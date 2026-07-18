@@ -28,6 +28,7 @@ using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Test;
+using NuGet.Repositories;
 using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
@@ -42,6 +43,1115 @@ namespace NuGet.Commands.Test.RestoreCommandTests
     public class RestoreCommandTests
     {
         private static SignedPackageVerifierSettings DefaultSettings = SignedPackageVerifierSettings.GetDefault(TestEnvironmentVariableReader.EmptyInstance);
+
+        [Fact]
+        public async Task RestoreCommand_WithAnalyzerAssetsEnabled_WritesIdentifiedAnalyzerAssetsAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                await result.CommitAsync(logger, CancellationToken.None);
+
+                var targetLibrary = GetAnalyzerTargetLibrary(result.LockFile, package.Id);
+                var analyzerAssets = GetAnalyzerAssetPaths(targetLibrary);
+
+                Assert.Equal(
+                    new[]
+                    {
+                        "analyzers/dotnet/NeutralAnalyzer.dll",
+                        "analyzers/dotnet/cs/CSharpAnalyzer.dll",
+                        "analyzers/dotnet/foo/UnknownFolderAnalyzer.dll",
+                        "analyzers/dotnet/fs/FSharpAnalyzer.dll",
+                        "analyzers/dotnet/vb/VisualBasicAnalyzer.dll",
+                    },
+                    analyzerAssets);
+
+                var assetsFile = File.ReadAllText(result.LockFilePath);
+                assetsFile.Should().Contain(@"""analyzers"": {");
+
+                // Each analyzer carries the codeLanguage derived from its path ("any" when language-agnostic),
+                // mirroring how content files carry codeLanguage metadata.
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/NeutralAnalyzer.dll", codeLanguage: "any");
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/cs/CSharpAnalyzer.dll", codeLanguage: "cs");
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/foo/UnknownFolderAnalyzer.dll", codeLanguage: "any");
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/fs/FSharpAnalyzer.dll", codeLanguage: "fs");
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/vb/VisualBasicAnalyzer.dll", codeLanguage: "vb");
+
+                assetsFile.Should().Contain(@"""codeLanguage"": ""cs""");
+                assetsFile.Should().Contain(@"""codeLanguage"": ""any""");
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithAnalyzerAssetsEnabled_HonorsAnalyzersForAllFrameworksAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                // Analyzer assets are a project-wide opt-in. In a multi-targeted project, when the project
+                // opts in, analyzers are honored for every target framework.
+                var net80 = new TargetFrameworkInformation
+                {
+                    FrameworkName = NuGetFramework.Parse("net8.0"),
+                    Dependencies = [CreateAnalyzerPackageDependency(package.Id, LibraryIncludeFlags.All, suppressParent: null)],
+                };
+                var net90 = new TargetFrameworkInformation
+                {
+                    FrameworkName = NuGetFramework.Parse("net9.0"),
+                    Dependencies = [CreateAnalyzerPackageDependency(package.Id, LibraryIncludeFlags.All, suppressParent: null)],
+                };
+
+                var packageSpec = PackageReferenceSpecBuilder.Create("AnalyzerProject", projectDirectory)
+                    .WithTargetFrameworks([net80, net90])
+                    .Build()
+                    .WithTestRestoreMetadata();
+                packageSpec.RestoreMetadata.RestoreEnableAnalyzerAssets = true;
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                await result.CommitAsync(logger, CancellationToken.None);
+
+                var net80Library = result.LockFile.GetTarget(NuGetFramework.Parse("net8.0"), runtimeIdentifier: null)
+                    .Libraries.Single(library => library.Name == package.Id);
+                var net90Library = result.LockFile.GetTarget(NuGetFramework.Parse("net9.0"), runtimeIdentifier: null)
+                    .Libraries.Single(library => library.Name == package.Id);
+
+                AssertAnalyzerAssetsSelected(net80Library);
+                AssertAnalyzerAssetsSelected(net90Library);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithAnalyzerAssetsEnabled_EmitsAnalyzerAssetsTelemetryAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+
+                // Set up telemetry capture *after* package creation, which also emits telemetry.
+                var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+                var telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+                telemetryService
+                    .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                    .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+                TelemetryActivity.NuGetTelemetryService = telemetryService.Object;
+
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+                projectInformationEvent["AnalyzerAssets.Enabled"].Should().Be(true);
+                // The analyzer package's analyzers all apply, so nothing is excluded.
+                projectInformationEvent["AnalyzerAssets.Excluded"].Should().Be(false);
+                projectInformationEvent["AnalyzerAssets.PackagesWithAnalyzers.Count"].Should().Be(1);
+                projectInformationEvent["AnalyzerAssets.PackagesWithExcludedAnalyzers.Count"].Should().Be(0);
+                projectInformationEvent["AnalyzerAssets.ExcludedByPrivateAssets.Count"].Should().Be(0);
+                projectInformationEvent["AnalyzerAssets.ExcludedByExcludeAssets.Count"].Should().Be(0);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithAnalyzerAssetsDisabled_StillEmitsAnalyzerAssetsTelemetryAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: false);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+
+                // Set up telemetry capture *after* package creation, which also emits telemetry.
+                var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+                var telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+                telemetryService
+                    .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                    .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+                TelemetryActivity.NuGetTelemetryService = telemetryService.Object;
+
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+                // The feature is off, but the blast-radius data is still reported so the impact of enabling
+                // it by default can be measured. Nothing is filtered here.
+                projectInformationEvent["AnalyzerAssets.Enabled"].Should().Be(false);
+                projectInformationEvent["AnalyzerAssets.PackagesWithAnalyzers.Count"].Should().Be(1);
+                projectInformationEvent["AnalyzerAssets.Excluded"].Should().Be(false);
+                projectInformationEvent["AnalyzerAssets.PackagesWithExcludedAnalyzers.Count"].Should().Be(0);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithExcludeAssetsAnalyzers_EmitsExcludedByExcludeAssetsTelemetryAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    includeType: LibraryIncludeFlags.All & ~LibraryIncludeFlags.Analyzers);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+
+                var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+                var telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+                telemetryService
+                    .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                    .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+                TelemetryActivity.NuGetTelemetryService = telemetryService.Object;
+
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+                // ExcludeAssets="analyzers" on the project's own reference filters the package's analyzers.
+                projectInformationEvent["AnalyzerAssets.Excluded"].Should().Be(true);
+                projectInformationEvent["AnalyzerAssets.PackagesWithAnalyzers.Count"].Should().Be(1);
+                projectInformationEvent["AnalyzerAssets.PackagesWithExcludedAnalyzers.Count"].Should().Be(1);
+                projectInformationEvent["AnalyzerAssets.ExcludedByExcludeAssets.Count"].Should().Be(1);
+                projectInformationEvent["AnalyzerAssets.ExcludedByPrivateAssets.Count"].Should().Be(0);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithPrivateAssetsAnalyzersOnTransitiveProjectReference_EmitsExcludedByPrivateAssetsTelemetryAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var libraryDirectory = Path.Combine(pathContext.SolutionRoot, "Library");
+                Directory.CreateDirectory(libraryDirectory);
+
+                var appDirectory = Path.Combine(pathContext.SolutionRoot, "App");
+                Directory.CreateDirectory(appDirectory);
+
+                var librarySpec = CreateAnalyzerPackageSpec(
+                    libraryDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    suppressParent: LibraryIncludeFlags.Analyzers,
+                    projectName: "Library");
+
+                var appSpec = CreateAnalyzerProjectSpec(
+                        "App",
+                        appDirectory,
+                        ImmutableArray<LibraryDependency>.Empty,
+                        restoreEnableAnalyzerAssets: true)
+                    .WithTestProjectReference(librarySpec);
+
+                var libraryLogger = new TestLogger();
+                var libraryRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, libraryLogger, librarySpec);
+                var libraryRestoreCommand = new RestoreCommand(libraryRequest);
+
+                // Restore the library first; only the app restore telemetry is captured below.
+                var libraryResult = await libraryRestoreCommand.ExecuteAsync();
+                libraryResult.Success.Should().BeTrue(because: libraryLogger.ShowMessages());
+
+                var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+                var telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+                telemetryService
+                    .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                    .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+                TelemetryActivity.NuGetTelemetryService = telemetryService.Object;
+
+                var appLogger = new TestLogger();
+                var appRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, appLogger, appSpec, librarySpec);
+                var appRestoreCommand = new RestoreCommand(appRequest);
+
+                // Act
+                var appResult = await appRestoreCommand.ExecuteAsync();
+
+                // Assert
+                appResult.Success.Should().BeTrue(because: appLogger.ShowMessages());
+
+                var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+                // The analyzers flow transitively through the Library project reference, where PrivateAssets="analyzers"
+                // (the default) suppresses them for the consuming App.
+                projectInformationEvent["AnalyzerAssets.Excluded"].Should().Be(true);
+                projectInformationEvent["AnalyzerAssets.PackagesWithAnalyzers.Count"].Should().Be(1);
+                projectInformationEvent["AnalyzerAssets.PackagesWithExcludedAnalyzers.Count"].Should().Be(1);
+                projectInformationEvent["AnalyzerAssets.ExcludedByPrivateAssets.Count"].Should().Be(1);
+                projectInformationEvent["AnalyzerAssets.ExcludedByExcludeAssets.Count"].Should().Be(0);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithCSharpSourceGeneratorAnalyzerDll_WritesAnalyzerAssetAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                package.AddFile("analyzers/dotnet/cs/SourceGenerator.dll");
+                package.AddFile("analyzers/dotnet/vb/VisualBasicSourceGenerator.dll");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var targetLibrary = GetAnalyzerTargetLibrary(result.LockFile, package.Id);
+
+                Assert.Equal(
+                    new[]
+                    {
+                        "analyzers/dotnet/NeutralAnalyzer.dll",
+                        "analyzers/dotnet/cs/CSharpAnalyzer.dll",
+                        "analyzers/dotnet/cs/SourceGenerator.dll",
+                        "analyzers/dotnet/foo/UnknownFolderAnalyzer.dll",
+                        "analyzers/dotnet/fs/FSharpAnalyzer.dll",
+                        "analyzers/dotnet/vb/VisualBasicAnalyzer.dll",
+                        "analyzers/dotnet/vb/VisualBasicSourceGenerator.dll",
+                    },
+                    GetAnalyzerAssetPaths(targetLibrary));
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithAnalyzerAssetsDisabled_DoesNotWriteAnalyzerAssetsAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: false);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                await result.CommitAsync(logger, CancellationToken.None);
+
+                var targetLibrary = GetAnalyzerTargetLibrary(result.LockFile, package.Id);
+                Assert.Empty(targetLibrary.AnalyzerAssets);
+
+                var assetsFile = File.ReadAllText(result.LockFilePath);
+                assetsFile.Should().NotContain(@"""analyzers"": {");
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithExcludeAssetsAnalyzers_WritesAnalyzerAssetsPlaceholderAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    includeType: LibraryIncludeFlags.All & ~LibraryIncludeFlags.Analyzers);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                await result.CommitAsync(logger, CancellationToken.None);
+
+                var targetLibrary = GetAnalyzerTargetLibrary(result.LockFile, package.Id);
+                AssertAnalyzerAssetsExcluded(targetLibrary);
+
+                var assetsFile = File.ReadAllText(result.LockFilePath);
+                assetsFile.Should().Contain(@"""analyzers"": {");
+                assetsFile.Should().Contain(@"""analyzers/dotnet/_._"": {}");
+                assetsFile.Should().NotContain(@"""analyzers/dotnet/NeutralAnalyzer.dll"": {}");
+                assetsFile.Should().NotContain(@"""analyzers/dotnet/cs/CSharpAnalyzer.dll"": {}");
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithIncludeAssetsCompileAndRuntime_WritesAnalyzerAssetsPlaceholderAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    includeType: LibraryIncludeFlags.Compile | LibraryIncludeFlags.Runtime);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                await result.CommitAsync(logger, CancellationToken.None);
+
+                var targetLibrary = GetAnalyzerTargetLibrary(result.LockFile, package.Id);
+                AssertAnalyzerAssetsExcluded(targetLibrary);
+
+                var assetsFile = File.ReadAllText(result.LockFilePath);
+                assetsFile.Should().Contain(@"""analyzers"": {");
+                assetsFile.Should().Contain(@"""analyzers/dotnet/_._"": {}");
+                assetsFile.Should().NotContain(@"""analyzers/dotnet/NeutralAnalyzer.dll"": {}");
+                assetsFile.Should().NotContain(@"""analyzers/dotnet/cs/CSharpAnalyzer.dll"": {}");
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithPrivateAssetsAnalyzersOnTransitiveProjectReference_DoesNotFlowAnalyzerAssetsAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var libraryDirectory = Path.Combine(pathContext.SolutionRoot, "Library");
+                Directory.CreateDirectory(libraryDirectory);
+
+                var appDirectory = Path.Combine(pathContext.SolutionRoot, "App");
+                Directory.CreateDirectory(appDirectory);
+
+                var librarySpec = CreateAnalyzerPackageSpec(
+                    libraryDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    suppressParent: LibraryIncludeFlags.Analyzers,
+                    projectName: "Library");
+
+                var appSpec = CreateAnalyzerProjectSpec(
+                        "App",
+                        appDirectory,
+                        ImmutableArray<LibraryDependency>.Empty,
+                        restoreEnableAnalyzerAssets: true)
+                    .WithTestProjectReference(librarySpec);
+
+                var libraryLogger = new TestLogger();
+                var libraryRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, libraryLogger, librarySpec);
+                var libraryRestoreCommand = new RestoreCommand(libraryRequest);
+
+                var appLogger = new TestLogger();
+                var appRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, appLogger, appSpec, librarySpec);
+                var appRestoreCommand = new RestoreCommand(appRequest);
+
+                // Act
+                var libraryResult = await libraryRestoreCommand.ExecuteAsync();
+                var appResult = await appRestoreCommand.ExecuteAsync();
+
+                // Assert
+                libraryResult.Success.Should().BeTrue(because: libraryLogger.ShowMessages());
+                appResult.Success.Should().BeTrue(because: appLogger.ShowMessages());
+
+                var libraryTargetLibrary = GetAnalyzerTargetLibrary(libraryResult.LockFile, package.Id);
+                AssertAnalyzerAssetsSelected(libraryTargetLibrary);
+
+                var appTargetLibrary = GetAnalyzerTargetLibrary(appResult.LockFile, package.Id);
+                AssertAnalyzerAssetsExcluded(appTargetLibrary);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithTransitiveAnalyzerPackage_WritesTransitiveAnalyzerAssetsAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var parentPackage = CreateAnalyzerPackageContext("ParentPackage");
+                var transitivePackage = CreateAnalyzerPackageContext("TransitiveAnalyzerPackage");
+                parentPackage.Dependencies.Add(transitivePackage);
+
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, parentPackage);
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, transitivePackage);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    parentPackage.Id,
+                    restoreEnableAnalyzerAssets: true);
+
+                var logger = new TestLogger();
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var parentTargetLibrary = GetAnalyzerTargetLibrary(result.LockFile, parentPackage.Id);
+                AssertAnalyzerAssetsSelected(parentTargetLibrary);
+
+                var transitiveTargetLibrary = GetAnalyzerTargetLibrary(result.LockFile, transitivePackage.Id);
+                AssertAnalyzerAssetsSelected(transitiveTargetLibrary);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithExcludeAssetsAnalyzersOnTransitivePackage_WritesPlaceholdersAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var parentPackage = CreateAnalyzerPackageContext("ParentPackage");
+                var transitivePackage = CreateAnalyzerPackageContext("TransitiveAnalyzerPackage");
+                parentPackage.Dependencies.Add(transitivePackage);
+
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, parentPackage);
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, transitivePackage);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    parentPackage.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    includeType: LibraryIncludeFlags.All & ~LibraryIncludeFlags.Analyzers);
+
+                var logger = new TestLogger();
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var parentTargetLibrary = GetAnalyzerTargetLibrary(result.LockFile, parentPackage.Id);
+                AssertAnalyzerAssetsExcluded(parentTargetLibrary);
+
+                var transitiveTargetLibrary = GetAnalyzerTargetLibrary(result.LockFile, transitivePackage.Id);
+                AssertAnalyzerAssetsExcluded(transitiveTargetLibrary);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithAnalyzerPackageThroughProjectReference_DoesNotFlowAnalyzerAssetsAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var libraryDirectory = Path.Combine(pathContext.SolutionRoot, "Library");
+                Directory.CreateDirectory(libraryDirectory);
+
+                var appDirectory = Path.Combine(pathContext.SolutionRoot, "App");
+                Directory.CreateDirectory(appDirectory);
+
+                var librarySpec = CreateAnalyzerPackageSpec(
+                    libraryDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    projectName: "Library");
+
+                var appSpec = CreateAnalyzerProjectSpec(
+                        "App",
+                        appDirectory,
+                        ImmutableArray<LibraryDependency>.Empty,
+                        restoreEnableAnalyzerAssets: true)
+                    .WithTestProjectReference(librarySpec);
+
+                var libraryLogger = new TestLogger();
+                var libraryRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, libraryLogger, librarySpec);
+                var libraryRestoreCommand = new RestoreCommand(libraryRequest);
+
+                var appLogger = new TestLogger();
+                var appRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, appLogger, appSpec, librarySpec);
+                var appRestoreCommand = new RestoreCommand(appRequest);
+
+                // Act
+                var libraryResult = await libraryRestoreCommand.ExecuteAsync();
+                var appResult = await appRestoreCommand.ExecuteAsync();
+
+                // Assert
+                libraryResult.Success.Should().BeTrue(because: libraryLogger.ShowMessages());
+                appResult.Success.Should().BeTrue(because: appLogger.ShowMessages());
+
+                var libraryTargetLibrary = GetAnalyzerTargetLibrary(libraryResult.LockFile, package.Id);
+                AssertAnalyzerAssetsSelected(libraryTargetLibrary);
+
+                var appTargetLibrary = GetAnalyzerTargetLibrary(appResult.LockFile, package.Id);
+                AssertAnalyzerAssetsExcluded(appTargetLibrary);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithProjectReferencePrivateAssetsWithoutAnalyzers_FlowsAnalyzerAssetsAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var libraryDirectory = Path.Combine(pathContext.SolutionRoot, "Library");
+                Directory.CreateDirectory(libraryDirectory);
+
+                var appDirectory = Path.Combine(pathContext.SolutionRoot, "App");
+                Directory.CreateDirectory(appDirectory);
+
+                var nonAnalyzerPrivateAssets = LibraryIncludeFlags.Build | LibraryIncludeFlags.ContentFiles;
+                var librarySpec = CreateAnalyzerPackageSpec(
+                    libraryDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    suppressParent: nonAnalyzerPrivateAssets,
+                    projectName: "Library");
+
+                var appSpec = CreateAnalyzerProjectSpec(
+                        "App",
+                        appDirectory,
+                        ImmutableArray<LibraryDependency>.Empty,
+                        restoreEnableAnalyzerAssets: true)
+                    .WithTestProjectReference(librarySpec, nonAnalyzerPrivateAssets);
+
+                var libraryLogger = new TestLogger();
+                var libraryRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, libraryLogger, librarySpec);
+                var libraryRestoreCommand = new RestoreCommand(libraryRequest);
+
+                var appLogger = new TestLogger();
+                var appRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, appLogger, appSpec, librarySpec);
+                var appRestoreCommand = new RestoreCommand(appRequest);
+
+                // Act
+                var libraryResult = await libraryRestoreCommand.ExecuteAsync();
+                var appResult = await appRestoreCommand.ExecuteAsync();
+
+                // Assert
+                libraryResult.Success.Should().BeTrue(because: libraryLogger.ShowMessages());
+                appResult.Success.Should().BeTrue(because: appLogger.ShowMessages());
+
+                var libraryTargetLibrary = GetAnalyzerTargetLibrary(libraryResult.LockFile, package.Id);
+                AssertAnalyzerAssetsSelected(libraryTargetLibrary);
+
+                var appTargetLibrary = GetAnalyzerTargetLibrary(appResult.LockFile, package.Id);
+                AssertAnalyzerAssetsSelected(appTargetLibrary);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithProjectReferencePackageExcludeAssetsAnalyzers_WritesPlaceholdersAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var libraryDirectory = Path.Combine(pathContext.SolutionRoot, "Library");
+                Directory.CreateDirectory(libraryDirectory);
+
+                var appDirectory = Path.Combine(pathContext.SolutionRoot, "App");
+                Directory.CreateDirectory(appDirectory);
+
+                var librarySpec = CreateAnalyzerPackageSpec(
+                    libraryDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    includeType: LibraryIncludeFlags.All & ~LibraryIncludeFlags.Analyzers,
+                    projectName: "Library");
+
+                var appSpec = CreateAnalyzerProjectSpec(
+                        "App",
+                        appDirectory,
+                        ImmutableArray<LibraryDependency>.Empty,
+                        restoreEnableAnalyzerAssets: true)
+                    .WithTestProjectReference(librarySpec);
+
+                var libraryLogger = new TestLogger();
+                var libraryRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, libraryLogger, librarySpec);
+                var libraryRestoreCommand = new RestoreCommand(libraryRequest);
+
+                var appLogger = new TestLogger();
+                var appRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, appLogger, appSpec, librarySpec);
+                var appRestoreCommand = new RestoreCommand(appRequest);
+
+                // Act
+                var libraryResult = await libraryRestoreCommand.ExecuteAsync();
+                var appResult = await appRestoreCommand.ExecuteAsync();
+
+                // Assert
+                libraryResult.Success.Should().BeTrue(because: libraryLogger.ShowMessages());
+                appResult.Success.Should().BeTrue(because: appLogger.ShowMessages());
+
+                var libraryTargetLibrary = GetAnalyzerTargetLibrary(libraryResult.LockFile, package.Id);
+                AssertAnalyzerAssetsExcluded(libraryTargetLibrary);
+
+                var appTargetLibrary = GetAnalyzerTargetLibrary(appResult.LockFile, package.Id);
+                AssertAnalyzerAssetsExcluded(appTargetLibrary);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithCompilerVersionAnalyzers_FlowsCompilerApiVersionMetadataAcrossProjectReferenceAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var package = new SimpleTestPackageContext("CompilerAnalyzerPackage")
+                {
+                    UseDefaultRuntimeAssemblies = false,
+                };
+                package.AddFile("analyzers/dotnet/cs/CSharpAnalyzer.dll");
+                package.AddFile("analyzers/dotnet/roslyn4.0/cs/RoslynAnalyzer.dll");
+                package.AddFile("lib/netstandard2.0/Package.dll");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var libraryDirectory = Path.Combine(pathContext.SolutionRoot, "Library");
+                Directory.CreateDirectory(libraryDirectory);
+
+                var appDirectory = Path.Combine(pathContext.SolutionRoot, "App");
+                Directory.CreateDirectory(appDirectory);
+
+                // PrivateAssets without analyzers so the analyzers flow across the project reference.
+                var nonAnalyzerPrivateAssets = LibraryIncludeFlags.Build | LibraryIncludeFlags.ContentFiles;
+                var librarySpec = CreateAnalyzerPackageSpec(
+                    libraryDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    suppressParent: nonAnalyzerPrivateAssets,
+                    projectName: "Library");
+
+                var appSpec = CreateAnalyzerProjectSpec(
+                        "App",
+                        appDirectory,
+                        ImmutableArray<LibraryDependency>.Empty,
+                        restoreEnableAnalyzerAssets: true)
+                    .WithTestProjectReference(librarySpec, nonAnalyzerPrivateAssets);
+
+                var libraryLogger = new TestLogger();
+                var libraryRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, libraryLogger, librarySpec);
+                var libraryRestoreCommand = new RestoreCommand(libraryRequest);
+
+                var appLogger = new TestLogger();
+                var appRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, appLogger, appSpec, librarySpec);
+                var appRestoreCommand = new RestoreCommand(appRequest);
+
+                // Act
+                var libraryResult = await libraryRestoreCommand.ExecuteAsync();
+                var appResult = await appRestoreCommand.ExecuteAsync();
+
+                // Assert
+                libraryResult.Success.Should().BeTrue(because: libraryLogger.ShowMessages());
+                appResult.Success.Should().BeTrue(because: appLogger.ShowMessages());
+
+                // The compiler-version metadata is preserved on the analyzers that flow into the consuming project.
+                var appTargetLibrary = GetAnalyzerTargetLibrary(appResult.LockFile, package.Id);
+                Assert.Equal(
+                    new[]
+                    {
+                        "analyzers/dotnet/cs/CSharpAnalyzer.dll",
+                        "analyzers/dotnet/roslyn4.0/cs/RoslynAnalyzer.dll",
+                    },
+                    GetAnalyzerAssetPaths(appTargetLibrary));
+                AssertAnalyzerMetadata(appTargetLibrary, "analyzers/dotnet/cs/CSharpAnalyzer.dll", codeLanguage: "cs");
+                AssertAnalyzerMetadata(appTargetLibrary, "analyzers/dotnet/roslyn4.0/cs/RoslynAnalyzer.dll", codeLanguage: "cs", compilerApiVersion: "roslyn4.0");
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithThreeHopProjectReferenceChain_FlowsAnalyzerAssetsToRootAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                // App -> Library2 -> Library1 -> analyzer package
+                var package = CreateAnalyzerPackageContext("AnalyzerPackage");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var library1Directory = Path.Combine(pathContext.SolutionRoot, "Library1");
+                var library2Directory = Path.Combine(pathContext.SolutionRoot, "Library2");
+                var appDirectory = Path.Combine(pathContext.SolutionRoot, "App");
+                Directory.CreateDirectory(library1Directory);
+                Directory.CreateDirectory(library2Directory);
+                Directory.CreateDirectory(appDirectory);
+
+                // PrivateAssets without analyzers at every hop so the analyzers flow all the way to the root.
+                var nonAnalyzerPrivateAssets = LibraryIncludeFlags.Build | LibraryIncludeFlags.ContentFiles;
+
+                var library1Spec = CreateAnalyzerPackageSpec(
+                    library1Directory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true,
+                    suppressParent: nonAnalyzerPrivateAssets,
+                    projectName: "Library1");
+
+                var library2Spec = CreateAnalyzerProjectSpec(
+                        "Library2",
+                        library2Directory,
+                        ImmutableArray<LibraryDependency>.Empty,
+                        restoreEnableAnalyzerAssets: true)
+                    .WithTestProjectReference(library1Spec, nonAnalyzerPrivateAssets);
+
+                var appSpec = CreateAnalyzerProjectSpec(
+                        "App",
+                        appDirectory,
+                        ImmutableArray<LibraryDependency>.Empty,
+                        restoreEnableAnalyzerAssets: true)
+                    .WithTestProjectReference(library2Spec, nonAnalyzerPrivateAssets);
+
+                var appLogger = new TestLogger();
+                var appRequest = ProjectTestHelpers.CreateRestoreRequest(pathContext, appLogger, appSpec, library2Spec, library1Spec);
+                var appRestoreCommand = new RestoreCommand(appRequest);
+
+                // Act
+                var appResult = await appRestoreCommand.ExecuteAsync();
+
+                // Assert
+                appResult.Success.Should().BeTrue(because: appLogger.ShowMessages());
+
+                // The analyzer package is a 3-hop transitive dependency; its analyzers (with metadata) reach the root.
+                var appTargetLibrary = GetAnalyzerTargetLibrary(appResult.LockFile, package.Id);
+                AssertAnalyzerAssetsSelected(appTargetLibrary);
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithAnalyzerTargetFrameworkAndArchitectureSegments_WritesIdentifiedAnalyzerAssetsAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = new SimpleTestPackageContext("AnalyzerPackage")
+                {
+                    UseDefaultRuntimeAssemblies = false,
+                };
+                package.AddFile("analyzers/dotnet8.0/TargetFrameworkAnalyzer.dll");
+                package.AddFile("analyzers/dotnet8.0/cs/TargetFrameworkCSharpAnalyzer.dll");
+                package.AddFile("analyzers/dotnet8.0/x64/TargetFrameworkArchitectureAnalyzer.dll");
+                package.AddFile("analyzers/dotnet8.0/x64/cs/TargetFrameworkArchitectureCSharpAnalyzer.dll");
+                package.AddFile("analyzers/dotnet/roslyn4.0/cs/CompilerApiVersionCSharpAnalyzer.dll");
+                package.AddFile("analyzers/dotnet/x64/ArchitectureAnalyzer.dll");
+                package.AddFile("analyzers/dotnet/x64/cs/ArchitectureCSharpAnalyzer.dll");
+                package.AddFile("analyzers/dotnet/x64/vb/ArchitectureVisualBasicAnalyzer.dll");
+                package.AddFile("analyzers/dotnet8.x/InvalidTargetFrameworkAnalyzer.dll");
+                package.AddFile("analyzers/dotnet/foo/InvalidArchitectureAnalyzer.dll");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var targetLibrary = GetAnalyzerTargetLibrary(result.LockFile, package.Id);
+
+                Assert.Equal(
+                    new[]
+                    {
+                        "analyzers/dotnet/foo/InvalidArchitectureAnalyzer.dll",
+                        "analyzers/dotnet/roslyn4.0/cs/CompilerApiVersionCSharpAnalyzer.dll",
+                        "analyzers/dotnet/x64/ArchitectureAnalyzer.dll",
+                        "analyzers/dotnet/x64/cs/ArchitectureCSharpAnalyzer.dll",
+                        "analyzers/dotnet/x64/vb/ArchitectureVisualBasicAnalyzer.dll",
+                        "analyzers/dotnet8.0/TargetFrameworkAnalyzer.dll",
+                        "analyzers/dotnet8.0/cs/TargetFrameworkCSharpAnalyzer.dll",
+                        "analyzers/dotnet8.0/x64/TargetFrameworkArchitectureAnalyzer.dll",
+                        "analyzers/dotnet8.0/x64/cs/TargetFrameworkArchitectureCSharpAnalyzer.dll",
+                        "analyzers/dotnet8.x/InvalidTargetFrameworkAnalyzer.dll",
+                    },
+                    GetAnalyzerAssetPaths(targetLibrary));
+
+                // The compiler version ('roslynX.Y') and language segments are captured as metadata.
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/roslyn4.0/cs/CompilerApiVersionCSharpAnalyzer.dll", codeLanguage: "cs", compilerApiVersion: "roslyn4.0");
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/x64/cs/ArchitectureCSharpAnalyzer.dll", codeLanguage: "cs");
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/x64/vb/ArchitectureVisualBasicAnalyzer.dll", codeLanguage: "vb");
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/foo/InvalidArchitectureAnalyzer.dll", codeLanguage: "any");
+                AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet8.0/TargetFrameworkAnalyzer.dll", codeLanguage: "any");
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithAnalyzerTargetOmitted_WritesIdentifiedAnalyzerAssetsAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = new SimpleTestPackageContext("AnalyzerPackage")
+                {
+                    UseDefaultRuntimeAssemblies = false,
+                };
+                package.AddFile("analyzers/NeutralAnalyzer.dll");
+                package.AddFile("analyzers/x64/ArchitectureAnalyzer.dll");
+                package.AddFile("analyzers/x64/cs/ArchitectureCSharpAnalyzer.dll");
+                package.AddFile("analyzers/cs/CSharpAnalyzer.dll");
+                package.AddFile("analyzers/vb/VisualBasicAnalyzer.dll");
+                package.AddFile("analyzers/cs/CSharpAnalyzer.resources.dll");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var targetLibrary = GetAnalyzerTargetLibrary(result.LockFile, package.Id);
+
+                Assert.Equal(
+                    new[]
+                    {
+                        "analyzers/NeutralAnalyzer.dll",
+                        "analyzers/cs/CSharpAnalyzer.dll",
+                        "analyzers/vb/VisualBasicAnalyzer.dll",
+                        "analyzers/x64/ArchitectureAnalyzer.dll",
+                        "analyzers/x64/cs/ArchitectureCSharpAnalyzer.dll",
+                    },
+                    GetAnalyzerAssetPaths(targetLibrary));
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithDeeplyNestedAnalyzers_WritesAllAnalyzerAssetsRegardlessOfDepthAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = new SimpleTestPackageContext("AnalyzerPackage")
+                {
+                    UseDefaultRuntimeAssemblies = false,
+                };
+                package.AddFile("analyzers/dotnet/cs/Analyzer.dll");
+                package.AddFile("analyzers/dotnet/roslyn4.0/x64/cs/nested/TooDeepAnalyzer.dll");
+                package.AddFile("analyzers/a/b/c/d/e/f/g/VeryDeepAnalyzer.dll");
+                package.AddFile("analyzers/dotnet/cs/nested/Localized.resources.dll");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var targetLibrary = GetAnalyzerTargetLibrary(result.LockFile, package.Id);
+
+                // All analyzer assemblies are included at any depth (matching the SDK), while satellite
+                // '.resources.dll' assemblies are excluded.
+                Assert.Equal(
+                    new[]
+                    {
+                        "analyzers/a/b/c/d/e/f/g/VeryDeepAnalyzer.dll",
+                        "analyzers/dotnet/cs/Analyzer.dll",
+                        "analyzers/dotnet/roslyn4.0/x64/cs/nested/TooDeepAnalyzer.dll",
+                    },
+                    GetAnalyzerAssetPaths(targetLibrary));
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithAnalyzerLikePathsOutsideAnalyzersFolder_AreNotSelectedAsync()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+                var package = new SimpleTestPackageContext("AnalyzerPackage")
+                {
+                    UseDefaultRuntimeAssemblies = false,
+                };
+                // Only assemblies under the 'analyzers/' directory are analyzers. A root-level 'analyzers.dll'
+                // and an unrelated 'analyzersfoo/' directory must not be mistaken for analyzer assets.
+                package.AddFile("analyzers.dll");
+                package.AddFile("analyzersfoo/NotAnAnalyzer.dll");
+                package.AddFile("analyzers/dotnet/cs/RealAnalyzer.dll");
+                await SimpleTestPackageUtility.CreateFullPackageAsync(pathContext.PackageSource, package);
+
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, "AnalyzerProject");
+                Directory.CreateDirectory(projectDirectory);
+
+                var packageSpec = CreateAnalyzerPackageSpec(
+                    projectDirectory,
+                    package.Id,
+                    restoreEnableAnalyzerAssets: true);
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                var restoreCommand = new RestoreCommand(request);
+
+                // Act
+                var result = await restoreCommand.ExecuteAsync();
+
+                // Assert
+                result.Success.Should().BeTrue(because: logger.ShowMessages());
+
+                var targetLibrary = GetAnalyzerTargetLibrary(result.LockFile, package.Id);
+
+                Assert.Equal(
+                    new[]
+                    {
+                        "analyzers/dotnet/cs/RealAnalyzer.dll",
+                    },
+                    GetAnalyzerAssetPaths(targetLibrary));
+            }
+        }
 
         [Fact]
         public async Task RestoreCommand_VerifyRuntimeSpecificAssetsAreNotIncludedForCompile_RuntimeOnlyAsync()
@@ -3054,9 +4164,16 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["LocalSourcesCount"] = value => value.Should().Be(1),
                 ["FallbackFoldersCount"] = value => value.Should().Be(0),
                 ["Audit.Enabled"] = value => value.Should().Be("enabled"),
+                ["AnalyzerAssets.Enabled"] = value => value.Should().BeOfType<bool>(),
+                ["AnalyzerAssets.Excluded"] = value => value.Should().BeOfType<bool>(),
+                ["AnalyzerAssets.PackagesWithAnalyzers.Count"] = value => value.Should().BeOfType<int>(),
+                ["AnalyzerAssets.PackagesWithExcludedAnalyzers.Count"] = value => value.Should().BeOfType<int>(),
+                ["AnalyzerAssets.ExcludedByPrivateAssets.Count"] = value => value.Should().BeOfType<int>(),
+                ["AnalyzerAssets.ExcludedByExcludeAssets.Count"] = value => value.Should().BeOfType<int>(),
                 ["Audit.Level"] = value => value.Should().Be(0),
                 ["Audit.Mode"] = value => value.Should().Be("Unknown"),
                 ["Audit.SuppressedAdvisories.Defined.Count"] = value => value.Should().Be(1),
+                ["PackagesWithFloatingVersionCount"] = value => value.Should().Be(0),
                 ["Audit.SuppressedAdvisories.TotalWarningsSuppressed.Count"] = value => value.Should().Be(0),
                 ["Audit.SuppressedAdvisories.DistinctAdvisoriesSuppressed.Count"] = value => value.Should().Be(0),
                 ["Audit.Vulnerability.Direct.Count"] = value => value.Should().Be(0),
@@ -3120,6 +4237,54 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             }
         }
 
+        [Theory]
+        [InlineData("1.0.0", 0)]
+        [InlineData("[1.0.0]", 0)]
+        [InlineData("*", 1)]
+        [InlineData("1.*", 1)]
+        [InlineData("1.0.*", 1)]
+        [InlineData("1.0.0-*", 1)]
+        public void CountPackagesWithFloatingVersion_WithSingleDependency_ReturnsExpectedCount(string version, int expectedCount)
+        {
+            // Arrange
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec("TestProject", @"C:\", "net8.0", "packageA", version);
+
+            // Act
+            int actualCount = RestoreCommand.CountPackagesWithFloatingVersion(packageSpec);
+
+            // Assert
+            actualCount.Should().Be(expectedCount);
+        }
+
+        [Fact]
+        public void CountPackagesWithFloatingVersion_WithSamePackageFloatingInMultipleFrameworks_CountsPackageOnce()
+        {
+            // Arrange
+            const string spec = @"
+                {
+                    ""frameworks"": {
+                        ""net8.0"": {
+                            ""dependencies"": {
+                                ""packageA"" : ""1.0.*"",
+                                ""packageB"" : ""2.0.0""
+                            }
+                        },
+                        ""net9.0"": {
+                            ""dependencies"": {
+                                ""packageA"" : ""1.0.*""
+                            }
+                        }
+                    }
+                }";
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("TestProject", @"C:\", spec);
+
+            // Act
+            int actualCount = RestoreCommand.CountPackagesWithFloatingVersion(packageSpec);
+
+            // Assert
+            actualCount.Should().Be(1);
+        }
+
         [Fact]
         public async Task ExecuteAsync_WithSuppressedWarning_PopulatesCorrectTelemetry()
         {
@@ -3155,6 +4320,59 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
             Assert.Equal("NU1603", projectInformationEvent["SuppressedWarningCodes"]);
             Assert.Null(projectInformationEvent["WarningCodes"]);
+        }
+
+        [Fact]
+        public async Task LockFileBuilder_WithUnmatchedTargetAlias_DoesNotThrow()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            const string ProjectName = "TestProject";
+            const string PackageId = "a";
+            NuGetFramework framework = NuGetFramework.Parse("net45");
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(ProjectName, pathContext.SolutionRoot, framework.GetShortFolderName(), PackageId);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext(PackageId, "1.0.0"));
+
+            var logger = new TestLogger();
+            TestRestoreRequest request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+            RestoreResult restoreResult = await new RestoreCommand(request).ExecuteAsync();
+            restoreResult.Success.Should().BeTrue(because: logger.ShowMessages());
+
+            var context = new TestRemoteWalkContext();
+            var provider = new DependencyProvider();
+            provider.Package(PackageId, "1.0.0");
+            context.LocalLibraryProviders.Add(provider);
+
+            var walker = new RemoteDependencyWalker(context);
+            GraphNode<RemoteResolveResult> rootNode = await DoWalkAsync(walker, PackageId, framework);
+            RestoreTargetGraph targetGraph = RestoreTargetGraph.Create(
+                RuntimeGraph.Empty,
+                new[] { rootNode },
+                context,
+                targetAlias: "unmatched",
+                framework,
+                runtimeIdentifier: null);
+
+            var lockFileBuilder = new LockFileBuilder(
+                LockFileFormat.AliasedVersion,
+                logger,
+                new Dictionary<RestoreTargetGraph, Dictionary<string, LibraryIncludeFlags>>());
+
+            // Act
+            Action act = () => lockFileBuilder.CreateLockFile(
+                previousLockFile: null,
+                packageSpec,
+                new[] { targetGraph },
+                new[] { new NuGetv3LocalRepository(pathContext.UserPackagesFolder) },
+                context,
+                new LockFileBuilderCache());
+
+            // Assert
+            act.Should().NotThrow();
         }
 
         [Fact]
@@ -3262,6 +4480,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             {
                 ["RestoreSuccess"] = value => value.Should().Be(true),
                 ["NoOpResult"] = value => value.Should().Be(true),
+                ["PackagesWithFloatingVersionCount"] = value => value.Should().Be(0),
                 ["IsCentralVersionManagementEnabled"] = value => value.Should().Be(false),
                 ["NoOpCacheFileEvaluationResult"] = value => value.Should().Be(true),
                 ["NoOpRestoreOutputEvaluationResult"] = value => value.Should().Be(true),
@@ -3282,6 +4501,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["FallbackFoldersCount"] = value => value.Should().Be(0),
                 ["IsLockFileEnabled"] = value => value.Should().Be(false),
                 ["NoOpCacheFileAgeDays"] = value => value.Should().NotBeNull(),
+                ["AnalyzerAssets.Enabled"] = value => value.Should().BeOfType<bool>(),
                 ["UseLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
                 ["UsedLegacyDependencyResolver"] = value => value.Should().BeOfType<bool>(),
                 ["Audit.Enabled"] = value => value.Should().BeOfType<string>(),
@@ -3386,6 +4606,13 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                 ["LockFileEvaluationResult"] = value => value.Should().Be(true),
                 ["NoOpDuration"] = value => value.Should().NotBeNull(),
                 ["TotalUniquePackagesCount"] = value => value.Should().Be(2),
+                ["PackagesWithFloatingVersionCount"] = value => value.Should().Be(0),
+                ["AnalyzerAssets.Enabled"] = value => value.Should().BeOfType<bool>(),
+                ["AnalyzerAssets.Excluded"] = value => value.Should().BeOfType<bool>(),
+                ["AnalyzerAssets.PackagesWithAnalyzers.Count"] = value => value.Should().BeOfType<int>(),
+                ["AnalyzerAssets.PackagesWithExcludedAnalyzers.Count"] = value => value.Should().BeOfType<int>(),
+                ["AnalyzerAssets.ExcludedByPrivateAssets.Count"] = value => value.Should().BeOfType<int>(),
+                ["AnalyzerAssets.ExcludedByExcludeAssets.Count"] = value => value.Should().BeOfType<int>(),
                 ["NewPackagesInstalledCount"] = value => value.Should().Be(1),
                 ["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"] = value => value.Should().Be(false),
                 ["EvaluateLockFileDuration"] = value => value.Should().NotBeNull(),
@@ -3766,6 +4993,137 @@ namespace NuGet.Commands.Test.RestoreCommandTests
 
             pairs[5].Framework.Should().Be(FrameworkConstants.CommonFrameworks.Net80);
             pairs[5].RuntimeIdentifier.Should().Be("win-x64");
+        }
+
+        private static SimpleTestPackageContext CreateAnalyzerPackageContext(string packageId)
+        {
+            var package = new SimpleTestPackageContext(packageId)
+            {
+                UseDefaultRuntimeAssemblies = false,
+            };
+
+            package.AddFile("analyzers/dotnet/NeutralAnalyzer.dll");
+            package.AddFile("analyzers/dotnet/cs/CSharpAnalyzer.dll");
+            package.AddFile("analyzers/dotnet/vb/VisualBasicAnalyzer.dll");
+            package.AddFile("analyzers/dotnet/fs/FSharpAnalyzer.dll");
+            package.AddFile("analyzers/dotnet/cs/CSharpAnalyzer.resources.dll");
+            package.AddFile("analyzers/dotnet/cs/NotAnAnalyzer.exe");
+            package.AddFile("analyzers/dotnet/cs/NotAnAnalyzer.winmd");
+            package.AddFile("analyzers/dotnet/foo/UnknownFolderAnalyzer.dll");
+            package.AddFile("lib/netstandard2.0/Package.dll");
+
+            return package;
+        }
+
+        private static PackageSpec CreateAnalyzerPackageSpec(
+            string projectDirectory,
+            string packageId,
+            bool restoreEnableAnalyzerAssets,
+            LibraryIncludeFlags includeType = LibraryIncludeFlags.All,
+            LibraryIncludeFlags? suppressParent = null,
+            string projectName = "AnalyzerProject")
+        {
+            return CreateAnalyzerProjectSpec(
+                projectName,
+                projectDirectory,
+                [
+                    CreateAnalyzerPackageDependency(packageId, includeType, suppressParent),
+                ],
+                restoreEnableAnalyzerAssets);
+        }
+
+        private static PackageSpec CreateAnalyzerProjectSpec(
+            string projectName,
+            string projectDirectory,
+            ImmutableArray<LibraryDependency> dependencies,
+            bool restoreEnableAnalyzerAssets)
+        {
+            var packageSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
+                .WithTargetFrameworks(
+                [
+                    new TargetFrameworkInformation
+                    {
+                        FrameworkName = NuGetFramework.Parse("netstandard2.0"),
+                        Dependencies = dependencies,
+                    },
+                ])
+                .Build()
+                .WithTestRestoreMetadata();
+
+            packageSpec.RestoreMetadata.RestoreEnableAnalyzerAssets = restoreEnableAnalyzerAssets;
+
+            return packageSpec;
+        }
+
+        private static LibraryDependency CreateAnalyzerPackageDependency(
+            string packageId,
+            LibraryIncludeFlags includeType,
+            LibraryIncludeFlags? suppressParent)
+        {
+            return new LibraryDependency
+            {
+                LibraryRange = new LibraryRange(
+                    packageId,
+                    VersionRange.Parse("1.0.0"),
+                    LibraryDependencyTarget.All),
+                IncludeType = includeType,
+                SuppressParent = suppressParent ?? LibraryIncludeFlagUtils.DefaultSuppressParent,
+            };
+        }
+
+        private static List<string> GetAnalyzerAssetPaths(LockFileTargetLibrary targetLibrary)
+        {
+            return targetLibrary.AnalyzerAssets
+                .Select(item => item.Path)
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToList();
+        }
+
+        private static void AssertAnalyzerMetadata(LockFileTargetLibrary targetLibrary, string path, string codeLanguage, string compilerApiVersion = null)
+        {
+            var item = targetLibrary.AnalyzerAssets.Single(a => a.Path == path);
+
+            item.Properties.TryGetValue("codeLanguage", out var actualCodeLanguage);
+            actualCodeLanguage.Should().Be(codeLanguage, because: $"{path} should report its code language");
+
+            item.Properties.TryGetValue("compilerApiVersion", out var actualCompilerApiVersion);
+            actualCompilerApiVersion.Should().Be(compilerApiVersion, because: $"{path} should report its compiler API version");
+        }
+
+        private static void AssertAnalyzerAssetsSelected(LockFileTargetLibrary targetLibrary)
+        {
+            Assert.Equal(
+                new[]
+                {
+                    "analyzers/dotnet/NeutralAnalyzer.dll",
+                    "analyzers/dotnet/cs/CSharpAnalyzer.dll",
+                    "analyzers/dotnet/foo/UnknownFolderAnalyzer.dll",
+                    "analyzers/dotnet/fs/FSharpAnalyzer.dll",
+                    "analyzers/dotnet/vb/VisualBasicAnalyzer.dll",
+                },
+                GetAnalyzerAssetPaths(targetLibrary));
+
+            // Selected analyzers (including ones that flow across project references) carry their metadata.
+            AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/NeutralAnalyzer.dll", codeLanguage: "any");
+            AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/cs/CSharpAnalyzer.dll", codeLanguage: "cs");
+            AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/foo/UnknownFolderAnalyzer.dll", codeLanguage: "any");
+            AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/fs/FSharpAnalyzer.dll", codeLanguage: "fs");
+            AssertAnalyzerMetadata(targetLibrary, "analyzers/dotnet/vb/VisualBasicAnalyzer.dll", codeLanguage: "vb");
+        }
+
+        private static void AssertAnalyzerAssetsExcluded(LockFileTargetLibrary targetLibrary)
+        {
+            Assert.Equal(
+                new[]
+                {
+                    "analyzers/dotnet/_._",
+                },
+                GetAnalyzerAssetPaths(targetLibrary));
+        }
+
+        private static LockFileTargetLibrary GetAnalyzerTargetLibrary(LockFile lockFile, string packageId)
+        {
+            return lockFile.Targets.Single().Libraries.Single(library => library.Name == packageId);
         }
 
         private static TargetFrameworkInformation CreateTargetFrameworkInformation(ImmutableArray<LibraryDependency> dependencies, List<CentralPackageVersion> centralVersionsDependencies, NuGetFramework framework = null)
@@ -4195,4 +5553,3 @@ namespace NuGet.Commands.Test.RestoreCommandTests
         }
     }
 }
-

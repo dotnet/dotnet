@@ -1189,6 +1189,7 @@ namespace NuGet.Build.Tasks.Console
             restoreMetadata.SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(project.GetProperty("SdkAnalysisLevel"));
             restoreMetadata.UseLegacyDependencyResolver = project.IsPropertyTrue("RestoreUseLegacyDependencyResolver");
             restoreMetadata.RestoreDoNotWriteDependencyGraphSpec = project.IsPropertyTrue("RestoreDoNotWriteDependencyGraphSpec");
+            restoreMetadata.RestoreEnableAnalyzerAssets = GetRestoreEnableAnalyzerAssets(project, projectsByTargetFramework.Values);
 
             return (restoreMetadata, targetFrameworkInfos);
 
@@ -1205,6 +1206,19 @@ namespace NuGet.Build.Tasks.Console
 
                 return (projectStyleResult.ProjectStyle, projectStyleResult.PackagesConfigFilePath);
             }
+        }
+
+        internal static bool GetRestoreEnableAnalyzerAssets(IMSBuildProject project, IEnumerable<IMSBuildProject> innerBuilds)
+        {
+            foreach (IMSBuildProject innerBuild in innerBuilds.NoAllocEnumerate())
+            {
+                if (innerBuild.IsPropertyTrue("RestoreEnableAnalyzerAssets"))
+                {
+                    return true;
+                }
+            }
+
+            return project.IsPropertyTrue("RestoreEnableAnalyzerAssets");
         }
 
         internal static bool GetPackagePruningDefault(IEnumerable<IMSBuildProject> innerBuilds)

@@ -293,6 +293,34 @@ namespace NuGet.ProjectModel.Test
         [InlineData("A;b", "a;B", true)]
         [InlineData("a;b;c", "c;a;B", true)]
         [InlineData("a;b;c;d", "c;a;B", false)]
+        public void Equals_WithAnalyzerAssets_ReturnsExpectedResult(string left, string right, bool expected)
+        {
+            var leftSide = new LockFileTargetLibrary()
+            {
+                AnalyzerAssets = left.Split(';').Select(e => new LockFileItem(e)).ToList()
+            };
+
+            var rightSide = new LockFileTargetLibrary()
+            {
+                AnalyzerAssets = right.Split(';').Select(e => new LockFileItem(e)).ToList()
+            };
+
+            // Act & Assert
+            if (expected)
+            {
+                leftSide.Should().Be(rightSide);
+            }
+            else
+            {
+                leftSide.Should().NotBe(rightSide);
+            }
+        }
+
+        [Theory]
+        [InlineData("a", "a", true)]
+        [InlineData("A;b", "a;B", true)]
+        [InlineData("a;b;c", "c;a;B", true)]
+        [InlineData("a;b;c;d", "c;a;B", false)]
         public void Equals_WithNativeLibraries(string left, string right, bool expected)
         {
             var leftSide = new LockFileTargetLibrary()
@@ -763,6 +791,34 @@ namespace NuGet.ProjectModel.Test
             var rightSide = new LockFileTargetLibrary()
             {
                 CompileTimeAssemblies = right.Split(';').Select(e => new LockFileItem(e)).ToList()
+            };
+
+            // Act & Assert
+            if (expected)
+            {
+                leftSide.GetHashCode().Should().Be(rightSide.GetHashCode());
+            }
+            else
+            {
+                leftSide.GetHashCode().Should().NotBe(rightSide.GetHashCode());
+            }
+        }
+
+        [Theory]
+        [InlineData("a", "a", true)]
+        [InlineData("A;b", "a;B", true)]
+        [InlineData("a;b;c", "c;a;B", true)]
+        [InlineData("a;b;c;d", "c;a;B", false)]
+        public void HashCode_WithAnalyzerAssets_ReturnsExpectedResult(string left, string right, bool expected)
+        {
+            var leftSide = new LockFileTargetLibrary()
+            {
+                AnalyzerAssets = left.Split(';').Select(e => new LockFileItem(e)).ToList()
+            };
+
+            var rightSide = new LockFileTargetLibrary()
+            {
+                AnalyzerAssets = right.Split(';').Select(e => new LockFileItem(e)).ToList()
             };
 
             // Act & Assert

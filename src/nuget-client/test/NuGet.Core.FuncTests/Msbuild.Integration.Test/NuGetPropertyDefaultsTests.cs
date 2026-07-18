@@ -160,5 +160,78 @@ namespace Msbuild.Integration.Test
             // Assert
             resultText.Should().Be(expected);
         }
+
+        [Theory]
+        // An explicit RestoreEnableAnalyzerAssets opt-in is honored on every target framework, so users can
+        // opt into the new behavior before it is enabled by default.
+        [InlineData("net12.0")]
+        [InlineData("net11.0")]
+        [InlineData("net10.0")]
+        [InlineData("net9.0")]
+        [InlineData("net8.0")]
+        [InlineData("netcoreapp3.1")]
+        [InlineData("netstandard2.1")]
+        [InlineData("netstandard2.0")]
+        [InlineData("net48")]
+        public void AnalyzerAssetsAvailability_RestoreEnableAnalyzerAssets_OptInHonoredOnAllFrameworks(string targetFramework)
+        {
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+
+            string projectText = @"<Project>
+    <PropertyGroup>
+        <RestoreEnableAnalyzerAssets>true</RestoreEnableAnalyzerAssets>
+    </PropertyGroup>
+    <Import Project=""$(NuGetRestoreTargets)"" />
+</Project>";
+            var projectFilePath = Path.Combine(testDirectory, "my.proj");
+            File.WriteAllText(projectFilePath, projectText);
+
+            string args = $"{projectFilePath} -getProperty:RestoreEnableAnalyzerAssets";
+
+            var framework = NuGetFramework.Parse(targetFramework);
+            args += $" -p:TargetFrameworkIdentifier={framework.Framework}";
+            args += $" -p:TargetFrameworkVersion={framework.Version}";
+
+            // Act
+            var result = _fixture.RunMsBuild(testDirectory, args);
+            var resultText = result.Output.Trim();
+
+            // Assert
+            resultText.Should().Be("true");
+        }
+
+        [Theory]
+        // Analyzer assets restore defaults to off when the opt-in is not set, on every target framework.
+        [InlineData("net12.0")]
+        [InlineData("net11.0")]
+        [InlineData("net10.0")]
+        [InlineData("net8.0")]
+        [InlineData("netstandard2.0")]
+        [InlineData("net48")]
+        public void AnalyzerAssetsAvailability_RestoreEnableAnalyzerAssets_DefaultsToFalse(string targetFramework)
+        {
+            // Arrange
+            using var testDirectory = TestDirectory.Create();
+
+            string projectText = @"<Project>
+    <Import Project=""$(NuGetRestoreTargets)"" />
+</Project>";
+            var projectFilePath = Path.Combine(testDirectory, "my.proj");
+            File.WriteAllText(projectFilePath, projectText);
+
+            string args = $"{projectFilePath} -getProperty:RestoreEnableAnalyzerAssets";
+
+            var framework = NuGetFramework.Parse(targetFramework);
+            args += $" -p:TargetFrameworkIdentifier={framework.Framework}";
+            args += $" -p:TargetFrameworkVersion={framework.Version}";
+
+            // Act
+            var result = _fixture.RunMsBuild(testDirectory, args);
+            var resultText = result.Output.Trim();
+
+            // Assert
+            resultText.Should().Be("false");
+        }
     }
 }

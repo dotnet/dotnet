@@ -56,7 +56,7 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new DownloadResourcePlugin(
-                    plugin: null,
+                    plugin: null!,
                     utilities: _utilities.Object,
                     packageSource: _packageSource));
 
@@ -69,7 +69,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new DownloadResourcePlugin(
                     _plugin.Object,
-                    utilities: null,
+                    utilities: null!,
                     packageSource: _packageSource));
 
             Assert.Equal("utilities", exception.ParamName);
@@ -82,7 +82,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 () => new DownloadResourcePlugin(
                     _plugin.Object,
                     _utilities.Object,
-                    packageSource: null));
+                    packageSource: null!));
 
             Assert.Equal("packageSource", exception.ParamName);
         }
@@ -94,7 +94,7 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => _resource.GetDownloadResourceResultAsync(
-                        identity: null,
+                        identity: null!,
                         downloadContext: new PackageDownloadContext(sourceCacheContext),
                         globalPackagesFolder: "",
                         logger: NullLogger.Instance,
@@ -117,7 +117,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => resource.GetDownloadResourceResultAsync(
                         new PackageIdentity(id: "a", version: NuGetVersion.Parse("1.0.0")),
-                        downloadContext: null,
+                        downloadContext: null!,
                         globalPackagesFolder: "",
                         logger: NullLogger.Instance,
                         cancellationToken: CancellationToken.None));
@@ -136,7 +136,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         new PackageIdentity(id: "a", version: NuGetVersion.Parse("1.0.0")),
                         new PackageDownloadContext(sourceCacheContext),
                         globalPackagesFolder: "",
-                        logger: null,
+                        logger: null!,
                         cancellationToken: CancellationToken.None));
 
                 Assert.Equal("logger", exception.ParamName);
@@ -173,7 +173,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     () => _resource.GetDownloadResourceResultAsync(
                         new PackageIdentity(id: "a", version: NuGetVersion.Parse("1.0.0")),
                         new PackageDownloadContext(sourceCacheContext),
-                        globalPackagesFolder: null,
+                        globalPackagesFolder: null!,
                         logger: NullLogger.Instance,
                         cancellationToken: CancellationToken.None));
             }
@@ -192,7 +192,7 @@ namespace NuGet.Protocol.Plugins.Tests
             using (var result = await _resource.GetDownloadResourceResultAsync(
                 new PackageIdentity(id: "a", version: NuGetVersion.Parse("1.0.0")),
                 new PackageDownloadContext(sourceCacheContext),
-                globalPackagesFolder: null,
+                globalPackagesFolder: null!,
                 logger: NullLogger.Instance,
                 cancellationToken: CancellationToken.None))
             {
@@ -217,7 +217,7 @@ namespace NuGet.Protocol.Plugins.Tests
             using (var result = await _resource.GetDownloadResourceResultAsync(
                 new PackageIdentity(id: "a", version: NuGetVersion.Parse("1.0.0")),
                 new PackageDownloadContext(sourceCacheContext),
-                globalPackagesFolder: null,
+                globalPackagesFolder: null!,
                 logger: NullLogger.Instance,
                 cancellationToken: CancellationToken.None))
             {
