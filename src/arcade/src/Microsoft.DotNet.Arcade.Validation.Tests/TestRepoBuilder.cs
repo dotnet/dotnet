@@ -529,17 +529,6 @@ namespace HelloWorld
 
             allArgs.AddRange(args);
 
-            // Workaround: a NuGet change (https://github.com/NuGet/NuGet.Client/pull/7020) flowed in via Arcade
-            // incorrectly holds file locks when deterministic timestamps are enabled, causing pack/sign tests to
-            // fail on Windows during cleanup with "The process cannot access the file ... because it is being used
-            // by another process." Disable deterministic timestamps until the underlying issue is resolved.
-            // This only manifests on Windows, so scope the workaround there to avoid changing behavior elsewhere.
-            // Tracking issue: https://github.com/dotnet/arcade/issues/17065
-            if (isWindows)
-            {
-                allArgs.Add("/p:DeterministicTimestamp=false");
-            }
-
             // Invokes eng/common/build.ps1 with provided options
             return async () =>
             {

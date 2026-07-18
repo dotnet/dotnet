@@ -7,29 +7,6 @@
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
     <UseBootstrapArcade Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</UseBootstrapArcade>
 
-    <!-- MSBuild -mt mode configuration.
-         UseMSBuildMT controls whether this repository builds with -mt flag when DotNetBuildMT=true.
-         
-         Default exclusions are defined here so local builds match CI behavior.
-         Override via MSBuild property /p:MSBuildMTExcludedReposOverride=... or
-         MSBUILD_MT_EXCLUDED_REPOS environment variable (colon-separated for bash compatibility).
-         
-         Priority (highest to lowest):
-         1. Per-repo .proj file setting <UseMSBuildMT>false</UseMSBuildMT>
-         2. MSBuildMTExcludedReposOverride MSBuild property
-         3. MSBUILD_MT_EXCLUDED_REPOS environment variable override
-         4. Default exclusion list below
-         5. Default: enabled for all repos
-    -->
-    <_MSBuildMTExcludedRepos>arcade;runtime;roslyn;aspnetcore;sdk;efcore;winforms;wpf;razor;source-build-reference-packages</_MSBuildMTExcludedRepos>
-    <!-- Allow override via MSBuild property (e.g. /p:MSBuildMTExcludedReposOverride=...) or environment variable -->
-    <_MSBuildMTExcludedRepos Condition="'$(MSBuildMTExcludedReposOverride)' != ''">$(MSBuildMTExcludedReposOverride)</_MSBuildMTExcludedRepos>
-    <_MSBuildMTExcludedReposOverride>$([System.Environment]::GetEnvironmentVariable('MSBUILD_MT_EXCLUDED_REPOS'))</_MSBuildMTExcludedReposOverride>
-    <_MSBuildMTExcludedRepos Condition="'$(_MSBuildMTExcludedReposOverride)' != ''">$(_MSBuildMTExcludedReposOverride.Replace(':',';'))</_MSBuildMTExcludedRepos>
-    <!-- Use same pattern as UseBootstrapArcade check above -->
-    <UseMSBuildMT Condition="'$(UseMSBuildMT)' == '' and $([System.String]::new(';$(_MSBuildMTExcludedRepos);').Contains(';$(RepositoryName);'))">false</UseMSBuildMT>
-    <UseMSBuildMT Condition="'$(UseMSBuildMT)' == ''">true</UseMSBuildMT>
-
     <RepoSharedCompilationId Condition="'$(RepoSharedCompilationId)' == ''">dotnet-vmr-$(RepositoryName)-$([System.Guid]::NewGuid().ToString('N'))</RepoSharedCompilationId>
 
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
@@ -156,8 +133,6 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
-    <!-- Temporarily disable deterministic timestamps https://github.com/dotnet/dotnet/issues/7331 -->
-    <CommonArgs>$(CommonArgs) /p:DeterministicTimestamp=false</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
     <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
@@ -221,8 +196,8 @@
     <EnvironmentVariables Include="MSBUILDDEBUGPATH=$(ArtifactsLogRepoDir)" />
   </ItemGroup>
 
-  <!-- Enable MSBuild -mt mode when DotNetBuildMT is set and the repository hasn't opted out -->
-  <ItemGroup Condition="'$(DotNetBuildMT)' == 'true' and '$(UseMSBuildMT)' != 'false'">
+  <!-- Enable MSBuild -mt mode when DotNetBuildMT is true -->
+  <ItemGroup Condition="'$(DotNetBuildMT)' == 'true'">
     <EnvironmentVariables Include="MSBUILD_MT_ENABLED=1" />
   </ItemGroup>
 

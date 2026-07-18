@@ -3,6 +3,13 @@
   <PropertyGroup>
     <DisallowDotNetFinalVersionKindOverride>true</DisallowDotNetFinalVersionKindOverride>
     <BuildArgs Condition="'$(EnableIBCOptimization)' != 'true'">$(BuildArgs) /p:EnableNgenOptimization=false</BuildArgs>
+
+    <!-- Use the repo root build script -->
+    <BuildScript>$(ProjectDirectory)build$(ShellExtension)</BuildScript>
+
+    <!-- Restore and Build actions are already passed in by the root script. -->
+    <BuildActions>$(FlagParameterPrefix)pack $(FlagParameterPrefix)publish</BuildActions>
+    <BuildActions Condition="'$(DotNetBuildSign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
   </PropertyGroup>
 
   <ItemGroup>
