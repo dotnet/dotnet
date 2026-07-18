@@ -7,4 +7,5 @@ public sealed record AzureDevOpsReportingParameters(
     Uri CollectionUri,
     string TeamProject,
     string TestRunId,
-    string? AccessToken = null);
+    string? AccessToken = null,
+    bool UseFullyQualifiedTestName = false);

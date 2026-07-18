@@ -58,7 +58,7 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
             return new TestResultUploadSummary(true, 0);
         }
 
-        IReadOnlyList<AggregatedResult> aggregatedResults = new ResultAggregator().Aggregate(parsedResults);
+        IReadOnlyList<AggregatedResult> aggregatedResults = new ResultAggregator().Aggregate(parsedResults, _azdoParameters.UseFullyQualifiedTestName);
         if (aggregatedResults.Count == 0)
         {
             _logger.LogDebug("Test results were discovered but none could be aggregated");
@@ -303,6 +303,12 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
         }
 
         string comment = JsonSerializer.Serialize(resultMetadata) ?? string.Empty;
+        bool useFullyQualifiedName = _azdoParameters.UseFullyQualifiedTestName;
+
+        string DisplayNameFor(AggregatedResult result)
+            => useFullyQualifiedName
+                ? TestNameFormatter.FormatDisplayName(result.FullyQualifiedName, result.Name)
+                : result.Name;
 
         PublishedSubResult ConvertToSubTest(AggregatedResult result)
         {
@@ -321,7 +327,7 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
             {
                 Comment = comment,
                 CustomFields = customFields,
-                DisplayName = result.Name,
+                DisplayName = DisplayNameFor(result),
                 Outcome = result.Result,
                 DurationInMs = result.DurationSeconds * 1000.0,
                 StackTrace = result.StackTrace,
@@ -344,11 +350,13 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
                 customFields.Add(new CustomField("AttemptId", result.SubResults.Count - 1));
             }
 
+            string displayName = DisplayNameFor(result);
+
             return new ConvertedResult(
                 new PublishedTestCase
                 {
-                    TestCaseTitle = result.Name,
-                    AutomatedTestName = result.Name,
+                    TestCaseTitle = displayName,
+                    AutomatedTestName = useFullyQualifiedName ? result.FullyQualifiedName : result.Name,
                     AutomatedTestType = "helix",
                     AutomatedTestStorage = comment, // TODO: This was workitem ID
                     Priority = 1,
@@ -400,7 +408,8 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
                     test.Aggregated.FailureMessage,
                     test.Aggregated.StackTrace,
                     isFlaky: test.Aggregated.IsFlaky,
-                    attemptId: test.Aggregated.AttemptId));
+                    attemptId: test.Aggregated.AttemptId,
+                    fullyQualifiedName: test.Aggregated.FullyQualifiedName));
         }
     }
 
