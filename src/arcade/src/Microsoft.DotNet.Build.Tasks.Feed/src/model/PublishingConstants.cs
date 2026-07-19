@@ -2110,6 +2110,18 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+
+            // VS 18 - Latest
+            new TargetChannelConfig(
+                id: 10709,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
             #endregion
         ];
     }
