@@ -31,7 +31,7 @@ You can download the .NET SDK either as an installer (MSI, PKG) or as an archive
 - The VMR also aims to become the place from which we release and service future versions of .NET to reduce the complexity of the product construction process. This should allow our partners and 3rd parties to easily build, test and modify .NET using their custom infrastructure as well as make the process available to the community.
 - Lastly, we hope to solve other problems that the current multi-repo setup brings:
   - Enable the standard [down-/up-stream open-source model](docs/VMR-Upstream-Downstream.md).
-  - Fulfill requirements of .NET distro builders such as RedHat or Canonical to natively include .NET in their distribution repositories.
+  - Fulfill requirements of .NET distro builders such as Red Hat or Canonical to natively include .NET in their distribution repositories.
   - Simplify scenarios such as client-run testing of bug fixes and improvements. The build should work in an offline environment too for certain platforms.
   - Enable developers to make and test changes spanning multiple repositories.
   - More efficient pipeline for security fixes during the CVE pre-disclosure process.
