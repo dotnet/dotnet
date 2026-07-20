@@ -9,17 +9,18 @@
     <PackageVersion Include="Azure.Identity" Version="$(AzureIdentityVersion)" />
     <PackageVersion Include="Azure.ResourceManager.CosmosDB" Version="$(AzureResourceManagerCosmosDBVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />
-    <PackageVersion Include="Microsoft.AspNetCore.OData" Version="8.2.5" />
+    <PackageVersion Include="Microsoft.AspNetCore.OData" Version="8.3.1" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationEnvironmentVariablesVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
     <PackageVersion Include="IdentityServer4.EntityFramework" Version="4.1.2" />
-    <PackageVersion Include="Grpc.AspNetCore" Version="2.59.0" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.80.0" />
     <PackageVersion Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="$(OpenTelemetryExporterInMemoryVersion)" />
-    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="$(SQLitePCLRawVersion)" />
-    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3mc" Version="$(SQLitePCLRawVersion)" />
-    <PackageVersion Include="SQLitePCLRaw.bundle_winsqlite3" Version="$(SQLitePCLRawVersion)" />
+    <PackageVersion Include="SQLite3MC.PCLRaw.bundle" Version="$(SQLite3MCPCLRawBundleVersion)" />
+    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="$(SQLitePCLRawBundleESqlcipherVersion)" />
+    <PackageVersion Include="SQLitePCLRaw.bundle_winsqlite3" Version="$(SQLitePCLRawBundleWinsqlite3Version)" />
+    <PackageVersion Include="SQLitePCLRaw.provider.sqlite3" Version="$(SQLitePCLRawVersion)" />
 
     <!-- Newer version of Roslyn used in tests for testing -->
     <!--https://github.com/dotnet/efcore/issues/34637-->

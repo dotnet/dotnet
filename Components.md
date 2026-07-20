@@ -12,11 +12,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@5fa9337](https://github.com/dotnet/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@a95d659](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GCa95d6599f37762ec8394ba9ca01e8263b2e36a26)*
+*[_git/dotnet-aspnetcore@b2f2fb6](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GCb2f2fb6f1be49a5187497be2396522876333279f)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@7140cd4](https://github.com/google/googletest/tree/7140cd416cecd7462a8aae488024abeee55598e4)*
+    *[google/googletest@3064a60](https://github.com/google/googletest/tree/3064a609c7a86ac9fb601a9cc5dea6ddb45ba49d)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
-    *[aspnet/MessagePack-CSharp@9614e6f](https://github.com/aspnet/MessagePack-CSharp/tree/9614e6f396e959ad67e4ba655d5ab6e1311bed23)*
+    *[aspnet/MessagePack-CSharp@365965f](https://github.com/aspnet/MessagePack-CSharp/tree/365965f0d8c13c40ff8fde25882066b90f569c7a)*
 - `src/cecil`  
 *[dotnet/cecil@5eaa92e](https://github.com/dotnet/cecil/tree/5eaa92e08ad36a380888b6e99b4f6c09a5e24815)*
 - `src/command-line-api`  
@@ -26,7 +26,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@513150c](https://github.com/dotnet/diagnostics/tree/513150c2f25077b1fcb194407e53c433c975f39b)*
 - `src/efcore`  
-*[_git/dotnet-efcore@0d9843b](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GC0d9843b88793b08762c73ef59a9083357e602ef5)*
+*[_git/dotnet-efcore@262173d](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GC262173db70d0f2af8fa82eedf1b8f33ed54c2690)*
 - `src/emsdk`  
 *[dotnet/emsdk@8e475db](https://github.com/dotnet/emsdk/tree/8e475db5d45016c77714cce29077ae8c66d12d53)*
 - `src/fsharp`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@623d5a2](https://github.com/dotnet/scenario-tests/tree/623d5a21e18d6d1f370b5b9d1ebaf8d687464c0b)*
 - `src/sdk`  
-*[dotnet/sdk@2b8e9d2](https://github.com/dotnet/sdk/tree/2b8e9d2b2f0eef8aa13f97bb84414ff2d60bc40b)*
+*[dotnet/sdk@74e0ded](https://github.com/dotnet/sdk/tree/74e0dedcb3d15d803d351d479e762d84341b5b79)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@898cae0](https://github.com/dotnet/source-build-assets/tree/898cae04468e9be69ab78fcc27bb70d676ae16b6)*
 - `src/source-build-externals`  
