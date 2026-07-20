@@ -83,7 +83,7 @@ internal class NuGetCommand
             "Trimming",
             "IL2026",
             Justification =
-                "This runner is excluded from CLI_AOT builds. Non-AOT builds intentionally support")]
+                "This runner is excluded from CLI_AOT builds")]
         public int Run(string[] args)
         {
             var originalDotNetHostPath = Environment.GetEnvironmentVariable(EnvironmentVariableNames.DOTNET_HOST_PATH);
