@@ -65,12 +65,3 @@ index ------------
  ./sdk/x.y.z/es/
  ./sdk/x.y.z/es/cs/
  ./sdk/x.y.z/es/cs/Microsoft.VisualStudio.TestPlatform.Client.resources.dll
-@@ ------------ @@
- ./sdk/x.y.z/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll
- ./sdk/x.y.z/OpenTelemetry.Instrumentation.Http.dll
- ./sdk/x.y.z/OpenTelemetry.Instrumentation.Runtime.dll
-+./sdk/x.y.z/OpenTelemetry.PersistentStorage.Abstractions.dll
-+./sdk/x.y.z/OpenTelemetry.PersistentStorage.FileSystem.dll
- ./sdk/x.y.z/pl/
- ./sdk/x.y.z/pl/cs/
- ./sdk/x.y.z/pl/cs/Microsoft.VisualStudio.TestPlatform.Client.resources.dll
