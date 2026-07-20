@@ -136,7 +136,6 @@ namespace Microsoft.SourceLink
             {
                 // ssh://{user}@{domain}:{port}/v3/{account}/{repositoryPath}/{'_full'|'_optimized'|''}/{repositoryName}
                 account = parts[1];
-                return account.Length > 0;
             }
             else
             {
