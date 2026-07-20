@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.IdentityModel.TestUtils;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect.Json.Tests;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -26,12 +25,8 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             try
             {
                 OpenIdConnectMessage oidcMessage = new OpenIdConnectMessage(theoryData.Json);
-                OpenIdConnectMessage6x oidcMessage6x = new OpenIdConnectMessage6x(theoryData.Json);
                 theoryData.ExpectedException.ProcessNoException(context);
-
                 IdentityComparer.AreEqual(oidcMessage.ExpiresIn, theoryData.PropertyValue, context);
-                // Note: in 6x Newtonsoft was set to format the json with /r/n and spaces, we don't do that in 7x
-                IdentityComparer.AreEqual(oidcMessage6x.ExpiresIn.Replace("\r", "").Replace("\n", "").Replace(" ", ""), theoryData.PropertyValue, context);
             }
             catch (Exception ex)
             {
@@ -160,8 +155,8 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
         public void Defaults()
         {
             List<string> errors = new List<string>();
-            var message = new OpenIdConnectMessage6x();
-            
+            var message = new OpenIdConnectMessage();
+
             if (message.AcrValues != null)
                 errors.Add("message.ArcValues != null");
 
@@ -273,7 +268,7 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
             TestUtilities.AssertFailIfErrors("OpenIdConnectMessage_GetSets*** Test Failures:\n", context.Errors);
         }
 
-        [Theory, MemberData(nameof(CreateAuthenticationRequestUrlTheoryData))]
+        [Theory, MemberData(nameof(CreateAuthenticationRequestUrlTheoryData), DisableDiscoveryEnumeration = true)]
         public void OidcCreateAuthenticationRequestUrl(string testId, OpenIdConnectMessage message, string expectedMessage)
         {
             TestUtilities.WriteHeader(testId, "OidcCreateAuthenticationRequestUrl", true);
@@ -293,9 +288,9 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
 #elif NET9_0
             if (!message.SkuTelemetryValue.Equals("ID_NET9_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET9_0");
-#elif NET_CORE
-            if (!message.SkuTelemetryValue.Equals("ID_NETSTANDARD2_0"))
-                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NETSTANDARD2_0");
+#elif NET10_0
+            if (!message.SkuTelemetryValue.Equals("ID_NET10_0"))
+                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET10_0");
 #endif
             IdentityComparer.AreEqual(message.CreateAuthenticationRequestUrl(), expectedMessage, context);
             TestUtilities.AssertFailIfErrors(context);
@@ -547,7 +542,7 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
             return theoryData;
         }
 
-        [Theory, MemberData(nameof(CreateLogoutRequestUrlTheoryData))]
+        [Theory, MemberData(nameof(CreateLogoutRequestUrlTheoryData), DisableDiscoveryEnumeration = true)]
         public void OidcCreateLogoutRequestUrl(string testId, OpenIdConnectMessage message, string expectedMessage)
         {
             TestUtilities.WriteHeader("OidcCreateLogoutRequestUrl - " + testId, true);
@@ -565,9 +560,9 @@ new OpenIdConnectMessageTheoryData("EmptyJsonStringEmptyJobj")
 #elif NET9_0
             if (!message.SkuTelemetryValue.Equals("ID_NET9_0"))
                 context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET9_0");
-#elif NET_CORE
-            if (!message.SkuTelemetryValue.Equals("ID_NETSTANDARD2_0"))
-                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NETSTANDARD2_0");
+#elif NET10_0
+            if (!message.SkuTelemetryValue.Equals("ID_NET10_0"))
+                context.Diffs.Add($"{message.SkuTelemetryValue} != ID_NET10_0");
 #endif
             IdentityComparer.AreEqual(message.CreateLogoutRequestUrl(), expectedMessage, context);
             TestUtilities.AssertFailIfErrors(context);

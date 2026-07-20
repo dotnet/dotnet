@@ -217,23 +217,6 @@ configuration:
       description: In-PR label
     - if:
       - payloadType: Pull_Request
-      - targetsBranch:
-          branch: main
-      - and:
-        - isAction:
-            action: Closed
-        - isMerged
-        - not:
-            titleContains:
-              pattern: '[main] Update dependencies'
-              isRegex: False
-      then:
-      - addMilestone:
-          milestone: 7.0 Preview4
-      description: Apply milestone '7.0' to PRs on the main branch
-      triggerOnOwnActions: true
-    - if:
-      - payloadType: Pull_Request
       - isActivitySender:
           user: dotnet-maestro[bot]
           issueAuthor: False
@@ -387,7 +370,7 @@ configuration:
       then:
       - addReply:
           reply: >-
-            Hi @${issueAuthor}. Please make sure you've updated the PR description to use the [Shiproom Template](https://dev.azure.com/devdiv/DevDiv/_wiki/wikis/DevDiv.wiki/545/NET-Servicing#pr-template). Also, make sure this PR is not marked as a draft and is ready-to-merge.
+            Hi ${issueAuthor}. Please make sure you've updated the PR description to use the [Shiproom Template](https://dev.azure.com/devdiv/DevDiv/_wiki/wikis/DevDiv.wiki/545/NET-Servicing#pr-template). Also, make sure this PR is not marked as a draft and is ready-to-merge.
 
 
             To learn more about how to prepare a servicing PR [click here](https://aka.ms/aspnet/servicing).

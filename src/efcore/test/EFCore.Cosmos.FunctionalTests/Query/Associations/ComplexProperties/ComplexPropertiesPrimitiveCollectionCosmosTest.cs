@@ -72,10 +72,11 @@ WHERE (ARRAY_LENGTH(c["RequiredAssociate"]["RequiredNestedAssociate"]["Ints"]) =
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Select_Sum()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Select_Sum();
 
         AssertSql(
@@ -90,7 +91,22 @@ WHERE ((
 """);
     }
 
-    [ConditionalFact]
+    [Fact]
+    public virtual async Task Where_constant()
+    {
+        await AssertQuery(
+            ss => ss.Set<RootEntity>().Where(e => e.RequiredAssociate.Ints == new List<int> { 1, 2, 3 }),
+            ss => ss.Set<RootEntity>().Where(e => e.RequiredAssociate.Ints.SequenceEqual(new List<int> { 1, 2, 3 })));
+
+        AssertSql(
+            """
+SELECT VALUE c
+FROM root c
+WHERE (c["RequiredAssociate"]["Ints"] = [1,2,3])
+""");
+    }
+
+    [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 

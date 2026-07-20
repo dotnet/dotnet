@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -14,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
+using NuGet.Configuration;
 using NuGet.DependencyResolver;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -30,6 +32,7 @@ namespace NuGet.Commands
     public class RestoreCommand
     {
         private readonly RestoreCollectorLogger _logger;
+        private static readonly ConcurrentDictionary<NuGetFramework, string> _frameworkShortNameCache = new(NuGetFrameworkFullComparer.Instance);
 
         private readonly RestoreRequest _request;
 
@@ -54,10 +57,12 @@ namespace NuGet.Commands
         private const string IsCentralVersionManagementEnabled = nameof(IsCentralVersionManagementEnabled);
         private const string TotalUniquePackagesCount = nameof(TotalUniquePackagesCount);
         private const string NewPackagesInstalledCount = nameof(NewPackagesInstalledCount);
+        private const string AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters = nameof(AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters);
         private const string SourcesCount = nameof(SourcesCount);
         private const string HttpSourcesCount = nameof(HttpSourcesCount);
         private const string LocalSourcesCount = nameof(LocalSourcesCount);
         private const string FallbackFoldersCount = nameof(FallbackFoldersCount);
+        private const string TargetFrameworks = nameof(TargetFrameworks);
         private const string TargetFrameworksCount = nameof(TargetFrameworksCount);
         private const string RuntimeIdentifiersCount = nameof(RuntimeIdentifiersCount);
         private const string TreatWarningsAsErrors = nameof(TreatWarningsAsErrors);
@@ -175,7 +180,7 @@ namespace NuGet.Commands
 
             _isLockFileEnabled = PackagesLockFileUtilities.IsNuGetLockFileEnabled(_request.Project);
             _enableNewDependencyResolver = _request.Project.RuntimeGraph.Supports.Count == 0 && ShouldUseNewResolverWithLockFile(_isLockFileEnabled, _request.Project) && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
-            EnvironmentVariableReader = EnvironmentVariableWrapper.Instance;
+            EnvironmentVariableReader = _request.EnvironmentVariableReader;
         }
 
         // Use the new resolver if lock files are not enabled, or if lock files are enabled and legacy projects or .NET 10 SDK is used.
@@ -235,7 +240,7 @@ namespace NuGet.Commands
                 telemetry.TelemetryEvent[NoOpResult] = false; // Getting here means we did not no-op.
 
                 bool success = !_request.AdditionalMessages?.Any(m => m.Level == LogLevel.Error) ?? true;
-                success &= BeforeGraphResolutionValidations(httpSourcesCount);
+                success &= BeforeGraphResolutionValidations(httpSourcesCount, auditEnabled);
 
                 var packagesLockFilePath = PackagesLockFileUtilities.GetNuGetLockFilePath(_request.Project);
                 PackagesLockFile packagesLockFile = null;
@@ -355,13 +360,13 @@ namespace NuGet.Commands
             }
         }
 
-        private bool BeforeGraphResolutionValidations(int httpSourcesCount)
+        private bool BeforeGraphResolutionValidations(int httpSourcesCount, bool auditEnabled)
         {
             var success = true;
 
             success &= EnsureNotDeprecatedProjectJsonProjectType();
             success &= AreCentralVersionRequirementsSatisfied(_request, httpSourcesCount);
-            success &= EvaluateHttpSourceUsage();
+            success &= EvaluateHttpSourceUsage(auditEnabled);
             success &= HasValidPlatformVersions();
             success &= PackageReferencesHaveVersions();
             success &= EnsureNoAliasesWithDisallowedCharacters();
@@ -381,7 +386,8 @@ namespace NuGet.Commands
             telemetry.TelemetryEvent[IsLockFileEnabled] = _isLockFileEnabled;
             telemetry.TelemetryEvent[UseLegacyDependencyResolver] = _request.Project.RestoreMetadata.UseLegacyDependencyResolver;
             telemetry.TelemetryEvent[UsedLegacyDependencyResolver] = !_enableNewDependencyResolver;
-            telemetry.TelemetryEvent[TargetFrameworksCount] = _request.Project.RestoreMetadata.TargetFrameworks.Count;
+            telemetry.TelemetryEvent[TargetFrameworks] = GetTargetFrameworksAsString(_request.Project.TargetFrameworks);
+            telemetry.TelemetryEvent[TargetFrameworksCount] = _request.Project.TargetFrameworks.Count;
             telemetry.TelemetryEvent[RuntimeIdentifiersCount] = _request.Project.RuntimeGraph.Runtimes.Count;
             telemetry.TelemetryEvent[TreatWarningsAsErrors] = _request.Project.RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors;
             telemetry.TelemetryEvent[SDKAnalysisLevel] = _request.Project.RestoreMetadata.SdkAnalysisLevel;
@@ -509,49 +515,77 @@ namespace NuGet.Commands
             return (null, noOpCacheFileEvaluation, cacheFile);
         }
 
-        private bool EvaluateHttpSourceUsage()
+        private bool EvaluateHttpSourceUsage(bool auditEnabled)
         {
             bool error = false;
+
+            // Track source URLs that have already been warned/errored about so the same URL,
+            // even when configured as both a package source and an audit source, is only reported once.
+            var reportedSources = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             if (_request.DependencyProviders.RemoteProviders != null)
             {
                 foreach (var remoteProvider in _request.DependencyProviders.RemoteProviders)
                 {
-                    var source = remoteProvider.Source;
-                    if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
+                    error |= CheckDisallowedInsecureHttpSource(remoteProvider.Source, SdkAnalysisLevelMinimums.V9_0_100, reportedSources);
+                }
+            }
+
+            // Audit sources are only contacted when auditing is enabled, so only error about insecure audit sources in that case.
+            // Unlike package sources, audit sources error when the SDK analysis level is high enough and are silent otherwise (no warning).
+            if (auditEnabled && _request.DependencyProviders.VulnerabilityInfoProviders != null)
+            {
+                foreach (var vulnerabilityInfoProvider in _request.DependencyProviders.VulnerabilityInfoProviders)
+                {
+                    if (vulnerabilityInfoProvider.IsAuditSource)
                     {
-                        var isErrorEnabled = SdkAnalysisLevelMinimums.IsEnabled(
-                            _request.Project.RestoreMetadata.SdkAnalysisLevel,
-                            _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
-                            SdkAnalysisLevelMinimums.V9_0_100);
-
-                        if (isErrorEnabled)
-                        {
-                            _logger.Log(
-                                RestoreLogMessage.CreateError(
-                                    NuGetLogCode.NU1302,
-                                    string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source)));
-
-                            error = true;
-                        }
-                        else
-                        {
-                            var message = RestoreLogMessage.CreateWarning(
-                                    NuGetLogCode.NU1803,
-                                    string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source));
-                            _logger.Log(message);
-
-                            // If the project treats this warning as an error, we should not continue
-                            if (message.Level == LogLevel.Error)
-                            {
-                                error = true;
-                            }
-                        }
+                        error |= CheckDisallowedInsecureHttpSource(vulnerabilityInfoProvider.PackageSource, SdkAnalysisLevelMinimums.V10_0_400, reportedSources, warnWhenNotError: false);
                     }
                 }
             }
 
             return !error;
+        }
+
+        private bool CheckDisallowedInsecureHttpSource(PackageSource source, NuGetVersion errorMinSdkAnalysisLevel, HashSet<string> reportedSources, bool warnWhenNotError = true)
+        {
+            if (!source.IsHttp || source.IsHttps || source.AllowInsecureConnections)
+            {
+                return false;
+            }
+
+            // Only warn/error once per unique source URL.
+            if (!reportedSources.Add(source.Source))
+            {
+                return false;
+            }
+
+            var isErrorEnabled = SdkAnalysisLevelMinimums.IsEnabled(
+                _request.Project.RestoreMetadata.SdkAnalysisLevel,
+                _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
+                errorMinSdkAnalysisLevel);
+
+            if (isErrorEnabled)
+            {
+                _logger.Log(
+                    RestoreLogMessage.CreateError(
+                        NuGetLogCode.NU1302,
+                        string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source)));
+
+                return true;
+            }
+            else if (warnWhenNotError)
+            {
+                var message = RestoreLogMessage.CreateWarning(
+                    NuGetLogCode.NU1803,
+                    string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source));
+                _logger.Log(message);
+
+                // If the project treats this warning as an error, we should not restore
+                return message.Level == LogLevel.Error;
+            }
+
+            return false;
         }
 
         private record struct EvaluateLockFileResult(bool Success, bool IsLockFileValid, bool RegenerateLockFile, string PackagesLockFilePath, PackagesLockFile PackagesLockFile);
@@ -743,6 +777,7 @@ namespace NuGet.Commands
                 }
 
                 telemetry.TelemetryEvent[NewPackagesInstalledCount] = graphs.Where(g => !g.InConflict).SelectMany(g => g.Install).Distinct().Count();
+                telemetry.TelemetryEvent[AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters] = graphs.Where(g => !g.InConflict).SelectMany(g => g.Flattened).Any(i => HasNonAlphanumericDotDashOrUnderscoreCharacters(i.Key.Name));
                 telemetry.TelemetryEvent[RestoreSuccess] = success;
             }
 
@@ -755,6 +790,24 @@ namespace NuGet.Commands
                 packagesLockFile,
                 packagesLockFilePath,
                 cacheFile);
+
+            bool HasNonAlphanumericDotDashOrUnderscoreCharacters(string packageId)
+            {
+                foreach (char c in packageId.AsSpan())
+                {
+                    if (!IsCharacterAlphanumericDotDashOrUnderscore(c))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+
+                bool IsCharacterAlphanumericDotDashOrUnderscore(char c)
+                {
+                    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '_';
+                }
+            }
         }
 
         /// <summary>Run NuGetAudit on the project's resolved restore graphs, and log messages and telemetry with the results.</summary>
@@ -1256,23 +1309,39 @@ namespace NuGet.Commands
 
             return true;
         }
-        private string ConcatAsString<T>(IEnumerable<T> enumerable)
+
+        private static string ConcatAsString<T>(HashSet<T> set)
         {
-            string result = null;
-
-            if (enumerable != null && enumerable.Any())
+            if (set == null || set.Count == 0)
             {
-                var builder = new StringBuilder();
-                foreach (var entry in enumerable)
-                {
-                    builder.Append(entry.ToString());
-                    builder.Append(";");
-                }
-
-                result = builder.ToString(0, builder.Length - 1);
+                return null;
             }
 
-            return result;
+            var builder = new StringBuilder();
+            foreach (T entry in set)
+            {
+                builder.Append(entry);
+                builder.Append(';');
+            }
+
+            return builder.ToString(0, builder.Length - 1);
+        }
+
+        internal static string GetTargetFrameworksAsString(IList<TargetFrameworkInformation> targetFrameworks)
+        {
+            var builder = new StringBuilder();
+
+            foreach (TargetFrameworkInformation targetFramework in targetFrameworks)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(';');
+                }
+
+                builder.Append(_frameworkShortNameCache.GetOrAdd(targetFramework.FrameworkName, static framework => framework.GetShortFolderName()));
+            }
+
+            return builder.ToString();
         }
 
         /// <summary>
@@ -1354,6 +1423,21 @@ namespace NuGet.Commands
                 await _request.Log.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1005, message));
 
                 return (success, isLockFileValid, packagesLockFile);
+            }
+
+            // RestoreLockedMode and RestoreForceEvaluate are contradictory: locked mode requires the lock file to remain
+            // unchanged, while force-evaluate re-evaluates the dependencies and regenerates it. When both are set,
+            // force-evaluate takes precedence; warn so the requested locked mode being ignored is not silent.
+            if (_isLockFileEnabled
+                && _request.IsRestoreOriginalAction
+                && _request.RestoreForceEvaluate
+                && _request.Project.RestoreMetadata.RestoreLockProperties.RestoreLockedMode
+                && SdkAnalysisLevelMinimums.IsEnabled(
+                    _request.Project.RestoreMetadata.SdkAnalysisLevel,
+                    _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
+                    SdkAnalysisLevelMinimums.V11_0_100))
+            {
+                await _request.Log.LogAsync(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1512, Strings.Warning_RestoreLockedModeAndForceEvaluate));
             }
 
             // read packages.lock.json file if exists and RestoreForceEvaluate flag is not set to true

@@ -14,39 +14,39 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [TestClass]
 public class InIsolationArgumentProcessorTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     private readonly InIsolationArgumentExecutor _executor;
     private readonly TestableRunSettingsProvider _runSettingsProvider;
 
     public InIsolationArgumentProcessorTests()
     {
         _runSettingsProvider = new TestableRunSettingsProvider();
-        _executor = new InIsolationArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider);
+        _executor = new InIsolationArgumentExecutor(_commandLineOptions, _runSettingsProvider);
     }
 
     [TestCleanup]
     public void TestCleanup()
     {
-        CommandLineOptions.Reset();
     }
 
     [TestMethod]
     public void GetMetadataShouldReturnInProcessArgumentProcessorCapabilities()
     {
-        var processor = new InIsolationArgumentProcessor();
+        var processor = new InIsolationArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is InIsolationArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnInProcessArgumentExecutor()
     {
-        var processor = new InIsolationArgumentProcessor();
+        var processor = new InIsolationArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is InIsolationArgumentExecutor);
     }
 
     [TestMethod]
     public void InIsolationArgumentProcessorMetadataShouldProvideAppropriateCapabilities()
     {
-        var isolationProcessor = new InIsolationArgumentProcessor();
+        var isolationProcessor = new InIsolationArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider());
         Assert.IsFalse(isolationProcessor.Metadata.Value.AllowMultiple);
         Assert.IsFalse(isolationProcessor.Metadata.Value.AlwaysExecute);
         Assert.IsFalse(isolationProcessor.Metadata.Value.IsAction);
@@ -70,7 +70,7 @@ public class InIsolationArgumentProcessorTests
     public void InitializeShouldSetInIsolationValue()
     {
         _executor.Initialize(null);
-        Assert.IsTrue(CommandLineOptions.Instance.InIsolation, "InProcess option must be set to true.");
+        Assert.IsTrue(_commandLineOptions.InIsolation, "InProcess option must be set to true.");
         Assert.AreEqual("true", _runSettingsProvider.QueryRunSettingsNode(InIsolationArgumentExecutor.RunSettingsPath));
     }
 

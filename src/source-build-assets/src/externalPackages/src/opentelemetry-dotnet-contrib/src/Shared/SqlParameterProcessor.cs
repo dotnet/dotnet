@@ -16,7 +16,7 @@ internal static class SqlParameterProcessor
             return;
         }
 
-        int index = 0;
+        var index = 0;
 
         foreach (var parameter in dbCommand.Parameters)
         {
@@ -27,7 +27,9 @@ internal static class SqlParameterProcessor
                     ? index.ToString(CultureInfo.InvariantCulture)
                     : dbDataParameter.ParameterName;
 
-                activity.SetTag($"db.query.parameter.{key}", dbDataParameter.Value);
+                var value = Convert.ToString(dbDataParameter.Value, CultureInfo.InvariantCulture);
+
+                activity.SetTag($"db.query.parameter.{key}", value);
             }
 
             index++;

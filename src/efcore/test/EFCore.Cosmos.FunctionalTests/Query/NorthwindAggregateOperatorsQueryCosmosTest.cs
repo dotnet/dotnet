@@ -1,11 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Net;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore.Cosmos.Internal;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
-using Microsoft.EntityFrameworkCore.TestUtilities.Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -23,7 +21,7 @@ public class NorthwindAggregateOperatorsQueryCosmosTest
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 
@@ -438,21 +436,33 @@ WHERE (c["$type"] = "Order")
 """);
             });
 
-    public override async Task Sum_with_division_on_decimal(bool async)
-    {
-        // Aggregate selecting non-mapped type. Issue #20677.
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await base.Sum_with_division_on_decimal(async));
+    public override Task Sum_with_division_on_decimal(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Sum_with_division_on_decimal(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE SUM((c["Quantity"] / 2.09))
+FROM root c
+WHERE (c["$type"] = "OrderDetail")
+""");
+            });
 
-    public override async Task Sum_with_division_on_decimal_no_significant_digits(bool async)
-    {
-        // Aggregate selecting non-mapped type. Issue #20677.
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await base.Sum_with_division_on_decimal_no_significant_digits(async));
+    public override Task Sum_with_division_on_decimal_no_significant_digits(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Sum_with_division_on_decimal_no_significant_digits(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE SUM((c["Quantity"] / 2))
+FROM root c
+WHERE (c["$type"] = "OrderDetail")
+""");
+            });
 
     public override Task Sum_with_coalesce(bool async)
         => Fixture.NoSyncTest(
@@ -462,7 +472,7 @@ WHERE (c["$type"] = "Order")
 
                 AssertSql(
                     """
-SELECT VALUE SUM(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0))
+SELECT VALUE SUM(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0))
 FROM root c
 WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
 """);
@@ -666,7 +676,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
             await base.MaxBy_no_data_value_type(async);
 
             AssertSql(
-"""
+                """
 SELECT VALUE c["OrderID"]
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
@@ -720,7 +730,7 @@ OFFSET 0 LIMIT 1
             await base.MaxBy_no_data_nullable_selector(async);
 
             AssertSql(
-"""
+                """
 SELECT VALUE c["OrderID"]
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
@@ -768,11 +778,11 @@ OFFSET 0 LIMIT 1
             await Assert.ThrowsAsync<CosmosException>(() => base.MaxBy_with_coalesce(async));
 
             AssertSql(
-"""
+                """
 SELECT VALUE c
 FROM root c
 WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
-ORDER BY ((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0) DESC
+ORDER BY ((c["UnitPrice"] != null) ? c["UnitPrice"] : 0) DESC
 OFFSET 0 LIMIT 1
 """);
         }
@@ -785,7 +795,7 @@ OFFSET 0 LIMIT 1
 
         AssertSql();
     }
-    
+
     public override async Task MaxBy_over_nested_subquery(bool async)
     {
         // The query requires use of LIMIT and OFFSET in a subquery, which is unsupported by Cosmos.
@@ -834,7 +844,7 @@ OFFSET 0 LIMIT 1
             await base.MinBy_no_data_value_type(async);
 
             AssertSql(
-"""
+                """
 SELECT VALUE c["OrderID"]
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
@@ -888,7 +898,7 @@ OFFSET 0 LIMIT 1
             await base.MinBy_no_data_nullable_selector(async);
 
             AssertSql(
-"""
+                """
 SELECT VALUE c["OrderID"]
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
@@ -920,11 +930,11 @@ OFFSET 0 LIMIT 1
             await Assert.ThrowsAsync<CosmosException>(() => base.MinBy_with_coalesce(async));
 
             AssertSql(
-"""
+                """
 SELECT VALUE c
 FROM root c
 WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
-ORDER BY ((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0)
+ORDER BY ((c["UnitPrice"] != null) ? c["UnitPrice"] : 0)
 OFFSET 0 LIMIT 1
 """);
         }
@@ -1010,22 +1020,33 @@ WHERE (c["$type"] = "Order")
 """);
             });
 
-    public override async Task Average_with_division_on_decimal(bool async)
-    {
-        // Aggregate selecting non-mapped type. Issue #20677.
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await base.Average_with_division_on_decimal(async));
+    public override Task Average_with_division_on_decimal(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Average_with_division_on_decimal(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE AVG((c["Quantity"] / 2.09))
+FROM root c
+WHERE (c["$type"] = "OrderDetail")
+""");
+            });
 
-    public override async Task Average_with_division_on_decimal_no_significant_digits(bool async)
-    {
-        // Aggregate selecting non-mapped type. Issue #20677.
-        await Assert.ThrowsAsync<KeyNotFoundException>(async ()
-            => await base.Average_with_division_on_decimal_no_significant_digits(async));
+    public override Task Average_with_division_on_decimal_no_significant_digits(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Average_with_division_on_decimal_no_significant_digits(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE AVG((c["Quantity"] / 2))
+FROM root c
+WHERE (c["$type"] = "OrderDetail")
+""");
+            });
 
     public override Task Average_with_coalesce(bool async)
         => Fixture.NoSyncTest(
@@ -1035,7 +1056,7 @@ WHERE (c["$type"] = "Order")
 
                 AssertSql(
                     """
-SELECT VALUE AVG(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0))
+SELECT VALUE AVG(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0))
 FROM root c
 WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
 """);
@@ -1159,7 +1180,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderID"] = -1))
 
                 AssertSql(
                     """
-SELECT VALUE MIN(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0))
+SELECT VALUE MIN(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0))
 FROM root c
 WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
 """);
@@ -1225,7 +1246,7 @@ WHERE (c["$type"] = "Order")
 
                 AssertSql(
                     """
-SELECT VALUE MAX(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0.0))
+SELECT VALUE MAX(((c["UnitPrice"] != null) ? c["UnitPrice"] : 0))
 FROM root c
 WHERE ((c["$type"] = "Product") AND (c["ProductID"] < 40))
 """);
@@ -1450,7 +1471,8 @@ FROM root c
 """);
             });
 
-    [SkipOnCiCondition(SkipReason = "Fails on CI #27688")]
+    // Tracked in #27688
+    [Theory, SkipOnCI("Test does not run on CI")]
     public override Task Distinct_Scalar(bool async)
         => Fixture.NoSyncTest(
             async, async a =>
@@ -1464,7 +1486,7 @@ FROM root c
 """);
             });
 
-    [ConditionalTheory(Skip = "Fails on emulator https://github.com/Azure/azure-cosmos-dotnet-v3/issues/4339")]
+    [Theory(Skip = "Fails on emulator https://github.com/Azure/azure-cosmos-dotnet-v3/issues/4339")]
     public override Task OrderBy_Distinct(bool async)
         => Fixture.NoSyncTest(
             async, async a =>
@@ -2267,27 +2289,22 @@ WHERE NOT(false)
 """);
             });
 
-    public override async Task Contains_top_level(bool async)
-    {
-        // Always throws for sync.
-        if (async)
-        {
-            // Top-level Any(), see #33854.
-            var exception = await Assert.ThrowsAsync<CosmosException>(() => base.Contains_top_level(async));
+    public override Task Contains_top_level(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Contains_top_level(a);
 
-            Assert.Equal(HttpStatusCode.BadRequest, exception.StatusCode);
-
-            AssertSql(
-                """
+                AssertSql(
+                    """
 @p='ALFKI'
 
-SELECT VALUE EXISTS (
-    SELECT 1
-    FROM root c
-    WHERE (c["id"] = @p))
+SELECT VALUE true
+FROM root c
+WHERE (c["id"] = @p)
+OFFSET 0 LIMIT 1
 """);
-        }
-    }
+            });
 
     public override async Task Contains_with_local_tuple_array_closure(bool async)
     {
@@ -2321,36 +2338,47 @@ SELECT VALUE EXISTS (
         AssertSql();
     }
 
-    public override async Task Average_with_non_matching_types_in_projection_doesnt_produce_second_explicit_cast(bool async)
-    {
-        // Aggregate selecting non-mapped type. Issue #20677.
-        await Assert.ThrowsAsync<KeyNotFoundException>(async ()
-            => await base.Average_with_non_matching_types_in_projection_doesnt_produce_second_explicit_cast(async));
+    public override Task Average_with_non_matching_types_in_projection_doesnt_produce_second_explicit_cast(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Average_with_non_matching_types_in_projection_doesnt_produce_second_explicit_cast(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE AVG(c["OrderID"])
+FROM root c
+WHERE ((c["$type"] = "Order") AND STARTSWITH(c["CustomerID"], "A"))
+""");
+            });
 
-    public override async Task Max_with_non_matching_types_in_projection_introduces_explicit_cast(bool async)
-    {
-        // Always throws for sync.
-        if (async)
-        {
-            // Aggregate selecting non-mapped type. Issue #20677.
-            await Assert.ThrowsAsync<KeyNotFoundException>(async ()
-                => await base.Max_with_non_matching_types_in_projection_introduces_explicit_cast(async));
+    public override Task Max_with_non_matching_types_in_projection_introduces_explicit_cast(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Max_with_non_matching_types_in_projection_introduces_explicit_cast(a);
 
-            AssertSql();
-        }
-    }
+                AssertSql(
+                    """
+SELECT VALUE MAX(c["OrderID"])
+FROM root c
+WHERE ((c["$type"] = "Order") AND STARTSWITH(c["CustomerID"], "A"))
+""");
+            });
 
-    public override async Task Min_with_non_matching_types_in_projection_introduces_explicit_cast(bool async)
-    {
-        // Aggregate selecting non-mapped type. Issue #20677.
-        await Assert.ThrowsAsync<KeyNotFoundException>(async ()
-            => await base.Min_with_non_matching_types_in_projection_introduces_explicit_cast(async));
+    public override Task Min_with_non_matching_types_in_projection_introduces_explicit_cast(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Min_with_non_matching_types_in_projection_introduces_explicit_cast(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE MIN(c["OrderID"])
+FROM root c
+WHERE ((c["$type"] = "Order") AND STARTSWITH(c["CustomerID"], "A"))
+""");
+            });
 
     public override async Task OrderBy_Take_Last_gives_correct_result(bool async)
     {
@@ -2519,28 +2547,22 @@ WHERE ARRAY_CONTAINS(@ids, c["id"])
 """);
             });
 
-    public override async Task Contains_over_entityType_with_null_should_rewrite_to_false(bool async)
-    {
-        // Always throws for sync.
-        if (async)
-        {
-            // Top-level Any(), see #33854.
-            var exception =
-                await Assert.ThrowsAsync<CosmosException>(() => base.Contains_over_entityType_with_null_should_rewrite_to_false(async));
+    public override Task Contains_over_entityType_with_null_should_rewrite_to_false(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Contains_over_entityType_with_null_should_rewrite_to_false(a);
 
-            Assert.Equal(HttpStatusCode.BadRequest, exception.StatusCode);
-
-            AssertSql(
-                """
+                AssertSql(
+                    """
 @entity_equality_p_OrderID=null
 
-SELECT VALUE EXISTS (
-    SELECT 1
-    FROM root c
-    WHERE (((c["$type"] = "Order") AND (c["CustomerID"] = "VINET")) AND (c["OrderID"] = @entity_equality_p_OrderID)))
+SELECT VALUE true
+FROM root c
+WHERE (((c["$type"] = "Order") AND (c["CustomerID"] = "VINET")) AND (c["OrderID"] = @entity_equality_p_OrderID))
+OFFSET 0 LIMIT 1
 """);
-        }
-    }
+            });
 
     public override async Task Contains_over_entityType_with_null_in_projection(bool async)
     {
@@ -2623,11 +2645,12 @@ WHERE ARRAY_CONTAINS(@ids, c["id"])
             });
 
     // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/289 (EXISTS/ANY/ALL subqueries cause internal server error)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override Task Where_subquery_where_any(bool async)
         => Fixture.NoSyncTest(
             async, async a =>
             {
+                CosmosTestEnvironment.SkipOnLinuxEmulator();
+
                 await base.Where_subquery_where_any(a);
 
                 AssertSql(
@@ -2695,11 +2718,12 @@ WHERE NOT(ARRAY_CONTAINS(@ids, c["id"]))
             });
 
     // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/289 (EXISTS/ANY/ALL subqueries cause internal server error)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
     public override Task Where_subquery_where_all(bool async)
         => Fixture.NoSyncTest(
             async, async a =>
             {
+                CosmosTestEnvironment.SkipOnLinuxEmulator();
+
                 await base.Where_subquery_where_all(a);
 
                 AssertSql(
@@ -2781,13 +2805,19 @@ FROM root c
         AssertSql();
     }
 
-    public override async Task Sum_over_explicit_cast_over_column(bool async)
-    {
-        // Aggregate selecting non-mapped type. Issue #20677.
-        await Assert.ThrowsAsync<KeyNotFoundException>(async () => await base.Sum_over_explicit_cast_over_column(async));
+    public override Task Sum_over_explicit_cast_over_column(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Sum_over_explicit_cast_over_column(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE SUM(c["OrderID"])
+FROM root c
+WHERE (c["$type"] = "Order")
+""");
+            });
 
     public override async Task Contains_over_scalar_with_null_should_rewrite_to_identity_equality_subquery(bool async)
     {
@@ -2895,16 +2925,12 @@ FROM root c
         AssertSql();
     }
 
-    public override async Task Average_with_unmapped_property_access_throws_meaningful_exception(bool async)
-    {
+    public override Task Average_with_unmapped_property_access_throws_meaningful_exception(bool async)
         // Aggregate selecting non-mapped type. Issue #20677.
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => AssertAverage(
+        => AssertTranslationFailed(() => AssertAverage(
             async,
             ss => ss.Set<Order>(),
             selector: c => c.ShipVia));
-
-        AssertSql();
-    }
 
     public override async Task Multiple_collection_navigation_with_FirstOrDefault_chained(bool async)
     {
@@ -2948,7 +2974,7 @@ FROM root c
                     """
 @cities='["London","Berlin"]'
 
-SELECT VALUE AVG((ARRAY_CONTAINS(@cities, c["City"]) ? 1.0 : 0.0))
+SELECT VALUE AVG((ARRAY_CONTAINS(@cities, c["City"]) ? 1 : 0))
 FROM root c
 """);
             });
@@ -3031,7 +3057,11 @@ FROM root c
             });
 
     public override Task Return_type_of_singular_operator_is_preserved(bool async)
-        => Fixture.NoSyncTest(
+    {
+        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/335
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
+        return Fixture.NoSyncTest(
             async, async a =>
             {
                 await base.Return_type_of_singular_operator_is_preserved(a);
@@ -3081,14 +3111,21 @@ ORDER BY c["id"] DESC
 OFFSET 0 LIMIT 1
 """);
             });
-
-    [ConditionalTheory(Skip = "Issue #20677")]
-    public override async Task Type_casting_inside_sum(bool async)
-    {
-        await base.Type_casting_inside_sum(async);
-
-        AssertSql();
     }
+
+    public override Task Type_casting_inside_sum(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Type_casting_inside_sum(a);
+
+                AssertSql(
+                    """
+SELECT VALUE SUM(c["Discount"])
+FROM root c
+WHERE (c["$type"] = "OrderDetail")
+""");
+            });
 
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);

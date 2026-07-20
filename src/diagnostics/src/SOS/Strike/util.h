@@ -1213,7 +1213,6 @@ private:
 #ifndef FEATURE_PAL
 HRESULT GetClrModuleImages(__in IXCLRDataModule* module, __in CLRDataModuleExtentType desiredType, __out PULONG64 pBase, __out PULONG64 pSize);
 #endif
-HRESULT GetMethodDefinitionsFromName(DWORD_PTR ModulePtr, IXCLRDataModule* mod, const char* name, IXCLRDataMethodDefinition **ppMethodDefinitions, int numMethods, int *numMethodsNeeded);
 HRESULT GetMethodDescsFromName(DWORD_PTR ModulePtr, IXCLRDataModule* mod, const char* name, DWORD_PTR **pOut, int *numMethodDescs);
 
 HRESULT FileNameForModule (const DacpModuleData * const pModule, __out_ecount (MAX_LONGPATH) WCHAR *fileName);
@@ -1605,8 +1604,6 @@ HRESULT GetMetadataMemory(CLRDATA_ADDRESS address, ULONG32 bufferSize, BYTE* buf
  */
 DWORD_PTR *ModuleFromName(__in_opt LPSTR name, int *numModules);
 HRESULT GetModuleFromAddress(___in CLRDATA_ADDRESS peAddress, ___out IXCLRDataModule** ppModule);
-void GetInfoFromName(DWORD_PTR ModuleAddr, const char* name, mdTypeDef* retMdTypeDef=NULL);
-void GetInfoFromModule (DWORD_PTR ModuleAddr, ULONG token, DWORD_PTR *ret=NULL);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1914,25 +1911,6 @@ struct MemRange
 }; //struct MemRange
 
 #ifndef FEATURE_PAL
-
-class StressLogMem
-{
-private:
-    // use a linked list for now, could be optimazied later
-    MemRange * list;
-
-    void AddRange (ULONG64 s, size_t l)
-    {
-        list = new MemRange (s, l, list);
-    }
-
-public:
-    StressLogMem () : list (NULL)
-        {}
-    ~StressLogMem ();
-    bool Init (ULONG64 stressLogAddr, IDebugDataSpaces* memCallBack);
-    bool IsInStressLog (ULONG64 addr);
-}; //class StressLogMem
 
 // An adapter class that DIA consumes so that it can read PE data from the an image
 // This implementation gets the backing data from the image loaded in debuggee memory

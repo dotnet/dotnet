@@ -71,15 +71,22 @@ public static class AWSXRayIdGenerator
         {
             var result = !Sdk.SuppressInstrumentation ? ComputeRootActivitySamplingResult(activity, sampler) : ActivitySamplingResult.None;
 
-            activity.ActivityTraceFlags = ActivityTraceFlags.None;
-
             // Following the same behavior when .NET runtime sets the trace flag for a newly created root activity.
             // See: https://github.com/dotnet/runtime/blob/master/src/libraries/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/Activity.cs#L1022-L1027
             activity.IsAllDataRequested = result is ActivitySamplingResult.AllData or ActivitySamplingResult.AllDataAndRecorded;
 
+            // Disable recording when the data is not required. We do this,
+            // rather than override to None then turn it on, in order to preserve
+            // any other trace flags that may have been set which are not available
+            // in the version of the ActivityTraceFlags enum we are compiling against
+            // (e.g. ActivityTraceFlags.RandomTraceId added in .NET 11).
             if (result == ActivitySamplingResult.AllDataAndRecorded)
             {
                 activity.ActivityTraceFlags |= ActivityTraceFlags.Recorded;
+            }
+            else
+            {
+                activity.ActivityTraceFlags &= ~ActivityTraceFlags.Recorded;
             }
         }
     }
@@ -112,7 +119,7 @@ public static class AWSXRayIdGenerator
         lock (RandLock)
         {
             NextBytes(bytes);
-            hexNumber = string.Concat(bytes.Select(x => x.ToString("x2", CultureInfo.InvariantCulture)).ToArray());
+            hexNumber = string.Concat(bytes.Select(x => x.ToString("x2", CultureInfo.InvariantCulture)));
             if (digits % 2 != 0)
             {
                 hexNumber += Next(16).ToString("x", CultureInfo.InvariantCulture);
@@ -127,11 +134,9 @@ public static class AWSXRayIdGenerator
     /// </summary>
     /// <param name="buffer">An array of bytes to contain random numbers.</param>
     private static void NextBytes(byte[] buffer)
-    {
 #pragma warning disable CA5394 // Do not use insecure randomness
-        Global.NextBytes(buffer);
+        => Global.NextBytes(buffer);
 #pragma warning restore CA5394 // Do not use insecure randomness
-    }
 
     /// <summary>
     /// Returns a non-negative random integer that is less than the specified maximum.
@@ -139,11 +144,9 @@ public static class AWSXRayIdGenerator
     /// <param name="maxValue">Max value of the random integer.</param>
     /// <returns>A 32-bit signed integer that is greater than or equal to 0, and less than maxValue.</returns>
     private static int Next(int maxValue)
-    {
 #pragma warning disable CA5394 // Do not use insecure randomness
-        return Global.Next(maxValue);
+        => Global.Next(maxValue);
 #pragma warning restore CA5394 // Do not use insecure randomness
-    }
 
     private static ActivitySamplingResult ComputeRootActivitySamplingResult(
         Activity activity,

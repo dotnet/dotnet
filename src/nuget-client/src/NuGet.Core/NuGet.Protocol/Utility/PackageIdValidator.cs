@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using NuGet.Common;
@@ -14,7 +12,16 @@ namespace NuGet.Protocol
     {
         private const string DisableValidationEnvVar = "NUGET_DISABLE_PACKAGEID_VALIDATION";
 
-        private static readonly Lazy<bool> IsValidationDisabled = new Lazy<bool>(() =>
+        static PackageIdValidator()
+        {
+            StaticState.StartMSBuildRestoreTasks += ResetCache;
+        }
+
+        private static Lazy<bool> IsValidationDisabled = new Lazy<bool>(() =>
+            IsPackageIdValidationDisabled(EnvironmentVariableWrapper.Instance));
+
+        /// <summary>Re-reads <c>NUGET_DISABLE_PACKAGEID_VALIDATION</c> from the current environment.</summary>
+        internal static void ResetCache() => IsValidationDisabled = new Lazy<bool>(() =>
             IsPackageIdValidationDisabled(EnvironmentVariableWrapper.Instance));
 
         /// <summary>
@@ -24,7 +31,7 @@ namespace NuGet.Protocol
         /// <exception cref="InvalidPackageIdException">
         /// Thrown if <paramref name="packageId"/> is not a valid NuGet package ID.
         /// </exception>
-        internal static void Validate(string packageId, IEnvironmentVariableReader env = null)
+        internal static void Validate(string packageId, IEnvironmentVariableReader? env = null)
         {
             bool isDisabled = env == null
                 ? IsValidationDisabled.Value

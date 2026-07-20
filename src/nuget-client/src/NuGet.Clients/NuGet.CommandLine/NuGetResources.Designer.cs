@@ -169,7 +169,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please provide password for: {0}.
+        ///   Looks up a localized string similar to Provide password for: {0}.
         /// </summary>
         public static string ConsolePasswordProvider_DisplayFile {
             get {
@@ -187,7 +187,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The remote server indicated that the previous request was forbidden. Please provide credentials for: {0}.
+        ///   Looks up a localized string similar to The remote server indicated that the previous request was forbidden. Provide credentials for: {0}.
         /// </summary>
         public static string Credentials_ForbiddenCredentials {
             get {
@@ -205,7 +205,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please provide proxy credentials:.
+        ///   Looks up a localized string similar to Provide proxy credentials:.
         /// </summary>
         public static string Credentials_ProxyCredentials {
             get {
@@ -214,7 +214,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please provide credentials for: {0}.
+        ///   Looks up a localized string similar to Provide credentials for: {0}.
         /// </summary>
         public static string Credentials_RequestCredentials {
             get {
@@ -503,7 +503,7 @@ namespace NuGet.CommandLine {
         
         /// <summary>
         ///   Looks up a localized string similar to `project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
-        ///Please consider migrating &apos;{0}&apos; to `PackageReference` and using the pack targets.
+        ///Consider migrating &apos;{0}&apos; to `PackageReference` and using the pack targets.
         ///You can set the &apos;{1}&apos; environment variable to &apos;true&apos; to temporarily reenable this functionality..
         /// </summary>
         public static string Error_ProjectJson_Deprecated_And_Removed {
@@ -639,7 +639,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This version of MSBuild not support the slnx format: &apos;{0}&apos;. Please use a MSBuild version greater or equal to 17.13 to use this feature..
+        ///   Looks up a localized string similar to This version of MSBuild not support the slnx format: &apos;{0}&apos;. Use a MSBuild version greater than or equal to 17.13 to use this feature..
         /// </summary>
         public static string Error_UnsupportedMsBuildForSlnx {
             get {
@@ -648,7 +648,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This version of MSBuild not support Solution filter: &apos;{0}&apos;. Please use a MSBuild version greater or equal to 16.7 to use this feature..
+        ///   Looks up a localized string similar to This version of MSBuild not support Solution filter: &apos;{0}&apos;. Use a MSBuild version greater than or equal to 16.7 to use this feature..
         /// </summary>
         public static string Error_UnsupportedMsBuildForSolutionFilter {
             get {
@@ -675,7 +675,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to load {0}, if this extension was downloaded from the internet please make sure it got unblocked (right click, properties, unblock)..
+        ///   Looks up a localized string similar to Failed to load {0}, if this extension was downloaded from the internet make sure it got unblocked (right click, properties, unblock)..
         /// </summary>
         public static string FailedToLoadExtension {
             get {
@@ -864,7 +864,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The specified source &apos;{0}&apos; is invalid. Please provide a valid source..
+        ///   Looks up a localized string similar to The specified source &apos;{0}&apos; is invalid. Provide a valid source..
         /// </summary>
         public static string InvalidSource {
             get {
@@ -963,7 +963,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An invalid local resource name was provided. Please provide one of the following values: http-cache, packages-cache, global-packages, all..
+        ///   Looks up a localized string similar to An invalid local resource name was provided. Provide one of the following values: http-cache, packages-cache, global-packages, all..
         /// </summary>
         public static string LocalsCommand_InvalidLocalResourceName {
             get {
@@ -1251,7 +1251,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please specify a nuspec or project file to use..
+        ///   Looks up a localized string similar to Specify a nuspec or project file to use..
         /// </summary>
         public static string PackageCommandSpecifyInputFileError {
             get {
@@ -1314,7 +1314,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to `project.json` pack is deprecated. Please consider migrating &apos;{0}&apos; to `PackageReference` and using the pack targets..
+        ///   Looks up a localized string similar to `project.json` pack is deprecated. Consider migrating &apos;{0}&apos; to `PackageReference` and using the pack targets..
         /// </summary>
         public static string ProjectJsonPack_Deprecated {
             get {
@@ -1332,7 +1332,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is no default source, please specify a source..
+        ///   Looks up a localized string similar to There is no default source, specify a source..
         /// </summary>
         public static string PushCommandNoSourceError {
             get {
@@ -1368,7 +1368,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;globalPackagesFolder&apos; setting is a relative path. To determine full path, please specify either -SolutionDirectory or a solution file as a parameter. To ignore &apos;globalPackagesFolder&apos; setting, specify -PackagesDirectory..
+        ///   Looks up a localized string similar to &apos;globalPackagesFolder&apos; setting is a relative path. To determine full path, specify either -SolutionDirectory or a solution file as a parameter. To ignore &apos;globalPackagesFolder&apos; setting, specify -PackagesDirectory..
         /// </summary>
         public static string RestoreCommandCannotDetermineGlobalPackagesFolder {
             get {
@@ -1377,7 +1377,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot determine the packages folder to restore NuGet packages. Please specify either -PackagesDirectory or -SolutionDirectory..
+        ///   Looks up a localized string similar to Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory..
         /// </summary>
         public static string RestoreCommandCannotDeterminePackagesFolder {
             get {
@@ -1774,7 +1774,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please enbale long file path support in local group policy. Fore more details, please refer to https://aka.ms/nuget-long-path..
+        ///   Looks up a localized string similar to Enable long file path support in local group policy. Fore more details, refer to https://aka.ms/nuget-long-path..
         /// </summary>
         public static string Warning_LongPath_DisabledPolicy {
             get {
@@ -1783,7 +1783,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, please refer to https://aka.ms/nuget-long-path..
+        ///   Looks up a localized string similar to Install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, refer to https://aka.ms/nuget-long-path..
         /// </summary>
         public static string Warning_LongPath_UnsupportedNetFramework {
             get {
@@ -1792,7 +1792,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Long file path is currently only supported on Windows 10. Fore more details, please refer to https://aka.ms/nuget-long-path..
+        ///   Looks up a localized string similar to Long file path is currently only supported on Windows 10. Fore more details, refer to https://aka.ms/nuget-long-path..
         /// </summary>
         public static string Warning_LongPath_UnsupportedOS {
             get {

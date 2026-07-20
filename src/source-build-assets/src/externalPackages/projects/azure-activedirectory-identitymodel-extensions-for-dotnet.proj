@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <!-- Per-component overrides (FileVersionRevision, AssemblyVersionOverride, etc.) and the
+       <FileVersionValidationPackage> item shared with the update-external-metadata tool
+       and ExternalPackageTests live in this sibling file. SourceRevisionId stays in the
+       .proj below — it's per-.proj source provenance, orthogonal to validation overrides. -->
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" />
+
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
-    <SourceRevisionId>e67b25be77532af9ba405670b34b4d263d505fde</SourceRevisionId>
-    <!-- The FileVersion revision from the Microsoft-shipped package. This must be updated
-         when the submodule is updated. See https://github.com/dotnet/source-build/issues/5509 -->
-    <FileVersionRevision>50722</FileVersionRevision>
-    <!-- Used by the update-external-metadata script to determine the package to download. -->
-    <FileVersionValidationPackage>Microsoft.IdentityModel.Tokens</FileVersionValidationPackage>
+    <SourceRevisionId>ee19952f21d5c170a778bdca901b67076a1cd8f8</SourceRevisionId>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">
@@ -23,7 +24,14 @@
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
+      <!-- WilsonVersion is used by the repo's build/common.props to compute FileVersion and AssemblyVersion.
+           Without it, the build falls back to the hardcoded WilsonCurrentVersion which may not match the release version. -->
+      <BuildCommandArgs>$(BuildCommandArgs) /p:WilsonVersion=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:FileVersion=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion).$(FileVersionRevision)</BuildCommandArgs>
+      <!-- Disable trimming/AOT analysis. On net8.0+ IsAotCompatible=true pulls in the
+           Microsoft.NET.ILLink.Tasks/.Analyzers packages, which are not available in the
+           offline source-build package feed. -->
+      <BuildCommandArgs>$(BuildCommandArgs) /p:IsAotCompatible=false /p:IsTrimmable=false</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>
     </PropertyGroup>

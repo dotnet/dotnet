@@ -2,6 +2,56 @@
 
 ## Unreleased
 
+* Fix `SqlClientTraceInstrumentationOptions` leaking across multiple tracer
+  provider registrations.
+  ([#4267](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4267))
+
+* Add support for native AoT on .NET 8+.
+  ([#4062](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4062))
+
+* Fix SQL query text sanitization for malformed bracketed identifiers in `FROM`
+  clauses to avoid leaking following literal values.
+  ([#4317](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4317))
+
+* Fix SQL query text sanitization performance for malformed `FROM` clauses with
+  repeated unterminated bracketed identifiers.
+  ([#4339](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4339))
+
+* Fix `SqlClientTraceInstrumentationOptions.EnableTraceContextPropagation` to behave
+  correctly when `ActivityTraceFlags.RandomTraceId` is available.
+  ([#4397](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4397))
+
+* Fix `db.query.parameter.<key>` attributes to always emit the value as a string.
+  ([#4395](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4395))
+
+* Fix `SqlConnectionDetails` to parse PostgreSQL data source URIs correctly.
+  ([#4444](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4444))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
+## 1.15.2
+
+Released 2026-Apr-21
+
+* Fix `IndexOutOfRangeException` when parsing SQL statements.
+  ([#4139](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4139))
+
+* Updated OpenTelemetry core component version(s) to `1.15.3`.
+  ([#4166](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4166))
+
+## 1.15.1
+
+Released 2026-Mar-04
+
+* Fix incorrect `db.query.summary` when table names include a schema and are
+  enclosed in brackets (e.g. `[dbo].[Person]`).
+  ([#3897](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/3897))
+
+## 1.15.0
+
+Released 2026-Jan-28
+
 ## 1.15.0-rc.1
 
 Released 2026-Jan-21
@@ -108,7 +158,7 @@ Released 2025-Jul-15
 
 * Added `OTEL_DOTNET_EXPERIMENTAL_SQLCLIENT_ENABLE_TRACE_CONTEXT_PROPAGATION`
   environment variable to propagate trace context to SQL Server databases.
-  This will remain experimental while the [specification](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/database/sql-server.md#context-propagation)
+  This will remain experimental while the [specification](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/db/sql-server.md#context-propagation)
   remains in development.
   It is now only available on .NET 8 and newer.
   ([#2709](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/2709))

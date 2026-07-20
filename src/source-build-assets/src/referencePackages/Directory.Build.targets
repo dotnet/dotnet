@@ -1,9 +1,27 @@
 <Project>
 
   <Import Project="..\..\Directory.Build.targets" />
-  <Import Project="$(ManualNuspecTargets)" />
+  <Import Project="$(RepositoryEngineeringDir)PackageValidation.targets" />
 
-  <!-- netstandard2.0's targeting pack uses the old package reference model which doesn't support using a local layout.
+  <!-- ==========================================================================
+       API Compatibility suppressions for reference packages
+       ========================================================================== -->
+  <PropertyGroup>
+    <!-- CP0003: Assembly version mismatch between baseline and current.
+         Source-generated reference packages use simplified version metadata that doesn't match upstream. -->
+    <!-- PKV006: "TFM is no longer supported in the latest version."
+         Missing TFMs are expected here because of TFM filtering. Source-build itself
+         validates that the required frameworks are present. -->
+    <NoWarn>$(NoWarn);CP0003;PKV006</NoWarn>
+  </PropertyGroup>
+
+  <!-- Ignore baseline TFMs that source-build doesn't support/include. Uses the same exclusion list as the
+       package source generator. -->
+  <ItemGroup>
+    <PackageValidationBaselineFrameworkToIgnore Include="@(ExcludedTargetFramework)" />
+  </ItemGroup>
+
+  <!-- netstandard2.0's targeting packuses the old package reference model which doesn't support using a local layout.
        Therefore disable the package reference download via DisableImplicitFrameworkReferences and manually import the
        packages' targets file to receive the references. -->
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -28,6 +46,11 @@
     <CustomizationsSourcePath>$(MSBuildProjectDirectory)\$(CustomizationsSourceFile)</CustomizationsSourcePath>
   </PropertyGroup>
 
+  <!-- The prebuilt payload has a Newtonsoft.Json with a specific version; align to avoid prebuilt. -->
+  <ItemGroup>
+    <PackageReference Update="Newtonsoft.Json" Version="$(NewtonsoftJsonBootstrapVersion)" />
+  </ItemGroup>
+
   <!-- Project references don't need to be copied to the output. That makes the build significantly faster. -->
   <ItemDefinitionGroup>
     <ProjectReference>
@@ -35,7 +58,29 @@
     </ProjectReference>
   </ItemDefinitionGroup>
 
-  <ItemGroup>
+  <!-- Cross-targeting outer-build filter: strip placeholder TFMs from the
+       `_TargetFrameworkInfo` aggregated from inner builds before
+       `GetTargetFrameworks` packages them into `_ThisProjectBuildMetadata`. The csproj
+       sets `<PlaceholderTargetFrameworks>` listing the placeholder-only TFMs. Without this filter,
+       consumers would see the placeholder TFM via FrameworkReducer and try to link
+       against an absent placeholder DLL. -->
+  <Target Name="_RemovePlaceholderTargetFrameworkInfo"
+          AfterTargets="GetTargetFrameworksWithPlatformFromInnerBuilds"
+          Condition="'$(PlaceholderTargetFrameworks)' != '' and '$(IsCrossTargetingBuild)' == 'true'">
+    <ItemGroup>
+      <_PlaceholderTfm Include="$(PlaceholderTargetFrameworks)" />
+      <_TargetFrameworkInfo Remove="@(_PlaceholderTfm)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Import placeholder-packaging targets when the current TargetFramework is one of
+       the placeholder TFMs declared by the csproj's $(PlaceholderTargetFrameworks). -->
+  <PropertyGroup>
+    <_IsPlaceholderTargetFramework Condition="'$(TargetFramework)' != '' and '$(PlaceholderTargetFrameworks)' != '' and $([System.String]::new(';$(PlaceholderTargetFrameworks);').Contains(';$(TargetFramework);'))">true</_IsPlaceholderTargetFramework>
+  </PropertyGroup>
+  <Import Project="$(RepositoryEngineeringDir)placeholderpackaging.targets" Condition="'$(_IsPlaceholderTargetFramework)' == 'true'" />
+
+  <ItemGroup Condition="'$(_IsPlaceholderTargetFramework)' != 'true'">
     <Compile Include="ref/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
     <Compile Include="lib/$(TargetFramework)/*$(DefaultLanguageSourceExtension)" />
 
@@ -66,29 +111,6 @@
     <ItemGroup>
       <Reference Remove="@(Reference->WithMetadataValue('ExternallyResolved', 'true')->WithMetadataValue('Filename', '$(TargetName)'))" />
     </ItemGroup>
-  </Target>
-
-  <Target Name="CopyBuildOutputToTempOutput"
-          AfterTargets="CopyFilesToOutputDirectory">
-    <ItemGroup>
-      <CompileWithRelativePath Include="@(Compile)" Condition="!$([System.String]::new('%(Identity)').StartsWith('%(RootDir)'))" />
-    </ItemGroup>
-
-    <Error
-      Condition="@(CompileWithRelativePath->Count()) != 1"
-      Text="Number of Compile items != 1. We need just one, to determine the path of the resulting DLL in the package including ref/lib and TFM." />
-
-    <ItemGroup>
-      <FullCompileDir Include="$([System.IO.Directory]::GetParent('%(CompileWithRelativePath.Identity)'))" />
-      <RelativeCompileDir Include="$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)\', '%(FullCompileDir.Identity)'))" />
-    </ItemGroup>
-
-    <Copy
-      SourceFiles="$(TargetPath)"
-      DestinationFiles="$([MSBuild]::NormalizePath(
-        '$(TFMPackTempOutputDir)',
-        '%(RelativeCompileDir.Identity)',
-        '$(TargetFileName)'))" />
   </Target>
 
   <!-- Use local targeting packs -->

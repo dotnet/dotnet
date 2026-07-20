@@ -1,0 +1,17 @@
+~Microsoft.IdentityModel.Tokens.CaseSensitiveClaimsIdentity.SecurityToken.set -> void
+Microsoft.IdentityModel.Tokens.CryptoProviderFactory.CacheCustomProviders.get -> bool
+Microsoft.IdentityModel.Tokens.CryptoProviderFactory.CacheCustomProviders.set -> void
+Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy
+Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.Decrypt(byte[] input, bool fOAEP) -> byte[]
+Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.Encrypt(byte[] input, bool fOAEP) -> byte[]
+Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.RSACryptoServiceProviderProxy(System.Security.Cryptography.RSACryptoServiceProvider rsa) -> void
+Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.SignData(byte[] input, object hash) -> byte[]
+Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.VerifyData(byte[] input, object hash, byte[] signature) -> bool
+Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.VerifyDataWithLength(byte[] input, int offset, int length, object hash, System.Security.Cryptography.HashAlgorithmName hashAlgorithmName, byte[] signature) -> bool
+override Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.DecryptValue(byte[] input) -> byte[]
+override Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.Dispose(bool disposing) -> void
+override Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.EncryptValue(byte[] input) -> byte[]
+override Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.ExportParameters(bool includePrivateParameters) -> System.Security.Cryptography.RSAParameters
+override Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.ImportParameters(System.Security.Cryptography.RSAParameters parameters) -> void
+override Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.KeyExchangeAlgorithm.get -> string
+override Microsoft.IdentityModel.Tokens.RSACryptoServiceProviderProxy.SignatureAlgorithm.get -> string

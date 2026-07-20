@@ -1,9 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
+    <PackageId>Microsoft.CodeAnalysis.Contracts</PackageId>
     <TargetFrameworks>net8.0;net9.0;netstandard2.0</TargetFrameworks>
     <PackageVersion>5.0.0-1.25277.114</PackageVersion>
     <AssemblyName>Microsoft.CodeAnalysis.Contracts</AssemblyName>
+    <Serviceable>true</Serviceable>
+    <Description>Package containing sources of Microsoft .NET Compiler Platform ("Roslyn") contract and polyfill types.
+    
+
+      The source code included in this package is subject to arbitrary changes in future versions. 
+      Updating a reference to this package to a newer version of the package may require changes in the referencing project.
+      No compatibility guarantees are provided.
+    
+      More details at https://aka.ms/roslyn-packages
+      This package was built from the source at https://github.com/dotnet/dotnet/commit/ddf39a1b4690fbe23aea79c78da67004a5c31094.</Description>
+    <PackageProjectUrl>https://github.com/dotnet/roslyn</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Parser Scanner Lexer Emit CodeGeneration Metadata IL Compilation Scripting Syntax Semantics</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
@@ -20,6 +35,71 @@
     <ProjectReference Include="../../../../referencePackages/src/system.memory/4.5.5/System.Memory.4.5.5.csproj" />
     <ProjectReference Include="../../../../referencePackages/src/system.numerics.vectors/4.5.0/System.Numerics.Vectors.4.5.0.csproj" />
     <ProjectReference Include="../../../../referencePackages/src/system.runtime.compilerservices.unsafe/6.0.0/System.Runtime.CompilerServices.Unsafe.6.0.0.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build/Microsoft.CodeAnalysis.Contracts.targets" Pack="true" PackagePath="build" />
+    <None Include="contentFiles/cs/net8.0/.editorconfig" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="None" />
+    <None Include="contentFiles/cs/net8.0/CollectionBuilderAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/CompilerFeatureRequiredAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/Contract.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/Contract.InterpolatedStringHandlers.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/ErrorReporting/FailFast.cs" Pack="true" PackagePath="contentFiles/cs/net8.0/ErrorReporting" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/ErrorReporting/FatalError.cs" Pack="true" PackagePath="contentFiles/cs/net8.0/ErrorReporting" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/ExceptionUtilities.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/ExperimentalAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/Index.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/InterpolatedStringHandlerArgumentAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/InterpolatedStringHandlerAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/IReadOnlySet.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/IsExternalInit.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/NonCopyableAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/NonDefaultableAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/NullableAttributes.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/Range.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/RequiredMemberAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net8.0/SetsRequiredMembersAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net8.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/.editorconfig" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="None" />
+    <None Include="contentFiles/cs/net9.0/CollectionBuilderAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/CompilerFeatureRequiredAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/Contract.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/Contract.InterpolatedStringHandlers.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/ErrorReporting/FailFast.cs" Pack="true" PackagePath="contentFiles/cs/net9.0/ErrorReporting" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/ErrorReporting/FatalError.cs" Pack="true" PackagePath="contentFiles/cs/net9.0/ErrorReporting" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/ExceptionUtilities.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/ExperimentalAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/Index.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/InterpolatedStringHandlerArgumentAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/InterpolatedStringHandlerAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/IReadOnlySet.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/IsExternalInit.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/NonCopyableAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/NonDefaultableAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/NullableAttributes.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/Range.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/RequiredMemberAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/net9.0/SetsRequiredMembersAttribute.cs" Pack="true" PackagePath="contentFiles/cs/net9.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/.editorconfig" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="None" />
+    <None Include="contentFiles/cs/netstandard2.0/CollectionBuilderAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/CompilerFeatureRequiredAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/Contract.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/Contract.InterpolatedStringHandlers.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/ErrorReporting/FailFast.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/ErrorReporting" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/ErrorReporting/FatalError.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/ErrorReporting" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/ExceptionUtilities.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/ExperimentalAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/Index.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/InterpolatedStringHandlerArgumentAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/InterpolatedStringHandlerAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/IReadOnlySet.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/IsExternalInit.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/NonCopyableAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/NonDefaultableAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/NullableAttributes.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/Range.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/RequiredMemberAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="contentFiles/cs/netstandard2.0/SetsRequiredMembersAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0" BuildAction="Compile" />
+    <None Include="ThirdPartyNotices.rtf" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>

@@ -7,6 +7,10 @@
     <MinVerTagPrefix>Sampler.AWS-</MinVerTagPrefix>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETCoreApp'">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
   <!-- Do not run Package Baseline Validation as this package has never released a stable version.
   Remove this property once we have released a stable version and add PackageValidationBaselineVersion property. -->
   <PropertyGroup>
@@ -15,11 +19,10 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTelemetry" />
-    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
-  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <PackageReference Update="System.Text.Json" VersionOverride="[6.0.10,)" />
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETFramework'">
@@ -28,6 +31,7 @@
 
   <ItemGroup>
     <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\HttpClientHelpers.cs" Link="Includes\HttpClientHelpers.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\SemanticConventions.cs" Link="Includes\SemanticConventions.cs" />
   </ItemGroup>
 

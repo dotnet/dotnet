@@ -11,7 +11,7 @@ internal class Utils
     {
         foreach (var tag in activity.TagObjects)
         {
-            if (tag.Key.Equals(tagName, StringComparison.Ordinal))
+            if (string.Equals(tag.Key, tagName, StringComparison.Ordinal))
             {
                 return tag.Value;
             }
@@ -20,15 +20,13 @@ internal class Utils
         return null;
     }
 
-    internal static string RemoveSuffix(string originalString, string suffix)
-    {
-        return string.IsNullOrEmpty(originalString)
+    internal static string RemoveSuffix(string originalString, string suffix) =>
+        string.IsNullOrEmpty(originalString)
             ? string.Empty
             : originalString.EndsWith(suffix, StringComparison.Ordinal)
                 ?
                 originalString.Substring(0, originalString.Length - suffix.Length)
                 : originalString;
-    }
 
     /// <summary>
     /// Removes amazon prefix from service name. There are two type of service name.
@@ -39,14 +37,10 @@ internal class Utils
     /// <param name="serviceName">Name of the service.</param>
     /// <returns>String after removing Amazon prefix.</returns>
     internal static string RemoveAmazonPrefixFromServiceName(string serviceName)
-    {
-        return RemovePrefix(RemovePrefix(serviceName, "Amazon"), ".");
-    }
+        => RemovePrefix(RemovePrefix(serviceName, "Amazon"), ".");
 
-    private static string RemovePrefix(string originalString, string prefix)
-    {
-        return string.IsNullOrEmpty(originalString) ? string.Empty :
+    private static string RemovePrefix(string originalString, string prefix) =>
+        string.IsNullOrEmpty(originalString) ? string.Empty :
             originalString.StartsWith(prefix, StringComparison.Ordinal) ? originalString.Substring(prefix.Length) :
             originalString;
-    }
 }

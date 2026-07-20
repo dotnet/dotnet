@@ -864,6 +864,7 @@
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
@@ -876,6 +877,7 @@
       Вы также можете переопределить поведение по умолчанию с помощью дополнительных параметров:
       CollectAlways — собирает дамп по завершении даже при отсутствии сбоев (true/false) 
       DumpType — задает тип дампа, mini (мини-дамп) или full (полный).
+      Для создания дампа аварийного дампа в Windows необходимо, чтобы файлы procdump.exe и procdump64.exe находились в одном из каталогов, указанных в переменной окружения PATH, либо в каталоге, на который указывает переменная окружения PROCDUMP_PATH. Эти инструменты можно загрузить по адресу https://docs.microsoft.com/sysinternals/downloads/procdump.
       Пример: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1167,16 +1169,6 @@
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">Время ожидания подключения обработчика запросов истекло через {0} с.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Время ожидания начала тестового сеанса истекло через {0} с.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Время ожидания остановки тестового сеанса истекло через {0} с.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

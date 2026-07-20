@@ -12,7 +12,7 @@ To triage this issue:
 * Add a comment explaining what you found the log
 * Is it a new known issue? 
   * Yes
-    * Edit this issue and add an error string in the json below that can help us match this issue with future build breaks [:information_source:](arcade-wiki)
+    * Edit this issue and add an error string in the json below that can help us match this issue with future build breaks
     * Remove label "Build Error Needs Triage" 
     * Add the label "Known build error"
   * No - Close the issue
@@ -22,7 +22,3 @@ To triage this issue:
     "errorMessage" : ""
 }
 ```
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CKnown-Issue.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CKnown-Issue.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDevWorkflow%5CDesign%5CGitHub-Check-Mockup%5CKnown-Issue.md)</sub>
-<!-- End Generated Content-->

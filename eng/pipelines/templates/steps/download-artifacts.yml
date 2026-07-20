@@ -20,6 +20,11 @@ steps:
   displayName: Copy ${{ parameters.artifactDescription }}
   inputs:
     SourceFolder: $(Pipeline.Workspace)/${{ parameters.artifactName }}
-    Contents: '**'
+    Contents: ${{ parameters.downloadFilePatterns }}
     FlattenFolders: ${{ parameters.flattenDirs }}
     TargetFolder: ${{ parameters.copyDestination }}
+- task: DeleteFiles@1
+  displayName: Clean up ${{ parameters.artifactDescription }} download
+  inputs:
+    SourceFolder: $(Pipeline.Workspace)/${{ parameters.artifactName }}
+    Contents: '**'

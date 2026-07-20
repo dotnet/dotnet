@@ -119,8 +119,7 @@ internal sealed class TldLogExporter : TldLogCommon, IDisposable
             }
             else
             {
-                // TODO: Avoid allocation
-                eventName = GetSanitizedCategoryName(categoryName);
+                eventName = this.GetSanitizedCategoryName(categoryName);
             }
         }
 
@@ -353,11 +352,11 @@ internal sealed class TldLogExporter : TldLogCommon, IDisposable
         base.Dispose(disposing);
     }
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
     private static void OnProcessScopeForIndividualColumns(LogRecordScope scope, TldLogExporter state)
         => OnProcessScopeForIndividualColumns(
             scope,
             state.serializationData.Value!,
-            state.customFields,
-            PartCFields.Value!,
-            EnvProperties.Value);
+            state.customFields);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 }

@@ -3,6 +3,8 @@
 
 using System.Diagnostics;
 using System.ServiceModel.Channels;
+using Microsoft.Extensions.Configuration;
+using static OpenTelemetry.Internal.RpcSemanticConventionHelper;
 
 namespace OpenTelemetry.Instrumentation.Wcf;
 
@@ -11,6 +13,21 @@ namespace OpenTelemetry.Instrumentation.Wcf;
 /// </summary>
 public class WcfInstrumentationOptions
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WcfInstrumentationOptions"/> class.
+    /// </summary>
+    public WcfInstrumentationOptions()
+        : this(new ConfigurationBuilder().AddEnvironmentVariables().Build())
+    {
+    }
+
+    internal WcfInstrumentationOptions(IConfiguration configuration)
+    {
+        var rpcSemanticConvention = GetSemanticConventionOptIn(configuration);
+        this.EmitOldRpcAttributes = rpcSemanticConvention.HasFlag(RpcSemanticConvention.Old);
+        this.EmitNewRpcAttributes = rpcSemanticConvention.HasFlag(RpcSemanticConvention.New);
+    }
+
     /// <summary>
     /// Gets or sets an action to enrich an Activity.
     /// </summary>
@@ -45,7 +62,7 @@ public class WcfInstrumentationOptions
     public bool SuppressDownstreamInstrumentation { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets a value indicating whether or not the SOAP message version should be added as the <see cref="WcfInstrumentationConstants.SoapMessageVersionTag"/> tag. Default value: False.
+    /// Gets or sets a value indicating whether or not the SOAP message version should be added as the <see cref="WcfInstrumentationConstants.AttributeSoapMessageVersion"/> tag. Default value: False.
     /// </summary>
     public bool SetSoapMessageVersion { get; set; }
 
@@ -56,8 +73,18 @@ public class WcfInstrumentationOptions
     /// </summary>
     /// <remarks>
     /// <para>For specification details see: <see
-    /// href="https://github.com/open-telemetry/semantic-conventions/blob/main/docs/exceptions/exceptions-spans.md"
+    /// href="https://github.com/open-telemetry/semantic-conventions/blob/v1.42.0/docs/exceptions/exceptions-spans.md"
     /// />.</para>
     /// </remarks>
     public bool RecordException { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the old RPC attributes should be emitted.
+    /// </summary>
+    internal bool EmitOldRpcAttributes { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the new RPC attributes should be emitted.
+    /// </summary>
+    internal bool EmitNewRpcAttributes { get; set; }
 }

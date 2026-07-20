@@ -129,18 +129,63 @@ namespace NuGet.VisualStudio.Implementation.Test.Extensibility
             Assert.False(package.DirectDependency);
         }
 
+        [Fact]
+        public async Task GetInstalledPackagesAsync_MissingFallbackFolder_DoesNotFaultAndReturnsPackagesAsync()
+        {
+            // Arrange
+            var projectGuid = Guid.NewGuid();
+
+            var settings = new Mock<ISettings>();
+            // Strict so that any unexpected PostFaultAsync (i.e. the fault we're trying to eliminate) fails the test.
+            var telemetryProvider = new Mock<INuGetTelemetryProvider>(MockBehavior.Strict);
+
+            var installedPackages = new List<PackageReference>()
+            {
+                new PackageReference(new PackageIdentity("a", new NuGetVersion(1, 0, 0)), FrameworkConstants.CommonFrameworks.Net50)
+            };
+            var transitivePackages = new List<PackageReference>();
+
+            // A user-configured fallback folder that doesn't exist on disk previously caused the
+            // FallbackPackagePathResolver constructor to throw, which surfaced as a NuGet fault.
+            var missingFallbackFolder = Path.Combine(Path.GetTempPath(), "NuGet.Tests", Guid.NewGuid().ToString("N"));
+            var project = new TestPackageReferenceProject("ProjectA", @"src\ProjectA\Project.csproj", @"c:\path\to\src\ProjectA\ProjectA.csproj",
+                installedPackages, transitivePackages, fallbackFolders: new List<string>() { missingFallbackFolder });
+
+            var solutionManager = new Mock<IVsSolutionManager>();
+            solutionManager.Setup(sm => sm.GetNuGetProjectAsync(projectGuid.ToString()))
+                .Returns(() => Task.FromResult<NuGetProject>(project));
+
+            // Act
+            var target = new NuGetProjectService(solutionManager.Object, settings.Object, telemetryProvider.Object);
+            InstalledPackagesResult actual = await target.GetInstalledPackagesAsync(projectGuid, CancellationToken.None);
+
+            // Assert
+            Assert.NotNull(actual);
+            Assert.Equal(InstalledPackageResultStatus.Successful, actual.Status);
+
+            NuGetInstalledPackage package = actual.Packages.FirstOrDefault(p => p.Id == "a");
+            Assert.NotNull(package);
+            // The package can't be located on disk, so it has no install path, but no fault is raised.
+            Assert.Null(package.InstallPath);
+            telemetryProvider.Verify(t => t.PostFaultAsync(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IDictionary<string, object>>()), Times.Never);
+        }
+
         class TestPackageReferenceProject : PackageReferenceProject<List<PackageReference>, PackageReference>
         {
+            private readonly List<string> _fallbackFolders;
+
             public TestPackageReferenceProject(
                 string projectName,
                 string projectUniqueName,
                 string projectFullPath,
                 List<PackageReference> installedPackages,
-                List<PackageReference> transitivePackages)
+                List<PackageReference> transitivePackages,
+                List<string> fallbackFolders = null)
                 : base(projectName, projectUniqueName, projectFullPath)
             {
                 InstalledPackages = installedPackages;
                 TransitivePackages = transitivePackages;
+                _fallbackFolders = fallbackFolders ?? new List<string>();
             }
 
             public override string MSBuildProjectPath => ProjectFullPath;
@@ -173,7 +218,9 @@ namespace NuGet.VisualStudio.Implementation.Test.Extensibility
                 DependencyGraphSpec dgSpec = DependencyGraphSpecTestUtilities.CreateMinimalDependencyGraphSpec(ProjectFullPath, MSBuildProjectPath);
 
                 List<PackageSpec> packageSpecs = new List<PackageSpec>();
-                packageSpecs.Add(dgSpec.GetProjectSpec(ProjectFullPath));
+                PackageSpec packageSpec = dgSpec.GetProjectSpec(ProjectFullPath);
+                packageSpec.RestoreMetadata.FallbackFolders = _fallbackFolders;
+                packageSpecs.Add(packageSpec);
 
                 (IReadOnlyList<PackageSpec>, IReadOnlyList<IAssetsLogMessage>) result = (packageSpecs, null);
                 return Task.FromResult(result);

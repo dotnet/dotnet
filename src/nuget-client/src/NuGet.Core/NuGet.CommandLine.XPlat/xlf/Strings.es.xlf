@@ -183,8 +183,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Delete_MissingArguments">
-        <source>Please provide arguments for package id and package version.</source>
-        <target state="translated">Proporcione argumentos para el id. y la versión del paquete.</target>
+        <source>Provide arguments for package id and package version.</source>
+        <target state="translated">Proporcione argumentos para el identificador del paquete y la versión del paquete.</target>
         <note />
       </trans-unit>
       <trans-unit id="Delete_PackageIdAndVersion_Description">
@@ -270,8 +270,8 @@
         <note>0 - package id</note>
       </trans-unit>
       <trans-unit id="Error_AssetsFileNotFound">
-        <source>No assets file was found for `{0}`. Please run restore before running this command.</source>
-        <target state="translated">No se encontró ningún archivo de recursos para "{0}". Ejecute la restauración antes de ejecutar este comando.</target>
+        <source>No assets file was found for `{0}`. Run restore before running this command.</source>
+        <target state="translated">No se encontró ningún archivo de recursos para `{0}`. Ejecute la restauración antes de ejecutar este comando.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotObtainSearchSource">
@@ -369,7 +369,7 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
         <note>{0} - Project/csproj path</note>
       </trans-unit>
       <trans-unit id="Error_MultipleProjectOrSolutionFilesInDirectory">
-        <source>The directory '{0}' contains multiple project or solution files. Please specify which project or solution file to use.</source>
+        <source>The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</source>
         <target state="translated">El directorio "{0}" contiene varios archivos de proyecto o solución. Especifique el archivo de proyecto o solución que se va a usar.</target>
         <note>{0} - Directory</note>
       </trans-unit>
@@ -409,7 +409,7 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <source>Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</source>
         <target state="translated">Falta la ruta de acceso "{0}" o no es válida. Proporcione una ruta de acceso a un proyecto, un archivo de solución, una aplicación basada en archivos o un directorio de proyecto.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
@@ -557,13 +557,13 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingAssetsFile">
-        <source>Unable to read the assets file `{0}`. Please make sure the file has the write format.</source>
-        <target state="translated">No se puede leer el archivo de recursos "{0}". Asegúrese de que tiene formato de escritura.</target>
+        <source>Unable to read the assets file `{0}`. Make sure the file has the correct format.</source>
+        <target state="translated">No se puede leer el archivo de recursos `{0}`. Asegúrese de que el archivo tiene el formato correcto.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingReferenceFromProject">
-        <source>Unable to read a package reference from the project `{0}`. Please make sure that your project file and project.assets.json file are in sync by running restore.</source>
-        <target state="translated">No se puede leer una referencia de paquete del proyecto "{0}". Ejecute la opción de restaurar para asegurarse de que el archivo del proyecto y el archivo project.assets.json se sincronizan.</target>
+        <source>Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore.</source>
+        <target state="translated">No se puede leer una referencia de paquete del proyecto `{0}`. Asegúrese de que el archivo del proyecto y el archivo de project.assets.json están sincronizados mediante la ejecución de la restauración.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_FrameworkDescription">
@@ -789,11 +789,11 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_MultipleOperations">
-        <source>Both operations, --list and --clear, are not supported in the same command. Please specify only one operation.
+        <source>Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="translated">No se admiten ambas operaciones, --list y --clear, en el mismo comando. Especifique solo una.
-uso: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+        <target state="translated">No se admiten ambas operaciones, --list y --clear, en el mismo comando. Especifique solo una operación.
+uso: variables locales de NuGet &lt;todo | http-cache | paquetes globales | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 Para obtener más información, visite https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
@@ -807,11 +807,11 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_NoOperation">
-        <source>Please specify an operation i.e. --list or --clear.
+        <source>Specify an operation i.e. --list or --clear.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">Especifique una operación, es decir, --list o --clear.
-uso: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+uso: variables locales de NuGet &lt;todo | http-cache | paquetes globales | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 Para obtener más información, visite https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
@@ -1085,7 +1085,7 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
         <note />
       </trans-unit>
       <trans-unit id="Push_MissingArguments">
-        <source>Please specify the path to the package.</source>
+        <source>Specify the path to the package.</source>
         <target state="translated">Especifique la ruta de acceso al paquete.</target>
         <note />
       </trans-unit>
@@ -1203,7 +1203,7 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoTimestamperWarning">
-        <source>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.microsoft.com/dotnet/core/tools</source>
+        <source>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools</source>
         <target state="translated">No se proporcionó la opción "--marca de tiempo". El paquete firmado no tendrá una marca de tiempo. Para obtener más información sobre esta opción, visite https://docs.microsoft.com/dotnet/core/tools</target>
         <note>Please don't localize '--timestamper'</note>
       </trans-unit>
@@ -1393,8 +1393,8 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">
-        <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Please edit the project file directly. ({1})</source>
-        <target state="translated">El paquete {0} hace referencia a diferentes versiones del paquete para distintas plataformas de destino. Este comando no lo admite. Edite el archivo del proyecto directamente. ({1})</target>
+        <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1})</source>
+        <target state="translated">El paquete {0} hace referencia a diferentes versiones del paquete para distintas plataformas de destino. Este comando no lo admite. Edite el archivo de proyecto directamente. ({1})</target>
         <note>0 - The package id
 1 - The project path</note>
       </trans-unit>
@@ -1486,8 +1486,13 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
         <target state="translated">No se puede ejecutar "dotnet nuget why". {0}</target>
         <note>{0} - Exception mssage</note>
       </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="translated">Error interno: el archivo de recursos es incoherente</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
-        <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
+        <source>The file '{0}' does not appear to be a NuGet assets file. Run restore for project '{1}' before running this command.</source>
         <target state="translated">El archivo "{0}" no parece ser un archivo de recursos de NuGet. Ejecute la restauración del proyecto "{1}" antes de ejecutar este comando.</target>
         <note>{0} - Assets file path, {1} - Project name</note>
       </trans-unit>

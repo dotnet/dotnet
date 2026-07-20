@@ -19,7 +19,7 @@ using Microsoft.Extensions.DependencyModel;
 #endif
 using Microsoft.TestPlatform.TestHostProvider;
 using Microsoft.TestPlatform.TestHostProvider.Hosting;
-using Microsoft.TestPlatform.TestHostProvider.Resources;
+using TestHostResources = Microsoft.TestPlatform.TestHostProvider.Resources.Resources;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers;
@@ -243,15 +243,50 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         string? dotnetRootPath = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_PATH");
         string? dotnetRootArchitecture = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_ARCHITECTURE");
 
+        // The SDK (dotnet test) is the primary source: it computes the architecture specific dotnet root and passes it
+        // via VSTEST_DOTNET_ROOT_PATH / VSTEST_DOTNET_ROOT_ARCHITECTURE. Only when the SDK did not provide it (direct
+        // invocation of vstest.console, e.g. under Visual Studio or by hand) do we fall back to the architecture-less
+        // DOTNET_ROOT from the surrounding environment or the caller (runsettings <EnvironmentVariables>).
+        //
+        // An apphost honors that architecture-less DOTNET_ROOT regardless of its own architecture, so if it points at a
+        // different architecture (commonly an x64 install) an x86 apphost picks it up and tries to load the x64
+        // hostfxr.dll into the 32-bit process, failing with 0x800700C1 (ERROR_BAD_EXE_FORMAT). See
+        // https://github.com/microsoft/vstest/issues/16151. We derive the architecture the install actually is (from the
+        // dotnet muxer's PE header) so the resolution below can set the architecture specific DOTNET_ROOT_<ARCH>, and we
+        // clear the ambiguous DOTNET_ROOT so the apphost does not pick it up and fail.
+        if (StringUtilities.IsNullOrWhiteSpace(dotnetRootPath))
+        {
+            var dotnetRoot = TryGetTestHostEnvironmentVariable(startInfo, "DOTNET_ROOT", out var callerProvidedDotnetRoot)
+                ? callerProvidedDotnetRoot
+                : _environmentVariableHelper.GetEnvironmentVariable("DOTNET_ROOT");
+
+            if (!StringUtilities.IsNullOrWhiteSpace(dotnetRoot))
+            {
+                // The architecture specific apphosts affected by this ambiguity only exist on Windows, and the PE based
+                // architecture probe is Windows only, so GetExecutableArchitecture returns null elsewhere and we skip.
+                var dotnetExeArchitecture = GetExecutableArchitecture(Path.Combine(dotnetRoot, "dotnet.exe"));
+                if (dotnetExeArchitecture is not null)
+                {
+                    dotnetRootPath = dotnetRoot;
+                    dotnetRootArchitecture = dotnetExeArchitecture.ToString();
+
+                    EqtTrace.Verbose($"DotnetTestHostmanager.GetTestHostProcessStartInfo: Derived dotnet root '{dotnetRootPath}' (architecture '{dotnetRootArchitecture}') from the architecture-less DOTNET_ROOT.");
+
+                    startInfo.EnvironmentVariables["DOTNET_ROOT"] = string.Empty;
+                    EqtTrace.Verbose($"DotnetTestHostmanager.GetTestHostProcessStartInfo: clearing the ambiguous DOTNET_ROOT to avoid an architecture mismatch.");
+                }
+            }
+        }
+
         if (!StringUtilities.IsNullOrWhiteSpace(dotnetRootPath))
         {
             if (StringUtils.IsNullOrWhiteSpace(dotnetRootArchitecture))
             {
-                throw new InvalidOperationException("'VSTEST_DOTNET_ROOT_PATH' and 'VSTEST_DOTNET_ROOT_ARCHITECTURE' must be both always set. If you are seeing this error, this is a bug in dotnet SDK that sets those variables.");
+                throw new InvalidOperationException("Either 'VSTEST_DOTNET_ROOT_PATH' and 'VSTEST_DOTNET_ROOT_ARCHITECTURE', or 'DOTNET_ROOT' and autodetected architecture from dotnet.exe in that path must be both always set.");
             }
 
-            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_PATH={dotnetRootPath}");
-            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_ARCHITECTURE={dotnetRootArchitecture}");
+            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_PATH or DOTNET_ROOT={dotnetRootPath}");
+            EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_ARCHITECTURE or autodetected architecture from dotnet.exe={dotnetRootArchitecture}");
 
             if (!FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_DOTNET_ROOT_ON_NONWINDOWS))
             {
@@ -383,6 +418,17 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
 #endif
                 if (_fileHelper.Exists(testHostNextToRunner))
                 {
+                    // The testhost shipped next to the runner (together with the package's testhost.deps.json and a
+                    // synthesized runtimeconfig) is the fallback for native (C++) runners that bring no managed testhost.
+                    // A managed (.NET) source reaching here did not resolve a testhost from its own deps.json, which means
+                    // the test project is missing the Microsoft.NET.Test.Sdk reference. Don't silently run it on the
+                    // built-in testhost (it would just discover no tests) - throw and point the user at Microsoft.NET.Test.Sdk.
+                    if (!IsNativeModule(sourcePath))
+                    {
+                        string message = string.Format(CultureInfo.CurrentCulture, TestHostResources.CouldNotFindTesthost, sourcePath, sourceDirectory);
+                        throw new TestPlatformException(message);
+                    }
+
                     EqtTrace.Verbose("DotnetTestHostManager: Found testhost.dll next to runner executable: {0}.", testHostNextToRunner);
                     testHostPath = testHostNextToRunner;
 
@@ -397,12 +443,11 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                     EqtTrace.Verbose("DotnetTestHostmanager: Adding {0} in args", argsToAdd);
 
                     // Additional deps will contain relative paths, tell the process to search for the dlls also
-                    // next to the testhost.dll. The additional deps file is specially crafted to keep all the
-                    // .dlls in the root folder, by only referencing libraries, and setting the path to "/".
-                    // Without this, e.g. using the normal deps.json that is generated when testhost.dll is built,
-                    // dotnet would consider additional deps path as the root of a Nuget package source,
-                    // and would try to locate the dlls in a more complicated folder structure, and would fail to
-                    // find those dependencies.
+                    // next to the testhost.dll. testhost.deps.json is the real deps.json produced when testhost.dll
+                    // is built, shipped next to testhost.dll. Its dependency paths follow a NuGet package layout,
+                    // so on its own dotnet would look for the dlls in a nested folder structure and fail to find them.
+                    // We ship all the testhost dependencies flat next to testhost.dll and add that folder as an
+                    // additional probing path below, which lets dotnet resolve every dependency from there.
                     //
                     // If they were in the base path (where the test dll is) it would work
                     // fine, because in base folder, dotnet searches directly in that folder, but not in probing paths.
@@ -413,42 +458,15 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
 
                     if (!runtimeConfigFound)
                     {
-                        // When runtime config is not found, we don't know which version exactly should be selected for the runtime.
-                        // This can happen when the test project is .NET (Core) but does not have EXE output type, or when the dll is native.
+                        // Only native (e.g. C++) sources reach this point. A managed source that did not resolve its
+                        // own runtime config threw above and pointed the user at Microsoft.NET.Test.Sdk. A native dll
+                        // carries no target framework information, so we don't know - and don't care - which runtime
+                        // version it runs on. We point it at testhost-latest.runtimeconfig.json, which rolls forward to
+                        // the latest installed runtime, giving us the best chance of finding a runtime to launch on.
                         //
-                        // When the project is .NET (Core) we can look at the TargetFramework and gather the rough version from there. We then
-                        // provide a runtime config targetting that version. It rolls forward on the minor version by default, so the latest
-                        // version that is present will be selected in that range. Same as if you had EXE and no special settings.
-                        // E.g. the dll targets netcoreapp3.1, we get 3.1 from the attribute in the Dll, and provide testhost-3.1.runtimeconfig.json
-                        // this will resolve to 3.1.17 runtime because that is the latest installed on the system.
-                        //
-                        //
-                        // In the other case, where the Dll is native, we take the a runtime config that will roll forward to the latest version
-                        // because we don't care on which version we will run, and rolling forward gives us the best chance of findind some runtime.
-                        //
-                        //
-                        // There are 2 options how to provide the runtime version. Using --runtimeconfig, and --fx-version. The --fx-version does
-                        // not roll forward even when the --roll-forward option is provided (or --roll-forward-on-no-candidate-fx for netcoreapp2.1)
-                        // and we don't know the exact version we want to use. So the only option for us is to use the runtimeconfig.json.
-                        //
-                        //
-                        // TODO: This version check is a hack, when the target framework is figured out it tries to unify to a single common framework
-                        // even if there are incompatible frameworks (e.g any .NET Framwork assembly and any .NET (Core) assembly). Those incompatibilities
-                        // will fall back to a common default framework. And that framework (stored in Framework.DefaultFramework) depends on compile time variables
-                        // so depending on the version of vstest.console you are using, you will get a different value. This value for vstest.console.exe (under VS)
-                        // is .NET Framework 4, but for vstest.console.dll (under dotnet test) is .NET Core 1.0. Those values are also valid values, so we have no idea
-                        // if user actually provided a .NET Core 1.0 dll, or we are using fallback because we are running under vstest.console, and there is conflict,
-                        // or if user provided native dll which does not have the attribute (that we read via PEReader).
-                        //
-                        // Another aspect of this is that we are unifying the dlls, so until we add per assembly data, this would be less accurate than using runtimeconfig.json
-                        // but we can work around that by 1) changing how we schedule runners, to make sure we can process more that 1 type of assembly in vstest.console and
-                        // 2) making sure we still make the project executable (and so we actually do get runtimeconfig unless the user tries hard to not make the test and EXE).
-                        var suffix = _targetFramework.Version == "1.0.0.0" ? "latest" : $"{new Version(_targetFramework.Version).Major}.{new Version(_targetFramework.Version).Minor}";
-                        var testhostRuntimeConfig = Path.Combine(Path.GetDirectoryName(testHostNextToRunner)!, $"testhost-{suffix}.runtimeconfig.json");
-                        if (!_fileHelper.Exists(testhostRuntimeConfig))
-                        {
-                            testhostRuntimeConfig = Path.Combine(Path.GetDirectoryName(testHostNextToRunner)!, $"testhost-latest.runtimeconfig.json");
-                        }
+                        // We use --runtimeconfig rather than --fx-version because --fx-version pins an exact version and
+                        // does not roll forward (even with --roll-forward), and we don't know which version is installed.
+                        var testhostRuntimeConfig = Path.Combine(Path.GetDirectoryName(testHostNextToRunner)!, "testhost-latest.runtimeconfig.json");
 
                         argsToAdd = " --runtimeconfig " + testhostRuntimeConfig.AddDoubleQuote();
                         args += argsToAdd;
@@ -459,7 +477,8 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
 
             if (testHostPath.IsNullOrEmpty())
             {
-                throw new TestPlatformException("Could not find testhost");
+                string message = string.Format(CultureInfo.CurrentCulture, TestHostResources.CouldNotFindTesthost, sourcePath, sourceDirectory);
+                throw new TestPlatformException(message);
             }
 
             // We silently force x64 only if the target architecture is the default one and is not specified by user
@@ -498,7 +517,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 PlatformArchitecture finalTargetArchitecture = forceToX64 ? PlatformArchitecture.X64 : targetArchitecture;
                 if (!_dotnetHostHelper.TryGetDotnetPathByArchitecture(finalTargetArchitecture, muxerResolutionStrategy, out string? muxerPath))
                 {
-                    string message = string.Format(CultureInfo.CurrentCulture, Resources.NoDotnetMuxerFoundForArchitecture, $"dotnet{(_platformEnvironment.OperatingSystem == PlatformOperatingSystem.Windows ? ".exe" : string.Empty)}", finalTargetArchitecture.ToString());
+                    string message = string.Format(CultureInfo.CurrentCulture, TestHostResources.NoDotnetMuxerFoundForArchitecture, $"dotnet{(_platformEnvironment.OperatingSystem == PlatformOperatingSystem.Windows ? ".exe" : string.Empty)}", finalTargetArchitecture.ToString());
                     EqtTrace.Error(message);
                     throw new TestPlatformException(message);
                 }
@@ -601,11 +620,10 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                         }
                         else
                         {
-                            const string dotnetRoot = "DOTNET_ROOT";
-                            if (StringUtils.IsNullOrWhiteSpace(_environmentVariableHelper.GetEnvironmentVariable(dotnetRoot)))
-                            {
-                                startInfo.EnvironmentVariables.Add(dotnetRoot, dotnetRootPath);
-                            }
+                            // If the architecture is not x86 and the testhost does not understand the architecture
+                            // specific DOTNET_ROOT_<ARCH>, we have to re-insert the more generic DOTNET_ROOT. Use the
+                            // indexer (not Add) because the architecture-less DOTNET_ROOT was cleared to empty above.
+                            startInfo.EnvironmentVariables["DOTNET_ROOT"] = dotnetRootPath;
                         }
                     }
                 }
@@ -699,22 +717,99 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                    new Version(_targetFramework.Version).Major < 5 &&
                    !IsNativeModule(sourcePath);
         }
+    }
 
-        bool IsNativeModule(string modulePath)
+    /// <summary>
+    /// Determines whether the given module is a native (unmanaged) binary, such as a C++ CppUnitTestFramework test dll.
+    /// </summary>
+    /// <remarks>
+    /// Native sources have no managed (CLI) metadata, or are not IL-only (mixed mode). They legitimately have no
+    /// deps.json and rely on the testhost shipped next to the runner, so callers treat them leniently. If the module
+    /// cannot be read we cannot prove it is native, so we assume managed.
+    /// </remarks>
+    internal virtual bool IsNativeModule(string modulePath)
+    {
+        // Scenario: dotnet test nativeArm64.dll for CppUnitTestFramework
+        try
         {
-            // Scenario: dotnet test nativeArm64.dll for CppUnitTestFramework
-            // If the dll is native and we're not running in process(vstest.console.exe)
-            // the expected target framework is ".NETCoreApp,Version=v1.0".
-            // In this case we don't want to force x64 architecture
-            using var assemblyStream = _fileHelper.GetStream(sourcePath, FileMode.Open, FileAccess.Read);
+            using var assemblyStream = _fileHelper.GetStream(modulePath, FileMode.Open, FileAccess.Read);
             using var peReader = new PEReader(assemblyStream);
             if (!peReader.HasMetadata || (peReader.PEHeaders.CorHeader?.Flags & CorFlags.ILOnly) == 0)
             {
-                EqtTrace.Verbose($"DotnetTestHostmanager.IsNativeModule: Source '{sourcePath}' is native.");
+                EqtTrace.Verbose($"DotnetTestHostManager.IsNativeModule: Source '{modulePath}' is native.");
                 return true;
             }
+        }
+        catch (Exception ex)
+        {
+            EqtTrace.Verbose($"DotnetTestHostManager.IsNativeModule: Failed to read '{modulePath}', assuming managed. {ex}");
+        }
 
+        return false;
+    }
+
+    /// <summary>
+    /// Looks up an environment variable that the caller explicitly set for the testhost (i.e. one present in
+    /// <paramref name="startInfo"/>'s <see cref="TestProcessStartInfo.EnvironmentVariables"/>, typically coming from
+    /// runsettings <c>&lt;EnvironmentVariables&gt;</c>). The lookup is case-insensitive to match how environment
+    /// variables are resolved on Windows, which is the only platform where the architecture specific apphosts handled
+    /// here exist. Returns <see langword="true"/> when the variable was provided (even when its value is
+    /// <see langword="null"/> or empty, i.e. explicitly cleared).
+    /// </summary>
+    private static bool TryGetTestHostEnvironmentVariable(TestProcessStartInfo startInfo, string name, out string? value)
+    {
+        value = null;
+        if (startInfo.EnvironmentVariables is null)
+        {
             return false;
+        }
+
+        foreach (var environmentVariable in startInfo.EnvironmentVariables)
+        {
+            if (string.Equals(environmentVariable.Key, name, StringComparison.OrdinalIgnoreCase))
+            {
+                value = environmentVariable.Value;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Gets the architecture of a Windows PE executable (e.g. the dotnet muxer) by reading its COFF header, or
+    /// <see langword="null"/> when the architecture cannot be determined (e.g. file missing or not a Windows PE).
+    /// </summary>
+    internal virtual PlatformArchitecture? GetExecutableArchitecture(string executablePath)
+    {
+        // The architecture specific apphosts we handle here only exist on Windows, so we only need to read the
+        // Windows PE header.
+        if (_platformEnvironment.OperatingSystem != PlatformOperatingSystem.Windows
+            || !_fileHelper.Exists(executablePath))
+        {
+            return null;
+        }
+
+        try
+        {
+            // Open with FileShare.Read so the probe is resilient when the muxer (dotnet.exe) is currently running,
+            // which is common on dev boxes and CI. The default FileShare.None overload would fail to open a file in
+            // use and silently skip normalization, leaving the original architecture mismatch in place.
+            using var stream = _fileHelper.GetStream(executablePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var peReader = new PEReader(stream);
+            return peReader.PEHeaders.CoffHeader.Machine switch
+            {
+                Machine.Amd64 => PlatformArchitecture.X64,
+                Machine.Arm64 => PlatformArchitecture.ARM64,
+                Machine.Arm => PlatformArchitecture.ARM,
+                Machine.I386 => PlatformArchitecture.X86,
+                _ => (PlatformArchitecture?)null,
+            };
+        }
+        catch (Exception ex)
+        {
+            EqtTrace.Verbose($"DotnetTestHostManager.GetExecutableArchitecture: Failed to read architecture from '{executablePath}': {ex.Message}");
+            return null;
         }
     }
 
@@ -954,34 +1049,43 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 {
 #if NETCOREAPP
                     using var doc = JsonDocument.Parse(stream);
-                    var runtimeOptions = doc.RootElement.GetProperty("runtimeOptions");
-                    var additionalProbingPaths = runtimeOptions.GetProperty("additionalProbingPaths");
-                    foreach (var x in additionalProbingPaths.EnumerateArray())
-                    {
-                        EqtTrace.Verbose("DotnetTestHostmanager: Looking for path {0} in folder {1}", testHostPath, x.GetString());
-                        string testHostFullPath;
-                        try
-                        {
-                            testHostFullPath = Path.Combine(x.GetString()!, testHostPath);
-                        }
-                        catch (ArgumentException)
-                        {
-                            // https://github.com/Microsoft/vstest/issues/847
-                            // skip any invalid paths and continue checking the others
-                            continue;
-                        }
 
-                        if (_fileHelper.Exists(testHostFullPath))
+                    if (doc.RootElement.TryGetProperty("runtimeOptions", out var runtimeOptions) &&
+                        runtimeOptions.TryGetProperty("additionalProbingPaths", out var additionalProbingPaths))
+                    {
+                        foreach (var x in additionalProbingPaths.EnumerateArray())
                         {
-                            EqtTrace.Verbose("DotnetTestHostmanager: Found testhost.dll in {0}", testHostFullPath);
-                            return testHostFullPath;
+                            EqtTrace.Verbose("DotnetTestHostmanager: Looking for path {0} in folder {1}", testHostPath, x.GetString());
+                            string testHostFullPath;
+                            try
+                            {
+                                testHostFullPath = Path.Combine(x.GetString()!, testHostPath);
+                            }
+                            catch (ArgumentException)
+                            {
+                                // https://github.com/Microsoft/vstest/issues/847
+                                // skip any invalid paths and continue checking the others
+                                continue;
+                            }
+
+                            if (_fileHelper.Exists(testHostFullPath))
+                            {
+                                EqtTrace.Verbose("DotnetTestHostmanager: Found testhost.dll in {0}", testHostFullPath);
+                                return testHostFullPath;
+                            }
                         }
                     }
 #else
                     using var reader = new StreamReader(stream);
                     var parsed = Json.Deserialize(reader) as IDictionary<string, object>;
-                    var runtimeOpts = parsed?["runtimeOptions"] as IDictionary<string, object>;
-                    var probingPaths = runtimeOpts?["additionalProbingPaths"] as IList<object>;
+                    var runtimeOpts = parsed is not null && parsed.TryGetValue("runtimeOptions", out var runtimeOptsObj)
+                        ? runtimeOptsObj as IDictionary<string, object>
+                        : null;
+
+                    var probingPaths = runtimeOpts is not null && runtimeOpts.TryGetValue("additionalProbingPaths", out var probingPathsObj)
+                        ? probingPathsObj as IList<object>
+                        : null;
+
                     if (probingPaths is not null)
                     {
                         foreach (var x in probingPaths)

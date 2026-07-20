@@ -33,9 +33,7 @@ public class SqlClientTraceInstrumentationOptions
     internal SqlClientTraceInstrumentationOptions(IConfiguration configuration)
     {
 #if NET
-        Debug.Assert(configuration != null, "configuration was null");
-
-        if (configuration!.TryGetBoolValue(
+        if (configuration.TryGetBoolValue(
                 SqlClientInstrumentationEventSource.Log,
                 ContextPropagationLevelEnvVar,
                 out var enableTraceContextPropagation))
@@ -43,7 +41,7 @@ public class SqlClientTraceInstrumentationOptions
             this.EnableTraceContextPropagation = enableTraceContextPropagation;
         }
 
-        if (configuration!.TryGetBoolValue(
+        if (configuration.TryGetBoolValue(
                 SqlClientInstrumentationEventSource.Log,
                 SetDbQueryParametersEnvVar,
                 out var setDbQueryParameters))

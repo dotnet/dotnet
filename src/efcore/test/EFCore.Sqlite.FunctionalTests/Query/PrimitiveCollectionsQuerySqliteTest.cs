@@ -426,7 +426,7 @@ SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE (
     SELECT COUNT(*)
-    FROM (SELECT CAST(@i AS INTEGER) AS "Value") AS "v"
+    FROM (SELECT @i AS "Value") AS "v"
     WHERE "v"."Value" > "p"."Id") = 1
 """);
     }
@@ -981,8 +981,8 @@ WHERE (
         => base.Parameter_collection_Count_with_huge_number_of_values_over_5_operations_same_parameter();
 
     // nothing to test here
-    public override Task Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping()
-        => base.Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping();
+    public override Task Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_property()
+        => base.Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_property();
 
     // nothing to test here
     public override Task Parameter_collection_Count_with_huge_number_of_values_over_5_operations_mixed_parameters_constants()
@@ -1001,8 +1001,8 @@ WHERE (
         => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_same_parameter();
 
     // nothing to test here
-    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping()
-        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping();
+    public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_property()
+        => base.Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_property();
 
     // nothing to test here
     public override Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_5_operations_forced_constants()
@@ -1522,7 +1522,7 @@ LIMIT 2
 """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public override Task Multidimensional_array_is_not_supported()
         => base.Multidimensional_array_is_not_supported();
 
@@ -1560,6 +1560,30 @@ WHERE "p"."Int" IN (10, 999)
 SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
 FROM "PrimitiveCollectionsEntity" AS "p"
 WHERE "p"."Int" IN (10, 999)
+""");
+    }
+
+    public override async Task Min_on_MemoryExtensions()
+    {
+        await base.Min_on_MemoryExtensions();
+
+        AssertSql(
+            """
+SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
+FROM "PrimitiveCollectionsEntity" AS "p"
+WHERE min(30, "p"."Int") = 30
+""");
+    }
+
+    public override async Task Max_on_MemoryExtensions()
+    {
+        await base.Max_on_MemoryExtensions();
+
+        AssertSql(
+            """
+SELECT "p"."Id", "p"."Bool", "p"."Bools", "p"."DateTime", "p"."DateTimes", "p"."Enum", "p"."Enums", "p"."Int", "p"."Ints", "p"."NullableInt", "p"."NullableInts", "p"."NullableString", "p"."NullableStrings", "p"."NullableWrappedId", "p"."NullableWrappedIdWithNullableComparer", "p"."String", "p"."Strings", "p"."WrappedId"
+FROM "PrimitiveCollectionsEntity" AS "p"
+WHERE max(30, "p"."Int") = 30
 """);
     }
 
@@ -2053,6 +2077,12 @@ WHERE (
             SqliteStrings.ApplyNotSupported,
             (await Assert.ThrowsAsync<InvalidOperationException>(() => base.Column_collection_SelectMany())).Message);
 
+    public override async Task Inline_collection_SelectMany_with_unreferenced_collection_value()
+        => Assert.Equal(
+            SqliteStrings.ApplyNotSupported,
+            (await Assert.ThrowsAsync<InvalidOperationException>(
+                () => base.Inline_collection_SelectMany_with_unreferenced_collection_value())).Message);
+
     public override async Task Column_collection_SelectMany_with_filter()
         => Assert.Equal(
             SqliteStrings.ApplyNotSupported,
@@ -2109,7 +2139,7 @@ WHERE (
 """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public override async Task Parameter_collection_Concat_column_collection()
     {
         // Issue #32561
@@ -2619,7 +2649,7 @@ WHERE json_array_length("b"."Ints") > 0
 """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Empty_string_used_for_primitive_collection_throws()
     {
         await using var connection = new SqliteConnection("DataSource=:memory:");
@@ -2814,7 +2844,7 @@ WHERE (
         return optionsBuilder;
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 

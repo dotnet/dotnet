@@ -127,6 +127,16 @@
   <data name="SuggestPublishTestProject" xml:space="preserve">
     <value>Unable to find {0}. Please publish your test project and retry.</value>
   </data>
+  <data name="CouldNotFindTesthost" xml:space="preserve">
+    <value>Could not find testhost for test source '{0}'.
+
+Verify that:
+  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
+  - The project has been built and the output is in '{1}'.
+  - The project's target framework matches the installed .NET runtime.
+</value>
+    <comment>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</comment>
+  </data>
   <data name="NoDotnetMuxerFoundForArchitecture" xml:space="preserve">
     <value>Could not find '{0}' host for the '{1}' architecture.
 
@@ -136,5 +146,10 @@ The specified framework can be found at:
   - https://aka.ms/dotnet-download
 </value>
     <comment>'{0}' is the placeholder for 'dotnet.exe' or 'dotnet' value and depends on platform Windows/Unix, '{1}' is the placeholder for the architeture name like ARM64, X64 etc...</comment>
+  </data>
+  <data name="NetFrameworkTestsNotSupportedOnNonWindows" xml:space="preserve">
+    <value>Running .NET Framework tests is supported on Windows only.
+
+Running .NET Framework tests on this operating system relied on Mono, which is no longer supported. To run these tests, run them on Windows, or change the test project to target .NET instead of .NET Framework.</value>
   </data>
 </root>

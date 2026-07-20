@@ -153,8 +153,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ExceptionWhenTryingToAddSource">
-        <source>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</source>
-        <target state="translated">Ausnahme "{0}" beim Versuch, die Quelle "{1}" hinzuzufügen. Bitte überprüfen Sie, ob alle Onlinepaketquellen verfügbar sind.</target>
+        <source>Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</source>
+        <target state="translated">Ausnahme „{0}“ beim Versuch, die Quelle „{1}“ hinzuzufügen. Überprüfen Sie, ob alle Onlinepaketquellen verfügbar sind.</target>
         <note />
       </trans-unit>
       <trans-unit id="FileConflictMessage">
@@ -273,8 +273,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundInPrimarySources">
-        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</source>
-        <target state="translated">Das Paket "{0}" wurde in den folgenden primären Quellen nicht gefunden: "{1}". Bitte überprüfen Sie, ob Ihre Onlinepaketquellen verfügbar sind bzw. die Paket-ID und die Version richtig angegeben wurden.</target>
+        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</source>
+        <target state="translated">Das Paket „{0}“ wurde in den folgenden primären Quellen nicht gefunden: „{1}“. Überprüfen Sie, ob Ihre Onlinepaketquellen verfügbar sind und ob die Paket-ID und die Version richtig angegeben wurden.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundOnSource">
@@ -400,8 +400,8 @@
         <note>0 - new line separated list of errors</note>
       </trans-unit>
       <trans-unit id="SolutionDirectoryNotAvailable">
-        <source>Solution is not opened or not saved. Please ensure you have an open and saved solution.</source>
-        <target state="translated">Die Projektmappe ist nicht geöffnet oder wurde nicht gespeichert. Bitte stellen Sie sicher, dass Sie über eine geöffnete und gespeicherte Projektmappe verfügen.</target>
+        <source>Solution is not opened or not saved. Ensure you have an open and saved solution.</source>
+        <target state="translated">Die Lösung ist nicht geöffnet oder wurde nicht gespeichert. Stellen Sie sicher, dass Sie über eine geöffnete und gespeicherte Lösung verfügen.</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionManagerNotAvailableForUninstall">
@@ -443,8 +443,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UnableToGatherPackageFromSource">
-        <source>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </source>
-        <target state="translated">Das Paket "{0}" konnte nicht aus der Quelle "{1}" abgerufen werden. Bitte überprüfen Sie, ob alle Onlinepaketquellen verfügbar sind. </target>
+        <source>Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</source>
+        <target state="translated">Das Paket „{0}“ konnte nicht aus der Quelle „{1}“ abgerufen werden. Überprüfen Sie, ob alle Onlinepaketquellen verfügbar sind.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToResolveDependencyInfo">

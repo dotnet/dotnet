@@ -7,7 +7,7 @@ using OpenTelemetry.Internal;
 namespace OpenTelemetry.Resources.Container;
 
 [EventSource(Name = "OpenTelemetry-Resources-Container")]
-internal class ContainerExtensionsEventSource : EventSource
+internal sealed class ContainerExtensionsEventSource : EventSource
 {
     public static ContainerExtensionsEventSource Log = new();
 

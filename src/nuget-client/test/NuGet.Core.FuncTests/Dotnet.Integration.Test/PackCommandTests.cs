@@ -86,6 +86,56 @@ namespace Dotnet.Integration.Test
             }
         }
 
+        // Other platforms may not have the same file locking behavior as Windows, so this test is only run on Windows.
+        [PlatformFact(Platform.Windows)]
+        public void Pack_DoesNotLeakSourceFileHandle()
+        {
+            // Arrange
+            using (var testDirectory = _dotnetFixture.CreateTestDirectory())
+            {
+                var projectName = "ClassLibrary1";
+                var workingDirectory = Path.Combine(testDirectory, projectName);
+                var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+
+                _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, "classlib", testOutputHelper: _testOutputHelper);
+
+                // A physical file included in the package. PhysicalPackageFile.GetStream() returns
+                // File.OpenRead(SourcePath), so the leaked handle locks this very file on disk.
+                File.WriteAllText(Path.Combine(workingDirectory, "signme.txt"), "original content to be signed");
+                File.WriteAllText(Path.Combine(workingDirectory, "signed.txt"), "signed content");
+
+                using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    var xml = XDocument.Load(stream);
+
+                    ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFramework", TestConstants.ProjectTargetFramework);
+                    ProjectFileUtils.AddProperty(xml, "Deterministic", "true");
+
+                    var itemGroupXml = @"<ItemGroup>
+    <None Include=""signme.txt"" Pack=""True"" PackagePath=""contentFiles/any/any/"" />
+  </ItemGroup>";
+                    // Simulate the signing step that copies signed files over the originals after pack.
+                    var signingTargetXml = @"<Target Name=""SimulateSigningOverwrite"" AfterTargets=""Pack"">
+    <Copy SourceFiles=""$(MSBuildProjectDirectory)/signed.txt""
+          DestinationFiles=""$(MSBuildProjectDirectory)/signme.txt""
+          OverwriteReadOnlyFiles=""true"" />
+  </Target>";
+                    ProjectFileUtils.AddCustomXmlToProjectRoot(xml, itemGroupXml);
+                    ProjectFileUtils.AddCustomXmlToProjectRoot(xml, signingTargetXml);
+                    ProjectFileUtils.WriteXmlToFile(xml, stream);
+                }
+
+                _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+
+                // Act & Assert
+                // With the handle leak, the post-pack Copy fails with a file-in-use/sharing-violation
+                // because PackTask still holds an open read handle on signme.txt, so pack exits non-zero.
+                var result = _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"/p:PackageOutputPath={workingDirectory}", testOutputHelper: _testOutputHelper);
+
+                Assert.Equal("signed content", File.ReadAllText(Path.Combine(workingDirectory, "signme.txt")));
+            }
+        }
+
         [PlatformFact(Platform.Windows)]
         public void PackCommand_NewProject_OutputsInDefaultPaths()
         {
@@ -3241,7 +3291,7 @@ namespace ClassLibrary
                         xml,
                         itemType,
                         "abc.png",
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
 
@@ -4347,7 +4397,7 @@ namespace ClassLibrary
                         xml,
                         "None",
                         licenseFileName,
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
@@ -4449,7 +4499,7 @@ namespace ClassLibrary
                         xml,
                         "None",
                         realLicenseFileName,
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
 
@@ -4608,7 +4658,7 @@ namespace ClassLibrary
                         xml,
                         "None",
                         licenseFileName,
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
@@ -4692,7 +4742,7 @@ namespace ClassLibrary
                         xml,
                         "None",
                         licenseFileName,
-                        NuGetFramework.AnyFramework,
+                        string.Empty,
                         properties,
                         attributes);
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
@@ -4951,9 +5001,13 @@ namespace ClassLibrary
             }
         }
 
-        [PlatformFact(Platform.Windows, Skip = "https://github.com/NuGet/Home/issues/8601")]
+        [PlatformFact(Platform.Windows)]
         public void PackCommand_Deterministic_MultiplePackInvocations_CreateIdenticalPackages()
         {
+            var deterministicTimestamp = new DateTimeOffset(year: 2020, month: 1, day: 1,
+                                                            hour: 0, minute: 0, second: 0,
+                                                            offset: TimeSpan.Zero);
+
             using (var testDirectory = _dotnetFixture.CreateTestDirectory())
             {
                 var projectName = "ClassLibrary1";
@@ -4965,6 +5019,7 @@ namespace ClassLibrary
                 {
                     var xml = XDocument.Load(stream);
                     ProjectFileUtils.AddProperty(xml, "Deterministic", "true");
+                    ProjectFileUtils.AddProperty(xml, "DeterministicTimestamp", deterministicTimestamp.ToString("o"));
                     ProjectFileUtils.WriteXmlToFile(xml, stream);
                 }
 
@@ -5002,6 +5057,105 @@ namespace ClassLibrary
                 }
                 // Assert
                 Assert.Equal(packageBytes[0], packageBytes[1]);
+            }
+        }
+
+        [Fact]
+        public void PackCommand_Deterministic_MultiplePackInvocationsAgainstNuspecWithGlobs_CreateIdenticalPackages()
+        {
+            var deterministicTimestamp = new DateTimeOffset(year: 2020, month: 1, day: 1,
+                                                            hour: 0, minute: 0, second: 0,
+                                                            offset: TimeSpan.Zero);
+
+            using (var testDirectory = _dotnetFixture.CreateTestDirectory())
+            {
+                var projectName = "ClassLibrary1";
+                var workingDirectory = Path.Combine(testDirectory, projectName);
+                _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
+
+                var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+                using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    var xml = XDocument.Load(stream);
+                    ProjectFileUtils.AddProperty(xml, "Deterministic", "true");
+                    ProjectFileUtils.AddProperty(xml, "DeterministicTimestamp", deterministicTimestamp.ToString("o"));
+                    ProjectFileUtils.WriteXmlToFile(xml, stream);
+                }
+
+                var nuspecXml = @"
+<package xmlns=""http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"">
+    <metadata>
+        <id>ClassLibrary1</id>
+        <version>1.0.0</version>
+        <description>Foo Bar</description>
+        <authors>Foo Bar Baz</authors>
+    </metadata>
+    <files>
+      <file src=""content/**/file1"" target=""content/"" />
+      <file src=""content/**/file2"" target=""content/"" />
+      <file src=""content/**/file3"" target=""content/"" />
+    </files>
+</package>";
+                var nuspecFile = Path.Combine(workingDirectory, $"{projectName}.nuspec");
+                File.WriteAllText(nuspecFile, nuspecXml);
+
+                var contentDirectory = Path.Combine(workingDirectory, "content");
+                Directory.CreateDirectory(contentDirectory);
+                foreach (var directory in new[] { "dir1", "dir2", "dir3" })
+                {
+                    var subcontentDirectory = Path.Combine(contentDirectory, directory);
+                    Directory.CreateDirectory(subcontentDirectory);
+                    foreach (var file in new[] { "file1", "file2", "file3" })
+                    {
+                        // Write deterministic contents
+                        File.WriteAllText(Path.Combine(subcontentDirectory, $"{file}"), $"{directory},{file}");
+                    }
+                }
+
+                _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+
+                var iterations = 5;
+                byte[][] packageBytes = new byte[iterations][];
+
+                for (var i = 0; i < iterations; i++)
+                {
+                    var packageOutputPath = Path.Combine(workingDirectory, i.ToString());
+                    var nupkgPath = Path.Combine(packageOutputPath, $"{projectName}.1.0.0.nupkg");
+
+                    // Every iteration, recreate everything in a random order
+
+                    Directory.Delete(contentDirectory, recursive: true);
+                    Directory.CreateDirectory(contentDirectory);
+
+                    foreach (var directory in new[] { "dir1", "dir2", "dir3" }.OrderBy(_ => Random.Shared.Next()))
+                    {
+                        var subcontentDirectory = Path.Combine(contentDirectory, directory);
+                        Directory.CreateDirectory(subcontentDirectory);
+                        foreach (var file in new[] { "file1", "file2", "file3" }.OrderBy(_ => Random.Shared.Next()))
+                        {
+                            // Write deterministic contents
+                            File.WriteAllText(Path.Combine(subcontentDirectory, $"{file}"), $"{directory},{file}");
+                        }
+                    }
+
+                    // Act
+                    _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"-p:NuspecFile={nuspecFile} -p:NuspecBasePath={workingDirectory} -o {packageOutputPath}", testOutputHelper: _testOutputHelper);
+
+                    Assert.True(File.Exists(nupkgPath), "The output .nupkg is not in the expected place");
+
+                    using (var reader = new FileStream(nupkgPath, FileMode.Open))
+                    using (var ms = new MemoryStream())
+                    {
+                        reader.CopyTo(ms);
+                        packageBytes[i] = ms.ToArray();
+                    }
+                }
+
+                // Assert
+                for (var i = 1; i < iterations; i++)
+                {
+                    Assert.Equal(packageBytes[0], packageBytes[i]);
+                }
             }
         }
 
@@ -6558,6 +6712,33 @@ namespace ClassLibrary
             ProjectFileUtils.AddProperties(xml, bananaProps, " '$(TargetFramework)' == 'banana' ");
 
             ProjectFileUtils.WriteXmlToFile(xml, stream);
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void PackCommand_PackageIdWithNonAsciiCharacters_NU5052()
+        {
+            using var testDirectory = _dotnetFixture.CreateTestDirectory();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(testDirectory, projectName);
+
+            _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+
+            using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddProperty(xml, "PackageId", "Contöso.Utilities");
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
+            var result = _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"-o {workingDirectory}", testOutputHelper: _testOutputHelper);
+
+#if SDK_NEXT
+            result.AllOutput.Should().Contain("NU5052");
+#else
+            result.AllOutput.Should().NotContain("NU5052");
+#endif
         }
     }
 }

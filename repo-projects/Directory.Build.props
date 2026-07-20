@@ -7,28 +7,7 @@
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
     <UseBootstrapArcade Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</UseBootstrapArcade>
 
-    <!-- MSBuild -mt mode configuration.
-         UseMSBuildMT controls whether this repository builds with -mt flag when DotNetBuildMT=true.
-         
-         Default exclusions are defined here so local builds match CI behavior.
-         Override via MSBuild property /p:MSBuildMTExcludedReposOverride=... or
-         MSBUILD_MT_EXCLUDED_REPOS environment variable (colon-separated for bash compatibility).
-         
-         Priority (highest to lowest):
-         1. Per-repo .proj file setting <UseMSBuildMT>false</UseMSBuildMT>
-         2. MSBuildMTExcludedReposOverride MSBuild property
-         3. MSBUILD_MT_EXCLUDED_REPOS environment variable override
-         4. Default exclusion list below
-         5. Default: enabled for all repos
-    -->
-    <_MSBuildMTExcludedRepos>arcade;runtime;roslyn;aspnetcore;sdk;efcore;winforms;wpf;razor;source-build-reference-packages</_MSBuildMTExcludedRepos>
-    <!-- Allow override via MSBuild property (e.g. /p:MSBuildMTExcludedReposOverride=...) or environment variable -->
-    <_MSBuildMTExcludedRepos Condition="'$(MSBuildMTExcludedReposOverride)' != ''">$(MSBuildMTExcludedReposOverride)</_MSBuildMTExcludedRepos>
-    <_MSBuildMTExcludedReposOverride>$([System.Environment]::GetEnvironmentVariable('MSBUILD_MT_EXCLUDED_REPOS'))</_MSBuildMTExcludedReposOverride>
-    <_MSBuildMTExcludedRepos Condition="'$(_MSBuildMTExcludedReposOverride)' != ''">$(_MSBuildMTExcludedReposOverride.Replace(':',';'))</_MSBuildMTExcludedRepos>
-    <!-- Use same pattern as UseBootstrapArcade check above -->
-    <UseMSBuildMT Condition="'$(UseMSBuildMT)' == '' and $([System.String]::new(';$(_MSBuildMTExcludedRepos);').Contains(';$(RepositoryName);'))">false</UseMSBuildMT>
-    <UseMSBuildMT Condition="'$(UseMSBuildMT)' == ''">true</UseMSBuildMT>
+    <RepoSharedCompilationId Condition="'$(RepoSharedCompilationId)' == ''">dotnet-vmr-$(RepositoryName)-$([System.Guid]::NewGuid().ToString('N'))</RepoSharedCompilationId>
 
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
@@ -136,13 +115,16 @@
     <CommonArgs Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">$(CommonArgs) /p:DotNetBuildPass=$(DotNetBuildPass)</CommonArgs>
 
     <!-- Only pass these properites through when necessary to reduce command line noise. -->
-    <CommonArgs Condition="'$(CrossBuild)' == 'true'">$(CommonArgs) /p:CrossBuild=true</CommonArgs>
     <CommonArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">$(CommonArgs) /p:DotNetBuildUseMonoRuntime=$(DotNetBuildUseMonoRuntime)</CommonArgs>
     <CommonArgs Condition="'$(OfficialBuildId)' != ''">$(CommonArgs) /p:OfficialBuildId=$(OfficialBuildId)</CommonArgs>
     <CommonArgs Condition="'$(OfficialBuilder)' != ''">$(CommonArgs) /p:OfficialBuilder="$(OfficialBuilder)"</CommonArgs>
     <CommonArgs Condition="'$(ForceDryRunSigning)' != ''">$(CommonArgs) /p:ForceDryRunSigning=$(ForceDryRunSigning)</CommonArgs>
     <CommonArgs Condition="'$(DotNetSignType)' != ''">$(CommonArgs) /p:DotNetSignType=$(DotNetSignType)</CommonArgs>
     <CommonArgs Condition="'$(KeepNativeSymbols)' != ''">$(CommonArgs) /p:KeepNativeSymbols=$(KeepNativeSymbols)</CommonArgs>
+
+    <!-- Mobile builds and windows host (for Android-on-windows etc.) are never "cross" builds as they don't have a rootfs-based filesystem build. -->
+    <TargetsMobile Condition="'$(TargetOS)' == 'ios' or '$(TargetOS)' == 'iossimulator' or '$(TargetOS)' == 'maccatalyst' or '$(TargetOS)' == 'tvos' or '$(TargetOS)' == 'tvossimulator' or '$(TargetOS)' == 'android' or '$(TargetOS)' == 'browser' or '$(TargetOS)' == 'wasi'">true</TargetsMobile>
+    <CommonArgs Condition="'$(CrossBuild)' == 'true' or ('$(TargetOS)-$(TargetArchitecture)' != '$(BuildOS)-$(BuildArchitecture)' and '$(TargetsMobile)' != 'true' and '$(TargetOS)' != 'windows' and '$(TargetOS)' != 'linux-bionic')">$(CommonArgs) /p:CrossBuild=true</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)</CommonArgs>
 
@@ -214,9 +196,18 @@
     <EnvironmentVariables Include="MSBUILDDEBUGPATH=$(ArtifactsLogRepoDir)" />
   </ItemGroup>
 
-  <!-- Enable MSBuild -mt mode when DotNetBuildMT is set and the repository hasn't opted out -->
-  <ItemGroup Condition="'$(DotNetBuildMT)' == 'true' and '$(UseMSBuildMT)' != 'false'">
+  <!-- Enable MSBuild -mt mode when DotNetBuildMT is true -->
+  <ItemGroup Condition="'$(DotNetBuildMT)' == 'true'">
     <EnvironmentVariables Include="MSBUILD_MT_ENABLED=1" />
+  </ItemGroup>
+
+  <!-- NOTE: This is for internal testing only; real CI should not have node reuse.
+       Follow-up to replace this env var with a proper switch: https://github.com/dotnet/arcade/issues/17013
+       Enable MSBuild node reuse when DotNetBuildNodeReuse is set and the repository hasn't opted out.
+       By default CI builds force nodeReuse=false; opting in keeps the worker MSBuild nodes alive
+       between invocations. A repository can opt out by setting <UseNodeReuse>false</UseNodeReuse>. -->
+  <ItemGroup Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(UseNodeReuse)' != 'false'">
+    <EnvironmentVariables Include="MSBUILD_NODEREUSE_ENABLED=1" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">

@@ -36,7 +36,7 @@ namespace System.IdentityModel.Tokens.Jwt
             // Set the maximum number of segments to MaxJwtSegmentCount + 1. This controls the number of splits and allows detecting the number of segments is too large.
             // For example: "a.b.c.d.e.f.g.h" => [a], [b], [c], [d], [e], [f.g.h]. 6 segments.
             // If just MaxJwtSegmentCount was used, then [a], [b], [c], [d], [e.f.g.h] would be returned. 5 segments.
-            string[] tokenParts = jwtEncodedString.Split(new char[] {'.'}, JwtConstants.MaxJwtSegmentCount + 1);
+            string[] tokenParts = jwtEncodedString.Split(new char[] { '.' }, JwtConstants.MaxJwtSegmentCount + 1);
             if (tokenParts.Length == JwtConstants.JwsSegmentCount)
             {
                 if (!JwtTokenUtilities.RegexJws.IsMatch(jwtEncodedString))
@@ -292,7 +292,8 @@ namespace System.IdentityModel.Tokens.Jwt
         /// This property can be null if the content type of the most inner token is unrecognized, in that case
         ///  the content of the token is the string returned by PlainText property.
         /// </summary>
-        public JwtPayload Payload {
+        public JwtPayload Payload
+        {
             get
             {
                 if (InnerToken != null)
@@ -396,7 +397,7 @@ namespace System.IdentityModel.Tokens.Jwt
         /// </summary>
         public EncryptingCredentials EncryptingCredentials
         {
-            get { return Header.EncryptingCredentials;  }
+            get { return Header.EncryptingCredentials; }
         }
 
         /// <summary>
@@ -446,7 +447,7 @@ namespace System.IdentityModel.Tokens.Jwt
                 return DateTime.MinValue;
             }
         }
-		
+
         /// <summary>
         /// Gets the 'value' of the 'issued at' claim { iat, 'value' } converted to a <see cref="DateTime"/> assuming 'value' is seconds since UnixEpoch (UTC 1970-01-01T0:0:0Z).
         /// </summary>

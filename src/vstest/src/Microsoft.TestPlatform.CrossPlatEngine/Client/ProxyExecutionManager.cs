@@ -32,16 +32,13 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 /// </summary>
 internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInternalTestRunEventsHandler
 {
-    private readonly TestSessionInfo? _testSessionInfo;
-    private readonly Func<string, ProxyExecutionManager, ProxyOperationManager>? _proxyOperationManagerCreator;
     private readonly IFileHelper _fileHelper;
     private readonly IDataSerializer _dataSerializer;
-    private readonly bool _debugEnabledForTestSession;
 
     private List<string>? _testSources;
-    private ITestRuntimeProvider? _testHostManager;
+    private readonly ITestRuntimeProvider? _testHostManager;
     private bool _isCommunicationEstablished;
-    private ProxyOperationManager? _proxyOperationManager;
+    private readonly ProxyOperationManager? _proxyOperationManager;
     private IInternalTestRunEventsHandler? _baseTestRunEventsHandler;
     private bool _skipDefaultAdapters;
 
@@ -63,32 +60,6 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
             TPDebug.Assert(_proxyOperationManager is not null, "_proxyOperationManager is null");
             _proxyOperationManager.CancellationTokenSource = value;
         }
-    }
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ProxyExecutionManager"/> class.
-    /// </summary>
-    ///
-    /// <param name="testSessionInfo">The test session info.</param>
-    /// <param name="proxyOperationManagerCreator">The proxy operation manager creator.</param>
-    /// <param name="debugEnabledForTestSession">
-    /// A flag indicating if debugging should be enabled or not.
-    /// </param>
-    public ProxyExecutionManager(
-        TestSessionInfo testSessionInfo,
-        Func<string, ProxyExecutionManager, ProxyOperationManager> proxyOperationManagerCreator,
-        bool debugEnabledForTestSession)
-    {
-        // Filling in test session info and proxy information.
-        _testSessionInfo = testSessionInfo;
-        _proxyOperationManagerCreator = proxyOperationManagerCreator;
-
-        // This should be set to enable debugging when we have test session info available.
-        _debugEnabledForTestSession = debugEnabledForTestSession;
-
-        _testHostManager = null;
-        _dataSerializer = JsonDataSerializer.Instance;
-        _fileHelper = new FileHelper();
-        _isCommunicationEstablished = false;
     }
 
     /// <summary>
@@ -159,22 +130,7 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
 
     public virtual void InitializeTestRun(TestRunCriteria testRunCriteria, IInternalTestRunEventsHandler eventHandler)
     {
-        if (_proxyOperationManager == null)
-        {
-            // In case we have an active test session, we always prefer the already
-            // created proxies instead of the ones that need to be created on the spot.
-            var sources = testRunCriteria.HasSpecificTests
-                ? TestSourcesUtility.GetSources(testRunCriteria.Tests)
-                : testRunCriteria.Sources;
-
-            TPDebug.Assert(_proxyOperationManagerCreator is not null, "_proxyOperationManagerCreator is null");
-            TPDebug.Assert(sources is not null, "sources is null");
-            _proxyOperationManager = _proxyOperationManagerCreator(
-                sources.First(),
-                this);
-
-            _testHostManager = _proxyOperationManager.TestHostManager;
-        }
+        TPDebug.Assert(_proxyOperationManager is not null, "_proxyOperationManager is null");
 
         _baseTestRunEventsHandler = eventHandler;
         try
@@ -255,11 +211,8 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
                     areTestCaseLevelEventsRequired: false,
                     hasTestRun: true,
                     // Debugging should happen if there's a custom test host launcher present
-                    // and is in debugging mode, or if the debugging is enabled in case the
-                    // test session info is present.
-                    isDebug:
-                        (testRunCriteria.TestHostLauncher != null && testRunCriteria.TestHostLauncher.IsDebug)
-                        || _debugEnabledForTestSession,
+                    // and is in debugging mode.
+                    isDebug: testRunCriteria.TestHostLauncher != null && testRunCriteria.TestHostLauncher.IsDebug,
                     testCaseFilter: testRunCriteria.TestCaseFilter,
                     filterOptions: testRunCriteria.FilterOptions);
 
@@ -375,23 +328,8 @@ internal class ProxyExecutionManager : IProxyExecutionManager, IBaseProxy, IInte
             return;
         }
 
-        // When no test session is being used, we don't share the testhost
-        // between test discovery and test run. The testhost is closed upon
-        // successfully completing the operation it was spawned for.
-        //
-        // In contrast, the new workflow (using test sessions) means we should keep
-        // the testhost alive until explicitly closed by the test session owner, but
-        // only if the testhost is part of a test session (i.e. the proxy operation manager
-        // id is valid), since there is the distinct possibility of test session criteria
-        // changing between spawn and discovery/run, causing a new proxy operation manager
-        // to be spawned on demand instead of dequeuing an incompatible proxy from the pool.
-        if (_testSessionInfo == null || _proxyOperationManager.Id < 0)
-        {
-            _proxyOperationManager.Close();
-            return;
-        }
-
-        TestSessionPool.Instance.ReturnProxy(_testSessionInfo, _proxyOperationManager.Id);
+        // The testhost is closed upon successfully completing the operation it was spawned for.
+        _proxyOperationManager.Close();
     }
 
     /// <inheritdoc/>

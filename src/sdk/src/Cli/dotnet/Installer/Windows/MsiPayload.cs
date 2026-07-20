@@ -4,7 +4,7 @@
 #nullable disable
 
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Microsoft.DotNet.Cli.Installer.Windows;
 
@@ -65,13 +65,11 @@ internal class MsiPayload(string manifestPath, string msiPath)
     /// <summary>
     /// The manifest data describing the associated MSI.
     /// </summary>
-    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Newtonsoft.Json is not used in AOT scenarios.")]
-    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Newtonsoft.Json is not used in trimmed scenarios.")]
     public MsiManifest Manifest
     {
         get
         {
-            _manifest ??= JsonConvert.DeserializeObject<MsiManifest>(File.ReadAllText(ManifestPath));
+            _manifest ??= JsonSerializer.Deserialize(File.ReadAllText(ManifestPath), InstallerJsonSerializerContext.Default.MsiManifest);
 
             return _manifest;
         }

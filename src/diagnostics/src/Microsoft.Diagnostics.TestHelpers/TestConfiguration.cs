@@ -53,18 +53,10 @@ namespace Microsoft.Diagnostics.TestHelpers
                 // This emulates that logic so the VS Test Explorer can still run the tests for
                 // config files that don't set the NugetPackagesCacheDir value (like the SOS unit
                 // tests).
-                string nugetPackagesRoot = null;
-                if (OS.Kind == OSKind.Windows)
+                string basePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                if (!string.IsNullOrEmpty(basePath))
                 {
-                    nugetPackagesRoot = Environment.GetEnvironmentVariable("UserProfile");
-                }
-                else if (OS.Kind is OSKind.Linux or OSKind.OSX)
-                {
-                    nugetPackagesRoot = Environment.GetEnvironmentVariable("HOME");
-                }
-                if (nugetPackagesRoot != null)
-                {
-                    nugetPackages = Path.Combine(nugetPackagesRoot, ".nuget", "packages");
+                    nugetPackages = Path.Combine(basePath, ".nuget", "packages");
                 }
             }
             // The TargetArchitecture and NuGetPackageCacheDir can still be overridden
@@ -80,7 +72,6 @@ namespace Microsoft.Diagnostics.TestHelpers
                 ["TargetRid"] = GetRid(),
                 ["TargetArchitecture"] = OS.TargetArchitecture.ToString().ToLowerInvariant(),
                 ["NuGetPackageCacheDir"] = nugetPackages,
-                ["TestCDAC"] = Environment.GetEnvironmentVariable("SOS_TEST_CDAC")
             };
             if (OS.Kind == OSKind.Windows)
             {
@@ -462,9 +453,24 @@ namespace Microsoft.Diagnostics.TestHelpers
             {
                 sb.Append(".singlefile");
             }
-            if (TestCDAC)
+            switch (DacMode)
             {
-                sb.Append(".cdac");
+                case DacMode.CDacFallback:
+                    sb.Append(".cdacfallback");
+                    break;
+                case DacMode.CDacVerify:
+                    sb.Append(".cdacverify");
+                    break;
+                case DacMode.CDac:
+                    sb.Append(".cdac");
+                    break;
+                case DacMode.Dac:
+                    sb.Append(".dac");
+                    break;
+            }
+            if (UseInterpreter)
+            {
+                sb.Append(".interpreter");
             }
             if (!string.IsNullOrEmpty(version))
             {
@@ -561,11 +567,37 @@ namespace Microsoft.Diagnostics.TestHelpers
         }
 
         /// <summary>
-        /// Returns true if test should use the cDAC.
+        /// Controls which DAC/cDAC the SOS tests load (see <see cref="Microsoft.Diagnostics.TestHelpers.DacMode"/>). The value comes
+        /// from the SOS_TEST_DAC_MODE environment variable, which eng/build.* sets from its -dacMode argument
+        /// (and which direct "dotnet test" runs can set themselves).
         /// </summary>
-        public bool TestCDAC
+        public DacMode DacMode
         {
-            get { return string.Equals(GetValue("TestCDAC"), "true", StringComparison.InvariantCultureIgnoreCase); }
+            get
+            {
+                string mode = Environment.GetEnvironmentVariable("SOS_TEST_DAC_MODE");
+                return (mode ?? string.Empty).Trim().ToLowerInvariant() switch
+                {
+                    "" => DacMode.Default,
+                    "cdac" => DacMode.CDac,
+                    "cdacfallback" => DacMode.CDacFallback,
+                    "cdacverify" => DacMode.CDacVerify,
+                    "dac" => DacMode.Dac,
+                    _ => throw new NotSupportedException($"Unknown DacMode '{mode}'. Expected cdac, cdacfallback, cdacverify, dac, or empty."),
+                };
+            }
+        }
+
+        /// <summary>
+        /// Returns true if this configuration runs its debuggee on the CoreCLR interpreter.
+        /// Set only on the dedicated interpreter-variant configurations cloned by
+        /// SOSTestHelpers.InterpreterConfigurations; opt-in tests consume those via their
+        /// own MemberData source. When set, SOSRunner launches the debuggee with
+        /// DOTNET_Interpreter=InterpTestMethod*
+        /// </summary>
+        public bool UseInterpreter
+        {
+            get { return string.Equals(GetValue("UseInterpreter"), "true", StringComparison.InvariantCultureIgnoreCase); }
         }
 
         /// <summary>
@@ -929,6 +961,40 @@ namespace Microsoft.Diagnostics.TestHelpers
         Linux,
         OSX,
         Unknown,
+    }
+
+    /// <summary>
+    /// Controls which DAC/cDAC the SOS tests load. The harness (SOSRunner) translates this into the
+    /// DOTNET_ENABLE_CDAC / CDAC_NO_FALLBACK environment variables and the "runtimes --usecdac" SOS
+    /// command, so there are no per-mode special cases elsewhere.
+    /// </summary>
+    public enum DacMode
+    {
+        /// <summary>
+        /// Unspecified: the harness applies no DAC/cDAC configuration (SOS uses its default load policy).
+        /// </summary>
+        Default,
+
+        /// <summary>
+        /// cDAC hosted by the in-box DAC, with per-API fallback to the legacy DAC.
+        /// </summary>
+        CDacFallback,
+
+        /// <summary>
+        /// cDAC hosted by the in-box DAC, with no fallback to the legacy DAC (still verifies against it).
+        /// </summary>
+        CDacVerify,
+
+        /// <summary>
+        /// The standalone cDAC (mscordaccore_universal) loaded directly through SOS hosting -- the
+        /// canonical cDAC path.
+        /// </summary>
+        CDac,
+
+        /// <summary>
+        /// The legacy in-box DAC only.
+        /// </summary>
+        Dac,
     }
 
     /// <summary>

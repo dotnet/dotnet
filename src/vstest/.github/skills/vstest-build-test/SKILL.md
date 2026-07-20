@@ -90,30 +90,75 @@ For isolated projects with few dependencies:
 ./test.cmd
 ```
 
-### Specific Test Assembly
+### Specific Project(s)
 
-Use `-p` to filter by assembly name pattern:
-
-```bash
-# Linux / macOS
-./test.sh -p htmllogger       # HTML logger tests
-./test.sh -p trxlogger        # TRX logger tests
-./test.sh -p datacollector    # Data collector tests
-./test.sh -p smoke            # Smoke tests
-
-# Windows (-p is ambiguous in PowerShell; use -projects)
-./test.cmd -projects htmllogger
-./test.cmd -projects smoke
-```
-
-### Specific Test by Name
+`-projects` / `--projects` takes a **resolvable path or glob** — it is passed through
+`Resolve-Path`, so a bare project nickname or category (e.g. `smoke`, `htmllogger`) fails with
+`Cannot find path`. Point it at the csproj(s):
 
 ```bash
 # Windows
-./test.cmd -bl -c release /p:TestRunnerAdditionalArguments="'--filter TestName'" -Integration
+./test.cmd -projects "test\**\*HtmlLogger*\*.csproj"
 
 # Linux / macOS
-./test.sh -bl -c release /p:TestRunnerAdditionalArguments="'--filter TestName'" --integrationTest
+./test.sh --projects "test/**/*HtmlLogger*/*.csproj"
+```
+
+For a single project you can also build+test its csproj directly with the bootstrapped SDK:
+
+```bash
+# Windows
+./.dotnet/dotnet.exe test test/Microsoft.TestPlatform.Extensions.HtmlLogger.UnitTests/*.csproj -c Debug
+
+# Linux / macOS
+./.dotnet/dotnet test test/Microsoft.TestPlatform.Extensions.HtmlLogger.UnitTests/*.csproj -c Debug
+```
+
+### Test Categories (smoke / integration / performance / compatibility)
+
+These are **switches** handled by `eng/build.ps1` — NOT `-projects` values:
+
+```bash
+# Windows
+./test.cmd -smokeTest           # TestCategory=Smoke (a subset of integration tests)
+./test.cmd -integrationTest     # full acceptance / integration suite
+./test.cmd -performanceTest
+./test.cmd -compatibilityTest
+
+# Linux / macOS use the same switch names
+./test.sh -smokeTest
+```
+
+> `-smokeTest` and `-integrationTest` are mutually exclusive (smoke is a subset); passing both throws.
+
+### Filter by Test Name
+
+Use the `-filter` parameter. Do **not** pass `--filter` inside `TestRunnerAdditionalArguments` —
+`eng/build.ps1` explicitly throws if you do.
+
+```bash
+# Windows
+./test.cmd -integrationTest -filter "FullyQualifiedName~MyScenario"
+
+# Linux / macOS
+./test.sh -integrationTest -filter "FullyQualifiedName~MyScenario"
+```
+
+### Running integration / smoke tests locally (DOTNET_ROOT gotcha)
+
+Integration and smoke tests self-host: they launch test-asset apphosts built against the repo's
+preview TFM (e.g. `net11.0`). An apphost resolves its shared runtime from `DOTNET_ROOT`, falling
+back to the machine-wide install (`C:\Program Files\dotnet`), which usually lacks the preview
+runtime — so it fails instantly with *"You must install or update .NET to run this application."*
+
+- `test.sh` (Linux/macOS) sets `DOTNET_ROOT` to the repo `.dotnet` automatically.
+- `test.cmd` (Windows) does **not** — set it yourself before running:
+
+```powershell
+$env:DOTNET_ROOT = "$PWD\.dotnet"
+${env:DOTNET_ROOT(x86)} = "$PWD\.dotnet\dotnet-sdk-x86"   # only if x86 test hosts run
+$env:DOTNET_MULTILEVEL_LOOKUP = "0"
+./test.cmd -smokeTest
 ```
 
 ## Manual Validation with vstest.console
@@ -131,15 +176,16 @@ After building with `--pack` / `-pack`, validate vstest.console changes by unzip
 
 ## Test Categories
 
-| Category | Speed | What it tests | Filter |
+| Category | Speed | What it tests | How to run |
 |---|---|---|---|
-| Unit tests | Fast | Individual units | `./test.sh` / `./test.cmd` (default) |
-| Smoke tests | Slow | P0 end-to-end scenarios | `-p smoke` |
-| Acceptance tests | Slowest | Extensive coverage | `--integrationTest` / `-Integration` flag |
+| Unit tests | Fast | Individual units | `./test.cmd` / `./test.sh` (default) |
+| Smoke tests | Slow | P0 end-to-end scenarios | `-smokeTest` switch |
+| Acceptance / integration | Slowest | Extensive coverage | `-integrationTest` switch |
 
 ## Troubleshooting
 
 - **OS mismatch errors:** If you see SDK load failures, run the mismatch detection script above to clean and re-bootstrap.
+- **Integration/smoke tests fail instantly on Windows with "You must install or update .NET to run this application":** `test.cmd` does not set `DOTNET_ROOT`, so the self-hosted preview-TFM apphosts look in `C:\Program Files\dotnet` (which lacks the preview runtime). Set `$env:DOTNET_ROOT = "$PWD\.dotnet"` before running — see "Running integration / smoke tests locally".
 - If build fails asking for .NET 4.6 targeting pack, install it from [Microsoft Downloads](https://www.microsoft.com/download/details.aspx?id=48136)
 - Enable verbose diagnostics: see `docs/diagnose.md`
 - For debugging, add `Debugger.Launch` at process entry points (testhost.exe, vstest.console.exe)

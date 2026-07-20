@@ -864,6 +864,7 @@
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
@@ -876,6 +877,7 @@
       この既定の動作を次のオプション パラメーターでオーバーライドすることもできます:
       CollectAlways - クラッシュが発生していなくても終了時にダンプを収集します (true/false) 
       DumpType - ダンプの種類を指定します (mini/full)。
+      Windows でクラッシュ ダンプを収集するには、PATH または PROCDUMP_PATH 環境変数が指すディレクトリで procdump.exe と procdump64.exe を使用できる必要があります。ツールは次の場所からダウンロードできます: https://docs.microsoft.com/sysinternals/downloads/procdump。
       例: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1167,16 +1169,6 @@
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">要求ハンドラー接続の待機が {0} 秒後にタイムアウトしました。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">テスト セッション開始の待機が {0} 秒後にタイムアウトしました。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">テスト セッション停止の待機が {0} 秒後にタイムアウトしました。</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

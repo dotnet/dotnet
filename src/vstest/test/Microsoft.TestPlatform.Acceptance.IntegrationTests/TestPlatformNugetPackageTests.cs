@@ -22,9 +22,8 @@ public class TestPlatformNugetPackageTests : CodeCoverageAcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [Ignore("Code Coverage is using 17.x.x dependency, will be solved in other PR. https://github.com/microsoft/vstest/issues/15223")]
-    [NetFullTargetFrameworkDataSourceAttribute(useCoreRunner: false)]
-    [NetCoreTargetFrameworkDataSourceAttribute(useCoreRunner: false)]
+    [TestMatrix(console: NetFx, testHost: NetFx)]
+    [TestMatrix(console: NetFx, testHost: Net)]
     public void RunMultipleTestAssembliesWithCodeCoverage(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -59,12 +58,10 @@ public class TestPlatformNugetPackageTests : CodeCoverageAcceptanceTestBase
         string assemblyPaths,
         out string trxFilePath)
     {
-        string diagFileName = Path.Combine(TempDirectory.Path, "diaglog.txt");
-
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty,
             FrameworkArgValue, runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
 
-        arguments = string.Concat(arguments, $" /Diag:{diagFileName}", $" /EnableCodeCoverage");
+        arguments = string.Concat(arguments, $" /EnableCodeCoverage");
 
         trxFilePath = Path.Combine(TempDirectory.Path, Guid.NewGuid() + ".trx");
         arguments = string.Concat(arguments, " /logger:trx;logfilename=" + trxFilePath);

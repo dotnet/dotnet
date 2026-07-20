@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -89,6 +89,29 @@ namespace Microsoft.Build.CommandLine
         /// The saved environment for the process.
         /// </summary>
         private IDictionary<string, string> _savedEnvironment;
+
+        /// <summary>
+        /// The build process environment most recently received in full from the parent on this connection.
+        /// When a <see cref="TaskHostConfiguration"/> arrives marked <see cref="InvariantPayloadTransferMode.Identical"/>
+        /// it is reconstructed from this baseline.
+        /// </summary>
+        private Dictionary<string, string> _forwardEnvironmentBaseline;
+
+        /// <summary>
+        /// The global properties most recently received in full from the parent on this connection. When a
+        /// <see cref="TaskHostConfiguration"/> arrives marked <see cref="InvariantPayloadTransferMode.Identical"/> they
+        /// are reconstructed from this baseline.
+        /// </summary>
+        private Dictionary<string, string> _forwardGlobalParametersBaseline;
+
+        /// <summary>
+        /// The build process environment whose values are currently reflected in this task host process. Used to
+        /// skip the redundant per-task environment apply + restore when the next task's environment is identical
+        /// and the previous task did not mutate it. Set to <see langword="null"/> whenever a task blocks on a
+        /// callback (<see cref="SaveOperatingEnvironment"/>) or the node is reused for a new build, so nested
+        /// activity and build boundaries always force a fresh apply.
+        /// </summary>
+        private IDictionary<string, string> _lastAppliedConfigEnvironment;
 
         /// <summary>
         /// The event which is set when we should shut down.
@@ -265,7 +288,7 @@ namespace Microsoft.Build.CommandLine
         {
             get
             {
-                ErrorUtilities.VerifyThrow(EffectiveConfiguration != null, "We should never have a null configuration during a BuildEngine callback!");
+                Assumed.NotNull(EffectiveConfiguration, "We should never have a null configuration during a BuildEngine callback!");
                 return EffectiveConfiguration.ContinueOnError;
             }
         }
@@ -277,7 +300,7 @@ namespace Microsoft.Build.CommandLine
         {
             get
             {
-                ErrorUtilities.VerifyThrow(EffectiveConfiguration != null, "We should never have a null configuration during a BuildEngine callback!");
+                Assumed.NotNull(EffectiveConfiguration, "We should never have a null configuration during a BuildEngine callback!");
                 return EffectiveConfiguration.LineNumberOfTask;
             }
         }
@@ -289,7 +312,7 @@ namespace Microsoft.Build.CommandLine
         {
             get
             {
-                ErrorUtilities.VerifyThrow(EffectiveConfiguration != null, "We should never have a null configuration during a BuildEngine callback!");
+                Assumed.NotNull(EffectiveConfiguration, "We should never have a null configuration during a BuildEngine callback!");
                 return EffectiveConfiguration.ColumnNumberOfTask;
             }
         }
@@ -301,7 +324,7 @@ namespace Microsoft.Build.CommandLine
         {
             get
             {
-                ErrorUtilities.VerifyThrow(EffectiveConfiguration != null, "We should never have a null configuration during a BuildEngine callback!");
+                Assumed.NotNull(EffectiveConfiguration, "We should never have a null configuration during a BuildEngine callback!");
                 return EffectiveConfiguration.ProjectFileOfTask;
             }
         }
@@ -512,11 +535,7 @@ namespace Microsoft.Build.CommandLine
                 return false;
             }
 
-            ErrorUtilities.VerifyThrow(
-                targetOutputsPerProject is null || projectFileNames.Length == targetOutputsPerProject.Length,
-                "projectFileNames has {0} entries but targetOutputsPerProject has {1} -- lengths must match.",
-                projectFileNames.Length,
-                targetOutputsPerProject?.Length ?? 0);
+            Assumed.True(targetOutputsPerProject is null || projectFileNames.Length == targetOutputsPerProject.Length, $"projectFileNames has {projectFileNames.Length} entries but targetOutputsPerProject has {targetOutputsPerProject?.Length ?? 0} -- lengths must match.");
 
             bool includeTargetOutputs = targetOutputsPerProject is not null;
 
@@ -691,7 +710,7 @@ namespace Microsoft.Build.CommandLine
 
         public int RequestCores(int requestedCores)
         {
-            ErrorUtilities.VerifyThrowArgumentOutOfRange(requestedCores > 0, nameof(requestedCores));
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestedCores);
 
             if (!CallbacksSupported)
             {
@@ -707,7 +726,7 @@ namespace Microsoft.Build.CommandLine
 
         public void ReleaseCores(int coresToRelease)
         {
-            ErrorUtilities.VerifyThrowArgumentOutOfRange(coresToRelease > 0, nameof(coresToRelease));
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(coresToRelease);
 
             if (!CallbacksSupported)
             {
@@ -742,7 +761,7 @@ namespace Microsoft.Build.CommandLine
             {
                 get
                 {
-                    ErrorUtilities.VerifyThrow(_taskHost.EffectiveConfiguration != null, "We should never have a null configuration during a BuildEngine callback!");
+                    Assumed.NotNull(_taskHost.EffectiveConfiguration, "We should never have a null configuration during a BuildEngine callback!");
                     return _taskHost.EffectiveConfiguration.IsTaskInputLoggingEnabled;
                 }
             }
@@ -852,7 +871,7 @@ namespace Microsoft.Build.CommandLine
             shutdownException = null;
 
             // Snapshot the current environment
-            _savedEnvironment = FrameworkCommunicationsUtilities.GetEnvironmentVariables();
+            _savedEnvironment = CommunicationsUtilities.GetEnvironmentVariables();
 
             _nodeReuse = nodeReuse;
             _nodeEndpoint = new NodeEndpointOutOfProcTaskHost(nodeReuse, parentPacketVersion);
@@ -943,7 +962,7 @@ namespace Microsoft.Build.CommandLine
         {
             if (packet is not ITaskHostCallbackPacket callbackPacket)
             {
-                ErrorUtilities.ThrowInternalError("HandleCallbackResponse called with non-callback packet type: {0}", packet.GetType().Name);
+                InternalError.Throw($"HandleCallbackResponse called with non-callback packet type: {packet.GetType().Name}");
                 return;
             }
 
@@ -965,8 +984,7 @@ namespace Microsoft.Build.CommandLine
 
             // No pending request matched -- this is a protocol bug (duplicate response,
             // corrupted request ID, or race with shutdown). Crash to surface the issue.
-            ErrorUtilities.ThrowInternalError("TaskHost received callback response with no pending request. RequestId={0}, Type={1}",
-                callbackPacket.RequestId, packet.Type);
+            InternalError.Throw($"TaskHost received callback response with no pending request. RequestId={callbackPacket.RequestId}, Type={packet.Type}");
         }
 
         /// <summary>
@@ -1103,7 +1121,7 @@ namespace Microsoft.Build.CommandLine
             if (!_taskContexts.TryAdd(taskId, context))
             {
                 context.Dispose();
-                ErrorUtilities.ThrowInternalError("Task ID {0} already exists in TaskHost.", taskId);
+                InternalError.Throw($"Task ID {taskId} already exists in TaskHost.");
             }
 
             return context;
@@ -1126,11 +1144,14 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         private void SaveOperatingEnvironment(TaskExecutionContext context)
         {
-            ErrorUtilities.VerifyThrowArgumentNull(context, nameof(context));
+            ArgumentNullException.ThrowIfNull(context);
 
-            context.SavedCurrentDirectory = NativeMethodsShared.GetCurrentDirectory();
+            // A task is about to block and let a nested task run, which may change the process environment.
+            _lastAppliedConfigEnvironment = null;
+
+            context.SavedCurrentDirectory = Environment.CurrentDirectory;
             context.SavedEnvironment = new Dictionary<string, string>(
-                FrameworkCommunicationsUtilities.GetEnvironmentVariables(),
+                CommunicationsUtilities.GetEnvironmentVariables(),
                 StringComparer.OrdinalIgnoreCase);
 
             // Save debug/environment flags that are overwritten per-task in RunTask
@@ -1144,14 +1165,14 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         private void RestoreOperatingEnvironment(TaskExecutionContext context)
         {
-            ErrorUtilities.VerifyThrowArgumentNull(context, nameof(context));
+            ArgumentNullException.ThrowIfNull(context);
 
             if (context.SavedCurrentDirectory is null || context.SavedEnvironment is null)
             {
                 return;
             }
 
-            FrameworkCommunicationsUtilities.SetEnvironment(context.SavedEnvironment);
+            CommunicationsUtilities.SetEnvironment(context.SavedEnvironment);
             NativeMethodsShared.SetCurrentDirectory(context.SavedCurrentDirectory);
 
             // Restore debug/environment flags
@@ -1171,16 +1192,17 @@ namespace Microsoft.Build.CommandLine
         {
             // Only _activeTaskCount must be zero — blocked tasks (waiting on BuildProjectFile
             // callbacks) don't prevent accepting a new nested task configuration.
-            ErrorUtilities.VerifyThrow(_activeTaskCount == 0,
-                "Why are we getting a TaskHostConfiguration packet while a task is actively executing? activeTaskCount={0}",
-                _activeTaskCount);
+            Assumed.Zero(_activeTaskCount, $"Why are we getting a TaskHostConfiguration packet while a task is actively executing? activeTaskCount={_activeTaskCount}");
 
             if (_blockedTaskCount > 0)
             {
-                CommunicationsUtilities.Trace("Nested task {0} dispatched while {1} tasks are blocked on callbacks.", taskHostConfiguration.TaskName, _blockedTaskCount);
+                CommunicationsUtilities.Trace($"Nested task {taskHostConfiguration.TaskName} dispatched while {_blockedTaskCount} tasks are blocked on callbacks.");
             }
 
             _currentConfiguration = taskHostConfiguration;
+            ResolveIncomingEnvironment(taskHostConfiguration);
+            ResolveIncomingGlobalParameters(taskHostConfiguration);
+
             // Create task execution context for this task
             var context = CreateTaskContext(taskHostConfiguration);
             context.State = TaskExecutionState.Executing;
@@ -1191,6 +1213,44 @@ namespace Microsoft.Build.CommandLine
             context.ExecutingThread = taskThread;
 
             taskThread.Start(context);
+        }
+
+        /// <summary>
+        /// Resolves the build process environment of an incoming configuration. When the parent marked it
+        /// <see cref="InvariantPayloadTransferMode.Identical"/> the environment was not serialized on the
+        /// wire, so it is reconstructed from this connection's baseline; otherwise the baseline is refreshed
+        /// with the full environment that was sent.
+        /// </summary>
+        private void ResolveIncomingEnvironment(TaskHostConfiguration configuration)
+        {
+            if (configuration.EnvironmentMode == InvariantPayloadTransferMode.Identical)
+            {
+                Assumed.NotNull(_forwardEnvironmentBaseline, "Received an EnvironmentIdentical TaskHostConfiguration before any full build process environment was sent on this connection.");
+                configuration.SetResolvedBuildProcessEnvironment(_forwardEnvironmentBaseline);
+            }
+            else
+            {
+                _forwardEnvironmentBaseline = configuration.BuildProcessEnvironment;
+            }
+        }
+
+        /// <summary>
+        /// Resolves the global properties of an incoming configuration. When the parent marked them
+        /// <see cref="InvariantPayloadTransferMode.Identical"/> they were not serialized on the wire, so they are
+        /// reconstructed from this connection's baseline; otherwise the baseline is refreshed with the full
+        /// dictionary that was sent.
+        /// </summary>
+        private void ResolveIncomingGlobalParameters(TaskHostConfiguration configuration)
+        {
+            if (configuration.GlobalParametersMode == InvariantPayloadTransferMode.Identical)
+            {
+                Assumed.NotNull(_forwardGlobalParametersBaseline, "Received a GlobalParametersIdentical TaskHostConfiguration before any full global properties were sent on this connection.");
+                configuration.SetResolvedGlobalParameters(_forwardGlobalParametersBaseline);
+            }
+            else
+            {
+                _forwardGlobalParametersBaseline = configuration.GlobalProperties;
+            }
         }
 
         /// <summary>
@@ -1262,7 +1322,11 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         private void HandleNodeBuildComplete(NodeBuildComplete buildComplete)
         {
-            ErrorUtilities.VerifyThrow(_activeTaskCount == 0, "We should never have a task in the process of executing when we receive NodeBuildComplete.");
+            Assumed.Zero(_activeTaskCount, "We should never have a task in the process of executing when we receive NodeBuildComplete.");
+
+            // When this node is reused for a later build, reset the environment-reuse cache so the first task of
+            // the next build performs a fresh apply rather than trusting state left over from this build.
+            _lastAppliedConfigEnvironment = null;
 
             // Sidecar TaskHost will persist after the build is done.
             if (_nodeReuse)
@@ -1308,7 +1372,7 @@ namespace Microsoft.Build.CommandLine
             // Restore the original environment, best effort.
             try
             {
-                FrameworkCommunicationsUtilities.SetEnvironment(_savedEnvironment);
+                CommunicationsUtilities.SetEnvironment(_savedEnvironment);
             }
             catch (Exception ex)
             {
@@ -1428,14 +1492,24 @@ namespace Microsoft.Build.CommandLine
                 // Change to the startup directory
                 NativeMethodsShared.SetCurrentDirectory(taskConfiguration.StartupDirectory);
 
-                if (_updateEnvironment)
+                bool canSkipEnvironmentApply = _lastAppliedConfigEnvironment is not null
+                    && _blockedTaskCount == 0
+                    && _activeTaskCount == 1
+                    && CommunicationsUtilities.AreDictionariesEquivalent(taskConfiguration.BuildProcessEnvironment, _lastAppliedConfigEnvironment);
+
+                if (!canSkipEnvironmentApply)
                 {
-                    InitializeMismatchedEnvironmentTable(taskConfiguration.BuildProcessEnvironment);
+                    if (_updateEnvironment)
+                    {
+                        InitializeMismatchedEnvironmentTable(taskConfiguration.BuildProcessEnvironment);
+                    }
+
+                    // Now set the new environment
+                    SetTaskHostEnvironment(taskConfiguration.BuildProcessEnvironment);
+                    DotnetHostEnvironmentHelper.ClearBootstrapDotnetRootEnvironment(taskConfiguration.BuildProcessEnvironment);
                 }
 
-                // Now set the new environment
-                SetTaskHostEnvironment(taskConfiguration.BuildProcessEnvironment);
-                DotnetHostEnvironmentHelper.ClearBootstrapDotnetRootEnvironment(taskConfiguration.BuildProcessEnvironment);
+                _lastAppliedConfigEnvironment = taskConfiguration.BuildProcessEnvironment;
 
                 // Set culture
                 Thread.CurrentThread.CurrentCulture = taskConfiguration.Culture;
@@ -1488,14 +1562,15 @@ namespace Microsoft.Build.CommandLine
                 {
                     // BlockForCallback/ResumeAfterCallback are always paired, so a task
                     // should never be in BlockedOnCallback state when it completes.
-                    ErrorUtilities.VerifyThrow(
-                        taskContext is null || taskContext.State != TaskExecutionState.BlockedOnCallback,
-                        "Task completed while still in BlockedOnCallback state.");
+                    Assumed.True(taskContext is null || taskContext.State != TaskExecutionState.BlockedOnCallback, "Task completed while still in BlockedOnCallback state.");
 
                     Interlocked.Decrement(ref _activeTaskCount);
 
-                    IDictionary<string, string> currentEnvironment = FrameworkCommunicationsUtilities.GetEnvironmentVariables();
+                    IDictionary<string, string> currentEnvironment = CommunicationsUtilities.GetEnvironmentVariables();
                     currentEnvironment = UpdateEnvironmentForMainNode(currentEnvironment);
+
+                    bool environmentUnchangedByTask =
+                        CommunicationsUtilities.AreDictionariesEquivalent(currentEnvironment, taskConfiguration.BuildProcessEnvironment);
 
                     taskResult ??= new OutOfProcTaskHostTaskResult(TaskCompleteType.Failure);
                     _taskCompletePacket = new TaskHostTaskComplete(
@@ -1505,6 +1580,11 @@ namespace Microsoft.Build.CommandLine
 #endif
                         currentEnvironment);
 
+                    if (NodePacketTypeExtensions.GetNegotiatedPacketVersion(_parentPacketVersion) >= NodePacketTypeExtensions.EnvironmentDeltaMinVersion && environmentUnchangedByTask)
+                    {
+                        _taskCompletePacket.EnvironmentMode = InvariantPayloadTransferMode.Identical;
+                    }
+
 #if FEATURE_APPDOMAIN
                     foreach (TaskParameter param in taskParams.Values)
                     {
@@ -1513,8 +1593,16 @@ namespace Microsoft.Build.CommandLine
                     }
 #endif
 
-                    // Restore the original clean environment
-                    FrameworkCommunicationsUtilities.SetEnvironment(_savedEnvironment);
+                    bool canSkipEnvironmentRestore = environmentUnchangedByTask
+                        && _blockedTaskCount == 0
+                        && ReferenceEquals(_lastAppliedConfigEnvironment, taskConfiguration.BuildProcessEnvironment);
+
+                    if (!canSkipEnvironmentRestore)
+                    {
+                        // Restore the original clean environment
+                        CommunicationsUtilities.SetEnvironment(_savedEnvironment);
+                        _lastAppliedConfigEnvironment = null;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -1565,7 +1653,7 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         private void SetTaskHostEnvironment(IDictionary<string, string> environment)
         {
-            ErrorUtilities.VerifyThrowInternalNull(s_mismatchedEnvironmentValues, "mismatchedEnvironmentValues");
+            Assumed.NotNull(s_mismatchedEnvironmentValues);
             IDictionary<string, string> updatedEnvironment = null;
 
             if (_updateEnvironment)
@@ -1617,7 +1705,7 @@ namespace Microsoft.Build.CommandLine
                 updatedEnvironment = environment;
             }
 
-            FrameworkCommunicationsUtilities.SetEnvironment(updatedEnvironment);
+            CommunicationsUtilities.SetEnvironment(updatedEnvironment);
         }
 
         /// <summary>
@@ -1628,7 +1716,7 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         private IDictionary<string, string> UpdateEnvironmentForMainNode(IDictionary<string, string> environment)
         {
-            ErrorUtilities.VerifyThrowInternalNull(s_mismatchedEnvironmentValues, "mismatchedEnvironmentValues");
+            Assumed.NotNull(s_mismatchedEnvironmentValues);
             IDictionary<string, string> updatedEnvironment = null;
 
             if (_updateEnvironment)
@@ -1737,7 +1825,7 @@ namespace Microsoft.Build.CommandLine
 #pragma warning disable SYSLIB0050
                 // Types which are not serializable and are not IExtendedBuildEventArgs as
                 // those always implement custom serialization by WriteToStream and CreateFromStream.
-                if (!e.GetType().GetTypeInfo().IsSerializable && e is not IExtendedBuildEventArgs)
+                if (!e.GetType().IsSerializable && e is not IExtendedBuildEventArgs)
 #pragma warning disable SYSLIB0050
                 {
                     // log a warning and bail.  This will end up re-calling SendBuildEvent, but we know for a fact
@@ -1756,7 +1844,7 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         private void LogMessageFromResource(MessageImportance importance, string messageResource, params object[] messageArgs)
         {
-            ErrorUtilities.VerifyThrow(EffectiveConfiguration != null, "We should never have a null configuration when we're trying to log messages!");
+            Assumed.NotNull(EffectiveConfiguration, "We should never have a null configuration when we're trying to log messages!");
 
             // Using the CLR 2 build event because this class is shared between MSBuildTaskHost.exe (CLR2) and MSBuild.exe (CLR4+)
             BuildMessageEventArgs message = new BuildMessageEventArgs(
@@ -1773,7 +1861,7 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         private void LogWarningFromResource(string messageResource, params object[] messageArgs)
         {
-            ErrorUtilities.VerifyThrow(EffectiveConfiguration != null, "We should never have a null configuration when we're trying to log warnings!");
+            Assumed.NotNull(EffectiveConfiguration, "We should never have a null configuration when we're trying to log warnings!");
 
             // Using the CLR 2 build event because this class is shared between MSBuildTaskHost.exe (CLR2) and MSBuild.exe (CLR4+)
             BuildWarningEventArgs warning = new BuildWarningEventArgs(
@@ -1796,7 +1884,7 @@ namespace Microsoft.Build.CommandLine
         /// </summary>
         private void LogErrorFromResource(string messageResource)
         {
-            ErrorUtilities.VerifyThrow(EffectiveConfiguration != null, "We should never have a null configuration when we're trying to log errors!");
+            Assumed.NotNull(EffectiveConfiguration, "We should never have a null configuration when we're trying to log errors!");
 
             // Using the CLR 2 build event because this class is shared between MSBuildTaskHost.exe (CLR2) and MSBuild.exe (CLR4+)
             BuildErrorEventArgs error = new BuildErrorEventArgs(

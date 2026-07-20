@@ -2,14 +2,22 @@
 
 | Status | |
 | ------ | --- |
-| Stability | [Stable](../../README.md#stable) |
-| Code Owners | [@zivaninstana](https://github.com/zivaninstana) |
+| Stability | [Deprecated](../../README.md#deprecated) |
 
 [![NuGet version badge](https://img.shields.io/nuget/v/OpenTelemetry.Exporter.Instana)](https://www.nuget.org/packages/OpenTelemetry.Exporter.Instana)
 [![NuGet download count badge](https://img.shields.io/nuget/dt/OpenTelemetry.Exporter.Instana)](https://www.nuget.org/packages/OpenTelemetry.Exporter.Instana)
 [![codecov.io](https://codecov.io/gh/open-telemetry/opentelemetry-dotnet-contrib/branch/main/graphs/badge.svg?flag=unittests-Exporter.Instana)](https://app.codecov.io/gh/open-telemetry/opentelemetry-dotnet-contrib?flags[0]=unittests-Exporter.Instana)
 
-The Instana Exporter exports telemetry to Instana backend.
+The Instana Exporter exports telemetry to an Instana backend.
+
+## Deprecated
+
+> [!IMPORTANT]
+> Development of this component is halted. No new package versions
+> are planned, and new issues will not be worked on.
+
+Consider using [`OpenTelemetry.Exporter.OpenTelemetryProtocol`](https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/src/OpenTelemetry.Exporter.OpenTelemetryProtocol/README.md)
+as a replacement.
 
 ## Installation
 
@@ -19,28 +27,30 @@ dotnet add package OpenTelemetry.Exporter.Instana
 
 ## Configuration
 
-The trace exporter is supported.
+> [!NOTE]
+> The Instana exporter only supports traces.
 
-To report to Instana backend correct agent key and backend URL must be configured.
-These values can be configured by environment variables INSTANA_AGENT_KEY
-and  INSTANA_ENDPOINT_URL.
-Optionally backend communication timeout can be configured by environment
-variable INSTANA_TIMEOUT.
+To report to an Instana backend the correct agent key and backend URL must be
+configured.
 
-### Enable Traces
-
-This snippet shows how to configure the Instana Exporter for Traces
+These values can be configured either by the environment variables `INSTANA_AGENT_KEY`
+and `INSTANA_ENDPOINT_URL`, or using the `InstanaExporterOptions` class.
 
 ```csharp
 using var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .AddSource("DemoSource")
-    .AddInstanaExporter()
+    .AddInstanaExporter((options) =>
+    {
+        options.AgentKey = "instana-agent-key";
+        options.EndpointUrl = "https://instana.local";
+    })
     .Build();
 ```
 
-The above code must be in application startup. In case of ASP.NET Core
-applications, this should be in `ConfigureServices` of `Startup` class.
-For ASP.NET applications, this should be in `Global.aspx.cs`.
+Optionally backend communication timeout can be configured using the environment
+variable `INSTANA_TIMEOUT` or the
+`InstanaExporterOptions.BatchExportProcessorOptions.ExporterTimeoutMilliseconds`
+property.
 
 ## Troubleshooting
 

@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Commands;
+using NuGet.Commands.Restore.Utility;
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Packaging;
@@ -83,7 +84,7 @@ namespace Msbuild.Integration.Test
 
                 var environmentVariables = new Dictionary<string, string>();
                 environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
-                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+                environmentVariables[PackageSpecFactory.EnvironmentVariableName] = usePackageSpecFactory.ToString();
 
                 // Act
                 string args = $"/t:restore {pathContext.SolutionRoot} /p:RestorePackagesConfig=true /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore}";
@@ -598,7 +599,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var environmentVariables = new Dictionary<string, string>();
                 environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
-                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+                environmentVariables[PackageSpecFactory.EnvironmentVariableName] = usePackageSpecFactory.ToString();
 
                 // Restore the project with a PackageReference which generates assets
                 result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
@@ -664,7 +665,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var environmentVariables = new Dictionary<string, string>();
                 environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
-                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+                environmentVariables[PackageSpecFactory.EnvironmentVariableName] = usePackageSpecFactory.ToString();
 
                 // Restore the project with a PackageReference which generates assets
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation=true {project.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
@@ -723,7 +724,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var environmentVariables = new Dictionary<string, string>();
                 environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
-                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+                environmentVariables[PackageSpecFactory.EnvironmentVariableName] = usePackageSpecFactory.ToString();
 
                 // Restore the project with a PackageReference which generates assets
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath} /p:RestoreSources=\"{relativePath}\"" +
@@ -842,7 +843,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 // Assert
                 Assert.True(result.ExitCode == 1, result.AllOutput);
 
-                result.AllOutput.Should().Contain($"error MSB4025: The project file could not be loaded. Could not find file '{projectB.ProjectPath}'");
+                result.AllOutput.Should().Contain($"error MSB4025: The project file");
             }
         }
 
@@ -889,7 +890,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var environmentVariables = new Dictionary<string, string>();
                 environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
-                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+                environmentVariables[PackageSpecFactory.EnvironmentVariableName] = usePackageSpecFactory.ToString();
 
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={restoreUseStaticGraphEvaluation} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
 
@@ -963,7 +964,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var environmentVariables = new Dictionary<string, string>();
                 environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
-                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+                environmentVariables[PackageSpecFactory.EnvironmentVariableName] = usePackageSpecFactory.ToString();
 
                 // Act
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory,
@@ -1778,7 +1779,6 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                                 name: "NuGetAuditSuppress",
                                 identity: advisoryUrl1,
                                 framework: NuGetFramework.AnyFramework,
-                                properties: new Dictionary<string, string>(),
                                 attributes: new Dictionary<string, string>());
             xmlA.Save(projectA.ProjectPath);
 
@@ -1789,7 +1789,6 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                                 name: "NuGetAuditSuppress",
                                 identity: advisoryUrl2,
                                 framework: NuGetFramework.AnyFramework,
-                                properties: new Dictionary<string, string>(),
                                 attributes: new Dictionary<string, string>());
             xmlB.Save(projectB.ProjectPath);
 
@@ -1943,7 +1942,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
             var environmentVariables = new Dictionary<string, string>();
             environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
-            environmentVariables.Add("NUGET_USE_NEW_PACKAGESPEC_FACTORY", usePackageSpecFactory.ToString());
+            environmentVariables.Add(PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString());
 
             // Act
             CommandRunnerResult result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {projectA.ProjectPath}", ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
@@ -2204,7 +2203,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 
                 var environmentVariables = new Dictionary<string, string>();
                 environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
-                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+                environmentVariables[PackageSpecFactory.EnvironmentVariableName] = usePackageSpecFactory.ToString();
 
                 var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}" + (useStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=\"true\"" : string.Empty), ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
                 result.Success.Should().BeTrue(because: result.AllOutput);

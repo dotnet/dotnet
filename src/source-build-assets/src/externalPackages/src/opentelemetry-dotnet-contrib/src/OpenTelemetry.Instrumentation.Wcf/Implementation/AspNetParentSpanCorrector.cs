@@ -116,7 +116,7 @@ internal static class AspNetParentSpanCorrector
         // Get the parameter types from the callback property type itself to avoid hardcoded type loading
         var callbackType = onRequestStartedProp.PropertyType;
         var invokeMethod = callbackType.GetMethod("Invoke");
-        var parameterTypes = invokeMethod!.GetParameters().Select(p => p.ParameterType).ToArray();
+        var parameterTypes = invokeMethod.GetParameters().Select(p => p.ParameterType).ToArray();
         var returnType = invokeMethod.ReturnType;
 
         // Parameters for the new combined callback (use actual parameter types from the callback)
@@ -157,7 +157,7 @@ internal static class AspNetParentSpanCorrector
         var activityNotNull = Expression.NotEqual(activityVariable, Expression.Constant(null, returnType));
 
         // Call OnRequestStarted method - convert HttpContextBase to object for compatibility
-        var onRequestStartedMethod = typeof(AspNetParentSpanCorrector).GetMethod(nameof(OnRequestStarted), BindingFlags.Static | BindingFlags.NonPublic)!;
+        var onRequestStartedMethod = typeof(AspNetParentSpanCorrector).GetMethod(nameof(OnRequestStarted), BindingFlags.Static | BindingFlags.NonPublic);
         var callOnRequestStarted = Expression.Call(onRequestStartedMethod, activityVariable, Expression.Convert(httpContextParam, typeof(object)));
 
         // Conditional call to OnRequestStarted

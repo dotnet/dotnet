@@ -371,6 +371,39 @@ namespace NuGet.Tests.Apex
             CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project, TestPackageName, TestPackageVersionV2, Logger);
         }
 
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        [TestCategory("StagingGate")]
+        [TestCategory("CanaryGate")]
+        public async Task VerifyDeletedAssetsFileIsBackByReloadingProject()
+        {
+            // Arrange
+            using var suppressNuGetUI = NuGetUISuppression.Suppress();
+            await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+
+            NuGetApexTestService nugetTestService = GetNuGetTestService();
+
+            SolutionService solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", _pathContext.SolutionRoot);
+            ProjectTestExtension project = solutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.NetCoreConsoleApp, "TestProject");
+            VisualStudio.ClearOutputWindow();
+            solutionService.SaveAll();
+
+            CommonUtility.OpenNuGetPackageManagerWithDte(VisualStudio, Logger);
+            NuGetUIProjectTestExtension uiwindow = nugetTestService.GetUIWindowfromProject(project);
+            uiwindow.InstallPackageFromUI(TestPackageName, TestPackageVersionV1);
+
+            var assetsFilePath = CommonUtility.GetAssetsFilePath(project.FullPath);
+            CommonUtility.WaitForFileExists(new FileInfo(assetsFilePath));
+            File.Delete(assetsFilePath);
+
+            // Act
+            CommonUtility.AutoRestorePackageByReloadingProject(VisualStudio, project);
+
+            // Assert
+            CommonUtility.WaitForFileExists(new FileInfo(assetsFilePath));
+        }
+
         public override void Dispose()
         {
             _pathContext.Dispose();

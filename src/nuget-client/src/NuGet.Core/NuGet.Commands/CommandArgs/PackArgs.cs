@@ -11,6 +11,7 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging;
 using NuGet.ProjectModel;
+using NuGet.Versioning;
 
 namespace NuGet.Commands
 {
@@ -45,7 +46,10 @@ namespace NuGet.Commands
         public bool Tool { get; set; }
         public string Version { get; set; }
         public bool Deterministic { get; set; }
+        public string DeterministicTimestamp { get; set; }
         public WarningProperties WarningProperties { get; set; }
+        public NuGetVersion SdkAnalysisLevel { get; set; }
+        public bool UsingMicrosoftNETSdk { get; set; }
         public MSBuildPackTargetArgs PackTargetArgs { get; set; }
         public Dictionary<string, string> Properties
         {

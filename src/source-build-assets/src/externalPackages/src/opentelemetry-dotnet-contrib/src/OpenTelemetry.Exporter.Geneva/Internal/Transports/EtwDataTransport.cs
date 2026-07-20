@@ -40,7 +40,7 @@ internal sealed class EtwDataTransport : IDataTransport, IDisposable
         this.disposed = true;
     }
 
-    private sealed class EtwEventSource : EventSource
+    internal sealed class EtwEventSource : EventSource
     {
         public EtwEventSource(string providerName)
             : base(providerName, EventSourceSettings.EtwManifestEventFormat)

@@ -54,10 +54,16 @@ resources:
     source: DartLab
     branch: main
   repositories:
-  - repository: DartLabTemplates
+  # Legacy DTL DartLab templates repository
+  - repository: LegacyDartLabTemplates
     type: git
     name: DartLab.Templates
     ref: refs/heads/main
+  # DartLab1ES/CloudTest templates repository
+  - repository: DartLabTemplates
+    type: git
+    name: DevDiv/DartLab
+    ref: refs/tags/Production
 
 variables:
   DOTNET_NOLOGO: 1

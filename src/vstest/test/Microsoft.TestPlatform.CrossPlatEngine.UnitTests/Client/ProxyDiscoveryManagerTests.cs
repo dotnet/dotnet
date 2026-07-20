@@ -519,66 +519,6 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
     }
 
     [TestMethod]
-    public void StartTestRunShouldAttemptToTakeProxyFromPoolIfProxyIsNull()
-    {
-        var testSessionInfo = new TestSessionInfo();
-
-        Func<string, ProxyDiscoveryManager, ProxyOperationManager>
-            proxyOperationManagerCreator = (
-                string source,
-                ProxyDiscoveryManager proxyDiscoveryManager) =>
-            {
-                var proxyOperationManager = TestSessionPool.Instance.TryTakeProxy(
-                    testSessionInfo,
-                    source,
-                    _discoveryCriteria.RunSettings,
-                    _mockRequestData.Object);
-
-                return proxyOperationManager!;
-            };
-
-        var testDiscoveryManager = new ProxyDiscoveryManager(
-            testSessionInfo,
-            proxyOperationManagerCreator);
-
-        var mockTestSessionPool = new Mock<TestSessionPool>();
-        TestSessionPool.Instance = mockTestSessionPool.Object;
-
-        try
-        {
-            var mockProxyOperationManager = new Mock<ProxyOperationManager>(
-                _mockRequestData.Object,
-                _mockRequestSender.Object,
-                _mockTestHostManager.Object,
-                null);
-            mockTestSessionPool.Setup(
-                    tsp => tsp.TryTakeProxy(
-                        testSessionInfo,
-                        It.IsAny<string>(),
-                        It.IsAny<string>(),
-                        _mockRequestData.Object))
-                .Returns(mockProxyOperationManager.Object);
-
-            testDiscoveryManager.Initialize(true);
-            testDiscoveryManager.DiscoverTests(
-                _discoveryCriteria,
-                new Mock<ITestDiscoveryEventsHandler2>().Object);
-
-            mockTestSessionPool.Verify(
-                tsp => tsp.TryTakeProxy(
-                    testSessionInfo,
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    _mockRequestData.Object),
-                Times.Once);
-        }
-        finally
-        {
-            TestSessionPool.Instance = null;
-        }
-    }
-
-    [TestMethod]
     public void HandleDiscoveredTestsMarksDiscoveryStatus()
     {
         // Arrange

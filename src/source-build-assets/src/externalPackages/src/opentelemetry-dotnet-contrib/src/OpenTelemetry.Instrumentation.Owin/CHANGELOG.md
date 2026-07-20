@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+* Update to version 1.41.0 of the HTTP Semantic Conventions.
+  ([#4375](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4375))
+
+* Add instrumentation scope version and schema URL to metrics and traces.
+  ([#4375](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4375))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
+## 1.15.1-beta.1
+
+Released 2026-Apr-21
+
+* Fixed a startup regression in `AddOwinInstrumentation` for applications
+  which do not register `IConfiguration` in DI.
+  ([#4146](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4146))
+
+* Updated OpenTelemetry core component version(s) to `1.15.3`.
+  ([#4166](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4166))
+
 ## 1.15.0-beta.1
 
 Released 2026-Jan-21

@@ -122,7 +122,7 @@ namespace Microsoft.Build.CommandLine
             LoadedType taskType = null;
             try
             {
-                TypeLoader typeLoader = new(TaskLoader.IsTaskClass);
+                TypeLoader typeLoader = TypeLoader.Create<ITask>();
                 taskType = typeLoader.Load(
                     taskName,
                     AssemblyLoadInfo.Create(null, taskLocation),
@@ -139,6 +139,18 @@ namespace Microsoft.Build.CommandLine
                 return new OutOfProcTaskHostTaskResult(
                                 TaskCompleteType.CrashedDuringInitialization,
                                 exceptionToReturn,
+                                "TaskInstantiationFailureError",
+                                [taskName, taskLocation, String.Empty]);
+            }
+
+            // TypeLoader.Load returns null (rather than throwing) when the requested type cannot be
+            // found in the assembly. Guard against that here so we surface an actionable diagnostic
+            // instead of crashing later with an opaque NullReferenceException.
+            if (taskType == null)
+            {
+                return new OutOfProcTaskHostTaskResult(
+                                TaskCompleteType.CrashedDuringInitialization,
+                                new TypeLoadException(),
                                 "TaskInstantiationFailureError",
                                 [taskName, taskLocation, String.Empty]);
             }
@@ -325,6 +337,10 @@ namespace Microsoft.Build.CommandLine
                     taskLine,
                     taskColumn,
                     new TaskLoader.LogError(LogErrorDelegate),
+                    // The out-of-proc task host runs tasks in multi-process mode, where each process provides
+                    // its own isolated environment. Supply the fallback environment so a task that only declares
+                    // a TaskEnvironment constructor can still be instantiated here.
+                    TaskEnvironment.Fallback,
 #if FEATURE_APPDOMAIN
                     appDomainSetup,
                     // custom app domain assembly loading won't be available for task host

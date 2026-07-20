@@ -8,9 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Handlebars.Net" />
-    <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
     <PackageReference Include="Microsoft.OpenApi" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" />
+    <PackageReference Include="Microsoft.OpenApi.YamlReader" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,42 +8,102 @@ using OpenTelemetry.OpAmp.Client.Internal.Utils;
 
 namespace OpenTelemetry.OpAmp.Client.Internal.Transport.WebSocket;
 
+/// <summary>
+/// Reads OpAMP WebSocket messages from the server and dispatches them to the frame processor.
+/// </summary>
 internal sealed class WsReceiver : IDisposable
 {
     private const int RentalBufferSize = 4 * 1024; // 4 KB
     private const int ReceiveBufferSize = 8 * 1024; // 8 KB
-    private const int MaxMessageSize = 128 * 1024; // 128 KB
 
     private readonly ClientWebSocket ws;
-    private readonly Thread receiveThread;
     private readonly FrameProcessor processor;
+    private readonly SemaphoreSlim sendLock;
+    private readonly CancellationTokenSource disposeTokenSource = new();
 
     private readonly byte[] receiveBuffer = new byte[ReceiveBufferSize];
 
-    private CancellationToken token;
+    private CancellationTokenSource? linkedReceiveTokenSource;
+    private Task? receiveTask;
+    private bool disposed;
 
-    public WsReceiver(ClientWebSocket ws, FrameProcessor processor)
+    public WsReceiver(ClientWebSocket ws, FrameProcessor processor, SemaphoreSlim sendLock)
     {
         Guard.ThrowIfNull(ws, nameof(ws));
         Guard.ThrowIfNull(processor, nameof(processor));
+        Guard.ThrowIfNull(sendLock, nameof(sendLock));
 
         this.ws = ws;
         this.processor = processor;
-        this.receiveThread = new Thread(this.ReceiveLoop)
-        {
-            Name = "OpAmp WebSocket Receive Loop",
-        };
+        this.sendLock = sendLock;
     }
 
     public void Start(CancellationToken token = default)
     {
-        this.token = token;
-        this.receiveThread.Start();
+#if NET8_0_OR_GREATER
+        ObjectDisposedException.ThrowIf(this.disposed, this);
+#else
+        if (this.disposed)
+        {
+            throw new ObjectDisposedException(nameof(WsReceiver));
+        }
+#endif
+
+        if (this.receiveTask != null)
+        {
+            throw new InvalidOperationException("The WebSocket receiver has already been started.");
+        }
+
+        this.linkedReceiveTokenSource = CancellationTokenSource.CreateLinkedTokenSource(token, this.disposeTokenSource.Token);
+        this.receiveTask = this.ReceiveLoopAsync(this.linkedReceiveTokenSource.Token);
     }
 
+    /// <summary>
+    /// Releases resources used by the receiver.
+    /// </summary>
+    /// <remarks>
+    /// This method blocks until the background receive task has finished so pooled receive buffers
+    /// are always returned and the <see cref="ClientWebSocket"/> is not used concurrently after
+    /// disposal. <see cref="WsTransport.Dispose"/> aborts the socket before calling this method, so
+    /// the wait is usually brief. For cooperative shutdown without blocking here, cancel the token
+    /// passed to <see cref="Start"/> and complete a graceful close on the transport before disposing.
+    /// </remarks>
     public void Dispose()
     {
-        this.receiveThread?.Join();
+        if (this.disposed)
+        {
+            return;
+        }
+
+        this.disposed = true;
+        this.disposeTokenSource.Cancel();
+
+        try
+        {
+            // Synchronous wait: see remarks on this method. WsTransport.Dispose aborts the socket
+            // before disposing the receiver, and the receive path uses ConfigureAwait(false).
+            this.receiveTask?.GetAwaiter().GetResult();
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            // Swallow any other fault so Dispose() does not throw, per IDisposable contract.
+            // This can happen if, for example, the frame processor throws while handling a frame.
+            OpAmpClientEventSource.Log.TransportCloseException(ex);
+        }
+        finally
+        {
+            this.linkedReceiveTokenSource?.Dispose();
+            this.disposeTokenSource.Dispose();
+        }
+    }
+
+    private static void StopReading(out bool continueRead, out bool isClosed)
+    {
+        continueRead = false;
+        isClosed = true;
     }
 
     private static void ReturnRentalBuffers(List<byte[]>? rentalBuffers)
@@ -53,28 +113,30 @@ internal sealed class WsReceiver : IDisposable
             return;
         }
 
-        foreach (var rental in rentalBuffers)
+        // Skip index 0 because that is always the non-pooled receiveBuffer field.
+        for (var i = 1; i < rentalBuffers.Count; i++)
         {
-            ArrayPool<byte>.Shared.Return(rental);
+            ArrayPool<byte>.Shared.Return(rentalBuffers[i]);
         }
     }
 
-    private async void ReceiveLoop()
+    private async Task ReceiveLoopAsync(CancellationToken token)
     {
-        while (!this.token.IsCancellationRequested && this.ws.State == WebSocketState.Open)
+        while (!token.IsCancellationRequested && this.ws.State == WebSocketState.Open)
         {
-            await this.ReceiveAsync().ConfigureAwait(false);
+            await this.ReceiveAsync(token).ConfigureAwait(false);
         }
     }
 
-    private async Task ReceiveAsync()
+    private async Task ReceiveAsync(CancellationToken token)
     {
         var totalCount = 0;
         var workingCount = 0;
         WebSocketReceiveResult result;
-        byte[] workingBuffer = this.receiveBuffer;
+        var workingBuffer = this.receiveBuffer;
 
         List<byte[]>? rentalBuffers = null;
+
         bool continueRead;
         bool isClosed;
 
@@ -83,10 +145,7 @@ internal sealed class WsReceiver : IDisposable
             // out of space, need to rent more
             if (workingBuffer.Length - workingCount == 0)
             {
-                if (rentalBuffers == null)
-                {
-                    rentalBuffers = [this.receiveBuffer];
-                }
+                rentalBuffers ??= [this.receiveBuffer];
 
                 workingBuffer = ArrayPool<byte>.Shared.Rent(RentalBufferSize);
                 workingCount = 0;
@@ -105,7 +164,7 @@ internal sealed class WsReceiver : IDisposable
             try
             {
                 result = await this.ws
-                    .ReceiveAsync(segment1, this.token)
+                    .ReceiveAsync(segment1, token)
                     .ConfigureAwait(false);
 
                 continueRead = !result.EndOfMessage;
@@ -115,33 +174,69 @@ internal sealed class WsReceiver : IDisposable
             }
             catch (OperationCanceledException)
             {
-                continueRead = false;
-                isClosed = true;
+                StopReading(out continueRead, out isClosed);
+            }
+            catch (Exception ex) when (ex is WebSocketException or ObjectDisposedException)
+            {
+                StopReading(out continueRead, out isClosed);
             }
 
-            if (totalCount > MaxMessageSize)
+            // Reject only after a receive pushes past the limit (see TransportConstants.MaxMessageSize remarks).
+            if (totalCount > TransportConstants.MaxMessageSize)
             {
-                // Message too large, abort the connection.
-                await this.ws
-                    .CloseOutputAsync(WebSocketCloseStatus.MessageTooBig, "Message too large", CancellationToken.None)
-                    .ConfigureAwait(false);
+                OpAmpClientEventSource.Log.OversizedWebSocketMessageReceived(totalCount, TransportConstants.MaxMessageSize);
+
+                // Message too large, abort the connection. Take the send lock so the close frame does
+                // not race a concurrent data send (WsTransmitter) on the socket: ClientWebSocket rejects
+                // concurrent sends with InvalidOperationException, which would otherwise fault this loop
+                // and leave the close frame unsent. Use the dispose token so a shutdown does not block here.
+                try
+                {
+                    await this.sendLock.WaitAsync(this.disposeTokenSource.Token).ConfigureAwait(false);
+
+                    try
+                    {
+                        await this.ws
+                            .CloseOutputAsync(WebSocketCloseStatus.MessageTooBig, "Message too large", CancellationToken.None)
+                            .ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        this.sendLock.Release();
+                    }
+                }
+                catch (Exception ex) when (ex is WebSocketException or ObjectDisposedException or OperationCanceledException)
+                {
+                    OpAmpClientEventSource.Log.TransportCloseException(ex);
+                }
 
                 isClosed = true;
                 break;
             }
         }
-        while (continueRead && !this.token.IsCancellationRequested);
+        while (continueRead && !token.IsCancellationRequested);
 
-        if (!isClosed)
+        try
         {
-            var sequence =
-                rentalBuffers?.Count > 1
-                    ? rentalBuffers.CreateSequenceFromBuffers(workingCount + 1)
-                    : new ReadOnlySequence<byte>(this.receiveBuffer);
+            if (!isClosed)
+            {
+                var sequence =
+                    rentalBuffers?.Count > 1
+                        ? rentalBuffers.CreateSequenceFromBuffers(workingCount)
+                        : new ReadOnlySequence<byte>(this.receiveBuffer, 0, totalCount);
 
-            this.processor.OnServerFrame(sequence, totalCount, verifyHeader: true);
+                this.processor.OnServerFrame(sequence, totalCount, verifyHeader: true);
+            }
         }
-
-        ReturnRentalBuffers(rentalBuffers);
+        catch (Exception ex)
+        {
+            // Frame deserialization or listener dispatch failed. Log and continue the
+            // receive loop so a single bad frame does not kill the long-lived connection.
+            OpAmpClientEventSource.Log.FrameProcessingException(ex);
+        }
+        finally
+        {
+            ReturnRentalBuffers(rentalBuffers);
+        }
     }
 }

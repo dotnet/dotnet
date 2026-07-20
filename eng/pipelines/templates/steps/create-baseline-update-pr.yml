@@ -5,17 +5,12 @@ parameters:
 
 # The pipeline that is being run
 # Used to determine the correct baseline update tool to run
-# Currently only supports "sdk" and "license"
+# Currently supports "sdk", "license", and "reproducibility"
 - name: pipeline
   type: string
 
-# The GitHub repository to create the PR in.
-# Should be in the form '<owner>/<repo-name>'
-- name: repo
-  type: string
-
 # Path to the directory containing the original test files
-# Should be relative to the "repo" parameter
+# Should be relative to the targeted repo
 - name: originalFilesDirectory
   type: string
 
@@ -28,25 +23,57 @@ parameters:
   type: string
   default: Update Test Baselines
 
+# Optional discriminator forwarded to the runner so multiple jobs of the same pipeline
+# targeting the same branch produce distinct PRs.
+- name: identifier
+  type: string
+  default: ''
+
+# Two separate invocations of the underlying runner, gated by mutually-exclusive
+# branch conditions. This is defensive programming to ensure that an internal
+# branch isn't accidentally pushed to a public repository.
 steps:
-  - script: |
-      restoreSources="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"
-      restoreSources+="%3Bhttps://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries/nuget/v3/index.json"
+- ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+  - template: run-baseline-update-pr-tool.yml
+    parameters:
+      dotnetPath: ${{ parameters.dotnetPath }}
+      pipeline: ${{ parameters.pipeline }}
+      repoUrl: 'https://github.com/dotnet/dotnet'
+      token: $(BotAccount-dotnet-sb-bot-pat)
+      originalFilesDirectory: ${{ parameters.originalFilesDirectory }}
+      updatedFilesDirectory: ${{ parameters.updatedFilesDirectory }}
+      pullRequestTitle: ${{ parameters.pullRequestTitle }}
+      identifier: ${{ parameters.identifier }}
 
-      branchName=$(echo "$(Build.SourceBranch)" | sed 's/refs\/heads\///g')
-
-      ${{ parameters.dotnetPath }}/dotnet run \
-        --project eng/tools/CreateBaselineUpdatePR/ \
-        --property:RestoreSources="$restoreSources" \
-        "${{ parameters.pipeline }}" \
-        "${{ parameters.repo }}" \
-        "${{ parameters.originalFilesDirectory }}" \
-        "${{ parameters.updatedFilesDirectory }}" \
-        "$(Build.BuildId)" \
-        --title "${{ parameters.pullRequestTitle }}" \
-        --branch "$branchName"
-    displayName: Publish Test Results PR
-    workingDirectory: $(Build.SourcesDirectory)
+- ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/') }}:
+  - task: AzureCLI@2
+    displayName: Mint AzDO token (WIF)
     condition: succeededOrFailed()
-    env:
-      GH_TOKEN: $(BotAccount-dotnet-sb-bot-pat)
+    inputs:
+      azureSubscription: dnceng-build-rw-code-rw-wif
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        # Azure DevOps AAD resource ID
+        $azureDevOpsResourceId = "499b84ac-1321-427f-aa17-267ca6975798"
+        $token = az account get-access-token --resource $azureDevOpsResourceId --query accessToken -o tsv
+        if ($LASTEXITCODE -ne 0) {
+          Write-Error "Failed to acquire Azure DevOps token via 'az account get-access-token'. Exit code: $LASTEXITCODE"
+          exit 1
+        }
+        $token = $token.Trim()
+        if ([string]::IsNullOrWhiteSpace($token)) {
+          Write-Error "Received an empty Azure DevOps token from 'az account get-access-token'."
+          exit 1
+        }
+        Write-Host "##vso[task.setvariable variable=BaselinePrAzdoToken;issecret=true]$token"
+  - template: run-baseline-update-pr-tool.yml
+    parameters:
+      dotnetPath: ${{ parameters.dotnetPath }}
+      pipeline: ${{ parameters.pipeline }}
+      repoUrl: 'https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet'
+      token: $(BaselinePrAzdoToken)
+      originalFilesDirectory: ${{ parameters.originalFilesDirectory }}
+      updatedFilesDirectory: ${{ parameters.updatedFilesDirectory }}
+      pullRequestTitle: ${{ parameters.pullRequestTitle }}
+      identifier: ${{ parameters.identifier }}

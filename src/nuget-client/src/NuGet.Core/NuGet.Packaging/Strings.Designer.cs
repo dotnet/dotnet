@@ -151,6 +151,24 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CRL URL: {0}.
+        /// </summary>
+        internal static string CertUtilityCertificateCrlUrl {
+            get {
+                return ResourceManager.GetString("CertUtilityCertificateCrlUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OCSP URL: {0}.
+        /// </summary>
+        internal static string CertUtilityCertificateOcspUrl {
+            get {
+                return ResourceManager.GetString("CertUtilityCertificateOcspUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ... {0} more..
         /// </summary>
         internal static string CertUtilityMultipleCertificatesFooter {
@@ -446,6 +464,15 @@ namespace NuGet.Packaging {
                 return ResourceManager.GetString("ErrorInvalidPackageVersionForDependency", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid timestamp: &apos;{0}&apos;.
+        /// </summary>
+        internal static string ErrorInvalidTimestamp {
+            get {
+                return ResourceManager.GetString("ErrorInvalidTimestamp", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Manifest file not found at &apos;{0}&apos;.
@@ -583,7 +610,7 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fail to load packages.config as XML file. Please check it. .
+        ///   Looks up a localized string similar to Fail to load packages.config as XML file. Check that it is valid. .
         /// </summary>
         internal static string FailToLoadPackagesConfig {
             get {
@@ -1168,7 +1195,7 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;{0}&apos; package requires NuGet client version &apos;{1}&apos; or above, but the current NuGet version is &apos;{2}&apos;. To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget.
+        ///   Looks up a localized string similar to The &apos;{0}&apos; package requires NuGet client version &apos;{1}&apos; or above, but the current NuGet version is &apos;{2}&apos;. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget.
         /// </summary>
         internal static string PackageMinVersionNotSatisfied {
             get {
@@ -1339,7 +1366,7 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package already contains a signature. Please remove the existing signature before adding a new signature..
+        ///   Looks up a localized string similar to The package already contains a signature. Remove the existing signature before adding a new signature..
         /// </summary>
         internal static string SignedPackageAlreadySigned {
             get {
@@ -1384,7 +1411,7 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package already contains a repository countersignature. Please remove the existing signature before adding a new repository countersignature..
+        ///   Looks up a localized string similar to The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature..
         /// </summary>
         internal static string SignedPackagePackageAlreadyCountersigned {
             get {
@@ -1393,7 +1420,7 @@ namespace NuGet.Packaging {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package was not opened correctly to perform signature operations. Please use a Stream-based constructor to have access to signature attributes of the package..
+        ///   Looks up a localized string similar to The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package..
         /// </summary>
         internal static string SignedPackageUnableToAccessSignature {
             get {

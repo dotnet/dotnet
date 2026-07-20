@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -16,27 +15,39 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Gets the plugin's operation claims.
         /// </summary>
-        public IReadOnlyList<OperationClaim> Claims { get; }
+        public IReadOnlyList<OperationClaim>? Claims { get; }
 
         /// <summary>
         /// Gets a message if <see cref="Plugin" /> is <see langword="null" />; otherwise, <see langword="null" />.
         /// </summary>
-        public string Message { get; }
+        public string? Message { get; }
 
         /// <summary>
         /// Gets the exception caught.  May be <see langword="null" />.
         /// </summary>
-        public Exception Exception { get; }
+        public Exception? Exception { get; }
 
         /// <summary>
         /// Gets a plugin.
         /// </summary>
-        public IPlugin Plugin { get; }
+        public IPlugin? Plugin { get; }
 
         /// <summary>
         /// Gets a plugin multiclient utilities.
         /// </summary>
-        public IPluginMulticlientUtilities PluginMulticlientUtilities { get; }
+        public IPluginMulticlientUtilities? PluginMulticlientUtilities { get; }
+
+        /// <summary>
+        /// Gets whether the plugin was created successfully.
+        /// When <see langword="true" />, <see cref="Plugin" />, <see cref="PluginMulticlientUtilities" />,
+        /// and <see cref="Claims" /> are guaranteed to be non-<see langword="null" />.
+        /// When <see langword="false" />, <see cref="Message" /> is guaranteed to be non-<see langword="null" />.
+        /// </summary>
+        [MemberNotNullWhen(true, nameof(Plugin))]
+        [MemberNotNullWhen(true, nameof(PluginMulticlientUtilities))]
+        [MemberNotNullWhen(true, nameof(Claims))]
+        [MemberNotNullWhen(false, nameof(Message))]
+        internal bool IsSuccess => Plugin is not null;
 
         /// <summary>
         /// Instantiates a new <see cref="PluginCreationResult" /> class.

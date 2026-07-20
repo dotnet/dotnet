@@ -1,5 +1,11 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <!-- Per-component overrides (FileVersionRevision, AssemblyVersionOverride, etc.) and the
+       <FileVersionValidationPackage> item shared with the update-external-metadata tool
+       and ExternalPackageTests live in this sibling file. SourceRevisionId stays in the
+       .proj below — it's per-.proj source provenance, orthogonal to validation overrides. -->
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" />
+
   <PropertyGroup>
     <!-- Project Paths -->
     <SlnPersistenceKeyFilePath>$(KeysDir)vs-solutionpersistence.snk</SlnPersistenceKeyFilePath>
@@ -14,11 +20,14 @@
     <DotNetToolArgs>$(DotNetToolArgs) /p:AssemblyOriginatorKeyFile=$(SlnPersistenceKeyFilePath)</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:SignAssembly=true</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:PublicSign=true</DotNetToolArgs>
-    <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(SolutionPersistenceVersion)</DotNetToolArgs>
-    <DotNetToolArgs>$(DotNetToolArgs) /p:PackageVersion=$(SolutionPersistenceVersion)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:Version=$(VsSolutionPersistenceReleaseVersion)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:AssemblyVersion=$(AssemblyVersionOverride)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:FileVersion=$(VsSolutionPersistenceReleaseVersion).$(FileVersionRevision)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:InformationalVersion=$(InformationalVersionOverride)</DotNetToolArgs>
+    <DotNetToolArgs>$(DotNetToolArgs) /p:PackageVersion=$(VsSolutionPersistenceReleaseVersion)</DotNetToolArgs>
 
     <BuildCommand>$(DotNetTool) pack $(SlnPersistenceProjectPath) /bl:$(ArtifactsLogRepoDir)build.binlog $(DotNetToolArgs)</BuildCommand>
-    <SourceRevisionId>0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac</SourceRevisionId>
+    <SourceRevisionId>19c3ca7dc997dba2b3a86f6c666e9f717f34c8fe</SourceRevisionId>
   </PropertyGroup>
 
   <ItemGroup>

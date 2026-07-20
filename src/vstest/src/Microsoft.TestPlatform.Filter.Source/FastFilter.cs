@@ -80,23 +80,60 @@ internal sealed class FastFilter
 #endif
 
         bool matched = false;
-        foreach (var name in FilterProperties.Keys)
+        foreach (var kvp in FilterProperties)
         {
-            // If there is no value corresponding to given name, treat it as unmatched.
-            if (!TryGetPropertyValue(name, propertyValueProvider, out var singleValue, out var multiValues))
+            var filterValues = kvp.Value;
+
+            // Reserved keyword: "None" matches tests with no value for this property (uncategorized).
+            bool hasNoneFilter = filterValues.Contains(Condition.NoneFilterValue);
+
+            // If there is no value corresponding to given name, treat it as unmatched unless filtering for "None".
+            if (!TryGetPropertyValue(kvp.Key, propertyValueProvider, out var singleValue, out var multiValues))
             {
+                if (hasNoneFilter)
+                {
+                    matched = true;
+                    break;
+                }
+
                 continue;
             }
 
             if (singleValue != null)
             {
                 var value = PropertyValueRegex == null ? singleValue : ApplyRegex(singleValue);
-                matched = value != null && FilterProperties[name].Contains(value);
+                matched = value != null && filterValues.Contains(value);
             }
-            else
+            else if (multiValues is { Length: > 0 })
             {
-                var values = PropertyValueRegex == null ? multiValues : multiValues?.Select(value => ApplyRegex(value));
-                matched = values?.Any(result => result != null && FilterProperties[name].Contains(result)) == true;
+                if (PropertyValueRegex == null)
+                {
+                    foreach (var result in multiValues)
+                    {
+                        if (result != null && filterValues.Contains(result))
+                        {
+                            matched = true;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var result in multiValues)
+                    {
+                        var transformed = ApplyRegex(result);
+                        if (transformed != null && filterValues.Contains(transformed))
+                        {
+                            matched = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (hasNoneFilter)
+            {
+                // Empty array matches "None" filter (uncategorized).
+                matched = true;
             }
 
             if (matched)

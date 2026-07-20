@@ -56,10 +56,12 @@ internal sealed class WriteDirectlyToTransportSink<T> : ISink<T>, IDisposable
             if (remainingDataFromPreviousTransmission.Count > 0)
             {
                 buffer.Position = 0;
+#pragma warning disable IDE0370 // Suppression is unnecessary
                 buffer.Write(
                     remainingDataFromPreviousTransmission.Array!,
                     remainingDataFromPreviousTransmission.Offset,
                     remainingDataFromPreviousTransmission.Count);
+#pragma warning restore IDE0370 // Suppression is unnecessary
                 buffer.SetLength(remainingDataFromPreviousTransmission.Count);
                 numberOfItemsToSend = 1;
                 remainingDataFromPreviousTransmission = default;
@@ -100,10 +102,12 @@ internal sealed class WriteDirectlyToTransportSink<T> : ISink<T>, IDisposable
 
                 var endPositionOfValidMessages = (int)(result.PayloadSizeInBytes - result.PayloadOverflowItemSizeInBytes);
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
                 remainingDataFromPreviousTransmission = new ArraySegment<byte>(
                     underlyingBuffer.Array!,
                     endPositionOfValidMessages,
                     (int)result.PayloadOverflowItemSizeInBytes.Value);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
                 buffer.SetLength(endPositionOfValidMessages);
 

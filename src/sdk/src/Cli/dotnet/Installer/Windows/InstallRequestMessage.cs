@@ -4,7 +4,7 @@
 #nullable disable
 
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Microsoft.DotNet.Cli.Installer.Windows;
 
@@ -152,11 +152,10 @@ internal class InstallRequestMessage : InstallMessageBase
     /// </summary>
     /// <param name="bytes">The array of bytes to convert.</param>
     /// <returns>An <see cref="InstallRequestMessage"/>.</returns>
-    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Newtonsoft.Json is not used in AOT scenarios.")]
-    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Newtonsoft.Json is not used in trimmed scenarios.")]
     public static InstallRequestMessage Create(byte[] bytes)
     {
         string json = Encoding.UTF8.GetString(bytes);
-        return JsonConvert.DeserializeObject<InstallRequestMessage>(json, DefaultSerializerSettings);
+        return JsonSerializer.Deserialize(json, InstallerJsonSerializerContext.Default.InstallRequestMessage)
+            ?? throw new JsonException("The install request message payload deserialized to null.");
     }
 }

@@ -47,6 +47,12 @@
         <target state="translated">{0} konumundaki packages.config dosyası ayrıştırılırken hata oluştu: {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">'{0}' için proje bilgileri okunamıyor: {1}</target>
+        <note>0 - The project name
+1 - The error message</note>
+      </trans-unit>
       <trans-unit id="Error_StaticGraphNonZeroExitCode">
         <source>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</source>
         <target state="translated">Statik grafik tabanlı geri yükleme, '{0}' çıkış koduyla başarısız oldu, ancak hatayı günlüğe kaydetmedi. Lütfen https://github.com/NuGet/Home sayfasından sorun bildirin.</target>
@@ -111,8 +117,8 @@
 1 - list of projects</note>
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
-        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</source>
-        <target state="translated">RestoreNoCache kullanım dışı bırakıldı ve RestoreNoHttpCache olarak yeniden adlandırıldı. Lütfen bunun yerine RestoreNoHttpCache kullanın.</target>
+        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</source>
+        <target state="translated">RestoreNoCache kullanım dışı bırakıldı ve RestoreNoHttpCache olarak yeniden adlandırıldı. Bunun yerine RestoreNoHttpCache kullanın.</target>
         <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
       </trans-unit>
       <trans-unit id="Log_RunningStaticGraphRestoreCommand">

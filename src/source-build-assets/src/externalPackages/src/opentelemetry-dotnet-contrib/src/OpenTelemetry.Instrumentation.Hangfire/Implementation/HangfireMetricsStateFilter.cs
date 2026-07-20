@@ -53,7 +53,7 @@ internal sealed class HangfireMetricsStateFilter : JobFilterAttribute, IApplySta
             return null;
         }
 
-        StateData? stateData = context.Connection.GetStateData(context.BackgroundJob.Id);
+        var stateData = context.Connection.GetStateData(context.BackgroundJob.Id);
         return stateData != null ? TryGetExceptionTypeFromSerializedData(stateData.Data) : null;
     }
 

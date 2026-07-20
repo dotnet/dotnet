@@ -1,6 +1,6 @@
 parameters:
   - name: 'ComponentBranchName'
-    default: 'rel/18.7'
+    default: 'main'
   - name: 'CreateDraftPR'
     default: 'false'
   - name: 'OptionalTitlePrefix'
@@ -9,7 +9,6 @@ parameters:
     default: 'main'
 
 variables:
-- group: DotNet-Roslyn-Insertion-Variables
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
 - name: BuildQueueName
   value: 'microsoft-vstest'
@@ -26,7 +25,7 @@ variables:
 - name: CherryPick
   value: ''
 - name: AutoComplete
-  value: 'true'
+  value: 'false'
 - name: ComponentBranchName
   value: '${{ parameters.ComponentBranchName }}'
 - name: CreateDraftPR
@@ -44,7 +43,7 @@ schedules:
     displayName: Daily midnight insertion to VS
     branches:
       include:
-      - rel/18.7
+      - main
     always: true
 
 resources:
@@ -96,12 +95,16 @@ extends:
                     & eng/common/dotnet-install.ps1 -version $version -runtime ''
 
               - task: AzureCLI@2
-                displayName: 'Run VS Insertion'
+                displayName: '🚀 Run VS Insertion'
                 inputs:
                   azureSubscription: 'DncEng Insertion: Roslyn and Razor'
                   scriptType: pscore
                   scriptLocation: inlineScript
                   inlineScript: |
+                    # Disable .NET first-time experience to avoid delays
+                    $env:DOTNET_NOLOGO = '1'
+                    $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE = '1'
+
                     # Install Roslyn insertion tools from the dnceng feed, using --tool-path as a workaround to avoid resetting the process to pick up dotnet tool path changes
                     $dotnet = "$(Build.SourcesDirectory)\.dotnet\dotnet.exe"
                     & $dotnet tool install Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json --tool-path .
@@ -130,13 +133,14 @@ extends:
                       "--title-prefix", "$(OptionalTitlePrefix)"
                       "--reviewer-guid", $team
                       "--dnceng-azdo-token", $dncengToken
-                      "--devdiv-azdo-token", "$(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)"
+                      "--devdiv-azdo-token", $dncengToken
                       "--ci"
                     )
 
-                    if ("$(AutoComplete)" -eq "true") {
-                      $insertArgs += "--set-auto-complete"
-                    }
+                    # AutoComplete disabled — WIF token cannot vote on behalf of others (TF401186)
+                    # if ("$(AutoComplete)" -eq "true") {
+                    #   $insertArgs += "--set-auto-complete"
+                    # }
 
                     if ("$(CreateDraftPR)" -eq "true") {
                       $insertArgs += "--create-draft-pr"
@@ -152,9 +156,203 @@ extends:
                       $insertArgs += "$(CherryPick)"
                     }
 
-                    "Running: ./roslyn-tools.exe $($insertArgs -join ' ')"
-                    ./roslyn-tools.exe @insertArgs
+                    "Running: ./roslyn-tools.exe $(($insertArgs -join ' ') -replace [regex]::Escape($dncengToken), '***')"
+                    $roslynOutput = ./roslyn-tools.exe @insertArgs 2>&1 | ForEach-Object { Write-Host $_; $_ }
                     if ($LASTEXITCODE -ne 0) {
                       exit $LASTEXITCODE
                     }
 
+                    # Push vstest.console app.config to the insertion PR branch in the VS repo.
+                    # The file maps to src/vset/Agile/TestPlatform/RocksteadyCLI/App.config in VS.
+                    # Use the WIF token (SP is enrolled in both dnceng and devdiv)
+                    $headers = @{
+                      Authorization = "Bearer $dncengToken"
+                      'Content-Type' = 'application/json'
+                    }
+
+                    $devdivOrg = "https://dev.azure.com/devdiv"
+                    $project = "DevDiv"
+                    $vsRepoId = "a290117c-5a8a-40f7-bc2c-f14dbe3acf6d"
+                    $targetFilePath = "/src/vset/Agile/TestPlatform/RocksteadyCLI/App.config"
+
+                    # Extract the PR number from roslyn-tools output.
+                    # The tool logs a PR URL like: https://dev.azure.com/devdiv/DevDiv/_git/VS/pullrequest/735439
+                    # We match the URL pattern specifically to avoid grabbing timestamps from PR titles.
+                    $outputText = $roslynOutput -join "`n"
+                    $prId = $null
+                    if ($outputText -match '/pullrequest/(\d+)') {
+                      $prId = $Matches[1]
+                    } elseif ($outputText -match 'pullrequests/(\d+)') {
+                      $prId = $Matches[1]
+                    }
+
+                    if (-not $prId) {
+                      Write-Error "Could not extract PR ID from roslyn-tools output. Cannot push App.config and revision.txt."
+                      Write-Host "roslyn-tools output was:"
+                      Write-Host $outputText
+                      exit 1
+                    }
+                    else {
+                      Write-Host "Detected insertion PR #$prId, pushing App.config and revision.txt..."
+
+                      try {
+                        # Get the PR to find its source branch
+                        $prUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/pullrequests/${prId}?api-version=7.1"
+                        $pr = Invoke-RestMethod -Uri $prUrl -Headers $headers -Method Get
+                        $sourceBranch = $pr.sourceRefName
+                        Write-Host "PR source branch: $sourceBranch"
+
+                        # Get the latest commit on the insertion branch
+                        $refFilter = ($sourceBranch -replace '^refs/', '')
+                        $encodedFilter = [Uri]::EscapeDataString($refFilter)
+                        $refUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/refs?filter=$encodedFilter&api-version=7.1"
+                        $refResponse = Invoke-RestMethod -Uri $refUrl -Headers $headers -Method Get
+                        if (-not $refResponse.value -or $refResponse.value.Count -eq 0) {
+                          throw "Could not resolve ref for branch $sourceBranch"
+                        }
+                        $latestCommitId = $refResponse.value[0].objectId
+
+                        # Fetch the app.config from the mirror repo at the exact commit used by the insertion.
+                        # roslyn-tools logs "Found microsoft-vstest build number X" — resolve the source commit from that build.
+                        $mirrorRepoId = "microsoft-vstest"
+                        $dncengBase = "https://dnceng.visualstudio.com/internal"
+                        $dncengHeaders = @{
+                          Authorization = "Bearer $dncengToken"
+                        }
+
+                        $sourceCommit = $null
+
+                        # Extract the build ID from the "Updating VS Test Platform from [...] to [buildnum](url) ([sha](sourcesUrl))" line.
+                        # We use the build ID to resolve the full commit SHA via the builds API.
+                        if ($outputText -match 'Updating VS Test Platform from .+ to \[\S+\]\([^)]+\) \(\[[0-9a-f]{7,40}\]\(https://dev\.azure\.com/dnceng/[^)]+/_apis/build/builds/(\d+)/sources\)\)') {
+                          $sourceBuildId = $Matches[1]
+                          Write-Host "Resolving source commit from build ID $sourceBuildId"
+                          $buildUrl = "$dncengBase/_apis/build/builds/${sourceBuildId}?api-version=7.1"
+                          $buildResponse = Invoke-RestMethod -Uri $buildUrl -Headers $dncengHeaders -Method Get
+                          $sourceCommit = $buildResponse.sourceVersion
+                        }
+
+                        if (-not $sourceCommit) {
+                          # Fallback: resolve source commit from build number via AzDO API.
+                          # buildNumber is not unique across pipelines (e.g. "20260514.9" matches dotnet-roslyn,
+                          # dotnet-runtime, microsoft-vstest, ...) so filter the result by the mirror pipeline name.
+                          if ($outputText -match 'Found microsoft-vstest build number (\S+)') {
+                            $buildNumber = $Matches[1]
+                            Write-Host "Resolving source commit from build number $buildNumber"
+                            $buildsUrl = "$dncengBase/_apis/build/builds?buildNumber=$buildNumber&api-version=7.1"
+                            $buildsResponse = Invoke-RestMethod -Uri $buildsUrl -Headers $dncengHeaders -Method Get
+                            $matchingBuild = $buildsResponse.value | Where-Object { $_.definition.name -eq $mirrorRepoId } | Select-Object -First 1
+                            if ($matchingBuild) {
+                              $sourceCommit = $matchingBuild.sourceVersion
+                            }
+                          }
+                        }
+
+                        if (-not $sourceCommit) {
+                          throw "Could not determine source commit from roslyn-tools output"
+                        }
+
+                        Write-Host "Fetching app.config from mirror repo at commit $sourceCommit"
+                        $encodedPath = [Uri]::EscapeDataString("/src/vstest.console/app.config")
+                        $itemUrl = "$dncengBase/_apis/git/repositories/$mirrorRepoId/items?path=$encodedPath&versionDescriptor.version=$sourceCommit&versionDescriptor.versionType=commit&api-version=7.1"
+                        # Use Invoke-WebRequest and decode to string explicitly.
+                        # Invoke-RestMethod auto-parses XML into XmlDocument (depth overflow),
+                        # and Invoke-WebRequest.Content returns byte[] when charset is missing.
+                        $appConfigResponse = Invoke-WebRequest -Uri $itemUrl -Headers $dncengHeaders -Method Get -UseBasicParsing
+                        $appConfigContent = if ($appConfigResponse.Content -is [byte[]]) {
+                          [System.Text.Encoding]::UTF8.GetString($appConfigResponse.Content)
+                        } else {
+                          $appConfigResponse.Content
+                        }
+
+                        # Compare with the current App.config in the insertion branch. If there is
+                        # no App.config change, do not create a revision-only commit.
+                        $sourceBranchName = ($sourceBranch -replace '^refs/heads/', '')
+                        $encodedSourceBranchName = [Uri]::EscapeDataString($sourceBranchName)
+                        $encodedTargetPath = [Uri]::EscapeDataString($targetFilePath)
+                        $currentAppConfigUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/items?path=$encodedTargetPath&versionDescriptor.version=$encodedSourceBranchName&versionDescriptor.versionType=branch&api-version=7.1"
+                        $currentAppConfigResponse = Invoke-WebRequest -Uri $currentAppConfigUrl -Headers $headers -Method Get -UseBasicParsing
+                        $currentAppConfigContent = if ($currentAppConfigResponse.Content -is [byte[]]) {
+                          [System.Text.Encoding]::UTF8.GetString($currentAppConfigResponse.Content)
+                        } else {
+                          $currentAppConfigResponse.Content
+                        }
+
+                        if ($currentAppConfigContent -eq $appConfigContent) {
+                          Write-Host "App.config is unchanged on the insertion branch; skipping revision.txt bump."
+                        }
+                        else {
+                          # Read revision.txt from the VS target branch and bump the revision number.
+                          # revision.txt has two lines: an integer revision number and a GUID.
+                          $revisionFilePath = "/src/SetupPackages/TestTools/TestPlatform/V1/CLI/core/Shared/revision.txt"
+                          $targetBranch = $pr.targetRefName
+                          Write-Host "PR target branch: $targetBranch"
+
+                          $targetBranchName = ($targetBranch -replace '^refs/heads/', '')
+                          $encodedRevPath = [Uri]::EscapeDataString($revisionFilePath)
+                          $revisionUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/items?path=$encodedRevPath&versionDescriptor.version=$targetBranchName&versionDescriptor.versionType=branch&api-version=7.1"
+                          $revResponse = Invoke-WebRequest -Uri $revisionUrl -Headers $headers -Method Get -UseBasicParsing
+                          $revisionContent = if ($revResponse.Content -is [byte[]]) {
+                            [System.Text.Encoding]::UTF8.GetString($revResponse.Content)
+                          } else {
+                            $revResponse.Content
+                          }
+                          $revisionLines = $revisionContent -split "`n"
+                          $currentRevision = [int]($revisionLines[0].Trim())
+                          $newRevision = $currentRevision + 1
+                          $revisionLines[0] = $newRevision.ToString()
+                          $newRevisionContent = $revisionLines -join "`n"
+                          Write-Host "Bumping revision.txt: $currentRevision -> $newRevision"
+
+                          # Push app.config and revision.txt to the insertion branch in a single commit.
+                          $pushUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/pushes?api-version=7.1"
+                          $pushBody = @{
+                            refUpdates = @(
+                              @{
+                                name = $sourceBranch
+                                oldObjectId = $latestCommitId
+                              }
+                            )
+                            commits = @(
+                              @{
+                                comment = "Update RocksteadyCLI App.config and bump revision.txt"
+                                changes = @(
+                                  @{
+                                    changeType = "edit"
+                                    item = @{
+                                      path = $targetFilePath
+                                    }
+                                    newContent = @{
+                                      content = $appConfigContent
+                                      contentType = "rawtext"
+                                    }
+                                  },
+                                  @{
+                                    changeType = "edit"
+                                    item = @{
+                                      path = $revisionFilePath
+                                    }
+                                    newContent = @{
+                                      content = $newRevisionContent
+                                      contentType = "rawtext"
+                                    }
+                                  }
+                                )
+                              }
+                            )
+                          } | ConvertTo-Json -Depth 10
+
+                          # Debug: show content types to diagnose serialization issues
+                          Write-Host "appConfigContent type: $($appConfigContent.GetType().FullName), length: $($appConfigContent.Length)"
+                          Write-Host "newRevisionContent type: $($newRevisionContent.GetType().FullName), length: $($newRevisionContent.Length)"
+                          Write-Host "pushBody length: $($pushBody.Length)"
+
+                          $pushResponse = Invoke-RestMethod -Uri $pushUrl -Headers $headers -Method Post -Body ([System.Text.Encoding]::UTF8.GetBytes($pushBody)) -ContentType 'application/json; charset=utf-8'
+                          Write-Host "Pushed App.config and revision.txt to insertion branch. Commit: $($pushResponse.commits[0].commitId)"
+                        }
+                      }
+                      catch {
+                        Write-Error "Failed to push App.config and revision.txt to insertion branch: $_"
+                        exit 1
+                      }
+                    }

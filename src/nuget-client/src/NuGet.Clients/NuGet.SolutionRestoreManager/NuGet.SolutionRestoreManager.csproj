@@ -21,6 +21,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
   </ItemGroup>
 
   <ItemGroup>

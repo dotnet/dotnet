@@ -13,8 +13,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Cmdlet_CommandObsolete">
-        <source>This Command/Parameter combination has been deprecated and will be removed in the next release. Please consider using the new command that replaces it: '{0}'.</source>
-        <target state="translated">Это сочетание команды и параметра является нерекомендуемым и будет удалено в следующем выпуске. Вместо этой команды рекомендуется использовать новую, которая ее заменяет: '{0}'.</target>
+        <source>This Command/Parameter combination has been deprecated and will be removed in the next release. Consider using the new command that replaces it: '{0}'.</source>
+        <target state="translated">Это сочетание команды и параметра является нерекомендуемым и будет удалено в следующем выпуске. Вместо этой команды рекомендуется использовать новую, которая ее заменяет: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Cmdlet_DeprecatedFrameworkContinue">
@@ -226,7 +226,7 @@
 {1} - source string specified by the user</note>
       </trans-unit>
       <trans-unit id="Host_PSNotInstalled">
-        <source>Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Please install the PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</source>
+        <source>Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Install PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</source>
         <target state="translated">Ошибка. Для работы Package Manager Console требуется среда выполнения PowerShell 2.0, которая не обнаружена на этом компьютере. Установите PowerShell 2.0, воспользовавшись страницей по адресу http://support.microsoft.com/kb/968929, и перезапустите Visual Studio.</target>
         <note />
       </trans-unit>
@@ -241,13 +241,13 @@
         <note>{0} = defaultChoice</note>
       </trans-unit>
       <trans-unit id="UnknownSource">
-        <source>Source '{0}' not found. Please provide an HTTP or local source.</source>
-        <target state="translated">Не удалось найти источник "{0}". Укажите HTTP- или локальный источник.</target>
+        <source>Source '{0}' not found. Provide an HTTP or local source.</source>
+        <target state="translated">Не удалось найти источник {0}. Укажите HTTP- или локальный источник.</target>
         <note>{0} is the source</note>
       </trans-unit>
       <trans-unit id="UnknownSourceType">
-        <source>Unsupported type of source '{0}'. Please provide an HTTP or local source.</source>
-        <target state="translated">Неподдерживаемый тип источника "{0}". Укажите HTTP- или локальный источник.</target>
+        <source>Unsupported type of source '{0}'. Provide an HTTP or local source.</source>
+        <target state="translated">Неподдерживаемый тип источника {0}. Укажите HTTP- или локальный источник.</target>
         <note>{0} is the input source.</note>
       </trans-unit>
       <trans-unit id="UnknownSourceWithId">

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.NET.Sdk.iOS.Manifest-11.0.100-preview.6</PackageId>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>26.5.11720-net11-p6</PackageVersion>
+    <AssemblyName>Microsoft.NET.Sdk.iOS.Manifest-11.0.100-preview.6</AssemblyName>
+    <Description>.NET Workload for iOS platforms</Description>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageType>DotnetPlatform</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="data/WorkloadDependencies.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.targets" Pack="true" PackagePath="data" />
+    <None Include="LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

@@ -12,8 +12,6 @@ Developers can use them in MSBuild projects in the following ways:
 
 ### Sdk element (recommended)
 
-Requires: MSBuild 15.6+
-
 Reference the package as an "SDK" in your MSBuild project. MSBuild will automatically restore and extract this package.
 
 ```xml
@@ -115,8 +113,3 @@ MSBuild task packages cannot have dependencies (due to the current design of the
   </metadata>
 </package>
 ```
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CTaskPackages.md)](https://helix.dot.net/f/p/5?p=Documentation%5CTaskPackages.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CTaskPackages.md)</sub>
-<!-- End Generated Content-->

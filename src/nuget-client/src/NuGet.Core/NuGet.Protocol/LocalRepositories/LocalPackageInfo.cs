@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
@@ -11,8 +9,8 @@ namespace NuGet.Protocol
 {
     public class LocalPackageInfo
     {
-        private readonly Lazy<NuspecReader> _nuspecHelper;
-        private readonly Func<PackageReaderBase> _getPackageReader;
+        private readonly Lazy<NuspecReader> _nuspecHelper = null!;
+        private readonly Func<PackageReaderBase> _getPackageReader = null!;
 
         /// <summary>
         /// Local nuget package.
@@ -52,7 +50,7 @@ namespace NuGet.Protocol
             {
                 if (useFolder)
                 {
-                    var directoryName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path), System.IO.Path.GetFileNameWithoutExtension(Path));
+                    var directoryName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path)!, System.IO.Path.GetFileNameWithoutExtension(Path));
                     return new PackageFolderReader(directoryName);
                 }
                 else
@@ -62,20 +60,20 @@ namespace NuGet.Protocol
             });
         }
 
+        // Protected ctor for subclass override patterns; virtual members must be overridden.
         protected LocalPackageInfo()
         {
-
         }
 
         /// <summary>
         /// Package id and version.
         /// </summary>
-        public virtual PackageIdentity Identity { get; }
+        public virtual PackageIdentity Identity { get; } = null!;
 
         /// <summary>
         /// Nupkg or folder path.
         /// </summary>
-        public virtual string Path { get; }
+        public virtual string Path { get; } = null!;
 
         /// <summary>
         /// Last file write time. This is used for the publish date.

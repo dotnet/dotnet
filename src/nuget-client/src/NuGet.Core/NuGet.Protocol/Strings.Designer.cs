@@ -205,6 +205,42 @@ namespace NuGet.Protocol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unexpected JSON token type &apos;{0}&apos;..
+        /// </summary>
+        internal static string Error_UnexpectedJsonToken {
+            get {
+                return ResourceManager.GetString("Error_UnexpectedJsonToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Required property &apos;{0}&apos; not found in JSON..
+        /// </summary>
+        internal static string Error_RequiredJsonPropertyMissing {
+            get {
+                return ResourceManager.GetString("Error_RequiredJsonPropertyMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expected payload to be a JSON object but was `{0}`..
+        /// </summary>
+        internal static string Error_UnexpectedPayloadTokenType {
+            get {
+                return ResourceManager.GetString("Error_UnexpectedPayloadTokenType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported payload type `{0}`..
+        /// </summary>
+        internal static string Error_UnsupportedPayloadType {
+            get {
+                return ResourceManager.GetString("Error_UnsupportedPayloadType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The server responded with HTTP &apos;403 Forbidden&apos; when accessing the source &apos;{0}&apos;. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource..
         /// </summary>
         internal static string Http_CredentialsForForbidden {
@@ -894,6 +930,24 @@ namespace NuGet.Protocol {
         internal static string Protocol_PackageMetadataError {
             get {
                 return ResourceManager.GetString("Protocol_PackageMetadataError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The source does not support filtering search results by package type..
+        /// </summary>
+        internal static string Protocol_PackageTypeFilterNotSupported {
+            get {
+                return ResourceManager.GetString("Protocol_PackageTypeFilterNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The source supports filtering by only one package type at a time..
+        /// </summary>
+        internal static string Protocol_PackageTypeFilterMultipleNotSupported {
+            get {
+                return ResourceManager.GetString("Protocol_PackageTypeFilterMultipleNotSupported", resourceCulture);
             }
         }
         

@@ -4,22 +4,20 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using OpenTelemetry.Instrumentation.AspNet.Implementation;
-using OpenTelemetry.Internal;
+using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Instrumentation.AspNet;
 
 /// <summary>
-/// Asp.Net Requests instrumentation.
+/// ASP.NET Requests instrumentation.
 /// </summary>
 internal sealed class AspNetInstrumentation : IDisposable
 {
     public static readonly AspNetInstrumentation Instance = new();
 
-    private static readonly (ActivitySource ActivitySource, Meter Meter) Telemetry = CreateTelemetry();
-#pragma warning disable SA1202 // Elements must be ordered by accessibility. Telemetry field should be private and initialized earlier
-    public static readonly ActivitySource ActivitySource = Telemetry.ActivitySource;
-#pragma warning restore SA1202 // Elements must be ordered by accessibility. Telemetry field should be private and initialized earlier
-    public static readonly Meter Meter = Telemetry.Meter;
+    public static readonly Version SemanticConventionsVersion = new(1, 36, 0);
+    public static readonly ActivitySource ActivitySource = ActivitySourceFactory.Create<AspNetInstrumentation>(SemanticConventionsVersion);
+    public static readonly Meter Meter = Metrics.MeterFactory.Create<AspNetInstrumentation>(SemanticConventionsVersion);
 
     public static readonly Histogram<double> HttpServerDuration = Meter.CreateHistogram(
         "http.server.request.duration",
@@ -44,30 +42,5 @@ internal sealed class AspNetInstrumentation : IDisposable
 
     /// <inheritdoc/>
     public void Dispose()
-    {
-        this.httpInListener?.Dispose();
-    }
-
-    private static (ActivitySource ActivitySource, Meter Meter) CreateTelemetry()
-    {
-        const string telemetrySchemaUrl = "https://opentelemetry.io/schemas/1.36.0";
-        var assembly = typeof(AspNetInstrumentation).Assembly;
-        var assemblyName = assembly.GetName();
-        var name = assemblyName.Name!;
-        var version = assembly.GetPackageVersion();
-
-        var activitySourceOptions = new ActivitySourceOptions(name)
-        {
-            Version = version,
-            TelemetrySchemaUrl = telemetrySchemaUrl,
-        };
-
-        var meterOptions = new MeterOptions(name)
-        {
-            Version = version,
-            TelemetrySchemaUrl = telemetrySchemaUrl,
-        };
-
-        return (new ActivitySource(activitySourceOptions), new Meter(meterOptions));
-    }
+        => this.httpInListener?.Dispose();
 }

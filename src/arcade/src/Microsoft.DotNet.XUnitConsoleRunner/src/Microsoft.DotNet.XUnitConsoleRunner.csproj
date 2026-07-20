@@ -1,7 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <!-- The console runner (xunit.console.dll) is a test host: it loads and runs test
+         assemblies in-process, so it must run on a .NET runtime whose version is at least
+         that of the test assemblies. Ship a host for both NetCurrent (for repos that build
+         against the in-development TFM, e.g. dotnet/runtime) and NetMinimum (for repos that
+         consume the latest Arcade while still on an older .NET SDK). A host built only for
+         NetMinimum causes TypeLoadException "format is invalid" when it is asked to load a
+         NetCurrent test assembly that references newer BCL members. The consuming project
+         selects the matching host via the packaged build props. -->
+    <TargetFrameworks>$(NetCurrent);$(NetPrevious);$(NetMinimum)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <AssemblyName>xunit.console</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -19,6 +27,7 @@
 
   <ItemGroup>
     <None Include="build\Microsoft.DotNet.XUnitConsoleRunner.props" Pack="true" PackagePath="build" />
+    <None Include="build\Microsoft.DotNet.XUnitConsoleRunner.targets" Pack="true" PackagePath="build" />
     <None Include="$(RepoRoot)LICENSE.txt" PackagePath="LICENSE.txt" Pack="true"/>
     <None Include="$(RepoRoot)THIRD-PARTY-NOTICES.txt" PackagePath="THIRD-PARTY-NOTICES.txt" Pack="true"/>
   </ItemGroup>
@@ -38,11 +47,18 @@
     <PackageReference Include="xunit.runner.reporters" />
   </ItemGroup>
 
-  <!-- Publish build assets and include them in the package under the tools directory. -->
+  <!-- Publish build assets and include them in the package under the tools directory.
+       The NetCurrent host keeps the historical 'tools/net' location so existing consumers
+       (and the default in the build props) continue to resolve it. Additional hosts (e.g.
+       NetMinimum) are placed under a TFM-specific folder and selected by the build props. -->
   <Target Name="_AddBuildOutputToPackage" DependsOnTargets="Publish">
+    <PropertyGroup>
+      <_XunitConsoleRunnerToolsSubDir Condition="'$(TargetFramework)' == '$(NetCurrent)'">net</_XunitConsoleRunnerToolsSubDir>
+      <_XunitConsoleRunnerToolsSubDir Condition="'$(TargetFramework)' != '$(NetCurrent)'">$(TargetFramework)</_XunitConsoleRunnerToolsSubDir>
+    </PropertyGroup>
     <ItemGroup>
       <TfmSpecificPackageFile Include="$(PublishDir)**" 
-                              PackagePath="tools/net/%(RecursiveDir)%(FileName)%(Extension)"/>
+                              PackagePath="tools/$(_XunitConsoleRunnerToolsSubDir)/%(RecursiveDir)%(FileName)%(Extension)"/>
     </ItemGroup>
   </Target>
 

@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <TargetFrameworks Condition="'$(TargetNet9)' == 'True'">$(TargetFramework); net9.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(TargetNetNext)'== 'True'">$(TargetFrameworks)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>full</TrimMode>
@@ -22,7 +22,7 @@
     
     <CompatibleReference Update="@(CompatibleReference)" Path="..\..\src\%(Identity)\%(Identity).csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="@(CompatibleReference->'%(Path)')" />
 

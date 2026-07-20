@@ -37,7 +37,7 @@ internal class AFDCorrelationIdLogProcessor : BaseProcessor<LogRecord>
             return;
         }
 
-        var capacity = data.Attributes?.Count + 1 ?? 1;
+        var capacity = (data.Attributes?.Count + 1) ?? 1;
         var attributes = new List<KeyValuePair<string, object?>>(capacity);
 
         if (data.Attributes != null)
@@ -68,7 +68,7 @@ internal class AFDCorrelationIdLogProcessor : BaseProcessor<LogRecord>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string? GetRuntimeContextValue()
     {
-        if (GenevaAfdCorrelationIdStateTracker.Get() == true)
+        if (GenevaAfdCorrelationIdStateTracker.Get())
         {
             return null;
         }

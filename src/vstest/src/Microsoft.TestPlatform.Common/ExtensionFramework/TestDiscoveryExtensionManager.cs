@@ -99,16 +99,11 @@ internal class TestDiscoveryExtensionManager
     /// <param name="throwOnError"> The throw On Error. </param>
     internal static void LoadAndInitializeAllExtensions(bool throwOnError)
     {
+        TestDiscoveryExtensionManager allDiscoverers;
+
         try
         {
-            var allDiscoverers = Create();
-
-            // Iterate throw the discoverers so that they are initialized
-            foreach (var discoverer in allDiscoverers.Discoverers)
-            {
-                // discoverer.value below is what initializes the extension types and hence is not under a EqtTrace.IsVerboseEnabled check.
-                EqtTrace.Verbose("TestDiscoveryManager: LoadExtensions: Created discoverer {0}", discoverer.Value);
-            }
+            allDiscoverers = Create();
         }
         catch (Exception ex)
         {
@@ -117,6 +112,28 @@ internal class TestDiscoveryExtensionManager
             if (throwOnError)
             {
                 throw;
+            }
+
+            return;
+        }
+
+        // Iterate through the discoverers so that they are initialized. One discoverer failing to
+        // initialize must not prevent the remaining discoverers from being loaded.
+        foreach (var discoverer in allDiscoverers.Discoverers)
+        {
+            try
+            {
+                // discoverer.value below is what initializes the extension types and hence is not under a EqtTrace.IsVerboseEnabled check.
+                EqtTrace.Verbose("TestDiscoveryManager: LoadExtensions: Created discoverer {0}", discoverer.Value);
+            }
+            catch (Exception ex)
+            {
+                EqtTrace.Error("TestDiscoveryManager: LoadExtensions: Exception occurred while loading extension {0}: {1}", discoverer.TestPluginInfo?.IdentifierData, ex);
+
+                if (throwOnError)
+                {
+                    throw;
+                }
             }
         }
     }

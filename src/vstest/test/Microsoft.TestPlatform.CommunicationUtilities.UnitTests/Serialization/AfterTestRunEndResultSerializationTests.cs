@@ -205,6 +205,41 @@ public class AfterTestRunEndResultSerializationTests
         Assert.AreEqual("Code Coverage", result.InvokedDataCollectors[0].FriendlyName);
     }
 
+    // ── Missing collections ──────────────────────────────────────────────
+
+    [TestMethod]
+    [DataRow(1)]
+    [DataRow(7)]
+    public void DeserializePayloadWithMissingCollectionsReturnsNonNullEmptyCollections(int version)
+    {
+        // Regression test for https://github.com/microsoft/vstest/issues/16186 (Task 3).
+        // A payload that omits AttachmentSets/Metrics must still deserialize to non-null
+        // collections so consumers never observe null on these non-nullable properties.
+        var json = version == 1
+            ? """
+              {
+                "MessageType": "DataCollection.AfterTestRunEndResult",
+                "Payload": {}
+              }
+              """
+            : """
+              {
+                "Version": 7,
+                "MessageType": "DataCollection.AfterTestRunEndResult",
+                "Payload": {}
+              }
+              """;
+
+        var message = JsonDataSerializer.Instance.DeserializeMessage(Minify(json));
+        var result = JsonDataSerializer.Instance.DeserializePayload<AfterTestRunEndResult>(message);
+
+        Assert.IsNotNull(result);
+        Assert.IsNotNull(result.AttachmentSets);
+        Assert.IsEmpty(result.AttachmentSets);
+        Assert.IsNotNull(result.Metrics);
+        Assert.IsEmpty(result.Metrics);
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────
 
 }

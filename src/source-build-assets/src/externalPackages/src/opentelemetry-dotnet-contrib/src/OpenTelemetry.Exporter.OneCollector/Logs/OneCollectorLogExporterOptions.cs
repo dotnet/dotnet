@@ -12,8 +12,6 @@ namespace OpenTelemetry.Exporter.OneCollector;
 /// </summary>
 public sealed class OneCollectorLogExporterOptions : OneCollectorExporterOptions
 {
-    private IReadOnlyDictionary<string, string>? eventFullNameMappings;
-
     /// <summary>
     /// Gets or sets the default event namespace. Default value:
     /// <c>OpenTelemetry.Logs</c>.
@@ -94,12 +92,12 @@ public sealed class OneCollectorLogExporterOptions : OneCollectorExporterOptions
     /// </remarks>
     public IReadOnlyDictionary<string, string>? EventFullNameMappings
     {
-        get => this.eventFullNameMappings;
+        get;
         set
         {
             if (value == null)
             {
-                this.eventFullNameMappings = null;
+                field = null;
                 return;
             }
 
@@ -110,7 +108,7 @@ public sealed class OneCollectorLogExporterOptions : OneCollectorExporterOptions
                 copy[entry.Key] = entry.Value;
             }
 
-            this.eventFullNameMappings = copy;
+            field = copy;
         }
     }
 
@@ -125,7 +123,7 @@ public sealed class OneCollectorLogExporterOptions : OneCollectorExporterOptions
     {
         if (this.DefaultEventNamespace?.Length != 0
             && (this.DefaultEventNamespace == null
-                || !EventNameManager.IsEventNamespaceValid(this.DefaultEventNamespace!)))
+                || !EventNameManager.IsEventNamespaceValid(this.DefaultEventNamespace)))
         {
             throw new OneCollectorExporterValidationException($"{nameof(this.DefaultEventNamespace)} was not specified on {nameof(OneCollectorLogExporterOptions)} options or was invalid.");
         }
@@ -146,7 +144,7 @@ public sealed class OneCollectorLogExporterOptions : OneCollectorExporterOptions
             throw new OneCollectorExporterValidationException($"{nameof(this.DefaultEventNamespace)} & {nameof(this.DefaultEventName)} specified on {nameof(OneCollectorLogExporterOptions)} options cannot be less than 4 characters or greater than 100 characters in length when combined.");
         }
 
-        var eventFullNameMappings = this.eventFullNameMappings;
+        var eventFullNameMappings = this.EventFullNameMappings;
         if (eventFullNameMappings != null)
         {
             var parsedEventFullNameMappings = new Dictionary<string, EventFullName>(
@@ -165,7 +163,9 @@ public sealed class OneCollectorLogExporterOptions : OneCollectorExporterOptions
                     throw new OneCollectorExporterValidationException($"The event full name mapping value provided for key '{entry.Key}' was null.");
                 }
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
                 eventFullName!.Validate(entry.Key);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
                 parsedEventFullNameMappings.Add(entry.Key, eventFullName);
             }

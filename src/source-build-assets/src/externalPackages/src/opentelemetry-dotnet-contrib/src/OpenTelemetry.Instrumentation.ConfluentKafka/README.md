@@ -53,6 +53,8 @@ steps:
         {
             tracing.AddConsoleExporter()
                 .AddOtlpExporter()
+                // AddKafkaProducerInstrumentation and AddKafkaConsumerInstrumentation
+                // are what enable Kafka traces.
                 .AddKafkaProducerInstrumentation<string, string>()
                 .AddKafkaConsumerInstrumentation<string, string>();
         })
@@ -60,6 +62,8 @@ steps:
         {
             metering.AddConsoleExporter()
                 .AddOtlpExporter()
+                // AddKafkaProducerInstrumentation and AddKafkaConsumerInstrumentation
+                // are what enable Kafka metrics.
                 .AddKafkaProducerInstrumentation<string, string>()
                 .AddKafkaConsumerInstrumentation<string, string>();
         });
@@ -72,6 +76,14 @@ steps:
 
 This will set up OpenTelemetry instrumentation for Confluent.Kafka producers
 and consumers, allowing you to collect and export telemetry data.
+
+## Runnable example
+
+A complete end-to-end sample that produces and consumes messages with
+instrumentation enabled is available in
+[`examples/kafka`](../../examples/kafka). Follow that example's README to
+start a local Kafka broker and see traces and metrics flowing to the
+configured exporters.
 
 ## Extending `ConsumerBuilder` or `ProducerBuilder` instances
 

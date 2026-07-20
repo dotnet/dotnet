@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using NuGet.Packaging;
@@ -15,9 +13,9 @@ namespace NuGet.Protocol.Core.Types
     public sealed class DownloadResourceResult : IDisposable
     {
         private bool _isDisposed;
-        private readonly Stream _stream;
-        private readonly PackageReaderBase _packageReader;
-        private readonly string _packageSource;
+        private readonly Stream? _stream;
+        private readonly PackageReaderBase? _packageReader;
+        private readonly string? _packageSource;
 
         /// <summary>
         /// Initializes a new <see cref="DownloadResourceResult" /> class.
@@ -44,7 +42,7 @@ namespace NuGet.Protocol.Core.Types
         /// <param name="stream">A package stream.</param>
         /// <param name="source">A package source.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="stream" /> is <see langword="null" />.</exception>
-        public DownloadResourceResult(Stream stream, string source)
+        public DownloadResourceResult(Stream stream, string? source)
         {
             if (stream == null)
             {
@@ -63,7 +61,7 @@ namespace NuGet.Protocol.Core.Types
         /// <param name="packageReader">A package reader.</param>
         /// <param name="source">A package source.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="stream" /> is <see langword="null" />.</exception>
-        public DownloadResourceResult(Stream stream, PackageReaderBase packageReader, string source)
+        public DownloadResourceResult(Stream stream, PackageReaderBase? packageReader, string? source)
             : this(stream, source)
         {
             _packageReader = packageReader;
@@ -75,7 +73,7 @@ namespace NuGet.Protocol.Core.Types
         /// <param name="packageReader">A package reader.</param>
         /// <param name="source">A package source.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="packageReader" /> is <see langword="null" />.</exception>
-        public DownloadResourceResult(PackageReaderBase packageReader, string source)
+        public DownloadResourceResult(PackageReaderBase packageReader, string? source)
         {
             if (packageReader == null)
             {
@@ -95,19 +93,19 @@ namespace NuGet.Protocol.Core.Types
         /// Gets the package <see cref="PackageStream"/>.
         /// </summary>
         /// <remarks>The value may be <see langword="null" />.</remarks>
-        public Stream PackageStream => _stream;
+        public Stream? PackageStream => _stream;
 
         /// <summary>
         /// Gets the source containing this package, if not from cache
         /// </summary>
         /// <remarks>The value may be <see langword="null" />.</remarks>
-        public string PackageSource => _packageSource;
+        public string? PackageSource => _packageSource;
 
         /// <summary>
         /// Gets the <see cref="PackageReaderBase"/> for the package.
         /// </summary>
         /// <remarks>The value may be <see langword="null" />.</remarks>
-        public PackageReaderBase PackageReader => _packageReader;
+        public PackageReaderBase? PackageReader => _packageReader;
 
         /// <summary>
         /// Disposes of this instance.

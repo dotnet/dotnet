@@ -18,7 +18,6 @@ using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -521,102 +520,6 @@ public class DesignModeClientTests
         Assert.IsTrue(_completeEvent.WaitOne(Timeout), "Execution not completed.");
         _mockCommunicationManager.Verify(cm => cm.SendMessage(MessageType.TestMessage, It.IsAny<TestMessagePayload>()), Times.Once());
         _mockCommunicationManager.Verify(cm => cm.SendMessage(MessageType.ExecutionComplete, It.IsAny<TestRunCompletePayload>()), Times.Once());
-    }
-
-    [TestMethod]
-    public void DesignModeClientConnectShouldReturnNullSessionWhenStartTestSessionThrows()
-    {
-        var payload = new StartTestSessionPayload();
-        var startTestSessionMessage = new Message()
-        {
-            MessageType = MessageType.StartTestSession,
-            Version = _protocolVersion,
-            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.StartTestSession, payload, _protocolVersion)
-        };
-
-        _mockCommunicationManager.Setup(cm => cm.WaitForServerConnection(It.IsAny<int>())).Returns(true);
-        _mockCommunicationManager.SetupSequence(cm => cm.ReceiveMessage()).Returns(startTestSessionMessage);
-        _mockCommunicationManager.Setup(cm => cm.SendMessage(
-                MessageType.StartTestSessionCallback,
-                It.IsAny<StartTestSessionAckPayload>()))
-            .Callback((string _, object actualPayload) =>
-            {
-                _completeEvent.Set();
-                Assert.IsNull(((StartTestSessionAckPayload)actualPayload).EventArgs!.TestSessionInfo);
-            });
-        _mockCommunicationManager.Setup(
-                cm => cm.DeserializePayload<StartTestSessionPayload>(
-                    startTestSessionMessage))
-            .Returns(payload);
-
-        _mockTestRequestManager.Setup(
-            rm => rm.StartTestSession(
-                It.IsAny<StartTestSessionPayload>(),
-                It.IsAny<ITestHostLauncher3>(),
-                It.IsAny<ITestSessionEventsHandler>(),
-                It.IsAny<ProtocolConfig>())).Throws(new SettingsException("DummyException"));
-
-        _designModeClient.ConnectToClientAndProcessRequests(PortNumber, _mockTestRequestManager.Object);
-
-        Assert.IsTrue(_completeEvent.WaitOne(Timeout), "Start test session not completed.");
-        _mockCommunicationManager.Verify(
-            cm => cm.SendMessage(
-                MessageType.StartTestSessionCallback,
-                It.IsAny<StartTestSessionAckPayload>()),
-            Times.Once());
-    }
-
-    [TestMethod]
-    public void DesignModeClientConnectShouldReturnFalseWhenStopTestSessionThrows()
-    {
-        var mockTestPool = new Mock<TestSessionPool>();
-        TestSessionPool.Instance = mockTestPool.Object;
-
-        var testSessionInfo = new TestSessionInfo();
-        var stopTestSessionPayload = new StopTestSessionPayload
-        {
-            TestSessionInfo = testSessionInfo,
-            CollectMetrics = true
-        };
-        var stopTestSessionMessage = new Message()
-        {
-            MessageType = MessageType.StopTestSession,
-            Version = _protocolVersion,
-            RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.StopTestSession, stopTestSessionPayload, _protocolVersion)
-        };
-
-        _mockCommunicationManager.Setup(cm => cm.WaitForServerConnection(It.IsAny<int>())).Returns(true);
-        _mockCommunicationManager.SetupSequence(cm => cm.ReceiveMessage()).Returns(stopTestSessionMessage);
-        _mockCommunicationManager.Setup(cm => cm.SendMessage(
-                MessageType.StopTestSessionCallback,
-                It.IsAny<StopTestSessionAckPayload>()))
-            .Callback((string _, object actualPayload) =>
-            {
-                _completeEvent.Set();
-
-                Assert.AreEqual(((StopTestSessionAckPayload)actualPayload).EventArgs!.TestSessionInfo, testSessionInfo);
-                Assert.IsFalse(((StopTestSessionAckPayload)actualPayload).EventArgs!.IsStopped);
-            });
-
-        _mockCommunicationManager.Setup(
-                cm => cm.DeserializePayload<StopTestSessionPayload>(
-                    stopTestSessionMessage))
-            .Returns(stopTestSessionPayload);
-
-        _mockTestRequestManager.Setup(
-            rm => rm.StopTestSession(
-                It.IsAny<StopTestSessionPayload>(),
-                It.IsAny<ITestSessionEventsHandler>(),
-                It.IsAny<ProtocolConfig>())).Throws(new Exception("DummyException"));
-
-        _designModeClient.ConnectToClientAndProcessRequests(PortNumber, _mockTestRequestManager.Object);
-
-        Assert.IsTrue(_completeEvent.WaitOne(Timeout), "Start test session not completed.");
-        _mockCommunicationManager.Verify(
-            cm => cm.SendMessage(
-                MessageType.StopTestSessionCallback,
-                It.IsAny<StopTestSessionAckPayload>()),
-            Times.Once());
     }
 
     [TestMethod]

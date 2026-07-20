@@ -32,16 +32,6 @@
         <target state="translated">Обработка вложений активного тестового запуска прервана.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AbortedStartTestSession">
-        <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">Операция запуска сеанса тестирования прервана.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AbortedStopTestSession">
-        <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">Операция остановки сеанса тестирования прервана.</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

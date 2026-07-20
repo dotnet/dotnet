@@ -144,12 +144,27 @@ namespace NuGet.Commands
         /// <summary>
         /// Add standard properties to only props file if it exists, otherwise the targets.
         /// </summary>
+        [Obsolete("This method will be removed in a future release.")]
         public static void AddNuGetPropertiesToFirstImport(IEnumerable<MSBuildOutputFile> files,
             IEnumerable<string> packageFolders,
             string repositoryRoot,
             ProjectStyle projectStyle,
             string assetsFilePath,
             bool success)
+        {
+            AddNuGetPropertiesToFirstImport(files, packageFolders, repositoryRoot, projectStyle, assetsFilePath, success, EnvironmentVariableWrapper.Instance);
+        }
+
+        /// <summary>
+        /// Add standard properties to only props file if it exists, otherwise the targets.
+        /// </summary>
+        internal static void AddNuGetPropertiesToFirstImport(IEnumerable<MSBuildOutputFile> files,
+            IEnumerable<string> packageFolders,
+            string repositoryRoot,
+            ProjectStyle projectStyle,
+            string assetsFilePath,
+            bool success,
+            IEnvironmentVariableReader environmentVariableReader)
         {
             // For project.json not all files are written out. Find the first one
             // or if no files exist skip this.
@@ -164,7 +179,7 @@ namespace NuGet.Commands
                 // until restore can run again.
                 var resolvableAssetsFilePath = @"$(MSBuildThisFileDirectory)" + Path.GetFileName(assetsFilePath);
 
-                AddNuGetProperties(firstImport.Content, packageFolders, repositoryRoot, projectStyle, resolvableAssetsFilePath, success);
+                AddNuGetProperties(firstImport.Content, packageFolders, repositoryRoot, projectStyle, resolvableAssetsFilePath, success, environmentVariableReader);
             }
         }
 
@@ -172,6 +187,7 @@ namespace NuGet.Commands
         /// Apply standard properties in a property group.
         /// Additionally add a SourceRoot item to point to the package folders.
         /// </summary>
+        [Obsolete("This method is unused and will be removed in a future version.")]
         public static void AddNuGetProperties(
             XDocument doc,
             IEnumerable<string> packageFolders,
@@ -182,6 +198,7 @@ namespace NuGet.Commands
         {
             AddNuGetProperties(doc, packageFolders, repositoryRoot, projectStyle, assetsFilePath, success, EnvironmentVariableWrapper.Instance);
         }
+
         internal static void AddNuGetProperties(
             XDocument doc,
             IEnumerable<string> packageFolders,
@@ -340,10 +357,13 @@ namespace NuGet.Commands
             path);
         }
 
+        [Obsolete("This method will be removed in a future release.")]
         public static string GetPathWithMacros(string absolutePath, string repositoryRoot)
         {
+            _ = absolutePath ?? throw new ArgumentNullException(nameof(absolutePath));
             return GetPathWithMacros(absolutePath, repositoryRoot, EnvironmentVariableWrapper.Instance);
         }
+
         internal static string GetPathWithMacros(string absolutePath, string repositoryRoot, IEnvironmentVariableReader environmentVariableReader)
         {
             var path = absolutePath;
@@ -542,11 +562,11 @@ namespace NuGet.Commands
                 }
 
                 // build/ {packageId}.targets
-                var buildTargetsGroup = GenerateBuildGroup(repositoryRoot, sortedPackages, TargetsExtension);
+                var buildTargetsGroup = GenerateBuildGroup(repositoryRoot, sortedPackages, TargetsExtension, request.EnvironmentVariableReader);
                 targets.AddRange(GenerateGroupsWithConditions(buildTargetsGroup, isMultiTargeting, frameworkConditions));
 
                 // props/ {packageId}.props
-                MSBuildRestoreItemGroup buildPropsGroup = GenerateBuildGroup(repositoryRoot, sortedPackages, PropsExtension);
+                MSBuildRestoreItemGroup buildPropsGroup = GenerateBuildGroup(repositoryRoot, sortedPackages, PropsExtension, request.EnvironmentVariableReader);
                 props.AddRange(GenerateGroupsWithConditions(buildPropsGroup, isMultiTargeting, frameworkConditions));
 
                 // Create an empty PropertyGroup for package properties
@@ -594,11 +614,11 @@ namespace NuGet.Commands
                 if (isMultiTargeting)
                 {
                     // buildMultiTargeting/ {packageId}.targets
-                    var buildCrossTargetsGroup = GenerateMultiTargetingGroup(repositoryRoot, sortedPackages, multiTargetingImportsAdded, TargetsExtension);
+                    var buildCrossTargetsGroup = GenerateMultiTargetingGroup(repositoryRoot, sortedPackages, multiTargetingImportsAdded, TargetsExtension, request.EnvironmentVariableReader);
                     targets.AddRange(GenerateGroupsWithConditions(buildCrossTargetsGroup, isMultiTargeting, CrossTargetingCondition));
 
                     // buildMultiTargeting/ {packageId}.props
-                    var buildCrossPropsGroup = GenerateMultiTargetingGroup(repositoryRoot, sortedPackages, multiTargetingImportsAdded, PropsExtension);
+                    var buildCrossPropsGroup = GenerateMultiTargetingGroup(repositoryRoot, sortedPackages, multiTargetingImportsAdded, PropsExtension, request.EnvironmentVariableReader);
                     props.AddRange(GenerateGroupsWithConditions(buildCrossPropsGroup, isMultiTargeting, CrossTargetingCondition));
                 }
 
@@ -623,7 +643,7 @@ namespace NuGet.Commands
                         var currentItems = new List<(LockFileTargetLibrary, LockFileContentFile, string)>(lockContentFiles.Count);
                         foreach (var e in lockContentFiles)
                         {
-                            var tuple = ValueTuple.Create(item1: pkg.Key, item2: e, item3: GetPathWithMacros(pkg.Value.GetAbsolutePath(e), repositoryRoot));
+                            var tuple = ValueTuple.Create(item1: pkg.Key, item2: e, item3: GetPathWithMacros(pkg.Value.GetAbsolutePath(e), repositoryRoot, request.EnvironmentVariableReader));
                             currentItems.Add(tuple);
                         }
 
@@ -662,11 +682,11 @@ namespace NuGet.Commands
 
             var packageFolders = repositories.Select(e => e.RepositoryRoot);
 
-            AddNuGetPropertiesToFirstImport(files, packageFolders, repositoryRoot, request.ProjectStyle, assetsFilePath, restoreSuccess);
+            AddNuGetPropertiesToFirstImport(files, packageFolders, repositoryRoot, request.ProjectStyle, assetsFilePath, restoreSuccess, request.EnvironmentVariableReader);
 
             return files;
 
-            static MSBuildRestoreItemGroup GenerateBuildGroup(string repositoryRoot, List<KeyValuePair<LockFileTargetLibrary, Lazy<LocalPackageSourceInfo>>> sortedPackages, string extension)
+            static MSBuildRestoreItemGroup GenerateBuildGroup(string repositoryRoot, List<KeyValuePair<LockFileTargetLibrary, Lazy<LocalPackageSourceInfo>>> sortedPackages, string extension, IEnvironmentVariableReader environmentVariableReader)
             {
                 var buildGroup = new MSBuildRestoreItemGroup();
                 buildGroup.RootName = MSBuildRestoreItemGroup.ImportGroup;
@@ -679,7 +699,7 @@ namespace NuGet.Commands
                         foreach (LockFileItem lockFileItem in pkg.Key.Build.WithExtension(extension))
                         {
                             var absolutePath = pkg.Value.GetAbsolutePath(lockFileItem);
-                            var pathWithMacros = GetPathWithMacros(absolutePath, repositoryRoot);
+                            var pathWithMacros = GetPathWithMacros(absolutePath, repositoryRoot, environmentVariableReader);
                             var import = GenerateImport(pathWithMacros);
                             buildGroup.Items.Add(import);
                         }
@@ -689,7 +709,7 @@ namespace NuGet.Commands
                 return buildGroup;
             }
 
-            static MSBuildRestoreItemGroup GenerateMultiTargetingGroup(string repositoryRoot, List<KeyValuePair<LockFileTargetLibrary, Lazy<LocalPackageSourceInfo>>> sortedPackages, HashSet<string> multiTargetingImportsAdded, string extension)
+            static MSBuildRestoreItemGroup GenerateMultiTargetingGroup(string repositoryRoot, List<KeyValuePair<LockFileTargetLibrary, Lazy<LocalPackageSourceInfo>>> sortedPackages, HashSet<string> multiTargetingImportsAdded, string extension, IEnvironmentVariableReader environmentVariableReader)
             {
                 var buildCrossTargetsGroup = new MSBuildRestoreItemGroup();
                 buildCrossTargetsGroup.RootName = MSBuildRestoreItemGroup.ImportGroup;
@@ -704,7 +724,7 @@ namespace NuGet.Commands
                             var path = pkg.Value.GetAbsolutePath(e);
                             if (multiTargetingImportsAdded.Add(path))
                             {
-                                var pathWithMacros = GetPathWithMacros(path, repositoryRoot);
+                                var pathWithMacros = GetPathWithMacros(path, repositoryRoot, environmentVariableReader);
                                 var import = GenerateImport(pathWithMacros);
                                 buildCrossTargetsGroup.Items.Add(import);
                             }

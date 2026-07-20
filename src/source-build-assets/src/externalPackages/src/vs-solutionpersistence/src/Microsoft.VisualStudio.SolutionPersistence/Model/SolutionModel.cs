@@ -588,6 +588,8 @@ public sealed class SolutionModel : PropertyContainerModel
         }
 
         string displayName = project.ActualDisplayName;
+        string folderPath = project.Parent?.Path ?? "Root";
+
         foreach (SolutionProjectModel existingProject in this.SolutionProjects)
         {
             if (!ReferenceEquals(existingProject.Parent, project.Parent) || ReferenceEquals(existingProject, project))
@@ -597,7 +599,7 @@ public sealed class SolutionModel : PropertyContainerModel
 
             if (existingProject.ActualDisplayName.Equals(displayName, StringComparison.OrdinalIgnoreCase))
             {
-                throw new SolutionArgumentException(string.Format(Errors.DuplicateProjectName_Arg1, displayName), SolutionErrorType.DuplicateProjectName);
+                throw new SolutionArgumentException(string.Format(Errors.DuplicateProjectName_Arg2, displayName, folderPath), SolutionErrorType.DuplicateProjectName);
             }
         }
     }

@@ -3,7 +3,6 @@
 
 using System;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
@@ -14,7 +13,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForUndefinedResponseCode()
         {
             var exception = Assert.Throws<ArgumentException>(
-                () => new GetServiceIndexResponse((MessageResponseCode)int.MaxValue, JObject.Parse("{}")));
+                () => new GetServiceIndexResponse((MessageResponseCode)int.MaxValue, "{}"));
 
             Assert.Equal("responseCode", exception.ParamName);
         }
@@ -23,26 +22,25 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullServiceIndexWhenResponseCodeIsSuccess()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndex: null));
+                () => new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndexJson: (string?)null!));
 
-            Assert.Equal("serviceIndex", exception.ParamName);
+            Assert.Equal("serviceIndexJson", exception.ParamName);
         }
 
         [Fact]
         public void Constructor_InitializesProperties()
         {
-            var serviceIndex = JObject.Parse("{}");
-            var response = new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndex);
+            var serviceIndexJson = "{\"a\":\"b\"}";
+            var response = new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndexJson);
 
             Assert.Equal(MessageResponseCode.Success, response.ResponseCode);
-            Assert.Same(serviceIndex, response.ServiceIndex);
+            Assert.Equal(serviceIndexJson, response.ServiceIndexJson);
         }
 
         [Fact]
         public void JsonSerialization_ReturnsCorrectJson()
         {
-            var serviceIndex = JObject.Parse("{\"a\":\"b\"}");
-            var response = new GetServiceIndexResponse(MessageResponseCode.Success, serviceIndex);
+            var response = new GetServiceIndexResponse(MessageResponseCode.Success, "{\"a\":\"b\"}");
 
             var json = TestUtilities.Serialize(response);
 
@@ -53,20 +51,20 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObjectForSuccess()
         {
             var json = "{\"ResponseCode\":\"Success\",\"ServiceIndex\":{\"a\":\"b\"}}";
-            var response = JsonSerializationUtilities.Deserialize<GetServiceIndexResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<GetServiceIndexResponse>(json)!;
 
             Assert.Equal(MessageResponseCode.Success, response.ResponseCode);
-            Assert.Equal("{\"a\":\"b\"}", response.ServiceIndex.ToString(Formatting.None));
+            Assert.Equal("{\"a\":\"b\"}", response.ServiceIndexJson);
         }
 
         [Fact]
         public void JsonDeserialization_ReturnsCorrectObjectForNotFound()
         {
             var json = "{\"ResponseCode\":\"NotFound\"}";
-            var response = JsonSerializationUtilities.Deserialize<GetServiceIndexResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<GetServiceIndexResponse>(json)!;
 
             Assert.Equal(MessageResponseCode.NotFound, response.ResponseCode);
-            Assert.Null(response.ServiceIndex);
+            Assert.Null(response.ServiceIndexJson);
         }
 
         [Theory]
@@ -83,8 +81,6 @@ namespace NuGet.Protocol.Plugins.Tests
         [InlineData("{}", typeof(ArgumentNullException))]
         [InlineData("{\"ResponseCode\":\"Success\"}", typeof(ArgumentNullException))]
         [InlineData("{\"ResponseCode\":\"Success\",\"ServiceIndex\":null}", typeof(ArgumentNullException))]
-        [InlineData("{\"ResponseCode\":\"Success\",\"ServiceIndex\":\"a\"}", typeof(JsonSerializationException))]
-        [InlineData("{\"ResponseCode\":\"Success\",\"ServiceIndex\":1}", typeof(JsonSerializationException))]
         public void JsonDeserialization_ThrowsForInvalidServiceIndex(string json, Type exceptionType)
         {
             var exception = Assert.Throws(
@@ -93,7 +89,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             if (exception is ArgumentNullException)
             {
-                Assert.Equal("serviceIndex", ((ArgumentNullException)exception).ParamName);
+                Assert.Equal("serviceIndexJson", ((ArgumentNullException)exception).ParamName);
             }
         }
     }

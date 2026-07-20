@@ -122,23 +122,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                     {
                                         string normalizedVersion = version.ToNormalizedString();
                                         string runtime = runtimeItem.Key;
-                                        string arguments = $"-runtime \"{runtime}\" -version \"{normalizedVersion}\"";
-                                        if (!string.IsNullOrEmpty(architecture))
-                                        {
-                                            arguments += $" -architecture {architecture}";
-                                        }
-
-                                        if (!string.IsNullOrWhiteSpace(RuntimeSourceFeed))
-                                        {
-                                            arguments += $" -runtimeSourceFeed {RuntimeSourceFeed}";
-                                        }
-
-                                        // The default RuntimeSourceFeed doesn't need a key
-                                        if (!string.IsNullOrWhiteSpace(RuntimeSourceFeed) && !string.IsNullOrWhiteSpace(RuntimeSourceFeedKey))
-                                        {
-                                            arguments += $" -runtimeSourceFeedKey {RuntimeSourceFeedKey}";
-                                        }
-
+                                        string arguments = BuildInstallArguments(runtime, normalizedVersion, architecture, includeRuntimeSourceOptions: true);
                                         // Null architecture means that the script should infer it, we don't want to re-implement too much logic here,
                                         // so we skip the quick check.
                                         if (architecture != null)
@@ -183,7 +167,8 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                         process.WaitForExit();
                                         if (process.ExitCode != 0)
                                         {
-                                            Log.LogError("dotnet-install failed");
+                                            string safeArguments = BuildInstallArguments(runtime, normalizedVersion, architecture, includeRuntimeSourceOptions: false);
+                                            Log.LogError($"dotnet-install failed for runtime '{runtime}' version '{normalizedVersion}' (exit code {process.ExitCode}). Command: {DotNetInstallScript} {safeArguments}");
                                         }
                                     }
                                 }
@@ -193,6 +178,37 @@ namespace Microsoft.DotNet.Arcade.Sdk
                 }
             }
             return !Log.HasLoggedErrors;
+        }
+
+        private string BuildInstallArguments(string runtime, string version, string architecture, bool includeRuntimeSourceOptions)
+        {
+            string dotNetPath = Path.TrimEndingDirectorySeparator(DotNetPath);
+
+            // Preserve root paths and double a trailing backslash so it doesn't escape the closing quote
+            // in the raw command-line string passed to dotnet-install on Windows.
+            if (dotNetPath.EndsWith('\\'))
+            {
+                dotNetPath += '\\';
+            }
+
+            string arguments = $"-runtime \"{runtime}\" -version \"{version}\" -dotnetPath \"{dotNetPath}\"";
+            if (!string.IsNullOrEmpty(architecture))
+            {
+                arguments += $" -architecture {architecture}";
+            }
+
+            if (includeRuntimeSourceOptions && !string.IsNullOrWhiteSpace(RuntimeSourceFeed))
+            {
+                arguments += $" -runtimeSourceFeed {RuntimeSourceFeed}";
+            }
+
+            // The default RuntimeSourceFeed doesn't need a key
+            if (includeRuntimeSourceOptions && !string.IsNullOrWhiteSpace(RuntimeSourceFeed) && !string.IsNullOrWhiteSpace(RuntimeSourceFeedKey))
+            {
+                arguments += $" -runtimeSourceFeedKey {RuntimeSourceFeedKey}";
+            }
+
+            return arguments;
         }
 
         private string GetArchitecture(string architecture)

@@ -22,9 +22,7 @@ internal sealed class EventFullName
     public string EventName { get; }
 
     public static EventFullName Create(string eventName)
-    {
-        return new(eventNamespace: string.Empty, eventName: eventName);
-    }
+        => new(eventNamespace: string.Empty, eventName: eventName);
 
     public static bool TryParseFromMapping(
         string? eventFullNameMapping,
@@ -39,7 +37,9 @@ internal sealed class EventFullName
             return false;
         }
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
         var parts = eventFullNameMapping!.Split('.');
+#pragma warning restore IDE0370 // Suppression is unnecessary
         eventFullName = parts.Length > 1
             ? new(
                 string.Join(".", parts, 0, parts.Length - 1),
@@ -53,14 +53,14 @@ internal sealed class EventFullName
     {
         if (this.EventNamespace?.Length != 0
             && (this.EventNamespace == null
-                || !EventNameManager.IsEventNamespaceValid(this.EventNamespace!)))
+                || !EventNameManager.IsEventNamespaceValid(this.EventNamespace)))
         {
             throw new OneCollectorExporterValidationException($"The event full name mapping namespace value provided for key '{key}' was null or invalid.");
         }
 
         if (this.EventName != "*"
             && (string.IsNullOrWhiteSpace(this.EventName)
-                || !EventNameManager.IsEventNameValid(this.EventName!)))
+                || !EventNameManager.IsEventNameValid(this.EventName)))
         {
             throw new OneCollectorExporterValidationException($"The event full name mapping name value provided for key '{key}' was null or invalid.");
         }

@@ -16,8 +16,7 @@ namespace Microsoft.TestPlatform.Library.IntegrationTests;
 public class FilterSourceIntegrationTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void FilterSourcePackage_AllTestsPass(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

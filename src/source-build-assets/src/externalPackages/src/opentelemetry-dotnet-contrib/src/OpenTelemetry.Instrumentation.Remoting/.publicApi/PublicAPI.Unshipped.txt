@@ -1,0 +1,13 @@
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions.EnrichWithMethodMessage.get -> System.Action<System.Diagnostics.Activity!, System.Runtime.Remoting.Messaging.IMethodMessage!>?
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions.EnrichWithMethodMessage.set -> void
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions.EnrichWithMethodReturnMessage.get -> System.Action<System.Diagnostics.Activity!, System.Runtime.Remoting.Messaging.IMethodReturnMessage!>?
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions.EnrichWithMethodReturnMessage.set -> void
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions.Filter.get -> System.Func<System.Runtime.Remoting.Messaging.IMessage!, bool>?
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions.Filter.set -> void
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions.Propagator.get -> OpenTelemetry.Context.Propagation.TextMapPropagator!
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions.Propagator.set -> void
+OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions.RemotingInstrumentationOptions() -> void
+OpenTelemetry.Trace.TracerProviderBuilderExtensions
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddRemotingInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static OpenTelemetry.Trace.TracerProviderBuilderExtensions.AddRemotingInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder, System.Action<OpenTelemetry.Instrumentation.Remoting.RemotingInstrumentationOptions!>? configure) -> OpenTelemetry.Trace.TracerProviderBuilder!

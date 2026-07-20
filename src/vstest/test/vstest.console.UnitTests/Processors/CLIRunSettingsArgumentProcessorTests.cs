@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -9,6 +9,8 @@ using Microsoft.VisualStudio.TestPlatform.CommandLine;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,6 +24,7 @@ public class CliRunSettingsArgumentProcessorTests
     private readonly TestableRunSettingsProvider _settingsProvider;
     private readonly CliRunSettingsArgumentExecutor _executor;
     private readonly CommandLineOptions _commandLineOptions;
+    private readonly IRunSettingsHelper _runSettingsHelper;
     private readonly string _defaultRunSettings = string.Join(Environment.NewLine,
         "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
         "<RunSettings>",
@@ -54,28 +57,28 @@ public class CliRunSettingsArgumentProcessorTests
 
     public CliRunSettingsArgumentProcessorTests()
     {
-        _commandLineOptions = CommandLineOptions.Instance;
+        _commandLineOptions = new CommandLineOptions();
         _settingsProvider = new TestableRunSettingsProvider();
-        _executor = new CliRunSettingsArgumentExecutor(_settingsProvider, _commandLineOptions);
+        _runSettingsHelper = new RunSettingsHelper();
+        _executor = new CliRunSettingsArgumentExecutor(_settingsProvider, _commandLineOptions, _runSettingsHelper);
     }
 
     [TestCleanup]
     public void Cleanup()
     {
-        CommandLineOptions.Reset();
     }
 
     [TestMethod]
     public void GetMetadataShouldReturnRunSettingsArgumentProcessorCapabilities()
     {
-        var processor = new CliRunSettingsArgumentProcessor();
+        var processor = new CliRunSettingsArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Metadata.Value is CliRunSettingsArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnRunSettingsArgumentProcessorCapabilities()
     {
-        var processor = new CliRunSettingsArgumentProcessor();
+        var processor = new CliRunSettingsArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Executor!.Value is CliRunSettingsArgumentExecutor);
     }
 

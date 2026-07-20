@@ -26,7 +26,7 @@ WHERE (ARRAY_LENGTH(c["AssociateCollection"]) = 2)
 """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Where_first_inline_not_null()
     {
         await AssertQuery(ss => ss.Set<RootEntity>().Where(e => e.AssociateCollection.FirstOrDefault() != null));
@@ -39,10 +39,11 @@ WHERE ((c["AssociateCollection"][0] ?? null) != null)
 """);
     }
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Where()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Where();
 
         AssertSql(
@@ -77,8 +78,22 @@ WHERE (ARRAY(
     public override Task Distinct()
         => AssertTranslationFailed(base.Distinct);
 
-    public override Task Distinct_projected(QueryTrackingBehavior queryTrackingBehavior)
-        => Assert.ThrowsAnyAsync<Exception>(() => base.Distinct_projected(queryTrackingBehavior));
+    public override async Task Distinct_projected(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Distinct_projected(queryTrackingBehavior);
+
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            AssertSql(
+                """
+SELECT VALUE ARRAY(
+    SELECT DISTINCT VALUE a
+    FROM a IN c["AssociateCollection"])
+FROM root c
+ORDER BY c["Id"]
+""");
+        }
+    }
 
     public override Task Distinct_over_projected_nested_collection()
         => Assert.ThrowsAsync<InvalidOperationException>(base.Distinct_over_projected_nested_collection);
@@ -157,16 +172,17 @@ WHERE (c["RequiredAssociate"]["NestedCollection"][0]["Int"] = 8)
 
     #region GroupBy
 
-    [ConditionalFact]
+    [Fact]
     public override Task GroupBy()
         => AssertTranslationFailed(base.GroupBy);
 
     #endregion GroupBy
 
-    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/287 (Aggregates over subqueries return null result set)
-    [CosmosCondition(CosmosCondition.IsNotLinuxEmulator)]
+    // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/330 (Aggregates over subqueries return null result set)
     public override async Task Select_within_Select_within_Select_with_aggregates()
     {
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Select_within_Select_within_Select_with_aggregates();
 
         AssertSql(
@@ -180,7 +196,7 @@ FROM root c
 """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 

@@ -133,7 +133,7 @@
     <value>Hash algorithm to be used while generating the package manifest file. Defaults to SHA256.</value>
   </data>
   <data name="MSSignCommandInvalidArgumentException" xml:space="preserve">
-    <value>Invalid value provided for '{0}'. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</value>
+    <value>Invalid value provided for '{0}'. For a list of accepted values, visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</value>
     <comment>{0} - argument name</comment>
   </data>
   <data name="MSSignCommandInvalidCngKeyException" xml:space="preserve">
@@ -149,10 +149,10 @@
     <value>Can't find cng key.</value>
   </data>
   <data name="MSSignCommandNoPackageException" xml:space="preserve">
-    <value>No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
   </data>
   <data name="MSSignCommandNoTimestamperWarning" xml:space="preserve">
-    <value>No '-Timestamper' option was provided the signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference</value>
+    <value>No '-Timestamper' option was provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</value>
   </data>
   <data name="MSSignCommandNoValidCertificateFileException" xml:space="preserve">
     <value>No CertificateFile provided or provided file is not a p7b file.</value>

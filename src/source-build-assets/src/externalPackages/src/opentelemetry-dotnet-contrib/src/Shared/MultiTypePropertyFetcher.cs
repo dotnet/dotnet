@@ -41,9 +41,11 @@ internal sealed class MultiTypePropertyFetcher<T>
         {
             var property =
                 type.DeclaredProperties.FirstOrDefault(p => string.Equals(p.Name, this.propertyName, StringComparison.OrdinalIgnoreCase)) ??
-                type.GetProperty(this.propertyName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
+                type.GetProperty(this.propertyName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-            fetcher = PropertyFetch.FetcherForProperty(property);
+#pragma warning disable IDE0370 // Suppression is unnecessary
+            fetcher = PropertyFetch.FetcherForProperty(property!);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
             this.innerFetcher.TryAdd(type, fetcher);
         }
@@ -67,9 +69,11 @@ internal sealed class MultiTypePropertyFetcher<T>
             }
 
             var typedPropertyFetcher = typeof(TypedPropertyFetch<,>);
+#pragma warning disable IDE0370 // Suppression is unnecessary
             var instantiatedTypedPropertyFetcher = typedPropertyFetcher.MakeGenericType(
                 typeof(T), propertyInfo.DeclaringType!, propertyInfo.PropertyType);
             return (PropertyFetch)Activator.CreateInstance(instantiatedTypedPropertyFetcher, propertyInfo)!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
         }
 
         public virtual T? Fetch(object obj) => default;

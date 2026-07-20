@@ -81,6 +81,12 @@ internal static class Constants
     public static string WarnOnFileOverwrite = "WarnOnFileOverwrite";
 
     /// <summary>
+    /// Treat error-level run messages (e.g. from data collectors) as warnings,
+    /// preventing them from marking the TRX result summary as Failed.
+    /// </summary>
+    public const string TreatErrorMessagesAsWarnings = "TreatErrorMessagesAsWarnings";
+
+    /// <summary>
     /// Mstest adapter string
     /// </summary>
     public const string MstestAdapterString = "mstestadapter";

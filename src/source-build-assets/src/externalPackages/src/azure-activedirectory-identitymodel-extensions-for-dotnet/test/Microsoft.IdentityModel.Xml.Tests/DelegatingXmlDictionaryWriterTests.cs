@@ -14,7 +14,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
 {
     public class DelegatingXmlDictionaryWriterTests
     {
-        [Theory, MemberData(nameof(WriteXmlTheoryData))]
+        [Theory, MemberData(nameof(WriteXmlTheoryData), DisableDiscoveryEnumeration = true)]
         public void WriteXml(DelegatingXmlDictionaryWriterTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.WriteXml", theoryData);

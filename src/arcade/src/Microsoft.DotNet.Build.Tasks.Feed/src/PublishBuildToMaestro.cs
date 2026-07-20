@@ -13,16 +13,22 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Maestro.Common;
+using Maestro.Common.Telemetry;
 using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.DarcLib;
 using Microsoft.DotNet.DarcLib.Models.Darc;
+using Microsoft.DotNet.Internal.Credentials;
 using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Microsoft.DotNet.Build.Manifest;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MSBuild = Microsoft.Build.Utilities;
+using DarcDependencyFileManager = Microsoft.DotNet.DarcLib.Helpers.DependencyFileManager;
+using DarcFileSystem = Microsoft.DotNet.DarcLib.Helpers.FileSystem;
+using DarcProcessManager = Microsoft.DotNet.DarcLib.Helpers.ProcessManager;
+using DarcVersionDetailsParser = Microsoft.DotNet.DarcLib.Helpers.VersionDetailsParser;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
@@ -258,7 +264,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             CancellationToken cancellationToken)
         {
             var logger = new MSBuildLogger(Log);
-            var local = new Local(new RemoteTokenProvider(), logger, RepoRoot);
+            var local = CreateLocal(logger);
             IEnumerable<DependencyDetail> dependencies = await local.GetDependenciesAsync();
             var builds = new Dictionary<int, bool>();
             var assetCache = new Dictionary<(string name, string version, string commit), int>();
@@ -291,6 +297,47 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
 
             return builds.Select(t => new BuildRef(t.Key, t.Value, 0)).ToList();
+        }
+
+        private Local CreateLocal(Microsoft.Extensions.Logging.ILogger logger)
+        {
+            var tokenProvider = new ResolvedTokenProvider(null);
+            // DarcLib changed Local's constructor shape; use reflection to tolerate both package versions during dependency flow.
+            var oldConstructor = typeof(Local).GetConstructor(new[]
+            {
+                typeof(IRemoteTokenProvider),
+                typeof(Microsoft.Extensions.Logging.ILogger),
+                typeof(string)
+            });
+
+            if (oldConstructor != null)
+            {
+                return (Local)oldConstructor.Invoke(new object[] { tokenProvider, logger, RepoRoot });
+            }
+
+            var gitClient = new LocalLibGit2Client(
+                tokenProvider,
+                new NoTelemetryRecorder(),
+                new DarcProcessManager(logger, "git"),
+                new DarcFileSystem(),
+                logger);
+            var dependencyFileManager = Activator.CreateInstance(
+                typeof(DarcDependencyFileManager),
+                gitClient,
+                new DarcVersionDetailsParser(),
+                new AssetLocationResolver(new BarApiClient(
+                    BuildAssetRegistryToken,
+                    managedIdentityId: null,
+                    disableInteractiveAuth: !AllowInteractive,
+                    buildAssetRegistryBaseUri: MaestroApiEndpoint)),
+                logger);
+
+            return (Local)Activator.CreateInstance(
+                typeof(Local),
+                dependencyFileManager,
+                gitClient,
+                logger,
+                RepoRoot);
         }
 
         private static async Task<int?> GetBuildId(DependencyDetail dep, IProductConstructionServiceApi client,

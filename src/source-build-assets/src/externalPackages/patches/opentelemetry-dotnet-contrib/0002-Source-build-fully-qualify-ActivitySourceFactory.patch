@@ -1,0 +1,28 @@
+From 121cbed0f04ea3602ba237ec256b8a8151f3c297 Mon Sep 17 00:00:00 2001
+From: Matt Thalman <mthalman@microsoft.com>
+Date: Fri, 10 Jul 2026 10:24:01 -0500
+Subject: [PATCH] Source-build: fully-qualify ActivitySourceFactory
+
+The runtime now ships a public System.Diagnostics.ActivitySourceFactory
+type. OpenTelemetry.Instrumentation.Http imports both System.Diagnostics
+and OpenTelemetry.Trace, and OpenTelemetry defines its own
+OpenTelemetry.Trace.ActivitySourceFactory shim, so the unqualified
+reference becomes ambiguous (CS0104) when building against the
+source-built runtime. Fully-qualify the call site to disambiguate.
+---
+ .../Implementation/HttpHandlerDiagnosticListener.cs           | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/OpenTelemetry.Instrumentation.Http/Implementation/HttpHandlerDiagnosticListener.cs b/src/OpenTelemetry.Instrumentation.Http/Implementation/HttpHandlerDiagnosticListener.cs
+index 65a18d976a7..121cbed0f04 100644
+--- a/src/OpenTelemetry.Instrumentation.Http/Implementation/HttpHandlerDiagnosticListener.cs
++++ b/src/OpenTelemetry.Instrumentation.Http/Implementation/HttpHandlerDiagnosticListener.cs
+@@ -25,7 +25,7 @@ internal sealed class HttpHandlerDiagnosticListener : ListenerHandler
+     internal static readonly bool IsNet9OrGreater = Environment.Version.Major >= 9;
+     internal static readonly bool IsNet10OrGreater = Environment.Version.Major >= 10;
+ 
+-    internal static readonly ActivitySource ActivitySource = ActivitySourceFactory.Create(typeof(HttpHandlerDiagnosticListener), HttpClientInstrumentation.SemanticConventionsVersion, name: ActivitySourceName);
++    internal static readonly ActivitySource ActivitySource = OpenTelemetry.Trace.ActivitySourceFactory.Create(typeof(HttpHandlerDiagnosticListener), HttpClientInstrumentation.SemanticConventionsVersion, name: ActivitySourceName);
+ 
+     private const string OnStartEvent = "System.Net.Http.HttpRequestOut.Start";
+     private const string OnStopEvent = "System.Net.Http.HttpRequestOut.Stop";

@@ -9,4 +9,5 @@ internal enum AnyValueType
     Boolean,
     Integer,
     Double,
+    Array,
 }

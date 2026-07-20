@@ -66,7 +66,6 @@ stages:
   displayName: VMR Comparison
   variables:
   - template: ../variables/vmr-build.yml
-  - group: Release-Pipeline
   - group: DotNetBot-GitHub-AllBranches
   jobs:
   - ${{ if ne(parameters.comparisonType, 'signing') }}:

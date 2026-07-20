@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Data;
@@ -31,7 +31,7 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
 
     #region 21355
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task Can_configure_SingleQuery_at_context_level()
     {
         var contextFactory = await InitializeNonSharedTest<Context21355>(
@@ -54,7 +54,7 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
         }
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task Can_configure_SplitQuery_at_context_level()
     {
         var contextFactory = await InitializeNonSharedTest<Context21355>(
@@ -77,7 +77,7 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
         }
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task Unconfigured_query_splitting_behavior_throws_a_warning()
     {
         var contextFactory = await InitializeNonSharedTest<Context21355>(
@@ -99,7 +99,7 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
         }
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task Using_AsSingleQuery_without_context_configuration_does_not_throw_warning()
     {
         var contextFactory = await InitializeNonSharedTest<Context21355>(seed: c => c.SeedAsync());
@@ -107,7 +107,7 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
         context.Parents.Include(p => p.Children1).Include(p => p.Children2).AsSingleQuery().ToList();
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task SplitQuery_disposes_inner_data_readers()
     {
         var contextFactory = await InitializeNonSharedTest<Context21355>(seed: c => c.SeedAsync());
@@ -179,17 +179,17 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
 
     #region 25225
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task Can_query_with_nav_collection_in_projection_with_split_query_in_parallel_async()
     {
         var (context1, context2) = await CreateTwoContext25225();
+        ClearLog();
         var task1 = QueryAsync(context1, Context25225.Parent1Id, Context25225.Collection1Id);
         var task2 = QueryAsync(context2, Context25225.Parent2Id, Context25225.Collection2Id);
         await Task.WhenAll(task1, task2);
 
         async Task QueryAsync(Context25225 context, Guid parentId, Guid collectionId)
         {
-            ClearLog();
             for (var i = 0; i < 100; i++)
             {
                 var parent = await SelectParent25225(context, parentId).SingleAsync();
@@ -198,17 +198,17 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
         }
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task Can_query_with_nav_collection_in_projection_with_split_query_in_parallel_sync()
     {
         var (context1, context2) = await CreateTwoContext25225();
+        ClearLog();
         var task1 = Task.Run(() => Query(context1, Context25225.Parent1Id, Context25225.Collection1Id));
         var task2 = Task.Run(() => Query(context2, Context25225.Parent2Id, Context25225.Collection2Id));
         await Task.WhenAll(task1, task2);
 
         void Query(Context25225 context, Guid parentId, Guid collectionId)
         {
-            ClearLog();
             for (var i = 0; i < 10; i++)
             {
                 var parent = SelectParent25225(context, parentId).Single();
@@ -313,7 +313,7 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
 
     #region 25400
 
-    [ConditionalTheory, InlineData(true), InlineData(false)]
+    [Theory, InlineData(true), InlineData(false)]
     public virtual async Task NoTracking_split_query_creates_only_required_instances(bool async)
     {
         var contextFactory = await InitializeNonSharedTest<Context25400>(
@@ -365,7 +365,7 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
 
     #region 34728
 
-    [ConditionalTheory, InlineData(true), InlineData(false)]
+    [Theory, InlineData(true), InlineData(false)]
     public virtual async Task NoTrackingWithIdentityResolution_split_query_basic(bool async)
     {
         var contextFactory = await InitializeNonSharedTest<Context34728>(
@@ -381,7 +381,7 @@ public abstract class AdHocQuerySplittingQueryTestBase(NonSharedFixture fixture)
             : query.ToList();
     }
 
-    [ConditionalTheory, InlineData(true), InlineData(false)]
+    [Theory, InlineData(true), InlineData(false)]
     public virtual async Task NoTrackingWithIdentityResolution_split_query_complex(bool async)
     {
         var contextFactory = await InitializeNonSharedTest<Context34728>(

@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
-using OpenTelemetry.Internal;
 using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Instrumentation.SqlClient.Implementation;
@@ -16,11 +15,9 @@ internal sealed class SqlTelemetryHelper
 {
     public const string MicrosoftSqlServerDbSystemName = "microsoft.sql_server";
 
-    private static readonly (ActivitySource ActivitySource, Meter Meter) Telemetry = CreateTelemetry();
-#pragma warning disable SA1202 // Elements must be ordered by accessibility. Telemetry field should be private and initialized earlier
-    public static readonly ActivitySource ActivitySource = Telemetry.ActivitySource;
-#pragma warning restore SA1202 // Elements must be ordered by accessibility. Telemetry field should be private and initialized earlier
-    public static readonly Meter Meter = Telemetry.Meter;
+    public static readonly Version SemanticConventionsVersion = new(1, 33, 0);
+    public static readonly ActivitySource ActivitySource = ActivitySourceFactory.Create<SqlTelemetryHelper>(SemanticConventionsVersion);
+    public static readonly Meter Meter = Metrics.MeterFactory.Create<SqlTelemetryHelper>(SemanticConventionsVersion);
 
     public static readonly Histogram<double> DbClientOperationDuration = Meter.CreateHistogram(
         "db.client.operation.duration",
@@ -56,9 +53,11 @@ internal sealed class SqlTelemetryHelper
 
             if (!string.IsNullOrEmpty(databaseName))
             {
+#pragma warning disable IDE0370 // Suppression is unnecessary
                 var dbNamespace = !string.IsNullOrEmpty(connectionDetails.InstanceName)
                     ? $"{connectionDetails.InstanceName}.{databaseName}"
                     : databaseName!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
                 tags.Add(SemanticConventions.AttributeDbNamespace, dbNamespace);
                 activityName = dbNamespace;
             }
@@ -74,56 +73,25 @@ internal sealed class SqlTelemetryHelper
 
                 if (activityName == MicrosoftSqlServerDbSystemName)
                 {
+#pragma warning disable IDE0370 // Suppression is unnecessary
                     activityName = connectionDetails.Port is { } portNumber
                         ? $"{serverAddress}:{portNumber}"
                         : serverAddress!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
                 }
             }
         }
         else if (!string.IsNullOrEmpty(databaseName))
         {
             tags.Add(SemanticConventions.AttributeDbNamespace, databaseName);
+#pragma warning disable IDE0370 // Suppression is unnecessary
             activityName = databaseName!;
+#pragma warning restore IDE0370 // Suppression is unnecessary
         }
 
         return tags;
     }
 
     internal static double CalculateDurationFromTimestamp(long begin)
-    {
-#if NET
-        var duration = Stopwatch.GetElapsedTime(begin);
-#else
-        var end = Stopwatch.GetTimestamp();
-        var timestampToTicks = TimeSpan.TicksPerSecond / (double)Stopwatch.Frequency;
-        var delta = end - begin;
-        var ticks = (long)(timestampToTicks * delta);
-        var duration = new TimeSpan(ticks);
-#endif
-
-        return duration.TotalSeconds;
-    }
-
-    private static (ActivitySource ActivitySource, Meter Meter) CreateTelemetry()
-    {
-        const string telemetrySchemaUrl = "https://opentelemetry.io/schemas/1.33.0";
-        var assembly = typeof(SqlTelemetryHelper).Assembly;
-        var assemblyName = assembly.GetName();
-        var name = assemblyName.Name!;
-        var version = assembly.GetPackageVersion();
-
-        var activitySourceOptions = new ActivitySourceOptions(name)
-        {
-            Version = version,
-            TelemetrySchemaUrl = telemetrySchemaUrl,
-        };
-
-        var meterOptions = new MeterOptions(name)
-        {
-            Version = version,
-            TelemetrySchemaUrl = telemetrySchemaUrl,
-        };
-
-        return (new ActivitySource(activitySourceOptions), new Meter(meterOptions));
-    }
+        => Stopwatch.GetElapsedTime(begin).TotalSeconds;
 }

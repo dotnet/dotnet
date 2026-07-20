@@ -1972,6 +1972,36 @@ public partial class PropertyGridTests
         Assert.False(property.ShouldSerializeValue(control));
     }
 
+    [WinFormsFact]
+    public void PropertyGrid_ResetHelpForeColor_Invoke_ResetsForeColorOnly()
+    {
+        using PropertyGrid control = new()
+        {
+            HelpForeColor = Color.Red,
+            HelpBackColor = Color.Yellow
+        };
+
+        control.TestAccessor.Dynamic.ResetHelpForeColor();
+
+        Assert.Equal(SystemColors.ControlText, control.HelpForeColor);
+        Assert.Equal(Color.Yellow, control.HelpBackColor);
+    }
+
+    [WinFormsFact]
+    public void PropertyGrid_ResetHelpBackColor_Invoke_ResetsBackColorOnly()
+    {
+        using PropertyGrid control = new()
+        {
+            HelpForeColor = Color.Red,
+            HelpBackColor = Color.Yellow
+        };
+
+        control.TestAccessor.Dynamic.ResetHelpBackColor();
+
+        Assert.Equal(SystemColors.Control, control.HelpBackColor);
+        Assert.Equal(Color.Red, control.HelpForeColor);
+    }
+
     [WinFormsTheory]
     [InlineData(true, true, 0, 0, 1)]
     [InlineData(true, false, 1, 1, 2)]
@@ -2361,6 +2391,20 @@ public partial class PropertyGridTests
     }
 
     [WinFormsFact]
+    public void PropertyGrid_SelectedObject_SetAfterReplacingDefaultTab_UsesCustomTab()
+    {
+        using PropertyGrid control = new();
+        control.PropertyTabs.RemoveTabType(typeof(PropertiesTab));
+        control.PropertyTabs.AddTabType(typeof(ReplacementPropertyTab), PropertyTabScope.Static);
+
+        using Button selectedObject = new();
+        control.SelectedObject = selectedObject;
+
+        Assert.Equal(selectedObject, control.SelectedObject);
+        Assert.IsType<ReplacementPropertyTab>(control.SelectedTab);
+    }
+
+    [WinFormsFact]
     public void PropertyGrid_PropertyTabCollection_AddAndRemoveTabType_Success()
     {
         using PropertyGrid grid = new();
@@ -2380,6 +2424,27 @@ public partial class PropertyGridTests
         public override Bitmap Bitmap => new(10, 10);
 
         public override PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes) => throw new NotImplementedException();
+    }
+
+    private class ReplacementPropertyTab : PropertyTab, IDisposable
+    {
+        private Bitmap _bitmap;
+
+        public override string TabName => "ReplacementPropertyTab";
+
+        public override Bitmap Bitmap => _bitmap ??= new(10, 10);
+
+        public override PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes)
+            => TypeDescriptor.GetProperties(component, attributes);
+
+        public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object component, Attribute[] attributes)
+            => TypeDescriptor.GetProperties(component, attributes);
+
+        public override void Dispose()
+        {
+            _bitmap?.Dispose();
+            base.Dispose();
+        }
     }
 
     [WinFormsFact]

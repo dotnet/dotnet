@@ -164,7 +164,7 @@
 1- attributes count</note>
       </trans-unit>
       <trans-unit id="NoWritteableConfig">
-        <source>There is no NuGet.Config that could be used for writing settings. Please create one at the desired location and restart the client.</source>
+        <source>There is no NuGet.Config that could be used for writing settings. Create one at the desired location and restart the client.</source>
         <target state="translated">Отсутствует NuGet.Config для записи параметров. Создайте конфигурацию в нужном расположении и перезапустите клиент.</target>
         <note />
       </trans-unit>

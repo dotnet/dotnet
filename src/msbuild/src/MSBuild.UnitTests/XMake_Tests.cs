@@ -580,7 +580,7 @@ namespace Microsoft.Build.UnitTests
             process.ExitCode.ShouldBe(0);
 
             string output = process.StandardOutput.ReadToEnd();
-            output.EndsWith(Environment.NewLine).ShouldBeTrue();
+            output.EndsWith(Environment.NewLine, StringComparison.Ordinal).ShouldBeTrue();
 
             process.Close();
         }
@@ -620,7 +620,7 @@ namespace Microsoft.Build.UnitTests
             process.ExitCode.ShouldBe(0);
 
             string output = process.StandardOutput.ReadToEnd();
-            output.EndsWith(Environment.NewLine).ShouldBeFalse();
+            output.EndsWith(Environment.NewLine, StringComparison.Ordinal).ShouldBeFalse();
 
             process.Close();
         }
@@ -859,6 +859,41 @@ namespace Microsoft.Build.UnitTests
             results.Contains("MyTarget").ShouldBe(targetResultPresent);
             results.Contains("\"Result\": \"Success\"").ShouldBe(targetResultPresent || restoreOnly);
             results.ShouldNotContain(ResourceUtilities.GetResourceString("BuildFailedWithPropertiesItemsOrTargetResultsRequested"));
+        }
+
+        /// <summary>
+        /// When no target is requested, <c>-getProperty</c>/<c>-getItem</c> evaluate only as far as
+        /// needed (partial evaluation, gated behind change wave 18.10). A project whose only error is
+        /// in the targets pass therefore succeeds for a property-only query, but reverts to failing
+        /// when the change wave is opted out (full evaluation).
+        /// </summary>
+        [Theory]
+        [InlineData(null, true)]      // wave enabled (default): partial evaluation stops before the failing targets pass
+        [InlineData("18.10", false)]  // wave disabled: full evaluation hits the failing targets pass
+        public void GetPropertyWithoutTargetUsesPartialEvaluation(string disableFeaturesFromVersion, bool expectedSuccess)
+        {
+            using TestEnvironment env = TestEnvironment.Create();
+            if (disableFeaturesFromVersion is not null)
+            {
+                env.SetEnvironmentVariable("MSBUILDDISABLEFEATURESFROMVERSION", disableFeaturesFromVersion);
+            }
+
+            // The BeforeTargets expression only fails when the targets pass runs (pass 5); properties
+            // (pass 1) are unaffected, so a partial evaluation reads Foo without hitting the error.
+            TransientTestFile project = env.CreateFile("testProject.csproj", @"
+<Project>
+  <PropertyGroup>
+    <Foo>EvalValue</Foo>
+  </PropertyGroup>
+  <Target Name=""Bad"" BeforeTargets=""$([System.Int32]::Parse('notanumber'))"" />
+</Project>
+");
+            string results = RunnerUtilities.ExecMSBuild($" {project.Path} -getProperty:Foo", out bool success);
+            success.ShouldBe(expectedSuccess, results);
+            if (expectedSuccess)
+            {
+                results.ShouldContain("EvalValue");
+            }
         }
 
         [Fact]
@@ -1275,6 +1310,7 @@ namespace Microsoft.Build.UnitTests
         /// <summary>
         /// Basic case
         /// </summary>
+        [ActiveIssue("https://github.com/dotnet/msbuild/issues/14194", TestPlatforms.Windows)]
         [Fact]
         public void GetCommandLine()
         {
@@ -1290,6 +1326,7 @@ namespace Microsoft.Build.UnitTests
         /// <summary>
         /// Quoted path
         /// </summary>
+        [ActiveIssue("https://github.com/dotnet/msbuild/issues/14192", TestPlatforms.Windows)]
         [Fact]
         public void GetCommandLineQuotedExe()
         {
@@ -1313,6 +1350,7 @@ namespace Microsoft.Build.UnitTests
         /// <summary>
         /// On path
         /// </summary>
+        [ActiveIssue("https://github.com/dotnet/msbuild/issues/14196", TestPlatforms.Windows)]
         [Fact]
         public void GetCommandLineQuotedExeOnPath()
         {
@@ -1569,6 +1607,48 @@ namespace Microsoft.Build.UnitTests
             var msbuildParameters = "\"" + directory.Path + "\"";
             RunnerUtilities.ExecMSBuild(msbuildParameters, out var successfulExit, _output);
             successfulExit.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void ResponseFileNoticeIsPrintedOnSwitchError()
+        {
+            _env.SetEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US");
+            var directory = _env.CreateFolder();
+            var content = ObjectModelHelpers.CleanupFileContents("<Project><Target Name='t'><Message Text='Completed'/></Target></Project>");
+            directory.CreateFile("foo.proj", content);
+            var projectPath = directory.CreateFile("bar.proj", content).Path;
+            var rspPath = directory.CreateFile("Directory.Build.rsp", "foo.proj").Path;
+
+            string output = RunnerUtilities.ExecMSBuild($"\"{projectPath}\"", out var successfulExit, _output);
+
+            successfulExit.ShouldBeFalse();
+            int noticeIndex = output.IndexOf("Some command line switches were read from", StringComparison.OrdinalIgnoreCase);
+            int errorIndex = output.IndexOf("MSB1008", StringComparison.OrdinalIgnoreCase);
+            noticeIndex.ShouldBeGreaterThanOrEqualTo(0);
+            errorIndex.ShouldBeGreaterThanOrEqualTo(0);
+            noticeIndex.ShouldBeLessThan(errorIndex);
+            output.ShouldContain(rspPath);
+        }
+
+        [Fact]
+        public void ExplicitResponseFileNoticeIsPrintedOnSwitchError()
+        {
+            _env.SetEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US");
+            var directory = _env.CreateFolder();
+            var content = ObjectModelHelpers.CleanupFileContents("<Project><Target Name='t'><Message Text='Completed'/></Target></Project>");
+            directory.CreateFile("foo.proj", content);
+            var projectPath = directory.CreateFile("bar.proj", content).Path;
+            var rspPath = directory.CreateFile("explicit.rsp", "foo.proj").Path;
+
+            string output = RunnerUtilities.ExecMSBuild($"\"{projectPath}\" @\"{rspPath}\" -noAutoResponse", out var successfulExit, _output);
+
+            successfulExit.ShouldBeFalse();
+            int noticeIndex = output.IndexOf("Some command line switches were read from", StringComparison.OrdinalIgnoreCase);
+            int errorIndex = output.IndexOf("MSB1008", StringComparison.OrdinalIgnoreCase);
+            noticeIndex.ShouldBeGreaterThanOrEqualTo(0);
+            errorIndex.ShouldBeGreaterThanOrEqualTo(0);
+            noticeIndex.ShouldBeLessThan(errorIndex);
+            output.ShouldContain(rspPath);
         }
 
         /// <summary>
@@ -2571,6 +2651,28 @@ $@"<Project>
         }
 
         /// <summary>
+        /// Regression test for dotnet/msbuild#14274 / dotnet/sdk#55245: restore must not inject the ExcludeRestorePackageImports
+        /// global property. Doing so aligns MSBuild's restore evaluation with the global property set NuGet's inner restore walk
+        /// uses, which makes a nonexistent &lt;ProjectReference&gt; leak into NuGet's _GenerateRestoreGraphProjectEntry MSBuild call
+        /// (which does not skip nonexistent projects) and fail with MSB3202 instead of being skipped.
+        /// </summary>
+        [Fact]
+        public void RestoreDoesNotInjectExcludeRestorePackageImports()
+        {
+            string projectContents = ObjectModelHelpers.CleanupFileContents(
+                @"<Project>
+  <Target Name=""Restore"">
+    <Message Text=""ExcludeRestorePackageImports=[$(ExcludeRestorePackageImports)]"" Importance=""High"" />
+  </Target>
+</Project>");
+
+            string logContents = ExecuteMSBuildExeExpectSuccess(projectContents, arguments: "/t:restore");
+
+            // The property must remain empty; MSBuild must not set it during restore.
+            logContents.ShouldContain("ExcludeRestorePackageImports=[]");
+        }
+
+        /// <summary>
         /// We check if there is only one target name specified and this logic caused a regression: https://github.com/dotnet/msbuild/issues/3317
         /// </summary>
         [Fact]
@@ -3137,6 +3239,64 @@ EndGlobal
             string project = testEnvironment.CreateTestProjectWithFiles("project.proj", projectContent).ProjectFile;
 
             MSBuildApp.Execute([@"c:\bin\msbuild.exe", project, "/m:257 /mt"]).ShouldBe(MSBuildApp.ExitType.SwitchError);
+        }
+
+        [Fact]
+        public void MSBuildForceMultiThreadedEnvironmentVariableEnablesMultiThreadedMode()
+        {
+            // When MSBUILDFORCEMULTITHREADED=1 is set, IsMultiThreadedEnabled should return true
+            // even when the -multiThreaded / -mt switch is not passed on the command line.
+            using TestEnvironment testEnvironment = TestEnvironment.Create();
+            testEnvironment.SetEnvironmentVariable("MSBUILDFORCEMULTITHREADED", "1");
+
+            CommandLineSwitches switches = new CommandLineSwitches();
+            switches.IsParameterizedSwitchSet(CommandLineSwitches.ParameterizedSwitch.MultiThreaded).ShouldBeFalse();
+
+            MSBuildApp.IsMultiThreadedEnabled(switches).ShouldBeTrue();
+        }
+
+        [Fact]
+        public void MSBuildForceMultiThreadedEnvironmentVariableUnsetDoesNotEnableMultiThreadedMode()
+        {
+            // When the env var is not set and the switch is not passed, IsMultiThreadedEnabled should return false.
+            using TestEnvironment testEnvironment = TestEnvironment.Create();
+            testEnvironment.SetEnvironmentVariable("MSBUILDFORCEMULTITHREADED", null);
+
+            CommandLineSwitches switches = new CommandLineSwitches();
+            MSBuildApp.IsMultiThreadedEnabled(switches).ShouldBeFalse();
+        }
+
+        [Fact]
+        public void MSBuildForceMultiThreadedEnvironmentVariableNonOneValueDoesNotEnableMultiThreadedMode()
+        {
+            // The env var is only honored when set to exactly "1", matching other MSBUILDFORCE* flags.
+            using TestEnvironment testEnvironment = TestEnvironment.Create();
+            testEnvironment.SetEnvironmentVariable("MSBUILDFORCEMULTITHREADED", "true");
+
+            CommandLineSwitches switches = new CommandLineSwitches();
+            MSBuildApp.IsMultiThreadedEnabled(switches).ShouldBeFalse();
+        }
+
+        [Theory]
+        // MSBUILDUSESERVER value, -mt build, expected server use, expected reason.
+        [InlineData("1", false, true, "EnvVar")]
+        [InlineData("1", true, true, "EnvVar")]
+        [InlineData("0", true, false, "")]
+        [InlineData("0", false, false, "")]
+        [InlineData("false", true, false, "")] // any explicit non-"1" value opts out
+        [InlineData("true", true, false, "")]
+        [InlineData(null, true, true, "ImpliedByMt")]
+        [InlineData(null, false, false, "")]
+        [InlineData("", true, true, "ImpliedByMt")] // empty is treated as unset
+        public void ShouldUseMSBuildServerDecisionTree(string useServerValue, bool isMultiThreaded, bool expectedUseServer, string expectedReason)
+        {
+            using TestEnvironment testEnvironment = TestEnvironment.Create();
+            testEnvironment.SetEnvironmentVariable("MSBUILDUSESERVER", useServerValue);
+
+            bool useServer = MSBuildApp.ShouldUseMSBuildServer(isMultiThreaded, out string reason);
+
+            useServer.ShouldBe(expectedUseServer);
+            reason.ShouldBe(expectedReason);
         }
 
         private string CopyMSBuild()

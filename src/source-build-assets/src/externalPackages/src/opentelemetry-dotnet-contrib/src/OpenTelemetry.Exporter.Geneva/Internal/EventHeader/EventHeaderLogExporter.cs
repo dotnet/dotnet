@@ -67,7 +67,16 @@ internal class EventHeaderLogExporter : TldLogCommon, IDisposable
                 try
                 {
                     var eventBuilder = this.SerializeLogRecord(logRecord);
-                    eventBuilder.Write(this.logsTracepoint);
+                    var errorCode = eventBuilder.Write(this.logsTracepoint);
+                    if (errorCode != 0)
+                    {
+                        if (!GenevaBufferOverflowExceptionHelper.TryReportLogBufferOverflow(errorCode))
+                        {
+                            ExporterEventSource.Log.FailedToSendLogData($"EventHeader log export failed with errno {errorCode}.");
+                        }
+
+                        result = ExportResult.Failure;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -121,8 +130,7 @@ internal class EventHeaderLogExporter : TldLogCommon, IDisposable
             }
             else
             {
-                // TODO: Avoid allocation
-                eventName = GetSanitizedCategoryName(categoryName);
+                eventName = this.GetSanitizedCategoryName(categoryName);
             }
         }
 
@@ -328,7 +336,7 @@ internal class EventHeaderLogExporter : TldLogCommon, IDisposable
             {
                 // Get all "other" fields and collapse them into single field
                 // named "env_properties".
-                var serializedEnvPropertiesStringAsBytes = JsonSerializer.SerializeKeyValuePairsListAsBytes(envPropertiesList, out var count);
+                var serializedEnvPropertiesStringAsBytes = JsonSerializer.SerializeKeyValuePairsListAsBytes(envPropertiesList, out _);
                 eb.AddString8("env_properties", serializedEnvPropertiesStringAsBytes);
             }
 
@@ -344,9 +352,7 @@ internal class EventHeaderLogExporter : TldLogCommon, IDisposable
         => OnProcessScopeForIndividualColumns(
             scope,
             state.serializationData.Value!,
-            state.customFields,
-            PartCFields.Value!,
-            EnvProperties.Value);
+            state.customFields);
 }
 
 #endif

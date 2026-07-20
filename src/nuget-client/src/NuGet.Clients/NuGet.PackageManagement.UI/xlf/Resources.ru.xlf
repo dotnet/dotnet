@@ -112,19 +112,9 @@
         <target state="translated">Аргумент не может быть пустым или равен NULL.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">Попробуйте перенести формат управления пакетами NuGet проекта из "packages.config" в "PackageReference".</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">В этом решении отсутствует несколько пакетов NuGet. Щелкните, чтобы восстановить их из источников пакетов в сети.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AskForUpdateMessage">
-        <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">Доступна новая версия диспетчера пакетов NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -144,7 +134,7 @@
       </trans-unit>
       <trans-unit id="Button_Cancel">
         <source>_Cancel</source>
-        <target state="translated">_Отменить</target>
+        <target state="translated">_Отмена</target>
         <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
       </trans-unit>
       <trans-unit id="Button_Copy">
@@ -462,11 +452,6 @@
         <target state="translated">Сообщить о нарушении</target>
         <note />
       </trans-unit>
-      <trans-unit id="IgnoreUpgrade">
-        <source>Ignore for now</source>
-        <target state="translated">Пока пропустить</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImageCaption_HelpIcon">
         <source>Help icon</source>
         <target state="translated">Значок справки</target>
@@ -644,7 +629,7 @@
       </trans-unit>
       <trans-unit id="Label_PackagePrerelease">
         <source>Prerelease</source>
-        <target state="translated">Предварительный выпуск</target>
+        <target state="translated">Предварительная версия</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_PackageSelectForInfoToolTip">
@@ -752,11 +737,6 @@
         <target state="translated">Лицензия {0}</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">Больше не показывать</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">Дополнительные сведения о параметрах установки</target>
@@ -765,16 +745,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">Дополнительные сведения о параметрах удаления</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">Почему следует выполнить переход?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">Перейти сейчас</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">
@@ -897,11 +867,6 @@
         <target state="translated">_Восстановить</target>
         <note />
       </trans-unit>
-      <trans-unit id="ShowDetails">
-        <source>Show Details</source>
-        <target state="translated">Показать сведения</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
 Error: {1}</source>
@@ -932,12 +897,12 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
-        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
         <target state="translated">Указанное имя уже было добавлено в список доступных источников пакетов. Укажите уникальное имя.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
-        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
         <target state="translated">Указанный источник уже был добавлен в список доступных источников пакетов. Укажите уникальный источник.</target>
         <note />
       </trans-unit>
@@ -1047,7 +1012,7 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="Text_NoReadme">
-        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
         <target state="translated">Нет доступного файла сведений для выбранной версии пакета. Дополнительные сведения см. на странице [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
@@ -1282,8 +1247,8 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
-        <source>Please follow simple instructions from {0} to go back to previous state.</source>
-        <target state="translated">Следуйте простым инструкциям в {0}, чтобы вернуться к предыдущему состоянию.</target>
+        <source>Follow the instructions at {0} to return to the previous state.</source>
+        <target state="translated">Следуйте инструкциям по адресу {0}, чтобы вернуться к предыдущему состоянию.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">
@@ -1338,7 +1303,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Version_LatestPrerelease">
         <source>Latest prerelease</source>
-        <target state="translated">Последний предварительный выпуск</target>
+        <target state="translated">Последняя предварительная версия</target>
         <note />
       </trans-unit>
       <trans-unit id="Version_LatestStable">

@@ -116,6 +116,18 @@ namespace NuGet.Commands
             outputPath = outputPath ?? GetOutputPath(builder, _packArgs, false, builder.Version);
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
 
+            // Warn if the package ID doesn't adhere to the restricted character set (NU5052)
+            if (!symbolsPackage &&
+                _packArgs.UsingMicrosoftNETSdk &&
+                SdkAnalysisLevelMinimums.IsEnabled(_packArgs.SdkAnalysisLevel, _packArgs.UsingMicrosoftNETSdk, SdkAnalysisLevelMinimums.V11_0_100) &&
+                !PackageIdValidator.IsValidPackageId(builder.Id, useRestrictedCharacterSet: true))
+            {
+                _packArgs.Logger.Log(
+                    PackagingLogMessage.CreateWarning(
+                        string.Format(CultureInfo.CurrentCulture, Strings.RestrictedPackageIdWarning, builder.Id),
+                        NuGetLogCode.NU5052));
+            }
+
             // Track if the package file was already present on disk
             bool isExistingPackage = File.Exists(outputPath);
             try
@@ -459,7 +471,10 @@ namespace NuGet.Commands
                     !_packArgs.ExcludeEmptyDirectories,
                     _packArgs.Deterministic,
                     _packArgs.Logger,
-                    _packArgs.Version);
+                    _packArgs.Version)
+                {
+                    DeterministicTimestamp = _packArgs.DeterministicTimestamp,
+                };
             }
 
             return new PackageBuilder(
@@ -469,7 +484,10 @@ namespace NuGet.Commands
                 !_packArgs.ExcludeEmptyDirectories,
                 _packArgs.Deterministic,
                 _packArgs.Logger,
-                _packArgs.Version);
+                _packArgs.Version)
+            {
+                DeterministicTimestamp = _packArgs.DeterministicTimestamp,
+            };
         }
 
         private bool BuildFromProjectFile(string path)

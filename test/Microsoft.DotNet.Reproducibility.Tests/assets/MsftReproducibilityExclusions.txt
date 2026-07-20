@@ -1,0 +1,25 @@
+# MSFT SDK reproducibility exclusions
+#
+# Files listed here have known root-cause-justified differences between two builds of the
+# same source commit.
+
+# https://github.com/NuGet/NuGet.Client/pull/7020
+# https://github.com/dotnet/arcade/pull/16787
+# The JSON files are included as well due to a cascade effect of sha512 hash diffs from the nupkgs
+**/*.nupkg
+sdk/*/dotnet.deps.json
+sdk/*/DotnetTools/dotnet-format/dotnet-format.deps.json
+sdk/*/DotnetTools/dotnet-watch/*/tools/net11.0/any/dotnet-watch.deps.json
+sdk/*/FSharp/fsc.deps.json
+sdk/*/FSharp/fsi.deps.json
+sdk/*/MSBuild.deps.json
+sdk/*/NuGet.CommandLine.XPlat.deps.json
+sdk/*/redist.deps.json
+sdk/*/Sdks/Microsoft.Build.Tasks.Git/tools/net/Microsoft.Build.Tasks.Git.deps.json
+sdk/*/Sdks/Microsoft.NET.Sdk.BlazorWebAssembly/tools/net11.0/Microsoft.NET.Sdk.BlazorWebAssembly.Tool.deps.json
+sdk/*/Sdks/Microsoft.NET.Sdk.Razor/tools/rzc.deps.json
+sdk/*/Sdks/Microsoft.NET.Sdk.StaticWebAssets/tools/net11.0/Microsoft.NET.Sdk.StaticWebAssets.Tool.deps.json
+sdk/*/Sdks/Microsoft.SourceLink.AzureRepos.Git/tools/net/Microsoft.SourceLink.AzureRepos.Git.deps.json
+sdk/*/Sdks/Microsoft.SourceLink.Bitbucket.Git/tools/net/Microsoft.SourceLink.Bitbucket.Git.deps.json
+sdk/*/Sdks/Microsoft.SourceLink.GitHub/tools/net/Microsoft.SourceLink.GitHub.deps.json
+sdk/*/Sdks/Microsoft.SourceLink.GitLab/tools/net/Microsoft.SourceLink.GitLab.deps.json

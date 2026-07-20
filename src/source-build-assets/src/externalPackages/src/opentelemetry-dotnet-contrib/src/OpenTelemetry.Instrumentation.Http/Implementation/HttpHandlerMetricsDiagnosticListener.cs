@@ -7,7 +7,6 @@ using System.Diagnostics.Metrics;
 #if NETFRAMEWORK
 using System.Net.Http;
 #endif
-using System.Reflection;
 using OpenTelemetry.Internal;
 using OpenTelemetry.Trace;
 
@@ -17,10 +16,8 @@ internal sealed class HttpHandlerMetricsDiagnosticListener : ListenerHandler
 {
     internal const string OnStopEvent = "System.Net.Http.HttpRequestOut.Stop";
 
-    internal static readonly AssemblyName AssemblyName = typeof(HttpClientMetrics).Assembly.GetName();
-    internal static readonly string MeterName = AssemblyName.Name!;
-    internal static readonly string MeterVersion = AssemblyName.Version!.ToString();
-    internal static readonly Meter Meter = new(MeterName, MeterVersion);
+    internal static readonly Meter Meter = Metrics.MeterFactory.Create<HttpHandlerMetricsDiagnosticListener>(HttpClientInstrumentation.SemanticConventionsVersion);
+
     private const string OnUnhandledExceptionEvent = "System.Net.Http.Exception";
     private static readonly Histogram<double> HttpClientRequestDuration = Meter.CreateHistogram(
         "http.client.request.duration",
@@ -45,7 +42,7 @@ internal sealed class HttpHandlerMetricsDiagnosticListener : ListenerHandler
     {
         if (TryFetchRequest(payload, out var request))
         {
-            // see the spec https://github.com/open-telemetry/semantic-conventions/blob/v1.23.0/docs/http/http-metrics.md
+            // See the spec https://github.com/open-telemetry/semantic-conventions/blob/v1.40.0/docs/http/http-metrics.md
             TagList tags = default;
 
             var httpMethod = HttpTagHelper.RequestDataHelper.GetNormalizedHttpMethod(request.Method.Method);
@@ -68,7 +65,7 @@ internal sealed class HttpHandlerMetricsDiagnosticListener : ListenerHandler
                 tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeHttpResponseStatusCode, TelemetryHelper.GetBoxedStatusCode(response.StatusCode)));
 
                 // Set error.type to status code for failed requests
-                // https://github.com/open-telemetry/semantic-conventions/blob/v1.23.0/docs/http/http-spans.md#common-attributes
+                // https://github.com/open-telemetry/semantic-conventions/blob/v1.40.0/docs/http/http-spans.md#http-client-span
                 if (SpanHelper.ResolveActivityStatusForHttpStatusCode(ActivityKind.Client, (int)response.StatusCode) == ActivityStatusCode.Error)
                 {
                     tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeErrorType, TelemetryHelper.GetStatusCodeString(response.StatusCode)));
@@ -84,7 +81,7 @@ internal sealed class HttpHandlerMetricsDiagnosticListener : ListenerHandler
 #endif
 
                 // Set error.type to exception type if response was not received.
-                // https://github.com/open-telemetry/semantic-conventions/blob/v1.23.0/docs/http/http-spans.md#common-attributes
+                // https://github.com/open-telemetry/semantic-conventions/blob/v1.40.0/docs/http/http-spans.md#http-client-span
                 if (errorType != null)
                 {
                     tags.Add(new KeyValuePair<string, object?>(SemanticConventions.AttributeErrorType, errorType));

@@ -38,11 +38,13 @@ namespace Microsoft.CSharp.RuntimeBinder
         public static System.Runtime.CompilerServices.CallSiteBinder SetMember(CSharpBinderFlags flags, string name, System.Type context, System.Collections.Generic.IEnumerable<CSharpArgumentInfo> argumentInfo) { throw null; }
         public static System.Runtime.CompilerServices.CallSiteBinder UnaryOperation(CSharpBinderFlags flags, System.Linq.Expressions.ExpressionType operation, System.Type context, System.Collections.Generic.IEnumerable<CSharpArgumentInfo> argumentInfo) { throw null; }
     }
+
     public sealed partial class CSharpArgumentInfo
     {
         internal CSharpArgumentInfo() { }
         public static CSharpArgumentInfo Create(CSharpArgumentInfoFlags flags, string name) { throw null; }
     }
+
     [System.Flags]
     public enum CSharpArgumentInfoFlags
     {

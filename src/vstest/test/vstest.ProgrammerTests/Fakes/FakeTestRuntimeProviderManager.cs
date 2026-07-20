@@ -69,4 +69,6 @@ internal class FakeTestRuntimeProviderManager : ITestRuntimeProviderManager
     {
         throw new NotImplementedException();
     }
+
+    public Type? GetSourceAwareRuntimeProviderType(string? runConfiguration, string source) => null;
 }

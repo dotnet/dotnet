@@ -12,7 +12,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class ValidatorsTests
     {
-        [Theory, MemberData(nameof(ValidateAudienceParametersTheoryData))]
+        [Theory, MemberData(nameof(ValidateAudienceParametersTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateAudienceParameters(AudienceValidationTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateAudienceParameters", theoryData);
@@ -28,97 +28,111 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             TestUtilities.AssertFailIfErrors(context);
         }
+
         public static TheoryData<AudienceValidationTheoryData> ValidateAudienceParametersTheoryData
         {
             get
             {
                 return new TheoryData<AudienceValidationTheoryData>
                 {
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("TokenValidationParametersNull")
                     {
                         Audiences = new List<string> { "audience1" },
                         ExpectedException = ExpectedException.ArgumentNullException("IDX10000:"),
-                        TestId = "TokenValidationParametersNull",
                         TokenValidationParameters = null
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("AudiencesEmptyString")
                     {
                         Audiences = new List<string> { "" },
                         ExpectedException =  ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "AudiencesEmptyString",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = "audience"}
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("AudiencesWhiteSpace")
                     {
                         Audiences = new List<string> { "    " },
                         ExpectedException =  ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "AudiencesWhiteSpace",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = "audience"}
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("AudiencesNull")
                     {
                         Audiences = null,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10207:"),
-                        TestId = "AudiencesNull"
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("AudiencesEmptyList")
                     {
                         Audiences = new List<string>{ },
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10206:"),
-                        TestId = "AudiencesEmptyList",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = "audience"}
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidateAudienceFalseAudiencesEmptyList")
                     {
                         Audiences = new List<string>{ },
-                        TestId = "ValidateAudienceFalseAudiencesEmptyList",
                         TokenValidationParameters = new TokenValidationParameters{ ValidateAudience = false }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidateAudienceFalseAudiencesNull")
                     {
                         Audiences = null,
-                        TestId = "ValidateAudienceFalseAudiencesNull",
                         TokenValidationParameters = new TokenValidationParameters{ ValidateAudience = false }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudienceEmptyString")
                     {
                         Audiences = new List<string> { "audience1" },
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10208:"),
-                        TestId = "ValidAudienceEmptyString",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = "" }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudienceWhiteSpace")
                     {
                         Audiences = new List<string> { "audience1" },
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10208:"),
-                        TestId = "ValidAudienceWhiteSpace",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = "    " }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudiencesEmptyString")
                     {
                         Audiences = new List<string> { "audience1" },
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "ValidAudiencesEmptyString",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudiences = new List<string>{ "" } }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudiencesWhiteSpace")
                     {
                         Audiences = new List<string> { "audience1" },
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "ValidAudiencesWhiteSpace",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudiences = new List<string>{ "    " } }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidateAudienceTrueValidAudienceAndValidAudiencesNull")
                     {
                         Audiences = new List<string> { "audience1" },
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10208:"),
-                        TestId = "ValidateAudienceTrueValidAudienceAndValidAudiencesNull"
+                    },
+                    new AudienceValidationTheoryData("AudiencesEmpty_RequireAudienceFalse_NoException")
+                    {
+                        Audiences = new List<string> { },
+                        TokenValidationParameters = new TokenValidationParameters{
+                            RequireAudience = false
+                            // default value of TVP.RequireAudience is true.
+                        }
+                    },
+                    new AudienceValidationTheoryData("ValidAudience_RequireAudienceFalse_NoException")
+                    {
+                        Audiences = new List<string> { "audience" },
+                        TokenValidationParameters = new TokenValidationParameters{
+                            ValidAudience = "audience",
+                            RequireAudience = false
+                        }
+                    },
+                    new AudienceValidationTheoryData("InvalidAudience_RequireAudienceFalse_ExceptionThrown")
+                    {
+                        Audiences = new List<string> { "audience1" },
+                        ExpectedException =  ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
+                        TokenValidationParameters = new TokenValidationParameters{
+                            ValidAudience = "audience",
+                            RequireAudience = false
+                        }
                     }
                 };
             }
         }
 
-        [Theory, MemberData(nameof(ValidateAudienceTheoryData))]
+        [Theory, MemberData(nameof(ValidateAudienceTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateAudience(AudienceValidationTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateAudience", theoryData);
@@ -149,138 +163,136 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
                 return new TheoryData<AudienceValidationTheoryData>
                 {
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("SameLengthMatched")
                     {
                         Audiences = audiences1,
-                        TestId = "SameLengthMatched",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience1 }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("SameLengthNotMatched")
                     {
                         Audiences = audiences1,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "SameLengthNotMatched",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience2 }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("NoMatchTVPValidateFalse")
                     {
                         Audiences = audiences1,
-                        TestId = "NoMatchTVPValidateFalse",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience2, ValidateAudience = false }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("AudiencesValidAudienceWithSlashNotMatched")
                     {
                         Audiences = audiences1,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "AudiencesValidAudienceWithSlashNotMatched",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience2 + "/" }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("AudiencesWithSlashValidAudienceSameLengthNotMatched")
                     {
                         Audiences = audiences2WithSlash,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "AudiencesWithSlashValidAudienceSameLengthNotMatched",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience1 }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudienceWithSlashTVPFalse")
                     {
                         Audiences = audiences1,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "ValidAudienceWithSlashTVPFalse",
                         TokenValidationParameters = new TokenValidationParameters{ IgnoreTrailingSlashWhenValidatingAudience = false, ValidAudience = audience1 + "/" }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudienceWithSlashTVPTrue")
                     {
                         Audiences = audiences1,
-                        TestId = "ValidAudienceWithSlashTVPTrue",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience1 + "/" }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudiencesWithSlashTVPFalse")
                     {
                         Audiences = audiences1,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "ValidAudiencesWithSlashTVPFalse",
                         TokenValidationParameters = new TokenValidationParameters{ IgnoreTrailingSlashWhenValidatingAudience = false, ValidAudiences = audiences1WithSlash }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudiencesWithSlashTVPTrue")
                     {
                         Audiences = audiences1,
-                        TestId = "ValidAudiencesWithSlashTVPTrue",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudiences = audiences1WithSlash }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudienceWithExtraChar")
                     {
                         Audiences = audiences1,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "ValidAudienceWithExtraChar",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience1 + "A" }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudienceWithDoubleSlashTVPTrue")
                     {
                         Audiences = audiences1,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "ValidAudienceWithDoubleSlashTVPTrue",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience1 + "//" }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("ValidAudiencesWithDoubleSlashTVPTrue")
                     {
                         Audiences = audiences1,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "ValidAudiencesWithDoubleSlashTVPTrue",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudiences = audiences1WithTwoSlashes }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("TokenAudienceWithSlashTVPFalse")
                     {
                         Audiences = audiences1WithSlash,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "TokenAudienceWithSlashTVPFalse",
                         TokenValidationParameters = new TokenValidationParameters{ IgnoreTrailingSlashWhenValidatingAudience = false, ValidAudience = audience1 }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("TokenAudienceWithSlashTVPTrue")
                     {
                         Audiences = audiences1WithSlash,
-                        TestId = "TokenAudienceWithSlashTVPTrue",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience1 }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("TokenAudienceWithSlashNotEqual")
                     {
                         Audiences = audiences2WithSlash,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "TokenAudienceWithSlashNotEqual",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience1 },
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("TokenAudiencesWithSlashTVPFalse")
                     {
                         Audiences = audiences1WithSlash,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "TokenAudiencesWithSlashTVPFalse",
                         TokenValidationParameters = new TokenValidationParameters{ IgnoreTrailingSlashWhenValidatingAudience = false, ValidAudience = audience1 }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("TokenAudiencesWithSlashTVPTrue")
                     {
                         Audiences = audiences1WithSlash,
-                        TestId = "TokenAudiencesWithSlashTVPTrue",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience1 }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("TokenAudiencesWithSlashValidAudiencesNotMatchedTVPTrue")
                     {
                         Audiences = audiences1WithSlash,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "TokenAudiencesWithSlashValidAudiencesNotMatchedTVPTrue",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudiences = audiences2 }
                     },
-                    new AudienceValidationTheoryData
+                    new AudienceValidationTheoryData("TokenAudienceWithTwoSlashesTVPTrue")
                     {
                         Audiences = audiences1WithTwoSlashes,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
-                        TestId = "TokenAudienceWithTwoSlashesTVPTrue",
                         TokenValidationParameters = new TokenValidationParameters{ ValidAudience = audience1 }
+                    },
+                    new AudienceValidationTheoryData("ValidAudiencesList_OptimizedPath")
+                    {
+                        Audiences = new List<string> { "audience1" },
+                        TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidAudiences = new List<string> { "invalidAudience", "audience1" }  // Using List<string> to test IList optimization
+                        }
+                    },
+                    new AudienceValidationTheoryData("ValidAudiencesList_EmptyList_OptimizedPath")
+                    {
+                        Audiences = new List<string> { "audience1" },
+                        ExpectedException = ExpectedException.SecurityTokenInvalidAudienceException("IDX10214:"),
+                        TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidAudiences = new List<string>()  // Empty list should still return false through optimized path
+                        }
                     }
                 };
             }
         }
 
-        [Theory, MemberData(nameof(IssuerDataSet))]
+        [Theory, MemberData(nameof(IssuerDataSet), DisableDiscoveryEnumeration = true)]
         public void Issuer(string issuer, SecurityToken securityToken, TokenValidationParameters validationParameters, BaseConfiguration configuration, ExpectedException ee)
         {
             try
@@ -319,7 +331,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(LifeTimeDataSet))]
+        [Theory, MemberData(nameof(LifeTimeDataSet), DisableDiscoveryEnumeration = true)]
         public void Lifetime(DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters, ExpectedException ee)
         {
             try
@@ -361,20 +373,20 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                 dataset.Add(DateTime.UtcNow - TimeSpan.FromHours(2), DateTime.UtcNow + TimeSpan.FromHours(1), null, new TokenValidationParameters(), ExpectedException.NoExceptionExpected);
 
                 // clock skew, positive then negative
-                dataset.Add(DateTime.UtcNow + TimeSpan.FromMinutes(2), DateTime.UtcNow + TimeSpan.FromHours(1), null, new TokenValidationParameters{ ClockSkew = TimeSpan.FromMinutes(5) }, ExpectedException.NoExceptionExpected);
-                dataset.Add(DateTime.UtcNow - TimeSpan.FromMinutes(2), DateTime.UtcNow - TimeSpan.FromMinutes(1), null, new TokenValidationParameters{ ClockSkew = TimeSpan.FromMinutes(5) }, ExpectedException.NoExceptionExpected);
+                dataset.Add(DateTime.UtcNow + TimeSpan.FromMinutes(2), DateTime.UtcNow + TimeSpan.FromHours(1), null, new TokenValidationParameters { ClockSkew = TimeSpan.FromMinutes(5) }, ExpectedException.NoExceptionExpected);
+                dataset.Add(DateTime.UtcNow - TimeSpan.FromMinutes(2), DateTime.UtcNow - TimeSpan.FromMinutes(1), null, new TokenValidationParameters { ClockSkew = TimeSpan.FromMinutes(5) }, ExpectedException.NoExceptionExpected);
 
                 notBefore = EpochTime.DateTime(EpochTime.GetIntDate((DateTime.UtcNow + TimeSpan.FromMinutes(6)).ToUniversalTime()));
                 expires = EpochTime.DateTime(EpochTime.GetIntDate((DateTime.UtcNow + TimeSpan.FromHours(1)).ToUniversalTime()));
-                dataset.Add(notBefore, expires, null, new TokenValidationParameters{ ClockSkew = TimeSpan.FromMinutes(5) }, ExpectedException.SecurityTokenNotYetValidException("IDX10222:", propertiesExpected: new Dictionary<string, object> { { "NotBefore", notBefore } }));
+                dataset.Add(notBefore, expires, null, new TokenValidationParameters { ClockSkew = TimeSpan.FromMinutes(5) }, ExpectedException.SecurityTokenNotYetValidException("IDX10222:", propertiesExpected: new Dictionary<string, object> { { "NotBefore", notBefore } }));
 
-                dataset.Add(DateTime.UtcNow - TimeSpan.FromHours(2), DateTime.UtcNow - TimeSpan.FromMinutes(6), null, new TokenValidationParameters{ ClockSkew = TimeSpan.FromMinutes(5) }, ExpectedException.SecurityTokenExpiredException("IDX10223:"));
+                dataset.Add(DateTime.UtcNow - TimeSpan.FromHours(2), DateTime.UtcNow - TimeSpan.FromMinutes(6), null, new TokenValidationParameters { ClockSkew = TimeSpan.FromMinutes(5) }, ExpectedException.SecurityTokenExpiredException("IDX10223:"));
 
                 return dataset;
             }
         }
 
-        [Theory, MemberData(nameof(SecurityKeyDataSet))]
+        [Theory, MemberData(nameof(SecurityKeyDataSet), DisableDiscoveryEnumeration = true)]
         public void SecurityKey(SecurityKey securityKey, SecurityToken securityToken, TokenValidationParameters validationParameters, ExpectedException ee)
         {
             try
@@ -410,7 +422,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(TokenReplayDataSet))]
+        [Theory, MemberData(nameof(TokenReplayDataSet), DisableDiscoveryEnumeration = true)]
         public void TokenReplay(string securityToken, DateTime? expirationTime, TokenValidationParameters validationParameters, ExpectedException ee)
         {
             try
@@ -444,7 +456,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
         // Each TokenReplayValidator in this test checks that the expiration parameter passed into it is equal to the expiration time of the token.
         // If they're not equal, the test will fail.
-        [Theory, MemberData(nameof(CheckParametersForTokenReplayTheoryData))]
+        [Theory, MemberData(nameof(CheckParametersForTokenReplayTheoryData), DisableDiscoveryEnumeration = true)]
         public void CheckParametersForTokenReplay(TokenReplayTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.CheckParametersForTokenReplay", theoryData);
@@ -500,6 +512,9 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
         public class AudienceValidationTheoryData : TheoryDataBase
         {
+            public AudienceValidationTheoryData(string testId) : base(testId)
+            { }
+
             public List<string> Audiences { get; set; }
 
             public SecurityToken SecurityToken { get; set; }

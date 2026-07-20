@@ -3934,7 +3934,7 @@ public partial class ToolStrip : ScrollableControl, IArrangedElement, ISupportTo
     /// <param name="items">contains ToolStrip or ToolStripDropDown items to disconnect</param>
     internal virtual void ReleaseToolStripItemsProviders(ToolStripItemCollection items)
     {
-        ToolStripItem[] itemsArray = [..items.Cast<ToolStripItem>()];
+        ToolStripItem[] itemsArray = [.. items.Cast<ToolStripItem>()];
         foreach (ToolStripItem toolStripItem in itemsArray)
         {
             if (toolStripItem is ToolStripDropDownItem dropDownItem && dropDownItem.DropDownItems.Count > 0)
@@ -4579,8 +4579,48 @@ public partial class ToolStrip : ScrollableControl, IArrangedElement, ISupportTo
         {
             SnapFocus((HWND)(nint)m.WParamInternal);
 
-            // For fix https://github.com/dotnet/winforms/issues/12916
-            ToolStripManager.ModalMenuFilter.SetActiveToolStrip(this);
+            if (IsDropDown)
+            {
+                // Designer SmartTag panels are hosted in ToolStripDropDown. Keep these
+                // participating in modal menu tracking regardless of previous focus.
+                ToolStripManager.ModalMenuFilter.SetActiveToolStrip(this);
+            }
+
+            // Only activate ModalMenuFilter when focus transfers
+            // between ToolStrips (to fix #12916).
+            // Do NOT activate on generic Tab focus (#14489).
+            else
+            {
+                HWND previousFocus = (HWND)(nint)m.WParamInternal;
+                Control? previousControl = FromChildHandle(previousFocus);
+                if (previousControl is ToolStrip || previousControl?.Parent is ToolStrip)
+                {
+                    ToolStripManager.ModalMenuFilter.SetActiveToolStrip(this);
+                }
+            }
+        }
+
+        if (m.MsgInternal == PInvokeCore.WM_KILLFOCUS)
+        {
+            // Clear modal menu tracking when focus leaves ToolStrip context so
+            // keyboard input is not incorrectly routed after tabbing away.
+            // Keep ToolStripDropDowns in menu tracking while they remain visible (for
+            // example, designer SmartTag panels that may temporarily transfer focus).
+            if (!IsDropDown)
+            {
+                HWND nextFocus = (HWND)(nint)m.WParamInternal;
+                Control? nextControl = FromChildHandle(nextFocus);
+                if (ToolStripManager.ModalMenuFilter.GetActiveToolStrip() == this
+                    && nextControl is not ToolStrip
+                    && nextControl?.Parent is not ToolStrip)
+                {
+                    ToolStripManager.ModalMenuFilter.RemoveActiveToolStrip(this);
+                    if (ToolStripManager.ModalMenuFilter.GetActiveToolStrip() is null)
+                    {
+                        ToolStripManager.ModalMenuFilter.ExitMenuMode();
+                    }
+                }
+            }
         }
 
         if (!AllowClickThrough && m.MsgInternal == PInvokeCore.WM_MOUSEACTIVATE)

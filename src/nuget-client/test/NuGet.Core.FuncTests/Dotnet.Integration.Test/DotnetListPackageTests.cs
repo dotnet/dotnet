@@ -12,10 +12,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
-using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using Newtonsoft.Json.Linq;
-using NuGet.CommandLine.XPlat;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
@@ -53,7 +51,7 @@ namespace Dotnet.Integration.Test
         {
             using (var pathContext = _fixture.CreateSimpleTestPathContext())
             {
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
                 var packageX = XPlatTestUtils.CreatePackage();
 
@@ -79,7 +77,38 @@ namespace Dotnet.Integration.Test
             }
         }
 
-        // https://github.com/NuGet/Home/issues/14823: This should use `dotnet package list` when it supports file-based apps.
+        [Theory]
+        [InlineData("list {0} package")]
+        [InlineData("package list --project {0}")]
+        public async Task DotnetListPackage_RelativeProjectPath_Succeeds(string commandTemplate)
+        {
+            using var pathContext = _fixture.CreateSimpleTestPathContext();
+            var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
+
+            var packageX = XPlatTestUtils.CreatePackage();
+
+            // Generate Package
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageX);
+
+            {
+                using var stream = File.Open(projectA.ProjectPath, FileMode.Open, FileAccess.ReadWrite);
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddItem(xml, "PackageReference", "packageX", string.Empty, [], new Dictionary<string, string>() { { "Version", "1.0.0" } });
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            var relativeProjectPath = Path.GetRelativePath(pathContext.SolutionRoot, projectA.ProjectPath);
+            CommandRunnerResult listResult = _fixture.RunDotnetExpectSuccess(
+                pathContext.SolutionRoot,
+                string.Format(CultureInfo.InvariantCulture, commandTemplate, relativeProjectPath),
+                testOutputHelper: _testOutputHelper);
+
+            Assert.True(ContainsIgnoringSpaces(listResult.AllOutput, "packageX1.0.01.0.0"));
+        }
+
         [Fact]
         public async Task DotnetListPackage_FileBasedApp()
         {
@@ -102,45 +131,11 @@ namespace Dotnet.Integration.Test
             // Restore.
             _fixture.RunDotnetExpectSuccess(fbaDir, "restore app.cs", testOutputHelper: _testOutputHelper);
 
-            // Get project content.
-            var virtualProject = _fixture.GetFileBasedAppVirtualProject(appFile, _testOutputHelper);
-            using var builder = new TestVirtualProjectBuilder(virtualProject);
-
             // List packages.
-            using var outWriter = new StringWriter();
-            using var errorWriter = new StringWriter();
-            var testApp = new CommandLineApplication
-            {
-                Out = outWriter,
-                Error = errorWriter,
-            };
-            var logger = new TestLogger(_testOutputHelper);
-            var msbuild = new MSBuildAPIUtility(logger, builder);
-            ListPackageCommand.Register(
-                testApp,
-                () => logger,
-                (_) => { },
-                () => new ListPackageCommandRunner(msbuild));
-            int result = testApp.Execute([
-                "list", appFile,
-                "--source", pathContext.PackageSource,
-                "--format", "json",
-            ]);
+            var result = _fixture.RunDotnetExpectSuccess(fbaDir, "package list --file app.cs --format json", testOutputHelper: _testOutputHelper);
 
-            var output = outWriter.ToString();
-            var error = errorWriter.ToString();
-
-            _testOutputHelper.WriteLine(output);
-            _testOutputHelper.WriteLine(error);
-
-            Assert.Equal(0, result);
-
-            Assert.Empty(error);
-
-            Assert.Contains("packageX", output);
-            Assert.Contains("1.0.0", output);
-
-            Assert.Null(builder.ModifiedContent);
+            Assert.Contains("packageX", result.AllOutput);
+            Assert.Contains("1.0.0", result.AllOutput);
         }
 
         [PlatformFact(Platform.Windows)]
@@ -201,7 +196,7 @@ namespace Dotnet.Integration.Test
                 string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
 <PropertyGroup>
-	<TargetFramework>net46</TargetFramework>
+	<TargetFramework>{TestConstants.ProjectTargetFramework}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
         <PackageReference Include=""X""/>
@@ -255,7 +250,7 @@ namespace Dotnet.Integration.Test
                 string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
 <PropertyGroup>
-	<TargetFramework>net46</TargetFramework>
+	<TargetFramework>{TestConstants.ProjectTargetFramework}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
         <PackageReference Include=""X"" VersionOverride=""1.0.0""/>
@@ -307,7 +302,7 @@ namespace Dotnet.Integration.Test
                 string projectContent =
 @$"<Project  Sdk=""Microsoft.NET.Sdk"">
 <PropertyGroup>
-	<TargetFramework>net46</TargetFramework>
+	<TargetFramework>{TestConstants.ProjectTargetFramework}</TargetFramework>
 	</PropertyGroup>
     <ItemGroup>
         <PackageReference Include=""X""/>
@@ -337,7 +332,7 @@ namespace Dotnet.Integration.Test
         {
             using (var pathContext = _fixture.CreateSimpleTestPathContext())
             {
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
                 var packageX = XPlatTestUtils.CreatePackage();
                 var packageY = XPlatTestUtils.CreatePackage(packageId: "packageY");
@@ -385,9 +380,9 @@ namespace Dotnet.Integration.Test
             {
                 string directDependencyProjectName = $"{ProjectName}Dependency";
                 string transitiveDependencyProjectName = $"{ProjectName}TransitiveDependency";
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
-                var projectB = XPlatTestUtils.CreateProject(directDependencyProjectName, pathContext, "net46");
-                var projectC = XPlatTestUtils.CreateProject(transitiveDependencyProjectName, pathContext, "net46");
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
+                var projectB = XPlatTestUtils.CreateProject(directDependencyProjectName, pathContext, TestConstants.ProjectTargetFramework);
+                var projectC = XPlatTestUtils.CreateProject(transitiveDependencyProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
                 var packageX = XPlatTestUtils.CreatePackage(packageId: "packageX");
                 var packageY = XPlatTestUtils.CreatePackage(packageId: "packageY");
@@ -515,9 +510,10 @@ namespace Dotnet.Integration.Test
 @$"<Project Sdk=""Microsoft.NET.Sdk"">
 <PropertyGroup>
 	<TargetFrameworks>net46;net48</TargetFrameworks>
+	<AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
 	</PropertyGroup>
-	 <ItemGroup>
-		 <PackageReference Include=""PackageX"" Version=""2.0.0""/>   
+	<ItemGroup>
+		<PackageReference Include=""PackageX"" Version=""2.0.0""/>
      </ItemGroup>
      <ItemGroup Condition = ""'$(TargetFramework)' == 'net46'"">
          <PackageReference Include=""PackageY"" Version=""3.0.0""/>
@@ -570,6 +566,11 @@ namespace Dotnet.Integration.Test
                     $"add {projectA.ProjectPath} package packageX --no-restore",
                     testOutputHelper: _testOutputHelper);
 
+                // Disable implicit reference assembly packages to avoid needing Microsoft.NETFramework.ReferenceAssemblies
+                var doc = XDocument.Load(projectA.ProjectPath);
+                doc.Root.Element(XName.Get("PropertyGroup")).Add(new XElement(XName.Get("AutomaticallyUseReferenceAssemblyPackages"), "false"));
+                doc.Save(projectA.ProjectPath);
+
                 _fixture.RunDotnetExpectSuccess(Directory.GetParent(projectA.ProjectPath).FullName,
                     $"restore {projectA.ProjectName}.csproj",
                     testOutputHelper: _testOutputHelper);
@@ -593,7 +594,7 @@ namespace Dotnet.Integration.Test
         {
             using (var pathContext = _fixture.CreateSimpleTestPathContext())
             {
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
                 var packageX = XPlatTestUtils.CreatePackage();
 
@@ -613,7 +614,7 @@ namespace Dotnet.Integration.Test
                     testOutputHelper: _testOutputHelper);
 
                 _fixture.RunDotnetExpectFailure(Directory.GetParent(projectA.ProjectPath).FullName,
-                    $"list {projectA.ProjectPath} package --framework net46 --framework invalidFramework",
+                    $"list {projectA.ProjectPath} package --framework {TestConstants.ProjectTargetFramework} --framework invalidFramework",
                     testOutputHelper: _testOutputHelper);
             }
         }
@@ -623,7 +624,7 @@ namespace Dotnet.Integration.Test
         {
             using (var pathContext = _fixture.CreateSimpleTestPathContext())
             {
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
                 var listResult = _fixture.RunDotnetExpectFailure(Directory.GetParent(projectA.ProjectPath).FullName,
                     $"list {projectA.ProjectPath} package --deprecated --outdated",
@@ -640,11 +641,9 @@ namespace Dotnet.Integration.Test
         {
             using (var pathContext = _fixture.CreateSimpleTestPathContext())
             {
-
                 var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net461");
 
                 projectA.Properties.Add("RuntimeIdentifiers", "win;win-x86;win-x64");
-                projectA.Properties.Add("AutomaticallyUseReferenceAssemblyPackages", bool.FalseString);
 
                 var packageX = XPlatTestUtils.CreatePackage();
 
@@ -844,7 +843,7 @@ namespace Dotnet.Integration.Test
         {
             using (var pathContext = _fixture.CreateSimpleTestPathContext())
             {
-                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
+                var projectA = XPlatTestUtils.CreateProject(ProjectName, pathContext, TestConstants.ProjectTargetFramework);
 
                 var doc = XDocument.Parse(File.ReadAllText(projectA.ProjectPath));
 
@@ -1108,19 +1107,19 @@ namespace Dotnet.Integration.Test
 
         [PlatformTheory(Platform.Windows)]
         [InlineData(" --include-transitive", true)]
-        [InlineData(" --include-transitive --framework net10.0", false)]
+        [InlineData(" --include-transitive --framework " + TestConstants.ProjectTargetFramework, false)]
         [InlineData(" --include-transitive --framework net472", true)]
         [InlineData("", false)]
         public async Task DeprecatedOption_WithMultiTargetedProjectsAndDeprecatedPackages_Succeeds(string additionalOptions, bool shouldReportTransitivePackages)
         {
             // Arrange
             using var pathContext = _fixture.CreateSimpleTestPathContext();
-            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net472;net10.0");
+            var projectA = XPlatTestUtils.CreateProject("ProjectA", pathContext, "net472;" + TestConstants.ProjectTargetFramework);
 
             var packageA100 = new SimpleTestPackageContext("A", "1.0.0");
             var packageB100 = new SimpleTestPackageContext("B", "1.0.0");
             packageA100.PerFrameworkDependencies.Add(FrameworkConstants.CommonFrameworks.Net472, [packageB100]);
-            packageA100.PerFrameworkDependencies.Add(FrameworkConstants.CommonFrameworks.Net10_0, []);
+            packageA100.PerFrameworkDependencies.Add(TestConstants.DefaultTargetFramework, []);
 
             await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packageA100, packageB100);
 

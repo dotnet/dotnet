@@ -42,9 +42,10 @@ WHERE (c["DateTimeOffset"] != GetCurrentDateTime())
         AssertSql();
     }
 
-    [CosmosCondition(CosmosCondition.IsEmulator)]
     public override async Task Year()
     {
+        CosmosTestEnvironment.SkipIfNotEmulator();
+
         await base.Year();
 
         AssertSql(
@@ -55,9 +56,10 @@ WHERE (DateTimePart("yyyy", c["DateTimeOffset"]) = 1998)
 """);
     }
 
-    [CosmosCondition(CosmosCondition.IsEmulator)]
     public override async Task Month()
     {
+        CosmosTestEnvironment.SkipIfNotEmulator();
+
         // Our persisted representation of DateTimeOffset (xxx+00:00) isn't supported by Cosmos (should be xxxZ). #35310
         await Assert.ThrowsAsync<EqualException>(() => base.Month());
 
@@ -77,9 +79,10 @@ WHERE (DateTimePart("mm", c["DateTimeOffset"]) = 5)
         AssertSql();
     }
 
-    [CosmosCondition(CosmosCondition.IsEmulator)]
     public override async Task Day()
     {
+        CosmosTestEnvironment.SkipIfNotEmulator();
+
         await base.Day();
 
         AssertSql(
@@ -90,9 +93,10 @@ WHERE (DateTimePart("dd", c["DateTimeOffset"]) = 4)
 """);
     }
 
-    [CosmosCondition(CosmosCondition.IsEmulator)]
     public override async Task Hour()
     {
+        CosmosTestEnvironment.SkipIfNotEmulator();
+
         // Our persisted representation of DateTimeOffset (xxx+00:00) isn't supported by Cosmos (should be xxxZ). #35310
         await Assert.ThrowsAsync<EqualException>(() => base.Hour());
 
@@ -104,9 +108,10 @@ WHERE (DateTimePart("hh", c["DateTimeOffset"]) = 15)
 """);
     }
 
-    [CosmosCondition(CosmosCondition.IsEmulator)]
     public override async Task Minute()
     {
+        CosmosTestEnvironment.SkipIfNotEmulator();
+
         // Our persisted representation of DateTimeOffset (xxx+00:00) isn't supported by Cosmos (should be xxxZ). #35310
         await Assert.ThrowsAsync<EqualException>(() => base.Minute());
 
@@ -118,9 +123,10 @@ WHERE (DateTimePart("mi", c["DateTimeOffset"]) = 30)
 """);
     }
 
-    [CosmosCondition(CosmosCondition.IsEmulator)]
     public override async Task Second()
     {
+        CosmosTestEnvironment.SkipIfNotEmulator();
+
         await base.Second();
 
         AssertSql(
@@ -131,9 +137,10 @@ WHERE (DateTimePart("ss", c["DateTimeOffset"]) = 10)
 """);
     }
 
-    [CosmosCondition(CosmosCondition.IsEmulator)]
     public override async Task Millisecond()
     {
+        CosmosTestEnvironment.SkipIfNotEmulator();
+
         await base.Millisecond();
 
         AssertSql(
@@ -144,9 +151,10 @@ WHERE (DateTimePart("ms", c["DateTimeOffset"]) = 123)
 """);
     }
 
-    [CosmosCondition(CosmosCondition.IsEmulator)]
     public override async Task Microsecond()
     {
+        CosmosTestEnvironment.SkipIfNotEmulator();
+
         await base.Microsecond();
 
         AssertSql(
@@ -236,7 +244,7 @@ FROM root c
 
         AssertSql(
             """
-SELECT VALUE DateTimeAdd("ss", 1.0, c["DateTimeOffset"])
+SELECT VALUE DateTimeAdd("ss", 1, c["DateTimeOffset"])
 FROM root c
 """);
     }
@@ -248,7 +256,7 @@ FROM root c
 
         AssertSql(
             """
-SELECT VALUE DateTimeAdd("hh", 1.0, c["DateTimeOffset"])
+SELECT VALUE DateTimeAdd("hh", 1, c["DateTimeOffset"])
 FROM root c
 """);
     }
@@ -260,7 +268,7 @@ FROM root c
 
         AssertSql(
             """
-SELECT VALUE DateTimeAdd("mi", 1.0, c["DateTimeOffset"])
+SELECT VALUE DateTimeAdd("mi", 1, c["DateTimeOffset"])
 FROM root c
 """);
     }
@@ -272,7 +280,7 @@ FROM root c
 
         AssertSql(
             """
-SELECT VALUE DateTimeAdd("ss", 1.0, c["DateTimeOffset"])
+SELECT VALUE DateTimeAdd("ss", 1, c["DateTimeOffset"])
 FROM root c
 """);
     }
@@ -284,7 +292,7 @@ FROM root c
 
         AssertSql(
             """
-SELECT VALUE DateTimeAdd("ms", 300.0, c["DateTimeOffset"])
+SELECT VALUE DateTimeAdd("ms", 300, c["DateTimeOffset"])
 FROM root c
 """);
     }
@@ -316,7 +324,7 @@ WHERE (c["DateTimeOffset"] = "1902-01-02T10:00:00.1234567+01:30")
 """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 

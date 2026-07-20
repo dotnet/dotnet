@@ -454,6 +454,11 @@
         <target state="translated">'{0}' 속성은 null이거나 비어 있을 수 없습니다.</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">'{0}'에 대한 프로젝트 정보를 읽을 수 없습니다. {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">신뢰할 수 있는 리포지토리를 추가할 수 없습니다. 패키지에 리포지토리 서명 또는 연대 서명이 없습니다.</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0}은(는) 잘리지 않습니다. 이 패키지는 불필요할 수 있으므로 종속성에서 제거하는 것이 좋습니다.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">{0} PackageReferenc는 정리할 수 없습니다. 이 패키지는 자동으로 사용할 수 있으며 명시적으로 참조할 필요가 없습니다. PackageReference 항목을 제거합니다.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1108,6 +1113,11 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
         <target state="translated">패키지 '{0}'을(를) '{1}'의 종속성으로 잘라내는 중입니다. 잘라내기 가능한 최대 버전은 '{2}'입니다.</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
+      <trans-unit id="RestrictedPackageIdWarning">
+        <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
+        <target state="translated">패키지 ID '{0}'이(가) 잘못되었습니다. 패키지 ID는 문자, 숫자 또는 밑줄로 시작해야 합니다. 또한 ASCII 문자, 숫자, 점(.), 대시(-), 밑줄(_)만 포함해야 하며, 점이나 대시가 연속해서 나오면 안 됩니다.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
         <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">인증서 파일 '{0}'을(를) 찾을 수 없습니다. 인증서를 제공하는 허용된 방법 목록은 https://docs.nuget.org/docs/reference/command-line-reference를 참조하세요.</target>
@@ -1453,7 +1463,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
-        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
         <target state="translated">구성에 정의된 {0} 패키지 원본이 있습니다. 중앙 패키지 관리를 사용하는 경우 패키지 원본을 패키지 원본 매핑(https://aka.ms/nuget-package-source-mapping)으로 매핑하거나 단일 패키지 원본을 지정하세요. 다음 원본이 정의됩니다. {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
@@ -1496,6 +1506,12 @@ NuGet에는 HTTPS 원본이 필요합니다. https://aka.ms/nuget-https-everywhe
         <target state="translated">{0}은(는) 종속성 {1}에 대한 포괄적인 하한을 제공하지 않습니다. 대신 {2}이(가) 확인되었습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">패키지 '{0}' {1}이(가) 'net6.0-android' 이상 대신 사용 중단된 MonoAndroid 프레임워크를 사용합니다. 이 패키지의 최신 버전으로 업그레이드하거나 패키지 작성자에게 문의하는 것이 좋습니다.</target>
+        <note>{0} - package id
+{1} - package version</note>
+      </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
         <target state="translated">'{0}' {1} 패키지에 알려진 {2} 심각도 취약성인 {3}이(가) 있습니다.</target>
@@ -1513,6 +1529,11 @@ NuGet에는 HTTPS 원본이 필요합니다. https://aka.ms/nuget-https-everywhe
         <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
         <target state="translated">프로젝트 종속성 '{0}'이(가) 버전을 지정하지 않습니다. 일관된 복원 결과를 보장하기 위해 종속성에 대한 버전을 포함합니다.</target>
         <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="translated">RestoreForceEvaluate는 RestoreLockedMode를 재정의합니다. 패키지 잠금 파일은 다시 평가되고 다시 생성되며, 잠금 모드는 무시됩니다.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>

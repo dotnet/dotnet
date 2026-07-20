@@ -7,6 +7,10 @@
     <MinVerTagPrefix>OpAmp.Client-</MinVerTagPrefix>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETCoreApp'">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
   <!-- Do not run Package Baseline Validation as this package has never released a stable version.
   Remove this property once we have released a stable version and add PackageValidationBaselineVersion property. -->
   <PropertyGroup>
@@ -18,11 +22,6 @@
     <PackageReference Include="Grpc.Tools" VersionOverride="[2.72.0,)" PrivateAssets="all" />
   </ItemGroup>
 
-  <!-- .NET Framework supporting packages -->
-  <ItemGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETFramework'">
-    <PackageReference Include="System.Net.Http" />
-  </ItemGroup>
-
   <ItemGroup>
     <Protobuf Include="Protos\anyvalue.proto" ProtoRoot="Protos" Access="Internal" />
     <Protobuf Include="Protos\opamp.proto" ProtoRoot="Protos" Access="Internal" />
@@ -31,6 +30,7 @@
   <ItemGroup>
     <Compile Include="$(RepoRoot)\src\Shared\ExceptionExtensions.cs" Link="Includes\ExceptionExtensions.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\HttpClientHelpers.cs" Link="Includes\HttpClientHelpers.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\Lock.cs" Link="Includes\Lock.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\NullableAttributes.cs" Link="Includes\NullableAttributes.cs" />
   </ItemGroup>

@@ -31,6 +31,27 @@
   <PropertyGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) ">
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
   </PropertyGroup>
+
+  <!-- Publish the .NET Framework runner once into the canonical packaging-publish folder; the
+       Microsoft.TestPlatform tool package harvests it into its runner-root payload. See
+       eng/PublishForPackaging.targets. Scoped to the netfx runner TFM (net48). -->
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'">
+    <PublishForPackaging>true</PublishForPackaging>
+  </PropertyGroup>
+
+  <!-- Publish the .NET runner once into the canonical packaging-publish folder; the
+       Microsoft.TestPlatform.CLI tool package harvests it into its net10.0 contentFiles root.
+       See eng/PublishForPackaging.targets. Scoped to the .NET SDK runner TFM (net10.0). -->
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetSDKTargetFramework)'">
+    <PublishForPackaging>true</PublishForPackaging>
+  </PropertyGroup>
+
+  <!-- Publish the .NET runner once into the canonical packaging-publish folder; the
+       Microsoft.TestPlatform.Portable tool package harvests it into its net8.0 tools root.
+       See eng/PublishForPackaging.targets. Scoped to the portable .NET runner TFM (net8.0). -->
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetCoreAppMinimum)'">
+    <PublishForPackaging>true</PublishForPackaging>
+  </PropertyGroup>
   <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)')) ">
     <Reference Include="System" />
     <Reference Include="System.IO" />

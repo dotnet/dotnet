@@ -8,16 +8,25 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tests.Common;
 using Microsoft.Diagnostics.Tools.Trace;
 using Microsoft.Internal.Common.Utils;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.Diagnostics.Tools.Trace
 {
     public class CollectCommandFunctionalTests
     {
         private const string ExpectedPayload = "CollectCommandFunctionalTestsTraceData";
+
+        private readonly ITestOutputHelper _outputHelper;
+
+        public CollectCommandFunctionalTests(ITestOutputHelper outputHelper)
+        {
+            _outputHelper = outputHelper;
+        }
 
         public sealed record CollectArgs(
             CancellationToken ct = default,
@@ -38,7 +47,8 @@ namespace Microsoft.Diagnostics.Tools.Trace
             string stoppingEventEventName = "",
             string stoppingEventPayloadFilter = "",
             bool? rundown = false,
-            string dsrouter = "")
+            string dsrouter = "",
+            EventPipeBufferingMode bufferingMode = EventPipeBufferingMode.Drop)
         {
             internal TraceFileFormat Format => (TraceFileFormat)formatValue;
             public int ProcessId => processId == -1 ? Environment.ProcessId : processId;
@@ -51,7 +61,7 @@ namespace Microsoft.Diagnostics.Tools.Trace
         [MemberData(nameof(BasicCases))]
         public async Task CollectCommandProviderConfigurationConsolidation(CollectArgs args, string[] expectedSubset)
         {
-            MockConsole console = new(200, 30);
+            MockConsole console = new(200, 30, _outputHelper);
             int exitCode = await RunAsync(args, console).ConfigureAwait(true);
             Assert.Equal((int)ReturnCode.Ok, exitCode);
             console.AssertSanitizedLinesEqual(CollectSanitizer, expectedSubset);
@@ -64,7 +74,7 @@ namespace Microsoft.Diagnostics.Tools.Trace
         [MemberData(nameof(InvalidProviders))]
         public async Task CollectCommandInvalidProviderConfiguration_Throws(CollectArgs args, string[] expectedException)
         {
-            MockConsole console = new(200, 30);
+            MockConsole console = new(200, 30, _outputHelper);
             int exitCode = await RunAsync(args, console).ConfigureAwait(true);
             Assert.Equal((int)ReturnCode.ArgumentError, exitCode);
             console.AssertSanitizedLinesEqual(CollectSanitizer, expectedException);
@@ -74,7 +84,7 @@ namespace Microsoft.Diagnostics.Tools.Trace
         [MemberData(nameof(InvalidProcessSpecifierConfigurations))]
         public async Task CollectCommand_InvalidProcessSpecifierConfigurations(CollectArgs args, bool childMode, string expectedError)
         {
-            MockConsole console = new(200, 30);
+            MockConsole console = new(200, 30, _outputHelper);
             int exitCode = await RunAsync(args, console, hasChildProcess: childMode).ConfigureAwait(true);
 
             Assert.Equal((int)ReturnCode.ArgumentError, exitCode);
@@ -83,6 +93,12 @@ namespace Microsoft.Diagnostics.Tools.Trace
 
         private static async Task<int> RunAsync(CollectArgs config, MockConsole console, bool hasChildProcess = false)
         {
+            // Disable the interactive status-printing path. It is currently non-deterministic in these tests because the
+            // MemoryStream-backed session completes near-instantly, and whether the status line fires before the loop exits
+            // depends on thread scheduling. The MemoryStream substitution also means no trace file exists on disk, so
+            // FileInfo.Length in the status printer would throw.
+            console.IsOutputRedirected = true;
+
             var handler = new CollectCommandHandler(console);
             handler.StartTraceSessionAsync = (client, cfg, ct) => Task.FromResult<CollectCommandHandler.ICollectSession>(new TestCollectSession());
             handler.ResumeRuntimeAsync = (client, ct) => Task.CompletedTask;
@@ -109,7 +125,8 @@ namespace Microsoft.Diagnostics.Tools.Trace
                 config.stoppingEventEventName,
                 config.stoppingEventPayloadFilter,
                 config.rundown,
-                config.dsrouter
+                config.dsrouter,
+                config.bufferingMode
             ).ConfigureAwait(false);
         }
 

@@ -6,13 +6,17 @@
 
   <ItemGroup>
     <FileExtensionSignInfo Include=".pyd" CertificateName="MicrosoftDotNet500" />
-    <FileExtensionSignInfo Include=".cat" CertificateName="MicrosoftDotNet500" />
+    <FileExtensionSignInfo Include=".vbs" CertificateName="MicrosoftDotNet500" />
 
     <!-- JS files are customer-modifiable Emscripten toolchain files. They cannot be
          Authenticode-signed because modifying a signed file breaks the signature.
          Instead, a catalog file (emscripten-js.cat) is generated and signed to provide
          integrity verification. See the GenerateCatalogFiles target in eng/emsdk.proj. -->
     <FileExtensionSignInfo Update=".js" CertificateName="None" />
+    <FileSignInfo Include="emscripten-js.cat" CertificateName="MicrosoftDotNet500" />
+
+    <!-- python.cat ships in the Python transport package. -->
+    <FileSignInfo Include="python.cat" CertificateName="MicrosoftDotNet500" />
 
     <!--
       Zero length files should not be signed because it breaks signing/ESRP.
@@ -28,8 +32,8 @@
     <!-- sign macOS binaries from transport packages -->
     <FileSignInfo Include="node" CertificateName="MacDeveloper" />
     <FileSignInfo Include="python3" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="python3.11" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="clang-19" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="python3.13" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="clang-23" CertificateName="MacDeveloper" />
     <FileSignInfo Include="llvm-addr2line" CertificateName="MacDeveloper" />
     <FileSignInfo Include="llvm-ar" CertificateName="MacDeveloper" />
     <FileSignInfo Include="llvm-cxxfilt" CertificateName="MacDeveloper" />
@@ -48,14 +52,9 @@
     <FileSignInfo Include="wasm-ctor-eval" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-dis" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-emscripten-finalize" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-fuzz-lattices" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-fuzz-types" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-ld" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-merge" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-metadce" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-opt" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-reduce" CertificateName="MacDeveloper" />
-    <FileSignInfo Include="wasm-shell" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm-split" CertificateName="MacDeveloper" />
     <FileSignInfo Include="wasm2js" CertificateName="MacDeveloper" />
   </ItemGroup>

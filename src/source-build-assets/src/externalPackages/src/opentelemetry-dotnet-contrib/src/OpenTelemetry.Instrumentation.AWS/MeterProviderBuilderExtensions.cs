@@ -3,6 +3,7 @@
 
 using Amazon;
 using Amazon.Runtime.Telemetry;
+using OpenTelemetry.AWS;
 using OpenTelemetry.Instrumentation.AWS.Implementation.Metrics;
 using OpenTelemetry.Internal;
 
@@ -23,7 +24,10 @@ public static class MeterProviderBuilderExtensions
     {
         Guard.ThrowIfNull(builder);
 
-        AWSConfigs.TelemetryProvider.RegisterMeterProvider(new AWSMeterProvider());
+        // This isn't currently configurable, so use the default
+        var semanticConventionVersion = AWSSemanticConventions.DefaultSemanticConventionVersion;
+
+        AWSConfigs.TelemetryProvider.RegisterMeterProvider(new AWSMeterProvider(semanticConventionVersion));
         builder.AddMeter($"{TelemetryConstants.TelemetryScopePrefix}.*");
 
         return builder;

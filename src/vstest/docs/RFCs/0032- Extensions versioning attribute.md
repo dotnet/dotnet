@@ -7,7 +7,7 @@ This document explain how to use the `TestExtensionTypesAttribute` and `TestExte
 The test platform offers many extensions points like custom test adapters, test execution providers, data collectors, etc...   
 The main problem with the extensions is that the platform is in continuous evolution. Therefore, we need to keep the back-compatibility; we want to load new extensions in the old test platform implementation and vice versa.
 
-The logic used to load the extensions if inside the [TestPluginDiscoverer.cs](./src/Microsoft.TestPlatform.Common/ExtensionFramework/TestPluginDiscoverer.cs) file.  
+The logic used to load the extensions is inside the [TestPluginDiscoverer.cs](../../src/Microsoft.TestPlatform.Common/ExtensionFramework/TestPluginDiscoverer.cs) file.  
 
 # How to use `TestExtensionTypesAttribute` and `TestExtensionTypesV2Attribute`
 

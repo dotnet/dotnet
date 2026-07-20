@@ -26,6 +26,15 @@
     <!-- Turn on package pruning by default. -->
     <RestoreEnablePackagePruning>true</RestoreEnablePackagePruning>
 
+    <!-- Enable NuGet audit to check for security vulnerabilities by default.
+         Explicitly set NuGetAuditMode to 'all' to audit transitive dependencies as well. -->
+    <NuGetAuditMode Condition="'$(NuGetAuditMode)' == ''">all</NuGetAuditMode>
+    <!-- Disable NuGet audit in official builds. MSBuild does not correctly handle
+         WarningsNotAsErrors for NuGet warnings (https://github.com/dotnet/msbuild/issues/10801),
+         so audit findings become errors via TreatWarningsAsErrors
+         with no way to downgrade them. Keep audit enabled for local/CI dev builds. -->
+    <NuGetAudit Condition="'$(OfficialBuild)' == 'true'">false</NuGetAudit>
+
     <!-- Disable the message indicating we are using a preview SDK. That is understood and by design -->
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
 
@@ -62,6 +71,14 @@
       {TargetFrameworkDirectory};
       {RawFileName};
     </AssemblySearchPaths>
+
+    <!--
+      Tolerate package sources that are unavailable (e.g. transport feeds that have been
+      decommissioned after a release). Restore falls back to the remaining sources instead
+      of failing outright. Can be overridden by setting RestoreIgnoreFailedSources explicitly.
+      See https://github.com/dotnet/runtime/issues/129694.
+    -->
+    <RestoreIgnoreFailedSources Condition="'$(RestoreIgnoreFailedSources)' == ''">true</RestoreIgnoreFailedSources>
   </PropertyGroup>
 
   <PropertyGroup>

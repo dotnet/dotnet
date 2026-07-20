@@ -1,0 +1,7 @@
+{
+  "knownFalsePositives": [
+    "textOnlyPackages/microsoft.build.notargets/3.7.0",
+    "textOnlyPackages/microsoft.build.traversal/3.4.0",
+    "textOnlyPackages/microsoft.netcore.platforms/1.1.0"
+  ]
+}

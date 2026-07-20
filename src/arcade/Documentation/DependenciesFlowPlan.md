@@ -105,12 +105,7 @@ It involves:
 Currently, Maestro is in charge of this builds. Part of the work here is to define how those mirrors are going to happen in this new world and eventually stop relying on Maestro to build .NET CORE 3.0.
 
 ## Speculative version flow
-More information [here]( https://github.com/dotnet/arcade/blob/master/Documentation/Maestro.md#speculative-version-flow).
+More information [here]( Maestro.md#speculative-version-flow).
 
 ## Speculative product build
-More information [here](https://github.com/dotnet/arcade/blob/master/Documentation/Maestro.md#speculative-product-builds).
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDependenciesFlowPlan.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDependenciesFlowPlan.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDependenciesFlowPlan.md)</sub>
-<!-- End Generated Content-->
+More information [here](Maestro.md#speculative-product-builds).

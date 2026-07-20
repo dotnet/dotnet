@@ -23,28 +23,38 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_CopilotAccessDenied">
-        <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
-        <target state="translated">存取遭拒。請確保您已登入 GitHub Copilot。</target>
+        <source>Access denied. Ensure you are signed in to GitHub Copilot.</source>
+        <target state="translated">存取遭拒。確保您已登入 GitHub Copilot。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotNotReady">
-        <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="translated">GitHub Copilot 尚未就緒。請確保已安裝並登入 GitHub Copilot。</target>
+        <source>GitHub Copilot is not ready. Ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">GitHub Copilot 尚未就緒。確保已安裝並登入 GitHub Copilot。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
-        <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="translated">GitHub Copilot 服務無法使用。請確保已安裝並登入 GitHub Copilot。</target>
+        <source>GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">GitHub Copilot 服務無法使用。確保已安裝並登入 GitHub Copilot。</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpServerInfoServiceNotAvailable">
+        <source>Unable to determine the status of the NuGet MCP Server. Ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">無法判斷 NuGet MCP 伺服器的狀態。確保已安裝並登入 GitHub Copilot。</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpServerNotActive">
+        <source>The NuGet MCP Server is not active. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
+        <target state="translated">NuGet MCP 伺服器尚未啟用。在 GitHub Copilot 聊天視窗啟用 NuGet MCP 伺服器，然後再試一次。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpToolServiceNotAvailable">
-        <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="translated">MCP 工具服務無法使用。請確保已安裝並登入 GitHub Copilot。</target>
+        <source>MCP Tool Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">MCP 工具服務無法使用。確保已安裝並登入 GitHub Copilot。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_NuGetSolverNotAvailable">
-        <source>The NuGet Solver tool is unavailable. Please enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="translated">NuGet 求解器工具無法使用。請在 GitHub Copilot 聊天視窗啟用 NuGet MCP 伺服器，然後再試一次。</target>
+        <source>The NuGet Solver tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
+        <target state="translated">NuGet 求解器工具無法使用。在 GitHub Copilot 聊天視窗啟用 NuGet MCP 伺服器，然後再試一次。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
@@ -73,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_ServiceBrokerNotAvailable">
-        <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
-        <target state="translated">Service Broker 無法使用。請確保 Visual Studio 正常執行。</target>
+        <source>Service Broker is not available. Ensure Visual Studio is running correctly.</source>
+        <target state="translated">Service Broker 無法使用。確保 Visual Studio 正常執行。</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -158,8 +168,8 @@
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
-        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
-        <target state="translated">未儲存解決方案。請先儲存解決方案，再管理 NuGet 套件。</target>
+        <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
+        <target state="translated">未儲存解決方案。先儲存解決方案，再管理 NuGet 套件。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">

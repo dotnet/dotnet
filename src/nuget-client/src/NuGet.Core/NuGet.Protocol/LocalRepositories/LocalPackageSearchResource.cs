@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
+using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 
@@ -29,6 +29,8 @@ namespace NuGet.Protocol
 
             _localResource = localResource;
         }
+
+        public override bool SupportsPackageTypeFiltering => true;
 
         public async override Task<IEnumerable<IPackageSearchMetadata>> SearchAsync(
             string searchTerm,
@@ -61,9 +63,15 @@ namespace NuGet.Protocol
                     query = query.Where(package => ContainsAnyTerm(terms, package));
                 }
 
+                // Filter on package type
+                if (!string.IsNullOrEmpty(filters.PackageType))
+                {
+                    query = query.Where(package => MatchesPackageType(package, filters.PackageType!));
+                }
+
                 // Collapse to the highest version per id, if necessary
-                var collapsedQuery = filters?.Filter == SearchFilterType.IsLatestVersion ||
-                                     filters?.Filter == SearchFilterType.IsAbsoluteLatestVersion
+                var collapsedQuery = filters.Filter == SearchFilterType.IsLatestVersion ||
+                                     filters.Filter == SearchFilterType.IsAbsoluteLatestVersion
                                      ? CollapseToHighestVersion(query) : query;
 
                 // execute the query
@@ -93,6 +101,27 @@ namespace NuGet.Protocol
                 if (ContainsTerm(term, id)
                     || ContainsTerm(term, tags)
                     || ContainsTerm(term, description))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool MatchesPackageType(LocalPackageInfo package, string packageType)
+        {
+            IReadOnlyList<PackageType> packageTypes = package.Nuspec.GetPackageTypes();
+
+            // A package that does not declare any package type is implicitly a "Dependency" package.
+            if (packageTypes.Count == 0)
+            {
+                return PackageType.PackageTypeNameComparer.Equals(packageType, PackageType.Dependency.Name);
+            }
+
+            foreach (PackageType type in packageTypes.NoAllocEnumerate())
+            {
+                if (PackageType.PackageTypeNameComparer.Equals(type.Name, packageType))
                 {
                     return true;
                 }
@@ -154,7 +183,7 @@ namespace NuGet.Protocol
 
         private static bool IsLocalOrUNC(string currentSource)
         {
-            Uri currentURI = UriUtility.TryCreateSourceUri(currentSource, UriKind.Absolute);
+            Uri? currentURI = UriUtility.TryCreateSourceUri(currentSource, UriKind.Absolute);
             if (currentURI != null)
             {
                 if (currentURI.IsFile || currentURI.IsUnc)
@@ -177,15 +206,15 @@ namespace NuGet.Protocol
         {
             bool first = true;
             bool maxElementHasValue = false;
-            LocalPackageInfo previousElement = null;
-            LocalPackageInfo maxElement = null;
+            LocalPackageInfo? previousElement = null;
+            LocalPackageInfo? maxElement = null;
 
             foreach (LocalPackageInfo element in source)
             {
                 // If we're starting a new group then return the max element from the last group
-                if (!first && !StringComparer.OrdinalIgnoreCase.Equals(element.Identity.Id, previousElement.Identity.Id))
+                if (!first && !StringComparer.OrdinalIgnoreCase.Equals(element.Identity.Id, previousElement!.Identity.Id))
                 {
-                    yield return maxElement;
+                    yield return maxElement!;
 
                     // Reset the max element
                     maxElementHasValue = false;
@@ -194,7 +223,7 @@ namespace NuGet.Protocol
                 // If the current max element has a value and is bigger or doesn't have a value then update the max
                 if (!maxElementHasValue
                     || (maxElementHasValue
-                        && VersionComparer.VersionRelease.Compare(maxElement.Identity.Version, element.Identity.Version) < 0))
+                        && VersionComparer.VersionRelease.Compare(maxElement!.Identity.Version, element.Identity.Version) < 0))
                 {
                     maxElement = element;
                     maxElementHasValue = true;
@@ -206,7 +235,7 @@ namespace NuGet.Protocol
 
             if (!first)
             {
-                yield return maxElement;
+                yield return maxElement!;
             }
 
             yield break;

@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Data.Sqlite;
@@ -186,7 +186,7 @@ WHERE EXISTS (
                 => base.Json_collection_Select_entity_with_initializer_ElementAt(async)))
             .Message);
 
-    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
+    [Theory, MemberData(nameof(IsAsyncData))]
     public virtual async Task FromSqlInterpolated_on_entity_with_json_with_predicate(bool async)
     {
         var parameter = new SqliteParameter { ParameterName = "prm", Value = 1 };
@@ -456,6 +456,15 @@ FROM "JsonEntitiesCustomNaming" AS "j"
 
     public override Task Json_projection_using_queryable_methods_on_top_of_JSON_collection_AsNoTrackingWithIdentityResolution(bool async)
         => Task.CompletedTask;
+
+    // The uncorrelated FirstOrDefault subquery translates via APPLY, which SQLite doesn't support.
+    public override async Task
+        Entity_including_collection_with_json_and_separate_json_projection_AsNoTrackingWithIdentityResolution(bool async)
+        => Assert.Equal(
+            SqliteStrings.ApplyNotSupported,
+            (await Assert.ThrowsAsync<InvalidOperationException>(()
+                => base.Entity_including_collection_with_json_and_separate_json_projection_AsNoTrackingWithIdentityResolution(async)))
+            .Message);
 
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);

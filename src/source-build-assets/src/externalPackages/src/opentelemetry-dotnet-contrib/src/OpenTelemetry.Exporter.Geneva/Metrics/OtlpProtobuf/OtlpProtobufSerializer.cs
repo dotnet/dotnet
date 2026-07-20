@@ -141,7 +141,9 @@ internal sealed class OtlpProtobufSerializer
             {
                 case char:
                 case string:
+#pragma warning disable IDE0370 // Suppression is unnecessary
                     ProtobufSerializerHelper.WriteStringTag(buffer, ref cursor, FieldNumberConstants.AnyValue_string_value, Convert.ToString(value, CultureInfo.InvariantCulture)!);
+#pragma warning restore IDE0370 // Suppression is unnecessary
                     break;
                 case bool b:
                     ProtobufSerializerHelper.WriteBoolWithTag(buffer, ref cursor, FieldNumberConstants.AnyValue_bool_value, (bool)value);
@@ -180,9 +182,21 @@ internal sealed class OtlpProtobufSerializer
             ProtobufSerializerHelper.WriteTagAndLengthPrefix(buffer, ref anyValueTagAndLengthIndex, cursor - anyValueIndex, FieldNumberConstants.KeyValue_value, WireType.LEN);
             ProtobufSerializerHelper.WriteTagAndLengthPrefix(buffer, ref keyValueTagAndLengthIndex, cursor - keyValueIndex, fieldNumber, WireType.LEN);
         }
-        catch
+        catch (Exception ex) when (!GenevaBufferOverflowExceptionHelper.IsMetricBufferOverflow(ex))
         {
             // TODO: log exception.
+            // Buffer overflow exceptions are intentionally not caught here so they propagate to the
+            // per-metric-point handler, which reports them via the dedicated buffer overflow event.
+        }
+    }
+
+    internal void HandleMetricSerializationException(Metric metric, Exception ex)
+    {
+        this.metricExportResult = ExportResult.Failure;
+
+        if (!GenevaBufferOverflowExceptionHelper.TryReportMetricBufferOverflow(metric.Name, ex))
+        {
+            ExporterEventSource.Log.FailedToSerializeMetric(metric.Name, ex);
         }
     }
 
@@ -373,8 +387,7 @@ internal sealed class OtlpProtobufSerializer
                         }
                         catch (Exception ex)
                         {
-                            this.metricExportResult = ExportResult.Failure;
-                            ExporterEventSource.Log.FailedToSerializeMetric(metric.Name, ex);
+                            this.HandleMetricSerializationException(metric, ex);
                         }
                     }
 
@@ -413,8 +426,7 @@ internal sealed class OtlpProtobufSerializer
                         }
                         catch (Exception ex)
                         {
-                            this.metricExportResult = ExportResult.Failure;
-                            ExporterEventSource.Log.FailedToSerializeMetric(metric.Name, ex);
+                            this.HandleMetricSerializationException(metric, ex);
                         }
                     }
 
@@ -446,8 +458,7 @@ internal sealed class OtlpProtobufSerializer
                         }
                         catch (Exception ex)
                         {
-                            this.metricExportResult = ExportResult.Failure;
-                            ExporterEventSource.Log.FailedToSerializeMetric(metric.Name, ex);
+                            this.HandleMetricSerializationException(metric, ex);
                         }
                     }
 
@@ -479,8 +490,7 @@ internal sealed class OtlpProtobufSerializer
                         }
                         catch (Exception ex)
                         {
-                            this.metricExportResult = ExportResult.Failure;
-                            ExporterEventSource.Log.FailedToSerializeMetric(metric.Name, ex);
+                            this.HandleMetricSerializationException(metric, ex);
                         }
                     }
 
@@ -561,8 +571,7 @@ internal sealed class OtlpProtobufSerializer
                         }
                         catch (Exception ex)
                         {
-                            this.metricExportResult = ExportResult.Failure;
-                            ExporterEventSource.Log.FailedToSerializeMetric(metric.Name, ex);
+                            this.HandleMetricSerializationException(metric, ex);
                         }
                     }
 
@@ -654,8 +663,7 @@ internal sealed class OtlpProtobufSerializer
                         }
                         catch (Exception ex)
                         {
-                            this.metricExportResult = ExportResult.Failure;
-                            ExporterEventSource.Log.FailedToSerializeMetric(metric.Name, ex);
+                            this.HandleMetricSerializationException(metric, ex);
                         }
                     }
 
@@ -744,9 +752,7 @@ internal sealed class OtlpProtobufSerializer
     }
 
     private void SendMetricPoint(byte[] buffer, ref int cursor)
-    {
-        this.MetricDataTransport.SendOtlpProtobufEvent(buffer, cursor);
-    }
+        => this.MetricDataTransport.SendOtlpProtobufEvent(buffer, cursor);
 
     private void SerializeResource(byte[] buffer, ref int cursor, Resource resource)
     {
@@ -756,7 +762,9 @@ internal sealed class OtlpProtobufSerializer
             cursor += TagAndLengthSize;
             var valueIndex = cursor;
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
             SerializeTags(buffer, ref cursor, resource.Attributes!, FieldNumberConstants.Resource_attributes);
+#pragma warning restore IDE0370 // Suppression is unnecessary
 
             // TODO: check to see if should de-dupe in case the values are also provided via resource attributes.
             if (this.metricAccount != null)

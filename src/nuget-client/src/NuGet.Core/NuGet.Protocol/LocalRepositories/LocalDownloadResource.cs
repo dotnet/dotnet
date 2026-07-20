@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
 using System.Diagnostics;
@@ -52,7 +51,7 @@ namespace NuGet.Protocol
             try
             {
                 // Find the package from the local folder
-                LocalPackageInfo packageInfo = null;
+                LocalPackageInfo? packageInfo = null;
 
                 var sourcePackage = identity as SourcePackageDependencyInfo;
 

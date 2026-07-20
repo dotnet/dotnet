@@ -3,16 +3,12 @@
 
 using System;
 using System.Globalization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace NuGet.Protocol.Plugins
 {
     internal abstract class PluginLogMessage : IPluginLogMessage
     {
-        private static readonly StringEnumConverter _enumConverter = new StringEnumConverter();
-
         private readonly DateTime _now;
 
         protected PluginLogMessage(DateTimeOffset now)
@@ -20,7 +16,7 @@ namespace NuGet.Protocol.Plugins
             _now = now.UtcDateTime;
         }
 
-        protected string ToString(string type, JObject message)
+        protected string ToString(string type, JsonObject message)
         {
             if (string.IsNullOrEmpty(type))
             {
@@ -32,12 +28,14 @@ namespace NuGet.Protocol.Plugins
                 throw new ArgumentNullException(nameof(message));
             }
 
-            var outerMessage = new JObject(
-                new JProperty("now", _now.ToString("O", CultureInfo.InvariantCulture)), // round-trip format
-                new JProperty("type", type),
-                new JProperty("message", message));
+            var outerMessage = new JsonObject
+            {
+                ["now"] = _now.ToString("O", CultureInfo.InvariantCulture), // round-trip format
+                ["type"] = type,
+                ["message"] = message,
+            };
 
-            return outerMessage.ToString(Formatting.None, _enumConverter);
+            return outerMessage.ToJsonString();
         }
     }
 }

@@ -1,6 +1,6 @@
 # Using Native Tools on Machine
 
-The replacement for [native tools bootstrapping](NativeToolsBootstrapping.md) is having all tools needed come pre-installed on
+The replacement for [native tools bootstrapping](NativeToolBootstrapping.md) is having all tools needed come pre-installed on
 the build machines. This document describes how to onboard to this new process.
 
 This document only applies to Windows machines as Linux machines already come with native tools installed via package manager.
@@ -31,7 +31,3 @@ Once you've executed these steps, you'll be using the native tools installed on 
 After switching, the local dev experience will change as devs will be expected to install dependencies ahead of time. Consider
 creating a document similar to [this](https://github.com/dotnet/runtime/blob/main/docs/workflow/requirements/windows-requirements.md)
 dotnet/runtime requirements doc.
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CNativeToolsOnMachine.md)](https://helix.dot.net/f/p/5?p=Documentation%5CNativeToolsOnMachine.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CNativeToolsOnMachine.md)</sub>
-<!-- End Generated Content-->

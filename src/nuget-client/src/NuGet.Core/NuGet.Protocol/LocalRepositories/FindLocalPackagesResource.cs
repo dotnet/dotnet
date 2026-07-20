@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +13,7 @@ namespace NuGet.Protocol
 {
     public abstract class FindLocalPackagesResource : INuGetResource
     {
-        public string Root { get; protected set; }
+        public string Root { get; protected set; } = null!;
 
         public virtual bool Exists(PackageIdentity identity, ILogger logger, CancellationToken token)
         {
@@ -27,9 +25,9 @@ namespace NuGet.Protocol
             return FindPackagesById(packageId, logger, token).Any();
         }
 
-        public abstract LocalPackageInfo GetPackage(Uri path, ILogger logger, CancellationToken token);
+        public abstract LocalPackageInfo? GetPackage(Uri path, ILogger logger, CancellationToken token);
 
-        public abstract LocalPackageInfo GetPackage(PackageIdentity identity, ILogger logger, CancellationToken token);
+        public abstract LocalPackageInfo? GetPackage(PackageIdentity identity, ILogger logger, CancellationToken token);
 
         public abstract IEnumerable<LocalPackageInfo> FindPackagesById(string id, ILogger logger, CancellationToken token);
 

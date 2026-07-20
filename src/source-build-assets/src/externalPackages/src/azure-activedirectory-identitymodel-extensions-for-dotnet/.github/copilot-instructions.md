@@ -1,0 +1,1 @@
+Carefully review the agents.md file in the repository root. It contains comprehensive agent automation and development guidelines that serve as your custom instructions.

@@ -2,11 +2,38 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" original="../Resources.resx" target-language="zh-Hant">
     <body>
+      <trans-unit id="CouldNotFindTesthost">
+        <source>Could not find testhost for test source '{0}'.
+
+Verify that:
+  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
+  - The project has been built and the output is in '{1}'.
+  - The project's target framework matches the installed .NET runtime.
+</source>
+        <target state="translated">無法為測試來源 '{0}' 找到 testhost。
+
+請確認:
+ 
+  - 測試專案參考 'Microsoft.NET.Test.Sdk' NuGet 套件。
+  - 專案已建置，且輸出位於 '{1}'。
+  - 專案的目標 Framework 與已安裝的 .NET 執行階段相符。
+</target>
+        <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
+      </trans-unit>
       <trans-unit id="MultipleFileVersions">
         <source>Multiple versions of same extension found. Selecting the highest version.
 {0}</source>
         <target state="translated">找到相同延伸模組的多個版本。系統會選取最高版本。
 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NetFrameworkTestsNotSupportedOnNonWindows">
+        <source>Running .NET Framework tests is supported on Windows only.
+
+Running .NET Framework tests on this operating system relied on Mono, which is no longer supported. To run these tests, run them on Windows, or change the test project to target .NET instead of .NET Framework.</source>
+        <target state="translated">只有 Windows 支援執行 .NET Framework 測試。
+
+在此作業系統上執行 .NET Framework 測試時，會依賴 Mono，但系統已不再支援 Mono。若要執行這些測試，請在 Windows 上執行，或將測試專案的目標從 .NET Framework 改為 .NET。</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindDepsFile">

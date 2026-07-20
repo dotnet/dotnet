@@ -17,6 +17,12 @@ internal class ListTestsTargetPathArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly CommandLineOptions _commandLineOptions;
+
+    public ListTestsTargetPathArgumentProcessor(CommandLineOptions commandLineOptions)
+    {
+        _commandLineOptions = commandLineOptions;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -31,7 +37,7 @@ internal class ListTestsTargetPathArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new ListTestsTargetPathArgumentExecutor(CommandLineOptions.Instance));
+            new ListTestsTargetPathArgumentExecutor(_commandLineOptions));
 
         set => _executor = value;
     }

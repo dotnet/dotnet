@@ -1,0 +1,25 @@
+steps:
+- task: CopyFiles@2
+  displayName: Gather packages for publish
+  inputs:
+    SourceFolder: 'artifacts/packages'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/packages'
+  continueOnError: true
+  condition: always()
+- ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  - task: PublishPipelineArtifact@1
+    displayName: Publish packages
+    inputs:
+      targetPath: '$(Build.ArtifactStagingDirectory)/artifacts/packages'
+      artifactName: 'Packages_$(Agent.Os)_$(_BuildConfig)'
+    continueOnError: true
+    condition: always()
+- ${{ else }}:
+  - task: 1ES.PublishPipelineArtifact@1
+    displayName: Publish packages
+    inputs:
+      targetPath: '$(Build.ArtifactStagingDirectory)/artifacts/packages'
+      artifactName: 'Packages_$(Agent.Os)_$(_BuildConfig)'
+    continueOnError: true
+    condition: always()

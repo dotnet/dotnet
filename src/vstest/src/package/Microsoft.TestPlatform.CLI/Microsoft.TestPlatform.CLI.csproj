@@ -4,13 +4,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true' ">Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' != 'true'">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">Microsoft.TestPlatform.CLI.sourcebuild.product.nuspec</NuspecFile>
     <IsPackable>true</IsPackable>
     <!-- This package is included even in source build -->
     <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <!-- This is a packaging container project: it ships content files only, no assembly of its
+         own and no NuGet dependencies. -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageId>Microsoft.TestPlatform.CLI</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
     <PackageProjectUrl>https://github.com/microsoft/vstest</PackageProjectUrl>
@@ -18,12 +19,191 @@
     <PackageDescription>
       The cross platform Microsoft Test Platform.
     </PackageDescription>
+    <!-- NU5109/NU5118: assemblies/content placed outside lib (intentional, everything ships under contentFiles).
+         NU5128: no dependencies and no lib folder. -->
+    <NoWarn>$(NoWarn);NU5109;NU5118;NU5128</NoWarn>
+    <!-- TFM of the cross-platform (.NET) content shipped by the source-build / non-Windows package layout.
+         In source-only builds Directory.Build.targets overrides TargetFrameworks to $(NetCurrent), so the
+         single produced output folder is $(_CliContentTfm). In all other builds (including the non-Windows
+         product/Microsoft build) this project builds $(NetSDKTargetFramework) and there is no $(NetCurrent)
+         output, so the content must be taken from $(NetSDKTargetFramework). Using the wrong TFM here makes
+         pack look for a non-existent output folder (e.g. .../Release/net11.0) and fail. -->
+    <_CliContentTfm Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</_CliContentTfm>
+    <_CliContentTfm Condition="'$(_CliContentTfm)' == ''">$(NetSDKTargetFramework)</_CliContentTfm>
   </PropertyGroup>
 
-  <ItemGroup Label="NuGet">
-    <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
-    <NuspecProperty Include="TesthostRuntimeconfig=$(RepoRoot)temp\testhost" />
-    <NuspecProperty Include="SourceBuildTfmCurrent=$(NetCurrent)" />
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+    <None Include="$(SrcPackageFolder)ThirdPartyNotices.txt" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <!-- Windows (non source-build) ships the full content tree, including the .NET Framework test hosts,
+       mirroring Microsoft.TestPlatform.CLI.nuspec. The product assemblies are gathered at pack time by
+       the _IncludeCli* targets below, each sourced from its producing project's own build/publish
+       output. Only the following remain hand-listed here, because no product project produces them:
+       external package assemblies (raked into $(OutDir) by the CopyFiles target), the generated
+       testhost runtimeconfig templates, and the .NET Framework facade/shim assemblies. Everything is
+       placed under contentFiles with copyToOutput=true/flatten=false/buildAction=None to preserve
+       consumer copy semantics. -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT'">
+    <!-- External packages (copied into $(OutDir) subfolders by the CopyFiles target below). Not vstest-produced. -->
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\Microsoft.CodeCoverage.IO.dll" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.Extensions.DependencyModel\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.Extensions.FileSystemGlobbing\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <!-- Generated testhost runtimeconfig.json fallback template. Only the roll-forward-to-latest template is shipped; the native (C++) fallback has no target framework preference. -->
+    <None Include="$(RepoRoot)temp\testhost\testhost-latest.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\net10.0\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <!-- External Microsoft.CodeCoverage.IO localized satellites. -->
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\cs\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\de\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\es\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\fr\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\it\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\ja\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\ko\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\pl\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\pt-BR\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\ru\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\tr\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\zh-Hans\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net10.0\Microsoft.CodeCoverage.IO\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="contentFiles\any\net10.0\zh-Hant\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <!-- External Microsoft.Diagnostics.NETCore.Client (dump support). -->
+    <None Include="$(OutputPath)net10.0\Microsoft.Diagnostics.NETCore.Client\Microsoft.Diagnostics.NETCore.Client.dll" Pack="true" PackagePath="contentFiles\any\net10.0\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <!-- .NET Framework facade/shim assemblies (netstandard + System.* + Win32.Primitives). These are framework shims pulled in by this package project's own net462 compile; no product project produces them, so they stay hand-listed alongside the externals. -->
+    <None Include="$(OutputPath)net462\System.AppContext.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Collections.Concurrent.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Collections.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Collections.NonGeneric.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Collections.Specialized.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.ComponentModel.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.ComponentModel.EventBasedAsync.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.ComponentModel.Primitives.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.ComponentModel.TypeConverter.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Console.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Data.Common.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Diagnostics.Contracts.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Diagnostics.Debug.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Diagnostics.FileVersionInfo.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Diagnostics.Process.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Diagnostics.StackTrace.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Diagnostics.TextWriterTraceListener.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Diagnostics.Tools.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Diagnostics.TraceSource.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Diagnostics.Tracing.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Drawing.Primitives.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Dynamic.Runtime.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Globalization.Calendars.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Globalization.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Globalization.Extensions.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.Compression.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.Compression.ZipFile.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.FileSystem.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.FileSystem.DriveInfo.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.FileSystem.Primitives.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.FileSystem.Watcher.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.IsolatedStorage.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.MemoryMappedFiles.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.Pipes.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.IO.UnmanagedMemoryStream.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Linq.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Linq.Expressions.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Linq.Parallel.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Linq.Queryable.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.Http.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.NameResolution.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.NetworkInformation.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.Ping.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.Primitives.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.Requests.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.Security.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.Sockets.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.WebHeaderCollection.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.WebSockets.Client.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Net.WebSockets.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.ObjectModel.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Reflection.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Reflection.Extensions.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Reflection.Primitives.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Resources.Reader.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Resources.ResourceManager.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Resources.Writer.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.CompilerServices.VisualC.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.Extensions.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.Handles.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.InteropServices.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.InteropServices.RuntimeInformation.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.Numerics.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.Serialization.Formatters.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.Serialization.Json.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.Serialization.Primitives.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Runtime.Serialization.Xml.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Security.Claims.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Security.Cryptography.Algorithms.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Security.Cryptography.Csp.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Security.Cryptography.Encoding.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Security.Cryptography.Primitives.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Security.Cryptography.X509Certificates.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Security.Principal.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Security.SecureString.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Text.Encoding.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Text.Encoding.Extensions.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Text.RegularExpressions.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Threading.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Threading.Overlapped.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Threading.Tasks.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Threading.Tasks.Parallel.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Threading.Thread.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Threading.ThreadPool.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Threading.Timer.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Xml.ReaderWriter.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Xml.XDocument.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Xml.XmlDocument.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Xml.XmlSerializer.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Xml.XPath.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\System.Xml.XPath.XDocument.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\netstandard.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net462\Microsoft.Win32.Primitives.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <!-- External msdia native libraries (Microsoft.Internal.Dia, copied into $(OutDir)\Microsoft.Internal.Dia by CopyFiles). -->
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\x64\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\x64\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\x86\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\x86\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\arm64\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" Pack="true" PackagePath="contentFiles\any\net10.0\TestHostNetFramework\arm64\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+  </ItemGroup>
+
+  <!-- Source-build and non-Windows ship the cross-platform ($(_CliContentTfm)) content only.
+       Mirrors Microsoft.TestPlatform.CLI.sourcebuild(.product).nuspec. -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT'">
+    <None Include="$(OutputPath)$(_CliContentTfm)\datacollector.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\datacollector.dll.config" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\datacollector.deps.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\datacollector.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.Extensions.DependencyModel\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.Extensions.FileSystemGlobbing\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.CommunicationUtilities.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.CoreUtilities.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.CrossPlatEngine.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.PlatformAbstractions.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.Utilities.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Client.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Common.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <!-- Only the roll-forward-to-latest testhost runtimeconfig.json template (native fallback has no TFM preference). -->
+    <None Include="$(RepoRoot)temp\testhost\testhost-latest.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\testhost.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\testhost.deps.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\vstest.console.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\vstest.console.dll.config" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\vstest.console.deps.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\vstest.console.runtimeconfig.json" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.Diagnostics.NETCore.Client\Microsoft.Diagnostics.NETCore.Client.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.TestPlatform.TestHostRuntimeProvider.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
+    <None Include="$(OutputPath)$(_CliContentTfm)\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" Pack="true" PackagePath="contentFiles\any\$(_CliContentTfm)\Extensions\" BuildAction="None" PackageCopyToOutput="true" PackageFlatten="false" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -37,7 +217,7 @@
       Sometimes NU1702 is not suppressed correctly, so force reducing severity of the warning.
       See https://github.com/NuGet/Home/issues/9147
     -->
-    <MSBuildWarningsAsMessages>NU1702</MSBuildWarningsAsMessages>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);NU1702</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
   <!-- runner and runner dependencies -->
@@ -47,7 +227,7 @@
     <!-- EventLogCollector only works on Windows and .NET Framework. -->
     <ProjectReference Include="..\..\DataCollectors\Microsoft.TestPlatform.Extensions.EventLogCollector\Microsoft.TestPlatform.Extensions.EventLogCollector.csproj"
                       SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)"
-                      Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+                      Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT'" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
@@ -68,7 +248,7 @@
     <ProjectReference Include="..\..\testhost.arm64\testhost.arm64.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT'">
     <!-- We are forcing the reference here to .NET Framework project for both .NET and .NET Framework builds.
     This is because we are offloading the dumping to this tool on Windows, and we need this tool to run anywhere with any selected architecture, and using .NET Framework (or eventually .NET Native)
     prevents us from having to lookup the correct .NET runtime. -->
@@ -103,6 +283,271 @@
     <Copy SourceFiles="@(MicrosoftDiagnosticsNETCoreClient)" DestinationFiles="$(OutDir)\Microsoft.Diagnostics.NETCore.Client\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftInternalDia)" DestinationFiles="$(OutDir)\Microsoft.Internal.Dia\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(SystemCollectionsImmutableFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
+  </Target>
+
+  <!-- The source-build / non-Windows localized satellite resources are collected with wildcards.
+       Item wildcards in a static <ItemGroup> are expanded during evaluation, before the referenced
+       projects' resources have been copied into this project's output, so a clean build would match
+       nothing. They are instead gathered at pack time: TargetsForTfmSpecificContentInPackage runs in
+       the inner (per-TFM) build where $(OutputPath) is already populated. The target is gated to
+       $(_CliContentTfm) so the content is added exactly once.
+       Note: in the inner build $(OutputPath) already points at the per-TFM output directory
+       (e.g. artifacts\bin\...\Release\net11.0\), so the '$(OutputPath)**' globs only ever span that
+       single TFM's sub-folders. %(RecursiveDir) is therefore just the language folder (cs, de, ...),
+       not a leading TFM directory, and the package layout stays contentFiles\any\$(_CliContentTfm)\<lang>\. -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT'">
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_IncludeCliSourceBuildResources</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <Target Name="_IncludeCliSourceBuildResources"
+          Condition="('$(DotNetBuildSourceOnly)' == 'true' or '$(OS)' != 'Windows_NT') and '$(TargetFramework)' == '$(_CliContentTfm)'"
+          Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.TestPlatform.*.resources.dll"
+                              Exclude="$(OutputPath)**\*TestHostRuntimeProvider*.resources.dll;$(OutputPath)**\*BlameDataCollector*.resources.dll">
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(RecursiveDir)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll">
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.TestPlatform.Extensions.BlameDataCollector.resources.dll">
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.*.resources.dll"
+                              Exclude="$(OutputPath)**\*Html*.resources.dll;$(OutputPath)**\*Trx*.resources.dll">
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(RecursiveDir)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll">
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(OutputPath)**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll">
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\Extensions\%(RecursiveDir)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="$(OutputPath)**\vstest.console.resources.dll">
+        <PackagePath>contentFiles\any\$(_CliContentTfm)\%(RecursiveDir)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+
+  <!-- =================================================================================================
+       Windows (non source-build) product payloads are gathered at PACK TIME from each producing
+       project's OWN publish/build output, mirroring src\package\Microsoft.TestPlatform (PR #16206).
+
+       Previously every product DLL was cherry-picked out of THIS package project's commingled
+       $(OutputPath)<tfm>\ folder, into which all 15 ProjectReferences copy their outputs. A DLL and
+       its matching .config / binding redirects could therefore be produced by different framework
+       resolutions. Sourcing each file from a single, self-consistent producer removes that hazard.
+
+       The targets are gated to the single $(_CliContentTfm) (net10.0) inner build so each contributes
+       exactly once. They follow the metadata contract established by _IncludeCliSourceBuildResources
+       above (BuildAction=None + PackageCopyToOutput=true + PackageFlatten=false so consumers get the
+       files copied next to their build output). Only externals (raked into $(OutDir) by CopyFiles),
+       generated testhost runtimeconfig templates, and .NET Framework facade assemblies remain
+       hand-listed in the ItemGroup above - no product project produces those. -->
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT'">
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_IncludeCliRunnerContent;_IncludeCliNetTestHostContent;_IncludeCliDataCollectorContent;_IncludeCliExtensionContent;_IncludeCliDumpContent;_IncludeCliNetFrameworkTestHostPublishContent;_IncludeCliNetFrameworkTestHostContent</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <!-- Runner: the full .NET (net10.0) publish closure of vstest.console - vstest.console.{dll,dll.config,
+       deps.json,runtimeconfig.json}, the shared Test Platform product DLLs, and their localized
+       satellites - taken wholesale from the runner's own publish so the exe/config and every dependency
+       share one framework resolution. Microsoft.Extensions.FileSystemGlobbing.dll is excluded here
+       because it ships as an external (hand-listed above, copied by the CopyFiles target). -->
+  <Target Name="_IncludeCliRunnerContent"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
+          Returns="@(TfmSpecificPackageFile)">
+    <PropertyGroup>
+      <_CliRunnerPublishDir>$(TestPlatformPackagingPublishRoot)vstest.console\$(NetSDKTargetFramework)\</_CliRunnerPublishDir>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_CliRunnerPublishDir)')"
+           Text="Expected published .NET runner at '$(_CliRunnerPublishDir)'. It is produced by src\vstest.console\vstest.console.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
+    <ItemGroup>
+      <_CliRunnerPublishedFile Include="$(_CliRunnerPublishDir)**\*"
+                               Exclude="$(_CliRunnerPublishDir)**\*.xml;$(_CliRunnerPublishDir)Microsoft.Extensions.FileSystemGlobbing.dll" />
+      <TfmSpecificPackageFile Include="@(_CliRunnerPublishedFile)">
+        <PackagePath>contentFiles\any\net10.0\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+
+  <!-- .NET testhost process assembly + its deps.json from the testhost project's own
+       $(NetCoreAppMinimum) (net8.0) build output. -->
+  <Target Name="_IncludeCliNetTestHostContent"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
+          Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_CliNetTestHostContent Include="$(ArtifactsBinDir)testhost\$(Configuration)\$(NetCoreAppMinimum)\testhost.dll;$(ArtifactsBinDir)testhost\$(Configuration)\$(NetCoreAppMinimum)\testhost.deps.json">
+        <PackagePath>contentFiles\any\net10.0\%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliNetTestHostContent>
+      <TfmSpecificPackageFile Include="@(_CliNetTestHostContent)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- .NET datacollector from the datacollector project's own $(NetSDKTargetFramework) (net10.0) output. -->
+  <Target Name="_IncludeCliDataCollectorContent"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
+          Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_CliDataCollectorContent Include="$(ArtifactsBinDir)datacollector\$(Configuration)\$(NetSDKTargetFramework)\datacollector.dll;$(ArtifactsBinDir)datacollector\$(Configuration)\$(NetSDKTargetFramework)\datacollector.dll.config;$(ArtifactsBinDir)datacollector\$(Configuration)\$(NetSDKTargetFramework)\datacollector.deps.json;$(ArtifactsBinDir)datacollector\$(Configuration)\$(NetSDKTargetFramework)\datacollector.runtimeconfig.json">
+        <PackagePath>contentFiles\any\net10.0\%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliDataCollectorContent>
+      <TfmSpecificPackageFile Include="@(_CliDataCollectorContent)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Loggers / data collectors that ship under Extensions\, each taken from its OWN producing
+       project's build output (netstandard2.0 for the cross-platform loggers/blame/provider, net48 for
+       the Windows-only EventLog collector). The name-scoped **\<name>*.dll globs pick up each
+       extension's primary DLL and its localized satellites (Extensions\<lang>\). Each extension uses a
+       DISTINCT item name because reusing one name across groups with %(Filename) child metadata
+       triggers MSBuild self-referential batching. -->
+  <Target Name="_IncludeCliExtensionContent"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
+          Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_CliBlameContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\netstandard2.0\**\Microsoft.TestPlatform.Extensions.BlameDataCollector*.dll">
+        <PackagePath>contentFiles\any\net10.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliBlameContent>
+      <_CliEventLogContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\net48\**\Microsoft.TestPlatform.Extensions.EventLogCollector*.dll">
+        <PackagePath>contentFiles\any\net10.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliEventLogContent>
+      <_CliHtmlContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\netstandard2.0\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*.dll">
+        <PackagePath>contentFiles\any\net10.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliHtmlContent>
+      <_CliTrxContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TrxLogger\$(Configuration)\netstandard2.0\**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger*.dll">
+        <PackagePath>contentFiles\any\net10.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliTrxContent>
+      <_CliTestHostProviderContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.TestHostProvider\$(Configuration)\netstandard2.0\**\Microsoft.TestPlatform.TestHostRuntimeProvider*.dll">
+        <PackagePath>contentFiles\any\net10.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliTestHostProviderContent>
+      <TfmSpecificPackageFile Include="@(_CliBlameContent);@(_CliEventLogContent);@(_CliHtmlContent);@(_CliTrxContent);@(_CliTestHostProviderContent)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- DumpMinitool (net462) for each architecture, from each DumpMinitool project's own RID output,
+       shipped under Extensions\dump\. -->
+  <Target Name="_IncludeCliDumpContent"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
+          Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_CliDumpContent Include="$(ArtifactsBinDir)DumpMinitool\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\DumpMinitool.exe;$(ArtifactsBinDir)DumpMinitool\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\DumpMinitool.exe.config;$(ArtifactsBinDir)DumpMinitool.x86\$(Configuration)\$(NetFrameworkMinimum)\win-x86\DumpMinitool.x86.exe;$(ArtifactsBinDir)DumpMinitool.x86\$(Configuration)\$(NetFrameworkMinimum)\win-x86\DumpMinitool.x86.exe.config;$(ArtifactsBinDir)DumpMinitool.arm64\$(Configuration)\$(NetFrameworkMinimum)\win10-arm64\DumpMinitool.arm64.exe;$(ArtifactsBinDir)DumpMinitool.arm64\$(Configuration)\$(NetFrameworkMinimum)\win10-arm64\DumpMinitool.arm64.exe.config">
+        <PackagePath>contentFiles\any\net10.0\Extensions\dump\%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliDumpContent>
+      <TfmSpecificPackageFile Include="@(_CliDumpContent)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- .NET Framework testhost default-architecture (net462) closure - testhost.exe + testhost.exe.config
+       + the shared Test Platform DLLs, the versioned System.* assemblies, and their satellites - taken
+       wholesale from the testhost project's own net462 publish so the exe/config and every dependency
+       share one framework resolution. Shipped under TestHostNetFramework\. The per-arch and per-TFM
+       renamed executables are layered on top by _IncludeCliNetFrameworkTestHostContent; the .NET
+       Framework facade assemblies (which no product project produces) stay hand-listed above. -->
+  <Target Name="_IncludeCliNetFrameworkTestHostPublishContent"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
+          Returns="@(TfmSpecificPackageFile)">
+    <PropertyGroup>
+      <_CliNetFrameworkTestHostPublishDir>$(TestPlatformPackagingPublishRoot)testhost\$(NetFrameworkMinimum)\</_CliNetFrameworkTestHostPublishDir>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_CliNetFrameworkTestHostPublishDir)')"
+           Text="Expected published .NET Framework testhost at '$(_CliNetFrameworkTestHostPublishDir)'. It is produced by src\testhost\testhost.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
+    <ItemGroup>
+      <_CliNetFrameworkTestHostPublishedFile Include="$(_CliNetFrameworkTestHostPublishDir)**\*"
+                                             Exclude="$(_CliNetFrameworkTestHostPublishDir)**\*.xml" />
+      <TfmSpecificPackageFile Include="@(_CliNetFrameworkTestHostPublishedFile)">
+        <PackagePath>contentFiles\any\net10.0\TestHostNetFramework\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+
+  <!-- The .NET Framework testhost executables (and their .config files) for the non-published cases:
+       the default architecture net47..net481 (net462 comes from the publish above), and every net462..
+       net481 executable for x86 and arm64, plus the .NET Framework datacollector executables. Each is
+       taken from its own project's RID-specific build output. Paths are enumerated explicitly rather
+       than globbed: a wildcard over the TFM folder would over-capture and, via %(RecursiveDir), preserve
+       the TFM\RID path instead of flattening. Each architecture uses a DISTINCT item name because
+       reusing one name across groups with %(Filename) child metadata triggers self-referential batching. -->
+  <Target Name="_IncludeCliNetFrameworkTestHostContent"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
+          Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_CliNetFrameworkTestHostDefault Include="$(ArtifactsBinDir)testhost\$(Configuration)\net47\win7-x64\testhost.net47.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net47\win7-x64\testhost.net47.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net471\win7-x64\testhost.net471.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net471\win7-x64\testhost.net471.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net472\win7-x64\testhost.net472.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net472\win7-x64\testhost.net472.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net48\win7-x64\testhost.net48.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net48\win7-x64\testhost.net48.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net481\win7-x64\testhost.net481.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net481\win7-x64\testhost.net481.exe.config">
+        <PackagePath>contentFiles\any\net10.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliNetFrameworkTestHostDefault>
+      <_CliNetFrameworkTestHostX86 Include="$(ArtifactsBinDir)testhost.x86\$(Configuration)\net462\win-x86\testhost.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net462\win-x86\testhost.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net47\win-x86\testhost.net47.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net47\win-x86\testhost.net47.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net471\win-x86\testhost.net471.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net471\win-x86\testhost.net471.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net472\win-x86\testhost.net472.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net472\win-x86\testhost.net472.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net48\win-x86\testhost.net48.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net48\win-x86\testhost.net48.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net481\win-x86\testhost.net481.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net481\win-x86\testhost.net481.x86.exe.config">
+        <PackagePath>contentFiles\any\net10.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliNetFrameworkTestHostX86>
+      <_CliNetFrameworkTestHostArm64 Include="$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net462\win10-arm64\testhost.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net462\win10-arm64\testhost.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net47\win10-arm64\testhost.net47.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net47\win10-arm64\testhost.net47.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net471\win10-arm64\testhost.net471.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net471\win10-arm64\testhost.net471.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net472\win10-arm64\testhost.net472.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net472\win10-arm64\testhost.net472.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net48\win10-arm64\testhost.net48.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net48\win10-arm64\testhost.net48.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net481\win10-arm64\testhost.net481.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net481\win10-arm64\testhost.net481.arm64.exe.config">
+        <PackagePath>contentFiles\any\net10.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliNetFrameworkTestHostArm64>
+      <_CliNetFrameworkDataCollector Include="$(ArtifactsBinDir)datacollector\$(Configuration)\net48\win7-x64\datacollector.exe;$(ArtifactsBinDir)datacollector\$(Configuration)\net48\win7-x64\datacollector.exe.config;$(ArtifactsBinDir)datacollector.arm64\$(Configuration)\net48\win10-arm64\datacollector.arm64.exe;$(ArtifactsBinDir)datacollector.arm64\$(Configuration)\net48\win10-arm64\datacollector.arm64.exe.config">
+        <PackagePath>contentFiles\any\net10.0\TestHostNetFramework\%(Filename)%(Extension)</PackagePath>
+        <BuildAction>None</BuildAction>
+        <PackageCopyToOutput>true</PackageCopyToOutput>
+        <PackageFlatten>false</PackageFlatten>
+      </_CliNetFrameworkDataCollector>
+      <TfmSpecificPackageFile Include="@(_CliNetFrameworkTestHostDefault);@(_CliNetFrameworkTestHostX86);@(_CliNetFrameworkTestHostArm64);@(_CliNetFrameworkDataCollector)" />
+    </ItemGroup>
   </Target>
 
 </Project>

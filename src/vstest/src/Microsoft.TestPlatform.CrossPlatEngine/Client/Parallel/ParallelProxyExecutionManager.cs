@@ -115,7 +115,7 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
             // _currentRunDataAggregator.MarkAsAborted();
         }
 
-        _parallelOperationManager.StartWork(runnableWorkloads, eventHandler, GetParallelEventHandler, PrepareTestRunOnConcurrentManager, StartTestRunOnConcurrentManager);
+        _parallelOperationManager.StartWork(runnableWorkloads, eventHandler, GetParallelEventHandler, StartTestRunOnConcurrentManager);
 
         // Why 1? Because this is supposed to be a processId, and that is just the default that was chosen by someone before me,
         // and maybe is checked somewhere, but I don't see it checked in our codebase.
@@ -173,21 +173,8 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
         // and queue another test run.
         if (!testRunCompleteArgs.IsCanceled && !_abortRequested)
         {
-            // Do NOT return true here, there should be only one place where this method returns true,
-            // and cancellation or success or any other other combination or timing should result in only one true.
-            // This is largely achieved by returning true above when "allRunsCompleted" is true. That variable is true
-            // when we cancel all sources or when we complete all sources.
-            //
-            // But we can also start a source, and cancel right after, which will remove all managers, and RunNextWork returns
-            // false, because we had no more work to do. If we check that result here and return true, then the whole logic is
-            // broken and we end up calling RunComplete handlers twice and writing logger output to screen twice. So don't do it.
-            // var hadMoreWork = _parallelOperationManager.RunNextWork(proxyExecutionManager);
-            // if (!hadMoreWork)
-            // {
-            //     return true;
-            // }
             EqtTrace.Verbose("ParallelProxyExecutionManager: HandlePartialRunComplete: Not cancelled or aborted, running next work.");
-            var _ = _parallelOperationManager.RunNextWork(proxyExecutionManager);
+            _parallelOperationManager.RunNextWork(proxyExecutionManager);
         }
         else
         {
@@ -394,37 +381,14 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
             _currentRunDataAggregator);
     }
 
-    private Task PrepareTestRunOnConcurrentManager(IProxyExecutionManager proxyExecutionManager, IInternalTestRunEventsHandler eventHandler, TestRunCriteria testRunCriteria)
-    {
-        return Task.Run(() =>
-        {
-            if (!proxyExecutionManager.IsInitialized)
-            {
-                proxyExecutionManager.Initialize(_skipDefaultAdapters);
-            }
-
-            // NOTE: No need to increment the number of started clients on initialization since the
-            // client doesn't really count as started unless some work is done on it. Incrementing
-            // the number of clients will result in failing acceptance tests because they expect all
-            // clients to be done running their workloads when aborting/cancelling and that doesn't
-            // happen with an initialized workload that is never run.
-            //
-            // Interlocked.Increment(ref _runStartedClients); <- BUG: Is this a bug waiting to happen for pre-started hosts?
-            proxyExecutionManager.InitializeTestRun(testRunCriteria, eventHandler);
-        });
-    }
-
     /// <summary>
-    /// Triggers the execution for the next data object on the concurrent executor
-    /// Each concurrent executor calls this method, once its completed working on previous data
+    /// Triggers the execution for the next data object on the concurrent executor.
+    /// Each concurrent executor calls this method once it has completed working on the previous data.
     /// </summary>
-    /// <returns>True, if execution triggered</returns>
     private void StartTestRunOnConcurrentManager(
         IProxyExecutionManager proxyExecutionManager,
         IInternalTestRunEventsHandler eventHandler,
-        TestRunCriteria testRunCriteria,
-        bool initialized,
-        Task? initTask)
+        TestRunCriteria testRunCriteria)
     {
         // If we do the scheduling incorrectly this will get null. It should not happen, but it has happened before.
         if (testRunCriteria == null)
@@ -434,27 +398,24 @@ internal sealed class ParallelProxyExecutionManager : IParallelProxyExecutionMan
 
         Task.Run(() =>
             {
-                if (!initialized)
+                if (!proxyExecutionManager.IsInitialized)
                 {
-                    if (!proxyExecutionManager.IsInitialized)
-                    {
-                        EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Initializing uninitialized client. Started clients: " + _runStartedClients);
-                        proxyExecutionManager.Initialize(_skipDefaultAdapters);
-                    }
+                    EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Initializing uninitialized client. Started clients: " + _runStartedClients);
+                    proxyExecutionManager.Initialize(_skipDefaultAdapters);
+                }
 
-                    EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Initializing test run. Started clients: " + _runStartedClients);
-                    Interlocked.Increment(ref _runStartedClients);
-                    proxyExecutionManager.InitializeTestRun(testRunCriteria, eventHandler);
-                }
-                else
+                // Increment under the same lock that guards reads of this field in
+                // HandlePartialRunComplete, so the write is properly fenced against the
+                // concurrent read instead of relying on an unsynchronized Interlocked op.
+                lock (_executionStatusLockObject)
                 {
-                    EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Waiting for pre-initialized client to finish initialization. Started clients: " + _runStartedClients);
-                    initTask!.Wait();
-                    EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Pre-initialized client finished initialization. Started clients: " + _runStartedClients);
+                    _runStartedClients++;
                 }
+
+                EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Initializing test run. Started clients: " + _runStartedClients);
+                proxyExecutionManager.InitializeTestRun(testRunCriteria, eventHandler);
 
                 EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Execution starting. Started clients: " + _runStartedClients);
-
                 proxyExecutionManager.StartTestRun(testRunCriteria, eventHandler);
                 EqtTrace.Verbose("ParallelProxyExecutionManager.StartTestRunOnConcurrentManager: Execution started. Started clients: " + _runStartedClients);
             })

@@ -8,29 +8,30 @@ internal class AWSServiceType
     internal const string DynamoDbService = "DynamoDB";
     internal const string SQSService = "SQS";
     internal const string SNSService = "SNS";
+    internal const string S3Service = "S3";
     internal const string BedrockService = "Bedrock";
     internal const string BedrockAgentService = "Bedrock Agent";
     internal const string BedrockAgentRuntimeService = "Bedrock Agent Runtime";
     internal const string BedrockRuntimeService = "Bedrock Runtime";
 
     internal static bool IsDynamoDbService(string service)
-        => DynamoDbService.Equals(service, StringComparison.OrdinalIgnoreCase);
+        => string.Equals(DynamoDbService, service, StringComparison.OrdinalIgnoreCase);
 
     internal static bool IsSqsService(string service)
-        => SQSService.Equals(service, StringComparison.OrdinalIgnoreCase);
+        => string.Equals(SQSService, service, StringComparison.OrdinalIgnoreCase);
 
     internal static bool IsSnsService(string service)
-        => SNSService.Equals(service, StringComparison.OrdinalIgnoreCase);
+        => string.Equals(SNSService, service, StringComparison.OrdinalIgnoreCase);
 
     internal static bool IsBedrockService(string service)
-        => BedrockService.Equals(service, StringComparison.OrdinalIgnoreCase);
+        => string.Equals(BedrockService, service, StringComparison.OrdinalIgnoreCase);
 
     internal static bool IsBedrockAgentService(string service)
-        => BedrockAgentService.Equals(service, StringComparison.OrdinalIgnoreCase);
+        => string.Equals(BedrockAgentService, service, StringComparison.OrdinalIgnoreCase);
 
     internal static bool IsBedrockAgentRuntimeService(string service)
-        => BedrockAgentRuntimeService.Equals(service, StringComparison.OrdinalIgnoreCase);
+        => string.Equals(BedrockAgentRuntimeService, service, StringComparison.OrdinalIgnoreCase);
 
     internal static bool IsBedrockRuntimeService(string service)
-        => BedrockRuntimeService.Equals(service, StringComparison.OrdinalIgnoreCase);
+        => string.Equals(BedrockRuntimeService, service, StringComparison.OrdinalIgnoreCase);
 }

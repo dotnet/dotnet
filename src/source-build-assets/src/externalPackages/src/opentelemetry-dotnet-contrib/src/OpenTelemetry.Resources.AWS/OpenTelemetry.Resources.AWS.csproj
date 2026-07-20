@@ -8,17 +8,20 @@
     <DefineConstants>RESOURCES_AWS;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETCoreApp'">
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
   <PropertyGroup>
-    <PackageValidationBaselineVersion>1.14.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.15.1</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="OpenTelemetry" />
-    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' != '.NETCoreApp'">
-    <PackageReference Update="System.Text.Json" VersionOverride="[6.0.10,)" />
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETFramework'">
@@ -29,6 +32,7 @@
     <Compile Include="$(RepoRoot)\src\Shared\AWS\*.cs" Link="Includes\AWS\%(Filename).cs" />
     <Compile Include="$(RepoRoot)\src\Shared\ExceptionExtensions.cs" Link="Includes\ExceptionExtensions.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\HttpClientHelpers.cs" Link="Includes\HttpClientHelpers.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\IServerCertificateValidationEventSource.cs" Link="Includes\IServerCertificateValidationEventSource.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\ServerCertificateValidationHandler.cs" Link="Includes\ServerCertificateValidationHandler.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\ServerCertificateValidationProvider.cs" Link="Includes\ServerCertificateValidationProvider.cs" />

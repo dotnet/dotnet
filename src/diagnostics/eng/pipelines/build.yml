@@ -60,6 +60,12 @@ parameters:
   type: boolean
   default: false
 
+  # Optional: publish the full build outputs (managed + native + debuggees) as a
+  # 'TestArtifacts_<phase>' artifact so the matching test-only legs can run without rebuilding.
+- name: publishTestArtifacts
+  type: boolean
+  default: false
+
 # Optional: architecture cross build if true
 - name: crossBuild
   type: boolean
@@ -68,10 +74,6 @@ parameters:
 - name: dependsOn
   type: string
   default: ''
-
-- name: isCodeQLRun
-  type: boolean
-  default: false
 
 - name: disableComponentGovernance
   type: boolean
@@ -84,7 +86,6 @@ jobs:
       name: ${{ coalesce(parameters.name, parameters.osGroup) }}_${{ config.architecture }}_${{ config.configuration }}
       timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
       enableMicrobuild: true
-      runAsPublic: ${{ parameters.isCodeQLRun }}
       disableComponentGovernance: ${{ parameters.disableComponentGovernance }}
       templateContext: ${{ parameters.templateContext }}
 
@@ -118,7 +119,7 @@ jobs:
       ${{ if ne(parameters.strategy, '') }}:
         'error, we can no longer support the strategy feature in the new pipeline system. Please remove the strategy from the job template.': error
 
-      ${{ if ne(parameters.dependsOn, '') }}:
+      ${{ if and(ne(parameters.dependsOn, ''), ne(parameters.testOnly, true)) }}:
         dependsOn: ${{ parameters.dependsOn }}_${{ config.architecture }}_${{ config.configuration }}
 
       workspace:
@@ -133,23 +134,31 @@ jobs:
       - _TestArgs: '-test'
       - _Cross: ''
 
-      - ${{ if eq(parameters.osGroup, 'Windows_NT') }}:
-        - _buildScript: $(Build.SourcesDirectory)\build.cmd
-      - ${{ if ne(parameters.osGroup, 'Windows_NT') }}:
-        - _buildScript: $(Build.SourcesDirectory)/build.sh
-
       - ${{ if and(eq(parameters.testOnly, 'true'), eq(parameters.buildOnly, 'true')) }}:
         'error, testOnly and buildOnly cannot be true at the same time': error
 
+      # Test-only legs invoke test.cmd/test.sh, which already encode
+      # '-test -skipmanaged -skipnative' and do not prepend '-restore -build'. All other legs
+      # (build-only and build+test) use build.cmd/build.sh, which prepend '-restore -build'.
       - ${{ if eq(parameters.testOnly, 'true') }}:
-        - _TestArgs: '-test -skipnative'
+        - ${{ if eq(parameters.osGroup, 'Windows_NT') }}:
+          - _buildScript: $(Build.SourcesDirectory)\test.cmd
+        - ${{ if ne(parameters.osGroup, 'Windows_NT') }}:
+          - _buildScript: $(Build.SourcesDirectory)/test.sh
+        - _TestArgs: ''
 
-      - ${{ if or(eq(parameters.buildOnly, 'true'), eq(parameters.isCodeQLRun, 'true')) }}:
+      - ${{ if ne(parameters.testOnly, 'true') }}:
+        - ${{ if eq(parameters.osGroup, 'Windows_NT') }}:
+          - _buildScript: $(Build.SourcesDirectory)\build.cmd
+        - ${{ if ne(parameters.osGroup, 'Windows_NT') }}:
+          - _buildScript: $(Build.SourcesDirectory)/build.sh
+
+      - ${{ if eq(parameters.buildOnly, 'true') }}:
         - _TestArgs: ''
 
       # For testing msrc's and service releases. The RuntimeSourceVersion is either "default" or the service release version to test
       - _InternalInstallArgs: ''
-      - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(parameters.isCodeQLRun, 'false')) }}:
+      - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
         - _InternalInstallArgs:
             -dotnetruntimeversion '$(DotnetRuntimeVersion)'
             -dotnetruntimedownloadversion '$(DotnetRuntimeDownloadVersion)'
@@ -162,23 +171,18 @@ jobs:
 
       steps:
       - ${{ if eq(parameters.testOnly, true) }}:
-        - ${{ if ne(parameters.osGroup, 'Linux') }}:
-          - 'error, testOnly is only supported on Linux': error
+        - ${{ if notIn(parameters.osGroup, 'Windows_NT', 'MacOS', 'Linux') }}:
+          - 'error, testOnly is only supported on Windows_NT, MacOS, and Linux': error
+        # The matching build leg published its full outputs (managed assemblies, native
+        # binaries, and debuggees) as TestArtifacts_<phase>. Restore them into the repo
+        # artifacts directory so the test run can skip both the native and managed builds
+        # (-skipnative -skipmanaged) and only execute the tests.
         - task: DownloadPipelineArtifact@2
           displayName: 'Download Build Artifacts'
           inputs:
-            targetPath: '$(Build.ArtifactStagingDirectory)/__download__'
-            itemPattern: Build_${{ parameters.dependsOn }}_${{ config.architecture }}_${{ config.configuration }}/bin/**
+            artifact: TestArtifacts_${{ parameters.dependsOn }}_${{ config.architecture }}_${{ config.configuration }}
+            targetPath: '$(Build.SourcesDirectory)/artifacts'
             checkDownloadedFiles: true
-        - task: CopyFiles@2
-          displayName: 'Binplace Downloaded Product'
-          inputs:
-            sourceFolder: $(Build.ArtifactStagingDirectory)/__download__/Build_${{ parameters.dependsOn }}_${{ config.architecture }}_${{ config.configuration }}/bin/linux${{ parameters.osSuffix }}.${{ config.architecture }}.${{ config.configuration }}
-            targetFolder: '$(Build.SourcesDirectory)/artifacts/bin/linux.${{ config.architecture }}.${{ config.configuration }}'
-
-      - ${{ if eq(parameters.isCodeQLRun, 'true') }}:
-        - task: CodeQL3000Init@0
-          displayName: CodeQL Initialize
 
       - script: $(_buildScript)
           -ci
@@ -196,11 +200,6 @@ jobs:
         ${{ else }}:
           displayName: Build / Test
         condition: succeeded()
-
-      - ${{ if eq(parameters.isCodeQLRun, 'true') }}:
-        - task: CodeQL3000Finalize@0
-          displayName: CodeQL Finalize
-
       - ${{ if ne(config.artifactUploadPath, '') }}:
         - task: CopyFiles@2
           displayName: Gather binaries for publish
@@ -216,29 +215,41 @@ jobs:
               targetPath: '$(Build.ArtifactStagingDirectory)/artifacts'
               artifactName: Build_$(_PhaseName)
 
-      - task: CopyFiles@2
-        displayName: Gather diagnostic artifacts on failure
-        inputs:
-          SourceFolder: '$(Build.SourcesDirectory)/artifacts'
-          TargetFolder: $(Build.ArtifactStagingDirectory)/artifacts_on_failure
-          Contents: |
-            bin/**
-            log/**
-            TestResults/**
-            tmp/${{ config.configuration }}/dumps/**
-            tmp/${{ config.configuration }}/streams/**
-        continueOnError: true
-        condition: failed()
-
-      - template: /eng/pipelines/publish-pipeline-artifact-shim.yml@self
-        parameters:
-          displayName: Publish diagnostic artifacts on failure
+      # Publish the full build outputs for the matching test-only legs to consume. This lets the
+      # test legs run with -skipnative -skipmanaged instead of rebuilding the product themselves.
+      # Only valid on build-only legs (publishTestArtifacts without buildOnly is a configuration error).
+      - ${{ if and(eq(parameters.publishTestArtifacts, true), eq(parameters.buildOnly, true)) }}:
+        - task: CopyFiles@2
+          displayName: Gather test artifacts for publish
           inputs:
-            targetPath: $(Build.ArtifactStagingDirectory)/artifacts_on_failure
-            artifactName: Artifacts_On_Failure_$(_PhaseName)_$(System.JobAttempt)
-            sbomEnabled: false # we don't need SBOM for non-shipping diagnostics assets
+            SourceFolder: '$(Build.SourcesDirectory)/artifacts'
+            Contents: |
+              bin/**
+              obj/**
+              test/**
+            TargetFolder: $(Build.ArtifactStagingDirectory)/testartifacts
+
+        - template: /eng/pipelines/publish-pipeline-artifact-shim.yml@self
+          parameters:
+            displayName: Publish Test Artifacts
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/testartifacts'
+              artifactName: TestArtifacts_$(_PhaseName)
+
+      - ${{ if ne(parameters.buildOnly, 'true') }}:
+        # Publish test results to Azure Pipelines
+        - task: PublishTestResults@2
+          inputs:
+            testResultsFormat: xUnit
+            testResultsFiles: '**/*.xml'
+            searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults'
+            testRunTitle: 'Tests $(_PhaseName)'
+            failTaskOnFailedTests: true
+            publishRunAttachments: true
+            mergeTestResults: true
+            buildConfiguration: ${{ config.configuration }}
           continueOnError: true
-          condition: failed()
+          condition: always()
 
       - task: CopyFiles@2
         displayName: Gather Logs
@@ -259,17 +270,46 @@ jobs:
           continueOnError: true
           condition: always()
 
-      - ${{ if and(ne(parameters.buildOnly, 'true'), ne(parameters.isCodeQLRun, 'true')) }}:
-        # Publish test results to Azure Pipelines
-        - task: PublishTestResults@2
+      - pwsh: |
+          $source = "$(Build.SourcesDirectory)/artifacts"
+          $dest = "$(Build.ArtifactStagingDirectory)/artifacts_on_failure"
+          New-Item -ItemType Directory -Force -Path $dest
+
+          # Move non-dump artifacts
+          $patterns = @("bin", "Debuggees", "log", "TestResults")
+          foreach ($p in $patterns) {
+            $src = Join-Path $source $p
+            if (Test-Path $src) {
+              $target = Join-Path $dest $p
+              Move-Item -Force $src $target
+            }
+          }
+
+          # Tar dumps and streams directly from source to avoid ENOSPC.
+          # Peak disk = original files + compressed tar (smaller than a copy).
+          $dumpSrc = Join-Path $source "tmp/${{ config.configuration }}/dumps"
+          $streamSrc = Join-Path $source "tmp/${{ config.configuration }}/streams"
+
+          $tarInputs = @()
+          if (Test-Path $dumpSrc) { $tarInputs += "tmp/${{ config.configuration }}/dumps" }
+          if (Test-Path $streamSrc) { $tarInputs += "tmp/${{ config.configuration }}/streams" }
+
+          if ($tarInputs.Count -gt 0) {
+            New-Item -ItemType Directory -Force -Path $dest | Out-Null
+            $tarPath = Join-Path $dest "diagnostics-dumps.tar.gz"
+            tar -czf $tarPath -C $source @tarInputs
+            foreach ($t in $tarInputs) { Remove-Item -Recurse -Force (Join-Path $source $t) }
+          }
+        displayName: Gather diagnostic artifacts on failure
+        continueOnError: true
+        condition: failed()
+
+      - template: /eng/pipelines/publish-pipeline-artifact-shim.yml@self
+        parameters:
+          displayName: Publish diagnostic artifacts on failure
           inputs:
-            testResultsFormat: xUnit
-            testResultsFiles: '**/*.xml'
-            searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults'
-            testRunTitle: 'Tests $(_PhaseName)'
-            failTaskOnFailedTests: true
-            publishRunAttachments: true
-            mergeTestResults: true
-            buildConfiguration: ${{ config.configuration }}
+            targetPath: $(Build.ArtifactStagingDirectory)/artifacts_on_failure
+            artifactName: Artifacts_On_Failure_$(_PhaseName)_$(System.JobAttempt)
+            sbomEnabled: false # we don't need SBOM for non-shipping diagnostics assets
           continueOnError: true
-          condition: always()
+          condition: failed()

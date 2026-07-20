@@ -7,8 +7,6 @@
   
     Optional variables:
       DotNetFinalVersionKind            Global property that stores the type of the current build: https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Versioning.md#build-kind
-      DotNetSymbolServerTokenMsdl       Personal access token for MSDL symbol server. Available from variable group DotNet-Symbol-Server-Pats.
-      DotNetSymbolServerTokenSymWeb     Personal access token for SymWeb symbol server. Available from variable group DotNet-Symbol-Server-Pats.
       DotNetSymbolExpirationInDays      Symbol expiration time in days (defaults to 10 years).
       SkipPackageChecks                 Skips package safety checks.
       EnableDefaultArtifacts            Includes packages under "/artifacts/packages/**" for publishing. Defaults to true.

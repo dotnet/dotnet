@@ -1,10 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksForLibraries)</TargetFrameworks>
     <Description>OpenTelemetry Resource Detectors for Azure cloud environments.</Description>
     <PackageTags>$(PackageTags);ResourceDetector</PackageTags>
     <MinVerTagPrefix>Resources.Azure-</MinVerTagPrefix>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETCoreApp'">
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <!-- Do not run Package Baseline Validation as this package has never released a stable version.
@@ -15,16 +19,15 @@
 
   <ItemGroup>
     <PackageReference Include="OpenTelemetry" />
-    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETStandard'">
-    <PackageReference Include="System.Text.Encodings.Web" />
-    <PackageReference Update="System.Text.Json" VersionOverride="[4.7.2,)" />
+  <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\HttpClientHelpers.cs" Link="Includes\HttpClientHelpers.cs" />
     <Compile Include="$(RepoRoot)\src\Shared\ResourceSemanticConventions.cs" Link="Includes\ResourceSemanticConventions.cs"/>
   </ItemGroup>
 

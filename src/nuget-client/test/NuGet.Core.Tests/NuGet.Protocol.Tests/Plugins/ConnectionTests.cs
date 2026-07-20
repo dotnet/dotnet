@@ -313,7 +313,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         MessageMethod.Initialize,
                         new RequestHandler<InitializeResponse>(new InitializeResponse(MessageResponseCode.Success)));
 
-                    var message = new Message(
+                    var message = MessageUtilities.Create(
                         requestId: "a",
                         type: MessageType.Response,
                         method: MessageMethod.Initialize);
@@ -354,7 +354,7 @@ namespace NuGet.Protocol.Plugins.Tests
                         MessageMethod.Initialize,
                         new RequestHandler<InitializeResponse>(new InitializeResponse(MessageResponseCode.Success)));
 
-                    var message = new Message(
+                    var message = MessageUtilities.Create(
                         requestId: "a",
                         type: MessageType.Request,
                         method: MessageMethod.Initialize);
@@ -387,7 +387,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public async Task SendAsync_ThrowsIfCancelled()
         {
-            var message = new Message(
+            var message = MessageUtilities.Create(
                 requestId: "a",
                 type: MessageType.Request,
                 method: MessageMethod.Initialize);
@@ -402,7 +402,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public async Task SendAsync_ThrowsIfNotConnected()
         {
-            var message = new Message(
+            var message = MessageUtilities.Create(
                 requestId: "a",
                 type: MessageType.Request,
                 method: MessageMethod.Initialize);
@@ -419,7 +419,7 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             using (var test = new MockConnectionTest())
             {
-                var message = new Message(
+                var message = MessageUtilities.Create(
                     requestId: "a",
                     type: MessageType.Request,
                     method: MessageMethod.Initialize);
@@ -463,7 +463,7 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             using (var test = new MockConnectionTest())
             {
-                var message = new Message(
+                var message = MessageUtilities.Create(
                     requestId: "a",
                     type: MessageType.Request,
                     method: MessageMethod.Initialize);

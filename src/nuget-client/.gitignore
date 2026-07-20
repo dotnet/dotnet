@@ -207,3 +207,5 @@ launchSettings.json
 
 # Image manifests are generated at build-time for VSIX
 *.imagemanifest
+
+test/ManualTests/

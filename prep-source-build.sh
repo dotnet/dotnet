@@ -12,7 +12,14 @@
 ###   --no-artifacts              Exclude the download of the previously source-built artifacts archive
 ###   --no-bootstrap              Don't replace portable packages in the download source-built artifacts
 ###   --no-prebuilts              Exclude the download of the prebuilts archive
-###   --no-sdk                    Exclude the download of the .NET SDK
+###   --no-sdk                    Skip SDK acquisition. On 1xx branches this skips the Microsoft
+###                               .NET SDK install. On non-1xx (feature band) branches this skips
+###                               downloading the 1xx source-built SDK published by Microsoft. In both
+###                               cases, use --with-sdk to supply your own SDK.
+###   --no-shared-components      Exclude the download of the 1xx shared components archive.
+###                               Only applies on non-1xx (feature band) branches, where the shared
+###                               components archive is downloaded by default. On 1xx branches this
+###                               flag has no effect because shared components are built from source.
 ###   --artifacts-rid             The RID of the previously source-built artifacts archive to download
 ###                               Default is centos.9-x64
 ###   --bootstrap-rid <value>     The (portable) RID for the bootstrap artifacts to restore. For example, linux-arm64, linux-musl-x64
@@ -74,6 +81,33 @@ artifactsTarballPattern="$artifactsBaseFileName.*.tar.gz"
 prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
 prebuiltsTarballPattern="$prebuiltsBaseFileName.*.tar.gz"
 
+sharedComponentsBaseFileName="Private.SourceBuilt.SharedComponents"
+
+sourceBuiltSdkBaseFileName="dotnet-sdk"
+
+# Detect whether the current branch is a non-1xx (feature band) branch.
+# On feature band branches, the runtime/aspnetcore/etc. shared components are not built
+# from source and must instead be sourced from a 1xx VMR build's output. The bootstrap
+# toolchain (SDK + arcade packages) also comes from that 1xx build rather than from
+# a Microsoft-installed SDK plus local bootstrap, because the 1xx source-built SDK
+# already contains those bootstrap packages. To make this seamless for developers and
+# avoid requiring them to know about the 1xx vs feature band split, prep on a feature
+# band branch by default:
+#   1. Downloads the 1xx source-built SDK and extracts it to .dotnet (replacing the
+#      Microsoft SDK install + bootstrap that 1xx branches use).
+#   2. Downloads the 1xx shared components archive into prereqs/packages/archive/
+#      where init-source-only.proj auto-discovers it.
+# The matching --no-sdk and --no-shared-components flags opt out of each
+# step independently (e.g. for distro maintainers who supply their own assets via
+# --with-sdk and build.sh --with-shared-components).
+versionSDKMinor=$(GetXmlPropertyValue "VersionSDKMinor" "$REPO_ROOT/eng/Versions.props")
+isFeatureBand=false
+if [[ -n "$versionSDKMinor" && "$versionSDKMinor" != "1" ]]; then
+  isFeatureBand=true
+fi
+downloadSharedComponents=$isFeatureBand
+downloadSourceBuiltSdk=$isFeatureBand
+
 positional_args=()
 while :; do
   if [ $# -le 0 ]; then
@@ -100,6 +134,10 @@ while :; do
       ;;
     --no-sdk)
       installDotnet=false
+      downloadSourceBuiltSdk=false
+      ;;
+    --no-shared-components)
+      downloadSharedComponents=false
       ;;
     --artifacts-rid)
       artifactsRid=$2
@@ -141,6 +179,20 @@ while :; do
 done
 
 source "$REPO_ROOT/eng/common/tools.sh"
+
+# Apply feature band overrides now that arg parsing is complete. On feature band branches
+# the SDK comes from either the downloaded source-built SDK (default, controlled by
+# --no-sdk) or from a user-supplied --with-sdk path. In both cases, the local Microsoft
+# SDK install + bootstrap steps are unnecessary because the supplied SDK already contains
+# everything BootstrapArtifacts would otherwise restore from Private.SourceBuilt.Artifacts.
+if [[ "$isFeatureBand" == "true" && -n "$customSdkDir" ]]; then
+  downloadSourceBuiltSdk=false
+  installDotnet=false
+  buildBootstrap=false
+elif [[ "$downloadSourceBuiltSdk" == "true" ]]; then
+  installDotnet=false
+  buildBootstrap=false
+fi
 
 # Default properties
 properties=( "/p:Configuration=$configuration" )
@@ -200,19 +252,59 @@ fi
 # Check if Private.SourceBuilt artifacts archive exists
 downloadPsbArtifacts=$downloadArtifacts
 packagesArchiveDir="$packagesDir/archive/"
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarballPattern} ]; then
+
+# Determine the exact expected filenames for the shared components and source-built
+# SDK cache checks. Using exact filenames (rather than glob-matching) ensures that
+# leftover tarballs from a different version or RID don't trigger false cache hits.
+# These properties may not be defined on every branch:
+#  - PrivateSourceBuiltSdkVersion is read from eng/Versions.props.
+#  - MicrosoftNETSdkPackageVersion is populated by Maestro dependency flow into
+#    eng/Version.Details.props on non-1xx (feature band) branches; on 1xx it is
+#    absent, but the shared components download is never invoked there either.
+expectedSdkVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
+expectedSharedComponentsVersion=$(GetXmlPropertyValue "MicrosoftNETSdkPackageVersion" "$REPO_ROOT/eng/Version.Details.props")
+
+# Note: the source-built SDK filename uses dash separators around the version, while
+# Private.SourceBuilt.* archives use dot separators. This matches DownloadArchive's
+# filename construction.
+expectedSourceBuiltSdkFile=""
+if [[ -n "$expectedSdkVersion" ]]; then
+  expectedSourceBuiltSdkFile="${packagesArchiveDir}${sourceBuiltSdkBaseFileName}-${expectedSdkVersion}-${artifactsRid}.tar.gz"
+fi
+expectedSharedComponentsFile=""
+if [[ -n "$expectedSharedComponentsVersion" ]]; then
+  expectedSharedComponentsFile="${packagesArchiveDir}${sharedComponentsBaseFileName}.${expectedSharedComponentsVersion}.${artifactsRid}.tar.gz"
+fi
+
+if [ "$downloadArtifacts" == true ] && [ -n "$(find "$packagesArchiveDir" -maxdepth 1 -name "$artifactsTarballPattern" 2>/dev/null | head -n 1)" ]; then
   echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadPsbArtifacts=false
 fi
 
 # Check if Private.SourceBuilt prebuilts archive exists
-if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
+if [ "$downloadPrebuilts" == true ] && [ -n "$(find "$packagesArchiveDir" -maxdepth 1 -name "$prebuiltsTarballPattern" 2>/dev/null | head -n 1)" ]; then
   echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadPrebuilts=false
 fi
 
+# Check if Private.SourceBuilt.SharedComponents archive exists for the expected version + RID
+if [ "$downloadSharedComponents" == true ] && [[ -n "$expectedSharedComponentsFile" ]] && [ -f "$expectedSharedComponentsFile" ]; then
+  echo "  $(basename "$expectedSharedComponentsFile") exists in $packagesArchiveDir...it will not be downloaded"
+  downloadSharedComponents=false
+fi
+
+# Check if the source-built SDK tarball exists for the expected version + RID. The
+# tarball (rather than the extracted .dotnet/sdk/<version> directory) is used as the
+# cache marker because a same-versioned SDK could otherwise be present in .dotnet from
+# a prior Microsoft SDK install on a 1xx branch, which would not be a source-built SDK
+# even though the version matches.
+downloadSourceBuiltSdkArchive=$downloadSourceBuiltSdk
+if [ "$downloadSourceBuiltSdk" == true ] && [[ -n "$expectedSourceBuiltSdkFile" ]] && [ -f "$expectedSourceBuiltSdkFile" ]; then
+  echo "  $(basename "$expectedSourceBuiltSdkFile") exists in $packagesArchiveDir...it will not be downloaded"
+  downloadSourceBuiltSdkArchive=false
+fi
+
 # Check if dotnet is installed
-expectedSdkVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
 if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
   installedVersions=$("$REPO_ROOT/.dotnet/dotnet" --list-sdks | awk '{print $1}')
   if grep -qx "$expectedSdkVersion" <<< "${installedVersions[*]}"; then
@@ -228,6 +320,27 @@ if [ "$installDotnet" == true ]; then
   (source ./eng/common/tools.sh && InitializeDotNetCli true)
 fi
 
+if [ "$downloadSourceBuiltSdk" == true ]; then
+  echo "  Detected non-1xx feature band branch; using 1xx source-built .NET SDK $expectedSdkVersion."
+  echo "  Pass --no-sdk to skip this (and use --with-sdk to supply your own SDK)."
+
+  if [ "$downloadSourceBuiltSdkArchive" == true ]; then
+    DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" true "$artifactsRid" "$packagesArchiveDir"
+  fi
+
+  if [ ! -f "$expectedSourceBuiltSdkFile" ]; then
+    echo "  ERROR: $(basename "$expectedSourceBuiltSdkFile") not found in $packagesArchiveDir after download"
+    exit 1
+  fi
+
+  # Extract on every prep run to ensure .dotnet reflects the source-built SDK rather
+  # than any prior Microsoft SDK install that may have left same-named files behind.
+  # Tar overwrites existing files, so this is idempotent.
+  mkdir -p "$REPO_ROOT/.dotnet"
+  echo "  Extracting $(basename "$expectedSourceBuiltSdkFile") to $REPO_ROOT/.dotnet"
+  tar -xzf "$expectedSourceBuiltSdkFile" -C "$REPO_ROOT/.dotnet"
+fi
+
 # Read the eng/Versions.props to get the archives to download and download them
 if [ "$downloadPsbArtifacts" == true ]; then
   DownloadArchive "previously source-built artifacts" "PrivateSourceBuiltArtifactsVersion" true "$artifactsRid" "$packagesArchiveDir"
@@ -239,6 +352,14 @@ fi
 
 if [ "$downloadPrebuilts" == true ]; then
   DownloadArchive "prebuilts" "PrivateSourceBuiltPrebuiltsVersion" false "$artifactsRid" "$packagesArchiveDir"
+fi
+
+if [ "$downloadSharedComponents" == true ]; then
+  echo "  Detected non-1xx feature band branch; downloading 1xx shared components."
+  echo "  Pass --no-shared-components to skip this download (e.g. when supplying shared components via build.sh --with-shared-components)."
+
+  mkdir -p "$packagesArchiveDir"
+  DownloadArchive "shared components" "PrivateSourceBuiltArtifactsVersion" true "$artifactsRid" "$packagesArchiveDir" "$sharedComponentsBaseFileName" "MicrosoftNETSdkPackageVersion"
 fi
 
 if [ "$removeBinaries" == true ]; then

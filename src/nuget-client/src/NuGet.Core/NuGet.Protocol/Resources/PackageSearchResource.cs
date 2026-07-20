@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,5 +19,10 @@ namespace NuGet.Protocol.Core.Types
             int take,
             Common.ILogger log,
             CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Indicates whether filtering on <see cref="SearchFilter.PackageType"/> is supported by the current package source.
+        /// </summary>
+        public abstract bool SupportsPackageTypeFiltering { get; }
     }
 }

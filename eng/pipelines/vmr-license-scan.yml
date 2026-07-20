@@ -60,12 +60,11 @@ extends:
       networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     pool:
       name: NetCore1ESPool-Svc-Internal
-      image: 1es-ubuntu-2204
+      image: build.azurelinux.3.amd64
       os: linux
     containers:
       azurelinuxSourceBuildTestContainer:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-source-build-test-amd64
-        options: '--memory=12g'
     sdl:
       sourceAnalysisPool:
           name: NetCore1ESPool-Svc-Internal
@@ -74,8 +73,6 @@ extends:
       binskim:
         enabled: true
       policheck:
-        enabled: true
-      tsa:
         enabled: true
     stages:
     - template: /eng/pipelines/templates/stages/vmr-license-scan.yml@self

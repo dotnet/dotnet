@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Configuration;
 using NuGet.Packaging.Signing;
@@ -21,7 +19,7 @@ namespace NuGet.Protocol.Core.Types
 
         public PackageDownloadContext(
             SourceCacheContext sourceCacheContext,
-            string directDownloadDirectory,
+            string? directDownloadDirectory,
             bool directDownload)
         {
             if (sourceCacheContext == null)
@@ -43,9 +41,9 @@ namespace NuGet.Protocol.Core.Types
 
         public PackageDownloadContext(
             SourceCacheContext sourceCacheContext,
-            string directDownloadDirectory,
+            string? directDownloadDirectory,
             bool directDownload,
-            PackageSourceMapping packageSourceMappingConfiguration) : this(
+            PackageSourceMapping? packageSourceMappingConfiguration) : this(
             sourceCacheContext,
             directDownloadDirectory,
             directDownload)
@@ -55,11 +53,11 @@ namespace NuGet.Protocol.Core.Types
 
         public SourceCacheContext SourceCacheContext { get; }
         public bool DirectDownload { get; }
-        public string DirectDownloadDirectory { get; }
+        public string? DirectDownloadDirectory { get; }
 
         public Guid ParentId { get; set; }
 
-        public ClientPolicyContext ClientPolicyContext { get; set; }
-        public PackageSourceMapping PackageSourceMapping { get; }
+        public ClientPolicyContext? ClientPolicyContext { get; set; }
+        public PackageSourceMapping? PackageSourceMapping { get; }
     }
 }

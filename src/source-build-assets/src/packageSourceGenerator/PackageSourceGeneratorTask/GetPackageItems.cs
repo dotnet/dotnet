@@ -39,12 +39,15 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         /// <summary>
         /// Include only the package compile items and dependencies with a matching target framework.
         /// </summary>
-        public string? IncludeTargetFrameworks { get; set; }
+        public string[]? IncludeTargetFrameworks { get; set; }
 
         /// <summary>
         /// Exclude package compile items and dependencies with a matching target framework.
+        /// An excluded target framework can carry the KeepPlaceholder="true" metadata to indicate that
+        /// placeholder files (_._) for that target framework should be retained even though its other
+        /// assets are filtered out.
         /// </summary>
-        public string? ExcludeTargetFrameworks { get; set; }
+        public ITaskItem[]? ExcludeTargetFrameworks { get; set; }
 
         /// <summary>
         /// The package's compile items, including target framework metadata.
@@ -76,6 +79,23 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         [Output]
         public string? PackageId { get; set; }
 
+        /// <summary>
+        /// The relative path to the package icon file as declared in the nuspec's &lt;icon&gt; element,
+        /// or empty if the nuspec does not declare an icon. Used by the generator pipeline to
+        /// strip the icon file from the on-disk package source (we do not bundle icons in SBRP
+        /// outputs, see <see cref="GenerateProject"/>).
+        /// </summary>
+        [Output]
+        public string? IconPath { get; set; }
+
+        /// <summary>
+        /// The relative path to the package readme file as declared in the nuspec's &lt;readme&gt;
+        /// element, or empty if the nuspec does not declare a readme. Used by the generator
+        /// pipeline to strip the readme file from the on-disk package source.
+        /// </summary>
+        [Output]
+        public string? ReadmePath { get; set; }
+
         public override bool Execute()
         {
             using PackageArchiveReader packageArchiveReader = new(PackagePath!);
@@ -86,6 +106,10 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             SetPackageDependencies(packageArchiveReader, targetFrameworkRegexFilter);
             SetFrameworkReferences(packageArchiveReader, targetFrameworkRegexFilter);
             PackageId = packageArchiveReader.GetIdentity().Id;
+
+            NuspecReader nuspecReader = packageArchiveReader.NuspecReader;
+            IconPath = nuspecReader.GetMetadataValue("icon") ?? string.Empty;
+            ReadmePath = nuspecReader.GetMetadataValue("readme") ?? string.Empty;
 
             if (targetFrameworkRegexFilter.FoundExcludedTargetFrameworks.Count > 0)
             {
@@ -111,7 +135,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 .Concat(contentItemCollection.FindItems(managedCodeConventions.Patterns.CompileLibAssemblies))
                 .Where(t => t.Properties.ContainsKey("tfm"))
                 .Select(t => (NuGetFramework)t.Properties["tfm"])
-                .Where(nugetFramework => targetFrameworkRegexFilter.IsIncludedAndNotExcluded(nugetFramework.GetShortFolderName()))
                 .Distinct()
                 .ToArray();
 
@@ -121,6 +144,16 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             foreach (NuGetFramework packageFramework in packageFrameworks)
             {
                 string targetFramework = packageFramework.GetShortFolderName();
+
+                // Determine whether the target framework is included (and not excluded). Placeholder
+                // files (_._) must be preserved for excluded / out-of-support target frameworks that opt
+                // in via the KeepPlaceholder metadata. A placeholder signals that the package intentionally
+                // provides no asset for that TFM, which prevents a consumer from incorrectly falling back
+                // to another TFM's assembly (e.g. System.Runtime.CompilerServices.Unsafe where the
+                // implementation was moved inbox).
+                bool isIncludedTargetFramework = targetFrameworkRegexFilter.IsIncludedAndNotExcluded(targetFramework);
+                bool keepPlaceholderForExcludedTargetFramework = !isIncludedTargetFramework &&
+                    targetFrameworkRegexFilter.ShouldKeepPlaceholder(targetFramework);
 
                 SelectionCriteria managedCriteria = managedCodeConventions.Criteria.ForFramework(packageFramework);
                 ContentItemGroup compileItems = contentItemCollection.FindBestItemGroup(managedCriteria,
@@ -132,6 +165,13 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
                 foreach (ContentItem compileItem in compileItems.Items)
                 {
+                    bool isPlaceholderFile = Path.GetFileName(compileItem.Path) == PlaceholderFile;
+
+                    // Skip assets for excluded / out-of-support target frameworks. Placeholder files are
+                    // retained only when the excluded target framework opted in via KeepPlaceholder metadata.
+                    if (!isIncludedTargetFramework && !(isPlaceholderFile && keepPlaceholderForExcludedTargetFramework))
+                        continue;
+
                     // Skip duplicate compile items. That can happen when different target frameworks choose
                     // the same asset as best compatible. E.g. System.Runtime.CompilerServices.Unsafe/4.7.0
                     // netcoreapp2.0 and netstandard2.0 TFMs both choose the netstandard2.0 compile asset.
@@ -141,7 +181,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     TaskItem compileTaskItem = new(compileItem.Path);
                     compileTaskItem.SetMetadata(SharedMetadata.TargetFrameworkMetadataName, targetFramework);
 
-                    bool isPlaceholderFile = Path.GetFileName(compileItem.Path) == PlaceholderFile;
                     if (isPlaceholderFile)
                     {
                         placeholderTaskItems.Add(compileTaskItem);

@@ -1,1 +1,6 @@
 #nullable enable
+NuGet.Common.StaticState
+static NuGet.Common.StaticState.EndMSBuildRestoreTasks -> System.Action?
+static NuGet.Common.StaticState.RaiseEndMSBuildRestoreTasks() -> void
+static NuGet.Common.StaticState.RaiseStartMSBuildRestoreTasks() -> void
+static NuGet.Common.StaticState.StartMSBuildRestoreTasks -> System.Action?

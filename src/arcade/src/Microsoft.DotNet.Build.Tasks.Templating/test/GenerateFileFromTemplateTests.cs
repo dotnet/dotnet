@@ -85,6 +85,92 @@ namespace Microsoft.DotNet.Build.Tasks.Templating.Tests
             }
         }
 
+        [Fact]
+        public void GenerateFileFromTemplate_SkipUnchanged_DoesNotRewriteUnchangedFile()
+        {
+            string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            string filePath = Path.Combine(tempDir, "Directory.Build.props");
+
+            try
+            {
+                GenerateFileFromTemplate task = new();
+                task.BuildEngine = new MockBuildEngine();
+                task.TemplateFile = GetFullPath("Directory.Build.props.in");
+                task.OutputPath = filePath;
+                task.Properties = new[] { "DefaultNetCoreTargetFramework=net6.0" };
+                task.SkipUnchanged = true;
+
+                Assert.True(task.Execute());
+
+                // Move the timestamp into the past so a rewrite would be observable.
+                // Capture the on-disk value after setting it, since the filesystem may round it.
+                File.SetLastWriteTimeUtc(filePath, DateTime.UtcNow.AddDays(-1));
+                DateTime originalWriteTime = File.GetLastWriteTimeUtc(filePath);
+                long originalLength = new FileInfo(filePath).Length;
+
+                Assert.True(task.Execute());
+
+                Assert.Equal(originalWriteTime, File.GetLastWriteTimeUtc(filePath));
+                Assert.Equal(originalLength, new FileInfo(filePath).Length);
+            }
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public void GenerateFileFromTemplate_SkipUnchanged_RewritesWhenContentsDiffer()
+        {
+            string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            string filePath = Path.Combine(tempDir, "Directory.Build.props");
+
+            try
+            {
+                Directory.CreateDirectory(tempDir);
+                File.WriteAllText(filePath, "stale contents");
+
+                GenerateFileFromTemplate task = new();
+                task.BuildEngine = new MockBuildEngine();
+                task.TemplateFile = GetFullPath("Directory.Build.props.in");
+                task.OutputPath = filePath;
+                task.Properties = new[] { "DefaultNetCoreTargetFramework=net6.0" };
+                task.SkipUnchanged = true;
+
+                Assert.True(task.Execute());
+                Assert.Equal(ReadAllText("Directory.Build.props.in").Replace("${DefaultNetCoreTargetFramework}", "net6.0"), File.ReadAllText(filePath));
+            }
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+
+        [Fact]
+        public void GenerateFileFromTemplate_SkipUnchanged_WritesWhenFileMissing()
+        {
+            string tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            string filePath = Path.Combine(tempDir, "Directory.Build.props");
+
+            try
+            {
+                GenerateFileFromTemplate task = new();
+                task.BuildEngine = new MockBuildEngine();
+                task.TemplateFile = GetFullPath("Directory.Build.props.in");
+                task.OutputPath = filePath;
+                task.Properties = new[] { "DefaultNetCoreTargetFramework=net6.0" };
+                task.SkipUnchanged = true;
+
+                Assert.True(task.Execute());
+                Assert.True(File.Exists(filePath));
+                Assert.Equal(ReadAllText("Directory.Build.props.in").Replace("${DefaultNetCoreTargetFramework}", "net6.0"), File.ReadAllText(filePath));
+            }
+            finally
+            {
+                Directory.Delete(tempDir, true);
+            }
+        }
+
         public static string GetFullPath(string relativeTestInputPath)
         {
             return Path.Combine(

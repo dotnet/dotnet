@@ -40,7 +40,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void BlameDataCollectorShouldGiveCorrectTestCaseName(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -55,8 +55,8 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource(useCoreRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: NetFx, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void BlameDataCollectorShouldOutputDumpFile(RunnerInfo runnerInfo)
     {
 
@@ -79,7 +79,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void BlameDataCollectorShouldNotOutputDumpFileWhenNoCrashOccurs(RunnerInfo runnerInfo)
     {
 
@@ -103,7 +103,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     // This tests .net runner and .net framework runner, together with .net framework testhost.
-    [NetFullTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
     public void BlameDataCollectorShouldOutputDumpFileWhenNoCrashOccursButCollectAlwaysIsEnabled(RunnerInfo runnerInfo)
     {
 
@@ -125,7 +125,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net481;net11.0")]
+    [TestMatrix(console: Net)]
     public void HangDumpOnTimeout(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -133,7 +133,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, string.Empty, runnerInfo.InIsolationValue);
         arguments = string.Concat(arguments, $" /ResultsDirectory:{TempDirectory.Path}");
         // Don't reduce this, 10s is about the safe minimum to not have flakiness.
-        arguments = string.Concat(arguments, $@" /Blame:""CollectHangDump;HangDumpType=mini;TestTimeout=10s"" /Diag:{TempDirectory.Path}/log.txt");
+        arguments = string.Concat(arguments, $@" /Blame:""CollectHangDump;HangDumpType=mini;TestTimeout=10s""");
 
         var env = new Dictionary<string, string?>
         {
@@ -147,7 +147,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     // .NET testhost does not support dump on exit
-    [NetFullTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
 
     public void CrashDumpWhenThereIsNoTimeout(RunnerInfo runnerInfo)
     {
@@ -169,7 +169,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
 
     [TestMethod]
     // .NET tfms do not support dump on exit, but runner does
-    [NetFullTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
 
     public void CrashDumpOnExit(RunnerInfo runnerInfo)
     {
@@ -190,7 +190,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net481;net11.0")]
+    [TestMatrix(console: Net)]
     public void CrashDumpOnStackOverflow(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -210,7 +210,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner(NET)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CrashDumpChildProcesses(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -224,7 +224,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreRunner("net481;net11.0")]
+    [TestMatrix(console: Net)]
     public void HangDumpChildProcesses(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -239,10 +239,50 @@ public class BlameDataCollectorTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [DoNotParallelize] // Modifies the test asset's runtimeconfig.json on disk.
+    [TestMatrix(testHost: Net)]
+    public void HangDumpShouldNotHangWhenTestHostFailsToStart(RunnerInfo runnerInfo)
+    {
+        // When testhost can't start (e.g. wrong runtime version), the inactivity timer
+        // must not try to dump PID 0. It should exit cleanly because the timer only starts
+        // after TestHostLaunched, which never fires here.
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+        const string testAssetProjectName = "SimpleTestProjectMessedUpTargetFramework";
+        var assemblyPath = GetTestDllForFramework(testAssetProjectName + ".dll", Core11TargetFramework);
+
+        // Make testhost fail immediately by targeting a non-existent runtime.
+        var runtimeConfigJson = Path.Combine(Path.GetDirectoryName(assemblyPath)!, testAssetProjectName + ".runtimeconfig.json");
+        var originalContent = File.ReadAllText(runtimeConfigJson);
+        try
+        {
+            var updatedContent = Regex.Replace(originalContent, @"""version""\s*:\s*""[^""]+""", @"""version"": ""9999.0.0""");
+            File.WriteAllText(runtimeConfigJson, updatedContent);
+
+            var arguments = PrepareArguments(assemblyPath, GetTestAdapterPath(), string.Empty, string.Empty, runnerInfo.InIsolationValue);
+            arguments = string.Concat(arguments, $" /ResultsDirectory:{TempDirectory.Path}");
+            arguments = string.Concat(arguments, $@" /Blame:""CollectHangDump;HangDumpType=mini;TestTimeout=30s""");
+            InvokeVsTest(arguments);
+
+            // vstest should exit with failure (testhost didn't start), but not hang and not crash.
+            ExitCodeEquals(1);
+            // Verify the failure was specifically because the runtime wasn't found, not some other error.
+            // The .NET runtime error can appear in stderr or stdout depending on the platform/host.
+            Assert.IsTrue(
+                Regex.IsMatch(StdErr, "9999\\.0\\.0") || Regex.IsMatch(StdOut, "9999\\.0\\.0"),
+                $"Expected '9999.0.0' in output.\nStdErr: {StdErr}\nStdOut: {StdOut}");
+            Assert.DoesNotContain(".dmp", StdOut, "no dump should be collected when testhost never launched");
+        }
+        finally
+        {
+            File.WriteAllText(runtimeConfigJson, originalContent);
+        }
+    }
+
+    [TestMethod]
     [TestCategory("Windows-Review")]
     [DoNotParallelize] // Installs/uninstalls procdump as machine-wide postmortem debugger via HKLM registry.
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void BlameDataCollectorAeDebuggerShouldCollectDump(RunnerInfo runnerInfo)
     {
         // For convenience skip locally, but never skip in CI. If this cannot pass in CI we are not testing it at all.

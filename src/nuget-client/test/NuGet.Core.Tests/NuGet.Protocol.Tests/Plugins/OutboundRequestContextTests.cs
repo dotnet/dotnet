@@ -16,12 +16,11 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new OutboundRequestContext<HandshakeResponse>(
-                    connection: null,
-                    request: new Message(
+                    connection: null!,
+                    request: MessageUtilities.Create(
                         requestId: "a",
                         type: MessageType.Request,
-                        method: MessageMethod.Handshake,
-                        payload: null),
+                        method: MessageMethod.Handshake),
                     timeout: TimeSpan.FromMinutes(1),
                     isKeepAlive: true,
                     cancellationToken: CancellationToken.None));
@@ -35,7 +34,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new OutboundRequestContext<HandshakeResponse>(
                     Mock.Of<IConnection>(),
-                    request: null,
+                    request: null!,
                     timeout: TimeSpan.FromMinutes(1),
                     isKeepAlive: true,
                     cancellationToken: CancellationToken.None));
@@ -49,15 +48,14 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new OutboundRequestContext<HandshakeResponse>(
                     Mock.Of<IConnection>(),
-                    new Message(
+                    MessageUtilities.Create(
                         requestId: "a",
                         type: MessageType.Request,
-                        method: MessageMethod.Handshake,
-                        payload: null),
+                        method: MessageMethod.Handshake),
                     TimeSpan.FromMinutes(1),
                     isKeepAlive: true,
                     cancellationToken: CancellationToken.None,
-                    logger: null));
+                    logger: null!));
 
             Assert.Equal("logger", exception.ParamName);
         }
@@ -178,7 +176,7 @@ namespace NuGet.Protocol.Plugins.Tests
             using (var test = new OutboundRequestContextTest())
             {
                 var exception = Assert.Throws<ArgumentNullException>(
-                    () => test.Context.HandleProgress(progress: null));
+                    () => test.Context.HandleProgress(progress: null!));
 
                 Assert.Equal("progress", exception.ParamName);
             }
@@ -190,7 +188,7 @@ namespace NuGet.Protocol.Plugins.Tests
             using (var test = new OutboundRequestContextTest())
             {
                 var exception = Assert.Throws<ArgumentNullException>(
-                    () => test.Context.HandleResponse(response: null));
+                    () => test.Context.HandleResponse(response: null!));
 
                 Assert.Equal("response", exception.ParamName);
             }
@@ -212,8 +210,8 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 Assert.Equal(TaskStatus.RanToCompletion, test.Context.CompletionTask.Status);
 #pragma warning disable xUnit1031 // Do not use blocking task operations in test method
-                Assert.Equal(MessageResponseCode.Error, test.Context.CompletionTask.Result.ResponseCode);
-                Assert.Null(test.Context.CompletionTask.Result.ProtocolVersion);
+                Assert.Equal(MessageResponseCode.Error, test.Context.CompletionTask.Result!.ResponseCode);
+                Assert.Null(test.Context.CompletionTask.Result!.ProtocolVersion);
 #pragma warning restore xUnit1031 // Do not use blocking task operations in test method
             }
         }
@@ -257,7 +255,7 @@ namespace NuGet.Protocol.Plugins.Tests
             using (var test = new OutboundRequestContextTest())
             {
                 var exception = Assert.Throws<ArgumentNullException>(
-                    () => test.Context.HandleFault(fault: null));
+                    () => test.Context.HandleFault(fault: null!));
 
                 Assert.Equal("fault", exception.ParamName);
             }
@@ -295,11 +293,10 @@ namespace NuGet.Protocol.Plugins.Tests
                 CancellationTokenSource = new CancellationTokenSource();
                 Connection = new Mock<IConnection>(MockBehavior.Strict);
                 Logger = new Mock<IPluginLogger>(MockBehavior.Strict);
-                Request = new Message(
+                Request = MessageUtilities.Create(
                     requestId: "a",
                     type: MessageType.Request,
-                    method: MessageMethod.Handshake,
-                    payload: null);
+                    method: MessageMethod.Handshake);
                 Context = new OutboundRequestContext<HandshakeResponse>(
                     Connection.Object,
                     Request,

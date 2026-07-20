@@ -35,8 +35,9 @@ public class CustomTestHostLauncherTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // WrapperCompatibilityDataSource includes the .NET Framework runner, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
-    [WrapperCompatibilityDataSource()]
+    [CompatibilityMatrix(CompatScenario.Wrapper)]
     public void RunTestsWithCustomTestHostLauncherAttachesToDebuggerUsingTheProvidedLauncher(RunnerInfo runnerInfo)
     {
         // Arrange
@@ -57,9 +58,10 @@ public class CustomTestHostLauncherTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // WrapperCompatibilityDataSource includes the .NET Framework runner, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
     [TestCategory("Feature")]
-    [WrapperCompatibilityDataSource]
+    [CompatibilityMatrix(CompatScenario.Wrapper)]
     public void RunAllTestsWithMixedTFMsWillProvideAdditionalInformationToTheDebugger(RunnerInfo runnerInfo)
     {
         // Arrange

@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageId>System.Threading.Tasks.Extensions</PackageId>
+    <TargetFrameworks>netcoreapp2.1;netstandard2.0;netstandard2.1</TargetFrameworks>
     <PackageVersion>4.6.3</PackageVersion>
     <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
+    <Description>System.Threading.Tasks.Extensions</Description>
+    <PackageProjectUrl>https://github.com/dotnet/maintenance-packages</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PlaceholderTargetFrameworks>netcoreapp2.1;netstandard2.1</PlaceholderTargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

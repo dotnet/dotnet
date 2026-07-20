@@ -47,6 +47,12 @@
         <target state="translated">Erreur durant l'analyse du fichier packages.config sur {0} : {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">Impossible de lire les informations relatives au projet pour '{0}' : {1}</target>
+        <note>0 - The project name
+1 - The error message</note>
+      </trans-unit>
       <trans-unit id="Error_StaticGraphNonZeroExitCode">
         <source>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</source>
         <target state="translated">La restauration statique basée sur un graphique a échoué avec le code de sortie '{0}' mais n’a pas journalisée d’erreur. Entrez un problème sur https://github.com/NuGet/Home.</target>
@@ -111,7 +117,7 @@
 1 - list of projects</note>
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
-        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</source>
+        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</source>
         <target state="translated">RestoreNoCache est déconseillé et a été renommé RestoreNoHttpCache. Utilisez RestoreNoHttpCache à la place.</target>
         <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
       </trans-unit>

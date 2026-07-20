@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageId>System.Memory</PackageId>
+    <TargetFrameworks>netcoreapp2.1;netstandard2.0;netstandard2.1</TargetFrameworks>
     <PackageVersion>4.6.3</PackageVersion>
     <AssemblyName>System.Memory</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
+    <Description>System.Memory</Description>
+    <PackageProjectUrl>https://github.com/dotnet/maintenance-packages</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PlaceholderTargetFrameworks>netcoreapp2.1;netstandard2.1</PlaceholderTargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

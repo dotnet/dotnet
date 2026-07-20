@@ -183,8 +183,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Delete_MissingArguments">
-        <source>Please provide arguments for package id and package version.</source>
-        <target state="translated">패키지 ID 및 패키지 버전에 대한 인수를 입력하세요.</target>
+        <source>Provide arguments for package id and package version.</source>
+        <target state="translated">패키지 ID 및 패키지 버전에 대한 인수를 제공하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="Delete_PackageIdAndVersion_Description">
@@ -270,7 +270,7 @@
         <note>0 - package id</note>
       </trans-unit>
       <trans-unit id="Error_AssetsFileNotFound">
-        <source>No assets file was found for `{0}`. Please run restore before running this command.</source>
+        <source>No assets file was found for `{0}`. Run restore before running this command.</source>
         <target state="translated">`{0}`에 대한 자산 파일을 찾을 수 없습니다. 이 명령을 실행하기 전에 복원을 실행하세요.</target>
         <note />
       </trans-unit>
@@ -369,8 +369,8 @@ NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGe
         <note>{0} - Project/csproj path</note>
       </trans-unit>
       <trans-unit id="Error_MultipleProjectOrSolutionFilesInDirectory">
-        <source>The directory '{0}' contains multiple project or solution files. Please specify which project or solution file to use.</source>
-        <target state="translated">디렉터리 '{0}'에 여러 프로젝트 또는 솔루션 파일이 포함되어 있습니다. 사용할 프로젝트 또는 솔루션 파일을 지정하십시오.</target>
+        <source>The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</source>
+        <target state="translated">디렉터리 '{0}'에 여러 프로젝트 또는 솔루션 파일이 포함되어 있습니다. 사용할 프로젝트 또는 솔루션 파일을 지정하세요.</target>
         <note>{0} - Directory</note>
       </trans-unit>
       <trans-unit id="Error_NoDgSpec">
@@ -409,7 +409,7 @@ NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGe
         <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
-        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, file-based app, or project directory.</source>
+        <source>Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</source>
         <target state="translated">'{0}' 경로가 없거나 잘못되었습니다. 프로젝트, 솔루션 파일, 파일 기반 앱 또는 프로젝트 디렉터리의 경로를 제공하세요.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
@@ -557,13 +557,13 @@ NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGe
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingAssetsFile">
-        <source>Unable to read the assets file `{0}`. Please make sure the file has the write format.</source>
-        <target state="translated">자산 파일 `{0}`을(를) 읽을 수 없습니다. 파일에 쓰기 형식이 있는지 확인하세요.</target>
+        <source>Unable to read the assets file `{0}`. Make sure the file has the correct format.</source>
+        <target state="translated">자산 파일 `{0}`을(를) 읽을 수 없습니다. 파일 형식이 올바른지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingReferenceFromProject">
-        <source>Unable to read a package reference from the project `{0}`. Please make sure that your project file and project.assets.json file are in sync by running restore.</source>
-        <target state="translated">'{0}' 프로젝트에서 패키지 참조를 읽을 수 없습니다. 복원을 실행하여 프로젝트 파일과 project.assets.json 파일이 동기화되었는지 확인하세요.</target>
+        <source>Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore.</source>
+        <target state="translated">`{0}` 프로젝트에서 패키지 참조를 읽을 수 없습니다. 복원을 실행하여 프로젝트 파일과 project.assets.json 파일이 동기화되었는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_FrameworkDescription">
@@ -789,10 +789,10 @@ NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGe
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_MultipleOperations">
-        <source>Both operations, --list and --clear, are not supported in the same command. Please specify only one operation.
+        <source>Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="translated">--list와 --clear 작업을 모두 동일한 명령에서 사용할 수 없습니다. 하나의 명령만 지정하세요.
+        <target state="translated">--list와 --clear 작업을 모두 동일한 명령에서 사용할 수 없습니다. 하나의 작업만 지정하세요.
 사용법: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 자세한 내용은 https://docs.nuget.org/docs/reference/command-line-reference를 참조하세요.</target>
         <note />
@@ -807,7 +807,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_NoOperation">
-        <source>Please specify an operation i.e. --list or --clear.
+        <source>Specify an operation i.e. --list or --clear.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">작업을 지정하세요(예: --list 또는 --clear).
@@ -1085,8 +1085,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <note />
       </trans-unit>
       <trans-unit id="Push_MissingArguments">
-        <source>Please specify the path to the package.</source>
-        <target state="translated">패키지의 경로를 지정하세요.</target>
+        <source>Specify the path to the package.</source>
+        <target state="translated">패키지 경로를 지정하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="Push_Package_ApiKey_Description">
@@ -1204,7 +1204,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoTimestamperWarning">
-        <source>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.microsoft.com/dotnet/core/tools</source>
+        <source>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools</source>
         <target state="translated">'--timestamper' 옵션이 제공되지 않았습니다. 서명된 패키지에는 타임스탬프가 표시되지 않습니다. 이 옵션에 대한 자세한 내용은 https://docs.microsoft.com/dotnet/core/tools를 참조하세요.</target>
         <note>Please don't localize '--timestamper'</note>
       </trans-unit>
@@ -1394,7 +1394,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">
-        <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Please edit the project file directly. ({1})</source>
+        <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1})</source>
         <target state="translated">패키지 {0}은(는) 서로 다른 대상 프레임워크에 대한 패키지의 다른 버전을 참조합니다. 이는 이 명령에서 지원되지 않습니다. 프로젝트 파일을 직접 편집하세요. ({1})</target>
         <note>0 - The package id
 1 - The project path</note>
@@ -1487,8 +1487,13 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <target state="translated">'dotnet nuget why'를 실행할 수 없습니다. {0}</target>
         <note>{0} - Exception mssage</note>
       </trans-unit>
+      <trans-unit id="WhyCommand_Error_InconsistentAssetsFile">
+        <source>Internal error: Assets file is inconsistent</source>
+        <target state="translated">내부 오류: 자산 파일이 일치하지 않습니다.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
-        <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
+        <source>The file '{0}' does not appear to be a NuGet assets file. Run restore for project '{1}' before running this command.</source>
         <target state="translated">'{0}' 파일이 NuGet 자산 파일이 아닙니다. 이 명령을 실행하기 전에 '{1}' 프로젝트에 대해 복원을 실행하세요.</target>
         <note>{0} - Assets file path, {1} - Project name</note>
       </trans-unit>

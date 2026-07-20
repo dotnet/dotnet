@@ -34,6 +34,48 @@ module CustomAttributes_Basic =
         |> verifyCompileAndRun
         |> shouldSucceed
 
+    // Regression for https://github.com/dotnet/fsharp/issues/995
+    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"EnumValueAsObjectArg01.fs"|])>]
+    let ``EnumValueAsObjectArg01_fs`` compilation =
+        compilation
+        |> verifyCompileAndRun
+        |> shouldSucceed
+
+    // Cross-language: the same scenario as EnumValueAsObjectArg01.fs, but with the enum and the
+    // attribute defined in C#. See https://github.com/dotnet/fsharp/issues/995.
+    [<Fact>]
+    let ``Enum defined in C# used in an F# attribute arg of type obj keeps its type`` () =
+        let csLib =
+            CSharp """
+namespace CSharpLib
+{
+    public enum MyEnum { A = 1, B = 2 }
+
+    [System.AttributeUsage(System.AttributeTargets.All)]
+    public class MyAttribute : System.Attribute
+    {
+        public object Prop { get; set; }
+    }
+}
+"""
+            |> withName "CSharpLib"
+
+        FSharp """
+module Test
+open System
+open CSharpLib
+
+[<My(Prop = MyEnum.B)>]
+type MyClass = class end
+
+let prop = (typeof<MyClass>.GetCustomAttributes(false)[0] :?> MyAttribute).Prop
+if prop.GetType() <> typeof<MyEnum> then failwith "enum type was lost"
+if Convert.ToString(prop, Globalization.CultureInfo.InvariantCulture) <> "B" then failwith "expected \"B\""
+"""
+        |> withReferences [csLib]
+        |> compileExeAndRun
+        |> shouldSucceed
+
     // SOURCE=E_AttributeApplication01.fs					# E_AttributeApplication01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"E_AttributeApplication01.fs"|])>]
     let ``E_AttributeApplication01_fs`` compilation =
@@ -263,6 +305,14 @@ module CustomAttributes_Basic =
         |> verifyCompileAndRun
         |> shouldSucceed
 
+    // SOURCE=ReturnType04.fs							# ReturnType04.fs
+    // Regression test for https://github.com/dotnet/fsharp/issues/462
+    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"ReturnType04.fs"|])>]
+    let ``ReturnType04_fs`` compilation =
+        compilation
+        |> verifyCompileAndRun
+        |> shouldSucceed
+
     // SOURCE=SanityCheck01.fs							# SanityCheck01.fs
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"SanityCheck01.fs"|])>]
     let ``SanityCheck01_fs`` compilation =
@@ -299,6 +349,14 @@ module CustomAttributes_Basic =
     // SOURCE=TypesAsAttrArgs01.fs						# TypesAsAttrArgs01
     [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"TypesAsAttrArgs01.fs"|])>]
     let ``TypesAsAttrArgs01_fs`` compilation =
+        compilation
+        |> verifyCompileAndRun
+        |> shouldSucceed
+
+    // SOURCE=OptionalAttributeArgs.fs						# OptionalAttributeArgs.fs
+    // Regression test for https://github.com/dotnet/fsharp/issues/8353
+    [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"OptionalAttributeArgs.fs"|])>]
+    let ``OptionalAttributeArgs_fs`` compilation =
         compilation
         |> verifyCompileAndRun
         |> shouldSucceed

@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.Build.BackEnd.Logging;
@@ -460,6 +461,64 @@ namespace Microsoft.Build.UnitTests
             // thus producing garbled fully qualified paths in the actual .ProjectImports.zip entries
             zipArchive.Entries.ShouldContain(zE => zE.Name.EndsWith("testtaskoutputfile.txt"),
                 $"Embedded files: {string.Join(",", zipArchive.Entries)}");
+        }
+
+        [Fact]
+        public void BinaryLoggerShouldEmbedFilesWithRelativePathFromChildProjects()
+        {
+            // Repro for https://github.com/dotnet/msbuild/issues/13789: EmbedInBinlog items with a
+            // relative Include path emitted by child projects must still be embedded. The binary
+            // logger runs on the entrypoint node, so a relative path coming from a child project
+            // (built on another node) has to be resolved against that child's directory, otherwise
+            // it is silently dropped.
+            //
+            // The generated file is written via an absolute path so its creation is deterministic;
+            // only the EmbedInBinlog Include uses a relative path, which is the behavior under test.
+            // MSBUILDNOINPROCNODE forces every project onto an out-of-proc worker node so the
+            // forwarded-event path (where ProjectFile is not serialized) is always exercised.
+            _env.SetEnvironmentVariable("MSBUILDNOINPROCNODE", "1");
+            TransientTestFolder rootFolder = _env.CreateFolder();
+
+            const string childProjectContents = @"
+<Project>
+    <Target Name=""Build"">
+        <WriteLinesToFile File=""$(MSBuildProjectDirectory)/generated.txt"" Lines=""generated"" Overwrite=""true"" />
+        <CreateItem Include=""generated.txt"">
+            <Output TaskParameter=""Include"" ItemName=""EmbedInBinlog"" />
+        </CreateItem>
+    </Target>
+</Project>";
+
+            string childADir = Directory.CreateDirectory(Path.Combine(rootFolder.Path, "ChildA")).FullName;
+            string childBDir = Directory.CreateDirectory(Path.Combine(rootFolder.Path, "ChildB")).FullName;
+            File.WriteAllText(Path.Combine(childADir, "ChildA.proj"), childProjectContents);
+            File.WriteAllText(Path.Combine(childBDir, "ChildB.proj"), childProjectContents);
+
+            const string parentProjectContents = @"
+<Project>
+    <ItemGroup>
+        <ChildProject Include=""ChildA\ChildA.proj"" />
+        <ChildProject Include=""ChildB\ChildB.proj"" />
+    </ItemGroup>
+    <Target Name=""Build"">
+        <MSBuild Projects=""@(ChildProject)"" Targets=""Build"" BuildInParallel=""true"" />
+    </Target>
+</Project>";
+            string parentProjectPath = Path.Combine(rootFolder.Path, "build.proj");
+            File.WriteAllText(parentProjectPath, parentProjectContents);
+
+            RunnerUtilities.ExecMSBuild(
+                $"\"{parentProjectPath}\" -m:2 -bl:\"{_logFile};ProjectImports=ZipFile\"",
+                out bool success);
+            success.ShouldBeTrue();
+
+            var projectImportsZipPath = Path.ChangeExtension(_logFile, ".ProjectImports.zip");
+            using var fileStream = new FileStream(projectImportsZipPath, FileMode.Open);
+            using var zipArchive = new ZipArchive(fileStream, ZipArchiveMode.Read);
+
+            // Both child projects' generated files must be embedded, not just the entrypoint's.
+            int generatedFileCount = zipArchive.Entries.Count(zE => zE.Name.EndsWith("generated.txt", StringComparison.Ordinal));
+            generatedFileCount.ShouldBe(2, $"Embedded files: {string.Join(",", zipArchive.Entries)}");
         }
 
         [RequiresSymbolicLinksFact]
@@ -966,6 +1025,171 @@ namespace Microsoft.Build.UnitTests
         }
 
         #endregion
+
+        #region Forward Compatibility Replay Tests
+        // These tests exercise in-memory streams rather than .binlog files,
+        // but the fixture's _logFile must exist at Dispose time.
+
+        [Fact]
+        public void OpenBuildEventsReader_ThrowsForIncompatibleVersion()
+        {
+            // fileFormatVersion > current AND minimumReaderVersion > current => fatal
+            var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            writer.Write(BinaryLogger.FileFormatVersion + 10); // fileFormatVersion
+            writer.Write(BinaryLogger.FileFormatVersion + 5);  // minimumReaderVersion (too high)
+            writer.Flush();
+            stream.Position = 0;
+
+            using var reader = new BinaryReader(stream);
+            Should.Throw<NotSupportedException>(() =>
+                BinaryLogReplayEventSource.OpenBuildEventsReader(reader, closeInput: false, allowForwardCompatibility: true));
+
+            CreateExpectedLogFile();
+        }
+
+        [Fact]
+        public void OpenBuildEventsReader_SucceedsForForwardCompatibleVersion()
+        {
+            // fileFormatVersion > current but minimumReaderVersion <= current => should succeed
+            var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            writer.Write(BinaryLogger.FileFormatVersion + 5);         // fileFormatVersion (newer)
+            writer.Write(BinaryLogger.ForwardCompatibilityMinimalVersion); // minimumReaderVersion (compatible)
+            writer.Flush();
+            stream.Position = 0;
+
+            using var reader = new BinaryReader(stream);
+            using var eventsReader = BinaryLogReplayEventSource.OpenBuildEventsReader(reader, closeInput: false, allowForwardCompatibility: true);
+            eventsReader.ShouldNotBeNull();
+            eventsReader.FileFormatVersion.ShouldBe(BinaryLogger.FileFormatVersion + 5);
+
+            CreateExpectedLogFile();
+        }
+
+        [Fact]
+        public void OpenBuildEventsReader_ThrowsWithoutForwardCompatibility()
+        {
+            // fileFormatVersion > current, allowForwardCompatibility = false => fatal even if minimumReaderVersion is ok
+            var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            writer.Write(BinaryLogger.FileFormatVersion + 5);         // fileFormatVersion (newer)
+            writer.Write(BinaryLogger.ForwardCompatibilityMinimalVersion); // minimumReaderVersion (compatible)
+            writer.Flush();
+            stream.Position = 0;
+
+            using var reader = new BinaryReader(stream);
+            Should.Throw<NotSupportedException>(() =>
+                BinaryLogReplayEventSource.OpenBuildEventsReader(reader, closeInput: false, allowForwardCompatibility: false));
+
+            CreateExpectedLogFile();
+        }
+
+        /// <summary>
+        /// Creates an empty placeholder so the fixture's Dispose doesn't fail
+        /// when the test didn't produce a real .binlog file.
+        /// </summary>
+        private void CreateExpectedLogFile() => File.Create(_logFile).Dispose();
+
+        [Fact]
+        public void FormatVersionMismatchWarning_NullForCurrentVersion()
+        {
+            _env.SetEnvironmentVariable("MSBUILDTARGETOUTPUTLOGGING", "1");
+
+            var binaryLogger = new BinaryLogger { Parameters = _logFile };
+
+            using (ProjectCollection collection = new())
+            {
+                Project project = ObjectModelHelpers.CreateInMemoryProject(collection, s_testProject);
+                project.Build(new ILogger[] { binaryLogger }).ShouldBeTrue();
+            }
+
+            var replayEventSource = new BinaryLogReplayEventSource();
+            replayEventSource.RecoverableReadError += _ => { };
+            replayEventSource.BuildFinished += (_, _) => { };
+            replayEventSource.Replay(_logFile);
+
+            replayEventSource.FormatVersionMismatchWarning.ShouldBeNull();
+        }
+
+        [Fact]
+        public void FormatVersionMismatchWarning_NonNullForNewerVersion()
+        {
+            int newerVersion = BinaryLogger.FileFormatVersion + 5;
+
+            var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true);
+            writer.Write(newerVersion);                                     // fileFormatVersion
+            writer.Write(BinaryLogger.ForwardCompatibilityMinimalVersion);  // minimumReaderVersion
+            stream.WriteByte(0);                                            // EndOfFile record
+            writer.Flush();
+            stream.Position = 0;
+
+            using var binaryReader = new BinaryReader(stream);
+            using var eventsReader = BinaryLogReplayEventSource.OpenBuildEventsReader(binaryReader, closeInput: false, allowForwardCompatibility: true);
+
+            var replayEventSource = new BinaryLogReplayEventSource();
+            replayEventSource.RecoverableReadError += _ => { };
+            replayEventSource.BuildFinished += (_, _) => { };
+            replayEventSource.Replay(eventsReader, CancellationToken.None);
+
+            replayEventSource.FormatVersionMismatchWarning.ShouldNotBeNull();
+            replayEventSource.FormatVersionMismatchWarning.ShouldContain(newerVersion.ToString());
+            replayEventSource.FormatVersionMismatchWarning.ShouldContain(BinaryLogger.FileFormatVersion.ToString());
+
+            CreateExpectedLogFile();
+        }
+
+        #endregion
+
+        [Fact]
+        public void DeferredMSBuildServerLifecycleEventIsWrittenToBinlog()
+        {
+            // Regression coverage for the LogDeferredMessages "glue": a DeferredBuildMessage backed by a
+            // pre-built BuildEventArgs must be raised as-is and land in the binary log as that exact typed event
+            // (mirrors how XMake records the MSBuild Server lifecycle under its own record kind).
+            var binaryLogger = new BinaryLogger { Parameters = _logFile };
+
+            var lifecycleEvent = new MSBuildServerLifecycleEventArgs(
+                MSBuildServerLifecycleKind.Spawned,
+                1234,
+                reason: null,
+                reasonCode: null,
+                "MSBuild Server node started for this build (process ID 1234).",
+                MessageImportance.Low);
+            var deferredMessages = new[]
+            {
+                new BuildManager.DeferredBuildMessage(lifecycleEvent),
+            };
+
+            var parameters = new BuildParameters
+            {
+                Loggers = new ILogger[] { binaryLogger },
+            };
+
+            using (var buildManager = new BuildManager())
+            {
+                buildManager.BeginBuild(parameters, deferredMessages);
+                buildManager.EndBuild();
+            }
+
+            MSBuildServerLifecycleEventArgs replayed = null;
+            var replay = new BinaryLogReplayEventSource();
+            replay.AnyEventRaised += (_, e) =>
+            {
+                if (e is MSBuildServerLifecycleEventArgs serverEvent)
+                {
+                    replayed = serverEvent;
+                }
+            };
+            replay.Replay(_logFile);
+
+            replayed.ShouldNotBeNull();
+            replayed.Kind.ShouldBe(MSBuildServerLifecycleKind.Spawned);
+            replayed.ProcessId.ShouldBe(1234);
+            replayed.Importance.ShouldBe(MessageImportance.Low);
+            replayed.Message.ShouldBe("MSBuild Server node started for this build (process ID 1234).");
+        }
 
         public void Dispose()
         {

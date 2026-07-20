@@ -864,18 +864,20 @@ Günlükler için izleme düzeyini aşağıda gösterildiği gibi değiştirin
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
         <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
       Testi blame modunda çalıştırır. Bu seçenek, test ana bilgisayarının kilitlenmesine neden olan sorunlu testin ayrı tutulmasını sağlar.
-      Geçerli dizinde, kilitlenmeden önce testin yürütülme düzenini yakalayan,
-      “Sequence.xml” adlı bir çıkış dosyası oluşturur. 
+      Geçerli dizinde “Sequence.xml” adlı bir çıktı dosyası oluşturur,
+      kilitlenmeden önce testin yürütülme düzenini yakalayan.
       İsteğe bağlı olarak test ana bilgisayarının işlem dökümünü çıkarmayı seçebilirsiniz.
       Dökümü çıkarmayı seçtiğinizde, kilitlenme durumunda varsayılan olarak bir mini döküm çıkarılır.
       Dilerseniz bazı isteğe bağlı parametrelerle bu varsayılan davranışı geçersiz kılabilirsiniz:
       CollectAlways - Kilitlenme olmasa da her çıkışta döküm çıkarma (true/false) 
       DumpType - Döküm türünü belirtme (mini/full).
+      Windows'da kilitlenme bilgi dökümü toplamak için procdump.exe ve procdump64.exe dosyalarının PATH içinde ya da PROCDUMP_PATH ortam değişkeninin işaret ettiği bir dizinde bulunması gerekir. Araçlar https://docs.microsoft.com/sysinternals/downloads/procdump adresinden indirilebilir.
       Örnek: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1167,16 +1169,6 @@ Günlükler için izleme düzeyini aşağıda gösterildiği gibi değiştirin
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">İstek işleyicisi bağlantısını bekleme süresi {0} saniye sonra zaman aşımına uğradı.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Test oturumunun başlamasını bekleme süresi {0} saniye sonra zaman aşımına uğradı.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Test oturumunun durdurulmasını bekleme süresi {0} saniye sonra zaman aşımına uğradı.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

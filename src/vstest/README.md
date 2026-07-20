@@ -55,12 +55,13 @@ NOTE: When adding a new public API, always add it directly to the `PublicAPI.Shi
 - [Environment Variables](./docs/environment-variables.md)
 - [Roadmap](./docs/releases.md)
 - [Troubleshooting guide](./docs/troubleshooting.md)
+- Command-line options reference: [vstest.console.exe options](https://learn.microsoft.com/visualstudio/test/vstest-console-options) and [dotnet test options](https://learn.microsoft.com/dotnet/core/tools/dotnet-test)
 
 ## Building
 
 VSTest can be built from within Visual Studio or from the CLI.
 
-- [Building with Visual Studio](./docs/contribute.md#building-with-visual-studio)
+- [Building with Visual Studio](./CONTRIBUTING.md#building-with-visual-studio)
 
 ## Microsoft Open Source Code of Conduct
 
@@ -72,7 +73,7 @@ VSTest platform is licensed under the [MIT license](./LICENSE)
 
 ## Issue Tracking
 
-Please see [issue tracking](./issuetracking.md) for a description of the workflow we use to process issues.
+Please see [issue tracking](./docs/issuetracking.md) for a description of the workflow we use to process issues.
 
 ## Roadmap
 

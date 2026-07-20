@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
@@ -17,6 +17,10 @@
 
   <ItemGroup>
     <None Include="Scaffolding\Baselines\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\ModuleInitializer.cs" Link="ModuleInitializer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,7 +48,6 @@
     <Using Include="Microsoft.Extensions.Logging" />
     <Using Include="Microsoft.Extensions.DependencyInjection" />
     <Using Include="Xunit" />
-    <Using Include="Xunit.Abstractions" />
   </ItemGroup>
 
   <ItemGroup>

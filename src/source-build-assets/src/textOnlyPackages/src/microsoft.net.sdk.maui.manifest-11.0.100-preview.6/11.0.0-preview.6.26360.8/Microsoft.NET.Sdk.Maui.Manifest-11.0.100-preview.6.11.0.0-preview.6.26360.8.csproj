@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.NET.Sdk.Maui.Manifest-11.0.100-preview.6</PackageId>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>11.0.0-preview.6.26360.8</PackageVersion>
+    <AssemblyName>Microsoft.NET.Sdk.Maui.Manifest-11.0.100-preview.6</AssemblyName>
+    <Serviceable>true</Serviceable>
+    <Description>.NET Multi-platform App UI (.NET MAUI) workload manifest. Please do not reference this package directly.</Description>
+    <PackageProjectUrl>https://github.com/dotnet/maui</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>dotnet-maui dotnet maui cross-platform ios android macos maccatalyst windows winui</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageType>DotnetPlatform</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="data/WorkloadDependencies.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.json" Pack="true" PackagePath="data" />
+    <None Include="data/WorkloadManifest.targets" Pack="true" PackagePath="data" />
+    <None Include="LICENSE.TXT" Pack="true" PackagePath="" />
+    <None Include="THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

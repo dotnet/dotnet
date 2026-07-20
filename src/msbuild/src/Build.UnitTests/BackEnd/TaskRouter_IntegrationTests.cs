@@ -381,8 +381,6 @@ namespace Microsoft.Build.Engine.UnitTests.BackEnd
             logger.FullLog.ShouldContain("TaskWithAttribute executed");
         }
 
-
-
         private string CreateTestProject(string taskName, string taskClass)
         {
             return $@"

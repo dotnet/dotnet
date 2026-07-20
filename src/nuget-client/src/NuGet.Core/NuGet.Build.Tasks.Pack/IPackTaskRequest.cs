@@ -76,6 +76,9 @@ namespace NuGet.Build.Tasks.Pack
         string PackageLicenseFile { get; }
         string Readme { get; }
         bool Deterministic { get; }
+        string DeterministicTimestamp { get; }
         string PackageIcon { get; }
+        string SdkAnalysisLevel { get; }
+        string UsingMicrosoftNETSdk { get; }
     }
 }

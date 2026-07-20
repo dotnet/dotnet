@@ -864,18 +864,20 @@ Alterar o nível de rastreamento dos logs, como mostrado abaixo
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
         <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
-      Executa o teste em modo blame. Essa opção é útil para isolar o teste com problema causando falha no host de teste .
-     Ele cria um arquivo de saída no diretório atual como "Sequence.xml",
+      Executa o teste em modo blame. Essa opção é útil para isolar o teste com problema causando falha no host de teste.
+      Ele cria um arquivo de saída no diretório atual como "Sequence.xml",
       que captura a ordem de execução do teste antes da falha.
       Você pode optar por coletar o processo de despejo para o host de teste.
       Ao optar por coletar despejo, por padrão, um mini despejo será coletado em uma falha.
-     Você também pode optar por sobrescrever este comportamento padrão por alguns parâmetros opcionais:
-      CollectAlways - Para coletar despejo na saída mesmo que não haja falha (true/false) 
+      Você também pode optar por sobrescrever este comportamento padrão por alguns parâmetros opcionais:
+      CollectAlways — Para coletar despejo na saída mesmo se não houver nenhuma falha (true/false) 
       DumpType - Para especificar o tipo de despejo (mini/full).
+      Coletar um despejo de memória no Windows requer que procdump.exe e procdump64.exe estejam disponíveis no PATH ou em um diretório apontado pela variável de ambiente PROCDUMP_PATH. As ferramentas podem ser baixadas em https://docs.microsoft.com/sysinternals/downloads/procdump.
       Exemplo: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1167,16 +1169,6 @@ Altere o prefixo de nível de diagnóstico do agente de console, como mostrado a
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">A espera pela conexão do manipulador de solicitação expirou após {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Aguardando o início da sessão de teste expirou após {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">A espera da sessão de teste de parada expirou após {0} segundos.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

@@ -6,10 +6,11 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26202.1</MicrosoftDotNetDarcLibPackageVersion>
+    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26309.4</MicrosoftDotNetDarcLibPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26210.111</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildManifestPackageVersion>11.0.0-beta.26210.111</MicrosoftDotNetBuildManifestPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26359.118</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildManifestPackageVersion>11.0.0-beta.26359.118</MicrosoftDotNetBuildManifestPackageVersion>
+    <MicrosoftDotNetSignCheckTaskPackageVersion>11.0.0-beta.26359.118</MicrosoftDotNetSignCheckTaskPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
@@ -18,5 +19,6 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
+    <MicrosoftDotNetSignCheckTaskVersion>$(MicrosoftDotNetSignCheckTaskPackageVersion)</MicrosoftDotNetSignCheckTaskVersion>
   </PropertyGroup>
 </Project>

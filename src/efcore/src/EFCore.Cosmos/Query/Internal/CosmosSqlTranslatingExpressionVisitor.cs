@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Cosmos.Internal;
+using Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Internal;
 using static Microsoft.EntityFrameworkCore.Infrastructure.ExpressionExtensions;
 
@@ -21,11 +22,10 @@ public partial class CosmosSqlTranslatingExpressionVisitor(
     ITypeMappingSource typeMappingSource,
     IMemberTranslatorProvider memberTranslatorProvider,
     IMethodCallTranslatorProvider methodCallTranslatorProvider,
+    ICosmosStructuralTypeSerializerProvider structuralTypeSerializerProvider,
     QueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor)
     : ExpressionVisitor
 {
-    private static readonly MethodInfo ConcatMethodInfo
-        = typeof(string).GetRuntimeMethod(nameof(string.Concat), [typeof(object), typeof(object)])!;
 
     private static readonly MethodInfo StringEqualsWithStringComparison
         = typeof(string).GetRuntimeMethod(nameof(string.Equals), [typeof(string), typeof(StringComparison)])!;
@@ -74,15 +74,48 @@ public partial class CosmosSqlTranslatingExpressionVisitor(
     {
         TranslationErrorDetails = null;
 
-        return TranslateInternal(expression, applyDefaultTypeMapping);
+        return TranslateInternal(expression, applyDefaultTypeMapping) as SqlExpression;
     }
 
-    private SqlExpression? TranslateInternal(Expression expression, bool applyDefaultTypeMapping = true)
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    [EntityFrameworkInternal]
+    public virtual Expression? TranslateProjection(Expression expression, bool applyDefaultTypeMapping = true)
+    {
+        TranslationErrorDetails = null;
+
+        return TranslateInternal(expression, applyDefaultTypeMapping, isProjection: true) switch
+        {
+            // This is the case of a structural type getting projected out via Select (possibly also an owned entity one day, if we stop
+            // expanding them in pre-visitation)
+            StructuralTypeReferenceExpression { Parameter: { } shaper }
+                => shaper,
+
+            StructuralTypeReferenceExpression { Subquery: not null }
+                => null, // TODO: think about this - probably unsupported (if so, message)
+
+            SqlExpression s => s,
+
+            _ => null
+        };
+    }
+
+    private Expression? TranslateInternal(Expression expression, bool applyDefaultTypeMapping = true, bool isProjection = false)
     {
         var result = Visit(expression);
 
         if (result is SqlExpression translation)
         {
+            if (translation is SqlUnaryExpression { OperatorType: ExpressionType.Convert } sqlUnaryExpression
+                && sqlUnaryExpression.Type == typeof(object))
+            {
+                translation = sqlUnaryExpression.Operand;
+            }
+
             if (applyDefaultTypeMapping)
             {
                 translation = sqlExpressionFactory.ApplyDefaultTypeMapping(translation);
@@ -93,13 +126,22 @@ public partial class CosmosSqlTranslatingExpressionVisitor(
                     return null;
                 }
 
+                // If this is a projection of a non-constant non-direct member access -number, cosmos could return it as a double,
+                // so we need to overwrite the type mapping with CosmosNumberProjectionTypeMapping to ensure it gets deserialized as a double and converted to the correct type.
+                if (isProjection && translation is not SqlConstantExpression && translation is not ScalarAccessExpression
+                 && CosmosNumberProjectionTypeMapping.IsRequiredForType(translation.Type.UnwrapNullableType()))
+                {
+                    var typeMapping = CosmosNumberProjectionTypeMapping.CreateFromType(translation.Type.UnwrapNullableType());
+                    translation = sqlExpressionFactory.SetTypeMapping(translation, typeMapping);
+                }
+
                 _sqlVerifyingExpressionVisitor.Visit(translation);
             }
 
             return translation;
         }
 
-        return null;
+        return result;
     }
 
     /// <summary>
@@ -177,10 +219,6 @@ public partial class CosmosSqlTranslatingExpressionVisitor(
                     equalsMethod: false,
                     out var result):
                 return result;
-
-            case { Method: var method } when method == ConcatMethodInfo:
-                return QueryCompilationContext.NotTranslatedExpression;
-
             default:
                 var uncheckedNodeTypeVariant = binaryExpression.NodeType switch
                 {
@@ -644,7 +682,7 @@ public partial class CosmosSqlTranslatingExpressionVisitor(
                 arguments = new SqlExpression[methodCallExpression.Arguments.Count];
                 for (var i = 0; i < arguments.Length; i++)
                 {
-                    var argument = methodCallExpression.Arguments[i];
+                    var argument = RemoveObjectConvert(methodCallExpression.Arguments[i]);
                     if (TranslationFailed(argument, Visit(argument), out var sqlArgument))
                     {
                         return TranslateAsSubquery(methodCallExpression);
@@ -832,34 +870,47 @@ public partial class CosmosSqlTranslatingExpressionVisitor(
             return QueryCompilationContext.NotTranslatedExpression;
         }
 
-        return unaryExpression.NodeType switch
+        switch (unaryExpression.NodeType)
         {
-            ExpressionType.Not when operand is SqlConstantExpression { Value: bool boolValue }
-                => sqlExpressionFactory.Constant(!boolValue),
-            ExpressionType.Not
-                => sqlExpressionFactory.Not(sqlOperand!),
+            case ExpressionType.Not when operand is SqlConstantExpression { Value: bool boolValue }:
+               return sqlExpressionFactory.Constant(!boolValue);
+            case ExpressionType.Not:
+                return sqlExpressionFactory.Not(sqlOperand!);
 
-            ExpressionType.Negate or ExpressionType.NegateChecked
-                => sqlExpressionFactory.Negate(sqlOperand!),
+            case ExpressionType.Negate:
+            case ExpressionType.NegateChecked:
+                return sqlExpressionFactory.Negate(sqlOperand!);
 
-            // Convert nodes can be an explicit user gesture in the query, or they may get introduced by the compiler (e.g. when a Child is
-            // passed as an argument for a parameter of type Parent). The latter type should generally get stripped out as a pure C#/LINQ
-            // artifact that shouldn't affect translation, but the latter may be an indication from the user that they want to apply a
-            // type change.
-            ExpressionType.Convert or ExpressionType.ConvertChecked or ExpressionType.TypeAs
-                when operand.Type.IsInterface && unaryExpression.Type.GetInterfaces().Any(e => e == operand.Type)
-                // We strip out implicit conversions, e.g. float[] -> ReadOnlyMemory<float> (for vector search)
-                || (unaryExpression.Method is { IsSpecialName: true, Name: "op_Implicit" }
-                    && IsReadOnlyMemory(unaryExpression.Type.UnwrapNullableType()))
-                || unaryExpression.Type.UnwrapNullableType() == operand.Type
-                || unaryExpression.Type.UnwrapNullableType() == typeof(Enum)
+            case ExpressionType.Convert:
+            case ExpressionType.ConvertChecked:
+            case ExpressionType.TypeAs:
                 // Object convert needs to be converted to explicit cast when mismatching types
-                // But we let it pass here since we don't have explicit cast mechanism here and in some cases object convert is due to value types
-                || unaryExpression.Type == typeof(object)
-                => sqlOperand!,
+                if (operand.Type.IsInterface
+                    && unaryExpression.Type.GetInterfaces().Any(e => e == operand.Type)
+                    // We strip out implicit conversions, e.g. float[] -> ReadOnlyMemory<float> (for vector search)
+                    || (unaryExpression.Method is { IsSpecialName: true, Name: "op_Implicit" }
+                        && IsReadOnlyMemory(unaryExpression.Type.UnwrapNullableType()))
+                    || unaryExpression.Type.UnwrapNullableType() == operand.Type.UnwrapNullableType()
+                    || unaryExpression.Type.UnwrapNullableType() == typeof(Enum))
+                {
+                    return sqlOperand!;
+                }
 
-            _ => QueryCompilationContext.NotTranslatedExpression
-        };
+                // Introduce explicit cast only if the target type is mapped else we need to client eval
+                if (unaryExpression.Type == typeof(object)
+                    || typeMappingSource.FindMapping(unaryExpression.Type, queryCompilationContext.Model) != null)
+                {
+                    sqlOperand = sqlExpressionFactory.ApplyDefaultTypeMapping(sqlOperand);
+                    return sqlOperand?.TypeMapping is null ? QueryCompilationContext.NotTranslatedExpression : sqlExpressionFactory.Convert(sqlOperand!, unaryExpression.Type);
+                }
+
+                break;
+
+            case ExpressionType.Quote:
+                return operand;
+        }
+
+        return QueryCompilationContext.NotTranslatedExpression;
 
         static bool IsReadOnlyMemory(Type type)
             => type is { IsGenericType: true, IsGenericTypeDefinition: false }
@@ -881,7 +932,7 @@ public partial class CosmosSqlTranslatingExpressionVisitor(
         {
             return sqlExpressionFactory.Constant(typeReference.StructuralType.ClrType == typeBinaryExpression.TypeOperand);
         }
-        
+
         if (entityType.GetAllBaseTypesInclusive().Any(et => et.ClrType == typeBinaryExpression.TypeOperand))
         {
             return sqlExpressionFactory.Constant(true);
@@ -1004,9 +1055,7 @@ public partial class CosmosSqlTranslatingExpressionVisitor(
                         || innerType == typeof(sbyte)
                         || innerType == typeof(char)
                         || innerType == typeof(short)
-                        || innerType == typeof(ushort)))
-                || (convertedType == typeof(double)
-                    && (innerType == typeof(float))))
+                        || innerType == typeof(ushort))))
             {
                 return TryRemoveImplicitConvert(unaryExpression.Operand);
             }

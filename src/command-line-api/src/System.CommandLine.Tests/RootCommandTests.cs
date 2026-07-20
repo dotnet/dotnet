@@ -48,5 +48,17 @@ namespace System.CommandLine.Tests
 
             rootCommand.Name.Should().Be(RootCommand.ExecutableName);
         }
+
+        [Fact]
+        public void ExecutablePath_is_not_null()
+        {
+            RootCommand.ExecutablePath.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void ExecutableName_is_not_null_or_empty()
+        {
+            RootCommand.ExecutableName.Should().NotBeNullOrEmpty();
+        }
     }
 }

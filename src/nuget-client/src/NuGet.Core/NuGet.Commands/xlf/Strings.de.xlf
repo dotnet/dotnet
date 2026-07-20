@@ -454,6 +454,11 @@
         <target state="translated">Die Eigenschaft "{0}" darf nicht NULL oder leer sein.</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">Die Projektinformationen für "{0}" können nicht gelesen werden: {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">Vertrauenswürdiges Repository kann nicht hinzugefügt werden. Das Paket ist nicht als Repository signiert oder weist keine Gegensignatur auf.</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} wird nicht gekürzt. Erwägen Sie, dieses Paket aus Ihren Abhängigkeiten zu entfernen, da es wahrscheinlich nicht erforderlich ist.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">PackageReference {0} wird nicht gekürzt. Dieses Paket ist automatisch verfügbar und muss nicht explizit referenziert werden. Entfernen Sie das PackageReference-Element.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1108,6 +1113,11 @@ Aktualisieren Sie Ihr .NET SDK oder entfernen Sie RestoreUseLegacyDependencyReso
         <target state="translated">Das Paket „{0}“ wird als Abhängigkeit von „{1}“ gekürzt. Die maximal kürzbare Version ist „{2}“.</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
+      <trans-unit id="RestrictedPackageIdWarning">
+        <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
+        <target state="translated">Die Paket-ID „{0}“ ist ungültig. Paket-IDs müssen mit einem Buchstaben, einer Ziffer oder einem Unterstrich beginnen und dürfen nur ASCII-Buchstaben, Ziffern, Punkte (.), Bindestriche (–) und Unterstriche (_) ohne aufeinander folgende Punkte oder Bindestriche enthalten.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
         <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">Die Zertifikatdatei "{0}" wurde nicht gefunden. Eine Liste der anerkannten Methoden zur Bereitstellung eines Zertifikats finden Sie unter https://docs.nuget.org/docs/reference/command-line-reference.</target>
@@ -1453,8 +1463,8 @@ Aktualisieren Sie Ihr .NET SDK oder entfernen Sie RestoreUseLegacyDependencyReso
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
-        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="translated">Es sind {0} Paketquellen in Ihrer Konfiguration definiert. Wenn Sie die zentrale Paketverwaltung verwenden, ordnen Sie Ihre Paketquellen mit der Paketquellenzuordnung (https://aka.ms/nuget-package-source-mapping) zu oder geben Sie eine einzelne Paketquelle an. Die folgenden Quellen sind definiert: {1}</target>
+        <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <target state="translated">In Ihrer Konfiguration sind {0} Paketquellen definiert. Wenn Sie die zentrale Paketverwaltung verwenden, ordnen Sie Ihre Paketquellen mit der Paketquellenzuordnung zu (https://aka.ms/nuget-package-source-mapping), oder geben Sie eine einzelne Paketquelle an. Die folgenden Quellen sind definiert: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">
@@ -1496,6 +1506,12 @@ NuGet erfordert HTTPS-Quellen. Weitere Informationen finden Sie unter https://ak
         <target state="translated">{0} stellt keine inklusive untere Grenze für Abhängigkeiten {1} bereit. {2} wurde stattdessen aufgelöst.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">Das Paket „{0}“ {1} verwendet das veraltete MonoAndroid-Framework statt „net6.0-android“ oder höher. Erwägen Sie ein Upgrade auf eine neuere Version dieses Pakets oder wenden Sie sich an den Paketautor.</target>
+        <note>{0} - package id
+{1} - package version</note>
+      </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
         <target state="translated">Das Paket "{0}" {1} weist eine bekannte {2} Schweregrad-Sicherheitsanfälligkeit auf, {3}.</target>
@@ -1513,6 +1529,11 @@ NuGet erfordert HTTPS-Quellen. Weitere Informationen finden Sie unter https://ak
         <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
         <target state="translated">Die Projektabhängigkeit „{0}“ gibt keine Version an. Fügen Sie eine Version für die Abhängigkeit ein, um konsistente Wiederherstellungsergebnisse sicherzustellen.</target>
         <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="translated">RestoreForceEvaluate überschreibt RestoreLockedMode. Die Paketsperrdatei wird erneut ausgewertet und neu generiert, und der gesperrte Modus wird ignoriert.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>

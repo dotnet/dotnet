@@ -275,9 +275,25 @@ namespace System.CommandLine.Parsing
                     return true;
                 }
 
-                if (rootCommand.EqualsNameOrAlias(args[0]))
+                if (args[0].TrySplitIntoSubtokens(out var first, out _) &&
+                    rootCommand.ValidTokens().TryGetValue(first, out var token) &&
+                    token.Type == TokenType.Option)
                 {
-                    return true;
+                    return false;
+                }
+
+                try
+                {
+                    var potentialRootCommand = Path.GetFileName(args[0]);
+
+                    if (rootCommand.EqualsNameOrAlias(potentialRootCommand))
+                    {
+                        return true;
+                    }
+                }
+                catch (ArgumentException)
+                {
+                    // possible exception for illegal characters in path on .NET Framework
                 }
             }
 

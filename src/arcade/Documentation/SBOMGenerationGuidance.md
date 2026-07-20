@@ -15,7 +15,7 @@ efforts to have 6.0 and 7.0 builds generate the SBOMs.
 ## Use with Arcade
 
 As an initial phase for SBOM generation, Arcade provides [a new YAML
-template](https://github.com/dotnet/arcade/tree/main/eng/common/templates/steps/generate-sbom.yml)
+template](../eng/common/templates/steps/generate-sbom.yml)
 to encapsulate the creation and upload of the SBOM to the build's artifacts, leveraging the [ADO
 SBOM generator
 task](https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/secure-supply-chain/ado-sbom-generator).
@@ -25,8 +25,8 @@ your current usage of the YAML templates that Arcade provides.
 ### Repositories using Arcade's job(s).yml templates
 
 If you are using Arcade from the ".NET Eng - latest" or ".NET 6 Eng" channels, and using the provided job
-templates ([job.yml](https://github.com/dotnet/arcade/tree/main/eng/common/templates/job/job.yml),
-[jobs.yml](https://github.com/dotnet/arcade/blob/main/eng/common/templates/jobs/jobs.yml)), Your
+templates ([job.yml](../eng/common/templates/job/job.yml),
+[jobs.yml](../eng/common/templates/jobs/jobs.yml)), Your
 build legs should start attempting to generate and upload SBOMs automatically.
 
 For most cases, this is all that a repository using the arcade templates will need to do to generate
@@ -40,7 +40,7 @@ for your release builds](#retention-rules-for-release-build-sboms)
 We encourage the usage of the job templates, as it's the best way for newer changes to the
 infrastructure to be added to your repository via the Arcade dependency flow. In cases where it's
 not possible for your repository to use the job templates, you will have to insert the
-[generate-sbom.yml](https://github.com/dotnet/arcade/tree/main/eng/common/templates/steps/generate-sbom.yml)
+[generate-sbom.yml](../eng/common/templates/steps/generate-sbom.yml)
 template directly into each of your jobs that produce or modify assets. 
 
 A minimal example follows:
@@ -181,8 +181,8 @@ for your release builds:
   should be retained indefinitely, but rather whichever builds will be used to release assets to
   customers. To help
   with this, Arcade provides a [PowerShell
-  script](https://github.com/dotnet/arcade/blob/main/eng/common/retain-build.ps1) and a helper [YAML
-  template](https://github.com/dotnet/arcade/blob/main/eng/common/templates/steps/retain-build.yml)
+  script](../eng/common/retain-build.ps1) and a helper [YAML
+  template](../eng/common/templates/steps/retain-build.yml)
   that can be added together or individually to build and release pipelines. The YAML template by
   default will attempt to retain the same build where the pipeline is running, and the script can
   also be ran by itself by providing the required parameters.
@@ -259,8 +259,3 @@ for your release builds:
   SBOMs](https://eng.ms/docs/initiatives/executive-order/executive-order-requirements/executiveorderoncybersecurity/softwarebillofmaterials)
 - [Manifest Generation task
   documentation](https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/secure-supply-chain/ado-sbom-generator)
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CSBOMGenerationGuidance.md)](https://helix.dot.net/f/p/5?p=Documentation%5CSBOMGenerationGuidance.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CSBOMGenerationGuidance.md)</sub>
-<!-- End Generated Content-->

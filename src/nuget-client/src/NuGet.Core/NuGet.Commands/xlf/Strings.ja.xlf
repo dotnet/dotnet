@@ -454,6 +454,11 @@
         <target state="translated">プロパティ '{0}' を null または空にすることはできません。</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">'{0}' のプロジェクト情報を読み取ることができません: {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">信頼されたリポジトリを追加できません。パッケージは署名済みまたは副署名済みリポジトリではありません。</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} は取り除かれません。このパッケージは不要である可能性があるため、依存関係から削除することを検討してください。</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">PackageReference {0} は削除されません。このパッケージは自動的に利用可能になるため、明示的に参照する必要はありません。PackageReference 項目を削除します。</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1108,6 +1113,11 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
         <target state="translated">パッケージ '{0}' を '{1}' の依存関係として取り除いています。取り除きが可能な最大バージョンは '{2}' です</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
+      <trans-unit id="RestrictedPackageIdWarning">
+        <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
+        <target state="translated">パッケージ ID '{0}' が無効です。パッケージ ID は英字、数字、またはアンダースコアで始まり、ASCII 文字、数字、ドット (.)、ダッシュ (-)、およびアンダースコア (_) のみを含めることができます。連続するドットやダッシュは使用できません。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
         <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">証明書ファイル '{0}' は見つかりませんでした。証明書を提供する承認済みの方法のリストについて、https://docs.nuget.org/docs/reference/command-line-reference をご覧ください</target>
@@ -1453,8 +1463,8 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
-        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="translated">お客様の構成には {0} 個のパッケージ ソースが定義されています。中央パッケージ管理を使用する場合は、パッケージ ソース マッピング (https://aka.ms/nuget-package-source-mapping) を使用してパッケージ ソースをマップするか、単一のパッケージ ソースを指定してください: {1}</target>
+        <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <target state="translated">お客様の構成には {0} 個のパッケージ ソースが定義されています。中央パッケージ管理を使用する場合は、パッケージ ソース マッピング (https://aka.ms/nuget-package-source-mapping) を使用してパッケージ ソースをマップするか、単一のパッケージ ソースを指定してください。次のソースが定義されています: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">
@@ -1496,6 +1506,12 @@ NuGet には HTTPS ソースが必要です。詳しくは、https://aka.ms/nuge
         <target state="translated">{0} では、依存関係 {1} の下限値 (その値を含む) を指定しませんでした。代わりに、{2} が解決されました。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">パッケージ '{0}' {1} は、'net6.0-android' 以降ではなく、非推奨の MonoAndroid フレームワークを使用します。このパッケージの新しいバージョンにアップグレードするか、パッケージの作成者に問い合わせてください。</target>
+        <note>{0} - package id
+{1} - package version</note>
+      </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
         <target state="translated">パッケージ '{0}' {1} に既知の {2} 重大度の脆弱性があります、{3}</target>
@@ -1513,6 +1529,11 @@ NuGet には HTTPS ソースが必要です。詳しくは、https://aka.ms/nuge
         <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
         <target state="translated">プロジェクトの依存関係 '{0}' でバージョンが指定されていません。一貫性のある復元結果を得るには、依存関係のバージョンを含めます。</target>
         <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="translated">RestoreForceEvaluate は RestoreLockedMode をオーバーライドします。パッケージ ロック ファイルの再評価と再生成が行われ、ロック モードは無視されます。</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>

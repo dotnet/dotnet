@@ -6,10 +6,6 @@ parameters:
   type: string
   default: ''
 
-- name: desiredIbc
-  type: string
-  default: ''
-
 - name: desiredFinalVersionKind
   type: string
   default: ''
@@ -102,7 +98,6 @@ stages:
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
         isOfficialBuild: ${{ parameters.isOfficialBuild }}
-        desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     jobs:
 
@@ -141,7 +136,6 @@ stages:
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
         isOfficialBuild: ${{ parameters.isOfficialBuild }}
-        desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     jobs:
 
@@ -156,8 +150,9 @@ stages:
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
-          enableIBCOptimization: ${{ variables.ibcEnabled }}
           brandingType: ${{ variables.brandingType }}
+          sourceIndexName: dotnet-dotnet-windows
+          sourceIndexIncludeRepos: 'winforms wpf windowsdesktop aspnetcore'
 
     - ${{ if containsValue(parameters.verifications, 'unified-build-windows-x86') }}:
       - template: ../jobs/vmr-build.yml
@@ -637,7 +632,6 @@ stages:
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: arm64
-          enableIBCOptimization: ${{ variables.ibcEnabled }}
           brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
@@ -660,7 +654,6 @@ stages:
           targetOS: windows
           targetArchitecture: x86
           extraProperties: /p:PgoInstrument=true
-          enableIBCOptimization: ${{ variables.ibcEnabled }}
           brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
@@ -814,7 +807,6 @@ stages:
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
         isOfficialBuild: ${{ parameters.isOfficialBuild }}
-        desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isScoutingJob: true
     jobs:
@@ -830,7 +822,6 @@ stages:
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
         targetArchitecture: x64
-        enableIBCOptimization: ${{ variables.ibcEnabled }}
 
     - template: ../jobs/vmr-build.yml
       parameters:
@@ -855,7 +846,6 @@ stages:
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
         targetArchitecture: arm64
-        enableIBCOptimization: ${{ variables.ibcEnabled }}
 
     ## Build Pass 2 verticals
 

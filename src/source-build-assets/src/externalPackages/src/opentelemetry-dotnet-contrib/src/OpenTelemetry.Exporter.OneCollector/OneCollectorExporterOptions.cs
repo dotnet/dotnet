@@ -45,7 +45,9 @@ public abstract class OneCollectorExporterOptions
             throw new OneCollectorExporterValidationException($"{nameof(this.ConnectionString)} was not specified on {this.GetType().Name} options.");
         }
 
+#pragma warning disable IDE0370 // Suppression is unnecessary
         this.InstrumentationKey = new ConnectionStringParser(this.ConnectionString!).InstrumentationKey;
+#pragma warning restore IDE0370 // Suppression is unnecessary
         if (string.IsNullOrWhiteSpace(this.InstrumentationKey))
         {
             throw new OneCollectorExporterValidationException("Instrumentation key was not specified on connection string.");

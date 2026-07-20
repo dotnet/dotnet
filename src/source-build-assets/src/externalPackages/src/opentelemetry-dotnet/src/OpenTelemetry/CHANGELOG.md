@@ -6,6 +6,79 @@ Notes](../../RELEASENOTES.md).
 
 ## Unreleased
 
+## 1.16.0
+
+Released 2026-Jun-10
+
+## 1.16.0-rc.1
+
+Released 2026-Jun-10
+
+* Stop validating View-provided metric stream `Name` against the instrument
+  name syntax, per
+  [spec clarification](https://github.com/open-telemetry/opentelemetry-specification/pull/5094).
+  ([#7300](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7300))
+
+* Fix incorrect validation of `OTEL_BSP_*` and `OTEL_BLRP_*` environment
+  variables.
+  ([#7187](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7187))
+
+* Fix observable instrument callbacks running once per reader instead of
+  once per collection cycle.
+  ([#7188](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7188))
+
+* Added exception safety for user-supplied `ExemplarReservoir` implementations.
+  Exceptions thrown from `Offer` are now caught and logged rather than propagating
+  out of `Counter.Add`/`Histogram.Record`.
+  ([#7277](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7277))
+
+* Update `OpenTelemetrySdkEventSource` to support the W3C randomness flag.
+  ([#7301](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7301))
+
+* Added `ObservedTimestamp` property to `LogRecord`.
+  ([#6979](https://github.com/open-telemetry/opentelemetry-dotnet/pull/6979))
+
+* **Breaking Change** Explicit histogram boundaries no longer allow more than
+  10 million values.
+  ([#7165](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7165))
+
+* Fixed a circular reference which could cause a `LoggerProvider` to fail to
+  resolve when one of its dependencies depends on `ILogger` or `ILoggerFactory`.
+  As part of this fix the `LoggerProvider` resolved from dependency injection
+  is now created lazily when the first logger is created rather than when
+  `ILoggerProvider` or `ILoggerFactory` is resolved. A consequence is that any
+  invalid configuration now surfaces when the first log record is written instead
+  of when the logging services are resolved.
+  ([#7308](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7308))
+
+## 1.15.3
+
+Released 2026-Apr-21
+
+* Fix resource leak in batch and periodic exporting task workers for Blazor/WASM.
+  ([#7069](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7069))
+
+* Fixed `LogRecord.LogLevel` to preserve `LogLevel.None` and handle
+  unspecified or out-of-range severities without returning invalid enum values.
+  ([#7092](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7092))
+
+* Fixed `OTEL_TRACES_SAMPLER_ARG` handling to treat out-of-range, `NaN`, and
+  infinite values as invalid and fall back to the default ratio when using
+  `traceidratio` and `parentbased_traceidratio` samplers.
+  ([#7103](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7103))
+
+## 1.15.2
+
+Released 2026-Apr-08
+
+* Added Task-based worker support for `BatchExportProcessor` and
+  `PeriodicExportingMetricReader` to enable OpenTelemetry to work in
+  single-threaded WebAssembly environments such as Blazor and Uno Platform.
+  The implementation automatically detects the WebAssembly runtime and switches
+  to Task-based workers accordingly; the Thread-based approach remains the
+  default on all other platforms.
+  ([#6379](https://github.com/open-telemetry/opentelemetry-dotnet/pull/6379))
+
 ## 1.15.1
 
 Released 2026-Mar-27
@@ -15,8 +88,8 @@ Released 2026-Mar-27
   ([#6257](https://github.com/open-telemetry/opentelemetry-dotnet/issues/6257))
 
 * Fixed `OverflowException` in `TraceIdRatioBasedSampler` when trace ID bytes
-produced `long.MinValue`.
-([[#6928](https://github.com/open-telemetry/opentelemetry-dotnet/issues/6928)])
+  produced `long.MinValue`.
+  ([#6928](https://github.com/open-telemetry/opentelemetry-dotnet/issues/6928))
 
 * Fixed precision issues when using `Histogram<float>` with custom
   `HistogramBucketBoundaries`.

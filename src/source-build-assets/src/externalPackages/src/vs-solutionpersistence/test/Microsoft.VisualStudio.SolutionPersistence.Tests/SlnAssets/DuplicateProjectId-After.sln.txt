@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.35819.311
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DuplicateProjectId", "DuplicateProjectId.csproj", "{8BADBEEF-1111-2222-3333-444444444444}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DuplicateProjectIdOpposite", "DuplicateProjectIdOpposite.csproj", "{FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8BADBEEF-1111-2222-3333-444444444444}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{8BADBEEF-1111-2222-3333-444444444444}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{8BADBEEF-1111-2222-3333-444444444444}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BADBEEF-1111-2222-3333-444444444444}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0F1003A-31EB-42B8-8684-F82D4D7B9108}
+	EndGlobalSection
+EndGlobal

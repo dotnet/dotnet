@@ -32,7 +32,6 @@ using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.TestRunAttachmentsProc
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
 using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
@@ -48,8 +47,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
 /// </summary>
 internal class TestRequestManager : ITestRequestManager
 {
-    private static ITestRequestManager? s_testRequestManagerInstance;
-
     private readonly ITestPlatform _testPlatform;
     private readonly ITestPlatformEventSource _testPlatformEventSource;
     // TODO: No idea what is Task supposed to buy us, Tasks start immediately on instantiation
@@ -66,6 +63,7 @@ internal class TestRequestManager : ITestRequestManager
     private readonly ITestRunAttachmentsProcessingManager _attachmentsProcessingManager;
     private readonly IEnvironment _environment;
     private readonly IEnvironmentVariableHelper _environmentVariableHelper;
+    private readonly IRunSettingsHelper _runSettingsHelper;
 
     /// <summary>
     /// Maintains the current active execution request.
@@ -92,23 +90,22 @@ internal class TestRequestManager : ITestRequestManager
     /// </summary>
     private CancellationTokenSource? _currentAttachmentsProcessingCancellationTokenSource;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TestRequestManager"/> class.
-    /// </summary>
-    public TestRequestManager()
+
+    internal TestRequestManager(CommandLineOptions commandLineOptions, TestRunResultAggregator testRunResultAggregator)
         : this(
-            CommandLineOptions.Instance,
+            commandLineOptions,
             TestPlatformFactory.GetTestPlatform(),
-            TestRunResultAggregator.Instance,
+            testRunResultAggregator,
             TestPlatformEventSource.Instance,
             new InferHelper(AssemblyMetadataProvider.Instance),
             MetricsPublisherFactory.GetMetricsPublisher(
                 IsTelemetryOptedIn(),
-                CommandLineOptions.Instance.IsDesignMode),
+                commandLineOptions.IsDesignMode),
             new ProcessHelper(),
             new TestRunAttachmentsProcessingManager(TestPlatformEventSource.Instance, new DataCollectorAttachmentsProcessorsFactory()),
             new PlatformEnvironment(),
-            new EnvironmentVariableHelper())
+            new EnvironmentVariableHelper(),
+            RunSettingsHelper.Instance)
     {
     }
 
@@ -123,6 +120,33 @@ internal class TestRequestManager : ITestRequestManager
         ITestRunAttachmentsProcessingManager attachmentsProcessingManager,
         IEnvironment environment,
         IEnvironmentVariableHelper environmentVariableHelper)
+        : this(
+            commandLineOptions,
+            testPlatform,
+            testRunResultAggregator,
+            testPlatformEventSource,
+            inferHelper,
+            metricsPublisher,
+            processHelper,
+            attachmentsProcessingManager,
+            environment,
+            environmentVariableHelper,
+            RunSettingsHelper.Instance)
+    {
+    }
+
+    internal TestRequestManager(
+        CommandLineOptions commandLineOptions,
+        ITestPlatform testPlatform,
+        TestRunResultAggregator testRunResultAggregator,
+        ITestPlatformEventSource testPlatformEventSource,
+        InferHelper inferHelper,
+        Task<IMetricsPublisher> metricsPublisher,
+        IProcessHelper processHelper,
+        ITestRunAttachmentsProcessingManager attachmentsProcessingManager,
+        IEnvironment environment,
+        IEnvironmentVariableHelper environmentVariableHelper,
+        IRunSettingsHelper runSettingsHelper)
     {
         _testPlatform = testPlatform;
         _commandLineOptions = commandLineOptions;
@@ -134,13 +158,8 @@ internal class TestRequestManager : ITestRequestManager
         _attachmentsProcessingManager = attachmentsProcessingManager;
         _environment = environment;
         _environmentVariableHelper = environmentVariableHelper;
+        _runSettingsHelper = runSettingsHelper;
     }
-
-    /// <summary>
-    /// Gets the test request manager instance.
-    /// </summary>
-    public static ITestRequestManager Instance
-        => s_testRequestManagerInstance ??= new TestRequestManager();
 
     #region ITestRequestManager
 
@@ -161,7 +180,10 @@ internal class TestRequestManager : ITestRequestManager
     /// <inheritdoc />
     public void ResetOptions()
     {
-        CommandLineOptions.Reset();
+        // Nothing to reset. The manager holds the CommandLineOptions it was constructed with and
+        // never mutates them per request; design-mode requests derive their state from the request
+        // payload (sources, run settings), not from shared mutable command-line options. This used
+        // to null a process-wide CommandLineOptions singleton, which no longer exists.
     }
 
     /// <inheritdoc />
@@ -461,158 +483,6 @@ internal class TestRequestManager : ITestRequestManager
         }
     }
 
-    /// <inheritdoc/>
-    public void StartTestSession(
-        StartTestSessionPayload payload,
-        ITestHostLauncher3? testHostLauncher,
-        ITestSessionEventsHandler eventsHandler,
-        ProtocolConfig protocolConfig)
-    {
-        EqtTrace.Info("TestRequestManager.StartTestSession: Starting test session.");
-
-        if (payload.TestPlatformOptions != null)
-        {
-            _telemetryOptedIn = payload.TestPlatformOptions.CollectMetrics;
-        }
-
-        payload.Sources ??= new List<string>();
-        payload.RunSettings ??= "<RunSettings></RunSettings>";
-
-        if (UpdateRunSettingsIfRequired(
-                payload.RunSettings,
-                payload.Sources,
-                registrar: null,
-                isDiscovery: false,
-                out string updatedRunsettings,
-                out IDictionary<string, Architecture> sourceToArchitectureMap,
-                out IDictionary<string, Framework> sourceToFrameworkMap))
-        {
-            payload.RunSettings = updatedRunsettings;
-        }
-
-        var sourceToSourceDetailMap = payload.Sources.Select(source => new SourceDetail
-        {
-            Source = source,
-            Architecture = sourceToArchitectureMap[source],
-            Framework = sourceToFrameworkMap[source],
-        }).ToDictionary(k => k.Source!);
-
-        if (InferRunSettingsHelper.AreRunSettingsCollectorsIncompatibleWithTestSettings(payload.RunSettings))
-        {
-            throw new SettingsException(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.Resources.RunsettingsWithDCErrorMessage,
-                    payload.RunSettings));
-        }
-
-        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(payload.RunSettings);
-        var requestData = GetRequestData(protocolConfig);
-
-        // Collect metrics & commands.
-        CollectMetrics(requestData, runConfiguration);
-        LogCommandsTelemetryPoints(requestData);
-
-        // Get Fakes data collector settings.
-        payload.RunSettings = AddFakesConfigurationToRunsettings(payload.Sources, payload.RunSettings);
-
-        // Data collection is not supported yet, so no test session is spawned.
-        if (XmlRunSettingsUtilities.IsDataCollectionEnabled(payload.RunSettings))
-        {
-            eventsHandler.HandleStartTestSessionComplete(new()
-            {
-                TestSessionInfo = null,
-                Metrics = null,
-            });
-
-            return;
-        }
-
-        lock (_syncObject)
-        {
-            try
-            {
-                EqtTrace.Info("TestRequestManager.StartTestSession: Synchronization context taken.");
-                _testPlatformEventSource.StartTestSessionStart();
-
-                var criteria = new StartTestSessionCriteria()
-                {
-                    Sources = payload.Sources,
-                    RunSettings = payload.RunSettings,
-                    TestHostLauncher = testHostLauncher
-                };
-
-                var testSessionStarted = _testPlatform.StartTestSession(requestData, criteria, eventsHandler, sourceToSourceDetailMap, new NullWarningLogger());
-                if (!testSessionStarted)
-                {
-                    // Note: We need to send back a TestSessionComplete event, so that the caller
-                    // completes a session start request.
-                    // StartTestSession will invoke the HandleStartTestSessionComplete event
-                    // if the test session is started successfully. However, if it is not started,
-                    // HandleStartTestSessionComplete will not send an event. That's why we need
-                    // to do it here.
-                    eventsHandler.HandleStartTestSessionComplete(new());
-                    EqtTrace.Warning("TestRequestManager.StartTestSession: Unable to start test session.");
-                }
-            }
-            finally
-            {
-                EqtTrace.Info("TestRequestManager.StartTestSession: Starting test session completed.");
-                _testPlatformEventSource.StartTestSessionStop();
-
-                // Post the attachments processing complete event.
-                _metricsPublisher.Result.PublishMetrics(
-                    TelemetryDataConstants.StartTestSessionCompleteEvent,
-                    requestData.MetricsCollection.Metrics!);
-            }
-        }
-    }
-
-    /// <inheritdoc/>
-    public void StopTestSession(
-        StopTestSessionPayload payload,
-        ITestSessionEventsHandler eventsHandler,
-        ProtocolConfig protocolConfig)
-    {
-        EqtTrace.Info("TestRequestManager.StopTestSession: Stopping test session.");
-
-        _telemetryOptedIn = payload.CollectMetrics;
-        var requestData = GetRequestData(protocolConfig);
-
-        lock (_syncObject)
-        {
-            try
-            {
-                EqtTrace.Info("TestRequestManager.StopTestSession: Synchronization context taken.");
-                _testPlatformEventSource.StopTestSessionStart();
-
-                var stopped = TestSessionPool.Instance.KillSession(payload.TestSessionInfo!, requestData);
-                eventsHandler.HandleStopTestSessionComplete(
-                    new()
-                    {
-                        TestSessionInfo = payload.TestSessionInfo,
-                        Metrics = stopped ? requestData.MetricsCollection.Metrics : null,
-                        IsStopped = stopped
-                    });
-
-                if (!stopped)
-                {
-                    EqtTrace.Warning("TestRequestManager.StopTestSession: Unable to stop test session.");
-                }
-            }
-            finally
-            {
-                EqtTrace.Info("TestRequestManager.StopTestSession: Stopping test session completed.");
-                _testPlatformEventSource.StopTestSessionStop();
-
-                // Post the attachments processing complete event.
-                _metricsPublisher.Result.PublishMetrics(
-                    TelemetryDataConstants.StopTestSessionCompleteEvent,
-                    requestData.MetricsCollection.Metrics!);
-            }
-        }
-    }
-
     private static void LogTelemetryForLegacySettings(IRequestData requestData, string runsettings)
     {
         requestData.MetricsCollection.Add(
@@ -779,7 +649,7 @@ internal class TestRequestManager : ITestRequestManager
             // Other scenarios, most notably .NET Framework with MultiTFM disabled, will use the old default X86 architecture.
         }
 
-        EqtTrace.Verbose($"TestRequestManager.UpdateRunSettingsIfRequired: Default architecture: {defaultArchitecture} IsDefaultTargetArchitecture: {RunSettingsHelper.Instance.IsDefaultTargetArchitecture}, Current process architecture: {_processHelper.GetCurrentProcessArchitecture()} OperatingSystem: {_environment.OperatingSystem}.");
+        EqtTrace.Verbose($"TestRequestManager.UpdateRunSettingsIfRequired: Default architecture: {defaultArchitecture} IsDefaultTargetArchitecture: {_runSettingsHelper.IsDefaultTargetArchitecture}, Current process architecture: {_processHelper.GetCurrentProcessArchitecture()} OperatingSystem: {_environment.OperatingSystem}.");
 
         // True when runsettings don't set platforml. False when runsettings force platform
         // in both cases the sourceToArchitectureMap is populated with the real architecture as we inferred it
@@ -856,7 +726,7 @@ internal class TestRequestManager : ITestRequestManager
 
         Architecture GetDefaultArchitecture(RunConfiguration runConfiguration)
         {
-            if (!RunSettingsHelper.Instance.IsDefaultTargetArchitecture)
+            if (!_runSettingsHelper.IsDefaultTargetArchitecture)
             {
                 return runConfiguration.TargetPlatform;
             }
@@ -1539,9 +1409,21 @@ internal class TestRequestManager : ITestRequestManager
                 _telemetryOptedIn || IsTelemetryOptedIn()
                     ? new MetricsCollection()
                     : new NoOpMetricsCollection(),
-            IsTelemetryOptedIn = _telemetryOptedIn || IsTelemetryOptedIn()
+            IsTelemetryOptedIn = _telemetryOptedIn || IsTelemetryOptedIn(),
+            KnownExtensionInstanceFactory = CreateKnownExtensionInstance,
         };
     }
+
+    /// <summary>
+    /// Supplies pre-configured instances of vstest.console's own built-in extensions so they receive
+    /// injected dependencies (here: the parsed <see cref="CommandLineOptions"/>) instead of reaching
+    /// for process-wide singletons. Unknown extension URIs return <see langword="null"/> and are
+    /// reflection-activated as before, so this does not widen any public extension point.
+    /// </summary>
+    private object? CreateKnownExtensionInstance(Uri extensionUri)
+        => string.Equals(extensionUri.AbsoluteUri, ConsoleLogger.ExtensionUri, StringComparison.OrdinalIgnoreCase)
+            ? new ConsoleLogger(_commandLineOptions)
+            : null;
 
     private static List<string> GetSources(TestRunRequestPayload testRunRequestPayload)
     {

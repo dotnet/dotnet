@@ -14,24 +14,47 @@
   <PropertyGroup>
     <MicrosoftDotNetHelixSdkTasksAssembly Condition="'$(MicrosoftDotNetHelixSdkTasksAssembly)' == ''">$(MSBuildThisFileDirectory)net/Microsoft.DotNet.Helix.Sdk.dll</MicrosoftDotNetHelixSdkTasksAssembly>
     <MicrosoftDotNetHelixSdkTasksFactory Condition="'$(MicrosoftDotNetHelixSdkTasksFactory)' == ''">AssemblyTaskFactory</MicrosoftDotNetHelixSdkTasksFactory>
-    <NETCORE_ENGINEERING_TELEMETRY>Helix</NETCORE_ENGINEERING_TELEMETRY>
   </PropertyGroup>
 
-  <UsingTask TaskName="SendHelixJob" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="WaitForHelixJobCompletion" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="CheckHelixJobStatus" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="FindDotNetCliPackage" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="GetHelixWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="CreateXUnitWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="CreateXUnitV3WorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="CreateXHarnessAndroidWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="CreateXHarnessAppleWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="CreateTestsForWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="StartAzurePipelinesTestRun" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="StopAzurePipelinesTestRun" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="CheckAzurePipelinesTestResults" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="DownloadFromResultsContainer" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="CancelHelixJobs" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="InstallDotNetTool" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <!--
+    Feature flag: when 'true', the Helix Sdk emits jobs that are intended to be reported on by the
+    standalone dotnet-helix-job-monitor tool running in a separate Azure Pipelines job. This:
+      * disables the in-pipeline Python xunit/AzureDevOps reporter (no AzDO test runs are created
+        from this build job),
+      * copies any *.trx / *Results.xml / junit*results.xml produced by the work item into
+        $HELIX_WORKITEM_UPLOAD_ROOT so the monitor can download them, and
+      * causes the Helix Sdk targets to return immediately after submitting the Helix job rather
+        than waiting for it to complete.
+  -->
+  <PropertyGroup>
+    <EnableHelixJobMonitor Condition="'$(EnableHelixJobMonitor)' != 'true'">false</EnableHelixJobMonitor>
+  </PropertyGroup>
+
+  <!--
+    Feature flag: when 'true', the Helix Sdk logs a preview queue-health summary (estimated wait,
+    queue depth, snapshot time) for each submitted job, plus warnings when the estimated wait
+    exceeds the SLA or the snapshot is stale. Off by default.
+  -->
+  <PropertyGroup>
+    <EnableShowHelixQueueStats Condition="'$(EnableShowHelixQueueStats)' != 'true'">false</EnableShowHelixQueueStats>
+  </PropertyGroup>
+
+  <!-- TODO: Remove Architecture="*" on Runtime="NET" UsingTask declarations below when https://github.com/dotnet/msbuild/issues/13739 is fixed and a new msbuild is consumed with the fix. -->
+  <UsingTask TaskName="SendHelixJob" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="WaitForHelixJobCompletion" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="CheckHelixJobStatus" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="FindDotNetCliPackage" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="GetHelixWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="CreateXUnitWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="CreateMTPWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="CreateXHarnessAndroidWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="CreateXHarnessAppleWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="CreateTestsForWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="StartAzurePipelinesTestRun" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="StopAzurePipelinesTestRun" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="CheckAzurePipelinesTestResults" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="DownloadFromResultsContainer" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="CancelHelixJobs" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="InstallDotNetTool" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
 
 </Project>

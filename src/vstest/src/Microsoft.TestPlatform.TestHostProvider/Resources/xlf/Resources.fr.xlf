@@ -2,11 +2,37 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" original="../Resources.resx" target-language="fr">
     <body>
+      <trans-unit id="CouldNotFindTesthost">
+        <source>Could not find testhost for test source '{0}'.
+
+Verify that:
+  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
+  - The project has been built and the output is in '{1}'.
+  - The project's target framework matches the installed .NET runtime.
+</source>
+        <target state="translated">Nous n’avons pas pu trouver testhost pour la source de test « {0} ».
+
+Vérifiez ce qui suit : 
+  – Le projet de test référence le package NuGet « Microsoft.NET.Test.Sdk ».
+  – Le projet a été généré et la sortie se trouve dans « {1} ».
+  – L’infrastructure cible du projet correspond au runtime .NET installé.
+</target>
+        <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
+      </trans-unit>
       <trans-unit id="MultipleFileVersions">
         <source>Multiple versions of same extension found. Selecting the highest version.
 {0}</source>
         <target state="translated">Plusieurs versions de la même extension ont été trouvées. Sélection de la version la plus élevée.
 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NetFrameworkTestsNotSupportedOnNonWindows">
+        <source>Running .NET Framework tests is supported on Windows only.
+
+Running .NET Framework tests on this operating system relied on Mono, which is no longer supported. To run these tests, run them on Windows, or change the test project to target .NET instead of .NET Framework.</source>
+        <target state="translated">L’exécution de tests .NET Framework est prise en charge uniquement sur Windows.
+
+L’exécution .NET Framework tests sur ce système d’exploitation reposait sur Mono, qui n’est plus pris en charge. Pour exécuter ces tests, exécutez-les sur Windows ou modifiez le projet de test pour cibler .NET au lieu de .NET Framework.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindDepsFile">

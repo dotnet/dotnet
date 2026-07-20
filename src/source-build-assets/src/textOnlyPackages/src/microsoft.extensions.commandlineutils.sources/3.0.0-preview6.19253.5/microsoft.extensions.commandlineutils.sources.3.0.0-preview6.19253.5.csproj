@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <PackageVersion>3.0.0-preview6.19253.5</PackageVersion>
-    <AssemblyName>Microsoft.Extensions.CommandLineUtils.Sources</AssemblyName>
-  </PropertyGroup>
-
-</Project>

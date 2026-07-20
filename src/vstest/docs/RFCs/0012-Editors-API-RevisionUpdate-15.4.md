@@ -7,8 +7,8 @@ and the test platform to support test case filtering.
 ## Motivation
 The console runner has an ability to run a specific set of tests via the `/testcasefilter` argument. Editors require this functionality as well to run a subset of tests which have not yet been discovered. This document builds on top of the v2 protocol between the Editor/IDE and the test platform.
 
-Here is the link to v1 specs: [Editors-API-Specification](./RFCs/0007-Editors-API-Specification.md)
-and here is the link to the v2 specs: [Editors-API-Specification-V2](./RFCs/0009-Editors-API-RevisionUpdate.md)
+Here is the link to v1 specs: [Editors-API-Specification](./0007-Editors-API-Specification.md)
+and here is the link to the v2 specs: [Editors-API-Specification-V2](./0009-Editors-API-RevisionUpdate.md)
 
 ## Design
 Filtering in the test platform is only supported when a test run request with sources is requested. This is unsupported when a run request with a set of TestCases is passed in. To that effect the following messages would change to accommodate filtering.

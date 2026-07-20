@@ -30,7 +30,7 @@ This document is to provide value guidance when creating Arcade documentation. T
 
 - Examples should be simple but not trivial.
 
-- Documentation starts with a single landing page (like current StartHere.md). All other documentation may be found within a few clicks of here.
+- Documentation starts with a single landing page (like current [README.md](README.md)). All other documentation may be found within a few clicks of here.
 
 - Documentation is organized by category, then by product. Categories borrow from 1ES and mirror development flow. This provides natural boundaries and flow for both customers and developers, improving understanding. Existing documentation maps well to this space. The categories are: Code, Build, Test, Deploy.
 
@@ -114,8 +114,3 @@ See [Migrating from v0.2](Migrating-0.2.md).
 Version 1.0 works always; there is no change needed.
 
 ```
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CDocumentationPrinciples.md)](https://helix.dot.net/f/p/5?p=Documentation%5CDocumentationPrinciples.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CDocumentationPrinciples.md)</sub>
-<!-- End Generated Content-->

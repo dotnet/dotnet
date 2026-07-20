@@ -29,7 +29,7 @@ internal static class HangfireMetrics
     /// - state=executing: Time spent in actual execution.
     /// </summary>
     public static readonly Histogram<double> ExecutionDuration =
-        Meter!.CreateHistogram<double>(
+        Meter.CreateHistogram<double>(
             WorkflowMetricNames.ExecutionDuration,
             unit: "s",
             description: "Duration of an execution grouped by task, type and result.");
@@ -39,7 +39,7 @@ internal static class HangfireMetrics
     /// Follows OpenTelemetry workflow semantic conventions.
     /// </summary>
     public static readonly UpDownCounter<long> ExecutionStatus =
-        Meter!.CreateUpDownCounter<long>(
+        Meter.CreateUpDownCounter<long>(
             WorkflowMetricNames.ExecutionStatus,
             unit: "{executions}",
             description: "The number of actively running tasks grouped by task, type and the current state.");
@@ -49,7 +49,7 @@ internal static class HangfireMetrics
     /// Follows OpenTelemetry workflow semantic conventions.
     /// </summary>
     public static readonly Counter<long> ExecutionErrors =
-        Meter!.CreateCounter<long>(
+        Meter.CreateCounter<long>(
             WorkflowMetricNames.ExecutionErrors,
             unit: "{error}",
             description: "The number of errors encountered in task runs (eg. compile, test failures).");
@@ -60,7 +60,7 @@ internal static class HangfireMetrics
     /// In Hangfire, this tracks individual job completions. For batch workflows, this would track batch completion.
     /// </summary>
     public static readonly Counter<long> WorkflowOutcome =
-        Meter!.CreateCounter<long>(
+        Meter.CreateCounter<long>(
             WorkflowMetricNames.WorkflowOutcome,
             unit: "{workflows}",
             description: "The number of workflow instances which have been initiated.");
@@ -71,7 +71,7 @@ internal static class HangfireMetrics
     /// In Hangfire, this tracks workflows that haven't entered the execution pipeline yet (e.g., scheduled jobs).
     /// </summary>
     public static readonly UpDownCounter<long> WorkflowStatus =
-        Meter!.CreateUpDownCounter<long>(
+        Meter.CreateUpDownCounter<long>(
             WorkflowMetricNames.WorkflowStatus,
             unit: "{workflows}",
             description: "The number of actively running workflows grouped by definition and the current state.");
@@ -81,10 +81,8 @@ internal static class HangfireMetrics
     /// </summary>
     internal static readonly string MeterName = Meter.Name;
 
-    private static Meter? meter;
-
     /// <summary>
     /// Gets the meter instance for all Hangfire metrics.
     /// </summary>
-    private static Meter Meter => meter ??= new(typeof(HangfireMetrics).Assembly.GetName().Name, typeof(HangfireMetrics).Assembly.GetPackageVersion());
+    private static Meter Meter => field ??= new(typeof(HangfireMetrics).Assembly.GetName().Name, typeof(HangfireMetrics).Assembly.GetPackageVersion());
 }

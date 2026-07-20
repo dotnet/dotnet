@@ -67,28 +67,24 @@ internal sealed partial class AWSECSDetector : IResourceDetector
 
     internal static string? GetECSContainerId(string path)
     {
-        string? containerId = null;
+        using var streamReader = ResourceDetectorUtils.GetStreamReader(path);
+        string? line = null;
 
-        using (var streamReader = ResourceDetectorUtils.GetStreamReader(path))
+        while ((line = streamReader.ReadLine()) is not null)
         {
-            while (!streamReader.EndOfStream)
+            var trimmedLine = line.Trim();
+            if (trimmedLine.Length > 64)
             {
-                var trimmedLine = streamReader.ReadLine()?.Trim();
-                if (trimmedLine?.Length > 64)
-                {
-                    containerId = trimmedLine.Substring(trimmedLine.Length - 64);
-                    return containerId;
-                }
+                return trimmedLine.Substring(trimmedLine.Length - 64);
             }
         }
 
-        return containerId;
+        return null;
     }
 
-    internal static bool IsECSProcess()
-    {
-        return Environment.GetEnvironmentVariable(AWSECSMetadataURLKey) != null || Environment.GetEnvironmentVariable(AWSECSMetadataURLV4Key) != null;
-    }
+    internal static bool IsECSProcess() =>
+        Environment.GetEnvironmentVariable(AWSECSMetadataURLKey) != null ||
+        Environment.GetEnvironmentVariable(AWSECSMetadataURLV4Key) != null;
 
     internal void ExtractMetadataV4ResourceAttributes(AWSSemanticConventions.AttributeBuilderImpl resourceAttributes)
     {
@@ -100,11 +96,22 @@ internal sealed partial class AWSECSDetector : IResourceDetector
 
         using var scope = SuppressInstrumentationScope.Begin();
         using var httpClientHandler = new HttpClientHandler();
-        var metadataV4ContainerResponse = AsyncHelper.RunSync(() => ResourceDetectorUtils.SendOutRequestAsync(metadataV4Url, HttpMethod.Get, null, httpClientHandler));
-        var metadataV4TaskResponse = AsyncHelper.RunSync(() => ResourceDetectorUtils.SendOutRequestAsync($"{metadataV4Url.TrimEnd('/')}/task", HttpMethod.Get, null, httpClientHandler));
+
+        var metadataV4ContainerResponse = ResourceDetectorUtils.SendOutRequest(metadataV4Url, HttpMethod.Get, null, httpClientHandler);
+        var metadataV4TaskResponse = ResourceDetectorUtils.SendOutRequest($"{metadataV4Url.TrimEnd('/')}/task", HttpMethod.Get, null, httpClientHandler);
 
         using var containerResponse = JsonDocument.Parse(metadataV4ContainerResponse);
         using var taskResponse = JsonDocument.Parse(metadataV4TaskResponse);
+
+        // On Linux the container ID is obtained from a file which does not exist on Windows.
+        // The ECS Metadata V4 container endpoint always carries the same ID in the "DockerId" field.
+        // See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v4-response.html.
+        if (OperatingSystem.IsWindows() &&
+            containerResponse.RootElement.TryGetProperty("DockerId", out var dockerIdElement) &&
+            dockerIdElement.GetString() is string { Length: > 0 } dockerId)
+        {
+            resourceAttributes.AddAttributeContainerId(dockerId);
+        }
 
         if (!containerResponse.RootElement.TryGetProperty("ContainerARN", out var containerArnElement)
             || containerArnElement.GetString() is not string containerArn)
@@ -122,7 +129,15 @@ internal sealed partial class AWSECSDetector : IResourceDetector
 
         if (!clusterArn.StartsWith("arn:", StringComparison.Ordinal))
         {
-            var baseArn = containerArn.Substring(containerArn.LastIndexOf(':'));
+            var containerArnSeparatorIndex = containerArn.LastIndexOf(':');
+            if (containerArnSeparatorIndex < 0)
+            {
+                AWSResourcesEventSource.Log.ResourceAttributesExtractException(nameof(AWSECSDetector), new ArgumentException("The ECS Metadata V4 response contained an invalid 'ContainerARN' field"));
+                return;
+            }
+
+            var baseArn = containerArn.Substring(0, containerArnSeparatorIndex);
+            clusterArn = $"{baseArn}:cluster/{clusterArn}";
         }
 
         resourceAttributes

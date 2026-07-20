@@ -2,6 +2,41 @@
 
 ## Unreleased
 
+## 1.16.0-beta.1
+
+Released 2026-Jun-24
+
+* Fix SQL query text sanitization for malformed bracketed identifiers in `FROM`
+  clauses to avoid leaking following literal values.
+  ([#4317](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4317))
+
+* Fix SQL query text sanitization performance for malformed `FROM` clauses with
+  repeated unterminated bracketed identifiers.
+  ([#4339](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4339))
+
+* Fix `db.query.parameter.<key>` attributes to always emit the value as a string.
+  ([#4395](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4395))
+
+* Fix `SqlConnectionDetails` to parse PostgreSQL data source URIs correctly.
+  ([#4444](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4444))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#4487](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4487))
+
+## 1.15.1-beta.1
+
+Released 2026-Apr-21
+
+* Fix `IndexOutOfRangeException` when parsing SQL statements.
+  ([#4139](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4139))
+
+* Add instrumentation schema URL to traces when using either the old or new
+  database Semantic Conventions, but not when both are used together.
+  ([#4078](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4078))
+
+* Updated OpenTelemetry core component version(s) to `1.15.3`.
+  ([#4166](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/pull/4166))
+
 ## 1.15.0-beta.1
 
 Released 2026-Jan-21

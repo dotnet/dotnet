@@ -864,6 +864,7 @@
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
@@ -876,6 +877,7 @@
       Możesz także przesłonić to zachowanie domyślne opcjonalnymi parametrami:
       CollectAlways — zrzut jest zbierany przy wychodzeniu, nawet jeśli nie ma awarii (true/false) 
       DumpType — określa typ zrzutu (mini/full).
+      Aby zebrać zrzut awaryjny w systemie Windows, w ścieżce PATH muszą być dostępne pliki procdump.exe i procdump64.exe albo muszą znajdować się w katalogu wskazanym przez zmienną środowiskową PROCDUMP_PATH. Narzędzia można pobrać z https://docs.microsoft.com/sysinternals/downloads/procdump.
       Przykład: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1167,16 +1169,6 @@
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">Upłynął limit czasu oczekiwania na połączenie programu obsługi żądań po {0} s.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Upłynął limit czasu oczekiwania na rozpoczęcie sesji testu po {0} s.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Upłynął limit czasu oczekiwania na zatrzymanie sesji testu po {0} sekund.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

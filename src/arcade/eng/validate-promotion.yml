@@ -1,0 +1,59 @@
+# Validates that Arcade build promotion works when driven by the newly built Arcade. One of the
+# parallel jobs of the official build's ValidateSdk stage. See eng/validation/validate-promotion.ps1.
+#
+# NOTE: runs only in the internal official build; not testable locally or in PR. Needs
+# @dotnet/dnceng review and a real official-build run to confirm.
+
+jobs:
+- template: /eng/common/templates-official/job/job.yml@self
+  parameters:
+    name: ValidatePromotion
+    displayName: Validate promotion (newly built Arcade)
+    enableMicrobuild: false
+    timeoutInMinutes: 120
+    # The publish-build-assets job writes the BAR build id as the first line of ReleaseConfigs.txt.
+    artifacts:
+      download:
+        name: ReleaseConfigs
+        path: release_configs
+    variables:
+    - group: Publish-Build-Assets
+    - template: /eng/common/templates-official/variables/pool-providers.yml@self
+    pool:
+      name: $(DncEngInternalBuildPool)
+      demands: ImageOverride -equals windows.vs2026.amd64
+    preSteps:
+    - checkout: self
+      clean: true
+    steps:
+    - powershell: |
+        $releaseConfigs = Get-Content "$(System.DefaultWorkingDirectory)/release_configs/ReleaseConfigs.txt"
+        $barId = ($releaseConfigs | Select-Object -First 1).Trim()
+        if ([string]::IsNullOrEmpty($barId)) { Write-Error "Could not read BAR build id from ReleaseConfigs.txt"; exit 1 }
+        Write-Host "BAR build id: $barId"
+        Write-Host "##vso[task.setvariable variable=BARBuildId]$barId"
+      displayName: Read BAR build id
+    # Token with code read/write on the internal AzDO mirror, to push the update-dependencies branch.
+    - task: AzureCLI@2
+      displayName: Get AzDO token (WIF)
+      name: GetAzDoToken
+      inputs:
+        azureSubscription: "dnceng-build-rw-code-rw-wif"
+        scriptType: ps
+        scriptLocation: inlineScript
+        inlineScript: |
+          $azdoToken = az account get-access-token --resource "499b84ac-1321-427f-aa17-267ca6975798" --query accessToken -o tsv
+          if ($LASTEXITCODE -ne 0) { Write-Error "Failed to get AzDO token"; exit 1 }
+          Write-Host "##vso[task.setvariable variable=WifAzDoToken;issecret=true]$azdoToken"
+    - task: AzureCLI@2
+      displayName: Validate promotion with the newly built Arcade
+      inputs:
+        azureSubscription: "Darc: Maestro Production"
+        scriptType: ps
+        scriptLocation: scriptPath
+        scriptPath: $(System.DefaultWorkingDirectory)/eng/validation/validate-promotion.ps1
+        arguments: >
+          -BuildId $(BARBuildId)
+          -Commit $(Build.SourceVersion)
+          -AzdoToken $(WifAzDoToken)
+          -GitHubPat $(BotAccount-dotnet-maestro-bot-PAT)

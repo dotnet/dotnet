@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +13,8 @@ using NuGet.Frameworks;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
+using NuGet.Protocol.Model;
+using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.Protocol
@@ -26,6 +26,32 @@ namespace NuGet.Protocol
         /// </summary>
         /// <returns>Returns an empty sequence if the package does not exist.</returns>
         public static async Task<IEnumerable<RemoteSourceDependencyInfo>> GetDependencies(
+            HttpSource httpClient,
+            Uri registrationUri,
+            string packageId,
+            VersionRange range,
+            SourceCacheContext cacheContext,
+            ILogger log,
+            CancellationToken token,
+            IEnvironmentVariableReader? env)
+        {
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+            {
+                return await GetDependenciesFromItemsAsync(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+            }
+
+            if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(env))
+            {
+                return await GetDependenciesFromItemsAsync(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+            }
+
+            return await GetDependenciesFromJObjectsAsync(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+        }
+
+        /// <summary>
+        /// Newtonsoft.Json (JObject) based registration walk.
+        /// </summary>
+        private static async Task<HashSet<RemoteSourceDependencyInfo>> GetDependenciesFromJObjectsAsync(
             HttpSource httpClient,
             Uri registrationUri,
             string packageId,
@@ -44,10 +70,10 @@ namespace NuGet.Protocol
                     throw new InvalidDataException(registrationUri.AbsoluteUri);
                 }
 
-                foreach (JObject packageObj in rangeObj["items"])
+                foreach (JObject packageObj in rangeObj["items"]!)
                 {
-                    var catalogEntry = (JObject)packageObj["catalogEntry"];
-                    var version = NuGetVersion.Parse(catalogEntry["version"].ToString());
+                    var catalogEntry = (JObject)packageObj["catalogEntry"]!;
+                    var version = NuGetVersion.Parse(catalogEntry["version"]!.ToString());
 
                     if (range.Satisfies(version))
                     {
@@ -60,6 +86,80 @@ namespace NuGet.Protocol
         }
 
         /// <summary>
+        /// System.Text.Json based registration walk.
+        /// </summary>
+        private static async Task<HashSet<RemoteSourceDependencyInfo>> GetDependenciesFromItemsAsync(
+            HttpSource httpClient,
+            Uri registrationUri,
+            string packageId,
+            VersionRange range,
+            SourceCacheContext cacheContext,
+            ILogger log,
+            CancellationToken token)
+        {
+            var results = new HashSet<RemoteSourceDependencyInfo>();
+
+            IReadOnlyList<RegistrationPage?> pages = await RegistrationUtility.LoadRangesAsItemsAsync(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+
+            // NoAllocEnumerate can't be used on nullable types, so avoid allocating an enumerator by using a for loop.
+            for (int i = 0; i < pages.Count; i++)
+            {
+                RegistrationPage? page = pages[i];
+
+                if (page == null)
+                {
+                    throw new InvalidDataException(registrationUri.AbsoluteUri);
+                }
+
+                if (page.Items is null)
+                {
+                    throw new InvalidDataException(registrationUri.AbsoluteUri);
+                }
+
+                foreach (RegistrationLeafItem leaf in page.Items)
+                {
+                    if (leaf is null || leaf.CatalogEntry is null)
+                    {
+                        throw new InvalidDataException(registrationUri.AbsoluteUri);
+                    }
+
+                    PackageSearchMetadataRegistration catalogEntry = leaf.CatalogEntry;
+                    NuGetVersion version = catalogEntry.Version;
+
+                    if (range.Satisfies(version))
+                    {
+                        results.Add(ProcessPackageVersion(leaf, version, registrationUri));
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Process an individual package version entry from a strongly typed registration leaf.
+        /// </summary>
+        /// <returns>Returns the RemoteSourceDependencyInfo object corresponding to this package version</returns>
+        private static RemoteSourceDependencyInfo ProcessPackageVersion(RegistrationLeafItem leaf, NuGetVersion version, Uri registrationUri)
+        {
+            PackageSearchMetadataRegistration catalogEntry = leaf.CatalogEntry!;
+
+            bool listed = catalogEntry.IsListed;
+            string id = catalogEntry.PackageId!;
+
+            var identity = new PackageIdentity(id, version);
+
+            if (leaf.PackageContent is null)
+            {
+                throw new InvalidDataException(registrationUri.AbsoluteUri);
+            }
+
+            string contentUri = leaf.PackageContent.OriginalString;
+
+            return new RemoteSourceDependencyInfo(identity, listed, catalogEntry.DependencySets, contentUri);
+        }
+
+        /// <summary>
         /// Process an individual package version entry
         /// </summary>
         /// <param name="packageObj"></param>
@@ -67,16 +167,16 @@ namespace NuGet.Protocol
         /// <returns>Returns the RemoteSourceDependencyInfo object corresponding to this package version</returns>
         private static RemoteSourceDependencyInfo ProcessPackageVersion(JObject packageObj, NuGetVersion version)
         {
-            var catalogEntry = (JObject)packageObj["catalogEntry"];
+            var catalogEntry = (JObject)packageObj["catalogEntry"]!;
 
             var listed = catalogEntry.GetBoolean("listed") ?? true;
 
-            var id = catalogEntry.Value<string>("id");
+            var id = catalogEntry.Value<string>("id")!;
 
             var identity = new PackageIdentity(id, version);
             var dependencyGroups = new List<PackageDependencyGroup>();
 
-            var dependencyGroupsArray = (JArray)catalogEntry["dependencyGroups"];
+            var dependencyGroupsArray = (JArray?)catalogEntry["dependencyGroups"];
 
             if (dependencyGroupsArray != null)
             {
@@ -87,7 +187,7 @@ namespace NuGet.Protocol
 
                     var groupDependencies = new List<PackageDependency>();
 
-                    JToken dependenciesObj;
+                    JToken? dependenciesObj;
 
                     // Packages with no dependencies have 'dependencyGroups' but no 'dependencies'
                     if (dependencyGroupObj.TryGetValue("dependencies", out dependenciesObj))
@@ -96,8 +196,8 @@ namespace NuGet.Protocol
                         for (int j = 0; j < dependencies.Count; j++)
                         {
                             var dependencyObj = (JObject)dependencies[j];
-                            var dependencyId = dependencyObj.Value<string>("id");
-                            var dependencyRange = RegistrationUtility.CreateVersionRange(dependencyObj.Value<string>("range"));
+                            var dependencyId = dependencyObj.Value<string>("id")!;
+                            var dependencyRange = RegistrationUtility.CreateVersionRange(dependencyObj.Value<string>("range")!);
 
                             groupDependencies.Add(new PackageDependency(dependencyId, dependencyRange));
                         }
@@ -107,7 +207,7 @@ namespace NuGet.Protocol
                 }
             }
 
-            var contentUri = packageObj.Value<string>("packageContent");
+            var contentUri = packageObj.Value<string>("packageContent")!;
 
             return new RemoteSourceDependencyInfo(identity, listed, dependencyGroups, contentUri);
         }
@@ -115,8 +215,8 @@ namespace NuGet.Protocol
         /// <summary>
         /// Retrieve a registration blob
         /// </summary>
-        /// <returns>Returns Null if the package does not exist</returns>
-        public static async Task<RegistrationInfo> GetRegistrationInfo(
+        /// <returns>Returns null if the package does not exist.</returns>
+        public static async Task<RegistrationInfo?> GetRegistrationInfo(
             HttpSource httpClient,
             Uri registrationUri,
             string packageId,
@@ -124,15 +224,24 @@ namespace NuGet.Protocol
             SourceCacheContext cacheContext,
             NuGetFramework projectTargetFramework,
             ILogger log,
-            CancellationToken token)
+            CancellationToken token,
+            IEnvironmentVariableReader? env)
         {
             var frameworkComparer = NuGetFrameworkFullComparer.Instance;
             var frameworkReducer = new FrameworkReducer();
-            var dependencies = await GetDependencies(httpClient, registrationUri, packageId, range, cacheContext, log, token);
+            IEnumerable<RemoteSourceDependencyInfo> dependencies = await GetDependencies(httpClient, registrationUri, packageId, range, cacheContext, log, token, env);
 
-            var registrationInfo = new RegistrationInfo();
+            if (!dependencies.Any())
+            {
+                return null;
+            }
 
-            registrationInfo.IncludePrerelease = true;
+            var registrationInfo = new RegistrationInfo
+            {
+                Id = packageId,
+                IncludePrerelease = true
+            };
+
             foreach (var item in dependencies)
             {
                 var packageInfo = new PackageInfo
@@ -167,7 +276,6 @@ namespace NuGet.Protocol
                 }
 
                 registrationInfo.Add(packageInfo);
-                registrationInfo.Id = item.Identity.Id;
             }
 
             return registrationInfo;
@@ -182,7 +290,7 @@ namespace NuGet.Protocol
 
             if (dependencyGroupObj["targetFramework"] != null)
             {
-                framework = NuGetFramework.Parse(dependencyGroupObj["targetFramework"].ToString());
+                framework = NuGetFramework.Parse(dependencyGroupObj["targetFramework"]!.ToString());
             }
 
             return framework;

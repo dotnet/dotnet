@@ -153,8 +153,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ExceptionWhenTryingToAddSource">
-        <source>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</source>
-        <target state="translated">Objevila se výjimka {0} při pokusu o přidání zdroje {1}. Ověřte prosím, že jsou k dispozici všechny online zdroje balíčků.</target>
+        <source>Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</source>
+        <target state="translated">Objevila se výjimka {0} při pokusu o přidání zdroje {1}. Ověřte, že jsou k dispozici všechny online zdroje balíčků.</target>
         <note />
       </trans-unit>
       <trans-unit id="FileConflictMessage">
@@ -273,8 +273,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundInPrimarySources">
-        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</source>
-        <target state="translated">Balíček {0} se nenašel v následujících primárních zdrojích: {1}. Ověřte prosím, že jsou všechny online zdroje balíčků dostupné (NEBO) že jsou správně zadané ID a verze balíčku.</target>
+        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</source>
+        <target state="translated">Balíček {0} se nenašel v následujících primárních zdrojích: {1}. Ověřte, že jsou všechny online zdroje balíčků dostupné (NEBO) že jsou správně zadané ID a verze balíčku.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundOnSource">
@@ -400,7 +400,7 @@
         <note>0 - new line separated list of errors</note>
       </trans-unit>
       <trans-unit id="SolutionDirectoryNotAvailable">
-        <source>Solution is not opened or not saved. Please ensure you have an open and saved solution.</source>
+        <source>Solution is not opened or not saved. Ensure you have an open and saved solution.</source>
         <target state="translated">Řešení není otevřené nebo není uložené. Zkontrolujte, že je řešení otevřené a uložené.</target>
         <note />
       </trans-unit>
@@ -443,8 +443,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UnableToGatherPackageFromSource">
-        <source>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </source>
-        <target state="translated">Nejde získat balíček {0} ze zdroje {1}. Ověřte prosím, že jsou k dispozici všechny online zdroje balíčků. </target>
+        <source>Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</source>
+        <target state="translated">Nejde získat balíček {0} ze zdroje {1}. Ověřte, že jsou k dispozici všechny online zdroje balíčků.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToResolveDependencyInfo">

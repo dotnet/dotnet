@@ -9,11 +9,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Moq;
 using Newtonsoft.Json.Linq;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Tests;
 using NuGet.Protocol.Tests.Providers;
+using NuGet.Shared;
 using Test.Utility;
 using Xunit;
 
@@ -34,36 +37,53 @@ namespace NuGet.Protocol.Providers.Tests
         private static readonly SemanticVersion DefaultVersion = new SemanticVersion(0, 0, 0);
 
         private readonly PackageSource _packageSource;
-        private readonly RepositorySignatureResourceProvider _repositorySignatureResourceProvider;
 
         public RepositorySignatureResourceProviderTests()
         {
             _packageSource = new PackageSource("https://unit.test");
-            _repositorySignatureResourceProvider = new RepositorySignatureResourceProvider();
         }
 
-        [Fact]
-        public async Task TryCreate_WhenResourceDoesNotExist_ReturnsNoResource()
+        private static IEnvironmentVariableReader CreateStjEnabledEnvReader()
         {
+            var mockEnvReader = new Mock<IEnvironmentVariableReader>();
+            mockEnvReader.Setup(r => r.GetEnvironmentVariable(NuGetFeatureFlags.UseSystemTextJsonDeserializationEnvVar))
+                .Returns("true");
+            return mockEnvReader.Object;
+        }
+
+        private RepositorySignatureResourceProvider CreateProvider(bool useStj)
+            => useStj
+                ? new RepositorySignatureResourceProvider(CreateStjEnabledEnvReader())
+                : new RepositorySignatureResourceProvider();
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TryCreate_WhenResourceDoesNotExist_ReturnsNoResource(bool useStj)
+        {
+            var provider = CreateProvider(useStj);
             var resourceProviders = new ResourceProvider[]
             {
                 MockServiceIndexResourceV3Provider.Create(),
-                _repositorySignatureResourceProvider
+                provider
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
-            var result = await _repositorySignatureResourceProvider.TryCreate(sourceRepository, CancellationToken.None);
+            var result = await provider.TryCreate(sourceRepository, CancellationToken.None);
 
             Assert.False(result.Item1);
             Assert.Null(result.Item2);
         }
 
-        [Fact]
-        public async Task TryCreate_WhenUrlIsHttp_Throws()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TryCreate_WhenUrlIsHttp_Throws(bool useStj)
         {
             string resourceUrl = "http://unit.test/4.9.0";
             string resourceType = ResourceType490;
             var serviceEntry = new ServiceIndexEntry(new Uri(resourceUrl), resourceType, DefaultVersion);
+            var provider = CreateProvider(useStj);
             var resourceProviders = new ResourceProvider[]
             {
                 MockServiceIndexResourceV3Provider.Create(serviceEntry),
@@ -72,22 +92,25 @@ namespace NuGet.Protocol.Providers.Tests
                     {
                         { serviceEntry.Uri.AbsoluteUri, GetRepositorySignaturesResourceJson(resourceUrl) }
                     }),
-                _repositorySignatureResourceProvider
+                provider
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
             var exception = await Assert.ThrowsAsync<FatalProtocolException>(
-                () => _repositorySignatureResourceProvider.TryCreate(sourceRepository, CancellationToken.None));
+                () => provider.TryCreate(sourceRepository, CancellationToken.None));
 
             exception.InnerException.Message.Should().Contain(string.Format(NuGet.Protocol.Strings.Error_Insecure_HTTP, _packageSource.SourceUri, resourceUrl));
         }
 
-        [Fact]
-        public async Task TryCreate_WhenUrlIsInvalid_Throws()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TryCreate_WhenUrlIsInvalid_Throws(bool useStj)
         {
             string resourceUrl = @"\\localhost\unit\test\4.9.0";
             string resourceType = ResourceType490;
             var serviceEntry = new ServiceIndexEntry(new Uri(resourceUrl), resourceType, DefaultVersion);
+            var provider = CreateProvider(useStj);
             var resourceProviders = new ResourceProvider[]
             {
                 MockServiceIndexResourceV3Provider.Create(serviceEntry),
@@ -96,23 +119,27 @@ namespace NuGet.Protocol.Providers.Tests
                     {
                         { serviceEntry.Uri.AbsoluteUri, GetRepositorySignaturesResourceJson(resourceUrl) }
                     }),
-                _repositorySignatureResourceProvider
+                provider
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
             var exception = await Assert.ThrowsAsync<FatalProtocolException>(
-                () => _repositorySignatureResourceProvider.TryCreate(sourceRepository, CancellationToken.None));
+                () => provider.TryCreate(sourceRepository, CancellationToken.None));
 
             Assert.Equal($"Repository Signatures resouce must be served over HTTPS. Source: {_packageSource.Source}", exception.Message);
         }
 
         [Theory]
-        [InlineData(ResourceUri500, ResourceType500)]
-        [InlineData(ResourceUri490, ResourceType490)]
-        [InlineData(ResourceUri470, ResourceType470)]
-        public async Task TryCreate_WhenOnlyOneResourceIsPresent_ReturnsThatResource(string resourceUrl, string resourceType)
+        [InlineData(ResourceUri500, ResourceType500, false)]
+        [InlineData(ResourceUri500, ResourceType500, true)]
+        [InlineData(ResourceUri490, ResourceType490, false)]
+        [InlineData(ResourceUri490, ResourceType490, true)]
+        [InlineData(ResourceUri470, ResourceType470, false)]
+        [InlineData(ResourceUri470, ResourceType470, true)]
+        public async Task TryCreate_WhenOnlyOneResourceIsPresent_ReturnsThatResource(string resourceUrl, string resourceType, bool useStj)
         {
             var serviceEntry = new ServiceIndexEntry(new Uri(resourceUrl), resourceType, DefaultVersion);
+            var provider = CreateProvider(useStj);
             var resourceProviders = new ResourceProvider[]
             {
                 MockServiceIndexResourceV3Provider.Create(serviceEntry),
@@ -121,11 +148,11 @@ namespace NuGet.Protocol.Providers.Tests
                     {
                         { serviceEntry.Uri.AbsoluteUri, GetRepositorySignaturesResourceJson(resourceUrl) }
                     }),
-                _repositorySignatureResourceProvider
+                provider
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
-            var result = await _repositorySignatureResourceProvider.TryCreate(sourceRepository, CancellationToken.None);
+            var result = await provider.TryCreate(sourceRepository, CancellationToken.None);
 
             Assert.True(result.Item1);
 
@@ -136,12 +163,15 @@ namespace NuGet.Protocol.Providers.Tests
             Assert.Single(resource.RepositoryCertificateInfos);
         }
 
-        [Fact]
-        public async Task TryCreate_WhenMultipleResourcesArePresent_Returns500Resource()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TryCreate_WhenMultipleResourcesArePresent_Returns500Resource(bool useStj)
         {
             var serviceEntry470 = new ServiceIndexEntry(new Uri(ResourceUri470), ResourceType470, DefaultVersion);
             var serviceEntry490 = new ServiceIndexEntry(new Uri(ResourceUri490), ResourceType490, DefaultVersion);
             var serviceEntry500 = new ServiceIndexEntry(new Uri(ResourceUri500), ResourceType500, DefaultVersion);
+            var provider = CreateProvider(useStj);
             var resourceProviders = new ResourceProvider[]
             {
                 MockServiceIndexResourceV3Provider.Create(serviceEntry470, serviceEntry490, serviceEntry500),
@@ -152,11 +182,11 @@ namespace NuGet.Protocol.Providers.Tests
                         { serviceEntry490.Uri.AbsoluteUri, GetRepositorySignaturesResourceJson(serviceEntry490.Uri.AbsoluteUri) },
                         { serviceEntry500.Uri.AbsoluteUri, GetRepositorySignaturesResourceJson(serviceEntry500.Uri.AbsoluteUri) }
                     }),
-                _repositorySignatureResourceProvider
+                provider
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
-            var result = await _repositorySignatureResourceProvider.TryCreate(sourceRepository, CancellationToken.None);
+            var result = await provider.TryCreate(sourceRepository, CancellationToken.None);
 
             Assert.True(result.Item1);
 
@@ -169,10 +199,13 @@ namespace NuGet.Protocol.Providers.Tests
         }
 
         [Theory]
-        [InlineData(ResourceUri500, ResourceType500, "repository_signatures_5.0.0")]
-        [InlineData(ResourceUri490, ResourceType490, "repository_signatures_4.9.0")]
-        [InlineData(ResourceUri470, ResourceType470, "repository_signatures_4.7.0")]
-        public async Task TryCreate_WhenResourceIsPresent_CreatesVersionedHttpCacheEntry(string resourceUrl, string resourceType, string expectedCacheKey)
+        [InlineData(ResourceUri500, ResourceType500, "repository_signatures_5.0.0", false)]
+        [InlineData(ResourceUri500, ResourceType500, "repository_signatures_5.0.0", true)]
+        [InlineData(ResourceUri490, ResourceType490, "repository_signatures_4.9.0", false)]
+        [InlineData(ResourceUri490, ResourceType490, "repository_signatures_4.9.0", true)]
+        [InlineData(ResourceUri470, ResourceType470, "repository_signatures_4.7.0", false)]
+        [InlineData(ResourceUri470, ResourceType470, "repository_signatures_4.7.0", true)]
+        public async Task TryCreate_WhenResourceIsPresent_CreatesVersionedHttpCacheEntry(string resourceUrl, string resourceType, string expectedCacheKey, bool useStj)
         {
             var serviceEntry = new ServiceIndexEntry(new Uri(resourceUrl), resourceType, DefaultVersion);
             var responses = new Dictionary<string, string>()
@@ -181,11 +214,12 @@ namespace NuGet.Protocol.Providers.Tests
             };
 
             var httpSource = new TestHttpSource(_packageSource, responses);
+            var provider = CreateProvider(useStj);
             var resourceProviders = new ResourceProvider[]
             {
                 MockServiceIndexResourceV3Provider.Create(serviceEntry),
                 StaticHttpSource.CreateHttpSource(responses, httpSource: httpSource),
-                _repositorySignatureResourceProvider
+                provider
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
             string actualCacheKey = null;
@@ -195,7 +229,7 @@ namespace NuGet.Protocol.Providers.Tests
                 actualCacheKey = request.CacheKey;
             };
 
-            var result = await _repositorySignatureResourceProvider.TryCreate(sourceRepository, CancellationToken.None);
+            var result = await provider.TryCreate(sourceRepository, CancellationToken.None);
 
             Assert.True(result.Item1);
             Assert.Equal(expectedCacheKey, actualCacheKey);

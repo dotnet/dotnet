@@ -71,43 +71,29 @@ internal sealed class ConnectionStringBuilder
     }
 
     public bool PrivatePreviewEnableTraceLoggingDynamic => this.parts.TryGetValue(nameof(this.PrivatePreviewEnableTraceLoggingDynamic), out var value)
-                && bool.TrueString.Equals(value, StringComparison.OrdinalIgnoreCase);
+                && string.Equals(bool.TrueString, value, StringComparison.OrdinalIgnoreCase);
 
     public bool PrivatePreviewEnableOtlpProtobufEncoding => this.parts.TryGetValue(nameof(this.PrivatePreviewEnableOtlpProtobufEncoding), out var value)
-                && bool.TrueString.Equals(value, StringComparison.OrdinalIgnoreCase);
+                && string.Equals(bool.TrueString, value, StringComparison.OrdinalIgnoreCase);
 
     public bool PrivatePreviewEnableUserEvents => this.parts.TryGetValue(nameof(this.PrivatePreviewEnableUserEvents), out var value)
-                && bool.TrueString.Equals(value, StringComparison.OrdinalIgnoreCase);
+                && string.Equals(bool.TrueString, value, StringComparison.OrdinalIgnoreCase);
 
     public bool PrivatePreviewEnableAFDCorrelationIdEnrichment => this.parts.TryGetValue(nameof(this.PrivatePreviewEnableAFDCorrelationIdEnrichment), out var value)
-                && bool.TrueString.Equals(value, StringComparison.OrdinalIgnoreCase);
+                && string.Equals(bool.TrueString, value, StringComparison.OrdinalIgnoreCase);
 
-    public int PrivatePreviewLogMessagePackStringSizeLimit
-    {
-        get
-        {
-            if (!this.parts.TryGetValue(nameof(this.PrivatePreviewLogMessagePackStringSizeLimit), out var value))
-            {
-                return MessagePackSerializer.DEFAULT_STRING_SIZE_LIMIT_CHAR_COUNT;
-            }
-
-            if (!int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sizeLimit))
-            {
-                throw new ArgumentException(
-                    $"{nameof(this.PrivatePreviewLogMessagePackStringSizeLimit)} is malformed.",
-                    nameof(this.PrivatePreviewLogMessagePackStringSizeLimit));
-            }
-
-            if (sizeLimit <= 0 || sizeLimit > MsgPackLogExporter.BUFFER_SIZE)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(this.PrivatePreviewLogMessagePackStringSizeLimit),
-                    $"{nameof(this.PrivatePreviewLogMessagePackStringSizeLimit)} should be greater than zero and less than or equal to {MsgPackLogExporter.BUFFER_SIZE} characters.");
-            }
-
-            return sizeLimit;
-        }
-    }
+    public int PrivatePreviewLogMessagePackStringSizeLimit =>
+        !this.parts.TryGetValue(nameof(this.PrivatePreviewLogMessagePackStringSizeLimit), out var value)
+        ? MessagePackSerializer.DEFAULT_STRING_SIZE_LIMIT_CHAR_COUNT
+        : !int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sizeLimit)
+        ? throw new ArgumentException(
+            $"{nameof(this.PrivatePreviewLogMessagePackStringSizeLimit)} is malformed.",
+            nameof(this.PrivatePreviewLogMessagePackStringSizeLimit))
+        : sizeLimit is <= 0 or > MsgPackLogExporter.BUFFER_SIZE
+        ? throw new ArgumentOutOfRangeException(
+            nameof(this.PrivatePreviewLogMessagePackStringSizeLimit),
+            $"{nameof(this.PrivatePreviewLogMessagePackStringSizeLimit)} should be greater than zero and less than or equal to {MsgPackLogExporter.BUFFER_SIZE} characters.")
+        : sizeLimit;
 
     public string Endpoint
     {
@@ -253,21 +239,17 @@ internal sealed class ConnectionStringBuilder
     }
 
     /// <summary>
-    /// Replace first charater of string if it matches with <paramref name="oldChar"/> with <paramref name="newChar"/>.
+    /// Replace first character of string if it matches with <paramref name="oldChar"/> with <paramref name="newChar"/>.
     /// </summary>
     /// <param name="str">String to be updated.</param>
     /// <param name="oldChar">Old character to be replaced.</param>
     /// <param name="newChar">New character to be replaced with.</param>
     /// <returns>Updated string.</returns>
     internal static string ReplaceFirstChar(string str, char oldChar, char newChar)
-    {
-        return str.Length > 0 && str[0] == oldChar ? $"{newChar}{str.Substring(1)}" : str;
-    }
+        => str.Length > 0 && str[0] == oldChar ? $"{newChar}{str.Substring(1)}" : str;
 
-    private T ThrowIfNotExists<T>(string name)
-    {
-        return !this.parts.TryGetValue(name, out var value)
+    private T ThrowIfNotExists<T>(string name) =>
+        !this.parts.TryGetValue(name, out var value)
             ? throw new ArgumentException($"'{name}' value is missing in connection string.")
             : (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
-    }
 }

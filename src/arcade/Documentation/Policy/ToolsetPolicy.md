@@ -43,8 +43,3 @@ For purposes of this document, 'Toolset' refers to tools which create and/or mod
 - All toolset updates will be communicated in advance by the engineering services team.
 - The implication here is that product teams should expect to deal with the toolsets updating on a relatively high cadence.  However, this in turn means that the delta will be much smaller for each update.
 - The latest version principle does not apply to .net runtimes and refpacks when used for compat testing
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CPolicy%5CToolsetPolicy.md)](https://helix.dot.net/f/p/5?p=Documentation%5CPolicy%5CToolsetPolicy.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CPolicy%5CToolsetPolicy.md)</sub>
-<!-- End Generated Content-->

@@ -2066,9 +2066,12 @@ public partial class PropertyGrid : ContainerControl, IComPropertyBrowser, IProp
             AddLargeImage(_alphaBitmap);
             AddLargeImage(_categoryBitmap);
 
-            foreach (var tab in _tabs)
+            if (_tabs.Count > 1)
             {
-                AddLargeImage(tab.Tab.Bitmap);
+                foreach (var tab in _tabs)
+                {
+                    AddLargeImage(tab.Tab.Bitmap);
+                }
             }
 
             AddLargeImage(_propertyPageBitmap);
@@ -3628,7 +3631,7 @@ public partial class PropertyGrid : ContainerControl, IComPropertyBrowser, IProp
 
     private void ResetHelpBackColor() => _helpPane.ResetBackColor();
 
-    private void ResetHelpForeColor() => _helpPane.ResetBackColor();
+    private void ResetHelpForeColor() => _helpPane.ResetForeColor();
 
     /// <summary>
     ///  This method is intended for use in replacing a specific selected root object with another object of the
@@ -3710,15 +3713,10 @@ public partial class PropertyGrid : ContainerControl, IComPropertyBrowser, IProp
 
     private bool SelectViewTabButtonDefault(ToolStripButton? button)
     {
-        if (button is null)
-        {
-            return false;
-        }
-
         // Is this tab button checked? If so, do nothing.
         if (button == _selectedTab?.Button)
         {
-            button.Checked = true;
+            button?.Checked = true;
             return true;
         }
 
@@ -3755,7 +3753,6 @@ public partial class PropertyGrid : ContainerControl, IComPropertyBrowser, IProp
 
         // Select the first tab if we didn't find that one.
         _selectedTab = _tabs[PropertiesTabIndex];
-        Debug.Assert(_tabs[PropertiesTabIndex].Tab.GetType() == DefaultTabType, "First item is not property tab!");
         SelectViewTabButton(_tabs[PropertiesTabIndex].Button, updateSelection: false);
         return false;
     }

@@ -1,32 +1,34 @@
-From 0f2b734553e3570d7c9be8b27a1dca0047fdb040 Mon Sep 17 00:00:00 2001
+From 812c81987b033b9b284f1d336d6fbfccf0bff6b9 Mon Sep 17 00:00:00 2001
 From: Chet Husk <chusk3@gmail.com>
-Date: Thu, 2 Apr 2026 12:21:06 -0500
+Date: Thu, 30 Apr 2026 17:32:05 +0200
 Subject: [PATCH] Source-build: add conditional TFM overrides and analyzer
  guards
 
 Add DotNetBuildSourceOnly conditions to:
 - Restrict target frameworks to BundledNETCoreAppTargetFramework;netstandard2.0
-- Skip Microsoft.NETFramework.ReferenceAssemblies and PublicApiAnalyzers
+- Skip Microsoft.NETFramework.ReferenceAssemblies, PublicApiAnalyzers, and BannedApiAnalyzers
 ---
- build/Common.prod.props | 2 +-
+ build/Common.prod.props | 4 ++--
  build/Common.props      | 4 +++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/build/Common.prod.props b/build/Common.prod.props
-index 8df4738d..08053885 100644
+index a0de59e9..b844ce97 100644
 --- a/build/Common.prod.props
 +++ b/build/Common.prod.props
-@@ -37,7 +37,7 @@
+@@ -37,8 +37,8 @@
  
    <ItemGroup>
      <PackageReference Include="MinVer" PrivateAssets="All" Condition="'$(IntegrationBuild)' != 'true'" />
+-    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="All" />
 -    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
++    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" PrivateAssets="All" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
 +    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
    </ItemGroup>
  
    <ItemGroup>
 diff --git a/build/Common.props b/build/Common.props
-index 44c697e3..e734b610 100644
+index 48a94bc9..4bf48dd4 100644
 --- a/build/Common.props
 +++ b/build/Common.props
 @@ -31,7 +31,9 @@
@@ -43,11 +45,11 @@ index 44c697e3..e734b610 100644
    </ItemGroup>
  
    <ItemGroup>
--    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" />
-+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Condition="$(OS) != 'Windows_NT'" />
++    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Condition="$(OS) != 'Windows_NT' AND '$(DotNetBuildSourceOnly)' != 'true'" />
      <PackageReference Include="StyleCop.Analyzers" PrivateAssets="All" Condition="'$(SkipAnalysis)'!='true'" />
    </ItemGroup>
  
 -- 
-2.52.0.windows.1
+2.53.0.windows.3
 

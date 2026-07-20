@@ -15,7 +15,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullPlugin()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new CloseRequestHandler(plugin: null));
+                () => new CloseRequestHandler(plugin: null!));
 
             Assert.Equal("plugin", exception.ParamName);
         }
@@ -53,12 +53,11 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Handler.HandleResponseAsync(
-                        connection: null,
-                        request: new Message(
+                        connection: null!,
+                        request: MessageUtilities.Create(
                             requestId: "a",
                             type: MessageType.Request,
-                            method: MessageMethod.Close,
-                            payload: null),
+                            method: MessageMethod.Close),
                         responseHandler: Mock.Of<IResponseHandler>(),
                         cancellationToken: CancellationToken.None));
 
@@ -74,7 +73,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Handler.HandleResponseAsync(
                         Mock.Of<IConnection>(),
-                        request: null,
+                        request: null!,
                         responseHandler: Mock.Of<IResponseHandler>(),
                         cancellationToken: CancellationToken.None));
 
@@ -90,12 +89,11 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Handler.HandleResponseAsync(
                         Mock.Of<IConnection>(),
-                        new Message(
+                        MessageUtilities.Create(
                             requestId: "a",
                             type: MessageType.Request,
-                            method: MessageMethod.Close,
-                            payload: null),
-                        responseHandler: null,
+                            method: MessageMethod.Close),
+                        responseHandler: null!,
                         cancellationToken: CancellationToken.None));
 
                 Assert.Equal("responseHandler", exception.ParamName);
@@ -110,11 +108,10 @@ namespace NuGet.Protocol.Plugins.Tests
                 await Assert.ThrowsAsync<OperationCanceledException>(
                     () => test.Handler.HandleResponseAsync(
                         Mock.Of<IConnection>(),
-                        new Message(
+                        MessageUtilities.Create(
                             requestId: "a",
                             type: MessageType.Request,
-                            method: MessageMethod.Close,
-                            payload: null),
+                            method: MessageMethod.Close),
                         Mock.Of<IResponseHandler>(),
                         new CancellationToken(canceled: true)));
             }
@@ -129,11 +126,10 @@ namespace NuGet.Protocol.Plugins.Tests
 
                 await test.Handler.HandleResponseAsync(
                     Mock.Of<IConnection>(),
-                    new Message(
+                    MessageUtilities.Create(
                         requestId: "a",
                         type: MessageType.Request,
-                        method: MessageMethod.Close,
-                        payload: null),
+                        method: MessageMethod.Close),
                     Mock.Of<IResponseHandler>(),
                     CancellationToken.None);
 

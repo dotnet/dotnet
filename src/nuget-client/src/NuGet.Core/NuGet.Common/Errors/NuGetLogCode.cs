@@ -337,6 +337,11 @@ namespace NuGet.Common
         NU1511 = 1511,
 
         /// <summary>
+        /// RestoreLockedMode and RestoreForceEvaluate are both set to true; RestoreForceEvaluate takes precedence and locked mode is ignored.
+        /// </summary>
+        NU1512 = 1512,
+
+        /// <summary>
         /// Dependency bumped up
         /// </summary>
         NU1601 = 1601,
@@ -381,7 +386,8 @@ namespace NuGet.Common
         NU1702 = 1702,
 
         /// <summary>
-        /// MacCatalyst platform fell back to xamarin.ios - Added in 6.0, removed in 6.1.
+        /// Package uses a deprecated legacy Xamarin framework (e.g. MonoAndroid) instead of a modern .NET TFM.
+        /// Originally added in 6.0 for MacCatalyst/Xamarin.iOS (removed in 6.1), reused for MonoAndroid in 11.0.
         /// </summary>
         NU1703 = 1703,
 
@@ -903,6 +909,11 @@ namespace NuGet.Common
         NU5051 = 5051,
 
         /// <summary>
+        /// Package ID does not adhere to the restricted set of characters
+        /// </summary>
+        NU5052 = 5052,
+
+        /// <summary>
         /// AssemblyOutsideLibWarning
         /// </summary>
         NU5100 = 5100,
@@ -1076,5 +1087,10 @@ namespace NuGet.Common
         /// InvalidUndottedFrameworkWarning
         /// </summary>
         NU5501 = 5501,
+
+        /// <summary>
+        /// Invalid deterministic timestamp
+        /// </summary>
+        NU5502 = 5502,
     }
 }

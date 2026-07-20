@@ -21,7 +21,6 @@ using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
@@ -186,20 +185,6 @@ public class DesignModeClient : IDesignModeClient
                             // Do not filter the Editor/IDE provided extensions by name
                             var extensionPaths = _communicationManager.DeserializePayload<IEnumerable<string>>(message);
                             testRequestManager.InitializeExtensions(extensionPaths, skipExtensionFilters: true);
-                            break;
-                        }
-
-                    case MessageType.StartTestSession:
-                        {
-                            var testSessionPayload = _communicationManager.DeserializePayload<StartTestSessionPayload>(message);
-                            StartTestSession(testSessionPayload, testRequestManager);
-                            break;
-                        }
-
-                    case MessageType.StopTestSession:
-                        {
-                            var testSessionPayload = _communicationManager.DeserializePayload<StopTestSessionPayload>(message);
-                            StopTestSession(testSessionPayload, testRequestManager);
                             break;
                         }
 
@@ -588,74 +573,6 @@ public class DesignModeClient : IDesignModeClient
 
             // Send run complete to translation layer
             _communicationManager.SendMessage(MessageType.TestRunAttachmentsProcessingComplete, payload);
-        }
-    }
-
-    private void StartTestSession(StartTestSessionPayload? payload, ITestRequestManager requestManager)
-    {
-        Task.Run(() =>
-        {
-            var eventsHandler = new TestSessionEventsHandler(_communicationManager);
-
-            try
-            {
-                if (payload is null)
-                {
-                    OnError(eventsHandler, null);
-                    return;
-                }
-
-                var customLauncher = payload.HasCustomHostLauncher
-                    ? DesignModeTestHostLauncherFactory.GetCustomHostLauncherForTestRun(this, payload.IsDebuggingEnabled)
-                    : null;
-
-                requestManager.ResetOptions();
-                requestManager.StartTestSession(payload, customLauncher, eventsHandler, _protocolConfig);
-            }
-            catch (Exception ex)
-            {
-                OnError(eventsHandler, ex);
-            }
-        });
-
-        static void OnError(TestSessionEventsHandler eventsHandler, Exception? ex)
-        {
-            EqtTrace.Error("DesignModeClient.StartTestSession: " + ex ?? "payload is null");
-
-            eventsHandler.HandleLogMessage(TestMessageLevel.Error, ex?.ToString());
-            eventsHandler.HandleStartTestSessionComplete(new());
-        }
-    }
-
-    private void StopTestSession(StopTestSessionPayload? payload, ITestRequestManager requestManager)
-    {
-        Task.Run(() =>
-        {
-            var eventsHandler = new TestSessionEventsHandler(_communicationManager);
-
-            try
-            {
-                requestManager.ResetOptions();
-                if (payload is null)
-                {
-                    OnError(eventsHandler, null);
-                    return;
-                }
-
-                requestManager.StopTestSession(payload, eventsHandler, _protocolConfig);
-            }
-            catch (Exception ex)
-            {
-                OnError(eventsHandler, ex);
-            }
-        });
-
-        void OnError(TestSessionEventsHandler eventsHandler, Exception? ex)
-        {
-            EqtTrace.Error("DesignModeClient.StopTestSession: " + ex ?? "payload is null");
-
-            eventsHandler.HandleLogMessage(TestMessageLevel.Error, ex?.ToString());
-            eventsHandler.HandleStopTestSessionComplete(new(payload?.TestSessionInfo));
         }
     }
 

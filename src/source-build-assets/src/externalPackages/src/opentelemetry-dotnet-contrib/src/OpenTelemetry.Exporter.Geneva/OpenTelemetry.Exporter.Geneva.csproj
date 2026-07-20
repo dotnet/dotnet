@@ -9,8 +9,12 @@
     <!-- Tweak style rules for Geneva: Allow underscores in constant names and allow regions inside code blocks -->
     <NoWarn>$(NoWarn);SA1123;SA1310</NoWarn>
     <MinVerTagPrefix>Exporter.Geneva-</MinVerTagPrefix>
-    <PackageValidationBaselineVersion>1.14.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.15.2</PackageValidationBaselineVersion>
     <AssemblyIsCLSCompliant>false</AssemblyIsCLSCompliant>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$([MSBuild]::GetTargetFrameworkIdentifier(`$(TargetFramework)`))' == '.NETCoreApp'">
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,7 +36,9 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="OpenTelemetry.Exporter.Geneva.Benchmarks" PublicKey="$(StrongNamePublicKey)" />
+    <InternalsVisibleTo Include="OpenTelemetry.Exporter.Geneva.FuzzTests" PublicKey="$(StrongNamePublicKey)" />
     <InternalsVisibleTo Include="OpenTelemetry.Exporter.Geneva.Stress" PublicKey="$(StrongNamePublicKey)" />
+    <InternalsVisibleTo Include="OpenTelemetry.Exporter.Geneva.Tests" PublicKey="$(StrongNamePublicKey)" />
   </ItemGroup>
 
 </Project>

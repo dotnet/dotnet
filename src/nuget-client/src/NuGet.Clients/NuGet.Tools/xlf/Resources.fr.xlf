@@ -23,28 +23,38 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_CopilotAccessDenied">
-        <source>Access denied. Please ensure you are signed in to GitHub Copilot.</source>
+        <source>Access denied. Ensure you are signed in to GitHub Copilot.</source>
         <target state="translated">Accès refusé. Vérifiez que vous êtes connecté(e) à GitHub Copilot.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotNotReady">
-        <source>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="translated">Désolé, GitHub Copilot n’est pas prêt. Veuillez vérifier que GitHub Copilot est installé et que vous êtes connecté(e).</target>
+        <source>GitHub Copilot is not ready. Ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">Désolé, GitHub Copilot n’est pas prêt. Vérifiez que GitHub Copilot est installé et connecté.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
-        <source>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="translated">Désolé, le service de GitHub Copilot n’est pas disponible. Veuillez vérifier que GitHub Copilot est installé et que vous êtes connecté(e).</target>
+        <source>GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">Désolé, le service de GitHub Copilot n’est pas disponible. Vérifiez que GitHub Copilot est installé et connecté.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpServerInfoServiceNotAvailable">
+        <source>Unable to determine the status of the NuGet MCP Server. Ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">Impossible de déterminer l’état du serveur MCP NuGet. Vérifiez que GitHub Copilot est installé et connecté.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
+      <trans-unit id="Error_McpServerNotActive">
+        <source>The NuGet MCP Server is not active. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
+        <target state="translated">Le serveur MCP NuGet n’est pas actif. Activez le serveur MCP NuGet dans la fenêtre de conversation GitHub Copilot et réessayez.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpToolServiceNotAvailable">
-        <source>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</source>
-        <target state="translated">Désolé, le service MCP Tool n’est pas disponible. Veuillez vérifier que GitHub Copilot est installé et que vous êtes connecté(e).</target>
+        <source>MCP Tool Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
+        <target state="translated">Désolé, le service MCP Tool n’est pas disponible. Vérifiez que GitHub Copilot est installé et connecté.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_NuGetSolverNotAvailable">
-        <source>The NuGet Solver tool is unavailable. Please enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="translated">Désolé, l’outil Solutionneur NuGet n’est pas disponible. Veuillez activer le serveur MCP NuGet dans la fenêtre de conversation GitHub Copilot et réessayer.</target>
+        <source>The NuGet Solver tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
+        <target state="translated">Désolé, l’outil Solutionneur NuGet n’est pas disponible. Activez le serveur MCP NuGet dans la fenêtre de conversation GitHub Copilot et réessayez.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
@@ -73,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_ServiceBrokerNotAvailable">
-        <source>Service Broker is not available. Please ensure Visual Studio is running correctly.</source>
-        <target state="translated">Désolé, Service Broker n’est pas disponible. Veuillez vérifier que Visual Studio fonctionne correctement.</target>
+        <source>Service Broker is not available. Ensure Visual Studio is running correctly.</source>
+        <target state="translated">Désolé, Service Broker n’est pas disponible. Vérifiez que Visual Studio fonctionne correctement.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -158,8 +168,8 @@
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
-        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
-        <target state="translated">La solution n'est pas enregistrée. Enregistrez votre solution avant de gérer des packages NuGet.</target>
+        <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
+        <target state="translated">La solution n’est pas enregistrée. Enregistrez votre solution avant de gérer des packages NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">

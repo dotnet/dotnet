@@ -867,6 +867,7 @@
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
@@ -875,10 +876,11 @@
       Crea un archivo de salida en el directorio actual como "Sequence.xml",
       que captura el orden de ejecución de la prueba antes del bloqueo.
       Tiene la opción de elegir recopilar el volcado de proceso para el host de prueba.
-      Cuando elige recopilar el volcado, de forma predeterminada se recopila un mini volcado en un bloqueo.
+      Cuando elige recopilar el volcado, de forma predeterminada se recopilará un mini volcado en un bloqueo.
       También puede elegir invalidar este comportamiento predeterminado mediante algunos parámetros opcionales:
-      CollectAlways: para recopilar un volcado al salir incluso aunque no haya un bloqueo (true/false) 
-      DumpType: para especificar el tipo de volcado (mini/completo).
+      CollectAlways: para recopilar un volcado al salir incluso aunque no haya un bloqueo (true/false)
+      DumpType: para especificar el tipo de volcado (mini/full).
+      La recopilación de un volcado de memoria en Windows requiere que procdump.exe y procdump64.exe estén disponibles en PATH o en un directorio al que apunta la variable de entorno PROCDUMP_PATH. Las herramientas se pueden descargar desde aquí: https://docs.microsoft.com/sysinternals/downloads/procdump.
       Ejemplo: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1170,16 +1172,6 @@
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">Se ha agotado el tiempo de espera de la conexión del controlador de solicitudes después de {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Se ha agotado el tiempo de espera de la sesión de prueba de inicio después de {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Se ha agotado el tiempo de espera para detener la sesión de prueba después de {0} segundos.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

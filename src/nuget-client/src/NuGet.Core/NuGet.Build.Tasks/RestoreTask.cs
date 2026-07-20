@@ -21,6 +21,7 @@ namespace NuGet.Build.Tasks
     /// <summary>
     /// .NET Core compatible restore task for PackageReference and UWP project.json projects.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class RestoreTask : Microsoft.Build.Utilities.Task, ICancelableTask, IDisposable
     {
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
@@ -160,6 +161,19 @@ namespace NuGet.Build.Tasks
                 ExceptionUtilities.LogException(e, log);
                 return false;
             }
+            finally
+            {
+                try
+                {
+                    // End of restore: tear down plugin processes that the per-build process exit used to reclaim, so they
+                    // do not linger in a reused process.
+                    StaticState.RaiseEndMSBuildRestoreTasks();
+                }
+                catch (Exception e)
+                {
+                    ExceptionUtilities.LogException(e, log);
+                }
+            }
         }
 
         private async Task<bool> ExecuteAsync(Common.ILogger log)
@@ -173,7 +187,7 @@ namespace NuGet.Build.Tasks
             // Convert to the internal wrapper
             var wrappedItems = RestoreGraphItems.Select(MSBuildUtility.WrapMSBuildItem);
 
-            var dgFile = MSBuildRestoreUtility.GetDependencySpec(wrappedItems, readOnly: true);
+            (var dgFile, var additionalMessages) = MSBuildRestoreUtility.GetDependencySpec(wrappedItems, readOnly: true, collectAdditionalMessages: true);
 
             EmbedInBinlog = GetFilesToEmbedInBinlog(dgFile);
 
@@ -195,6 +209,8 @@ namespace NuGet.Build.Tasks
                 forceEvaluate: RestoreForceEvaluate,
                 hideWarningsAndErrors: HideWarningsAndErrors,
                 restorePC: RestorePackagesConfig,
+                cleanupAssetsForUnsupportedProjects: false,
+                additionalMessages: additionalMessages,
                 log: log,
                 cancellationToken: _cts.Token);
 

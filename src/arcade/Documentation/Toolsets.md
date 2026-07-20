@@ -33,8 +33,3 @@ At a high level, toolsets not built by Arcade are managed by:
 * New tools and tool versions are added to the Azure blob location.  (no replacements, only adds)
 * Script updates are deployed to each repo using automation
 * When absolutely necessary, a repo can "pin" to a specific "channel", or branch/fork.  (see "servicing" document for policy around this)
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CToolsets.md)](https://helix.dot.net/f/p/5?p=Documentation%5CToolsets.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CToolsets.md)</sub>
-<!-- End Generated Content-->

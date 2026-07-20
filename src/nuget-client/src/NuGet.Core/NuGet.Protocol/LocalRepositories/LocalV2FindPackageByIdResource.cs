@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
 using System.Collections.Concurrent;
@@ -176,7 +175,7 @@ namespace NuGet.Protocol
                     using (var fileStream = File.OpenRead(info.Path))
                     {
                         await fileStream.CopyToAsync(destination, cancellationToken);
-                        ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(_source, destination.Length));
+                        ProtocolDiagnostics.RaiseEvent(new ProtocolDiagnosticNupkgCopiedEvent(_source, destination.Length, id));
                         return true;
                     }
                 }
@@ -212,7 +211,7 @@ namespace NuGet.Protocol
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public override Task<FindPackageByIdDependencyInfo> GetDependencyInfoAsync(
+        public override Task<FindPackageByIdDependencyInfo?> GetDependencyInfoAsync(
             string id,
             NuGetVersion version,
             SourceCacheContext cacheContext,
@@ -245,14 +244,14 @@ namespace NuGet.Protocol
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                FindPackageByIdDependencyInfo dependencyInfo = null;
+                FindPackageByIdDependencyInfo? dependencyInfo = null;
                 var info = GetPackageInfo(id, version, cacheContext, logger);
                 if (info != null)
                 {
                     dependencyInfo = GetDependencyInfo(info.Nuspec);
                 }
 
-                return Task.FromResult(dependencyInfo);
+                return Task.FromResult<FindPackageByIdDependencyInfo?>(dependencyInfo);
             }
             finally
             {
@@ -265,7 +264,7 @@ namespace NuGet.Protocol
             }
         }
 
-        private LocalPackageInfo GetPackageInfo(
+        private LocalPackageInfo? GetPackageInfo(
             string id,
             NuGetVersion version,
             SourceCacheContext cacheContext,
@@ -289,7 +288,7 @@ namespace NuGet.Protocol
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public override Task<IPackageDownloader> GetPackageDownloaderAsync(
+        public override Task<IPackageDownloader?> GetPackageDownloaderAsync(
             PackageIdentity packageIdentity,
             SourceCacheContext cacheContext,
             ILogger logger,
@@ -316,14 +315,14 @@ namespace NuGet.Protocol
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var packageInfo = GetPackageInfo(packageIdentity.Id, packageIdentity.Version, cacheContext, logger);
-                IPackageDownloader packageDownloader = null;
+                IPackageDownloader? packageDownloader = null;
 
                 if (packageInfo != null)
                 {
                     packageDownloader = new LocalPackageArchiveDownloader(_source, packageInfo.Path, packageInfo.Identity, logger);
                 }
 
-                return Task.FromResult(packageDownloader);
+                return Task.FromResult<IPackageDownloader?>(packageDownloader);
             }
             finally
             {
@@ -404,7 +403,7 @@ namespace NuGet.Protocol
             SourceCacheContext cacheContext,
             ILogger logger)
         {
-            IReadOnlyList<LocalPackageInfo> results = null;
+            IReadOnlyList<LocalPackageInfo>? results = null;
 
             Func<string, IReadOnlyList<LocalPackageInfo>> findPackages = (packageId) => GetPackageInfosCore(packageId, logger);
 

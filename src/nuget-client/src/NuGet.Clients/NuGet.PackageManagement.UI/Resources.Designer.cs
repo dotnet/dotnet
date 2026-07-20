@@ -277,15 +277,6 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A new version of NuGet Package Manager is available..
-        /// </summary>
-        public static string AskForUpdateMessage {
-            get {
-                return ResourceManager.GetString("AskForUpdateMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Implicitly referenced by an SDK. To update the package, update the SDK to which it belongs..
         /// </summary>
         public static string AutoReferenced {
@@ -885,15 +876,6 @@ namespace NuGet.PackageManagement.UI {
         public static string Hyperlink_ReportAbuse {
             get {
                 return ResourceManager.GetString("Hyperlink_ReportAbuse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ignore for now.
-        /// </summary>
-        public static string IgnoreUpgrade {
-            get {
-                return ResourceManager.GetString("IgnoreUpgrade", resourceCulture);
             }
         }
         
@@ -1672,15 +1654,6 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Details.
-        /// </summary>
-        public static string ShowDetails {
-            get {
-                return ResourceManager.GetString("ShowDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to NuGet storage clear failed at {0}. 
         ///Error: {1}.
         /// </summary>
@@ -1727,7 +1700,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The name specified has already been added to the list of available package sources. Please provide a unique name..
+        ///   Looks up a localized string similar to The name specified has already been added to the list of available package sources. Provide a unique name..
         /// </summary>
         public static string ShowWarning_UniqueName {
             get {
@@ -1736,7 +1709,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The source specified has already been added to the list of available package sources. Please provide a unique source..
+        ///   Looks up a localized string similar to The source specified has already been added to the list of available package sources. Provide a unique source..
         /// </summary>
         public static string ShowWarning_UniqueSource {
             get {
@@ -1934,7 +1907,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)..
+        ///   Looks up a localized string similar to There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)..
         /// </summary>
         public static string Text_NoReadme {
             get {
@@ -2348,7 +2321,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please follow simple instructions from {0} to go back to previous state..
+        ///   Looks up a localized string similar to Follow the instructions at {0} to return to the previous state..
         /// </summary>
         public static string Upgrade_RevertSteps {
             get {

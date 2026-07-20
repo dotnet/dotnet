@@ -4,84 +4,87 @@
 #nullable enable
 
 using System;
+using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using Microsoft.Extensions.CommandLineUtils;
-using NuGet.Common;
 
 namespace NuGet.CommandLine.XPlat
 {
-    internal class RemovePackageReferenceCommand
+    internal static class RemovePackageReferenceCommand
     {
-        public static void Register(CommandLineApplication app, Func<ILogger> getLogger,
+        internal static void Register(Command parent, Func<ILoggerWithColor> getLogger,
             Func<IPackageReferenceCommandRunner> getCommandRunner,
             Func<IVirtualProjectBuilder?>? getVirtualProjectBuilder = null)
         {
-            app.Command("remove", removePkg =>
+            var removeCommand = new Command("remove", Strings.RemovePkg_Description);
+
+            var id = new Option<string>("--package")
             {
-                removePkg.Description = Strings.RemovePkg_Description;
-                removePkg.HelpOption(XPlatUtility.HelpOption);
+                Description = Strings.RemovePkg_PackageIdDescription,
+                Arity = ArgumentArity.ExactlyOne
+            };
 
-                removePkg.Option(
-                    CommandConstants.ForceEnglishOutputOption,
-                    Strings.ForceEnglishOutput_Description,
-                    CommandOptionType.NoValue);
+            var projectPath = new Option<string>("--project", "-p")
+            {
+                Description = Strings.RemovePkg_ProjectPathDescription,
+                Arity = ArgumentArity.ExactlyOne
+            };
 
-                var id = removePkg.Option(
-                    "--package",
-                    Strings.RemovePkg_PackageIdDescription,
-                    CommandOptionType.SingleValue);
+            var interactive = new Option<bool>("--interactive")
+            {
+                Description = Strings.AddPkg_InteractiveDescription,
+                Arity = ArgumentArity.Zero
+            };
 
-                var projectPath = removePkg.Option(
-                    "-p|--project",
-                    Strings.RemovePkg_ProjectPathDescription,
-                    CommandOptionType.SingleValue);
+            removeCommand.Options.Add(id);
+            removeCommand.Options.Add(projectPath);
+            removeCommand.Options.Add(interactive);
 
-                var interactive = removePkg.Option(
-                    "--interactive",
-                    Strings.AddPkg_InteractiveDescription,
-                    CommandOptionType.NoValue);
+            removeCommand.SetAction(async (parseResult, cancellationToken) =>
+            {
+                var virtualProjectBuilder = getVirtualProjectBuilder?.Invoke();
 
-                removePkg.OnExecute(() =>
+                var idValue = parseResult.GetValue(id);
+                var projectPathValue = parseResult.GetValue(projectPath);
+
+                ValidateArgument(idValue, "--package", "remove");
+                ValidateArgument(projectPathValue, "--project", "remove");
+                ValidateProjectPath(projectPathValue, "remove", virtualProjectBuilder);
+                var logger = getLogger();
+                var packageRefArgs = new PackageReferenceArgs(projectPathValue, logger)
                 {
-                    var virtualProjectBuilder = getVirtualProjectBuilder?.Invoke();
-
-                    ValidateArgument(id, removePkg.Name);
-                    ValidateArgument(projectPath, removePkg.Name);
-                    ValidateProjectPath(projectPath, removePkg.Name, virtualProjectBuilder);
-                    var logger = getLogger();
-                    var packageRefArgs = new PackageReferenceArgs(projectPath.Value(), logger)
-                    {
-                        Interactive = interactive.HasValue(),
-                        PackageId = id.Value()
-                    };
-                    var msBuild = new MSBuildAPIUtility(logger, virtualProjectBuilder);
-                    var removePackageRefCommandRunner = getCommandRunner();
-                    return removePackageRefCommandRunner.ExecuteCommand(packageRefArgs, msBuild);
-                });
+                    Interactive = parseResult.GetValue(interactive),
+                    PackageId = idValue
+                };
+                var msBuild = new MSBuildAPIUtility(logger, virtualProjectBuilder!);
+                var removePackageRefCommandRunner = getCommandRunner();
+                return await removePackageRefCommandRunner.ExecuteCommand(packageRefArgs, msBuild);
             });
+
+            parent.Subcommands.Add(removeCommand);
         }
 
-        private static void ValidateArgument(CommandOption arg, string commandName)
+        private static void ValidateArgument([NotNull] string? value, string optionName, string commandName)
         {
-            if (arg.Values.Count < 1)
+            if (string.IsNullOrEmpty(value))
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PkgMissingArgument,
                     commandName,
-                    arg.Template));
+                    optionName));
             }
         }
 
-        private static void ValidateProjectPath(CommandOption projectPath, string commandName, IVirtualProjectBuilder? virtualProjectBuilder)
+        private static void ValidateProjectPath(string projectPath, string commandName, IVirtualProjectBuilder? virtualProjectBuilder)
         {
-            if (!File.Exists(projectPath.Value())
-                || (!projectPath.Value().EndsWith("proj", StringComparison.OrdinalIgnoreCase)
-                    && virtualProjectBuilder?.IsValidEntryPointPath(projectPath.Value()) != true))
+            if (!File.Exists(projectPath)
+                || (!projectPath.EndsWith("proj", StringComparison.OrdinalIgnoreCase)
+                    && virtualProjectBuilder?.IsValidEntryPointPath(projectPath) != true))
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                     Strings.Error_PkgMissingOrInvalidProjectFile,
                     commandName,
-                    projectPath.Value()));
+                    projectPath));
             }
         }
     }

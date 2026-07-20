@@ -2,13 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Storage.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal;
 
@@ -35,10 +35,7 @@ public class CosmosTypeMappingSource : TypeMappingSource
             {
                 { typeof(TimeOnly), CosmosTimeOnlyTypeMapping.Default },
                 { typeof(TimeSpan), CosmosTimeSpanTypeMapping.Default },
-                {
-                    typeof(JObject), new CosmosTypeMapping(
-                        typeof(JObject), jsonValueReaderWriter: dependencies.JsonValueReaderWriterSource.FindReaderWriter(typeof(JObject)))
-                }
+                { typeof(decimal), CosmosDecimalTypeMapping.Default }
             }.ToFrozenDictionary();
 
     /// <summary>
@@ -115,10 +112,10 @@ public class CosmosTypeMappingSource : TypeMappingSource
             CoreTypeMapping? typeMapping = null;
             return !TryFindJsonCollectionMapping(elementMappingInfo, memoryType.MakeArrayType(), null, ref typeMapping, out var _, out var readerWriter)
                 ? null
-                : new CosmosTypeMapping(clrType, jsonValueReaderWriter: readerWriter)
-                .WithComposedConverter(
-                    (ValueConverter)Activator.CreateInstance(typeof(ReadOnlyMemoryConverter<>).MakeGenericType(memoryType))!,
-                    (ValueComparer)Activator.CreateInstance(typeof(ReadOnlyMemoryComparer<>).MakeGenericType(memoryType))!);
+                : CreateMapping(clrType, jsonValueReaderWriter: readerWriter)
+                    .WithComposedConverter(
+                        (ValueConverter)Activator.CreateInstance(typeof(ReadOnlyMemoryConverter<>).MakeGenericType(memoryType))!,
+                        (ValueComparer)Activator.CreateInstance(typeof(ReadOnlyMemoryComparer<>).MakeGenericType(memoryType))!);
         }
 
         return clrType.IsNumeric()
@@ -129,7 +126,7 @@ public class CosmosTypeMappingSource : TypeMappingSource
             || clrType == typeof(DateTimeOffset)
             || clrType == typeof(TimeSpan)
             || clrType == typeof(string)
-                ? new CosmosTypeMapping(
+                ? CreateMapping(
                     clrType, jsonValueReaderWriter: Dependencies.JsonValueReaderWriterSource.FindReaderWriter(clrType))
                 : null;
     }
@@ -155,7 +152,7 @@ public class CosmosTypeMappingSource : TypeMappingSource
                 out var collectionReaderWriter)
             && elementMapping is not null)
         {
-            return new CosmosTypeMapping(
+            return CreateMapping(
                 clrType,
                 elementComparer,
                 elementMapping: elementMapping,
@@ -234,7 +231,7 @@ public class CosmosTypeMappingSource : TypeMappingSource
                         }
                     }
 
-                    return new CosmosTypeMapping(
+                    return CreateMapping(
                         clrType,
                         CreateStringDictionaryComparer(elementMapping, elementType, clrType),
                         jsonValueReaderWriter: jsonValueReaderWriter);
@@ -245,14 +242,68 @@ public class CosmosTypeMappingSource : TypeMappingSource
         return null;
     }
 
+    private static CosmosTypeMapping CreateMapping(
+        Type clrType,
+        ValueComparer? comparer = null,
+        ValueComparer? keyComparer = null,
+        CoreTypeMapping? elementMapping = null,
+        JsonValueReaderWriter? jsonValueReaderWriter = null)
+        => clrType switch
+        {
+            _ when clrType == typeof(bool) => Create<bool>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(byte) => Create<byte>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(sbyte) => Create<sbyte>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(char) => Create<char>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(short) => Create<short>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(ushort) => Create<ushort>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(int) => Create<int>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(uint) => Create<uint>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(long) => Create<long>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(ulong) => Create<ulong>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(float) => Create<float>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(double) => Create<double>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(decimal) => Create<decimal>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(string) => Create<string>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(Guid) => Create<Guid>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(DateTime) => Create<DateTime>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(DateTimeOffset) => Create<DateTimeOffset>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ when clrType == typeof(DateOnly) => Create<DateOnly>(comparer, keyComparer, elementMapping, jsonValueReaderWriter),
+            _ => CreateMappingWithReflection(clrType, comparer, keyComparer, elementMapping, jsonValueReaderWriter)
+        };
+
+    private static CosmosTypeMapping Create<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties)] T>(
+        ValueComparer? comparer,
+        ValueComparer? keyComparer,
+        CoreTypeMapping? elementMapping,
+        JsonValueReaderWriter? jsonValueReaderWriter)
+        => comparer is null && keyComparer is null && elementMapping is null
+            && (jsonValueReaderWriter is null || ReferenceEquals(jsonValueReaderWriter, CosmosTypeMapping<T>.Default.JsonValueReaderWriter))
+            ? CosmosTypeMapping<T>.Default
+            : new CosmosTypeMapping<T>(comparer, keyComparer, elementMapping, jsonValueReaderWriter);
+
+    [UnconditionalSuppressMessage(
+        "AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.",
+        Justification = "The type mapping source is not used at runtime by NativeAOT applications, which use a compiled model instead.")]
+    private static CosmosTypeMapping CreateMappingWithReflection(
+        Type clrType,
+        ValueComparer? comparer,
+        ValueComparer? keyComparer,
+        CoreTypeMapping? elementMapping,
+        JsonValueReaderWriter? jsonValueReaderWriter)
+    {
+        var genericType = typeof(CosmosTypeMapping<>).MakeGenericType(clrType);
+        return comparer is null && keyComparer is null && elementMapping is null && jsonValueReaderWriter is null
+            ? (CosmosTypeMapping)genericType.GetAnyProperty(nameof(CosmosTypeMapping<object>.Default))!.GetValue(null)!
+            : (CosmosTypeMapping)Activator.CreateInstance(genericType, comparer, keyComparer, elementMapping, jsonValueReaderWriter)!;
+    }
+
     private static ValueComparer CreateStringDictionaryComparer(
         CoreTypeMapping elementMapping,
         Type elementType,
         Type dictType,
         bool readOnly = false)
     {
-        var unwrappedType = elementType.UnwrapNullableType();
-
         return (ValueComparer)Activator.CreateInstance(
             typeof(StringDictionaryComparer<,>).MakeGenericType(dictType, elementType),
 #pragma warning disable EF1001 // Internal EF Core API usage.
@@ -282,7 +333,29 @@ public class CosmosTypeMappingSource : TypeMappingSource
         public override IEnumerable<KeyValuePair<string, TElement>> FromJsonTyped(
             ref Utf8JsonReaderManager manager,
             object? existingObject = null)
-            => throw new NotImplementedException("JsonValueReader infrastructure for Dictionary is not supported on Cosmos."); // @TODO: #34567
+        {
+            if (manager.CurrentReader.TokenType != JsonTokenType.StartObject)
+            {
+                throw new InvalidOperationException(CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType));
+            }
+
+            var dictionary = new Dictionary<string, TElement>();
+            while (true)
+            {
+                switch (manager.MoveNext())
+                {
+                    case JsonTokenType.PropertyName:
+                        var key = manager.CurrentReader.GetString()!;
+                        manager.MoveNext();
+                        dictionary.Add(key, _elementReaderWriter.FromJsonTyped(ref manager));
+                        break;
+                    case JsonTokenType.EndObject:
+                        return dictionary;
+                    default:
+                        throw new InvalidOperationException(CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType));
+                }
+            }
+        }
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -348,7 +421,38 @@ public class CosmosTypeMappingSource : TypeMappingSource
         public override IEnumerable<KeyValuePair<string, TElement?>> FromJsonTyped(
             ref Utf8JsonReaderManager manager,
             object? existingObject = null)
-            => throw new NotImplementedException("JsonValueReader infrastructure for Dictionary is not supported on Cosmos."); // @TODO: #34567
+        {
+            if (manager.CurrentReader.TokenType != JsonTokenType.StartObject)
+            {
+                throw new InvalidOperationException(CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType));
+            }
+
+            var dictionary = new Dictionary<string, TElement?>();
+            while (true)
+            {
+                switch (manager.MoveNext())
+                {
+                    case JsonTokenType.PropertyName:
+                        var key = manager.CurrentReader.GetString()!;
+                        manager.MoveNext();
+
+                        if (manager.CurrentReader.TokenType == JsonTokenType.Null && !_elementReaderWriter.HandlesNullWrites)
+                        {
+                            dictionary.Add(key, null);
+                        }
+                        else
+                        {
+                            dictionary.Add(key, _elementReaderWriter.FromJsonTyped(ref manager));
+                        }
+
+                        break;
+                    case JsonTokenType.EndObject:
+                        return dictionary;
+                    default:
+                        throw new InvalidOperationException(CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType));
+                }
+            }
+        }
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -414,7 +518,37 @@ public class CosmosTypeMappingSource : TypeMappingSource
         public override IEnumerable<KeyValuePair<string, TConcreteCollection>> FromJsonTyped(
             ref Utf8JsonReaderManager manager,
             object? existingObject = null)
-            => throw new NotImplementedException("JsonValueReader infrastructure for Dictionary is not supported on Cosmos."); // @TODO: #34567
+        {
+            if (manager.CurrentReader.TokenType != JsonTokenType.StartObject)
+            {
+                throw new InvalidOperationException(CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType));
+            }
+
+            var dictionary = new Dictionary<string, TConcreteCollection>();
+            while (true)
+            {
+                switch (manager.MoveNext())
+                {
+                    case JsonTokenType.PropertyName:
+                        var key = manager.CurrentReader.GetString()!;
+
+                        if (manager.MoveNext() == JsonTokenType.Null)
+                        {
+                            dictionary.Add(key, default!); // As per unit test Can_add_update_delete_with_nested_collections
+                        }
+                        else
+                        {
+                            dictionary.Add(key, (TConcreteCollection)_elementReaderWriter.FromJsonTyped(ref manager));
+                        }
+
+                        break;
+                    case JsonTokenType.EndObject:
+                        return dictionary;
+                    default:
+                        throw new InvalidOperationException(CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType));
+                }
+            }
+        }
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -481,7 +615,38 @@ public class CosmosTypeMappingSource : TypeMappingSource
         public override IEnumerable<KeyValuePair<string, TConcreteCollection>> FromJsonTyped(
             ref Utf8JsonReaderManager manager,
             object? existingObject = null)
-            => throw new NotImplementedException("JsonValueReader infrastructure for Dictionary is not supported on Cosmos."); // @TODO: #34567
+        {
+            if (manager.CurrentReader.TokenType != JsonTokenType.StartObject)
+            {
+                throw new InvalidOperationException(CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType));
+            }
+
+            var dictionary = new Dictionary<string, TConcreteCollection>();
+            while (true)
+            {
+                switch (manager.MoveNext())
+                {
+                    case JsonTokenType.PropertyName:
+                        var key = manager.CurrentReader.GetString()!;
+                        manager.MoveNext();
+
+                        if (manager.CurrentReader.TokenType == JsonTokenType.Null)
+                        {
+                            dictionary.Add(key, default!);
+                        }
+                        else
+                        {
+                            dictionary.Add(key, (TConcreteCollection)_elementReaderWriter.FromJsonTyped(ref manager));
+                        }
+
+                        break;
+                    case JsonTokenType.EndObject:
+                        return dictionary;
+                    default:
+                        throw new InvalidOperationException(CoreStrings.JsonReaderInvalidTokenType(manager.CurrentReader.TokenType));
+                }
+            }
+        }
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

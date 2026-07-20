@@ -21,10 +21,9 @@ function ResolveProjectForTag {
   }
 
   $tagPrefix = $match.Groups[1].Value
-  $version = $match.Groups[2].Value
 
   # Step 1: Look for a .proj file in build/Projects with a matching MinVerTagPrefix
-  $buildProjects = @(Get-ChildItem -Path build/Projects/*.proj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select Path)
+  $buildProjects = @(Get-ChildItem -Path build/Projects/*.proj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select-Object Path)
 
   if ($buildProjects.Length -gt 1)
   {
@@ -40,7 +39,7 @@ function ResolveProjectForTag {
   }
 
   # Step 2: If no .proj file found use component build for the csproj found matching MinVerTagPrefix
-  $projects = @(Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select Path)
+  $projects = @(Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$tagPrefix</MinVerTagPrefix>" -List | Select-Object Path)
 
   if ($projects.Length -gt 1)
   {
@@ -88,6 +87,8 @@ function FindComponentOwners {
     [Parameter()][ref]$componentOwners
   )
 
+  $componentOwners.Value = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+
   $projectPath = "src/$component/$component.csproj"
 
   if ((Test-Path -Path $projectPath) -eq $false)
@@ -97,7 +98,7 @@ function FindComponentOwners {
         gh issue comment $issueNumber `
           --body "I couldn't find the project file for the requested component. Please create a new release request and select a valid component or edit the description and set a valid component."
       }
-      Return
+      return $false
   }
 
   $projectContent = Get-Content -Path $projectPath
@@ -110,16 +111,14 @@ function FindComponentOwners {
         gh issue comment $issueNumber `
           --body "I couldn't find ``MinVerTagPrefix`` in the project file for the requested component. Please create a new release request and select a valid component or edit the description and set a valid component."
       }
-      Return
+      return $false
   }
 
   $minVerTagPrefix = $match.Groups[1].Value
 
-  $projectDirs = Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$minVerTagPrefix</MinVerTagPrefix>" -List | Select Path | Split-Path -Parent
+  $projectDirs = Get-ChildItem -Path src/**/*.csproj | Select-String "<MinVerTagPrefix>$minVerTagPrefix</MinVerTagPrefix>" -List | Select-Object Path | Split-Path -Parent
 
   $componentOwnersContent = Get-Content '.github/component_owners.yml' -Raw
-
-  $componentOwners.Value = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
 
   foreach ($projectDir in $projectDirs)
   {
@@ -128,14 +127,16 @@ function FindComponentOwners {
     $match = [regex]::Match($componentOwnersContent, "src\/$projectName\/:([\w\W\s]*?)(src|test)")
     if ($match.Success -eq $true)
     {
-      $matches = [regex]::Matches($match.Groups[1].Value, "-\s*(.*)")
-      foreach ($match in $matches)
+      $ownerMatches = [regex]::Matches($match.Groups[1].Value, "-\s*(.*)")
+      foreach ($match in $ownerMatches)
       {
         $owner = $match.Groups[1].Value
-        $_ = $componentOwners.Value.Add($owner.Trim())
+        [void]$componentOwners.Value.Add($owner.Trim())
       }
     }
   }
+
+  return $true
 }
 
 Export-ModuleMember -Function FindComponentOwners

@@ -176,6 +176,13 @@ namespace Microsoft.DotNet.Helix.Client
         IJobDefinition WithMaxRetryCount(int? maxRetryCount);
 
         /// <summary>
+        /// Opts in to logging the preview Helix queue health summary (estimated wait, depth,
+        /// snapshot time) returned in the job creation response. Off by default.
+        /// </summary>
+        /// <returns>Fluent job builder.</returns>
+        IJobDefinition WithQueueStats();
+
+        /// <summary>
         /// <para>Sends the fully specified job to execution.</para>
         /// 
         /// <para>This includes upload of all the provided correlation data, but does not
@@ -185,5 +192,21 @@ namespace Microsoft.DotNet.Helix.Client
         /// </summary>
         /// <returns>Job accepted by Helix.</returns>
         Task<ISentJob> SendAsync(Action<string> log = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// <para>Sends the fully specified job to execution, routing the opt-in Helix queue health
+        /// summary (see <see cref="WithQueueStats"/>) to a dedicated callback so callers can surface
+        /// it at a different verbosity than the routine submission progress output.</para>
+        /// <para>The default interface implementation preserves the pre-existing behavior by
+        /// delegating to <see cref="SendAsync(Action{string}, CancellationToken)"/> and ignoring
+        /// <paramref name="queueStatsLog"/>; implementations must override this overload to route the
+        /// queue health summary separately.</para>
+        /// </summary>
+        /// <param name="log">Receives routine progress messages (payload upload, job list creation, etc.).</param>
+        /// <param name="queueStatsLog">Receives the queue health summary lines. When null, falls back to <paramref name="log"/>.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Job accepted by Helix.</returns>
+        Task<ISentJob> SendAsync(Action<string> log, Action<string> queueStatsLog, CancellationToken cancellationToken = default)
+            => SendAsync(log, cancellationToken);
     }
 }

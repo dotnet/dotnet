@@ -735,67 +735,6 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
         mockTestRunEventsHandler.Verify(mtdeh => mtdeh.LaunchProcessWithDebuggerAttached(It.IsAny<TestProcessStartInfo>()), Times.Once);
     }
 
-    [TestMethod]
-    public void StartTestRunShouldAttemptToTakeProxyFromPoolIfProxyIsNull()
-    {
-        var testSessionInfo = new TestSessionInfo();
-
-        Func<string, ProxyExecutionManager, ProxyOperationManager>
-            proxyOperationManagerCreator = (
-                string source,
-                ProxyExecutionManager proxyExecutionManager) =>
-            {
-                var proxyOperationManager = TestSessionPool.Instance.TryTakeProxy(
-                    testSessionInfo,
-                    source,
-                    string.Empty,
-                    _mockRequestData.Object);
-
-                return proxyOperationManager!;
-            };
-
-        var testExecutionManager = new ProxyExecutionManager(
-            testSessionInfo,
-            proxyOperationManagerCreator,
-            false);
-
-        var mockTestSessionPool = new Mock<TestSessionPool>();
-        TestSessionPool.Instance = mockTestSessionPool.Object;
-
-        try
-        {
-            var mockProxyOperationManager = new Mock<ProxyOperationManager>(
-                _mockRequestData.Object,
-                _mockRequestSender.Object,
-                _mockTestHostManager.Object,
-                null);
-            mockTestSessionPool.Setup(
-                    tsp => tsp.TryTakeProxy(
-                        testSessionInfo,
-                        It.IsAny<string>(),
-                        It.IsAny<string>(),
-                        _mockRequestData.Object))
-                .Returns(mockProxyOperationManager.Object);
-
-            testExecutionManager.Initialize(true);
-            testExecutionManager.StartTestRun(
-                _mockTestRunCriteria.Object,
-                new Mock<IInternalTestRunEventsHandler>().Object);
-
-            mockTestSessionPool.Verify(
-                tsp => tsp.TryTakeProxy(
-                    testSessionInfo,
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    _mockRequestData.Object),
-                Times.Once);
-        }
-        finally
-        {
-            TestSessionPool.Instance = null;
-        }
-    }
-
     private static void SignalEvent(ManualResetEvent manualResetEvent)
     {
         // Wait for the 100 ms.

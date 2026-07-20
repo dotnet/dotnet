@@ -7,7 +7,7 @@ using OpenTelemetry.Internal;
 
 namespace OpenTelemetry.Instrumentation.Wcf.Implementation;
 
-internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexChannel>, IDuplexSessionChannel
+internal class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexChannel>, IDuplexChannel
 {
     private readonly TimeSpan telemetryTimeout;
 
@@ -23,8 +23,6 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
 
     public Uri Via => this.Inner.Via;
 
-    public IDuplexSession Session => ((IDuplexSessionChannel)this.Inner).Session;
-
     public void Send(Message message)
     {
         Guard.ThrowIfNull(message);
@@ -39,18 +37,16 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         this.SendInternal(message, timeout, _ => this.Inner.Send(message, timeout));
     }
 
-    public IAsyncResult BeginSend(Message message, AsyncCallback callback, object? state)
+    public IAsyncResult BeginSend(Message message, AsyncCallback? callback, object? state)
     {
         Guard.ThrowIfNull(message);
-        Guard.ThrowIfNull(callback);
 
         return this.SendInternal(message, this.telemetryTimeout, (cb, s) => this.Inner.BeginSend(message, cb, s), callback, state);
     }
 
-    public IAsyncResult BeginSend(Message message, TimeSpan timeout, AsyncCallback callback, object? state)
+    public IAsyncResult BeginSend(Message message, TimeSpan timeout, AsyncCallback? callback, object? state)
     {
         Guard.ThrowIfNull(message);
-        Guard.ThrowIfNull(callback);
 
         return this.SendInternal(message, timeout, (cb, s) => this.Inner.BeginSend(message, timeout, cb, s), callback, state);
     }
@@ -85,17 +81,13 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         return message;
     }
 
-    public IAsyncResult BeginReceive(AsyncCallback callback, object? state)
+    public IAsyncResult BeginReceive(AsyncCallback? callback, object? state)
     {
-        Guard.ThrowIfNull(callback);
-
         return this.Inner.BeginReceive(callback, state);
     }
 
-    public IAsyncResult BeginReceive(TimeSpan timeout, AsyncCallback callback, object? state)
+    public IAsyncResult BeginReceive(TimeSpan timeout, AsyncCallback? callback, object? state)
     {
-        Guard.ThrowIfNull(callback);
-
         return this.Inner.BeginReceive(timeout, callback, state);
     }
 
@@ -115,10 +107,8 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         return returnValue;
     }
 
-    public IAsyncResult BeginTryReceive(TimeSpan timeout, AsyncCallback callback, object? state)
+    public IAsyncResult BeginTryReceive(TimeSpan timeout, AsyncCallback? callback, object? state)
     {
-        Guard.ThrowIfNull(callback);
-
         return this.Inner.BeginTryReceive(timeout, callback, state);
     }
 
@@ -136,10 +126,8 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         return this.Inner.WaitForMessage(timeout);
     }
 
-    public IAsyncResult BeginWaitForMessage(TimeSpan timeout, AsyncCallback callback, object? state)
+    public IAsyncResult BeginWaitForMessage(TimeSpan timeout, AsyncCallback? callback, object? state)
     {
-        Guard.ThrowIfNull(callback);
-
         return this.Inner.BeginWaitForMessage(timeout, callback, state);
     }
 
@@ -164,7 +152,7 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
         ClientChannelInstrumentation.AfterRequestCompleted(null, telemetryState);
     }
 
-    private IAsyncResult SendInternal(Message message, TimeSpan timeout, Func<AsyncCallback, object?, IAsyncResult> executeSend, AsyncCallback callback, object? state)
+    private IAsyncResult SendInternal(Message message, TimeSpan timeout, Func<AsyncCallback?, object?, IAsyncResult> executeSend, AsyncCallback? callback, object? state)
     {
         IAsyncResult? result = null;
         this.SendInternal(message, timeout, telemetryState =>
@@ -186,15 +174,17 @@ internal sealed class InstrumentedDuplexChannel : InstrumentedChannel<IDuplexCha
             executeSend(telemetryState);
         }
 
-        var executionContext = ExecutionContext.Capture();
-        if (executionContext == null)
-        {
-            throw new InvalidOperationException("Cannot fetch execution context");
-        }
-
         try
         {
-            ExecutionContext.Run(executionContext, ExecuteInChildContext, null);
+            var executionContext = ExecutionContext.Capture();
+            if (executionContext == null)
+            {
+                ExecuteInChildContext(null);
+            }
+            else
+            {
+                ExecutionContext.Run(executionContext, ExecuteInChildContext, null);
+            }
         }
         catch (Exception ex)
         {

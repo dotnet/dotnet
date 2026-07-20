@@ -39,7 +39,7 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
 
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunTestsWithNunitAdapter(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -68,9 +68,10 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    // there are logs in the diagnostic log, it is failing with NullReferenceException because path is null
+    // The xUnit adapter produces no results on Linux/macOS (diagnostic log shows a NullReferenceException because path is null),
+    // so the run returns an empty sequence and .First() throws. Keep this Windows-only.
     [TestCategory("Windows-Review")]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunTestsWithXunitAdapter(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -104,9 +105,9 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
     // TODO: this does not work with netcore testhost, why?
-    [NetFullTargetFrameworkDataSource]
+    [TestCategory("Windows-Review")]
+    [TestMatrix(testHost: NetFx)]
     public void RunTestsWithNonDllAdapter(RunnerInfo runnerInfo)
     {
         // This used to be test for Chutzpah, but it has long running problem with updating dependencies,

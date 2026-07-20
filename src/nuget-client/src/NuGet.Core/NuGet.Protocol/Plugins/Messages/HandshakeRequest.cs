@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using Newtonsoft.Json;
@@ -19,12 +17,14 @@ namespace NuGet.Protocol.Plugins
         /// Gets the requestor's plugin protocol version.
         /// </summary>
         [JsonRequired]
+        [System.Text.Json.Serialization.JsonConverter(typeof(StjSemanticVersionConverter))]
         public SemanticVersion ProtocolVersion { get; }
 
         /// <summary>
         /// Gets the requestor's minimum plugin protocol version.
         /// </summary>
         [JsonRequired]
+        [System.Text.Json.Serialization.JsonConverter(typeof(StjSemanticVersionConverter))]
         public SemanticVersion MinimumProtocolVersion { get; }
 
         /// <summary>

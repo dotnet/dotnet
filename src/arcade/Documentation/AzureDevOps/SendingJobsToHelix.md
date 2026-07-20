@@ -119,13 +119,15 @@ The list of available Helix queues can be found on the [Helix homepage](https://
       # condition: succeeded() - defaults to succeeded()
 ```
 
-### XUnit v3
+### Microsoft.Testing.Platform (MTP)
 
-XUnit v3 test projects are self-hosting executables and do not need an external console runner. Instead of `XUnitProjects`, use `XUnitV3Project` items directly in your Helix MSBuild project file (see [the SDK's readme](/src/Microsoft.DotNet.Helix/Sdk/Readme.md) for details). The `XUnitPublishTargetFramework`, `XUnitRuntimeTargetFramework`, and `XUnitRunnerVersion` parameters are not needed for v3 projects.
+Test projects that target [Microsoft.Testing.Platform](https://learn.microsoft.com/dotnet/core/testing/microsoft-testing-platform-intro) (MTP) are self-hosting executables and do not need an external console runner. This covers MSTest 4.x with the MTP runner, xUnit v3 with MTP (the default for v3), NUnit with the MTP runner, TUnit, and any custom MTP-based framework.
+
+Instead of `XUnitProjects`, use `MTPProject` items directly in your Helix MSBuild project file (see [the SDK's readme](/src/Microsoft.DotNet.Helix/Sdk/Readme.md) for details). Each project must reference `Microsoft.Testing.Extensions.TrxReport`; this is implicit for `MSTest.Sdk` projects and for xUnit v3 projects built with `Microsoft.DotNet.Arcade.Sdk`'s XUnitV3 targets. The `XUnitPublishTargetFramework`, `XUnitRuntimeTargetFramework`, and `XUnitRunnerVersion` parameters are not needed for MTP projects.
 
 ## The More Complex Case
 
-For anything more complex than the above example, you'll want to create your own MSBuild proj file to specify the work items and correlation payloads you want to send up to Helix. Full documentation on how to do this can be found [in the SDK's readme](https://github.com/dotnet/arcade/blob/master/src/Microsoft.DotNet.Helix/Sdk/Readme.md).
+For anything more complex than the above example, you'll want to create your own MSBuild proj file to specify the work items and correlation payloads you want to send up to Helix. Full documentation on how to do this can be found [in the SDK's readme](../../src/Microsoft.DotNet.Helix/Sdk/Readme.md).
 
 ## Viewing test results
 
@@ -161,9 +163,3 @@ As surfaced by the Helix API and backing Kusto (Azure Data Explorer) database, h
 - InfraRetry – Work item completed as expected, but on the 2nd-Nth attempt; this can be a requested-by-the-workitem retry, machine being rebooted or deleted during execution, or any number of random Azure components being flaky.  Typically ignoreable for test runs.
 - PassOnRetry – Special legacy retry functionality which is purposefully obsoleted as it does not play well with Azure DevOps test reporting (reporting the same facts twice causes issues)
 - Timeout – Work Item did not complete within its specified timeout and was forcibly killed.  Corresponds to exit code -3 (made up value since the process never exited)
-
-
-
-<!-- Begin Generated Content: Doc Feedback -->
-<sub>Was this helpful? [![Yes](https://helix.dot.net/f/ip/5?p=Documentation%5CAzureDevOps%5CSendingJobsToHelix.md)](https://helix.dot.net/f/p/5?p=Documentation%5CAzureDevOps%5CSendingJobsToHelix.md) [![No](https://helix.dot.net/f/in)](https://helix.dot.net/f/n/5?p=Documentation%5CAzureDevOps%5CSendingJobsToHelix.md)</sub>
-<!-- End Generated Content-->

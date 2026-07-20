@@ -24,6 +24,7 @@ namespace NuGet.Protocol
         private readonly HttpSource _client;
         private readonly RegistrationResourceV3 _regResource;
         private readonly SourceRepository _source;
+        private readonly Common.IEnvironmentVariableReader _environmentVariableReader;
 
         /// <summary>
         /// Dependency info resource
@@ -31,6 +32,11 @@ namespace NuGet.Protocol
         /// <param name="client">Http client</param>
         /// <param name="regResource">Registration blob resource</param>
         public DependencyInfoResourceV3(HttpSource client, RegistrationResourceV3 regResource, SourceRepository source)
+            : this(client, regResource, source, environmentVariableReader: null)
+        {
+        }
+
+        internal DependencyInfoResourceV3(HttpSource client, RegistrationResourceV3 regResource, SourceRepository source, Common.IEnvironmentVariableReader environmentVariableReader)
         {
             if (client == null)
             {
@@ -50,6 +56,7 @@ namespace NuGet.Protocol
             _client = client;
             _regResource = regResource;
             _source = source;
+            _environmentVariableReader = environmentVariableReader;
         }
 
         /// <summary>
@@ -73,12 +80,11 @@ namespace NuGet.Protocol
 
                 // Retrieve the registration blob
                 var singleVersion = new VersionRange(minVersion: package.Version, includeMinVersion: true, maxVersion: package.Version, includeMaxVersion: true);
-                var regInfo = await ResolverMetadataClient.GetRegistrationInfo(_client, uri, package.Id, singleVersion, cacheContext, projectFramework, log, token);
+                RegistrationInfo regInfo = await ResolverMetadataClient.GetRegistrationInfo(_client, uri, package.Id, singleVersion, cacheContext, projectFramework, log, token, _environmentVariableReader);
 
-                // regInfo is null if the server returns a 404 for the package to indicate that it does not exist
+                // regInfo is null if the package does not exist
                 if (regInfo != null)
                 {
-                    // Parse package and dependeny info from the blob
                     result = GetPackagesFromRegistration(regInfo, token).FirstOrDefault();
                 }
 
@@ -111,15 +117,12 @@ namespace NuGet.Protocol
                 var uri = _regResource.GetUri(packageId);
 
                 // Retrieve the registration blob
-                var regInfo = await ResolverMetadataClient.GetRegistrationInfo(_client, uri, packageId, VersionRange.All, cacheContext, projectFramework, log, token);
+                RegistrationInfo regInfo = await ResolverMetadataClient.GetRegistrationInfo(_client, uri, packageId, VersionRange.All, cacheContext, projectFramework, log, token, _environmentVariableReader);
 
-                // regInfo is null if the server returns a 404 for the package to indicate that it does not exist
+                // regInfo is null if the package does not exist
                 if (regInfo != null)
                 {
-                    // Parse package and dependeny info from the blob
                     var packages = GetPackagesFromRegistration(regInfo, token);
-
-                    // Filter on prerelease
                     results.AddRange(packages);
                 }
 
@@ -149,7 +152,7 @@ namespace NuGet.Protocol
                 var uri = _regResource.GetUri(packageId);
 
                 // Retrieve the registration blob
-                return ResolverMetadataClient.GetDependencies(_client, uri, packageId, VersionRange.All, cacheContext, log, token);
+                return ResolverMetadataClient.GetDependencies(_client, uri, packageId, VersionRange.All, cacheContext, log, token, _environmentVariableReader);
             }
             catch (Exception ex)
             {

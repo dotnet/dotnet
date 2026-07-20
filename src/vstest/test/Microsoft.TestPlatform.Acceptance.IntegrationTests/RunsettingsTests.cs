@@ -20,8 +20,8 @@ public class RunsettingsTests : AcceptanceTestBase
     /// Command line run settings should have high precedence among settings file, cli runsettings and cli switches
     /// </summary>
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void CommandLineRunSettingsShouldWinAmongAllOptions(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -60,8 +60,8 @@ public class RunsettingsTests : AcceptanceTestBase
     /// Command line run settings should have high precedence between cli runsettings and cli switches.
     /// </summary>
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void CLIRunsettingsShouldWinBetweenCLISwitchesAndCLIRunsettings(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -94,8 +94,8 @@ public class RunsettingsTests : AcceptanceTestBase
     /// Command line switches should have high precedence if runsetting file and command line switch specified
     /// </summary>
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void CommandLineSwitchesShouldWinBetweenSettingsFileAndCommandLineSwitches(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -123,8 +123,8 @@ public class RunsettingsTests : AcceptanceTestBase
     #endregion
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void RunSettingsWithoutParallelAndPlatformX86(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -148,8 +148,8 @@ public class RunsettingsTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void RunSettingsParamsAsArguments(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -175,8 +175,8 @@ public class RunsettingsTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void RunSettingsAndRunSettingsParamsAsArguments(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -210,8 +210,8 @@ public class RunsettingsTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void RunSettingsWithParallelAndPlatformX64(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -231,8 +231,8 @@ public class RunsettingsTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, inProcess: true)]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx, inProcess: true)]
+    [TestMatrix(testHost: Net)]
     public void RunSettingsWithInvalidValueShouldLogError(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -252,8 +252,8 @@ public class RunsettingsTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, inProcess: true)]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx, inProcess: true)]
+    [TestMatrix(testHost: Net)]
     public void TestAdapterPathFromRunSettings(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -275,8 +275,8 @@ public class RunsettingsTests : AcceptanceTestBase
     #region RunSettings With EnvironmentVariables Settings Tests
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx)]
+    [TestMatrix(testHost: Net)]
     public void EnvironmentVariablesSettingsShouldSetEnvironmentVariables(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -313,10 +313,8 @@ public class RunsettingsTests : AcceptanceTestBase
     /// </summary>
     /// <param name="runnerInfo"></param>
     [TestMethod]
-    // patched dotnet is not published on non-windows systems
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSourceAttribute(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSourceAttribute(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void RunSettingsAreLoadedFromProject(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -362,7 +360,6 @@ public class RunsettingsTests : AcceptanceTestBase
         }
 
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), runsettingsPath, FrameworkArgValue, _testEnvironment.InIsolationValue, resultsDirectory: TempDirectory.Path);
-        arguments += GetDiagArg(TempDirectory.Path);
 
         if (!string.IsNullOrWhiteSpace(additionalArgs))
         {
@@ -377,7 +374,7 @@ public class RunsettingsTests : AcceptanceTestBase
         InvokeVsTest(arguments);
 
         // assert
-        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, TempDirectory.Path, testhostProcessNames, arguments, GetConsoleRunnerPath());
+        AssertExpectedNumberOfHostProcesses(expectedNumOfProcessCreated, DiagLogsDirectory, testhostProcessNames, arguments, GetConsoleRunnerPath());
         ValidateSummaryStatus(2, 2, 2);
 
         //cleanup

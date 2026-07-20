@@ -112,20 +112,28 @@ internal class ConsoleLogger : ITestLoggerWithParameters
     private string? _targetFramework;
 
     /// <summary>
-    /// Default constructor.
+    /// Constructor. The built-in console logger is activated directly by the composition root (see
+    /// <see cref="TestPlatformHelpers.TestRequestManager"/>) rather than by reflection, so it receives
+    /// the parsed <see cref="CommandLineOptions"/> by injection instead of reaching for the process-wide
+    /// singleton. <see cref="Output"/> and the progress indicator are established later, in
+    /// <see cref="Initialize(TestLoggerEvents, string)"/>.
     /// </summary>
-    public ConsoleLogger()
+    internal ConsoleLogger(CommandLineOptions commandLineOptions)
     {
+        _commandLineOptions = commandLineOptions;
     }
 
     /// <summary>
     /// Constructor added for testing purpose
     /// </summary>
-    internal ConsoleLogger(IOutput output, IProgressIndicator progressIndicator, IFeatureFlag featureFlag)
+    internal ConsoleLogger(IOutput output, IProgressIndicator progressIndicator, IFeatureFlag featureFlag, CommandLineOptions? commandLineOptions = null)
     {
         Output = output;
         _progressIndicator = progressIndicator;
         _featureFlag = featureFlag;
+        // The logger owns its own options so tests stay isolated and the built-in logger never reads a
+        // process-wide singleton (there is none): callers inject the options, tests get a fresh instance.
+        _commandLineOptions = commandLineOptions ?? new CommandLineOptions();
     }
 
     /// <summary>
@@ -141,6 +149,8 @@ internal class ConsoleLogger : ITestLoggerWithParameters
     private IProgressIndicator? _progressIndicator;
 
     private readonly IFeatureFlag _featureFlag = FeatureFlag.Instance;
+
+    private readonly CommandLineOptions _commandLineOptions;
 
     /// <summary>
     /// Get the verbosity level for the console logger
@@ -415,10 +425,11 @@ internal class ConsoleLogger : ITestLoggerWithParameters
         TPDebug.Assert(Output != null, "Initialize should have been called");
 
         // Print all test containers.
-        Output.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestSourcesDiscovered, CommandLineOptions.Instance.Sources.Count()), OutputLevel.Information);
+        var commandLineOptions = _commandLineOptions;
+        Output.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.TestSourcesDiscovered, commandLineOptions.Sources.Count()), OutputLevel.Information);
         if (VerbosityLevel == Verbosity.Detailed)
         {
-            foreach (var source in CommandLineOptions.Instance.Sources)
+            foreach (var source in commandLineOptions.Sources)
             {
                 Output.WriteLine(source, OutputLevel.Information);
             }
@@ -684,7 +695,7 @@ internal class ConsoleLogger : ITestLoggerWithParameters
                 // DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX(new UX) is disabled
                 _featureFlag.IsSet(FeatureFlag.VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX) ||
                 // TestSessionCorrelationId is null(we're not running through the dotnet SDK).
-                CommandLineOptions.Instance.TestSessionCorrelationId is null)
+                _commandLineOptions.TestSessionCorrelationId is null)
             {
                 Output.Information(false, CommandLineResources.AttachmentsBanner);
                 TPDebug.Assert(e.AttachmentSets != null, "e.AttachmentSets should not be null when runLevelAttachmentsCount > 0.");

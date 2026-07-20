@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <PackageType>MSBuildSdk</PackageType>
     <IsBuildTaskProject>true</IsBuildTaskProject>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -23,6 +23,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Client\CSharp\Microsoft.DotNet.Helix.Client.csproj" />
     <ProjectReference Include="..\JobSender\Microsoft.DotNet.Helix.JobSender.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.DotNet.Helix.Sdk.Tests" />
   </ItemGroup>
 
   <ItemGroup>

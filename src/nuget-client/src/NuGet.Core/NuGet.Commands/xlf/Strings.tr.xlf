@@ -454,6 +454,11 @@
         <target state="translated">'{0}' özelliği null veya boş olmamalıdır.</target>
         <note>0 - property name</note>
       </trans-unit>
+      <trans-unit id="Error_ReadingProjectInformation">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">'{0}' için proje bilgileri okunamıyor: {1}</target>
+        <note>{0} - project name; {1} - error details</note>
+      </trans-unit>
       <trans-unit id="Error_RepoTrustExpectedRepoSignature">
         <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
         <target state="translated">Güvenilen depo eklenemiyor. Paket depo imzalı veya onay imzalı değil.</target>
@@ -465,8 +470,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_RestorePruningDirectPackageReference">
-        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
-        <target state="translated">PackageReference {0} ayıklanmayacak. Bu paketi bağımlılıklarınızdan kaldırmayı düşünün, çünkü muhtemelen gereksizdir.</target>
+        <source>PackageReference {0} will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.</source>
+        <target state="translated">PackageReference {0} ayıklanmayacak. Bu paket otomatik olarak kullanılabilir ve bu pakete açıkça başvurulması gerekmez. PackageReference öğesini kaldırın.</target>
         <note>0 - package id and version</note>
       </trans-unit>
       <trans-unit id="Error_RestorePruningProjectReference">
@@ -1108,6 +1113,11 @@ Bu özelliği kullanmak için .NET SDK'nizi yükseltin veya RestoreUseLegacyDepe
         <target state="translated">‘{0}’ paketini ‘{1}’ bağımlılığı olarak ayıklama. Maksimum ayıklanabilir sürüm ‘{2}’</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
+      <trans-unit id="RestrictedPackageIdWarning">
+        <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
+        <target state="translated">'{0}' paket kimliği geçersiz. Paket kimlikleri harf, rakam veya alt çizgiyle başlamalı ve yalnızca ASCII karakteri, rakam, nokta (.), kısa çizgi (-) ve alt çizgi (_) içermelidir. Art arda noktalar veya kısa çizgiler içermemelidir.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
         <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">'{0}' sertifika dosyası bulunamadı. Kabul edilen sertifika sağlama yollarının listesi için bkz. https://docs.nuget.org/docs/reference/command-line-reference</target>
@@ -1453,8 +1463,8 @@ Bu özelliği kullanmak için .NET SDK'nizi yükseltin veya RestoreUseLegacyDepe
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
-        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="translated">Konfigürasyonunuzda tanımlanmış {0} paket kaynakları var. Merkezi paket yönetimini kullanırken lütfen paket kaynak eşleme (https://aka.ms/nuget-package-source-mapping) ile paket kaynaklarınızı eşleyin veya tek bir paket kaynağı belirtin. Aşağıdaki kaynaklar tanımlandı: {1}</target>
+        <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <target state="translated">Yapılandırmanızda tanımlanmış {0} paket kaynağı var. Merkezi paket yönetimini kullanırken paket kaynak eşleme (https://aka.ms/nuget-package-source-mapping) ile paket kaynaklarınızı eşleyin veya tek bir paket kaynağı belirtin. Aşağıdaki kaynaklar tanımlandı: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">
@@ -1496,6 +1506,12 @@ NuGet için HTTPS kaynakları gereklidir. Daha fazla bilgi için şuraya başvur
         <target state="translated">{0}, {1} bağımlılığı için kapsayıcı bir alt sınır sağlamıyor. Bunun yerine {2} çözümlendi.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
+        <source>Package '{0}' {1} uses the deprecated MonoAndroid framework instead of 'net6.0-android' or later. Consider upgrading to a newer version of this package or contacting the package author.</source>
+        <target state="translated">'{0}' paketinin {1} sürümü, 'net6.0-android' veya sonraki sürümler yerine kullanım dışı MonoAndroid çerçevesini kullanıyor. Bu paketin daha yeni bir sürümüne yükseltmeyi veya paket yazarına başvurmayı düşünün.</target>
+        <note>{0} - package id
+{1} - package version</note>
+      </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
         <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
         <target state="translated">'{0}' {1} paketinde önem derecesi {2} olan bilinen bir {3} güvenlik açığı var</target>
@@ -1513,6 +1529,11 @@ NuGet için HTTPS kaynakları gereklidir. Daha fazla bilgi için şuraya başvur
         <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
         <target state="translated">‘{0}’ proje bağımlılığı sürüm belirtmiyor. Tutarlı geri yükleme sonuçları sağlamak için bağımlılığın sürümünü ekleyin.</target>
         <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
+        <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
+        <target state="translated">RestoreForceEvaluate, RestoreLockedMode değerini geçersiz kılıyor; paketler kilit dosyası yeniden değerlendirilecek ve yeniden oluşturulacak, kilitli mod yoksayılır.</target>
+        <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">
         <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>

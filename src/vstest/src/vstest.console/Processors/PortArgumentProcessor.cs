@@ -8,11 +8,10 @@ using System.Globalization;
 
 using Microsoft.VisualStudio.TestPlatform.Client.DesignMode;
 using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
-using Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
-using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Resources.Resources;
 
@@ -30,6 +29,16 @@ internal class PortArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly IRunSettingsHelper _runSettingsHelper;
+    private readonly CommandLineOptions _commandLineOptions;
+    private readonly ITestRequestManager _testRequestManager;
+
+    public PortArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsHelper runSettingsHelper, ITestRequestManager testRequestManager)
+    {
+        _commandLineOptions = commandLineOptions;
+        _runSettingsHelper = runSettingsHelper;
+        _testRequestManager = testRequestManager;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -43,7 +52,7 @@ internal class PortArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new PortArgumentExecutor(CommandLineOptions.Instance, TestRequestManager.Instance));
+            new PortArgumentExecutor(_commandLineOptions, _testRequestManager, _runSettingsHelper));
 
         set => _executor = value;
     }
@@ -90,9 +99,19 @@ internal class PortArgumentExecutor : IArgumentExecutor
     private IDesignModeClient? _designModeClient;
 
     /// <summary>
+    /// Port number captured during Initialize, used in Execute to avoid re-reading the shared singleton.
+    /// </summary>
+    private int _port;
+
+    /// <summary>
     /// Process helper for process management actions.
     /// </summary>
     private readonly IProcessHelper _processHelper;
+
+    /// <summary>
+    /// Used to flag that the run was started from an Editor or IDE.
+    /// </summary>
+    private readonly IRunSettingsHelper _runSettingsHelper;
 
     /// <summary>
     /// Default constructor.
@@ -101,31 +120,32 @@ internal class PortArgumentExecutor : IArgumentExecutor
     /// The options.
     /// </param>
     /// <param name="testRequestManager"> Test request manager</param>
-    public PortArgumentExecutor(CommandLineOptions options, ITestRequestManager testRequestManager)
-        : this(options, testRequestManager, InitializeDesignMode, new ProcessHelper())
+    /// <param name="runSettingsHelper"> The runsettings helper. </param>
+    public PortArgumentExecutor(CommandLineOptions options, ITestRequestManager testRequestManager, IRunSettingsHelper runSettingsHelper)
+        : this(options, testRequestManager, InitializeDesignMode, new ProcessHelper(), runSettingsHelper)
     {
     }
 
     /// <summary>
     /// For Unit testing only
     /// </summary>
-    internal PortArgumentExecutor(CommandLineOptions options, ITestRequestManager testRequestManager, IProcessHelper processHelper)
-        : this(options, testRequestManager, InitializeDesignMode, processHelper)
+    internal PortArgumentExecutor(CommandLineOptions options, ITestRequestManager testRequestManager, IProcessHelper processHelper, IRunSettingsHelper runSettingsHelper)
+        : this(options, testRequestManager, InitializeDesignMode, processHelper, runSettingsHelper)
     {
     }
 
     /// <summary>
     /// For Unit testing only
     /// </summary>
-    internal PortArgumentExecutor(CommandLineOptions options, ITestRequestManager testRequestManager, Func<int, IProcessHelper, IDesignModeClient> designModeInitializer, IProcessHelper processHelper)
+    internal PortArgumentExecutor(CommandLineOptions options, ITestRequestManager testRequestManager, Func<int, IProcessHelper, IDesignModeClient> designModeInitializer, IProcessHelper processHelper, IRunSettingsHelper runSettingsHelper)
     {
         ValidateArg.NotNull(options, nameof(options));
         _commandLineOptions = options;
         _testRequestManager = testRequestManager;
         _designModeInitializer = designModeInitializer;
         _processHelper = processHelper;
+        _runSettingsHelper = runSettingsHelper;
     }
-
 
     #region IArgumentExecutor
 
@@ -140,9 +160,10 @@ internal class PortArgumentExecutor : IArgumentExecutor
             throw new CommandLineException(CommandLineResources.InvalidPortArgument);
         }
 
+        _port = portNumber;
         _commandLineOptions.Port = portNumber;
         _commandLineOptions.IsDesignMode = true;
-        RunSettingsHelper.Instance.IsDesignMode = true;
+        _runSettingsHelper.IsDesignMode = true;
         _designModeClient = _designModeInitializer?.Invoke(_commandLineOptions.ParentProcessId, _processHelper);
     }
 
@@ -154,11 +175,11 @@ internal class PortArgumentExecutor : IArgumentExecutor
     {
         try
         {
-            _designModeClient?.ConnectToClientAndProcessRequests(_commandLineOptions.Port, _testRequestManager);
+            _designModeClient?.ConnectToClientAndProcessRequests(_port, _testRequestManager);
         }
         catch (TimeoutException ex)
         {
-            throw new CommandLineException(string.Format(CultureInfo.CurrentCulture, CommandLineResources.DesignModeClientTimeoutError, _commandLineOptions.Port), ex);
+            throw new CommandLineException(string.Format(CultureInfo.CurrentCulture, CommandLineResources.DesignModeClientTimeoutError, _port), ex);
         }
 
         return ArgumentProcessorResult.Success;

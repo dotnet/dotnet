@@ -11,17 +11,18 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [TestClass]
 public class TestCaseFilterArgumentProcessorTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     [TestMethod]
     public void GetMetadataShouldReturnTestCaseFilterArgumentProcessorCapabilities()
     {
-        TestCaseFilterArgumentProcessor processor = new();
+        TestCaseFilterArgumentProcessor processor = new(_commandLineOptions);
         Assert.IsTrue(processor.Metadata.Value is TestCaseFilterArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecutorShouldReturnTestCaseFilterArgumentProcessorCapabilities()
     {
-        TestCaseFilterArgumentProcessor processor = new();
+        TestCaseFilterArgumentProcessor processor = new(_commandLineOptions);
         Assert.IsTrue(processor.Executor!.Value is TestCaseFilterArgumentExecutor);
     }
 
@@ -48,7 +49,7 @@ public class TestCaseFilterArgumentProcessorTests
     [TestMethod]
     public void ExecutorInitializeWithNullOrEmptyTestCaseFilterShouldThrowCommandLineException()
     {
-        var options = CommandLineOptions.Instance;
+        var options = new CommandLineOptions();
         TestCaseFilterArgumentExecutor executor = new(options);
 
         var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(null));
@@ -58,7 +59,7 @@ public class TestCaseFilterArgumentProcessorTests
     [TestMethod]
     public void ExecutorInitializeWithNullOrEmptyTestCaseFilterShouldNotThrowWhenTestFilterWasSpecifiedByPreviousStep()
     {
-        var options = CommandLineOptions.Instance;
+        var options = new CommandLineOptions();
         options.TestCaseFilterValue = "Test=FilterFromPreviousStep";
         TestCaseFilterArgumentExecutor executor = new(options);
 
@@ -68,7 +69,7 @@ public class TestCaseFilterArgumentProcessorTests
     [TestMethod]
     public void ExecutorInitializeWithTestCaseFilterShouldMergeWithTheValueProvidedByPreviousStep()
     {
-        var options = CommandLineOptions.Instance;
+        var options = new CommandLineOptions();
         var defaultValue = "Test=FilterFromPreviousStep";
         options.TestCaseFilterValue = defaultValue;
         Assert.AreEqual(defaultValue, options.TestCaseFilterValue);
@@ -84,7 +85,7 @@ public class TestCaseFilterArgumentProcessorTests
     [TestMethod]
     public void ExecutorExecutoreturnArgumentProcessorResultSuccess()
     {
-        var executor = new TestCaseFilterArgumentExecutor(CommandLineOptions.Instance);
+        var executor = new TestCaseFilterArgumentExecutor(_commandLineOptions);
         var result = executor.Execute();
         Assert.AreEqual(ArgumentProcessorResult.Success, result);
     }
