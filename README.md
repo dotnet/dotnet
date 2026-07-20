@@ -187,7 +187,7 @@ You can also utilize [GitHub Codespaces](https://github.com/features/codespaces)
 ### Building from released sources
 
 You can also build from sources (and not from a context of a git repository), such as the ones you can acquire from a [dotnet/dotnet release](https://github.com/dotnet/dotnet/releases).
-In this case, you need to provide additional information which includes the original repository and commit hash the code was built from so that the SDK can provide a better debugging experience (think the `Step into..` functionality).
+In this case, you need to provide additional information which includes the original repository and commit hash the code was built from so that the SDK can provide a better debugging experience (think the `Step into...` functionality).
 Usually, this means the [dotnet/dotnet repository](https://github.com/dotnet/dotnet) together with the commit the release tag is connected to.
 
 In practice, this means that when calling the main build script, you need to provide additional arguments when building outside of a context of a git repository.  
