@@ -16,13 +16,13 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>43b5827697e501c442eb75ffff832cd4df2514fe</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26364.9">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26366.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>52d337de212e05c65166e82deea5029e5baba469</Sha>
+      <Sha>39a14d239f4a9f26890081cfdd20b643e42cbf21</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.26364.9">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.26366.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>52d337de212e05c65166e82deea5029e5baba469</Sha>
+      <Sha>39a14d239f4a9f26890081cfdd20b643e42cbf21</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.26359.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
