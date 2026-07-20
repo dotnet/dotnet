@@ -8,11 +8,6 @@ parameters:
   type: string
   default: ''
 
-- name: desiredIBC
-  displayName: IBC on/IBC off/default IBC parameters
-  type: string
-  default: ''
-
 - name: desiredFinalVersionKind
   displayName: Final version kind
   type: string
@@ -33,26 +28,6 @@ variables:
 
 - name: defaultContainerOptions
   value: --privileged --ulimit nofile=65536:65536
-
-- ${{ if eq(parameters.desiredIBC, 'Enabled') }}:
-  - name: ibcEnabled
-    value: true
-- ${{ elseif eq(parameters.desiredIBC, 'Disabled') }}:
-  - name: ibcEnabled
-    value: false
-- ${{ elseif or(startsWith(parameters.desiredIBC, 'Default'), eq(parameters.desiredIBC, '')) }}:
-  # IBC is disabled by default. The source branch in the VMR doesn't match individual repo branches,
-  # so IBC optimization data lookup would fail.
-  - ${{ if and(eq(parameters.isOfficialBuild, true), ne(parameters.buildSourceOnly, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
-    - name: ibcEnabled
-      value: false
-  # No IBC otherwise.
-  - ${{ else }}:
-    - name: ibcEnabled
-      value: false
-- ${{ else }}:
-  - name: ibcEnabled
-    value: false
 
 - ${{ if eq(parameters.desiredFinalVersionKind, 'Repo default (uses the repo branding defaults)') }}:
   - name: brandingType

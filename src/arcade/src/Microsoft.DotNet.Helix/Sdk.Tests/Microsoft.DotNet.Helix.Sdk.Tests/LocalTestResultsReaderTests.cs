@@ -90,5 +90,48 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 Directory.Delete(tempDirectory, recursive: true);
             }
         }
+
+        [Fact]
+        public async Task LocalTestResultsReader_TrxWithUnqualifiedTestName_DerivesFullyQualifiedName()
+        {
+            string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+            string workItemDirectory = Path.Combine(tempDirectory, "work-item");
+            Directory.CreateDirectory(workItemDirectory);
+
+            try
+            {
+                // MSTest emits testName as just the method name; the class lives in TestMethod.className.
+                File.WriteAllText(
+                    Path.Combine(workItemDirectory, "results.trx"),
+                    """
+                    <TestRun xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+                      <Results>
+                        <UnitTestResult testId="11111111-1111-1111-1111-111111111111" testName="MyMethod" outcome="Passed" duration="00:00:00.1234567" />
+                      </Results>
+                      <TestDefinitions>
+                        <UnitTest id="11111111-1111-1111-1111-111111111111">
+                          <TestMethod className="Ns.MyTests" name="MyMethod" />
+                        </UnitTest>
+                      </TestDefinitions>
+                    </TestRun>
+                    """);
+
+                var reader = new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>());
+                string filePath = Path.Combine(workItemDirectory, "results.trx");
+                IReadOnlyList<TestResult> resultSets = await reader.ReadResultFileAsync(filePath);
+
+                TestResult test = Assert.Single(resultSets);
+                Assert.Equal("MyMethod", test.Name);
+                Assert.Equal("Ns.MyTests.MyMethod", test.FullyQualifiedName);
+
+                AggregatedResult aggregated = Assert.Single(new ResultAggregator().Aggregate([resultSets], useFullyQualifiedName: true));
+                Assert.Equal("Ns.MyTests.MyMethod", aggregated.FullyQualifiedName);
+                Assert.Equal("Passed", aggregated.Result);
+            }
+            finally
+            {
+                Directory.Delete(tempDirectory, recursive: true);
+            }
+        }
     }
 }
