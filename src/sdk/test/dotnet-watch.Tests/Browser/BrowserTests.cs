@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.DotNet.Watch.UnitTests;
 
@@ -27,6 +28,25 @@ public class BrowserTests : DotNetWatchTestBase
 
     [TestMethod]
     [OSCondition(ConditionMode.Exclude, OperatingSystems.OSX)] // https://github.com/dotnet/sdk/issues/53061
+    [DataRow("")]
+    [DataRow("https://nonlocal")]
+    public async Task OriginValidation(string origin)
+    {
+        var testAsset = TestAssets.CopyTestAsset("WatchRazorWithDeps", identifier: origin)
+            .WithSource();
+
+        App.UseTestBrowser();
+        App.EnvironmentVariables.Add("TEST_BROWSER_ORIGIN_HEADER", origin);
+
+        var url = $"http://localhost:{TestOptions.GetTestPort()}";
+        App.Start(testAsset, ["--urls", url], relativeProjectDirectory: "RazorApp", testFlags: TestFlags.ReadKeyFromStdin);
+
+        // Verify that the connection has been rejected:
+        await App.WaitUntilOutputContains(new Regex("🧪 Error connecting to 'ws://localhost:.*': The server returned status code '403' when status code '101' was expected."));
+    }
+
+    [TestMethod]
+    [OSCondition(ConditionMode.Exclude, OperatingSystems.OSX)] // https://github.com/dotnet/sdk/issues/53061
     public async Task BrowserDiagnostics()
     {
         var testAsset = TestAssets.CopyTestAsset("WatchRazorWithDeps")
@@ -45,6 +65,7 @@ public class BrowserTests : DotNetWatchTestBase
 
         // Verify the browser has been launched.
         await App.WaitUntilOutputContains($"🧪 Test browser opened at '{url}'.");
+        await App.WaitUntilOutputContains($"🧪 Setting Origin header to '{url}'.");
 
         // Verify the browser connected to the refresh server.
         await App.WaitUntilOutputContains(MessageDescriptor.ConnectedToRefreshServer, "Browser #1");
@@ -80,8 +101,8 @@ public class BrowserTests : DotNetWatchTestBase
             🧪 Received: {"type":"Reload"}
             """);
 
-        // no other browser message sent:
-        Assert.AreEqual(2, App.Process.Output.Count(line => line.Contains("🧪")));
+        // no other browser refresh messages sent:
+        Assert.AreEqual(2, App.Process.Output.Count(line => line.Contains("🧪 Received:")));
 
         await App.WaitUntilOutputContains(MessageDescriptor.WaitingForChanges);
 
@@ -104,9 +125,6 @@ public class BrowserTests : DotNetWatchTestBase
             🧪 Received: {"type":"Reload"}
             """);
 
-        // no other browser message sent:
-        Assert.AreEqual(2, App.Process.Output.Count(line => line.Contains("🧪")));
-
         App.Process.ClearOutput();
 
         // valid edit:
@@ -122,7 +140,7 @@ public class BrowserTests : DotNetWatchTestBase
             🧪 Received: {"type":"RefreshBrowser"}
             """);
 
-        // no other browser message sent:
-        Assert.AreEqual(2, App.Process.Output.Count(line => line.Contains("🧪")));
+        // no other browser refresh messages sent:
+        Assert.AreEqual(2, App.Process.Output.Count(line => line.Contains("🧪 Received:")));
     }
 }
