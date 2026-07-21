@@ -620,7 +620,6 @@
           IgnoreStandardErrorWarningFormat="true"
           YieldDuringToolExecution="true"
           StandardOutputImportance="$(RepoStandardOutputImportance)"
-          CustomWarningRegularExpression=":\s*warning(\s|:)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
 
