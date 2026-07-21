@@ -1,5 +1,6 @@
 {
   "sdk": {
+    "version": "10.0.110",
     "paths": [
       ".dotnet",
       "$host$"
@@ -7,7 +8,7 @@
     "errorMessage": "The .NET SDK is not installed or is not configured correctly. Please run ./build to install the correct SDK version locally."
   },
   "tools": {
-    "dotnet": "10.0.105",
+    "dotnet": "10.0.110",
     "runtimes": {
       "dotnet": [
         "$(MicrosoftNETCorePlatformsPackageVersion)"

@@ -222,9 +222,10 @@
       ClearDisabledPackageSources="$(ClearDisabledPackageSources)"
       Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
+    <!-- Remove nuget.org from auditSources to avoid reaching the internet during offline builds. -->
     <RemoveBlockedAuditSourcesFromNuGetConfig
       NuGetConfigFile="$(NuGetConfigFile)"
-      Condition="'$(RemoveBlockedAuditSources)' == 'true'" />
+      Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PrebuiltNuGetSourceName)"
