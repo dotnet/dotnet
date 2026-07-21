@@ -34,6 +34,9 @@ internal readonly struct WebSocketConfig(int port, int? securePort, string? host
         }
     }
 
+    public IEnumerable<string> GetAllowedOriginDomains()
+        => hostName != null ? [HostName] : ["localhost", "127.0.0.1"];
+
     public WebSocketConfig WithSecurePort(int? value)
         => new(port, value, hostName);
 }
