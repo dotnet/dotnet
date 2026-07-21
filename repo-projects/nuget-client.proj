@@ -10,6 +10,9 @@
 
     <!-- This is a default in the arcade sdk which nuget-client doesn't use. -->
     <BuildArgs Condition="'$(OfficialBuild)' == 'true'">$(BuildArgs) /p:NuGetAudit=false</BuildArgs>
+
+    <!-- Prevent NuGet Audit warnings to get promoted to errors. -->
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnnotaserror "NU1900$(FlagEscapeChar);NU1901$(FlagEscapeChar);NU1902$(FlagEscapeChar);NU1903"</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
