@@ -281,9 +281,29 @@ public class TestRequestSender : ITestRequestSender
 
             _channel.Send(data);
 
-            // Wait for negotiation response
+            // Wait for the negotiation response, or for the test host to exit. If the test host exits
+            // before it answers (for example it crashed while deserializing the version check message)
+            // we must stop waiting immediately instead of blocking for the whole connection timeout, and
+            // surface the error it wrote to its standard error rather than a generic timeout message.
             var timeout = EnvironmentHelper.GetConnectionTimeout();
-            if (!protocolNegotiated.WaitOne(timeout * 1000))
+            var waitResult = WaitHandle.WaitAny([protocolNegotiated, _clientExited.WaitHandle], timeout * 1000);
+
+            // The test host process exited before it negotiated the protocol version.
+            if (waitResult == 1)
+            {
+                // Surface the error the test host wrote to its standard error (captured in
+                // OnClientProcessExit) so the user sees the real cause instead of a timeout.
+                var reason = CommonResources.TestHostProcessCrashed;
+                if (!string.IsNullOrWhiteSpace(_clientExitErrorMessage))
+                {
+                    reason = $"{reason} : {_clientExitErrorMessage}";
+                }
+
+                throw new TestPlatformException(reason);
+            }
+
+            // Neither the negotiation response nor the test host exit happened within the timeout.
+            if (waitResult == WaitHandle.WaitTimeout)
             {
                 throw new TestPlatformException(string.Format(CultureInfo.CurrentCulture, CommonResources.VersionCheckTimedout, timeout, EnvironmentHelper.VstestConnectionTimeout));
             }

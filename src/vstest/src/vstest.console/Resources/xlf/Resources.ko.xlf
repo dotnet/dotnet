@@ -384,8 +384,8 @@
       <trans-unit id="PlatformArgumentHelp">
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
-      Valid values are x86, x64 and ARM.</source>
-        <target state="translated">--Platform|/Platform:&lt;Platform type&gt;
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
+        <target state="needs-review-translation">--Platform|/Platform:&lt;Platform type&gt;
       테스트를 실행하는 데 사용할 대상 플랫폼 아키텍처입니다. 
       유효한 값은 x86, x64 및 ARM입니다.</target>
         <note />
@@ -398,9 +398,9 @@
       <trans-unit id="FrameworkArgumentHelp">
         <source>--Framework|/Framework:&lt;Framework Version&gt;
       Target .Net Framework version to be used for test execution. 
-      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="translated">--Framework|/Framework:&lt;Framework Version&gt;
+        <target state="needs-review-translation">--Framework|/Framework:&lt;Framework Version&gt;
       테스트 실행에 사용할 대상 .NET Framework 버전입니다. 
       유효한 값은 ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" 등입니다.
       기타 지원되는 값은 Framework40, Framework45, FrameworkCore10 및 FrameworkUap10입니다.</target>

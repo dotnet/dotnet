@@ -50,7 +50,7 @@ public class FrameworkArgumentProcessorTests
     {
         var capabilities = new FrameworkArgumentProcessorCapabilities();
         Assert.AreEqual("/Framework", capabilities.CommandName);
-        Assert.Contains("Valid values are \".NETFramework,Version=v4.5.1\", \".NETCoreApp,Version=v1.0\"", capabilities.HelpContentResourceName);
+        Assert.Contains("Valid values are short names such as net48 and net10.0, or long names such as \".NETFramework,Version=v4.8\" and \".NETCoreApp,Version=v10.0\"", capabilities.HelpContentResourceName);
 
         Assert.AreEqual(HelpContentPriority.FrameworkArgumentProcessorHelpPriority, capabilities.HelpPriority);
         Assert.IsFalse(capabilities.IsAction);

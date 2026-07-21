@@ -400,4 +400,51 @@ public class RunConfigurationTests
 
         Assert.Contains("<CreateNoNewWindow>True</CreateNoNewWindow>", runConfiguration.ToXml().InnerXml);
     }
+
+    [TestMethod]
+    public void RunConfigurationReadsIsTargetPlatformInferredFromXml()
+    {
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                     <RunConfiguration>
+                       <IsTargetPlatformInferred>false</IsTargetPlatformInferred>
+                     </RunConfiguration>
+                </RunSettings>";
+
+        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml);
+
+        Assert.IsFalse(runConfiguration.IsTargetPlatformInferred);
+    }
+
+    [TestMethod]
+    public void RunConfigurationIsTargetPlatformInferredDefaultsToTrueWhenNotPresentInXml()
+    {
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                     <RunConfiguration>
+                       <TargetPlatform>x64</TargetPlatform>
+                     </RunConfiguration>
+                </RunSettings>";
+
+        var runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml);
+
+        Assert.IsTrue(runConfiguration.IsTargetPlatformInferred);
+    }
+
+    [TestMethod]
+    public void RunConfigurationFromXmlThrowsSettingsExceptionIfIsTargetPlatformInferredIsInvalid()
+    {
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                     <RunConfiguration>
+                       <IsTargetPlatformInferred>InvalidValue</IsTargetPlatformInferred>
+                     </RunConfiguration>
+                </RunSettings>";
+
+        Assert.ThrowsExactly<SettingsException>(
+                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
+    }
 }
