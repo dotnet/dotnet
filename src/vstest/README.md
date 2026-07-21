@@ -50,11 +50,18 @@ NOTE: When adding a new public API, always add it directly to the `PublicAPI.Shi
 - [TestSettings Deprecation](./docs/RFCs/0023-TestSettings-Deprecation.md)
 - [Blame Collector Options](./docs/RFCs/0024-Blame-Collector-Options.md)
 
-### Other
+### Guides
 
+- [Quickstart](./docs/quickstart.md)
+- [Command line options](./docs/commandline.md)
+- [TestCase filtering](./docs/filter.md)
+- [Passing runsettings from the command line](./docs/RunSettingsArguments.md)
+- [Configure a test run (.runsettings)](./docs/configure.md)
+- [Code coverage](./docs/analyze.md)
+- [Diagnostics](./docs/diagnose.md)
 - [Environment Variables](./docs/environment-variables.md)
-- [Roadmap](./docs/releases.md)
 - [Troubleshooting guide](./docs/troubleshooting.md)
+- [Roadmap](./docs/releases.md)
 - Command-line options reference: [vstest.console.exe options](https://learn.microsoft.com/visualstudio/test/vstest-console-options) and [dotnet test options](https://learn.microsoft.com/dotnet/core/tools/dotnet-test)
 
 ## Building

@@ -376,6 +376,13 @@ public class TestRequestHandler : ITestRequestHandler, IDeploymentAwareTestReque
                     _messageProcessingUnrecoverableError = ex;
                     EqtTrace.Error("Failed processing message {0}, aborting test run.", message.MessageType);
                     EqtTrace.Error(ex);
+
+                    // The protocol version is not negotiated yet, so we cannot report this error back to
+                    // the runner over the communication channel (serializing the response would hit the
+                    // same failure). Write it to standard error instead, so the runner can capture it from
+                    // the test host process output and show the real cause instead of a connection timeout.
+                    WriteToStandardError($"Failed to process {message.MessageType} message in test host: {ex}");
+
                     goto case MessageType.AbortTestRun;
                 }
                 break;
@@ -592,6 +599,13 @@ public class TestRequestHandler : ITestRequestHandler, IDeploymentAwareTestReque
                     break;
                 }
         }
+    }
+
+    // Writes a message to the test host standard error stream. Virtual so tests can observe what the
+    // test host writes to standard error without depending on the process-wide Console.Error stream.
+    internal virtual void WriteToStandardError(string message)
+    {
+        ConsoleOutput.Instance.WriteLine(message, OutputLevel.Error);
     }
 
     private static ITestCaseEventsHandler? GetTestCaseEventsHandler(string? runSettings)

@@ -378,7 +378,7 @@
           Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
           Returns="@(TfmSpecificPackageFile)">
     <PropertyGroup>
-      <_CliRunnerPublishDir>$(TestPlatformPackagingPublishRoot)vstest.console\$(NetSDKTargetFramework)\</_CliRunnerPublishDir>
+      <_CliRunnerPublishDir>$(ArtifactsBinDir)vstest.console\$(Configuration)\$(NetSDKTargetFramework)\publish\</_CliRunnerPublishDir>
     </PropertyGroup>
     <Error Condition="!Exists('$(_CliRunnerPublishDir)')"
            Text="Expected published .NET runner at '$(_CliRunnerPublishDir)'. It is produced by src\vstest.console\vstest.console.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
@@ -495,7 +495,7 @@
           Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(_CliContentTfm)'"
           Returns="@(TfmSpecificPackageFile)">
     <PropertyGroup>
-      <_CliNetFrameworkTestHostPublishDir>$(TestPlatformPackagingPublishRoot)testhost\$(NetFrameworkMinimum)\</_CliNetFrameworkTestHostPublishDir>
+      <_CliNetFrameworkTestHostPublishDir>$(ArtifactsBinDir)testhost\$(Configuration)\$(NetFrameworkMinimum)\publish\</_CliNetFrameworkTestHostPublishDir>
     </PropertyGroup>
     <Error Condition="!Exists('$(_CliNetFrameworkTestHostPublishDir)')"
            Text="Expected published .NET Framework testhost at '$(_CliNetFrameworkTestHostPublishDir)'. It is produced by src\testhost\testhost.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />

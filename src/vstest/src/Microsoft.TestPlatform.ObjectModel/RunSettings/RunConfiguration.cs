@@ -97,6 +97,7 @@ public class RunConfiguration : TestRunSettings
         ForwardStandardOutput = !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_STANDARD_OUTPUT_FORWARDING);
         DisableSharedTestHost = FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST);
         CreateNoNewWindow = true;
+        IsTargetPlatformInferred = true;
     }
 
     /// <summary>
@@ -473,6 +474,15 @@ public class RunConfiguration : TestRunSettings
     /// Skips passing VisualStudio built in adapters to the project.
     /// </summary>
     public bool SkipDefaultAdapters { get; private set; }
+
+    /// <summary>
+    /// Gets a value indicating whether the target platform was inferred by the platform rather than
+    /// pinned by the user (through <c>--arch</c>, <c>/Platform</c>, or <c>RunConfiguration.TargetPlatform</c>).
+    /// vstest.console stamps this into the run settings it hands to the test host manager so that the
+    /// per-request fact travels with the run settings instead of a process-wide singleton. Defaults to
+    /// <see langword="true"/> (inferred). Internal because only the in-box test host manager reads it.
+    /// </summary>
+    internal bool IsTargetPlatformInferred { get; private set; }
 
     /// <inheritdoc/>
     public override XmlElement ToXml()
@@ -1040,6 +1050,25 @@ public class RunConfiguration : TestRunSettings
                             }
 
                             runConfiguration.SkipDefaultAdapters = boolValue;
+                            break;
+                        }
+
+                    case nameof(IsTargetPlatformInferred):
+                        {
+                            // Internal marker stamped by vstest.console recording whether the target platform
+                            // was inferred (true) or pinned by the user (false). Not exposed to the public
+                            // run settings schema; read only by the in-box test host manager.
+                            XmlRunSettingsUtilities.ThrowOnHasAttributes(reader);
+                            string element = reader.ReadElementContentAsString();
+
+                            bool boolValue;
+                            if (!bool.TryParse(element, out boolValue))
+                            {
+                                throw new SettingsException(string.Format(CultureInfo.CurrentCulture,
+                                    Resources.Resources.InvalidSettingsIncorrectValue, Constants.RunConfigurationSettingsName, boolValue, elementName));
+                            }
+
+                            runConfiguration.IsTargetPlatformInferred = boolValue;
                             break;
                         }
 
