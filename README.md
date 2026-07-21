@@ -31,7 +31,7 @@ You can download the .NET SDK either as an installer (MSI, PKG) or as an archive
 - The VMR also aims to become the place from which we release and service future versions of .NET to reduce the complexity of the product construction process. This should allow our partners and 3rd parties to easily build, test and modify .NET using their custom infrastructure as well as make the process available to the community.
 - Lastly, we hope to solve other problems that the current multi-repo setup brings:
   - Enable the standard [down-/up-stream open-source model](docs/VMR-Upstream-Downstream.md).
-  - Fulfill requirements of .NET distro builders such as RedHat or Canonical to natively include .NET in their distribution repositories.
+  - Fulfill requirements of .NET distro builders such as Red Hat or Canonical to natively include .NET in their distribution repositories.
   - Simplify scenarios such as client-run testing of bug fixes and improvements. The build should work in an offline environment too for certain platforms.
   - Enable developers to make and test changes spanning multiple repositories.
   - More efficient pipeline for security fixes during the CVE pre-disclosure process.
@@ -66,7 +66,7 @@ If you would like to make a cross-cutting change in the VMR, please ask the Unif
 - Non `src/*` directories - Directly in VMR
 - Arcade `eng/common` changes - There are many copies of eng/common in the VMR:
   - The VMR uses its root eng/common/* to bootstrap the VMR build. These should not be updated manually. They should only be updated via a re-bootstrap of the VMR.
-  - A VMR build uses `src/arcade/eng/common/*` for arcade and any repository that builds after arcade. Changes may be made to these files, and they will flow back into arcade as well as to any repository that gets its arcade flow from the VMR. However, due to varying scenarios in which `eng/common/` can be used, it is generally recommended that the VMR only be used to test `eng/common` changes, while actual changes should still be made in the dotnet/arcade repository.
+  - A VMR build uses `src/arcade/eng/common/*` for Arcade and any repository that builds after Arcade. Changes may be made to these files, and they will flow back into Arcade as well as to any repository that gets its Arcade flow from the VMR. However, due to varying scenarios in which `eng/common/` can be used, it is generally recommended that the VMR only be used to test `eng/common` changes, while actual changes should still be made in the dotnet/arcade repository.
 - VMR pipeline changes - The root pipeline logic lives in eng/* and should be changed in the VMR.
 
 For any questions, please ask the Unified Build team.
@@ -186,11 +186,11 @@ You can also utilize [GitHub Codespaces](https://github.com/features/codespaces)
 
 ### Building from released sources
 
-You can also build from sources (and not from a context of a git repository), such as the ones you can acquire from a [dotnet/dotnet release](https://github.com/dotnet/dotnet/releases).
+You can also build from sources (and not from a context of a Git repository), such as the ones you can acquire from a [dotnet/dotnet release](https://github.com/dotnet/dotnet/releases).
 In this case, you need to provide additional information which includes the original repository and commit hash the code was built from so that the SDK can provide a better debugging experience (think the `Step into..` functionality).
 Usually, this means the [dotnet/dotnet repository](https://github.com/dotnet/dotnet) together with the commit the release tag is connected to.
 
-In practice, this means that when calling the main build script, you need to provide additional arguments when building outside of a context of a git repository.  
+In practice, this means that when calling the main build script, you need to provide additional arguments when building outside of a context of a Git repository.  
 Alternatively, you can also provide a manifest file where this information can be read from. This file (`release.json`) can be found attached with the [dotnet/dotnet release](https://github.com/dotnet/dotnet/releases).
 
 ### Manually synchronizing code with the VMR
