@@ -12,7 +12,7 @@
     <BuildArgs Condition="'$(OfficialBuild)' == 'true'">$(BuildArgs) /p:NuGetAudit=false</BuildArgs>
 
     <!-- Prevent NuGet Audit warnings to get promoted to errors. -->
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnnotaserror "NU1900$(FlagEscapeChar);NU1901$(FlagEscapeChar);NU1902$(FlagEscapeChar);NU1903"</BuildArgs>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnnotaserror "NU1900$(FlagParameterSemicolon)NU1901$(FlagParameterSemicolon)NU1902$(FlagParameterSemicolon)NU1903"</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>

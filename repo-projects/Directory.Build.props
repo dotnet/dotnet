@@ -72,12 +72,12 @@
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
     <FlagParameterPrefix>-</FlagParameterPrefix>
     <ArcadeFalseBoolBuildArg>0</ArcadeFalseBoolBuildArg>
-    <FlagEscapeChar>`</FlagEscapeChar>
+    <FlagParameterSemicolon>`;</FlagParameterSemicolon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(BuildOS)' != 'windows'">
     <FlagParameterPrefix>--</FlagParameterPrefix>
     <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
-    <FlagEscapeChar></FlagEscapeChar>
+    <FlagParameterSemicolon>\;</FlagParameterSemicolon>
   </PropertyGroup>
 
   <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds. -->
