@@ -30,15 +30,6 @@ parameters:
     - Unsigned
     - Default (unsigned for non release-branch builds)
 
-- name: desiredIBC
-  displayName: 'Enable IBC?'
-  type: string
-  default: 'Default (disabled for non-release branch builds)'
-  values:
-    - Enabled
-    - Disabled
-    - Default (disabled for non-release branch builds)
-
 - name: desiredFinalVersionKind
   displayName: 'Final version kind'
   type: string
@@ -195,7 +186,6 @@ extends:
           desiredSigning: Signed (Real)
         ${{ else }}:
           desiredSigning: ${{ parameters.desiredSigning }}
-        desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isOfficialBuild: true
         scope: full
