@@ -171,6 +171,11 @@ public partial class LinuxInstallerTests : IDisposable
         ValidatePackageMetadata($"{repo}:{tag}", PackageType.Deb);
     }
 
+    /// <summary>
+    /// Verifies that RPM package operations preserve and repair the public dnx entries throughout their lifecycle.
+    /// </summary>
+    /// <param name="image">The container image used to exercise the RPM package lifecycle.</param>
+    /// <returns>A task that represents the asynchronous test operation.</returns>
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
     [InlineData("mcr.microsoft.com/azurelinux/base/core:3.0")]
     public async Task RpmDnxPackageLifecycleTest(string image)
@@ -180,6 +185,11 @@ public partial class LinuxInstallerTests : IDisposable
         DnxPackageLifecycleTest(image, PackageType.Rpm);
     }
 
+    /// <summary>
+    /// Verifies that Debian package operations preserve and repair the public dnx entries throughout their lifecycle.
+    /// </summary>
+    /// <param name="image">The container image used to exercise the Debian package lifecycle.</param>
+    /// <returns>A task that represents the asynchronous test operation.</returns>
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
     [InlineData("debian:bookworm")]
     public async Task DebDnxPackageLifecycleTest(string image)
@@ -436,6 +446,15 @@ public partial class LinuxInstallerTests : IDisposable
         }
     }
 
+    /// <summary>
+    /// Builds a container image that exercises the host and SDK package lifecycle for dnx.
+    /// </summary>
+    /// <remarks>
+    /// The lifecycle script runs during the image build so that any failed package operation or
+    /// assertion fails the Docker build and, consequently, the test.
+    /// </remarks>
+    /// <param name="baseImage">The base container image in which to install the packages.</param>
+    /// <param name="packageType">One of the enumeration values that specifies the package format to test.</param>
     private void DnxPackageLifecycleTest(string baseImage, PackageType packageType)
     {
         string hostPackage = Path.GetFileName(GetContentPackage(DotnetHostPrefix, packageType));
@@ -446,6 +465,8 @@ public partial class LinuxInstallerTests : IDisposable
         dockerfile.AppendLine($"FROM {baseImage}");
         if (packageType == PackageType.Deb)
         {
+            // Debian does not provide the affected .NET 10 package, so use Microsoft's production
+            // feed to test against the same package family that the new host package services.
             dockerfile.AppendLine(
                 "RUN apt-get update && apt-get install -y ca-certificates curl gpg && " +
                 "curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | " +

@@ -4,6 +4,10 @@ set -eu
 package_type="$1"
 host_package="$2"
 
+# Exercise both package installation orders against the repository-selected .NET 10 SDK. Each
+# scenario also removes the SDK before the host to prove that the host keeps the public dnx entries
+# alive, then removes the host to prove that its final-removal script cleans them up.
+
 assert_dotnet_dnx()
 {
   /usr/share/dotnet/dotnet dnx --help >/dev/null
@@ -11,6 +15,8 @@ assert_dotnet_dnx()
 
 assert_sdk_dnx()
 {
+  # Accept a future SDK package that already contains the repaired layout. For the released legacy
+  # layout, require the exact broken executable and exit code that the host package must repair.
   if test -L /usr/bin/dnx; then
     test "$(readlink /usr/bin/dnx)" = "../share/dotnet/dnx"
     /usr/bin/dnx --help >/dev/null
@@ -92,6 +98,7 @@ if test "$package_type" = "rpm"; then
     rm -rf /usr/share/dotnet/sdk
   }
 
+  # SDK first: installing the host must take ownership of the public entries and repair them.
   wipe
   install_sdk
   assert_sdk_dnx
@@ -104,6 +111,8 @@ if test "$package_type" = "rpm"; then
   remove_host
   assert_cleaned_dnx
 
+  # Host first: SDK installation and reinstallation must trigger repair after overwriting the
+  # public entries. Reinstalling the host must also remain safe and idempotent.
   wipe
   install_host
   install_sdk
@@ -158,6 +167,7 @@ elif test "$package_type" = "deb"; then
     rm -rf /usr/share/dotnet/sdk
   }
 
+  # SDK first: installing the host must take ownership of the public entries and repair them.
   wipe
   install_sdk
   assert_sdk_dnx
@@ -170,6 +180,8 @@ elif test "$package_type" = "deb"; then
   remove_host
   assert_cleaned_dnx
 
+  # Host first: SDK installation and reinstallation must trigger repair after overwriting the
+  # public entries. Reinstalling the host must also remain safe and idempotent.
   wipe
   install_host
   install_sdk

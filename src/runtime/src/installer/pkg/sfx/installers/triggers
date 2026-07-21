@@ -1,4 +1,4 @@
-# dpkg triggers for dotnet-host (dotnet/sdk#55303).
+# dpkg triggers for dotnet-host (https://github.com/dotnet/sdk/issues/55303).
 #
 # Re-run the postinst repair whenever any package installs, upgrades, or removes files under
 # these paths. The host package's bounded Replaces relationship prevents an in-range

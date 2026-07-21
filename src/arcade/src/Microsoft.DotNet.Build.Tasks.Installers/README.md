@@ -37,6 +37,8 @@ To add symlinks that should be installed on the system, add a `LinuxPackageSymli
 > Symlinks added with `LinuxPackageSymlink` are relative to the filesystem root, not to the `LinuxInstallRoot` property.
 > As the vast majority of symlinks in a package are from system locations to the install root, this provides an easier UX for defining symlinks.
 
+When Arcade invokes a project's `PublishToDisk` target to construct a DEB or RPM layout, it sets `IsPublishingToLinuxPackage` to `true`. Projects can use this context property to include content only in native Linux packages.
+
 Add a `LinuxPostInstallScript` item to specify an sh script that should be run after the package is installed.
 Add a `LinuxPostRemoveScript` item to specify an sh script that should be run after the package is removed. This item is used for both the Debian `postrm` maintainer script and the RPM `%postun` scriptlet. (`LinuxPostRmScript` is a deprecated alias that only fed the RPM `%postun` scriptlet; prefer `LinuxPostRemoveScript`.)
 

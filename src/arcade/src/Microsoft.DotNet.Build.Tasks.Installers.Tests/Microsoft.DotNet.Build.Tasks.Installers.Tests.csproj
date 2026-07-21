@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

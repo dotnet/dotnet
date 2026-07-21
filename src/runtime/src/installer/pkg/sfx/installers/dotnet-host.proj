@@ -53,14 +53,15 @@
             Condition="'$(TargetsUnix)' == 'true'" />
       <!--
         Private, non-conflicting copy of the robust dnx dispatcher used as the repair source by
-        the Linux package post-install and file-trigger scriptlets (dotnet/sdk#55303). Only laid
-        out for the native Linux packages (via _PublishLinuxPackageContent, set only by the deb/rpm
-        layout target); macOS/archive/MSI behavior is unchanged. Note that GenerateDeb/GenerateRpm
-        are stripped from this nested PublishToDisk invocation, so they cannot be used here.
+        the Linux package post-install and file-trigger scriptlets (https://github.com/dotnet/sdk/issues/55303).
+        Only laid out for the native Linux packages (via IsPublishingToLinuxPackage, set only by
+        the deb/rpm layout target); macOS/archive/MSI behavior is unchanged. Note that
+        GenerateDeb/GenerateRpm are stripped from this nested PublishToDisk invocation, so they
+        cannot be used here.
       -->
       <FilesToPublish Include="$(MSBuildThisFileDirectory)dnx"
             Destination="$(OutputPath)dnx.dispatcher"
-            Condition="'$(TargetsUnix)' == 'true' and '$(_PublishLinuxPackageContent)' == 'true'" />
+            Condition="'$(TargetsUnix)' == 'true' and '$(IsPublishingToLinuxPackage)' == 'true'" />
     </ItemGroup>
 
     <Copy SourceFiles="@(FilesToPublish)"
@@ -70,7 +71,7 @@
           Condition="'$(TargetsUnix)' == 'true' and !$([MSBuild]::IsOSPlatform('windows'))" />
 
     <Exec Command="chmod 755 &quot;$(OutputPath)dnx.dispatcher&quot;"
-          Condition="'$(TargetsUnix)' == 'true' and '$(_PublishLinuxPackageContent)' == 'true' and !$([MSBuild]::IsOSPlatform('windows'))" />
+          Condition="'$(TargetsUnix)' == 'true' and '$(IsPublishingToLinuxPackage)' == 'true' and !$([MSBuild]::IsOSPlatform('windows'))" />
   </Target>
 
   <Target Name="PublishSymbolsToDisk">
@@ -97,25 +98,26 @@
   </ItemGroup>
 
   <!--
-    dnx file-ownership fix for native Linux packages (dotnet/sdk#55303).
+    dnx packaging compatibility for native Linux packages
+    (https://github.com/dotnet/sdk/issues/55303).
 
-    Released dotnet-sdk-10.0 packages own /usr/share/dotnet/dnx and /usr/bin/dnx with different
-    RPM/DEB records than dotnet-host, which makes co-installing the host (pulled in as a newer
-    dependency) fail. dotnet-host owns the authoritative, robust dnx dispatcher, so the fix lives
-    here. The public entries are (re)created/repaired from a private source copy shipped by the
-    host (see dnx.dispatcher in PublishToDisk) so that SDK 10 and SDK 11 remain usable
-    side-by-side and a direct 'dnx' invocation always works.
+    Released dotnet-sdk-10.0 packages already install /usr/share/dotnet/dnx and /usr/bin/dnx.
+    Starting with .NET 11, dotnet-host also needs to provide these files. Package managers can
+    reject the installation when two packages provide the same path differently, and reinstalling
+    SDK 10 can restore its older, broken dnx files.
 
-    - Both formats: an idempotent post-install repair (also run on trigger activation) restores
-      /usr/share/dotnet/dnx and points /usr/bin/dnx at it, and a final-removal cleanup removes the
-      generated public entries.
-    - DEB: a bounded 'Replaces' lets the host take over the dnx files from released dotnet-sdk-10.0
-      without a conflict in either install order (narrowly scoped so it never affects SDK 11).
-      A dpkg path trigger re-runs the repair as a backstop whenever a package transaction touches
-      either public path.
-    - RPM: the public paths are owned as '%ghost' entries (not shipped in the payload, since rpm
-      rejects a non-identical file owned by two installed packages) and a transaction file trigger
-      re-runs the repair after an SDK install/reinstall finishes extracting its payload.
+    dotnet-host keeps a safe copy of the current dispatcher in dnx.dispatcher. Its install script
+    copies that file to /usr/share/dotnet/dnx and creates /usr/bin/dnx as a symlink to it. The same
+    repair runs again if a later package operation changes the public files; this occurs because of
+    the transaction trigger file. Removing the final dotnet-host package removes the generated
+    public files.
+
+    - DEB: 'Replaces' tells dpkg that dotnet-host may take these files from .NET 10 SDK packages,
+      but not from later SDK versions. A path trigger runs the repair whenever another package
+      changes either public file.
+    - RPM: '%ghost' tells rpm that dotnet-host owns the public paths without including them in the
+      package archive, avoiding a duplicate-file conflict and having those files deleted by SDK 10
+      removal. A transaction trigger runs the repair after an SDK package is installed or reinstalled.
   -->
   <ItemGroup Condition="'$(GenerateDeb)' == 'true' or '$(GenerateRpm)' == 'true'">
     <LinuxPostInstallScript Include="$(MSBuildThisFileDirectory)dnx-postinst.sh" />

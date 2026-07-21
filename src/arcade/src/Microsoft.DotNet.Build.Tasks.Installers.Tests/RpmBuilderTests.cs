@@ -19,6 +19,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
         // RPMSENSE_TRIGGERIN (rpmds.h).
         private const int RpmSenseTriggerIn = 1 << 16;
         private const int RpmDefaultFileTriggerPriority = 1000000;
+        private const uint ExecutableFilePermissions = 0x1ED; // 0755
+        private const uint SymbolicLinkPermissions = 0x1FF; // 0777
 
         private static RpmBuilder CreateBuilder() =>
             new("test-package", "1.0.0", "1", Architecture.X64, OSPlatform.Linux)
@@ -31,7 +33,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
                 Url = "https://example.test",
             };
 
-        private static CpioEntry RegularFile(string name, string content, uint permissions = 0x1ED /* 0755 */)
+        private static CpioEntry RegularFile(string name, string content, uint permissions = ExecutableFilePermissions)
         {
             return new CpioEntry(
                 inode: 1,
@@ -56,7 +58,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
                 timestamp: 0,
                 ownerID: 0,
                 groupID: 0,
-                mode: CpioEntry.SymbolicLink | 0x1FF /* 0777 */,
+                mode: CpioEntry.SymbolicLink | SymbolicLinkPermissions,
                 numberOfLinks: 1,
                 devMajor: 0,
                 devMinor: 0,
@@ -99,6 +101,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             return names;
         }
 
+        /// <summary>
+        /// Verifies that a ghost file is owned in the RPM header without being shipped in the payload.
+        /// </summary>
         [Fact]
         public void GhostFile_IsRecordedInHeaderWithGhostFlagAndOmittedFromPayload()
         {
@@ -130,6 +135,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             archiveNames.Should().NotContain("./usr/bin/dnx", "ghost files are omitted from the payload");
         }
 
+        /// <summary>
+        /// Verifies that ghost files have empty digests because they carry no payload content.
+        /// </summary>
         [Fact]
         public void GhostFile_HasEmptyDigest()
         {
@@ -145,6 +153,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             fileDigests[index].Should().BeEmpty("ghost files ship no content, so their digest is empty");
         }
 
+        /// <summary>
+        /// Verifies that file trigger scripts and conditions produce correctly aligned RPM header arrays.
+        /// </summary>
         [Fact]
         public void FileTrigger_EmitsExpectedParallelHeaderArrays()
         {
@@ -168,6 +179,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             GetArray<int>(package, RpmHeaderTag.FileTriggerIndex).Should().Equal(0, 0);
         }
 
+        /// <summary>
+        /// Verifies that RPM file trigger headers are omitted when no triggers are configured.
+        /// </summary>
         [Fact]
         public void FileTrigger_NotEmittedWhenNoneAdded()
         {
@@ -182,6 +196,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             HasTag(package, RpmHeaderTag.TransFileTriggerName).Should().BeFalse();
         }
 
+        /// <summary>
+        /// Verifies that transaction file trigger scripts and conditions produce correctly aligned RPM header arrays.
+        /// </summary>
         [Fact]
         public void TransactionFileTrigger_EmitsExpectedParallelHeaderArrays()
         {
@@ -205,6 +222,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             HasTag(package, RpmHeaderTag.FileTriggerName).Should().BeFalse();
         }
 
+        /// <summary>
+        /// Verifies that unsupported file trigger kinds are rejected.
+        /// </summary>
         [Fact]
         public void AddFileTrigger_UnknownKind_Throws()
         {
@@ -213,6 +233,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             act.Should().Throw<ArgumentException>();
         }
 
+        /// <summary>
+        /// Verifies that file triggers without path conditions are rejected.
+        /// </summary>
         [Fact]
         public void AddFileTrigger_EmptyPaths_Throws()
         {

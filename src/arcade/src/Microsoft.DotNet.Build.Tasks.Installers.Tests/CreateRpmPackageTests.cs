@@ -14,9 +14,15 @@ using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
 {
+    /// <summary>
+    /// Tests RPM package generation.
+    /// </summary>
     public class CreateRpmPackageTests : IDisposable
     {
+        // RPMFILE_GHOST occupies bit 6 in RPM's file flags field.
         private const int RpmFileGhost = 1 << 6;
+        private const uint ExecutableFilePermissions = 0x1ED; // 0755
+        private const uint SymbolicLinkPermissions = 0x1FF; // 0777
 
         private readonly string _tempDir;
 
@@ -39,10 +45,10 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
         }
 
         private static CpioEntry RegularFile(string name, string content) =>
-            new(1, name, 0, 0, 0, CpioEntry.RegularFile | 0x1ED, 1, 0, 0, 0, 0, new MemoryStream(Encoding.UTF8.GetBytes(content)));
+            new(1, name, 0, 0, 0, CpioEntry.RegularFile | ExecutableFilePermissions, 1, 0, 0, 0, 0, new MemoryStream(Encoding.UTF8.GetBytes(content)));
 
         private static CpioEntry SymbolicLink(string name, string target) =>
-            new(2, name, 0, 0, 0, CpioEntry.SymbolicLink | 0x1FF, 1, 0, 0, 0, 0, new MemoryStream(Encoding.UTF8.GetBytes(target)));
+            new(2, name, 0, 0, 0, CpioEntry.SymbolicLink | SymbolicLinkPermissions, 1, 0, 0, 0, 0, new MemoryStream(Encoding.UTF8.GetBytes(target)));
 
         private string WritePayload(params CpioEntry[] entries)
         {
@@ -83,6 +89,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             };
         }
 
+        /// <summary>
+        /// Verifies that ghost file metadata is harvested from the payload and emitted with file trigger paths.
+        /// </summary>
         [Fact]
         public void GhostFileAndFileTrigger_AreHarvestedAndEmitted()
         {
@@ -126,6 +135,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             triggerNames.Should().Equal("/usr/bin/dnx", "/usr/share/dotnet/dnx");
         }
 
+        /// <summary>
+        /// Verifies that post-install and post-uninstall scripts are emitted in their corresponding RPM headers.
+        /// </summary>
         [Fact]
         public void PostInAndPostUnScripts_AreEmittedAsRpmScriptletHeaders()
         {
@@ -164,6 +176,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             postunValue.Should().Contain("postun cleanup marker");
         }
 
+        /// <summary>
+        /// Verifies that transaction file triggers are emitted with their configured path prefixes.
+        /// </summary>
         [Fact]
         public void TransactionFileTrigger_IsEmitted()
         {
@@ -195,6 +210,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             triggerNames.Should().Equal("/usr/share/dotnet/sdk");
         }
 
+        /// <summary>
+        /// Verifies that a ghost file absent from the package layout produces a build error.
+        /// </summary>
         [Fact]
         public void GhostFileNotInPayload_LogsErrorAndFails()
         {
@@ -215,6 +233,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
                 .Which.Message.Should().Contain("/usr/bin/dnx");
         }
 
+        /// <summary>
+        /// Verifies that duplicate ghost paths are rejected after installed-path normalization.
+        /// </summary>
         [Fact]
         public void DuplicateNormalizedGhostFilePaths_LogErrorAndFail()
         {

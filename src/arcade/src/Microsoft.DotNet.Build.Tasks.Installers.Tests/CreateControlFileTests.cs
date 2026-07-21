@@ -11,6 +11,9 @@ using Xunit;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
 {
+    /// <summary>
+    /// Tests Debian control file generation.
+    /// </summary>
     public class CreateControlFileTests : IDisposable
     {
         private readonly string _tempDir;
@@ -47,12 +50,12 @@ namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
             ControlFileOutputPath = outputPath,
         };
 
+        /// <summary>
+        /// Verifies that additional Debian control properties preserve bounded version relationships.
+        /// </summary>
         [Fact]
         public void ReplacesAdditionalProperty_IsEmittedVerbatim()
         {
-            // The DEB half of the host dnx fix expresses a bounded Replaces on the released
-            // dotnet-sdk-10.0 package via a DebControlProperty. Prove the control file emits
-            // the exact bounded constraint (including the version relation) unmodified.
             string outputPath = Path.Combine(_tempDir, "control");
             CreateControlFile task = CreateTask(outputPath);
 
