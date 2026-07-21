@@ -619,7 +619,7 @@
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
           IgnoreStandardErrorWarningFormat="true"
           YieldDuringToolExecution="true"
-          StandardOutputImportance="$(RepoStandardOutputImportance)"
+          StandardOutputImportance="$(RepoStandardOutputImportance)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
 
