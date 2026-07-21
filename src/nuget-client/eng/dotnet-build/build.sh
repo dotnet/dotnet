@@ -144,8 +144,8 @@ if [[ $warn_as_error == true ]]; then
 fi
 
 warnnotaserror_switch=""
-if [[ -n "$warn_not_as_error" ]]; then
-  warnnotaserror_switch="/warnnotaserror:$warn_not_as_error /p:AdditionalWarningsNotAsErrors=$warn_not_as_error"
+if [[ -n "$warn_not_as_error" && "$warn_as_error" == true ]]; then
+  warnnotaserror_switch="/warnnotaserror:$warn_not_as_error /p:AdditionalWarningsNotAsErrors=${warn_not_as_error//;/%3B}"
 fi
 
 "$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl $warnaserror_switch $warnnotaserror_switch /p:TreatWarningsAsErrors=$warn_as_error ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
