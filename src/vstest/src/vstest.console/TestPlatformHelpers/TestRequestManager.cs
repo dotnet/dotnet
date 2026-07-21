@@ -710,6 +710,7 @@ internal class TestRequestManager : ITestRequestManager
         }
 
         settingsUpdated |= UpdateDesignMode(document, runConfiguration);
+        settingsUpdated |= UpdateIsTargetPlatformInferred(document);
         settingsUpdated |= UpdateCollectSourceInformation(document, runConfiguration);
         settingsUpdated |= UpdateTargetDevice(navigator, document);
         settingsUpdated |= AddOrUpdateBuiltInLoggers(document, runConfiguration, loggerRunSettings);
@@ -881,6 +882,19 @@ internal class TestRequestManager : ITestRequestManager
                 _commandLineOptions.IsDesignMode);
         }
         return updateRequired;
+    }
+
+    private bool UpdateIsTargetPlatformInferred(XmlDocument document)
+    {
+        // Stamp whether the target platform was inferred by the platform rather than pinned by the user
+        // (through --arch, /Platform, or RunConfiguration.TargetPlatform). The test host manager reads this
+        // per-request fact from the run settings instead of the process-wide RunSettingsHelper singleton, so
+        // it does not leak across requests when a single vstest.console process serves multiple requests in
+        // design mode. Always written so the marker reflects the current request.
+        InferRunSettingsHelper.UpdateIsTargetPlatformInferred(
+            document,
+            _runSettingsHelper.IsDefaultTargetArchitecture);
+        return true;
     }
 
     internal /* for testing purposes */ static bool AddOrUpdateBatchSize(XmlDocument document, RunConfiguration runConfiguration, bool isDiscovery)

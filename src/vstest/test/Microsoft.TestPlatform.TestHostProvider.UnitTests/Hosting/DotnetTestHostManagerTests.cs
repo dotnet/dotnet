@@ -43,7 +43,6 @@ public class DotnetTestHostManagerTests
     private readonly Mock<IWindowsRegistryHelper> _mockWindowsRegistry;
     private readonly Mock<IMessageLogger> _mockMessageLogger;
     private readonly Mock<IEnvironment> _mockEnvironment;
-    private readonly Mock<IRunSettingsHelper> _mockRunsettingHelper;
     private readonly TestRunnerConnectionInfo _defaultConnectionInfo;
     private readonly string[] _testSource = ["test.dll"];
     private readonly string _defaultTestHostPath;
@@ -68,11 +67,9 @@ public class DotnetTestHostManagerTests
         _mockEnvironment = new Mock<IEnvironment>();
         _mockWindowsRegistry = new Mock<IWindowsRegistryHelper>();
         _mockEnvironmentVariable = new Mock<IEnvironmentVariableHelper>();
-        _mockRunsettingHelper = new Mock<IRunSettingsHelper>();
         _defaultConnectionInfo = new TestRunnerConnectionInfo { Port = 123, ConnectionInfo = new TestHostConnectionInfo { Endpoint = "127.0.0.1:123", Role = ConnectionRole.Client }, RunnerProcessId = 0 };
 
         _mockEnvironment.SetupGet(e => e.Architecture).Returns((PlatformArchitecture)Enum.Parse(typeof(PlatformArchitecture), Constants.DefaultPlatform.ToString()));
-        _mockRunsettingHelper.SetupGet(r => r.IsDefaultTargetArchitecture).Returns(true);
         string defaultSourcePath = Path.Combine(_temp, "test.dll");
         _defaultTestHostPath = Path.Combine(_temp, "testhost.dll");
         _dotnetHostManager = new TestableDotnetTestHostManager(
@@ -80,7 +77,6 @@ public class DotnetTestHostManagerTests
             _mockFileHelper.Object,
             new DotnetHostHelper(_mockFileHelper.Object, _mockEnvironment.Object, _mockWindowsRegistry.Object, _mockEnvironmentVariable.Object, _mockProcessHelper.Object),
             _mockEnvironment.Object,
-            _mockRunsettingHelper.Object,
             _mockWindowsRegistry.Object,
             _mockEnvironmentVariable.Object);
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, string.Empty);
@@ -1250,10 +1246,9 @@ public class DotnetTestHostManagerTests
             IFileHelper fileHelper,
             IDotnetHostHelper dotnetTestHostHelper,
             IEnvironment environment,
-            IRunSettingsHelper runsettingsHelper,
             IWindowsRegistryHelper windowsRegistryHelper,
             IEnvironmentVariableHelper environmentVariableHelper)
-            : base(processHelper, fileHelper, dotnetTestHostHelper, environment, runsettingsHelper, windowsRegistryHelper, environmentVariableHelper)
+            : base(processHelper, fileHelper, dotnetTestHostHelper, environment, windowsRegistryHelper, environmentVariableHelper)
         {
         }
 

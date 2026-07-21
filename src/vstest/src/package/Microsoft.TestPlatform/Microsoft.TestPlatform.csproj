@@ -204,19 +204,19 @@
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.MediaRecorder.Model.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.MediaRecorder.Model.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.VideoRecorderCollector.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.VideoRecorderCollector.dll" />
     <None Include="$(OutputPath)net48\Microsoft.CodeCoverage.IO.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.CodeCoverage.IO.dll" />
+    <None Include="$(OutputPath)net48\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\VideoRecorder\VSTestVideoRecorder.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\VideoRecorder\VSTestVideoRecorder.exe" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\dbghelp.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Discoverer.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Discoverer.dll" />
@@ -339,7 +339,7 @@
       <!-- Canonical folder that src\testhost\testhost.csproj publishes into once (see
            eng/PublishForPackaging.targets). Populated during the solution Build pass, which
            completes before any package Pack pass, so it is present here. -->
-      <_NetTestHostPublishDir>$(TestPlatformPackagingPublishRoot)testhost\$(NetCoreAppMinimum)\</_NetTestHostPublishDir>
+      <_NetTestHostPublishDir>$(ArtifactsBinDir)testhost\$(Configuration)\$(NetCoreAppMinimum)\publish\</_NetTestHostPublishDir>
     </PropertyGroup>
     <Error Condition="!Exists('$(_NetTestHostPublishDir)')"
            Text="Expected published .NET testhost at '$(_NetTestHostPublishDir)'. It is produced by src\testhost\testhost.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
@@ -377,7 +377,7 @@
   -->
   <Target Name="_PublishRunnerRootContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
     <PropertyGroup>
-      <_RunnerRootPublishDir>$(TestPlatformPackagingPublishRoot)vstest.console\$(NetFrameworkRunnerTargetFramework)\</_RunnerRootPublishDir>
+      <_RunnerRootPublishDir>$(ArtifactsBinDir)vstest.console\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\publish\</_RunnerRootPublishDir>
     </PropertyGroup>
     <Error Condition="!Exists('$(_RunnerRootPublishDir)')"
            Text="Expected published .NET Framework runner at '$(_RunnerRootPublishDir)'. It is produced by src\vstest.console\vstest.console.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
