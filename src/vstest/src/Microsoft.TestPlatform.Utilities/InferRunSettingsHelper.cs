@@ -32,11 +32,13 @@ public class InferRunSettingsHelper
     private const string TargetPlatformNodeName = "TargetPlatform";
     private const string TargetFrameworkNodeName = "TargetFrameworkVersion";
     private const string TargetDevice = "TargetDevice";
+    private const string IsTargetPlatformInferredNodeName = "IsTargetPlatformInferred";
 
     private const string DesignModeNodePath = @"/RunSettings/RunConfiguration/DesignMode";
     private const string BatchSizeNodePath = @"/RunSettings/RunConfiguration/BatchSize";
     private const string CollectSourceInformationNodePath = @"/RunSettings/RunConfiguration/CollectSourceInformation";
     private const string RunConfigurationNodePath = @"/RunSettings/RunConfiguration";
+    private const string IsTargetPlatformInferredNodePath = @"/RunSettings/RunConfiguration/IsTargetPlatformInferred";
     private const string TargetPlatformNodePath = @"/RunSettings/RunConfiguration/TargetPlatform";
     private const string TargetFrameworkNodePath = @"/RunSettings/RunConfiguration/TargetFrameworkVersion";
     private const string ResultsDirectoryNodePath = @"/RunSettings/RunConfiguration/ResultsDirectory";
@@ -225,6 +227,19 @@ public class InferRunSettingsHelper
     public static void UpdateCollectSourceInformation(XmlDocument runSettingsDocument, bool collectSourceInformationValue)
     {
         AddNodeIfNotPresent(runSettingsDocument, CollectSourceInformationNodePath, CollectSourceInformationNodeName, collectSourceInformationValue);
+    }
+
+    /// <summary>
+    /// Records whether the target platform was inferred by the platform (<see langword="true"/>) or pinned
+    /// by the user (<see langword="false"/>) into <c>RunConfiguration.IsTargetPlatformInferred</c>. Always
+    /// overwrites so the value reflects the current run. This is an internal marker read by the in-box test
+    /// host manager; it is not part of the public run settings schema.
+    /// </summary>
+    /// <param name="runSettingsDocument">Document for runsettings xml</param>
+    /// <param name="isTargetPlatformInferred">Value to set</param>
+    public static void UpdateIsTargetPlatformInferred(XmlDocument runSettingsDocument, bool isTargetPlatformInferred)
+    {
+        AddNodeIfNotPresent(runSettingsDocument, IsTargetPlatformInferredNodePath, IsTargetPlatformInferredNodeName, isTargetPlatformInferred, overwrite: true);
     }
 
     /// <summary>

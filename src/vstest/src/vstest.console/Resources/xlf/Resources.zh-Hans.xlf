@@ -384,8 +384,8 @@
       <trans-unit id="PlatformArgumentHelp">
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
-      Valid values are x86, x64 and ARM.</source>
-        <target state="translated">--Platform|/Platform:&lt;Platform type&gt;
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
+        <target state="needs-review-translation">--Platform|/Platform:&lt;Platform type&gt;
       用于执行测试的目标平台体系结构。
    有效值为 x86、x64 和 ARM。</target>
         <note />
@@ -398,9 +398,9 @@
       <trans-unit id="FrameworkArgumentHelp">
         <source>--Framework|/Framework:&lt;Framework Version&gt;
       Target .Net Framework version to be used for test execution. 
-      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="translated">--Framework|/Framework:&lt;Framework Version&gt;
+        <target state="needs-review-translation">--Framework|/Framework:&lt;Framework Version&gt;
       用于执行测试的目标 .Net Framework 版本。
       有效值为 ".NETFramework,Version=v4.5.1".NETCoreApp,Version=v1.0" 等。
       其他支持的值为 Framework40、Framework45、FrameworkCore10 和 FrameworkUap10。</target>
