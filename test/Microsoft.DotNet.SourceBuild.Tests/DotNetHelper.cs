@@ -55,6 +55,9 @@ internal partial class DotNetHelper
             {
                 Directory.CreateDirectory(ProjectsDirectory);
                 InitNugetConfig();
+
+                // Isolate test environment by creating an empty global.json so that the repo root one is never considered.
+                File.WriteAllText(Path.Combine(ProjectsDirectory, "global.json"), "{}");
             }
 
             if (!Directory.Exists(PackagesDirectory))
