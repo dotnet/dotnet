@@ -962,7 +962,10 @@ jobs:
 
           customPreBuildArgs=""
           if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
-            customPreBuildArgs="sudo -E"
+            # Preserve HOME across the sudo boundary so the Azure Artifacts credential
+            # provider provisioned by NuGetAuthenticate can locate the credentials it
+            # cached for internal-feed restore.
+            customPreBuildArgs="sudo -E --preserve-env=HOME"
             export MICROBUILDOUTPUTFOLDEROVERRIDE
           fi
 
