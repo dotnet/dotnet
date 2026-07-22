@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,7 +34,7 @@ namespace NuGet.Protocol
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="source"/> is <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken"/>
         /// is cancelled.</exception>
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(
             SourceRepository source,
             CancellationToken cancellationToken)
         {
@@ -47,7 +45,7 @@ namespace NuGet.Protocol
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            DownloadResourcePlugin resource = null;
+            DownloadResourcePlugin? resource = null;
 
             var pluginResource = await source.GetResourceAsync<PluginResource>(cancellationToken);
 
@@ -73,7 +71,7 @@ namespace NuGet.Protocol
                 }
             }
 
-            return new Tuple<bool, INuGetResource>(resource != null, resource);
+            return new Tuple<bool, INuGetResource?>(resource != null, resource);
         }
 
         private static void AddOrUpdateGetCredentialsRequestHandler(

@@ -134,6 +134,11 @@ NuGet'in derleme sırasında paketleri geri yüklemesini önlemek için Visual S
         <target state="translated">Çözüm kaydedilmedi. NuGet paketlerini yönetmeden önce çözümünüzü kaydedin.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Ask Copilot to fix NuGet package vulnerabilities</source>
+        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <note>Do not translate Copilot or NuGet</note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

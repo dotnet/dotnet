@@ -155,7 +155,12 @@ namespace NuGet.Commands
 
             var librariesWithWarnings = new HashSet<LibraryIdentity>();
 
-            var rootProjectStyle = project.RestoreMetadata?.ProjectStyle ?? ProjectStyle.Unknown;
+            var restoreMetadata = project.RestoreMetadata;
+            var rootProjectStyle = restoreMetadata?.ProjectStyle ?? ProjectStyle.Unknown;
+
+            // Analyzer assets are a project-wide opt-in (the RestoreEnableAnalyzerAssets MSBuild property).
+            // When enabled, analyzer assets are honored for every target framework.
+            bool restoreEnableAnalyzerAssets = restoreMetadata?.RestoreEnableAnalyzerAssets ?? false;
 
             // Add the targets
             foreach (var targetGraph in targetGraphs
@@ -182,9 +187,9 @@ namespace NuGet.Commands
                 var flattenedFlags = IncludeFlagUtils.FlattenDependencyTypes(_includeFlagGraphs, project, targetGraph);
 
                 // Check if warnings should be displayed for the current framework.
-                var tfi = project.GetTargetFramework(targetGraph.Framework);
+                var tfi = project.GetTargetFramework(targetGraph.TargetAlias);
 
-                bool warnForImportsOnGraph = tfi.Warn
+                bool warnForImportsOnGraph = tfi?.Warn == true
                     && (target.TargetFramework is FallbackFramework
                         || target.TargetFramework is AssetTargetFallbackFramework);
 
@@ -228,7 +233,7 @@ namespace NuGet.Commands
                         }
 
                         var package = packageInfo.Package;
-                        var libraryDependency = tfi.Dependencies.FirstOrDefault(e => e.Name.Equals(library.Name, StringComparison.OrdinalIgnoreCase));
+                        var libraryDependency = tfi?.Dependencies.FirstOrDefault(e => e.Name.Equals(library.Name, StringComparison.OrdinalIgnoreCase));
 
                         (LockFileTargetLibrary targetLibrary, bool usedFallbackFramework, NuGetFramework compileAssetFramework, NuGetFramework runtimeAssetFramework) = LockFileUtils.CreateLockFileTargetLibrary(
                             libraryDependency?.Aliases,
@@ -238,6 +243,7 @@ namespace NuGet.Commands
                             dependencyType: includeFlags,
                             targetFrameworkOverride: null,
                             dependencies: graphItem.Data.Dependencies,
+                            restoreEnableAnalyzerAssets: restoreEnableAnalyzerAssets,
                             cache: lockFileBuilderCache);
 
                         target.Libraries.Add(targetLibrary);
@@ -258,6 +264,7 @@ namespace NuGet.Commands
                                     targetFrameworkOverride: nonFallbackFramework,
                                     dependencyType: includeFlags,
                                     dependencies: graphItem.Data.Dependencies,
+                                    restoreEnableAnalyzerAssets: restoreEnableAnalyzerAssets,
                                     cache: lockFileBuilderCache);
                                 usedFallbackFramework = !targetLibrary.Equals(targetLibraryWithoutFallback);
                             }

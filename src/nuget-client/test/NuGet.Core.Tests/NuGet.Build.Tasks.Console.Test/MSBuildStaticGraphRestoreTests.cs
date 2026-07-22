@@ -1289,6 +1289,37 @@ namespace NuGet.Build.Tasks.Console.Test
 
         [Theory]
         [InlineData("true", "false", "false", true)]
+        [InlineData("false", "true", "false", true)]
+        [InlineData("false", "false", "true", true)]
+        [InlineData("false", "false", "false", false)]
+        public void GetRestoreEnableAnalyzerAssets(string outerValue, string firstInnerValue, string secondInnerValue, bool expected)
+        {
+            // Arrange
+            var project = new MockMSBuildProject(new Dictionary<string, string>
+            {
+                ["RestoreEnableAnalyzerAssets"] = outerValue,
+            });
+            var innerBuilds = new List<IMSBuildProject>
+            {
+                new MockMSBuildProject(new Dictionary<string, string>
+                {
+                    ["RestoreEnableAnalyzerAssets"] = firstInnerValue,
+                }),
+                new MockMSBuildProject(new Dictionary<string, string>
+                {
+                    ["RestoreEnableAnalyzerAssets"] = secondInnerValue,
+                }),
+            };
+
+            // Act
+            bool result = MSBuildStaticGraphRestore.GetRestoreEnableAnalyzerAssets(project, innerBuilds);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("true", "false", "false", true)]
         [InlineData("true", "", "false", true)]
         [InlineData("", "", "false", false)]
         public void GetPackagePruningDefault(string firstDefault, string secondDefault, string thirdDefault, bool expected)

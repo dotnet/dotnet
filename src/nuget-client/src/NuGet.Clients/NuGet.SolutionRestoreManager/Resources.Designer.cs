@@ -106,6 +106,15 @@ namespace NuGet.SolutionRestoreManager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ask Copilot to fix NuGet package vulnerabilities.
+        /// </summary>
+        internal static string Title_FixVulnerabilitiesWithCopilot {
+            get {
+                return ResourceManager.GetString("Title_FixVulnerabilitiesWithCopilot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manage NuGet Packages.
         /// </summary>
         internal static string InfoBar_HyperlinkMessage {

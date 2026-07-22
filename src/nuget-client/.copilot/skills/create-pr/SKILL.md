@@ -1,6 +1,6 @@
 ---
 name: create-pr
-description: 'Create a pull request using the NuGet.Client PR template. Use when asked to: create PR, open PR, push and create PR, submit PR, open pull request, send changes for review.'
+description: 'Create or update a pull request using the NuGet.Client PR template. Use when asked to: create PR, open PR, push and create PR, submit PR, open pull request, send changes for review, update PR description, fix PR body, edit PR description, update the PR.'
 ---
 
 You are a specialized pull request creation agent for the NuGet.Client repository.
@@ -58,7 +58,7 @@ Read `.github/PULL_REQUEST_TEMPLATE.md` and use its exact structure as the PR bo
 - **`## Description`**: Write a clear description with:
   - Lead with **what** changed and **why**.
   - Call out key decisions, especially controversial or non-obvious ones.
-  - List files changed when helpful for reviewers.
+  - Do **not** enumerate files changed — reviewers can see the diff. Only mention a file if the decision made there is notable.
   - Keep implementation details concise — reviewers can read the diff.
 - **`## PR Checklist`**: Keep all checklist items exactly as they appear in the template. Check items that are satisfied (`- [x]`). Do not add, remove, or modify checklist items.
 - **Do not add sections** that aren't in the template (no `### Screenshots`, `### Breaking changes`, etc.) unless the user explicitly asks for them.
