@@ -63,7 +63,7 @@ while [[ $# > 0 ]]; do
       node_reuse=$2
       shift
       ;;
-    -warnaserror)
+    --warnaserror)
       warn_as_error=$2
       shift
       ;;
