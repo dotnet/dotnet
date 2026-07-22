@@ -9,6 +9,25 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
+# Skip mechanical bot PRs the expert review adds no value to (and shouldn't spend
+# agent runs on): OneLocBuild localization check-ins (dotnet-bot) and Maestro
+# dependency-flow updates (dotnet-maestro[bot]). Human PRs and manual dispatch still
+# run — on a workflow_dispatch the pull_request fields are empty, so the bot/title
+# match is false and this negated guard evaluates to true (so the review runs).
+if: >
+  !(
+    (
+      github.event.pull_request.user.login == 'dotnet-bot'
+      || github.event.pull_request.user.login == 'dotnet-maestro[bot]'
+    )
+    && (
+      startsWith(github.event.pull_request.title, 'Localized file check-in')
+      || startsWith(github.event.pull_request.title, '[main] Update dependencies from dotnet/')
+      || startsWith(github.event.pull_request.title, '[main] Update dependencies from microsoft/')
+      || startsWith(github.event.pull_request.title, '[main] Update dependencies from devdiv/')
+    )
+  )
+
 permissions:
   contents: read
   pull-requests: read
