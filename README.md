@@ -65,7 +65,7 @@ If you would like to make a cross-cutting change in the VMR, please ask the Unif
 - `src/*` - Constituent repositories, except VMR pipeline changes.
 - Non `src/*` directories - Directly in VMR
 - Arcade `eng/common` changes - There are many copies of eng/common in the VMR:
-  - The VMR uses its root eng/common/* to bootstrap the VMR build. These should not be updated manually. They should only be updated via a re-bootrap of the VMR.
+  - The VMR uses its root eng/common/* to bootstrap the VMR build. These should not be updated manually. They should only be updated via a re-bootstrap of the VMR.
   - A VMR build uses `src/arcade/eng/common/*` for Arcade and any repository that builds after Arcade. Changes may be made to these files, and they will flow back into Arcade as well as to any repository that gets its Arcade flow from the VMR. However, due to varying scenarios in which `eng/common/` can be used, it is generally recommended that the VMR only be used to test `eng/common` changes, while actual changes should still be made in the dotnet/arcade repository.
 - VMR pipeline changes - The root pipeline logic lives in eng/* and should be changed in the VMR.
 
