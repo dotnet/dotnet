@@ -97,7 +97,7 @@ internal partial class DotNetHelper
             DotNetPath,
             args,
             OutputHelper,
-            configureCallback: (process) => configureProcess(process, workingDirectory),
+            configureCallback: (process) => configureProcess(process, workingDirectory ?? ProjectsDirectory),
             millisecondTimeout: millisecondTimeout);
 
         if (expectedExitCode != null)
@@ -105,7 +105,7 @@ internal partial class DotNetHelper
             ExecuteHelper.ValidateExitCode(executeResult, (int)expectedExitCode);
         }
 
-        void configureProcess(Process process, string? workingDirectory)
+        void configureProcess(Process process, string workingDirectory)
         {
             ConfigureProcess(process, workingDirectory);
 
@@ -113,12 +113,9 @@ internal partial class DotNetHelper
         }
     }
 
-    public static void ConfigureProcess(Process process, string? workingDirectory)
+    public static void ConfigureProcess(Process process, string workingDirectory)
     {
-        if (workingDirectory != null)
-        {
-            process.StartInfo.WorkingDirectory = workingDirectory;
-        }
+        process.StartInfo.WorkingDirectory = workingDirectory;
 
         process.StartInfo.EnvironmentVariables["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";
         process.StartInfo.EnvironmentVariables["DOTNET_SKIP_FIRST_TIME_EXPERIENCE"] = "1";
