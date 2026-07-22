@@ -13,7 +13,7 @@ This file should be imported by eng/Versions.props
     <SystemFormatsAsn1PackageVersion>8.0.1</SystemFormatsAsn1PackageVersion>
     <SystemSecurityCryptographyPkcsPackageVersion>6.0.4</SystemSecurityCryptographyPkcsPackageVersion>
     <SystemSecurityCryptographyProtectedDataPackageVersion>9.0.6</SystemSecurityCryptographyProtectedDataPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>6.0.1</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>8.0.4</SystemSecurityCryptographyXmlPackageVersion>
     <!-- dotnet/xdt dependencies -->
     <MicrosoftWebXdtPackageVersion>3.2.0</MicrosoftWebXdtPackageVersion>
     <!-- dotnet/command-line-api dependencies -->
