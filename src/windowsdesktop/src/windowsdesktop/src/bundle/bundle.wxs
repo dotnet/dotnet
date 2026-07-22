@@ -10,18 +10,18 @@
   <!-- This enables preview -> RC -> GA -> servicing upgrade path -->
 
   <!-- Primary upgrade relationship using current deterministic upgrade code (for GA and all servicing) -->
-  <RelatedBundle Id="$(UpgradeCode)" Action="Upgrade" />
+  <RelatedBundle Code="$(UpgradeCode)" Action="Upgrade" />
 
   <!-- Secondary: Upgrade bundles that shipped with legacy UpgradeCode (Preview 2 through RC2) -->
   <!-- Architecture-specific legacy codes used before deterministic generation -->
   <?if $(TargetArchitecture)=x64?>
-  <RelatedBundle Id="{55414577-5A99-7937-6951-9CCC4BE8857E}" Action="Upgrade" />
+  <RelatedBundle Code="{55414577-5A99-7937-6951-9CCC4BE8857E}" Action="Upgrade" />
   <?endif?>
   <?if $(TargetArchitecture)=x86?>
-  <RelatedBundle Id="{4FEAFCE2-50E6-6CFB-797A-D44EBBE7AC5D}" Action="Upgrade" />
+  <RelatedBundle Code="{4FEAFCE2-50E6-6CFB-797A-D44EBBE7AC5D}" Action="Upgrade" />
   <?endif?>
   <?if $(TargetArchitecture)=arm64?>
-  <RelatedBundle Id="{BCE1CB35-52F6-5801-38F9-1E2D6E0FB355}" Action="Upgrade" />
+  <RelatedBundle Code="{BCE1CB35-52F6-5801-38F9-1E2D6E0FB355}" Action="Upgrade" />
   <?endif?>
 
     <bal:Condition Message="#(loc.InstallPathx64x86)" Condition="WixBundleInstalled OR (NOT DOTNETHOME_X64 ~= DOTNETHOME_X86) OR DOTNETHOMESIMILARITYCHECKOVERRIDE" />
