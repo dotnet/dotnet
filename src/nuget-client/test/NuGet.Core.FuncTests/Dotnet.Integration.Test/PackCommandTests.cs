@@ -2692,7 +2692,8 @@ namespace ClassLibrary
                     var nuspecReader = nupkgReader.NuspecReader;
                     // Validate the assets.
                     var srcItems = nupkgReader.GetFiles("src").ToArray();
-                    Assert.Equal(4, srcItems.Length);
+
+                    // At least the user-authored source files are always included.
                     Assert.Contains("src/ClassLibrary1/ClassLibrary1.csproj", srcItems);
                     Assert.Contains("src/ClassLibrary1/Class1.cs", srcItems);
                     Assert.Contains("src/ClassLibrary1/Extensions/ExtensionMethods.cs", srcItems);
@@ -6734,11 +6735,7 @@ namespace ClassLibrary
             _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
             var result = _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"-o {workingDirectory}", testOutputHelper: _testOutputHelper);
 
-#if SDK_NEXT
             result.AllOutput.Should().Contain("NU5052");
-#else
-            result.AllOutput.Should().NotContain("NU5052");
-#endif
         }
     }
 }

@@ -36,6 +36,10 @@ namespace NuGet.Client
             PropertyNames.CodeLanguage,
             parser: CodeLanguage_Parser);
 
+        private static readonly ContentPropertyDefinition AnalyzerAssemblyProperty = new ContentPropertyDefinition(
+            PropertyNames.AnalyzerAssembly,
+            parser: AnalyzerAssembly_Parser);
+
         private static readonly Dictionary<string, object> NetTFMTable = new Dictionary<string, object>
         {
             { "tfm", new NuGetFramework(FrameworkConstants.FrameworkIdentifiers.Net, FrameworkConstants.EmptyVersion) },
@@ -85,6 +89,7 @@ namespace NuGet.Client
             props[MSBuildProperty.Name] = MSBuildProperty;
             props[SatelliteAssemblyProperty.Name] = SatelliteAssemblyProperty;
             props[CodeLanguageProperty.Name] = CodeLanguageProperty;
+            props[AnalyzerAssemblyProperty.Name] = AnalyzerAssemblyProperty;
 
             props[PropertyNames.RuntimeIdentifier] = new ContentPropertyDefinition(
                 PropertyNames.RuntimeIdentifier,
@@ -296,6 +301,23 @@ namespace NuGet.Client
             return null;
         }
 
+        /// <summary>
+        /// Matches an analyzer assembly: a '.dll' (at any depth, so the token is terminal and may receive a
+        /// multi-segment remainder) excluding satellite '.resources.dll' assemblies. Mirrors the SDK's analyzer
+        /// detection apart from the 'analyzers/' folder casing, which the content model matches case-insensitively.
+        /// </summary>
+        private static object? AnalyzerAssembly_Parser(ReadOnlyMemory<char> s, PatternTable? _, bool matchOnly)
+        {
+            ReadOnlySpan<char> span = s.Span;
+            if (span.EndsWith(".dll".AsSpan(), StringComparison.OrdinalIgnoreCase)
+                && !span.EndsWith(".resources.dll".AsSpan(), StringComparison.OrdinalIgnoreCase))
+            {
+                return matchOnly ? string.Empty : s.ToString();
+            }
+
+            return null;
+        }
+
         private static bool TargetFrameworkName_CompatibilityTest(object? criteria, object? available)
         {
             var criteriaFrameworkName = criteria as NuGetFramework;
@@ -472,6 +494,11 @@ namespace NuGet.Client
             /// </summary>
             public PatternSet MSBuildTransitiveFiles { get; }
 
+            /// <summary>
+            /// Pattern used to identify analyzer assemblies, at any depth under 'analyzers/'.
+            /// </summary>
+            public PatternSet AnalyzerAssemblies { get; }
+
             internal ManagedCodePatterns(ManagedCodeConventions conventions)
             {
                 AnyTargettedFile = new PatternSet(
@@ -627,6 +654,17 @@ namespace NuGet.Client
                         new PatternDefinition("buildTransitive/{tfm}/{msbuild}", table: DotnetAnyTable),
                         new PatternDefinition("buildTransitive/{msbuild}", table: null, defaults: DefaultTfmAny)
                     });
+
+                AnalyzerAssemblies = new PatternSet(
+                    conventions.Properties,
+                    groupPatterns: new PatternDefinition[]
+                    {
+                        new PatternDefinition("analyzers/{analyzerAssembly}"),
+                    },
+                    pathPatterns: new PatternDefinition[]
+                    {
+                        new PatternDefinition("analyzers/{analyzerAssembly}"),
+                    });
             }
         }
 
@@ -640,6 +678,7 @@ namespace NuGet.Client
             public static readonly string MSBuild = "msbuild";
             public static readonly string SatelliteAssembly = "satelliteAssembly";
             public static readonly string CodeLanguage = "codeLanguage";
+            public static readonly string AnalyzerAssembly = "analyzerAssembly";
         }
     }
 }

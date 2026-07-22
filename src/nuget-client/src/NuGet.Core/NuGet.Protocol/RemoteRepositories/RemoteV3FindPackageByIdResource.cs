@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,7 +31,7 @@ namespace NuGet.Protocol
         private readonly HttpSource _httpSource;
         private readonly FindPackagesByIdNupkgDownloader _nupkgDownloader;
 
-        private DependencyInfoResource _dependencyInfoResource;
+        private DependencyInfoResource? _dependencyInfoResource;
 
         private const string ResourceTypeName = nameof(FindPackageByIdResource);
         private const string ThisTypeName = nameof(RemoteV3FindPackageByIdResource);
@@ -144,7 +142,7 @@ namespace NuGet.Protocol
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public override async Task<FindPackageByIdDependencyInfo> GetDependencyInfoAsync(
+        public override async Task<FindPackageByIdDependencyInfo?> GetDependencyInfoAsync(
             string id,
             NuGetVersion version,
             SourceCacheContext cacheContext,
@@ -299,7 +297,7 @@ namespace NuGet.Protocol
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public override async Task<IPackageDownloader> GetPackageDownloaderAsync(
+        public override async Task<IPackageDownloader?> GetPackageDownloaderAsync(
             PackageIdentity packageIdentity,
             SourceCacheContext cacheContext,
             ILogger logger,
@@ -415,7 +413,7 @@ namespace NuGet.Protocol
             }
         }
 
-        private async Task<RemoteSourceDependencyInfo> GetPackageInfoAsync(
+        private async Task<RemoteSourceDependencyInfo?> GetPackageInfoAsync(
             string id,
             NuGetVersion version,
             SourceCacheContext cacheContext,
@@ -448,7 +446,7 @@ namespace NuGet.Protocol
             // This is invoked from inside a lock.
             await EnsureDependencyProvider(cancellationToken);
 
-            var result = await _dependencyInfoResource.ResolvePackages(id, sourceCacheContext, logger, cancellationToken);
+            var result = await _dependencyInfoResource!.ResolvePackages(id, sourceCacheContext, logger, cancellationToken);
 
             return result;
         }

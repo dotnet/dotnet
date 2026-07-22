@@ -366,6 +366,63 @@ namespace NuGet.ProjectModel.Test
         }
 
         [Fact]
+        public void LockFileFormat_WithAnalyzerAssets_WritesAndReadsAnalyzerAssets()
+        {
+            // Arrange
+            const string AnalyzerAssetPath = "analyzers/dotnet/cs/MyAnalyzer.dll";
+
+            var lockFile = new LockFile()
+            {
+                Version = 5,
+                PackageSpec = new PackageSpec(new[]
+                {
+                    new TargetFrameworkInformation
+                    {
+                        FrameworkName = FrameworkConstants.CommonFrameworks.DotNet,
+                        TargetAlias = "dotnet"
+                    }
+                })
+            };
+
+            var target = new LockFileTarget()
+            {
+                TargetFramework = FrameworkConstants.CommonFrameworks.DotNet,
+                TargetAlias = "dotnet",
+                Name = "dotnet"
+            };
+
+            var targetLibrary = new LockFileTargetLibrary()
+            {
+                Name = "MyAnalyzerPackage",
+                Version = NuGetVersion.Parse("1.0.0"),
+                Type = LibraryType.Package
+            };
+            var analyzerAsset = new LockFileItem(AnalyzerAssetPath);
+            analyzerAsset.Properties["codeLanguage"] = "cs";
+            analyzerAsset.Properties["compilerApiVersion"] = "roslyn4.0";
+            targetLibrary.AnalyzerAssets.Add(analyzerAsset);
+            target.Libraries.Add(targetLibrary);
+            lockFile.Targets.Add(target);
+
+            var lockFileFormat = new LockFileFormat();
+
+            // Act
+            var renderedJson = lockFileFormat.Render(lockFile);
+            var parsedLockFile = Parse(renderedJson, "In Memory");
+
+            // Assert
+            Assert.Contains(@"""version"": 5", renderedJson);
+            Assert.Contains(@"""analyzers"": {", renderedJson);
+            Assert.Contains(@"""codeLanguage"": ""cs""", renderedJson);
+            Assert.Contains(@"""compilerApiVersion"": ""roslyn4.0""", renderedJson);
+
+            var parsedAsset = parsedLockFile.Targets.Single().Libraries.Single().AnalyzerAssets.Single();
+            Assert.Equal(AnalyzerAssetPath, parsedAsset.Path);
+            Assert.Equal("cs", parsedAsset.Properties["codeLanguage"]);
+            Assert.Equal("roslyn4.0", parsedAsset.Properties["compilerApiVersion"]);
+        }
+
+        [Fact]
         public void LockFileFormat_WritesPackageSpec()
         {
             // Arrange
@@ -393,6 +450,57 @@ namespace NuGet.ProjectModel.Test
                         FrameworkName = FrameworkConstants.CommonFrameworks.DotNet
                     }
                 })
+            };
+
+            // Act
+            var lockFileFormat = new LockFileFormat();
+            var output = JObject.Parse(lockFileFormat.Render(lockFile));
+            var expected = JObject.Parse(lockFileContent);
+
+            // Assert
+            Assert.Equal(expected.ToString(), output.ToString());
+        }
+
+        [Fact]
+        public void LockFileFormat_WithRestoreEnableAnalyzerAssets_WritesPackageSpecRestoreMetadata()
+        {
+            // Arrange
+            var lockFileContent = @"{
+  ""version"": 2,
+  ""targets"": {},
+  ""libraries"": {},
+  ""projectFileDependencyGroups"": {},
+  ""project"": {
+    ""restore"": {
+      ""projectUniqueName"": ""projectUniqueName"",
+      ""restoreEnableAnalyzerAssets"": true
+    },
+    ""frameworks"": {
+      ""dotnet"": {
+        ""framework"": ""dotnet""
+        }
+    }
+  }
+}";
+            var lockFile = new LockFile()
+            {
+                Version = 2,
+
+                PackageSpec = new PackageSpec(new[]
+                {
+                    new TargetFrameworkInformation
+                    {
+                        FrameworkName = FrameworkConstants.CommonFrameworks.DotNet
+                    }
+                })
+                {
+                    RestoreMetadata = new ProjectRestoreMetadata
+                    {
+                        ProjectUniqueName = "projectUniqueName",
+                        UsingMicrosoftNETSdk = true,
+                        RestoreEnableAnalyzerAssets = true
+                    }
+                }
             };
 
             // Act

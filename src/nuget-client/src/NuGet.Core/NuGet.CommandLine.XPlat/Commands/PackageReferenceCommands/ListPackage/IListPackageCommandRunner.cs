@@ -3,12 +3,14 @@
 
 #nullable enable
 
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace NuGet.CommandLine.XPlat
 {
     internal interface IListPackageCommandRunner
     {
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
         Task<int> ExecuteCommandAsync(ListPackageArgs packageRefArgs);
     }
 }

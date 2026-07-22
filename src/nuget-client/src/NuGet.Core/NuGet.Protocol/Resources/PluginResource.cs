@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +19,7 @@ namespace NuGet.Protocol.Core.Types
     {
         private const string _basicAuthenticationType = "Basic";
 
-        private readonly ICredentialService _credentialService;
+        private readonly ICredentialService? _credentialService;
         private readonly PackageSource _packageSource;
         private readonly IReadOnlyList<PluginCreationResult> _pluginCreationResults;
 
@@ -36,7 +34,7 @@ namespace NuGet.Protocol.Core.Types
         public PluginResource(
             IEnumerable<PluginCreationResult> pluginCreationResults,
             PackageSource packageSource,
-            ICredentialService credentialService)
+            ICredentialService? credentialService)
         {
             if (pluginCreationResults == null)
             {
@@ -62,7 +60,7 @@ namespace NuGet.Protocol.Core.Types
         /// The task result (<see cref="Task{TResult}.Result" />) returns a <see cref="GetPluginResult" />.</returns>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public async Task<GetPluginResult> GetPluginAsync(
+        public async Task<GetPluginResult?> GetPluginAsync(
             OperationClaim requiredClaim,
             CancellationToken cancellationToken)
         {
@@ -75,16 +73,16 @@ namespace NuGet.Protocol.Core.Types
                     throw new PluginException(result.Message);
                 }
 
-                if (result.Claims.Contains(requiredClaim))
+                if (result.Claims!.Contains(requiredClaim)) // When Claims is guaranteed non-empty when result.Message is not set, but it cannot be compiler enforced.
                 {
                     var key = $"{MessageMethod.SetCredentials}.{_packageSource.SourceUri}";
 
-                    await result.PluginMulticlientUtilities.DoOncePerPluginLifetimeAsync(
+                    await result.PluginMulticlientUtilities!.DoOncePerPluginLifetimeAsync(
                         key,
-                        () => SetPackageSourceCredentialsAsync(result.Plugin, cancellationToken),
+                        () => SetPackageSourceCredentialsAsync(result.Plugin!, cancellationToken),
                         cancellationToken);
 
-                    return new GetPluginResult(result.Plugin, result.PluginMulticlientUtilities);
+                    return new GetPluginResult(result.Plugin!, result.PluginMulticlientUtilities!);
                 }
             }
 
@@ -104,15 +102,15 @@ namespace NuGet.Protocol.Core.Types
         private SetCredentialsRequest CreateRequest()
         {
             var sourceUri = _packageSource.SourceUri;
-            string proxyUsername = null;
-            string proxyPassword = null;
-            string username = null;
-            string password = null;
-            ICredentials credentials;
+            string? proxyUsername = null;
+            string? proxyPassword = null;
+            string? username = null;
+            string? password = null;
+            ICredentials? credentials;
 
             if (TryGetCachedCredentials(sourceUri, isProxy: true, credentials: out credentials))
             {
-                var proxyCredential = credentials.GetCredential(sourceUri, _basicAuthenticationType);
+                var proxyCredential = credentials!.GetCredential(sourceUri, _basicAuthenticationType);
 
                 if (proxyCredential != null)
                 {
@@ -123,7 +121,7 @@ namespace NuGet.Protocol.Core.Types
 
             if (TryGetCachedCredentials(sourceUri, isProxy: false, credentials: out credentials))
             {
-                var packageSourceCredential = credentials.GetCredential(sourceUri, authType: null);
+                var packageSourceCredential = credentials!.GetCredential(sourceUri, authType: null!);
 
                 if (packageSourceCredential != null)
                 {
@@ -140,7 +138,7 @@ namespace NuGet.Protocol.Core.Types
                 password);
         }
 
-        private bool TryGetCachedCredentials(Uri uri, bool isProxy, out ICredentials credentials)
+        private bool TryGetCachedCredentials(Uri uri, bool isProxy, out ICredentials? credentials)
         {
             credentials = null;
 

@@ -21,6 +21,7 @@ namespace NuGet.ProjectModel
         private static readonly PropertyKey RuntimeAssembliesKey = new(nameof(RuntimeAssemblies));
         private static readonly PropertyKey ResourceAssembliesKey = new(nameof(ResourceAssemblies));
         private static readonly PropertyKey CompileTimeAssembliesKey = new(nameof(CompileTimeAssemblies));
+        private static readonly PropertyKey AnalyzerAssetsKey = new(nameof(AnalyzerAssets));
         private static readonly PropertyKey NativeLibrariesKey = new(nameof(NativeLibraries));
         private static readonly PropertyKey BuildKey = new(nameof(Build));
         private static readonly PropertyKey BuildMultiTargetingKey = new(nameof(BuildMultiTargeting));
@@ -108,6 +109,12 @@ namespace NuGet.ProjectModel
             set => SetListProperty(CompileTimeAssembliesKey, value);
         }
 
+        public IList<LockFileItem> AnalyzerAssets
+        {
+            get => GetListProperty<LockFileItem>(AnalyzerAssetsKey);
+            set => SetListProperty(AnalyzerAssetsKey, value);
+        }
+
         public IList<LockFileItem> NativeLibraries
         {
             get => GetListProperty<LockFileItem>(NativeLibrariesKey);
@@ -180,6 +187,7 @@ namespace NuGet.ProjectModel
                 && IsListOrderedEqual<LockFileItem>(RuntimeAssembliesKey, static o => o.Path)
                 && IsListOrderedEqual<LockFileItem>(ResourceAssembliesKey, static o => o.Path)
                 && IsListOrderedEqual<LockFileItem>(CompileTimeAssembliesKey, static o => o.Path)
+                && IsListOrderedEqual<LockFileItem>(AnalyzerAssetsKey, static o => o.Path)
                 && IsListOrderedEqual<LockFileItem>(NativeLibrariesKey, static o => o.Path)
                 && IsListOrderedEqual<LockFileContentFile>(ContentFilesKey, static o => o.Path)
                 && IsListOrderedEqual<LockFileRuntimeTarget>(RuntimeTargetsKey, static o => o.Path)
@@ -221,6 +229,7 @@ namespace NuGet.ProjectModel
             combiner.AddUnorderedSequence(RuntimeAssemblies);
             combiner.AddUnorderedSequence(ResourceAssemblies);
             combiner.AddUnorderedSequence(CompileTimeAssemblies);
+            combiner.AddUnorderedSequence(AnalyzerAssets);
             combiner.AddUnorderedSequence(NativeLibraries);
             combiner.AddUnorderedSequence(ContentFiles);
             combiner.AddUnorderedSequence(RuntimeTargets);
