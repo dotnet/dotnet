@@ -734,8 +734,7 @@ public partial class LinuxInstallerTests : IDisposable
 
     private void ValidateDnxPackageMetadata(PackageType packageType)
     {
-        string hostPackage = GetContentPackage(DotnetHostPrefix, packageType);
-        string hostPackagePath = Path.Combine(_contextDir, hostPackage);
+        string hostPackagePath = GetContentPackage(DotnetHostPrefix, packageType);
 
         if (packageType == PackageType.Rpm)
         {
