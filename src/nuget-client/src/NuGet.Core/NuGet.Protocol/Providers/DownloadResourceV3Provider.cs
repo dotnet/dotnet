@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,15 +15,16 @@ namespace NuGet.Protocol
         {
         }
 
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token)
         {
-            DownloadResource curResource = null;
+            DownloadResource? curResource = null;
 
             var serviceIndex = await source.GetResourceAsync<ServiceIndexResourceV3>(token);
 
             if (serviceIndex != null)
             {
-                var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token);
+                var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token)
+                    ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(HttpSourceResource)}.");
                 var client = httpSourceResource.HttpSource;
 
                 // Repository signature information init
@@ -44,12 +43,13 @@ namespace NuGet.Protocol
                 {
                     // If there is no flat container resource fall back to using the registration resource to find
                     // the download url.
-                    var registrationResource = await source.GetResourceAsync<RegistrationResourceV3>(token);
+                    var registrationResource = await source.GetResourceAsync<RegistrationResourceV3>(token)
+                        ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(RegistrationResourceV3)}.");
                     curResource = new DownloadResourceV3(source.PackageSource.Source, client, registrationResource);
                 }
             }
 
-            return new Tuple<bool, INuGetResource>(curResource != null, curResource);
+            return new Tuple<bool, INuGetResource?>(curResource != null, curResource);
         }
     }
 }

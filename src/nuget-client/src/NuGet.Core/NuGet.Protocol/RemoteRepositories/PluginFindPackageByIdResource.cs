@@ -109,7 +109,7 @@ namespace NuGet.Protocol.Core.Types
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public override Task<IPackageDownloader> GetPackageDownloaderAsync(
+        public override Task<IPackageDownloader?> GetPackageDownloaderAsync(
             PackageIdentity packageIdentity,
             SourceCacheContext cacheContext,
             ILogger logger,
@@ -138,7 +138,7 @@ namespace NuGet.Protocol.Core.Types
                 var packageReader = new PluginPackageReader(_plugin, packageIdentity, _packageSource.Source);
                 var packageDependency = new PluginPackageDownloader(_plugin, packageIdentity, packageReader, _packageSource.Source);
 
-                return Task.FromResult<IPackageDownloader>(packageDependency);
+                return Task.FromResult<IPackageDownloader?>(packageDependency);
             }
             finally
             {
