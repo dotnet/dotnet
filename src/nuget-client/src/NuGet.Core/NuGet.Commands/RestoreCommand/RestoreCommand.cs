@@ -777,7 +777,7 @@ namespace NuGet.Commands
                 }
 
                 telemetry.TelemetryEvent[NewPackagesInstalledCount] = graphs.Where(g => !g.InConflict).SelectMany(g => g.Install).Distinct().Count();
-                telemetry.TelemetryEvent[AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters] = graphs.Where(g => !g.InConflict).SelectMany(g => g.Flattened).Any(i => HasNonAlphanumericDotDashOrUnderscoreCharacters(i.Key.Name));
+                telemetry.TelemetryEvent[AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters] = graphs.Where(g => !g.InConflict).SelectMany(g => g.Flattened).Any(i => i.Key.Type == LibraryType.Package && HasNonAlphanumericDotDashOrUnderscoreCharacters(i.Key.Name));
                 telemetry.TelemetryEvent[RestoreSuccess] = success;
             }
 
