@@ -453,22 +453,18 @@ jobs:
               return milestone.number;
             }
 
-            // Parses a milestone title created by this workflow (e.g. "11.0-preview4",
-            // "11.0-rc1") into a comparable [major, minor, labelRank, iteration] tuple.
-            // Returns null for titles that don't match this format (e.g. a milestone
-            // that was created/renamed manually), so callers can fall back safely.
+            // Parses "X.Y-previewN"/"X.Y-rcN" into a [major, minor, labelRank, iteration]
+            // tuple for comparison. Returns null if the title doesn't match.
             function parseMilestoneTuple(title) {
               const match = title.match(/^(\d+)\.(\d+)-(preview|rc)(\d+)$/);
               if (!match) return null;
               const [, major, minor, label, iteration] = match;
-              // Previews always precede rc's within the same X.Y release.
-              const labelRank = label === 'rc' ? 1 : 0;
+              const labelRank = label === 'rc' ? 1 : 0; // previews precede rc's
               return [parseInt(major), parseInt(minor), labelRank, parseInt(iteration)];
             }
 
-            // Compares two milestone titles produced by this workflow.
-            // Returns -1 if `a` is older than `b`, 0 if equal, 1 if `a` is newer,
-            // or null if either title can't be parsed (unknown relative age).
+            // Returns -1 if `a` is older than `b`, 0 if equal, 1 if newer, or null if
+            // either title can't be parsed.
             function compareMilestoneAge(a, b) {
               const tupleA = parseMilestoneTuple(a);
               const tupleB = parseMilestoneTuple(b);
@@ -479,16 +475,10 @@ jobs:
               return 0;
             }
 
-            // With repo-snapped preview/rc branches, the same child-repo commit can
-            // now flow into dotnet/dotnet twice concurrently: once via `main` and once
-            // via the new `release/*-previewN`/`-rcN` branch. Both flows try to
-            // milestone the same child PR, potentially with different milestones.
-            // Rule: the OLDEST milestone wins — a PR should never be bumped to a
-            // newer milestone by this workflow once an older one has been applied,
-            // since the older one reflects the earliest release the commit shipped in.
-            //
-            // Decides what to do given the child PR's current state. Returns
-            // { action: 'skip', reason, warn? } or { action: 'apply' }.
+            // Repo-snapped preview/rc branches mean a child commit can flow into
+            // dotnet/dotnet twice concurrently (via `main` and via the new release
+            // branch), each potentially milestoning the same child PR differently.
+            // Rule: oldest milestone wins. Returns { action: 'skip'|'apply', reason, warn? }.
             function decideMilestoneAction(pr, milestoneName, milestoneNumber) {
               if (pr.milestone?.number === milestoneNumber) {
                 return { action: 'skip', reason: 'already has correct milestone' };
@@ -496,38 +486,21 @@ jobs:
               if (pr.milestone) {
                 const cmp = compareMilestoneAge(milestoneName, pr.milestone.title);
                 if (cmp === null) {
-                  // Existing milestone doesn't match this workflow's own
-                  // "X.Y-previewN"/"X.Y-rcN" naming convention (e.g. a generic
-                  // "11.0" or "11.0.x" placeholder). We can't confirm it's
-                  // older, but repos reaching this code have opted IN to
-                  // automated milestoning (opted-out repos never get here —
-                  // see OPTED_OUT_REPOS above), so overwrite it rather than
-                  // leaving a non-workflow milestone in place indefinitely.
+                  // Not a workflow-style milestone (e.g. generic "10.0"). Repos here
+                  // have opted in (see OPTED_OUT_REPOS), so overwrite it.
                   return { action: 'apply', warn: true, reason: `existing milestone "${pr.milestone.title}" doesn't match the expected format — overwriting with "${milestoneName}"` };
                 }
                 if (cmp >= 0) {
-                  // The existing milestone is the same age or older than the one
-                  // we're trying to apply — keep it (oldest milestone wins).
                   return { action: 'skip', reason: `existing milestone "${pr.milestone.title}" is already the same as or older than "${milestoneName}"` };
                 }
               }
               return { action: 'apply' };
             }
 
-            // Note: this workflow's concurrency group (see top of file) is scoped to
-            // an individual dotnet/dotnet PR, so two runs triggered by two DIFFERENT
-            // dotnet/dotnet PRs (one to `main`, one to a release branch) that both
-            // touch this same child PR are NOT serialized against each other. Since
-            // each run does several paginated API/GraphQL calls before reaching this
-            // point, the race window between two such runs can span most of a run's
-            // duration, not just a single request. GitHub's REST API has no
-            // compare-and-swap for the `milestone` field, so this can't be closed
-            // perfectly without an external lock — but re-checking the PR's milestone
-            // immediately before the mutating write (below) shrinks the window down
-            // to a single API round trip, which is cheap and closes the overwhelming
-            // majority of the practical race.
+            // The per-PR concurrency group (top of file) doesn't serialize runs for
+            // DIFFERENT dotnet/dotnet PRs, so two runs can race on the same child PR.
+            // Re-checking right before the write (below) narrows that window.
             async function applyMilestone(owner, repo, prNumber, milestoneName, milestoneNumber, octokit) {
-              // First check (also drives dry-run logging without mutating anything).
               const { data: pr } = await octokit.rest.pulls.get({ owner, repo, pull_number: prNumber });
               const decision = decideMilestoneAction(pr, milestoneName, milestoneNumber);
               if (decision.action === 'skip') {
@@ -541,10 +514,7 @@ jobs:
                 return;
               }
 
-              // Re-check right before writing, to narrow the race window described above.
-              // Use this fresher decision (not the first one) to decide both whether to
-              // write and whether to warn, since the PR's milestone may have changed
-              // between the two reads (e.g. a concurrent run already applied one).
+              // Re-check with fresh data right before writing (see comment above).
               const { data: latestPr } = await octokit.rest.pulls.get({ owner, repo, pull_number: prNumber });
               const finalDecision = decideMilestoneAction(latestPr, milestoneName, milestoneNumber);
               if (finalDecision.action === 'skip') {
