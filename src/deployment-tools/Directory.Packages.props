@@ -14,7 +14,6 @@
     <!-- Runtime dependencies -->
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.0" />
     <PackageVersion Include="System.Text.Json" Version="8.0.5" />
-    <PackageVersion Include="System.Formats.Asn1" Version="8.0.1" /> <!-- Pin transitive dependency to avoid vulnerable 8.0.0 version. -->
 
     <!-- Native dependencies -->
     <PackageVersion Include="Microsoft.NETCore.App.Host.win-x64" Version="$(BundledNETCoreAppPackageVersion)" />
@@ -27,11 +26,6 @@
     <PackageVersion Update="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildTasksCoreVersion)" Condition="'$(MicrosoftBuildTasksCoreVersion)' != ''" />
     <PackageVersion Update="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" Condition="'$(SystemSecurityCryptographyXmlVersion)' != ''" />
     <PackageVersion Update="System.Text.Json" Version="$(SystemTextJsonVersion)" Condition="'$(SystemTextJsonVersion)' != ''" />
-  </ItemGroup>
-
-  <!-- Suppress System.Text.Json/8.0.4 advisory as desktop msbuild doesn't yet provide binding redirects for the non-vulnerable version (8.0.5). -->
-  <ItemGroup>
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-8g4q-xg66-9fp4" />
   </ItemGroup>
 
 </Project>
