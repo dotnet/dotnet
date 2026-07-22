@@ -46,7 +46,7 @@ namespace Microsoft.DotNet.SignTool
             _dotnetTimeout = args.DotNetTimeout;
         }
 
-        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath)
+        public override bool RunMSBuild(IBuildEngine buildEngine, string projectFilePath, string binLogPath, string logPath, string errorLogPath, bool suppressErrors = false)
         {
             if (_dotnetPath == null)
             {
@@ -80,7 +80,10 @@ namespace Microsoft.DotNet.SignTool
                 bool success = true;
                 if (!process.WaitForExit(_dotnetTimeout))
                 {
-                    _log.LogError($"MSBuild process did not exit within '{_dotnetTimeout}' ms.");
+                    if (suppressErrors)
+                        _log.LogMessage(MessageImportance.High, $"MSBuild process did not exit within '{_dotnetTimeout}' ms.");
+                    else
+                        _log.LogError($"MSBuild process did not exit within '{_dotnetTimeout}' ms.");
                     process.Kill();
                     process.WaitForExit();
                     success = false;
@@ -88,8 +91,12 @@ namespace Microsoft.DotNet.SignTool
 
                 if (process.ExitCode != 0)
                 {
-                    _log.LogError($"Failed to execute MSBuild on the project file '{projectFilePath}'" +
-                    $" with exit code '{process.ExitCode}'.");
+                    if (suppressErrors)
+                        _log.LogMessage(MessageImportance.High, $"Failed to execute MSBuild on the project file '{projectFilePath}'" +
+                        $" with exit code '{process.ExitCode}'.");
+                    else
+                        _log.LogError($"Failed to execute MSBuild on the project file '{projectFilePath}'" +
+                        $" with exit code '{process.ExitCode}'.");
                     success = false;
                 }
 

@@ -55,6 +55,14 @@
       {TargetFrameworkDirectory};
       {RawFileName};
     </AssemblySearchPaths>
+
+    <!--
+      Tolerate package sources that are unavailable (e.g. transport feeds that have been
+      decommissioned after a release). Restore falls back to the remaining sources instead
+      of failing outright. Can be overridden by setting RestoreIgnoreFailedSources explicitly.
+      See https://github.com/dotnet/runtime/issues/129694.
+    -->
+    <RestoreIgnoreFailedSources Condition="'$(RestoreIgnoreFailedSources)' == ''">true</RestoreIgnoreFailedSources>
   </PropertyGroup>
 
   <PropertyGroup>
