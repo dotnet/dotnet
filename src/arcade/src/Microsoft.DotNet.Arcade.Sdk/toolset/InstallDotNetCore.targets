@@ -15,13 +15,14 @@
     </PropertyGroup>
 
     <InstallDotNetCore
-      VersionsPropsPath="$(RepositoryEngineeringDir)Versions.props"
       GlobalJsonPath="$(RepoRoot)global.json"
       DotNetPath="$(_DotNetPath)"
       DotNetInstallScript="$(_DotNetInstallScript)"
       Platform="$(Platform)"
+      VersionsPropsPath="$(RepositoryEngineeringDir)Versions.props"
       RuntimeSourceFeed="$(DotNetRuntimeSourceFeed)"
-      RuntimeSourceFeedKey="$(DotNetRuntimeSourceFeedKey)"/>
+      RuntimeSourceFeedKey="$(DotNetRuntimeSourceFeedKey)"
+      SkipRuntimesInstall="$(SkipRuntimesInstall)" />
   </Target>
 
 </Project>
