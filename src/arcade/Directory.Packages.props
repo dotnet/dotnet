@@ -90,7 +90,8 @@
     <PackageVersion Include="Microsoft.ApplicationInsights" Version="2.23.0" />
     <PackageVersion Include="Microsoft.Data.OData" Version="5.8.4" />
     <PackageVersion Include="Microsoft.DataServices.Client" Version="$(MicrosoftDataServicesClientVersion)" />
-    <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="1.0.5" />
+    <PackageVersion Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.721401" />
+    <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="4.1.735601" />
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.73.1" />
     <PackageVersion Include="Microsoft.OpenApi" Version="1.3.2" />
     <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.3.2" />
