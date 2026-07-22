@@ -8,8 +8,8 @@
     <!-- Passed for compatibility with new P4 SDK. -->
     <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
 
-    <!-- Remove nuget.org from auditSources to avoid reaching the internet during CI builds. -->
-    <RemoveBlockedAuditSources>true</RemoveBlockedAuditSources>
+    <!-- This is a default in the arcade sdk which nuget-client doesn't use. -->
+    <BuildArgs Condition="'$(OfficialBuild)' == 'true'">$(BuildArgs) /p:NuGetAudit=false</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
