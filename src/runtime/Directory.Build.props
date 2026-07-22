@@ -212,10 +212,6 @@
     <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
     <!-- Turn off producing Windows PDBs from our portable PDBs. No one uses them and they slow down publishing. -->
     <PublishWindowsPdb>false</PublishWindowsPdb>
-    <!-- Disable source link when building locally. -->
-    <DisableSourceLink Condition="'$(DisableSourceLink)' == '' and
-                                  '$(ContinuousIntegrationBuild)' != 'true' and
-                                  '$(OfficialBuildId)' == ''">true</DisableSourceLink>
     <!-- Runtime doesn't support Arcade-driven target framework filtering. -->
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
 
