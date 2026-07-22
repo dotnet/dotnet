@@ -13,9 +13,6 @@
 
     <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
     <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)tfm $(NetCurrent)</BuildArgs>
-
-    <!-- Prevent NuGet Audit warnings to get promoted to errors. -->
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnnotaserror "NU1900$(FlagParameterSemicolon)NU1901$(FlagParameterSemicolon)NU1902$(FlagParameterSemicolon)NU1903"</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
