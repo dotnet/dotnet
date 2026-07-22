@@ -110,7 +110,7 @@ public class SourcelinkTests : SdkTests
                 logOutput: false,
                 excludeInfo: true, // Exclude info messages, as there can be 1,000+ processes
                 millisecondTimeout: 60000,
-                configureCallback: (process) => DotNetHelper.ConfigureProcess(process, null));
+                configureCallback: (process) => DotNetHelper.ConfigureProcess(process, DotNetHelper.ProjectsDirectory));
 
             if (executeResult.Process.ExitCode != 0)
             {
