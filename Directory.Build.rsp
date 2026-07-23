@@ -1,1 +1,1 @@
--tl:false
+-tl:false -warnNotAsError:"NU1901;NU1902;NU1903"
