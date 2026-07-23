@@ -72,6 +72,7 @@ extends:
       networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     featureFlags:
       binskimScanAllExtensions: true
+      useBinskimResponseFile: true
       incrementalSDLBinaryAnalysis: true
       autoEnablePREfastWithNewRuleset: false
       autoEnableRoslynWithNewRuleset: false
