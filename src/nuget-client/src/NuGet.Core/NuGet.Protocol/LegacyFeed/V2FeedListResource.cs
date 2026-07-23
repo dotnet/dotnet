@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -38,7 +36,7 @@ namespace NuGet.Protocol
             CancellationToken token)
         {
             var isSearchSupported = await _feedCapabilities.SupportsSearchAsync(logger, token);
-            SearchFilter filter = null;
+            SearchFilter? filter = null;
             if (isSearchSupported)
             {
                 if (allVersions)
@@ -158,8 +156,8 @@ internal class EnumeratorAsync : IEnumeratorAsync<IPackageSearchMetadata>
     private readonly bool _allVersions;
 
 
-    private IEnumerator<IPackageSearchMetadata> _currentEnumerator;
-    private V2FeedPage _currentPage;
+    private IEnumerator<IPackageSearchMetadata>? _currentEnumerator;
+    private V2FeedPage? _currentPage;
 
     public EnumeratorAsync(IV2FeedParser feedParser, string searchTerm, SearchFilter filter, int skip, int take, bool isSearchAvailable, bool allVersions,
         ILogger logger, CancellationToken token)
@@ -179,7 +177,7 @@ internal class EnumeratorAsync : IEnumeratorAsync<IPackageSearchMetadata>
     {
         get
         {
-            return _currentEnumerator?.Current;
+            return _currentEnumerator!.Current;
         }
     }
 
@@ -218,7 +216,7 @@ internal class EnumeratorAsync : IEnumeratorAsync<IPackageSearchMetadata>
         }
         else
         {
-            if (!_currentEnumerator.MoveNext())
+            if (!_currentEnumerator!.MoveNext())
             {
                 if (_currentPage.Items.Count != _take) // Last page not filled completely, no more pages left
                 {

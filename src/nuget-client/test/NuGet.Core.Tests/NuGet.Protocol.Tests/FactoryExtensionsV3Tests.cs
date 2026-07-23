@@ -13,7 +13,7 @@ namespace NuGet.Protocol.Tests
         [Fact]
         public void GetCoreV3_WhenFactoryIsNull_Throws()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => FactoryExtensionsV3.GetCoreV3(factory: null));
+            var exception = Assert.Throws<ArgumentNullException>(() => FactoryExtensionsV3.GetCoreV3(factory: null!));
 
             Assert.Equal("factory", exception.ParamName);
         }

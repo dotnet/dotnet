@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,9 +17,9 @@ namespace NuGet.Protocol
         {
         }
 
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token)
         {
-            MetadataResourceV3 curResource = null;
+            MetadataResourceV3? curResource = null;
             var regResource = await source.GetResourceAsync<RegistrationResourceV3>(token);
 
             if (regResource != null)
@@ -29,7 +27,7 @@ namespace NuGet.Protocol
                 curResource = new MetadataResourceV3(regResource);
             }
 
-            return new Tuple<bool, INuGetResource>(curResource != null, curResource);
+            return new Tuple<bool, INuGetResource?>(curResource != null, curResource);
         }
     }
 }

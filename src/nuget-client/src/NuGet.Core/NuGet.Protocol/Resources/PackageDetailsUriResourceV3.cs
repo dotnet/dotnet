@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
@@ -13,12 +11,12 @@ namespace NuGet.Protocol
     {
         private readonly string _template;
 
-        private PackageDetailsUriResourceV3(string template)
+        private PackageDetailsUriResourceV3(string? template)
         {
             _template = template ?? throw new ArgumentNullException(nameof(template));
         }
 
-        public static PackageDetailsUriResourceV3 CreateOrNull(string uriTemplate)
+        public static PackageDetailsUriResourceV3? CreateOrNull(string? uriTemplate)
         {
             if (string.IsNullOrWhiteSpace(uriTemplate)
                 || !IsValidUriTemplate(uriTemplate))
@@ -29,13 +27,12 @@ namespace NuGet.Protocol
             return new PackageDetailsUriResourceV3(uriTemplate);
         }
 
-        private static bool IsValidUriTemplate(string uriTemplate)
+        private static bool IsValidUriTemplate(string? uriTemplate)
         {
-            Uri uri;
-            var isValidUri = Uri.TryCreate(uriTemplate, UriKind.Absolute, out uri);
+            var isValidUri = Uri.TryCreate(uriTemplate, UriKind.Absolute, out Uri? uri);
 
             // Only allow HTTPS package details URLs.
-            if (isValidUri && !uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
+            if (isValidUri && !uri!.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -34,7 +32,7 @@ namespace NuGet.Protocol
             _source = source;
         }
 
-        public override async Task<SourcePackageDependencyInfo> ResolvePackage(
+        public override async Task<SourcePackageDependencyInfo?> ResolvePackage(
             PackageIdentity package,
             NuGetFramework projectFramework,
             SourceCacheContext sourceCacheContext,
@@ -122,7 +120,7 @@ namespace NuGet.Protocol
                 deps,
                 packageVersion.IsListed,
                 _source,
-                new Uri(packageVersion.DownloadUrl),
+                packageVersion.DownloadUrl != null ? new Uri(packageVersion.DownloadUrl) : null,
                 packageVersion.PackageHash);
 
             return result;

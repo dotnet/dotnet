@@ -517,7 +517,7 @@ namespace NuGet.Protocol
 
         internal async Task<XDocument?> LoadXmlAsync(
             string uri,
-            string cacheKey,
+            string? cacheKey,
             bool ignoreNotFounds,
             SourceCacheContext? sourceCacheContext,
             ILogger log,
