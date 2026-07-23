@@ -1,5 +1,8 @@
 {
   "sdk": {
+    "version": "11.0.100-preview.5.26302.115",
+    "allowPrerelease": true,
+    "rollForward": "latestFeature",
     "paths": [
       ".dotnet",
       "$host$"
@@ -26,7 +29,7 @@
     "Microsoft.Build.NoTargets": "3.7.134",
     "Microsoft.Build.Traversal": "4.1.82",
     "Microsoft.WixToolset.Sdk": "6.0.3-dotnet.6",
-    "MSTest.Sdk": "4.4.0-preview.26360.5"
+    "MSTest.Sdk": "4.4.0-preview.26367.7"
   },
   "test": {
     "runner": "Microsoft.Testing.Platform"

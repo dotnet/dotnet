@@ -51,7 +51,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             workItem.GetMetadata("Timeout").Should().Be("00:05:00");
 
             var command = workItem.GetMetadata("Command");
-            command.Should().StartWith("dotnet exec --roll-forward Major ");
+            command.Should().StartWith("dotnet exec ");
+            command.Should().NotContain("--roll-forward");
             command.Should().Contain("--runtimeconfig MyApp.Tests.runtimeconfig.json");
             command.Should().Contain("--depsfile MyApp.Tests.deps.json");
             command.Should().Contain("MyApp.Tests.dll");

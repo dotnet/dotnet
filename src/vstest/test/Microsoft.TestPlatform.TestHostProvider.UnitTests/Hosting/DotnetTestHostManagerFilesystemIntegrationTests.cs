@@ -37,7 +37,6 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
     private readonly Mock<IProcessHelper> _mockProcessHelper = new();
     private readonly Mock<IEnvironment> _mockEnvironment = new();
     private readonly Mock<IMessageLogger> _mockMessageLogger = new();
-    private readonly Mock<IRunSettingsHelper> _mockRunsettingsHelper = new();
     private readonly Mock<IWindowsRegistryHelper> _mockWindowsRegistry = new();
     private readonly Mock<IEnvironmentVariableHelper> _mockEnvironmentVariable = new();
     private readonly TestRunnerConnectionInfo _connectionInfo = new()
@@ -56,7 +55,6 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
         // Simulate non-Windows so the code goes to testhost.dll discovery (not testhost.exe).
         _mockEnvironment.Setup(e => e.OperatingSystem).Returns(PlatformOperatingSystem.Unix);
         _mockEnvironment.SetupGet(e => e.Architecture).Returns(PlatformArchitecture.X64);
-        _mockRunsettingsHelper.SetupGet(r => r.IsDefaultTargetArchitecture).Returns(true);
 
         // Current process is a dotnet muxer so it is used as-is for FileName.
         _mockProcessHelper.Setup(p => p.GetCurrentProcessFileName()).Returns("/usr/bin/dotnet");
@@ -292,7 +290,6 @@ public class DotnetTestHostManagerFilesystemIntegrationTests
             fileHelper,
             new DotnetHostHelper(fileHelper, _mockEnvironment.Object, _mockWindowsRegistry.Object, _mockEnvironmentVariable.Object, _mockProcessHelper.Object),
             _mockEnvironment.Object,
-            _mockRunsettingsHelper.Object,
             _mockWindowsRegistry.Object,
             _mockEnvironmentVariable.Object);
 }

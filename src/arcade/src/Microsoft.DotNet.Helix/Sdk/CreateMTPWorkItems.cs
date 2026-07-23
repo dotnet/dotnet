@@ -135,7 +135,11 @@ namespace Microsoft.DotNet.Helix.Sdk
             // every work item) or the per-project Arguments metadata on MTPProject.
             string reporterArgs = "--results-directory .";
 
-            string command = $"{PathToDotnet} exec --roll-forward Major " +
+            // Intentionally do not pass --roll-forward so each work item runs on the runtime
+            // matching its target framework. A blanket roll-forward (e.g. Major) can silently
+            // run a net8.0 assembly on a net9.0 runtime, masking a missing runtime and causing
+            // silent loss of multi-TFM coverage. See https://github.com/dotnet/arcade/issues/17000.
+            string command = $"{PathToDotnet} exec " +
                 $"--runtimeconfig {assemblyBaseName}.runtimeconfig.json " +
                 $"--depsfile {assemblyBaseName}.deps.json " +
                 $"{assemblyName} {reporterArgs}" +

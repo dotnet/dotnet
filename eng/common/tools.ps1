@@ -767,7 +767,8 @@ function MSBuild() {
   }
 
   if ($warnAsError -and $warnNotAsError) {
-    $cmdArgs += " /warnnotaserror:$warnNotAsError /p:AdditionalWarningsNotAsErrors=$warnNotAsError"
+    $escapedWarnNotAsError = $warnNotAsError -replace ';', '%3B'
+    $cmdArgs += " /warnnotaserror:$warnNotAsError /p:AdditionalWarningsNotAsErrors=$escapedWarnNotAsError"
   }
 
   foreach ($arg in $args) {
