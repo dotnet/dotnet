@@ -16,32 +16,32 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [TestClass]
 public class ResultsDirectoryArgumentProcessorTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     private readonly ResultsDirectoryArgumentExecutor _executor;
     private readonly TestableRunSettingsProvider _runSettingsProvider;
 
     public ResultsDirectoryArgumentProcessorTests()
     {
         _runSettingsProvider = new TestableRunSettingsProvider();
-        _executor = new ResultsDirectoryArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider);
+        _executor = new ResultsDirectoryArgumentExecutor(_commandLineOptions, _runSettingsProvider);
     }
 
     [TestCleanup]
     public void TestCleanup()
     {
-        CommandLineOptions.Reset();
     }
 
     [TestMethod]
     public void GetMetadataShouldReturnResultsDirectoryArgumentProcessorCapabilities()
     {
-        var processor = new ResultsDirectoryArgumentProcessor();
+        var processor = new ResultsDirectoryArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Metadata.Value is ResultsDirectoryArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnResultsDirectoryArgumentExecutor()
     {
-        var processor = new ResultsDirectoryArgumentProcessor();
+        var processor = new ResultsDirectoryArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider());
         Assert.IsTrue(processor.Executor!.Value is ResultsDirectoryArgumentExecutor);
     }
 
@@ -118,7 +118,7 @@ public class ResultsDirectoryArgumentProcessorTests
         var relativePath = TranslatePath(@".\relative\path");
         var absolutePath = Path.GetFullPath(relativePath);
         _executor.Initialize(relativePath);
-        Assert.AreEqual(absolutePath, CommandLineOptions.Instance.ResultsDirectory);
+        Assert.AreEqual(absolutePath, _commandLineOptions.ResultsDirectory);
         Assert.AreEqual(absolutePath, _runSettingsProvider.QueryRunSettingsNode(ResultsDirectoryArgumentExecutor.RunSettingsPath));
     }
 
@@ -127,7 +127,7 @@ public class ResultsDirectoryArgumentProcessorTests
     {
         var absolutePath = TranslatePath(@"c:\random\someone\testresults");
         _executor.Initialize(absolutePath);
-        Assert.AreEqual(absolutePath, CommandLineOptions.Instance.ResultsDirectory);
+        Assert.AreEqual(absolutePath, _commandLineOptions.ResultsDirectory);
         Assert.AreEqual(absolutePath, _runSettingsProvider.QueryRunSettingsNode(ResultsDirectoryArgumentExecutor.RunSettingsPath));
     }
 

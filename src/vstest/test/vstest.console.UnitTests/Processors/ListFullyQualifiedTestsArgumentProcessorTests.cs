@@ -38,6 +38,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [TestClass]
 public class ListFullyQualifiedTestsArgumentProcessorTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     private readonly Mock<IFileHelper> _mockFileHelper;
     private readonly Mock<IAssemblyMetadataProvider> _mockAssemblyMetadataProvider;
     private readonly InferHelper _inferHelper;
@@ -51,13 +52,13 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
     private readonly Mock<IEnvironment> _mockEnvironment;
     private readonly Mock<IEnvironmentVariableHelper> _mockEnvironmentVariableHelper;
 
-    private static ListFullyQualifiedTestsArgumentExecutor GetExecutor(ITestRequestManager testRequestManager, IOutput? output)
+    private ListFullyQualifiedTestsArgumentExecutor GetExecutor(ITestRequestManager testRequestManager, IOutput? output)
     {
         var runSettingsProvider = new TestableRunSettingsProvider();
         runSettingsProvider.AddDefaultRunSettings();
         var listFullyQualifiedTestsArgumentExecutor =
             new ListFullyQualifiedTestsArgumentExecutor(
-                CommandLineOptions.Instance,
+                _commandLineOptions,
                 runSettingsProvider,
                 testRequestManager,
                 output ?? ConsoleOutput.Instance);
@@ -68,7 +69,6 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
     public void Cleanup()
     {
         File.Delete(_dummyFilePath);
-        CommandLineOptions.Reset();
     }
 
     public ListFullyQualifiedTestsArgumentProcessorTests()
@@ -95,8 +95,8 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
     [TestMethod]
     public void GetMetadataShouldReturnListFullyQualifiedTestsArgumentProcessorCapabilities()
     {
-        var processor = new ListTestsArgumentProcessor();
-        Assert.IsTrue(processor.Metadata.Value is ListTestsArgumentProcessorCapabilities);
+        var processor = new ListFullyQualifiedTestsArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider(), new Mock<ITestRequestManager>().Object);
+        Assert.IsTrue(processor.Metadata.Value is ListFullyQualifiedTestsArgumentProcessorCapabilities);
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
     [TestMethod]
     public void GetExecuterShouldReturnListFullyQualifiedTestsArgumentProcessorCapabilities()
     {
-        var processor = new ListFullyQualifiedTestsArgumentProcessor();
+        var processor = new ListFullyQualifiedTestsArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider(), new Mock<ITestRequestManager>().Object);
         Assert.IsTrue(processor.Executor!.Value is ListFullyQualifiedTestsArgumentExecutor);
     }
 
@@ -131,21 +131,20 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
     [TestMethod]
     public void ExecutorInitializeWithValidSourceShouldAddItToTestSources()
     {
-        CommandLineOptions.Instance.FileHelper = _mockFileHelper.Object;
-        CommandLineOptions.Instance.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, _mockFileHelper.Object);
-        var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, TestPlatformFactory.GetTestPlatform(), TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
+        _commandLineOptions.FileHelper = _mockFileHelper.Object;
+        _commandLineOptions.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, _mockFileHelper.Object);
+        var testRequestManager = new TestRequestManager(_commandLineOptions, TestPlatformFactory.GetTestPlatform(), new TestRunResultAggregator(), _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
         var executor = GetExecutor(testRequestManager, null);
 
         executor.Initialize(_dummyTestFilePath);
 
-        Assert.IsTrue(Enumerable.Contains(CommandLineOptions.Instance.Sources, _dummyTestFilePath));
+        Assert.IsTrue(Enumerable.Contains(_commandLineOptions.Sources, _dummyTestFilePath));
     }
 
     [TestMethod]
     public void ExecutorExecuteForNoSourcesShouldReturnFail()
     {
-        CommandLineOptions.Reset();
-        var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, TestPlatformFactory.GetTestPlatform(), TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
+        var testRequestManager = new TestRequestManager(_commandLineOptions, TestPlatformFactory.GetTestPlatform(), new TestRunResultAggregator(), _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
         var executor = GetExecutor(testRequestManager, null);
 
         Assert.ThrowsExactly<CommandLineException>(() => executor.Execute());
@@ -162,7 +161,7 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
 
         ResetAndAddSourceToCommandLineOptions(true);
 
-        var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
+        var testRequestManager = new TestRequestManager(_commandLineOptions, mockTestPlatform.Object, new TestRunResultAggregator(), _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
 
         var executor = GetExecutor(testRequestManager, null);
 
@@ -179,7 +178,7 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
         mockTestPlatform.Setup(tp => tp.CreateDiscoveryRequest(It.IsAny<IRequestData>(), It.IsAny<DiscoveryCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(mockDiscoveryRequest.Object);
         ResetAndAddSourceToCommandLineOptions(true);
 
-        var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
+        var testRequestManager = new TestRequestManager(_commandLineOptions, mockTestPlatform.Object, new TestRunResultAggregator(), _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
 
         var listTestsArgumentExecutor = GetExecutor(testRequestManager, null);
 
@@ -198,7 +197,7 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
         ResetAndAddSourceToCommandLineOptions(true);
 
 
-        var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
+        var testRequestManager = new TestRequestManager(_commandLineOptions, mockTestPlatform.Object, new TestRunResultAggregator(), _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
 
         var listTestsArgumentExecutor = GetExecutor(testRequestManager, null);
 
@@ -216,7 +215,7 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
 
         ResetAndAddSourceToCommandLineOptions(true);
 
-        var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
+        var testRequestManager = new TestRequestManager(_commandLineOptions, mockTestPlatform.Object, new TestRunResultAggregator(), _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
 
         var executor = GetExecutor(testRequestManager, null);
 
@@ -304,10 +303,10 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
         mockTestPlatform.Setup(tp => tp.CreateDiscoveryRequest(It.IsAny<IRequestData>(), It.IsAny<DiscoveryCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>())).Returns(mockDiscoveryRequest.Object);
 
         ResetAndAddSourceToCommandLineOptions(legitPath);
-        var cmdOptions = CommandLineOptions.Instance;
+        var cmdOptions = _commandLineOptions;
         cmdOptions.TestCaseFilterValue = "TestCategory=MyCat";
 
-        var testRequestManager = new TestRequestManager(cmdOptions, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
+        var testRequestManager = new TestRequestManager(cmdOptions, mockTestPlatform.Object, new TestRunResultAggregator(), _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
 
         GetExecutor(testRequestManager, mockConsoleOutput.Object).Execute();
     }
@@ -325,18 +324,17 @@ public class ListFullyQualifiedTestsArgumentProcessorTests
 
         ResetAndAddSourceToCommandLineOptions(legitPath);
 
-        var testRequestManager = new TestRequestManager(CommandLineOptions.Instance, mockTestPlatform.Object, TestRunResultAggregator.Instance, _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
+        var testRequestManager = new TestRequestManager(_commandLineOptions, mockTestPlatform.Object, new TestRunResultAggregator(), _mockTestPlatformEventSource.Object, _inferHelper, _mockMetricsPublisherTask, _mockProcessHelper.Object, _mockAttachmentsProcessingManager.Object, _mockEnvironment.Object, _mockEnvironmentVariableHelper.Object);
 
         GetExecutor(testRequestManager, mockConsoleOutput.Object).Execute();
     }
 
     private void ResetAndAddSourceToCommandLineOptions(bool legitPath)
     {
-        CommandLineOptions.Reset();
 
-        CommandLineOptions.Instance.FileHelper = _mockFileHelper.Object;
-        CommandLineOptions.Instance.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, _mockFileHelper.Object);
-        CommandLineOptions.Instance.AddSource(_dummyTestFilePath);
-        CommandLineOptions.Instance.ListTestsTargetPath = legitPath ? _dummyFilePath : string.Empty;
+        _commandLineOptions.FileHelper = _mockFileHelper.Object;
+        _commandLineOptions.FilePatternParser = new FilePatternParser(new Mock<Matcher>().Object, _mockFileHelper.Object);
+        _commandLineOptions.AddSource(_dummyTestFilePath);
+        _commandLineOptions.ListTestsTargetPath = legitPath ? _dummyFilePath : string.Empty;
     }
 }

@@ -275,14 +275,34 @@ try {
     if ($matchingPr) {
         $prUpdatedSuccess = $false
 
-        try {
-            if ($PSCmdlet.ShouldProcess("Update remote branch $mergeBranchName on $remoteName")) {
-                Invoke-Block { & git push $remoteName "${mergeBranchName}:${mergeBranchName}" }
+        if ($PSCmdlet.ShouldProcess("Update remote branch $mergeBranchName on $remoteName")) {
+            # Attempt a fast-forward update of the existing PR branch. Capture the output so we can
+            # distinguish an expected non-fast-forward rejection -- the PR branch has intentionally
+            # diverged (e.g. manual conflict-resolution commits, or a regenerated ResetToTargetPaths
+            # commit) and we deliberately do not force-push over it -- from a genuine push failure
+            # such as an auth, network, or permissions problem, which must still fail the workflow.
+            Write-Host "git push $remoteName ${mergeBranchName}:${mergeBranchName}"
+            $pushOutput = & git push $remoteName "${mergeBranchName}:${mergeBranchName}" 2>&1
+            $pushExitCode = $LASTEXITCODE
+            $pushOutputText = ($pushOutput | Out-String)
+            Write-Host $pushOutputText
+
+            if ($pushExitCode -eq 0) {
+                $prUpdatedSuccess = $true
             }
-            $prUpdatedSuccess = $true
+            elseif ($pushOutputText -match '(?i)\[rejected\]|non-fast-forward|fetch first|tip of your current branch is behind') {
+                # Benign: the existing PR has diverged and cannot be fast-forwarded. Leave the PR
+                # untouched and do not fail the job. Reset the exit code so the non-fast-forward
+                # rejection from git push does not propagate as the process exit code.
+                Write-Host -f Yellow "The existing PR branch '$mergeBranchName' has diverged and cannot be fast-forwarded; leaving the existing PR unchanged."
+                $global:LASTEXITCODE = 0
+            }
+            else {
+                throw "Failed to push updates to existing PR branch '$mergeBranchName'. See push output above."
+            }
         }
-        catch {
-            Write-Warning "Failed to update existing PR"
+        else {
+            $prUpdatedSuccess = $true
         }
 
         $prMessage = if ($prUpdatedSuccess) {

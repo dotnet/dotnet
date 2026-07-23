@@ -157,8 +157,32 @@ internal sealed class Condition
 #if IS_VSTEST_REPO
         ValidateArg.NotNull(propertyValueProvider, nameof(propertyValueProvider));
 #endif
-        var multiValue = GetPropertyValue(propertyValueProvider);
-        var result = Operation switch
+        var propertyValue = propertyValueProvider(Name);
+
+        // Fast path: single string value (most common case for FullyQualifiedName, DisplayName, etc.)
+        // Avoids allocating a string[1] wrapper that the general multi-value path would create.
+        if (propertyValue is string singleValue)
+        {
+            return Operation switch
+            {
+                Operation.Equal => string.Equals(singleValue, Value, StringComparison.OrdinalIgnoreCase),
+                Operation.NotEqual => !string.Equals(singleValue, Value, StringComparison.OrdinalIgnoreCase),
+                Operation.Contains => singleValue.IndexOf(Value, StringComparison.OrdinalIgnoreCase) != -1,
+                Operation.NotContains => singleValue.IndexOf(Value, StringComparison.OrdinalIgnoreCase) == -1,
+                _ => false,
+            };
+        }
+
+        // Null, string[], or other types: use multi-value evaluation.
+        // Other types are coerced via ToString() for backward compatibility.
+        string[]? multiValue = propertyValue switch
+        {
+            null => null,
+            string[] arr => arr,
+            _ => new[] { propertyValue.ToString()! },
+        };
+
+        return Operation switch
         {
             // if any value in multi-valued property matches 'this.Value', for Equal to evaluate true.
             Operation.Equal => EvaluateEqualOperation(multiValue),
@@ -170,8 +194,6 @@ internal sealed class Condition
             Operation.NotContains => !EvaluateContainsOperation(multiValue),
             _ => false,
         };
-
-        return result;
     }
 
     /// <summary>
@@ -290,25 +312,6 @@ internal sealed class Condition
             "!~" => Operation.NotContains,
             _ => throw new FormatException(string.Format(CultureInfo.CurrentCulture, TestCaseFilterFormatException, string.Format(CultureInfo.CurrentCulture, InvalidOperator, operationString))),
         };
-    }
-
-    /// <summary>
-    /// Returns property value for Property using propertValueProvider.
-    /// </summary>
-    private string[]? GetPropertyValue(Func<string, object?> propertyValueProvider)
-    {
-        var propertyValue = propertyValueProvider(Name);
-        if (null != propertyValue)
-        {
-            if (propertyValue is not string[] multiValue)
-            {
-                multiValue = new string[1];
-                multiValue[0] = propertyValue.ToString()!;
-            }
-            return multiValue;
-        }
-
-        return null;
     }
 
     internal static IEnumerable<string> TokenizeFilterConditionString(string str)

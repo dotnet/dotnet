@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #if NET
+using System.Collections.Concurrent;
 using System.Collections.Frozen;
 #endif
 using System.Diagnostics;
@@ -23,6 +24,12 @@ internal sealed class RequestDataHelper
     private readonly FrozenDictionary<string, string> knownHttpMethods;
 #else
     private readonly Dictionary<string, string> knownHttpMethods;
+#endif
+
+#if NET
+    // Caches the final display name string for each (namePrefix, httpRoute) pair.
+    // The number of distinct combinations is bounded by the number of (HTTP method name prefixes * routes) in the app.
+    private readonly ConcurrentDictionary<(string Method, string Route), string> displayNameCache = new();
 #endif
 
     public RequestDataHelper(bool configureByHttpKnownMethodsEnvironmentalVariable)
@@ -79,6 +86,19 @@ internal sealed class RequestDataHelper
         }
     }
 
+    public void SetActivityDisplayNameAndHttpMethodTag(Activity activity, string originalHttpMethod)
+    {
+        var normalizedHttpMethod = this.GetNormalizedHttpMethod(originalHttpMethod);
+
+        activity.DisplayName = normalizedHttpMethod == OtherHttpMethod ? "HTTP" : normalizedHttpMethod;
+        activity.SetTag(SemanticConventions.AttributeHttpRequestMethod, normalizedHttpMethod);
+
+        if (originalHttpMethod != normalizedHttpMethod)
+        {
+            activity.SetTag(SemanticConventions.AttributeHttpRequestMethodOriginal, originalHttpMethod);
+        }
+    }
+
     public void SetHttpMethodTag(ref TagList tags, string originalHttpMethod)
     {
         var normalizedHttpMethod = this.GetNormalizedHttpMethod(originalHttpMethod);
@@ -103,9 +123,18 @@ internal sealed class RequestDataHelper
         // https://github.com/open-telemetry/semantic-conventions/blob/v1.24.0/docs/http/http-spans.md#name
 
         var normalizedHttpMethod = this.GetNormalizedHttpMethod(originalHttpMethod);
-        var namePrefix = normalizedHttpMethod == "_OTHER" ? "HTTP" : normalizedHttpMethod;
+        var namePrefix = normalizedHttpMethod == OtherHttpMethod ? "HTTP" : normalizedHttpMethod;
 
-        return string.IsNullOrEmpty(httpRoute) ? namePrefix : $"{namePrefix} {httpRoute}";
+        if (string.IsNullOrEmpty(httpRoute))
+        {
+            return namePrefix;
+        }
+
+#if NET
+        return this.displayNameCache.GetOrAdd((namePrefix, httpRoute), static kv => $"{kv.Method} {kv.Route}");
+#else
+        return $"{namePrefix} {httpRoute}";
+#endif
     }
 
     internal static string GetHttpProtocolVersion(Version httpVersion) => httpVersion switch

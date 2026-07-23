@@ -153,7 +153,7 @@
         <note />
       </trans-unit>
       <trans-unit id="ExceptionWhenTryingToAddSource">
-        <source>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</source>
+        <source>Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</source>
         <target state="translated">Exceção '{0}' lançada ao tentar adicionar fonte '{1}'. Verifique se todas as suas fontes de pacote online estão disponíveis.</target>
         <note />
       </trans-unit>
@@ -273,7 +273,7 @@
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundInPrimarySources">
-        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</source>
+        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</source>
         <target state="translated">O pacote '{0}' não foi encontrado na(s) seguinte(s) fonte(s) primária(s): '{1}'. Verifique se todas as suas fontes de pacote online estão disponíveis (OU) se a ID e a versão de pacote estão especificadas corretamente.</target>
         <note />
       </trans-unit>
@@ -400,7 +400,7 @@
         <note>0 - new line separated list of errors</note>
       </trans-unit>
       <trans-unit id="SolutionDirectoryNotAvailable">
-        <source>Solution is not opened or not saved. Please ensure you have an open and saved solution.</source>
+        <source>Solution is not opened or not saved. Ensure you have an open and saved solution.</source>
         <target state="translated">A solução não está aberta ou não foi salva. Verifique se você tem uma solução aberta e salva.</target>
         <note />
       </trans-unit>
@@ -443,8 +443,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UnableToGatherPackageFromSource">
-        <source>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </source>
-        <target state="translated">Não foi possível coletar o pacote '{0}' da fonte '{1}'. Verifique se todas as suas fontes de pacote online estão disponíveis. </target>
+        <source>Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</source>
+        <target state="translated">Não foi possível coletar o pacote '{0}' da fonte '{1}'. Verifique se todas as suas fontes de pacote online estão disponíveis.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToResolveDependencyInfo">

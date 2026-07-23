@@ -20,7 +20,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
         public ExpectedException JsonSerializerExpectedException { get; set; } = ExpectedException.NoExceptionExpected;
 
-        public string PropertyName { get;  set; }
+        public string PropertyName { get; set; }
 
         public object Object { get; set; }
     }

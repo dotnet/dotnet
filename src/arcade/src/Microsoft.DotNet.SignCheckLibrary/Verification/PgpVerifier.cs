@@ -28,7 +28,8 @@ namespace Microsoft.SignCheck.Verification
 
         /// <summary>
         /// Verifies the signature of a file using a detached .sig file.
-        /// If the .sig file exists, verifies as a supported file type; otherwise, as unsupported.
+        /// If the .sig file exists, verifies as a supported file type; otherwise, reports the
+        /// PGP signature as skipped while still recursing into the archive's contents.
         /// </summary>
         protected SignatureVerificationResult VerifyDetachedSignature(string path, string parent, string virtualPath)
         {
@@ -36,7 +37,11 @@ namespace Microsoft.SignCheck.Verification
             {
                 return VerifySupportedFileType(path, parent, virtualPath);
             }
-            return VerifyUnsupportedFileType(path, parent, virtualPath);
+            // No detached .sig sidecar was shipped alongside the file (most .tar.gz/.deb/.rpm
+            // artifacts only carry one on the Linux package feeds). Report a clearer reason
+            // than the generic "unsupported file type" so users don't think the whole archive
+            // was an unrecognized format.
+            return VerifySkipped(path, parent, virtualPath, SignCheckResources.SkipReasonNoPgpSignature);
         }
 
         /// <summary>
@@ -56,7 +61,7 @@ namespace Microsoft.SignCheck.Verification
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                throw new PlatformNotSupportedException("Pgp verification is not supported on Windows.");
+                throw new PlatformNotSupportedException("PGP signature verification is only supported on Linux and macOS");
             }
 
             string tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());

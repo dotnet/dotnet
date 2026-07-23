@@ -1,0 +1,349 @@
+abstract Microsoft.IdentityModel.Xml.CanonicalizingTransfrom.Algorithm.get -> string
+abstract Microsoft.IdentityModel.Xml.CanonicalizingTransfrom.ProcessAndDigest(Microsoft.IdentityModel.Xml.XmlTokenStream tokenStream, System.Security.Cryptography.HashAlgorithm hashAlg) -> byte[]
+abstract Microsoft.IdentityModel.Xml.Transform.Algorithm.get -> string
+abstract Microsoft.IdentityModel.Xml.Transform.Process(Microsoft.IdentityModel.Xml.XmlTokenStream tokenStream) -> Microsoft.IdentityModel.Xml.XmlTokenStream
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Attributes.Algorithm = "Algorithm" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Attributes.AnyUri = "anyURI" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Attributes.Id = "Id" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Attributes.NcName = "NCName" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Attributes.Nil = "nil" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Attributes.PrefixList = "PrefixList" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Attributes.URI = "URI" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.CanonicalizationMethod = "CanonicalizationMethod" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.DigestMethod = "DigestMethod" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.DigestValue = "DigestValue" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.Exponent = "Exponent" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.InclusiveNamespaces = "InclusiveNamespaces" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.KeyInfo = "KeyInfo" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.KeyName = "KeyName" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.KeyValue = "KeyValue" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.Modulus = "Modulus" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.Object = "Object" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.Reference = "Reference" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.RetrievalMethod = "RetrievalMethod" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.RSAKeyValue = "RSAKeyValue" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.Signature = "Signature" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.SignatureMethod = "SignatureMethod" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.SignatureValue = "SignatureValue" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.SignedInfo = "SignedInfo" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.Transform = "Transform" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.TransformationParameters = "TransformationParameters" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.Transforms = "Transforms" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.X509Certificate = "X509Certificate" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.X509CRL = "X509CRL" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.X509Data = "X509Data" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.X509IssuerName = "X509IssuerName" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.X509IssuerSerial = "X509IssuerSerial" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.X509SerialNumber = "X509SerialNumber" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.X509SKI = "X509SKI" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements.X509SubjectName = "X509SubjectName" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.ExclusiveC14nInclusiveNamespaces = "InclusiveNamespaces" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.ExclusiveC14nNamespace = "http://www.w3.org/2001/10/xml-exc-c14n#" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.ExclusiveC14nPrefix = "ec" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.Namespace = "http://www.w3.org/2000/09/xmldsig#" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.PreferredPrefix = "ds" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.SecurityJan2004Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.SecurityJan2004Prefix = "o" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.TransformationParameters = "TransformationParameters" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.XmlNamepspacePrefix = "xmlns" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.XmlNamespace = "http://www.w3.org/XML/1998/namespace" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.XmlNamespaceNamespace = "http://www.w3.org/2000/xmlns/" -> string
+const Microsoft.IdentityModel.Xml.XmlSignatureConstants.XmlSchemaNamespace = "http://www.w3.org/2001/XMLSchema-instance" -> string
+Microsoft.IdentityModel.Xml.CanonicalizingTransfrom
+Microsoft.IdentityModel.Xml.CanonicalizingTransfrom.CanonicalizingTransfrom() -> void
+Microsoft.IdentityModel.Xml.CanonicalizingTransfrom.IncludeComments.get -> bool
+Microsoft.IdentityModel.Xml.CanonicalizingTransfrom.IncludeComments.set -> void
+Microsoft.IdentityModel.Xml.CanonicalizingTransfrom.InclusiveNamespacesPrefixList.get -> string
+Microsoft.IdentityModel.Xml.CanonicalizingTransfrom.InclusiveNamespacesPrefixList.set -> void
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.DelegatingXmlDictionaryReader() -> void
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.HasLineInfo() -> bool
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.InnerReader.get -> System.Xml.XmlDictionaryReader
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.InnerReader.set -> void
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.LineNumber.get -> int
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.LinePosition.get -> int
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.UseInnerReader.get -> System.Xml.XmlDictionaryReader
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.DelegatingXmlDictionaryWriter() -> void
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.InnerWriter.get -> System.Xml.XmlDictionaryWriter
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.InnerWriter.set -> void
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.TracingWriter.get -> System.Xml.XmlDictionaryWriter
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.TracingWriter.set -> void
+Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.UseInnerWriter.get -> System.Xml.XmlDictionaryWriter
+Microsoft.IdentityModel.Xml.DSigElement
+Microsoft.IdentityModel.Xml.DSigElement.DSigElement() -> void
+Microsoft.IdentityModel.Xml.DSigElement.Id.get -> string
+Microsoft.IdentityModel.Xml.DSigElement.Id.set -> void
+Microsoft.IdentityModel.Xml.DSigElement.Prefix.get -> string
+Microsoft.IdentityModel.Xml.DSigElement.Prefix.set -> void
+Microsoft.IdentityModel.Xml.DSigSerializer
+Microsoft.IdentityModel.Xml.DSigSerializer.DSigSerializer() -> void
+Microsoft.IdentityModel.Xml.DSigSerializer.MaximumReferenceTransforms.get -> int
+Microsoft.IdentityModel.Xml.DSigSerializer.MaximumReferenceTransforms.set -> void
+Microsoft.IdentityModel.Xml.DSigSerializer.Prefix.get -> string
+Microsoft.IdentityModel.Xml.DSigSerializer.Prefix.set -> void
+Microsoft.IdentityModel.Xml.DSigSerializer.TransformFactory.get -> Microsoft.IdentityModel.Xml.TransformFactory
+Microsoft.IdentityModel.Xml.DSigSerializer.TransformFactory.set -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureReader
+Microsoft.IdentityModel.Xml.EnvelopedSignatureReader.EnvelopedSignatureReader(System.Xml.XmlReader reader, Microsoft.IdentityModel.Xml.IXmlElementReader xmlElementReader) -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureReader.EnvelopedSignatureReader(System.Xml.XmlReader reader) -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureReader.Serializer.get -> Microsoft.IdentityModel.Xml.DSigSerializer
+Microsoft.IdentityModel.Xml.EnvelopedSignatureReader.Serializer.set -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureReader.Signature.get -> Microsoft.IdentityModel.Xml.Signature
+Microsoft.IdentityModel.Xml.EnvelopedSignatureReader.Signature.set -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureTransform
+Microsoft.IdentityModel.Xml.EnvelopedSignatureTransform.EnvelopedSignatureTransform() -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter
+Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.DSigSerializer.get -> Microsoft.IdentityModel.Xml.DSigSerializer
+Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.DSigSerializer.set -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.EnvelopedSignatureWriter(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, string referenceId, string inclusivePrefixList) -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.EnvelopedSignatureWriter(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, string referenceId) -> void
+Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.WriteSignature() -> void
+Microsoft.IdentityModel.Xml.ExclusiveCanonicalizationTransform
+Microsoft.IdentityModel.Xml.ExclusiveCanonicalizationTransform.ExclusiveCanonicalizationTransform() -> void
+Microsoft.IdentityModel.Xml.ExclusiveCanonicalizationTransform.ExclusiveCanonicalizationTransform(bool includeComments) -> void
+Microsoft.IdentityModel.Xml.IssuerSerial
+Microsoft.IdentityModel.Xml.IssuerSerial.IssuerName.get -> string
+Microsoft.IdentityModel.Xml.IssuerSerial.IssuerSerial(string issuerName, string serialNumber) -> void
+Microsoft.IdentityModel.Xml.IssuerSerial.SerialNumber.get -> string
+Microsoft.IdentityModel.Xml.IXmlElementReader
+Microsoft.IdentityModel.Xml.IXmlElementReader.CanRead(System.Xml.XmlReader reader) -> bool
+Microsoft.IdentityModel.Xml.IXmlElementReader.Items.get -> System.Collections.Generic.IList<object>
+Microsoft.IdentityModel.Xml.IXmlElementReader.Read(System.Xml.XmlReader reader) -> void
+Microsoft.IdentityModel.Xml.KeyInfo
+Microsoft.IdentityModel.Xml.KeyInfo.KeyInfo() -> void
+Microsoft.IdentityModel.Xml.KeyInfo.KeyInfo(Microsoft.IdentityModel.Tokens.SecurityKey key) -> void
+Microsoft.IdentityModel.Xml.KeyInfo.KeyInfo(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) -> void
+Microsoft.IdentityModel.Xml.KeyInfo.KeyName.get -> string
+Microsoft.IdentityModel.Xml.KeyInfo.KeyName.set -> void
+Microsoft.IdentityModel.Xml.KeyInfo.RetrievalMethodUri.get -> string
+Microsoft.IdentityModel.Xml.KeyInfo.RetrievalMethodUri.set -> void
+Microsoft.IdentityModel.Xml.KeyInfo.RSAKeyValue.get -> Microsoft.IdentityModel.Xml.RSAKeyValue
+Microsoft.IdentityModel.Xml.KeyInfo.RSAKeyValue.set -> void
+Microsoft.IdentityModel.Xml.KeyInfo.X509Data.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Xml.X509Data>
+Microsoft.IdentityModel.Xml.Reference
+Microsoft.IdentityModel.Xml.Reference.CanonicalizingTransfrom.get -> Microsoft.IdentityModel.Xml.CanonicalizingTransfrom
+Microsoft.IdentityModel.Xml.Reference.CanonicalizingTransfrom.set -> void
+Microsoft.IdentityModel.Xml.Reference.ComputeDigest(Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory) -> byte[]
+Microsoft.IdentityModel.Xml.Reference.DigestMethod.get -> string
+Microsoft.IdentityModel.Xml.Reference.DigestMethod.set -> void
+Microsoft.IdentityModel.Xml.Reference.DigestValue.get -> string
+Microsoft.IdentityModel.Xml.Reference.DigestValue.set -> void
+Microsoft.IdentityModel.Xml.Reference.Reference() -> void
+Microsoft.IdentityModel.Xml.Reference.Reference(Microsoft.IdentityModel.Xml.Transform transform, Microsoft.IdentityModel.Xml.CanonicalizingTransfrom canonicalizingTransfrom) -> void
+Microsoft.IdentityModel.Xml.Reference.TokenStream.get -> Microsoft.IdentityModel.Xml.XmlTokenStream
+Microsoft.IdentityModel.Xml.Reference.TokenStream.set -> void
+Microsoft.IdentityModel.Xml.Reference.Transforms.get -> System.Collections.Generic.IList<Microsoft.IdentityModel.Xml.Transform>
+Microsoft.IdentityModel.Xml.Reference.Type.get -> string
+Microsoft.IdentityModel.Xml.Reference.Type.set -> void
+Microsoft.IdentityModel.Xml.Reference.Uri.get -> string
+Microsoft.IdentityModel.Xml.Reference.Uri.set -> void
+Microsoft.IdentityModel.Xml.Reference.Verify(Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory) -> void
+Microsoft.IdentityModel.Xml.RSAKeyValue
+Microsoft.IdentityModel.Xml.RSAKeyValue.Exponent.get -> string
+Microsoft.IdentityModel.Xml.RSAKeyValue.Modulus.get -> string
+Microsoft.IdentityModel.Xml.RSAKeyValue.RSAKeyValue(string modulus, string exponent) -> void
+Microsoft.IdentityModel.Xml.Signature
+Microsoft.IdentityModel.Xml.Signature.KeyInfo.get -> Microsoft.IdentityModel.Xml.KeyInfo
+Microsoft.IdentityModel.Xml.Signature.KeyInfo.set -> void
+Microsoft.IdentityModel.Xml.Signature.Signature() -> void
+Microsoft.IdentityModel.Xml.Signature.Signature(Microsoft.IdentityModel.Xml.SignedInfo signedInfo) -> void
+Microsoft.IdentityModel.Xml.Signature.SignatureValue.get -> string
+Microsoft.IdentityModel.Xml.Signature.SignatureValue.set -> void
+Microsoft.IdentityModel.Xml.Signature.SignedInfo.get -> Microsoft.IdentityModel.Xml.SignedInfo
+Microsoft.IdentityModel.Xml.Signature.SignedInfo.set -> void
+Microsoft.IdentityModel.Xml.Signature.Verify(Microsoft.IdentityModel.Tokens.SecurityKey key, Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory) -> void
+Microsoft.IdentityModel.Xml.Signature.Verify(Microsoft.IdentityModel.Tokens.SecurityKey key) -> void
+Microsoft.IdentityModel.Xml.SignedInfo
+Microsoft.IdentityModel.Xml.SignedInfo.CanonicalizationMethod.get -> string
+Microsoft.IdentityModel.Xml.SignedInfo.CanonicalizationMethod.set -> void
+Microsoft.IdentityModel.Xml.SignedInfo.GetCanonicalBytes(System.IO.Stream stream) -> void
+Microsoft.IdentityModel.Xml.SignedInfo.References.get -> System.Collections.Generic.IList<Microsoft.IdentityModel.Xml.Reference>
+Microsoft.IdentityModel.Xml.SignedInfo.SignatureMethod.get -> string
+Microsoft.IdentityModel.Xml.SignedInfo.SignatureMethod.set -> void
+Microsoft.IdentityModel.Xml.SignedInfo.SignedInfo() -> void
+Microsoft.IdentityModel.Xml.SignedInfo.SignedInfo(Microsoft.IdentityModel.Xml.Reference reference) -> void
+Microsoft.IdentityModel.Xml.SignedInfo.Verify(Microsoft.IdentityModel.Tokens.CryptoProviderFactory cryptoProviderFactory) -> void
+Microsoft.IdentityModel.Xml.Transform
+Microsoft.IdentityModel.Xml.Transform.Transform() -> void
+Microsoft.IdentityModel.Xml.TransformFactory
+Microsoft.IdentityModel.Xml.TransformFactory.TransformFactory() -> void
+Microsoft.IdentityModel.Xml.X509Data
+Microsoft.IdentityModel.Xml.X509Data.Certificates.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Xml.X509Data.CRL.get -> string
+Microsoft.IdentityModel.Xml.X509Data.CRL.set -> void
+Microsoft.IdentityModel.Xml.X509Data.IssuerSerial.get -> Microsoft.IdentityModel.Xml.IssuerSerial
+Microsoft.IdentityModel.Xml.X509Data.IssuerSerial.set -> void
+Microsoft.IdentityModel.Xml.X509Data.SKI.get -> string
+Microsoft.IdentityModel.Xml.X509Data.SKI.set -> void
+Microsoft.IdentityModel.Xml.X509Data.SubjectName.get -> string
+Microsoft.IdentityModel.Xml.X509Data.SubjectName.set -> void
+Microsoft.IdentityModel.Xml.X509Data.X509Data() -> void
+Microsoft.IdentityModel.Xml.X509Data.X509Data(System.Collections.Generic.IEnumerable<System.Security.Cryptography.X509Certificates.X509Certificate2> certificates) -> void
+Microsoft.IdentityModel.Xml.X509Data.X509Data(System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) -> void
+Microsoft.IdentityModel.Xml.XmlException
+Microsoft.IdentityModel.Xml.XmlException.XmlException() -> void
+Microsoft.IdentityModel.Xml.XmlException.XmlException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Xml.XmlException.XmlException(string message) -> void
+Microsoft.IdentityModel.Xml.XmlException.XmlException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Xml.XmlReadException
+Microsoft.IdentityModel.Xml.XmlReadException.XmlReadException() -> void
+Microsoft.IdentityModel.Xml.XmlReadException.XmlReadException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Xml.XmlReadException.XmlReadException(string message) -> void
+Microsoft.IdentityModel.Xml.XmlReadException.XmlReadException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Xml.XmlSignatureConstants
+Microsoft.IdentityModel.Xml.XmlSignatureConstants.Attributes
+Microsoft.IdentityModel.Xml.XmlSignatureConstants.Elements
+Microsoft.IdentityModel.Xml.XmlTokenStream
+Microsoft.IdentityModel.Xml.XmlTokenStream.Add(System.Xml.XmlNodeType type, string value) -> void
+Microsoft.IdentityModel.Xml.XmlTokenStream.AddAttribute(string prefix, string localName, string namespace, string value) -> void
+Microsoft.IdentityModel.Xml.XmlTokenStream.AddElement(string prefix, string localName, string namespace, bool isEmptyElement) -> void
+Microsoft.IdentityModel.Xml.XmlTokenStream.SetElementExclusion(string element, string namespace) -> void
+Microsoft.IdentityModel.Xml.XmlTokenStream.WriteTo(System.Xml.XmlWriter writer) -> void
+Microsoft.IdentityModel.Xml.XmlTokenStream.XmlTokenStream() -> void
+Microsoft.IdentityModel.Xml.XmlTokenStreamReader
+Microsoft.IdentityModel.Xml.XmlTokenStreamReader.TokenStream.get -> Microsoft.IdentityModel.Xml.XmlTokenStream
+Microsoft.IdentityModel.Xml.XmlTokenStreamReader.XmlTokenStreamReader(System.Xml.XmlDictionaryReader reader) -> void
+Microsoft.IdentityModel.Xml.XmlUtil
+Microsoft.IdentityModel.Xml.XmlValidationException
+Microsoft.IdentityModel.Xml.XmlValidationException.XmlValidationException() -> void
+Microsoft.IdentityModel.Xml.XmlValidationException.XmlValidationException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Xml.XmlValidationException.XmlValidationException(string message) -> void
+Microsoft.IdentityModel.Xml.XmlValidationException.XmlValidationException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Xml.XmlWriteException
+Microsoft.IdentityModel.Xml.XmlWriteException.XmlWriteException() -> void
+Microsoft.IdentityModel.Xml.XmlWriteException.XmlWriteException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Xml.XmlWriteException.XmlWriteException(string message) -> void
+Microsoft.IdentityModel.Xml.XmlWriteException.XmlWriteException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.AttributeCount.get -> int
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.BaseURI.get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.CanReadBinaryContent.get -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.CanReadValueChunk.get -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.Close() -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.Depth.get -> int
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.EOF.get -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.GetAttribute(int i) -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.GetAttribute(string name, string namespace) -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.GetAttribute(string name) -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.HasValue.get -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.IsDefault.get -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.IsEmptyElement.get -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.LocalName.get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.LookupNamespace(string prefix) -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.MoveToAttribute(int index) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.MoveToAttribute(string name, string namespace) -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.MoveToAttribute(string name) -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.MoveToElement() -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.MoveToFirstAttribute() -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.MoveToNextAttribute() -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.Name.get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.NamespaceURI.get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.NameTable.get -> System.Xml.XmlNameTable
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.NodeType.get -> System.Xml.XmlNodeType
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.Prefix.get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.Read() -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.ReadAttributeValue() -> bool
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.ReadContentAsBase64(byte[] buffer, int index, int count) -> int
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.ReadContentAsBinHex(byte[] buffer, int index, int count) -> int
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.ReadContentAsUniqueId() -> System.Xml.UniqueId
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.ReadState.get -> System.Xml.ReadState
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.ReadValueChunk(char[] buffer, int index, int count) -> int
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.ResolveEntity() -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.this[int i].get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.this[string name, string namespace].get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.this[string name].get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.Value.get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.ValueType.get -> System.Type
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.XmlLang.get -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryReader.XmlSpace.get -> System.Xml.XmlSpace
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.Flush() -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.LookupPrefix(string namespace) -> string
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteBase64(byte[] buffer, int index, int count) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteCData(string text) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteCharEntity(char ch) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteChars(char[] buffer, int index, int count) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteComment(string text) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteDocType(string name, string pubid, string sysid, string subset) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteEndAttribute() -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteEndDocument() -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteEndElement() -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteEntityRef(string name) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteFullEndElement() -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteProcessingInstruction(string name, string text) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteRaw(char[] buffer, int index, int count) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteRaw(string data) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteStartAttribute(string prefix, string localName, string namespace) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteStartDocument() -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteStartDocument(bool standalone) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteStartElement(string prefix, string localName, string namespace) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteState.get -> System.Xml.WriteState
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteString(string text) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteSurrogateCharEntity(char lowChar, char highChar) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteWhitespace(string ws) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteXmlAttribute(string localName, string value) -> void
+override Microsoft.IdentityModel.Xml.DelegatingXmlDictionaryWriter.WriteXmlnsAttribute(string prefix, string namespace) -> void
+override Microsoft.IdentityModel.Xml.EnvelopedSignatureReader.Read() -> bool
+override Microsoft.IdentityModel.Xml.EnvelopedSignatureTransform.Algorithm.get -> string
+override Microsoft.IdentityModel.Xml.EnvelopedSignatureTransform.Process(Microsoft.IdentityModel.Xml.XmlTokenStream tokenStream) -> Microsoft.IdentityModel.Xml.XmlTokenStream
+override Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.Dispose(bool disposing) -> void
+override Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.WriteEndElement() -> void
+override Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.WriteFullEndElement() -> void
+override Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.WriteStartElement(string prefix, string localName, string namespace) -> void
+override Microsoft.IdentityModel.Xml.ExclusiveCanonicalizationTransform.Algorithm.get -> string
+override Microsoft.IdentityModel.Xml.ExclusiveCanonicalizationTransform.ProcessAndDigest(Microsoft.IdentityModel.Xml.XmlTokenStream tokenStream, System.Security.Cryptography.HashAlgorithm hash) -> byte[]
+override Microsoft.IdentityModel.Xml.IssuerSerial.Equals(object obj) -> bool
+override Microsoft.IdentityModel.Xml.IssuerSerial.GetHashCode() -> int
+override Microsoft.IdentityModel.Xml.KeyInfo.Equals(object obj) -> bool
+override Microsoft.IdentityModel.Xml.KeyInfo.GetHashCode() -> int
+override Microsoft.IdentityModel.Xml.RSAKeyValue.Equals(object obj) -> bool
+override Microsoft.IdentityModel.Xml.RSAKeyValue.GetHashCode() -> int
+override Microsoft.IdentityModel.Xml.X509Data.Equals(object obj) -> bool
+override Microsoft.IdentityModel.Xml.X509Data.GetHashCode() -> int
+override Microsoft.IdentityModel.Xml.XmlTokenStreamReader.Read() -> bool
+override Microsoft.IdentityModel.Xml.XmlValidationException.StackTrace.get -> string
+static Microsoft.IdentityModel.Xml.DSigSerializer.Default.get -> Microsoft.IdentityModel.Xml.DSigSerializer
+static Microsoft.IdentityModel.Xml.DSigSerializer.Default.set -> void
+static Microsoft.IdentityModel.Xml.TransformFactory.Default.get -> Microsoft.IdentityModel.Xml.TransformFactory
+static Microsoft.IdentityModel.Xml.XmlSignatureConstants.Attributes.Type.get -> string
+static Microsoft.IdentityModel.Xml.XmlUtil.CheckReaderOnEntry(System.Xml.XmlReader reader, string element, string namespace) -> void
+static Microsoft.IdentityModel.Xml.XmlUtil.CheckReaderOnEntry(System.Xml.XmlReader reader, string element) -> void
+static Microsoft.IdentityModel.Xml.XmlUtil.EqualsQName(System.Xml.XmlQualifiedName qualifiedName, string name, string namespace) -> bool
+static Microsoft.IdentityModel.Xml.XmlUtil.GetXsiTypeAsQualifiedName(System.Xml.XmlReader reader) -> System.Xml.XmlQualifiedName
+static Microsoft.IdentityModel.Xml.XmlUtil.IsNil(System.Xml.XmlReader reader) -> bool
+static Microsoft.IdentityModel.Xml.XmlUtil.IsStartElement(System.Xml.XmlReader reader, string element, System.Collections.Generic.ICollection<string> namespaceList) -> bool
+static Microsoft.IdentityModel.Xml.XmlUtil.LogReadException(string format, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Xml.XmlUtil.LogReadException(string format, System.Exception inner, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Xml.XmlUtil.LogValidationException(string format, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Xml.XmlUtil.LogValidationException(string format, System.Exception inner, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Xml.XmlUtil.LogWriteException(string format, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Xml.XmlUtil.LogWriteException(string format, System.Exception inner, params object[] args) -> System.Exception
+static Microsoft.IdentityModel.Xml.XmlUtil.NormalizeEmptyString(string string) -> string
+static Microsoft.IdentityModel.Xml.XmlUtil.ResolveQName(System.Xml.XmlReader reader, string qualifiedString) -> System.Xml.XmlQualifiedName
+static Microsoft.IdentityModel.Xml.XmlUtil.ValidateXsiType(System.Xml.XmlReader reader, string expectedTypeName, string expectedTypeNamespace, bool requireDeclaration) -> void
+static Microsoft.IdentityModel.Xml.XmlUtil.ValidateXsiType(System.Xml.XmlReader reader, string expectedTypeName, string expectedTypeNamespace) -> void
+static readonly Microsoft.IdentityModel.Xml.EnvelopedSignatureWriter.SignaturePlaceholder -> string
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.CreateKeyInfo(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Xml.KeyInfo
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.ReadCanonicalizationMethod(System.Xml.XmlReader reader) -> string
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.ReadKeyInfo(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Xml.KeyInfo
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.ReadReference(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Xml.Reference
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.ReadReferences(System.Xml.XmlReader reader) -> System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Xml.Reference>
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.ReadSignature(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Xml.Signature
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.ReadSignatureMethod(System.Xml.XmlReader reader) -> string
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.ReadSignedInfo(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Xml.SignedInfo
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.ReadTransforms(System.Xml.XmlReader reader, Microsoft.IdentityModel.Xml.Reference reference) -> void
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.TryReadKeyInfoType(System.Xml.XmlReader reader, ref Microsoft.IdentityModel.Xml.KeyInfo keyInfo) -> bool
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.TryReadKeyName(System.Xml.XmlReader reader, out string name) -> bool
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.TryReadKeyValueType(System.Xml.XmlReader reader, ref Microsoft.IdentityModel.Xml.KeyInfo keyInfo) -> bool
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.TryReadRetrievalMethod(System.Xml.XmlReader reader, out string method) -> bool
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.TryReadRSAKeyValue(System.Xml.XmlReader reader, out Microsoft.IdentityModel.Xml.RSAKeyValue value) -> bool
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.TryReadX509Data(System.Xml.XmlReader reader, out Microsoft.IdentityModel.Xml.X509Data data) -> bool
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.WriteKeyInfo(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Xml.KeyInfo keyInfo) -> void
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.WriteReference(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Xml.Reference reference) -> void
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.WriteSignature(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Xml.Signature signature) -> void
+virtual Microsoft.IdentityModel.Xml.DSigSerializer.WriteSignedInfo(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Xml.SignedInfo signedInfo) -> void
+virtual Microsoft.IdentityModel.Xml.EnvelopedSignatureReader.OnEndOfRootElement() -> void
+virtual Microsoft.IdentityModel.Xml.KeyInfo.MatchesKey(Microsoft.IdentityModel.Tokens.SecurityKey key) -> bool
+virtual Microsoft.IdentityModel.Xml.TransformFactory.GetCanonicalizingTransform(string transform) -> Microsoft.IdentityModel.Xml.CanonicalizingTransfrom
+virtual Microsoft.IdentityModel.Xml.TransformFactory.GetTransform(string transform) -> Microsoft.IdentityModel.Xml.Transform
+virtual Microsoft.IdentityModel.Xml.TransformFactory.IsSupportedCanonicalizingTransfrom(string transform) -> bool
+virtual Microsoft.IdentityModel.Xml.TransformFactory.IsSupportedTransform(string transform) -> bool

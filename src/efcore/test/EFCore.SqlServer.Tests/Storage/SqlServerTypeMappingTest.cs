@@ -7,6 +7,7 @@ using Microsoft.Data.SqlTypes;
 using Microsoft.EntityFrameworkCore.Design.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
 
 // ReSharper disable InconsistentNaming
 namespace Microsoft.EntityFrameworkCore.Storage;
@@ -378,6 +379,51 @@ public class SqlServerTypeMappingTest : RelationalTypeMappingTest
         Assert.Equal(DbType.String, parameter.DbType);
     }
 
+    [Theory]
+    [InlineData("<r>a</r>", "<r>a</r>")]
+    // The XML declaration is removed so the value can be sent as a string without an encoding conflict.
+    [InlineData("<?xml version=\"1.0\" encoding=\"utf-8\"?><r>a</r>", "<r>a</r>")]
+    // The declaration's closing '>' is found even when a space precedes it, and any leading whitespace is dropped too.
+    [InlineData(" <?xml version=\"1.0\" encoding=\"utf-8\" ?> <r>a</r>", " <r>a</r>")]
+    // Only the declaration is removed; a following stylesheet PI and the rest are kept verbatim.
+    [InlineData("<?xml version=\"1.1\" encoding=\"utf-8\"?><?xml-stylesheet href=\"s.xsl\"?><r>a</r>", "<?xml-stylesheet href=\"s.xsl\"?><r>a</r>")]
+    [InlineData("", "")]
+    [InlineData("text fragment", "text fragment")]
+    // Content after the prolog is sent verbatim, so the original formatting is preserved.
+    [InlineData("<a/><b/>", "<a/><b/>")]
+    public virtual void Xml_parameter_is_sent_as_string_with_prolog_removed(string value, string expected)
+    {
+        var mapping = GetMapping("xml");
+        Assert.Equal("xml", mapping.StoreType);
+
+        using var command = CreateTestCommand();
+        var parameter = (SqlParameter)mapping.CreateParameter(command, "foo", value);
+
+        Assert.Equal(SqlDbType.Xml, parameter.SqlDbType);
+
+        // The value stays a string so it can still be rendered by the diagnostics logger.
+        Assert.Equal(expected, parameter.Value);
+        Assert.Equal(
+            $"foo='{expected}' (Nullable = false) (Size = -1) (DbType = Xml)",
+            parameter.FormatParameter(logParameterValues: true));
+    }
+
+    [Fact]
+    public virtual void Xml_null_parameter_is_sent_as_SqlDbType_Xml()
+    {
+        var mapping = GetMapping("xml");
+
+        using var command = CreateTestCommand();
+        var parameter = (SqlParameter)mapping.CreateParameter(command, "foo", null, nullable: true);
+
+        Assert.Equal(SqlDbType.Xml, parameter.SqlDbType);
+        Assert.Equal(DBNull.Value, parameter.Value);
+    }
+
+    [Fact]
+    public virtual void Xml_literal_is_generated_as_unicode()
+        => Test_GenerateSqlLiteral_helper(GetMapping("xml"), "<r>\U0001F62D</r>", "N'<r>\U0001F62D</r>'");
+
     [Fact]
     public virtual void DateOnly_code_literal_generated_correctly()
     {
@@ -419,6 +465,34 @@ public class SqlServerTypeMappingTest : RelationalTypeMappingTest
         Assert.True(typeMapping.Comparer.Equals(vector1, vector2));
         Assert.False(typeMapping.Comparer.Equals(vector1, vector3));
     }
+
+    [Fact]
+    public virtual void GenerateCodeLiteral_generates_vector_literal()
+        => Test_GenerateCodeLiteral_helper(
+            new SqlServerVectorTypeMapping(3),
+            new SqlVector<float>(new float[] { 1, 2, 3 }),
+            "new Microsoft.Data.SqlTypes.SqlVector<float>(new[] { 1f, 2f, 3f })");
+
+    [Fact]
+    public virtual void GenerateCodeLiteral_generates_null_vector_literal()
+        => Test_GenerateCodeLiteral_helper(
+            new SqlServerVectorTypeMapping(3),
+            SqlVector<float>.CreateNull(3),
+            "Microsoft.Data.SqlTypes.SqlVector<float>.CreateNull(3)");
+
+    [Fact]
+    public virtual void Vector_default_provider_value_is_zero_vector_of_configured_dimensions()
+    {
+        var value = Assert.IsType<SqlVector<float>>(new SqlServerVectorTypeMapping(3).GetDefaultProviderValue());
+
+        Assert.False(value.IsNull);
+        Assert.Equal(3, value.Length);
+        Assert.True(value.Memory.Span.TrimStart(0f).IsEmpty);
+    }
+
+    [Fact]
+    public virtual void Vector_default_provider_value_is_null_without_dimensions()
+        => Assert.Null(SqlServerVectorTypeMapping.Default.GetDefaultProviderValue());
 
     #endregion Vector
 

@@ -294,7 +294,7 @@
     <!-- dependency of Lucene.net. Can delete when Lucene.net has an update with a newer dependency on sharpziplib -->
     <PackageReference Include="SharpZipLib" ExcludeAssets="all" />
 
-    <PackageReference Include="Newtonsoft.Json" ExcludeAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Newtonsoft.Json" ExcludeAssets="all" GeneratePathProperty="true" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.Web.Xdt" ExcludeAssets="all" GeneratePathProperty="true" />
 
     <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="all" GeneratePathProperty="true" />

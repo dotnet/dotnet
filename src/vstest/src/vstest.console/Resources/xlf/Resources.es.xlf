@@ -386,8 +386,8 @@
       <trans-unit id="PlatformArgumentHelp">
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
-      Valid values are x86, x64 and ARM.</source>
-        <target state="translated">--Platform|/Platform:&lt;tipoPlataforma&gt;
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
+        <target state="needs-review-translation">--Platform|/Platform:&lt;tipoPlataforma&gt;
       Arquitectura de la plataforma de destino que se usará para la ejecución de pruebas. 
       Los valores válidos son x86, x64 y ARM.</target>
         <note />
@@ -400,9 +400,9 @@
       <trans-unit id="FrameworkArgumentHelp">
         <source>--Framework|/Framework:&lt;Framework Version&gt;
       Target .Net Framework version to be used for test execution. 
-      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="translated">--Framework|/Framework:&lt;Versión de Framework&gt;
+        <target state="needs-review-translation">--Framework|/Framework:&lt;Versión de Framework&gt;
       Versión de .NET Framework de destino que se usará para la ejecución de pruebas. 
       Los valores válidos son ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0", etc.
       Otros valores admitidos son Framework40, Framework45, FrameworkCore10 y FrameworkUap10.</target>
@@ -867,6 +867,7 @@
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
@@ -875,10 +876,11 @@
       Crea un archivo de salida en el directorio actual como "Sequence.xml",
       que captura el orden de ejecución de la prueba antes del bloqueo.
       Tiene la opción de elegir recopilar el volcado de proceso para el host de prueba.
-      Cuando elige recopilar el volcado, de forma predeterminada se recopila un mini volcado en un bloqueo.
+      Cuando elige recopilar el volcado, de forma predeterminada se recopilará un mini volcado en un bloqueo.
       También puede elegir invalidar este comportamiento predeterminado mediante algunos parámetros opcionales:
-      CollectAlways: para recopilar un volcado al salir incluso aunque no haya un bloqueo (true/false) 
-      DumpType: para especificar el tipo de volcado (mini/completo).
+      CollectAlways: para recopilar un volcado al salir incluso aunque no haya un bloqueo (true/false)
+      DumpType: para especificar el tipo de volcado (mini/full).
+      La recopilación de un volcado de memoria en Windows requiere que procdump.exe y procdump64.exe estén disponibles en PATH o en un directorio al que apunta la variable de entorno PROCDUMP_PATH. Las herramientas se pueden descargar desde aquí: https://docs.microsoft.com/sysinternals/downloads/procdump.
       Ejemplo: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1170,16 +1172,6 @@
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">Se ha agotado el tiempo de espera de la conexión del controlador de solicitudes después de {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Se ha agotado el tiempo de espera de la sesión de prueba de inicio después de {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Se ha agotado el tiempo de espera para detener la sesión de prueba después de {0} segundos.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

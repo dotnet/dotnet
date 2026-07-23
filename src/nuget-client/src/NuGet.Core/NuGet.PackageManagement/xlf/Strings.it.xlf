@@ -153,8 +153,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ExceptionWhenTryingToAddSource">
-        <source>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</source>
-        <target state="translated">Eccezione '{0}' generata durante il tentativo di aggiunta dell'origine '{1}'. Verificare che tutte le origini pacchetti online siano disponibili.</target>
+        <source>Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</source>
+        <target state="translated">Eccezione ''{0}'' generata durante il tentativo di aggiunta dell'origine ''{1}''. Verificare che tutte le origini pacchetti online siano disponibili.</target>
         <note />
       </trans-unit>
       <trans-unit id="FileConflictMessage">
@@ -273,8 +273,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundInPrimarySources">
-        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</source>
-        <target state="translated">Non è stato possibile trovare il pacchetto '{0}' nelle origini primarie seguenti: '{1}'. Verificare che tutte le origini pacchetti online siano disponibili oppure che la versione dell'ID pacchetto sia specificata correttamente.</target>
+        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</source>
+        <target state="translated">Non è stato possibile trovare il pacchetto ''{0}'' nelle origini primarie seguenti: ''{1}''. Verificare che tutte le origini pacchetti online siano disponibili oppure che la versione dell'ID pacchetto sia specificata correttamente.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundOnSource">
@@ -400,7 +400,7 @@
         <note>0 - new line separated list of errors</note>
       </trans-unit>
       <trans-unit id="SolutionDirectoryNotAvailable">
-        <source>Solution is not opened or not saved. Please ensure you have an open and saved solution.</source>
+        <source>Solution is not opened or not saved. Ensure you have an open and saved solution.</source>
         <target state="translated">Soluzione non aperta o non salvata. Assicurarsi di disporre di una soluzione aperta e salvata.</target>
         <note />
       </trans-unit>
@@ -443,8 +443,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UnableToGatherPackageFromSource">
-        <source>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </source>
-        <target state="translated">Non è possibile raccogliere il pacchetto '{0}' dall'origine '{1}'. Verificare che tutte le origini pacchetti online siano disponibili. </target>
+        <source>Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</source>
+        <target state="translated">Non è possibile raccogliere il pacchetto ''{0}'' dall'origine ''{1}''. Verificare che tutte le origini pacchetti online siano disponibili.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToResolveDependencyInfo">

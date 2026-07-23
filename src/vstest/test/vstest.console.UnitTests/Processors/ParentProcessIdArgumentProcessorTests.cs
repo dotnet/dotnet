@@ -12,17 +12,18 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [TestClass]
 public class ParentProcessIdArgumentProcessorTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     [TestMethod]
     public void GetMetadataShouldReturnParentProcessIdArgumentProcessorCapabilities()
     {
-        var processor = new ParentProcessIdArgumentProcessor();
+        var processor = new ParentProcessIdArgumentProcessor(_commandLineOptions);
         Assert.IsTrue(processor.Metadata.Value is ParentProcessIdArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecutorShouldReturnParentProcessIdArgumentProcessorCapabilities()
     {
-        var processor = new ParentProcessIdArgumentProcessor();
+        var processor = new ParentProcessIdArgumentProcessor(_commandLineOptions);
         Assert.IsTrue(processor.Executor!.Value is ParentProcessIdArgumentExecutor);
     }
 
@@ -55,7 +56,7 @@ public class ParentProcessIdArgumentProcessorTests
     [TestMethod]
     public void ExecutorInitializeWithNullOrEmptyParentProcessIdShouldThrowCommandLineException()
     {
-        var executor = new ParentProcessIdArgumentExecutor(CommandLineOptions.Instance);
+        var executor = new ParentProcessIdArgumentExecutor(_commandLineOptions);
         var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(null));
         Assert.AreEqual("The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.", ex.Message);
     }
@@ -63,7 +64,7 @@ public class ParentProcessIdArgumentProcessorTests
     [TestMethod]
     public void ExecutorInitializeWithInvalidParentProcessIdShouldThrowCommandLineException()
     {
-        var executor = new ParentProcessIdArgumentExecutor(CommandLineOptions.Instance);
+        var executor = new ParentProcessIdArgumentExecutor(_commandLineOptions);
         var ex = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize("Foo"));
         Assert.AreEqual("The --ParentProcessId|/ParentProcessId argument requires the process id which is an integer. Specify the process id of the parent process that launched this process.", ex.Message);
     }
@@ -71,16 +72,16 @@ public class ParentProcessIdArgumentProcessorTests
     [TestMethod]
     public void ExecutorInitializeWithValidPortShouldAddParentProcessIdToCommandLineOptions()
     {
-        var executor = new ParentProcessIdArgumentExecutor(CommandLineOptions.Instance);
+        var executor = new ParentProcessIdArgumentExecutor(_commandLineOptions);
         int parentProcessId = 2345;
         executor.Initialize(parentProcessId.ToString(CultureInfo.InvariantCulture));
-        Assert.AreEqual(parentProcessId, CommandLineOptions.Instance.ParentProcessId);
+        Assert.AreEqual(parentProcessId, _commandLineOptions.ParentProcessId);
     }
 
     [TestMethod]
     public void ExecutorExecuteReturnsArgumentProcessorResultSuccess()
     {
-        var executor = new ParentProcessIdArgumentExecutor(CommandLineOptions.Instance);
+        var executor = new ParentProcessIdArgumentExecutor(_commandLineOptions);
 
         int parentProcessId = 2345;
         executor.Initialize(parentProcessId.ToString(CultureInfo.InvariantCulture));

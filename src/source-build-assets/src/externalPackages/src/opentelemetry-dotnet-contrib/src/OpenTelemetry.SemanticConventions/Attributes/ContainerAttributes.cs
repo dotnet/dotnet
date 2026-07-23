@@ -113,7 +113,7 @@ public static class ContainerAttributes
     public const string AttributeContainerRuntime = "container.runtime";
 
     /// <summary>
-    /// A description about the runtime which could include, for example details about the CRI/API version being used or other customisations.
+    /// A description about the runtime which could include, for example details about the CRI/API version being used or other customizations.
     /// </summary>
     public const string AttributeContainerRuntimeDescription = "container.runtime.description";
 

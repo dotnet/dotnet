@@ -77,13 +77,13 @@ namespace TestNamespace
 
     [Fact]
     public virtual Task No_NativeAOT()
-        => BigModel(false);
+        => TestBigModel(false);
 
     [Fact]
     public virtual Task BigModel()
-        => BigModel(true);
+        => TestBigModel(true);
 
-    protected virtual Task BigModel(bool forNativeAot, [CallerMemberName] string testName = "")
+    protected virtual Task TestBigModel(bool forNativeAot, [CallerMemberName] string testName = "")
         => Test(
             modelBuilder => BuildBigModel(modelBuilder, jsonColumns: false),
             model => AssertBigModel(model, jsonColumns: false),
@@ -214,10 +214,10 @@ namespace TestNamespace
             b.PrimitiveCollection(e => e.EnumU32AsStringArray).ElementType(b => b.HasConversion<string>());
             b.PrimitiveCollection(e => e.EnumU64AsStringArray).ElementType(b => b.HasConversion<string>());
 
-            b.Property(e => e.BoolReadOnlyCollection);
-            b.Property(e => e.UInt8ReadOnlyCollection).HasField("_uInt8ReadOnlyCollection");
-            b.Property(e => e.Int32ReadOnlyCollection);
-            b.Property(e => e.StringReadOnlyCollection).HasField("_stringReadOnlyCollection");
+            b.PrimitiveCollection(e => e.BoolReadOnlyCollection);
+            b.PrimitiveCollection(e => e.UInt8ReadOnlyCollection).HasField("_uInt8ReadOnlyCollection");
+            b.PrimitiveCollection(e => e.Int32ReadOnlyCollection);
+            b.PrimitiveCollection(e => e.StringReadOnlyCollection).HasField("_stringReadOnlyCollection");
 
             b.PrimitiveCollection(e => e.IPAddressReadOnlyCollection)
                 .ElementType(b => b.HasConversion<string>())

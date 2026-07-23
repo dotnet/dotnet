@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -45,8 +46,9 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // WrapperCompatibilityDataSource includes the .NET Framework runner, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
-    [WrapperCompatibilityDataSource]
+    [CompatibilityMatrix(CompatScenario.Wrapper)]
     public void RunAllTests(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -63,8 +65,7 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
-    [NetFullTargetFrameworkDataSource(useVsixRunner: true)]
+    [TestMatrix(testHost: Net)]
     [TestCategory("Smoke")]
     public void RunAllTestsFromDlls(RunnerInfo runnerInfo)
     {
@@ -82,8 +83,9 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // WrapperCompatibilityDataSource includes the .NET Framework runner, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
-    [WrapperCompatibilityDataSource()]
+    [CompatibilityMatrix(CompatScenario.Wrapper)]
     public void RunAllTestsWithMixedTFMsWillRunTestsFromAllProvidedDllEvenWhenTheyMixTFMs(RunnerInfo runnerInfo)
     {
         // Arrange
@@ -108,7 +110,7 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void EndSessionShouldEnsureVstestConsoleProcessDies(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -128,7 +130,7 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunTestsWithTelemetryOptedIn(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -151,7 +153,7 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: Net)]
     public void RunTestsWithTelemetryOptedOut(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -170,8 +172,11 @@ public class RunTests : AcceptanceTestBase
 
     [TestMethod]
     // This is testing the behavior of crash in testhost, run on different testhost, and just .NET runner.
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    // The assertion below branches on the .NET Framework-specific stack overflow message, and the
+    // .NET Framework testhost is only available on Windows, so this runs as Windows-Review.
+    [TestCategory("Windows-Review")]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void RunTestsShouldThrowOnStackOverflowException(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -186,17 +191,15 @@ public class RunTests : AcceptanceTestBase
             _runEventHandler);
 
         var errorMessagePattern = runnerInfo.IsNetFrameworkTarget
-            ? $"The active test run was aborted. Reason: Test host process crashed : Process is terminated due to StackOverflowException.*"
-            : $"The active test run was aborted. Reason: Test host process crashed : Stack overflow.*";
+            ? $"The active test run was aborted. Reason: Test host process crashed : Process path: *{Environment.NewLine}Process is terminated due to StackOverflowException.*"
+            : $"The active test run was aborted. Reason: Test host process crashed : Process path: *{Environment.NewLine}Stack overflow.*";
 
         _runEventHandler.Errors.Should().ContainSingle()
             .Which.Should().Match(errorMessagePattern);
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource(useDesktopRunner: false)]
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void RunTestsShouldShowProperWarningOnNoTestsForTestCaseFilter(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

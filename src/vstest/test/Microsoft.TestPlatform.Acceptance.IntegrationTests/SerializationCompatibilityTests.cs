@@ -38,8 +38,9 @@ public class SerializationCompatibilityTests : AcceptanceTestBase
     /// Verifies that discovery request/response messages serialize correctly across the version boundary.
     /// </summary>
     [TestMethod]
+    // Compatibility matrix includes the .NET Framework runner/testhost, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
-    [RunnerCompatibilityDataSource()]
+    [CompatibilityMatrix(CompatScenario.VSTestConsole)]
     public void DiscoverTests_LatestRunner_WithOlderTesthosts(RunnerInfo runnerInfo)
     {
 #pragma warning disable RS0030 // Do not use banned APIs
@@ -73,8 +74,9 @@ public class SerializationCompatibilityTests : AcceptanceTestBase
     /// Verifies that older runners can understand discovery responses from the new STJ-based testhost.
     /// </summary>
     [TestMethod]
+    // Compatibility matrix includes the .NET Framework runner/testhost, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
-    [TestHostCompatibilityDataSource]
+    [CompatibilityMatrix(CompatScenario.TestHost)]
     public void DiscoverTests_OlderRunners_WithLatestTesthost(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -109,8 +111,9 @@ public class SerializationCompatibilityTests : AcceptanceTestBase
     /// Verifies that test run messages (start, result, complete) serialize correctly across versions.
     /// </summary>
     [TestMethod]
+    // Compatibility matrix includes the .NET Framework runner/testhost, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
-    [RunnerCompatibilityDataSource]
+    [CompatibilityMatrix(CompatScenario.VSTestConsole)]
     public void RunTests_LatestRunner_WithOlderTesthosts(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -148,8 +151,9 @@ public class SerializationCompatibilityTests : AcceptanceTestBase
     /// Verifies that older runners can process execution results from the new STJ-based testhost.
     /// </summary>
     [TestMethod]
+    // Compatibility matrix includes the .NET Framework runner/testhost, which is not available on Linux/macOS.
     [TestCategory("Windows-Review")]
-    [TestHostCompatibilityDataSource]
+    [CompatibilityMatrix(CompatScenario.TestHost)]
     public void RunTests_OlderRunners_WithLatestTesthost(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

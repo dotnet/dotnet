@@ -25,7 +25,8 @@
                         OverscanCount="@OverscanCount"
                         ItemsProvider="@ProvideVirtualizedItems"
                         ItemContent="@(item => builder => RenderRow(builder, item.RowIndex, item.Data))"
-                        Placeholder="@(placeholderContext => builder => RenderPlaceholderRow(builder, placeholderContext))" />
+                        Placeholder="@(placeholderContext => builder => RenderPlaceholderRow(builder, placeholderContext))"
+                        @attributes="@_virtualizeAttributes" />
                 }
                 else
                 {
@@ -84,7 +85,7 @@
 
     private void RenderPlaceholderRow(RenderTreeBuilder __builder, PlaceholderContext placeholderContext)
     {
-        <tr aria-rowindex="@(placeholderContext.Index + 1)">
+        <tr aria-rowindex="@(placeholderContext.Index + 1)" data-blazor-virtualize-reserved-height="@placeholderContext.Size.ToString(System.Globalization.CultureInfo.InvariantCulture)">
             @foreach (var col in _columns)
             {
                 <td class="grid-cell-placeholder @ColumnClass(col)" @key="@col">@{ col.RenderPlaceholderContent(__builder, placeholderContext); }</td>

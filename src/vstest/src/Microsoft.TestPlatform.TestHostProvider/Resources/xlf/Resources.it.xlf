@@ -10,12 +10,12 @@ Verify that:
   - The project has been built and the output is in '{1}'.
   - The project's target framework matches the installed .NET runtime.
 </source>
-        <target state="new">Could not find testhost for test source '{0}'.
+        <target state="translated">Non è possibile trovare testhost per l'origine del test ''{0}''.
 
-Verify that:
-  - The test project references the 'Microsoft.NET.Test.Sdk' NuGet package.
-  - The project has been built and the output is in '{1}'.
-  - The project's target framework matches the installed .NET runtime.
+Verificare che:
+  - Il progetto di test faccia riferimento al pacchetto NuGet ''Microsoft.NET.Test.Sdk''.
+  - Il progetto sia stato compilato e l'output si trovi in ''{1}''.
+  - Il framework di destinazione del progetto corrisponda al runtime .NET installato.
 </target>
         <note>'{0}' is the path to the test source (DLL/EXE), '{1}' is the directory where testhost was searched.</note>
       </trans-unit>
@@ -24,6 +24,15 @@ Verify that:
 {0}</source>
         <target state="translated">Sono state trovate più versioni della stessa estensione. Verrà selezionata quella più recente.
 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NetFrameworkTestsNotSupportedOnNonWindows">
+        <source>Running .NET Framework tests is supported on Windows only.
+
+Running .NET Framework tests on this operating system relied on Mono, which is no longer supported. To run these tests, run them on Windows, or change the test project to target .NET instead of .NET Framework.</source>
+        <target state="translated">L'esecuzione dei test .NET Framework è supportata solo su Windows.
+
+L'esecuzione dei test .NET Framework su questo sistema operativo si basava su Mono, che non è più supportato. Per eseguire questi test, eseguili su Windows oppure modifica il progetto di test in modo che sia destinato a .NET anziché a .NET Framework.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindDepsFile">

@@ -12,11 +12,13 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class MultitargetingTestHostTests : AcceptanceTestBase
 {
     [TestMethod]
+    // Multitargeting is exercised against .NET Framework testhosts (net481), which only exist on Windows,
+    // so both data sources produce zero rows on Linux/macOS.
     [TestCategory("Windows-Review")]
     // the underlying test is using xUnit to avoid AppDomain enhancements in MSTest that make this pass even without multitargetting
     // xUnit supports net452 onwards, so that is why this starts at net452, I also don't test all framework versions
-    [NetCoreRunner(NETFX)]
-    [NetFrameworkRunner(NETFX)]
+    [TestMatrix(console: Net, testHost: NetFx)]
+    [TestMatrix(console: NetFx, testHost: NetFx)]
     public void TestRunInATesthostThatTargetsTheirChosenNETFramework(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

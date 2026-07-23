@@ -332,11 +332,8 @@ public class SOSStackTraceTests
     [SkippableTheory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
     public async Task StackTests(TestConfiguration config)
     {
-        if (config.RuntimeFrameworkVersionMajor == 10)
-        {
-            // The clrstack -i command regressed on .NET 10 win-x86, so skip this test for now.
-            SOSTestHelpers.SkipIfWinX86(config);
-        }
+        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
+        SOSTestHelpers.SkipIfWinX86(config);
 
         await SOSTestHelpers.RunTest(
             config,
@@ -507,6 +504,8 @@ public class SOSGCTests
     public async Task GCTests(TestConfiguration config)
     {
         SOSTestHelpers.SkipIfArm(config);
+        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
+        SOSTestHelpers.SkipIfWinX86(config);
 
         // Live only
         await SOSTestHelpers.RunTest(
@@ -525,6 +524,8 @@ public class SOSGCTests
         {
             throw new SkipTestException("This test validates POH behavior, which was introduced in .net 5");
         }
+        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
+        SOSTestHelpers.SkipIfWinX86(config);
         await SOSTestHelpers.RunTest(
             config,
             debuggeeName: "GCPOH",
@@ -663,6 +664,7 @@ public class SOSDumpTests
                 TestConfiguration = config,
                 TestName = "SOS.OtherCommands",
                 DebuggeeName = "SymbolTestApp",
+                EnableStressLog = true,
                 // Assumes that SymbolTestDll.dll that is dynamically loaded is the parent directory of the single file app
                 DebuggeeArguments = config.PublishSingleFile ? Path.Combine("%DEBUG_ROOT%", "..") : "%DEBUG_ROOT%"
             },
@@ -709,6 +711,8 @@ public class SOSMethodTests
         {
             throw new SkipTestException("Test only supports CDB and therefore only runs on Windows");
         }
+        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
+        SOSTestHelpers.SkipIfWinX86(config);
 
         await SOSTestHelpers.RunTest(
             config,
@@ -862,11 +866,8 @@ public class SOSStackAndOtherTests
         {
             throw new SkipTestException("Single-file DAC signature verification failure with CDB (https://github.com/dotnet/diagnostics/issues/5757)");
         }
-        if (config.RuntimeFrameworkVersionMajor == 10)
-        {
-            // The clrstack -i -a command regressed on .NET 10 win-x86, so skip this test for now.
-            SOSTestHelpers.SkipIfWinX86(config);
-        }
+        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
+        SOSTestHelpers.SkipIfWinX86(config);
 
         foreach (TestConfiguration currentConfig in TestRunner.EnumeratePdbTypeConfigs(config))
         {

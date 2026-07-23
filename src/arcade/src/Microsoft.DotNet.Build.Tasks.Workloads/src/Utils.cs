@@ -79,6 +79,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             File.SetAttributes(fileName, oldAttributes);
         }
 
+        internal static void StringReplace(string fileName, Dictionary<string, string> tokenReplacements) =>
+            StringReplace(fileName, tokenReplacements, Encoding.UTF8);
+
         /// <summary>
         /// Checks whether a string parameter is neither <see langword="null"/> nor empty.
         /// </summary>

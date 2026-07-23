@@ -27,10 +27,13 @@ internal class SnsRequestContextHelper
         }
         else
         {
-            if (attributes.Keys.Any(originalRequest.MessageAttributes.ContainsKey))
+            foreach (var key in attributes.Keys)
             {
-                // If at least one attribute is already present in the request then we skip the injection.
-                return;
+                if (originalRequest.MessageAttributes.ContainsKey(key))
+                {
+                    // If at least one attribute is already present in the request then we skip the injection.
+                    return;
+                }
             }
 
             var attributesCount = originalRequest.MessageAttributes.Count;

@@ -384,8 +384,8 @@
       <trans-unit id="PlatformArgumentHelp">
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
-      Valid values are x86, x64 and ARM.</source>
-        <target state="translated">--Platform|/Platform:&lt;平台類型&gt;
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
+        <target state="needs-review-translation">--Platform|/Platform:&lt;平台類型&gt;
       用於測試執行的目標平台架構。
       有效值為 x86、x64 和 ARM。</target>
         <note />
@@ -398,9 +398,9 @@
       <trans-unit id="FrameworkArgumentHelp">
         <source>--Framework|/Framework:&lt;Framework Version&gt;
       Target .Net Framework version to be used for test execution. 
-      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="translated">--Framework|/Framework:&lt;Framework 版本&gt;
+        <target state="needs-review-translation">--Framework|/Framework:&lt;Framework 版本&gt;
       用於測試執行的目標.Net Framework 版本。 
       有效的值為 ".NETFramework,Version=v4.5.1"、".NETCoreApp,Version=v1.0" 等等。
       其他支援的值為 Framework40、Framework45、FrameworkCore10 與 FrameworkUap10。</target>
@@ -805,7 +805,7 @@
       </trans-unit>
       <trans-unit id="MalformedRunSettingsKey">
         <source>One or more runsettings provided contain invalid token</source>
-        <target state="translated">提供的一或多個 runsettings 包含無效的語彙基元</target>
+        <target state="translated">已提供的一或多個 runsettings 中含有無效的 Token</target>
         <note />
       </trans-unit>
       <trans-unit id="ResultsDirectoryArgumentHelp">
@@ -864,6 +864,7 @@
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
@@ -872,10 +873,11 @@
       它會在目前的目錄建立輸出檔案 "Sequence.xml"，
       該檔案會擷取當機前的測試執行順序。
       您也可以選擇收集測試主機的處理序傾印。
-      當您選擇收集傾印時，預設會在當機時收集迷你傾印／
+      當您選擇收集傾印時，預設會在當機時收集迷你傾印。
       您也可以選擇使用一些選用參數來覆寫此預設行為:
       CollectAlways - 即使沒有當機，也在離開時收集傾印 (true/false) 
       DumpType - 指定傾印類型 (mini/full)。
+      在 Windows 上收集當機傾印需要於 PATH 或於 PROCDUMP_PATH 環境變數所指向的目錄中提供 procdump.exe 和 procdump64.exe。您可以於下列位置下載工具: https://docs.microsoft.com/sysinternals/downloads/procdump。
       範例: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1167,16 +1169,6 @@
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">等待要求處理常式連線在 {0} 秒後逾時。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">等待啟動測試工作階段在 {0} 秒後逾時。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">等待停止測試工作階段在 {0} 秒後逾時。</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

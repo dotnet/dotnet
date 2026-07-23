@@ -1,6 +1,9 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Globalization;
+using CurrentProcess = System.Diagnostics.Process;
+
 namespace OpenTelemetry.Resources.Process;
 
 /// <summary>
@@ -14,20 +17,43 @@ internal sealed class ProcessDetector : IResourceDetector
     /// <returns>Resource with key-value pairs of resource attributes.</returns>
     public Resource Detect()
     {
-        return new Resource(new List<KeyValuePair<string, object>>(2)
+        GetProcessAttributes(
+            out var processId,
+            out var creationTime);
+
+        var attributes = new List<KeyValuePair<string, object>>(3)
         {
             new(ProcessSemanticConventions.AttributeProcessOwner, Environment.UserName),
-#if NET
-            new(ProcessSemanticConventions.AttributeProcessPid, Environment.ProcessId),
-        });
-#else
-            new(ProcessSemanticConventions.AttributeProcessPid, GetProcessPid()),
-        });
-        static int GetProcessPid()
+            new(ProcessSemanticConventions.AttributeProcessPid, processId),
+        };
+
+        if (creationTime is { } startTime)
         {
-            using var process = System.Diagnostics.Process.GetCurrentProcess();
-            return process.Id;
+            attributes.Add(new(ProcessSemanticConventions.AttributeProcessCreationTime, startTime.ToString("O", CultureInfo.InvariantCulture)));
         }
-#endif
+
+        return new Resource(attributes);
+
+        static void GetProcessAttributes(
+            out int processId,
+            out DateTime? creationTime)
+        {
+            using var process = CurrentProcess.GetCurrentProcess();
+            processId = process.Id;
+
+            creationTime = SafeGet(process, (p) => p.StartTime);
+
+            static T? SafeGet<T>(CurrentProcess process, Func<CurrentProcess, T> getter)
+            {
+                try
+                {
+                    return getter(process);
+                }
+                catch (Exception)
+                {
+                    return default;
+                }
+            }
+        }
     }
 }

@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Diagnostics;
-using System.Reflection;
-using OpenTelemetry.Internal;
+using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Instrumentation.GrpcCore;
 
@@ -13,22 +12,12 @@ namespace OpenTelemetry.Instrumentation.GrpcCore;
 internal static class GrpcCoreInstrumentation
 {
     /// <summary>
-    /// The assembly.
+    /// Gets the version of the RPC Semantic Conventions used by the instrumentation.
     /// </summary>
-    internal static readonly Assembly Assembly = typeof(GrpcCoreInstrumentation).Assembly;
+    internal static readonly Version SemanticConventionsVersion = new(1, 42, 0);
 
     /// <summary>
-    /// The assembly name.
+    /// Gets the activity source for the instrumentation.
     /// </summary>
-    internal static readonly AssemblyName AssemblyName = Assembly.GetName();
-
-    /// <summary>
-    /// The activity source name.
-    /// </summary>
-    internal static readonly string ActivitySourceName = AssemblyName.Name;
-
-    /// <summary>
-    /// The activity source.
-    /// </summary>
-    internal static readonly ActivitySource ActivitySource = new(ActivitySourceName, Assembly.GetPackageVersion());
+    internal static readonly ActivitySource ActivitySource = ActivitySourceFactory.Create(typeof(GrpcCoreInstrumentation), SemanticConventionsVersion);
 }

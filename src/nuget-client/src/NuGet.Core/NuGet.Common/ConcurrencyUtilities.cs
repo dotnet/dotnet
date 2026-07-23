@@ -30,6 +30,22 @@ namespace NuGet.Common
 
         internal static IEnvironmentVariableReader EnvironmentVariableReader { get; set; } = EnvironmentVariableWrapper.Instance;
 
+        static ConcurrencyUtilities()
+        {
+            StaticState.StartMSBuildRestoreTasks += ResetEnvironmentCaches;
+        }
+
+        /// <summary>
+        /// Clears the environment-derived caches (the delete-on-close opt-in and the lock-file base path) so they
+        /// are re-read from the current environment on next use. The base path also derives from the NuGet temp
+        /// directory; callers should reset <see cref="NuGetEnvironment" /> as well.
+        /// </summary>
+        internal static void ResetEnvironmentCaches()
+        {
+            _useDeleteOnClose = null;
+            _basePath = null;
+        }
+
         public async static Task<T> ExecuteWithFileLockedAsync<T>(string filePath,
             Func<CancellationToken, Task<T>> action,
             CancellationToken token)

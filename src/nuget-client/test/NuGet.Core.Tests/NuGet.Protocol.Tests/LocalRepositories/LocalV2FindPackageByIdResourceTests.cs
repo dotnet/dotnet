@@ -21,7 +21,7 @@ namespace NuGet.Protocol.Tests
         public void Constructor_ThrowsForNullPackageSource()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new LocalV2FindPackageByIdResource(packageSource: null));
+                () => new LocalV2FindPackageByIdResource(packageSource: null!));
 
             Assert.Equal("packageSource", exception.ParamName);
         }
@@ -52,7 +52,7 @@ namespace NuGet.Protocol.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Resource.GetAllVersionsAsync(
                         test.PackageIdentity.Id,
-                        cacheContext: null,
+                        cacheContext: null!,
                         logger: NullLogger.Instance,
                         cancellationToken: CancellationToken.None));
 
@@ -69,7 +69,7 @@ namespace NuGet.Protocol.Tests
                     () => test.Resource.GetAllVersionsAsync(
                         test.PackageIdentity.Id,
                         test.SourceCacheContext,
-                        logger: null,
+                        logger: null!,
                         cancellationToken: CancellationToken.None));
 
                 Assert.Equal("logger", exception.ParamName);
@@ -147,8 +147,8 @@ namespace NuGet.Protocol.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Resource.GetDependencyInfoAsync(
                         test.PackageIdentity.Id,
-                        version: null,
-                        cacheContext: null,
+                        version: null!,
+                        cacheContext: null!,
                         logger: NullLogger.Instance,
                         cancellationToken: CancellationToken.None));
 
@@ -165,7 +165,7 @@ namespace NuGet.Protocol.Tests
                     () => test.Resource.GetDependencyInfoAsync(
                         test.PackageIdentity.Id,
                         test.PackageIdentity.Version,
-                        cacheContext: null,
+                        cacheContext: null!,
                         logger: NullLogger.Instance,
                         cancellationToken: CancellationToken.None));
 
@@ -183,7 +183,7 @@ namespace NuGet.Protocol.Tests
                         test.PackageIdentity.Id,
                         test.PackageIdentity.Version,
                         test.SourceCacheContext,
-                        logger: null,
+                        logger: null!,
                         cancellationToken: CancellationToken.None));
 
                 Assert.Equal("logger", exception.ParamName);
@@ -233,7 +233,7 @@ namespace NuGet.Protocol.Tests
                     NullLogger.Instance,
                     CancellationToken.None);
 
-                Assert.Equal(test.PackageIdentity.Id.ToLower(), info.PackageIdentity.Id);
+                Assert.Equal(test.PackageIdentity.Id.ToLower(), info!.PackageIdentity.Id);
                 Assert.Equal(test.PackageIdentity.Version, info.PackageIdentity.Version);
             }
         }
@@ -266,7 +266,7 @@ namespace NuGet.Protocol.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Resource.CopyNupkgToStreamAsync(
                         test.PackageIdentity.Id,
-                        version: null,
+                        version: null!,
                         destination: Stream.Null,
                         cacheContext: test.SourceCacheContext,
                         logger: NullLogger.Instance,
@@ -285,7 +285,7 @@ namespace NuGet.Protocol.Tests
                     () => test.Resource.CopyNupkgToStreamAsync(
                         test.PackageIdentity.Id,
                         test.PackageIdentity.Version,
-                        destination: null,
+                        destination: null!,
                         cacheContext: test.SourceCacheContext,
                         logger: NullLogger.Instance,
                         cancellationToken: CancellationToken.None));
@@ -304,7 +304,7 @@ namespace NuGet.Protocol.Tests
                         test.PackageIdentity.Id,
                         test.PackageIdentity.Version,
                         Stream.Null,
-                        cacheContext: null,
+                        cacheContext: null!,
                         logger: NullLogger.Instance,
                         cancellationToken: CancellationToken.None));
 
@@ -323,7 +323,7 @@ namespace NuGet.Protocol.Tests
                         test.PackageIdentity.Version,
                         Stream.Null,
                         test.SourceCacheContext,
-                        logger: null,
+                        logger: null!,
                         cancellationToken: CancellationToken.None));
 
                 Assert.Equal("logger", exception.ParamName);
@@ -391,7 +391,7 @@ namespace NuGet.Protocol.Tests
             {
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Resource.GetPackageDownloaderAsync(
-                        packageIdentity: null,
+                        packageIdentity: null!,
                         cacheContext: test.SourceCacheContext,
                         logger: NullLogger.Instance,
                         cancellationToken: CancellationToken.None));
@@ -408,7 +408,7 @@ namespace NuGet.Protocol.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Resource.GetPackageDownloaderAsync(
                         test.PackageIdentity,
-                        cacheContext: null,
+                        cacheContext: null!,
                         logger: NullLogger.Instance,
                         cancellationToken: CancellationToken.None));
 
@@ -425,7 +425,7 @@ namespace NuGet.Protocol.Tests
                     () => test.Resource.GetPackageDownloaderAsync(
                         test.PackageIdentity,
                         test.SourceCacheContext,
-                        logger: null,
+                        logger: null!,
                         cancellationToken: CancellationToken.None));
 
                 Assert.Equal("logger", exception.ParamName);

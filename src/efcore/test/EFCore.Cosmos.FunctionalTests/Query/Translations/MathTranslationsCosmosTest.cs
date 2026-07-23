@@ -64,13 +64,13 @@ WHERE (ABS(c["Float"]) = 9.5)
 
     public override async Task Ceiling()
     {
-        await base.Ceiling_float();
+        await base.Ceiling();
 
         AssertSql(
             """
 SELECT VALUE c
 FROM root c
-WHERE (CEILING(c["Float"]) = 9.0)
+WHERE (CEILING(c["Double"]) = 9)
 """);
     }
 
@@ -82,7 +82,7 @@ WHERE (CEILING(c["Float"]) = 9.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (CEILING(c["Float"]) = 9.0)
+WHERE (CEILING(c["Float"]) = 9)
 """);
     }
 
@@ -94,7 +94,7 @@ WHERE (CEILING(c["Float"]) = 9.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (FLOOR(c["Decimal"]) = 8.0)
+WHERE (FLOOR(c["Decimal"]) = 8)
 """);
     }
 
@@ -106,7 +106,7 @@ WHERE (FLOOR(c["Decimal"]) = 8.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (FLOOR(c["Double"]) = 8.0)
+WHERE (FLOOR(c["Double"]) = 8)
 """);
     }
 
@@ -118,7 +118,7 @@ WHERE (FLOOR(c["Double"]) = 8.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (FLOOR(c["Float"]) = 8.0)
+WHERE (FLOOR(c["Float"]) = 8)
 """);
     }
 
@@ -130,7 +130,7 @@ WHERE (FLOOR(c["Float"]) = 8.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (EXP(c["Double"]) > 1.0)
+WHERE (EXP(c["Double"]) > 1)
 """);
     }
 
@@ -142,16 +142,20 @@ WHERE (EXP(c["Double"]) > 1.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (EXP(c["Float"]) > 1.0)
+WHERE (EXP(c["Float"]) > 1)
 """);
     }
 
     public override async Task Power()
     {
-        // Convert node. Issue #25120.
-        await AssertTranslationFailed(() => base.Power());
+        await base.Power();
 
-        AssertSql();
+        AssertSql(
+            """
+SELECT VALUE c
+FROM root c
+WHERE (POWER(c["Int"], 2) = 64)
+""");
     }
 
     public override async Task Power_float()
@@ -162,7 +166,7 @@ WHERE (EXP(c["Float"]) > 1.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE ((POWER(c["Float"], 2.0) > 73.0) AND (POWER(c["Float"], 2.0) < 74.0))
+WHERE ((POWER(c["Float"], 2) > 73) AND (POWER(c["Float"], 2) < 74))
 """);
     }
 
@@ -174,7 +178,7 @@ WHERE ((POWER(c["Float"], 2.0) > 73.0) AND (POWER(c["Float"], 2.0) < 74.0))
             """
 SELECT VALUE c
 FROM root c
-WHERE (ROUND(c["Decimal"]) = 9.0)
+WHERE (ROUND(c["Decimal"]) = 9)
 """,
             //
             """
@@ -191,7 +195,7 @@ FROM root c
             """
 SELECT VALUE c
 FROM root c
-WHERE (ROUND(c["Double"]) = 9.0)
+WHERE (ROUND(c["Double"]) = 9)
 """,
             //
             """
@@ -208,7 +212,7 @@ FROM root c
             """
 SELECT VALUE c
 FROM root c
-WHERE (ROUND(c["Float"]) = 9.0)
+WHERE (ROUND(c["Float"]) = 9)
 """,
             //
             """
@@ -249,7 +253,7 @@ FROM root c
             """
 SELECT VALUE c
 FROM root c
-WHERE (TRUNC(c["Decimal"]) = 8.0)
+WHERE (TRUNC(c["Decimal"]) = 8)
 """,
             //
             """
@@ -266,7 +270,7 @@ FROM root c
             """
 SELECT VALUE c
 FROM root c
-WHERE (TRUNC(c["Double"]) = 8.0)
+WHERE (TRUNC(c["Double"]) = 8)
 """,
             //
             """
@@ -283,7 +287,7 @@ FROM root c
             """
 SELECT VALUE c
 FROM root c
-WHERE (TRUNC(c["Float"]) = 8.0)
+WHERE (TRUNC(c["Float"]) = 8)
 """,
             //
             """
@@ -339,7 +343,7 @@ ORDER BY TRUNC(c["Double"]) DESC
             """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Double"] > 0.0) AND (LOG(c["Double"]) != 0.0))
+WHERE ((c["Double"] > 0) AND (LOG(c["Double"]) != 0))
 """);
     }
 
@@ -351,7 +355,7 @@ WHERE ((c["Double"] > 0.0) AND (LOG(c["Double"]) != 0.0))
             """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Float"] > 0.0) AND (LOG(c["Float"]) != 0.0))
+WHERE ((c["Float"] > 0) AND (LOG(c["Float"]) != 0))
 """);
     }
 
@@ -363,7 +367,7 @@ WHERE ((c["Float"] > 0.0) AND (LOG(c["Float"]) != 0.0))
             """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Double"] > 0.0) AND (LOG(c["Double"], 7.0) != 0.0))
+WHERE ((c["Double"] > 0) AND (LOG(c["Double"], 7) != 0))
 """);
     }
 
@@ -375,7 +379,7 @@ WHERE ((c["Double"] > 0.0) AND (LOG(c["Double"], 7.0) != 0.0))
             """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Float"] > 0.0) AND (LOG(c["Float"], 7.0) != 0.0))
+WHERE ((c["Float"] > 0) AND (LOG(c["Float"], 7) != 0))
 """);
     }
 
@@ -387,7 +391,7 @@ WHERE ((c["Float"] > 0.0) AND (LOG(c["Float"], 7.0) != 0.0))
             """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Double"] > 0.0) AND (LOG10(c["Double"]) != 0.0))
+WHERE ((c["Double"] > 0) AND (LOG10(c["Double"]) != 0))
 """);
     }
 
@@ -399,7 +403,7 @@ WHERE ((c["Double"] > 0.0) AND (LOG10(c["Double"]) != 0.0))
             """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Float"] > 0.0) AND (LOG10(c["Float"]) != 0.0))
+WHERE ((c["Float"] > 0) AND (LOG10(c["Float"]) != 0))
 """);
     }
 
@@ -419,7 +423,7 @@ WHERE ((c["Float"] > 0.0) AND (LOG10(c["Float"]) != 0.0))
             """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Double"] > 0.0) AND (SQRT(c["Double"]) > 0.0))
+WHERE ((c["Double"] > 0) AND (SQRT(c["Double"]) > 0))
 """);
     }
 
@@ -431,7 +435,7 @@ WHERE ((c["Double"] > 0.0) AND (SQRT(c["Double"]) > 0.0))
             """
 SELECT VALUE c
 FROM root c
-WHERE ((c["Float"] > 0.0) AND (SQRT(c["Float"]) > 0.0))
+WHERE ((c["Float"] > 0) AND (SQRT(c["Float"]) > 0))
 """);
     }
 
@@ -559,7 +563,7 @@ FROM root c
             """
 SELECT VALUE c
 FROM root c
-WHERE (DEGREES(c["Double"]) > 0.0)
+WHERE (DEGREES(c["Double"]) > 0)
 """);
     }
 
@@ -571,7 +575,7 @@ WHERE (DEGREES(c["Double"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (DEGREES(c["Float"]) > 0.0)
+WHERE (DEGREES(c["Float"]) > 0)
 """);
     }
 
@@ -583,7 +587,7 @@ WHERE (DEGREES(c["Float"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (RADIANS(c["Double"]) > 0.0)
+WHERE (RADIANS(c["Double"]) > 0)
 """);
     }
 
@@ -595,7 +599,7 @@ WHERE (RADIANS(c["Double"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (RADIANS(c["Float"]) > 0.0)
+WHERE (RADIANS(c["Float"]) > 0)
 """);
     }
 
@@ -609,7 +613,7 @@ WHERE (RADIANS(c["Float"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (((c["Double"] >= -1.0) AND (c["Double"] <= 1.0)) AND (ACOS(c["Double"]) > 1.0))
+WHERE (((c["Double"] >= -1) AND (c["Double"] <= 1)) AND (ACOS(c["Double"]) > 1))
 """);
     }
 
@@ -621,7 +625,7 @@ WHERE (((c["Double"] >= -1.0) AND (c["Double"] <= 1.0)) AND (ACOS(c["Double"]) >
             """
 SELECT VALUE c
 FROM root c
-WHERE (((c["Float"] >= -1.0) AND (c["Float"] <= 1.0)) AND (ACOS(c["Float"]) > 0.0))
+WHERE (((c["Float"] >= -1) AND (c["Float"] <= 1)) AND (ACOS(c["Float"]) > 0))
 """);
     }
 
@@ -641,7 +645,7 @@ WHERE (((c["Float"] >= -1.0) AND (c["Float"] <= 1.0)) AND (ACOS(c["Float"]) > 0.
             """
 SELECT VALUE c
 FROM root c
-WHERE (((c["Double"] >= -1.0) AND (c["Double"] <= 1.0)) AND (ASIN(c["Double"]) > -1.7976931348623157E+308))
+WHERE (((c["Double"] >= -1) AND (c["Double"] <= 1)) AND (ASIN(c["Double"]) > -1.7976931348623157E+308))
 """);
     }
 
@@ -653,7 +657,7 @@ WHERE (((c["Double"] >= -1.0) AND (c["Double"] <= 1.0)) AND (ASIN(c["Double"]) >
             """
 SELECT VALUE c
 FROM root c
-WHERE (((c["Float"] >= -1.0) AND (c["Float"] <= 1.0)) AND (ASIN(c["Float"]) > -1.7976931348623157E+308))
+WHERE (((c["Float"] >= -1) AND (c["Float"] <= 1)) AND (ASIN(c["Float"]) > -1.7976931348623157E+308))
 """);
     }
 
@@ -673,7 +677,7 @@ WHERE (((c["Float"] >= -1.0) AND (c["Float"] <= 1.0)) AND (ASIN(c["Float"]) > -1
             """
 SELECT VALUE c
 FROM root c
-WHERE (ATAN(c["Double"]) > 0.0)
+WHERE (ATAN(c["Double"]) > 0)
 """);
     }
 
@@ -685,7 +689,7 @@ WHERE (ATAN(c["Double"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (ATAN(c["Float"]) > 0.0)
+WHERE (ATAN(c["Float"]) > 0)
 """);
     }
 
@@ -705,7 +709,7 @@ WHERE (ATAN(c["Float"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (ATN2(c["Double"], 1.0) > 0.0)
+WHERE (ATN2(c["Double"], 1) > 0)
 """);
     }
 
@@ -717,7 +721,7 @@ WHERE (ATN2(c["Double"], 1.0) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (COS(c["Double"]) > 0.0)
+WHERE (COS(c["Double"]) > 0)
 """);
     }
 
@@ -729,7 +733,7 @@ WHERE (COS(c["Double"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (COS(c["Float"]) > 0.0)
+WHERE (COS(c["Float"]) > 0)
 """);
     }
 
@@ -749,7 +753,7 @@ WHERE (COS(c["Float"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (SIN(c["Double"]) > 0.0)
+WHERE (SIN(c["Double"]) > 0)
 """);
     }
 
@@ -761,7 +765,7 @@ WHERE (SIN(c["Double"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (SIN(c["Float"]) > 0.0)
+WHERE (SIN(c["Float"]) > 0)
 """);
     }
 
@@ -781,7 +785,7 @@ WHERE (SIN(c["Float"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (TAN(c["Double"]) > 0.0)
+WHERE (TAN(c["Double"]) > 0)
 """);
     }
 
@@ -793,7 +797,7 @@ WHERE (TAN(c["Double"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (TAN(c["Float"]) > 0.0)
+WHERE (TAN(c["Float"]) > 0)
 """);
     }
 
@@ -813,7 +817,7 @@ WHERE (TAN(c["Float"]) > 0.0)
             """
 SELECT VALUE c
 FROM root c
-WHERE (ATN2(c["Float"], 1.0) > 0.0)
+WHERE (ATN2(c["Float"], 1) > 0)
 """);
     }
 

@@ -145,7 +145,10 @@ namespace Microsoft.DotNet.Helix.Client
             return this;
         }
 
-        public async Task<ISentJob> SendAsync(Action<string> log, CancellationToken cancellationToken)
+        public Task<ISentJob> SendAsync(Action<string> log, CancellationToken cancellationToken)
+            => SendAsync(log, log, cancellationToken);
+
+        public async Task<ISentJob> SendAsync(Action<string> log, Action<string> queueStatsLog, CancellationToken cancellationToken)
         {
             IBlobHelper storage;
             if (string.IsNullOrEmpty(StorageAccountConnectionString))
@@ -244,7 +247,7 @@ namespace Microsoft.DotNet.Helix.Client
 
             if (ShowQueueStats)
             {
-                LogQueueStats(log, queueId, newJob?.QueueStats);
+                LogQueueStats(queueStatsLog ?? log, queueId, newJob?.QueueStats);
             }
 
             return new SentJob(JobApi, newJob);

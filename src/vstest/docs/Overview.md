@@ -56,6 +56,10 @@
       - [Test Logger](#test-logger)
       - [Runtime Provider](#runtime-provider)
     - [TranslationLayer extension points](#translationlayer-extension-points)
+      - [Public surface of the TranslationLayer project](#public-surface-of-the-translationlayer-project)
+      - [Usage: driving the wrapper](#usage-driving-the-wrapper)
+      - [Extension points: interfaces you implement](#extension-points-interfaces-you-implement)
+      - [Configuring the runner process (ConsoleParameters)](#configuring-the-runner-process-consoleparameters)
     - [.NET Implementation](#net-implementation)
       - [Architecture](#architecture)
       
@@ -70,7 +74,7 @@ TestPlatform is also known as vstest, or by the names of the tools that use it: 
 
 ## How it works?
 
-TestPlatform consists of multiple processes that communicate over sockets, by sending JSON serialized messages. There are 4 processes that usually work together run tests:
+TestPlatform consists of multiple components that communicate by sending JSON serialized messages. A classic VSTest run usually involves these processes:
 
 - Client
 - Runner
@@ -83,13 +87,15 @@ The runner receives the request from the client, and starts an appropriate testh
 
 Testhost receives the request to run tests, and runs them via an appropriate test framework. The most often used .NET test frameworks are XUnit, MSTest and NUnit.
 
-Datacollector observes the testhost to collect additional information about the run.
+Datacollector observes the testhost to collect additional information about the run when data collection is enabled.
+
+Microsoft.Testing.Platform (MTP) test applications are an emerging model. For those applications, the application hosts itself and TestPlatform drives discovery and execution over the MTP protocol instead of launching a VSTest testhost.
 
 While the tests execute, the results are reported back to the runner, aggregated, and forwarded to the client.
 
 The client processes the results and shows them in their UI, for example as TestExplorer does it here:
 
-<TODO gif>
+![Visual Studio Test Explorer showing the results of a completed test run](resources/test-explorer-example.gif)
 
 A simplified flow describing the whole process is as follows:
 
@@ -138,8 +144,6 @@ The Run workflow described above is very common in command line tools, and proba
 ## Communication Protocol
 
 ### Base Protocol
-
-TODO: fill in more details.
 
 Data are passed as JSON serialized strings over TCP. The messages are serialized using binary format that delimits messages by a length prefix. The size prefix is written as 7 bit encoded int. (The basics of encoding that number are summarized here: <https://stackoverflow.com/a/49780224/3065397>).
 
@@ -228,9 +232,9 @@ There is no header in the message itself. There is header only in the binary mes
 
 TestPlatform protocol defines a set of JSON request, response and notification messages, that are exchanged using the above base protocol. This section starts by describing the basic JSON structures used in the protocol. The description uses C# classes, and types, with nullability enabled. Meaning that every type is non-nullable by default, and nullability is denoted by `?` following the type name.
 
-<TODO example?>
-
 The protocol assumes that one server serves one tool. There is no support in the protocol to share one server between different tools.
+
+See [Message documentation](#message-documentation) for the format used to describe every message, including a worked [ProtocolVersion request](#protocolversion-request) example.
 
 #### Capabilities
 
@@ -248,7 +252,7 @@ The version is negotiated between the components at the beginning of every workf
 
 #### Request, Notification and Response Ordering
 
-The server supports processing only a single request at a time. Unless the request is [Cancel](#cancel) or [Abort](#abort) request.
+The server supports processing only a single request at a time, unless the request is a Cancel or Abort request.
 
 All notifications are sent before a response is sent.
 
@@ -256,10 +260,32 @@ All notifications are sent before a response is sent.
 
 TestPlatformProtocol is defined by a set of requests, responses and notifications. Each of those are described using the following format:
 
-- a header describing the request
-- a request section describing the format of the
+- a header describing the message
+- a request section describing the request payload format
+- a response section describing the response payload format, when the message has a response
+- examples of the JSON sent on the wire
 
-<TODO>
+For example, the [ProtocolVersion request](#protocolversion-request) below follows this format. Because it is exchanged during negotiation, it uses the unversioned message envelope (the `Version` property is only emitted for protocol v1 and above) and therefore omits `Version` from the JSON examples.
+Its header describes the message, the *Request* section documents the request payload as the JSON sent on
+the wire, and the *Response* section documents the reply the same way:
+
+*Request:*
+
+```json
+{
+    "MessageType": "ProtocolVersion",
+    "Payload": 7
+}
+```
+
+*Response:*
+
+```json
+{
+    "MessageType": "ProtocolVersion",
+    "Payload": 7
+}
+```
 
 ### Basic structures
 
@@ -293,7 +319,7 @@ The version is determined by choosing the highest common supported version. When
 
 The receiving side should remember the agreed value, and use it as the highest supported version for any downstream component. In the case above runner should send 6 to testhost, even though the runner supports versions up to 7.
 
-The request was introduced in TestPlatform version `16.0.0`. Runners before this version are not allowed. Testhosts before this version are allowed, the version of testhost is figured out by scanning the assembly, and the request is not sent to them. Version 0 is used for communication.
+The current source defines `Version0` as the lowest supported protocol version and `Version7` as the highest supported protocol version.
 
 Versions:
 
@@ -302,7 +328,7 @@ Versions:
 - 2: Changed serialization from a generic bag that described each property and its type, to explicit properties that are serialized without additional type info.
 - 3: Added AttachDebugger message.
 - 4: Added because version 3 did not update the serialization to use, and it will use v1 serialization (bag) rather than explicit properties. Right side should avoid negotiating 3 and downgrade to 2.
-- 5: Unknown. (TODO)
+- 5: Unknown in the core `ProtocolVersioning` table (the source still marks this version as `// 5: ???`). The TranslationLayer defines a private `MinimumProtocolVersionWithTestSessionSupport = 5` in `VsTestConsoleRequestSender`, but the constant is currently unused, so the exact change associated with v5 is unclear from the current source.
 - 6: Added Abort and Cancel with handlers that report the status.
 - 7: Added SkippedDiscoveredSources.
 
@@ -616,7 +642,9 @@ public class DiscoveryCompletePayload
     public IList<string>? NotDiscoveredSources { get; set; } = new List<string>();
 
     // Gets or sets the collection of discovered extensions.
-    // TODO: since?
+    // Introduced as a telemetry data point in v17.2.0 (PR dotnet/vstest#3511); not gated by a
+    // protocol version. Can be null (for example before extension discovery has populated
+    // TestPluginCache), so its presence on the wire is not guaranteed.
     public Dictionary<string, HashSet<string>>? DiscoveredExtensions { get; set; } = new();
 }
 ```
@@ -707,7 +735,7 @@ Contains full paths to one or more test sources, and settings to use for the dis
 ```csharp
 public class DiscoveryCriteria
 {
-    // Gets the test Containers (e.g. .appx, .appxrecipie) TODO what???
+    // Gets the test container package path (for example, an appx package).
     public string? Package { get; set; }
 
     
@@ -791,7 +819,9 @@ public class DiscoveryCompletePayload
     public IList<string>? NotDiscoveredSources { get; set; } = new List<string>();
 
     // Gets or sets the collection of discovered extensions.
-    // TODO: since?
+    // Introduced as a telemetry data point in v17.2.0 (PR dotnet/vstest#3511); not gated by a
+    // protocol version. Can be null (for example before extension discovery has populated
+    // TestPluginCache), so its presence on the wire is not guaranteed.
     public Dictionary<string, HashSet<string>>? DiscoveredExtensions { get; set; } = new();
 }
 ```
@@ -1105,8 +1135,7 @@ public class TestRunCompleteEventArgs
     // Error encountered in the run that is not linked to any test.
     public Exception? Error { get; private set; }
 
-    // Gets the attachment sets associated with the test run.
-    // TODO: HOW is this different from RunAttachments above?
+    // Gets the attachment sets associated with the test run (for example data-collector output). These are distinct from RunAttachments on the enclosing TestRunCompletePayload, which carries the run-context attachments (runContextAttachments) sent alongside ExecutionComplete.
     public Collection<AttachmentSet> AttachmentSets { get; private set; }
 
     // Gets the invoked data collectors for the test session.
@@ -1249,7 +1278,9 @@ public class TestExecutionContext
     // Gets or sets a value indicating whether testhost process should be kept running after test run completion.
     public bool KeepAlive { get; set; }
 
-    // Gets or sets a value indicating whether test case level events need to be sent or not. TODO: what is it? Is there since first commit, no usages on grep.app.
+    // Gets or sets a value indicating whether test case level events (TestCaseStart / TestCaseEnd)
+    // are required. The cross-platform execution managers currently always pass false here
+    // (see ProxyExecutionManager and InProcessProxyExecutionManager).
     public bool AreTestCaseLevelEventsRequired { get; set; }
 
     // Gets or sets a value indicating whether execution is in debug mode.
@@ -1355,8 +1386,7 @@ public class TestRunCompleteEventArgs
     // Error encountered in the run that is not linked to any test.
     public Exception? Error { get; private set; }
 
-    // Gets the attachment sets associated with the test run.
-    // TODO: HOW is this different from RunAttachments above?
+    // Gets the attachment sets associated with the test run (for example data-collector output). These are distinct from RunAttachments on the enclosing TestRunCompletePayload, which carries the run-context attachments (runContextAttachments) sent alongside ExecutionComplete.
     public Collection<AttachmentSet> AttachmentSets { get; private set; }
 
     // Gets the invoked data collectors for the test session.
@@ -1856,10 +1886,129 @@ Additional example of a toy test framework and adapter can be found in <https://
 
 ### TranslationLayer extension points
 
-TODO
+The TranslationLayer (assembly `Microsoft.TestPlatform.VsTestConsole.TranslationLayer`,
+NuGet package `Microsoft.TestPlatform.TranslationLayer`) is the client-facing library that
+tools such as Visual Studio, the Azure DevOps test task, and custom runners use to drive
+TestPlatform programmatically. Instead of shelling out to `vstest.console.exe` and parsing
+its output, a consumer references the library, points it at a `vstest.console` binary, and
+receives strongly-typed callbacks. Internally the wrapper starts the `vstest.console`
+process, opens the socket connection to it, and exchanges the JSON protocol messages
+described earlier in this document; all of that is hidden behind the interfaces below.
+
+Working with the layer has two distinct sides, and it is worth keeping them separate:
+
+1. **Usage** - you *instantiate* `VsTestConsoleWrapper` and *call* it to drive discovery,
+   execution, and attachment processing. You do not extend `IVsTestConsoleWrapper`; you
+   consume it.
+2. **Extension points** - the callback interfaces you *implement* and hand to the wrapper, so
+   TestPlatform can call back into your tool as an operation progresses (the handler and
+   launcher interfaces from `Microsoft.VisualStudio.TestPlatform.ObjectModel.Client`). These
+   are the actual plug-in points.
+
+#### Public surface of the TranslationLayer project
+
+| Type | Kind | Purpose |
+| --- | --- | --- |
+| `IVsTestConsoleWrapper` | interface | Synchronous entry point. Controller for every test operation on the wrapped runner. Derives from `IVsTestConsoleWrapperAsync`. |
+| `IVsTestConsoleWrapperAsync` | interface | Asynchronous counterpart. All of its `*Async` operations are marked `[Obsolete("The async APIs don't work, use the sync API instead.")]`; only `ProcessTestRunAttachmentsAsync` is a supported async-only method. |
+| `VsTestConsoleWrapper` | class | The default implementation. Constructed with the path to `vstest.console` and, optionally, a `ConsoleParameters`. |
+| `ConsoleParameters` | class | Configures how the `vstest.console` process is launched (see below). |
+| `DiscoveryEventsHandleConverter` | class | Adapter that lets an older `ITestDiscoveryEventsHandler` be used where an `ITestDiscoveryEventsHandler2` is required. |
+| `TransationLayerException` | class | Exception type thrown for TranslationLayer-specific failures. |
+
+The `ITranslationLayerRequestSender` / `IProcessManager` interfaces in the project are
+`internal` plumbing (socket request sender and process manager) and are not part of the
+public extension surface.
+
+#### Usage: driving the wrapper
+
+You point the wrapper at a `vstest.console` binary, then call `DiscoverTests` / `RunTests`,
+passing in your own event handler to receive results. A minimal end-to-end example (adapted
+from [`playground/TestPlatform.Playground/Program.cs`](../playground/TestPlatform.Playground/Program.cs)):
+
+```csharp
+// 'console' is the full path to vstest.console(.exe/.dll); 'sources' are the test DLLs.
+var consoleParameters = new ConsoleParameters
+{
+    LogFilePath = Path.Combine(here, "logs", "log.txt"),
+    TraceLevel = TraceLevel.Verbose,
+};
+var options = new TestPlatformOptions { CollectMetrics = true };
+
+// Instantiate the wrapper. The vstest.console process is started lazily on the first
+// operation; you may also call StartSession() explicitly to start it up front.
+IVsTestConsoleWrapper wrapper = new VsTestConsoleWrapper(console, consoleParameters);
+
+// Discover: 'discoveryHandler' is YOUR ITestDiscoveryEventsHandler(2) implementation.
+wrapper.DiscoverTests(sources, runSettings, options, testSessionInfo: null, discoveryHandler);
+
+// Run: 'runHandler' is YOUR ITestRunEventsHandler implementation. This runs by sources; you
+// can also run a specific set of TestCase objects that your discovery handler collected.
+wrapper.RunTests(sources, runSettings, options, testSessionInfo: null, runHandler);
+
+wrapper.EndSession();
+```
+
+The operations you can call on `IVsTestConsoleWrapper` are:
+
+- `StartSession()` - starts the `vstest.console` process and readies it for requests.
+- `EndSession()` - ends the session and stops the runner process. Also `CancelDiscovery()`,
+  `CancelTestRun()`, and `AbortTestRun()` to interrupt in-flight operations.
+- `InitializeExtensions(IEnumerable<string> pathToAdditionalExtensions)` - registers extra
+  extension DLLs (adapters, loggers, data collectors) by full path before discovery/execution.
+- `DiscoverTests(...)` - discovers tests in the given sources. Overloads accept an optional
+  `TestPlatformOptions` and `TestSessionInfo`, and report results through an
+  `ITestDiscoveryEventsHandler` (legacy) or `ITestDiscoveryEventsHandler2`.
+- `RunTests(...)` - runs tests, selected either by `sources` (assemblies) or by an explicit
+  list of `TestCase` objects. Overloads accept `TestPlatformOptions`, a `TestSessionInfo`
+  (to run against a pre-warmed test session), an `ITestRunEventsHandler`, and optionally an
+  `ITelemetryEventsHandler`.
+- `RunTestsWithCustomTestHost(...)` - same as `RunTests`, but the testhost process is
+  launched by a caller-supplied `ITestHostLauncher`. This is how IDEs attach a debugger to
+  the testhost or otherwise control how it is started.
+- `ProcessTestRunAttachmentsAsync(...)` (async only) - post-processes the `AttachmentSet`s
+  produced by a previous run, for example merging code-coverage files. Progress and
+  completion are reported through an `ITestRunAttachmentsProcessingEventsHandler`, and the
+  call honours a `CancellationToken`.
+
+#### Extension points: interfaces you implement
+
+These live in `Microsoft.VisualStudio.TestPlatform.ObjectModel.Client(.Interfaces)`. This is
+where you plug into the layer: your tool implements the relevant interface and passes an
+instance to the wrapper operation above; TestPlatform invokes it as the operation progresses.
+They all derive from `ITestMessageEventHandler`, which provides `HandleRawMessage(string)` and
+`HandleLogMessage(TestMessageLevel, string?)`.
+
+| Interface | Passed to | Key callbacks |
+| --- | --- | --- |
+| `ITestDiscoveryEventsHandler` | `DiscoverTests` (legacy overload) | `HandleDiscoveredTests`, `HandleDiscoveryComplete(long totalTests, ..., bool isAborted)` |
+| `ITestDiscoveryEventsHandler2` | `DiscoverTests` | `HandleDiscoveredTests`, `HandleDiscoveryComplete(DiscoveryCompleteEventArgs, ...)` (richer completion args) |
+| `ITestRunEventsHandler` | `RunTests`, `RunTestsWithCustomTestHost` | `HandleTestRunStatsChange`, `HandleTestRunComplete`, `LaunchProcessWithDebuggerAttached` |
+| `ITelemetryEventsHandler` | `RunTests` (telemetry overloads) | `HandleTelemetryEvent(TelemetryEvent)` |
+| `ITestRunAttachmentsProcessingEventsHandler` | `ProcessTestRunAttachmentsAsync` | `HandleProcessedAttachmentsChunk`, `HandleTestRunAttachmentsProcessingProgress`, `HandleTestRunAttachmentsProcessingComplete` |
+| `ITestHostLauncher` | `RunTestsWithCustomTestHost` | `IsDebug`, `LaunchTestHost(TestProcessStartInfo, ...)` |
+| `ITestHostLauncher2` : `ITestHostLauncher` | `RunTestsWithCustomTestHost` | adds `AttachDebuggerToProcess(int pid, ...)` for attaching to an already-running testhost |
+| `ITestHostLauncher3` : `ITestHostLauncher2` | `RunTestsWithCustomTestHost` | adds `AttachDebuggerToProcess(AttachDebuggerInfo, CancellationToken)` (carries the target framework so the correct debugger engine is used) |
+
+The launcher hierarchy is versioned rather than modified so that older consumers keep working:
+the wrapper upcasts the `ITestHostLauncher` it is given to `ITestHostLauncher2` / `3` when it
+needs the newer debugger-attach capabilities, and falls back gracefully when they are not
+implemented.
+
+#### Configuring the runner process (`ConsoleParameters`)
+
+`ConsoleParameters` is a usage-side configuration object that controls how the
+`vstest.console` process is started:
+
+- `EnvironmentVariables` / `InheritEnvironmentVariables` - environment for the runner process.
+  By default the entries are merged onto the inherited environment; set
+  `InheritEnvironmentVariables` to `false` to supply the full environment yourself.
+- `TraceLevel` and `LogFilePath` - diagnostic logging for the runner. The setter for
+  `LogFilePath` creates the target directory if needed and quotes the path.
+- The constructor also accepts an `IFileHelper`, allowing the file-system interactions to be
+  substituted (primarily for testing). `PortNumber` and `ParentProcessId` exist but are
+  `internal` and set by the wrapper, so they are not part of the public contract.
 
 ### .NET Implementation
 
 #### Architecture
-
-

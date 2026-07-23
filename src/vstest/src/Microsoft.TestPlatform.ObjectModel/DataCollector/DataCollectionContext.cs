@@ -36,9 +36,12 @@ public class DataCollectionContext
     public DataCollectionContext(TestCase? testCase)
     {
         TestCase = testCase;
-        // TODO: Comment says this ctor should never have been made public but it was added.
-        // This leaves a path where SessionId is null but the rest of the class doesn't handle it.
-        SessionId = null!;
+        // There is no session associated with an in-process data collection context that is
+        // created from a test case alone, so we use the empty session id sentinel to signify
+        // that the session is irrelevant in this context (matching the convention used by the
+        // test case and session event args).
+        SessionId = SessionId.Empty;
+        _hashCode = ComputeHashCode();
     }
 
     /// <summary>

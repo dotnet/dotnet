@@ -384,8 +384,8 @@
       <trans-unit id="PlatformArgumentHelp">
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
-      Valid values are x86, x64 and ARM.</source>
-        <target state="translated">--Platform|/Platform:&lt;Platform type&gt;
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
+        <target state="needs-review-translation">--Platform|/Platform:&lt;Platform type&gt;
       用于执行测试的目标平台体系结构。
    有效值为 x86、x64 和 ARM。</target>
         <note />
@@ -398,9 +398,9 @@
       <trans-unit id="FrameworkArgumentHelp">
         <source>--Framework|/Framework:&lt;Framework Version&gt;
       Target .Net Framework version to be used for test execution. 
-      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="translated">--Framework|/Framework:&lt;Framework Version&gt;
+        <target state="needs-review-translation">--Framework|/Framework:&lt;Framework Version&gt;
       用于执行测试的目标 .Net Framework 版本。
       有效值为 ".NETFramework,Version=v4.5.1".NETCoreApp,Version=v1.0" 等。
       其他支持的值为 Framework40、Framework45、FrameworkCore10 和 FrameworkUap10。</target>
@@ -864,18 +864,20 @@
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
         <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
-      在追责模式下运行测试。此选项有助于隔离导致测试主机崩溃的问题测试。
-      它会在当前目录中创建一个输出文件 "Sequence.xml"，
-      用于在崩溃之前捕获测试的执行顺序。
-      可以根据需要选择收集测试主机的进程转储。
-      选择收集转储时，默认情况下，将在崩溃时收集小型转储。
-      还可选择通过一些可选参数覆盖此默认行为:
-      CollectAlways - 若无崩溃则在退出时收集转储(true/false)
+      在追溯模式下运行测试。此选项有助于隔离导致测试主机故障的问题测试。
+      它会在当前目录中创建一个输出文件 "Sequence.xml",
+      用于在发生故障之前捕获测试的执行顺序。
+      你可以根据需要选择收集测试主机的进程转储。
+      选择收集转储时，默认情况下，将在发生故障时收集小型转储。
+      你还可选择通过一些可选参数覆盖此默认行为:
+      CollectAlways - 即使没有故障，也会在退出时收集转储(true/false)
       DumpType - 指定转储类型(小型/完整)。
+      在 Windows 上收集故障转储时，需要 procdump.exe 和 procdump64.exe 位于 PATH 中，或者位于 PROCDUMP_PATH 环境变量指定的目录中。可在以下位置下载工具: https://docs.microsoft.com/sysinternals/downloads/procdump。
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1167,16 +1169,6 @@
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">等待请求处理程序连接在 {0} 秒后超时。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">等待启动测试会话在 {0} 秒后超时。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">等待停止测试会话在 {0} 秒后超时。</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Microsoft.DotNet.Helix.JobMonitor;
 
 namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
@@ -19,8 +20,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         private readonly object _sync = new();
         private readonly List<AzureDevOpsTimelineRecord[]> _timelineResponses = [];
         private readonly HashSet<string> _previouslyProcessedJobs = new(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, int> _inProgressRunsByJobName = new(StringComparer.OrdinalIgnoreCase);
         private readonly Queue<Exception> _uploadFailures = [];
+        private readonly HashSet<(string JobName, string WorkItemName)> _recordedFailedTests
+            = new(FailedTestWorkItemComparer.Instance);
+        private readonly HashSet<(string JobName, string WorkItemName)> _uploadFailedTests
+            = new(FailedTestWorkItemComparer.Instance);
         private int _timelineCallCount;
         private int _nextTestRunId;
 
@@ -34,6 +38,13 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         public TaskCompletionSource UploadStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         public TaskCompletionSource UploadCompleted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         public Task UploadBlocker { get; set; } = Task.CompletedTask;
+
+        /// <summary>
+        /// When true, <see cref="UploadTestResultsAsync"/> waits on <see cref="UploadBlocker"/>
+        /// without observing the cancellation token, simulating an upload stuck in a
+        /// non-cancellable operation when the monitor is cancelled.
+        /// </summary>
+        public bool UploadBlockerIgnoresCancellation { get; set; }
 
         /// <summary>
         /// Number of times <see cref="GetTimelineRecordsAsync"/> has been called.
@@ -73,6 +84,36 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             return this;
         }
 
+        /// <summary>
+        /// Marks a (Helix job, work item) pair as having had failed test results recorded by
+        /// a prior monitor invocation (i.e. surfaced by <see cref="GetFailedTestWorkItemsAsync"/>).
+        /// Used to test the retry pass’s behavior of resubmitting work items that passed by
+        /// exit code but whose tests failed.
+        /// </summary>
+        public FakeAzureDevOpsService WithRecordedFailedTest(string helixJobName, string workItemName)
+        {
+            lock (_sync)
+            {
+                _recordedFailedTests.Add((helixJobName, workItemName));
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Configures <see cref="UploadTestResultsAsync"/> to report
+        /// <c>AllPassed = false</c> for the given (Helix job, work item) pair when the next
+        /// upload includes it. Used to test that the monitor marks work items as failed
+        /// based on their uploaded test results even when the work item passed by exit code.
+        /// </summary>
+        public FakeAzureDevOpsService WithFailedUpload(string helixJobName, string workItemName)
+        {
+            lock (_sync)
+            {
+                _uploadFailedTests.Add((helixJobName, workItemName));
+            }
+            return this;
+        }
+
         // IAzureDevOpsService implementation
         public Task<IReadOnlyList<AzureDevOpsTimelineRecord>> GetTimelineRecordsAsync(CancellationToken cancellationToken)
         {
@@ -96,46 +137,70 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             }
         }
 
-        public Task<int> CreateTestRunAsync(string name, string helixJobName, CancellationToken cancellationToken)
+        public Task<IReadOnlyDictionary<string, IReadOnlySet<string>>> GetFailedTestWorkItemsAsync(CancellationToken cancellationToken)
+        {
+            lock (_sync)
+            {
+                var result = new Dictionary<string, IReadOnlySet<string>>(StringComparer.OrdinalIgnoreCase);
+                foreach (IGrouping<string, (string JobName, string WorkItemName)> group in
+                    _recordedFailedTests.GroupBy(p => p.JobName, StringComparer.OrdinalIgnoreCase))
+                {
+                    result[group.Key] = new HashSet<string>(
+                        group.Select(p => p.WorkItemName),
+                        StringComparer.OrdinalIgnoreCase);
+                }
+                return Task.FromResult<IReadOnlyDictionary<string, IReadOnlySet<string>>>(result);
+            }
+        }
+
+        public Task<int> CreateTestRunAsync(string name, CancellationToken cancellationToken)
         {
             lock (_sync)
             {
                 CreateTestRunCallCount++;
 
-                // Idempotent: if a run for this helix job is in-progress, reuse it
-                if (_inProgressRunsByJobName.TryGetValue(helixJobName, out int existingId))
-                {
-                    return Task.FromResult(existingId);
-                }
-
+                // Matches the real AzureDevOpsService: every call creates a brand new in-progress
+                // run. The service never reuses an existing run, so a transient upload failure that
+                // re-enters the retry loop leaves an orphaned (untagged) run behind — exactly the
+                // crash-resilience behavior described in the design.
                 int id = Interlocked.Increment(ref _nextTestRunId);
                 CreatedTestRuns.Add(name);
-                _inProgressRunsByJobName[helixJobName] = id;
                 return Task.FromResult(id);
             }
         }
 
-        public Task CompleteTestRunAsync(int testRunId, CancellationToken cancellationToken)
+        public Task CompleteTestRunAsync(int testRunId, string helixJobName, IReadOnlyCollection<string> failedWorkItems, CancellationToken cancellationToken)
         {
             lock (_sync)
             {
                 CompletedTestRunIds.Add(testRunId);
-
-                string keyToRemove = null;
-                foreach (var kvp in _inProgressRunsByJobName)
+                foreach (string workItemName in failedWorkItems ?? [])
                 {
-                    if (kvp.Value == testRunId) { keyToRemove = kvp.Key; break; }
+                    if (!string.IsNullOrEmpty(workItemName))
+                    {
+                        _recordedFailedTests.Add((helixJobName, workItemName));
+                    }
                 }
-
-                if (keyToRemove != null) _inProgressRunsByJobName.Remove(keyToRemove);
                 return Task.CompletedTask;
             }
         }
 
-        public async Task<int> UploadTestResultsAsync(int testRunId, IReadOnlyList<WorkItemTestResults> results, CancellationToken cancellationToken)
+        public async Task<IReadOnlyDictionary<(string JobName, string WorkItemName), TestResultUploadSummary>> UploadTestResultsAsync(
+            int testRunId,
+            IReadOnlyList<WorkItemTestResults> results,
+            CancellationToken cancellationToken)
         {
             UploadStarted.TrySetResult();
-            await UploadBlocker.WaitAsync(cancellationToken);
+            if (UploadBlockerIgnoresCancellation)
+            {
+                await UploadBlocker;
+            }
+            else
+            {
+                await UploadBlocker.WaitAsync(cancellationToken);
+            }
+
+            var summaries = new Dictionary<(string JobName, string WorkItemName), TestResultUploadSummary>();
 
             lock (_sync)
             {
@@ -158,10 +223,31 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
                     UploadedJobNames.Add(jobName);
                     _previouslyProcessedJobs.Add(jobName);
                 }
+
+                foreach (WorkItemTestResults result in results)
+                {
+                    bool allPassed = !_uploadFailedTests.Contains((result.JobName, result.WorkItemName));
+                    summaries[(result.JobName, result.WorkItemName)] =
+                        new TestResultUploadSummary(allPassed, result.TestResultFiles.Count);
+                }
             }
 
             UploadCompleted.TrySetResult();
-            return results.Sum(static result => result.TestResultFiles.Count);
+            return summaries;
+        }
+
+        private sealed class FailedTestWorkItemComparer : IEqualityComparer<(string JobName, string WorkItemName)>
+        {
+            public static readonly FailedTestWorkItemComparer Instance = new();
+
+            public bool Equals((string JobName, string WorkItemName) x, (string JobName, string WorkItemName) y)
+                => StringComparer.OrdinalIgnoreCase.Equals(x.JobName, y.JobName)
+                    && StringComparer.OrdinalIgnoreCase.Equals(x.WorkItemName, y.WorkItemName);
+
+            public int GetHashCode((string JobName, string WorkItemName) obj)
+                => HashCode.Combine(
+                    obj.JobName is null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(obj.JobName),
+                    obj.WorkItemName is null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(obj.WorkItemName));
         }
     }
 }

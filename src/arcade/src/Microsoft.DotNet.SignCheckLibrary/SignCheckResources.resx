@@ -162,11 +162,26 @@
   <data name="DetailSignedStrongName" xml:space="preserve">
     <value>StrongName signed: {0}</value>
   </data>
-  <data name="DetailSkipped" xml:space="preserve">
-    <value>Skipped</value>
+  <data name="DetailSkippedFormat" xml:space="preserve">
+    <value>Skipped ({0})</value>
   </data>
-  <data name="DetailSkippedUnsupportedFileType" xml:space="preserve">
-    <value>Skipped (unsupported file type)</value>
+  <data name="SkipDetailArchiveInnerFormat" xml:space="preserve">
+    <value>{0}; {1}</value>
+  </data>
+  <data name="SkipReasonUnsupportedFileType" xml:space="preserve">
+    <value>unsupported file type</value>
+  </data>
+  <data name="SkipReasonNoPgpSignature" xml:space="preserve">
+    <value>no PGP signature available to verify</value>
+  </data>
+  <data name="SkipContentsVerified" xml:space="preserve">
+    <value>archive contents recursively verified</value>
+  </data>
+  <data name="SkipContentsNoRecursive" xml:space="preserve">
+    <value>archive contents not verified — run with --recursive to verify nested files</value>
+  </data>
+  <data name="SkipContentsPlatformUnsupported" xml:space="preserve">
+    <value>archive contents not verified — not supported on this platform</value>
   </data>
   <data name="DetailVerificationError" xml:space="preserve">
     <value>Verification error: {0}</value>

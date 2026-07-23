@@ -361,7 +361,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             out TestInputOutputInfo output,
             ArrayBuilder<BoundPatternBinding> bindings)
         {
-            Debug.Assert(!pattern.IsUnionMatching);
+            Debug.Assert(pattern.UnionMatchingMode == UnionMatchingMode.None);
             Debug.Assert(input.UnionValue is null ?
                 (pattern.HasErrors || pattern.InputType.Equals(input.DagTemp.Type, TypeCompareKind.AllIgnoreOptions) || pattern.InputType.IsErrorType()) :
                 (pattern.InputType.SpecialType == SpecialType.System_Object));
@@ -4125,7 +4125,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     static void assemble(SequenceTests toAssemble, ArrayBuilder<Tests> tests)
                     {
                         var length = toAssemble.RemainingTests.Length;
-                        var newSequence = ArrayBuilder<Tests>.GetInstance(length, null!);
+                        var newSequence = ArrayBuilder<Tests>.GetInstance(length, fillWithValue: null!);
                         for (int i = length - 1; i >= 0; i--)
                         {
                             newSequence[i] = tests.Pop();

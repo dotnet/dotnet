@@ -96,7 +96,8 @@ After packaging changes, regenerate `eng/expected-nupkg-file-counts.json` and `e
 ### Agentic Workflows (gh-aw)
 
 - Use `gh aw secrets set` to manage secrets, NOT `gh secret set`. Plain `gh secret set` creates the repo secret but gh-aw can't see it.
-- Two secrets needed: `COPILOT_GITHUB_TOKEN` (Copilot API access) and `GH_AW_GITHUB_TOKEN` (repo interactions).
+- **Auth is company-token first — no long-lived personal PATs.** Copilot inference uses the `copilot-requests: write` permission (billed to the org Copilot subscription), so `COPILOT_GITHUB_TOKEN` is no longer referenced by any compiled workflow. Write-backs use an org-owned GitHub App (`APP_ID` variable + `APP_PRIVATE_KEY` secret) with `ignore-if-missing: true`, falling back to `GITHUB_TOKEN` until an org admin provisions it. See [`.github/workflows/README.md`](.github/workflows/README.md) for the full secrets table and rationale (the Microsoft OSS enterprise now 403s fine-grained PATs older than 8 days).
+- `lockdown:` has been removed repo-wide (deprecated upstream); workflows keep `min-integrity: none` and use the default `GITHUB_TOKEN` for MCP reads.
 - Workflow source files are `.md` in `.github/workflows/`. Compiled `.lock.yml` files are generated — don't hand-edit them.
 - To recompile after editing a workflow: `gh aw compile` from the repo root.
 - `.github/*` and `AGENTS.md` are excluded from CI path triggers — editing workflows won't trigger a full build.

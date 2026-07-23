@@ -16,13 +16,21 @@ public partial class PRCreator
 {
     private readonly GitClient _gitClient;
     private readonly Pipelines _pipeline;
+    private readonly string _identifier;
     private const string BuildLink = "https://dev.azure.com/dnceng/internal/_build/results?buildId=";
     private const string DefaultLicenseBaselineContent = "{\n  \"files\": []\n}";
     private const string UpdatedFilePrefix = "updated";
-    public PRCreator(GitClient gitClient, Pipelines pipeline)
+
+    // GitHub's git data API is eventually consistent: a branch ref read immediately after it is
+    // written can still report "not found". Poll a handful of times before treating a missing
+    // branch as a genuine failure.
+    private const int BranchCreationVerificationAttempts = 5;
+    private static readonly TimeSpan BranchCreationVerificationDelay = TimeSpan.FromSeconds(2);
+    public PRCreator(GitClient gitClient, Pipelines pipeline, string? identifier = null)
     {
         _gitClient = gitClient;
         _pipeline = pipeline;
+        _identifier = string.IsNullOrWhiteSpace(identifier) ? string.Empty : identifier.Trim();
     }
 
     [GeneratedRegex("-+")]
@@ -280,7 +288,7 @@ public partial class PRCreator
         }
         else
         {
-            await CreatePullRequestAsync(newBranchName, commitFiles, commitMessage, targetBranch, title, pullRequestBody);
+            await CreatePullRequestAsync(newBranchName, commitFiles, commitMessage, targetBranch, title, pullRequestBody, originalFilesDirectory);
         }
     }
 
@@ -335,10 +343,22 @@ public partial class PRCreator
         Log.LogInformation($"Updated existing pull request #{pullRequestId}. URL: {_gitClient.BuildPullRequestHtmlUrl(pullRequestId)}");
     }
 
-    private async Task CreatePullRequestAsync(string newBranchName, List<GitFile> commitFiles, string commitMessage, string targetBranch, string title, string body)
+    private async Task CreatePullRequestAsync(string newBranchName, List<GitFile> commitFiles, string commitMessage, string targetBranch, string title, string body, string originalFilesDirectory)
     {
         await EnsureHeadBranchAsync(newBranchName, targetBranch);
         await _gitClient.Repo.CommitFilesWithNoCloningAsync(commitFiles, _gitClient.RepoUri, newBranchName, commitMessage);
+
+        // Safety net: never open a no-diff PR. Even though ComputeChangeSet found differences,
+        // the commit can still land an empty tree (byte-identical to target) — most commonly when
+        // another baseline PR updated the target branch with the equivalent content between when
+        // this run computed its change set and when it committed. Verify real Git state before
+        // creating the PR and clean up the branch we created if there is nothing to merge.
+        if (!await CommitIntroducesTargetChangesAsync(commitFiles, targetBranch, originalFilesDirectory))
+        {
+            Log.LogInformation("No effective changes after commit; skipping PR creation.");
+            await _gitClient.Repo.DeleteBranchAsync(_gitClient.RepoUri, newBranchName);
+            return;
+        }
 
         var newPullRequest = new PullRequest
         {
@@ -354,6 +374,49 @@ public partial class PRCreator
         // update path uses, so both code paths log a clickable browser link.
         int pullRequestId = ParsePullRequestIdFromUrl(pullRequest.Url);
         Log.LogInformation($"Created pull request. URL: {_gitClient.BuildPullRequestHtmlUrl(pullRequestId)}");
+    }
+
+    // Determines whether committing `commitFiles` actually changed the repository tree, by checking
+    // each file against the current target branch content. CommitFilesWithNoCloningAsync writes
+    // these files on top of the head branch, which EnsureHeadBranchAsync had just reset to
+    // `targetBranch`, so the head tree equals the target tree with `commitFiles` applied. If none
+    // of the files change the current target content, the commit is empty and a PR would show no
+    // diff. We re-read `targetBranch` (which this tool never writes to) rather than the freshly
+    // pushed head branch, so the check is immune to the GitHub read-after-write lag that affects
+    // newly created/updated refs.
+    private async Task<bool> CommitIntroducesTargetChangesAsync(List<GitFile> commitFiles, string targetBranch, string desiredPath)
+    {
+        List<TreeFile> currentTarget = await FetchOriginalTreeItemsAsync(targetBranch, desiredPath);
+        var targetByPath = currentTarget.ToDictionary(f => f.RelativePath, f => f.Content, StringComparer.Ordinal);
+        string prefix = desiredPath.Replace('\\', '/').TrimEnd('/') + "/";
+
+        foreach (GitFile file in commitFiles)
+        {
+            string relativePath = file.FilePath.StartsWith(prefix, StringComparison.Ordinal)
+                ? file.FilePath[prefix.Length..]
+                : file.FilePath;
+            bool existsInTarget = targetByPath.TryGetValue(relativePath, out string? targetContent);
+
+            if (file.Operation == GitFileOperation.Delete)
+            {
+                // A delete is a real change only if the file still exists on target.
+                if (existsInTarget)
+                {
+                    return true;
+                }
+            }
+            // file.Content is the value GitFile's constructor stored — i.e. exactly the bytes that
+            // will be committed (GitFile folds Environment.NewLine to '\n' and ensures a trailing
+            // '\n'; note that on the Linux CI agent Environment.NewLine is "\n", so CRLF is left
+            // intact). Comparing it against the current target blob therefore detects a real change
+            // and, conversely, only reports "no change" when the commit would genuinely be empty.
+            else if (!existsInTarget || !string.Equals(targetContent, file.Content, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Both GitHub (.../pulls/<id>) and AzDO (.../pullRequests/<id>) API URLs end with the PR id,
@@ -386,9 +449,18 @@ public partial class PRCreator
 
         foreach (var (path, modifiedItem) in modifiedByPath)
         {
-            if (!originalByPath.TryGetValue(path, out var originalItem) || originalItem.Content != modifiedItem.Content)
+            // Build the file exactly as it will be committed. DarcLib's GitFile constructor folds
+            // Environment.NewLine to '\n' and always appends a trailing '\n' (so empty content
+            // becomes "\n"); the committed bytes can therefore differ from the raw content. Detect
+            // changes by comparing the original against the modified content in that same committed
+            // form, otherwise a 0-byte baseline (whose committed form is "\n") is perpetually
+            // re-written to "\n", producing a spurious no-op diff on every run. Real whitespace/
+            // line-ending differences are still captured because both sides are normalized identically.
+            GitFile candidate = new(prefix + path, modifiedItem.Content);
+            if (!originalByPath.TryGetValue(path, out var originalItem)
+                || new GitFile(prefix + path, originalItem.Content).Content != candidate.Content)
             {
-                changes.Add(new GitFile(prefix + path, modifiedItem.Content));
+                changes.Add(candidate);
             }
         }
 
@@ -424,7 +496,32 @@ public partial class PRCreator
         // branch (it sends a request with a null newObjectId, which the server accepts
         // as a no-op). If we don't fail here, the subsequent CommitFilesWithNoCloningAsync gives
         // a confusing "couldn't find remote ref" error.
-        if (!await _gitClient.Repo.DoesBranchExistAsync(_gitClient.RepoUri, headBranch))
+        //
+        // The verification must tolerate GitHub's read-after-write eventual consistency: a single
+        // immediate DoesBranchExistAsync probe frequently returns false for a branch that was in
+        // fact created, which previously failed this step spuriously. Poll a few times before
+        // giving up. In the genuine AzDO no-op case the branch never appears, so this still throws;
+        // in the GitHub read-after-write-lag case it appears within a retry or two.
+        bool branchExists = false;
+        for (int attempt = 1; attempt <= BranchCreationVerificationAttempts; attempt++)
+        {
+            if (await _gitClient.Repo.DoesBranchExistAsync(_gitClient.RepoUri, headBranch))
+            {
+                branchExists = true;
+                break;
+            }
+
+            if (attempt < BranchCreationVerificationAttempts)
+            {
+                Log.LogDebug(
+                    $"Branch '{headBranch}' not yet visible on remote " +
+                    $"(attempt {attempt}/{BranchCreationVerificationAttempts}); " +
+                    $"retrying in {BranchCreationVerificationDelay.TotalSeconds}s.");
+                await Task.Delay(BranchCreationVerificationDelay);
+            }
+        }
+
+        if (!branchExists)
         {
             throw new InvalidOperationException(
                 $"Branch '{headBranch}' was not created on '{_gitClient.RepoUri}' from base '{targetBranch}'. " +
@@ -439,8 +536,21 @@ public partial class PRCreator
     private string BuildHeadBranchName(string targetBranch)
     {
         string sanitized = SanitizeForBranchName(targetBranch);
-        string hash = ShortHash($"{_pipeline}|{targetBranch}");
-        return $"pr-baseline-{_pipeline.ToString().ToLowerInvariant()}-{sanitized}-{hash}";
+
+        // When no identifier is supplied, preserve the exact historical branch name and hash
+        // input so open PRs from single-job pipelines (sdk, license) are undisturbed.
+        if (_identifier.Length == 0)
+        {
+            string hashNoIdentifier = ShortHash($"{_pipeline}|{targetBranch}");
+            return $"pr-baseline-{_pipeline.ToString().ToLowerInvariant()}-{sanitized}-{hashNoIdentifier}";
+        }
+
+        // With an identifier, fold it into both the readable branch name and the hash so that
+        // multiple jobs of the same pipeline targeting the same branch (e.g. the reproducibility
+        // pipeline's SourceBuilt vs Msft jobs) resolve to distinct branches and therefore distinct PRs.
+        string sanitizedIdentifier = SanitizeForBranchName(_identifier);
+        string hash = ShortHash($"{_pipeline}|{_identifier}|{targetBranch}");
+        return $"pr-baseline-{_pipeline.ToString().ToLowerInvariant()}-{sanitizedIdentifier}-{sanitized}-{hash}";
     }
 
     private static string SanitizeForBranchName(string s)

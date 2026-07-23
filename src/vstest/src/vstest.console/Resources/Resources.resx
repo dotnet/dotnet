@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -276,7 +276,7 @@
   <data name="FrameworkArgumentHelp" xml:space="preserve">
     <value>--Framework|/Framework:&lt;Framework Version&gt;
       Target .Net Framework version to be used for test execution. 
-      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</value>
   </data>
   <data name="FrameworkVersionRequired" xml:space="preserve">
@@ -446,7 +446,7 @@
   <data name="PlatformArgumentHelp" xml:space="preserve">
     <value>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
-      Valid values are x86, x64 and ARM.</value>
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</value>
   </data>
   <data name="PlatformTypeRequired" xml:space="preserve">
     <value>The /Platform argument requires the target platform type for the test run to be provided.   Example:  /Platform:x86</value>
@@ -696,6 +696,7 @@
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</value>
@@ -830,12 +831,6 @@
   </data>
   <data name="RequestHandlerConnectionTimedOut" xml:space="preserve">
     <value>Waiting for request handler connection timed out after {0} seconds.</value>
-  </data>
-  <data name="StartTestSessionTimedOut" xml:space="preserve">
-    <value>Waiting for start test session timed out after {0} seconds.</value>
-  </data>
-  <data name="StopTestSessionTimedOut" xml:space="preserve">
-    <value>Waiting for stop test session timed out after {0} seconds.</value>
   </data>
   <data name="ErrorHostingCommunicationChannel" xml:space="preserve">
     <value>Error hosting communication channel.</value>

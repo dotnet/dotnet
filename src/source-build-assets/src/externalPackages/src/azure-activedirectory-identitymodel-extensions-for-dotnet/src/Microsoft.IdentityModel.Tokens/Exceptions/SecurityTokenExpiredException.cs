@@ -19,11 +19,6 @@ namespace Microsoft.IdentityModel.Tokens
         const string _ExpiresKey = _Prefix + nameof(Expires);
 
         /// <summary>
-        /// Gets or sets the Expires value that created the validation exception. This value is always in UTC.
-        /// </summary>
-        public DateTime Expires { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of  <see cref="SecurityTokenExpiredException"/>
         /// </summary>
         public SecurityTokenExpiredException()
@@ -73,6 +68,11 @@ namespace Microsoft.IdentityModel.Tokens
                 }
             }
         }
+
+        /// <summary>
+        /// Gets or sets the Expires value that created the validation exception. This value is always in UTC.
+        /// </summary>
+        public DateTime Expires { get; set; }
 
         /// <inheritdoc/>
 #if NET8_0_OR_GREATER

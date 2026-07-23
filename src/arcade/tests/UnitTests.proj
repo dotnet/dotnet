@@ -24,6 +24,8 @@
          instead of the in-build Python reporter. The corresponding monitor job is
          configured in the Arcade pipeline YAML. -->
     <EnableHelixJobMonitor>true</EnableHelixJobMonitor>
+
+    <EnableShowHelixQueueStats>true</EnableShowHelixQueueStats>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,12 +54,29 @@
   <ItemGroup>
     <XUnitProject Include="..\src\**\*.Tests.csproj"/>
 
-    <!-- XUnit v3 tests are self-hosting executables and use XUnitV3Project instead -->
+    <!-- xUnit v3 tests are self-hosting MTP executables and use MTPProject instead -->
     <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+    <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssembly.Tests.csproj"/>
+
+    <!-- Arcade SDK validation tests spawn full build.ps1/build.sh sub-builds against the newly
+         produced SDK and must run on a build agent with a local package feed; they are intended to
+         be executed directly by the validation pipeline stage, not submitted to Helix. -->
+    <XUnitProject Remove="..\src\Microsoft.DotNet.Arcade.Validation.Tests\Microsoft.DotNet.Arcade.Validation.Tests.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <XUnitV3Project Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+    <MTPProject Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+    
+    <!--
+      The assembly-level [ConditionalAssembly] in this project always evaluates to false,
+      tagging every test with the 'category=failing' trait. Filter that trait out so the
+      deliberately failing test is skipped on Helix; ignore the MTP "zero tests ran" exit
+      code (8) since no tests run after the filter. This validates that the attribute is
+      actually applied to all tests in the assembly.
+    -->
+    <MTPProject Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssembly.Tests.csproj">
+      <Arguments>--filter-not-trait "category=failing" --ignore-exit-code 8</Arguments>
+    </MTPProject>
   </ItemGroup>
 
   <ItemGroup>

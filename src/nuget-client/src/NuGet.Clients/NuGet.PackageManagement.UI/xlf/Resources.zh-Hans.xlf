@@ -112,19 +112,9 @@
         <target state="translated">参数不能为 null 或为空。</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">考虑将此项目的 NuGet 程序包管理格式从 "packages.config" 迁移到 "PackageReference"。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">此解决方案中缺少某些 NuGet 程序包。单击可从联机程序包源中还原。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AskForUpdateMessage">
-        <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">新版本的 NuGet 包管理器可用。</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -462,11 +452,6 @@
         <target state="translated">举报不良信息</target>
         <note />
       </trans-unit>
-      <trans-unit id="IgnoreUpgrade">
-        <source>Ignore for now</source>
-        <target state="translated">暂时忽略</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImageCaption_HelpIcon">
         <source>Help icon</source>
         <target state="translated">“帮助”图标</target>
@@ -752,11 +737,6 @@
         <target state="translated">{0} 许可证</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">不再显示</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">了解安装选项</target>
@@ -765,16 +745,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">了解卸载选项</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">为什么应进行迁移?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">立即迁移</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">
@@ -897,11 +867,6 @@
         <target state="translated">还原(_R)</target>
         <note />
       </trans-unit>
-      <trans-unit id="ShowDetails">
-        <source>Show Details</source>
-        <target state="translated">显示详细信息</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
 Error: {1}</source>
@@ -932,12 +897,12 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
-        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
         <target state="translated">指定的名称已添加到可用程序包名称的列表中。请提供唯一的名称。</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
-        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
         <target state="translated">指定的源已添加到可用程序包源的列表中。请提供唯一的源。</target>
         <note />
       </trans-unit>
@@ -1047,7 +1012,7 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="Text_NoReadme">
-        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
         <target state="translated">没有适用于所选包版本的自述文件。有关详细信息，请访问 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)。</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
@@ -1282,8 +1247,8 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
-        <source>Please follow simple instructions from {0} to go back to previous state.</source>
-        <target state="translated">请按照 {0} 的简单说明返回到以前的状态。</target>
+        <source>Follow the instructions at {0} to return to the previous state.</source>
+        <target state="translated">按照 {0} 中的说明返回到上一个状态。</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

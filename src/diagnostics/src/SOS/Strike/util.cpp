@@ -3810,7 +3810,7 @@ public:
 HRESULT LoadClrDebugDll(void)
 {
     _ASSERTE(g_pRuntime != nullptr);
-    HRESULT hr = g_pRuntime->GetClrDataProcess(IRuntime::ClrDataProcessFlags::None, &g_clrData);
+    HRESULT hr = g_pRuntime->GetClrDataProcess(IRuntime::ClrDataProcessFlags::UseCDac, &g_clrData);
     if (FAILED(hr))
     {
         g_clrData = GetClrDataFromDbgEng();
@@ -4001,83 +4001,6 @@ HRESULT GetMTOfObject(TADDR obj, TADDR *mt)
 
     return hr;
 }
-
-#ifndef FEATURE_PAL
-
-StressLogMem::~StressLogMem ()
-{
-    MemRange * range = list;
-
-    while (range)
-    {
-        MemRange * temp = range->next;
-        delete range;
-        range = temp;
-    }
-}
-
-bool StressLogMem::Init (ULONG64 stressLogAddr, IDebugDataSpaces* memCallBack)
-{
-    size_t ThreadStressLogAddr = NULL;
-    HRESULT hr = memCallBack->ReadVirtual(UL64_TO_CDA(stressLogAddr + offsetof (StressLog, logs)),
-            &ThreadStressLogAddr, sizeof (ThreadStressLogAddr), 0);
-    if (hr != S_OK)
-    {
-        return false;
-    }
-
-    while(ThreadStressLogAddr != NULL)
-    {
-        size_t ChunkListHeadAddr = NULL;
-        hr = memCallBack->ReadVirtual(TO_CDADDR(ThreadStressLogAddr + ThreadStressLog::OffsetOfListHead ()),
-            &ChunkListHeadAddr, sizeof (ChunkListHeadAddr), 0);
-        if (hr != S_OK || ChunkListHeadAddr == NULL)
-        {
-            return false;
-        }
-
-        size_t StressLogChunkAddr = ChunkListHeadAddr;
-
-        do
-        {
-            AddRange (StressLogChunkAddr, sizeof (StressLogChunk));
-            hr = memCallBack->ReadVirtual(TO_CDADDR(StressLogChunkAddr + offsetof (StressLogChunk, next)),
-                &StressLogChunkAddr, sizeof (StressLogChunkAddr), 0);
-            if (hr != S_OK)
-            {
-                return false;
-            }
-            if (StressLogChunkAddr == NULL)
-            {
-                return true;
-            }
-        } while (StressLogChunkAddr != ChunkListHeadAddr);
-
-        hr = memCallBack->ReadVirtual(TO_CDADDR(ThreadStressLogAddr + ThreadStressLog::OffsetOfNext ()),
-            &ThreadStressLogAddr, sizeof (ThreadStressLogAddr), 0);
-        if (hr != S_OK)
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool StressLogMem::IsInStressLog (ULONG64 addr)
-{
-    MemRange * range = list;
-    while (range)
-    {
-        if (range->InRange (addr))
-            return true;
-        range = range->next;
-    }
-
-    return false;
-}
-
-#endif // !FEATURE_PAL
 
 unsigned int Output::g_bSuppressOutput = 0;
 unsigned int Output::g_Indent = 0;
@@ -5337,7 +5260,7 @@ WString DmlEscape(const WString &input)
     const WCHAR *str = input.c_str();
     size_t len = input.length();
     WString result;
-    
+
     for (size_t i = 0; i < len; i++)
     {
         // Ampersand must be escaped FIRST to avoid double-escaping
@@ -5361,7 +5284,7 @@ WString DmlEscape(const WString &input)
             result += temp;
         }
     }
-    
+
     return result;
 }
 

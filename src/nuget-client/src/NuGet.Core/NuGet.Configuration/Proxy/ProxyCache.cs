@@ -27,7 +27,12 @@ namespace NuGet.Configuration
 
         // It's not likely that http proxy settings are set in machine wide settings,
         // so not passing machine wide settings to Settings.LoadDefaultSettings() should be fine.
-        private static readonly Lazy<ProxyCache> _instance = new Lazy<ProxyCache>(() => FromDefaultSettings());
+        private static Lazy<ProxyCache> _instance = new Lazy<ProxyCache>(() => FromDefaultSettings());
+
+        static ProxyCache()
+        {
+            StaticState.StartMSBuildRestoreTasks += ResetCache;
+        }
 
         private static ProxyCache FromDefaultSettings()
         {
@@ -37,6 +42,13 @@ namespace NuGet.Configuration
         }
 
         public static ProxyCache Instance => _instance.Value;
+
+        /// <summary>
+        /// Re-reads proxy settings (the <c>http_proxy</c> family of environment variables and nuget.config) by
+        /// discarding the cached instance, so a process reused across builds observes the current proxy
+        /// configuration and does not retain previously cached proxy credentials.
+        /// </summary>
+        internal static void ResetCache() => _instance = new Lazy<ProxyCache>(() => FromDefaultSettings());
 
         public Guid Version { get; private set; } = Guid.NewGuid();
 

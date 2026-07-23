@@ -650,7 +650,7 @@ public abstract class PrimitiveCollectionsQueryTestBase<TFixture>(TFixture fixtu
     }
 
     [Fact]
-    public virtual Task Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping()
+    public virtual Task Parameter_collection_Count_with_huge_number_of_values_over_2_operations_same_parameter_different_property()
     {
         if (NumberOfValuesForHugeParameterCollectionTests is null)
         {
@@ -660,9 +660,6 @@ public abstract class PrimitiveCollectionsQueryTestBase<TFixture>(TFixture fixtu
         var extra = Enumerable.Range(1000, (int)NumberOfValuesForHugeParameterCollectionTests / 3);
         var ids = new[] { 2, 999 };
 
-        // Id will have a different type mapping here.
-        // Very specific, kind of fragile, but at least something.
-        // More info efcore#37185.
         return AssertQuery(ss => ss.Set<PrimitiveCollectionsEntity>()
             .Where(c => ids.Count(i => i > c.Id) > 0)
             .Where(c => extra.Count(i => i > c.Id) > 0)
@@ -825,7 +822,7 @@ public abstract class PrimitiveCollectionsQueryTestBase<TFixture>(TFixture fixtu
     }
 
     [Fact]
-    public virtual async Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_type_mapping()
+    public virtual async Task Parameter_collection_of_ints_Contains_int_with_huge_number_of_values_over_2_operations_same_parameter_different_property()
     {
         if (NumberOfValuesForHugeParameterCollectionTests is null)
         {
@@ -835,9 +832,7 @@ public abstract class PrimitiveCollectionsQueryTestBase<TFixture>(TFixture fixtu
         var extra = Enumerable.Range(10, (int)NumberOfValuesForHugeParameterCollectionTests / 3).Append(1);
         var ints = new[] { 10, 999 };
 
-        // Id will have a different type mapping here.
-        // Very specific, kind of fragile, but at least something.
-        // More info efcore#37185.
+        // Reusing the same large collection across predicates summed over occurrences triggers fallback; see #37185.
         await AssertQuery(ss => ss.Set<PrimitiveCollectionsEntity>()
             .Where(c => ints.Contains(c.Int))
             .Where(c => extra.Contains(c.Int))
@@ -1128,6 +1123,20 @@ public abstract class PrimitiveCollectionsQueryTestBase<TFixture>(TFixture fixtu
     public virtual Task Contains_with_MemoryExtensions_with_null_comparer()
         => AssertQuery(
             ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => MemoryExtensions.Contains(new[] { 10, 999 }, c.Int, comparer: null)));
+
+    // .NET 11 first-class spans caused MemoryExtensions.Min to get resolved instead of Enumerable.Min.
+    // The following tests that the various overloads are all supported.
+    [Fact]
+    public virtual Task Min_on_MemoryExtensions()
+        => AssertQuery(
+            ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => MemoryExtensions.Min(new[] { 30, c.Int }) == 30));
+
+    // .NET 11 first-class spans caused MemoryExtensions.Max to get resolved instead of Enumerable.Max.
+    // The following tests that the various overloads are all supported.
+    [Fact]
+    public virtual Task Max_on_MemoryExtensions()
+        => AssertQuery(
+            ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => MemoryExtensions.Max(new[] { 30, c.Int }) == 30));
 
     [Fact]
     public virtual Task Column_collection_Count_method()

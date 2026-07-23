@@ -9,6 +9,15 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
     internal static class DefaultValues
     {
         /// <summary>
+        /// Maximum size of an MSI in bytes.
+        /// </summary>
+        /// <remarks>
+        /// Workload MSIs are distributed in NuGet packages and cannot exceed the maximum size of a NuGet package (250 MB). The limit
+        /// is set to 245 MB to account for package metadata, signatures, etc.
+        /// </remarks>
+        public const int MaxMsiSize = 256901120;
+
+        /// <summary>
         /// Prefix used in Visual Studio for SWIX based package group.
         /// </summary>
         public const string PackageGroupPrefix = "PackageGroup";
@@ -58,5 +67,49 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
         /// A value indicating that the SWIX project creates an MSI package for a workload set.
         /// </summary>
         public static readonly string PackageTypeMsiWorkloadSet = "msi-workload-set";
+
+        /// <summary>
+        /// A value indicating the MSI represents a workload manifest.
+        /// </summary>
+        public static readonly string ManifestMsi = "manifest";
+
+        /// <summary>
+        /// A value indicating the MSI represents a workload pack.
+        /// </summary>
+        public static readonly string WorkloadPackMsi = "pack";
+
+        /// <summary>
+        /// A value indicating the MSI represents a workload set.
+        /// </summary>
+        public static readonly string WorkloadSetMsi = "workload-set";
+
+        /// <summary>
+        /// A value indicating the MSI represents a workload pack group.
+        /// </summary>
+        public static readonly string WorkloadPackGroupMsi = "pack-group";
+
+        /// <summary>
+        /// Default values specific to SWIX authoring.
+        /// </summary>
+        internal static class Swix
+        {
+            public static readonly string Yes = "yes";
+
+            public static readonly string No = "no";
+        }
+
+        internal static class Wix
+        {
+            /// <summary>
+            /// Default LCID value for the ProductLanguage property.
+            /// </summary>
+            public const string Language = "1033";
+
+            /// <summary>
+            /// Default preprocessor variable to use for substituing File@Source when harvesting a directory with Heat.
+            /// </summary>
+            public const string SourceVariableName = "SourceDir";
+        }
+
     }
 }

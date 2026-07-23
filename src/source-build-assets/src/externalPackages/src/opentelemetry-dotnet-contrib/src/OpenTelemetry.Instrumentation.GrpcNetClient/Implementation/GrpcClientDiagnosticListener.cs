@@ -3,22 +3,15 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using OpenTelemetry.Context.Propagation;
-using OpenTelemetry.Internal;
 using OpenTelemetry.Trace;
 
 namespace OpenTelemetry.Instrumentation.GrpcNetClient.Implementation;
 
 internal sealed class GrpcClientDiagnosticListener : ListenerHandler
 {
-    internal static readonly Assembly Assembly = typeof(GrpcClientDiagnosticListener).Assembly;
-    internal static readonly AssemblyName AssemblyName = Assembly.GetName();
-#pragma warning disable IDE0370 // Suppression is unnecessary
-    internal static readonly string ActivitySourceName = AssemblyName.Name!;
-#pragma warning restore IDE0370 // Suppression is unnecessary
-    internal static readonly string Version = Assembly.GetPackageVersion();
-    internal static readonly ActivitySource ActivitySource = new(ActivitySourceName, Version);
+    internal static readonly Version SemanticConventionsVersion = new(1, 42, 0);
+    internal static readonly ActivitySource ActivitySource = ActivitySourceFactory.Create<GrpcClientDiagnosticListener>(SemanticConventionsVersion);
 
     private const string OnStartEvent = "Grpc.Net.Client.GrpcOut.Start";
     private const string OnStopEvent = "Grpc.Net.Client.GrpcOut.Stop";
@@ -36,21 +29,21 @@ internal sealed class GrpcClientDiagnosticListener : ListenerHandler
 
     public override void OnEventWritten(string name, object? payload)
     {
-        var activity = Activity.Current!;
+        if (Activity.Current is not { } activity)
+        {
+            return;
+        }
+
         switch (name)
         {
             case OnStartEvent:
-                {
-                    this.OnStartActivity(activity, payload);
-                }
-
+                this.OnStartActivity(activity, payload);
                 break;
+
             case OnStopEvent:
-                {
-                    this.OnStopActivity(activity, payload);
-                }
-
+                this.OnStopActivity(activity, payload);
                 break;
+
             default:
                 break;
         }
@@ -114,49 +107,35 @@ internal sealed class GrpcClientDiagnosticListener : ListenerHandler
             ActivityInstrumentationHelper.SetActivitySourceProperty(activity, ActivitySource);
             ActivityInstrumentationHelper.SetKindProperty(activity, ActivityKind.Client);
 
-            var grpcMethod = GrpcTagHelper.GetGrpcMethodFromActivity(activity);
-
-            if (grpcMethod != null)
-            {
-                activity.DisplayName = grpcMethod.Trim('/');
-
-                if (GrpcTagHelper.TryParseRpcServiceAndRpcMethod(grpcMethod, out var rpcService, out var rpcMethod))
-                {
-                    activity.SetTag(SemanticConventions.AttributeRpcService, rpcService);
-                    activity.SetTag(SemanticConventions.AttributeRpcMethod, rpcMethod);
-
-                    // Remove the grpc.method tag added by the gRPC .NET library
-                    activity.SetTag(GrpcTagHelper.GrpcMethodTagName, null);
-                }
-            }
-
-            activity.SetTag(SemanticConventions.AttributeRpcSystem, GrpcTagHelper.RpcSystemGrpc);
+            GrpcTagHelper.SetGrpcSystemName(activity);
+            GrpcTagHelper.SetGrpcMethodAndDisplayNameFromActivity(activity);
 
             var requestUri = request.RequestUri;
 
             if (requestUri != null)
             {
+                activity.SetTag(SemanticConventions.AttributeServerAddress, requestUri.Host);
+                activity.SetTag(SemanticConventions.AttributeServerPort, requestUri.Port);
+
                 var uriHostNameType = Uri.CheckHostName(requestUri.Host);
 
                 if (uriHostNameType is UriHostNameType.IPv4 or UriHostNameType.IPv6)
                 {
-                    activity.SetTag(SemanticConventions.AttributeServerSocketAddress, requestUri.Host);
+                    activity.SetTag(SemanticConventions.AttributeNetworkPeerAddress, requestUri.Host);
+                    activity.SetTag(SemanticConventions.AttributeNetworkPeerPort, requestUri.Port);
                 }
-                else
+            }
+
+            if (this.options.EnrichWithHttpRequestMessage is { } enrich)
+            {
+                try
                 {
-                    activity.SetTag(SemanticConventions.AttributeServerAddress, requestUri.Host);
+                    enrich(activity, request);
                 }
-
-                activity.SetTag(SemanticConventions.AttributeServerPort, requestUri.Port);
-            }
-
-            try
-            {
-                this.options.EnrichWithHttpRequestMessage?.Invoke(activity, request);
-            }
-            catch (Exception ex)
-            {
-                GrpcInstrumentationEventSource.Log.EnrichmentException(ex);
+                catch (Exception ex)
+                {
+                    GrpcInstrumentationEventSource.Log.EnrichmentException(ex);
+                }
             }
         }
 
@@ -173,28 +152,54 @@ internal sealed class GrpcClientDiagnosticListener : ListenerHandler
 
     public void OnStopActivity(Activity activity, object? payload)
     {
-        if (activity.IsAllDataRequested)
+        if (!activity.IsAllDataRequested)
         {
-            var validConversion = GrpcTagHelper.TryGetGrpcStatusCodeFromActivity(activity, out var status);
-            if (validConversion)
-            {
-                if (activity.Status == ActivityStatusCode.Unset)
-                {
-                    activity.SetStatus(GrpcTagHelper.ResolveSpanStatusForGrpcStatusCodeOnClient(status));
-                }
+            return;
+        }
 
-                // setting rpc.grpc.status_code
-                activity.SetTag(SemanticConventions.AttributeRpcGrpcStatusCode, status);
+        var validConversion = GrpcTagHelper.TryGetGrpcStatusCodeFromActivity(activity, out var status);
+        if (validConversion)
+        {
+            var spanStatus = GrpcTagHelper.ResolveSpanStatusForGrpcStatusCodeOnClient(status);
+            if (activity.Status == ActivityStatusCode.Unset)
+            {
+                activity.SetStatus(spanStatus);
             }
 
-            // Remove the grpc.status_code tag added by the gRPC .NET library
-            activity.SetTag(GrpcTagHelper.GrpcStatusCodeTagName, null);
+            var grpcStatusName = GrpcTagHelper.GetGrpcStatusCodeName(status);
+            activity.SetTag(SemanticConventions.AttributeRpcResponseStatusCode, grpcStatusName);
 
-            if (TryFetchResponse(payload, out var response))
+            // error.type is conditionally required when the operation failed. For gRPC client
+            // spans all status codes other than OK are considered errors, and error.type is set
+            // to the status code name.
+            // See https://github.com/open-telemetry/semantic-conventions/blob/v1.42.0/docs/rpc/grpc.md
+            if (spanStatus == ActivityStatusCode.Error)
+            {
+                activity.SetTag(SemanticConventions.AttributeErrorType, grpcStatusName);
+            }
+        }
+
+        // Remove the grpc.status_code tag added by the gRPC .NET library
+        activity.SetTag(GrpcTagHelper.GrpcStatusCodeTagName, null);
+
+        if (TryFetchResponse(payload, out var response))
+        {
+            if (response.RequestMessage?.RequestUri is { } requestUri)
+            {
+                var uriHostNameType = Uri.CheckHostName(requestUri.Host);
+
+                if (uriHostNameType is UriHostNameType.IPv4 or UriHostNameType.IPv6)
+                {
+                    activity.SetTag(SemanticConventions.AttributeNetworkPeerAddress, requestUri.Host);
+                    activity.SetTag(SemanticConventions.AttributeNetworkPeerPort, requestUri.Port);
+                }
+            }
+
+            if (this.options.EnrichWithHttpResponseMessage is { } enrich)
             {
                 try
                 {
-                    this.options.EnrichWithHttpResponseMessage?.Invoke(activity, response);
+                    enrich(activity, response);
                 }
                 catch (Exception ex)
                 {

@@ -17,6 +17,10 @@
   </PropertyGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <!-- Publish-for-packaging: lets bundled products publish themselves once into a canonical
+       folder that the src/package/* tool packages harvest at pack time. Imported after the
+       Arcade/.NET SDK targets so the Build and Publish targets it hooks are defined. -->
+  <Import Project="$(RepositoryEngineeringDir)PublishForPackaging.targets" />
   <!-- Override the version of imported package to avoid infinite restore loop in VisualStudio, https://github.com/dotnet/arcade/issues/16228 -->
   <ItemGroup>
     <PackageReference Update="Microsoft.VSSDK.BuildTools"

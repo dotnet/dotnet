@@ -767,7 +767,6 @@ public class SqliteDataReaderTest
     public void GetDateTimeOffset_throws_when_null()
         => GetX_throws_when_null(r => ((SqliteDataReader)r).GetDateTimeOffset(0));
 
-#if NET6_0_OR_GREATER
     [Fact]
     public void GetFieldValue_of_DateOnly_works()
         => GetFieldValue_works(
@@ -791,7 +790,6 @@ public class SqliteDataReaderTest
         => GetFieldValue_works(
             "SELECT '13:10:15.5';",
             new TimeOnly(13, 10, 15, 500));
-#endif
 
     [Theory,
      InlineData("SELECT 1;", "INTEGER"),
@@ -1207,6 +1205,25 @@ public class SqliteDataReaderTest
     [Fact]
     public void GetFloat_throws_when_non_query()
         => X_throws_when_non_query(r => r.GetFloat(0));
+
+#if NET6_0_OR_GREATER
+    [Fact]
+    public void GetFieldValue_of_Half_works()
+        => GetX_works(
+            "SELECT 3;",
+            r => r.GetFieldValue<Half>(0),
+            (Half)3f);
+
+    [Fact]
+    public void GetFieldValue_of_Half_throws_when_null()
+        => GetX_throws_when_null(r => r.GetFieldValue<Half>(0));
+
+    [Fact]
+    public void GetFieldValue_of_NullableHalf_works()
+        => GetFieldValue_works(
+            "SELECT 3.14;",
+            (Half?)3.14f);
+#endif
 
     [Theory,
      InlineData("2.0", 2.0),

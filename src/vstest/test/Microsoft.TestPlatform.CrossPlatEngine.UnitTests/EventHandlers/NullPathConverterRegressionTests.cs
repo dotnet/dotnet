@@ -71,4 +71,35 @@ public class NullPathConverterRegressionTests
 
         Assert.AreSame(instance1, instance2, "NullPathConverter should be a singleton.");
     }
+
+    // Regression test for #16186 — these methods previously returned param! and silently
+    // passed null through, violating their non-nullable return contracts.
+    [TestMethod]
+    public void UpdateAttachmentSets_Null_ShouldThrowArgumentNullException()
+    {
+        IPathConverter converter = NullPathConverter.Instance;
+
+        Assert.ThrowsExactly<ArgumentNullException>(
+            () => converter.UpdateAttachmentSets((ICollection<AttachmentSet>?)null, PathConversionDirection.Receive));
+    }
+
+    // Regression test for #16186
+    [TestMethod]
+    public void UpdateTestCases_Null_ShouldThrowArgumentNullException()
+    {
+        IPathConverter converter = NullPathConverter.Instance;
+
+        Assert.ThrowsExactly<ArgumentNullException>(
+            () => converter.UpdateTestCases(null, PathConversionDirection.Receive));
+    }
+
+    // Regression test for #16186
+    [TestMethod]
+    public void UpdateTestRunChangedEventArgs_Null_ShouldThrowArgumentNullException()
+    {
+        IPathConverter converter = NullPathConverter.Instance;
+
+        Assert.ThrowsExactly<ArgumentNullException>(
+            () => converter.UpdateTestRunChangedEventArgs(null, PathConversionDirection.Receive));
+    }
 }

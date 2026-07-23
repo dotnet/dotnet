@@ -17,11 +17,17 @@ internal class DisableAutoFakesArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly CommandLineOptions _commandLineOptions;
+
+    public DisableAutoFakesArgumentProcessor(CommandLineOptions commandLineOptions)
+    {
+        _commandLineOptions = commandLineOptions;
+    }
 
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new DisableAutoFakesArgumentExecutor(CommandLineOptions.Instance));
+            new DisableAutoFakesArgumentExecutor(_commandLineOptions));
 
         set => _executor = value;
     }

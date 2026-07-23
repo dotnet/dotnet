@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Arcade.Common;
@@ -21,11 +20,6 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 {
     internal sealed class HelixService : IHelixService
     {
-        // Matches the "(alias)queueId" portion of a Helix target queue string. Mirrors the regex used by
-        // JobDefinition.ParseQueueId in the Helix JobSender so resubmission parses queues identically.
-        // Part of the operatingSystem-property workaround; see ResolveTargetQueueSpec and dotnet/arcade#16964.
-        private static readonly Regex s_queueAliasRegex = new(@"\((.+?)\)(.*)", RegexOptions.Compiled);
-
         private readonly ILogger _logger;
         private readonly IHelixApi _helixApi;
         private readonly IBlobClientFactory _blobClientFactory;
@@ -278,20 +272,17 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
             string newJobListUri = AppendSasIfPresent(jobListBlobClient.Uri, container.ReadToken);
 
-            // 5. Reconstruct the original target queue so the resubmitted work item runs in the same
-            //    execution environment (e.g. the same Docker container) as the original job. The logic
-            //    used to recover the Docker tag / queue alias is intentionally isolated in a single
-            //    replaceable method (see ResolveTargetQueueSpec) because it is a temporary workaround.
-            TargetQueueSpec targetQueue = ResolveTargetQueueSpec(details, originalJobName);
-
-            // 6. Build the new job creation request, copying over Source / Properties / Creator
+            // 5. Build the new job creation request, copying over Source / Properties / Creator
             //    so the resubmitted job remains discoverable (BuildId, System.StageName, TestRunName, etc.).
-            var creationRequest = new JobCreationRequest(details.Type, newJobListUri, targetQueue.QueueId)
+            //    The QueueId / QueueAlias / DockerTag returned by Job.DetailsAsync ensure the resubmitted
+            //    work item runs in the same execution environment (e.g. the same Docker container) as the
+            //    original job.
+            var creationRequest = new JobCreationRequest(details.Type, newJobListUri, details.QueueId)
             {
                 Source = details.Source,
                 Creator = details.Creator,
-                DockerTag = targetQueue.DockerTag,
-                QueueAlias = targetQueue.QueueAlias,
+                DockerTag = details.DockerTag,
+                QueueAlias = details.QueueAlias,
                 Properties = ConvertPropertiesToImmutableDictionary(details.Properties)
                     .SetItem(HelixJobInfo.PreviousHelixJobNamePropertyName, originalJobName),
             };
@@ -324,69 +315,6 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 HelixJobInfo.GetDetailsUri(newJob.Name));
 
             return newJobInfo;
-        }
-
-        // ----------------------------------------------------------------------------------------------
-        // WORKAROUND (tracked by https://github.com/dotnet/arcade/issues/16964)
-        //
-        // Determines the (queueId, dockerTag, queueAlias) to resubmit a job into the SAME execution
-        // environment as the original. Today Job.DetailsAsync only returns the *resolved* QueueId; the
-        // Docker tag and queue alias are stripped from the response. We recover them from the
-        // 'operatingSystem' property, which the Helix SDK stamps with the verbatim
-        // "(alias)queueId@dockerTag" target-queue string (see Microsoft.DotNet.Helix.Sdk/MonoQueue.targets),
-        // re-parsing it with the same logic the fresh submission path uses (JobDefinition.ParseQueueId).
-        // We fall back to the resolved QueueId (no Docker tag/alias) when the property is missing or
-        // unparseable.
-        //
-        // This is the single seam that should change once dotnet-helix-service PR 61770 ships and
-        // Microsoft.DotNet.Helix.Client is regenerated to expose JobDetails.DockerTag /
-        // JobDetails.QueueAlias: replace the body below with a direct read of those fields, then delete
-        // ParseQueueId and s_queueAliasRegex.
-        // ----------------------------------------------------------------------------------------------
-        private TargetQueueSpec ResolveTargetQueueSpec(JobDetails details, string originalJobName)
-        {
-            string originalTargetQueue = GetStringPropertyFromProperties(details.Properties, "operatingSystem");
-            if (!string.IsNullOrEmpty(originalTargetQueue))
-            {
-                (string parsedQueueId, string parsedDockerTag, string parsedQueueAlias) = ParseQueueId(originalTargetQueue);
-                if (!string.IsNullOrEmpty(parsedQueueId))
-                {
-                    return new TargetQueueSpec(parsedQueueId, parsedDockerTag, parsedQueueAlias);
-                }
-
-                _logger.LogWarning(
-                    "Could not parse a queue id from the 'operatingSystem' property '{OperatingSystem}' of job '{JobName}'; resubmitting on resolved queue '{QueueId}' without a Docker tag.",
-                    originalTargetQueue, originalJobName, details.QueueId);
-            }
-
-            return new TargetQueueSpec(details.QueueId, DockerTag: null, QueueAlias: null);
-        }
-
-        // The execution-environment coordinates used to (re)submit a Helix job.
-        private readonly record struct TargetQueueSpec(string QueueId, string DockerTag, string QueueAlias);
-
-        // Splits a Helix target queue string of the form "(alias)queueId@dockerTag" into its parts.
-        // Mirrors JobDefinition.ParseQueueId in the Helix JobSender so a resubmitted job reconstructs the
-        // same (queueId, dockerTag, queueAlias) tuple the fresh submission path produced.
-        // Part of the operatingSystem-property workaround; see ResolveTargetQueueSpec and dotnet/arcade#16964.
-        private static (string queueId, string dockerTag, string queueAlias) ParseQueueId(string value)
-        {
-            int index = value.IndexOf('@');
-            if (index < 0)
-            {
-                return (value, string.Empty, value);
-            }
-
-            string queueInfo = value.Substring(0, index);
-            string dockerTag = value.Substring(index + 1);
-
-            Match queueInfoSplit = s_queueAliasRegex.Match(queueInfo);
-            if (queueInfoSplit.Success && queueInfoSplit.Groups.Count == 3)
-            {
-                return (queueInfoSplit.Groups[2].Value, dockerTag, queueInfoSplit.Groups[1].Value);
-            }
-
-            return (queueInfo, dockerTag, queueInfo);
         }
 
         private static ImmutableDictionary<string, string> ConvertPropertiesToImmutableDictionary(JToken properties)

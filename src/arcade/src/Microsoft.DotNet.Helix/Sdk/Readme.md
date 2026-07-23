@@ -58,6 +58,8 @@ The job monitor is a lightweight dedicated pipeline job that:
 
 This allows the original build jobs to stop waiting on Helix execution while still preserving test visibility and pass/fail behavior in the pipeline.
 
+![Helix Job Monitor](../../../Documentation/HelixJobMonitor.png)
+
 The job is added with the template at [/eng/common/core-templates/job/helix-job-monitor.yml](/eng/common/core-templates/job/helix-job-monitor.yml).
 
 Example:
@@ -76,6 +78,7 @@ Useful parameters:
 - `helixAccessToken`: optional token for authenticated Helix access on internal builds.
 - `pollingIntervalSeconds`: how often the job monitor checks for new completed jobs.
 - `timeoutInMinutes`: overall timeout for the job monitor.
+- `useFullyQualifiedTestName`: report fully qualified test names to Azure DevOps (see [Fully qualified test names](#fully-qualified-test-names)). Defaults to `false`.
 
 Behavior notes:
 
@@ -83,6 +86,95 @@ Behavior notes:
 - If parseable xUnit, JUnit, or TRX result files are available, those are uploaded.
 - If no result files are found for a work item, no test results are uploaded for that work item; Helix work-item failures still affect the monitor job's final pass/fail status.
 - The reporter is safe to rerun because it checks for already-completed test runs and only processes new results.
+
+#### What changes for pipeline users when the monitor is on
+
+When `EnableHelixJobMonitor` is set, the Helix-submitting jobs and the Helix Job Monitor job play
+different roles than in the legacy ("inline") flow. The user-visible UX differs in a few important
+ways:
+
+- **The submitter job no longer waits for Helix.** The job that runs `SendHelixJob` now exits as
+  soon as the Helix jobs have been queued. It will go green in Azure DevOps long before the tests
+  finish running. **Don't interpret a green submitter job as "tests passed"** — it only means the
+  work was successfully queued.
+- **The monitor job owns pass/fail for tests.** The pipeline's overall test pass/fail status comes
+  from the Helix Job Monitor job. If the monitor is red, the tests (or the Helix work that runs
+  them) failed. If the monitor is green, all Helix work items passed (after any retries — see
+  below).
+- **Test results appear incrementally.** Results are uploaded to Azure DevOps as each Helix job
+  completes, not in a single batch at the end. The "Tests" tab will start populating while the
+  monitor is still running.
+- **Build agents are freed up sooner.** Because the submitter job exits early, build pool capacity
+  is no longer held hostage by long-running Helix queues. The monitor job runs on a lightweight
+  agent and is the only thing waiting on Helix.
+- **One monitor job per stage.** The monitor is scoped to a single Azure DevOps stage by default.
+  In a multi-stage pipeline you add the `helix-job-monitor.yml` template once per stage that
+  submits Helix work.
+
+#### How re-runs work with the monitor
+
+The monitor performs **automatic, in-pipeline retries of failed Helix work items** at the start of
+each monitor invocation. This is in addition to (and operates very differently from) the existing
+[test retry](#test-retry) feature, which retries individual tests within a single work item.
+
+What this means in practice:
+
+- **One-shot retry on entry.** When the monitor starts, it takes a snapshot of the Helix jobs for
+  the build and resubmits the failed work items from each completed job's latest incarnation.
+  Passing work items are not resubmitted; only the failed ones are.
+- **Re-running the monitor job re-runs failed Helix work.** If you re-run the **monitor job** in
+  Azure DevOps (e.g. via "Rerun failed jobs" on the build), it picks up where it left off:
+  - Passing work items from previous attempts are preserved.
+  - Failed work items are resubmitted to Helix. These are not built again; the same payloads are re-queued for execution.
+  - The monitor then waits for the new work items to complete, uploads their results, and folds
+    them into the pipeline test pass/fail status.
+  - A newer passing incarnation of a work item supersedes an older failed one, so retries
+    naturally converge — each rerun should resubmit fewer work items than the previous one.
+- **Test result uploads are deduplicated.** Each Helix job's test results are uploaded at most
+  once per build, even across monitor reruns. The monitor identifies already-uploaded jobs from
+  Azure DevOps test-run tags, so it's always safe to re-run the monitor job.
+
+💡 The recommended workflow when something fails is therefore:
+
+1. Look at the monitor job's log to see which Helix work items failed and follow the linked
+   Helix console output.
+2. If the failure looks transient (flaky infrastructure, network blip, etc.), **re-run the monitor job**.
+   The monitor will resubmit only the failed work items.
+3. If the failure is a real product/test bug, fix it and push a new commit — that triggers a new
+   build with a fresh submitter + monitor pair.
+
+#### Fully qualified test names
+
+By default the monitor reports each test to Azure DevOps using the framework-provided display name
+as both the visible title and the stable `automatedTestName`. That is a problem for some frameworks:
+MSTest reports only the method name (so `Tests.ClassA.MyTest` and `Tests.ClassB.MyTest` both show up
+as `MyTest`), and xUnit tests using a custom `[Fact(DisplayName = "...")]` get an arbitrary,
+non-unique name that is unstable over time.
+
+Set the `useFullyQualifiedTestName` parameter to opt in to fully qualified reporting:
+
+```yaml
+jobs:
+- template: /eng/common/core-templates/job/helix-job-monitor.yml@self
+  parameters:
+    useFullyQualifiedTestName: true
+```
+
+When enabled, the monitor:
+
+- uses the fully qualified name (`Namespace.Type.Method`) as the stable `automatedTestName`, so a test
+  keeps a consistent identity in the AzDO **Tests** tab and history even when its display name changes,
+- groups results by the fully qualified name, which prevents same-named methods in different classes
+  from being merged together,
+- formats the visible title as:
+  - `Namespace.Type.Method` when the display name is just the method name (the common default),
+  - `Namespace.Type.Method ("net10.0")` for parameterized rows, keeping the arguments without
+    duplicating the method name,
+  - `Namespace.Type.Method (My custom name)` when a custom display name adds information.
+
+This is opt-in because switching an existing pipeline changes AzDO test identity and how titles are
+displayed. The equivalent tool flag is `--use-fully-qualified-test-name`, and it can also be enabled
+by setting the `HELIX_USE_FULLY_QUALIFIED_TEST_NAME` environment variable to `true`.
 
 #### Adding the `microsoft.dotnet.helix.jobmonitor` package
 
@@ -331,17 +423,40 @@ Given a local folder `$(TestFolder)` containing `runtests.cmd`, this will run `r
   </PropertyGroup>
 
   <!--
-    XUnit v3 Runner
-      Enabling this will create one work item for each xunit v3 test project specified.
-      XUnit v3 tests are self-hosting executables and do not need an external console runner.
-      This is enabled by specifying one or more XUnitV3Project items.
+    Microsoft.Testing.Platform (MTP) Runner
+      Enabling this will create one Helix work item per MTP-based test project. This
+      covers MSTest 4.x with the MTP runner, xUnit v3 with MTP (the default for v3),
+      NUnit with the MTP runner, TUnit, and any custom MTP-based framework.
+
+      Each test project must reference Microsoft.Testing.Extensions.TrxReport so that
+      results can be reported as a TRX file (which arcade's reporter consumes natively).
+      Projects built with MSTest.Sdk, or with Microsoft.DotNet.Arcade.Sdk's XUnitV3
+      targets, get this reference implicitly.
+
+      With MTP's --auto-reporters on by default the TRX reporter activates automatically.
+      The generated work item command passes only the built-in '--results-directory .'
+      so artifacts land in the work item working directory. Pass any reporter flags
+      (e.g. '--report-trx --report-trx-filename testResults.trx' if you need a
+      deterministic file name) via MTPAdditionalArguments below.
   -->
   <ItemGroup>
-    <XUnitV3Project Include="..\tests\bar.Tests.csproj"/>
+    <MTPProject Include="..\tests\bar.Tests.csproj"/>
   </ItemGroup>
   <PropertyGroup>
-    <!-- Whether to use the Microsoft Testing Platform runner. Defaults to true. -->
-    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <!-- Optional: per-work-item timeout (TimeSpan format). Defaults to 5 minutes. -->
+    <MTPWorkItemTimeout>00:05:00</MTPWorkItemTimeout>
+    <!--
+      Optional: extra command-line arguments appended to every MTP work item command,
+      between the built-in '--results-directory .' flag and any per-project Arguments
+      metadata. Use this for reporter or framework-specific MTP switches that should
+      not be forced on every framework. Examples:
+        '--report-trx --report-trx-filename testResults.trx' to control the TRX name
+        (requires Microsoft.Testing.Extensions.TrxReport).
+        '--auto-reporters off' to silence xUnit v3's auto-activated reporters - this
+        flag is registered by xUnit v3 only; MSTest / NUnit / TUnit reject it as an
+        unknown option, so it is not injected by default.
+    -->
+    <MTPAdditionalArguments></MTPAdditionalArguments>
   </PropertyGroup>
 
   <ItemGroup>

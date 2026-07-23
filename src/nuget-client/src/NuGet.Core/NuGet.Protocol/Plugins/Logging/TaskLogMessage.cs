@@ -2,8 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -27,15 +27,17 @@ namespace NuGet.Protocol.Plugins
 
         public override string ToString()
         {
-            var message = new JObject(
-                new JProperty("request ID", _requestId),
-                new JProperty("method", _method),
-                new JProperty("type", _type),
-                new JProperty("state", _state));
+            var message = new JsonObject
+            {
+                ["request ID"] = _requestId,
+                ["method"] = _method.ToString(),
+                ["type"] = _type.ToString(),
+                ["state"] = _state.ToString(),
+            };
 
             if (_currentTaskId.HasValue)
             {
-                message.Add(new JProperty("current task ID", _currentTaskId.Value));
+                message["current task ID"] = _currentTaskId.Value;
             }
 
             return ToString("task", message);

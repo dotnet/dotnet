@@ -164,8 +164,8 @@
 1- attributes count</note>
       </trans-unit>
       <trans-unit id="NoWritteableConfig">
-        <source>There is no NuGet.Config that could be used for writing settings. Please create one at the desired location and restart the client.</source>
-        <target state="translated">Aucun des fichiers NuGet.Config n'a pu être utilisé pour écrire des paramètres. Créez-en un à l'emplacement souhaité et redémarrez le client.</target>
+        <source>There is no NuGet.Config that could be used for writing settings. Create one at the desired location and restart the client.</source>
+        <target state="translated">Aucun des fichiers NuGet.Config n’a pu être utilisé pour écrire des paramètres. Créez-en un à l’emplacement souhaité et redémarrez le client.</target>
         <note />
       </trans-unit>
       <trans-unit id="OwnersItemMustHaveAtLeastOneOwner">

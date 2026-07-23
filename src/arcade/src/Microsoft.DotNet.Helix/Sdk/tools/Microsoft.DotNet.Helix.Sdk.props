@@ -46,7 +46,7 @@
   <UsingTask TaskName="FindDotNetCliPackage" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
   <UsingTask TaskName="GetHelixWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
   <UsingTask TaskName="CreateXUnitWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
-  <UsingTask TaskName="CreateXUnitV3WorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
+  <UsingTask TaskName="CreateMTPWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
   <UsingTask TaskName="CreateXHarnessAndroidWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
   <UsingTask TaskName="CreateXHarnessAppleWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />
   <UsingTask TaskName="CreateTestsForWorkItems" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)" Runtime="NET" Architecture="*" TaskFactory="$(MicrosoftDotNetHelixSdkTasksFactory)" />

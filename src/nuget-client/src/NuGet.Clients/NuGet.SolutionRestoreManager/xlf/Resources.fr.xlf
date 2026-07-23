@@ -83,8 +83,8 @@ Packages manquants : {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
-        <source>NuGet Package restore failed for project {0}: {1}. Please see Error List window for detailed warnings and errors.</source>
-        <target state="translated">La restauration du package NuGet a échoué pour le projet {0} : {1}. Consultez la fenêtre Liste d'erreurs pour obtenir le détail des erreurs et des avertissements.</target>
+        <source>NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</source>
+        <target state="translated">Nous n’avons pas pu effectuer la restauration du package NuGet pour le projet {0} : {1}. Consultez la fenêtre Liste d’erreurs pour obtenir le détail des erreurs et des avertissements.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
@@ -98,8 +98,8 @@ Packages manquants : {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedWithError">
-        <source>NuGet package restore failed. Please see Error List window for detailed warnings and errors.</source>
-        <target state="translated">La restauration du package NuGet a échoué. Consultez la fenêtre Liste d'erreurs pour obtenir le détail des erreurs et des avertissements.</target>
+        <source>NuGet package restore failed. See the Error List window for detailed warnings and errors.</source>
+        <target state="translated">Nous n’avons pas pu effectuer la restauration du package NuGet. Consultez la fenêtre Liste d’erreurs pour obtenir le détail des erreurs et des avertissements.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreOptOutMessage">
@@ -115,8 +115,8 @@ Pour empêcher NuGet de restaurer les packages lors de la génération, ouvrez l
         <note />
       </trans-unit>
       <trans-unit id="RelativeGlobalPackagesFolder">
-        <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Please save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
-        <target state="translated">'globalPackagesFolder' du fichier nuget.config ou la variable d'environnement est '{0}', un chemin d'accès relatif. La solution n'est pas enregistrée. Enregistrez votre solution ou configurez un dossier 'globalPackagesFolder' qui est un chemin d'accès complet.</target>
+        <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
+        <target state="translated">« globalPackagesFolder » du fichier nuget.config ou la variable d’environnement est « {0} », un chemin d’accès relatif. La solution n’est pas enregistrée. Enregistrez votre solution ou configurez un dossier « globalPackagesFolder » qui est un chemin d’accès complet.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoredPackage">
@@ -130,8 +130,8 @@ Pour empêcher NuGet de restaurer les packages lors de la génération, ouvrez l
         <note />
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
-        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
-        <target state="translated">La solution n'est pas enregistrée. Enregistrez votre solution avant de gérer des packages NuGet.</target>
+        <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
+        <target state="translated">La solution n’est pas enregistrée. Enregistrez votre solution avant de gérer des packages NuGet.</target>
         <note />
       </trans-unit>
     </body>

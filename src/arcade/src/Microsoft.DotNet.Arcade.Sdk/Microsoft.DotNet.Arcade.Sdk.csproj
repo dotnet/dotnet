@@ -47,6 +47,42 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.ArcadeLogging\Microsoft.DotNet.ArcadeLogging.csproj"
+      ReferenceOutputAssembly="false"
+      SkipGetTargetFrameworkProperties="true"
+      Publish="false"
+      Private="false"
+      PrivateAssets="all"
+      ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <!--
+    Build-order-only references to the other in-repo packages that the Arcade SDK's props/targets
+    consume at the Arcade SDK version (pinned in tools/DefaultVersions.props and
+    toolset/Directory.Packages.props). These are pure ordering references (no assembly or package
+    dependency thanks to ReferenceOutputAssembly="false" + PrivateAssets="all"); the Targets metadata
+    also packs each referenced project during this project's build, so the freshly built packages land
+    in the local feed. This lets repos building against the just-produced Arcade SDK — e.g.
+    src/Microsoft.DotNet.Arcade.Validation.Tests — restore them from a plain `build.cmd` without a
+    separate `-pack`.
+    Don't define the "dependencies" when building source-only to avoid trying to build projects that
+    are actually filtered out.
+  -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <ProjectReference Include="..\Microsoft.DotNet.XliffTasks\Microsoft.DotNet.XliffTasks.csproj;
+                               ..\Microsoft.DotNet.SignTool\Microsoft.DotNet.SignTool.csproj;
+                               ..\Microsoft.DotNet.Build.Tasks.Feed\Microsoft.DotNet.Build.Tasks.Feed.csproj;
+                               ..\Microsoft.DotNet.NuGetRepack\tasks\Microsoft.DotNet.NuGetRepack.Tasks.csproj;
+                               ..\Microsoft.DotNet.SignCheckTask\Microsoft.DotNet.SignCheckTask.csproj;
+                               ..\Microsoft.DotNet.SourceBuild\tasks\Microsoft.DotNet.SourceBuild.Tasks.csproj;
+                               ..\Microsoft.DotNet.Baselines.Tasks\Microsoft.DotNet.Baselines.Tasks.csproj;
+                               ..\Microsoft.DotNet.Build.Tasks.Installers\Microsoft.DotNet.Build.Tasks.Installers.csproj;
+                               ..\Microsoft.DotNet.Build.Tasks.VisualStudio\Microsoft.DotNet.Build.Tasks.VisualStudio.csproj;
+                               ..\Microsoft.DotNet.MacOsPkg\Cli\Microsoft.DotNet.MacOsPkg.Cli.csproj"
+                      Targets="Build;Pack"
+                      ReferenceOutputAssembly="false"
+                      SkipGetTargetFrameworkProperties="true"
+                      PrivateAssets="all" />
   </ItemGroup>
 
   <Target Name="_GenerateSdkVersionFile" Inputs="$(MSBuildAllProjects)" Outputs="$(_GeneratedVersionFilePath)" BeforeTargets="GenerateNuSpec">
@@ -75,5 +111,11 @@
       <FileWrites Include="$(_GeneratedVersionFilePath)" />
     </ItemGroup>
   </Target>
+
+  <ItemGroup>
+    <None Include="$(ArtifactsBinDir)Microsoft.DotNet.ArcadeLogging\$(Configuration)\netstandard2.0\Microsoft.DotNet.ArcadeLogging.dll"
+          Pack="true"
+          PackagePath="toolset\net\Microsoft.DotNet.ArcadeLogging.dll" />
+  </ItemGroup>
 
 </Project>

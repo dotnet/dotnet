@@ -30,6 +30,16 @@ internal class RunSettingsArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly IRunSettingsProvider _runSettingsProvider;
+    private readonly CommandLineOptions _commandLineOptions;
+    private readonly IRunSettingsHelper _runSettingsHelper;
+
+    public RunSettingsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper)
+    {
+        _commandLineOptions = commandLineOptions;
+        _runSettingsProvider = runSettingsProvider;
+        _runSettingsHelper = runSettingsHelper;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -44,7 +54,7 @@ internal class RunSettingsArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new RunSettingsArgumentExecutor(CommandLineOptions.Instance, RunSettingsManager.Instance));
+            new RunSettingsArgumentExecutor(_commandLineOptions, _runSettingsProvider, _runSettingsHelper));
 
         set => _executor = value;
     }
@@ -69,13 +79,15 @@ internal class RunSettingsArgumentExecutor : IArgumentExecutor
 {
     private readonly CommandLineOptions _commandLineOptions;
     private readonly IRunSettingsProvider _runSettingsManager;
+    private readonly IRunSettingsHelper _runSettingsHelper;
 
     internal IFileHelper FileHelper { get; set; }
 
-    internal RunSettingsArgumentExecutor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsManager)
+    internal RunSettingsArgumentExecutor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsManager, IRunSettingsHelper runSettingsHelper)
     {
         _commandLineOptions = commandLineOptions;
         _runSettingsManager = runSettingsManager;
+        _runSettingsHelper = runSettingsHelper;
         FileHelper = new FileHelper();
     }
 
@@ -144,7 +156,7 @@ internal class RunSettingsArgumentExecutor : IArgumentExecutor
         var platformStr = _runSettingsManager.QueryRunSettingsNode(PlatformArgumentExecutor.RunSettingsPath);
         if (Enum.TryParse<Architecture>(platformStr, true, out var architecture))
         {
-            RunSettingsHelper.Instance.IsDefaultTargetArchitecture = false;
+            _runSettingsHelper.IsDefaultTargetArchitecture = false;
             _commandLineOptions.TargetArchitecture = architecture;
         }
     }

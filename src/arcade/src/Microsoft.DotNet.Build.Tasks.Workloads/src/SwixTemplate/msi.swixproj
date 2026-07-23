@@ -19,7 +19,5 @@
     <Package Include="msi.swr" />
   </ItemGroup>
   
-  <Target Name="GetNativeManifest" />  
-
   <Import Project="$(SwixBuildTargets)"/>  
 </Project>

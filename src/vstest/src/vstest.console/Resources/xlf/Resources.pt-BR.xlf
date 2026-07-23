@@ -384,8 +384,8 @@ Altere o prefixo de nível de diagnóstico do agente de console, como mostrado a
       <trans-unit id="PlatformArgumentHelp">
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
-      Valid values are x86, x64 and ARM.</source>
-        <target state="translated">--Platform|/Platform:&lt;Platform type&gt;
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
+        <target state="needs-review-translation">--Platform|/Platform:&lt;Platform type&gt;
       Arquitetura da plataforma destino a ser usada na execução de teste. 
       Os valores válidos são x86, x64 e ARM.</target>
         <note />
@@ -398,9 +398,9 @@ Altere o prefixo de nível de diagnóstico do agente de console, como mostrado a
       <trans-unit id="FrameworkArgumentHelp">
         <source>--Framework|/Framework:&lt;Framework Version&gt;
       Target .Net Framework version to be used for test execution. 
-      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="translated">--Framework|/Framework:&lt;Versão do Framework&gt;
+        <target state="needs-review-translation">--Framework|/Framework:&lt;Versão do Framework&gt;
       Versão de destino do .NET Framework a ser usada para execução de teste. 
       Os valores válidos são ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
       Outros valores permitidos são Framework40, Framework45, FrameworkCore10 e FrameworkUap10.</target>
@@ -864,18 +864,20 @@ Alterar o nível de rastreamento dos logs, como mostrado abaixo
       You may also choose to override this default behaviour by some optional parameters:
       CollectAlways - To collect dump on exit even if there is no crash (true/false) 
       DumpType - To specify dump type (mini/full).
+      Collecting a crash dump on Windows requires procdump.exe and procdump64.exe to be available in PATH, or in a directory pointed to by the PROCDUMP_PATH environment variable. The tools can be downloaded from https://docs.microsoft.com/sysinternals/downloads/procdump.
       Example: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</source>
         <target state="translated">--Blame|/Blame:[CollectDump];[CollectAlways]=[Value];[DumpType]=[Value]
-      Executa o teste em modo blame. Essa opção é útil para isolar o teste com problema causando falha no host de teste .
-     Ele cria um arquivo de saída no diretório atual como "Sequence.xml",
+      Executa o teste em modo blame. Essa opção é útil para isolar o teste com problema causando falha no host de teste.
+      Ele cria um arquivo de saída no diretório atual como "Sequence.xml",
       que captura a ordem de execução do teste antes da falha.
       Você pode optar por coletar o processo de despejo para o host de teste.
       Ao optar por coletar despejo, por padrão, um mini despejo será coletado em uma falha.
-     Você também pode optar por sobrescrever este comportamento padrão por alguns parâmetros opcionais:
-      CollectAlways - Para coletar despejo na saída mesmo que não haja falha (true/false) 
+      Você também pode optar por sobrescrever este comportamento padrão por alguns parâmetros opcionais:
+      CollectAlways — Para coletar despejo na saída mesmo se não houver nenhuma falha (true/false) 
       DumpType - Para especificar o tipo de despejo (mini/full).
+      Coletar um despejo de memória no Windows requer que procdump.exe e procdump64.exe estejam disponíveis no PATH ou em um diretório apontado pela variável de ambiente PROCDUMP_PATH. As ferramentas podem ser baixadas em https://docs.microsoft.com/sysinternals/downloads/procdump.
       Exemplo: /Blame
                /Blame:CollectDump
                /Blame:CollectDump;CollectAlways=true;DumpType=full</target>
@@ -1167,16 +1169,6 @@ Altere o prefixo de nível de diagnóstico do agente de console, como mostrado a
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">A espera pela conexão do manipulador de solicitação expirou após {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Aguardando o início da sessão de teste expirou após {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">A espera da sessão de teste de parada expirou após {0} segundos.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

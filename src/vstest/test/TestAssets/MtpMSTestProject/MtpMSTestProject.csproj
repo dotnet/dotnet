@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Multi-targeted so the acceptance harness can resolve the net11.0 build (its mainstream test
+         target framework) while the net8.0 build stays available for the standalone manual E2E runs. -->
+    <TargetFrameworks>net8.0;net11.0</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+
+    <!-- Build this project as a Microsoft.Testing.Platform application (an MTP exe) rather than a
+         classic vstest test library. This injects
+         [assembly: AssemblyMetadata("Microsoft.Testing.Platform.Application", "true")], which is what
+         vstest uses to detect an MTP app and drive it over the MTP protocol. -->
+    <EnableMSTestRunner>true</EnableMSTestRunner>
+    <GenerateTestingPlatformEntryPoint>true</GenerateTestingPlatformEntryPoint>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestFramework">
+      <Version>$(MSTestTestFrameworkVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="MSTest.TestAdapter">
+      <Version>$(MSTestTestAdapterVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild">
+      <Version>$(MicrosoftTestingPlatformVersion)</Version>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

@@ -307,13 +307,11 @@ internal sealed partial class OpenApiJsonSchema
                 break;
             case OpenApiSchemaKeywords.AnyOfKeyword:
                 reader.Read();
-                schema.Type = JsonSchemaType.Object;
                 var anyOfSchemas = ReadList<OpenApiJsonSchema>(ref reader, context);
                 schema.AnyOf = anyOfSchemas?.Select(s => s.Schema as IOpenApiSchema).ToList();
                 break;
             case OpenApiSchemaKeywords.OneOfKeyword:
                 reader.Read();
-                schema.Type = JsonSchemaType.Object;
                 var oneOfSchemas = ReadList<OpenApiJsonSchema>(ref reader, context);
                 schema.OneOf = oneOfSchemas?.Select(s => s.Schema as IOpenApiSchema).ToList();
                 break;
@@ -338,10 +336,24 @@ internal sealed partial class OpenApiJsonSchema
                     }
                 }
                 break;
+            case OpenApiSchemaKeywords.DiscriminatorDefaultMappingKeyword:
+                reader.Read();
+                var defaultMapping = reader.GetString();
+                if (defaultMapping is not null)
+                {
+                    schema.Discriminator ??= new OpenApiDiscriminator();
+                    schema.Discriminator.DefaultMapping = new OpenApiSchemaReference(defaultMapping);
+                }
+                break;
             case OpenApiConstants.SchemaId:
                 reader.Read();
                 schema.Metadata ??= new Dictionary<string, object>();
                 schema.Metadata.Add(OpenApiConstants.SchemaId, reader.GetString() ?? string.Empty);
+                break;
+            case OpenApiConstants.SchemaIsUnion:
+                reader.Read();
+                schema.Metadata ??= new Dictionary<string, object>();
+                schema.Metadata.Add(OpenApiConstants.SchemaIsUnion, reader.GetBoolean());
                 break;
             case OpenApiConstants.NullableProperty:
                 reader.Read();

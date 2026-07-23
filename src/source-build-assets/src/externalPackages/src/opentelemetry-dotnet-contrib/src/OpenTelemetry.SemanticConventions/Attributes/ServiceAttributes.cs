@@ -15,6 +15,14 @@ namespace OpenTelemetry.SemanticConventions;
 public static class ServiceAttributes
 {
     /// <summary>
+    /// The operational criticality of the service.
+    /// </summary>
+    /// <remarks>
+    /// Application developers are encouraged to set <c>service.criticality</c> to express the operational importance of their services. Telemetry consumers MAY use this attribute to optimize telemetry collection or improve user experience.
+    /// </remarks>
+    public const string AttributeServiceCriticality = "service.criticality";
+
+    /// <summary>
     /// The string ID of the service instance.
     /// </summary>
     /// <remarks>
@@ -51,7 +59,8 @@ public static class ServiceAttributes
     /// Logical name of the service.
     /// </summary>
     /// <remarks>
-    /// MUST be the same for all instances of horizontally scaled services. If the value was not specified, SDKs MUST fallback to <c>unknown_service:</c> concatenated with <a href="process.md"><c>process.executable.name</c></a>, e.g. <c>unknown_service:bash</c>. If <c>process.executable.name</c> is not available, the value MUST be set to <c>unknown_service</c>.
+    /// MUST be the same for all instances of horizontally scaled services. If the value was not specified, SDKs MUST fallback to <c>unknown_service:</c> concatenated with the process executable name, e.g. <c>unknown_service:bash</c>. If the process executable name is not available, the value MUST be set to <c>unknown_service</c>.
+    /// The process executable name is the name of the process executable, the same value as described by the <a href="process.md"><c>process.executable.name</c></a> resource attribute.
     /// </remarks>
     public const string AttributeServiceName = "service.name";
 
@@ -77,4 +86,30 @@ public static class ServiceAttributes
     /// The version string of the service component. The format is not defined by these conventions.
     /// </summary>
     public const string AttributeServiceVersion = "service.version";
+
+    /// <summary>
+    /// The operational criticality of the service.
+    /// </summary>
+    public static class ServiceCriticalityValues
+    {
+        /// <summary>
+        /// Service is business-critical; downtime directly impacts revenue, user experience, or core functionality.
+        /// </summary>
+        public const string Critical = "critical";
+
+        /// <summary>
+        /// Service is important but has degradation tolerance or fallback mechanisms.
+        /// </summary>
+        public const string High = "high";
+
+        /// <summary>
+        /// Service provides supplementary functionality; degradation has limited user impact.
+        /// </summary>
+        public const string Medium = "medium";
+
+        /// <summary>
+        /// Service is non-essential to core operations; used for background tasks or internal tools.
+        /// </summary>
+        public const string Low = "low";
+    }
 }

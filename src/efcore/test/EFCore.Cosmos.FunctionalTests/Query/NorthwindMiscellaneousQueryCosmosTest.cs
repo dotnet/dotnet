@@ -1601,7 +1601,11 @@ WHERE ((c["$type"] = "Order") AND (c["OrderID"] < 10300))
             });
 
     public override Task Select_DTO_with_member_init_distinct_translated_to_server(bool async)
-        => Fixture.NoSyncTest(
+    {
+        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/335
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
+        return Fixture.NoSyncTest(
             async, async a =>
             {
                 await base.Select_DTO_with_member_init_distinct_translated_to_server(a);
@@ -1610,13 +1614,14 @@ WHERE ((c["$type"] = "Order") AND (c["OrderID"] < 10300))
                     """
 SELECT DISTINCT VALUE
 {
-    "Id" : c["CustomerID"],
-    "Count" : c["OrderID"]
+    "Count" : c["OrderID"],
+    "Id" : c["CustomerID"]
 }
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderID"] < 10300))
 """);
             });
+    }
 
     public override async Task Select_nested_collection_count_using_DTO(bool async)
     {
@@ -1785,7 +1790,11 @@ ORDER BY (c["Region"] = "ASK")
     }
 
     public override Task Projection_null_coalesce_operator(bool async)
-        => Fixture.NoSyncTest(
+    {
+        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/335
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
+        return Fixture.NoSyncTest(
             async, async a =>
             {
                 await base.Projection_null_coalesce_operator(a);
@@ -1800,6 +1809,7 @@ SELECT VALUE
 FROM root c
 """);
             });
+    }
 
     public override Task Filter_coalesce_operator(bool async)
         => Fixture.NoSyncTest(
@@ -2139,7 +2149,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("hh", 1.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("hh", 1, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2153,7 +2163,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("mi", 1.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("mi", 1, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2167,7 +2177,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("ss", 1.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("ss", 1, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2181,7 +2191,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("ms", 1000000000000.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("ms", 1000000000000, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2199,7 +2209,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("ms", -1000000000000.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("ms", -1000000000000, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2213,7 +2223,9 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT c["OrderDate"], DateTimePart("ms", c["OrderDate"]) AS c
+@millisecondsPerDay='86400000'
+
+SELECT VALUE DateTimeAdd("ms", (DateTimePart("ms", c["OrderDate"]) % @millisecondsPerDay), DateTimeAdd("dd", (DateTimePart("ms", c["OrderDate"]) / @millisecondsPerDay), c["OrderDate"]))
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2227,7 +2239,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE (c["OrderID"] % 25)
+SELECT VALUE DateTimeAdd("mi", (c["OrderID"] % 25), "1900-01-01T00:00:00")
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderID"] < 10500))
 ORDER BY c["OrderID"]
@@ -3234,14 +3246,9 @@ ORDER BY c["OrderID"] DESC, c["ProductID"] DESC
 
                 AssertSql(
                     """
-SELECT VALUE
-{
-    "ReportsTo" : c["ReportsTo"],
-    "c" : 1,
-    "c0" : 2,
-    "c1" : 3
-}
+SELECT VALUE (((c["ReportsTo"] + 1) != null) ? (c["ReportsTo"] + 1) : (((c["ReportsTo"] + 2) != null) ? (c["ReportsTo"] + 2) : (c["ReportsTo"] + 3)))
 FROM root c
+WHERE ((((c["ReportsTo"] + 1) != null) ? (c["ReportsTo"] + 1) : (((c["ReportsTo"] + 2) != null) ? (c["ReportsTo"] + 2) : (c["ReportsTo"] + 3))) != null)
 ORDER BY c["EmployeeID"]
 """);
             });
@@ -3628,24 +3635,27 @@ WHERE (c["Title"] = @value)
 
     public override async Task Collection_projection_skip(bool async)
     {
-        // Cosmos client evaluation. Issue #17246.
-        await AssertTranslationFailed(() => base.Collection_projection_skip(async));
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Collection_projection_skip(async));
+
+        Assert.Equal(CosmosStrings.NonEmbeddedIncludeNotSupported("Navigation: Order.OrderDetails (ICollection<OrderDetail>) Collection ToDependent OrderDetail Inverse: Order"), ex.Message);
 
         AssertSql();
     }
 
     public override async Task Collection_projection_take(bool async)
     {
-        // Cosmos client evaluation. Issue #17246.
-        await AssertTranslationFailed(() => base.Collection_projection_take(async));
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Collection_projection_take(async));
+
+        Assert.Equal(CosmosStrings.NonEmbeddedIncludeNotSupported("Navigation: Order.OrderDetails (ICollection<OrderDetail>) Collection ToDependent OrderDetail Inverse: Order"), ex.Message);
 
         AssertSql();
     }
 
     public override async Task Collection_projection_skip_take(bool async)
     {
-        // Cosmos client evaluation. Issue #17246.
-        await AssertTranslationFailed(() => base.Collection_projection_skip_take(async));
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Collection_projection_skip_take(async));
+
+        Assert.Equal(CosmosStrings.NonEmbeddedIncludeNotSupported("Navigation: Order.OrderDetails (ICollection<OrderDetail>) Collection ToDependent OrderDetail Inverse: Order"), ex.Message);
 
         AssertSql();
     }
@@ -3775,7 +3785,7 @@ WHERE c["id"] IN (null, "ALFKI")
 
     public override async Task Select_distinct_Select_with_client_bindings(bool async)
     {
-        // No Select after Distinct. Issue #17246.
+        // Cosmos client evaluation. Issue #17246.
         await AssertTranslationFailed(() => base.Select_distinct_Select_with_client_bindings(async));
 
         AssertSql();
@@ -3984,7 +3994,7 @@ FROM root c
 
                 AssertSql(
                     """
-SELECT c["CustomerID"], c["OrderID"]
+SELECT VALUE (c["CustomerID"] || ToString(c["OrderID"]))
 FROM root c
 WHERE (c["$type"] = "Order")
 """);
@@ -4010,11 +4020,6 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
         if (async)
         {
             await base.Throws_on_concurrent_query_first(async);
-            AssertSql(
-                """
-SELECT VALUE c
-FROM root c
-""");
         }
     }
 
@@ -4039,7 +4044,7 @@ WHERE false
 
                 AssertSql(
                     """
-SELECT VALUE c["OrderID"]
+SELECT VALUE ("-" || ToString(c["OrderID"]))
 FROM root c
 WHERE (c["$type"] = "Order")
 """);
@@ -4089,7 +4094,7 @@ ORDER BY c["id"]
 
                 AssertSql(
                     """
-SELECT c["OrderID"], c["CustomerID"]
+SELECT VALUE (ToString(c["OrderID"]) || c["CustomerID"])
 FROM root c
 WHERE (c["$type"] = "Order")
 """);
@@ -4159,7 +4164,11 @@ FROM root c
             });
 
     public override Task Ternary_should_not_evaluate_both_sides(bool async)
-        => Fixture.NoSyncTest(
+    {
+        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/335
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
+        return Fixture.NoSyncTest(
             async, async a =>
             {
                 await base.Ternary_should_not_evaluate_both_sides(a);
@@ -4174,6 +4183,7 @@ SELECT VALUE
 FROM root c
 """);
             });
+    }
 
     public override Task Entity_equality_orderby(bool async)
         => Fixture.NoSyncTest(
@@ -4316,7 +4326,9 @@ WHERE ((c["$type"] = "OrderDetail") AND false)
 
                 AssertSql(
                     """
-SELECT VALUE c["OrderID"]
+@parameter='-'
+
+SELECT VALUE (@parameter || ToString(c["OrderID"]))
 FROM root c
 WHERE (c["$type"] = "Order")
 """);
@@ -4347,11 +4359,6 @@ WHERE (c["Title"] = "Sales Representative")
         if (async)
         {
             await base.Throws_on_concurrent_query_list(async);
-            AssertSql(
-                """
-SELECT VALUE c
-FROM root c
-""");
         }
     }
 
@@ -5013,33 +5020,69 @@ WHERE (c["id"] = "ALFKI")
 
     #endregion ToPageAsync
 
-    public override async Task Ternary_Not_Null_Contains(bool async)
-    {
-        await AssertTranslationFailed(() => base.Ternary_Not_Null_Contains(async));
+    public override Task Ternary_Not_Null_Contains(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Ternary_Not_Null_Contains(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE (true ? (ToString(c["OrderID"]) || "") : null)
+FROM root c
+WHERE ((c["$type"] = "Order") AND CONTAINS((true ? (ToString(c["OrderID"]) || "") : null), "1"))
+ORDER BY c["OrderID"]
+OFFSET 0 LIMIT 1
+""");
+            });
 
-    public override async Task Ternary_Not_Null_endsWith_Non_Numeric_First_Part(bool async)
-    {
-        await AssertTranslationFailed(() => base.Ternary_Not_Null_endsWith_Non_Numeric_First_Part(async));
+    public override Task Ternary_Not_Null_endsWith_Non_Numeric_First_Part(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Ternary_Not_Null_endsWith_Non_Numeric_First_Part(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE (true ? (("" || ToString(c["OrderID"])) || "") : null)
+FROM root c
+WHERE ((c["$type"] = "Order") AND ENDSWITH((true ? (("" || ToString(c["OrderID"])) || "") : null), "1"))
+ORDER BY c["OrderID"]
+OFFSET 0 LIMIT 1
+""");
+            });
 
-    public override async Task Ternary_Null_Equals_Non_Numeric_First_Part(bool async)
-    {
-        await AssertTranslationFailed(() => base.Ternary_Null_Equals_Non_Numeric_First_Part(async));
+    public override Task Ternary_Null_Equals_Non_Numeric_First_Part(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Ternary_Null_Equals_Non_Numeric_First_Part(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE (false ? null : (("" || ToString(c["OrderID"])) || ""))
+FROM root c
+WHERE ((c["$type"] = "Order") AND ((false ? null : (("" || ToString(c["OrderID"])) || "")) = "1"))
+ORDER BY c["OrderID"]
+OFFSET 0 LIMIT 1
+""");
+            });
 
-    public override async Task Ternary_Null_StartsWith(bool async)
-    {
-        await AssertTranslationFailed(() => base.Ternary_Null_StartsWith(async));
+    public override Task Ternary_Null_StartsWith(bool async)
+        => Fixture.NoSyncTest(
+            async, async a =>
+            {
+                await base.Ternary_Null_StartsWith(a);
 
-        AssertSql();
-    }
+                AssertSql(
+                    """
+SELECT VALUE (false ? null : (ToString(c["OrderID"]) || ""))
+FROM root c
+WHERE ((c["$type"] = "Order") AND STARTSWITH((false ? null : (ToString(c["OrderID"]) || "")), "1"))
+ORDER BY c["OrderID"]
+OFFSET 0 LIMIT 1
+""");
+            });
 
     public override async Task Column_access_inside_subquery_predicate(bool async)
     {

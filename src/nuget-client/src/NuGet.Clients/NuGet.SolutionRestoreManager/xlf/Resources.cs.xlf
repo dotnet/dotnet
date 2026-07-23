@@ -83,8 +83,8 @@ Chybějící balíčky: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
-        <source>NuGet Package restore failed for project {0}: {1}. Please see Error List window for detailed warnings and errors.</source>
-        <target state="translated">Pro projekt {0} se nepovedlo obnovit balíček NuGet: {1}. Podrobná upozornění a chyby najdete v okně Seznam chyb.</target>
+        <source>NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</source>
+        <target state="translated">Pro projekt {0} se nepovedlo obnovit balíček NuGet: {1}. Další podrobnosti o upozorněních a chybách najdete v okně Seznam chyb.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
@@ -98,8 +98,8 @@ Chybějící balíčky: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedWithError">
-        <source>NuGet package restore failed. Please see Error List window for detailed warnings and errors.</source>
-        <target state="translated">Nepovedlo se obnovit balíček NuGet. Podrobná upozornění a chyby najdete v okně Seznam chyb.</target>
+        <source>NuGet package restore failed. See the Error List window for detailed warnings and errors.</source>
+        <target state="translated">Nepovedlo se obnovit balíček NuGet. Další podrobnosti o upozorněních a chybách najdete v okně Seznam chyb.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreOptOutMessage">
@@ -115,8 +115,8 @@ Když nechcete, aby aplikace NuGet obnovovala balíčky během vytváření sest
         <note />
       </trans-unit>
       <trans-unit id="RelativeGlobalPackagesFolder">
-        <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Please save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
-        <target state="translated">globalPackagesFolder ze souboru nuget.config nebo proměnná prostředí je {0}, to je relativní cesta a řešení se neuloží. Uložte si prosím řešení nebo nakonfigurujte globalPackagesFolder, což je úplná cesta.</target>
+        <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
+        <target state="translated">globalPackagesFolder ze souboru nuget.config nebo proměnná prostředí je {0}, to je relativní cesta a řešení se neuloží. Uložte si řešení nebo nakonfigurujte globalPackagesFolder, což je úplná cesta.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoredPackage">
@@ -130,7 +130,7 @@ Když nechcete, aby aplikace NuGet obnovovala balíčky během vytváření sest
         <note />
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
-        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
+        <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
         <target state="translated">Řešení není uložené. Než začnete spravovat balíčky NuGet, řešení uložte.</target>
         <note />
       </trans-unit>

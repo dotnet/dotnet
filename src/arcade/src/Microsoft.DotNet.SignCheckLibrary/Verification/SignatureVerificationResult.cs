@@ -295,15 +295,23 @@ namespace Microsoft.SignCheck.Verification
         /// Creates a SignatureVerificationResult for an unsupported file type or file extension.
         /// </summary>
         /// <param name="path">The path to the file that is unsupported</param>
-        /// <returns>A SignatureVerificationResult indicating the file is unsupported..</returns>
+        /// <returns>A SignatureVerificationResult indicating the file is unsupported.</returns>
         public static SignatureVerificationResult UnsupportedFileTypeResult(string path, string parent, string virtualPath)
+            => UnsupportedFileTypeResult(path, parent, virtualPath,
+                string.Format(SignCheckResources.DetailSkippedFormat, SignCheckResources.SkipReasonUnsupportedFileType));
+
+        /// <summary>
+        /// Creates a SignatureVerificationResult for an unsupported file type or file extension
+        /// with a custom skip reason in the detail line.
+        /// </summary>
+        public static SignatureVerificationResult UnsupportedFileTypeResult(string path, string parent, string virtualPath, string skipDetail)
         {
             var signatureVerificationResult = new SignatureVerificationResult(path, parent, virtualPath)
             {
                 IsSkipped = true
             };
 
-            signatureVerificationResult.AddDetail(DetailKeys.File, SignCheckResources.DetailSkippedUnsupportedFileType);
+            signatureVerificationResult.AddDetail(DetailKeys.File, skipDetail);
 
             return signatureVerificationResult;
         }

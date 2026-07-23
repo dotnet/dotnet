@@ -145,18 +145,28 @@ stages:
           matrix:
             Build_Release:
               _BuildConfig: Release
+        # Upload the non-Helix (inline) unit test results, including the Arcade SDK validation
+        # RepoTests, from artifacts/TestResults. Helix test results are published separately by
+        # the Helix Job Monitor.
+        enablePublishTestResults: true
         variables:
         - _Testing: Helix
         preSteps:
         - checkout: self
           clean: true
         steps:
+        # The Test stage build runs the non-Helix unit tests inline, which includes the ported
+        # Arcade SDK validation RepoTests (excluded from the Helix submission below). Passing
+        # RunNonHelixTestsOnly skips the inline execution of the Helix-routed unit tests so only the
+        # non-Helix tests run here. The validation tests are credential-free: the project defaults
+        # its Arcade SDK version + local feed to the freshly built $(PackageVersion) /
+        # $(ArtifactsNonShippingPackagesDir).
         - script: eng\common\cibuild.cmd
             -configuration $(_BuildConfig)
             -prepareMachine
             $(_InternalBuildArgs)
-            /p:Test=false
-          displayName: Windows Build / Publish
+            /p:RunNonHelixTestsOnly=true
+          displayName: Windows Build / Publish + non-Helix tests
 
         - powershell: eng\common\build.ps1
             -configuration $(_BuildConfig)
@@ -182,17 +192,23 @@ stages:
           matrix:
             Build_Debug:
               _BuildConfig: Debug
+        # Upload the non-Helix (inline) unit test results, including the Arcade SDK validation
+        # RepoTests, from artifacts/TestResults. Helix test results are published separately by
+        # the Helix Job Monitor.
+        enablePublishTestResults: true
         variables:
         - _Testing: Helix
         preSteps:
         - checkout: self
           clean: true
         steps:
+        # See the Windows job: run the non-Helix unit tests (incl. the Arcade SDK validation
+        # RepoTests) inline; RunNonHelixTestsOnly skips inline execution of the Helix-routed tests.
         - script: eng/common/cibuild.sh
             --configuration $(_BuildConfig)
             --prepareMachine
-            /p:Test=false
-          displayName: Unix Build / Publish
+            /p:RunNonHelixTestsOnly=true
+          displayName: Unix Build / Publish + non-Helix tests
 
         - script: eng/common/build.sh
             --configuration $(_BuildConfig)
@@ -214,6 +230,9 @@ stages:
   - template: /eng/common/core-templates/job/helix-job-monitor.yml
     parameters:
       timeoutInMinutes: 90
+      # Arcade's own tests intentionally exercise failure paths, so test failures should
+      # not be promoted to work-item failures or trigger resubmissions here.
+      failWorkItemsWithFailedTests: false
       # Install from the nupkg produced by the Build stage's Windows_NT Release job.
       toolNupkgArtifactName: Artifacts_Windows_NT_Release
       toolNupkgArtifactSubPath: packages/Release/NonShipping
@@ -360,6 +379,9 @@ stages:
   - template: /eng/common/core-templates/job/helix-job-monitor.yml
     parameters:
       timeoutInMinutes: 90
+      # Arcade's own tests intentionally exercise failure paths, so test failures should
+      # not be promoted to work-item failures or trigger resubmissions here.
+      failWorkItemsWithFailedTests: false
       # Install from the nupkg produced by the Build stage's Windows_NT Release job.
       toolNupkgArtifactName: Artifacts_Windows_NT_Release
       toolNupkgArtifactSubPath: packages/Release/NonShipping

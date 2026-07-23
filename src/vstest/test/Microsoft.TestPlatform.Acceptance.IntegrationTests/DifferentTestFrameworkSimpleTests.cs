@@ -15,7 +15,7 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
+    [TestMatrix(testHost: NetFx, inProcess: true)]
     public void NonDllRunAllTestExecution(RunnerInfo runnerInfo)
     {
         // This used to test Chutzpah, to prove that we can run tests that are not shipped in dlls.
@@ -36,7 +36,7 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     [TestMethod]
     // vstest.console is x64 now, but x86 run "in process" run should still succeed by being run in x86 testhost
     // Skip .NET (Core) tests because we test them below.
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true, useCoreRunner: false)]
+    [TestMatrix(console: NetFx, testHost: NetFx, inProcess: true)]
     public void CPPRunAllTestExecutionNetFramework(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -48,7 +48,7 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     [TestCategory("Windows-Review")]
     // vstest.console is 64-bit now, run in process to test the 64-bit native dll
     // Skip .NET (Core) tests because we test them below.
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true, useCoreRunner: false)]
+    [TestMatrix(console: NetFx, testHost: NetFx, inProcess: true)]
     public void CPPRunAllTestExecutionPlatformx64NetFramework(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -60,7 +60,7 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     // C++ tests cannot run in .NET Framework host under .NET Core, because we only ship .NET Standard CPP adapter in .NET Core
     // We also don't test x86 for .NET Core, because the resolver there does not switch between x86 and x64 correctly, it just uses the parent process bitness.
     // We run this on netcore31 and not the default netcore21 because netcore31 is the minimum tfm that has the runtime features we need, such as additionaldeps.
-    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false, useCoreRunner: true)]
+    [TestMatrix(console: Net, testHost: Net)]
     public void CPPRunAllTestExecutionPlatformx64Net(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -68,8 +68,8 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx, inProcess: true)]
+    [TestMatrix(testHost: Net)]
     public void NUnitRunAllTestExecution(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
@@ -84,8 +84,8 @@ public class DifferentTestFrameworkSimpleTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
-    [NetCoreTargetFrameworkDataSource]
+    [TestMatrix(testHost: NetFx, inProcess: true)]
+    [TestMatrix(testHost: Net)]
     public void XUnitRunAllTestExecution(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

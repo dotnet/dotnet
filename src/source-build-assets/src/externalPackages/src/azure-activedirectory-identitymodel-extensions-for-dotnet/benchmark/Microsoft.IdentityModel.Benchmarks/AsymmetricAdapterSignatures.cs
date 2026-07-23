@@ -24,7 +24,7 @@ namespace Microsoft.IdentityModel.Benchmarks
         [GlobalSetup]
         public void Setup()
         {
-            SecurityTokenDescriptor securityTokenDescriptor = new ()
+            SecurityTokenDescriptor securityTokenDescriptor = new()
             {
                 SigningCredentials = BenchmarkUtils.SigningCredentialsRsaSha256,
                 Claims = BenchmarkUtils.Claims,
@@ -32,12 +32,12 @@ namespace Microsoft.IdentityModel.Benchmarks
             };
 
             _bytesToSign = Encoding.UTF8.GetBytes((new JsonWebTokenHandler()).CreateToken(securityTokenDescriptor));
-           _rsaAsymmetricAdapter = new AsymmetricAdapter(
-               BenchmarkUtils.SigningCredentialsRsaSha256.Key,
-               SecurityAlgorithms.RsaSha256,
-               SHA256.Create(),
-               SupportedAlgorithms.GetHashAlgorithmName(SecurityAlgorithms.RsaSha256),
-               true );
+            _rsaAsymmetricAdapter = new AsymmetricAdapter(
+                BenchmarkUtils.SigningCredentialsRsaSha256.Key,
+                SecurityAlgorithms.RsaSha256,
+                SHA256.Create(),
+                SupportedAlgorithms.GetHashAlgorithmName(SecurityAlgorithms.RsaSha256),
+                true);
 
             _signatureBuffer = new byte[256];
         }

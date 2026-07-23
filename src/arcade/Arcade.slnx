@@ -20,6 +20,7 @@
     <Project Path="src/Common/Microsoft.Arcade.Common.Tests/Microsoft.Arcade.Common.Tests.csproj" />
     <Project Path="src/Common/Microsoft.Arcade.Test.Common/Microsoft.Arcade.Test.Common.csproj" />
     <Project Path="src/Microsoft.DotNet.Arcade.Sdk.Tests/Microsoft.DotNet.Arcade.Sdk.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Arcade.Validation.Tests/Microsoft.DotNet.Arcade.Validation.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Build.Manifest.Tests/Microsoft.DotNet.Build.Manifest.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Build.Tasks.Feed.Tests/Microsoft.DotNet.Build.Tasks.Feed.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Build.Tasks.Packaging/tests/Microsoft.DotNet.Build.Tasks.Packaging.Tests.csproj" />
@@ -36,6 +37,7 @@
     <Project Path="src/Microsoft.DotNet.SourceBuild/tests/Microsoft.DotNet.SourceBuild.Tasks.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XliffTasks.Tests/Microsoft.DotNet.XliffTasks.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XUnitExtensions/tests/Microsoft.DotNet.XUnitExtensions.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.XUnitV3Extensions/tests/Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssembly.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XUnitV3Extensions/tests/Microsoft.DotNet.XUnitV3Extensions.Tests.csproj" />
     <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli.Tests/Microsoft.DotNet.VersionTools.Cli.Tests.csproj" />
   </Folder>
@@ -47,6 +49,7 @@
   <Project Path="src/Microsoft.Cci.Extensions/Microsoft.Cci.Extensions.csproj" />
   <Project Path="src/Microsoft.DotNet.Arcade.Sdk/Microsoft.DotNet.Arcade.Sdk.csproj" />
   <Project Path="src/Microsoft.DotNet.ArcadeAzureIntegration/Microsoft.DotNet.ArcadeAzureIntegration.csproj" />
+  <Project Path="src/Microsoft.DotNet.ArcadeLogging/Microsoft.DotNet.ArcadeLogging.csproj" />
   <Project Path="src/Microsoft.DotNet.Baselines.Tasks/Microsoft.DotNet.Baselines.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Manifest/Microsoft.DotNet.Build.Manifest.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Archives/Microsoft.DotNet.Build.Tasks.Archives.csproj" />
@@ -80,6 +83,8 @@
   <Project Path="src/Microsoft.DotNet.SignCheckLibrary/Microsoft.DotNet.SignCheckLibrary.csproj" />
   <Project Path="src/Microsoft.DotNet.SignCheck/Microsoft.DotNet.SignCheck.csproj" />
   <Project Path="src/Microsoft.DotNet.SignCheckTask/Microsoft.DotNet.SignCheckTask.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.FileCatalog/Microsoft.DotNet.Build.Tasks.FileCatalog.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.FileCatalog.Tests/Microsoft.DotNet.Build.Tasks.FileCatalog.Tests.csproj" />
   <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli/Microsoft.DotNet.VersionTools.Cli.csproj" />
   <Project Path="src/WinShimmer/WinShimmer.csproj" />
 </Solution>

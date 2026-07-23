@@ -112,19 +112,9 @@
         <target state="translated">Argument nemůže být null ani prázdný.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">Zvažte migraci formátu správy balíčků NuGet tohoto projektu z packages.config na PackageReference.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">V tomhle řešení chybí některé balíčky NuGet. Kliknutím je obnovíte z online zdrojů balíčků.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AskForUpdateMessage">
-        <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">Je dostupná nová verze správce balíčků NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -462,11 +452,6 @@
         <target state="translated">Ohlásit nevhodné chování:</target>
         <note />
       </trans-unit>
-      <trans-unit id="IgnoreUpgrade">
-        <source>Ignore for now</source>
-        <target state="translated">Prozatím ignorovat</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImageCaption_HelpIcon">
         <source>Help icon</source>
         <target state="translated">Ikona nápovědy</target>
@@ -752,11 +737,6 @@
         <target state="translated">{0} – licence</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">Příště už nezobrazovat</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">Informace o možnostech instalace</target>
@@ -765,16 +745,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">Informace o možnostech odinstalace</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">Proč mám migrovat?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">Migrovat hned</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">
@@ -897,11 +867,6 @@
         <target state="translated">_Obnovit</target>
         <note />
       </trans-unit>
-      <trans-unit id="ShowDetails">
-        <source>Show Details</source>
-        <target state="translated">Zobrazit podrobnosti</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
 Error: {1}</source>
@@ -932,13 +897,13 @@ Chyba: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
-        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
-        <target state="translated">Zadaný název už byl přidaný do seznamu dostupných zdrojů balíčků. Zadejte jedinečný název.</target>
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
+        <target state="translated">Zadaný název se už přidal do seznamu dostupných zdrojů balíčků. Zadejte jedinečný název.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
-        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
-        <target state="translated">Zadaný zdroj už byl přidaný do seznamu dostupných zdrojů balíčků. Zadejte jedinečný zdroj.</target>
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
+        <target state="translated">Zadaný zdroj se už přidal do seznamu dostupných zdrojů balíčků. Zadejte jedinečný zdroj.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
@@ -1047,7 +1012,7 @@ Chyba: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_NoReadme">
-        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
         <target state="translated">Pro vybranou verzi balíčku není k dispozici žádný soubor README. Další informace najdete na [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
@@ -1282,8 +1247,8 @@ Chyba: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
-        <source>Please follow simple instructions from {0} to go back to previous state.</source>
-        <target state="translated">Pokud se chcete vrátit do předchozího stavu, postupujte podle jednoduchých pokynů v: {0}</target>
+        <source>Follow the instructions at {0} to return to the previous state.</source>
+        <target state="translated">Podle pokynů na {0} se vraťte do předchozího stavu.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

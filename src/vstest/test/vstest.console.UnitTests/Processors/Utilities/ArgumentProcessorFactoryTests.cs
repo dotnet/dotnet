@@ -5,11 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
+using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Moq;
+
+using vstest.console.UnitTests.Processors;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors.Utilities;
 
@@ -164,7 +170,40 @@ public class ArgumentProcessorFactoryTests
 
         foreach (var processor in allProcessors)
         {
-            var instance = Activator.CreateInstance(processor) as IArgumentProcessor;
+            // Processors declare different constructor shapes: most now take a CommandLineOptions first,
+            // optionally followed by an IRunSettingsProvider and/or IRunSettingsHelper, and the run/discovery
+            // ones also take an ITestRequestManager; a few legacy ones take only a run settings dependency, and
+            // the rest are parameterless. Try the known shapes from most to least specific.
+            var commandLineOptions = new CommandLineOptions();
+            var runSettingsProvider = new TestableRunSettingsProvider();
+            var runSettingsHelper = new RunSettingsHelper();
+            var testRequestManager = new Mock<ITestRequestManager>().Object;
+
+            (Type[] ParameterTypes, object[] Arguments)[] candidateConstructors =
+            [
+                ([typeof(CommandLineOptions), typeof(IRunSettingsProvider), typeof(ITestRequestManager)], [commandLineOptions, runSettingsProvider, testRequestManager]),
+                ([typeof(CommandLineOptions), typeof(IRunSettingsHelper), typeof(ITestRequestManager)], [commandLineOptions, runSettingsHelper, testRequestManager]),
+                ([typeof(CommandLineOptions), typeof(ITestRequestManager)], [commandLineOptions, testRequestManager]),
+                ([typeof(CommandLineOptions), typeof(IRunSettingsProvider), typeof(IRunSettingsHelper)], [commandLineOptions, runSettingsProvider, runSettingsHelper]),
+                ([typeof(CommandLineOptions), typeof(IRunSettingsProvider)], [commandLineOptions, runSettingsProvider]),
+                ([typeof(CommandLineOptions), typeof(IRunSettingsHelper)], [commandLineOptions, runSettingsHelper]),
+                ([typeof(CommandLineOptions)], [commandLineOptions]),
+                ([typeof(IRunSettingsProvider), typeof(IRunSettingsHelper)], [runSettingsProvider, runSettingsHelper]),
+                ([typeof(IRunSettingsProvider)], [runSettingsProvider]),
+                ([typeof(IRunSettingsHelper)], [runSettingsHelper]),
+            ];
+
+            object? created = null;
+            foreach (var (parameterTypes, arguments) in candidateConstructors)
+            {
+                if (processor.GetConstructor(parameterTypes) is { } constructor)
+                {
+                    created = constructor.Invoke(arguments);
+                    break;
+                }
+            }
+
+            var instance = (created ?? Activator.CreateInstance(processor)) as IArgumentProcessor;
             Assert.IsNotNull(instance, $"Unable to instantiate processor: {processor}");
 
             var specialProcessor = instance.Metadata.Value.IsSpecialCommand;

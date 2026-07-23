@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using Newtonsoft.Json;
@@ -14,7 +12,7 @@ namespace NuGet.Protocol.Plugins
     {
         public override bool CanConvert(Type objectType) => objectType == typeof(string);
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null)
             {
@@ -28,14 +26,18 @@ namespace NuGet.Protocol.Plugins
             }
 
             var obj = JObject.Load(reader);
-            return obj.ToString(Formatting.None);
+#pragma warning disable IL2026, IL3050 // WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs
+            return obj.ToString(Formatting.None, Array.Empty<JsonConverter>());
+#pragma warning restore IL2026, IL3050
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             if (value is string s)
             {
-                JObject.Parse(s).WriteTo(writer);
+#pragma warning disable IL2026, IL3050 // WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs
+                JObject.Parse(s).WriteTo(writer, Array.Empty<JsonConverter>());
+#pragma warning restore IL2026, IL3050
             }
             else
             {

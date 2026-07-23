@@ -4,6 +4,8 @@
 
 This document describes how multiple .NET SDK bands are managed in the Unified Build world using the VMR (Virtual Monolithic Repository). This approach allows us to maintain multiple SDK versions that share common components while keeping band-specific components separate.
 
+> **For tooling repo developers:** If you contribute to a band-specific tooling repo (e.g. `sdk`, `roslyn`, `msbuild`) and want a focused summary of the constraints that apply when your code lands in a non-1xx band branch, see [Feature Band Constraints for Tooling Repo Devs](./VMR-Feature-Band-Tooling-Constraints.md).
+
 ## Terminology
 
 This section presents more precise definitions of common terms used in this document that may be prone to confusion. Also see the [Unified Build terminology](./Terminology.md) for more.

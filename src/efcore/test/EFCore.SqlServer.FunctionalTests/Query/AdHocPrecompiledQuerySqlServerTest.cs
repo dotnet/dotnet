@@ -119,6 +119,28 @@ FROM [Books] AS [b]
 """);
     }
 
+    public override async Task Invalid_identifier_json_property_name()
+    {
+        await base.Invalid_identifier_json_property_name();
+
+        AssertSql(
+            """
+SELECT [e].[Id], [e].[Nested]
+FROM [Entities] AS [e]
+""");
+    }
+
+    public override async Task Invalid_identifier_shadow_property_name()
+    {
+        await base.Invalid_identifier_shadow_property_name();
+
+        AssertSql(
+            """
+SELECT [e].[Id], [e].[NOT VALID !!!1]
+FROM [Entities] AS [e]
+""");
+    }
+
     [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());

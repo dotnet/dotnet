@@ -20,12 +20,20 @@ internal sealed class ExporterEventSource : EventSource
     private const int EVENT_ID_TRANSPORT_EXCEPTION = 8; // Transport exception
     private const int EVENT_ID_TRANSPORT_INFO = 9; // Transport info
     private const int EVENT_ID_AFD_CORRELATION_ID = 10; // Failed to get AFD correlation ID
+    private const int EVENT_ID_METRIC_BUFFER_OVERFLOW = 11; // Metric serialization buffer overflow
+    private const int EVENT_ID_TRACE_BUFFER_OVERFLOW = 12; // Trace serialization buffer overflow
+    private const int EVENT_ID_LOG_BUFFER_OVERFLOW = 13; // Log serialization buffer overflow
 
     [NonEvent]
     public void FailedToSendTraceData(Exception ex)
     {
         if (this.IsEnabled(EventLevel.Error, EventKeywords.All))
         {
+            if (GenevaBufferOverflowExceptionHelper.TryReportTraceBufferOverflow(ex))
+            {
+                return;
+            }
+
             // https://docs.microsoft.com/en-us/windows/win32/etw/about-event-tracing
             // ETW has a size limit: The total event size is greater than 64K. This includes the ETW header plus the data or payload.
             // TODO: Do not hit ETW size limit even for external library exception stack. But what is the ETW header size?
@@ -43,6 +51,11 @@ internal sealed class ExporterEventSource : EventSource
     {
         if (this.IsEnabled(EventLevel.Error, EventKeywords.All))
         {
+            if (GenevaBufferOverflowExceptionHelper.TryReportLogBufferOverflow(ex))
+            {
+                return;
+            }
+
             // TODO: Do not hit ETW size limit even for external library exception stack.
             this.FailedToSendLogData(ex.ToInvariantString());
         }
@@ -53,6 +66,11 @@ internal sealed class ExporterEventSource : EventSource
     {
         if (this.IsEnabled(EventLevel.Error, EventKeywords.All))
         {
+            if (GenevaBufferOverflowExceptionHelper.TryReportMetricBufferOverflow(metricName, ex))
+            {
+                return;
+            }
+
             // TODO: Do not hit ETW size limit even for external library exception stack.
             this.FailedToSendMetricData(monitoringAccount, metricNamespace, metricName, ex.ToInvariantString());
         }
@@ -156,5 +174,23 @@ internal sealed class ExporterEventSource : EventSource
     public void FailedToGetAFDCorrelationId(string error)
     {
         this.WriteEvent(EVENT_ID_AFD_CORRELATION_ID, error);
+    }
+
+    [Event(EVENT_ID_METRIC_BUFFER_OVERFLOW, Message = "Failed to export '{0}' metric: the {1}-byte serialization buffer was exceeded. Reduce the number or size of metric dimensions.", Level = EventLevel.Error)]
+    public void MetricSerializationBufferFull(string metricName, int bufferSizeBytes)
+    {
+        this.WriteEvent(EVENT_ID_METRIC_BUFFER_OVERFLOW, metricName, bufferSizeBytes);
+    }
+
+    [Event(EVENT_ID_TRACE_BUFFER_OVERFLOW, Message = "Failed to export trace data: the serialization buffer capacity was exceeded. Reduce the number or size of span attributes, events, or links.", Level = EventLevel.Error)]
+    public void TraceSerializationBufferFull()
+    {
+        this.WriteEvent(EVENT_ID_TRACE_BUFFER_OVERFLOW);
+    }
+
+    [Event(EVENT_ID_LOG_BUFFER_OVERFLOW, Message = "Failed to export log data: the serialization buffer capacity was exceeded. Reduce the size of the log body, attributes, or scopes.", Level = EventLevel.Error)]
+    public void LogSerializationBufferFull()
+    {
+        this.WriteEvent(EVENT_ID_LOG_BUFFER_OVERFLOW);
     }
 }

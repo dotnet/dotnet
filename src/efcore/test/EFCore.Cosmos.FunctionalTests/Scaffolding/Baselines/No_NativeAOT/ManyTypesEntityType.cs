@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.ValueGeneration.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -14,7 +15,6 @@ using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
-using Newtonsoft.Json.Linq;
 
 #pragma warning disable 219, 612, 618
 #nullable disable
@@ -30,9 +30,9 @@ public partial class ManyTypesEntityType
             "Microsoft.EntityFrameworkCore.Scaffolding.CompiledModelTestBase+ManyTypes",
             typeof(CompiledModelTestBase.ManyTypes),
             baseEntityType,
-            discriminatorProperty: "$type",
+            discriminatorProperty: "Discriminator",
             discriminatorValue: "ManyTypes",
-            propertyCount: 170,
+            propertyCount: 169,
             keyCount: 1);
 
         var id = runtimeEntityType.AddProperty(
@@ -43,12 +43,6 @@ public partial class ManyTypesEntityType
             afterSaveBehavior: PropertySaveBehavior.Throw,
             valueConverter: new CompiledModelTestBase.ManyTypesIdConverter());
         id.SetSentinelFromProviderValue(0);
-
-        var type = runtimeEntityType.AddProperty(
-            "$type",
-            typeof(string),
-            afterSaveBehavior: PropertySaveBehavior.Throw,
-            valueGeneratorFactory: new DiscriminatorValueGeneratorFactory().Create);
 
         var @bool = runtimeEntityType.AddProperty(
             "Bool",
@@ -83,27 +77,13 @@ public partial class ManyTypesEntityType
             typeof(bool),
             propertyInfo: typeof(CompiledModelTestBase.ManyTypes).GetProperty("BoolToStringConverterProperty", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
             fieldInfo: typeof(CompiledModelTestBase.ManyTypes).GetField("<BoolToStringConverterProperty>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-        boolToStringConverterProperty.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<bool>(
-                bool (bool v1, bool v2) => v1 == v2,
-                int (bool v) => ((object)v).GetHashCode(),
-                bool (bool v) => v),
-            keyComparer: new ValueComparer<bool>(
-                bool (bool v1, bool v2) => v1 == v2,
-                int (bool v) => ((object)v).GetHashCode(),
-                bool (bool v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            converter: new ValueConverter<bool, string>(
-                string (bool v) => ((string)((v ? "B" : "A"))),
-                bool (string v) => !(string.IsNullOrEmpty(v)) && ((int)(v.ToUpperInvariant()[0])) == ((int)("B".ToUpperInvariant()[0]))),
+        boolToStringConverterProperty.TypeMapping = CosmosTypeMapping<string>.Default.Clone(
+            comparer: DefaultValueComparer<bool>.Default,
+            providerValueComparer: DefaultValueComparer<string>.Default,
+            converter: new ValueConverter<bool, string>(string (bool v) => ((string)((v ? "B" : "A"))), bool (string v) => !(string.IsNullOrEmpty(v)) && ((int)(v.ToUpperInvariant()[0])) == ((int)("B".ToUpperInvariant()[0]))),
             jsonValueReaderWriter: new JsonConvertedValueReaderWriter<bool, string>(
                 JsonStringReaderWriter.Instance,
-                new ValueConverter<bool, string>(
-                    string (bool v) => ((string)((v ? "B" : "A"))),
-                    bool (string v) => !(string.IsNullOrEmpty(v)) && ((int)(v.ToUpperInvariant()[0])) == ((int)("B".ToUpperInvariant()[0])))));
+                new ValueConverter<bool, string>(string (bool v) => ((string)((v ? "B" : "A"))), bool (string v) => !(string.IsNullOrEmpty(v)) && ((int)(v.ToUpperInvariant()[0])) == ((int)("B".ToUpperInvariant()[0])))));
         boolToStringConverterProperty.SetSentinelFromProviderValue("A");
 
         var boolToTwoValuesConverterProperty = runtimeEntityType.AddProperty(
@@ -111,9 +91,7 @@ public partial class ManyTypesEntityType
             typeof(bool),
             propertyInfo: typeof(CompiledModelTestBase.ManyTypes).GetProperty("BoolToTwoValuesConverterProperty", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
             fieldInfo: typeof(CompiledModelTestBase.ManyTypes).GetField("<BoolToTwoValuesConverterProperty>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-        boolToTwoValuesConverterProperty.SetValueConverter(new ValueConverter<bool, byte>(
-            byte (bool v) => ((byte)((v ? 1 : 0))),
-            bool (byte v) => v == 1));
+        boolToTwoValuesConverterProperty.SetValueConverter(new ValueConverter<bool, byte>(byte (bool v) => ((byte)((v ? 1 : 0))), bool (byte v) => v == 1));
         boolToTwoValuesConverterProperty.SetSentinelFromProviderValue((byte)0);
 
         var boolToZeroOneConverterProperty = runtimeEntityType.AddProperty(
@@ -273,6 +251,13 @@ public partial class ManyTypesEntityType
             fieldInfo: typeof(CompiledModelTestBase.ManyTypes).GetField("<DecimalNumberToStringConverterProperty>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
             valueConverter: new NumberToStringConverter<decimal>());
         decimalNumberToStringConverterProperty.SetSentinelFromProviderValue("0");
+
+        var discriminator = runtimeEntityType.AddProperty(
+            "Discriminator",
+            typeof(string),
+            afterSaveBehavior: PropertySaveBehavior.Throw,
+            valueGeneratorFactory: new DiscriminatorValueGeneratorFactory().Create);
+        discriminator.AddAnnotation("Cosmos:PropertyName", "$type");
 
         var @double = runtimeEntityType.AddProperty(
             "Double",
@@ -1071,9 +1056,7 @@ public partial class ManyTypesEntityType
             propertyInfo: typeof(CompiledModelTestBase.ManyTypes).GetProperty("StringToBytesConverterProperty", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
             fieldInfo: typeof(CompiledModelTestBase.ManyTypes).GetField("<StringToBytesConverterProperty>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
             nullable: true);
-        stringToBytesConverterProperty.SetValueConverter(new ValueConverter<string, string>(
-            string (string v) => Convert.ToBase64String(Encoding.GetEncoding(12000).GetBytes(v)),
-            string (string v) => Encoding.GetEncoding(12000).GetString(Convert.FromBase64String(v))));
+        stringToBytesConverterProperty.SetValueConverter(new ValueConverter<string, string>(string (string v) => Convert.ToBase64String(Encoding.GetEncoding(12000).GetBytes(v)), string (string v) => Encoding.GetEncoding(12000).GetString(Convert.FromBase64String(v))));
 
         var stringToCharConverterProperty = runtimeEntityType.AddProperty(
             "StringToCharConverterProperty",
@@ -1285,15 +1268,6 @@ public partial class ManyTypesEntityType
             afterSaveBehavior: PropertySaveBehavior.Throw,
             valueGeneratorFactory: new IdValueGeneratorFactory().Create);
         __id.AddAnnotation("Cosmos:PropertyName", "id");
-
-        var __jObject = runtimeEntityType.AddProperty(
-            "__jObject",
-            typeof(JObject),
-            nullable: true,
-            valueGenerated: ValueGenerated.OnAddOrUpdate,
-            beforeSaveBehavior: PropertySaveBehavior.Ignore,
-            afterSaveBehavior: PropertySaveBehavior.Ignore);
-        __jObject.AddAnnotation("Cosmos:PropertyName", "");
 
         var key = runtimeEntityType.AddKey(
             new[] { id });

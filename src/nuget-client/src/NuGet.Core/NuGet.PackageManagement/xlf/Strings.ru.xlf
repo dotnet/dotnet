@@ -153,8 +153,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ExceptionWhenTryingToAddSource">
-        <source>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</source>
-        <target state="translated">Возникло исключение "{0}" при попытке добавить источник "{1}". Убедитесь, что все интернет-ресурсы пакетов доступны.</target>
+        <source>Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</source>
+        <target state="translated">Возникло исключение "{0}" при попытке добавить источник "{1}". Убедитесь, что все ваши сетевые источники пакетов доступны.</target>
         <note />
       </trans-unit>
       <trans-unit id="FileConflictMessage">
@@ -273,8 +273,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundInPrimarySources">
-        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</source>
-        <target state="translated">Не удалось найти пакет "{0}" в следующих первичных источниках: "{1}". Убедитесь, что все интернет-источники пакетов доступны (ЛИБО) что идентификатор и версия пакета указаны правильно.</target>
+        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</source>
+        <target state="translated">Не удалось найти пакет "{0}" в следующих первичных источниках: "{1}". Убедитесь, что все ваши сетевые источники пакетов доступны, а также что идентификатор и версия пакета указаны верно.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundOnSource">
@@ -400,8 +400,8 @@
         <note>0 - new line separated list of errors</note>
       </trans-unit>
       <trans-unit id="SolutionDirectoryNotAvailable">
-        <source>Solution is not opened or not saved. Please ensure you have an open and saved solution.</source>
-        <target state="translated">Решение не открыто или не сохранено. Убедитесь, что вы открыли и сохранили решение.</target>
+        <source>Solution is not opened or not saved. Ensure you have an open and saved solution.</source>
+        <target state="translated">Решение не открыто или не сохранено. Убедитесь, что у вас открыто и сохранено решение.</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionManagerNotAvailableForUninstall">
@@ -443,8 +443,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UnableToGatherPackageFromSource">
-        <source>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </source>
-        <target state="translated">Не удалось получить пакет "{0}" из источника "{1}". Убедитесь, что все интернет-ресурсы пакетов доступны. </target>
+        <source>Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</source>
+        <target state="translated">Не удалось получить пакет "{0}" из источника "{1}". Убедитесь, что все ваши сетевые источники пакетов доступны.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToResolveDependencyInfo">

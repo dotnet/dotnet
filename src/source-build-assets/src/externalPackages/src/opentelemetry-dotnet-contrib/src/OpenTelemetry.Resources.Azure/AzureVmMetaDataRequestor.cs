@@ -48,7 +48,7 @@ internal static class AzureVmMetaDataRequestor
 #if NET
             return JsonSerializer.Deserialize(result, SourceGenerationContext.Default.AzureVmMetadataResponse);
 #else
-            return JsonSerializer.Deserialize<AzureVmMetadataResponse>(result);
+            return JsonSerializer.Deserialize<AzureVmMetadataResponse>(result!);
 #endif
         }
 

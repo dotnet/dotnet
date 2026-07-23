@@ -29,7 +29,16 @@ internal class DataCollectionTestCaseEventHandler : IDataCollectionTestCaseEvent
     /// Initializes a new instance of the <see cref="DataCollectionTestCaseEventHandler"/> class.
     /// </summary>
     internal DataCollectionTestCaseEventHandler(IMessageSink messageSink)
-        : this(messageSink, new SocketCommunicationManager(), DataCollectionManager.Instance, JsonDataSerializer.Instance)
+        : this(messageSink, DataCollectionManager.Instance)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataCollectionTestCaseEventHandler"/> class.
+    /// </summary>
+    /// <param name="messageSink">Sink for messages</param>
+    /// <param name="dataCollectionManager">Data collection manager implementation.</param>
+    internal DataCollectionTestCaseEventHandler(IMessageSink messageSink, IDataCollectionManager? dataCollectionManager)
+        : this(messageSink, new SocketCommunicationManager(), dataCollectionManager, JsonDataSerializer.Instance)
     { }
 
     /// <summary>
@@ -97,7 +106,7 @@ internal class DataCollectionTestCaseEventHandler : IDataCollectionTestCaseEvent
                         EqtTrace.Error($"DataCollectionTestCaseEventHandler.ProcessRequests: Error occurred during TestCaseStarted event handling: {ex}");
                     }
 
-                    _communicationManager.SendMessage(MessageType.DataCollectionTestStartAck);
+                    _communicationManager.SendMessage(MessageType.DataCollectionTestStartAck, string.Empty, Math.Min(message.Version, ProtocolVersioning.HighestSupportedVersion));
 
                     EqtTrace.Info("DataCollectionTestCaseEventHandler: Test case '{0} - {1}' started.", testCaseStartEventArgs?.TestCaseName, testCaseStartEventArgs?.TestCaseId);
 
@@ -122,7 +131,7 @@ internal class DataCollectionTestCaseEventHandler : IDataCollectionTestCaseEvent
                         attachmentSets = new Collection<AttachmentSet>();
                     }
 
-                    _communicationManager.SendMessage(MessageType.DataCollectionTestEndResult, attachmentSets);
+                    _communicationManager.SendMessage(MessageType.DataCollectionTestEndResult, attachmentSets, Math.Min(message.Version, ProtocolVersioning.HighestSupportedVersion));
 
                     EqtTrace.Info("DataCollectionTestCaseEventHandler: Test case '{0} - {1}' completed", testCaseEndEventArgs?.TestCaseName, testCaseEndEventArgs?.TestCaseId);
                     break;

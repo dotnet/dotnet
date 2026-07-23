@@ -3,47 +3,78 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.Parallel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 
 /// <summary>
-/// Manages work that is done on multiple managers (testhosts) in parallel such as parallel discovery or parallel run.
+/// Manages work that is done on multiple managers (testhosts) in parallel, such as parallel discovery or parallel
+/// run. It is a plain producer/consumer queue: <see cref="StartWork"/> enqueues all the workloads (a single source,
+/// multiple sources, or a batch of test cases), and up to <see cref="MaxParallelLevel"/> managers pull from that
+/// queue. When a manager finishes its workload the consumer calls <see cref="RunNextWork"/>, which frees the manager
+/// and pulls the next workload until the queue is empty.
 /// </summary>
+/// <remarks>
+/// <code>
+///     workloads
+///         |                StartWork enqueues every workload
+///         v
+///   +-------------------+
+///   | _pendingWorkloads |  FIFO queue of work waiting for a free manager
+///   +-------------------+
+///         |                RunWorkInParallel dequeues while a slot is free
+///         v                (i.e. while _activeManagers holds fewer than MaxParallelLevel managers)
+///   +-------+  +-------+  +-------+
+///   | mgr 1 |  | mgr 2 |  | mgr 3 |   _activeManagers: at most MaxParallelLevel testhosts
+///   +-------+  +-------+  +-------+
+///       |          |          |
+///       |          |          |      each manager runs one workload on its testhost over IPC;
+///       v          v          v      from here on the work is fire-and-forget
+///     - - - - - asynchronous - - - - -
+///       |          |          |      when a testhost is done, its event handler calls
+///       v          v          v      RunNextWork(manager) - that out-of-band call is the "done" signal
+///   RunNextWork: remove the finished manager, then RunWorkInParallel pulls the next workload
+/// </code>
+///
+/// Why is this hand-rolled instead of a bounded primitive (SemaphoreSlim, System.Threading.Channels, or TPL
+/// Dataflow's ActionBlock with MaxDegreeOfParallelism)? All of those bound concurrency around an awaitable unit of
+/// work: the primitive starts a Task and watches that Task complete to release a slot. Our unit of work is not
+/// awaitable. A manager is a separate testhost process; it runs its workload over an IPC connection and reports
+/// completion much later through an out-of-band event (HandlePartialRunComplete / HandlePartialDiscoveryComplete),
+/// which is what calls RunNextWork. To adopt a bounded primitive we would have to bridge every workload to a
+/// TaskCompletionSource, complete it from that event, and add the matching cancellation plumbing - which relocates
+/// the complexity instead of removing it, and we would still need the queue and the active-manager list anyway.
+///
+/// We also keep the full active-manager list (not just a counter) because it is the cancellation surface: Abort /
+/// Cancel / Close are broadcast to every in-flight manager through <see cref="DoActionOnAllManagers"/>, so we need
+/// the live set of managers, not only how many there are.
+/// </remarks>
 internal sealed class ParallelOperationManager<TManager, TEventHandler, TWorkload> : IDisposable
 {
-    private const int PreStart = 0;
-    private readonly static int VSTEST_HOSTPRESTART_COUNT =
-        int.TryParse(
-                Environment.GetEnvironmentVariable(nameof(VSTEST_HOSTPRESTART_COUNT)),
-                out int num)
-        ? num
-        : PreStart;
     private readonly Func<TestRuntimeProviderInfo, TWorkload, TManager> _createNewManager;
-
-    /// <summary>
-    /// Default number of Processes
-    /// </summary>
-    private TEventHandler? _eventHandler;
-    private Func<TEventHandler, TManager, TEventHandler>? _getEventHandler;
-    private Func<TManager, TEventHandler, TWorkload, Task>? _initializeWorkload;
-    private Action<TManager, TEventHandler, TWorkload, bool, Task?>? _runWorkload;
-    private bool _acceptMoreWork;
-    private readonly List<ProviderSpecificWorkload<TWorkload>> _workloads = new();
-    private readonly List<Slot> _managerSlots = new();
-
     private readonly object _lock = new();
 
+    // Workloads that are waiting to be picked up by a manager.
+    private readonly Queue<ProviderSpecificWorkload<TWorkload>> _pendingWorkloads = new();
+
+    // Managers that are currently processing a workload. There are never more than MaxParallelLevel of them.
+    private readonly List<TManager> _activeManagers = new();
+
+    private TEventHandler? _eventHandler;
+    private Func<TEventHandler, TManager, TEventHandler>? _getEventHandler;
+    private Action<TManager, TEventHandler, TWorkload>? _runWorkload;
+    private bool _acceptMoreWork = true;
+
     public int MaxParallelLevel { get; }
-    public int OccupiedSlotCount { get; private set; }
-    public int AvailableSlotCount { get; private set; }
-    public int PreStartCount { get; private set; }
+
+    /// <summary>Number of managers that are currently running a workload. Exposed mainly for tests and diagnostics.</summary>
+    public int OccupiedSlotCount => _activeManagers.Count;
+
+    /// <summary>Number of managers that could still be started before reaching <see cref="MaxParallelLevel"/>. Exposed mainly for tests and diagnostics.</summary>
+    public int AvailableSlotCount => MaxParallelLevel - _activeManagers.Count;
 
     /// <summary>
     /// Creates new instance of ParallelOperationManager.
@@ -55,67 +86,38 @@ internal sealed class ParallelOperationManager<TManager, TEventHandler, TWorkloa
     {
         _createNewManager = createNewManager;
         MaxParallelLevel = parallelLevel;
-        // pre-start only when we don't run in parallel, if we do run in parallel,
-        // then pre-starting has no additional value because while one host is starting,
-        // another is running tests.
-        PreStartCount = MaxParallelLevel == 1 ? VSTEST_HOSTPRESTART_COUNT : 0;
-        ClearSlots(acceptMoreWork: true);
-    }
-
-    private void ClearSlots(bool acceptMoreWork)
-    {
-        EqtTrace.Verbose($"ParallelOperationManager.ClearSlots: Clearing all slots. Slots should accept more work: {acceptMoreWork}");
-
-        lock (_lock)
-        {
-            _acceptMoreWork = acceptMoreWork;
-            _managerSlots.Clear();
-            _managerSlots.AddRange(Enumerable.Range(0, MaxParallelLevel + PreStartCount).Select(i => new Slot { Index = i }));
-            SetOccupiedSlotCount();
-        }
-    }
-
-    private void SetOccupiedSlotCount()
-    {
-        AvailableSlotCount = _managerSlots.Count(s => !s.HasWork);
-        OccupiedSlotCount = _managerSlots.Count - AvailableSlotCount;
-
-        if (EqtTrace.IsVerboseEnabled)
-        {
-            EqtTrace.Verbose($"ParallelOperationManager.SetOccupiedSlotCount: Setting slot counts AvailableSlotCount = {AvailableSlotCount}, OccupiedSlotCount = {OccupiedSlotCount}.");
-            EqtTrace.Verbose($"Occupied slots:\n{(string.Join("\n", _managerSlots.Where(s => s.HasWork).Select((slot) => $"{slot.Index}: {GetSourcesForSlotExpensive(slot)}").ToArray()))}");
-
-        }
     }
 
     public void StartWork(
         List<ProviderSpecificWorkload<TWorkload>> workloads,
         TEventHandler eventHandler,
         Func<TEventHandler, TManager, TEventHandler> getEventHandler,
-        Func<TManager, TEventHandler, TWorkload, Task> initializeWorkload,
-        Action<TManager, TEventHandler, TWorkload, bool, Task?> runWorkload)
+        Action<TManager, TEventHandler, TWorkload> runWorkload)
     {
         _ = workloads ?? throw new ArgumentNullException(nameof(workloads));
         _eventHandler = eventHandler ?? throw new ArgumentNullException(nameof(eventHandler));
         _getEventHandler = getEventHandler ?? throw new ArgumentNullException(nameof(getEventHandler));
-        _initializeWorkload = initializeWorkload ?? throw new ArgumentNullException(nameof(initializeWorkload));
         _runWorkload = runWorkload ?? throw new ArgumentNullException(nameof(runWorkload));
 
-        EqtTrace.Verbose($"ParallelOperationManager.StartWork: Starting adding {workloads.Count} workloads.");
-        _workloads.AddRange(workloads);
+        EqtTrace.Verbose($"ParallelOperationManager.StartWork: Enqueuing {workloads.Count} workloads.");
 
-        ClearSlots(acceptMoreWork: true);
+        lock (_lock)
+        {
+            _acceptMoreWork = true;
+            foreach (var workload in workloads)
+            {
+                _pendingWorkloads.Enqueue(workload);
+            }
+        }
+
         RunWorkInParallel();
     }
 
-    // This does not do anything in parallel, all the workloads we schedule are offloaded to separate Task in the _runWorkload callback.
-    // I did not want to change that, yet but this is the correct place to do that offloading. Not each manager.
-    private bool RunWorkInParallel()
+    /// <summary>
+    /// Starts as many pending workloads as there are free manager slots (up to <see cref="MaxParallelLevel"/>).
+    /// </summary>
+    private void RunWorkInParallel()
     {
-        // TODO: Right now we don't re-use shared hosts, but if we did, this is the place
-        // where we should find a workload that fits the manager if any of them is shared.
-        // Or tear it down, and start a new one.
-
         if (_eventHandler == null)
             throw new InvalidOperationException($"{nameof(_eventHandler)} was not provided.");
 
@@ -125,225 +127,115 @@ internal sealed class ParallelOperationManager<TManager, TEventHandler, TWorkloa
         if (_runWorkload == null)
             throw new InvalidOperationException($"{nameof(_runWorkload)} was not provided.");
 
-        // Reserve slots and assign them work under the lock so we keep the slots consistent.
-        Slot[] slots;
+        // Reserve the managers under the lock so the slots stay consistent, but start their work outside of the
+        // lock. That way, if multiple completions come in at the same time, they only block each other while
+        // reserving a slot, and not while actually starting their assigned work.
+        List<(TManager Manager, TEventHandler EventHandler, TWorkload Work)> reserved = new();
+        int activeCount;
+        int pendingCount;
         lock (_lock)
         {
-            // When HandlePartialDiscovery or HandlePartialRun are in progress, and we call StopAllManagers,
-            // it is possible that we will clear all slots, and have RunWorkInParallel waiting on the lock,
-            // so when it is allowed to enter it will try to add more work, but we already cancelled,
-            // so we should not start more work.
+            // When HandlePartialDiscovery or HandlePartialRun are in progress and we call StopAllManagers, it is
+            // possible that RunWorkInParallel is waiting on the lock. When it is finally allowed in, it should not
+            // start any more work, because we already cancelled.
             if (!_acceptMoreWork)
             {
-                EqtTrace.Verbose($"ParallelOperationManager.RunWorkInParallel: We don't accept more work, returning false.");
-                return false;
+                EqtTrace.Verbose("ParallelOperationManager.RunWorkInParallel: We don't accept more work, doing nothing.");
+                return;
             }
 
-            // We grab all empty slots.
-            var availableSlots = _managerSlots.Where(slot => !slot.HasWork).ToImmutableArray();
-            var occupiedSlots = MaxParallelLevel - (availableSlots.Length - PreStartCount);
-            // We grab all available workloads.
-            var availableWorkloads = _workloads.Where(workload => workload != null).ToImmutableArray();
-            // We take the amount of workloads to fill all the slots, or just as many workloads
-            // as there are if there are less workloads than slots.
-            var amount = Math.Min(availableSlots.Length, availableWorkloads.Length);
-            var workloadsToAdd = availableWorkloads.Take(amount).ToImmutableArray();
-
-            // We associate each workload to a slot, if we reached the max parallel
-            // level, then we will run only initialize step of the given workload.
-            for (int i = 0; i < amount; i++)
+            while (_activeManagers.Count < MaxParallelLevel && _pendingWorkloads.Count > 0)
             {
-                var slot = availableSlots[i];
-                var workload = workloadsToAdd[i];
-                slot.ShouldPreStart = occupiedSlots + i + 1 > MaxParallelLevel;
-
+                var workload = _pendingWorkloads.Dequeue();
                 var manager = _createNewManager(workload.Provider, workload.Work);
                 var eventHandler = _getEventHandler(_eventHandler, manager);
-                slot.EventHandler = eventHandler;
-                slot.Manager = manager;
-                slot.ManagerInfo = workload.Provider;
-                slot.Work = workload.Work;
-
-                _workloads.Remove(workload);
-
-                EqtTrace.Verbose($"ParallelOperationManager.RunWorkInParallel: Adding 1 workload to slot, remaining workloads {_workloads.Count}.");
-
-                // This must be set last, every loop below looks at this property,
-                // and they can do so from a different thread. So if we mark it as HasWork before actually assigning the work
-                // we can pick up the slot, but it has no associated work yet.
-                slot.HasWork = true;
+                _activeManagers.Add(manager);
+                reserved.Add((manager, eventHandler, workload.Work));
             }
 
-            slots = _managerSlots.ToArray();
-            SetOccupiedSlotCount();
+            activeCount = _activeManagers.Count;
+            pendingCount = _pendingWorkloads.Count;
         }
 
-        // Kick of the work in parallel outside of the lock so if we have more requests to run
-        // that come in at the same time we only block them from reserving the same slot at the same time
-        // but not from starting their assigned work at the same time.
-
-        // Kick of all pre-started hosts from the ones that had the longest time to initialize.
-        //
-        // This code should be safe even outside the lock since HasWork is only changed when work is
-        // complete and only for the slot that completed work. It is not possible to complete work before
-        // starting it (which is what we are trying to do here).
-        var startedWork = 0;
-        foreach (var slot in slots.Where(s => s.HasWork && !s.IsRunning && s.IsPreStarted).OrderBy(s => s.PreStartTime))
+        if (EqtTrace.IsVerboseEnabled)
         {
-            startedWork++;
-            slot.IsRunning = true;
-            if (EqtTrace.IsVerboseEnabled)
-            {
-                EqtTrace.Verbose($"ParallelOperationManager.RunWorkInParallel: Running on pre-started host for work (source) {GetSourcesForSlotExpensive(slot)}: {(DateTime.Now.TimeOfDay - slot.PreStartTime).TotalMilliseconds}ms {slot.InitTask?.Status}");
-            }
-            _runWorkload(slot.Manager!, slot.EventHandler!, slot.Work!, slot.IsPreStarted, slot.InitTask);
-
-            // We already started as many as we were allowed, jump out;
-            if (startedWork == MaxParallelLevel)
-            {
-                EqtTrace.Verbose($"ParallelOperationManager.RunWorkInParallel: We started {startedWork} work items, which is the max parallel level. Won't start more work.");
-                break;
-            }
+            EqtTrace.Verbose($"ParallelOperationManager.RunWorkInParallel: {activeCount} managers active (max {MaxParallelLevel}), {pendingCount} workloads still pending.");
         }
 
-        // We already started as many pre-started testhosts as we are allowed by the max parallel level
-        // skip running more work.
-        if (startedWork < MaxParallelLevel)
+        foreach (var (manager, eventHandler, work) in reserved)
         {
-            foreach (var slot in slots)
-            {
-                if (slot.HasWork && !slot.IsRunning)
-                {
-                    if (!slot.ShouldPreStart)
-                    {
-                        startedWork++;
-                        slot.IsRunning = true;
-                        if (EqtTrace.IsVerboseEnabled)
-                        {
-                            EqtTrace.Verbose($"ParallelOperationManager.RunWorkInParallel: Started host in slot number {slot.Index} for work (source): {GetSourcesForSlotExpensive(slot)}.");
-                        }
-                        _runWorkload(slot.Manager!, slot.EventHandler!, slot.Work!, slot.IsPreStarted, slot.InitTask);
-                    }
-                }
-
-                // We already started as many as we were allowed, jump out;
-                if (startedWork == MaxParallelLevel)
-                {
-                    EqtTrace.Verbose($"ParallelOperationManager.RunWorkInParallel: We started {startedWork} work items, which is the max parallel level. Won't start more work.");
-                    break;
-                }
-            }
+            EqtTrace.Verbose("ParallelOperationManager.RunWorkInParallel: Starting work on a manager.");
+            _runWorkload(manager, eventHandler, work);
         }
-
-        var preStartedWork = 0;
-        foreach (var slot in slots)
-        {
-            if (slot.HasWork && slot.ShouldPreStart && !slot.IsPreStarted)
-            {
-                preStartedWork++;
-                slot.PreStartTime = DateTime.Now.TimeOfDay;
-                slot.IsPreStarted = true;
-                if (EqtTrace.IsVerboseEnabled)
-                {
-                    EqtTrace.Verbose($"ParallelOperationManager.RunWorkInParallel: Pre-starting a host for work (source): {GetSourcesForSlotExpensive(slot)}.");
-                }
-                slot.InitTask = _initializeWorkload!(slot.Manager!, slot.EventHandler!, slot.Work!);
-            }
-        }
-
-        // Return true when we started more work. Or false, when there was nothing more to do.
-        // This will propagate to handling of partial discovery or partial run.
-        var weAddedMoreWork = preStartedWork + startedWork > 0;
-        EqtTrace.Verbose($"ParallelOperationManager.RunWorkInParallel: We started {preStartedWork + startedWork} work items in here, returning {weAddedMoreWork}.");
-        return weAddedMoreWork;
     }
 
-    public bool RunNextWork(TManager completedManager)
+    /// <summary>
+    /// Frees the manager that just completed its workload and starts the next pending workload if there is any.
+    /// </summary>
+    public void RunNextWork(TManager completedManager)
     {
         ValidateArg.NotNull(completedManager, nameof(completedManager));
-        ClearCompletedSlot(completedManager);
-        return RunWorkInParallel();
-    }
 
-    private void ClearCompletedSlot(TManager completedManager)
-    {
         lock (_lock)
         {
-            var completedSlot = _managerSlots.Where(s => ReferenceEquals(completedManager, s.Manager)).ToImmutableArray();
-            // When HandlePartialDiscovery or HandlePartialRun are in progress, and we call StopAllManagers,
-            // it is possible that we will clear all slots, while ClearCompletedSlot is waiting on the lock,
-            // so when it is allowed to enter it will fail to find the respective slot and fail. In this case it is
-            // okay that the slot is not found, and we do nothing, because we already stopped all work and cleared the slots.
-            if (completedSlot.Length == 0)
-            {
-                if (_acceptMoreWork)
-                {
-                    throw new InvalidOperationException("The provided manager was not found in any slot.");
-                }
-                else
-                {
-                    return;
-                }
-            }
+            var removed = TryRemoveActiveManager(completedManager);
 
-            if (completedSlot.Length > 1)
+            // When HandlePartialDiscovery or HandlePartialRun are in progress and we call StopAllManagers, it is
+            // possible that we already cleared all managers while RunNextWork was waiting on the lock. In that case
+            // it is okay that the manager is not found, because we already stopped all work.
+            if (!removed && _acceptMoreWork)
             {
-                throw new InvalidOperationException("The provided manager was found in multiple slots.");
+                throw new InvalidOperationException("The provided manager was not found among the active managers.");
             }
-
-            if (EqtTrace.IsVerboseEnabled)
-            {
-                EqtTrace.Verbose($"ParallelOperationManager.ClearCompletedSlot: Clearing slot number {completedSlot[0].Index} with work (source): {GetSourcesForSlotExpensive(completedSlot[0])}.");
-            }
-            var slot = completedSlot[0];
-            slot.PreStartTime = TimeSpan.Zero;
-            slot.Work = default(TWorkload);
-            slot.HasWork = false;
-            slot.ShouldPreStart = false;
-            slot.IsPreStarted = false;
-            slot.InitTask = null;
-            slot.IsRunning = false;
-            slot.Manager = default(TManager);
-            slot.EventHandler = default(TEventHandler);
-
-            SetOccupiedSlotCount();
         }
+
+        RunWorkInParallel();
     }
 
-    private static string GetSourcesForSlotExpensive(ParallelOperationManager<TManager, TEventHandler, TWorkload>.Slot slot)
+    // Called under _lock. Uses reference equality because each workload gets its own freshly created manager.
+    private bool TryRemoveActiveManager(TManager manager)
     {
-        return string.Join(", ", (slot.Work as DiscoveryCriteria)?.Sources ?? (slot.Work as TestRunCriteria)?.Sources ?? []);
+        for (int i = 0; i < _activeManagers.Count; i++)
+        {
+            if (ReferenceEquals(_activeManagers[i], manager))
+            {
+                _activeManagers.RemoveAt(i);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void DoActionOnAllManagers(Action<TManager> action, bool doActionsInParallel = false)
     {
-        EqtTrace.Verbose($"ParallelOperationManager.DoActionOnAllManagers: Calling an action on all managers.");
-        // We don't need to lock here, we just grab the current list of
-        // slots that are occupied (have managers) and run action on each one of them.
-        var managers = _managerSlots.Where(slot => slot.HasWork).Select(slot => slot.Manager).ToImmutableArray();
-        int i = 0;
-        var actionTasks = new Task[managers.Length];
-        foreach (var manager in managers)
-        {
-            if (manager == null)
-                continue;
+        EqtTrace.Verbose("ParallelOperationManager.DoActionOnAllManagers: Calling an action on all managers.");
 
-            // Read the array before firing the task - beware of closures
-            if (doActionsInParallel)
-            {
-                actionTasks[i] = Task.Run(() => action(manager));
-                i++;
-            }
-            else
+        TManager[] managers;
+        lock (_lock)
+        {
+            managers = _activeManagers.ToArray();
+        }
+
+        if (!doActionsInParallel)
+        {
+            foreach (var manager in managers)
             {
                 DoManagerAction(() => action(manager));
             }
+
+            return;
         }
 
-        if (doActionsInParallel)
+        var actionTasks = new Task[managers.Length];
+        for (int i = 0; i < managers.Length; i++)
         {
-            DoManagerAction(() => Task.WaitAll(actionTasks));
+            // Read the array before firing the task - beware of closures.
+            var manager = managers[i];
+            actionTasks[i] = Task.Run(() => action(manager));
         }
+
+        DoManagerAction(() => Task.WaitAll(actionTasks));
     }
 
     private static void DoManagerAction(Action action)
@@ -363,40 +255,18 @@ internal sealed class ParallelOperationManager<TManager, TEventHandler, TWorkloa
 
     internal void StopAllManagers()
     {
-        EqtTrace.Verbose($"ParallelOperationManager.StopAllManagers: Stopping all managers.");
-        ClearSlots(acceptMoreWork: false);
+        EqtTrace.Verbose("ParallelOperationManager.StopAllManagers: Stopping all managers and discarding pending workloads.");
+        lock (_lock)
+        {
+            _acceptMoreWork = false;
+            _pendingWorkloads.Clear();
+            _activeManagers.Clear();
+        }
     }
 
     public void Dispose()
     {
-        EqtTrace.Verbose($"ParallelOperationManager.Dispose: Disposing all managers.");
-        ClearSlots(acceptMoreWork: false);
-    }
-
-    private class Slot
-    {
-        public int Index { get; set; }
-        public bool HasWork { get; set; }
-
-        public bool ShouldPreStart { get; set; }
-
-        public Task? InitTask { get; set; }
-
-        public bool IsRunning { get; set; }
-
-        public TManager? Manager { get; set; }
-
-        public TestRuntimeProviderInfo? ManagerInfo { get; set; }
-
-        public TEventHandler? EventHandler { get; set; }
-
-        public TWorkload? Work { get; set; }
-        public bool IsPreStarted { get; internal set; }
-        public TimeSpan PreStartTime { get; internal set; }
-
-        public override string ToString()
-        {
-            return $"{Index}: HasWork: {HasWork}, ShouldPreStart: {ShouldPreStart}, IsPreStarted: {IsPreStarted},  IsRunning: {IsRunning}";
-        }
+        EqtTrace.Verbose("ParallelOperationManager.Dispose: Disposing all managers.");
+        StopAllManagers();
     }
 }

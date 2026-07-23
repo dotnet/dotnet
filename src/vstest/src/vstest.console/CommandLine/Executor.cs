@@ -11,10 +11,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
+using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
 using Microsoft.VisualStudio.TestPlatform.Common;
+using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces;
@@ -25,6 +27,8 @@ using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 
 using Microsoft.VisualStudio.TestPlatform.Utilities;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Resources.Resources;
 
@@ -59,6 +63,14 @@ internal class Executor
     private readonly ITestPlatformEventSource _testPlatformEventSource;
     private readonly IProcessHelper _processHelper;
     private readonly IEnvironment _environment;
+    private readonly IRunSettingsProvider _runSettingsProvider;
+    private readonly IRunSettingsHelper _runSettingsHelper;
+    private readonly CommandLineOptions _commandLineOptions;
+    private readonly TestRunResultAggregator _testRunResultAggregator;
+    // The single request manager for this Executor. It is built lazily (the real manager reads the
+    // parsed command line and loads the test platform, which must happen after argument parsing), so
+    // commands that never run or discover tests (for example --Help) never construct it.
+    private readonly ITestRequestManager _testRequestManager;
     private bool _showHelp;
 
     /// <summary>
@@ -89,6 +101,16 @@ internal class Executor
     }
 
     internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment)
+        : this(output, testPlatformEventSource, processHelper, environment, new RunSettingsManager(), RunSettingsHelper.Instance, new CommandLineOptions(), new TestRunResultAggregator())
+    {
+    }
+
+    internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider)
+        : this(output, testPlatformEventSource, processHelper, environment, runSettingsProvider, RunSettingsHelper.Instance, new CommandLineOptions(), new TestRunResultAggregator())
+    {
+    }
+
+    internal Executor(IOutput output, ITestPlatformEventSource testPlatformEventSource, IProcessHelper processHelper, IEnvironment environment, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper, CommandLineOptions commandLineOptions, TestRunResultAggregator testRunResultAggregator, ITestRequestManager? testRequestManager = null)
     {
         DebuggerBreakpoint.AttachVisualStudioDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_DEBUG_ATTACHVS);
         DebuggerBreakpoint.WaitForNativeDebugger(WellKnownDebugEnvironmentVariables.VSTEST_RUNNER_NATIVE_DEBUG);
@@ -99,6 +121,11 @@ internal class Executor
         _showHelp = true;
         _processHelper = processHelper;
         _environment = environment;
+        _runSettingsProvider = runSettingsProvider;
+        _runSettingsHelper = runSettingsHelper;
+        _commandLineOptions = commandLineOptions;
+        _testRunResultAggregator = testRunResultAggregator;
+        _testRequestManager = testRequestManager ?? new LazyTestRequestManager(() => new TestRequestManager(_commandLineOptions, _testRunResultAggregator));
     }
 
     /// <summary>
@@ -195,7 +222,7 @@ internal class Executor
         }
 
         // Use the test run result aggregator to update the exit code.
-        exitCode |= (TestRunResultAggregator.Instance.Outcome == TestOutcome.Passed) ? 0 : 1;
+        exitCode |= (_testRunResultAggregator.Outcome == TestOutcome.Passed) ? 0 : 1;
 
         EqtTrace.Verbose("Executor.Execute: Exiting with exit code of {0}", exitCode);
 
@@ -204,7 +231,7 @@ internal class Executor
         _testPlatformEventSource.MetricsDisposeStart();
 
         // Disposing Metrics Publisher when VsTestConsole ends
-        TestRequestManager.Instance.Dispose();
+        _testRequestManager.Dispose();
 
         _testPlatformEventSource.MetricsDisposeStop();
         return exitCode;
@@ -220,7 +247,7 @@ internal class Executor
     {
         processors = new List<IArgumentProcessor>();
         int result = 0;
-        var processorFactory = ArgumentProcessorFactory.Create();
+        var processorFactory = ArgumentProcessorFactory.Create(runSettingsProvider: _runSettingsProvider, runSettingsHelper: _runSettingsHelper, commandLineOptions: _commandLineOptions, testRequestManager: _testRequestManager);
         for (var index = 0; index < args.Length; index++)
         {
             var arg = args[index];
@@ -268,7 +295,7 @@ internal class Executor
         }
 
         // Initialize Runsettings with defaults
-        RunSettingsManager.Instance.AddDefaultRunSettings();
+        _runSettingsProvider.AddDefaultRunSettings();
 
         // Ensure we have an action argument.
         EnsureActionArgumentIsPresent(processors, processorFactory);

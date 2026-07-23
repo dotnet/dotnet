@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.TestRunAttachmentsProcessing;
 
@@ -22,6 +23,13 @@ internal class DataCollectorAttachmentsProcessorsFactory : IDataCollectorAttachm
 {
     private const string CoverageFriendlyName = "Code Coverage";
     private static readonly ConcurrentDictionary<string, DataCollectorExtensionManager> DataCollectorExtensionManagerCache = new();
+
+    private readonly IRunSettingsHelper _runSettingsHelper;
+
+    public DataCollectorAttachmentsProcessorsFactory(IRunSettingsHelper? runSettingsHelper = null)
+    {
+        _runSettingsHelper = runSettingsHelper ?? RunSettingsHelper.Instance;
+    }
 
     public DataCollectorAttachmentProcessor[] Create(InvokedDataCollector[]? invokedDataCollectors, IMessageLogger? logger)
     {
@@ -52,7 +60,7 @@ internal class DataCollectorAttachmentsProcessorsFactory : IDataCollectorAttachm
 #endif
 
                 // If we're in design mode we need to load the extension inside a different AppDomain to avoid to lock extension file containers.
-                if (canUseAppDomains && RunSettingsHelper.Instance.IsDesignMode)
+                if (canUseAppDomains && _runSettingsHelper.IsDesignMode)
                 {
 #if NETFRAMEWORK
                     try

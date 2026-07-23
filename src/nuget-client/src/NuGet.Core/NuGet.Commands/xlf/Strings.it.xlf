@@ -1113,6 +1113,11 @@ Per usare questa funzionalità, aggiornare .NET SDK o rimuovere RestoreUseLegacy
         <target state="translated">Rimozione del pacchetto '{0}' come dipendenza di '{1}'. La versione massima rimovibile è '{2}'</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
+      <trans-unit id="RestrictedPackageIdWarning">
+        <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
+        <target state="translated">L'ID pacchetto ''{0}'' non è valido. Gli ID del pacchetto devono iniziare con una lettera, una cifra o un carattere di sottolineatura e contenere solo lettere ASCII, cifre, punti (.), trattini (-) e caratteri di sottolineatura (_), senza punti o trattini consecutivi.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
         <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">Il file di certificato '{0}' non è stato trovato. Per un elenco dei modi accettati per specificare un certificato, vedere https://docs.nuget.org/docs/reference/command-line-reference</target>
@@ -1458,7 +1463,7 @@ Per usare questa funzionalità, aggiornare .NET SDK o rimuovere RestoreUseLegacy
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
-        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
         <target state="translated">Nella configurazione sono presenti {0} origini pacchetti definite. Quando si usa la gestione centralizzata dei pacchetti, eseguire il mapping delle origini pacchetti con il mapping dell'origine pacchetto (https://aka.ms/nuget-package-source-mapping) o specificare una singola origine pacchetto. Sono definite le origini seguenti: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
@@ -1527,7 +1532,7 @@ NuGet richiede origini HTTPS. Vedi https://aka.ms/nuget-https-everywhere per alt
       </trans-unit>
       <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
         <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
-        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <target state="translated">RestoreForceEvaluate sostituisce RestoreLockedMode; il file di blocco dei pacchetti verrà rivalutato e rigenerato, e la modalità di blocco verrà ignorata.</target>
         <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">

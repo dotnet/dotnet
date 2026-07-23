@@ -240,6 +240,14 @@ internal partial class CSharpFormattingPass
                             }
                         }
                     }
+                    else if (_documentMappingService.IsInStringLiteral(_csharpDocument, _csharpSyntaxRoot, line.Start, multilineOnly: false))
+                    {
+                        // Whitespace in a multiline string is content, so preserve it in the formatting document.
+                        _currentLine = line;
+                        _currentFirstNonWhitespacePosition = line.Start;
+                        _builder.AppendLine(line.ToString());
+                        _lineInfoBuilder.Add(CreateLineInfo(processIndentation: false, processFormatting: true, checkForNewLines: true));
+                    }
                     else
                     {
                         _builder.AppendLine();
@@ -378,6 +386,19 @@ internal partial class CSharpFormattingPass
                 // any indentation we want to add to line up attribute content, otherwise we'd end up pushing that content to
                 // the right repeatedly.
                 var attributeIndentationWidth = (htmlIndentLevel * _tabSize) + additionalIndentation.GetValueOrDefault();
+
+                // For lambda attributes like `OnClick=@(() => ...)`, Roslyn already contributes the
+                // lambda-body indentation on wrapped lines. If we keep applying the full attribute
+                // indentation baseline to those continuation lines, every format pass shifts the block
+                // body one level to the right.
+                if (expressionStartsBlockLambda &&
+                    attributeNode is MarkupAttributeBlockSyntax or MarkupTagHelperAttributeSyntax &&
+                    _currentLine.LineNumber > nodeStartLine &&
+                    htmlIndentLevel > 0)
+                {
+                    htmlIndentLevel--;
+                }
+
                 if (attributeIndentationWidth <= 0)
                 {
                     // Attributes don't affect indentation here, so the user's indentation is all we need.
@@ -561,9 +582,7 @@ internal partial class CSharpFormattingPass
                 // If we're here, it means this is a "normal" line of C#, so we can just emit it as is. The exception to this is
                 // when we're inside a string literal. We still want to emit it as is, but we need to make sure we tell the formatter
                 // to ignore any existing indentation too.
-                if (_documentMappingService.TryMapToCSharpDocumentPosition(_csharpDocument, _currentToken.SpanStart, out _, out var csharpIndex) &&
-                    _csharpSyntaxRoot.FindNode(new TextSpan(csharpIndex, 0), getInnermostNodeForTie: true) is { } csharpNode &&
-                    csharpNode.IsStringLiteral(multilineOnly: true))
+                if (_documentMappingService.IsInStringLiteral(_csharpDocument, _csharpSyntaxRoot, _currentToken.SpanStart, multilineOnly: true))
                 {
                     _builder.AppendLine(_currentLine.ToString());
                     return CreateLineInfo(processIndentation: false, processFormatting: true, checkForNewLines: true);

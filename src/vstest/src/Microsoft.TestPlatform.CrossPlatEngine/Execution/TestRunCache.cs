@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 
@@ -60,12 +59,12 @@ internal class TestRunCache : ITestRunCache
     /// <summary>
     /// The test case currently in progress.
     /// </summary>
-    private ICollection<TestCase> _inProgressTests;
+    private List<TestCase> _inProgressTests;
 
     /// <summary>
     /// Test results buffer
     /// </summary>
-    private ICollection<TestResult> _testResults;
+    private List<TestResult> _testResults;
 
     /// <summary>
     /// Sync object
@@ -91,10 +90,10 @@ internal class TestRunCache : ITestRunCache
 
         _cacheSize = cacheSize;
         _onCacheHit = onCacheHit;
-        _lastUpdate = DateTime.Now;
+        _lastUpdate = DateTime.UtcNow;
         _cacheTimeout = cacheTimeout;
-        _inProgressTests = new Collection<TestCase>();
-        _testResults = new Collection<TestResult>();
+        _inProgressTests = new List<TestCase>(InitialCapacity(cacheSize));
+        _testResults = new List<TestResult>(InitialCapacity(cacheSize));
         _runStats = new Dictionary<TestOutcome, long>();
         _syncObject = new object();
 
@@ -272,7 +271,10 @@ internal class TestRunCache : ITestRunCache
         {
             var lastChunk = _testResults;
 
-            _testResults = new Collection<TestResult>();
+            // GetLastChunk() is the end-of-run drain; no further results are expected after this
+            // call, so avoid pre-allocating capacity here. The replacement list exists only to keep
+            // the field non-null and will be allocated lazily if results somehow arrive afterwards.
+            _testResults = new List<TestResult>();
 
             return lastChunk;
         }
@@ -311,7 +313,7 @@ internal class TestRunCache : ITestRunCache
         {
             // Send results when the specified cache size has been reached or
             // after the specified cache timeout has been hit.
-            var timeDelta = DateTime.Now - _lastUpdate;
+            var timeDelta = DateTime.UtcNow - _lastUpdate;
 
             var inProgressTestsCount = _inProgressTests.Count;
 
@@ -337,9 +339,9 @@ internal class TestRunCache : ITestRunCache
     {
         // Pass on the buffer to the listener and clear the old one
         _onCacheHit(TestRunStatistics, _testResults, _inProgressTests);
-        _testResults = new Collection<TestResult>();
-        _inProgressTests = new Collection<TestCase>();
-        _lastUpdate = DateTime.Now;
+        _testResults = new List<TestResult>(InitialCapacity(_cacheSize));
+        _inProgressTests = new List<TestCase>(InitialCapacity(_cacheSize));
+        _lastUpdate = DateTime.UtcNow;
 
         // Reset the timer
         _timer.Change(_cacheTimeout, _cacheTimeout);
@@ -370,5 +372,7 @@ internal class TestRunCache : ITestRunCache
             EqtTrace.Warning("TestRunCache: No test found corresponding to testResult '{0}' in inProgress list.", result.DisplayName);
         }
     }
+
+    private static int InitialCapacity(long cacheSize) => (int)Math.Min(cacheSize, 512);
 
 }

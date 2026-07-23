@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
-using Newtonsoft.Json.Linq;
 
 #pragma warning disable 219, 612, 618
 #nullable disable
@@ -31,12 +30,13 @@ public partial class DependentBaseEntityType
             typeof(CompiledModelTestBase.DependentBase<byte?>),
             baseEntityType,
             discriminatorProperty: "EnumDiscriminator",
-            discriminatorValue: CompiledModelTestBase.Enum1.One,
             derivedTypesCount: 1,
-            propertyCount: 6,
+            propertyCount: 5,
             navigationCount: 1,
             foreignKeyCount: 2,
             keyCount: 1);
+
+        runtimeEntityType.SetDiscriminatorValueFromProviderValue(1);
 
         var principalId = runtimeEntityType.AddProperty(
             "PrincipalId",
@@ -54,21 +54,7 @@ public partial class DependentBaseEntityType
             shadowIndex: 0,
             relationshipIndex: 0,
             storeGenerationIndex: 0);
-        principalId.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<long>(
-                bool (long v1, long v2) => v1 == v2,
-                int (long v) => ((object)v).GetHashCode(),
-                long (long v) => v),
-            keyComparer: new ValueComparer<long>(
-                bool (long v1, long v2) => v1 == v2,
-                int (long v) => ((object)v).GetHashCode(),
-                long (long v) => v),
-            providerValueComparer: new ValueComparer<long>(
-                bool (long v1, long v2) => v1 == v2,
-                int (long v) => ((object)v).GetHashCode(),
-                long (long v) => v),
-            clrType: typeof(long),
-            jsonValueReaderWriter: JsonInt64ReaderWriter.Instance);
+        principalId.TypeMapping = CosmosTypeMapping<long>.Default;
         principalId.SetCurrentValueComparer(new EntryCurrentValueComparer<long>(principalId));
 
         var principalAlternateId = runtimeEntityType.AddProperty(
@@ -86,27 +72,13 @@ public partial class DependentBaseEntityType
             shadowIndex: 1,
             relationshipIndex: 1,
             storeGenerationIndex: 1);
-        principalAlternateId.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<Guid>(
-                bool (Guid v1, Guid v2) => v1 == v2,
-                int (Guid v) => ((object)v).GetHashCode(),
-                Guid (Guid v) => v),
-            keyComparer: new ValueComparer<Guid>(
-                bool (Guid v1, Guid v2) => v1 == v2,
-                int (Guid v) => ((object)v).GetHashCode(),
-                Guid (Guid v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            converter: new ValueConverter<Guid, string>(
-                string (Guid v) => v.ToString("D"),
-                Guid (string v) => new Guid(v)),
+        principalAlternateId.TypeMapping = CosmosTypeMapping<string>.Default.Clone(
+            comparer: DefaultValueComparer<Guid>.Default,
+            providerValueComparer: DefaultValueComparer<string>.Default,
+            converter: GuidToStringConverter.Instance,
             jsonValueReaderWriter: new JsonConvertedValueReaderWriter<Guid, string>(
                 JsonStringReaderWriter.Instance,
-                new ValueConverter<Guid, string>(
-                    string (Guid v) => v.ToString("D"),
-                    Guid (string v) => new Guid(v))));
+                GuidToStringConverter.Instance));
         principalAlternateId.SetCurrentValueComparer(new EntryCurrentValueComparer<Guid>(principalAlternateId));
         principalAlternateId.SetSentinelFromProviderValue("00000000-0000-0000-0000-000000000000");
 
@@ -126,27 +98,13 @@ public partial class DependentBaseEntityType
             shadowIndex: 2,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        enumDiscriminator.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<CompiledModelTestBase.Enum1>(
-                bool (CompiledModelTestBase.Enum1 v1, CompiledModelTestBase.Enum1 v2) => object.Equals(((object)v1), ((object)v2)),
-                int (CompiledModelTestBase.Enum1 v) => ((object)v).GetHashCode(),
-                CompiledModelTestBase.Enum1 (CompiledModelTestBase.Enum1 v) => v),
-            keyComparer: new ValueComparer<CompiledModelTestBase.Enum1>(
-                bool (CompiledModelTestBase.Enum1 v1, CompiledModelTestBase.Enum1 v2) => object.Equals(((object)v1), ((object)v2)),
-                int (CompiledModelTestBase.Enum1 v) => ((object)v).GetHashCode(),
-                CompiledModelTestBase.Enum1 (CompiledModelTestBase.Enum1 v) => v),
-            providerValueComparer: new ValueComparer<int>(
-                bool (int v1, int v2) => v1 == v2,
-                int (int v) => v,
-                int (int v) => v),
-            converter: new ValueConverter<CompiledModelTestBase.Enum1, int>(
-                int (CompiledModelTestBase.Enum1 value) => ((int)value),
-                CompiledModelTestBase.Enum1 (int value) => ((CompiledModelTestBase.Enum1)value)),
+        enumDiscriminator.TypeMapping = CosmosTypeMapping<int>.Default.Clone(
+            comparer: ValueComparer<CompiledModelTestBase.Enum1>.Default,
+            providerValueComparer: DefaultValueComparer<int>.Default,
+            converter: EnumToNumberConverter<CompiledModelTestBase.Enum1, int>.Instance,
             jsonValueReaderWriter: new JsonConvertedValueReaderWriter<CompiledModelTestBase.Enum1, int>(
                 JsonInt32ReaderWriter.Instance,
-                new ValueConverter<CompiledModelTestBase.Enum1, int>(
-                    int (CompiledModelTestBase.Enum1 value) => ((int)value),
-                    CompiledModelTestBase.Enum1 (int value) => ((CompiledModelTestBase.Enum1)value))));
+                EnumToNumberConverter<CompiledModelTestBase.Enum1, int>.Instance));
         enumDiscriminator.SetSentinelFromProviderValue(0);
 
         var id = runtimeEntityType.AddProperty(
@@ -181,23 +139,8 @@ public partial class DependentBaseEntityType
             shadowIndex: -1,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        id.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<byte>(
-                bool (byte v1, byte v2) => v1 == v2,
-                int (byte v) => ((int)v),
-                byte (byte v) => v),
-            keyComparer: new ValueComparer<byte>(
-                bool (byte v1, byte v2) => v1 == v2,
-                int (byte v) => ((int)v),
-                byte (byte v) => v),
-            providerValueComparer: new ValueComparer<byte>(
-                bool (byte v1, byte v2) => v1 == v2,
-                int (byte v) => ((int)v),
-                byte (byte v) => v),
-            clrType: typeof(byte),
-            jsonValueReaderWriter: JsonByteReaderWriter.Instance);
+        id.TypeMapping = CosmosTypeMapping<byte>.Default;
         id.SetComparer(new NullableValueComparer<byte>(id.TypeMapping.Comparer));
-        id.SetKeyComparer(new NullableValueComparer<byte>(id.TypeMapping.KeyComparer));
 
         var __id = runtimeEntityType.AddProperty(
             "__id",
@@ -215,53 +158,8 @@ public partial class DependentBaseEntityType
             shadowIndex: 3,
             relationshipIndex: -1,
             storeGenerationIndex: -1);
-        __id.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            keyComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            clrType: typeof(string),
-            jsonValueReaderWriter: JsonStringReaderWriter.Instance);
+        __id.TypeMapping = CosmosTypeMapping<string>.Default;
         __id.AddAnnotation("Cosmos:PropertyName", "id");
-
-        var __jObject = runtimeEntityType.AddProperty(
-            "__jObject",
-            typeof(JObject),
-            nullable: true);
-        __jObject.SetAccessors(
-            JObject (IInternalEntry entry) => entry.ReadShadowValue<JObject>(4),
-            JObject (IInternalEntry entry) => entry.ReadShadowValue<JObject>(4),
-            JObject (IInternalEntry entry) => entry.ReadOriginalValue<JObject>(__jObject, 5),
-            JObject (IInternalEntry entry) => entry.GetCurrentValue<JObject>(__jObject));
-        __jObject.SetPropertyIndexes(
-            index: 5,
-            originalValueIndex: 5,
-            shadowIndex: 4,
-            relationshipIndex: -1,
-            storeGenerationIndex: -1);
-        __jObject.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<JObject>(
-                bool (JObject v1, JObject v2) => object.Equals(v1, v2),
-                int (JObject v) => ((object)v).GetHashCode(),
-                JObject (JObject v) => v),
-            keyComparer: new ValueComparer<JObject>(
-                bool (JObject v1, JObject v2) => object.Equals(v1, v2),
-                int (JObject v) => ((object)v).GetHashCode(),
-                JObject (JObject v) => v),
-            providerValueComparer: new ValueComparer<JObject>(
-                bool (JObject v1, JObject v2) => object.Equals(v1, v2),
-                int (JObject v) => ((object)v).GetHashCode(),
-                JObject (JObject v) => v),
-            clrType: typeof(JObject));
-        __jObject.AddAnnotation("Cosmos:PropertyName", "");
 
         var key = runtimeEntityType.AddKey(
             new[] { principalId, principalAlternateId });
@@ -371,7 +269,6 @@ public partial class DependentBaseEntityType
         var enumDiscriminator = runtimeEntityType.FindProperty("EnumDiscriminator");
         var id = runtimeEntityType.FindProperty("Id");
         var __id = runtimeEntityType.FindProperty("__id");
-        var __jObject = runtimeEntityType.FindProperty("__jObject");
         var key = runtimeEntityType.FindKey(new[] { principalId, principalAlternateId });
         key.SetPrincipalKeyValueFactory(KeyValueFactoryFactory.CreateCompositeFactory(key));
         key.SetIdentityMapFactory(IdentityMapFactoryFactory.CreateFactory<IReadOnlyList<object>>(key));
@@ -380,16 +277,16 @@ public partial class DependentBaseEntityType
             ISnapshot (IInternalEntry source) =>
             {
                 var structuralType = ((CompiledModelTestBase.DependentBase<byte?>)(source.Entity));
-                return ((ISnapshot)(new Snapshot<long, Guid, CompiledModelTestBase.Enum1, byte?, string, JObject>(((ValueComparer<long>)(((IProperty)principalId).GetValueComparer())).Snapshot(source.GetCurrentValue<long>(principalId)), ((ValueComparer<Guid>)(((IProperty)principalAlternateId).GetValueComparer())).Snapshot(source.GetCurrentValue<Guid>(principalAlternateId)), ((ValueComparer<CompiledModelTestBase.Enum1>)(((IProperty)enumDiscriminator).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum1>(enumDiscriminator)), (source.GetCurrentValue<byte?>(id) == null ? null : ((ValueComparer<byte?>)(((IProperty)id).GetValueComparer())).Snapshot(source.GetCurrentValue<byte?>(id))), (source.GetCurrentValue<string>(__id) == null ? null : ((ValueComparer<string>)(((IProperty)__id).GetValueComparer())).Snapshot(source.GetCurrentValue<string>(__id))), (source.GetCurrentValue<JObject>(__jObject) == null ? null : ((ValueComparer<JObject>)(((IProperty)__jObject).GetValueComparer())).Snapshot(source.GetCurrentValue<JObject>(__jObject))))));
+                return ((ISnapshot)(new Snapshot<long, Guid, CompiledModelTestBase.Enum1, byte?, string>(((ValueComparer<long>)(((IProperty)principalId).GetValueComparer())).Snapshot(source.GetCurrentValue<long>(principalId)), ((ValueComparer<Guid>)(((IProperty)principalAlternateId).GetValueComparer())).Snapshot(source.GetCurrentValue<Guid>(principalAlternateId)), ((ValueComparer<CompiledModelTestBase.Enum1>)(((IProperty)enumDiscriminator).GetValueComparer())).Snapshot(source.GetCurrentValue<CompiledModelTestBase.Enum1>(enumDiscriminator)), (source.GetCurrentValue<byte?>(id) == null ? null : ((ValueComparer<byte?>)(((IProperty)id).GetValueComparer())).Snapshot(source.GetCurrentValue<byte?>(id))), (source.GetCurrentValue<string>(__id) == null ? null : ((ValueComparer<string>)(((IProperty)__id).GetValueComparer())).Snapshot(source.GetCurrentValue<string>(__id))))));
             });
         runtimeEntityType.SetStoreGeneratedValuesFactory(
             ISnapshot () => ((ISnapshot)(new Snapshot<long, Guid>(((ValueComparer<long>)(((IProperty)principalId).GetValueComparer())).Snapshot(default(long)), ((ValueComparer<Guid>)(((IProperty)principalAlternateId).GetValueComparer())).Snapshot(default(Guid))))));
         runtimeEntityType.SetTemporaryValuesFactory(
             ISnapshot (IInternalEntry source) => ((ISnapshot)(new Snapshot<long, Guid>(default(long), default(Guid)))));
         runtimeEntityType.SetShadowValuesFactory(
-            ISnapshot (IDictionary<string, object> source) => ((ISnapshot)(new Snapshot<long, Guid, CompiledModelTestBase.Enum1, string, JObject>((source.ContainsKey("PrincipalId") ? ((long)(source["PrincipalId"])) : 0L), (source.ContainsKey("PrincipalAlternateId") ? ((Guid)(source["PrincipalAlternateId"])) : new Guid("00000000-0000-0000-0000-000000000000")), (source.ContainsKey("EnumDiscriminator") ? ((CompiledModelTestBase.Enum1)(source["EnumDiscriminator"])) : CompiledModelTestBase.Enum1.Default), (source.ContainsKey("__id") ? ((string)(source["__id"])) : null), (source.ContainsKey("__jObject") ? ((JObject)(source["__jObject"])) : null)))));
+            ISnapshot (IDictionary<string, object> source) => ((ISnapshot)(new Snapshot<long, Guid, CompiledModelTestBase.Enum1, string>((source.ContainsKey("PrincipalId") ? ((long)(source["PrincipalId"])) : 0L), (source.ContainsKey("PrincipalAlternateId") ? ((Guid)(source["PrincipalAlternateId"])) : new Guid("00000000-0000-0000-0000-000000000000")), (source.ContainsKey("EnumDiscriminator") ? ((CompiledModelTestBase.Enum1)(source["EnumDiscriminator"])) : CompiledModelTestBase.Enum1.Default), (source.ContainsKey("__id") ? ((string)(source["__id"])) : null)))));
         runtimeEntityType.SetEmptyShadowValuesFactory(
-            ISnapshot () => ((ISnapshot)(new Snapshot<long, Guid, CompiledModelTestBase.Enum1, string, JObject>(default(long), default(Guid), default(CompiledModelTestBase.Enum1), default(string), default(JObject)))));
+            ISnapshot () => ((ISnapshot)(new Snapshot<long, Guid, CompiledModelTestBase.Enum1, string>(default(long), default(Guid), default(CompiledModelTestBase.Enum1), default(string)))));
         runtimeEntityType.SetRelationshipSnapshotFactory(
             ISnapshot (IInternalEntry source) =>
             {
@@ -397,12 +294,12 @@ public partial class DependentBaseEntityType
                 return ((ISnapshot)(new Snapshot<long, Guid, object>(((ValueComparer<long>)(((IProperty)principalId).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<long>(principalId)), ((ValueComparer<Guid>)(((IProperty)principalAlternateId).GetKeyValueComparer())).Snapshot(source.GetCurrentValue<Guid>(principalAlternateId)), source.GetCurrentValue<CompiledModelTestBase.PrincipalDerived<CompiledModelTestBase.DependentBase<byte?>>>(principal))));
             });
         runtimeEntityType.SetCounts(new PropertyCounts(
-            propertyCount: 6,
+            propertyCount: 5,
             navigationCount: 1,
             complexPropertyCount: 0,
             complexCollectionCount: 0,
-            originalValueCount: 6,
-            shadowCount: 5,
+            originalValueCount: 5,
+            shadowCount: 4,
             relationshipCount: 3,
             storeGeneratedCount: 2));
         runtimeEntityType.AddAnnotation("Cosmos:ContainerName", "Dependents");

@@ -169,6 +169,24 @@ public class TestRequestHandlerTests
         SendSessionEnd();
     }
 
+    [TestMethod]
+    public void ProcessRequestsVersionCheckFailureShouldWriteErrorToStandardError()
+    {
+        // A VersionCheck payload that is not an int makes DeserializePayload<int> throw, which simulates
+        // the unrecoverable serializer failure the test host hits when reflection-based serialization is
+        // disabled (issue #16274). The protocol version is not negotiated yet, so the error cannot be sent
+        // back over the channel and must instead be written to standard error for the runner to capture.
+        var message = new Message { MessageType = MessageType.VersionCheck, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.VersionCheck, "not-an-int", 1) };
+        ProcessRequestsAsync(_mockTestHostManagerFactory.Object);
+
+        SendMessageOnChannel(message);
+
+        var handler = (TestableTestRequestHandler)_requestHandler;
+        var standardError = string.Join(Environment.NewLine, handler.StandardErrorMessages);
+        Assert.Contains(MessageType.VersionCheck, standardError);
+        SendSessionEnd();
+    }
+
     #endregion
 
     #region Discovery Protocol
@@ -521,6 +539,8 @@ public class TestRequestHandlerTests
 
 public class TestableTestRequestHandler : TestRequestHandler
 {
+    public List<string> StandardErrorMessages { get; } = new();
+
     public TestableTestRequestHandler(
         TestHostConnectionInfo testHostConnectionInfo,
         ICommunicationEndpointFactory communicationEndpointFactory,
@@ -534,6 +554,11 @@ public class TestableTestRequestHandler : TestRequestHandler
             OnLaunchAdapterProcessWithDebuggerAttachedAckReceived,
             OnAttachDebuggerAckRecieved)
     {
+    }
+
+    internal override void WriteToStandardError(string message)
+    {
+        StandardErrorMessages.Add(message);
     }
 
     private static void OnLaunchAdapterProcessWithDebuggerAttachedAckReceived(Message message)

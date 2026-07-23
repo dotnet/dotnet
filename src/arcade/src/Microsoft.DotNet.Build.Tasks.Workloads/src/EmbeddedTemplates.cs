@@ -73,6 +73,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 { "ManifestProduct.wxs", $"{ns}.MsiTemplate.ManifestProduct.wxs" },
                 { "WorkloadSetProduct.wxs", $"{ns}.MsiTemplate.WorkloadSetProduct.wxs" },
                 { "Product.wxs", $"{ns}.MsiTemplate.Product.wxs" },
+                { "Productv5.wxs", $"{ns}.MsiTemplate.Productv5.wxs" },
                 { "Registry.wxs", $"{ns}.MsiTemplate.Registry.wxs" },
                 { "Variables.wxi", $"{ns}.MsiTemplate.Variables.wxi" },
 
@@ -81,7 +82,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                 { $"component.swr", $"{ns}.SwixTemplate.component.swr" },
                 { $"component.res.swr", $"{ns}.SwixTemplate.component.res.swr" },
                 { $"component.swixproj", $"{ns}.SwixTemplate.component.swixproj" },
-                { $"manifest.vsmanproj", $"{ns}.SwixTempalte.manifest.vsmanproj" },
+                { $"manifest.vsmanproj", $"{ns}.SwixTemplate.manifest.vsmanproj" },
                 { $"packageGroup.swr", $"{ns}.SwixTemplate.packageGroup.swr" },
                 { $"packageGroup.swixproj", $"{ns}.SwixTemplate.packageGroup.swixproj" },
 

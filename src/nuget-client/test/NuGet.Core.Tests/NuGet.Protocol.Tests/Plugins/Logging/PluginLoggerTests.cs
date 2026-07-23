@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json.Nodes;
 using System.Threading;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -23,6 +24,36 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = Assert.Throws<ArgumentNullException>(() => new PluginLogger(environmentVariableReader: null));
 
             Assert.Equal("environmentVariableReader", exception.ParamName);
+        }
+
+        [Fact]
+        public void ResetDefaultInstance_ReReadsEnableLogFromEnvironment()
+        {
+            // DefaultInstance freezes its IsEnabled when created; in a process reused across builds, ResetDefaultInstance
+            // must rebuild it so a toggled NUGET_PLUGIN_ENABLE_LOG takes effect on the next restore.
+            string original = Environment.GetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG");
+            using (var testDirectory = TestDirectory.Create())
+            {
+                string originalLogDir = Environment.GetEnvironmentVariable("NUGET_PLUGIN_LOG_DIRECTORY_PATH");
+                try
+                {
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_LOG_DIRECTORY_PATH", testDirectory.Path);
+
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG", bool.TrueString);
+                    PluginLogger.ResetDefaultInstance();
+                    Assert.True(PluginLogger.DefaultInstance.IsEnabled);
+
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG", bool.FalseString);
+                    PluginLogger.ResetDefaultInstance();
+                    Assert.False(PluginLogger.DefaultInstance.IsEnabled);
+                }
+                finally
+                {
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG", original);
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_LOG_DIRECTORY_PATH", originalLogDir);
+                    PluginLogger.ResetDefaultInstance();
+                }
+            }
         }
 
         [Fact]
@@ -189,7 +220,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             public override string ToString()
             {
-                var message = new JObject(new JProperty("message", Message));
+                var message = new JsonObject { ["message"] = Message };
 
                 return ToString("random", message);
             }

@@ -112,19 +112,9 @@
         <target state="translated">L'argument ne peut pas être null ou vide.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">Faites migrer le format de gestion des packages NuGet de ce projet, de 'packages.config' à 'PackageReference'.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">Certains packages NuGet sont absents de cette solution. Cliquez pour effectuer une restauration à partir de vos sources de package en ligne.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AskForUpdateMessage">
-        <source>A new version of NuGet Package Manager is available.</source>
-        <target state="translated">Une nouvelle version du Gestionnaire de package NuGet est disponible.</target>
         <note />
       </trans-unit>
       <trans-unit id="AutoReferenced">
@@ -462,11 +452,6 @@
         <target state="translated">Signaler un abus</target>
         <note />
       </trans-unit>
-      <trans-unit id="IgnoreUpgrade">
-        <source>Ignore for now</source>
-        <target state="translated">Ignorer pour le moment</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImageCaption_HelpIcon">
         <source>Help icon</source>
         <target state="translated">Icône d'aide</target>
@@ -752,11 +737,6 @@
         <target state="translated">Licence {0}</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">Ne plus afficher</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">En savoir plus sur les options d'installation</target>
@@ -765,16 +745,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">En savoir plus sur les options de désinstallation</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">Pourquoi dois-je effectuer une migration ?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">Faire migrer maintenant</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">
@@ -897,11 +867,6 @@
         <target state="translated">_Restaurer</target>
         <note />
       </trans-unit>
-      <trans-unit id="ShowDetails">
-        <source>Show Details</source>
-        <target state="translated">Afficher les détails</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
 Error: {1}</source>
@@ -932,12 +897,12 @@ Erreur : {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
-        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
         <target state="translated">Le nom spécifié a déjà été ajouté à la liste des sources de package disponibles. Indiquez un nom unique.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
-        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
         <target state="translated">La source spécifiée a déjà été ajoutée à la liste des sources de package disponibles. Indiquez une source unique.</target>
         <note />
       </trans-unit>
@@ -1047,8 +1012,8 @@ Erreur : {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_NoReadme">
-        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">Aucun fichier README n’est disponible pour la version de package sélectionnée. Pour plus d’informations, consultez [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <target state="translated">Aucun fichier README n’est disponible pour la version de package sélectionnée. Pour découvrir plus d’informations, consultez [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1282,8 +1247,8 @@ Erreur : {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
-        <source>Please follow simple instructions from {0} to go back to previous state.</source>
-        <target state="translated">Suivez les instructions simples de {0} pour revenir à l'état précédent.</target>
+        <source>Follow the instructions at {0} to return to the previous state.</source>
+        <target state="translated">Suivez les instructions sur {0} pour revenir à l’état précédent.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

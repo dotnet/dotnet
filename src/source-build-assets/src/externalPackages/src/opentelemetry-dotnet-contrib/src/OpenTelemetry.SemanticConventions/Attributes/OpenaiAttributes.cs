@@ -15,6 +15,11 @@ namespace OpenTelemetry.SemanticConventions;
 public static class OpenaiAttributes
 {
     /// <summary>
+    /// The type of OpenAI API being used.
+    /// </summary>
+    public const string AttributeOpenaiApiType = "openai.api.type";
+
+    /// <summary>
     /// The service tier requested. May be a specific tier, default, or auto.
     /// </summary>
     public const string AttributeOpenaiRequestServiceTier = "openai.request.service_tier";
@@ -28,6 +33,22 @@ public static class OpenaiAttributes
     /// A fingerprint to track any eventual change in the Generative AI environment.
     /// </summary>
     public const string AttributeOpenaiResponseSystemFingerprint = "openai.response.system_fingerprint";
+
+    /// <summary>
+    /// The type of OpenAI API being used.
+    /// </summary>
+    public static class OpenaiApiTypeValues
+    {
+        /// <summary>
+        /// The OpenAI <a href="https://developers.openai.com/api/reference/chat-completions/overview">Chat Completions API</a>.
+        /// </summary>
+        public const string ChatCompletions = "chat_completions";
+
+        /// <summary>
+        /// The OpenAI <a href="https://developers.openai.com/api/reference/responses/overview">Responses API</a>.
+        /// </summary>
+        public const string Responses = "responses";
+    }
 
     /// <summary>
     /// The service tier requested. May be a specific tier, default, or auto.

@@ -30,22 +30,6 @@ jobs:
     Codeql.Language: csharp,cpp
   templateContext:
     outputs:
-    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), ne(variables['DisableVSPublish'], 'true'), eq(variables['_BuildConfig'], 'Release')) }}:
-      - output: nuget
-        displayName: 'Push Visual Studio NuPkgs'
-        condition: succeeded()
-        packageParentPath: '$(Build.ArtifactStagingDirectory)'
-        packagesToPush: $(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/*/VS.Redist.Common.NETCoreCheck.*.nupkg
-        nuGetFeedType: external
-        publishFeedCredentials: 'DevDiv - VS package feed'
-    - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['_BuildConfig'], 'Release'), eq(parameters.targetArchitecture, 'x64')) }}:
-      - output: nuget
-        displayName: 'Push Visual Studio NuPkgs'
-        condition: succeeded()
-        packageParentPath: '$(Build.ArtifactStagingDirectory)'
-        packagesToPush: $(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/*/VS.Redist.Common.NetCore.Launcher.*.nupkg
-        nuGetFeedType: external
-        publishFeedCredentials: 'DevDiv - VS package feed'
     - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['_BuildConfig'], 'Release'), eq(variables['StagingArtifactsFolderExist'], True)) }}:
       - output: pipelineArtifact
         displayName: 'Publish Artifacts'
@@ -84,10 +68,29 @@ jobs:
     - template: /eng/common/templates-official/steps/generate-sbom.yml@self
       parameters:
         name: Generate_SBOM_${{ parameters.name }}
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), ne(variables['DisableVSPublish'], 'true'), eq(variables['_BuildConfig'], 'Release')) }}:
-    - task: NuGetToolInstaller@1
-      displayName: 'Install NuGet.exe'
-    - ${{ if eq(parameters.targetArchitecture, 'x64') }}: []
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest'), ne(variables['DisableVSPublish'], 'true')) }}:
+    - task: NuGetAuthenticate@1
+      displayName: 'Authenticate to DevDiv VS feed (WIF)'
+      inputs:
+        azureDevOpsServiceConnection: 'dnceng-devdiv-vs-feed-push'
+        feedUrl: 'https://devdiv.pkgs.visualstudio.com/_packaging/VS/nuget/v3/index.json'
+    - powershell: |
+        $packages = Get-ChildItem "$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/*/VS.Redist.Common.NETCoreCheck.*.nupkg"
+        foreach ($pkg in $packages) {
+          Write-Host "Pushing $($pkg.Name)..."
+          dotnet nuget push $pkg.FullName --source "https://devdiv.pkgs.visualstudio.com/_packaging/VS/nuget/v3/index.json" --api-key AzureDevOps --skip-duplicate
+        }
+      displayName: 'Push NETCoreCheck NuPkgs to DevDiv VS feed'
+      condition: succeeded()
+    - ${{ if eq(parameters.targetArchitecture, 'x64') }}:
+      - powershell: |
+          $packages = Get-ChildItem "$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)/*/VS.Redist.Common.NetCore.Launcher.*.nupkg"
+          foreach ($pkg in $packages) {
+            Write-Host "Pushing $($pkg.Name)..."
+            dotnet nuget push $pkg.FullName --source "https://devdiv.pkgs.visualstudio.com/_packaging/VS/nuget/v3/index.json" --api-key AzureDevOps --skip-duplicate
+          }
+        displayName: 'Push NetCore.Launcher NuPkgs to DevDiv VS feed'
+        condition: succeeded()
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
     - powershell: |
         $folderExists = Test-Path -Path "$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)"

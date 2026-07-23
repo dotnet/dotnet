@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Belongs to the sibling Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssembly.Tests project. -->
+    <Compile Remove="AlwaysFalseConditionalAssemblyTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.DotNet.XUnitV3Extensions.csproj" />
   </ItemGroup>
 

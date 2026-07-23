@@ -34,6 +34,13 @@ secrets:
       gitHubBotAccountSecret: BotAccount-dotnet-maestro-bot
       gitHubBotAccountName: dotnet-maestro-bot
 
+  # Mirror-Credentials - used by dotnet-mirroring pipelines
+  BotAccount-dotnet-maestro-bot-mirroring-PAT:
+    type: github-access-token
+    parameters:
+      gitHubBotAccountSecret: BotAccount-dotnet-maestro-bot
+      gitHubBotAccountName: dotnet-maestro-bot
+
   BotAccount-dotnet-bot-repo-PAT:
     type: github-access-token
     parameters:
@@ -46,17 +53,6 @@ secrets:
       description: Client id for akams app
 
   #AzureDevOps-Artifact-Feeds-Pats
-  dn-bot-dnceng-artifact-feeds-rw:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-dnceng-artifact-feeds
-      organizations: dnceng
-      scopes: packaging_write
-
   dn-bot-all-orgs-artifact-feeds-rw:
     type: azure-devops-access-token
     parameters:

@@ -14,6 +14,22 @@ public class EntitySplittingQuerySqlServerTest(NonSharedFixture fixture) : Entit
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 
+    public override async Task FromSql_on_split_entity_with_renamed_columns_uses_default_mappings(bool async)
+    {
+        await base.FromSql_on_split_entity_with_renamed_columns_uses_default_mappings(async);
+
+        AssertSql(
+            """
+SELECT [m].[Id], [m].[EntityThreeId], [m].[IntValue1], [m].[IntValue2], [m].[IntValue3], [m].[IntValue4], [m].[StringValue1], [m].[StringValue2], [m].[StringValue3], [m].[StringValue4]
+FROM (
+    SELECT "m".*, "s"."CustomStringValue3" AS "StringValue3", "s"."StringValue4", "s"."CustomIntValue3" AS "IntValue3", "s"."IntValue4"
+                  FROM "EntityOne" AS "m"
+                  INNER JOIN "SplitEntityOnePart" AS "s" ON "m"."Id" = "s"."Id"
+) AS [m]
+ORDER BY [m].[Id]
+""");
+    }
+
     public override async Task Can_query_entity_which_is_split_in_two(bool async)
     {
         await base.Can_query_entity_which_is_split_in_two(async);
@@ -208,7 +224,7 @@ LEFT JOIN [OwnedReferenceExtras1] AS [o0] ON [e].[Id] = [o0].[EntityOneId]
         AssertSql(
             """
 SELECT [e].[Id], CASE
-    WHEN [e].[OwnedReference_Id] IS NOT NULL AND [e].[OwnedReference_OwnedIntValue1] IS NOT NULL AND [e].[OwnedReference_OwnedIntValue2] IS NOT NULL AND [o0].[OwnedIntValue3] IS NOT NULL AND [o].[OwnedIntValue4] IS NOT NULL THEN [o].[OwnedIntValue4]
+    WHEN [e].[OwnedReference_Id] IS NOT NULL AND [e].[OwnedReference_OwnedIntValue1] IS NOT NULL AND [e].[OwnedReference_OwnedIntValue2] IS NOT NULL AND [o0].[OwnedIntValue3] IS NOT NULL THEN [o].[OwnedIntValue4]
 END AS [OwnedIntValue4], CASE
     WHEN [e].[OwnedReference_Id] IS NOT NULL AND [e].[OwnedReference_OwnedIntValue1] IS NOT NULL AND [e].[OwnedReference_OwnedIntValue2] IS NOT NULL AND [o0].[OwnedIntValue3] IS NOT NULL AND [o].[OwnedIntValue4] IS NOT NULL THEN [o].[OwnedStringValue4]
 END AS [OwnedStringValue4]

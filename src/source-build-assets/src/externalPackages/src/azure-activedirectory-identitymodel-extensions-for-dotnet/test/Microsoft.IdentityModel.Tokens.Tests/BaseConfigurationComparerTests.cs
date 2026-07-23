@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using Microsoft.IdentityModel.TestUtils;
@@ -9,7 +9,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class BaseConfigurationComparerTests
     {
-        [Theory, MemberData(nameof(ComparerTheoryData))]
+        [Theory, MemberData(nameof(ComparerTheoryData), DisableDiscoveryEnumeration = true)]
         public void Compare(BaseConfigurationComparerTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.Compare", theoryData);

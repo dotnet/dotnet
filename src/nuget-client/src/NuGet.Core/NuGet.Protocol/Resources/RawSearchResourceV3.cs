@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -69,20 +67,16 @@ namespace NuGet.Protocol
                     queryString += "&" + frameworks;
                 }
 
-                if (filters.PackageTypes != null
-                    && filters.PackageTypes.Any())
+                if (!string.IsNullOrEmpty(filters.PackageType))
                 {
-                    var types = string.Join("&",
-                        filters.PackageTypes.Select(
-                            s => "packageTypeFilter=" + s));
-                    queryString += "&" + types;
+                    queryString += "&packageType=" + filters.PackageType;
                 }
 
                 queryString += "&semVerLevel=2.0.0";
 
                 queryUrl.Query = queryString;
 
-                JObject searchJson = null;
+                JObject? searchJson = null;
                 try
                 {
                     searchJson = await _client.GetJObjectAsync(

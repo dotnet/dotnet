@@ -19,21 +19,23 @@
     <NewtonsoftJsonBootstrapVersion>13.0.4</NewtonsoftJsonBootstrapVersion>
 
     <Antlr4Version>4.13.1</Antlr4Version>
-    <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.0.1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
+    <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.19.2</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
     <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
     <MSBuildLocatorReleaseVersion>1.10.2</MSBuildLocatorReleaseVersion>
     <NewtonsoftJsonReleaseVersion>13.0.4</NewtonsoftJsonReleaseVersion>
     <VsSolutionPersistenceReleaseVersion>1.0.52</VsSolutionPersistenceReleaseVersion>
     <SpectreConsoleReleaseVersion>0.54.0</SpectreConsoleReleaseVersion>
-    <OpenTelemetryDotNetReleaseVersion>1.15.3</OpenTelemetryDotNetReleaseVersion>
-    <OpenTelemetryDotNetContribHttpReleaseVersion>1.15.1</OpenTelemetryDotNetContribHttpReleaseVersion>
+    <OpenTelemetryDotNetReleaseVersion>1.16.0</OpenTelemetryDotNetReleaseVersion>
+    <OpenTelemetryDotNetContribHttpReleaseVersion>1.16.0</OpenTelemetryDotNetContribHttpReleaseVersion>
     <OpenTelemetryDotNetContribRuntimeReleaseVersion>1.15.1</OpenTelemetryDotNetContribRuntimeReleaseVersion>
+    <OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion>1.1.0</OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion>
+    <OpenTelemetryDotNetContribPersistentStorageFileSystemReleaseVersion>1.1.0</OpenTelemetryDotNetContribPersistentStorageFileSystemReleaseVersion>
   </PropertyGroup>
 
   <PropertyGroup>
     <!-- NuGet dependencies -->
-    <NuGetPackagingVersion>6.11.0</NuGetPackagingVersion>
+    <NuGetPackagingVersion>6.11.2</NuGetPackagingVersion>
     <!-- xUnit dependencies -->
     <XunitSkippableFactVersion>1.4.13</XunitSkippableFactVersion>
   </PropertyGroup>

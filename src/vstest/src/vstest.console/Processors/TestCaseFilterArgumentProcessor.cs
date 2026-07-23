@@ -22,6 +22,12 @@ internal class TestCaseFilterArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly CommandLineOptions _commandLineOptions;
+
+    public TestCaseFilterArgumentProcessor(CommandLineOptions commandLineOptions)
+    {
+        _commandLineOptions = commandLineOptions;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -36,7 +42,7 @@ internal class TestCaseFilterArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new TestCaseFilterArgumentExecutor(CommandLineOptions.Instance));
+            new TestCaseFilterArgumentExecutor(_commandLineOptions));
 
         set => _executor = value;
     }

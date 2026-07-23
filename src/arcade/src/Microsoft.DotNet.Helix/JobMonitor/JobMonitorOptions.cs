@@ -46,7 +46,25 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         public int TestResultUploadParallelism { get; set; } = 4;
 
+        /// <summary>
+        /// When true (the default), a Helix work item that exited 0 but whose uploaded test
+        /// results contained failures is treated as failed: the monitor marks it failed in
+        /// the outcome map (exiting 1) and the retry pass on a subsequent monitor invocation
+        /// resubmits it. When false, work-item outcome is driven solely by the Helix exit
+        /// code and AzDO test failures do not influence retries or the final exit code.
+        /// </summary>
+        public bool FailWorkItemsWithFailedTests { get; set; } = true;
+
         public bool Verbose { get; set; }
+
+        /// <summary>
+        /// When <see langword="true"/>, test results are reported to Azure DevOps using the fully
+        /// qualified test name (<c>Namespace.Type.Method</c>) as the stable <c>automatedTestName</c>
+        /// and the visible title is qualified as well. Opt-in because it changes AzDO test identity
+        /// and display; primarily useful for frameworks like MSTest whose display name is only the
+        /// method name. Defaults to the HELIX_USE_FULLY_QUALIFIED_TEST_NAME environment variable.
+        /// </summary>
+        public bool UseFullyQualifiedTestName { get; set; }
 
         public static JobMonitorOptions Parse(string[] args)
         {
@@ -127,9 +145,21 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 DefaultValueFactory = _ => 4
             };
 
+            Option<bool> failWorkItemsWithFailedTestsOption = new("--fail-on-failed-tests")
+            {
+                Description = "When true (default), Helix work items that exit 0 but have failed AzDO test results are treated as failed (counted toward the monitor's exit code and resubmitted by a later invocation's retry pass). Pass --fail-on-failed-tests false to fall back to exit-code-only outcomes.",
+                DefaultValueFactory = _ => true
+            };
+
             Option<bool> verboseOption = new("--verbose")
             {
                 Description = "Enable verbose job monitor logging."
+            };
+
+            Option<bool> useFullyQualifiedTestNameOption = new("--use-fully-qualified-test-name")
+            {
+                Description = "Report test results to Azure DevOps using the fully qualified test name (Namespace.Type.Method) as the stable automatedTestName and qualify the visible title. Opt-in; primarily for frameworks like MSTest whose display name is only the method name. Defaults to the HELIX_USE_FULLY_QUALIFIED_TEST_NAME environment variable.",
+                DefaultValueFactory = _ => ParseBoolean(Environment.GetEnvironmentVariable("HELIX_USE_FULLY_QUALIFIED_TEST_NAME"))
             };
 
             RootCommand rootCommand = new("Standalone Helix Job Monitor tool for Azure DevOps pipelines")
@@ -151,7 +181,9 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             rootCommand.Options.Add(workingDirectoryOption);
             rootCommand.Options.Add(stageNameOption);
             rootCommand.Options.Add(testResultUploadParallelismOption);
+            rootCommand.Options.Add(failWorkItemsWithFailedTestsOption);
             rootCommand.Options.Add(verboseOption);
+            rootCommand.Options.Add(useFullyQualifiedTestNameOption);
 
             rootCommand.SetAction(parseResult =>
             {
@@ -171,7 +203,9 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     WorkingDirectory = parseResult.GetValue(workingDirectoryOption),
                     StageName = parseResult.GetValue(stageNameOption),
                     TestResultUploadParallelism = parseResult.GetValue(testResultUploadParallelismOption),
+                    FailWorkItemsWithFailedTests = parseResult.GetValue(failWorkItemsWithFailedTestsOption),
                     Verbose = parseResult.GetValue(verboseOption),
+                    UseFullyQualifiedTestName = parseResult.GetValue(useFullyQualifiedTestNameOption),
                 };
             });
 
@@ -256,5 +290,27 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         private static string EnsureTrailingSlash(string uri)
             => uri.EndsWith('/') ? uri : uri + '/';
+
+        private static bool ParseBoolean(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            if (bool.TryParse(value, out bool parsed))
+            {
+                return parsed;
+            }
+
+            // Accept common truthy tokens used in pipeline variables (e.g. "1", "yes", "on").
+            return value.Trim() switch
+            {
+                "1" => true,
+                var v when string.Equals(v, "yes", StringComparison.OrdinalIgnoreCase) => true,
+                var v when string.Equals(v, "on", StringComparison.OrdinalIgnoreCase) => true,
+                _ => false,
+            };
+        }
     }
 }

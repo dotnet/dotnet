@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Deployment.DotNet.Releases;
+using Microsoft.DotNet.Build.Tasks.Workloads.Msi;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
@@ -22,7 +23,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
     /// Serves as a base class for implementing different types of workload packages. The class captures some common
     /// elements related to the underlying NuGet package.
     /// </summary>
-    public abstract class WorkloadPackageBase
+    public abstract class WorkloadPackageBase : IWorkloadPackageMetadata
     {
         /// <summary>
         /// The package authors.
@@ -200,6 +201,12 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             Title = nuspec.GetTitle();
 
             PackagePath = packagePath;
+
+            // Directory structures that are too deep can still cause failures
+            // when harvesting packages. Especially when running tests under Arcade. Stripping
+            // off the package identity can work around this. Below is an example of such a failure:
+            // 
+            // heat.exe : error HEAT5059 : The file 'D:\git\forks\dotnet\src\arcade\artifacts\bin\Microsoft.DotNet.Build.Tasks.Workloads.Tests\Debug\net11.0\TEST_OUTPUT\uq4xhvn3\pkg\Microsoft.NET.Runtime.Emscripten.2.0.23.Python.win-x64.6.0.4\tools\lib\site-packages\pythonwin\pywin\framework\editor\color\coloreditor.py' cannot be found.
             DestinationDirectory = Path.Combine(destinationBaseDirectory, Path.GetRandomFileName());
             ShortNames = shortNames;
 

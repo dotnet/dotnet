@@ -122,6 +122,109 @@ partial class MySnapshot : ModelSnapshot
     }
 
     [Fact]
+    public void Snapshot_with_mismatched_key_and_foreign_key_property_types_is_usable()
+    {
+        const string snapshotCode =
+            """
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+
+#nullable disable
+
+namespace RootNamespace;
+
+partial class Snapshot : ModelSnapshot
+{
+    protected override void BuildModel(ModelBuilder modelBuilder)
+    {
+        modelBuilder
+            .HasAnnotation("ProductVersion", "10.0.0");
+
+        modelBuilder.Entity("Dependent", b =>
+            {
+                b.Property<long>("Id")
+                    .HasColumnType("bigint");
+
+                b.HasKey("Id");
+
+                b.HasOne("Principal")
+                    .WithMany()
+                    .HasForeignKey("Id");
+            });
+
+        modelBuilder.Entity("Principal", b =>
+            {
+                b.Property<short>("Id")
+                    .HasColumnType("smallint");
+
+                b.HasKey("Id");
+            });
+    }
+}
+
+""";
+
+        var snapshotModel = BuildModelFromSnapshotSource(snapshotCode);
+
+        Assert.Single(snapshotModel.FindEntityType("Dependent")!.GetForeignKeys());
+    }
+
+    [Fact] // Issue #36180
+    public void Owned_collection_with_one_to_one_reference_round_trips()
+    {
+        // Regenerating the snapshot from a model that was itself built from a snapshot (as happens
+        // when removing a migration) must not corrupt the owned entity type name used in the
+        // HasForeignKey call of a one-to-one relationship declared inside an owned collection.
+        var modelBuilder = CreateConventionalModelBuilder();
+        modelBuilder.HasDefaultSchema(null);
+        modelBuilder.Model.RemoveAnnotation(CoreAnnotationNames.ProductVersion);
+        modelBuilder.Entity<Cart>(b =>
+        {
+            b.HasKey(e => e.Id);
+            b.OwnsMany(
+                e => e.CartProducts,
+                ownedBuilder =>
+                {
+                    ownedBuilder.WithOwner().HasForeignKey(nameof(CartProduct.CartId));
+                    ownedBuilder.HasKey(nameof(CartProduct.CartId), nameof(CartProduct.ProductId));
+                    ownedBuilder.HasOne(e => e.Product).WithOne().HasForeignKey<CartProduct>(e => e.ProductId);
+                });
+        });
+        modelBuilder.Entity<Product>();
+
+        var model = modelBuilder.FinalizeModel(designTime: true, skipValidation: true);
+
+        var generator = CreateMigrationsGenerator();
+        var code = generator.GenerateSnapshot("RootNamespace", typeof(DbContext), "Snapshot", model);
+
+        var roundTrippedModel = BuildModelFromSnapshotSource(code);
+        var roundTrippedCode = generator.GenerateSnapshot("RootNamespace", typeof(DbContext), "Snapshot", roundTrippedModel);
+
+        Assert.Equal(code, roundTrippedCode, ignoreLineEndingDifferences: true);
+
+        // The regenerated snapshot must still compile into a valid model.
+        Assert.NotNull(BuildModelFromSnapshotSource(roundTrippedCode));
+    }
+
+    private class Cart
+    {
+        public int Id { get; set; }
+        public List<CartProduct> CartProducts { get; set; } = [];
+    }
+
+    private class CartProduct
+    {
+        public int CartId { get; set; }
+        public int ProductId { get; set; }
+        public Product Product { get; set; } = null!;
+    }
+
+    private class Product
+    {
+        public int Id { get; set; }
+    }
+
+    [Fact]
     public void Snapshot_with_migration_id()
     {
         var generator = CreateMigrationsCodeGenerator();
@@ -1104,6 +1207,31 @@ partial class MySnapshot : ModelSnapshot
             });
 """),
             o => Assert.Equal("EntityWithOneProperty", o.GetEntityTypes().Single().GetViewName()));
+
+    [Fact] // Issue #26067
+    public void ToTable_with_default_null_schema_is_not_changed_on_snapshot_round_trip()
+    {
+        // When the default schema is null, regenerating the snapshot from a model that was itself
+        // built from a snapshot (as happens when removing a migration) must not add a redundant
+        // ", (string)null" schema argument to every ToTable call.
+        var modelBuilder = CreateConventionalModelBuilder();
+        modelBuilder.HasDefaultSchema(null);
+        modelBuilder.Model.RemoveAnnotation(CoreAnnotationNames.ProductVersion);
+        modelBuilder.Entity<EntityWithOneProperty>().Ignore(e => e.EntityWithTwoProperties);
+
+        var model = modelBuilder.FinalizeModel(designTime: true, skipValidation: true);
+
+        var generator = CreateMigrationsGenerator();
+        var code = generator.GenerateSnapshot("RootNamespace", typeof(DbContext), "Snapshot", model);
+
+        Assert.Contains(@"b.ToTable(""EntityWithOneProperty"");", code);
+        Assert.DoesNotContain("(string)null", code);
+
+        var roundTrippedModel = BuildModelFromSnapshotSource(code);
+        var roundTrippedCode = generator.GenerateSnapshot("RootNamespace", typeof(DbContext), "Snapshot", roundTrippedModel);
+
+        Assert.Equal(code, roundTrippedCode, ignoreLineEndingDifferences: true);
+    }
 
     [Fact]
     public void Views_with_schemas_are_stored_in_the_model_snapshot()
@@ -4533,7 +4661,6 @@ partial class Snapshot : ModelSnapshot
                 Assert.NotNull(testOwnee.FindCheckConstraint("CK_TestOwnee_TestEnum_Enum_Constraint"));
             });
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
     [Fact]
     public virtual void Owned_types_mapped_to_json_are_stored_in_snapshot()
         => Test(
@@ -4772,7 +4899,6 @@ partial class Snapshot : ModelSnapshot
                 Assert.Equal("EntityWithTwoProperties", ownedType1.GetContainerColumnName());
                 Assert.Equal("json", ownedType1.GetContainerColumnType());
             });
-#pragma warning restore EF8001 // Owned JSON entities are obsolete
 
     private class Order
     {
@@ -6466,6 +6592,7 @@ partial class Snapshot : ModelSnapshot
         => Test(
             builder =>
             {
+                builder.HasEmbeddedDiscriminatorName("Terminator");
                 builder.Entity<EntityWithOneProperty>(b =>
                 {
                     b.HasKey(x => x.Id).HasName("PK_Custom");
@@ -6478,6 +6605,7 @@ partial class Snapshot : ModelSnapshot
                             bb.ComplexProperty(
                                 x => x.EntityWithStringKey, bbb =>
                                 {
+                                    bbb.HasDiscriminator<string>("Discriminator");
                                     bbb.ComplexCollection(x => x.Properties, bbbb => bbbb.HasJsonPropertyName("JsonProps"));
                                 });
                             bb.ComplexProperty(
@@ -6490,8 +6618,13 @@ partial class Snapshot : ModelSnapshot
                 });
             },
             AddBoilerPlate(
-                GetHeading()
-                + """
+                """
+        modelBuilder
+            .HasDefaultSchema("DefaultSchema")
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
         modelBuilder.Entity("Microsoft.EntityFrameworkCore.Migrations.Design.CSharpMigrationsGeneratorTest+EntityWithOneProperty", b =>
             {
                 var id = b.Property<int>("Id")
@@ -6520,6 +6653,10 @@ partial class Snapshot : ModelSnapshot
 
                         b1.ComplexProperty(typeof(Dictionary<string, object>), "EntityWithStringKey", "Microsoft.EntityFrameworkCore.Migrations.Design.CSharpMigrationsGeneratorTest+EntityWithOneProperty.EntityWithTwoProperties#EntityWithTwoProperties.EntityWithStringKey#EntityWithStringKey", b2 =>
                             {
+                                b2.Property<string>("Discriminator")
+                                    .IsRequired()
+                                    .HasJsonPropertyName("Terminator");
+
                                 b2.Property<string>("Id");
 
                                 b2.ComplexCollection(typeof(List<Dictionary<string, object>>), "Properties", "Microsoft.EntityFrameworkCore.Migrations.Design.CSharpMigrationsGeneratorTest+EntityWithOneProperty.EntityWithTwoProperties#EntityWithTwoProperties.EntityWithStringKey#EntityWithStringKey.Properties#EntityWithStringProperty", b3 =>
@@ -6530,6 +6667,8 @@ partial class Snapshot : ModelSnapshot
 
                                         b3.HasJsonPropertyName("JsonProps");
                                     });
+
+                                b2.HasDiscriminator<string>("Discriminator").HasValue("EntityWithStringKey");
                             });
 
                         b1
@@ -6572,6 +6711,7 @@ partial class Snapshot : ModelSnapshot
                 Assert.False(entityWithStringKeyComplexProperty.IsCollection);
                 Assert.True(entityWithStringKeyComplexProperty.IsNullable);
                 var entityWithStringKeyComplexType = entityWithStringKeyComplexProperty.ComplexType;
+                Assert.Equal("Terminator", entityWithStringKeyComplexType.FindDiscriminatorProperty()!.GetJsonPropertyName());
 
                 var propertiesComplexCollection =
                     entityWithStringKeyComplexType.FindComplexProperty(nameof(EntityWithStringKey.Properties));

@@ -317,7 +317,7 @@ public static class AwsAttributes
     public const string AttributeAwsS3UploadId = "aws.s3.upload_id";
 
     /// <summary>
-    /// The ARN of the Secret stored in the Secrets Mangger.
+    /// The ARN of the Secret stored in the Secrets Manager.
     /// </summary>
     public const string AttributeAwsSecretsmanagerSecretArn = "aws.secretsmanager.secret.arn";
 

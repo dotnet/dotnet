@@ -21,6 +21,12 @@ internal class ParentProcessIdArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly CommandLineOptions _commandLineOptions;
+
+    public ParentProcessIdArgumentProcessor(CommandLineOptions commandLineOptions)
+    {
+        _commandLineOptions = commandLineOptions;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -35,7 +41,7 @@ internal class ParentProcessIdArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new ParentProcessIdArgumentExecutor(CommandLineOptions.Instance));
+            new ParentProcessIdArgumentExecutor(_commandLineOptions));
 
         set => _executor = value;
     }

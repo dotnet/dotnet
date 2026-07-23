@@ -1293,6 +1293,17 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             e => e.Key);
 
     [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_ValueTuple_projection_joined_on_tuple_member(bool async)
+        // A GroupBy projecting a ValueTuple, then joined on a member of that tuple (t.Item1). The join key
+        // selector's member access is folded back to the tuple's constructor argument. Issue #22517.
+        => AssertQuery(
+            async,
+            ss => from t in ss.Set<Order>().GroupBy(o => o.CustomerID, (k, es) => new ValueTuple<string, int>(k, es.Count()))
+                  join c in ss.Set<Customer>() on t.Item1 equals c.CustomerID
+                  select new { c.CustomerID, Count = t.Item2 },
+            e => e.CustomerID);
+
+    [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_multi_navigation_members_Aggregate(bool async)
         => AssertQuery(
             async,
@@ -1957,7 +1968,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             .Select(a => a.First())
             .Where(x => x.EmployeeID == 6u));
 
-    [Theory(Skip = "Issue#31209"), MemberData(nameof(IsAsyncData))]
+    [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_Select_Entire_Entity_Where_Select(bool async) // #31209
         => AssertQuery(
             async,
@@ -1966,7 +1977,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 .Where(x => x.OrderID > 10)
                 .Select(r => r.EmployeeID));
 
-    [Theory(Skip = "Issue#31209"), MemberData(nameof(IsAsyncData))]
+    [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_Select_Entire_Entity_Select(bool async) // #31209
         => AssertQuery(
             async,
@@ -1994,6 +2005,41 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                     g.Key,
                     Item = g.OrderByDescending(x => x.OrderDate).FirstOrDefault(),
                 }).Where(x => x.Item != null));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_Select_Entire_Entity_FirstOrDefault_Where(bool async) // #31209
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(o => o.CustomerID)
+                .Select(g => g.OrderByDescending(o => o.OrderDate).FirstOrDefault())
+                .Where(r => r.EmployeeID == 5u));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_ResultSelector_Entire_Entity_Where(bool async) // #31209
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(
+                    o => o.CustomerID,
+                    (k, es) => es.OrderByDescending(o => o.OrderDate).First())
+                .Where(r => r.EmployeeID == 6u));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_Select_Entire_Entity_GroupBy(bool async) // #31209
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(o => new { o.CustomerID, o.EmployeeID })
+                .Select(g => g.First())
+                .GroupBy(o => o.EmployeeID)
+                .Select(g2 => new { g2.Key, Count = g2.Count() }),
+            elementSorter: e => e.Key);
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_Select_Entire_Entity_composite_key_Select(bool async) // #26748
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(o => new { o.CustomerID, o.EmployeeID })
+                .Select(g => g.First())
+                .Select(p => p.OrderID));
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_aggregate_join_with_group_result(bool async)

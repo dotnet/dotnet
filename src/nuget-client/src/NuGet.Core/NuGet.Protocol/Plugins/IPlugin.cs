@@ -13,12 +13,12 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Occurs before the plugin closes.
         /// </summary>
-        event EventHandler BeforeClose;
+        event EventHandler? BeforeClose;
 
         /// <summary>
         /// Occurs when the plugin has closed.
         /// </summary>
-        event EventHandler Closed;
+        event EventHandler? Closed;
 
         /// <summary>
         /// Gets the connection for the plugin.

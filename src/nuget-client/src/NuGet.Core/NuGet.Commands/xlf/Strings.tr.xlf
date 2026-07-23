@@ -1113,6 +1113,11 @@ Bu özelliği kullanmak için .NET SDK'nizi yükseltin veya RestoreUseLegacyDepe
         <target state="translated">‘{0}’ paketini ‘{1}’ bağımlılığı olarak ayıklama. Maksimum ayıklanabilir sürüm ‘{2}’</target>
         <note>0 - package id and version, 1 - version</note>
       </trans-unit>
+      <trans-unit id="RestrictedPackageIdWarning">
+        <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
+        <target state="translated">'{0}' paket kimliği geçersiz. Paket kimlikleri harf, rakam veya alt çizgiyle başlamalı ve yalnızca ASCII karakteri, rakam, nokta (.), kısa çizgi (-) ve alt çizgi (_) içermelidir. Art arda noktalar veya kısa çizgiler içermemelidir.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
         <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
         <target state="translated">'{0}' sertifika dosyası bulunamadı. Kabul edilen sertifika sağlama yollarının listesi için bkz. https://docs.nuget.org/docs/reference/command-line-reference</target>
@@ -1458,8 +1463,8 @@ Bu özelliği kullanmak için .NET SDK'nizi yükseltin veya RestoreUseLegacyDepe
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
-        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="translated">Konfigürasyonunuzda tanımlanmış {0} paket kaynakları var. Merkezi paket yönetimini kullanırken lütfen paket kaynak eşleme (https://aka.ms/nuget-package-source-mapping) ile paket kaynaklarınızı eşleyin veya tek bir paket kaynağı belirtin. Aşağıdaki kaynaklar tanımlandı: {1}</target>
+        <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <target state="translated">Yapılandırmanızda tanımlanmış {0} paket kaynağı var. Merkezi paket yönetimini kullanırken paket kaynak eşleme (https://aka.ms/nuget-package-source-mapping) ile paket kaynaklarınızı eşleyin veya tek bir paket kaynağı belirtin. Aşağıdaki kaynaklar tanımlandı: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">
@@ -1527,7 +1532,7 @@ NuGet için HTTPS kaynakları gereklidir. Daha fazla bilgi için şuraya başvur
       </trans-unit>
       <trans-unit id="Warning_RestoreLockedModeAndForceEvaluate">
         <source>RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</source>
-        <target state="new">RestoreForceEvaluate overrides RestoreLockedMode; the packages lock file will be re-evaluated and regenerated, and locked mode is ignored.</target>
+        <target state="translated">RestoreForceEvaluate, RestoreLockedMode değerini geçersiz kılıyor; paketler kilit dosyası yeniden değerlendirilecek ve yeniden oluşturulacak, kilitli mod yoksayılır.</target>
         <note>Do not localize RestoreLockedMode and RestoreForceEvaluate</note>
       </trans-unit>
       <trans-unit id="Warning_VersionAboveUpperBound">

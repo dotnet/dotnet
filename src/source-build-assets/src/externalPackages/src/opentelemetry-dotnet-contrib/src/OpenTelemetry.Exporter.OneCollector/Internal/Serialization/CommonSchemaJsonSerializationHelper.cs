@@ -78,11 +78,31 @@ internal static class CommonSchemaJsonSerializationHelper
                 return;
 
             case float v:
-                writer.WriteNumberValue(v);
+                if (!float.IsNaN(v) && !float.IsInfinity(v) && v % 1f == 0f && v > -1e9f && v < 1e9f)
+                {
+                    // Append ".0" for whole numbers so the backend treats the column as float
+                    // rather than integer. G9 is used for full float precision without scientific notation.
+                    writer.WriteRawValue(v.ToString("G9", CultureInfo.InvariantCulture) + ".0");
+                }
+                else
+                {
+                    writer.WriteNumberValue(v);
+                }
+
                 return;
 
             case double v:
-                writer.WriteNumberValue(v);
+                if (!double.IsNaN(v) && !double.IsInfinity(v) && v % 1.0 == 0.0 && v > -1e17 && v < 1e17)
+                {
+                    // Append ".0" for whole numbers so the backend treats the column as double
+                    // rather than integer. G17 is used for full double precision without scientific notation.
+                    writer.WriteRawValue(v.ToString("G17", CultureInfo.InvariantCulture) + ".0");
+                }
+                else
+                {
+                    writer.WriteNumberValue(v);
+                }
+
                 return;
 
             case decimal v:

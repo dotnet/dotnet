@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- $(NetFrameworkRunnerTargetFramework); should be added here, but it causes duplicates in tfm names and nuget restore fails -->
     <TargetFrameworks>$(TestHostAllTargetFrameworks)</TargetFrameworks>
@@ -15,10 +15,20 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Don't produce this package when building the .NET product as it relies on a VS license. -->
-    <IsPackable Condition="'$(DotNetBuild)' != 'true'">true</IsPackable>
-    <NuspecFile>Microsoft.TestPlatform.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
+    <!-- Don't produce this package when building the .NET product as it relies on a VS license.
+         Also don't produce on non-Windows as the package contains Windows-only executables and references. -->
+    <IsPackable Condition="'$(DotNetBuild)' != 'true' and '$(OS)' == 'Windows_NT'">true</IsPackable>
+    <!-- This is a packaging container project: it ships no assembly of its own and has no NuGet dependencies. -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- NU5100/NU5109/NU5118: assemblies/content placed outside lib (intentional for this tooling container).
+         NU5128: no dependencies and no lib folder. -->
+    <NoWarn>$(NoWarn);NU5100;NU5109;NU5118;NU5128</NoWarn>
+    <!-- The Microsoft.Internal.CodeCoverage content trees are added to the package at pack time by
+         the _IncludeInternalCodeCoverageContent target below; they must not be added via an
+         evaluation-time wildcard because that expands before the package is restored/built. -->
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_IncludeInternalCodeCoverageContent;_PublishNetTestHostContent;_PublishRunnerRootContent;_IncludeExtensionContent;_IncludeToolContent;_IncludeNetFrameworkTestHostContent</TargetsForTfmSpecificContentInPackage>
     <PackageId>Microsoft.TestPlatform</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
     <PackageDescription>
@@ -26,14 +36,15 @@
       It provides a modern, cross platform testing engine that powers the testing on .NET Core as well.
       It integrates with popular test frameworks like MSTest(v1 and v2), xUnit and Nunit with support for extensibility.
     </PackageDescription>
-    <!-- Override default license -->
+    <!-- Override default license (Directory.Build.props sets the MIT expression; clear it so the file license can be used). -->
+    <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE_VS.txt</PackageLicenseFile>
     <PackageLicenseFullPath>$(SrcPackageFolder)licenses/LICENSE_VS.txt</PackageLicenseFullPath>
   </PropertyGroup>
 
-  <ItemGroup Label="NuGet">
-    <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
-    <NuspecProperty Include="TesthostRuntimeconfig=$(RepoRoot)temp\testhost" />
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+    <None Include="$(PackageLicenseFullPath)" Pack="true" PackagePath="$(PackageLicenseFile)" />
   </ItemGroup>
 
   <!--
@@ -135,5 +146,336 @@
     <Copy SourceFiles="@(MicrosoftQualityToolsTestingFakesTestRunnerHarnessFiles)" DestinationFiles="$(OutDir)\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftVisualStudioTelemetryFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
     <Copy SourceFiles="@(MicrosoftVisualStudioUtilitiesInternalFiles)" DestinationFiles="$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)" />
+  </Target>
+  <ItemGroup Label="Packaged content (migrated from nuspec)">
+    <None Include="$(SrcPackageFolder)ThirdPartyNotices.txt" Pack="true" PackagePath="" />
+    <None Include="$(SrcPackageFolder)ThirdPartyNotices.txt" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ThirdPartyNotices.txt" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\extension.vsixmanifest" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\extension.vsixmanifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTrace.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTrace.exe" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTrace.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTrace.exe.config" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTrace.frontend.pkgdef" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTrace.frontend.pkgdef" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTrace.pkgdef" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTrace.pkgdef" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTraceCollection.cab" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\IntelliTraceCollection.cab" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Concord.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Concord.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Concord.vsdconfig" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Concord.vsdconfig" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.ConfigUI.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.ConfigUI.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Debugger.Common.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Debugger.Common.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Debugger.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Debugger.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.DebuggerMargin.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.DebuggerMargin.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace.Extensions\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Package.Common.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Package.Common.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Package.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Package.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Package.vsdconfig" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Package.vsdconfig" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Profiler.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Profiler.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.SearchMargin.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.SearchMargin.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.TelemetryObserver.Common.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.TelemetryObserver.Common.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.TelemetryObserver.CoreClr.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.TelemetryObserver.CoreClr.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace.Extensions\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.TelemetryObserver.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.TelemetryObserver.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace.Extensions\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.VisualStudio.DefaultDataQueries.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.VisualStudio.DefaultDataQueries.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.VisualStudio.Diagnostics.TfsSymbolResolver.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.VisualStudio.Diagnostics.TfsSymbolResolver.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Diagnostics.Utilities.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.VisualStudio.Diagnostics.Utilities.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace.Extensions\x64\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.VisualStudio.VIL.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.VisualStudio.VIL.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace.Extensions\x64\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.VisualStudio.VIL.NotifyPointInProcHost.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.VisualStudio.VIL.NotifyPointInProcHost.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\ProcessSnapshotCleanup.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\ProcessSnapshotCleanup.exe" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\ProcessSnapshotCleanup.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\ProcessSnapshotCleanup.exe.config" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\TDEnvCleanup.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\TDEnvCleanup.exe" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\TDEnvCleanup.exe.config" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\TDEnvCleanup.exe.config" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\1033\Microsoft.IntelliTrace.Profilerui.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\1033\Microsoft.IntelliTrace.Profilerui.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.IntelliTrace.Core.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Core.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.DiaSymReader.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\deps\Microsoft.DiaSymReader.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\deps\Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\en\collectionplan.xml" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\en\collectionplan.xml" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x64\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\Microsoft.IntelliTrace.Profiler.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\Microsoft.IntelliTrace.Profiler.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace\x64\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\1033\Microsoft.IntelliTrace.Profilerui.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\1033\Microsoft.IntelliTrace.Profilerui.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.DiaSymReader.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.DiaSymReader.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.Extensions.DependencyModel.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.IntelliTrace.Core.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.IntelliTrace.Core.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.xml" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.xml" />
+    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Diagnostics.Utilities.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Diagnostics.Utilities.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.QualityTools\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll" />
+    <None Include="$(OutputPath)net48\System.Collections.Immutable.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\System.Collections.Immutable.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\VideoRecorder\Microsoft.VisualStudio.QualityTools.VideoRecorderEngine.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\VideoRecorder\Microsoft.VisualStudio.QualityTools.VideoRecorderEngine.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.VSTestIntegration.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestPlatform.Extensions.VSTestIntegration.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.CppUnitTestExtension.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.CppUnitTestExtension.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.MediaRecorder.Model.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\VideoRecorder\Microsoft.VisualStudio.TestTools.DataCollection.MediaRecorder.Model.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.MediaRecorder.Model.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.MediaRecorder.Model.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.VideoRecorderCollector.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.TestTools.DataCollection.VideoRecorderCollector.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.CodeCoverage.IO.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.CodeCoverage.IO.dll" />
+    <None Include="$(OutputPath)net48\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\cs\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\de\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\es\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\fr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\it\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ja\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ko\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pl\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\ru\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\tr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\VideoRecorder\VSTestVideoRecorder.exe" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\VideoRecorder\VSTestVideoRecorder.exe" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\dbghelp.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Discoverer.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Discoverer.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Arm.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Arm.Resources.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.x64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.x64.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.x64.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.x64.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.arm64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.arm64.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.arm64.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.arm64.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Resources.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.x64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.x64.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Arm.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Arm.Resources.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.arm64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.arm64.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\x64\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\x64\dbghelp.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\arm64\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Cpp\arm64\dbghelp.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\x64\msdia140.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\x64\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\x86\msdia140.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\x86\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\arm64\msdia140.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\TestImpact\ComComponents\arm64\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\x64\msdia140.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\x64\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\x86\msdia140.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\x86\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\arm64\msdia140.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\V1\TestImpact\ComComponents\arm64\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\x64\msdia140.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\x64\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\x86\msdia140.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\x86\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\x86\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Dia\arm64\msdia140.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\arm64\msdia140.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.IntelliTrace.Core.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.Core.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.Intellitrace.Extensions\x86\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.ObjectModel.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.ObjectModel.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Telemetry.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Telemetry.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.VisualStudio.Utilities.Internal.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.Utilities.Internal.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\dbghelp.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Arm.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Arm.Resources.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.arm64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.arm64.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.ComInterfaces.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.CppUnitTestExtension.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.CppUnitTestExtension.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Discoverer.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Discoverer.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Arm.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Arm.Resources.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.arm64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.arm64.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.arm64.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.arm64.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.Resources.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.x64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.x64.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.x64.dll.manifest" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Executor.x64.dll.manifest" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Resources.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.Resources.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.TestEngine.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.x64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\Microsoft.VisualStudio.TestTools.CppUnitTestFramework.x64.dll" />
+    <None Include="$(RepoRoot)temp\testhost\testhost-latest.runtimeconfig.json" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\testhost-latest.runtimeconfig.json" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\arm64\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\arm64\dbghelp.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.Internal.TestPlatform.Extensions\Extensions\Cpp\x64\dbghelp.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\x64\dbghelp.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\TestPlatform\Microsoft.VisualStudio.TestPlatform.Fakes.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.VisualStudio.TestPlatform.Fakes.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\DataCollector\Microsoft.VisualStudio.Fakes.DataCollector.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.VisualStudio.Fakes.DataCollector.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\DataCollector\Microsoft.Cci.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Microsoft.Cci.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\Instrumentation\x86\Microsoft.QualityTools.Testing.Fakes.Instrumentation.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Fakes\x86\Microsoft.QualityTools.Testing.Fakes.Instrumentation.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\Instrumentation\x86\FakesInstrumentationProfiler_x86.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Fakes\x86\FakesInstrumentationProfiler_x86.config" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\Instrumentation\x64\Microsoft.QualityTools.Testing.Fakes.Instrumentation.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Fakes\x64\Microsoft.QualityTools.Testing.Fakes.Instrumentation.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\Instrumentation\x64\FakesInstrumentationProfiler_x64.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Fakes\x64\FakesInstrumentationProfiler_x64.config" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\Instrumentation\arm64\Microsoft.QualityTools.Testing.Fakes.Instrumentation.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Fakes\arm64\Microsoft.QualityTools.Testing.Fakes.Instrumentation.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\Instrumentation\arm64\FakesInstrumentationProfiler_arm64.config" Pack="true" PackagePath="tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\Fakes\arm64\FakesInstrumentationProfiler_arm64.config" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\MicrosoftInstrumentationEngine\x86\MicrosoftInstrumentationEngine_x86.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Platform\InstrumentationEngine\x86\MicrosoftInstrumentationEngine_x86.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\MicrosoftInstrumentationEngine\x64\MicrosoftInstrumentationEngine_x64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Platform\InstrumentationEngine\x64\MicrosoftInstrumentationEngine_x64.dll" />
+    <None Include="$(OutputPath)net48\Microsoft.QualityTools.Testing.Fakes.TestRunnerHarness\MicrosoftInstrumentationEngine\arm64\MicrosoftInstrumentationEngine_arm64.dll" Pack="true" PackagePath="tools\net462\Common7\IDE\CommonExtensions\Platform\InstrumentationEngine\arm64\MicrosoftInstrumentationEngine_arm64.dll" />
+  </ItemGroup>
+
+  <!--
+    The two Microsoft.Internal.CodeCoverage content trees were referenced in the old nuspec via
+    wildcards against the net48 build output (staged there by the CopyFiles target). With MSBuild
+    pack a static wildcard item is expanded at evaluation time, before Build/CopyFiles runs, so the
+    files would be missing on a clean build. Instead, add them at pack time from the immutable
+    restored package (its path property is only defined in the inner, per-TFM build) and gate to the
+    .NET Framework runner TFM so the content is included exactly once.
+    Each tree is globbed into its own temporary item so that the PackagePath's %(RecursiveDir) batches
+    only over that tree's files; combining two %(RecursiveDir) globs in a single TfmSpecificPackageFile
+    ItemGroup would otherwise cross-product every file with every directory.
+  -->
+  <Target Name="_IncludeInternalCodeCoverageContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_CodeCoverageTestPlatformContent Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\MS.TP\TestPlatform\**\*">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(RecursiveDir)</PackagePath>
+      </_CodeCoverageTestPlatformContent>
+      <_CodeCoverageDynamicToolsContent Include="$(PkgMicrosoft_Internal_CodeCoverage)\contentFiles\MS.TP\Dynamic Code Coverage Tools\**\*">
+        <PackagePath>tools\net462\Team Tools\Dynamic Code Coverage Tools\%(RecursiveDir)</PackagePath>
+      </_CodeCoverageDynamicToolsContent>
+      <TfmSpecificPackageFile Include="@(_CodeCoverageTestPlatformContent);@(_CodeCoverageDynamicToolsContent)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Publish the .NET (NetCoreAppMinimum) testhost and pack its output into the TestHostNet folder.
+
+    Previously the TestHostNet payload was hand-listed: testhost.dll came from the net8.0 build output
+    but the Test Platform dependency assemblies (Microsoft.TestPlatform.CoreUtilities.dll, ObjectModel,
+    CrossPlatEngine, ...) and their satellite resources were copied from the *net48* build output
+    ($(OutputPath)net48\...). That shipped .NET Framework-built assemblies - and a testhost.dll.config
+    whose binding redirects were computed for a different framework - next to the .NET testhost, so the
+    files on disk could disagree with the config. Running the real 'dotnet publish' emits testhost.dll,
+    its dependency assemblies, satellite resources and testhost.dll.config together for the SAME target
+    framework, keeping the runnable layout self-consistent by construction.
+
+    Gated to the .NET Framework runner TFM so it contributes to the package exactly once (mirrors
+    _IncludeInternalCodeCoverageContent). testhost.exe (apphost) and the single generated
+    testhost.runtimeconfig.json are excluded: the .NET testhost is launched via 'dotnet exec' using the
+    templated testhost-<version>.runtimeconfig.json files packed separately. XML doc files are excluded
+    to match the historical payload.
+  -->
+  <Target Name="_PublishNetTestHostContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <PropertyGroup>
+      <!-- Canonical folder that src\testhost\testhost.csproj publishes into once (see
+           eng/PublishForPackaging.targets). Populated during the solution Build pass, which
+           completes before any package Pack pass, so it is present here. -->
+      <_NetTestHostPublishDir>$(ArtifactsBinDir)testhost\$(Configuration)\$(NetCoreAppMinimum)\publish\</_NetTestHostPublishDir>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_NetTestHostPublishDir)')"
+           Text="Expected published .NET testhost at '$(_NetTestHostPublishDir)'. It is produced by src\testhost\testhost.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
+    <ItemGroup>
+      <!-- The managed testhost payload comes wholesale from the publish (testhost.dll + its
+           .config + deps.json + the shared TestPlatform DLLs and their satellites), guaranteeing
+           the DLLs and their configs are all net8.0 and mutually consistent. The generated apphost
+           (testhost.exe), doc XML, and the single generated runtimeconfig are excluded: the package
+           ships templated testhost-<ver>.runtimeconfig.json files (added as extras below) instead. -->
+      <_NetTestHostPublishedFile Include="$(_NetTestHostPublishDir)**\*" Exclude="$(_NetTestHostPublishDir)**\*.xml;$(_NetTestHostPublishDir)testhost.exe;$(_NetTestHostPublishDir)testhost.runtimeconfig.json" />
+      <TfmSpecificPackageFile Include="@(_NetTestHostPublishedFile)">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\TestHostNet\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Publish the .NET Framework runner (vstest.console, net48) and pack its output into the runner
+    root (tools\net462\...\Extensions\TestPlatform\). Previously vstest.console.exe, its .config
+    with binding redirects, the Test Platform dependency assemblies and their satellite resources
+    were hand-listed from the package project's own re-resolved net48 output ($(OutputPath)net48\).
+    Because that output is produced by a different project than the one that owns each assembly, a
+    shipped DLL and the binding redirects baked into vstest.console.exe.config could be computed
+    from different framework resolutions (e.g. System.Collections.Immutable 10.0.0.11 vs 10.0.0.0),
+    breaking assembly load at runtime. Running the real 'dotnet publish' of vstest.console emits
+    the exe, its config and its full dependency closure together for the same framework, so the
+    runnable layout is self-consistent by construction.
+
+    Gated to the netfx runner TFM so it contributes exactly once (mirrors _PublishNetTestHostContent).
+    XML doc files are excluded to match the historical payload; System.ValueTuple.dll is excluded
+    because it is framework-provided on net4x and was never shipped. Files that are not part of the
+    runner's publish closure - the .NET Framework testhosts, datacollector, arm64 binaries,
+    SettingsMigrator, code coverage, Dia/IntelliTrace/Fakes and other VS-internal assets - remain
+    hand-listed above.
+  -->
+  <Target Name="_PublishRunnerRootContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <PropertyGroup>
+      <_RunnerRootPublishDir>$(ArtifactsBinDir)vstest.console\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\publish\</_RunnerRootPublishDir>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_RunnerRootPublishDir)')"
+           Text="Expected published .NET Framework runner at '$(_RunnerRootPublishDir)'. It is produced by src\vstest.console\vstest.console.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
+    <ItemGroup>
+      <_RunnerRootPublishedFile Include="$(_RunnerRootPublishDir)**\*" Exclude="$(_RunnerRootPublishDir)**\*.xml;$(_RunnerRootPublishDir)System.ValueTuple.dll" />
+      <TfmSpecificPackageFile Include="@(_RunnerRootPublishedFile)">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
+  <!--
+    Pack the vstest-produced logger/collector extensions from each owning project's own build
+    output rather than the package project's commingled $(OutputPath)net48\ folder. Every extension
+    (and its satellite resources) is taken from artifacts\bin\<Project>\<Config>\<tfm>\, so each file
+    has a single, predictable producer instead of being cherry-picked out of a folder that aggregates
+    every ProjectReference. Gated to the netfx runner TFM so it contributes exactly once (mirrors
+    _PublishRunnerRootContent). The globs are name-scoped so only each extension's own primary and
+    satellite assemblies are packed - the shared dependency closure stays at the runner root. The
+    wildcards are expanded here (pack time), not in an evaluation-time ItemGroup, because the source
+    folders are produced during the build.
+  -->
+  <Target Name="_IncludeExtensionContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_TrxLoggerContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TrxLogger\$(Configuration)\net462\**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger*.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_TrxLoggerContent>
+      <_HtmlLoggerContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\net48\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_HtmlLoggerContent>
+      <_TestHostRuntimeProviderContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.TestHostProvider\$(Configuration)\net48\**\Microsoft.TestPlatform.TestHostRuntimeProvider*.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_TestHostRuntimeProviderContent>
+      <_BlameDataCollectorContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.BlameDataCollector\$(Configuration)\net48\Microsoft.TestPlatform.Extensions.BlameDataCollector.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(Filename)%(Extension)</PackagePath>
+      </_BlameDataCollectorContent>
+      <_EventLogCollectorContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\net48\Microsoft.TestPlatform.Extensions.EventLogCollector.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(Filename)%(Extension)</PackagePath>
+      </_EventLogCollectorContent>
+      <TfmSpecificPackageFile Include="@(_TrxLoggerContent);@(_HtmlLoggerContent);@(_TestHostRuntimeProviderContent);@(_BlameDataCollectorContent);@(_EventLogCollectorContent)" />
+    </ItemGroup>
+  </Target>
+  <!--
+    Pack the vstest-produced .NET Framework tools (datacollector, the arm64 runner, SettingsMigrator
+    and its satellites, and DumpMinitool) from each owning project's own RID-specific build output
+    rather than the package project's commingled $(OutputPath)net48\ folder. Every file has a single,
+    predictable producer instead of being cherry-picked out of a folder that aggregates every
+    ProjectReference. Gated to the netfx runner TFM so it contributes exactly once. The includes are
+    name-scoped so only each tool's own executable, config, and satellites are packed - the shared
+    dependency closure that also lands in those RID folders stays out. The wildcards are expanded here
+    (pack time), not in an evaluation-time ItemGroup, because the source folders are produced during
+    the build.
+  -->
+  <Target Name="_IncludeToolContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_DataCollectorContent Include="$(ArtifactsBinDir)datacollector\$(Configuration)\net48\win7-x64\datacollector.exe;$(ArtifactsBinDir)datacollector\$(Configuration)\net48\win7-x64\datacollector.exe.config;$(ArtifactsBinDir)datacollector.arm64\$(Configuration)\net48\win10-arm64\datacollector.arm64.exe;$(ArtifactsBinDir)datacollector.arm64\$(Configuration)\net48\win10-arm64\datacollector.arm64.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_DataCollectorContent>
+      <_VsTestConsoleArm64Content Include="$(ArtifactsBinDir)vstest.console.arm64\$(Configuration)\net48\win10-arm64\vstest.console.arm64.exe;$(ArtifactsBinDir)vstest.console.arm64\$(Configuration)\net48\win10-arm64\vstest.console.arm64.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_VsTestConsoleArm64Content>
+      <_SettingsMigratorContent Include="$(ArtifactsBinDir)SettingsMigrator\$(Configuration)\net48\win7-x64\SettingsMigrator.exe">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_SettingsMigratorContent>
+      <_SettingsMigratorSatelliteContent Include="$(ArtifactsBinDir)SettingsMigrator\$(Configuration)\net48\win7-x64\**\SettingsMigrator.resources.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_SettingsMigratorSatelliteContent>
+      <_DumpMinitoolContent Include="$(ArtifactsBinDir)DumpMinitool\$(Configuration)\net462\win7-x64\DumpMinitool.exe;$(ArtifactsBinDir)DumpMinitool\$(Configuration)\net462\win7-x64\DumpMinitool.exe.config;$(ArtifactsBinDir)DumpMinitool.x86\$(Configuration)\net462\win-x86\DumpMinitool.x86.exe;$(ArtifactsBinDir)DumpMinitool.x86\$(Configuration)\net462\win-x86\DumpMinitool.x86.exe.config;$(ArtifactsBinDir)DumpMinitool.arm64\$(Configuration)\net462\win10-arm64\DumpMinitool.arm64.exe;$(ArtifactsBinDir)DumpMinitool.arm64\$(Configuration)\net462\win10-arm64\DumpMinitool.arm64.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\dump\%(Filename)%(Extension)</PackagePath>
+      </_DumpMinitoolContent>
+      <TfmSpecificPackageFile Include="@(_DataCollectorContent);@(_VsTestConsoleArm64Content);@(_SettingsMigratorContent);@(_SettingsMigratorSatelliteContent);@(_DumpMinitoolContent)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Pack the .NET Framework testhost executables (and their .config files) for every supported netfx
+    TFM (net462..net481) and architecture (default/x86/arm64) from each testhost project's own
+    RID-specific build output. The paths are enumerated explicitly rather than globbed: a wildcard
+    over the TFM folder would both over-capture the netcore testhost's RID subfolder (net8.0, handled
+    separately by _PublishNetTestHostContent) and, via %(RecursiveDir), preserve the TFM\RID path
+    instead of flattening. Each executable has a unique file name, so explicit paths flatten into the
+    runner root by file name. Each architecture uses a distinct item name because reusing one item
+    name across several groups with %(Filename) child metadata triggers MSBuild self-referential
+    batching (later groups would bind to an earlier group's file names). Gated to the netfx runner TFM
+    so it contributes exactly once; expanded at pack time because the source folders are produced
+    during the build.
+  -->
+  <Target Name="_IncludeNetFrameworkTestHostContent" Condition="'$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'" Returns="@(TfmSpecificPackageFile)">
+    <ItemGroup>
+      <_NetFrameworkTestHostContent Include="$(ArtifactsBinDir)testhost\$(Configuration)\net462\win7-x64\testhost.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net462\win7-x64\testhost.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net47\win7-x64\testhost.net47.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net47\win7-x64\testhost.net47.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net471\win7-x64\testhost.net471.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net471\win7-x64\testhost.net471.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net472\win7-x64\testhost.net472.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net472\win7-x64\testhost.net472.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net48\win7-x64\testhost.net48.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net48\win7-x64\testhost.net48.exe.config;$(ArtifactsBinDir)testhost\$(Configuration)\net481\win7-x64\testhost.net481.exe;$(ArtifactsBinDir)testhost\$(Configuration)\net481\win7-x64\testhost.net481.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_NetFrameworkTestHostContent>
+      <_NetFrameworkTestHostX86Content Include="$(ArtifactsBinDir)testhost.x86\$(Configuration)\net462\win-x86\testhost.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net462\win-x86\testhost.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net47\win-x86\testhost.net47.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net47\win-x86\testhost.net47.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net471\win-x86\testhost.net471.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net471\win-x86\testhost.net471.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net472\win-x86\testhost.net472.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net472\win-x86\testhost.net472.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net48\win-x86\testhost.net48.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net48\win-x86\testhost.net48.x86.exe.config;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net481\win-x86\testhost.net481.x86.exe;$(ArtifactsBinDir)testhost.x86\$(Configuration)\net481\win-x86\testhost.net481.x86.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_NetFrameworkTestHostX86Content>
+      <_NetFrameworkTestHostArm64Content Include="$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net462\win10-arm64\testhost.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net462\win10-arm64\testhost.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net47\win10-arm64\testhost.net47.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net47\win10-arm64\testhost.net47.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net471\win10-arm64\testhost.net471.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net471\win10-arm64\testhost.net471.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net472\win10-arm64\testhost.net472.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net472\win10-arm64\testhost.net472.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net48\win10-arm64\testhost.net48.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net48\win10-arm64\testhost.net48.arm64.exe.config;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net481\win10-arm64\testhost.net481.arm64.exe;$(ArtifactsBinDir)testhost.arm64\$(Configuration)\net481\win10-arm64\testhost.net481.arm64.exe.config">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\%(Filename)%(Extension)</PackagePath>
+      </_NetFrameworkTestHostArm64Content>
+      <TfmSpecificPackageFile Include="@(_NetFrameworkTestHostContent);@(_NetFrameworkTestHostX86Content);@(_NetFrameworkTestHostArm64Content)" />
+    </ItemGroup>
   </Target>
 </Project>

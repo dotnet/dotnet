@@ -58,8 +58,8 @@
         <note>0 - the icon file, 1 - hint to guessed icon file</note>
       </trans-unit>
       <trans-unit id="IncompatibleSchema">
-        <source>The schema version of '{0}' is incompatible with version {1} of NuGet. Please upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</source>
-        <target state="translated">Die Schemaversion von "{0}" ist mit der Version {1} von NuGet nicht kompatibel. Führen Sie ein Upgrade von NuGet auf die neueste Version unter "http://go.microsoft.com/fwlink/?LinkId=213942" aus.</target>
+        <source>The schema version of '{0}' is incompatible with version {1} of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</source>
+        <target state="translated">Die Schemaversion von „{0}“ ist mit der Version {1} von NuGet nicht kompatibel. Führen Sie ein Upgrade von NuGet auf die neueste Version unter http://go.microsoft.com/fwlink/?LinkId=213942 aus.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPackageId">

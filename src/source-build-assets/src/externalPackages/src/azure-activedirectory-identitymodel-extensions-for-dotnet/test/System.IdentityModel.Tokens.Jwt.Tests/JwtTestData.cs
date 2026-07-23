@@ -218,7 +218,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             theoryData.Add(new JwtTheoryData
             {
                 CanRead = false,
-                TestId =  "'invalidRegEx: first position'",
+                TestId = "'invalidRegEx: first position'",
                 Token = invalidRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx + "." + validRegEx,
                 ExpectedException = ExpectedException.SecurityTokenMalformedTokenException(errorString)
             });

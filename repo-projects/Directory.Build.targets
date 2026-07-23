@@ -10,7 +10,7 @@
     <BuildServerShutdownTimeoutInMilliseconds Condition="'$(BuildServerShutdownTimeoutInMilliseconds)' == ''">300000</BuildServerShutdownTimeoutInMilliseconds>
     <BuildServerShutdownTimeoutInSeconds Condition="'$(BuildServerShutdownTimeoutInSeconds)' == ''">$([MSBuild]::Divide($(BuildServerShutdownTimeoutInMilliseconds), 1000))</BuildServerShutdownTimeoutInSeconds>
     <BuildServerShutdownCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command &quot;$p = Start-Process -FilePath '$(DotNetTool)' -ArgumentList '-d','build-server','shutdown','--vbcscompiler' -NoNewWindow -PassThru; if (-not $p.WaitForExit($(BuildServerShutdownTimeoutInMilliseconds))) { Write-Warning 'Build server shutdown timed out; terminating process.'; $p.Kill($true); exit 124 }; exit $p.ExitCode&quot;</BuildServerShutdownCommand>
-    <BuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; -d build-server shutdown --vbcscompiler &amp; _build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); if kill -0 $_build_server_shutdown_pid 2&gt;/dev/null; then echo 'Build server shutdown timed out; terminating process.' &gt;&amp;2; kill $_build_server_shutdown_pid 2&gt;/dev/null; fi) &amp; _build_server_shutdown_watchdog_pid=$!; wait $_build_server_shutdown_pid; _build_server_shutdown_exit_code=$?; kill $_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_build_server_shutdown_exit_code</BuildServerShutdownCommand>
+    <BuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; -d build-server shutdown --vbcscompiler &amp; _build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); kill $_build_server_shutdown_pid 2&gt;/dev/null) &amp; _build_server_shutdown_watchdog_pid=$!; wait $_build_server_shutdown_pid; _build_server_shutdown_exit_code=$?; kill $_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_build_server_shutdown_exit_code</BuildServerShutdownCommand>
 
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
@@ -37,7 +37,7 @@
 
     <!-- Branding -->
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'repodefault' or '$(RepoDotNetFinalVersionKind)' == ''"></RepoDotNetFinalVersionKindArg>
-    <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'unstable'">/p:DotNetFinalVersionKind=""</RepoDotNetFinalVersionKindArg>
+    <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'unstable'">/p:DotNetFinalVersionKind=</RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'preview'">/p:DotNetFinalVersionKind=prerelease</RepoDotNetFinalVersionKindArg>
     <RepoDotNetFinalVersionKindArg Condition="'$(RepoDotNetFinalVersionKind)' == 'release'">/p:DotNetFinalVersionKind=release</RepoDotNetFinalVersionKindArg>
     <CommonArgs Condition="'$(DisallowDotNetFinalVersionKindOverride)' != 'true'">$(CommonArgs) $(RepoDotNetFinalVersionKindArg)</CommonArgs>
@@ -51,10 +51,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- MinimalConsoleLogOutput determines if the repository build should be logged to a separate file or directly to the console.
-         Enable it by default as with prallel repository builds the log becomes non-readable. -->
     <RepoConsoleLogFile>$(ArtifactsLogRepoDir)$(RepositoryName).log</RepoConsoleLogFile>
-    <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
   </PropertyGroup>
 
   <!-- Exclude shared repositories from the build, unless shared component building is explicitly enabled. -->
@@ -207,9 +204,10 @@
       ClearDisabledPackageSources="$(ClearDisabledPackageSources)"
       Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
+    <!-- Remove nuget.org from auditSources to avoid reaching the internet during offline builds. -->
     <RemoveBlockedAuditSourcesFromNuGetConfig
       NuGetConfigFile="$(NuGetConfigFile)"
-      Condition="'$(RemoveBlockedAuditSources)' == 'true'" />
+      Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PrebuiltNuGetSourceName)"
@@ -607,7 +605,7 @@
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)" />
     <Message Importance="High" Text="Running command:" />
     <Message Importance="High" Text="  $(BuildCommand)" />
-    <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" Condition="'$(MinimalConsoleLogOutput)' == 'true'" />
+    <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" />
     <Message Importance="High" Text="  With Environment Variables:"/>
     <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
     <Message Importance="High" Text="    %(BuildEnvironmentVariable.Identity)" Condition="'@(BuildEnvironmentVariable)' != ''" />
@@ -618,7 +616,9 @@
 
     <PropertyGroup>
       <FullCommand>$(BuildCommand)</FullCommand>
-      <FullCommand Condition="'$(MinimalConsoleLogOutput)' == 'true'">$(FullCommand) &gt; $(RepoConsoleLogFile) 2&gt;&amp;1</FullCommand>
+      <FullCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command "&amp; { cmd /c '$(BuildCommand)' 2&gt;&amp;1 | Tee-Object -FilePath '$(RepoConsoleLogFile)'%3B exit %24LASTEXITCODE }"</FullCommand>
+      <FullCommand Condition="'$(BuildOS)' != 'windows'">rcf=%24(mktemp); { $(BuildCommand); printf %s "%24?" &gt;"%24rcf"; } 2&gt;&amp;1 | tee "$(RepoConsoleLogFile)"; rc=%24(cat "%24rcf"); rm -f "%24rcf"; exit "%24rc"</FullCommand> <!-- POSIX compliant -->
+      <RepoStandardOutputImportance Condition="'$(RepoStandardOutputImportance)' == ''">low</RepoStandardOutputImportance> <!-- low, normal, high -->
     </PropertyGroup>
 
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(RepoConsoleLogFile)'));
@@ -634,7 +634,8 @@
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
           IgnoreStandardErrorWarningFormat="true"
-          YieldDuringToolExecution="true">
+          YieldDuringToolExecution="true"
+          StandardOutputImportance="$(RepoStandardOutputImportance)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
 
@@ -648,8 +649,8 @@
     <OnError ExecuteTargets="MoveDotNetBuildLogs;LogRepoBuildError" />
   </Target>
 
-  <!-- Propagate errors to the output when using the minimal console log feature. -->
-  <Target Name="LogRepoBuildError" Condition="'$(MinimalConsoleLogOutput)' == 'true'">
+  <!-- Propagate errors to the output by printing the repository build log. -->
+  <Target Name="LogRepoBuildError">
     <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="Exists('$(RepoConsoleLogFile)')" />
     <Message Importance="High" Text="'$(RepositoryName)' failed during build." />
     <Message Importance="High" Text="See '$(RepoConsoleLogFile)' for more information." Condition="Exists('$(RepoConsoleLogFile)')" />
@@ -701,7 +702,7 @@
       <LogManifestNotFoundError Condition="('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1') and '@(RepoAssetManifest)' == ''">true</LogManifestNotFoundError>
     </PropertyGroup>
 
-    <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="'$(LogManifestNotFoundError)' == 'true' and '$(MinimalConsoleLogOutput)' == 'true' and Exists('$(RepoConsoleLogFile)')" />
+    <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="'$(LogManifestNotFoundError)' == 'true' and Exists('$(RepoConsoleLogFile)')" />
     <Error Text="No repository asset manifest files found at '$(RepoAssetManifestsDir)*.xml'. This often means the build failed but did not log an error." Condition="'$(LogManifestNotFoundError)' == 'true'" />
 
     <GetKnownArtifactsFromAssetManifests AssetManifests="@(RepoAssetManifest)">
@@ -816,9 +817,12 @@
       but the required features to read in binary files as input to a source generator don't exist.
       To work around these source generators, shut down the compiler server so we can delete the obj directories.
       Don't fail the build when shutdown returns a failure.
+
+      Don't run when source building to prevent the build from hanging indefinitely - https://github.com/dotnet/source-build/issues/4796
     -->
     <!-- Use an external timeout wrapper so timeout failures are absorbed by IgnoreExitCode instead of logged as MSBuild task errors. -->
     <Exec Command="$(BuildServerShutdownCommand)"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true'"
           EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache)"
           ContinueOnError="WarnAndContinue"
           IgnoreStandardErrorWarningFormat="true"

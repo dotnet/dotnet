@@ -39,6 +39,7 @@ __pycache__
 /mingw
 /spidermonkey
 /binaryen
+/firefox
 
 # MSFT ignores
 /artifacts

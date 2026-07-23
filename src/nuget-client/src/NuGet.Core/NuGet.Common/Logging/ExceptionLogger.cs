@@ -7,9 +7,15 @@ namespace NuGet.Common
 {
     public class ExceptionLogger
     {
+        static ExceptionLogger()
+        {
+            StaticState.StartMSBuildRestoreTasks += ResetInstance;
+        }
+
         public ExceptionLogger(IEnvironmentVariableReader reader)
         {
-            // We can cache this value since environment variables should be fixed during runtime.
+            // We can cache this value since environment variables should be fixed during a restore. In a host that
+            // reuses the process across builds, ResetInstance re-reads it at the start of the next restore.
             ShowStack = ShouldShowStack(reader);
         }
 
@@ -36,6 +42,12 @@ namespace NuGet.Common
             return string.Equals(rawShowStack.Trim(), "true", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static ExceptionLogger Instance { get; } = new ExceptionLogger(EnvironmentVariableWrapper.Instance);
+        public static ExceptionLogger Instance { get; private set; } = new ExceptionLogger(EnvironmentVariableWrapper.Instance);
+
+        /// <summary>
+        /// Recreates <see cref="Instance" /> from the current environment so a reused process observes the
+        /// current <c>NUGET_SHOW_STACK</c> value on the next restore.
+        /// </summary>
+        internal static void ResetInstance() => Instance = new ExceptionLogger(EnvironmentVariableWrapper.Instance);
     }
 }

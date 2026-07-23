@@ -27,7 +27,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
 
             Exception e = Assert.Throws<Exception>(() =>
             {
-                MsiSwixProject swixProject = new(msiItem, BaseIntermediateOutputPath, BaseOutputPath,
+                MsiSwixProject swixProject = new(msiItem, GetTestCaseDirectory(), BaseOutputPath,
                     new ReleaseVersion("6.0.100"),
                     chip: "x64", machineArch: "x64", productArch: "neutral");
             });
@@ -38,23 +38,23 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
         [WindowsOnlyFact]
         public void ItOnlyIncludesDefinedPropertiesForMsiPackages()
         {
-            // Build to a different path to avoid any file read locks on the MSI from other tests
-            // that can open it.
             string packageVersion = "16.0.527";
-            string PackageRootDirectory = Path.Combine(BaseIntermediateOutputPath, Path.GetRandomFileName());
+            string outputDirectory = GetTestCaseDirectory();
+            string pkgDirectory = Path.Combine(outputDirectory, "pkg");
+            string msiDirectory = Path.Combine(outputDirectory, "msi");
             string packagePath = Path.Combine(TestAssetsPath, $"microsoft.ios.templates.{packageVersion}.nupkg");
 
             WorkloadPack p = new(new WorkloadPackId("Microsoft.iOS.Templates"), packageVersion, WorkloadPackKind.Template, null);
-            TemplatePackPackage pkg = new(p, packagePath, new[] { "x64" }, PackageRootDirectory);
+            TemplatePackPackage pkg = new(p, packagePath, ["x64"], pkgDirectory);
             pkg.Extract();
-            WorkloadPackMsi msi = new(pkg, "x64", new MockBuildEngine(), WixToolsetPath, BaseIntermediateOutputPath);
+            WorkloadPackMsi msi = new(pkg, "x64", new MockBuildEngine(), WixToolsetConfig, outputDirectory);
 
-            ITaskItem msiItem = msi.Build(MsiOutputPath);
+            ITaskItem msiItem = msi.Build(msiDirectory);
             msiItem.SetMetadata(Metadata.Platform, "x64");
 
             Assert.Equal($"Microsoft.iOS.Templates.{packageVersion}", msiItem.GetMetadata(Metadata.SwixPackageId));
 
-            MsiSwixProject swixProject = new(msiItem, BaseIntermediateOutputPath, BaseOutputPath,
+            MsiSwixProject swixProject = new(msiItem, outputDirectory, BaseOutputPath,
                 new ReleaseVersion("6.0.100"),
                 chip: msiItem.GetMetadata(Metadata.Platform),
                 machineArch: DefaultValues.x64);
@@ -65,6 +65,5 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             Assert.Contains("vs.package.chip=x64", msiSwr);
             Assert.Contains("vs.package.machineArch=x64", msiSwr);
         }
-
     }
 }

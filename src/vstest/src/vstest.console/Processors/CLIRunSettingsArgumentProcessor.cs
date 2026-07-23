@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
+using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Resources.Resources;
 
@@ -29,6 +29,16 @@ internal class CliRunSettingsArgumentProcessor : IArgumentProcessor
 
     private Lazy<IArgumentProcessorCapabilities>? _metadata;
     private Lazy<IArgumentExecutor>? _executor;
+    private readonly IRunSettingsProvider _runSettingsProvider;
+    private readonly CommandLineOptions _commandLineOptions;
+    private readonly IRunSettingsHelper _runSettingsHelper;
+
+    public CliRunSettingsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider, IRunSettingsHelper runSettingsHelper)
+    {
+        _commandLineOptions = commandLineOptions;
+        _runSettingsProvider = runSettingsProvider;
+        _runSettingsHelper = runSettingsHelper;
+    }
 
     /// <summary>
     /// Gets the metadata.
@@ -43,7 +53,7 @@ internal class CliRunSettingsArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new CliRunSettingsArgumentExecutor(RunSettingsManager.Instance, CommandLineOptions.Instance));
+            new CliRunSettingsArgumentExecutor(_runSettingsProvider, _commandLineOptions, _runSettingsHelper));
 
         set => _executor = value;
     }
@@ -68,11 +78,13 @@ internal class CliRunSettingsArgumentExecutor : IArgumentsExecutor
 {
     private readonly IRunSettingsProvider _runSettingsManager;
     private readonly CommandLineOptions _commandLineOptions;
+    private readonly IRunSettingsHelper _runSettingsHelper;
 
-    internal CliRunSettingsArgumentExecutor(IRunSettingsProvider runSettingsManager, CommandLineOptions commandLineOptions)
+    internal CliRunSettingsArgumentExecutor(IRunSettingsProvider runSettingsManager, CommandLineOptions commandLineOptions, IRunSettingsHelper runSettingsHelper)
     {
         _runSettingsManager = runSettingsManager;
         _commandLineOptions = commandLineOptions;
+        _runSettingsHelper = runSettingsHelper;
     }
 
     public void Initialize(string? argument)
@@ -233,7 +245,7 @@ internal class CliRunSettingsArgumentExecutor : IArgumentsExecutor
             bool success = Enum.TryParse<Architecture>(value, true, out var architecture);
             if (success)
             {
-                RunSettingsHelper.Instance.IsDefaultTargetArchitecture = false;
+                _runSettingsHelper.IsDefaultTargetArchitecture = false;
                 _commandLineOptions.TargetArchitecture = architecture;
             }
         }
