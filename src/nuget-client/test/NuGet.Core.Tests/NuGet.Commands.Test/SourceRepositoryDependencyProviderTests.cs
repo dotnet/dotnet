@@ -471,6 +471,64 @@ namespace NuGet.Commands.Test
             Assert.Equal(1, versionsHitCount);
         }
 
+        [Theory]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        public async Task FindLibraryAsync_WhenLocalPackagesFolderAndMinVersionDoesNotExist_ReturnsNull(bool isGlobalPackagesFolder, bool isFallbackFolderSource)
+        {
+            // Arrange
+            var testLogger = new TestLogger();
+            var cacheContext = new SourceCacheContext();
+            var findResource = new Mock<FindPackageByIdResource>(MockBehavior.Strict);
+            var minVersion = NuGetVersion.Parse("1.0.0");
+
+            findResource.Setup(s => s.DoesPackageExistAsync(
+                    "x",
+                    minVersion,
+                    cacheContext,
+                    testLogger,
+                    CancellationToken.None))
+                .ReturnsAsync(false);
+
+            var source = new Mock<SourceRepository>();
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(CancellationToken.None))
+                .ReturnsAsync(findResource.Object);
+            source.SetupGet(s => s.PackageSource)
+                .Returns(new PackageSource("http://test/index.json"));
+
+            var libraryRange = new LibraryRange(
+                "x",
+                new VersionRange(minVersion),
+                LibraryDependencyTarget.Package);
+            var provider = new SourceRepositoryDependencyProvider(
+                source.Object,
+                testLogger,
+                cacheContext,
+                ignoreFailedSources: true,
+                ignoreWarning: true,
+                fileCache: null,
+                isGlobalPackagesFolder: isGlobalPackagesFolder,
+                isFallbackFolderSource: isFallbackFolderSource,
+                environmentVariableReader: EnvironmentVariableWrapper.Instance);
+
+            // Act
+            var library = await provider.FindLibraryAsync(
+                libraryRange,
+                NuGetFramework.Parse("net45"),
+                cacheContext,
+                testLogger,
+                CancellationToken.None);
+
+            // Assert
+            Assert.Null(library);
+            findResource.Verify(s => s.GetAllVersionsAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<SourceCacheContext>(),
+                    It.IsAny<ILogger>(),
+                    It.IsAny<CancellationToken>()),
+                Times.Never);
+        }
+
         [Fact]
         public async Task GetPackageDownloaderAsync_ThrowsForNullPackageIdentity()
         {
@@ -916,6 +974,7 @@ namespace NuGet.Commands.Test
                 ignoreFailedSources: true,
                 ignoreWarning: true,
                 fileCache: null,
+                isGlobalPackagesFolder: false,
                 isFallbackFolderSource: false,
                 new TestEnvironmentVariableReader(new Dictionary<string, string>()));
 
@@ -978,6 +1037,7 @@ namespace NuGet.Commands.Test
                 ignoreFailedSources: true,
                 ignoreWarning: true,
                 fileCache: null,
+                isGlobalPackagesFolder: false,
                 isFallbackFolderSource: false,
                 wrapper);
 
