@@ -39,6 +39,17 @@ public class ReproducibilityTests
             updatedBaselineFileName: "UpdatedMsftReproducibilityBaseline.diff");
     }
 
+    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeMsftReproducibilityTests))]
+    public void MsftArtifactsTarballIsReproducible()
+    {
+        CompareTarballs(
+            Config.MsftArtifactsTarballPath1!,
+            Config.MsftArtifactsTarballPath2!,
+            exclusionsFileName: "MsftArtifactsReproducibilityExclusions.txt",
+            baselineFileName: "MsftArtifactsReproducibilityBaseline.diff",
+            updatedBaselineFileName: "UpdatedMsftArtifactsReproducibilityBaseline.diff");
+    }
+
     [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeSourceBuiltReproducibilityTests))]
     public void SourceBuiltSdkTarballIsReproducible()
     {
@@ -48,6 +59,17 @@ public class ReproducibilityTests
             exclusionsFileName: "SourceBuiltReproducibilityExclusions.txt",
             baselineFileName: "SourceBuiltReproducibilityBaseline.diff",
             updatedBaselineFileName: "UpdatedSourceBuiltReproducibilityBaseline.diff");
+    }
+
+    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeSourceBuiltReproducibilityTests))]
+    public void SourceBuiltArtifactsTarballIsReproducible()
+    {
+        CompareTarballs(
+            Config.SourceBuiltArtifactsTarballPath1!,
+            Config.SourceBuiltArtifactsTarballPath2!,
+            exclusionsFileName: "SourceBuiltArtifactsReproducibilityExclusions.txt",
+            baselineFileName: "SourceBuiltArtifactsReproducibilityBaseline.diff",
+            updatedBaselineFileName: "UpdatedSourceBuiltArtifactsReproducibilityBaseline.diff");
     }
 
     /// <summary>
@@ -65,8 +87,8 @@ public class ReproducibilityTests
         string baselineFileName,
         string updatedBaselineFileName)
     {
-        Assert.True(File.Exists(tarballPath1), $"First SDK tarball not found: {tarballPath1}");
-        Assert.True(File.Exists(tarballPath2), $"Second SDK tarball not found: {tarballPath2}");
+        Assert.True(File.Exists(tarballPath1), $"First tarball not found: {tarballPath1}");
+        Assert.True(File.Exists(tarballPath2), $"Second tarball not found: {tarballPath2}");
 
         OutputHelper.WriteLine($"Comparing tarballs:");
         OutputHelper.WriteLine($"  Tarball 1: {tarballPath1}");

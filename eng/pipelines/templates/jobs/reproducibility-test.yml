@@ -54,6 +54,16 @@ jobs:
       checkDownloadedFiles: true
     displayName: Download First SDK Tarball (from Build1 stage)
 
+  # Download the first artifacts tarball from this pipeline's Build1 stage.
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: current
+      artifact: ${{ parameters.build1JobName }}_Artifacts
+      patterns: '**/assets/Release/Private.SourceBuilt.Artifacts.([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
+      downloadPath: $(Pipeline.Workspace)/Artifacts
+      checkDownloadedFiles: true
+    displayName: Download First Artifacts Tarball (from Build1 stage)
+
   - script: |
       # Move artifacts to root for easy discovery
       find $(Pipeline.Workspace)/Artifacts -type f -exec mv {} $(Pipeline.Workspace)/Artifacts \;
@@ -71,6 +81,18 @@ jobs:
       echo "##vso[task.setvariable variable=FirstSdkTarballPath]$(Pipeline.Workspace)/Artifacts/$first_sdk_tarball"
     displayName: Locate first SDK tarball
 
+  - script: |
+      first_artifacts_tarball=$(find "$(Pipeline.Workspace)/Artifacts" -name "Private.SourceBuilt.Artifacts.*-${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
+
+      if [[ -z "$first_artifacts_tarball" ]]; then
+        echo "First artifacts tarball not found in '$(Pipeline.Workspace)/Artifacts'. The Build1 stage's '${{ parameters.build1JobName }}' job might have failed to publish the expected artifact."
+        exit 1
+      fi
+
+      echo "First artifacts tarball: $first_artifacts_tarball"
+      echo "##vso[task.setvariable variable=FirstArtifactsTarballPath]$(Pipeline.Workspace)/Artifacts/$first_artifacts_tarball"
+    displayName: Locate first artifacts tarball
+
   # Download the second SDK tarball from this pipeline's Build2 stage
   - task: DownloadPipelineArtifact@2
     inputs:
@@ -83,6 +105,16 @@ jobs:
       downloadPath: $(Pipeline.Workspace)/RebuildArtifacts
       checkDownloadedFiles: true
     displayName: Download Second SDK Tarball (from Build2 stage)
+
+  # Download the second artifacts tarball from this pipeline's Build2 stage
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: current
+      artifact: ${{ parameters.build2JobName }}_Artifacts
+      patterns: '**/assets/Release/Private.SourceBuilt.Artifacts.([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
+      downloadPath: $(Pipeline.Workspace)/RebuildArtifacts
+      checkDownloadedFiles: true
+    displayName: Download Second Artifacts Tarball (from Build2 stage)
 
   - script: |
       find $(Pipeline.Workspace)/RebuildArtifacts -type f -exec mv {} $(Pipeline.Workspace)/RebuildArtifacts \;
@@ -100,12 +132,26 @@ jobs:
       echo "##vso[task.setvariable variable=SecondSdkTarballPath]$(Pipeline.Workspace)/RebuildArtifacts/$second_sdk_tarball"
     displayName: Locate second SDK tarball
 
+  - script: |
+      second_artifacts_tarball=$(find "$(Pipeline.Workspace)/RebuildArtifacts" -name "Private.SourceBuilt.Artifacts.*-${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
+
+      if [[ -z "$second_artifacts_tarball" ]]; then
+        echo "Second Artifacts tarball not found in rebuild artifacts."
+        exit 1
+      fi
+
+      echo "Second artifacts tarball: $second_artifacts_tarball"
+      echo "##vso[task.setvariable variable=SecondArtifactsTarballPath]$(Pipeline.Workspace)/RebuildArtifacts/$second_artifacts_tarball"
+    displayName: Locate second artifacts tarball
+
   - script: >
       eng/common/dotnet.sh test
       $(Build.SourcesDirectory)/test/Microsoft.DotNet.Reproducibility.Tests/Microsoft.DotNet.Reproducibility.Tests.csproj
       -bl:$(Build.SourcesDirectory)/artifacts/log/Release/ReproducibilityTests.binlog
       /p:${{ parameters.buildType }}SdkTarballPath1=$(FirstSdkTarballPath)
+      /p:${{ parameters.buildType }}ArtifactsTarballPath1=$(FirstArtifactsTarballPath)
       /p:${{ parameters.buildType }}SdkTarballPath2=$(SecondSdkTarballPath)
+      /p:${{ parameters.buildType }}ArtifactsTarballPath2=$(SecondArtifactsTarballPath)
     displayName: Run Reproducibility Tests
     workingDirectory: $(Build.SourcesDirectory)
 

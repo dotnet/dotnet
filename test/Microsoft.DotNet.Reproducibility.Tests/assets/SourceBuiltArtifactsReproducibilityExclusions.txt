@@ -1,0 +1,4 @@
+# Source-built Artifacts reproducibility exclusions
+#
+# Files listed here have known root-cause-justified differences between two builds of the
+# same source commit
