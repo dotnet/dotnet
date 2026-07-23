@@ -27,7 +27,7 @@ Param(
   [bool]$nodeReuse,
   [switch]$prepareMachine,
   [string]$projects,
-  [bool] $warnAsError,
+  [bool] $warnAsError = $true,
   [Parameter(ValueFromRemainingArguments=$true)][String[]]$properties
 )
 
