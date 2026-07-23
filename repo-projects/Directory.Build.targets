@@ -634,12 +634,14 @@
                           $(AspNetRazorBuildServerLogDir)"
              Condition="'$(EnableExtraDebugging)' == 'true'" />
 
+    <!-- Log NuGet warnings to the console -->
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
-          IgnoreStandardErrorWarningFormat="true"
           YieldDuringToolExecution="true"
-          StandardOutputImportance="$(RepoStandardOutputImportance)">
+          IgnoreStandardErrorWarningFormat="true"
+          StandardOutputImportance="$(RepoStandardOutputImportance)"
+          CustomWarningRegularExpression="\bwarning\s+NU\d+\b">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
 
