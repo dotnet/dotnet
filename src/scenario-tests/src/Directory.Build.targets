@@ -33,6 +33,11 @@
     <!-- Clean the test root to avoid dirty content from a previous run -->
     <RemoveDir Directories="$(TestRoot)" />
 
+    <!-- Isolate test environment by creating an empty global.json so that the repo root one is never considered. -->
+    <WriteLinesToFile File="$(TestRoot)global.json"
+      Lines="{}"
+      Overwrite="true" />
+
     <Exec Command='"$(TestDotNetTool)" exec $(TestFxVersionCLI)"$(TargetPath)" $(TestArgs)'
           EnvironmentVariables="@(TestEnvironmentVariable)" />
   </Target>
