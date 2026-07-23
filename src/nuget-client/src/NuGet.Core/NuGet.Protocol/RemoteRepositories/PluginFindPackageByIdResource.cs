@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -111,7 +109,7 @@ namespace NuGet.Protocol.Core.Types
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public override Task<IPackageDownloader> GetPackageDownloaderAsync(
+        public override Task<IPackageDownloader?> GetPackageDownloaderAsync(
             PackageIdentity packageIdentity,
             SourceCacheContext cacheContext,
             ILogger logger,
@@ -140,7 +138,7 @@ namespace NuGet.Protocol.Core.Types
                 var packageReader = new PluginPackageReader(_plugin, packageIdentity, _packageSource.Source);
                 var packageDependency = new PluginPackageDownloader(_plugin, packageIdentity, packageReader, _packageSource.Source);
 
-                return Task.FromResult<IPackageDownloader>(packageDependency);
+                return Task.FromResult<IPackageDownloader?>(packageDependency);
             }
             finally
             {
@@ -235,7 +233,7 @@ namespace NuGet.Protocol.Core.Types
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public override async Task<FindPackageByIdDependencyInfo> GetDependencyInfoAsync(
+        public override async Task<FindPackageByIdDependencyInfo?> GetDependencyInfoAsync(
             string id,
             NuGetVersion version,
             SourceCacheContext cacheContext,
@@ -269,7 +267,7 @@ namespace NuGet.Protocol.Core.Types
 
                 var packageInfos = await EnsurePackagesAsync(id, cacheContext, cancellationToken);
 
-                PackageInfo packageInfo;
+                PackageInfo? packageInfo;
 
                 if (packageInfos.TryGetValue(version, out packageInfo))
                 {
@@ -382,7 +380,7 @@ namespace NuGet.Protocol.Core.Types
             SourceCacheContext cacheContext,
             CancellationToken cancellationToken)
         {
-            AsyncLazy<SortedDictionary<NuGetVersion, PackageInfo>> result = null;
+            AsyncLazy<SortedDictionary<NuGetVersion, PackageInfo>> result;
 
             Func<string, AsyncLazy<SortedDictionary<NuGetVersion, PackageInfo>>> findPackages =
                 (keyId) => new AsyncLazy<SortedDictionary<NuGetVersion, PackageInfo>>(
@@ -423,7 +421,7 @@ namespace NuGet.Protocol.Core.Types
                     switch (response.ResponseCode)
                     {
                         case MessageResponseCode.Success:
-                            return ParsePackageVersions(response.Versions, id, uri);
+                            return ParsePackageVersions(response.Versions!, id, uri); // When the ResponseCode is Success, then Versions being non null is guaranteed, but can't be compiler enforced.
 
                         case MessageResponseCode.Error:
                             throw new PluginException(
@@ -510,11 +508,11 @@ namespace NuGet.Protocol.Core.Types
 
         private class PackageInfo
         {
-            public PackageIdentity Identity { get; set; }
+            public required PackageIdentity Identity { get; set; }
 
-            public string Path { get; set; }
+            public string? Path { get; set; }
 
-            public string ContentUri { get; set; }
+            public required string ContentUri { get; set; }
         }
     }
 }

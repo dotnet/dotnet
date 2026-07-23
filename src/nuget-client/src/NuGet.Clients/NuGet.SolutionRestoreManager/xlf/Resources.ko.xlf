@@ -134,6 +134,11 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
         <target state="translated">솔루션이 저장되지 않았습니다. NuGet 패키지를 관리하려면 먼저 솔루션을 저장하세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Ask Copilot to fix NuGet package vulnerabilities</source>
+        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <note>Do not translate Copilot or NuGet</note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

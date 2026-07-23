@@ -625,10 +625,181 @@ namespace NuGetConsole.Host.PowerShell.Test
                 .Contain("Solution is not saved.");
         }
 
+        [Fact]
+        public async Task GetPackageListAvailable_CollapsesMultipleVersionsToSingleEntryAsync()
+        {
+            // Arrange — a single package id published with multiple versions
+            using var pathContext = new SimpleTestPathContext();
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("CollapseTestPackage", "1.0.0"),
+                new SimpleTestPackageContext("CollapseTestPackage", "2.0.0"),
+                new SimpleTestPackageContext("CollapseTestPackage", "3.0.0"));
+
+            SetupSourceRepositoryProvider(pathContext.PackageSource);
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: pathContext.PackageSource);
+
+            // Act
+            var results = fixture.Invoke(
+                "Get-Package",
+                new Dictionary<string, object>
+                {
+                    { "ListAvailable", true },
+                    { "Source", pathContext.PackageSource },
+                    { "Filter", "CollapseTestPackage" },
+                });
+
+            // Assert — multiple versions collapse into a single entry for the id
+            results.Should().ContainSingle();
+            var package = (PowerShellRemotePackage)results[0].BaseObject;
+            package.Id.Should().Be("CollapseTestPackage");
+        }
+
+        [Fact]
+        public async Task GetPackageListAvailable_WithLargeFirst_ReturnsMoreThanServerPagingLimitAsync()
+        {
+            // Arrange — publish more distinct package ids than the server-side paging limit (100)
+            using var pathContext = new SimpleTestPathContext();
+
+            var packages = Enumerable.Range(1, 105)
+                .Select(i => new SimpleTestPackageContext($"PagingLimitPackage{i:D3}", "1.0.0"))
+                .ToArray();
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, packages);
+
+            SetupSourceRepositoryProvider(pathContext.PackageSource);
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: pathContext.PackageSource);
+
+            // Act — request more than the server-side paging limit explicitly
+            var results = fixture.Invoke(
+                "Get-Package",
+                new Dictionary<string, object>
+                {
+                    { "ListAvailable", true },
+                    { "Source", pathContext.PackageSource },
+                    { "Filter", "PagingLimitPackage" },
+                    { "First", 105 },
+                });
+
+            // Assert — the cmdlet aggregates across pages and returns more than the paging limit
+            results.Count.Should().Be(105, because: "Get-Package -ListAvailable should aggregate results beyond the server-side paging limit");
+        }
+
+        [Fact]
+        public async Task GetPackageListAvailable_WithSourceByName_ReturnsPackagesAsync()
+        {
+            // Arrange — a source registered under a friendly name (not just its path)
+            using var pathContext = new SimpleTestPathContext();
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("NamedSourcePackage", "1.0.0"));
+
+            SetupSourceRepositoryProvider(new[] { new PackageSource(pathContext.PackageSource, "MyNamedSource") });
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: pathContext.PackageSource);
+
+            // Act — reference the source by its configured name
+            var results = fixture.Invoke(
+                "Get-Package",
+                new Dictionary<string, object>
+                {
+                    { "ListAvailable", true },
+                    { "Source", "MyNamedSource" },
+                    { "Filter", "NamedSourcePackage" },
+                });
+
+            // Assert
+            results.Should().ContainSingle();
+            var package = (PowerShellRemotePackage)results[0].BaseObject;
+            package.Id.Should().Be("NamedSourcePackage");
+        }
+
+        [Fact]
+        public async Task GetPackageUpdates_WithSourceByName_ReturnsUpdatesAsync()
+        {
+            // Arrange — two installed packages with newer versions available in a named source
+            using var pathContext = new SimpleTestPathContext();
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("UpdatesNamedPackageA", "1.0.0"),
+                new SimpleTestPackageContext("UpdatesNamedPackageA", "2.0.0"),
+                new SimpleTestPackageContext("UpdatesNamedPackageB", "1.0.0"),
+                new SimpleTestPackageContext("UpdatesNamedPackageB", "2.0.0"));
+
+            SetupSourceRepositoryProvider(new[] { new PackageSource(pathContext.PackageSource, "MyNamedSource") });
+            SetupMultipleInstalledPackages("TestProject", new[]
+            {
+                ("UpdatesNamedPackageA", "1.0.0"),
+                ("UpdatesNamedPackageB", "1.0.0"),
+            });
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: pathContext.PackageSource);
+
+            // Act — Get-Package -Updates -Source MyNamedSource
+            List<PowerShellUpdatePackage> results = fixture.Invoke(
+                "Get-Package",
+                new Dictionary<string, object>
+                {
+                    { "Updates", true },
+                    { "Source", "MyNamedSource" },
+                }).Select(r => (PowerShellUpdatePackage)r.BaseObject).ToList();
+
+            // Assert — both packages report an available update
+            results.Should().HaveCount(2);
+            results[0].Id.Should().Be("UpdatesNamedPackageA");
+            results[0].Version.ToString().Should().Be("2.0.0");
+            results[1].Id.Should().Be("UpdatesNamedPackageB");
+            results[1].Version.ToString().Should().Be("2.0.0");
+        }
+
+        [Fact]
+        public async Task GetPackageUpdates_FromSourceWithoutInstalledPackage_ReturnsEmptyAsync()
+        {
+            // Arrange — one source has a newer version, a second source is empty
+            using var sourceWithUpdates = new SimpleTestPathContext();
+            using var emptySource = new SimpleTestPathContext();
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                sourceWithUpdates.PackageSource,
+                new SimpleTestPackageContext("SwitchSourcePackage", "1.0.0"),
+                new SimpleTestPackageContext("SwitchSourcePackage", "2.0.0"));
+
+            SetupSourceRepositoryProvider(new[]
+            {
+                new PackageSource(sourceWithUpdates.PackageSource, "WithUpdates"),
+                new PackageSource(emptySource.PackageSource, "EmptySource"),
+            });
+            SetupProjectWithInstalledPackage("SwitchSourcePackage", "1.0.0");
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: sourceWithUpdates.PackageSource);
+
+            // Act — query updates from the source that does not contain the installed package
+            var results = fixture.Invoke(
+                "Get-Package",
+                new Dictionary<string, object>
+                {
+                    { "Updates", true },
+                    { "Source", "EmptySource" },
+                });
+
+            // Assert — no updates because the selected source has no matching package
+            results.Should().BeEmpty();
+        }
+
         private void SetupSourceRepositoryProvider(string localSourcePath)
         {
             var localSource = new PackageSource(localSourcePath);
             var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(localSource);
+            _componentModel.Setup(x => x.GetService<ISourceRepositoryProvider>()).Returns(sourceRepositoryProvider);
+        }
+
+        private void SetupSourceRepositoryProvider(IEnumerable<PackageSource> packageSources)
+        {
+            var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(packageSources);
             _componentModel.Setup(x => x.GetService<ISourceRepositoryProvider>()).Returns(sourceRepositoryProvider);
         }
 

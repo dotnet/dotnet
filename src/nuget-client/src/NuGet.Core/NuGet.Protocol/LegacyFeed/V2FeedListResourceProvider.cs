@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,14 +18,15 @@ namespace NuGet.Protocol
         {
         }
 
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source,
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source,
             CancellationToken token)
         {
-            ListResource resource = null;
+            ListResource? resource = null;
 
             if (await source.GetFeedType(token) == FeedType.HttpV2)
             {
-                var httpSource = await source.GetResourceAsync<HttpSourceResource>(token);
+                var httpSource = await source.GetResourceAsync<HttpSourceResource>(token)
+                    ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(HttpSourceResource)}.");
 
                 var serviceDocument = await source.GetResourceAsync<ODataServiceDocumentResourceV2>(token);
                 if (serviceDocument != null)
@@ -39,7 +38,7 @@ namespace NuGet.Protocol
                     resource = new V2FeedListResource(parser, feedCapabilityResource, serviceDocument.BaseAddress);
                 }
             }
-            return new Tuple<bool, INuGetResource>(resource != null, resource);
+            return new Tuple<bool, INuGetResource?>(resource != null, resource);
         }
     }
 }

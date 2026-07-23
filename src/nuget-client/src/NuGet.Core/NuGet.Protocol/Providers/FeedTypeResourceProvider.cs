@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -27,9 +25,9 @@ namespace NuGet.Protocol
         {
         }
 
-        public override Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
+        public override Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token)
         {
-            FeedTypeResource curResource = null;
+            FeedTypeResource? curResource = null;
 
             if (source.FeedTypeOverride == FeedType.Undefined)
             {
@@ -62,7 +60,7 @@ namespace NuGet.Protocol
                 curResource = new FeedTypeResource(source.FeedTypeOverride);
             }
 
-            return Task.FromResult(new Tuple<bool, INuGetResource>(curResource != null, curResource));
+            return Task.FromResult(new Tuple<bool, INuGetResource?>(curResource != null, curResource));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace NuGetVSExtension
 {
     [Export(typeof(IFixVulnerabilitiesService))]
     [PartCreationPolicy(CreationPolicy.Shared)]
-    internal class FixVulnerablitiesService : IFixVulnerabilitiesService
+    internal class FixVulnerabilitiesService : IFixVulnerabilitiesService
     {
         private const string AgentModeResponderServiceMoniker = "Microsoft.VisualStudio.Copilot.AgentModeResponder";
         private const string ServiceName = "Microsoft.VisualStudio.Copilot.SolutionContextProvider";
@@ -39,9 +39,17 @@ namespace NuGetVSExtension
         [Import(typeof(VisualStudioActivityLogger), AllowDefault = true)]
         public ILogger? ActivityLogger { get; set; }
 
-        public async Task LaunchFixVulnerabilitiesAsync(CancellationToken cancellationToken)
+        public async Task LaunchFixVulnerabilitiesAsync(
+            FixVulnerabilitiesSource source,
+            CancellationToken cancellationToken)
         {
-            CopilotClientId clientId = new("Microsoft.VisualStudio.NuGet.VulnerabilitiesInfoBar");
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            NavigationOrigin navigationOrigin = source.NavigationOrigin;
+            CopilotClientId clientId = new(source.CopilotClientId);
 
             // Build the request first so we have a stable CorrelationId for function discovery
             CopilotRequest request = new(Resources.Prompt_FixNuGetPackageVulnerabilities)
@@ -61,7 +69,7 @@ namespace NuGetVSExtension
 
             if (!result.IsSuccess)
             {
-                HandleSessionError(result.Error);
+                HandleSessionError(result.Error, navigationOrigin);
                 return;
             }
 
@@ -75,17 +83,17 @@ namespace NuGetVSExtension
             try
             {
                 _ = await session.Thread.Session.SendRequestAsync(requestWithFunctionsAndContext, cancellationToken);
-                SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.None);
+                SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.None, navigationOrigin);
             }
             catch (UnauthorizedAccessException ex)
             {
-                SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.CopilotAccessDenied);
+                SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.CopilotAccessDenied, navigationOrigin);
                 ActivityLogger?.LogError(ex.Message);
                 ShowWarningMessage(Resources.Error_CopilotAccessDenied);
             }
         }
 
-        private static void HandleSessionError(CopilotToolSessionError error)
+        private static void HandleSessionError(CopilotToolSessionError error, NavigationOrigin navigationOrigin)
         {
             (FixVulnerabilitiesWithCopilotErrorType telemetryError, string message) = error switch
             {
@@ -99,7 +107,7 @@ namespace NuGetVSExtension
                 _ => throw new ArgumentOutOfRangeException(nameof(error), error, null),
             };
 
-            SendTelemetryEvent(telemetryError);
+            SendTelemetryEvent(telemetryError, navigationOrigin);
             ShowWarningMessage(message);
         }
 
@@ -113,9 +121,9 @@ namespace NuGetVSExtension
             MessageHelper.ShowWarningMessage(message, Resources.Title_FixVulnerabilitiesWithCopilot);
         }
 
-        private static void SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType errorType)
+        private static void SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType errorType, NavigationOrigin navigationOrigin)
         {
-            var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarFixWithCopilot(errorType);
+            var evt = NavigatedTelemetryEvent.CreateWithFixVulnerabilitiesWithCopilot(navigationOrigin, errorType);
             TelemetryActivity.EmitTelemetryEvent(evt);
         }
 

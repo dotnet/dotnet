@@ -3329,6 +3329,84 @@ EndGlobal";
         }
 
         [Theory]
+        [InlineData(false, false)] // Standard task-based restore
+        [InlineData(true, true)]   // Static graph with PackageSpecFactory
+        [InlineData(true, false)]  // Static graph with legacy PackageSpec construction
+        public async Task DotnetRestore_MultiTargetedProjectWithAnalyzerAssetsEnabledForOneFramework_WritesAnalyzersForAllFrameworks(
+            bool useStaticGraphRestore,
+            bool usePackageSpecFactory)
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            const string PackageId = "AnalyzerPackage";
+            const string AnalyzerPath = "analyzers/dotnet/cs/Analyzer.dll";
+            var package = new SimpleTestPackageContext(PackageId, "1.0.0")
+            {
+                UseDefaultRuntimeAssemblies = false,
+            };
+            package.AddFile(AnalyzerPath);
+            package.AddFile("lib/netstandard2.0/Package.dll");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, package);
+
+            var projectName = "AnalyzerProject";
+            var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(
+                pathContext.SolutionRoot,
+                projectName,
+                "classlib",
+                testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", "net10.0;net11.0");
+                ProjectFileUtils.AddProperty(
+                    xml,
+                    "RestoreEnableAnalyzerAssets",
+                    bool.TrueString,
+                    " '$(TargetFramework)' == 'net11.0' ");
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    PackageId,
+                    string.Empty,
+                    [],
+                    new Dictionary<string, string>() { { "Version", package.Version } });
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            var environmentVariables = new Dictionary<string, string>()
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+            string staticGraphArgument = useStaticGraphRestore
+                ? " /p:RestoreUseStaticGraphEvaluation=true"
+                : string.Empty;
+
+            // Act
+            _dotnetFixture.RunDotnetExpectSuccess(
+                workingDirectory,
+                $"restore {projectFile} /p:DisableImplicitFrameworkReferences=true{staticGraphArgument}",
+                environmentVariables,
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            string assetsFilePath = Path.Combine(workingDirectory, "obj", LockFileFormat.AssetsFileName);
+            LockFile assetsFile = new LockFileFormat().Read(assetsFilePath);
+            assetsFile.PackageSpec.RestoreMetadata.RestoreEnableAnalyzerAssets.Should().BeTrue();
+
+            foreach (string targetAlias in new[] { "net10.0", "net11.0" })
+            {
+                LockFileTarget target = assetsFile.GetTarget(targetAlias, string.Empty);
+                LockFileTargetLibrary targetLibrary = target.Libraries.Single(
+                    library => library.Name.Equals(PackageId, StringComparison.OrdinalIgnoreCase));
+                targetLibrary.AnalyzerAssets.Should().ContainSingle(
+                    analyzer => analyzer.Path.Equals(AnalyzerPath, StringComparison.Ordinal));
+            }
+        }
+
+        [Theory]
         [InlineData(null, "all")]
         [InlineData("direct", "direct")]
         [InlineData("all", "all")]
@@ -4675,7 +4753,7 @@ EndGlobal";
             var projectA = SimpleTestProjectContext.CreateNETCore(
                 "projectA",
                 pathContext.SolutionRoot,
-                NuGetFramework.Parse("net8.0"));
+                TestConstants.DefaultTargetFramework);
 
             var packageRef = new SimpleTestPackageContext(packageId, "1.0.0");
             packageRef.Version = "*";
@@ -4713,6 +4791,66 @@ EndGlobal";
             string expectedVersion = useGlobalProperty ? "2.0.0" : "1.0.0";
             var packageDirectory = Path.Combine(pathContext.UserPackagesFolder, packageId.ToLowerInvariant(), expectedVersion);
             Directory.Exists(packageDirectory).Should().BeTrue($"expected {packageId} {expectedVersion} to be in the global packages folder");
+        }
+
+        [Fact]
+        public async Task DotnetRestore_FloatingVersionWithForceRestore_DowngradesWhenHigherVersionIsRemovedFromSource()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+
+            const string packageId = "TestPackage";
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext(packageId, "1.0.0"),
+                new SimpleTestPackageContext(packageId, "2.0.0"));
+
+            var projectA = SimpleTestProjectContext.CreateNETCore(
+                "projectA",
+                pathContext.SolutionRoot,
+                TestConstants.DefaultTargetFramework);
+
+            projectA.AddPackageToAllFrameworks(new SimpleTestPackageContext(packageId, "*"));
+
+            new SimpleTestSolutionContext(pathContext.SolutionRoot, projectA).Create();
+
+            string arguments = $"restore projectA{Path.DirectorySeparatorChar}projectA.csproj";
+            string higherVersionGlobalPackageDirectory = GetPackageVersionDirectory(pathContext.UserPackagesFolder, packageId, "2.0.0");
+
+            _dotnetFixture.RunDotnetExpectSuccess(
+                pathContext.SolutionRoot,
+                arguments,
+                testOutputHelper: _testOutputHelper);
+
+            AssertRestoredPackageVersion(projectA, packageId, "2.0.0");
+
+            Directory.Delete(GetPackageVersionDirectory(pathContext.PackageSource, packageId, "2.0.0"), recursive: true);
+
+            // Act
+            _dotnetFixture.RunDotnetExpectSuccess(
+                pathContext.SolutionRoot,
+                arguments + " --force",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            AssertRestoredPackageVersion(projectA, packageId, "1.0.0");
+            Directory.Exists(higherVersionGlobalPackageDirectory).Should().BeTrue($"expected {packageId} 2.0.0 to remain in the global packages folder");
+        }
+
+        private static string GetPackageVersionDirectory(string source, string packageId, string version)
+        {
+            return Path.Combine(source, packageId.ToLowerInvariant(), version);
+        }
+
+        private static void AssertRestoredPackageVersion(SimpleTestProjectContext project, string packageId, string expectedVersion)
+        {
+            string assetsFilePath = Path.Combine(Path.GetDirectoryName(project.ProjectPath), "obj", LockFileFormat.AssetsFileName);
+            LockFile assetsFile = new LockFileFormat().Read(assetsFilePath);
+            assetsFile.Libraries.Single(e => e.Name.Equals(packageId, StringComparison.OrdinalIgnoreCase))
+                .Version
+                .Should()
+                .Be(NuGetVersion.Parse(expectedVersion));
         }
     }
 }

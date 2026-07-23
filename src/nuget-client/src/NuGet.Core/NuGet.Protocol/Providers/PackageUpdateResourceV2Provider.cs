@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,24 +17,25 @@ namespace NuGet.Protocol
                   NuGetResourceProviderPositions.Last)
         { }
 
-        public async override Task<Tuple<bool, INuGetResource>> TryCreate(
+        public async override Task<Tuple<bool, INuGetResource?>> TryCreate(
             SourceRepository source,
             CancellationToken token)
         {
-            HttpSource httpSource = null;
-            PackageUpdateResource packageUpdateResource = null;
-            var sourceUri = source.PackageSource?.Source;
+            HttpSource? httpSource = null;
+            PackageUpdateResource? packageUpdateResource = null;
+            var sourceUri = source.PackageSource.Source;
             if (!string.IsNullOrEmpty(sourceUri))
             {
                 if (source.PackageSource.IsHttp)
                 {
-                    var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token);
+                    var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token)
+                        ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(HttpSourceResource)}.");
                     httpSource = httpSourceResource.HttpSource;
                 }
                 packageUpdateResource = new PackageUpdateResource(sourceUri, httpSource);
             }
 
-            var result = new Tuple<bool, INuGetResource>(packageUpdateResource != null, packageUpdateResource);
+            var result = new Tuple<bool, INuGetResource?>(packageUpdateResource != null, packageUpdateResource);
             return result;
         }
     }

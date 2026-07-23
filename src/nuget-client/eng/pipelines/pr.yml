@@ -23,6 +23,10 @@ parameters:
   displayName: Run functional tests on MacOS
   type: boolean
   default: true
+- name: RunSdkNextTests
+  displayName: Run SDK Next integration tests
+  type: boolean
+  default: false
 - name: RunSourceBuild
   displayName: Run a SourceBuild build
   type: boolean
@@ -177,7 +181,7 @@ stages:
         testProjectName: Dotnet.Integration.Test
         timeoutInMinutes: 60
 
-- ${{ if eq(parameters.RunFunctionalTestsOnWindows, true) }}:
+- ${{ if and(eq(parameters.RunFunctionalTestsOnWindows, true), eq(parameters.RunSdkNextTests, true)) }}:
   - stage:
     displayName: Dotnet.Integration.Test on Windows (SDK Next)
     dependsOn: []
@@ -242,7 +246,7 @@ stages:
         testTargetFramework: net10.0
         timeoutInMinutes: 30
 
-- ${{ if eq(parameters.RunFunctionalTestsOnLinux, true) }}:
+- ${{ if and(eq(parameters.RunFunctionalTestsOnLinux, true), eq(parameters.RunSdkNextTests, true)) }}:
   - stage:
     displayName: Dotnet.Integration.Test on Linux (SDK Next)
     dependsOn: []
@@ -284,7 +288,7 @@ stages:
         testTargetFramework: net10.0
         timeoutInMinutes: 30
 
-- ${{ if eq(parameters.RunFunctionalTestsOnMacOS, true) }}:
+- ${{ if and(eq(parameters.RunFunctionalTestsOnMacOS, true), eq(parameters.RunSdkNextTests, true)) }}:
   - stage:
     displayName: Dotnet.Integration.Test on MacOS (SDK Next)
     dependsOn: []

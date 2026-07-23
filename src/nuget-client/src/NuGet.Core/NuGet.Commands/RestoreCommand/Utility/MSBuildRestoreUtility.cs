@@ -328,6 +328,7 @@ namespace NuGet.Commands
                 result.RestoreMetadata.SdkAnalysisLevel = GetSdkAnalysisLevel(specItem.GetProperty("SdkAnalysisLevel"));
                 result.RestoreMetadata.UseLegacyDependencyResolver = IsPropertyTrue(specItem, "RestoreUseLegacyDependencyResolver");
                 result.RestoreMetadata.RestoreDoNotWriteDependencyGraphSpec = IsPropertyTrue(specItem, "RestoreDoNotWriteDependencyGraphSpec");
+                result.RestoreMetadata.RestoreEnableAnalyzerAssets = GetRestoreEnableAnalyzerAssets(specItem, GetItemByType(items, "TargetFrameworkInformation"));
                 result.RestoreSettings.SdkVersion = GetSdkAnalysisLevel(specItem.GetProperty("NETCoreSdkVersion"));
             }
 
@@ -1080,6 +1081,19 @@ namespace NuGet.Commands
                 specItem.GetProperty("RestorePackagesWithLockFile"),
                 specItem.GetProperty("NuGetLockFilePath"),
                 IsPropertyTrue(specItem, "RestoreLockedMode"));
+        }
+
+        private static bool GetRestoreEnableAnalyzerAssets(IMSBuildItem project, IEnumerable<IMSBuildItem> targetFrameworks)
+        {
+            foreach (IMSBuildItem targetFramework in targetFrameworks.NoAllocEnumerate())
+            {
+                if (IsPropertyTrue(targetFramework, "RestoreEnableAnalyzerAssets"))
+                {
+                    return true;
+                }
+            }
+
+            return IsPropertyTrue(project, "RestoreEnableAnalyzerAssets");
         }
 
         public static RestoreAuditProperties GetRestoreAuditProperties(IMSBuildItem specItem, IEnumerable<IMSBuildItem> allItems, HashSet<string> suppressionItems)

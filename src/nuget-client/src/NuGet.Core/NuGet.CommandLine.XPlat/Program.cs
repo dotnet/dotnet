@@ -3,6 +3,7 @@
 
 using System;
 using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using NuGet.CommandLine.XPlat.Commands;
@@ -31,14 +32,18 @@ namespace NuGet.CommandLine.XPlat
 
         internal static int Main(string[] args)
         {
+#pragma warning disable IL2026 // Main is the entry point and cannot carry [RequiresUnreferencedCode]; this exe intentionally runs MSBuild in-process.
             return MainInternal(args, virtualProjectBuilder: null);
+#pragma warning restore IL2026
         }
 
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
         public static int Run(string[] args, IVirtualProjectBuilder virtualProjectBuilder)
         {
             return MainInternal(args, virtualProjectBuilder);
         }
 
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
         private static int MainInternal(string[] args, IVirtualProjectBuilder? virtualProjectBuilder)
         {
             var log = new CommandOutputLogger(LogLevel.Information);
@@ -119,7 +124,9 @@ namespace NuGet.CommandLine.XPlat
                 PackageSearchCommand.Register(packageCommand, getHidePrefixLogger);
                 AddPackageReferenceCommand.Register(packageCommand, () => log, () => new AddPackageReferenceCommandRunner(), () => msbuild.VirtualProjectBuilder);
                 RemovePackageReferenceCommand.Register(packageCommand, () => log, () => new RemovePackageReferenceCommandRunner(), () => msbuild.VirtualProjectBuilder);
+#pragma warning disable IL2026 // ListPackageCommand.Register intentionally uses MSBuild in-process for list package; annotated at the public boundary (Run/IListPackageCommandRunner).
                 ListPackageCommand.Register(packageCommand, getHidePrefixLogger, setLogLevel, () => new ListPackageCommandRunner(msbuild));
+#pragma warning restore IL2026
 #if DEBUG
                 PackageUpdateCommand.Register(packageCommand, interactiveOption, virtualProjectBuilder);
                 PackageDownloadCommand.Register(packageCommand, interactiveOption);

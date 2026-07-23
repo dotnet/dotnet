@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;
@@ -21,8 +20,7 @@ namespace NuGet.PackageManagement.VisualStudio
         private readonly IServiceBroker _serviceBroker;
         private readonly AuthorizationServiceClient _authorizationServiceClient;
 
-        [Import]
-        private IVsSolutionManager SolutionManager { get; set; } = null!;
+        private IVsSolutionManager SolutionManager { get; }
 
         public event EventHandler<string>? AfterNuGetCacheUpdated;
         public event EventHandler<IProjectContextInfo>? AfterProjectRenamed;
@@ -35,18 +33,16 @@ namespace NuGet.PackageManagement.VisualStudio
             ServiceActivationOptions options,
             IServiceBroker sb,
             AuthorizationServiceClient ac,
-            IComponentModel componentModel)
+            IVsSolutionManager solutionManager)
         {
             Assumes.NotNull(sb);
             Assumes.NotNull(ac);
+            Assumes.NotNull(solutionManager);
 
             _options = options;
             _serviceBroker = sb;
             _authorizationServiceClient = ac;
-
-            componentModel.DefaultCompositionService.SatisfyImportsOnce(this);
-
-            Assumes.NotNull(SolutionManager);
+            SolutionManager = solutionManager;
 
             RegisterEventHandlers();
         }
@@ -66,7 +62,9 @@ namespace NuGet.PackageManagement.VisualStudio
 
             Assumes.NotNull(componentModel);
 
-            return new NuGetSolutionManagerService(options, sb, ac, componentModel);
+            var solutionManager = componentModel.GetService<IVsSolutionManager>();
+            var solutionManagerService = new NuGetSolutionManagerService(options, sb, ac, solutionManager);
+            return solutionManagerService;
         }
 
         public void Dispose()
