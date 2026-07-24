@@ -2,3 +2,15 @@
 #
 # Files listed here have known root-cause-justified differences between two builds of the
 # same source commit
+
+Microsoft.NETCore.ILAsm.*.nupkg
+Microsoft.NETCore.ILDAsm.*.nupkg
+Microsoft.NETCore.TestHost.*.nupkg
+PackageVersions.props
+VerticalManifest.xml
+assets/Release/Runtime/*/dotnet-runtime-*-centos.10-x64.tar.gz
+assets/Release/aspnetcore/Runtime/*/aspnetcore-runtime-*-centos.10-x64.tar.gz
+assets/Release/dotnet-symbols-all-*-centos.10-x64.tar.gz
+runtime.centos.10-x64.Microsoft.NETCore.ILAsm.*.nupkg
+runtime.centos.10-x64.Microsoft.NETCore.ILDAsm.*.nupkg
+runtime.centos.10-x64.Microsoft.NETCore.TestHost.*.nupkg
