@@ -32,9 +32,6 @@
     <TargetArchitecture Condition="'$(TargetArchitecture)' == '' AND '$(Platform)' != '' AND '$(Platform)' != 'AnyCPU'">$(Platform)</TargetArchitecture>
     <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
 
-    <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
-    <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
-
     <!-- Builds are portable by default -->
     <PortableBuild Condition="'$(PortableBuild)' != 'false'">true</PortableBuild>
   </PropertyGroup>

@@ -7,8 +7,6 @@
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
     <UseBootstrapArcade Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</UseBootstrapArcade>
 
-    <RepoSharedCompilationId Condition="'$(RepoSharedCompilationId)' == ''">dotnet-vmr-$(RepositoryName)-$([System.Guid]::NewGuid().ToString('N'))</RepoSharedCompilationId>
-
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
     <!-- If this is a dev build with parallelism enabled, ensure that RunEachTargetSeparately is true so that StopOnFirstFailure will be honored.
@@ -74,10 +72,12 @@
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
     <FlagParameterPrefix>-</FlagParameterPrefix>
     <ArcadeFalseBoolBuildArg>0</ArcadeFalseBoolBuildArg>
+    <FlagParameterSemicolon>`;</FlagParameterSemicolon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(BuildOS)' != 'windows'">
     <FlagParameterPrefix>--</FlagParameterPrefix>
     <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
+    <FlagParameterSemicolon>\;</FlagParameterSemicolon>
   </PropertyGroup>
 
   <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds. -->
