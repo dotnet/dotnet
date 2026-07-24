@@ -453,24 +453,81 @@ jobs:
               return milestone.number;
             }
 
-            async function applyMilestone(owner, repo, prNumber, milestoneNumber, octokit) {
-              if (DRY_RUN) {
-                core.info(`[DRY RUN] Would apply milestone to ${owner}/${repo}#${prNumber}`);
+            // Parses "X.Y-previewN"/"X.Y-rcN" into a [major, minor, labelRank, iteration]
+            // tuple for comparison. Returns null if the title doesn't match.
+            function parseMilestoneTuple(title) {
+              const match = title.match(/^(\d+)\.(\d+)-(preview|rc)(\d+)$/);
+              if (!match) return null;
+              const [, major, minor, label, iteration] = match;
+              const labelRank = label === 'rc' ? 1 : 0; // previews precede rc's
+              return [parseInt(major), parseInt(minor), labelRank, parseInt(iteration)];
+            }
+
+            // Returns -1 if `a` is older than `b`, 0 if equal, 1 if newer, or null if
+            // either title can't be parsed.
+            function compareMilestoneAge(a, b) {
+              const tupleA = parseMilestoneTuple(a);
+              const tupleB = parseMilestoneTuple(b);
+              if (!tupleA || !tupleB) return null;
+              for (let i = 0; i < tupleA.length; i++) {
+                if (tupleA[i] !== tupleB[i]) return tupleA[i] < tupleB[i] ? -1 : 1;
+              }
+              return 0;
+            }
+
+            // Repo-snapped preview/rc branches mean a child commit can flow into
+            // dotnet/dotnet twice concurrently (via `main` and via the new release
+            // branch), each potentially milestoning the same child PR differently.
+            // Rule: oldest milestone wins. Returns { action: 'skip'|'apply', reason, warn? }.
+            function decideMilestoneAction(pr, milestoneName, milestoneNumber) {
+              if (pr.milestone?.number === milestoneNumber) {
+                return { action: 'skip', reason: 'already has correct milestone' };
+              }
+              if (pr.milestone) {
+                const cmp = compareMilestoneAge(milestoneName, pr.milestone.title);
+                if (cmp === null) {
+                  // Not a workflow-style milestone (e.g. generic "10.0"). Repos here
+                  // have opted in (see OPTED_OUT_REPOS), so overwrite it.
+                  return { action: 'apply', warn: true, reason: `existing milestone "${pr.milestone.title}" doesn't match the expected format — overwriting with "${milestoneName}"` };
+                }
+                if (cmp >= 0) {
+                  return { action: 'skip', reason: `existing milestone "${pr.milestone.title}" is already the same as or older than "${milestoneName}"` };
+                }
+              }
+              return { action: 'apply' };
+            }
+
+            // The per-PR concurrency group (top of file) doesn't serialize runs for
+            // DIFFERENT dotnet/dotnet PRs, so two runs can race on the same child PR.
+            // Re-checking right before the write (below) narrows that window.
+            async function applyMilestone(owner, repo, prNumber, milestoneName, milestoneNumber, octokit) {
+              const { data: pr } = await octokit.rest.pulls.get({ owner, repo, pull_number: prNumber });
+              const decision = decideMilestoneAction(pr, milestoneName, milestoneNumber);
+              if (decision.action === 'skip') {
+                core.info(`Skipping ${owner}/${repo}#${prNumber} — ${decision.reason}`);
                 return;
               }
 
-              // Check if already milestoned
-              const { data: pr } = await octokit.rest.pulls.get({ owner, repo, pull_number: prNumber });
-              if (pr.milestone?.number === milestoneNumber) {
-                core.info(`PR ${owner}/${repo}#${prNumber} already has correct milestone`);
+              if (DRY_RUN) {
+                if (decision.warn) core.warning(`${owner}/${repo}#${prNumber}: ${decision.reason}`);
+                core.info(`[DRY RUN] Would apply milestone "${milestoneName}" to ${owner}/${repo}#${prNumber}`);
                 return;
               }
+
+              // Re-check with fresh data right before writing (see comment above).
+              const { data: latestPr } = await octokit.rest.pulls.get({ owner, repo, pull_number: prNumber });
+              const finalDecision = decideMilestoneAction(latestPr, milestoneName, milestoneNumber);
+              if (finalDecision.action === 'skip') {
+                core.info(`Skipping ${owner}/${repo}#${prNumber} after re-check — ${finalDecision.reason}`);
+                return;
+              }
+              if (finalDecision.warn) core.warning(`${owner}/${repo}#${prNumber}: ${finalDecision.reason}`);
 
               await octokit.rest.issues.update({
                 owner, repo, issue_number: prNumber,
                 milestone: milestoneNumber,
               });
-              core.info(`Applied milestone to ${owner}/${repo}#${prNumber}`);
+              core.info(`Applied milestone "${milestoneName}" to ${owner}/${repo}#${prNumber}`);
             }
 
             // --- Core logic: process a single dotnet/dotnet PR ---
@@ -511,7 +568,7 @@ jobs:
 
                   for (const childPR of prNumbers) {
                     try {
-                      await applyMilestone(owner, repo, childPR, milestoneNumber, octokit);
+                      await applyMilestone(owner, repo, childPR, milestoneName, milestoneNumber, octokit);
                     } catch (e) {
                       core.warning(`Failed to milestone ${owner}/${repo}#${childPR}: ${e.message}`);
                     }
