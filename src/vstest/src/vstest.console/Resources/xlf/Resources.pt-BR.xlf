@@ -385,9 +385,9 @@ Altere o prefixo de nível de diagnóstico do agente de console, como mostrado a
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
       Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
-        <target state="needs-review-translation">--Platform|/Platform:&lt;Platform type&gt;
-      Arquitetura da plataforma destino a ser usada na execução de teste. 
-      Os valores válidos são x86, x64 e ARM.</target>
+        <target state="new">--Platform|/Platform:&lt;Platform type&gt;
+      Target platform architecture to be used for test execution. 
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInMultiTargetingMode">
@@ -400,10 +400,10 @@ Altere o prefixo de nível de diagnóstico do agente de console, como mostrado a
       Target .Net Framework version to be used for test execution. 
       Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="needs-review-translation">--Framework|/Framework:&lt;Versão do Framework&gt;
-      Versão de destino do .NET Framework a ser usada para execução de teste. 
-      Os valores válidos são ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
-      Outros valores permitidos são Framework40, Framework45, FrameworkCore10 e FrameworkUap10.</target>
+        <target state="new">--Framework|/Framework:&lt;Framework Version&gt;
+      Target .Net Framework version to be used for test execution. 
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
+      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</target>
         <note />
       </trans-unit>
       <trans-unit id="FrameworkVersionRequired">
