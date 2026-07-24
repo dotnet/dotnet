@@ -170,7 +170,7 @@ public partial class PRCreator
                     // collapses to content.Replace("\n", ""), stripping every newline and mangling
                     // the file into a single line. Blank lines are formatting, not exclusions, so
                     // there is never a reason to remove them here.
-                    if (line.Length == 0)
+                    if (string.IsNullOrWhiteSpace(line))
                     {
                         continue;
                     }
