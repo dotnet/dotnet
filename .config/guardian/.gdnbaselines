@@ -820,6 +820,357 @@
       "createdDate": "2026-05-08 20:56:44Z",
       "expirationDate": "2026-10-26 01:28:18Z",
       "justification": "This error is baselined with an expiration date of 180 days from 2026-05-09 01:28:18Z"
+    },
+    "072d2bb83a1b48a3effb5a6b709b947772966d2fa3c8f9f759cc851f37ad7621": {
+      "signature": "072d2bb83a1b48a3effb5a6b709b947772966d2fa3c8f9f759cc851f37ad7621",
+      "target": "tools/DLLs/libffi-8.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "0b7c6aef129b930ba5358993e006032f22735d90aa7586989b069ac77e472d74": {
+      "signature": "0b7c6aef129b930ba5358993e006032f22735d90aa7586989b069ac77e472d74",
+      "target": "tools/bin/wasm-ctor-eval.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "0fd42b41f375feceddda65c774ece90b25735d317d388fe824015f1c478279f2": {
+      "signature": "0fd42b41f375feceddda65c774ece90b25735d317d388fe824015f1c478279f2",
+      "target": "tools/bin/node_js2c.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "17ac08b6d33fadf191ef413d7f7584ccc5ebc50d30f9c6a5eaed1126f4ba5ccb": {
+      "signature": "17ac08b6d33fadf191ef413d7f7584ccc5ebc50d30f9c6a5eaed1126f4ba5ccb",
+      "target": "tools/bin/wasm-as.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "264e8c73ac50f02dd5b7c940dc9e8baf2113fa451c2a79b04f1e1bc422a94336": {
+      "signature": "264e8c73ac50f02dd5b7c940dc9e8baf2113fa451c2a79b04f1e1bc422a94336",
+      "target": "tools/bin/nop.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "2e747dbe75776a4aabafaa2f23bb45bbce38a3de6f4f93b829ce26600859a04e": {
+      "signature": "2e747dbe75776a4aabafaa2f23bb45bbce38a3de6f4f93b829ce26600859a04e",
+      "target": "tools/bin/wasm-emscripten-finalize.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "3675cd88be5ab5fc6ac1dc8bbb3f1c46e1b8014e71fef949cb5f976fd5bc839b": {
+      "signature": "3675cd88be5ab5fc6ac1dc8bbb3f1c46e1b8014e71fef949cb5f976fd5bc839b",
+      "target": "runtimes/win-x64/lib/net11.0/System.Printing.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "37156ee3db9fa7161f14f3ba1e455e377f9d2f12f3d7d115e86836095aff80fe": {
+      "signature": "37156ee3db9fa7161f14f3ba1e455e377f9d2f12f3d7d115e86836095aff80fe",
+      "target": "tools/emscripten/cache/ports/bullet/Bullet-version_1/bullet/Extras/CDTestFramework/GLUT32.DLL",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2009",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "52381a07121ad8c6d8874d31fcc9ec0c878cdc13a221c23dfb68d6e003c42ffe": {
+      "signature": "52381a07121ad8c6d8874d31fcc9ec0c878cdc13a221c23dfb68d6e003c42ffe",
+      "target": "runtimes/win-x64/lib/net11.0/DirectWriteForwarder.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "5258ca2e85c030b8ee1f5dab440bc25e828aa6dcfecb17fae868b848b72a4c1a": {
+      "signature": "5258ca2e85c030b8ee1f5dab440bc25e828aa6dcfecb17fae868b848b72a4c1a",
+      "target": "tools/pythonw.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "61b53d8bc71c8cfccce9335f05886f72cc3f21533c076b2e3c5a655c93d54b30": {
+      "signature": "61b53d8bc71c8cfccce9335f05886f72cc3f21533c076b2e3c5a655c93d54b30",
+      "target": "tools/bin/wasm2js.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "64dc331c5829ff7cab40f887cc1ecaaf7ab2509ea4764a1ff6f477366040029c": {
+      "signature": "64dc331c5829ff7cab40f887cc1ecaaf7ab2509ea4764a1ff6f477366040029c",
+      "target": "tools/emscripten/cache/ports/bullet/Bullet-version_1/bullet/Extras/CDTestFramework/GLUT32.DLL",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2018",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "6e5ecd4fc595e17f9e95e30dedf7f71d9e89737530e21283cb58d40abbcac71c": {
+      "signature": "6e5ecd4fc595e17f9e95e30dedf7f71d9e89737530e21283cb58d40abbcac71c",
+      "target": "tools/bin/wasm-opt.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "7350c93251b22a6750e1ca75724fc381daa0450623d8e74dfb5cf1136d3bb5e1": {
+      "signature": "7350c93251b22a6750e1ca75724fc381daa0450623d8e74dfb5cf1136d3bb5e1",
+      "target": "tools/python313.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "790e7a1846df61e45e2a81a59fd22beb372c8deb7c4e4aa9bf8ae0ff80eb5aba": {
+      "signature": "790e7a1846df61e45e2a81a59fd22beb372c8deb7c4e4aa9bf8ae0ff80eb5aba",
+      "target": "tools/DLLs/sqlite3.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "7af20123dab1a9b542f0c9ab1f7b1aa0f894e29bce704ba74fe50a16f7e5b460": {
+      "signature": "7af20123dab1a9b542f0c9ab1f7b1aa0f894e29bce704ba74fe50a16f7e5b460",
+      "target": "tools/python.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "88aa008b3413217a4d951711e709189675c573b24d966856ae1bd92a3b95159c": {
+      "signature": "88aa008b3413217a4d951711e709189675c573b24d966856ae1bd92a3b95159c",
+      "target": "tools/DLLs/libcrypto-3.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "954e6b40a961af5eada6835e709385e8c6cea51fb00bd22dd19440a11912598c": {
+      "signature": "954e6b40a961af5eada6835e709385e8c6cea51fb00bd22dd19440a11912598c",
+      "target": "lib/net11.0/System.Printing.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "a6e7ce3472550101e3cd0b1b15941c49b082b45167ed38ef8ca196f7e2cf645c": {
+      "signature": "a6e7ce3472550101e3cd0b1b15941c49b082b45167ed38ef8ca196f7e2cf645c",
+      "target": "tools/bin/wasm-metadce.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "bf365ed52057f9c6427ad28bb636a6145f089fe7fd77b836395bb333dd85b194": {
+      "signature": "bf365ed52057f9c6427ad28bb636a6145f089fe7fd77b836395bb333dd85b194",
+      "target": "tools/DLLs/libcrypto-3-arm64.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "c1e46aede103f65dba08e65a38c42251bd4f668f7a21e6247b8515ceb38b580a": {
+      "signature": "c1e46aede103f65dba08e65a38c42251bd4f668f7a21e6247b8515ceb38b580a",
+      "target": "lib/net11.0/DirectWriteForwarder.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "ca1ec3f33ee02536dd2d0a2b8bf0f299b9974d3fc052c30bc42477c1c8cfa37b": {
+      "signature": "ca1ec3f33ee02536dd2d0a2b8bf0f299b9974d3fc052c30bc42477c1c8cfa37b",
+      "target": "tools/bin/node.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "ce3376ba906a04410c01f13804fe9ca7ece60cd83108d433b30c32c2d74a3022": {
+      "signature": "ce3376ba906a04410c01f13804fe9ca7ece60cd83108d433b30c32c2d74a3022",
+      "target": "tools/DLLs/libssl-3.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "d03c65d19c4990fc42f1feae58996191d7df507ae54eba956ba331dcf4058047": {
+      "signature": "d03c65d19c4990fc42f1feae58996191d7df507ae54eba956ba331dcf4058047",
+      "target": "tools/bin/wasm-dis.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "d414bc80f801c3ed62fb8b80ff8ab334bb81d4261b3d9531d02425de2f5a5354": {
+      "signature": "d414bc80f801c3ed62fb8b80ff8ab334bb81d4261b3d9531d02425de2f5a5354",
+      "target": "tools/emscripten/cache/ports/bullet/Bullet-version_1/bullet/Extras/CDTestFramework/GLUT32.DLL",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2016",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "d44a0244927c3f480c3b6cfb8a81feb699e0c394b41409979bafdb9c7dbc086b": {
+      "signature": "d44a0244927c3f480c3b6cfb8a81feb699e0c394b41409979bafdb9c7dbc086b",
+      "target": "tools/bin/wasm-split.exe",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
+    },
+    "d5f4f72534a8fc3b172be05819d6ff9fcf515ced0828f08d9d0f0ac2981b6fb0": {
+      "signature": "d5f4f72534a8fc3b172be05819d6ff9fcf515ced0828f08d9d0f0ac2981b6fb0",
+      "target": "tools/DLLs/libssl-3-arm64.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 20:58:23Z",
+      "expirationDate": "2027-01-20 20:58:23Z",
+      "justification": "Baselined expected third-party binary analysis finding from build 3030592."
     }
   }
 }
