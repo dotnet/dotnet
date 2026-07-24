@@ -87,6 +87,17 @@
     <OfficialBuildId>$(OfficialBuildId.Split('.')[0]).$([MSBuild]::Add($(OfficialBuildId.Split('.')[1]), 100))</OfficialBuildId>
   </PropertyGroup>
 
+  <!-- Warning codes surfaced from each repo's build log into the orchestrator build so they're
+      visible in the CI/build summary (see the LogRepoBuildWarnings task in Directory.Build.targets).
+      Keep in sync with the warnNotAsError set in the VMR root Directory.Build.rsp so surfaced
+      warnings stay warnings instead of being promoted to errors by the blanket -warnAsError. 
+
+      Downgrade NuGet Audit NU1901, NU1902 and NU1903 to warnings and keep NU1904 (critical) as error. -->
+  <PropertyGroup>
+    <RepoBuildWarningCodesToSurface>NU1901;NU1902;NU1903</RepoBuildWarningCodesToSurface>
+  </PropertyGroup>
+
+
   <PropertyGroup>
     <!-- By default, use the eng/common/build.cmd/sh script -->
     <BuildScript>$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'common', 'build$(ShellExtension)'))</BuildScript>
@@ -112,8 +123,9 @@
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</CommonArgs>
 
-    <!-- Prevent NuGet Audit NU1901, NU1902 and NU1903 warnings from getting promoted to errors. Keep NU1904 (critical) as error. -->
-    <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "NU1901$(FlagParameterSemicolon)NU1902$(FlagParameterSemicolon)NU1903"</CommonArgs>
+    <!-- Prevent warnings from getting promoted to errors.
+         The semicolons are escaped per-OS so the list survives as a single argument to the repo build script. -->
+    <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "$(RepoBuildWarningCodesToSurface.Replace(';','$(FlagParameterSemicolon)'))"</CommonArgs>
     <CommonArgs>$(CommonArgs) /clp:NoSummary</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:TargetRid=$(TargetRid)</CommonArgs>

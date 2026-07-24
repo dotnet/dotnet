@@ -594,6 +594,7 @@
     </PropertyGroup>
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.LogRepoBuildWarnings" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="RepoBuild"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)Build.complete"
@@ -634,16 +635,23 @@
                           $(AspNetRazorBuildServerLogDir)"
              Condition="'$(EnableExtraDebugging)' == 'true'" />
 
-    <!-- Log NuGet warnings to the console -->
+    <!-- Build the repository. The console output is tee'd to $(RepoConsoleLogFile). -->
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
           YieldDuringToolExecution="true"
           IgnoreStandardErrorWarningFormat="true"
-          StandardOutputImportance="$(RepoStandardOutputImportance)"
-          CustomWarningRegularExpression="\bwarning\s+NU\d+\b">
+          StandardOutputImportance="$(RepoStandardOutputImportance)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
+
+    <!-- Surface the repo build's warningsNotAsErrors in the orchestrator build so
+         they're visible in the CI/build summary. They're re-emitted with their original warning code
+         so warnNotAsError (Directory.Build.rsp) keeps them as warnings rather than the blanket
+         -warnAsError promoting the otherwise code-less Exec warnings to errors. -->
+    <LogRepoBuildWarnings LogFile="$(RepoConsoleLogFile)"
+                          WarningCodes="$(RepoBuildWarningCodesToSurface)"
+                          Condition="'$(RepoBuildWarningCodesToSurface)' != ''" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)...done" />
 
