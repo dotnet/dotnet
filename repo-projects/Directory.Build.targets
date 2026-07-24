@@ -51,7 +51,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!-- MinimalConsoleLogOutput determines if the repository build should be logged to a separate file or directly to the console.
+         Enable it by default as with prallel repository builds the log becomes non-readable. -->
     <RepoConsoleLogFile>$(ArtifactsLogRepoDir)$(RepositoryName).log</RepoConsoleLogFile>
+    <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
   </PropertyGroup>
 
   <!-- Exclude shared repositories from the build, unless shared component building is explicitly enabled. -->
@@ -590,6 +593,7 @@
     </PropertyGroup>
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.LogRepoBuildDiagnostics" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="RepoBuild"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)Build.complete"
@@ -605,7 +609,7 @@
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)" />
     <Message Importance="High" Text="Running command:" />
     <Message Importance="High" Text="  $(BuildCommand)" />
-    <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" />
+    <Message Importance="High" Text="  Log: $(RepoConsoleLogFile)" Condition="'$(MinimalConsoleLogOutput)' == 'true'" />
     <Message Importance="High" Text="  With Environment Variables:"/>
     <Message Importance="High" Text="    %(EnvironmentVariables.Identity)" />
     <Message Importance="High" Text="    %(BuildEnvironmentVariable.Identity)" Condition="'@(BuildEnvironmentVariable)' != ''" />
@@ -616,9 +620,7 @@
 
     <PropertyGroup>
       <FullCommand>$(BuildCommand)</FullCommand>
-      <FullCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command "&amp; { cmd /c '$(BuildCommand)' 2&gt;&amp;1 | Tee-Object -FilePath '$(RepoConsoleLogFile)'%3B exit %24LASTEXITCODE }"</FullCommand>
-      <FullCommand Condition="'$(BuildOS)' != 'windows'">rcf=%24(mktemp); { $(BuildCommand); printf %s "%24?" &gt;"%24rcf"; } 2&gt;&amp;1 | tee "$(RepoConsoleLogFile)"; rc=%24(cat "%24rcf"); rm -f "%24rcf"; exit "%24rc"</FullCommand> <!-- POSIX compliant -->
-      <RepoStandardOutputImportance Condition="'$(RepoStandardOutputImportance)' == ''">low</RepoStandardOutputImportance> <!-- low, normal, high -->
+      <FullCommand Condition="'$(MinimalConsoleLogOutput)' == 'true'">$(FullCommand) &gt; $(RepoConsoleLogFile) 2&gt;&amp;1</FullCommand>
     </PropertyGroup>
 
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(RepoConsoleLogFile)'));
@@ -630,14 +632,26 @@
                           $(AspNetRazorBuildServerLogDir)"
              Condition="'$(EnableExtraDebugging)' == 'true'" />
 
+    <!-- Build the repository. When MinimalConsoleLogOutput is true the console output is redirected
+         to $(RepoConsoleLogFile) instead of the console. -->
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
-          IgnoreStandardErrorWarningFormat="true"
           YieldDuringToolExecution="true"
+          IgnoreStandardErrorWarningFormat="true"
           StandardOutputImportance="$(RepoStandardOutputImportance)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
+
+    <!-- Surface the repo build's warningsNotAsErrors in the orchestrator build so
+         they're visible in the CI/build summary. They're re-emitted with their original warning code
+         so warnNotAsError (Directory.Build.rsp) keeps them as warnings rather than the blanket
+         -warnAsError promoting the otherwise code-less Exec warnings to errors. This is only needed
+         when the console output was redirected to the log file (MinimalConsoleLogOutput); otherwise
+         the diagnostics already appear on the console. -->
+    <LogRepoBuildDiagnostics LogFile="$(RepoConsoleLogFile)"
+                             WarningCodes="$(RepoBuildWarningCodesToSurface)"
+                             Condition="'$(MinimalConsoleLogOutput)' == 'true' and '$(RepoBuildWarningCodesToSurface)' != ''" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)...done" />
 
@@ -649,9 +663,15 @@
     <OnError ExecuteTargets="MoveDotNetBuildLogs;LogRepoBuildError" />
   </Target>
 
-  <!-- Propagate errors to the output by printing the repository build log. -->
-  <Target Name="LogRepoBuildError">
-    <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="Exists('$(RepoConsoleLogFile)')" />
+  <!-- Propagate errors to the output when using the minimal console log feature. Every log line is
+       printed; error and surfaced-warning lines are promoted to real diagnostics so they appear in
+       the build summary. -->
+  <Target Name="LogRepoBuildError" Condition="'$(MinimalConsoleLogOutput)' == 'true'">
+    <LogRepoBuildDiagnostics LogFile="$(RepoConsoleLogFile)"
+                             WarningCodes="$(RepoBuildWarningCodesToSurface)"
+                             PrintAllLines="true"
+                             Condition="Exists('$(RepoConsoleLogFile)')" />
+
     <Message Importance="High" Text="'$(RepositoryName)' failed during build." />
     <Message Importance="High" Text="See '$(RepoConsoleLogFile)' for more information." Condition="Exists('$(RepoConsoleLogFile)')" />
   </Target>
@@ -702,7 +722,10 @@
       <LogManifestNotFoundError Condition="('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1') and '@(RepoAssetManifest)' == ''">true</LogManifestNotFoundError>
     </PropertyGroup>
 
-    <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="'$(LogManifestNotFoundError)' == 'true' and Exists('$(RepoConsoleLogFile)')" />
+    <LogRepoBuildDiagnostics LogFile="$(RepoConsoleLogFile)"
+                             WarningCodes="$(RepoBuildWarningCodesToSurface)"
+                             PrintAllLines="true"
+                             Condition="'$(LogManifestNotFoundError)' == 'true' and '$(MinimalConsoleLogOutput)' == 'true' and Exists('$(RepoConsoleLogFile)')" />
     <Error Text="No repository asset manifest files found at '$(RepoAssetManifestsDir)*.xml'. This often means the build failed but did not log an error." Condition="'$(LogManifestNotFoundError)' == 'true'" />
 
     <GetKnownArtifactsFromAssetManifests AssetManifests="@(RepoAssetManifest)">

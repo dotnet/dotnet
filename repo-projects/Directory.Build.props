@@ -72,18 +72,27 @@
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
     <FlagParameterPrefix>-</FlagParameterPrefix>
     <ArcadeFalseBoolBuildArg>0</ArcadeFalseBoolBuildArg>
-    <FlagParameterSemicolon>`;</FlagParameterSemicolon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(BuildOS)' != 'windows'">
     <FlagParameterPrefix>--</FlagParameterPrefix>
     <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
-    <FlagParameterSemicolon>\;</FlagParameterSemicolon>
   </PropertyGroup>
 
   <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds. -->
   <PropertyGroup Condition="'$(OfficialBuildId)' != ''">
     <OfficialBuildId>$(OfficialBuildId.Split('.')[0]).$([MSBuild]::Add($(OfficialBuildId.Split('.')[1]), 100))</OfficialBuildId>
   </PropertyGroup>
+
+  <!-- Warning codes surfaced from each repo's build log into the orchestrator build so they're
+      visible in the CI/build summary (see the LogRepoBuildWarnings task in Directory.Build.targets).
+      Keep in sync with the warnNotAsError set in the VMR root Directory.Build.rsp so surfaced
+      warnings stay warnings instead of being promoted to errors by the blanket -warnAsError. 
+
+      Downgrade NuGet Audit NU1901, NU1902 and NU1903 to warnings and keep NU1904 (critical) as error. -->
+  <PropertyGroup>
+    <RepoBuildWarningCodesToSurface>NU1901;NU1902;NU1903</RepoBuildWarningCodesToSurface>
+  </PropertyGroup>
+
 
   <PropertyGroup>
     <!-- By default, use the eng/common/build.cmd/sh script -->
@@ -109,6 +118,15 @@
     <!-- Pass down configuration properties -->
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</CommonArgs>
+
+    <!-- Prevent NuGet audit warnings from being promoted to errors in the repo build.
+         On Windows the list passes through PowerShell's Invoke-Expression (see runtime's build.ps1),
+         so each ';' is backtick-escaped to survive as a single argument. On other platforms the
+         quoted value is handed straight to the shell, where ';' is already literal, so it's used as-is. -->
+    <CommonArgs Condition="'$(BuildOS)' == 'windows'">$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "$(RepoBuildWarningCodesToSurface.Replace(';','`;'))"</CommonArgs>
+    <CommonArgs Condition="'$(BuildOS)' != 'windows'">$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "$(RepoBuildWarningCodesToSurface)"</CommonArgs>
+    <CommonArgs>$(CommonArgs) /clp:NoSummary</CommonArgs>
+
     <CommonArgs>$(CommonArgs) /p:TargetRid=$(TargetRid)</CommonArgs>
 
     <!-- Pass through DotNetBuildPass for join point vertical support. -->
