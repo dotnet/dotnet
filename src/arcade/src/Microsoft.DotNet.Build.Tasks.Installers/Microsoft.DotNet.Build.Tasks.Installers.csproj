@@ -23,6 +23,7 @@
     <InternalsVisibleTo Include="Microsoft.DotNet.SignCheckLibrary" />
     <InternalsVisibleTo Include="Microsoft.DotNet.SignTool" />
     <InternalsVisibleTo Include="Microsoft.DotNet.SignTool.Tests" />
+    <InternalsVisibleTo Include="Microsoft.DotNet.Build.Tasks.Installers.Tests" />
   </ItemGroup>
 
   <ItemGroup>

@@ -152,11 +152,57 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             _changelogLines.Add((name, text));
         }
 
-        private readonly List<(CpioEntry file, string fileKind)> _files = [];
+        private readonly List<(CpioEntry file, string fileKind, bool isGhost)> _files = [];
 
         public void AddFile(CpioEntry file, string fileKind)
         {
-            _files.Add((file, fileKind));
+            _files.Add((file, fileKind, isGhost: false));
+        }
+
+        /// <summary>
+        /// Adds a "ghost" file: a path that the package owns but does not ship in the payload.
+        /// Ghost files get an RPM file header record (with the <c>RPMFILE_GHOST</c> flag) but are
+        /// omitted from the CPIO archive. They are typically materialized/repaired by a scriptlet
+        /// or file trigger. See <c>%ghost</c> in the RPM spec documentation.
+        /// </summary>
+        public void AddGhostFile(CpioEntry file, string fileKind)
+        {
+            _files.Add((file, fileKind, isGhost: true));
+        }
+
+        private readonly List<(string script, int senseFlags, IReadOnlyList<string> paths)> _fileTriggers = [];
+        private readonly List<(string script, int senseFlags, IReadOnlyList<string> paths)> _transFileTriggers = [];
+
+        /// <summary>
+        /// Adds a file trigger scriptlet that runs when any package on the system installs, upgrades,
+        /// or removes a file under one of the specified <paramref name="paths"/> prefixes.
+        /// </summary>
+        /// <param name="kind">
+        /// One of <c>FileTriggerIn</c>, <c>FileTriggerUn</c>, <c>FileTriggerPostUn</c>,
+        /// <c>TransFileTriggerIn</c>, <c>TransFileTriggerUn</c>, or <c>TransFileTriggerPostUn</c>.
+        /// </param>
+        /// <param name="script">The shell script body to execute.</param>
+        /// <param name="paths">The file path prefixes that arm the trigger. Must be non-empty.</param>
+        public void AddFileTrigger(string kind, string script, IReadOnlyList<string> paths)
+        {
+            (int senseFlags, bool isTransactionTrigger) = kind switch
+            {
+                "FileTriggerIn" => (RpmSenseTriggerIn, false),
+                "FileTriggerUn" => (RpmSenseTriggerUn, false),
+                "FileTriggerPostUn" => (RpmSenseTriggerPostUn, false),
+                "TransFileTriggerIn" => (RpmSenseTriggerIn, true),
+                "TransFileTriggerUn" => (RpmSenseTriggerUn, true),
+                "TransFileTriggerPostUn" => (RpmSenseTriggerPostUn, true),
+                _ => throw new ArgumentException(
+                    $"Unknown file trigger kind: '{kind}'. Expected 'FileTriggerIn', 'FileTriggerUn', " +
+                    "'FileTriggerPostUn', 'TransFileTriggerIn', 'TransFileTriggerUn', or 'TransFileTriggerPostUn'.",
+                    nameof(kind))
+            };
+            if (paths is null || paths.Count == 0)
+            {
+                throw new ArgumentException("A file trigger must specify at least one path.", nameof(paths));
+            }
+            (isTransactionTrigger ? _transFileTriggers : _fileTriggers).Add((script, senseFlags, paths));
         }
 
         private readonly Dictionary<string, string> _scripts = [];
@@ -176,6 +222,88 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         private static readonly DateTimeOffset UnixEpoch = new(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
         internal static readonly int[] Sha256DigestAlgorithmValue = new[] { 8 };
+
+        // RPM file flags (see rpmfiles.h).
+        private const int RpmFileDoc = 1 << 1;    // RPMFILE_DOC
+        private const int RpmFileGhost = 1 << 6;  // RPMFILE_GHOST: owned by the package but not shipped in the payload.
+
+        // RPM dependency sense flags (see rpmds.h) used to classify file triggers.
+        private const int RpmSenseTriggerIn = 1 << 16;      // RPMSENSE_TRIGGERIN
+        private const int RpmSenseTriggerUn = 1 << 17;      // RPMSENSE_TRIGGERUN
+        private const int RpmSenseTriggerPostUn = 1 << 18;  // RPMSENSE_TRIGGERPOSTUN
+
+        // Default priority rpm assigns to a file trigger when none is specified (RPMTRIGGER_DEFAULT_PRIORITY).
+        private const int RpmDefaultFileTriggerPriority = 1000000;
+
+        private static void AddFileTriggerEntries(
+            List<RpmHeader<RpmHeaderTag>.Entry> entries,
+            List<(string script, int senseFlags, IReadOnlyList<string> paths)> triggers,
+            bool isTransactionTrigger)
+        {
+            if (triggers.Count == 0)
+            {
+                return;
+            }
+
+            // RPM stores trigger scriptlets and their matching path conditions in parallel arrays.
+            List<string> triggerScripts = [];
+            List<string> triggerScriptProgs = [];
+            List<int> triggerScriptFlags = [];
+            List<int> triggerPriorities = [];
+            List<string> triggerNames = [];
+            List<string> triggerVersions = [];
+            List<int> triggerFlags = [];
+            List<int> triggerIndices = [];
+
+            for (int tix = 0; tix < triggers.Count; tix++)
+            {
+                (string script, int senseFlags, IReadOnlyList<string> paths) = triggers[tix];
+                triggerScripts.Add(script);
+                triggerScriptProgs.Add("/bin/sh");
+                triggerScriptFlags.Add(0);
+                triggerPriorities.Add(RpmDefaultFileTriggerPriority);
+                foreach (string path in paths)
+                {
+                    triggerNames.Add(path);
+                    triggerVersions.Add("");
+                    triggerFlags.Add(senseFlags);
+                    triggerIndices.Add(tix);
+                }
+            }
+
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerScripts : RpmHeaderTag.FileTriggerScripts,
+                RpmHeaderEntryType.StringArray,
+                triggerScripts.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerScriptProg : RpmHeaderTag.FileTriggerScriptProg,
+                RpmHeaderEntryType.StringArray,
+                triggerScriptProgs.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerScriptFlags : RpmHeaderTag.FileTriggerScriptFlags,
+                RpmHeaderEntryType.Int32,
+                triggerScriptFlags.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerPriorities : RpmHeaderTag.FileTriggerPriorities,
+                RpmHeaderEntryType.Int32,
+                triggerPriorities.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerName : RpmHeaderTag.FileTriggerName,
+                RpmHeaderEntryType.StringArray,
+                triggerNames.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerVersion : RpmHeaderTag.FileTriggerVersion,
+                RpmHeaderEntryType.StringArray,
+                triggerVersions.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerFlags : RpmHeaderTag.FileTriggerFlags,
+                RpmHeaderEntryType.Int32,
+                triggerFlags.ToArray()));
+            entries.Add(new(
+                isTransactionTrigger ? RpmHeaderTag.TransFileTriggerIndex : RpmHeaderTag.FileTriggerIndex,
+                RpmHeaderEntryType.Int32,
+                triggerIndices.ToArray()));
+        }
 
         public RpmPackage Build()
         {
@@ -221,6 +349,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 entries.Add(new((RpmHeaderTag)Enum.Parse(typeof(RpmHeaderTag), $"{script.Key}prog"), RpmHeaderEntryType.String, "/bin/sh"));
             }
 
+            AddFileTriggerEntries(entries, _fileTriggers, isTransactionTrigger: false);
+            AddFileTriggerEntries(entries, _transFileTriggers, isTransactionTrigger: true);
+
             MemoryStream cpioArchive = new();
             using (CpioWriter writer = new(cpioArchive, leaveOpen: true))
             using (SHA256 sha256 = SHA256.Create())
@@ -245,13 +376,19 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 List<string> fileLinkTos = [];
                 int installedSize = 0;
                 entries.Add(new(RpmHeaderTag.FileDigestAlgorithm, RpmHeaderEntryType.Int32, Sha256DigestAlgorithmValue));
-                foreach ((CpioEntry file, string fileKind) in _files)
+                foreach ((CpioEntry file, string fileKind, bool isGhost) in _files)
                 {
-                    writer.WriteNextEntry(file);
+                    // Ghost files are owned by the package but not shipped in the payload, so they
+                    // must not be written to the CPIO archive. They still contribute a file header record.
+                    if (!isGhost)
+                    {
+                        writer.WriteNextEntry(file);
+                    }
                     file.DataStream.Position = 0;
 
                     // If the entry is a regular file, compute its digest.
-                    if ((file.Mode & CpioEntry.FileKindMask) == CpioEntry.RegularFile)
+                    // Ghost files ship no content, so their digest is always empty.
+                    if (!isGhost && (file.Mode & CpioEntry.FileKindMask) == CpioEntry.RegularFile)
                     {
                         fileDigests.Add(HexConverter.ToHexStringLower(sha256.ComputeHash(file.DataStream)));
                         file.DataStream.Position = 0;
@@ -336,11 +473,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                     if (file.Name.StartsWith("usr/share/doc") && Path.GetFileName(file.Name) == "copyright")
                     {
                         // Treat the copyright file as though it came from the %%doc section in an RPM spec file.
-                        fileFlags.Add(2);
+                        fileFlags.Add(isGhost ? RpmFileDoc | RpmFileGhost : RpmFileDoc);
                     }
                     else
                     {
-                        fileFlags.Add(0);
+                        fileFlags.Add(isGhost ? RpmFileGhost : 0);
                     }
                 }
                 entries.Add(new(RpmHeaderTag.FileDigests, RpmHeaderEntryType.StringArray, fileDigests.ToArray()));

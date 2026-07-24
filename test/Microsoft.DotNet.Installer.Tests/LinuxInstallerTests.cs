@@ -90,6 +90,9 @@ public partial class LinuxInstallerTests : IDisposable
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
     private const string DowngradeFxVersionsScript = "downgrade-fx-versions.sh";
+    private const string DnxPackageLifecycleScript = "dnx-package-lifecycle.sh";
+    private const int RpmFileGhost = 1 << 6;
+    private const int RpmTransFileTriggerNameTag = 5079;
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
     public static bool IncludeDebTests => Config.TestDebPackages;
@@ -166,6 +169,34 @@ public partial class LinuxInstallerTests : IDisposable
         await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
 
         ValidatePackageMetadata($"{repo}:{tag}", PackageType.Deb);
+    }
+
+    /// <summary>
+    /// Verifies that RPM package operations preserve and repair the public dnx entries throughout their lifecycle.
+    /// </summary>
+    /// <param name="image">The container image used to exercise the RPM package lifecycle.</param>
+    /// <returns>A task that represents the asynchronous test operation.</returns>
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    [InlineData("mcr.microsoft.com/azurelinux/base/core:3.0")]
+    public async Task RpmDnxPackageLifecycleTest(string image)
+    {
+        await InitializeContextAsync(PackageType.Rpm, initializeSharedContext: false);
+
+        DnxPackageLifecycleTest(image, PackageType.Rpm);
+    }
+
+    /// <summary>
+    /// Verifies that Debian package operations preserve and repair the public dnx entries throughout their lifecycle.
+    /// </summary>
+    /// <param name="image">The container image used to exercise the Debian package lifecycle.</param>
+    /// <returns>A task that represents the asynchronous test operation.</returns>
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    [InlineData("debian:bookworm")]
+    public async Task DebDnxPackageLifecycleTest(string image)
+    {
+        await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
+
+        DnxPackageLifecycleTest(image, PackageType.Deb);
     }
 
     [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
@@ -369,7 +400,9 @@ public partial class LinuxInstallerTests : IDisposable
         string containerLogDir = "/logs";
         string containerLogPath = Path.Combine(containerLogDir, $"scenario-tests-{GetSanitizedImageName(baseImage)}.xml");
 
-        string testCommand = $"dotnet {GetScenarioTestsBinaryPath()} --dotnet-root /usr/share/dotnet/ --xml {containerLogPath} --no-traits Category=RequiresNonTargetRidPackages";
+        string testCommand =
+            $"sh -c \"dnx --help && dotnet {GetScenarioTestsBinaryPath()} --dotnet-root /usr/share/dotnet/ " +
+            $"--xml {containerLogPath} --no-traits Category=RequiresNonTargetRidPackages\"";
 
         string tag = $"test-{Path.GetRandomFileName()}";
         string output = "";
@@ -403,6 +436,59 @@ public partial class LinuxInstallerTests : IDisposable
                 output = e.Message;
             }
             Assert.Fail($"{(buildCompleted ? "Build" : "Test")} failed: {output}");
+        }
+        finally
+        {
+            if (!Config.KeepDockerImages)
+            {
+                _dockerHelper.DeleteImage(tag);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Builds a container image that exercises the host and SDK package lifecycle for dnx.
+    /// </summary>
+    /// <remarks>
+    /// The lifecycle script runs during the image build so that any failed package operation or
+    /// assertion fails the Docker build and, consequently, the test.
+    /// </remarks>
+    /// <param name="baseImage">The base container image in which to install the packages.</param>
+    /// <param name="packageType">One of the enumeration values that specifies the package format to test.</param>
+    private void DnxPackageLifecycleTest(string baseImage, PackageType packageType)
+    {
+        string hostPackage = Path.GetFileName(GetContentPackage(DotnetHostPrefix, packageType));
+        string lifecycleScript = Path.Combine(GetAssetsDirectory(), DnxPackageLifecycleScript);
+        File.Copy(lifecycleScript, Path.Combine(_contextDir, DnxPackageLifecycleScript));
+
+        StringBuilder dockerfile = new();
+        dockerfile.AppendLine($"FROM {baseImage}");
+        if (packageType == PackageType.Deb)
+        {
+            // Debian does not provide the affected .NET 10 package, so use Microsoft's production
+            // feed to test against the same package family that the new host package services.
+            dockerfile.AppendLine(
+                "RUN apt-get update && apt-get install -y ca-certificates curl gpg && " +
+                "curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | " +
+                "gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg && " +
+                "architecture=\"$(dpkg --print-architecture)\" && " +
+                "echo \"deb [arch=${architecture} signed-by=/usr/share/keyrings/microsoft-prod.gpg] " +
+                "https://packages.microsoft.com/debian/12/prod bookworm main\" " +
+                "> /etc/apt/sources.list.d/microsoft-prod.list && apt-get update");
+        }
+        dockerfile.AppendLine($"COPY {hostPackage} /packages/{hostPackage}");
+        dockerfile.AppendLine($"COPY {DnxPackageLifecycleScript} /{DnxPackageLifecycleScript}");
+        dockerfile.AppendLine(
+            $"RUN chmod +x /{DnxPackageLifecycleScript} && /{DnxPackageLifecycleScript} " +
+            $"{packageType.ToString().ToLowerInvariant()} /packages/{hostPackage}");
+
+        string dockerfilePath = Path.Combine(_contextDir, $"Dockerfile-{Path.GetRandomFileName()}");
+        File.WriteAllText(dockerfilePath, dockerfile.ToString());
+        string tag = $"dnx-lifecycle-{Path.GetRandomFileName()}";
+
+        try
+        {
+            _dockerHelper.Build(tag, dockerfile: dockerfilePath, contextDir: _contextDir);
         }
         finally
         {
@@ -643,6 +729,50 @@ public partial class LinuxInstallerTests : IDisposable
     {
         List<string> list = GetPackageList(image, packageType);
         ValidatePackageDependencies(list, packageType);
+        ValidateDnxPackageMetadata(packageType);
+    }
+
+    private void ValidateDnxPackageMetadata(PackageType packageType)
+    {
+        string hostPackagePath = GetContentPackage(DotnetHostPrefix, packageType);
+
+        if (packageType == PackageType.Rpm)
+        {
+            using FileStream rpmStream = File.OpenRead(hostPackagePath);
+            using RpmPackage rpmPackage = RpmPackage.Read(rpmStream);
+
+            string[] baseNames = (string[])rpmPackage.Header.Entries.First(e => e.Tag == RpmHeaderTag.BaseNames).Value;
+            string[] directoryNames = (string[])rpmPackage.Header.Entries.First(e => e.Tag == RpmHeaderTag.DirectoryNames).Value;
+            int[] directoryNameIndices = (int[])rpmPackage.Header.Entries.First(e => e.Tag == RpmHeaderTag.DirectoryNameIndices).Value;
+            int[] fileFlags = (int[])rpmPackage.Header.Entries.First(e => e.Tag == RpmHeaderTag.FileFlags).Value;
+
+            string[] filePaths = baseNames
+                .Select((baseName, index) => directoryNames[directoryNameIndices[index]] + baseName)
+                .ToArray();
+
+            foreach (string ghostPath in new[] { "/usr/share/dotnet/dnx", "/usr/bin/dnx" })
+            {
+                int index = Array.IndexOf(filePaths, ghostPath);
+                Assert.True(index >= 0, $"RPM package does not own expected dnx path '{ghostPath}'.");
+                Assert.True((fileFlags[index] & RpmFileGhost) != 0, $"RPM path '{ghostPath}' is not ghost-owned.");
+            }
+
+            string[] triggerNames = (string[])rpmPackage.Header.Entries
+                .First(e => e.Tag == (RpmHeaderTag)RpmTransFileTriggerNameTag).Value;
+            Assert.Contains("/usr/share/dotnet/sdk", triggerNames);
+        }
+        else
+        {
+            Dictionary<string, string> controlFiles = GetDebianControlFiles(hostPackagePath);
+            Assert.True(controlFiles.TryGetValue("control", out string? control), "DEB package has no control file.");
+            Assert.Contains("Replaces: dotnet-sdk-10.0 (<< 10.1.0)", control);
+
+            Assert.True(controlFiles.TryGetValue("triggers", out string? triggers), "DEB package has no triggers file.");
+            Assert.Contains("interest-noawait /usr/share/dotnet/dnx", triggers);
+            Assert.Contains("interest-noawait /usr/bin/dnx", triggers);
+            Assert.Contains("postinst", controlFiles.Keys);
+            Assert.Contains("postrm", controlFiles.Keys);
+        }
     }
 
     private void ValidatePackageDependencies(List<string> list, PackageType packageType)
@@ -731,6 +861,14 @@ public partial class LinuxInstallerTests : IDisposable
 
     private List<string> GetDebianPackageDependencies(string packagePath)
     {
+        Dictionary<string, string> controlFiles = GetDebianControlFiles(packagePath);
+        return controlFiles.TryGetValue("control", out string? control)
+            ? ParseDebControlDependencies(control)
+            : [];
+    }
+
+    private Dictionary<string, string> GetDebianControlFiles(string packagePath)
+    {
         try
         {
             using FileStream debStream = File.OpenRead(packagePath);
@@ -756,22 +894,19 @@ public partial class LinuxInstallerTests : IDisposable
 
                 using (decompressed)
                 {
-                    // Read tar entries to find "control" file
+                    Dictionary<string, string> controlFiles = [];
                     using TarReader tarReader = new TarReader(decompressed, leaveOpen: false);
                     TarEntry? entry;
                     while ((entry = tarReader.GetNextEntry()) is not null)
                     {
-                        if (entry.Name
-                            .TrimStart('.', '/')
-                            .Equals("control", StringComparison.Ordinal))
+                        if (entry.DataStream is not null)
                         {
-                            using MemoryStream controlFileData = new MemoryStream();
-                            entry.DataStream?.CopyTo(controlFileData);
-                            string controlContent = Encoding.UTF8.GetString(controlFileData.ToArray());
-                            File.WriteAllText(Path.Combine(Path.GetTempPath(), "control.txt"), controlContent);
-                            return ParseDebControlDependencies(controlContent);
+                            using StreamReader reader = new(entry.DataStream, Encoding.UTF8, leaveOpen: true);
+                            controlFiles[entry.Name.TrimStart('.', '/')] = reader.ReadToEnd();
                         }
                     }
+
+                    return controlFiles;
                 }
             }
 
