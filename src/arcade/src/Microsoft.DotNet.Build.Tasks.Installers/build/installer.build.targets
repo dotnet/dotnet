@@ -124,8 +124,8 @@
     <MakeDir Directories="$(_LayoutDocs)" />
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="PublishToDisk"
-             Properties="OutputPath=$([MSBuild]::EnsureTrailingSlash('$(_LayoutPackageRoot)'));IsPublishingToLinuxPackage=true"
+             Targets="PublishToDisk;_PublishInstallerOnlyFilesToDisk"
+             Properties="OutputPath=$([MSBuild]::EnsureTrailingSlash('$(_LayoutPackageRoot)'))"
              RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)"  />
 
     <Copy

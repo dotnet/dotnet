@@ -54,27 +54,31 @@
       <!--
         Private, non-conflicting copy of the robust dnx dispatcher used as the repair source by
         the Linux package post-install and file-trigger scriptlets (https://github.com/dotnet/sdk/issues/55303).
-        Only laid out for the native Linux packages (via IsPublishingToLinuxPackage, set only by
-        the deb/rpm layout target); macOS/archive/MSI behavior is unchanged. Note that
-        GenerateDeb/GenerateRpm are stripped from this nested PublishToDisk invocation, so they
-        cannot be used here.
+        InstallerOnly keeps this file out of other PublishToDisk outputs while allowing the native
+        Linux package layout target to copy it after normal publication.
       -->
       <FilesToPublish Include="$(MSBuildThisFileDirectory)dnx"
             Destination="$(OutputPath)dnx.dispatcher"
-            Condition="'$(TargetsUnix)' == 'true' and '$(IsPublishingToLinuxPackage)' == 'true'" />
+            InstallerOnly="true"
+            Condition="'$(TargetsUnix)' == 'true'" />
       <FilesToPublish Include="$(MSBuildThisFileDirectory)dnx.cmd"
             Destination="$(OutputPath)dnx.cmd"
             Condition="'$(TargetsUnix)' != 'true'" />
     </ItemGroup>
 
     <Copy SourceFiles="@(FilesToPublish)"
-          DestinationFiles="%(FilesToPublish.Destination)" />
+          DestinationFiles="%(FilesToPublish.Destination)"
+          Condition="'%(FilesToPublish.InstallerOnly)' != 'true'" />
 
     <Exec Command="chmod 755 &quot;$(OutputPath)dnx&quot;"
           Condition="'$(TargetsUnix)' == 'true' and !$([MSBuild]::IsOSPlatform('windows'))" />
+  </Target>
 
+  <Target Name="_SetDnxDispatcherPermissions"
+          AfterTargets="_PublishInstallerOnlyFilesToDisk"
+          Condition="'$(TargetsUnix)' == 'true' and !$([MSBuild]::IsOSPlatform('windows'))">
     <Exec Command="chmod 755 &quot;$(OutputPath)dnx.dispatcher&quot;"
-          Condition="'$(TargetsUnix)' == 'true' and '$(IsPublishingToLinuxPackage)' == 'true' and !$([MSBuild]::IsOSPlatform('windows'))" />
+          Condition="Exists('$(OutputPath)dnx.dispatcher')" />
   </Target>
 
   <Target Name="PublishSymbolsToDisk">
