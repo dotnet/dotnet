@@ -114,7 +114,7 @@ internal static class Validation
 
         LogInfo($"Found modifications to {changedFiles.Count} file(s) in PR head branch");
 
-        return new PrInfo(targetBranch, changedFiles);
+        return new PrInfo(targetBranch, changedFiles, mergeBaseCommit);
     }
 
     private static ServiceProvider RegisterServices(string repoRoot)
