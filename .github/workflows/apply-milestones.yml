@@ -453,26 +453,13 @@ jobs:
               return milestone.number;
             }
 
-            // Parses "X.Y-previewN"/"X.Y-rcN" into a [major, minor, labelRank, iteration]
-            // tuple for comparison. Returns null if the title doesn't match.
-            function parseMilestoneTuple(title) {
-              const match = title.match(/^(\d+)\.(\d+)-(preview|rc)(\d+)$/);
-              if (!match) return null;
-              const [, major, minor, label, iteration] = match;
-              const labelRank = label === 'rc' ? 1 : 0; // previews precede rc's
-              return [parseInt(major), parseInt(minor), labelRank, parseInt(iteration)];
-            }
-
-            // Returns -1 if `a` is older than `b`, 0 if equal, 1 if newer, or null if
-            // either title can't be parsed.
+            // Milestone titles are "X.Y-previewN"/"X.Y-rcN"; plain string comparison
+            // sorts them correctly (major.minor only grows, preview < rc alphabetically,
+            // and iterations stay single-digit). Returns -1/0/1, or null if unparseable.
             function compareMilestoneAge(a, b) {
-              const tupleA = parseMilestoneTuple(a);
-              const tupleB = parseMilestoneTuple(b);
-              if (!tupleA || !tupleB) return null;
-              for (let i = 0; i < tupleA.length; i++) {
-                if (tupleA[i] !== tupleB[i]) return tupleA[i] < tupleB[i] ? -1 : 1;
-              }
-              return 0;
+              const MILESTONE_RE = /^\d+\.\d+-(preview|rc)\d+$/;
+              if (!MILESTONE_RE.test(a) || !MILESTONE_RE.test(b)) return null;
+              return a < b ? -1 : a > b ? 1 : 0;
             }
 
             // Repo-snapped preview/rc branches mean a child commit can flow into
