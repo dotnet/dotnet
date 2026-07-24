@@ -20,20 +20,28 @@ namespace Microsoft.DotNet.Arcade.Sdk
     {
         private static readonly char[] s_keyTrimChars = ['$', '(', ')'];
 
-        public string VersionsPropsPath { get; set; }
-
         [Required]
         public string DotNetInstallScript { get; set; }
+
         [Required]
         public string GlobalJsonPath { get; set; }
+
         [Required]
         public string DotNetPath { get; set; }
+
         [Required]
         public string Platform { get; set; }
+
+        public string VersionsPropsPath { get; set; }
 
         public string RuntimeSourceFeed { get; set; }
 
         public string RuntimeSourceFeedKey { get; set; }
+
+        /// <summary>
+        /// If true, skips installing runtimes listed in the GlobalJsonPath file.
+        /// </summary>
+        public bool SkipRuntimesInstall { get; set; }
 
         public override bool Execute()
         {
@@ -55,7 +63,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
             {
                 if (jsonDocument.RootElement.TryGetProperty("tools", out JsonElement toolsElement))
                 {
-                    if (toolsElement.TryGetProperty("runtimes", out JsonElement dotnetLocalElement))
+                    if (!SkipRuntimesInstall && toolsElement.TryGetProperty("runtimes", out JsonElement dotnetLocalElement))
                     {
                         var runtimeItems = new Dictionary<string, IEnumerable<KeyValuePair<string, string>>>();
                         foreach (var runtime in dotnetLocalElement.EnumerateObject())

@@ -52,14 +52,20 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             CancellationToken cancellationToken);
 
         /// <summary>
-        /// Resubmits the specified failed work items from a completed Helix job as a new job.
+        /// Resubmits the specified failed or unfinished work items from a Helix job as a new job.
         /// The new job copies correlation payloads and queue from the original, but only includes
-        /// the specified work items. Returns the new job's info, or null if resubmission is not possible.
-        /// The new job must preserve BuildId and StageName properties so it is discoverable by GetJobsAsync.
+        /// the specified work items. Returns the new job's info, or null if resubmission is not
+        /// possible (e.g. the original queue no longer exists).
+        /// The new job must preserve BuildId and StageName properties so it is discoverable by
+        /// GetJobsForBuildAsync, and must be stamped with <paramref name="targetStageAttempt"/>
+        /// (the resubmitting monitor's own stage attempt) rather than the original job's attempt,
+        /// so the monitor gates on its own resubmission. When <paramref name="targetStageAttempt"/>
+        /// is null/empty the original job's attempt is preserved (build + stage back-compat).
         /// </summary>
         Task<HelixJobInfo> ResubmitWorkItemsAsync(
             HelixJobInfo originalJob,
             IReadOnlyCollection<WorkItemSummary> failedWorkItems,
+            string targetStageAttempt,
             CancellationToken cancellationToken);
     }
 }

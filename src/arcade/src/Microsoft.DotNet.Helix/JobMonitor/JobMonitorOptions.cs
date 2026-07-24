@@ -44,6 +44,15 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         public string StageName { get; set; }
 
+        /// <summary>
+        /// Attempt number of the Azure DevOps pipeline stage the monitor is running in. Used to
+        /// scope monitoring to Helix jobs submitted by the current stage attempt (matched against
+        /// each job's <c>System.StageAttempt</c> property). When empty the monitor falls back to
+        /// build + stage scope and tracks jobs from every attempt. Defaults to the
+        /// SYSTEM_STAGEATTEMPT environment variable.
+        /// </summary>
+        public string StageAttempt { get; set; }
+
         public int TestResultUploadParallelism { get; set; } = 4;
 
         /// <summary>
@@ -139,6 +148,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 Description = "Name of the Azure DevOps pipeline stage the monitor is running in. Used to scope monitoring to that stage. Defaults to the SYSTEM_STAGENAME environment variable."
             };
 
+            Option<string> stageAttemptOption = new("--stage-attempt")
+            {
+                Description = "Attempt number of the Azure DevOps pipeline stage the monitor is running in. Used to scope monitoring to Helix jobs submitted by the current stage attempt so retries do not re-discover a previous attempt's work. Defaults to the SYSTEM_STAGEATTEMPT environment variable."
+            };
+
             Option<int> testResultUploadParallelismOption = new("--test-result-upload-parallelism")
             {
                 Description = "Maximum number of work items whose test results can be uploaded to Azure DevOps in parallel.",
@@ -180,6 +194,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             rootCommand.Options.Add(jobMonitorNameOption);
             rootCommand.Options.Add(workingDirectoryOption);
             rootCommand.Options.Add(stageNameOption);
+            rootCommand.Options.Add(stageAttemptOption);
             rootCommand.Options.Add(testResultUploadParallelismOption);
             rootCommand.Options.Add(failWorkItemsWithFailedTestsOption);
             rootCommand.Options.Add(verboseOption);
@@ -202,6 +217,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     JobMonitorName = parseResult.GetValue(jobMonitorNameOption),
                     WorkingDirectory = parseResult.GetValue(workingDirectoryOption),
                     StageName = parseResult.GetValue(stageNameOption),
+                    StageAttempt = parseResult.GetValue(stageAttemptOption),
                     TestResultUploadParallelism = parseResult.GetValue(testResultUploadParallelismOption),
                     FailWorkItemsWithFailedTests = parseResult.GetValue(failWorkItemsWithFailedTestsOption),
                     Verbose = parseResult.GetValue(verboseOption),
@@ -238,6 +254,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             BuildReason ??= Environment.GetEnvironmentVariable("BUILD_REASON");
             SourceBranch ??= Environment.GetEnvironmentVariable("BUILD_SOURCEBRANCH");
             StageName ??= Environment.GetEnvironmentVariable("SYSTEM_STAGENAME");
+            StageAttempt ??= Environment.GetEnvironmentVariable("SYSTEM_STAGEATTEMPT");
         }
 
         private void Validate()
