@@ -14,6 +14,12 @@ internal static class Config
     public static string? MsftSdkTarballPath1 => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(MsftSdkTarballPath1));
     public static string? MsftSdkTarballPath2 => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(MsftSdkTarballPath2));
 
+    public static string? MsftArtifactsTarballPath1 => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(MsftArtifactsTarballPath1));
+    public static string? MsftArtifactsTarballPath2 => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(MsftArtifactsTarballPath2));
+
     public static string? SourceBuiltSdkTarballPath1 => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(SourceBuiltSdkTarballPath1));
     public static string? SourceBuiltSdkTarballPath2 => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(SourceBuiltSdkTarballPath2));
+
+    public static string? SourceBuiltArtifactsTarballPath1 => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(SourceBuiltArtifactsTarballPath1));
+    public static string? SourceBuiltArtifactsTarballPath2 => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(SourceBuiltArtifactsTarballPath2));
 }
