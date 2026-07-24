@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,6 +26,30 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public const string PackageSuffix = ".nupkg";
         public const string PackagesCategory = "PACKAGE";
         public static TimeSpan NugetFeedPublisherHttpClientTimeout => TimeSpan.FromSeconds(300);
+
+        /// <summary>
+        /// Builds the Authorization header for Azure DevOps REST calls based on the shape of the token.
+        /// AAD/Entra access tokens are JWTs (three non-empty dot-separated segments) and must be sent as Bearer.
+        /// Personal access tokens (PATs) are opaque strings and use Basic auth. RemoveEmptyEntries ensures
+        /// malformed values like ".." are not misclassified as JWTs.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="token"/> is null, empty, or whitespace.</exception>
+        public static AuthenticationHeaderValue CreateAzdoAuthHeader(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new ArgumentException(
+                    "An Azure DevOps token is required to build an authorization header. Provide a personal access token or an Entra (AAD) access token.",
+                    nameof(token));
+            }
+
+            bool tokenIsJwt = token.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).Length == 3;
+            return tokenIsJwt
+                ? new AuthenticationHeaderValue("Bearer", token)
+                : new AuthenticationHeaderValue(
+                    "Basic",
+                    Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", token))));
+        }
 
         public static ExponentialRetry CreateDefaultRetryHandler()
             => new ExponentialRetry

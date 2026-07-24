@@ -120,20 +120,30 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         }
 
         /// <summary>
-        /// One-shot retry pass executed on entry. Walks the current Helix snapshot, finds
-        /// the latest completed incarnation in each lineage chain, and resubmits any failed
-        /// work items on those jobs. Returns the (scoped snapshot ∪ resubmitted jobs) so
-        /// the first poll iteration sees the resubmissions immediately.
+        /// One-shot retry pass executed on entry. Reconciles the whole stage's Helix work
+        /// (all attempts) into the current stage attempt: for each logical work stream it takes
+        /// the latest incarnation and, when that incarnation is a previous attempt's failed or
+        /// unfinished work (or a current attempt's completed-with-failures work), resubmits the
+        /// not-yet-passed items into the current attempt. Returns the (stage snapshot ∪
+        /// resubmitted jobs) so the first poll iteration sees the resubmissions immediately.
+        /// See JobMonitorRunner.Design.md §2.1 and §2.3.
         /// </summary>
         private async Task<IReadOnlyList<HelixJobInfo>> ExecuteRetryPassAsync(CancellationToken cancellationToken)
         {
             _reporter.LogRetryPassStart();
 
-            IReadOnlyList<HelixJobInfo> scopedJobs =
+            // Discover the whole stage's work across ALL attempts (not just the current one),
+            // so previous-attempt work can be reconciled into the current attempt rather than
+            // silently dropped (§2.1). Attempt classification happens per work stream below.
+            IReadOnlyList<HelixJobInfo> stageJobs =
             [
                 ..(await _helix.GetJobsForBuildAsync(_helixSource, _options.BuildId, cancellationToken))
-                    .Where(IsInScope)
+                    .Where(IsStageInScope)
             ];
+
+            // Seed the cross-poll cache so submitter-chain-key lineage (PreviousHelixJobName
+            // walks) resolves while grouping streams below.
+            _state.ObserveJobs(stageJobs);
 
             // Surfacing work items that passed by exit code but whose AzDO test results contain
             // failures: a prior monitor invocation may have uploaded failed tests for a job
@@ -149,14 +159,26 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
             var resubmittedJobs = new List<HelixJobInfo>();
 
-            foreach (HelixJobInfo completedJob in MonitorState.GetLatestHelixJobAttempts(scopedJobs)
-                                                              .Where(j => j.IsCompleted))
+            foreach (HelixJobInfo latest in _state.GetLatestIncarnationPerStream(stageJobs))
             {
+                bool previousAttempt = IsPreviousAttempt(latest);
+
+                // A current-attempt incarnation that is still in flight is gated on, not
+                // resubmitted (this also covers the fast-rerun case where a fresh current-attempt
+                // incarnation exists while a previous one is still running — §2.3.1 case 4).
+                if (!previousAttempt && !latest.IsCompleted)
+                {
+                    continue;
+                }
+
                 IReadOnlyCollection<WorkItemSummary> jobWorkItems =
-                    await _helix.ListWorkItemsAsync(completedJob.JobName, cancellationToken);
+                    await _helix.ListWorkItemsAsync(latest.JobName, cancellationToken);
 
-                failedTestWorkItemsByJob.TryGetValue(completedJob.JobName, out IReadOnlySet<string> testFailedNames);
+                failedTestWorkItemsByJob.TryGetValue(latest.JobName, out IReadOnlySet<string> testFailedNames);
 
+                // For a previous-attempt incarnation, IsFailed also captures still-unfinished
+                // (Waiting/running) items — those are work the prior attempt abandoned that must
+                // be driven to completion under the current attempt.
                 IReadOnlyList<WorkItemSummary> exitCodeFailures = [..jobWorkItems.Where(wi => wi.IsFailed)];
                 IReadOnlyList<WorkItemSummary> testOnlyFailures =
                 [
@@ -167,10 +189,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
                 if (exitCodeFailures.Count + testOnlyFailures.Count == 0)
                 {
+                    // Nothing to resubmit: a fully-passed incarnation. Its results are uploaded
+                    // and its outcome counted by the poll loop.
                     continue;
                 }
 
-                _reporter.LogRetryPassResubmission(completedJob, exitCodeFailures, testOnlyFailures);
+                _reporter.LogRetryPassResubmission(latest, exitCodeFailures, testOnlyFailures);
 
                 // exitCodeFailures and testOnlyFailures are disjoint by construction (one
                 // requires IsFailed, the other !IsFailed), but guard against duplicate work
@@ -182,14 +206,27 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                         .DistinctBy(wi => wi.Name, StringComparer.OrdinalIgnoreCase)
                 ];
 
-                HelixJobInfo resubmitted = await _helix.ResubmitWorkItemsAsync(completedJob, failedWorkItems, cancellationToken);
+                HelixJobInfo resubmitted = await _helix.ResubmitWorkItemsAsync(
+                    latest, failedWorkItems, _options.StageAttempt, cancellationToken);
                 if (resubmitted is null)
                 {
+                    // Previous-attempt work that can never run again (e.g. its queue was removed)
+                    // must not be silently dropped or waited on forever — record it as a hard
+                    // failure so the monitor fails fast with actionable output (§2.3.1 case 6).
+                    if (previousAttempt)
+                    {
+                        _state.RecordAbandonedWork(latest, failedWorkItems);
+                        LogWarning(
+                            $"Could not resubmit {failedWorkItems.Count} unfinished/failed work item(s) from a "
+                            + $"previous attempt of {latest.DisplayName} (e.g. its Helix queue may have been removed). "
+                            + "Marking them as failed so this build does not wait indefinitely.");
+                    }
+
                     continue;
                 }
 
                 resubmittedJobs.Add(resubmitted);
-                _state.RecordResubmission(completedJob.SubmitterJobName, failedWorkItems.Count);
+                _state.RecordResubmission(latest.SubmitterJobName, failedWorkItems.Count);
             }
 
             if (resubmittedJobs.Count == 0)
@@ -197,7 +234,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _reporter.LogRetryPassFoundNothing();
             }
 
-            return [.. scopedJobs, .. resubmittedJobs];
+            return [.. stageJobs, .. resubmittedJobs];
         }
 
         private async Task<int> RunPollLoopAsync(IReadOnlyList<HelixJobInfo> jobsForFirstPoll, CancellationToken cancellationToken)
@@ -235,18 +272,30 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     await _azdo.GetTimelineRecordsAsync(cancellationToken),
                     _options.StageName);
 
-            IReadOnlyList<HelixJobInfo> scopedJobs =
+            // The full set of the stage's Helix work across ALL attempts. Uploads and outcome
+            // reconciliation consider all of it (previous-attempt results still belong to this
+            // build), but completion gating considers only the current attempt (below).
+            IReadOnlyList<HelixJobInfo> stageJobs =
             [
                 ..(jobsForFirstPoll ?? await _helix.GetJobsForBuildAsync(_helixSource, _options.BuildId, cancellationToken))
-                    .Where(IsInScope)
+                    .Where(IsStageInScope)
+            ];
+
+            // Current-attempt work (including this invocation's resubmissions, which are stamped
+            // with the current attempt). Completion is gated on exactly this set: previous-attempt
+            // work has either been superseded by a current incarnation, resubmitted into the
+            // current attempt, or is already terminal — it must never block termination (§2.1).
+            IReadOnlyList<HelixJobInfo> currentAttemptJobs =
+            [
+                ..stageJobs.Where(IsStageAttemptInScope)
             ];
 
             _state.SetTimelineRecords(timelineRecords);
-            _state.ObserveJobs(scopedJobs);
+            _state.ObserveJobs(stageJobs);
 
             // Helix job summaries can omit Finished for failed jobs even after all work
             // items have terminal exit codes, so fall back to per-work-item status.
-            IReadOnlyCollection<HelixJobInfo> completedJobs = await GetCompletedJobsAsync(scopedJobs, cancellationToken);
+            IReadOnlyCollection<HelixJobInfo> completedJobs = await GetCompletedJobsAsync(stageJobs, cancellationToken);
             var completedJobNames = new HashSet<string>(
                 completedJobs.Select(j => j.JobName),
                 StringComparer.OrdinalIgnoreCase);
@@ -258,11 +307,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _state.TryMarkHelixJobProcessed(job.JobName);
             }
 
-            // Second pass: ensure outcomes for every completed scoped job are reflected in
-            // the running outcome map (oldest-incarnation first so newer ones supersede
-            // older ones). Idempotent — already-reconciled jobs early-return.
+            // Second pass: ensure outcomes for every completed job (any attempt) are reflected in
+            // the running outcome map (oldest-incarnation first, then lower stage attempt first,
+            // so newer incarnations — including higher-attempt rerun duplicates — supersede older
+            // ones). Idempotent — already-reconciled jobs early-return.
             foreach (HelixJobInfo job in MonitorState.OrderHelixJobsOldToNew(
-                MonitorState.GetLatestHelixJobAttempts(scopedJobs)
+                MonitorState.GetLatestHelixJobAttempts(stageJobs)
                     .Where(j => completedJobNames.Contains(j.JobName))))
             {
                 await ReconcileCompletedJobAsync(job, queueUpload: false, cancellationToken);
@@ -271,14 +321,14 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             _uploads.Prune();
 
             bool shouldLogStatus = _options.Verbose
-                || loopState.LastObservedJobCount != scopedJobs.Count
+                || loopState.LastObservedJobCount != stageJobs.Count
                 || loopState.LastObservedCompletedCount != completedJobs.Count
                 || (DateTime.UtcNow - loopState.LastStatusLogAt) >= TimeSpan.FromMinutes(5);
 
             if (shouldLogStatus)
             {
-                await _reporter.LogPollStatusAsync(scopedJobs, completedJobNames, cancellationToken);
-                loopState.LastObservedJobCount = scopedJobs.Count;
+                await _reporter.LogPollStatusAsync(stageJobs, completedJobNames, cancellationToken);
+                loopState.LastObservedJobCount = stageJobs.Count;
                 loopState.LastObservedCompletedCount = completedJobs.Count;
                 loopState.LastStatusLogAt = DateTime.UtcNow;
             }
@@ -288,7 +338,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _options.JobMonitorName,
                 _state.SnapshotRetryingHelixSubmitterJobs());
             bool allPipelineJobsComplete = HelixJobMonitorUtilities.AreNonMonitorJobsComplete(timelineRecords, _options.JobMonitorName);
-            bool allHelixJobsComplete = scopedJobs.Count == 0 || scopedJobs.All(j => completedJobNames.Contains(j.JobName));
+            bool allHelixJobsComplete = currentAttemptJobs.Count == 0 || currentAttemptJobs.All(j => completedJobNames.Contains(j.JobName));
 
             if (!(allPipelineJobsComplete && allHelixJobsComplete))
             {
@@ -417,9 +467,27 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             }));
         }
 
-        private bool IsInScope(HelixJobInfo job)
+        private bool IsStageInScope(HelixJobInfo job)
             => string.IsNullOrEmpty(job.StageName)
                 || string.Equals(job.StageName, _options.StageName, StringComparison.OrdinalIgnoreCase);
+
+        // Per-attempt scoping for completion gating: a job is "current attempt" when the
+        // monitor's own attempt is unknown (build+stage back-compat), the job's attempt is
+        // unknown (older jobs / non-stage submissions), or the two match. Only current-attempt
+        // work gates termination (§2.1).
+        private bool IsStageAttemptInScope(HelixJobInfo job)
+            => string.IsNullOrEmpty(_options.StageAttempt)
+                || string.IsNullOrEmpty(job.StageAttempt)
+                || string.Equals(job.StageAttempt, _options.StageAttempt, StringComparison.OrdinalIgnoreCase);
+
+        // A job belongs to a strictly-earlier attempt of this stage than the monitor's own.
+        // Such work is reconciled into the current attempt by the retry pass (§2.3) but never
+        // gated on directly. Requires both attempts to be known; unknown attempts are treated
+        // as current (see IsStageAttemptInScope).
+        private bool IsPreviousAttempt(HelixJobInfo job)
+            => !string.IsNullOrEmpty(_options.StageAttempt)
+                && !string.IsNullOrEmpty(job.StageAttempt)
+                && MonitorState.ParseStageAttempt(job.StageAttempt) < MonitorState.ParseStageAttempt(_options.StageAttempt);
 
         public void Dispose()
         {

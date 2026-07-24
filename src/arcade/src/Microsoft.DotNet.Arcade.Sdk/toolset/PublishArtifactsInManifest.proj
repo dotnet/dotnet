@@ -108,7 +108,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <FeedKey Include="https://pkgs.dev.azure.com/dnceng" Key="$(AzureDevOpsFeedsKey)"/>
+      <!-- When AzureDevOpsFeedsKey is empty the FeedKey item is intentionally omitted so the
+           publisher falls back to Entra-based auth (DefaultIdentityTokenCredential). -->
+      <FeedKey Include="https://pkgs.dev.azure.com/dnceng" Key="$(AzureDevOpsFeedsKey)" Condition="'$(AzureDevOpsFeedsKey)' != ''"/>
       <FeedOverride Include="https://dotnetbuilds.blob.core.windows.net/public-checksums" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
       <FeedOverride Include="https://dotnetbuilds.blob.core.windows.net/public" Replacement="$(InstallersFeedOverride)" Condition="'$(InstallersFeedOverride)' != ''"/>
       <FeedOverride Include="https://dotnetbuilds.blob.core.windows.net/internal-checksums" Replacement="$(ChecksumsFeedOverride)" Condition="'$(ChecksumsFeedOverride)' != ''"/>
