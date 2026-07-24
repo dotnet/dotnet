@@ -3974,6 +3974,128 @@ namespace NuGet.Commands.Test.RestoreCommandTests
             projectInformationEvent["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"].Should().Be(true);
         }
 
+        [Fact]
+        public async Task ExecuteAsync_WithNonAlphanumericDotDashOrUnderscoreProjectReferenceName_AndAllAsciiPackageIds_AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharactersIsFalse()
+        {
+
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var rootProjectName = "TestProject";
+            var referencedProjectName = "\u0420\u0435\u0444"; // Cyrillic (Реф)
+            var rootProjectPath = Path.Combine(pathContext.SolutionRoot, rootProjectName);
+
+            // Root project depends on an ASCII-only package and references a project with a non-ASCII name.
+            PackageSpec rootSpec = ProjectTestHelpers.GetPackageSpec(rootProjectName, pathContext.SolutionRoot, "net472", "My.Package1");
+            PackageSpec referencedSpec = ProjectTestHelpers.GetPackageSpec(referencedProjectName, pathContext.SolutionRoot, "net472");
+            rootSpec = rootSpec.WithTestProjectReference(referencedSpec);
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("My.Package1", "1.0.0"));
+            var logger = new TestLogger();
+
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootSpec, referencedSpec);
+
+            // Set-up telemetry service - Important to set-up the service *after* the package source creation call as that emits telemetry!
+            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+            var _telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+            _telemetryService
+                .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+
+            TelemetryActivity.NuGetTelemetryService = _telemetryService.Object;
+
+            // Act
+            var restoreCommand = new RestoreCommand(request);
+            RestoreResult result = await restoreCommand.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeTrue(because: logger.ShowMessages());
+            var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+
+            // The only package id ("My.Package1") is ASCII, so the flag should be false.
+            projectInformationEvent["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"].Should().Be(false);
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_WithUnresolvedNonAlphanumericDotDashOrUnderscorePackageId_AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharactersIsFalse()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var projectName = "TestProject";
+            var packageId = "Package\u03B1"; // Greek lowercase alpha (U+03B1)
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(projectName, pathContext.SolutionRoot, "net472", packageId);
+
+            // The package is intentionally NOT published to the feed, so the reference is unresolved and restore fails.
+            var logger = new TestLogger();
+
+            var request = new TestRestoreRequest(packageSpec, new PackageSource[] { new PackageSource(pathContext.PackageSource) }, pathContext.UserPackagesFolder, logger)
+            {
+                ProjectStyle = ProjectStyle.PackageReference,
+            };
+
+            // Set-up telemetry service - Important to set-up the service *after* the package source creation call as that emits telemetry!
+            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+            var _telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+            _telemetryService
+                .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+
+            TelemetryActivity.NuGetTelemetryService = _telemetryService.Object;
+
+            // Act
+            var restoreCommand = new RestoreCommand(request);
+            RestoreResult result = await restoreCommand.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeFalse(because: logger.ShowMessages());
+            var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+
+            // The package never resolved, so the flag should be false.
+            projectInformationEvent["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"].Should().Be(false);
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_WithNonExistentProjectReference_AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharactersIsFalse()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            var rootProjectName = "Project1";
+
+            // Project1 references Project2, but Project2 does not exist on disk (its spec is never written nor passed to
+            // restore), which causes NU1104.
+            PackageSpec rootSpec = ProjectTestHelpers.GetPackageSpec(rootProjectName, pathContext.SolutionRoot, "net472");
+            PackageSpec missingSpec = ProjectTestHelpers.GetPackageSpec("Project2", pathContext.SolutionRoot, "net472");
+            rootSpec = rootSpec.WithTestProjectReference(missingSpec);
+
+            var logger = new TestLogger();
+
+            // Only the root project is restored; the referenced Project2 is intentionally absent from disk and the closure.
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, rootSpec);
+
+            // Set-up telemetry service - Important to set-up the service *after* the package source creation call as that emits telemetry!
+            var telemetryEvents = new ConcurrentQueue<TelemetryEvent>();
+            var _telemetryService = new Mock<INuGetTelemetryService>(MockBehavior.Loose);
+            _telemetryService
+                .Setup(x => x.EmitTelemetryEvent(It.IsAny<TelemetryEvent>()))
+                .Callback<TelemetryEvent>(x => telemetryEvents.Enqueue(x));
+
+            TelemetryActivity.NuGetTelemetryService = _telemetryService.Object;
+
+            // Act
+            var restoreCommand = new RestoreCommand(request);
+            RestoreResult result = await restoreCommand.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeFalse(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().Contain(m => m.Code == NuGetLogCode.NU1104, because: logger.ShowMessages());
+            var projectInformationEvent = telemetryEvents.Single(e => e.Name.Equals("ProjectRestoreInformation"));
+
+            // No package was restored, so the flag should be false.
+            projectInformationEvent["AnyPackageIdContainsNonAlphanumericDotDashOrUnderscoreCharacters"].Should().Be(false);
+        }
+
         private Task<GraphNode<RemoteResolveResult>> DoWalkAsync(RemoteDependencyWalker walker, string name, NuGetFramework framework)
         {
             var range = new LibraryRange

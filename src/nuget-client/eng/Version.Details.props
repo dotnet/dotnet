@@ -10,8 +10,8 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-corefx dependencies -->
     <SystemComponentModelCompositionPackageVersion>4.5.0</SystemComponentModelCompositionPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26360.120</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26360.120</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26367.110</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26367.110</MicrosoftDotNetXliffTasksPackageVersion>
     <!-- dotnet-msbuild dependencies -->
     <MicrosoftBuildPackageVersion>17.3.1</MicrosoftBuildPackageVersion>
     <!-- dotnet-runtime dependencies -->
