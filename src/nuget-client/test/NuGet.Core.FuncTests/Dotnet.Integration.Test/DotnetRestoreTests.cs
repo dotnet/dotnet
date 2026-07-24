@@ -3329,6 +3329,84 @@ EndGlobal";
         }
 
         [Theory]
+        [InlineData(false, false)] // Standard task-based restore
+        [InlineData(true, true)]   // Static graph with PackageSpecFactory
+        [InlineData(true, false)]  // Static graph with legacy PackageSpec construction
+        public async Task DotnetRestore_MultiTargetedProjectWithAnalyzerAssetsEnabledForOneFramework_WritesAnalyzersForAllFrameworks(
+            bool useStaticGraphRestore,
+            bool usePackageSpecFactory)
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            const string PackageId = "AnalyzerPackage";
+            const string AnalyzerPath = "analyzers/dotnet/cs/Analyzer.dll";
+            var package = new SimpleTestPackageContext(PackageId, "1.0.0")
+            {
+                UseDefaultRuntimeAssemblies = false,
+            };
+            package.AddFile(AnalyzerPath);
+            package.AddFile("lib/netstandard2.0/Package.dll");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, package);
+
+            var projectName = "AnalyzerProject";
+            var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+            _dotnetFixture.CreateDotnetNewProject(
+                pathContext.SolutionRoot,
+                projectName,
+                "classlib",
+                testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", "net10.0;net11.0");
+                ProjectFileUtils.AddProperty(
+                    xml,
+                    "RestoreEnableAnalyzerAssets",
+                    bool.TrueString,
+                    " '$(TargetFramework)' == 'net11.0' ");
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    PackageId,
+                    string.Empty,
+                    [],
+                    new Dictionary<string, string>() { { "Version", package.Version } });
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            var environmentVariables = new Dictionary<string, string>()
+            {
+                { PackageSpecFactory.EnvironmentVariableName, usePackageSpecFactory.ToString() }
+            };
+            string staticGraphArgument = useStaticGraphRestore
+                ? " /p:RestoreUseStaticGraphEvaluation=true"
+                : string.Empty;
+
+            // Act
+            _dotnetFixture.RunDotnetExpectSuccess(
+                workingDirectory,
+                $"restore {projectFile} /p:DisableImplicitFrameworkReferences=true{staticGraphArgument}",
+                environmentVariables,
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            string assetsFilePath = Path.Combine(workingDirectory, "obj", LockFileFormat.AssetsFileName);
+            LockFile assetsFile = new LockFileFormat().Read(assetsFilePath);
+            assetsFile.PackageSpec.RestoreMetadata.RestoreEnableAnalyzerAssets.Should().BeTrue();
+
+            foreach (string targetAlias in new[] { "net10.0", "net11.0" })
+            {
+                LockFileTarget target = assetsFile.GetTarget(targetAlias, string.Empty);
+                LockFileTargetLibrary targetLibrary = target.Libraries.Single(
+                    library => library.Name.Equals(PackageId, StringComparison.OrdinalIgnoreCase));
+                targetLibrary.AnalyzerAssets.Should().ContainSingle(
+                    analyzer => analyzer.Path.Equals(AnalyzerPath, StringComparison.Ordinal));
+            }
+        }
+
+        [Theory]
         [InlineData(null, "all")]
         [InlineData("direct", "direct")]
         [InlineData("all", "all")]

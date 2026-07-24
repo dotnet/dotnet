@@ -190,6 +190,7 @@ namespace NuGet.Commands.Restore.Utility
             restoreMetadata.SdkAnalysisLevel = MSBuildRestoreUtility.GetSdkAnalysisLevel(outerBuild.GetProperty("SdkAnalysisLevel"));
             restoreMetadata.UseLegacyDependencyResolver = outerBuild.IsPropertyTrue("RestoreUseLegacyDependencyResolver");
             restoreMetadata.RestoreDoNotWriteDependencyGraphSpec = outerBuild.IsPropertyTrue("RestoreDoNotWriteDependencyGraphSpec");
+            restoreMetadata.RestoreEnableAnalyzerAssets = GetRestoreEnableAnalyzerAssets(project);
 
             return (restoreMetadata, targetFrameworkInfos);
 
@@ -286,6 +287,19 @@ namespace NuGet.Commands.Restore.Utility
                 }
             }
             return false;
+        }
+
+        private static bool GetRestoreEnableAnalyzerAssets(IProject project)
+        {
+            foreach (var targetFramework in project.TargetFrameworks.NoAllocEnumerate())
+            {
+                if (targetFramework.Value.IsPropertyTrue("RestoreEnableAnalyzerAssets"))
+                {
+                    return true;
+                }
+            }
+
+            return project.OuterBuild.IsPropertyTrue("RestoreEnableAnalyzerAssets");
         }
 
         private static RestoreAuditProperties? GetRestoreAuditProperties(IProject project)

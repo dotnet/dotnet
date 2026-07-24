@@ -28,6 +28,9 @@ namespace NuGet.ProjectModel
     ///     "compile": {
     ///         <see cref="Utf8JsonStreamLockFileItemConverter{T}"/>,
     ///     },
+    ///     "analyzers": {
+    ///         <see cref="Utf8JsonStreamLockFileItemConverter{T}"/>,
+    ///     },
     ///     "runtime": {
     ///         <see cref="Utf8JsonStreamLockFileItemConverter{T}"/>,
     ///     },
@@ -59,6 +62,7 @@ namespace NuGet.ProjectModel
         private static readonly byte[] FrameworkAssembliesPropertyName = Encoding.UTF8.GetBytes("frameworkAssemblies");
         private static readonly byte[] RuntimePropertyName = Encoding.UTF8.GetBytes("runtime");
         private static readonly byte[] CompilePropertyName = Encoding.UTF8.GetBytes("compile");
+        private static readonly byte[] AnalyzersPropertyName = Encoding.UTF8.GetBytes("analyzers");
         private static readonly byte[] ResourcePropertyName = Encoding.UTF8.GetBytes("resource");
         private static readonly byte[] NativePropertyName = Encoding.UTF8.GetBytes("native");
         private static readonly byte[] BuildPropertyName = Encoding.UTF8.GetBytes("build");
@@ -119,6 +123,11 @@ namespace NuGet.ProjectModel
                 {
                     reader.Read();
                     lockFileTargetLibrary.CompileTimeAssemblies = reader.ReadObjectAsList<LockFileItem>(Utf8JsonStreamLockFileConverters.LockFileItemConverter);
+                }
+                else if (reader.ValueTextEquals(AnalyzersPropertyName))
+                {
+                    reader.Read();
+                    lockFileTargetLibrary.AnalyzerAssets = reader.ReadObjectAsList<LockFileItem>(Utf8JsonStreamLockFileConverters.LockFileItemConverter);
                 }
                 else if (reader.ValueTextEquals(ResourcePropertyName))
                 {

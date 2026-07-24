@@ -10,6 +10,10 @@ parameters:
   displayName: Build bits for publishing
   type: boolean
   default: true
+- name: RunOptProf
+  displayName: Run optimization profiling
+  type: boolean
+  default: false
 - name: SigningType
   displayName: Type of signing to use
   type: string
@@ -99,7 +103,7 @@ stages:
         swix:
           enabled: true
         optprof:
-          enabled: ${{ variables['isOfficialBuild'] }}
+          enabled: ${{ parameters.RunOptProf }}
           OptimizationInputsLookupMethod: DropPrefix
           DropNamePrefix: OptimizationInputs/$(System.TeamProject)/$(Build.Repository.Name)
           ShouldSkipOptimize: $(ShouldSkipOptimize)
@@ -131,15 +135,16 @@ stages:
         # need to make daily Apex test pipeline build its own tests, and remove this from official pipeline
         codeSignValidationEnabled: false
 
-      - output: artifactsDrop
-        displayName: 'OptProfV2:  publish profiling inputs to artifact services'
-        condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
-        dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
-        buildNumber: '$(ProfilingInputsDropName)'
-        sourcePath: '$(Build.StagingDirectory)\OptProf\ProfilingInputs'
-        toLowerCase: false
-        usePat: true
-        dropMetadataContainerName: 'DropMetadata-ProfilingInputs'
+      - ${{ if eq(parameters.RunOptProf, true) }}:
+        - output: artifactsDrop
+          displayName: 'OptProfV2:  publish profiling inputs to artifact services'
+          condition: "succeeded()"
+          dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
+          buildNumber: '$(ProfilingInputsDropName)'
+          sourcePath: '$(Build.StagingDirectory)\OptProf\ProfilingInputs'
+          toLowerCase: false
+          usePat: true
+          dropMetadataContainerName: 'DropMetadata-ProfilingInputs'
 
       - output: pipelineArtifact
         displayName: 'Publish NuGet.exe and VSIX as artifact'
