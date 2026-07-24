@@ -28,26 +28,19 @@ public class ReproducibilityTests
     public static bool IncludeSourceBuiltReproducibilityTests =>
         !string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath1) && !string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath2);
 
+    public static bool IncludeSourceBuiltArtifactsReproducibilityTests =>
+        !string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath1) && !string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath2);
+
     [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeMsftReproducibilityTests))]
     public void MsftSdkTarballIsReproducible()
     {
         CompareTarballs(
             Config.MsftSdkTarballPath1!,
             Config.MsftSdkTarballPath2!,
+            stripLeadingDirectory: true,
             exclusionsFileName: "MsftReproducibilityExclusions.txt",
             baselineFileName: "MsftReproducibilityBaseline.diff",
             updatedBaselineFileName: "UpdatedMsftReproducibilityBaseline.diff");
-    }
-
-    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeMsftReproducibilityTests))]
-    public void MsftArtifactsTarballIsReproducible()
-    {
-        CompareTarballs(
-            Config.MsftArtifactsTarballPath1!,
-            Config.MsftArtifactsTarballPath2!,
-            exclusionsFileName: "MsftArtifactsReproducibilityExclusions.txt",
-            baselineFileName: "MsftArtifactsReproducibilityBaseline.diff",
-            updatedBaselineFileName: "UpdatedMsftArtifactsReproducibilityBaseline.diff");
     }
 
     [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeSourceBuiltReproducibilityTests))]
@@ -56,24 +49,26 @@ public class ReproducibilityTests
         CompareTarballs(
             Config.SourceBuiltSdkTarballPath1!,
             Config.SourceBuiltSdkTarballPath2!,
+            stripLeadingDirectory: true,
             exclusionsFileName: "SourceBuiltReproducibilityExclusions.txt",
             baselineFileName: "SourceBuiltReproducibilityBaseline.diff",
             updatedBaselineFileName: "UpdatedSourceBuiltReproducibilityBaseline.diff");
     }
 
-    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeSourceBuiltReproducibilityTests))]
+    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeSourceBuiltArtifactsReproducibilityTests))]
     public void SourceBuiltArtifactsTarballIsReproducible()
     {
         CompareTarballs(
             Config.SourceBuiltArtifactsTarballPath1!,
             Config.SourceBuiltArtifactsTarballPath2!,
+            stripLeadingDirectory: false,
             exclusionsFileName: "SourceBuiltArtifactsReproducibilityExclusions.txt",
             baselineFileName: "SourceBuiltArtifactsReproducibilityBaseline.diff",
             updatedBaselineFileName: "UpdatedSourceBuiltArtifactsReproducibilityBaseline.diff");
     }
 
     /// <summary>
-    /// Compares the regular-file contents of two SDK tarballs and asserts that they
+    /// Compares the regular-file contents of two tarballs and asserts that they
     /// match, modulo files listed in the exclusions file. Non-regular entries
     /// (symlinks, hardlinks, directories) and tar metadata (file modes, uid/gid,
     /// mtime, entry order, gzip header) are not compared. Any new non-reproducible
@@ -83,6 +78,7 @@ public class ReproducibilityTests
     private void CompareTarballs(
         string tarballPath1,
         string tarballPath2,
+        bool stripLeadingDirectory,
         string exclusionsFileName,
         string baselineFileName,
         string updatedBaselineFileName)
@@ -98,8 +94,8 @@ public class ReproducibilityTests
         Dictionary<string, string> hashes2 = null!;
 
         Parallel.Invoke(
-            () => hashes1 = ComputeTarballFileHashes(tarballPath1),
-            () => hashes2 = ComputeTarballFileHashes(tarballPath2));
+            () => hashes1 = ComputeTarballFileHashes(tarballPath1, stripLeadingDirectory),
+            () => hashes2 = ComputeTarballFileHashes(tarballPath2, stripLeadingDirectory));
 
         OutputHelper.WriteLine($"  Tarball 1 files: {hashes1.Count}");
         OutputHelper.WriteLine($"  Tarball 2 files: {hashes2.Count}");
@@ -220,7 +216,7 @@ public class ReproducibilityTests
     /// Computes SHA256 hashes for all files in a tar.gz archive without extracting to disk.
     /// Returns a dictionary mapping relative file paths to their hex-encoded hash.
     /// </summary>
-    private Dictionary<string, string> ComputeTarballFileHashes(string tarballPath)
+    private Dictionary<string, string> ComputeTarballFileHashes(string tarballPath, bool stripLeadingDirectory)
     {
         Dictionary<string, string> fileHashes = new(StringComparer.Ordinal);
 
@@ -233,8 +229,9 @@ public class ReproducibilityTests
             if (entry.EntryType is not TarEntryType.RegularFile and not TarEntryType.V7RegularFile)
                 continue;
 
-            // Strip the leading directory component (the tarball root folder)
-            string relativePath = StripLeadingDirectory(entry.Name);
+            string relativePath = stripLeadingDirectory
+                ? StripLeadingDirectory(entry.Name)
+                : entry.Name.Replace('\\', '/');
             if (string.IsNullOrEmpty(relativePath))
                 continue;
 

@@ -27,12 +27,6 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MsftSdkTarballPath2">
         <Value>$(MsftSdkTarballPath2)</Value>
       </RuntimeHostConfigurationOption>
-      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MsftArtifactsTarballPath1">
-        <Value>$(MsftArtifactsTarballPath1)</Value>
-      </RuntimeHostConfigurationOption>
-      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MsftArtifactsTarballPath2">
-        <Value>$(MsftArtifactsTarballPath2)</Value>
-      </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceBuiltSdkTarballPath1">
         <Value>$(SourceBuiltSdkTarballPath1)</Value>
       </RuntimeHostConfigurationOption>
