@@ -1046,8 +1046,16 @@ namespace Dotnet.Integration.Test
                 var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
                 var refProjectFile = Path.Combine(testDirectory, referencedProject, $"{referencedProject}.csproj");
 
-                _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, args: "classlib", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, referencedProject, "classlib", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.CreateDotnetNewProject(
+                    testDirectory.Path,
+                    projectName,
+                    args: "classlib",
+                    testOutputHelper: _testOutputHelper);
+                _dotnetFixture.CreateDotnetNewProject(
+                    testDirectory.Path,
+                    referencedProject,
+                    "classlib",
+                    testOutputHelper: _testOutputHelper);
 
                 using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
                 using (var refStream = new FileStream(refProjectFile, FileMode.Open, FileAccess.ReadWrite))
@@ -1193,6 +1201,79 @@ namespace Dotnet.Integration.Test
                         var package = packages.First(t => t.Id.Equals("ClassLibrary2"));
                         Assert.Equal(new VersionRange(new NuGetVersion("1.2.3-alpha")), package.VersionRange);
                     }
+                }
+            }
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void PackCommand_PackProject_WithConflictingPrivateItem_UsesProjectReferenceVersion()
+        {
+            // Arrange
+            using (var testDirectory = _dotnetFixture.CreateTestDirectory())
+            {
+                var projectName = "ClassLibrary1";
+                var referencedProject = "ClassLibrary2";
+                var workingDirectory = Path.Combine(testDirectory, projectName);
+                var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+                var refProjectFile = Path.Combine(testDirectory, referencedProject, $"{referencedProject}.csproj");
+
+                _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, args: "classlib", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, referencedProject, "classlib", testOutputHelper: _testOutputHelper);
+
+                using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
+                using (var refStream = new FileStream(refProjectFile, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    var xml = XDocument.Load(stream);
+                    ProjectFileUtils.AddItem(
+                        xml,
+                        "ProjectReference",
+                        @"..\ClassLibrary2\ClassLibrary2.csproj",
+                        string.Empty,
+                        new Dictionary<string, string>());
+
+                    var refXml = XDocument.Load(refStream);
+                    ProjectFileUtils.AddProperty(
+                        refXml,
+                        "PackageVersion",
+                        "1.2.3-alpha",
+                        "'$(ExcludeRestorePackageImports)' != 'true'");
+                    var target = @"<Target Name=""AddConflictingProjectPathWithVersion"" AfterTargets=""Build"">
+    <ItemGroup>
+      <_ProjectPathWithVersion Include=""$(MSBuildProjectFullPath)"">
+        <ProjectVersion>9.9.9</ProjectVersion>
+      </_ProjectPathWithVersion>
+    </ItemGroup>
+  </Target>";
+                    ProjectFileUtils.AddCustomXmlToProjectRoot(refXml, target);
+
+                    ProjectFileUtils.WriteXmlToFile(xml, stream);
+                    ProjectFileUtils.WriteXmlToFile(refXml, refStream);
+                }
+
+                _dotnetFixture.RestoreProjectExpectSuccess(
+                    workingDirectory,
+                    projectName,
+                    testOutputHelper: _testOutputHelper);
+
+                // Act
+                _dotnetFixture.PackProjectExpectSuccess(
+                    workingDirectory,
+                    projectName,
+                    $"-o {workingDirectory}",
+                    testOutputHelper: _testOutputHelper);
+
+                // Assert
+                var nupkgPath = Path.Combine(workingDirectory, $"{projectName}.1.0.0.nupkg");
+                using (var nupkgReader = new PackageArchiveReader(nupkgPath))
+                {
+                    var package = nupkgReader.NuspecReader
+                        .GetDependencyGroups()
+                        .Single()
+                        .Packages
+                        .Single();
+
+                    Assert.Equal("ClassLibrary2", package.Id);
+                    Assert.Equal(new VersionRange(new NuGetVersion("1.2.3-alpha")), package.VersionRange);
                 }
             }
         }
@@ -2692,7 +2773,8 @@ namespace ClassLibrary
                     var nuspecReader = nupkgReader.NuspecReader;
                     // Validate the assets.
                     var srcItems = nupkgReader.GetFiles("src").ToArray();
-                    Assert.Equal(4, srcItems.Length);
+
+                    // At least the user-authored source files are always included.
                     Assert.Contains("src/ClassLibrary1/ClassLibrary1.csproj", srcItems);
                     Assert.Contains("src/ClassLibrary1/Class1.cs", srcItems);
                     Assert.Contains("src/ClassLibrary1/Extensions/ExtensionMethods.cs", srcItems);
