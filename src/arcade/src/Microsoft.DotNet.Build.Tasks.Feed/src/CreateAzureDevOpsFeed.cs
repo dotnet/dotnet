@@ -121,10 +121,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                 string azureDevOpsFeedsBaseUrl = $"https://feeds.dev.azure.com/{AzureDevOpsOrg}/";
 
-                if (string.IsNullOrEmpty(AzureDevOpsPersonalAccessToken))
+                if (string.IsNullOrWhiteSpace(AzureDevOpsPersonalAccessToken))
                 {
                     const string AzureDevOpsScope = "499b84ac-1321-427f-aa17-267ca6975798/.default";
                     AzureDevOpsPersonalAccessToken = new AzureCliCredential().GetToken(new TokenRequestContext(new[] { AzureDevOpsScope })).Token;
+                }
+                else
+                {
+                    // Trim incidental whitespace from pipeline/MSBuild variables so the token
+                    // isn't rejected by CreateAzdoAuthHeader, consistent with other call sites.
+                    AzureDevOpsPersonalAccessToken = AzureDevOpsPersonalAccessToken.Trim();
                 }
 
                 do
@@ -137,9 +143,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         client.DefaultRequestHeaders.Add(
                             "Accept",
                             $"application/json;api-version={AzureDevOpsFeedsApiVersion}");
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                            "Basic",
-                            Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", AzureDevOpsPersonalAccessToken))));
+                        client.DefaultRequestHeaders.Authorization = GeneralUtils.CreateAzdoAuthHeader(AzureDevOpsPersonalAccessToken);
 
                         AzureDevOpsArtifactFeed newFeed = new AzureDevOpsArtifactFeed(versionedFeedName, AzureDevOpsOrg, AzureDevOpsProject);
 

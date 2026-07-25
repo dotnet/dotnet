@@ -397,6 +397,61 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 : $"submitter:{submitterJobName}|queue:{queueId}";
 
         /// <summary>
+        /// From an arbitrary set of Helix jobs (possibly spanning multiple stage attempts),
+        /// return the single latest incarnation of each logical work stream — one job per
+        /// submitter chain key (§5.7). Within a stream, resubmission lineage is collapsed to the
+        /// leaf, and unlinked rerun duplicates (same submitter + queue on different stage
+        /// attempts, not connected by <c>PreviousHelixJobName</c>) are broken toward the highest
+        /// stage attempt. Used by the retry pass to decide, per stream, whether previous-attempt
+        /// work must be reconciled into the current attempt.
+        /// </summary>
+        public IReadOnlyList<HelixJobInfo> GetLatestIncarnationPerStream(IEnumerable<HelixJobInfo> jobs)
+        {
+            lock (_sync)
+            {
+                return
+                [
+                    ..GetLatestHelixJobAttempts(jobs)
+                        .GroupBy(GetSubmitterChainKeyLocked, StringComparer.OrdinalIgnoreCase)
+                        .Select(g => g
+                            .OrderBy(j => ParseStageAttempt(j.StageAttempt))
+                            .ThenBy(j => j.JobName, StringComparer.OrdinalIgnoreCase)
+                            .Last())
+                ];
+            }
+        }
+
+        /// <summary>
+        /// Records work that could not be resubmitted (e.g. its Helix queue was removed) as
+        /// failed, so it counts toward the monitor's exit code and appears in the final failure
+        /// report instead of being silently dropped or waited on forever (§2.3.1 case 6).
+        /// </summary>
+        public void RecordAbandonedWork(HelixJobInfo job, IEnumerable<WorkItemSummary> workItems)
+        {
+            lock (_sync)
+            {
+                string chainKey = GetSubmitterChainKeyLocked(job);
+                foreach (WorkItemSummary wi in workItems)
+                {
+                    var key = (chainKey, wi.Name);
+                    _workItemOutcomes[key] = false;
+                    _failedWorkItemConsoleInfo[key] = new FailedWorkItemConsoleInfo(
+                        job.DisplayName,
+                        wi.Name,
+                        "Abandoned (could not be resubmitted)",
+                        job.DetailsUri);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Parses a stage-attempt string (e.g. the <c>System.StageAttempt</c> property) into a
+        /// comparable integer. Unknown / unparseable values sort as attempt 1 (the first attempt).
+        /// </summary>
+        public static int ParseStageAttempt(string stageAttempt)
+            => int.TryParse(stageAttempt, out int attempt) ? attempt : 1;
+
+        /// <summary>
         /// From an arbitrary set of Helix jobs return only the leaves of each lineage chain —
         /// jobs that are not pointed at by any other job's <c>PreviousHelixJobName</c>.
         /// </summary>
@@ -412,9 +467,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         /// <summary>
         /// Orders Helix jobs from oldest incarnation to newest by following the
-        /// <c>PreviousHelixJobName</c> link backwards. Used to ensure upload and outcome
-        /// reconciliation process lineage in the right order (older first, so newer
-        /// incarnations supersede older ones).
+        /// <c>PreviousHelixJobName</c> link backwards, breaking ties toward the lower stage
+        /// attempt. Used to ensure upload and outcome reconciliation process lineage in the
+        /// right order (older first, so newer incarnations supersede older ones) — including
+        /// unlinked rerun duplicates on different attempts, where the higher stage attempt must
+        /// reconcile last so it wins the outcome map (§5.7).
         /// </summary>
         public static IReadOnlyList<HelixJobInfo> OrderHelixJobsOldToNew(IEnumerable<HelixJobInfo> jobs)
         {
@@ -423,6 +480,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             [
                 ..jobs
                     .OrderBy(j => GetLineageDepth(j, jobByName))
+                    .ThenBy(j => ParseStageAttempt(j.StageAttempt))
                     .ThenBy(j => j.JobName, StringComparer.OrdinalIgnoreCase)
             ];
         }

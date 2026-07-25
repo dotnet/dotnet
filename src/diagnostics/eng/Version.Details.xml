@@ -1,13 +1,13 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="diagnostics" Sha="3e328deefbd3029c2f957050c508b4faeee3d71f" BarId="320520" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Diagnostics.Runtime" Version="4.1.735801">
+    <Dependency Name="Microsoft.Diagnostics.Runtime" Version="4.1.736701">
       <Uri>https://github.com/microsoft/clrmd</Uri>
-      <Sha>e33245a1964d196e911c5578741842ed52d22e12</Sha>
+      <Sha>1ccd03ae24b666d713e732bfd2b7b48da0096a57</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.Runtime.Utilities" Version="4.1.735801">
+    <Dependency Name="Microsoft.Diagnostics.Runtime.Utilities" Version="4.1.736701">
       <Uri>https://github.com/microsoft/clrmd</Uri>
-      <Sha>e33245a1964d196e911c5578741842ed52d22e12</Sha>
+      <Sha>1ccd03ae24b666d713e732bfd2b7b48da0096a57</Sha>
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25210.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
@@ -27,9 +27,9 @@
       <Uri>https://github.com/dotnet/arcade</Uri>
       <Sha>4e21b419f8adadeb519bee472464824b1cff603e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.RemoteExecutor" Version="7.0.0-beta.22316.2" Pinned="true">
+    <Dependency Name="Microsoft.DotNet.RemoteExecutor" Version="10.0.0-beta.26358.3" Pinned="true">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>ccfe6da198c5f05534863bbb1bff66e830e0c6ab</Sha>
+      <Sha>4e21b419f8adadeb519bee472464824b1cff603e</Sha>
     </Dependency>
     <!-- dotnet/installer: Testing version of the SDK. Needed for the signed & entitled host. -->
     <Dependency Name="Microsoft.NET.Sdk" Version="11.0.100-preview.7.26327.102">
