@@ -348,6 +348,14 @@ This section captures lessons learned from actual migration runs that don't fit 
 
 - **PR #7246 incorrectly removed `Test-NetCoreConsoleAppClean`** — it was claimed to be covered by Apex Daily's `VerifyCacheFileInsideObjFolder`, but that test is in Daily (different cadence) and bundles 3 behaviors. We properly covered it by adding `NetCoreConsoleApp` to `GetPackageReferenceTemplates()` in `PackageReferenceTestCase.CleanDeletesCacheFile`.
 
+### 2026-06-26: Find-Package / Get-Package paging migration
+
+- **`Get-Package -ListAvailable` defaults `First` to 50** (`GetPackageCommand.DefaultFirstValue`). The old E2E test `Test-GetPackageRetunsMoreThanServerPagingLimit` asserted `>100` against nuget.org and only worked under an older default. When migrating "more than server paging limit" to a unit test, pass an explicit large `-First` (e.g. `105`) over a local source with 105 packages and assert `> 100` — this faithfully validates page aggregation in `PackageFeedEnumerator`. Without `-First`, the local result caps at 50.
+- **Find/Get cmdlet filtering is substring match on a local feed** — creating ids that share a keyword prefix (e.g. `FirstKeywordPackage1..6`) and searching the keyword returns all of them, so `-First`/`-Skip` paging is testable with a unit test.
+- **`vs-tests.yml` `part:` list is NOT maintained per-migration** — e.g. `SyncPackageTest.ps1` remains listed after deletion in #7270. Follow precedent: when fully migrating a PS test file, delete the file and remove it from `NuGet.sln` solution items, but leave the `vs-tests.yml` part list untouched.
+- **`-Source` by *name* and `-Updates` source filtering are UNIT-testable, not Apex-only.** `GetMatchingSource` resolves `-Source` against `ISourceRepositoryProvider.PackageSourceProvider.LoadPackageSources()`, and `-Updates` queries `PrimarySourceRepositories` (= just the matched `-Source` when one is given). The unit harness's `TestSourceRepositoryUtility.CreateSourceRepositoryProvider(IEnumerable<PackageSource>)` builds a real provider — pass `new PackageSource(path, "FriendlyName")` to test name resolution, and register a second empty source to verify `-Updates -Source EmptySource` returns 0. Don't reach for Apex just because a scenario mentions `-Source`.
+- **`-Source 'All'` is a host-level concept, NOT a cmdlet `-Source` value.** The aggregate "All" is handled by `PowerShellHost.SetPrivateDataOnHost` (the PMC source dropdown), which maps it to an empty active source. Passing `-Source 'All'` literally to a cmdlet hits `GetMatchingSource('All')` → null → `CheckSourceValidity` → throws "Unknown source 'All'". The old `GetPackageAcceptsAllAsSourceName` PS function had no `Test-` prefix (never ran) and relied on this non-existent behavior — do not migrate it.
+
 ---
 
 # Migrating PowerShell E2E Tests to Unit Tests

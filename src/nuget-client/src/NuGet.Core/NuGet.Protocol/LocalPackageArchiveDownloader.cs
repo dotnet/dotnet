@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.IO;
@@ -28,7 +26,7 @@ namespace NuGet.Protocol
         private readonly PackageIdentity _packageIdentity;
         private Lazy<PackageArchiveReader> _packageReader;
         private Lazy<FileStream> _sourceStream;
-        private SemaphoreSlim _throttle;
+        private SemaphoreSlim? _throttle;
 
         /// <summary>
         /// Gets an asynchronous package content reader.
@@ -83,6 +81,11 @@ namespace NuGet.Protocol
         /// is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" />
         /// is <see langword="null" />.</exception>
+        /// <remarks>
+        /// NULL_INC: <paramref name="source" /> is annotated as non-null but no runtime check is
+        /// enforced in the constructor to avoid introducing a new throw in a previously-permissive
+        /// code path. Revisit with telemetry to confirm callers never pass null.
+        /// </remarks>
         public LocalPackageArchiveDownloader(
             string source,
             string packageFilePath,
@@ -267,7 +270,7 @@ namespace NuGet.Protocol
         /// Sets a throttle for package downloads.
         /// </summary>
         /// <param name="throttle">A throttle.  Can be <see langword="null" />.</param>
-        public void SetThrottle(SemaphoreSlim throttle)
+        public void SetThrottle(SemaphoreSlim? throttle)
         {
             _throttle = throttle;
         }

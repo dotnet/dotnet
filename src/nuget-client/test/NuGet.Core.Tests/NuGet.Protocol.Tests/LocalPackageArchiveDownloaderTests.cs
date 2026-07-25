@@ -24,7 +24,7 @@ namespace NuGet.Protocol.Tests
         {
             var exception = Assert.Throws<ArgumentException>(
                 () => new LocalPackageArchiveDownloader(
-                    source: null,
+                    source: null!,
                     packageFilePath: packageFilePath,
                     packageIdentity: new PackageIdentity(id: "a", version: NuGetVersion.Parse("1.0.0")),
                     logger: NullLogger.Instance));
@@ -37,9 +37,9 @@ namespace NuGet.Protocol.Tests
         {
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new LocalPackageArchiveDownloader(
-                    source: null,
+                    source: null!,
                     packageFilePath: "a",
-                    packageIdentity: null,
+                    packageIdentity: null!,
                     logger: NullLogger.Instance));
 
             Assert.Equal("packageIdentity", exception.ParamName);
@@ -50,10 +50,10 @@ namespace NuGet.Protocol.Tests
         {
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new LocalPackageArchiveDownloader(
-                    source: null,
+                    source: null!,
                     packageFilePath: "a",
                     packageIdentity: new PackageIdentity(id: "a", version: NuGetVersion.Parse("1.0.0")),
-                    logger: null));
+                    logger: null!));
 
             Assert.Equal("logger", exception.ParamName);
         }
@@ -328,7 +328,7 @@ namespace NuGet.Protocol.Tests
             using (var test = await LocalPackageArchiveDownloaderTest.CreateAsync())
             {
                 var exception = Assert.Throws<ArgumentNullException>(
-                    () => test.Downloader.SetExceptionHandler(handleExceptionAsync: null));
+                    () => test.Downloader.SetExceptionHandler(handleExceptionAsync: null!));
 
                 Assert.Equal("handleExceptionAsync", exception.ParamName);
             }
