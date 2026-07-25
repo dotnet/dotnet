@@ -1222,6 +1222,7 @@ class Foo {
 
 // Tests InvokeWithoutArgs(function).
 TEST(InvokeWithoutArgsTest, Function) {
+  GTEST_DISABLE_DEPRECATED_PUSH_()
   // As an action that takes one argument.
   Action<int(int)> a = InvokeWithoutArgs(Nullary);  // NOLINT
   EXPECT_EQ(1, a.Perform(std::make_tuple(2)));
@@ -1235,10 +1236,12 @@ TEST(InvokeWithoutArgsTest, Function) {
   g_done = false;
   a3.Perform(std::make_tuple(1));
   EXPECT_TRUE(g_done);
+  GTEST_DISABLE_DEPRECATED_POP_()
 }
 
 // Tests InvokeWithoutArgs(functor).
 TEST(InvokeWithoutArgsTest, Functor) {
+  GTEST_DISABLE_DEPRECATED_PUSH_()
   // As an action that takes no argument.
   Action<int()> a = InvokeWithoutArgs(NullaryFunctor());  // NOLINT
   EXPECT_EQ(2, a.Perform(std::make_tuple()));
@@ -1253,6 +1256,7 @@ TEST(InvokeWithoutArgsTest, Functor) {
   g_done = false;
   a3.Perform(std::make_tuple());
   EXPECT_TRUE(g_done);
+  GTEST_DISABLE_DEPRECATED_POP_()
 }
 
 // Tests InvokeWithoutArgs(obj_ptr, method).
