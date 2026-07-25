@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,7 +58,7 @@ namespace NuGet.Protocol.Core.Types
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public abstract Task<FindPackageByIdDependencyInfo> GetDependencyInfoAsync(
+        public abstract Task<FindPackageByIdDependencyInfo?> GetDependencyInfoAsync(
             string id,
             NuGetVersion version,
             SourceCacheContext cacheContext,
@@ -109,7 +107,7 @@ namespace NuGet.Protocol.Core.Types
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="logger" /> <see langword="null" />.</exception>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public abstract Task<IPackageDownloader> GetPackageDownloaderAsync(
+        public abstract Task<IPackageDownloader?> GetPackageDownloaderAsync(
             PackageIdentity packageIdentity,
             SourceCacheContext cacheContext,
             ILogger logger,

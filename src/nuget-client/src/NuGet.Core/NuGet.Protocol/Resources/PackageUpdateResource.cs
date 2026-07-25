@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -37,13 +36,13 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         private const string TempApiKeyServiceEndpoint = "create-verification-key/{0}/{1}";
 
-        private HttpSource _httpSource;
+        private HttpSource? _httpSource;
         private string _source;
         private bool _disableBuffering;
-        public ISettings Settings { get; set; }
+        public ISettings? Settings { get; set; }
 
         public PackageUpdateResource(string source,
-            HttpSource httpSource)
+            HttpSource? httpSource)
         {
             _source = source;
             _httpSource = httpSource;
@@ -63,7 +62,7 @@ namespace NuGet.Protocol.Core.Types
            Func<string, string> getSymbolApiKey,
            bool noServiceEndpoint,
            bool skipDuplicate,
-           SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+           SymbolPackageUpdateResourceV3? symbolPackageUpdateResource,
            ILogger log)
         {
             await Push(
@@ -135,7 +134,7 @@ namespace NuGet.Protocol.Core.Types
             Func<string, string> getSymbolApiKey,
             bool noServiceEndpoint,
             bool skipDuplicate,
-            SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
+            SymbolPackageUpdateResourceV3? symbolPackageUpdateResource,
             bool allowInsecureConnections,
             ILogger log)
         {
@@ -189,7 +188,7 @@ namespace NuGet.Protocol.Core.Types
                     packageVersion,
                     sourceDisplayName
                     ));
-                await DeletePackage(_source, apiKey, packageId, packageVersion, noServiceEndpoint, allowInsecureConnections, log, CancellationToken.None);
+                await DeletePackage(apiKey, packageId, packageVersion, noServiceEndpoint, allowInsecureConnections, log, CancellationToken.None);
                 log.LogInformation(string.Format(CultureInfo.CurrentCulture,
                     Strings.DeleteCommandDeletedPackage,
                     packageId,
@@ -238,7 +237,7 @@ namespace NuGet.Protocol.Core.Types
                         Strings.DefaultSymbolServer));
                 }
                 bool logErrorForHttpSources = true;
-                foreach (string packageToPush in symbolsToPush)
+                foreach (string packageToPush in symbolsToPush!)
                 {
                     await PushPackageCore(
                         symbolSource,
@@ -376,7 +375,7 @@ namespace NuGet.Protocol.Core.Types
             }
             else
             {
-                wasPackagePushed = await PushPackageToServer(source, apiKey, packageToPush, noServiceEndpoint, skipDuplicate,
+                wasPackagePushed = await PushPackageToServer(source, _httpSource!, apiKey, packageToPush, noServiceEndpoint, skipDuplicate,
                     requestTimeout, logErrorForHttpSources, allowInsecureConnections, log, token);
             }
 
@@ -399,6 +398,7 @@ namespace NuGet.Protocol.Core.Types
         }
 
         // Indicates whether the specified source is a file source, such as: \\a\b, c:\temp, etc.
+        [MemberNotNullWhen(false, nameof(_httpSource))]
         private bool IsFileSource()
         {
             //we leverage the detection already done at resource provider level.
@@ -412,7 +412,7 @@ namespace NuGet.Protocol.Core.Types
         private static string GetSymbolsPath(string packagePath, bool isSnupkg)
         {
             var symbolPath = Path.GetFileNameWithoutExtension(packagePath) + (isSnupkg ? NuGetConstants.SnupkgExtension : NuGetConstants.SymbolsExtension);
-            var packageDir = Path.GetDirectoryName(packagePath);
+            var packageDir = Path.GetDirectoryName(packagePath)!;
             return Path.Combine(packageDir, symbolPath);
         }
 
@@ -421,6 +421,7 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         /// <returns>Indicator of whether to show PushCommandPackagePushed message.</returns>
         private async Task<bool> PushPackageToServer(string source,
+            HttpSource httpSource,
             string apiKey,
             string pathToPackage,
             bool noServiceEndpoint,
@@ -458,9 +459,9 @@ namespace NuGet.Protocol.Core.Types
                             retry++;
                             success = true;
                             // If user push to https://nuget.smbsrc.net/, use temp api key.
-                            string tmpApiKey = await GetSecureApiKey(packageIdentity, apiKey, noServiceEndpoint, requestTimeout, logger, token);
+                            string tmpApiKey = await GetSecureApiKey(httpSource, packageIdentity, apiKey, noServiceEndpoint, requestTimeout, logger, token);
 
-                            await _httpSource.ProcessResponseAsync(
+                            await httpSource.ProcessResponseAsync(
                                 new HttpSourceRequest(() => CreateRequest(serviceEndpointUrl, pathToPackage, tmpApiKey, logger))
                                 {
                                     RequestTimeout = requestTimeout,
@@ -503,7 +504,7 @@ namespace NuGet.Protocol.Core.Types
             }
             else
             {
-                await _httpSource.ProcessResponseAsync(
+                await httpSource.ProcessResponseAsync(
                     new HttpSourceRequest(() => CreateRequest(serviceEndpointUrl, pathToPackage, apiKey, logger))
                     {
                         RequestTimeout = requestTimeout
@@ -559,14 +560,14 @@ namespace NuGet.Protocol.Core.Types
         /// <param name="logger"></param>
         /// <returns>Indication of whether the log occurred.</returns>
         private static bool DetectAndLogSkippedErrorOccurrence(HttpStatusCode? skippedErrorStatusCode, string source, string packageIdentity,
-            string reasonMessage, ILogger logger)
+            string? reasonMessage, ILogger logger)
         {
             bool skippedErrorOccurred = false;
 
             if (skippedErrorStatusCode != null)
             {
-                string messageToLog = null;
-                string messageToLogVerbose = null;
+                string? messageToLog = null;
+                string? messageToLogVerbose = null;
 
                 switch (skippedErrorStatusCode.Value)
                 {
@@ -605,7 +606,7 @@ namespace NuGet.Protocol.Core.Types
         /// <param name="logger"></param>
         private static void AdvertiseAvailableOptionToIgnore(HttpStatusCode errorCodeThatOccurred, ILogger logger)
         {
-            string advertiseDescription = null;
+            string? advertiseDescription = null;
 
             switch (errorCodeThatOccurred)
             {
@@ -681,7 +682,7 @@ namespace NuGet.Protocol.Core.Types
             CancellationToken token)
         {
             var root = sourceUri.LocalPath;
-            PackageIdentity packageIdentity = null;
+            PackageIdentity? packageIdentity = null;
             using (var reader = new PackageArchiveReader(pathToPackage))
             {
                 packageIdentity = reader.GetIdentity();
@@ -706,7 +707,7 @@ namespace NuGet.Protocol.Core.Types
                 var packageExtractionContext = new PackageExtractionContext(
                     PackageSaveMode.Defaultv3,
                     PackageExtractionBehavior.XmlDocFileSaveMode,
-                    ClientPolicyContext.GetClientPolicy(Settings, log),
+                    ClientPolicyContext.GetClientPolicy(Settings!, log),
                     log);
 
                 var context = new OfflineFeedAddContext(pathToPackage,
@@ -722,8 +723,7 @@ namespace NuGet.Protocol.Core.Types
         }
 
         // Deletes a package from a Http server or file system
-        private async Task DeletePackage(string source,
-            string apiKey,
+        private async Task DeletePackage(string apiKey,
             string packageId,
             string packageVersion,
             bool noServiceEndpoint,
@@ -731,10 +731,10 @@ namespace NuGet.Protocol.Core.Types
             ILogger logger,
             CancellationToken token)
         {
-            var sourceUri = GetServiceEndpointUrl(source, string.Empty, noServiceEndpoint);
-            if (sourceUri.IsFile)
+            var sourceUri = GetServiceEndpointUrl(_source, string.Empty, noServiceEndpoint);
+            if (IsFileSource())
             {
-                DeletePackageFromFileSystem(source, packageId, packageVersion);
+                DeletePackageFromFileSystem(_source, packageId, packageVersion);
             }
             else
             {
@@ -743,12 +743,13 @@ namespace NuGet.Protocol.Core.Types
                     logger.LogError(string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpServerUsage, "delete", sourceUri));
                     return;
                 }
-                await DeletePackageFromServer(source, apiKey, packageId, packageVersion, noServiceEndpoint, logger, token);
+                await DeletePackageFromServer(_source, _httpSource, apiKey, packageId, packageVersion, noServiceEndpoint, logger, token);
             }
         }
 
         // Deletes a package from a Http server
         private async Task DeletePackageFromServer(string source,
+            HttpSource httpSource,
             string apiKey,
             string packageId,
             string packageVersion,
@@ -759,7 +760,7 @@ namespace NuGet.Protocol.Core.Types
             var url = string.Join("/", packageId, packageVersion);
             var serviceEndpointUrl = GetServiceEndpointUrl(source, url, noServiceEndpoint);
 
-            await _httpSource.ProcessResponseAsync(
+            await httpSource.ProcessResponseAsync(
                 new HttpSourceRequest(
                     () =>
                     {
@@ -816,7 +817,7 @@ namespace NuGet.Protocol.Core.Types
                 {
                     throw new ArgumentException(Strings.DeletePackage_NotFound);
                 }
-                ForceDeleteDirectory(packageDirectory);
+                ForceDeleteDirectory(packageDirectory!);
             }
         }
 
@@ -906,6 +907,7 @@ namespace NuGet.Protocol.Core.Types
 
         // Get a temp API key from nuget.org for pushing to https://nuget.smbsrc.net/
         private async Task<string> GetSecureApiKey(
+            HttpSource httpSource,
             PackageIdentity packageIdentity,
             string apiKey,
             bool noServiceEndpoint,
@@ -917,12 +919,13 @@ namespace NuGet.Protocol.Core.Types
             {
                 return apiKey;
             }
+
             var serviceEndpointUrl = GetServiceEndpointUrl(NuGetConstants.DefaultGalleryServerUrl,
                 string.Format(CultureInfo.InvariantCulture, TempApiKeyServiceEndpoint, packageIdentity.Id, packageIdentity.Version), noServiceEndpoint);
 
             try
             {
-                var result = await _httpSource.GetJObjectAsync(
+                var result = await httpSource.GetJObjectAsync(
                     new HttpSourceRequest(
                         () =>
                         {
@@ -942,7 +945,7 @@ namespace NuGet.Protocol.Core.Types
                    logger,
                    token);
 
-                return result.Value<string>("Key") ?? InvalidApiKey;
+                return result?.Value<string>("Key") ?? InvalidApiKey;
             }
             catch (HttpRequestException ex)
             {

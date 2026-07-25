@@ -134,6 +134,11 @@ Aby uniemożliwić narzędziu NuGet przywracanie pakietów podczas kompilacji, o
         <target state="translated">Nie zapisano rozwiązania. Zapisz rozwiązanie zanim zaczniesz zarządzać pakietami NuGet.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Ask Copilot to fix NuGet package vulnerabilities</source>
+        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <note>Do not translate Copilot or NuGet</note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

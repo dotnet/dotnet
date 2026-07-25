@@ -142,6 +142,7 @@ namespace NuGet.Commands
                     ignoreFailedSources: true,
                     ignoreWarning: true,
                     fileCache: _fileCache,
+                    isGlobalPackagesFolder: true,
                     isFallbackFolderSource: false,
                     environmentVariableReader: environmentVariableReader);
             });
@@ -164,6 +165,7 @@ namespace NuGet.Commands
                         ignoreFailedSources: false,
                         ignoreWarning: false,
                         fileCache: _fileCache,
+                        isGlobalPackagesFolder: false,
                         isFallbackFolderSource: true,
                         environmentVariableReader: environmentVariableReader);
                 });
@@ -187,6 +189,7 @@ namespace NuGet.Commands
                     cacheContext.IgnoreFailedSources,
                     ignoreWarning: false,
                     fileCache: _fileCache,
+                    isGlobalPackagesFolder: false,
                     isFallbackFolderSource: false,
                     environmentVariableReader: environmentVariableReader));
 
