@@ -84,6 +84,22 @@
     <_GlobalPropertiesToRemoveForPublish Include="$(_GlobalPropertiesToRemoveForPublish)" />
   </ItemGroup>
 
+  <Target Name="_PublishInstallerOnlyFilesToDisk">
+    <Copy
+      SourceFiles="@(FilesToPublish)"
+      DestinationFiles="%(FilesToPublish.Destination)"
+      Condition="'%(FilesToPublish.InstallerOnly)' == 'true' and '%(FilesToPublish.Destination)' != ''"
+      OverwriteReadOnlyFiles="true"
+      SkipUnchangedFiles="true" />
+
+    <Copy
+      SourceFiles="@(FilesToPublish)"
+      DestinationFolder="$(OutputPath)%(FilesToPublish.TargetPath)%(FilesToPublish.Culture)"
+      Condition="'%(FilesToPublish.InstallerOnly)' == 'true' and '%(FilesToPublish.Destination)' == ''"
+      OverwriteReadOnlyFiles="true"
+      SkipUnchangedFiles="true" />
+  </Target>
+
   <Target Name="_GetProductBrandName">
     <PropertyGroup
       Condition="
