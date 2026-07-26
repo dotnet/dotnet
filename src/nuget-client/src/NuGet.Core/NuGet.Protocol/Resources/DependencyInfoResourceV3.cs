@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -24,7 +22,7 @@ namespace NuGet.Protocol
         private readonly HttpSource _client;
         private readonly RegistrationResourceV3 _regResource;
         private readonly SourceRepository _source;
-        private readonly Common.IEnvironmentVariableReader _environmentVariableReader;
+        private readonly Common.IEnvironmentVariableReader? _environmentVariableReader;
 
         /// <summary>
         /// Dependency info resource
@@ -36,7 +34,7 @@ namespace NuGet.Protocol
         {
         }
 
-        internal DependencyInfoResourceV3(HttpSource client, RegistrationResourceV3 regResource, SourceRepository source, Common.IEnvironmentVariableReader environmentVariableReader)
+        internal DependencyInfoResourceV3(HttpSource client, RegistrationResourceV3 regResource, SourceRepository source, Common.IEnvironmentVariableReader? environmentVariableReader)
         {
             if (client == null)
             {
@@ -69,18 +67,18 @@ namespace NuGet.Protocol
         /// Returns dependency info for the given package if it exists. If the package is not found null is
         /// returned.
         /// </returns>
-        public override async Task<SourcePackageDependencyInfo> ResolvePackage(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, Common.ILogger log, CancellationToken token)
+        public override async Task<SourcePackageDependencyInfo?> ResolvePackage(PackageIdentity package, NuGetFramework projectFramework, SourceCacheContext cacheContext, Common.ILogger log, CancellationToken token)
         {
             try
             {
-                SourcePackageDependencyInfo result = null;
+                SourcePackageDependencyInfo? result = null;
 
                 // Construct the registration index url
                 var uri = _regResource.GetUri(package.Id);
 
                 // Retrieve the registration blob
                 var singleVersion = new VersionRange(minVersion: package.Version, includeMinVersion: true, maxVersion: package.Version, includeMaxVersion: true);
-                RegistrationInfo regInfo = await ResolverMetadataClient.GetRegistrationInfo(_client, uri, package.Id, singleVersion, cacheContext, projectFramework, log, token, _environmentVariableReader);
+                RegistrationInfo? regInfo = await ResolverMetadataClient.GetRegistrationInfo(_client, uri, package.Id, singleVersion, cacheContext, projectFramework, log, token, _environmentVariableReader);
 
                 // regInfo is null if the package does not exist
                 if (regInfo != null)
@@ -117,7 +115,7 @@ namespace NuGet.Protocol
                 var uri = _regResource.GetUri(packageId);
 
                 // Retrieve the registration blob
-                RegistrationInfo regInfo = await ResolverMetadataClient.GetRegistrationInfo(_client, uri, packageId, VersionRange.All, cacheContext, projectFramework, log, token, _environmentVariableReader);
+                RegistrationInfo? regInfo = await ResolverMetadataClient.GetRegistrationInfo(_client, uri, packageId, VersionRange.All, cacheContext, projectFramework, log, token, _environmentVariableReader);
 
                 // regInfo is null if the package does not exist
                 if (regInfo != null)

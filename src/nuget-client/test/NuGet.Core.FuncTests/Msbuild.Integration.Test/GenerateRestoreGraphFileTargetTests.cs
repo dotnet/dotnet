@@ -66,5 +66,57 @@ namespace Msbuild.Integration.Test
                 regularDgSpec.Should().BeEquivalentTo(staticGraphDgSpec);
             }
         }
+
+        [PlatformFact(Platform.Windows)]
+        public async Task GenerateRestoreGraphFile_WithRestoreEnableAnalyzerAssets_WritesMetadataForBothStaticGraphAndStandard()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+                var net461 = NuGetFramework.Parse("net461");
+
+                var packageX = new SimpleTestPackageContext()
+                {
+                    Id = "x",
+                    Version = "1.0.0"
+                };
+                packageX.Files.Clear();
+                packageX.AddFile("lib/net461/a.dll");
+
+                var projectA = SimpleTestProjectContext.CreateLegacyPackageReference(
+                    "a",
+                    pathContext.SolutionRoot,
+                    net461);
+
+                projectA.AddPackageToAllFrameworks(packageX);
+                solution.Projects.Add(projectA);
+
+                solution.Create();
+
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    packageX);
+
+                var standardDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "standard.dgspec.json");
+                var staticGraphDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "staticGraph.dgspec.json");
+                var targetPath = projectA.ProjectPath;
+
+                // Act
+                // RestoreEnableAnalyzerAssets is a project-wide opt-in read from project restore metadata. It must
+                // be captured identically by the standard (task-based) and static graph restore evaluation paths.
+                _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:GenerateRestoreGraphFile /p:RestoreEnableAnalyzerAssets=true /p:RestoreGraphOutputPath=\"{standardDgSpecFile}\" {targetPath}", testOutputHelper: _testOutputHelper);
+                _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:GenerateRestoreGraphFile /p:RestoreEnableAnalyzerAssets=true /p:RestoreGraphOutputPath=\"{staticGraphDgSpecFile}\" /p:RestoreUseStaticGraphEvaluation=true {targetPath}", testOutputHelper: _testOutputHelper);
+
+                var regularDgSpec = File.ReadAllText(standardDgSpecFile);
+                var staticGraphDgSpec = File.ReadAllText(staticGraphDgSpecFile);
+
+                // Assert
+                // The property is only serialized when true, so its presence proves the opt-in reached restore metadata.
+                regularDgSpec.Should().Contain("restoreEnableAnalyzerAssets");
+                staticGraphDgSpec.Should().Contain("restoreEnableAnalyzerAssets");
+                regularDgSpec.Should().BeEquivalentTo(staticGraphDgSpec);
+            }
+        }
     }
 }

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Common;
 
@@ -14,11 +12,11 @@ namespace NuGet.Protocol.Core.Types
     public class SymbolPackageUpdateResourceV3 : INuGetResource
     {
 
-        private HttpSource _httpSource;
+        private HttpSource? _httpSource;
         private string _source;
 
         public SymbolPackageUpdateResourceV3(string source,
-            HttpSource httpSource)
+            HttpSource? httpSource)
         {
             _source = source;
             _httpSource = httpSource;

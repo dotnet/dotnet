@@ -134,6 +134,11 @@ Wenn Sie verhindern möchten, dass NuGet Pakete während des Builds wiederherste
         <target state="translated">Die Lösung wurde nicht gespeichert. Speichern Sie Ihre Lösung, bevor Sie NuGet-Pakete verwalten.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Ask Copilot to fix NuGet package vulnerabilities</source>
+        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <note>Do not translate Copilot or NuGet</note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -13,6 +13,7 @@ namespace NuGet.PackageManagement.Telemetry
         PMUI_ExternalLink,
         PMUI_PackageSourceMapping_Configure,
         VulnerabilityInfoBar_ManagePackages,
-        VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot
+        VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot,
+        ErrorList_FixVulnerabilitiesWithCopilot,
     }
 }

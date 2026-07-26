@@ -80,6 +80,8 @@ Copyright (c) .NET Foundation. All rights reserved.
                     AND '$(TargetFrameworkIdentifier)' == '.NETCoreApp'
                     AND $([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', '10.0'))">all</NuGetAuditMode>
     <NuGetAuditMode Condition=" '$(NuGetAuditMode)' == '' ">direct</NuGetAuditMode>
+    <!-- Analyzer assets restore defaults to off. An opt-in on the outer build or any target framework enables analyzer assets project-wide. -->
+    <RestoreEnableAnalyzerAssets Condition="'$(RestoreEnableAnalyzerAssets)' == '' AND '$(TargetFrameworks)' == ''">false</RestoreEnableAnalyzerAssets>
   </PropertyGroup>
 
   <!-- Package pruning is enabled for all projects targeting .NET 10 or greater, including multi-targeted projects. -->
@@ -974,6 +976,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <NETCoreSdkVersion>$(NETCoreSdkVersion)</NETCoreSdkVersion>
         <RestoreUseLegacyDependencyResolver>$(RestoreUseLegacyDependencyResolver)</RestoreUseLegacyDependencyResolver>
         <RestoreDoNotWriteDependencyGraphSpec>$(RestoreDoNotWriteDependencyGraphSpec)</RestoreDoNotWriteDependencyGraphSpec>
+        <RestoreEnableAnalyzerAssets>$(RestoreEnableAnalyzerAssets)</RestoreEnableAnalyzerAssets>
       </_RestoreGraphEntry>
     </ItemGroup>
 
@@ -1198,6 +1201,7 @@ Copyright (c) .NET Foundation. All rights reserved.
         <RestoreEnablePackagePruning>$(RestoreEnablePackagePruning)</RestoreEnablePackagePruning>
         <RestorePackagePruningDefault>$(RestorePackagePruningDefault)</RestorePackagePruningDefault>
         <NuGetAuditMode>$(NuGetAuditMode)</NuGetAuditMode>
+        <RestoreEnableAnalyzerAssets>$(RestoreEnableAnalyzerAssets)</RestoreEnableAnalyzerAssets>
       </_RestoreGraphEntry>
     </ItemGroup>
   </Target>
