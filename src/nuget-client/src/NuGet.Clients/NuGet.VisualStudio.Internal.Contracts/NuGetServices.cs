@@ -9,8 +9,6 @@ namespace NuGet.VisualStudio.Internal.Contracts
     public static class NuGetServices
     {
         // It is very important that these names and versions are kept the same as the ones elsewhere in the solution.
-        private const string SolutionServiceName = "Microsoft.VisualStudio.NuGet.SolutionService";
-        private const string SolutionServiceVersion = "1.0.0";
         private const string SolutionManagerServiceName = "Microsoft.VisualStudio.NuGet.SolutionManagerService";
         private const string SolutionManagerServiceVersion = "1.0.0";
         private const string SourceProviderServiceName = "Microsoft.VisualStudio.NuGet.SourceProviderService";
@@ -24,10 +22,6 @@ namespace NuGet.VisualStudio.Internal.Contracts
         private const string SearchServiceName = "Microsoft.VisualStudio.NuGet.PackageSearchService";
         private const string SearchServiceVersion = "1.0.0";
 
-        public static readonly ServiceRpcDescriptor SolutionService = new ServiceJsonRpcDescriptor(
-            new ServiceMoniker(SolutionServiceName, new Version(SolutionServiceVersion)),
-            ServiceJsonRpcDescriptor.Formatters.UTF8,
-            ServiceJsonRpcDescriptor.MessageDelimiters.HttpLikeHeaders);
         public static readonly ServiceRpcDescriptor SourceProviderService = new NuGetServiceMessagePackRpcDescriptor(
             new ServiceMoniker(SourceProviderServiceName, new Version(SourceProviderServiceVersion_1_0_1)));
         public static readonly ServiceRpcDescriptor SolutionManagerService = new NuGetServiceMessagePackRpcDescriptor(

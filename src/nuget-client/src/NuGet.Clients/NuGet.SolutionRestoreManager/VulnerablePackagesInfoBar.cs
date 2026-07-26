@@ -177,8 +177,10 @@ namespace NuGet.SolutionRestoreManager
                         return;
                     }
 
-                    await FixVulnerabilitiesService.Value.LaunchFixVulnerabilitiesAsync(CancellationToken.None);
-                }).PostOnFailure(nameof(VulnerablePackagesInfoBar));
+                    await FixVulnerabilitiesService.Value.LaunchFixVulnerabilitiesAsync(
+                        FixVulnerabilitiesSource.VulnerabilityInfoBar,
+                        CancellationToken.None);
+                }).PostOnFailure(nameof(VulnerablePackagesInfoBar), nameof(OnActionItemClicked));
             }
         }
 

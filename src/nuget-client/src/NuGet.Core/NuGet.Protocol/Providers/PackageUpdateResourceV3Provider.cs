@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.Threading;
@@ -20,11 +18,11 @@ namespace NuGet.Protocol
                   "PushCommandResourceV2Provider")
         { }
 
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(
             SourceRepository source,
             CancellationToken token)
         {
-            PackageUpdateResource packageUpdateResource = null;
+            PackageUpdateResource? packageUpdateResource = null;
 
             var serviceIndex = await source.GetResourceAsync<ServiceIndexResourceV3>(token);
 
@@ -32,16 +30,17 @@ namespace NuGet.Protocol
             {
                 var baseUrl = serviceIndex.GetServiceEntryUri(ServiceTypes.PackagePublish);
 
-                HttpSource httpSource = null;
+                HttpSource? httpSource = null;
                 var sourceUri = baseUrl?.AbsoluteUri;
                 if (!string.IsNullOrEmpty(sourceUri))
                 {
                     if (!(new Uri(sourceUri)).IsFile)
                     {
-                        var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token);
+                        var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token)
+                            ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(HttpSourceResource)}.");
                         httpSource = httpSourceResource.HttpSource;
                     }
-                    packageUpdateResource = new PackageUpdateResource(sourceUri, httpSource);
+                    packageUpdateResource = new PackageUpdateResource(sourceUri!, httpSource);
                 }
                 else
                 {
@@ -51,7 +50,7 @@ namespace NuGet.Protocol
                 }
             }
 
-            var result = new Tuple<bool, INuGetResource>(packageUpdateResource != null, packageUpdateResource);
+            var result = new Tuple<bool, INuGetResource?>(packageUpdateResource != null, packageUpdateResource);
             return result;
         }
     }

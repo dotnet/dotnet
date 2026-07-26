@@ -33,8 +33,8 @@ namespace NuGet.Protocol.Tests
             {
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => new RemotePackageArchiveDownloader(
-                        null,
-                        resource: null,
+                        null!,
+                        resource: null!,
                         packageIdentity: _packageIdentity,
                         cacheContext: sourceCacheContext,
                         logger: NullLogger.Instance));
@@ -50,9 +50,9 @@ namespace NuGet.Protocol.Tests
             {
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => new RemotePackageArchiveDownloader(
-                        null,
+                        null!,
                         Mock.Of<FindPackageByIdResource>(),
-                        packageIdentity: null,
+                        packageIdentity: null!,
                         cacheContext: sourceCacheContext,
                         logger: NullLogger.Instance));
 
@@ -65,10 +65,10 @@ namespace NuGet.Protocol.Tests
         {
             var exception = Assert.Throws<ArgumentNullException>(
                 () => new RemotePackageArchiveDownloader(
-                    null,
+                    null!,
                     Mock.Of<FindPackageByIdResource>(),
                     _packageIdentity,
-                    cacheContext: null,
+                    cacheContext: null!,
                     logger: NullLogger.Instance));
 
             Assert.Equal("cacheContext", exception.ParamName);
@@ -81,11 +81,11 @@ namespace NuGet.Protocol.Tests
             {
                 var exception = Assert.Throws<ArgumentNullException>(
                     () => new RemotePackageArchiveDownloader(
-                        null,
+                        null!,
                         Mock.Of<FindPackageByIdResource>(),
                         _packageIdentity,
                         sourceCacheContext,
-                        logger: null));
+                        logger: null!));
 
                 Assert.Equal("logger", exception.ParamName);
             }
@@ -456,7 +456,7 @@ namespace NuGet.Protocol.Tests
             using (var test = await RemotePackageArchiveDownloaderTest.CreateAsync())
             {
                 var exception = Assert.Throws<ArgumentNullException>(
-                    () => test.Downloader.SetExceptionHandler(handleExceptionAsync: null));
+                    () => test.Downloader.SetExceptionHandler(handleExceptionAsync: null!));
 
                 Assert.Equal("handleExceptionAsync", exception.ParamName);
             }

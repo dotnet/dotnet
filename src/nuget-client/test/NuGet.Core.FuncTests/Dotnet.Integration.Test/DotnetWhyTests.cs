@@ -93,13 +93,8 @@ namespace Dotnet.Integration.Test
 
             // Run "why" command.
             var result = _testFixture.RunDotnetExpectSuccess(fbaDir, "nuget why app.cs PackageB", testOutputHelper: _testOutputHelper);
-#if SDK_CURRENT
-            Assert.Contains("packageA (v1.0.0)", result.AllOutput);
-            Assert.Contains("packageB (v1.0.1)", result.AllOutput);
-#else
             result.AllOutput.Should().Contain("packageA@1.0.0 (>= 1.0.0)");
             result.AllOutput.Should().Contain("packageB@1.0.1 (>= 1.0.1)");
-#endif
         }
 
         [Fact]
@@ -209,11 +204,7 @@ namespace Dotnet.Integration.Test
 
             // Assert
             Assert.Equal(ExitCodes.InvalidArguments, result.ExitCode);
-#if SDK_CURRENT
-            Assert.Contains($"Required argument missing for command: 'why'.", result.Errors);
-#else
             Assert.Contains("Required argument 'PACKAGE' missing for command: 'why'", result.Errors);
-#endif
         }
 
         [Fact]
@@ -230,11 +221,7 @@ namespace Dotnet.Integration.Test
 
             // Assert
             Assert.Equal(ExitCodes.InvalidArguments, result.ExitCode);
-#if SDK_CURRENT
-            Assert.Contains($"Required argument missing for command: 'why'.", result.Errors);
-#else
             Assert.Contains($"Required argument 'PACKAGE' missing for command: 'why'.", result.Errors);
-#endif
         }
 
         [Fact]
@@ -351,20 +338,6 @@ namespace Dotnet.Integration.Test
 
             // Assert
             // project references should not have version numbers
-#if SDK_CURRENT
-            string[] expected =
-                [
-                "Project 'ProjectC' has the following dependency graph(s) for 'PackageX':",
-                "",
-                $"  [{TestConstants.ProjectTargetFramework}]                                                                     ",
-                "  └── ProjectB                                                                  ",
-                "      └── ProjectA                                                              ",
-                "          └── PackageX (v1.0.0)                                                 ",
-                "",
-                "",
-                ""
-                ];
-#else
             string[] expected =
                 [
                 "Project 'ProjectC' has the following dependency graph(s) for 'PackageX':",
@@ -377,7 +350,6 @@ namespace Dotnet.Integration.Test
                 "",
                 ""
                 ];
-#endif
             StripAnsiCodes(result.AllOutput).Should().Be(string.Join(Environment.NewLine, expected));
         }
 

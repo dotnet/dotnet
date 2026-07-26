@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
@@ -13,7 +11,7 @@ namespace NuGet.Protocol
     {
         private readonly string _uriTemplate;
 
-        public ReportAbuseResourceV3(string uriTemplate)
+        public ReportAbuseResourceV3(string? uriTemplate)
         {
             if (string.IsNullOrEmpty(uriTemplate) || !IsValidUriTemplate(uriTemplate))
             {
@@ -22,7 +20,7 @@ namespace NuGet.Protocol
             }
             else
             {
-                _uriTemplate = uriTemplate;
+                _uriTemplate = uriTemplate!;
             }
         }
 
@@ -48,10 +46,9 @@ namespace NuGet.Protocol
             return new Uri(uriString);
         }
 
-        private static bool IsValidUriTemplate(string uriTemplate)
+        private static bool IsValidUriTemplate(string? uriTemplate)
         {
-            Uri uri;
-            var isValidUri = Uri.TryCreate(uriTemplate, UriKind.Absolute, out uri);
+            var isValidUri = Uri.TryCreate(uriTemplate, UriKind.Absolute, out _);
             return isValidUri;
         }
     }
