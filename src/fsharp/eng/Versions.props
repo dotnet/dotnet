@@ -16,7 +16,7 @@
     <PreReleaseVersionLabel>servicing$(FSharpPreReleaseIteration)</PreReleaseVersionLabel>
     <FSMajorVersion>10</FSMajorVersion>
     <FSMinorVersion>0</FSMinorVersion>
-    <FSBuildVersion>303</FSBuildVersion>
+    <FSBuildVersion>304</FSBuildVersion>
     <FSRevisionVersion>0</FSRevisionVersion>    
 
 
