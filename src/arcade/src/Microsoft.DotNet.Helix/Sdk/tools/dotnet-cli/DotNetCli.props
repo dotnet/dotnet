@@ -18,11 +18,15 @@
   <!--
     Select DotNetCliRuntime based on TargetQueue if it isn't set
     TODO: Use the Helix Queue Info api to determine this information
+    Note: 'armarch' is treated as an alias for 'arm64' (aarch64). Some queues (e.g. dnceng's
+    'ubuntu.2204.armarch') use that suffix; without this the queue name matches neither 'arm64'
+    nor 'arm32' and falls through to the x64 default, sending an x64 .NET CLI to an arm64 host
+    (results in 'dotnet: exec format error'). See https://github.com/dotnet/dnceng/issues/5018.
   -->
   <Choose>
     <When Condition=" '$(DotNetCliRuntime)' != '' ">
     </When>
-    <When Condition="$(HelixTargetQueue.ToLowerInvariant().Contains('windows')) AND $(HelixTargetQueue.ToLowerInvariant().Contains('arm64'))">
+    <When Condition="$(HelixTargetQueue.ToLowerInvariant().Contains('windows')) AND ($(HelixTargetQueue.ToLowerInvariant().Contains('arm64')) OR $(HelixTargetQueue.ToLowerInvariant().Contains('armarch')))">
       <PropertyGroup>
         <DotNetCliRuntime>win-arm64</DotNetCliRuntime>
       </PropertyGroup>
@@ -37,7 +41,7 @@
         <DotNetCliRuntime>win-x64</DotNetCliRuntime>
       </PropertyGroup>
     </When>
-    <When Condition="$(HelixTargetQueue.ToLowerInvariant().Contains('osx')) AND $(HelixTargetQueue.ToLowerInvariant().Contains('arm64'))">
+    <When Condition="$(HelixTargetQueue.ToLowerInvariant().Contains('osx')) AND ($(HelixTargetQueue.ToLowerInvariant().Contains('arm64')) OR $(HelixTargetQueue.ToLowerInvariant().Contains('armarch')))">
       <PropertyGroup>
         <DotNetCliRuntime>osx-arm64</DotNetCliRuntime>
       </PropertyGroup>
@@ -47,7 +51,7 @@
         <DotNetCliRuntime>osx-x64</DotNetCliRuntime>
       </PropertyGroup>
     </When>
-    <When Condition="$(HelixTargetQueue.ToLowerInvariant().Contains('alpine')) AND $(HelixTargetQueue.ToLowerInvariant().Contains('arm64'))">
+    <When Condition="$(HelixTargetQueue.ToLowerInvariant().Contains('alpine')) AND ($(HelixTargetQueue.ToLowerInvariant().Contains('arm64')) OR $(HelixTargetQueue.ToLowerInvariant().Contains('armarch')))">
       <PropertyGroup>
         <DotNetCliRuntime>linux-musl-arm64</DotNetCliRuntime>
       </PropertyGroup>
@@ -67,7 +71,7 @@
         <DotNetCliRuntime>linux-arm</DotNetCliRuntime>
       </PropertyGroup>
     </When>
-    <When Condition="$(HelixTargetQueue.ToLowerInvariant().Contains('arm64'))">
+    <When Condition="$(HelixTargetQueue.ToLowerInvariant().Contains('arm64')) OR $(HelixTargetQueue.ToLowerInvariant().Contains('armarch'))">
       <PropertyGroup>
         <DotNetCliRuntime>linux-arm64</DotNetCliRuntime>
       </PropertyGroup>

@@ -6,8 +6,8 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26372.4</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26372.4</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26373.4</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26373.4</MicrosoftDotNetHelixSdkPackageVersion>
     <!-- dotnet-arcade-services dependencies -->
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26359.1</MicrosoftDotNetDarcLibPackageVersion>
     <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.26359.1</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
