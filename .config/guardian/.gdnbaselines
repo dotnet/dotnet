@@ -820,6 +820,110 @@
       "createdDate": "2026-05-08 20:56:44Z",
       "expirationDate": "2026-10-26 01:28:18Z",
       "justification": "This error is baselined with an expiration date of 180 days from 2026-05-09 01:28:18Z"
+    },
+    "cc990fbd632d53699419218fe0a2104d635756417a6984d39eb0c1ecd85b4172": {
+      "signature": "cc990fbd632d53699419218fe0a2104d635756417a6984d39eb0c1ecd85b4172",
+      "target": "Microsoft.EsrpClient.2.0.14/tools/Win10.x86/psfsip.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2026-07-24 17:38:40Z",
+      "expirationDate": "2027-01-20 17:38:40Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-07-24 17:38:40Z"
+    },
+    "3783c42653ff4b5d4b88a2af752b7d3dc534067e123dd61d676995ad74fce616": {
+      "signature": "3783c42653ff4b5d4b88a2af752b7d3dc534067e123dd61d676995ad74fce616",
+      "target": "Microsoft.EsrpClient.2.0.14/tools/Win10.x86/pysip.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 17:38:40Z",
+      "expirationDate": "2027-01-20 17:38:40Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-07-24 17:38:40Z"
+    },
+    "c41f29e684879eaeb1c030db42cba27d8b96bd438356023371440018e3bd0eae": {
+      "signature": "c41f29e684879eaeb1c030db42cba27d8b96bd438356023371440018e3bd0eae",
+      "target": "Microsoft.EsrpClient.2.0.14/tools/Win10.x86/sftsip.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2026-07-24 17:38:40Z",
+      "expirationDate": "2027-01-20 17:38:40Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-07-24 17:38:40Z"
+    },
+    "02313aff47a324e5a626b62e0b734c18c7971b04d114c375eedf583db8c9281e": {
+      "signature": "02313aff47a324e5a626b62e0b734c18c7971b04d114c375eedf583db8c9281e",
+      "target": "Microsoft.EsrpClient.2.0.14/tools/Win10.x86/wshext.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2026-07-24 17:38:40Z",
+      "expirationDate": "2027-01-20 17:38:40Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-07-24 17:38:40Z"
+    },
+    "ff9080c772d660abef218dd7eed059e2b5a0151aac34ba1aa13d49a49b546854": {
+      "signature": "ff9080c772d660abef218dd7eed059e2b5a0151aac34ba1aa13d49a49b546854",
+      "target": "Microsoft.EsrpClient.2.0.14/tools/Win8.x86/psfsip.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2026-07-24 17:38:40Z",
+      "expirationDate": "2027-01-20 17:38:40Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-07-24 17:38:40Z"
+    },
+    "e42262f79e364830993c0ce561da0f874e8c069b99e47b5e8382e94230edcbe5": {
+      "signature": "e42262f79e364830993c0ce561da0f874e8c069b99e47b5e8382e94230edcbe5",
+      "target": "Microsoft.EsrpClient.2.0.14/tools/Win8.x86/pysip.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2008",
+      "createdDate": "2026-07-24 17:38:40Z",
+      "expirationDate": "2027-01-20 17:38:40Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-07-24 17:38:40Z"
+    },
+    "0b07ba8f066337e5a37c61a152d67f748d929652d3d1ec60b98d1ae8049cd4ef": {
+      "signature": "0b07ba8f066337e5a37c61a152d67f748d929652d3d1ec60b98d1ae8049cd4ef",
+      "target": "Microsoft.EsrpClient.2.0.14/tools/Win8.x86/sftsip.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2026-07-24 17:38:40Z",
+      "expirationDate": "2027-01-20 17:38:40Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-07-24 17:38:40Z"
+    },
+    "98670529f2136e2a3fb47e4578c54573f0182ccca61b515bfc0f7ec667d65067": {
+      "signature": "98670529f2136e2a3fb47e4578c54573f0182ccca61b515bfc0f7ec667d65067",
+      "target": "Microsoft.EsrpClient.2.0.14/tools/Win8.x86/wshext.dll",
+      "uriBaseId": "file:///D:/a/_work/1/a/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2010",
+      "createdDate": "2026-07-24 17:38:40Z",
+      "expirationDate": "2027-01-20 17:38:40Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2026-07-24 17:38:40Z"
     }
   }
 }
