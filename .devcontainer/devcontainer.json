@@ -24,6 +24,20 @@
         "OPENSSL_ENABLE_SHA1_SIGNATURES":"1",
     },
     "onCreateCommand": ".devcontainer/init.sh"
+
+    {
+    "name": "my-project-devcontainer",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",  // Any generic, debian-based image.
+    "features": {
+        "ghcr.io/devcontainers/features/go:1": {
+            "version": "1.18"
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker:1": {
+            "version": "latest",
+            "moby": true
+        }
+    }
+}
 }
 ##El uso de cualquier servicio en línea, a los cuales se puede acceder a través del SOFTWARE, puede estar sujeto a los términos de uso respectivos relacionados con dichos servicios. En caso de que este SOFTWARE contenga documentación proporcionada solo en forma electrónica, usted no puede imprimir una copia de dicha documentación electrónica y registrarla propiedad .
 MARCAS REGISTRADAS: este EULA no le otorga ningún derecho relacionado con las marcas registradas o marcas de servicio de
