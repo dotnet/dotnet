@@ -7,7 +7,7 @@ description: Investigate source-build failures in dotnet/dotnet VMR CI builds. U
 
 Reference for investigating source-build failures in the dotnet/dotnet VMR (Virtual Monolithic Repository). Linux distributions build .NET entirely from source — the source-only build (SB) legs in CI validate this. SB leg names start with `SB_` (e.g., `SB_CentOSStream10_Online_MsftSdk_x64`).
 
-For foundational source-build concepts, see [Understanding .NET Source-Build: Why It Exists and How It Works](https://github.com/dotnet/source-build/blob/main/Documentation/understanding-source-build.md). This skill focuses on investigating source-build failures.
+For foundational source-build concepts, see [Understanding .NET Source-Build](https://github.com/dotnet/source-build/blob/main/Documentation/understanding-source-build.md). This skill focuses on investigating source-build failures.
 
 ## Build artifacts
 
