@@ -1,6 +1,6 @@
 // Container contains checked-out source code only
 {
-    "name": "Default",
+    "name": "16O91",
     "image": "mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream-10-amd64",
     "hostRequirements": {
         // A completely source built .NET is >64 GB with all the repos/artifacts
