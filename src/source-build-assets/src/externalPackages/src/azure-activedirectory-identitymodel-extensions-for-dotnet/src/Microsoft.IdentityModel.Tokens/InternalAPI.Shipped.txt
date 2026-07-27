@@ -1,3 +1,4 @@
+~Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.MlDsaSecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey webKey, bool usePrivateKey) -> void
 ~virtual Microsoft.IdentityModel.Tokens.IssuerValidatorAsync.Invoke(string issuer, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Threading.Tasks.ValueTask<string>
 const Microsoft.IdentityModel.Telemetry.TelemetryConstants.AlgorithmTag = "Algorithm" -> string
 const Microsoft.IdentityModel.Telemetry.TelemetryConstants.BlockingTypeTag = "Blocking" -> string
@@ -235,6 +236,11 @@ const Microsoft.IdentityModel.Tokens.LogMessages.IDX10717 = "IDX10717: '{0} + {1
 const Microsoft.IdentityModel.Tokens.LogMessages.IDX10718 = "IDX10718: AlgorithmToValidate is not supported: '{0}'. Algorithm '{1}'." -> string
 const Microsoft.IdentityModel.Tokens.LogMessages.IDX10719 = "IDX10719: SignatureSize (in bytes) was expected to be '{0}', was '{1}'." -> string
 const Microsoft.IdentityModel.Tokens.LogMessages.IDX10720 = "IDX10720: Unable to create KeyedHashAlgorithm for algorithm '{0}', the key size must be greater than: '{1}' bits, key has '{2}' bits." -> string
+const Microsoft.IdentityModel.Tokens.LogMessages.IDX10721 = "IDX10721: Unable to create a key from the AKP JsonWebKey (alg: '{0}'). The required parameter '{1}' is missing or empty." -> string
+const Microsoft.IdentityModel.Tokens.LogMessages.IDX10722 = "IDX10722: The AKP JsonWebKey (alg: '{0}') has inconsistent key material. The 'pub' parameter does not match the public key derived from 'priv'." -> string
+const Microsoft.IdentityModel.Tokens.LogMessages.IDX10723 = "IDX10723: Unable to extract the private key from the X.509 certificate for algorithm '{0}' (Key: '{1}'). Private key extraction may not be supported on this platform." -> string
+const Microsoft.IdentityModel.Tokens.LogMessages.IDX10724 = "IDX10724: Unable to compute a JWK thumbprint, public key extraction from the X.509 certificate is not supported on this platform (Key: '{0}')." -> string
+const Microsoft.IdentityModel.Tokens.LogMessages.IDX10725 = "IDX10725: Unable to create a SignatureProvider for algorithm '{0}' (Key: '{1}'). The X.509 certificate key could not be extracted. This may indicate the platform does not support the certificate's key type." -> string
 const Microsoft.IdentityModel.Tokens.LogMessages.IDX10805 = "IDX10805: Error deserializing json: '{0}' into '{1}'." -> string
 const Microsoft.IdentityModel.Tokens.LogMessages.IDX10806 = "IDX10806: Deserializing json: '{0}' into '{1}'." -> string
 const Microsoft.IdentityModel.Tokens.LogMessages.IDX10808 = "IDX10808: The 'use' parameter of a JsonWebKey: '{0}' was expected to be 'sig' or empty, but was '{1}'." -> string
@@ -267,6 +273,7 @@ const Microsoft.IdentityModel.Tokens.TokenUtilities.JsonArray = "JSON_ARRAY" -> 
 const Microsoft.IdentityModel.Tokens.TokenUtilities.JsonNull = "JSON_NULL" -> string
 const Microsoft.IdentityModel.Tokens.ValidationParameters.DefaultAuthenticationType = "AuthenticationTypes.Federation" -> string
 const Microsoft.IdentityModel.Tokens.ValidationParameters.DefaultMaximumTokenSizeInBytes = 256000 -> int
+internal static Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.GetAlgorithmName(System.Security.Cryptography.MLDsaAlgorithm algorithm) -> string
 Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.DecryptToken(Microsoft.IdentityModel.JsonWebTokens.JsonWebToken jwtToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.BaseConfiguration configuration, Microsoft.IdentityModel.Tokens.CallContext callContext) -> Microsoft.IdentityModel.Tokens.TokenDecryptionResult
 Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenAsync(Microsoft.IdentityModel.Tokens.SecurityToken token, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken? cancellationToken) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.TokenValidationResult>
 Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.CallContext callContext, System.Threading.CancellationToken? cancellationToken) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.TokenValidationResult>
@@ -810,6 +817,8 @@ Microsoft.IdentityModel.Tokens.ValidationParameters.ValidTypes.set -> void
 Microsoft.IdentityModel.Tokens.ValidatorUtilities
 Microsoft.IdentityModel.Tokens.VerifyDelegate
 Microsoft.IdentityModel.Tokens.VerifyUsingOffsetDelegate
+Microsoft.IdentityModel.Tokens.X509SecurityKey.MlDsaPrivateKey.get -> System.Security.Cryptography.MLDsa
+Microsoft.IdentityModel.Tokens.X509SecurityKey.MlDsaPublicKey.get -> System.Security.Cryptography.MLDsa
 Microsoft.IdentityModel.Tokens.X509SecurityKey.X509SecurityKey(Microsoft.IdentityModel.Tokens.JsonWebKey webKey) -> void
 override abstract Microsoft.IdentityModel.Tokens.SafeBCryptHandle.ReleaseHandle() -> bool
 override Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.CreateClaimsIdentityInternal(Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.ValidationParameters validationParameters, string issuer) -> System.Security.Claims.ClaimsIdentity
@@ -988,6 +997,8 @@ static Microsoft.IdentityModel.Tokens.JsonWebKeyParameterUtf8Bytes.X5tS256.get -
 static Microsoft.IdentityModel.Tokens.JsonWebKeyParameterUtf8Bytes.X5u.get -> System.ReadOnlySpan<byte>
 static Microsoft.IdentityModel.Tokens.JsonWebKeyParameterUtf8Bytes.Y.get -> System.ReadOnlySpan<byte>
 static Microsoft.IdentityModel.Tokens.MessageDetail.NullParameter(string parameterName) -> Microsoft.IdentityModel.Tokens.MessageDetail
+static Microsoft.IdentityModel.Tokens.MlDsaAdapter.CreateMlDsa(Microsoft.IdentityModel.Tokens.JsonWebKey jsonWebKey, bool usePrivateKey) -> System.Security.Cryptography.MLDsa
+static Microsoft.IdentityModel.Tokens.MlDsaAdapter.GetMLDsaAlgorithm(string algorithm) -> System.Security.Cryptography.MLDsaAlgorithm
 static Microsoft.IdentityModel.Tokens.SignatureValidationError.NullParameter(string parameterName, System.Diagnostics.StackFrame stackFrame) -> Microsoft.IdentityModel.Tokens.SignatureValidationError
 static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.GetDigestFromSignatureAlgorithm(string algorithm) -> string
 static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.GetHashAlgorithmName(string algorithm) -> System.Security.Cryptography.HashAlgorithmName
@@ -997,10 +1008,12 @@ static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsAesGcm(string algori
 static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsSupportedAlgorithm(string algorithm, Microsoft.IdentityModel.Tokens.SecurityKey key) -> bool
 static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsSupportedEncryptionAlgorithm(string algorithm, Microsoft.IdentityModel.Tokens.SecurityKey key) -> bool
 static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsSupportedHashAlgorithm(string algorithm) -> bool
+static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsSupportedMlDsaAlgorithm(string algorithm) -> bool
 static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsSupportedRsaAlgorithm(string algorithm, Microsoft.IdentityModel.Tokens.SecurityKey key) -> bool
 static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsSupportedRsaKeyWrap(string algorithm, Microsoft.IdentityModel.Tokens.SecurityKey key) -> bool
 static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsSupportedSymmetricAlgorithm(string algorithm) -> bool
 static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.IsSupportedSymmetricKeyWrap(string algorithm, Microsoft.IdentityModel.Tokens.SecurityKey key) -> bool
+static Microsoft.IdentityModel.Tokens.SupportedAlgorithms.TryGetHashAlgorithmName(string algorithm, out System.Security.Cryptography.HashAlgorithmName hashAlgorithmName) -> bool
 static Microsoft.IdentityModel.Tokens.TokenReplayValidationError.NullParameter(string parameterName, System.Diagnostics.StackFrame stackFrame) -> Microsoft.IdentityModel.Tokens.TokenReplayValidationError
 static Microsoft.IdentityModel.Tokens.TokenTypeValidationError.NullParameter(string parameterName, System.Diagnostics.StackFrame stackFrame) -> Microsoft.IdentityModel.Tokens.TokenTypeValidationError
 static Microsoft.IdentityModel.Tokens.TokenUtilities.CreateDictionaryFromClaims(System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims, Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor, bool audienceSet, bool issuerSet) -> System.Collections.Generic.Dictionary<string, object>

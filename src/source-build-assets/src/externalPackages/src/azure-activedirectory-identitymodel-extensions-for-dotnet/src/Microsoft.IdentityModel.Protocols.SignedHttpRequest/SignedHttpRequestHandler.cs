@@ -829,7 +829,10 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
             pClaimValue = pClaimValue.Trim('/');
             var expectedPClaimValue = httpRequestUri.AbsolutePath.Trim('/');
 
-            if (!string.Equals(expectedPClaimValue, pClaimValue, StringComparison.OrdinalIgnoreCase))
+            // URI path components are case-sensitive per RFC 3986 section 3.3. On the 8.x line this stricter comparison is opt-in:
+            // it is case-insensitive (OrdinalIgnoreCase) by default and becomes ordinal (case-sensitive) only when the AppContext switch is enabled.
+            var comparison = AppContextSwitches.UseCaseSensitivePClaimComparison ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+            if (!string.Equals(expectedPClaimValue, pClaimValue, comparison))
                 throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidPClaimException(LogHelper.FormatInvariant(LogMessages.IDX23011, LogHelper.MarkAsNonPII(SignedHttpRequestClaimTypes.P), expectedPClaimValue, pClaimValue)));
         }
 

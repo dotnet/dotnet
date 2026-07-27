@@ -2,7 +2,7 @@
 <Project>
 <!-- MicrosoftIdentityModelVersion  -->
   <PropertyGroup>
-    <MicrosoftIdentityModelCurrentVersion>8.18.1</MicrosoftIdentityModelCurrentVersion>
+    <MicrosoftIdentityModelCurrentVersion>8.19.1</MicrosoftIdentityModelCurrentVersion>
 
     <PreviewVersionSuffix Condition="'$(PreviewVersionSuffix)' == '' and '$(BuildingInsideVisualStudio)' != 'true'">preview-$([System.DateTime]::Now.AddYears(-2019).Year)$([System.DateTime]::Now.ToString("MMddHHmmss"))</PreviewVersionSuffix>
     <!--VS re-evaluates the variables, so having seconds or minutes creates an infinite loop of package updates-->
