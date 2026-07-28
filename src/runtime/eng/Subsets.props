@@ -153,7 +153,7 @@
     <DefaultHostSubsets Condition="'$(RuntimeFlavor)' != '$(PrimaryRuntimeFlavor)' or '$(TargetsMobile)' == 'true'"></DefaultHostSubsets>
     <DefaultHostSubsets Condition="'$(RuntimeFlavor)' != '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'">host.native</DefaultHostSubsets>
     <!-- When we're building all runtime packs, make sure that we build the correct host components to ship. -->
-    <DefaultHostSubsets Condition="'$(DotNetBuildAllRuntimePacks)' == 'true' and '$(TargetsLinuxBionic)' == 'true' and '$(MonoSupported)' == 'true'">host.native+host.pkg</DefaultHostSubsets>
+    <DefaultHostSubsets Condition="'$(DotNetBuildAllRuntimePacks)' == 'true' and '$(TargetsLinuxBionic)' == 'true'">host.native+host.pkg</DefaultHostSubsets>
 
     <DefaultPacksSubsets>packs.product</DefaultPacksSubsets>
     <DefaultPacksSubsets Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(DefaultPacksSubsets)+packs.installers</DefaultPacksSubsets>
