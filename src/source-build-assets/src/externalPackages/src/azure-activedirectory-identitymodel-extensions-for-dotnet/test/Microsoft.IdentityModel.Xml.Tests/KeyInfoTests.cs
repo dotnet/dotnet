@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.TestUtils;
+using Microsoft.IdentityModel.Tokens;
 using Xunit;
 
 namespace Microsoft.IdentityModel.Xml.Tests
@@ -76,9 +78,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
             Assert.True(inCollection);
         }
 
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
-
-        [Theory, MemberData(nameof(KeyInfoDataComparisonData))]
+        [Theory, MemberData(nameof(KeyInfoDataComparisonData), DisableDiscoveryEnumeration = true)]
         public void KeyInfo_HashCodeTests(KeyInfoComparisonTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.${nameof(KeyInfo_HashCodeTests)}", theoryData);
@@ -97,8 +97,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-
-        [Theory, MemberData(nameof(KeyInfoDataComparisonData))]
+        [Theory, MemberData(nameof(KeyInfoDataComparisonData), DisableDiscoveryEnumeration = true)]
         public void KeyInfo_EqualsTests(KeyInfoComparisonTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.{nameof(KeyInfo_EqualsTests)}", theoryData);
@@ -229,8 +228,123 @@ namespace Microsoft.IdentityModel.Xml.Tests
             }
         }
 
+        [Theory, MemberData(nameof(KeyInfoMatchesTheoryData), DisableDiscoveryEnumeration = true)]
+        public void KeyInfoMatchesKey(KeyInfoTheoryData theoryData)
+        {
+            var context = TestUtilities.WriteHeader($"{this}.{nameof(KeyInfoMatchesKey)}", theoryData);
+            try
+            {
+                bool matches = theoryData.KeyInfo.MatchesKey(theoryData.SecurityKey);
+                if (matches != theoryData.MatchesKey)
+                    context.AddDiff($"KeyInfo.MatchesKey failed, Expected: '{theoryData.MatchesKey}', Actual: '{matches}', SecurityKey: '{theoryData.SecurityKey}', KeyInfo: '{theoryData.KeyInfo}'");
 
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant
+                theoryData.ExpectedException.ProcessNoException(context);
+            }
+            catch (Exception ex)
+            {
+                theoryData.ExpectedException.ProcessException(ex, context);
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<KeyInfoTheoryData> KeyInfoMatchesTheoryData
+        {
+            get
+            {
+                X509Certificate2 x509CertificateWithSki = CertificateHelper.LoadX509Certificate(KeyingMaterial.SelfSignedWithSKIExtension_Public);
+                X509ExtensionCollection extensions = x509CertificateWithSki.Extensions ?? throw new NotSupportedException("Extensions are null");
+                X509SubjectKeyIdentifierExtension skiExtension = extensions["2.5.29.14"] as X509SubjectKeyIdentifierExtension;
+                if (skiExtension == null)
+                    throw new NotSupportedException("X509SubjectKeyIdentifierExtension is null");
+
+                string ski = Convert.ToBase64String(skiExtension.RawData, 2, skiExtension.RawData.Length - 2);
+
+                TheoryData<KeyInfoTheoryData> theoryData = new TheoryData<KeyInfoTheoryData>();
+
+                theoryData.Add(new KeyInfoTheoryData("X509CertificateWithSKIExtension_UsingExtensibility")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new CustomKeyInfo(ski),
+                    SecurityKey = new X509SecurityKey(x509CertificateWithSki),
+                    MatchesKey = true,
+                });
+
+                theoryData.Add(new KeyInfoTheoryData("X509CertificateWithoutSKIExtension_UsingExtensibility_NoMatch")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new CustomKeyInfo(ski),
+                    SecurityKey = new X509SecurityKey(KeyingMaterial.X509Certificate2),
+                    MatchesKey = false,
+                });
+
+                theoryData.Add(new KeyInfoTheoryData("X509CertificateWithoutSKIExtension_UsingExtensibility")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new CustomKeyInfo(KeyingMaterial.X509Certificate2),
+                    SecurityKey = new X509SecurityKey(KeyingMaterial.X509Certificate2),
+                    MatchesKey = true,
+                });
+
+                theoryData.Add(new KeyInfoTheoryData("X509CertificateWithSKIExtension")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new KeyInfo(x509CertificateWithSki),
+                    SecurityKey = new X509SecurityKey(x509CertificateWithSki),
+                    MatchesKey = true,
+                });
+
+                theoryData.Add(new KeyInfoTheoryData("X509CertificateWithSKIExtension_NoMatch")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new KeyInfo(KeyingMaterial.RsaSecurityKey1),
+                    SecurityKey = new X509SecurityKey(x509CertificateWithSki),
+                    MatchesKey = false,
+                });
+
+                theoryData.Add(new KeyInfoTheoryData("X509CertificateWithoutSKIExtension")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new KeyInfo(KeyingMaterial.X509Certificate2),
+                    SecurityKey = new X509SecurityKey(KeyingMaterial.X509Certificate2),
+                    MatchesKey = true,
+                });
+
+                theoryData.Add(new KeyInfoTheoryData("RSASecurityKey")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new KeyInfo(KeyingMaterial.RsaSecurityKey1),
+                    SecurityKey = KeyingMaterial.RsaSecurityKey1,
+                    MatchesKey = true,
+                });
+
+                theoryData.Add(new KeyInfoTheoryData("JsonWebKey_X509Cert")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new KeyInfo(KeyingMaterial.DefaultCert_2048_Public),
+                    SecurityKey = KeyingMaterial.JsonWebKeyX509_2048_Public,
+                    MatchesKey = true,
+                });
+
+                theoryData.Add(new KeyInfoTheoryData("JsonWebKey_RsaSecurityKey")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new KeyInfo(KeyingMaterial.RsaSecurityKey_2048_Public),
+                    SecurityKey = KeyingMaterial.JsonWebKeyRsa_2048_Public,
+                    MatchesKey = true,
+                });
+
+                theoryData.Add(new KeyInfoTheoryData("NullRSAKeyValue")
+                {
+                    ExpectedException = ExpectedException.NoExceptionExpected,
+                    KeyInfo = new KeyInfo(), // This will have null RSAKeyValue
+                    SecurityKey = KeyingMaterial.RsaSecurityKey_2048_Public,
+                    MatchesKey = false,
+                });
+
+                return theoryData;
+            }
+        }
     }
 
     public class KeyInfoComparisonTheoryData : TheoryDataBase
@@ -246,6 +360,10 @@ namespace Microsoft.IdentityModel.Xml.Tests
 
     public class KeyInfoTheoryData : TheoryDataBase
     {
+        public KeyInfoTheoryData(string testId) : base(testId)
+        {
+        }
+
         public DSigSerializer Serializer
         {
             get;
@@ -262,6 +380,48 @@ namespace Microsoft.IdentityModel.Xml.Tests
         {
             get;
             set;
+        }
+
+        public SecurityKey SecurityKey
+        {
+            get;
+            set;
+        }
+
+        public bool MatchesKey
+        {
+            get;
+            set;
+        }
+    }
+
+    public class CustomKeyInfo : KeyInfo
+    {
+        private string _securityKeyIdentifier;
+
+        public CustomKeyInfo(string securityKeyIdentifier)
+        {
+            _securityKeyIdentifier = securityKeyIdentifier;
+        }
+
+        public CustomKeyInfo(X509Certificate2 certificate) : base(certificate)
+        {
+        }
+
+        protected internal override bool MatchesKey(SecurityKey key)
+        {
+            X509SecurityKey x509SecurityKey = key as X509SecurityKey;
+            if (key != null && _securityKeyIdentifier != null)
+            {
+                X509SubjectKeyIdentifierExtension skiExtension = x509SecurityKey.Certificate.Extensions["2.5.29.14"] as X509SubjectKeyIdentifierExtension;
+                if (skiExtension == null)
+                    return base.MatchesKey(key);
+
+                string subjectKeyIdentifier = Convert.ToBase64String(skiExtension.RawData, 2, skiExtension.RawData.Length - 2);
+                return _securityKeyIdentifier == subjectKeyIdentifier;
+            }
+
+            return base.MatchesKey(key);
         }
     }
 }

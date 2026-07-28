@@ -1,0 +1,2 @@
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.HttpVersionPolicy.get -> System.Net.Http.HttpVersionPolicy?
+Microsoft.IdentityModel.Protocols.HttpDocumentRetriever.HttpVersionPolicy.set -> void

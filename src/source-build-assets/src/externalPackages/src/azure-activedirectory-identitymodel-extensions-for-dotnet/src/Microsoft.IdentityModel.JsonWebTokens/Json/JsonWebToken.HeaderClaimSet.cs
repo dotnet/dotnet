@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Tokens.Json;
 
 namespace Microsoft.IdentityModel.JsonWebTokens
@@ -22,7 +23,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         }
 
         internal JsonClaimSet CreateHeaderClaimSet(ReadOnlySpan<byte> byteSpan)
-        { 
+        {
             Utf8JsonReader reader = new(byteSpan);
             if (!JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.StartObject, true))
                 throw LogHelper.LogExceptionMessage(
@@ -41,50 +42,76 @@ namespace Microsoft.IdentityModel.JsonWebTokens
             {
                 if (reader.TokenType == JsonTokenType.PropertyName)
                 {
-                    if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Alg))
-                    {
-                        _alg = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Alg, ClassName, true);
-                        claims[JwtHeaderParameterNames.Alg] = _alg;
-                    }
-                    else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Cty))
-                    {
-                        _cty = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Cty, ClassName, true);
-                        claims[JwtHeaderParameterNames.Cty] = _cty;
-                    }
-                    else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Kid))
-                    {
-                        _kid = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Kid, ClassName, true);
-                        claims[JwtHeaderParameterNames.Kid] = _kid;
-                    }
-                    else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Typ))
-                    {
-                        _typ = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Typ, ClassName, true);
-                        claims[JwtHeaderParameterNames.Typ] = _typ;
-                    }
-                    else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.X5t))
-                    {
-                        _x5t = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.X5t, ClassName, true);
-                        claims[JwtHeaderParameterNames.X5t] = _x5t;
-                    }
-                    else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Zip))
-                    {
-                        _zip = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Zip, ClassName, true);
-                        claims[JwtHeaderParameterNames.Zip] = _zip;
-                    }
-                    else
-                    {
-                        string propertyName = reader.GetString();
-                        claims[propertyName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, propertyName, JsonClaimSet.ClassName, true);
-                    }
+                    ReadHeaderValue(ref reader, claims);
                 }
                 // We read a JsonTokenType.StartObject above, exiting and positioning reader at next token.
                 else if (JsonSerializerPrimitives.IsReaderAtTokenType(ref reader, JsonTokenType.EndObject, false))
                     break;
                 else if (!reader.Read())
                     break;
-            };
+            }
 
             return new JsonClaimSet(claims);
+        }
+
+
+        /// <summary>
+        /// Reads the value of a claim in the header and adds it to the <paramref name="claims"/> dictionary.
+        /// Can be overridden to read and add custom claims.
+        /// If a custom claim is read, the reader should be positioned at the next token after reading the claim.
+        /// </summary>
+        /// <param name="reader">The Utf8JsonReader instance positioned at a claim name token used to read the JSON payload.</param>
+        /// <param name="claims">Collection of claims that have been read from the reader.</param>
+        private protected virtual void ReadHeaderValue(ref Utf8JsonReader reader, IDictionary<string, object> claims)
+        {
+            if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Alg))
+            {
+                claims[JwtHeaderParameterNames.Alg] = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Alg, ClassName, true);
+            }
+            else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Cty))
+            {
+                claims[JwtHeaderParameterNames.Cty] = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Cty, ClassName, true);
+            }
+            else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Kid))
+            {
+                claims[JwtHeaderParameterNames.Kid] = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Kid, ClassName, true);
+            }
+            else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Typ))
+            {
+                claims[JwtHeaderParameterNames.Typ] = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Typ, ClassName, true); ;
+            }
+            else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.X5t))
+            {
+                claims[JwtHeaderParameterNames.X5t] = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.X5t, ClassName, true);
+            }
+            else if (reader.ValueTextEquals(JwtHeaderUtf8Bytes.Zip))
+            {
+                claims[JwtHeaderParameterNames.Zip] = JsonSerializerPrimitives.ReadString(ref reader, JwtHeaderParameterNames.Zip, ClassName, true);
+            }
+            else
+            {
+                string claimName = reader.GetString();
+
+                if (TryReadJwtClaim != null)
+                {
+                    reader.Read(); // Move to the value
+                    if (TryReadJwtClaim(ref reader, JwtSegmentType.Header, claimName, out object claimValue))
+                    {
+                        claims[claimName] = claimValue;
+                        reader.Read(); // Move to the next token
+                    }
+                    else
+                    {
+                        // The reader is positioned at the value token. The custom delegate did not read the value. Use our own logic.
+                        claims[claimName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, claimName, JsonClaimSet.ClassName, false);
+                    }
+                }
+                else
+                {
+                    // Move the reader forward to the value and read it using our own logic.
+                    claims[claimName] = JsonSerializerPrimitives.ReadPropertyValueAsObject(ref reader, claimName, JsonClaimSet.ClassName, true);
+                }
+            }
         }
     }
 }

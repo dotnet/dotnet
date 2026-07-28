@@ -43,7 +43,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             Assert.True(provider.EncryptCalled);
         }
 
-        [Theory, MemberData(nameof(GetKeyBytesTheoryData))]
+        [Theory, MemberData(nameof(GetKeyBytesTheoryData), DisableDiscoveryEnumeration = true)]
         public void GetKeyBytes(AuthenticatedEncryptionTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.GetKeyBytes", theoryData);
@@ -97,7 +97,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             };
         }
 
-        [Theory, MemberData(nameof(IsSupportedAlgorithmTheoryData))]
+        [Theory, MemberData(nameof(IsSupportedAlgorithmTheoryData), DisableDiscoveryEnumeration = true)]
         public void IsSupportedAlgorithm(AuthenticatedEncryptionTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.IsSupportedAlgorithm", theoryData);
@@ -156,7 +156,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             };
         }
 
-        [Theory, MemberData(nameof(ValidateKeySizeTheoryData))]
+        [Theory, MemberData(nameof(ValidateKeySizeTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateKeySize(AuthenticatedEncryptionTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateKeySize", theoryData);

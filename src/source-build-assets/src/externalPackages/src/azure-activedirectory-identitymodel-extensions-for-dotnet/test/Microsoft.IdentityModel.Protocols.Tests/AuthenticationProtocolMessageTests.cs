@@ -53,7 +53,7 @@ namespace Microsoft.IdentityModel.Protocols.Tests
             };
 
             var context = new GetSetContext();
-            foreach(string property in properties)
+            foreach (string property in properties)
             {
                 TestUtilities.SetGet(authenticationProtocolMessage, property, null, ExpectedException.ArgumentNullException(substringExpected: property), context);
                 TestUtilities.SetGet(authenticationProtocolMessage, property, "", ExpectedException.NoExceptionExpected, context);

@@ -43,7 +43,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                 IdentityComparer.AreEqual(obj, theoryData.ReadObject, context);
                 theoryData.ExpectedException.ProcessNoException(context);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 theoryData.ExpectedException.ProcessException(ex, context);
             }
@@ -70,7 +70,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 
                 DateTime dateTime = DateTime.UtcNow;
                 AddFloatDoubleVariations(theoryData);
-                AddListVariations(new List<string>{"string1", "string2"}, theoryData);
+                AddListVariations(new List<string> { "string1", "string2" }, theoryData);
                 AddMinMaxVariations(DateTime.MaxValue, DateTime.MinValue, dateTime, theoryData);
                 AddMinMaxVariations(float.MaxValue, float.MinValue, (float)0, theoryData);
                 AddMinMaxVariations(double.MaxValue, double.MinValue, (double)0, theoryData);
@@ -95,25 +95,25 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 
                 theoryData.Add(new JsonSerializerTheoryData("Dictionary_object_object>")
                 {
-                    Object = new Dictionary<object, object>{{"string1", "value1"}},
+                    Object = new Dictionary<object, object> { { "string1", "value1" } },
                     ReadObject = jsonElement
                 });
 
                 theoryData.Add(new JsonSerializerTheoryData("Dictionary_string_string")
                 {
-                    Object = new Dictionary<string,string>{{"string1", "value1"}},
+                    Object = new Dictionary<string, string> { { "string1", "value1" } },
                     ReadObject = jsonElement
                 });
 
                 theoryData.Add(new JsonSerializerTheoryData("IDictionary_string_string")
                 {
-                    Object = new Dictionary<string, string>{{"string1", "value1"}} as IDictionary<string, string>,
+                    Object = new Dictionary<string, string> { { "string1", "value1" } } as IDictionary<string, string>,
                     ReadObject = jsonElement
                 });
 
                 theoryData.Add(new JsonSerializerTheoryData("Dictionary_object_string>")
                 {
-                    Object = new Dictionary<object, string>{{"string1","value1"}},
+                    Object = new Dictionary<object, string> { { "string1", "value1" } },
                     ReadObject = jsonElement
                 });
                 #endregion
@@ -122,19 +122,19 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                 // objects embeded in a dictionary or list
                 theoryData.Add(new JsonSerializerTheoryData("Dictionary_Guid")
                 {
-                    Object = new Dictionary<string, object>{{"key1", new Dictionary<string, object>{{"guid", guid}}}},
+                    Object = new Dictionary<string, object> { { "key1", new Dictionary<string, object> { { "guid", guid } } } },
                     ReadObject = JsonUtilities.CreateJsonElement($$$"""{"key1":{"guid":"{{{guid.ToString()}}}"}}""")
                 });
 
                 theoryData.Add(new JsonSerializerTheoryData("Dictionary_Dictionary_List_string")
                 {
-                    Object = new Dictionary<object, object>{{"key1", new Dictionary<string, object>{{"key2", new List<string> {"string1", "string2"}}}}},
+                    Object = new Dictionary<object, object> { { "key1", new Dictionary<string, object> { { "key2", new List<string> { "string1", "string2" } } } } },
                     ReadObject = JsonUtilities.CreateJsonElement("""{"key1":{"key2":["string1","string2"]}}""")
                 });
 
                 theoryData.Add(new JsonSerializerTheoryData("List_Dictionary_String_List_String}")
                 {
-                    Object = new List<object>{"list",new Dictionary<string, string>{{"string1", "string2"}},new List<string>{"string3", "string4"}},
+                    Object = new List<object> { "list", new Dictionary<string, string> { { "string1", "string2" } }, new List<string> { "string3", "string4" } },
                     ReadObject = JsonUtilities.CreateJsonElement("""["list",{"string1":"string2"},["string3","string4"]]""")
                 });
 
@@ -146,7 +146,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                 """;
                 theoryData.Add(new JsonSerializerTheoryData("ListWithPrimitiveTypes")
                 {
-                    Object = new List<object>{"string1", guid, int.MaxValue, long.MaxValue, true, double.MaxValue, null, decimal.MaxValue },
+                    Object = new List<object> { "string1", guid, int.MaxValue, long.MaxValue, true, double.MaxValue, null, decimal.MaxValue },
                     ReadObject = JsonUtilities.CreateJsonElement(jsonElementString)
                 });
 #else
@@ -169,7 +169,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
         private static void AddListVariations(List<string> strings, TheoryData<JsonSerializerTheoryData> theoryData)
         {
             string jsonElementString = "[";
-            for (int i = 0; i < strings.Count -1; i++)
+            for (int i = 0; i < strings.Count - 1; i++)
                 jsonElementString += $@"""{strings[i]}"",";
 
             jsonElementString += $@"""{strings[strings.Count - 1]}""]";

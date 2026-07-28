@@ -1,0 +1,84 @@
+Microsoft.IdentityModel.Logging.IdentityModelEventSource
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogLevel.get -> System.Diagnostics.Tracing.EventLevel
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogLevel.set -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.Write(System.Diagnostics.Tracing.EventLevel level, System.Exception innerException, string message, params object[] args) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.Write(System.Diagnostics.Tracing.EventLevel level, System.Exception innerException, string message) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteAlways(string message, params object[] args) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteAlways(string message) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteCritical(string message, params object[] args) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteCritical(string message) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteError(string message, params object[] args) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteError(string message) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteInformation(string message, params object[] args) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteInformation(string message) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteVerbose(string message, params object[] args) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteVerbose(string message) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteWarning(string message, params object[] args) -> void
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.WriteWarning(string message) -> void
+Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil
+Microsoft.IdentityModel.Logging.ISafeLogSecurityArtifact
+Microsoft.IdentityModel.Logging.ISafeLogSecurityArtifact.UnsafeToString() -> string
+Microsoft.IdentityModel.Logging.LoggerContext
+Microsoft.IdentityModel.Logging.LoggerContext.ActivityId.get -> System.Guid
+Microsoft.IdentityModel.Logging.LoggerContext.ActivityId.set -> void
+Microsoft.IdentityModel.Logging.LoggerContext.CaptureLogs.get -> bool
+Microsoft.IdentityModel.Logging.LoggerContext.CaptureLogs.set -> void
+Microsoft.IdentityModel.Logging.LoggerContext.LoggerContext() -> void
+Microsoft.IdentityModel.Logging.LoggerContext.LoggerContext(System.Guid activityId) -> void
+Microsoft.IdentityModel.Logging.LoggerContext.Logs.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Logging.LoggerContext.PropertyBag.get -> System.Collections.Generic.IDictionary<string, object>
+Microsoft.IdentityModel.Logging.LoggerContext.PropertyBag.set -> void
+Microsoft.IdentityModel.Logging.LogHelper
+Microsoft.IdentityModel.Logging.LogHelper.LogHelper() -> void
+Microsoft.IdentityModel.Logging.TextWriterEventListener
+Microsoft.IdentityModel.Logging.TextWriterEventListener.TextWriterEventListener() -> void
+Microsoft.IdentityModel.Logging.TextWriterEventListener.TextWriterEventListener(string filePath) -> void
+Microsoft.IdentityModel.Logging.TextWriterEventListener.TextWriterEventListener(System.IO.StreamWriter streamWriter) -> void
+override Microsoft.IdentityModel.Logging.TextWriterEventListener.Dispose() -> void
+override Microsoft.IdentityModel.Logging.TextWriterEventListener.OnEventWritten(System.Diagnostics.Tracing.EventWrittenEventArgs eventData) -> void
+static Microsoft.IdentityModel.Logging.IdentityModelEventSource.HeaderWritten.get -> bool
+static Microsoft.IdentityModel.Logging.IdentityModelEventSource.HeaderWritten.set -> void
+static Microsoft.IdentityModel.Logging.IdentityModelEventSource.HiddenPIIString.get -> string
+static Microsoft.IdentityModel.Logging.IdentityModelEventSource.HiddenSecurityArtifactString.get -> string
+static Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogCompleteSecurityArtifact.get -> bool
+static Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogCompleteSecurityArtifact.set -> void
+static Microsoft.IdentityModel.Logging.IdentityModelEventSource.Logger.get -> Microsoft.IdentityModel.Logging.IdentityModelEventSource
+static Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII.get -> bool
+static Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII.set -> void
+static Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.AddTelemetryData(string key, string value) -> bool
+static Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.ClientSku.get -> string
+static Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.ClientVer.get -> string
+static Microsoft.IdentityModel.Logging.IdentityModelTelemetryUtil.RemoveTelemetryData(string key) -> bool
+static Microsoft.IdentityModel.Logging.LogHelper.FormatInvariant(string format, params object[] args) -> string
+static Microsoft.IdentityModel.Logging.LogHelper.IsEnabled(Microsoft.IdentityModel.Abstractions.EventLogLevel level) -> bool
+static Microsoft.IdentityModel.Logging.LogHelper.LogArgumentException<T>(string argumentName, string format, params object[] args) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogArgumentException<T>(string argumentName, string message) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogArgumentException<T>(string argumentName, System.Exception innerException, string format, params object[] args) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogArgumentException<T>(string argumentName, System.Exception innerException, string message) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogArgumentException<T>(System.Diagnostics.Tracing.EventLevel eventLevel, string argumentName, string format, params object[] args) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogArgumentException<T>(System.Diagnostics.Tracing.EventLevel eventLevel, string argumentName, string message) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogArgumentException<T>(System.Diagnostics.Tracing.EventLevel eventLevel, string argumentName, System.Exception innerException, string format, params object[] args) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogArgumentException<T>(System.Diagnostics.Tracing.EventLevel eventLevel, string argumentName, System.Exception innerException, string message) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogArgumentNullException(string argument) -> System.ArgumentNullException
+static Microsoft.IdentityModel.Logging.LogHelper.LogException<T>(string format, params object[] args) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogException<T>(string message) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogException<T>(System.Diagnostics.Tracing.EventLevel eventLevel, string format, params object[] args) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogException<T>(System.Diagnostics.Tracing.EventLevel eventLevel, string message) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogException<T>(System.Diagnostics.Tracing.EventLevel eventLevel, System.Exception innerException, string format, params object[] args) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogException<T>(System.Diagnostics.Tracing.EventLevel eventLevel, System.Exception innerException, string message) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogException<T>(System.Exception innerException, string format, params object[] args) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogException<T>(System.Exception innerException, string message) -> T
+static Microsoft.IdentityModel.Logging.LogHelper.LogExceptionMessage(System.Diagnostics.Tracing.EventLevel eventLevel, System.Exception exception) -> System.Exception
+static Microsoft.IdentityModel.Logging.LogHelper.LogExceptionMessage(System.Exception exception) -> System.Exception
+static Microsoft.IdentityModel.Logging.LogHelper.Logger.get -> Microsoft.IdentityModel.Abstractions.IIdentityLogger
+static Microsoft.IdentityModel.Logging.LogHelper.Logger.set -> void
+static Microsoft.IdentityModel.Logging.LogHelper.LogInformation(string message, params object[] args) -> void
+static Microsoft.IdentityModel.Logging.LogHelper.LogVerbose(string message, params object[] args) -> void
+static Microsoft.IdentityModel.Logging.LogHelper.LogWarning(string message, params object[] args) -> void
+static Microsoft.IdentityModel.Logging.LogHelper.MarkAsNonPII(object arg) -> object
+static Microsoft.IdentityModel.Logging.LogHelper.MarkAsSecurityArtifact(object arg, System.Func<object, string> callback, System.Func<object, string> callbackUnsafe) -> object
+static Microsoft.IdentityModel.Logging.LogHelper.MarkAsSecurityArtifact(object arg, System.Func<object, string> callback) -> object
+static Microsoft.IdentityModel.Logging.LogHelper.MarkAsUnsafeSecurityArtifact(object arg, System.Func<object, string> callbackUnsafe) -> object
+static readonly Microsoft.IdentityModel.Logging.TextWriterEventListener.DefaultLogFileName -> string
+virtual Microsoft.IdentityModel.Logging.LoggerContext.DebugId.get -> string
+virtual Microsoft.IdentityModel.Logging.LoggerContext.DebugId.set -> void

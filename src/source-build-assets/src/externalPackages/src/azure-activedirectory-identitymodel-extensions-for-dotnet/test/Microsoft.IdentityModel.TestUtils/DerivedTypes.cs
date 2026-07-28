@@ -5,9 +5,7 @@ using System;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 
-/// <summary>
-/// Contains derived types that are useful across multiple handlers / protocols.
-/// </summary>
+// Contains derived types that are useful across multiple handlers / protocols.
 namespace Microsoft.IdentityModel.TestUtils
 {
     public class DerivedAuthenticatedEncryptionProvider : AuthenticatedEncryptionProvider
@@ -21,15 +19,15 @@ namespace Microsoft.IdentityModel.TestUtils
         {
         }
 
-        public bool DecryptCalled { get; set; } = false;
+        public bool DecryptCalled { get; set; }
 
-        public bool EncryptCalled { get; set; } = false;
+        public bool EncryptCalled { get; set; }
 
-        public bool GetKeyBytesCalled { get; set; } = false;
+        public bool GetKeyBytesCalled { get; set; }
 
-        public bool IsSupportedAlgorithmCalled { get; set; } = false;
+        public bool IsSupportedAlgorithmCalled { get; set; }
 
-        public bool ValidateKeySizeCalled { get; set; } = false;
+        public bool ValidateKeySizeCalled { get; set; }
 
         public override byte[] Decrypt(byte[] ciphertext, byte[] authenticatedData, byte[] iv, byte[] authenticationTag)
         {
@@ -174,13 +172,13 @@ namespace Microsoft.IdentityModel.TestUtils
         {
         }
 
-        public bool GetSymmetricAlgorithmCalled { get; set; } = false;
+        public bool GetSymmetricAlgorithmCalled { get; set; }
 
-        public bool IsSupportedAlgorithmCalled { get; set; } = false;
+        public bool IsSupportedAlgorithmCalled { get; set; }
 
-        public bool UnwrapKeyCalled { get; set; } = false;
+        public bool UnwrapKeyCalled { get; set; }
 
-        public bool WrapKeyCalled { get; set; } = false;
+        public bool WrapKeyCalled { get; set; }
 
         protected override SymmetricAlgorithm GetSymmetricAlgorithm(SecurityKey key, string algorithm)
         {
@@ -260,13 +258,13 @@ namespace Microsoft.IdentityModel.TestUtils
         {
         }
 
-        public bool IsSupportedAlgorithmCalled { get; set; } = false;
+        public bool IsSupportedAlgorithmCalled { get; set; }
 
-        public bool ResolveRsaAlgorithmCalled { get; set; } = false;
+        public bool ResolveRsaAlgorithmCalled { get; set; }
 
-        public bool UnwrapKeyCalled { get; set; } = false;
+        public bool UnwrapKeyCalled { get; set; }
 
-        public bool WrapKeyCalled { get; set; } = false;
+        public bool WrapKeyCalled { get; set; }
 
         protected override bool IsSupportedAlgorithm(SecurityKey key, string algorithm)
         {

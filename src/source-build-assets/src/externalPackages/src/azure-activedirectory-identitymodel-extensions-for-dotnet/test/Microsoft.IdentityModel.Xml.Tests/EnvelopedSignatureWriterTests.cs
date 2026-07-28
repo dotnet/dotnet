@@ -18,7 +18,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
 {
     public class EnvelopedSignatureWriterTests
     {
-        [Theory, MemberData(nameof(ConstructorTestCases))]
+        [Theory, MemberData(nameof(ConstructorTestCases), DisableDiscoveryEnumeration = true)]
         public void Constructor(EnvelopedSignatureTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.Constructor", theoryData);
@@ -60,7 +60,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(CreateSignatureWithoutSpecifyingDigestTestCases))]
+        [Theory, MemberData(nameof(CreateSignatureWithoutSpecifyingDigestTestCases), DisableDiscoveryEnumeration = true)]
         public void CreateSignatureWithoutSpecifyingDigest(EnvelopedSignatureTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CreateSignatureWithoutSpecifyingDigest", theoryData);
@@ -76,7 +76,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
 
                     // read and verify signatures
                     EnvelopedSignatureReader envelopedReader = new EnvelopedSignatureReader(XmlUtilities.CreateDictionaryReader(Encoding.UTF8.GetString(buffer.ToArray())));
-                    while (envelopedReader.Read());
+                    while (envelopedReader.Read()) ;
 
                     envelopedReader.Signature.Verify(theoryData.SigningCredentials.Key, theoryData.SigningCredentials.Key.CryptoProviderFactory);
                     theoryData.ExpectedException.ProcessNoException(context);
@@ -112,13 +112,13 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
                 theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSha512, null, SecurityAlgorithms.RsaSha512 + "_DigestNULL"));
                 theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSha512Signature, null, SecurityAlgorithms.RsaSha512Signature + "_DigestNULL"));
 
-#if NET_CORE
-               theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha256, null, SecurityAlgorithms.RsaSsaPssSha256 + "_DigestNULL"));
-               theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha256Signature, null, SecurityAlgorithms.RsaSsaPssSha256Signature + "_DigestNULL"));
-               theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha384, null, SecurityAlgorithms.RsaSsaPssSha384 + "_DigestNULL"));
-               theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha384Signature, null, SecurityAlgorithms.RsaSsaPssSha384Signature + "_DigestNULL"));
-               theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha512, null, SecurityAlgorithms.RsaSsaPssSha512 + "_DigestNULL"));
-               theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha512Signature, null, SecurityAlgorithms.RsaSsaPssSha512Signature + "_DigestNULL"));
+#if NET
+                theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha256, null, SecurityAlgorithms.RsaSsaPssSha256 + "_DigestNULL"));
+                theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha256Signature, null, SecurityAlgorithms.RsaSsaPssSha256Signature + "_DigestNULL"));
+                theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha384, null, SecurityAlgorithms.RsaSsaPssSha384 + "_DigestNULL"));
+                theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha384Signature, null, SecurityAlgorithms.RsaSsaPssSha384Signature + "_DigestNULL"));
+                theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha512, null, SecurityAlgorithms.RsaSsaPssSha512 + "_DigestNULL"));
+                theoryData.Add(CreateSignatureTestCase(KeyingMaterial.RsaSecurityKey_2048, SecurityAlgorithms.RsaSsaPssSha512Signature, null, SecurityAlgorithms.RsaSsaPssSha512Signature + "_DigestNULL"));
 #endif
 
                 // Symmetric
@@ -149,7 +149,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             };
         }
 
-        [Theory, MemberData(nameof(RoundTripSaml2TestCases))]
+        [Theory, MemberData(nameof(RoundTripSaml2TestCases), DisableDiscoveryEnumeration = true)]
         public void RoundTripSaml2(EnvelopedSignatureTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RoundTripSaml2", theoryData);
@@ -202,7 +202,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(RoundTripWsMetadataTestCases))]
+        [Theory, MemberData(nameof(RoundTripWsMetadataTestCases), DisableDiscoveryEnumeration = true)]
         public void RoundTripWsMetadata(EnvelopedSignatureTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RoundTripWsMetadata", theoryData);

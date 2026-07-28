@@ -16,7 +16,7 @@ namespace Microsoft.IdentityModel.Tokens
     {
         private static CryptoProviderFactory _default;
         private static readonly ConcurrentDictionary<string, string> _typeToAlgorithmMap = new ConcurrentDictionary<string, string>();
-        private static readonly object _cacheLock = new object();
+        private readonly ConcurrentDictionary<string, string> _customProviderTypeCache = new ConcurrentDictionary<string, string>();
         private static int _defaultSignatureProviderObjectPoolCacheSize = Environment.ProcessorCount * 4;
         private static string _typeofAsymmetricSignatureProvider = typeof(AsymmetricSignatureProvider).ToString();
         private static string _typeofSymmetricSignatureProvider = typeof(SymmetricSignatureProvider).ToString();
@@ -46,7 +46,14 @@ namespace Microsoft.IdentityModel.Tokens
         public static int DefaultSignatureProviderObjectPoolCacheSize
         {
             get => _defaultSignatureProviderObjectPoolCacheSize;
-            set => _defaultSignatureProviderObjectPoolCacheSize = value > 0 ? value : throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(value), LogHelper.FormatInvariant(LogMessages.IDX10698, LogHelper.MarkAsNonPII(value))));
+            set => _defaultSignatureProviderObjectPoolCacheSize = value > 0
+                ? value
+                : throw LogHelper.LogExceptionMessage(
+                    new ArgumentOutOfRangeException(
+                        nameof(value),
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX10698,
+                            LogHelper.MarkAsNonPII(value))));
         }
 
         /// <summary>
@@ -86,6 +93,7 @@ namespace Microsoft.IdentityModel.Tokens
             CryptoProviderCache = new InMemoryCryptoProviderCache() { CryptoProviderFactory = this };
             CustomCryptoProvider = other.CustomCryptoProvider;
             CacheSignatureProviders = other.CacheSignatureProviders;
+            CacheCustomProviders = other.CacheCustomProviders;
             SignatureProviderObjectPoolCacheSize = other.SignatureProviderObjectPoolCacheSize;
         }
 
@@ -97,8 +105,9 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Extensibility point for creating custom cryptographic operators.
         /// </summary>
-        /// <remarks>By default, if set, <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> will be called before creating cryptographic operators.
-        /// If true is returned, then <see cref="ICryptoProvider.Create(string, object[])"/> will be called. The <see cref="CryptoProviderFactory"/> will throw if the
+        /// <remarks>By default, if set, <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> will be called before
+        /// creating cryptographic operators. If true is returned, then <see cref="ICryptoProvider.Create(string, object[])"/> will be called.
+        /// The <see cref="CryptoProviderFactory"/> will throw if the
         /// Cryptographic operator returned is not of the correct type.</remarks>
         public ICryptoProvider CustomCryptoProvider { get; set; }
 
@@ -109,29 +118,51 @@ namespace Microsoft.IdentityModel.Tokens
         public bool CacheSignatureProviders { get; set; } = DefaultCacheSignatureProviders;
 
         /// <summary>
+        /// Gets or sets a bool controlling if <see cref="SignatureProvider"/> instances created by <see cref="CustomCryptoProvider"/>
+        /// should be cached. Default is <see langword="false"/>.
+        /// </summary>
+        /// <remarks>
+        /// When <see langword="true"/>, signature providers returned by <see cref="ICryptoProvider.Create(string, object[])"/>
+        /// are cached using the same <see cref="CryptoProviderCache"/> used for built-in providers. This avoids
+        /// repeated provider creation and key materialisation on every signature validation.
+        /// </remarks>
+        [DefaultValue(false)]
+        public bool CacheCustomProviders { get; set; }
+
+        /// <summary>
         /// Gets or sets the maximum size of the object pool used by the SignatureProvider that are used for crypto objects.
         /// </summary>
         public int SignatureProviderObjectPoolCacheSize
         {
             get => _signatureProviderObjectPoolCacheSize;
 
-            set => _signatureProviderObjectPoolCacheSize = value > 0 ? value : throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(value), LogHelper.FormatInvariant(LogMessages.IDX10698, LogHelper.MarkAsNonPII(value))));
+            set => _signatureProviderObjectPoolCacheSize = value > 0
+                ? value
+                : throw LogHelper.LogExceptionMessage(
+                    new ArgumentOutOfRangeException(
+                        nameof(value),
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX10698,
+                            LogHelper.MarkAsNonPII(value))));
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="AuthenticatedEncryptionProvider"/> for a specific <paramref name="key"/> and <paramref name="algorithm"/>.
+        /// Creates an instance of <see cref="AuthenticatedEncryptionProvider"/> for a specific <paramref name="key"/>
+        /// and <paramref name="algorithm"/>.
         /// </summary>
         /// <param name="key">The <see cref="SecurityKey"/> to use.</param>
         /// <param name="algorithm">The algorithm to use.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="key"/> is null.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
-        /// <exception cref="ArgumentException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/> is not supported.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/> is not assignable to <see cref="KeyWrapProvider"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/>
+        /// is not supported.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/>
+        /// is not assignable to <see cref="KeyWrapProvider"/>.</exception>
         /// <remarks>
-        /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
-        /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="AuthenticatedEncryptionProvider"/>.
+        /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/>
+        /// returns true, <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="AuthenticatedEncryptionProvider"/>.
         /// </para>
-        /// <para>Once done with the <see cref="KeyWrapProvider"/>, call <see cref="ReleaseKeyWrapProvider(KeyWrapProvider)"/>.</para>
+        /// <para>When you are finished with the <see cref="KeyWrapProvider"/>, call <see cref="ReleaseKeyWrapProvider(KeyWrapProvider)"/>.</para>
         /// </remarks>
         /// <returns>An instance of <see cref="AuthenticatedEncryptionProvider"/>.</returns>
         public virtual AuthenticatedEncryptionProvider CreateAuthenticatedEncryptionProvider(SecurityKey key, string algorithm)
@@ -146,7 +177,13 @@ namespace Microsoft.IdentityModel.Tokens
             {
                 var cryptoProvider = CustomCryptoProvider.Create(algorithm, key) as AuthenticatedEncryptionProvider;
                 if (cryptoProvider == null)
-                    throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX10646, LogHelper.MarkAsNonPII(algorithm), key, LogHelper.MarkAsNonPII(typeof(AuthenticatedEncryptionProvider)))));
+                    throw LogHelper.LogExceptionMessage(
+                        new InvalidOperationException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10646,
+                                LogHelper.MarkAsNonPII(algorithm),
+                                LogHelper.MarkAsNonPII(key.KeyId),
+                                LogHelper.MarkAsNonPII(typeof(AuthenticatedEncryptionProvider)))));
 
                 return cryptoProvider;
             }
@@ -154,7 +191,12 @@ namespace Microsoft.IdentityModel.Tokens
             if (SupportedAlgorithms.IsSupportedEncryptionAlgorithm(algorithm, key))
                 return new AuthenticatedEncryptionProvider(key, algorithm);
 
-            throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10652, LogHelper.MarkAsNonPII(algorithm)), nameof(algorithm)));
+            throw LogHelper.LogExceptionMessage(
+                new ArgumentException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10652,
+                        LogHelper.MarkAsNonPII(algorithm)),
+                    nameof(algorithm)));
         }
 
         /// <summary>
@@ -164,13 +206,15 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="algorithm">The algorithm to use.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="key"/> is null.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
-        /// <exception cref="NotSupportedException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/> is not supported.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/> is not assignable to <see cref="KeyWrapProvider"/>.</exception>
+        /// <exception cref="NotSupportedException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/>
+        /// is not supported.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/>
+        /// is not assignable to <see cref="KeyWrapProvider"/>.</exception>
         /// <remarks>
-        /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
-        /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="KeyWrapProvider"/>.
+        /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/>
+        /// returns true, <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="KeyWrapProvider"/>.
         /// </para>
-        /// <para>Once done with the <see cref="KeyWrapProvider"/>, call <see cref="ReleaseKeyWrapProvider(KeyWrapProvider)"/>.</para>
+        /// <para>When you are finished with the <see cref="KeyWrapProvider"/>, call <see cref="ReleaseKeyWrapProvider(KeyWrapProvider)"/>.</para>
         /// </remarks>
         /// <returns>An instance of <see cref="KeyWrapProvider"/>.</returns>
         public virtual KeyWrapProvider CreateKeyWrapProvider(SecurityKey key, string algorithm)
@@ -185,13 +229,15 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="algorithm">The algorithm to use.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="key"/> is null.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
-        /// <exception cref="ArgumentException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/> is not supported.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/> is not assignable to <see cref="KeyWrapProvider"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/>
+        /// is not supported.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/>
+        /// is not assignable to <see cref="KeyWrapProvider"/>.</exception>
         /// <remarks>
-        /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
-        /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="KeyWrapProvider"/>.
+        /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/>
+        /// returns true, <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="KeyWrapProvider"/>.
         /// </para>
-        /// <para>Once done with the <see cref="KeyWrapProvider"/>, call <see cref="ReleaseKeyWrapProvider(KeyWrapProvider)"/>.</para>
+        /// <para>When you are finished with the <see cref="KeyWrapProvider"/>, call <see cref="ReleaseKeyWrapProvider(KeyWrapProvider)"/>.</para>
         /// </remarks>
         /// <returns>An instance of <see cref="KeyWrapProvider"/>.</returns>
         public virtual KeyWrapProvider CreateKeyWrapProviderForUnwrap(SecurityKey key, string algorithm)
@@ -210,7 +256,13 @@ namespace Microsoft.IdentityModel.Tokens
             if (CustomCryptoProvider != null && CustomCryptoProvider.IsSupportedAlgorithm(algorithm, key, willUnwrap))
             {
                 if (!(CustomCryptoProvider.Create(algorithm, key, willUnwrap) is KeyWrapProvider keyWrapProvider))
-                    throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX10646, LogHelper.MarkAsNonPII(algorithm), key, LogHelper.MarkAsNonPII(typeof(SignatureProvider)))));
+                    throw LogHelper.LogExceptionMessage(
+                        new InvalidOperationException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10646,
+                                LogHelper.MarkAsNonPII(algorithm),
+                                LogHelper.MarkAsNonPII(key.KeyId),
+                                LogHelper.MarkAsNonPII(typeof(SignatureProvider)))));
 
                 return keyWrapProvider;
             }
@@ -221,7 +273,12 @@ namespace Microsoft.IdentityModel.Tokens
             if (SupportedAlgorithms.IsSupportedSymmetricKeyWrap(algorithm, key))
                 return new SymmetricKeyWrapProvider(key, algorithm);
 
-            throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10661, LogHelper.MarkAsNonPII(algorithm), key)));
+            throw LogHelper.LogExceptionMessage(
+                new NotSupportedException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10661,
+                        LogHelper.MarkAsNonPII(algorithm),
+                        LogHelper.MarkAsNonPII(key.KeyId))));
         }
 
         /// <summary>
@@ -232,14 +289,16 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="key"/> is null.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <see cref="SecurityKey.KeySize"/> is too small.</exception>
-        /// <exception cref="NotSupportedException">Thrown if <paramref name="key"/> is not assignable from <see cref="AsymmetricSecurityKey"/> or <see cref="SymmetricSecurityKey"/>.</exception>
+        /// <exception cref="NotSupportedException">Thrown if <paramref name="key"/> is not assignable from <see cref="AsymmetricSecurityKey"/>
+        /// or <see cref="SymmetricSecurityKey"/>.</exception>
         /// <exception cref="NotSupportedException">Thrown if the key or algorithm combination is not supported.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/> is not assignable to <see cref="SignatureProvider"/>.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/>
+        /// is not assignable to <see cref="SignatureProvider"/>.</exception>
         /// <remarks>
         /// <para>AsymmetricSignatureProviders require access to a PrivateKey for signing.</para>
-        /// <para>Once done with the <see cref="SignatureProvider"/>, call <see cref="ReleaseSignatureProvider(SignatureProvider)"/>.</para>
-        /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
-        /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="SignatureProvider"/>.
+        /// <para>When you are finished with the <see cref="SignatureProvider"/>, call <see cref="ReleaseSignatureProvider(SignatureProvider)"/>.</para>
+        /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/>
+        /// returns true, <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="SignatureProvider"/>.
         /// </para>
         /// </remarks>
         /// <returns>A <see cref="SignatureProvider"/> instance that can be used to create a signature.</returns>
@@ -257,12 +316,15 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="key"/> is null.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <see cref="SecurityKey.KeySize"/> is too small.</exception>
-        /// <exception cref="NotSupportedException">Thrown if <paramref name="key"/> is not assignable from <see cref="AsymmetricSecurityKey"/> or <see cref="SymmetricSecurityKey"/>.</exception>
-        /// <exception cref="NotSupportedException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/> is not supported.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/> is not assignable to <see cref="SignatureProvider"/>.</exception>
+        /// <exception cref="NotSupportedException">Thrown if <paramref name="key"/> is not assignable from <see cref="AsymmetricSecurityKey"/>
+        /// or <see cref="SymmetricSecurityKey"/>.</exception>
+        /// <exception cref="NotSupportedException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/>
+        /// is not supported.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/>
+        /// is not assignable to <see cref="SignatureProvider"/>.</exception>
         /// <remarks>
         /// <para>AsymmetricSignatureProviders require access to a PrivateKey for signing.</para>
-        /// <para>Once done with the <see cref="SignatureProvider"/>, call <see cref="ReleaseSignatureProvider(SignatureProvider)"/>.</para>
+        /// <para>When you are finished with the <see cref="SignatureProvider"/>, call <see cref="ReleaseSignatureProvider(SignatureProvider)"/>.</para>
         /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
         /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="SignatureProvider"/>.
         /// </para>
@@ -281,16 +343,19 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="key"/> is null.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <see cref="SecurityKey.KeySize"/> is too small.</exception>
-        /// <exception cref="NotSupportedException">Thrown if <paramref name="key"/> is not assignable from <see cref="AsymmetricSecurityKey"/> or <see cref="SymmetricSecurityKey"/>.</exception>
+        /// <exception cref="NotSupportedException">Thrown if <paramref name="key"/> is not assignable from <see cref="AsymmetricSecurityKey"/>
+        /// or <see cref="SymmetricSecurityKey"/>.</exception>
         /// <exception cref="NotSupportedException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/> is not supported.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/> is not assignable to <see cref="SignatureProvider"/>.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/>
+        /// is not assignable to <see cref="SignatureProvider"/>.</exception>
         /// <remarks>
-        /// <para>Once done with the <see cref="SignatureProvider"/>, call <see cref="ReleaseSignatureProvider(SignatureProvider)"/>.</para>
+        /// <para>When you are finished with the <see cref="SignatureProvider"/>, call <see cref="ReleaseSignatureProvider(SignatureProvider)"/>.</para>
         /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
         /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="SignatureProvider"/>.
         /// </para>
         /// </remarks>
-        /// <returns>A <see cref="SignatureProvider"/> instance that can be used to validate signatures using the <see cref="SecurityKey"/> and algorithm.</returns>
+        /// <returns>A <see cref="SignatureProvider"/> instance that can be used to validate signatures using the <see cref="SecurityKey"/>
+        /// and algorithm.</returns>
         public virtual SignatureProvider CreateForVerifying(SecurityKey key, string algorithm)
         {
             return CreateForVerifying(key, algorithm, CacheSignatureProviders);
@@ -305,11 +370,13 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="key"/> is null.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <see cref="SecurityKey.KeySize"/> is too small.</exception>
-        /// <exception cref="NotSupportedException">Thrown if <paramref name="key"/> is not assignable from <see cref="AsymmetricSecurityKey"/> or <see cref="SymmetricSecurityKey"/>.</exception>
+        /// <exception cref="NotSupportedException">Thrown if <paramref name="key"/> is not assignable from <see cref="AsymmetricSecurityKey"/>
+        /// or <see cref="SymmetricSecurityKey"/>.</exception>
         /// <exception cref="NotSupportedException">Thrown if the combination of <paramref name="key"/> and <paramref name="algorithm"/> is not supported.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/> is not assignable to <see cref="SignatureProvider"/>.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the type returned by <see cref="ICryptoProvider.Create(string, object[])"/>
+        /// is not assignable to <see cref="SignatureProvider"/>.</exception>
         /// <remarks>
-        /// <para>Once done with the <see cref="SignatureProvider"/>, call <see cref="ReleaseSignatureProvider(SignatureProvider)"/>.</para>
+        /// <para>When you are finished with the <see cref="SignatureProvider"/>, call <see cref="ReleaseSignatureProvider(SignatureProvider)"/>.</para>
         /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
         /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="SignatureProvider"/>.
         /// </para>
@@ -325,10 +392,11 @@ namespace Microsoft.IdentityModel.Tokens
         /// </summary>
         /// <param name="algorithm">The name of the hash algorithm to create.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if <see cref="ICryptoProvider.Create(string, object[])"/> returns a type that is not assignable to <see cref="HashAlgorithm"/>.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if <see cref="ICryptoProvider.Create(string, object[])"/>
+        /// returns a type that is not assignable to <see cref="HashAlgorithm"/>.</exception>
         /// <exception cref="NotSupportedException">Thrown if <paramref name="algorithm"/> is not supported.</exception>
         /// <remarks>
-        /// <para>Once done with the <see cref="HashAlgorithm"/>, call <see cref="ReleaseHashAlgorithm(HashAlgorithm)"/>.</para>
+        /// <para>When you are finished with the <see cref="HashAlgorithm"/>, call <see cref="ReleaseHashAlgorithm(HashAlgorithm)"/>.</para>
         /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
         /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="HashAlgorithm"/>.
         /// </para>
@@ -339,7 +407,12 @@ namespace Microsoft.IdentityModel.Tokens
             if (CustomCryptoProvider != null && CustomCryptoProvider.IsSupportedAlgorithm(algorithm.Name))
             {
                 if (!(CustomCryptoProvider.Create(algorithm.Name) is HashAlgorithm hashAlgorithm))
-                    throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX10647, LogHelper.MarkAsNonPII(algorithm), LogHelper.MarkAsNonPII(typeof(HashAlgorithm)))));
+                    throw LogHelper.LogExceptionMessage(
+                       new InvalidOperationException(
+                           LogHelper.FormatInvariant(
+                               LogMessages.IDX10647,
+                               LogHelper.MarkAsNonPII(algorithm),
+                               LogHelper.MarkAsNonPII(typeof(HashAlgorithm)))));
 
                 _typeToAlgorithmMap[hashAlgorithm.GetType().ToString()] = algorithm.Name;
                 return hashAlgorithm;
@@ -354,7 +427,11 @@ namespace Microsoft.IdentityModel.Tokens
             if (algorithm == HashAlgorithmName.SHA512)
                 return SHA512.Create();
 
-            throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10640, LogHelper.MarkAsNonPII(algorithm))));
+            throw LogHelper.LogExceptionMessage(
+                new NotSupportedException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10640,
+                        LogHelper.MarkAsNonPII(algorithm))));
         }
 
         /// <summary>
@@ -362,10 +439,11 @@ namespace Microsoft.IdentityModel.Tokens
         /// </summary>
         /// <param name="algorithm">The name of the hash algorithm to create.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if <see cref="ICryptoProvider.Create(string, object[])"/> returns a type that is not assignable to <see cref="HashAlgorithm"/>.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if <see cref="ICryptoProvider.Create(string, object[])"/> returns a type that
+        /// is not assignable to <see cref="HashAlgorithm"/>.</exception>
         /// <exception cref="NotSupportedException">Thrown if <paramref name="algorithm"/> is not supported.</exception>
         /// <remarks>
-        /// Once done with the <see cref="HashAlgorithm"/>, call <see cref="ReleaseHashAlgorithm(HashAlgorithm)"/>.
+        /// When you are finished with the <see cref="HashAlgorithm"/>, call <see cref="ReleaseHashAlgorithm(HashAlgorithm)"/>.
         /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
         /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="HashAlgorithm"/>.
         /// </para>
@@ -379,7 +457,12 @@ namespace Microsoft.IdentityModel.Tokens
             if (CustomCryptoProvider != null && CustomCryptoProvider.IsSupportedAlgorithm(algorithm))
             {
                 if (!(CustomCryptoProvider.Create(algorithm) is HashAlgorithm hashAlgorithm))
-                    throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX10647, LogHelper.MarkAsNonPII(algorithm), LogHelper.MarkAsNonPII(typeof(HashAlgorithm)))));
+                    throw LogHelper.LogExceptionMessage(
+                        new InvalidOperationException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10647,
+                                LogHelper.MarkAsNonPII(algorithm),
+                                LogHelper.MarkAsNonPII(typeof(HashAlgorithm)))));
 
                 _typeToAlgorithmMap[hashAlgorithm.GetType().ToString()] = algorithm;
 
@@ -401,7 +484,11 @@ namespace Microsoft.IdentityModel.Tokens
                     return SHA512.Create();
             }
 
-            throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10640, LogHelper.MarkAsNonPII(algorithm))));
+            throw LogHelper.LogExceptionMessage(
+                new NotSupportedException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX10640,
+                        LogHelper.MarkAsNonPII(algorithm))));
         }
 
         /// <summary>
@@ -411,10 +498,11 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="algorithm">The name of the keyed hash algorithm to create.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="keyBytes"/> is null.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="algorithm"/> is null or empty.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if <see cref="ICryptoProvider.Create(string, object[])"/> returns a type that is not assignable to <see cref="KeyedHashAlgorithm"/>.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if <see cref="ICryptoProvider.Create(string, object[])"/> returns a type that
+        /// is not assignable to <see cref="KeyedHashAlgorithm"/>.</exception>
         /// <exception cref="NotSupportedException">Thrown if <paramref name="algorithm"/> is not supported.</exception>
         /// <remarks>
-        /// Once done with the <see cref="KeyedHashAlgorithm"/>, call <see cref="ReleaseHashAlgorithm(HashAlgorithm)"/>.
+        /// When you are finished with the <see cref="KeyedHashAlgorithm"/>, call <see cref="ReleaseHashAlgorithm(HashAlgorithm)"/>.
         /// <para>If <see cref="CustomCryptoProvider"/> is set and <see cref="ICryptoProvider.IsSupportedAlgorithm(string, object[])"/> returns true,
         /// <see cref="ICryptoProvider.Create(string, object[])"/> is called to obtain the <see cref="KeyedHashAlgorithm"/>.
         /// </para>
@@ -442,55 +530,62 @@ namespace Microsoft.IdentityModel.Tokens
             }
 
             // In the case of Aes128CbcHmacSha256, Aes192CbcHmacSha384, Aes256CbcHmacSha512 which are Authenticated Encryption algorithms
-            // SymmetricSignatureProvider will get passed a key with 1/2 the minimum keysize expected size for the HashAlgorithm. 16 bytes for SHA256, instead of 32 bytes.
+            // SymmetricSignatureProvider will get passed a key with 1/2 the minimum key size expected size for the HashAlgorithm. 16 bytes for SHA256, instead of 32 bytes.
             // see: https://datatracker.ietf.org/doc/html/rfc7518#section-5.2.2.1
             switch (algorithm)
             {
                 case SecurityAlgorithms.Aes128CbcHmacSha256:
-                {
-                    ValidateKeySize(keyBytes, algorithm, 16);
-                    return new HMACSHA256(keyBytes);
-                }
+                    {
+                        ValidateKeySize(keyBytes, algorithm, 16);
+                        return new HMACSHA256(keyBytes);
+                    }
 
                 case SecurityAlgorithms.Aes192CbcHmacSha384:
-                {
-                    ValidateKeySize(keyBytes, algorithm, 24);
-                    return new HMACSHA384(keyBytes);
-                }
+                    {
+                        ValidateKeySize(keyBytes, algorithm, 24);
+                        return new HMACSHA384(keyBytes);
+                    }
 
                 case SecurityAlgorithms.Aes256CbcHmacSha512:
-                {
-                    ValidateKeySize(keyBytes, algorithm, 32);
-                    return new HMACSHA512(keyBytes);
-                }
+                    {
+                        ValidateKeySize(keyBytes, algorithm, 32);
+                        return new HMACSHA512(keyBytes);
+                    }
 
                 case SecurityAlgorithms.HmacSha256Signature:
                 case SecurityAlgorithms.HmacSha256:
-                {
-                    ValidateKeySize(keyBytes, algorithm, 32);
-                    return new HMACSHA256(keyBytes);
-                }
+                    {
+                        ValidateKeySize(keyBytes, algorithm, 32);
+                        return new HMACSHA256(keyBytes);
+                    }
 
                 case SecurityAlgorithms.HmacSha384Signature:
                 case SecurityAlgorithms.HmacSha384:
-                {
-                    ValidateKeySize(keyBytes, algorithm, 48);
-                    return new HMACSHA384(keyBytes);
-                }
+                    {
+                        ValidateKeySize(keyBytes, algorithm, 48);
+                        return new HMACSHA384(keyBytes);
+                    }
 
                 case SecurityAlgorithms.HmacSha512Signature:
                 case SecurityAlgorithms.HmacSha512:
-                {
-                    ValidateKeySize(keyBytes, algorithm, 64);
-                    return new HMACSHA512(keyBytes);
-                }
+                    {
+                        ValidateKeySize(keyBytes, algorithm, 64);
+                        return new HMACSHA512(keyBytes);
+                    }
 
                 default:
-                    throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10666, LogHelper.MarkAsNonPII(algorithm))));
+                    throw LogHelper.LogExceptionMessage(
+                        new NotSupportedException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10666,
+                                LogHelper.MarkAsNonPII(algorithm))));
             }
         }
 
-        private static void ValidateKeySize(byte[] keyBytes, string algorithm, int expectedNumberOfBytes)
+        private static void ValidateKeySize(
+            byte[] keyBytes,
+            string algorithm,
+            int expectedNumberOfBytes)
         {
             if (keyBytes.Length < expectedNumberOfBytes)
                 throw LogHelper.LogExceptionMessage(
@@ -502,7 +597,11 @@ namespace Microsoft.IdentityModel.Tokens
                             LogHelper.MarkAsNonPII(keyBytes.Length * 8))));
         }
 
-        private SignatureProvider CreateSignatureProvider(SecurityKey key, string algorithm, bool willCreateSignatures, bool cacheProvider)
+        private SignatureProvider CreateSignatureProvider(
+            SecurityKey key,
+            string algorithm,
+            bool willCreateSignatures,
+            bool cacheProvider)
         {
             if (key == null)
                 throw LogHelper.LogArgumentNullException(nameof(key));
@@ -513,6 +612,23 @@ namespace Microsoft.IdentityModel.Tokens
             SignatureProvider signatureProvider;
             if (CustomCryptoProvider != null && CustomCryptoProvider.IsSupportedAlgorithm(algorithm, key, willCreateSignatures))
             {
+                if (CacheCustomProviders && CacheSignatureProviders && cacheProvider)
+                {
+                    // Try cache lookup first using the remembered provider type from a previous Create call.
+                    string cacheTypeKey = CustomCryptoProvider.GetType().ToString() + "-" + algorithm;
+                    if (_customProviderTypeCache.TryGetValue(cacheTypeKey, out string providerType)
+                        && CryptoProviderCache.TryGetSignatureProvider(
+                            key,
+                            algorithm,
+                            providerType,
+                            willCreateSignatures,
+                            out SignatureProvider cachedProvider))
+                    {
+                        cachedProvider.AddRef();
+                        return cachedProvider;
+                    }
+                }
+
                 signatureProvider = CustomCryptoProvider.Create(algorithm, key, willCreateSignatures) as SignatureProvider;
                 if (signatureProvider == null)
                     throw LogHelper.LogExceptionMessage(
@@ -520,8 +636,19 @@ namespace Microsoft.IdentityModel.Tokens
                             LogHelper.FormatInvariant(
                                 LogMessages.IDX10646,
                                 LogHelper.MarkAsNonPII(algorithm),
-                                key,
+                                LogHelper.MarkAsNonPII(key.KeyId),
                                 LogHelper.MarkAsNonPII(typeof(SignatureProvider)))));
+
+                if (CacheCustomProviders && CacheSignatureProviders && cacheProvider)
+                {
+                    // Remember the provider type for future cache lookups.
+                    string cacheTypeKey = CustomCryptoProvider.GetType().ToString() + "-" + algorithm;
+                    string providerType = signatureProvider.GetType().ToString();
+                    _customProviderTypeCache.TryAdd(cacheTypeKey, providerType);
+
+                    if (ShouldCacheSignatureProvider(signatureProvider))
+                        signatureProvider.IsCached = CryptoProviderCache.TryAdd(signatureProvider);
+                }
 
                 return signatureProvider;
             }
@@ -561,9 +688,15 @@ namespace Microsoft.IdentityModel.Tokens
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    throw LogHelper.LogExceptionMessage(new InvalidOperationException(LogHelper.FormatInvariant(LogMessages.IDX10694, key, ex), ex));
+                    throw LogHelper.LogExceptionMessage(
+                        new InvalidOperationException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10694,
+                                LogHelper.MarkAsNonPII(key.KeyId),
+                                ex),
+                            ex));
                 }
             }
             else if (key is SymmetricSecurityKey)
@@ -585,36 +718,49 @@ namespace Microsoft.IdentityModel.Tokens
 
             if (CacheSignatureProviders && cacheProvider)
             {
-                if (CryptoProviderCache.TryGetSignatureProvider(key, algorithm, typeofSignatureProvider, willCreateSignatures, out signatureProvider))
+                if (CryptoProviderCache.TryGetSignatureProvider(
+                    key,
+                    algorithm,
+                    typeofSignatureProvider,
+                    willCreateSignatures,
+                    out signatureProvider))
                 {
                     signatureProvider.AddRef();
                     return signatureProvider;
                 }
 
-                lock (_cacheLock)
-                {
-                    if (CryptoProviderCache.TryGetSignatureProvider(key, algorithm, typeofSignatureProvider, willCreateSignatures, out signatureProvider))
-                    {
-                        signatureProvider.AddRef();
-                        return signatureProvider;
-                    }
+                if (!IsSupportedAlgorithm(algorithm, key))
+                    throw LogHelper.LogExceptionMessage(
+                        new NotSupportedException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10634,
+                                LogHelper.MarkAsNonPII(algorithm),
+                                LogHelper.MarkAsNonPII(key.KeyId))));
 
-                    if (!IsSupportedAlgorithm(algorithm, key))
-                        throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10634, LogHelper.MarkAsNonPII(algorithm), key)));
+                if (createAsymmetric)
+                    signatureProvider = new AsymmetricSignatureProvider(key, algorithm, willCreateSignatures, this);
+                else
+                    signatureProvider = new SymmetricSignatureProvider(key, algorithm, willCreateSignatures);
 
-                    if (createAsymmetric)
-                        signatureProvider = new AsymmetricSignatureProvider(key, algorithm, willCreateSignatures, this);
-                    else
-                        signatureProvider = new SymmetricSignatureProvider(key, algorithm, willCreateSignatures);
-
-                    if (ShouldCacheSignatureProvider(signatureProvider))
-                        signatureProvider.IsCached = CryptoProviderCache.TryAdd(signatureProvider);
-                }
+                if (ShouldCacheSignatureProvider(signatureProvider))
+                    // CryptoProviderCache.TryAdd will return false if unable to add the SignatureProvider.
+                    // One possibility is the SignatureProvider was added between when we called TryGetSignatureProvider and here.
+                    // SignatureProvider.IsCached will be false and CryptoProviderFactory.Release will dispose the SignatureProvider.
+                    // Since the SignatureProvider, was never added to the cache, TryGetSignatureProvider will not return this instance, we can dispose.
+                    // This will result in sometimes (rarely) creating a SignatureProvider that is never cached.
+                    // The alternative is to use a lock after the call to TryGetSignatureProvider, and then check again: { TryGet, lock, TryGet }.
+                    // This will result in excessive locking for different keys, which is common in POP scenarios.
+                    signatureProvider.IsCached = CryptoProviderCache.TryAdd(signatureProvider);
             }
             else
             {
                 if (!IsSupportedAlgorithm(algorithm, key))
-                    throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10634, LogHelper.MarkAsNonPII(algorithm), key)));
+                    throw LogHelper.LogExceptionMessage(
+                        new NotSupportedException(
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10634,
+                                LogHelper.MarkAsNonPII(algorithm),
+                                LogHelper.MarkAsNonPII(key.KeyId))));
 
                 if (createAsymmetric)
                 {
@@ -704,7 +850,9 @@ namespace Microsoft.IdentityModel.Tokens
         {
             if (hashAlgorithm == null)
                 throw LogHelper.LogArgumentNullException(nameof(hashAlgorithm));
-            else if (CustomCryptoProvider != null && _typeToAlgorithmMap.TryGetValue(hashAlgorithm.GetType().ToString(), out var algorithm) && CustomCryptoProvider.IsSupportedAlgorithm(algorithm))
+            else if (CustomCryptoProvider != null
+                     && _typeToAlgorithmMap.TryGetValue(hashAlgorithm.GetType().ToString(), out string algorithm)
+                     && CustomCryptoProvider.IsSupportedAlgorithm(algorithm))
                 CustomCryptoProvider.Release(hashAlgorithm);
             else
                 hashAlgorithm.Dispose();
@@ -752,9 +900,14 @@ namespace Microsoft.IdentityModel.Tokens
 
             signatureProvider.Release();
             if (CustomCryptoProvider != null && CustomCryptoProvider.IsSupportedAlgorithm(signatureProvider.Algorithm))
-                CustomCryptoProvider.Release(signatureProvider);
+            {
+                if (!signatureProvider.IsCached)
+                    CustomCryptoProvider.Release(signatureProvider);
+            }
             else if (signatureProvider.CryptoProviderCache == null && signatureProvider.RefCount == 0 && !signatureProvider.IsCached)
+            {
                 signatureProvider.Dispose();
+            }
         }
     }
 }

@@ -77,6 +77,25 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
+#if NET472 || NET
+        [Fact]
+        public void Constructor_WithECDsa()
+        {
+            var certificate = KeyingMaterial.DefaultCert_256ECDSA;
+            var x509SecurityKey = new X509SecurityKey(certificate);
+            var context = new CompareContext();
+            IdentityComparer.AreEqual(x509SecurityKey.KeyId, certificate.Thumbprint, context);
+            IdentityComparer.AreEqual(x509SecurityKey.X5t, Base64UrlEncoder.Encode(certificate.GetCertHash()), context);
+            IdentityComparer.AreEqual(certificate, x509SecurityKey.Certificate, context);
+            Assert.NotNull(x509SecurityKey.PublicKey);
+            Assert.NotNull(x509SecurityKey.PrivateKey);
+            Assert.Equal(PrivateKeyStatus.Exists, x509SecurityKey.PrivateKeyStatus);
+            Assert.True(x509SecurityKey.CanComputeJwkThumbprint());
+            Assert.NotEmpty(x509SecurityKey.ComputeJwkThumbprint());
+            TestUtilities.AssertFailIfErrors(context);
+        }
+#endif
+
         [Fact]
         public void CanComputeJwkThumbprint()
         {

@@ -29,6 +29,9 @@ namespace Microsoft.IdentityModel.Protocols
         internal const string IDX20808 = "IDX20808: Network error occurred. Status code: '{0}'. \nResponse content: '{1}'. \nAttempting to retrieve document again from: '{2}'.";
         internal const string IDX20809 = "IDX20809: Unable to retrieve document from: '{0}'. Status code: '{1}'. \nResponse content: '{2}'.";
         internal const string IDX20810 = "IDX20810: Configuration validation failed, see inner exception for more details. Exception: '{0}'.";
+        internal const string IDX20811 = "IDX20811: Failed to retrieve configuration from event handler. MetadataAddress: '{0}', Exception: '{1}'.";
+        internal const string IDX20812 = "IDX20812: Failed to validate configuration retrieved via event handler. Exception: '{0}'.";
+        internal const string IDX20813 = "IDX20813: ConfigurationEventHandler implementation threw an exception on AfterUpdateAsync call for metadata address '{0}'. Exception: '{1}'.";
 
 #pragma warning restore 1591
     }

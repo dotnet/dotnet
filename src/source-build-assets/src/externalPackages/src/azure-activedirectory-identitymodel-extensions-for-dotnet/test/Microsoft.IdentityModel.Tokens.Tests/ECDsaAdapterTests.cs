@@ -14,7 +14,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class ECDsaAdapterTests
     {
-        [Theory, MemberData(nameof(CreateECDsaFromJsonWebKeyTheoryData))]
+        [Theory, MemberData(nameof(CreateECDsaFromJsonWebKeyTheoryData), DisableDiscoveryEnumeration = true)]
         public void CreateECDsa(JsonWebKeyTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CreateECDsa", theoryData);

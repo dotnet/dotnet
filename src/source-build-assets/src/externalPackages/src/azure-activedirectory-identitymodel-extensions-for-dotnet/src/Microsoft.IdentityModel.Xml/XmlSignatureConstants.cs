@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.IdentityModel.Tokens;
+
 namespace Microsoft.IdentityModel.Xml
 {
     /// <summary>
@@ -31,7 +33,11 @@ namespace Microsoft.IdentityModel.Xml
             public const string NcName = "NCName";
             public const string Nil = "nil";
             public const string PrefixList = "PrefixList";
-            public const string Type = "Type";
+            // Change the non-constant field `Type` to a property to resolve CA2211 diagnostic.
+            public static string Type
+            {
+                get => AppContextSwitches.UseCapitalizedXMLTypeAttr ? "Type" : "type";
+            }
             public const string URI = "URI";
         }
 
