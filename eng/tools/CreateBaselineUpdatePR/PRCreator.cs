@@ -165,6 +165,16 @@ public partial class PRCreator
 
                 foreach (var line in originalContent)
                 {
+                    // Skip blank lines. Splitting on "\n" yields a trailing empty element for a
+                    // file ending in a newline; running the removal below for that empty line
+                    // collapses to content.Replace("\n", ""), stripping every newline and mangling
+                    // the file into a single line. Blank lines are formatting, not exclusions, so
+                    // there is never a reason to remove them here.
+                    if (string.IsNullOrWhiteSpace(line))
+                    {
+                        continue;
+                    }
+
                     if (!parsedFile.Contains(line))
                     {
                         // If the newline character is not present, the line is at the end of the file

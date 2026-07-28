@@ -184,6 +184,13 @@ stages:
     - template: /eng/pipelines/templates/variables/pipelines.yml@self
       # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
     - group: Dotnet-SourceBuild-Secrets
+    templateContext:
+      outputs:
+      - output: pipelineArtifact
+        displayName: 'Publish BuildLogs'
+        condition: succeededOrFailed()
+        targetPath: '$(Build.StagingDirectory)/BuildLogs'
+        artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
     steps:
     - script: |
         source ./eng/common/tools.sh
@@ -203,6 +210,9 @@ stages:
     - script: |
         find $(Pipeline.Workspace)/Artifacts -type f -exec mv {} $(Pipeline.Workspace)/Artifacts \;
       displayName: Move Artifacts to root
+
+    - script: mkdir -p $(Build.StagingDirectory)/BuildLogs
+      displayName: Create BuildLogs staging directory
 
     - template: /eng/pipelines/templates/steps/create-baseline-update-pr.yml@self
       parameters:
