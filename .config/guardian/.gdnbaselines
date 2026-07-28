@@ -300,6 +300,38 @@
       "ruleId": "BA2008",
       "createdDate": "2026-07-27 01:55:14Z"
     },
+    "52381a07121ad8c6d8874d31fcc9ec0c878cdc13a221c23dfb68d6e003c42ffe": {
+      "signature": "52381a07121ad8c6d8874d31fcc9ec0c878cdc13a221c23dfb68d6e003c42ffe",
+      "alternativeSignatures": [
+        "64f99807a8aefa32a77901a8609c12f874c18504137787403d98059825b290ae",
+        "387876986bdf9230266b965715dd58674f2a1aad8873474a61052264be84c62a",
+        "dbab8c0c16e2ff1fb64261b180cd788786d883c5d57fe3a29c28dd29b2542f2e"
+      ],
+      "target": "runtimes/win-x64/lib/net11.0/DirectWriteForwarder.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260726.2/Microsoft_WindowsDesktop_App_Runtime_win-x64_11_0_0-rc_1_26376_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-07-27 01:55:14Z"
+    },
+    "3675cd88be5ab5fc6ac1dc8bbb3f1c46e1b8014e71fef949cb5f976fd5bc839b": {
+      "signature": "3675cd88be5ab5fc6ac1dc8bbb3f1c46e1b8014e71fef949cb5f976fd5bc839b",
+      "alternativeSignatures": [
+        "1ae7a929153ca1b67762a149da877f633a7e15e38f1b52e6ce52a734f38c3796",
+        "31f0f575b27847d04e9f16db5dd7dca6439d97d9eb204717d27378b519d79721",
+        "a7159af3e2873b30c4e97c762d09bae3afd9bf698432029620b8275fc3fe0e0f"
+      ],
+      "target": "runtimes/win-x64/lib/net11.0/System.Printing.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260726.2/Microsoft_WindowsDesktop_App_Runtime_win-x64_11_0_0-rc_1_26376_102_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-07-27 01:55:14Z"
+    },
     "c1e46aede103f65dba08e65a38c42251bd4f668f7a21e6247b8515ceb38b580a": {
       "signature": "c1e46aede103f65dba08e65a38c42251bd4f668f7a21e6247b8515ceb38b580a",
       "alternativeSignatures": [
