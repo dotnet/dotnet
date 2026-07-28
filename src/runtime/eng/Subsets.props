@@ -727,8 +727,8 @@
 
           <PropertyGroup Condition="'$(DotNetBuildAllRuntimePacks)' == 'true'">
             <_BuildNativeAOTRuntimePack Condition="'$(NativeAOTSupported)' == 'true'">true</_BuildNativeAOTRuntimePack>
-            <_BuildHostPack Condition="'$(TargetsMobile)' != 'true' and !('$(TargetsLinuxBionic)' == 'true' and '$(TargetArchitecture)' == 'arm')">true</_BuildHostPack>
-            <_BuildBundle Condition="'$(TargetsMobile)' != 'true' and !('$(TargetsLinuxBionic)' == 'true' and '$(TargetArchitecture)' == 'arm')">true</_BuildBundle>
+            <_BuildHostPack Condition="'$(TargetsMobile)' != 'true'">true</_BuildHostPack>
+            <_BuildBundle Condition="'$(TargetsMobile)' != 'true'">true</_BuildBundle>
           </PropertyGroup>
 
           <ItemGroup>
