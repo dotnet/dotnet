@@ -67,9 +67,18 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
 
         long uploadedCount = await UploadTestResultsWithCountAsync(aggregatedResults, resultMetadata, cancellationToken);
         return new TestResultUploadSummary(
-            AllPassed: aggregatedResults.All(result => result.Result != "Failed" && result.Result != "None" && result.Result != "Inconclusive"),
+            AllPassed: ComputeAllPassed(aggregatedResults),
             UploadedCount: uploadedCount);
     }
+
+    /// <summary>
+    /// A work item's uploaded results are only considered a failure when a test actually failed
+    /// or could not be parsed into a known outcome ("None"). "Inconclusive" is a legitimate,
+    /// non-failing outcome produced by the aggregator for data-driven tests that mix passing and
+    /// skipped data rows (see <see cref="ResultAggregator"/>), so it must not fail the work item.
+    /// </summary>
+    internal static bool ComputeAllPassed(IReadOnlyList<AggregatedResult> results)
+        => results.All(result => result.Result != "Failed" && result.Result != "None");
 
     public async Task<long> UploadTestResultsWithCountAsync(IEnumerable<AggregatedResult> results, object resultMetadata, CancellationToken cancellationToken = default)
     {
