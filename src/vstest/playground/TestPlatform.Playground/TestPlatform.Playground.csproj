@@ -99,13 +99,15 @@
       <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\$(NetFrameworkMinimum)\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*" SubFolder="netfx\Extensions\" />
       <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.Extensions.TrxLogger\$(Configuration)\$(NetFrameworkMinimum)\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger*" SubFolder="netfx\Extensions\" />
 
-      <!-- .NET console -->
-      <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" SubFolder="net" />
+      <!-- .NET console. Exclude the publish\ closure that PublishForPackaging emits under the
+           producer's own bin during -pack builds; it is a duplicate of the build output already
+           copied here and would otherwise be mirrored again under net\publish\. -->
+      <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" Exclude="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetCoreAppMinimum)\publish\**\*.*" SubFolder="net" />
       <!-- Copy only the runtime provider assembly (see the netfx note above for why the whole folder must not be copied). -->
       <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\netstandard2.0\**\Microsoft.TestPlatform.TestHostRuntimeProvider*" SubFolder="net\Extensions\" />
 
-      <!-- copy testhost -->
-      <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" SubFolder="net" />
+      <!-- copy testhost. Exclude the publish\ closure emitted for packaging (see the .NET console note above). -->
+      <FileToCopy Include="$(SourcePath)bin\testhost\$(Configuration)\$(NetCoreAppMinimum)\**\*.*" Exclude="$(SourcePath)bin\testhost\$(Configuration)\$(NetCoreAppMinimum)\publish\**\*.*" SubFolder="net" />
 
       <!-- copy datacollectors --><!--
       <FileToCopy Include="$(SourcePath)bin\datacollector\$(Configuration)\net472\**\*.*" SubFolder="net\" />

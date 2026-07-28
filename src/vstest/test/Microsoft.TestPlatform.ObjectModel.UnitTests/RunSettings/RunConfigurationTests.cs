@@ -444,7 +444,8 @@ public class RunConfigurationTests
                      </RunConfiguration>
                 </RunSettings>";
 
-        Assert.ThrowsExactly<SettingsException>(
+        var exception = Assert.ThrowsExactly<SettingsException>(
                 () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
+        Assert.AreEqual("Invalid settings 'RunConfiguration'.  Invalid value 'InvalidValue' specified for 'IsTargetPlatformInferred'.", exception.Message);
     }
 }
