@@ -1,6 +1,8 @@
-﻿using System;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System;
 using System.Buffers;
-using System.Linq;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Security.Cryptography;
@@ -18,13 +20,16 @@ if (args is not [var urlArg])
 Log($"Test browser opened at '{urlArg}'.");
 
 var url = new Uri(urlArg, UriKind.Absolute);
+var origin = Environment.GetEnvironmentVariable("TEST_BROWSER_ORIGIN_HEADER") ?? urlArg;
+
+Log($"Setting Origin header to '{origin}'.");
 
 var (webSocketUrls, publicKey) = await GetWebSocketUrlsAndPublicKey(url);
 
 var secret = RandomNumberGenerator.GetBytes(32);
 var encryptedSecret = GetEncryptedSecret(publicKey, secret);
 
-using var webSocket = await OpenWebSocket(webSocketUrls, encryptedSecret);
+using var webSocket = await OpenWebSocket(origin, webSocketUrls, encryptedSecret);
 var buffer = new byte[8 * 1024];
 
 while (await TryReceiveMessageAsync(webSocket, message => Log($"Received: {Encoding.UTF8.GetString(message)}")))
@@ -35,7 +40,7 @@ Log("WebSocket closed");
 
 return 0;
 
-static async Task<WebSocket> OpenWebSocket(string[] urls, string encryptedSecret)
+static async Task<WebSocket> OpenWebSocket(string origin, string[] urls, string encryptedSecret)
 {
     foreach (var url in urls)
     {
@@ -43,6 +48,12 @@ static async Task<WebSocket> OpenWebSocket(string[] urls, string encryptedSecret
         {
             var webSocket = new ClientWebSocket();
             webSocket.Options.AddSubProtocol(Uri.EscapeDataString(encryptedSecret));
+
+            if (origin != "")
+            {
+                webSocket.Options.SetRequestHeader("Origin", origin);
+            }
+
             await webSocket.ConnectAsync(new Uri(url), CancellationToken.None);
             return webSocket;
         }
