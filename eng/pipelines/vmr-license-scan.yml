@@ -19,6 +19,12 @@ schedules:
     - release/*.0.4xx*
     - internal/release/*.0.?xx*
     - internal/release/*.0.???
+    exclude:
+    # License scan is disabled for the 2xx band: the shared source-build test container
+    # ships a newer .NET 10 SDK than the 2xx branch global.json pins, so the test cannot
+    # run there. Tracking: dotnet/source-build#5623
+    - internal/release/*.0.2xx*
+    - internal/release/*.0.2??
 
 pr: none
 
@@ -34,6 +40,10 @@ trigger:
     - release/*.0.4xx*
     - internal/release/*.0.?xx*
     - internal/release/*.0.???
+    exclude:
+    # See note above — license scan is disabled for the 2xx band. Tracking: dotnet/source-build#5623
+    - internal/release/*.0.2xx*
+    - internal/release/*.0.2??
   paths:
     include:
     - test/Microsoft.DotNet.SourceBuild.Tests/LicenseScanTests.cs
