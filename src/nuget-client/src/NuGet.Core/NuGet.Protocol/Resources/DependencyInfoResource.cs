@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -29,7 +27,7 @@ namespace NuGet.Protocol.Core.Types
         /// Returns dependency info for the given package if it exists. If the package is not found null is
         /// returned.
         /// </returns>
-        public abstract Task<SourcePackageDependencyInfo> ResolvePackage(PackageIdentity package,
+        public abstract Task<SourcePackageDependencyInfo?> ResolvePackage(PackageIdentity package,
             NuGetFramework projectFramework,
             SourceCacheContext cacheContext,
             ILogger log,

@@ -89,12 +89,10 @@ namespace NuGetConsole.Host.PowerShell.Test
                     { "Source", pathContext.PackageSource },
                 });
 
-            // Assert — at least the two matching packages are returned
-            results.Should().HaveCountGreaterThanOrEqualTo(2, because: "two packages whose ID contains 'FindById' exist in the source");
+            // Assert — exactly the two matching packages are returned, ordered ascending by id
+            // (the local source enumerates package id folders in ascending order).
             var ids = results.Select(r => ((PowerShellPackage)r.BaseObject).Id).ToList();
-            ids.Should().Contain("FindByIdPackageA");
-            ids.Should().Contain("FindByIdPackageB");
-            ids.Should().NotContain("OtherPackage");
+            ids.Should().Equal("FindByIdPackageA", "FindByIdPackageB");
         }
 
         /// <summary>
@@ -159,13 +157,13 @@ namespace NuGetConsole.Host.PowerShell.Test
                     { "Source", pathContext.PackageSource },
                 });
 
-            // Assert
+            // Assert — all three versions are returned, ordered descending by version
+            // (LocalPackageSearchResource orders versions with OrderByDescending).
             results.Should().ContainSingle();
             var package = (PowerShellPackage)results[0].BaseObject;
             package.Id.Should().Be("AllVersionsPackage");
             var versions = package.Versions.Select(v => v.ToNormalizedString()).ToList();
-            versions.Should().HaveCountGreaterThanOrEqualTo(3, because: "three versions were published");
-            versions.Should().Contain("1.0.0").And.Contain("2.0.0").And.Contain("3.0.0");
+            versions.Should().Equal("3.0.0", "2.0.0", "1.0.0");
         }
 
         /// <summary>
@@ -231,6 +229,131 @@ namespace NuGetConsole.Host.PowerShell.Test
             var package = (PowerShellPackage)results[0].BaseObject;
             package.Id.Should().Be("PrereleaseOnlyPackage");
             package.Version.ToString().Should().Be("1.0.0-beta");
+        }
+
+        /// <summary>
+        /// Verifies that Find-Package -First caps the number of returned packages.
+        /// </summary>
+        [Fact]
+        public async Task FindPackage_WithFirst_LimitsNumberOfResultsAsync()
+        {
+            // Arrange — six distinct package ids share a common keyword
+            using var pathContext = new SimpleTestPathContext();
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("FirstKeywordPackage1", "1.0.0"),
+                new SimpleTestPackageContext("FirstKeywordPackage2", "1.0.0"),
+                new SimpleTestPackageContext("FirstKeywordPackage3", "1.0.0"),
+                new SimpleTestPackageContext("FirstKeywordPackage4", "1.0.0"),
+                new SimpleTestPackageContext("FirstKeywordPackage5", "1.0.0"),
+                new SimpleTestPackageContext("FirstKeywordPackage6", "1.0.0"));
+
+            SetupSourceRepositoryProvider(pathContext.PackageSource);
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: pathContext.PackageSource);
+
+            // Act — Find-Package FirstKeywordPackage -First 5
+            var results = fixture.Invoke(
+                "Find-Package",
+                new Dictionary<string, object>
+                {
+                    { "Id", "FirstKeywordPackage" },
+                    { "Source", pathContext.PackageSource },
+                    { "First", 5 },
+                });
+
+            // Assert — -First caps the count to the first 5 ids in ascending order
+            var ids = results.Select(r => ((PowerShellPackage)r.BaseObject).Id).ToList();
+            ids.Should().Equal(
+                "FirstKeywordPackage1",
+                "FirstKeywordPackage2",
+                "FirstKeywordPackage3",
+                "FirstKeywordPackage4",
+                "FirstKeywordPackage5");
+        }
+
+        /// <summary>
+        /// Verifies that Find-Package -Skip past the available results returns nothing.
+        /// </summary>
+        [Fact]
+        public async Task FindPackage_WithSkipBeyondResultCount_ReturnsEmptyAsync()
+        {
+            // Arrange — a single matching package
+            using var pathContext = new SimpleTestPathContext();
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("SkipKeywordPackage", "1.0.0"));
+
+            SetupSourceRepositoryProvider(pathContext.PackageSource);
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: pathContext.PackageSource);
+
+            // Act 1 — without -Skip, the single package is returned
+            var withoutSkip = fixture.Invoke(
+                "Find-Package",
+                new Dictionary<string, object>
+                {
+                    { "Id", "SkipKeywordPackage" },
+                    { "Source", pathContext.PackageSource },
+                });
+
+            // Act 2 — skipping past the only result returns nothing
+            var withSkip = fixture.Invoke(
+                "Find-Package",
+                new Dictionary<string, object>
+                {
+                    { "Id", "SkipKeywordPackage" },
+                    { "Source", pathContext.PackageSource },
+                    { "Skip", 1 },
+                });
+
+            // Assert
+            withoutSkip.Should().ContainSingle();
+            withSkip.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Verifies that Find-Package -First combined with -Skip returns a full page of results
+        /// after skipping into a larger result set.
+        /// </summary>
+        [Fact]
+        public async Task FindPackage_WithFirstAndSkip_ReturnsLimitedResultsAsync()
+        {
+            // Arrange — six matching packages; skip into the set and take a full page
+            using var pathContext = new SimpleTestPathContext();
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext("PageKeywordPackage1", "1.0.0"),
+                new SimpleTestPackageContext("PageKeywordPackage2", "1.0.0"),
+                new SimpleTestPackageContext("PageKeywordPackage3", "1.0.0"),
+                new SimpleTestPackageContext("PageKeywordPackage4", "1.0.0"),
+                new SimpleTestPackageContext("PageKeywordPackage5", "1.0.0"),
+                new SimpleTestPackageContext("PageKeywordPackage6", "1.0.0"));
+
+            SetupSourceRepositoryProvider(pathContext.PackageSource);
+
+            using var fixture = new CmdletRunspaceFixture(activeSource: pathContext.PackageSource);
+
+            // Act — Find-Package PageKeywordPackage -First 3 -Skip 2
+            var results = fixture.Invoke(
+                "Find-Package",
+                new Dictionary<string, object>
+                {
+                    { "Id", "PageKeywordPackage" },
+                    { "Source", pathContext.PackageSource },
+                    { "First", 3 },
+                    { "Skip", 2 },
+                });
+
+            // Assert — skipping 2 into the ascending set and taking 3 returns packages 3, 4, 5
+            var ids = results.Select(r => ((PowerShellPackage)r.BaseObject).Id).ToList();
+            ids.Should().Equal(
+                "PageKeywordPackage3",
+                "PageKeywordPackage4",
+                "PageKeywordPackage5");
         }
 
         private void SetupSourceRepositoryProvider(string localSourcePath)

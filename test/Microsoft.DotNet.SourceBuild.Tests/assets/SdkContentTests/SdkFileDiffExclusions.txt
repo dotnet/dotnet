@@ -44,6 +44,9 @@
 ./library-packs/|sb
 ./packs/runtime.banana-rid.Microsoft.DotNet.ILCompiler/|sb
 
+# VMR Linux_x64 MSFT SDK currently misses dotnet-aot: https://github.com/dotnet/dotnet/issues/7981
+./sdk/x.y.z/libdotnet-aot.so|sb
+
 # Exclude format and watch tools due to too much noise
 ./sdk/x.y.z/DotnetTools/dotnet-format/
 ./sdk/x.y.z/DotnetTools/dotnet-watch/

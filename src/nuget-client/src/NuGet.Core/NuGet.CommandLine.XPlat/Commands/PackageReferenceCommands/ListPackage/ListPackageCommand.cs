@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace NuGet.CommandLine.XPlat
 {
     internal static class ListPackageCommand
     {
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
         internal static void Register(
             Command parent,
             Func<ILoggerWithColor> getLogger,
