@@ -332,6 +332,38 @@
       "ruleId": "BA2007",
       "createdDate": "2026-07-27 01:55:14Z"
     },
+    "c1e46aede103f65dba08e65a38c42251bd4f668f7a21e6247b8515ceb38b580a": {
+      "signature": "c1e46aede103f65dba08e65a38c42251bd4f668f7a21e6247b8515ceb38b580a",
+      "alternativeSignatures": [
+        "e72417e8a2189829f556c94f92b7126b3de68741bcca30a8d44d6cd779dc9efd",
+        "c162eb1b273f3e7be10164117a29eeb38d48ff2c8c3716611421b27808011aab",
+        "a6fd3b242bd707128fc65e0767612efeb8a74fa454ce7e96668db3f8816528c8"
+      ],
+      "target": "lib/net11.0/DirectWriteForwarder.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260727.5/runtime_win-x86_Microsoft_DotNet_Wpf_GitHub_11_0_0-rc_1_26377_105_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-07-27 16:34:07Z"
+    },
+    "954e6b40a961af5eada6835e709385e8c6cea51fb00bd22dd19440a11912598c": {
+      "signature": "954e6b40a961af5eada6835e709385e8c6cea51fb00bd22dd19440a11912598c",
+      "alternativeSignatures": [
+        "f28f7957f2bf617d1ce98533be1fac69fd0aadaef76314b7bd34d68c06c81393",
+        "90196756554f13f90d2ef0329a044adce753d54d8f5cf26e8ff65228465c1350",
+        "6c4302241cc1e35696203f9fc9bc97b030f8abd4b9ed5140346747b61559689d"
+      ],
+      "target": "lib/net11.0/System.Printing.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260727.5/runtime_win-x86_Microsoft_DotNet_Wpf_GitHub_11_0_0-rc_1_26377_105_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-07-27 16:34:07Z"
+    },
     "37156ee3db9fa7161f14f3ba1e455e377f9d2f12f3d7d115e86836095aff80fe": {
       "signature": "37156ee3db9fa7161f14f3ba1e455e377f9d2f12f3d7d115e86836095aff80fe",
       "alternativeSignatures": [
