@@ -12,7 +12,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
     public class EncryptingCredentialsTests
     {
         //public EncryptingCredentials(SecurityKey key, string alg, string enc)
-        [Theory, MemberData(nameof(ConstructorATheoryData))]
+        [Theory, MemberData(nameof(ConstructorATheoryData), DisableDiscoveryEnumeration = true)]
         public void ConstructorA(EncryptingCredentialsTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ConstructorA", theoryData);
@@ -31,7 +31,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
         //Used in scenarios when a key represents a 'shared' symmetric key
         //public EncryptingCredentials(SecurityKey key, string enc)
-        [Theory, MemberData(nameof(ConstructorBTheoryData))]
+        [Theory, MemberData(nameof(ConstructorBTheoryData), DisableDiscoveryEnumeration = true)]
         public void ConstructorB(EncryptingCredentialsTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ConstructorB", theoryData);

@@ -1,6 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 #if NET8_0_OR_GREATER
@@ -164,7 +163,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
                     if (reader.ValueTextEquals(Utf8Bytes.AcrValuesSupported))
                         JsonPrimitives.ReadStrings(ref reader, config.AcrValuesSupported, MetadataName.AcrValuesSupported, ClassName, true);
 
-                    if (reader.ValueTextEquals(Utf8Bytes.AuthorizationDetailsTypesSupported))
+                    else if (reader.ValueTextEquals(Utf8Bytes.AuthorizationDetailsTypesSupported))
                         JsonPrimitives.ReadStrings(ref reader, config.AuthorizationDetailsTypesSupported, MetadataName.AuthorizationDetailsTypesSupported, ClassName, true);
 
                     else if (reader.ValueTextEquals(Utf8Bytes.AuthorizationEndpoint))
@@ -383,7 +382,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
                             if (propertyName.Equals(MetadataName.AcrValuesSupported, StringComparison.OrdinalIgnoreCase))
                                 JsonPrimitives.ReadStrings(ref reader, config.AcrValuesSupported, propertyName, ClassName);
 
-                            if (propertyName.Equals(MetadataName.AuthorizationDetailsTypesSupported, StringComparison.OrdinalIgnoreCase))
+                            else if (propertyName.Equals(MetadataName.AuthorizationDetailsTypesSupported, StringComparison.OrdinalIgnoreCase))
                                 JsonPrimitives.ReadStrings(ref reader, config.AuthorizationDetailsTypesSupported, propertyName, ClassName);
 
                             else if (propertyName.Equals(MetadataName.AuthorizationEndpoint, StringComparison.OrdinalIgnoreCase))

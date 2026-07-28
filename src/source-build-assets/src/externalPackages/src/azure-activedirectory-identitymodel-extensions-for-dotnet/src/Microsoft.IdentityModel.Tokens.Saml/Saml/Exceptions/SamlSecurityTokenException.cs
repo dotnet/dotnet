@@ -17,7 +17,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// </summary>
         public SamlSecurityTokenException()
             : base()
-        {}
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SamlSecurityTokenException"/> class.
@@ -25,7 +25,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
         public SamlSecurityTokenException(string message)
             : base(message)
-        {}
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SamlSecurityTokenException"/> class.
@@ -34,7 +34,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// <param name="innerException">A <see cref="Exception"/> that represents the root cause of the exception.</param>
         public SamlSecurityTokenException(string message, Exception innerException)
             : base(message, innerException)
-        {}
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SamlSecurityTokenException"/> class.
@@ -43,6 +43,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// <param name="context">The contextual information about the source or destination.</param>
         protected SamlSecurityTokenException(SerializationInfo info, StreamingContext context)
             : base(info, context)
-        {}
+        { }
     }
 }

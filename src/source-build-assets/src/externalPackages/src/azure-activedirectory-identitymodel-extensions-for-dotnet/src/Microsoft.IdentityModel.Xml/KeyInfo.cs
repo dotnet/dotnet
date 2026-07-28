@@ -55,7 +55,7 @@ namespace Microsoft.IdentityModel.Xml
                 // Obtain parameters from the RSA if the rsaKey does not contain a valid value for RSAParameters
                 if (rsaKey.Parameters.Equals(default(RSAParameters)))
                     rsaParameters = rsaKey.Rsa.ExportParameters(false);
-        
+
                 RSAKeyValue = new RSAKeyValue(Convert.ToBase64String(rsaParameters.Modulus), Convert.ToBase64String(rsaParameters.Exponent));
             }
         }
@@ -115,7 +115,7 @@ namespace Microsoft.IdentityModel.Xml
         /// <summary>
         /// Returns true if the KeyInfo object can be matched with the specified SecurityKey, returns false otherwise.
         /// </summary>
-        internal bool MatchesKey(SecurityKey key)
+        protected internal virtual bool MatchesKey(SecurityKey key)
         {
             if (key == null)
                 return false;
@@ -146,7 +146,7 @@ namespace Microsoft.IdentityModel.Xml
                 foreach (var certificate in data.Certificates)
                 {
                     // depending on the target, X509Certificate2 may be disposable
-                    var cert = new X509Certificate2(Convert.FromBase64String(certificate));
+                    X509Certificate2 cert = CertificateHelper.LoadX509Certificate(certificate);
                     try
                     {
                         if (cert.Equals(key.Certificate))
@@ -165,7 +165,7 @@ namespace Microsoft.IdentityModel.Xml
 
         private bool Matches(RsaSecurityKey key)
         {
-            if (key == null)
+            if (key == null || RSAKeyValue == null)
                 return false;
 
             if (!key.Parameters.Equals(default(RSAParameters)))
@@ -188,23 +188,27 @@ namespace Microsoft.IdentityModel.Xml
             if (key == null)
                 return false;
 
-            if (RSAKeyValue != null)
+            if (RSAKeyValue != null
+            && !string.IsNullOrEmpty(key.E)
+            && !string.IsNullOrEmpty(key.N)
+            && !string.IsNullOrEmpty(RSAKeyValue.Exponent)
+            && !string.IsNullOrEmpty(RSAKeyValue.Modulus))
             {
-                return RSAKeyValue.Exponent.Equals(Convert.FromBase64String(key.E))
-                        && RSAKeyValue.Modulus.Equals(Convert.FromBase64String(key.N));
+                return key.E.Equals(Base64UrlEncoder.Encode(Convert.FromBase64String(RSAKeyValue.Exponent)))
+                    && key.N.Equals(Base64UrlEncoder.Encode(Convert.FromBase64String(RSAKeyValue.Modulus)));
             }
 
             foreach (var x5c in key.X5c)
             {
                 // depending on the target, X509Certificate2 may be disposable
-                var certToMatch = new X509Certificate2(Convert.FromBase64String(x5c));
+                X509Certificate2 certToMatch = CertificateHelper.LoadX509Certificate(x5c);
                 try
                 {
                     foreach (var data in X509Data)
                     {
                         foreach (var certificate in data.Certificates)
                         {
-                            var cert = new X509Certificate2(Convert.FromBase64String(certificate));
+                            X509Certificate2 cert = CertificateHelper.LoadX509Certificate(certificate);
                             try
                             {
                                 if (cert.Equals(certToMatch))

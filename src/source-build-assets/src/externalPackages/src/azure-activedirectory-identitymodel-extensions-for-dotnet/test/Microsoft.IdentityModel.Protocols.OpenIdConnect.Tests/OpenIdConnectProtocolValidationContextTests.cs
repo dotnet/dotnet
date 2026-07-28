@@ -26,8 +26,8 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             GetSetContext context =
                 new GetSetContext
                 {
-                    PropertyNamesAndSetGetValue = new List<KeyValuePair<string, List<object>>> 
-                    { 
+                    PropertyNamesAndSetGetValue = new List<KeyValuePair<string, List<object>>>
+                    {
                         new KeyValuePair<string, List<object>>("State", new List<object>{(string)null, "AuthorizationCode", "AuthorizationCode_AuthorizationCode"}),
                         new KeyValuePair<string, List<object>>("Nonce", new List<object>{(string)null, "Nonce", "Nonce_Nonce"}),
                     },

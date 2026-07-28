@@ -36,7 +36,7 @@ namespace Microsoft.IdentityModel.Xml.Tests
             TestUtilities.AssertFailIfErrors($"{this}.GetSets", context.Errors);
         }
 
-        [Theory, MemberData(nameof(SignedInfoConstructorTheoryData))]
+        [Theory, MemberData(nameof(SignedInfoConstructorTheoryData), DisableDiscoveryEnumeration = true)]
         public void SignedInfoConstructor(SignedInfoTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.SignedInfoConstructor", theoryData);

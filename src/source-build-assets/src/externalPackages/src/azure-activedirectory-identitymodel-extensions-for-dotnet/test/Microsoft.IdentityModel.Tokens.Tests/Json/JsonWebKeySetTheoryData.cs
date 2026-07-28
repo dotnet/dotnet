@@ -17,7 +17,5 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
         public string Json { get; set; }
 
         public JsonWebKeySet JsonWebKeySet { get; set; }
-
-        public JsonWebKeySet6x JsonWebKeySet6x { get; set; }
     }
 }

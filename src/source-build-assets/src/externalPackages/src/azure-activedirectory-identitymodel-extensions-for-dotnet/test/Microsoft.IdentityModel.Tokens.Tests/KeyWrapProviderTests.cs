@@ -2,6 +2,9 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.TestUtils;
 using Xunit;
 
@@ -29,7 +32,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
     /// </summary>
     public class KeyWrapProviderTests
     {
-        [Theory, MemberData(nameof(KeyWrapConstructorTestCases))]
+        [Theory, MemberData(nameof(KeyWrapConstructorTestCases), DisableDiscoveryEnumeration = true)]
         public void Constructors(SupportedAlgorithmTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.Constructors", theoryData);
@@ -109,7 +112,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             Assert.True(provider.GetSymmetricAlgorithmCalled);
         }
 
-        [Theory, MemberData(nameof(WrapUnwrapTheoryData))]
+        [Theory, MemberData(nameof(WrapUnwrapTheoryData), DisableDiscoveryEnumeration = true)]
         public void WrapUnwrapKey(KeyWrapTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.WrapUnwrapKey", theoryData);
@@ -171,7 +174,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             });
         }
 
-        [Theory, MemberData(nameof(UnwrapTamperedTheoryData))]
+        [Theory, MemberData(nameof(UnwrapTamperedTheoryData), DisableDiscoveryEnumeration = true)]
         public void UnwrapTamperedData(KeyWrapTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.UnwrapTamperedData", theoryData);
@@ -217,7 +220,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             });
         }
 
-        [Theory, MemberData(nameof(UnwrapMismatchTheoryData))]
+        [Theory, MemberData(nameof(UnwrapMismatchTheoryData), DisableDiscoveryEnumeration = true)]
         public void UnwrapMismatch(KeyWrapTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.UnwrapMismatch", theoryData);
@@ -262,7 +265,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             });
         }
 
-        [Theory, MemberData(nameof(UnwrapTheoryData))]
+        [Theory, MemberData(nameof(UnwrapTheoryData), DisableDiscoveryEnumeration = true)]
         public void UnwrapParameterCheck(KeyWrapTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.UnwrapParameterCheck", theoryData);
@@ -278,6 +281,39 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
 
             TestUtilities.AssertFailIfErrors(context);
+        }
+
+        // Tests that concurrent calls to WrapKey and UnwrapKey do not run into encrypt/decrypt lock contention issues or other race conditions.
+        [Fact]
+        public void WrapAndUnwrapKey_ConcurrencyTest()
+        {
+            // Arrange
+            var numThreads = 10;
+            var wrapBarrier = new Barrier(numThreads);
+            var unwrapBarrier = new Barrier(numThreads);
+            var barrierTimeoutInMs = 5000;
+            var key = new SymmetricSecurityKey(new byte[32]);
+            var provider = new SymmetricKeyWrapProvider(key, SecurityAlgorithms.Aes256KW);
+            var tasks = new List<Task>(numThreads);
+
+            // Act and Assert
+            for (int i = 0; i < numThreads; i++)
+            {
+                tasks.Add(Task.Run(() =>
+                {
+                    // Wait for all threads to be ready before checking the WrapKey locks
+                    var keyBytes = new byte[32];
+                    wrapBarrier.SignalAndWait(barrierTimeoutInMs);
+                    var wrappedKey = provider.WrapKey(keyBytes);
+                    Assert.NotNull(wrappedKey);
+
+                    // Wait for all threads to be ready before checking the UnwrapKey locks
+                    unwrapBarrier.SignalAndWait(barrierTimeoutInMs);
+                    var unwrappedKey = provider.UnwrapKey(wrappedKey);
+                    Assert.NotNull(unwrappedKey);
+                }));
+            }
+            Task.WhenAll(tasks);
         }
 
         public static TheoryData<KeyWrapTheoryData> UnwrapTheoryData()

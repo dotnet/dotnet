@@ -13,14 +13,13 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using static Microsoft.IdentityModel.Validators.AadIssuerValidator;
 
 namespace Microsoft.IdentityModel.Validators
 {
     /// <summary>
     /// Generic class that validates the issuer for either JsonWebTokens or JwtSecurityTokens issued from the Microsoft identity platform (AAD).
     /// </summary>
-    public class AadIssuerValidator
+    public partial class AadIssuerValidator
     {
         private static readonly TimeSpan LastKnownGoodConfigurationLifetime = new TimeSpan(0, 24, 0, 0);
 
@@ -71,7 +70,7 @@ namespace Microsoft.IdentityModel.Validators
             {
                 if (_configurationManagerV1 == null)
                     _configurationManagerV1 = CreateConfigManager(AadAuthorityV1);
-            
+
                 return _configurationManagerV1;
             }
 
@@ -140,7 +139,7 @@ namespace Microsoft.IdentityModel.Validators
                     AadAuthorityV11 = AadAuthorityV1 + V11EndpointSuffix;
                     AadAuthorityV2 = AadAuthorityV1 + V2EndpointSuffix;
                     break;
-                    
+
                 case ProtocolVersion.V11:
                     AadAuthorityV1 = CreateV1Authority(AadAuthority, V11EndpointSuffix);
                     AadAuthorityV11 = aadAuthority;
@@ -324,14 +323,15 @@ namespace Microsoft.IdentityModel.Validators
         /// </summary>
         /// <param name="aadAuthority">The authority to create the validator for, e.g. https://login.microsoftonline.com/. </param>
         /// <param name="httpClient">Optional HttpClient to use to retrieve the endpoint metadata (can be null).</param>
-        /// <param name="configurationManagerProvider">Configuration manager provider. Injection point for metadata managed outside of the class.</param>
+        /// <param name="configurationManagerProvider">Configuration manager provider. Injection point for metadata managed outside
+        /// of the class. The delegate needs to return a configuration manager for a given authority.</param>
         /// <example><code>
         /// AadIssuerValidator aadIssuerValidator = AadIssuerValidator.GetAadIssuerValidator(authority, configurationManagerProvider);
         /// TokenValidationParameters.IssuerValidator = aadIssuerValidator.Validate;
         /// </code></example>
         /// <returns>A <see cref="AadIssuerValidator"/> for the aadAuthority.</returns>
         /// <exception cref="ArgumentNullException">if <paramref name="aadAuthority"/> is null or empty.</exception>
-        internal static AadIssuerValidator GetAadIssuerValidator(string aadAuthority, HttpClient httpClient, Func<string, BaseConfigurationManager> configurationManagerProvider)
+        public static AadIssuerValidator GetAadIssuerValidator(string aadAuthority, HttpClient httpClient, Func<string, BaseConfigurationManager> configurationManagerProvider)
         {
             if (string.IsNullOrEmpty(aadAuthority))
                 throw LogHelper.LogArgumentNullException(nameof(aadAuthority));
@@ -383,18 +383,38 @@ namespace Microsoft.IdentityModel.Validators
             }
         }
 
-        private static bool IsValidIssuer(string validIssuerTemplate, string tenantId, string actualIssuer)
+        internal static bool IsValidIssuer(string issuerTemplate, string tenantId, string tokenIssuer)
         {
-            if (string.IsNullOrEmpty(validIssuerTemplate))
+            if (string.IsNullOrEmpty(issuerTemplate) || string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(tokenIssuer))
                 return false;
 
-            if (validIssuerTemplate.Contains(TenantIdTemplate))
+            ReadOnlySpan<char> issuerTemplateSpan = issuerTemplate.AsSpan();
+            ReadOnlySpan<char> tokenIssuerSpan = tokenIssuer.AsSpan();
+            int templateTenantIdPosition = issuerTemplate.IndexOf(TenantIdTemplate, StringComparison.Ordinal);
+
+            // If the template contains the tenantIdTemplate, ensure the actual issuer matches the template with the tenantId replaced.
+            if (templateTenantIdPosition >= 0 && tokenIssuer.Length > templateTenantIdPosition)
             {
-                return validIssuerTemplate.Replace(TenantIdTemplate, tenantId) == actualIssuer;
+                // Ensure the prefix of the issuer template matches the token issuer's prefix
+                if (!issuerTemplateSpan.Slice(0, templateTenantIdPosition).SequenceEqual(tokenIssuerSpan.Slice(0, templateTenantIdPosition)))
+                    return false;
+
+                // Ensure tokenIssuer is atleast as long as issuerTemplate with tenantIdTemplate replaced
+                if (tokenIssuer.Length < templateTenantIdPosition + tenantId.Length)
+                    return false;
+
+                // Ensure the tenant ID in the token issuer matches the expected tenant ID
+                if (!tokenIssuerSpan.Slice(templateTenantIdPosition, tenantId.Length).SequenceEqual(tenantId.AsSpan()))
+                    return false;
+
+                // Ensure the suffixes of both issuer template and token issuer match
+                return issuerTemplateSpan.Slice(templateTenantIdPosition + TenantIdTemplate.Length)
+                    .SequenceEqual(tokenIssuerSpan.Slice(templateTenantIdPosition + tenantId.Length));
             }
             else
             {
-                return validIssuerTemplate == actualIssuer;
+                // If no tenant ID template exists, directly compare issuerTemplate and tokenIssuer
+                return issuerTemplateSpan.SequenceEqual(tokenIssuerSpan);
             }
         }
 
@@ -462,18 +482,18 @@ namespace Microsoft.IdentityModel.Validators
         }
 
         private BaseConfigurationManager GetEffectiveConfigurationManager(ProtocolVersion protocolVersion)
-        {        
+        {
             if (_configurationManagerProvider != null)
             {
                 string aadAuthority = GetAuthority(protocolVersion);
-                
+
 
                 var configurationManager = _configurationManagerProvider(aadAuthority);
                 if (configurationManager != null)
                     return configurationManager;
             }
 
-            // If no provider or provider returned null, fallback to previous strategy            
+            // If no provider or provider returned null, fallback to previous strategy
             return GetConfigurationManager(protocolVersion);
         }
 

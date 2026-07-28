@@ -104,7 +104,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
             get { return _value; }
             set
             {
-                if (string.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value)) //NOTE: We can remove this check and let our issuer validator handle this.
                     throw LogArgumentNullException(nameof(value));
 
                 _value = value;

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -216,7 +217,7 @@ namespace Microsoft.IdentityModel.TestUtils
             if (expires == null)
                 return false;
 
-            var samlToken = (SamlSecurityToken) new SamlSecurityTokenHandler().ReadToken(token);
+            var samlToken = (SamlSecurityToken)new SamlSecurityTokenHandler().ReadToken(token);
             return samlToken.Assertion.Conditions.NotOnOrAfter == expires;
         }
 
@@ -225,7 +226,7 @@ namespace Microsoft.IdentityModel.TestUtils
             if (expires == null)
                 return false;
 
-            var saml2Token = (Saml2SecurityToken) new Saml2SecurityTokenHandler().ReadToken(token);
+            var saml2Token = (Saml2SecurityToken)new Saml2SecurityTokenHandler().ReadToken(token);
             return saml2Token.Assertion.Conditions.NotOnOrAfter == expires;
         }
 
@@ -237,6 +238,12 @@ namespace Microsoft.IdentityModel.TestUtils
         public static SecurityToken TransformBeforeSignatureValidation(SecurityToken token, TokenValidationParameters validationParameters)
         {
             return token;
+        }
+
+        public static bool TryReadJwtClaim(ref Utf8JsonReader reader, JwtSegmentType jwtSegmentType, string claimName, out object claimValue)
+        {
+            claimValue = null;
+            return false;
         }
 
         public static string TypeValidator(string type, SecurityToken securityToken, TokenValidationParameters validationParameters)

@@ -76,7 +76,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 expires: (new DateTime(2038, 1, 20)).ToUniversalTime(),
                 signingCredentials: creds);
 
-            Assert.Equal(token.ValidTo, (new DateTime(2038,1,20)).ToUniversalTime());
+            Assert.Equal(token.ValidTo, (new DateTime(2038, 1, 20)).ToUniversalTime());
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
             foreach (Claim c in jwt.Claims)
             {
-                Assert.True(false, "claims.Count != 0");
+                Assert.Fail("claims.Count != 0");
                 break;
             }
 
@@ -96,7 +96,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             Assert.NotNull(jwt.Audiences);
             foreach (string aud in jwt.Audiences)
             {
-                Assert.True(false, "jwt.Audiences should be empty");
+                Assert.Fail("jwt.Audiences should be empty");
             }
             Assert.Null(jwt.Id);
             Assert.Null(jwt.Issuer);
@@ -180,7 +180,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 });
         }
 
-        [Theory, MemberData(nameof(EmbeddedTokenConstructorData))]
+        [Theory, MemberData(nameof(EmbeddedTokenConstructorData), DisableDiscoveryEnumeration = true)]
         public void EmbeddedTokenConstructor1(string testId, JwtSecurityTokenTestVariation outerTokenVariation, JwtSecurityTokenTestVariation innerTokenVariation, string jwt, ExpectedException ee)
         {
             JwtSecurityToken outerJwt = null;
@@ -234,7 +234,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
             catch (Exception ex)
             {
-                Assert.True(false, string.Format("Testcase: {0}. UnExpected when getting a properties: '{1}'", outerTokenVariation.Name, ex.ToString()));
+                Assert.Fail(string.Format("Testcase: {0}. UnExpected when getting a properties: '{1}'", outerTokenVariation.Name, ex.ToString()));
             }
 
             try
@@ -252,7 +252,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
             catch (Exception ex)
             {
-                Assert.True(false, string.Format("Testcase: {0}. UnExpected when getting a properties: '{1}'", testId, ex.ToString()));
+                Assert.Fail(string.Format("Testcase: {0}. UnExpected when getting a properties: '{1}'", testId, ex.ToString()));
             }
 
             try
@@ -267,7 +267,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
             catch (Exception ex)
             {
-                Assert.True(false, string.Format("Testcase: {0}. Unexpected inequality between outer and inner token properties: '{1}'", testId, ex.ToString()));
+                Assert.Fail(string.Format("Testcase: {0}. Unexpected inequality between outer and inner token properties: '{1}'", testId, ex.ToString()));
             }
 
         }
@@ -380,7 +380,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             if (string.IsNullOrEmpty(jwe))
                 throw LogHelper.LogExceptionMessage(new ArgumentNullException(nameof(jwe)));
 
-            string[] parts = jwe.Split(new char[] {'.'}, 6);
+            string[] parts = jwe.Split(new char[] { '.' }, 6);
             if (parts.Length != 5)
                 throw new ArgumentException(string.Format("The JWE token must have 5 parts. The JWE {0} has {1} parts.", jwe, parts.Length));
 
@@ -419,7 +419,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
             catch (Exception ex)
             {
-                Assert.True(false, string.Format("Testcase: {0}. UnExpected when getting a properties: '{1}'", variation.Name, ex.ToString()));
+                Assert.Fail(string.Format("Testcase: {0}. UnExpected when getting a properties: '{1}'", variation.Name, ex.ToString()));
             }
         }
 
@@ -434,7 +434,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 expires: variation.Expires);
         }
 
-        [Theory, MemberData(nameof(JwtSegmentTheoryData))]
+        [Theory, MemberData(nameof(JwtSegmentTheoryData), DisableDiscoveryEnumeration = true)]
         public void JwtSegment(JwtTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.JwtSegment", theoryData);

@@ -278,7 +278,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         }
 
         /// <summary>
-        /// Validates that an OpenIdConnect response from "useinfo_endpoint" is valid as per <see href="https://openid.net/specs/openid-connect-core-1_0.html"/>.
+        /// Validates that an OpenIdConnect response from "userinfo_endpoint" is valid as per <see href="https://openid.net/specs/openid-connect-core-1_0.html"/>.
         /// </summary>
         /// <param name="validationContext">the <see cref="OpenIdConnectProtocolValidationContext"/> that contains expected values.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="validationContext"/> is null.</exception>

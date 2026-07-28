@@ -80,59 +80,11 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             return jsonWebKey;
         }
 
-        public static JsonWebKey6x FullyPopulatedJsonWebKey6x()
-        {
-            JsonWebKey6x jsonWebKey = new JsonWebKey6x
-            {
-                Alg = SecurityAlgorithms.Sha256,
-                Crv = "CRV",
-                D = P256_D,
-                DP = DP,
-                DQ = DQ,
-                E = Exponent,
-                K = "K",
-                KeyId = "NGTFvdK-fythEuLwjpwAJOM9n-A",
-                Kid = "NGTFvdK-fythEuLwjpwAJOM9n-A",
-                Kty = "RSA",
-                N = Modulus,
-                P = P,
-                Q = Q,
-                QI = InverseQ,
-                Use = "sig",
-                X = P256_X,
-                X5t = "NGTFvdK-fythEuLwjpwAJOM9n-A",
-                X5tS256 = "x5t256",
-                X5u = "https://jsonkeyurl",
-                Y = P256_Y
-            };
-
-            jsonWebKey.X5c.Add(X5C);
-            jsonWebKey.KeyOps.Add("keyOps");
-            jsonWebKey.Oth = new List<string>
-            {
-                "oth1",
-                "oth2"
-            };
-
-            SetAdditionalData6x(jsonWebKey.AdditionalData);
-
-            return jsonWebKey;
-        }
-
         public static JsonWebKeySet FullyPopulatedJsonWebKeySet()
         {
             JsonWebKeySet jsonWebKeySet = new JsonWebKeySet();
             jsonWebKeySet.Keys.Add(FullyPopulatedJsonWebKey());
             SetAdditionalData(jsonWebKeySet.AdditionalData);
-
-            return jsonWebKeySet;
-        }
-
-        public static JsonWebKeySet6x FullyPopulatedJsonWebKeySet6x()
-        {
-            JsonWebKeySet6x jsonWebKeySet = new JsonWebKeySet6x();
-            jsonWebKeySet.Keys.Add(FullyPopulatedJsonWebKey6x());
-            SetAdditionalData6x(jsonWebKeySet.AdditionalData);
 
             return jsonWebKeySet;
         }
@@ -293,7 +245,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             return json;
         }
 
-        public static void SetAdditionalDataKeysToUpperCase(IDictionary<string,object> additionalData)
+        public static void SetAdditionalDataKeysToUpperCase(IDictionary<string, object> additionalData)
         {
             List<string> keys = [.. additionalData.Keys];
 
