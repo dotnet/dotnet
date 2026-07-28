@@ -71,8 +71,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             StablePackagesFeed = stablePackagesFeed;
             SymbolServerVisibility = symbolPublishVisibility;
             Flatten = flatten;
-            FeedKeys = feedKeys.ToImmutableDictionary(i => i.ItemSpec, i => i.GetMetadata("Key"));
-            FeedOverrides = feedOverrides.ToImmutableDictionary(i => i.ItemSpec, i => i.GetMetadata("Replacement"));
+            // feedKeys/feedOverrides may be null when the corresponding MSBuild ItemGroup is empty
+            // (e.g. when publishing with Entra/WIF auth and no feed key is supplied).
+            FeedKeys = (feedKeys ?? Array.Empty<ITaskItem>()).ToImmutableDictionary(i => i.ItemSpec, i => i.GetMetadata("Key"));
+            FeedOverrides = (feedOverrides ?? Array.Empty<ITaskItem>()).ToImmutableDictionary(i => i.ItemSpec, i => i.GetMetadata("Replacement"));
             AzureDevOpsFeedsKey = FeedKeys.TryGetValue("https://pkgs.dev.azure.com/dnceng", out string key) ? key : null;
             Log = log;
         }
