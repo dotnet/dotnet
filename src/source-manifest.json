@@ -37,10 +37,10 @@
       "commitSha": "73f1fdca8d9fb191297a7e687790b804f4e78ef5"
     },
     {
-      "barId": 324377,
+      "barId": 324590,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "4a19f27828311e4dbb95c139c407233bbd2a43ee"
+      "commitSha": "ada82397096df1855dfd543512273d3edb18a0dd"
     },
     {
       "barId": 317647,
@@ -79,10 +79,10 @@
       "commitSha": "95b450294d0852c47cebef2d649437fadaca6ea7"
     },
     {
-      "barId": 323912,
+      "barId": 324516,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "79d0c463f1b55624c874a11585f7e47731e8d675"
+      "commitSha": "4fa1313baf4d7112179897631357e3c710da2004"
     },
     {
       "barId": 322820,
@@ -91,16 +91,16 @@
       "commitSha": "ba95998da076270d7d92d544d8ec8aeb0bdf8ab8"
     },
     {
-      "barId": 323350,
+      "barId": 324651,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "498dd26f2300b5553e96aed4a11bb5c400923725"
+      "commitSha": "eb7701f4010a73b985bc3df57122a90bf87c77c4"
     },
     {
-      "barId": 323138,
+      "barId": 324622,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "6ad62b47a01666492b45abb9c1f1fe921a3612e9"
+      "commitSha": "07e5dbddc0154145ed167c08fdedcc64e0e5613b"
     },
     {
       "barId": 318747,
@@ -180,7 +180,7 @@
     {
       "path": "source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
       "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
-      "commitSha": "e67b25be77532af9ba405670b34b4d263d505fde"
+      "commitSha": "ee19952f21d5c170a778bdca901b67076a1cd8f8"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/cssparser",

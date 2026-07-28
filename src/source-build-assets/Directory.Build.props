@@ -19,6 +19,11 @@
     <ManualNuspecTargets>$(RepositoryEngineeringDir)ManualNuspec.targets</ManualNuspecTargets>
 
     <LogVerbosity Condition="'$(LogVerbosity)' == ''">minimal</LogVerbosity>
+
+    <!-- Only run NuGetAudit for official builds, where audit warnings should fail the build. -->
+    <NuGetAudit Condition="'$(OfficialBuild)' != 'true'">false</NuGetAudit>
+    <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+    <AdditionalWarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(AdditionalWarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</AdditionalWarningsNotAsErrors>
   </PropertyGroup>
 
 </Project>
