@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Xml;
@@ -17,7 +18,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
     public class Saml2SerializerTests
     {
         #region Saml2Action
-        [Theory, MemberData(nameof(ReadActionTheoryData))]
+        [Theory, MemberData(nameof(ReadActionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAction(Saml2TheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAction", theoryData);
@@ -58,7 +59,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region Saml2Advice
-        [Theory, MemberData(nameof(ReadAdviceTheoryData))]
+        [Theory, MemberData(nameof(ReadAdviceTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAdvice(Saml2TheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAdvice", theoryData);
@@ -99,7 +100,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region Saml2Assertion
-        [Theory, MemberData(nameof(ReadAssertionTheoryData))]
+        [Theory, MemberData(nameof(ReadAssertionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAssertion(Saml2TheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAssertion", theoryData);
@@ -119,7 +120,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(ReadAssertionTheoryData))]
+        [Theory, MemberData(nameof(ReadAssertionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAssertionUsingDictionaryReader(Saml2TheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAssertionUsingDictionaryReader", theoryData);
@@ -139,7 +140,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(ReadAssertionTheoryData))]
+        [Theory, MemberData(nameof(ReadAssertionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAssertionUsingXDocumentReader(Saml2TheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAssertionUsingXDocumentReader", theoryData);
@@ -180,7 +181,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region Saml2Attribute
-        [Theory, MemberData(nameof(ReadAttributeTheoryData))]
+        [Theory, MemberData(nameof(ReadAttributeTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAttribute(Saml2TheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAttribute", theoryData);
@@ -220,7 +221,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region Saml2AttributeStatement
-        [Theory, MemberData(nameof(ReadAttributeStatementTheoryData))]
+        [Theory, MemberData(nameof(ReadAttributeStatementTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAttributeStatement(Saml2TheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAttributeStatement", theoryData);
@@ -262,7 +263,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region Saml2AudienceRestrictionCondition
-        [Theory, MemberData(nameof(ReadAudienceRestrictionConditionTheoryData))]
+        [Theory, MemberData(nameof(ReadAudienceRestrictionConditionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAudienceRestriction(Saml2TheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAudienceRestriction", theoryData);
@@ -304,7 +305,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region Saml2AuthenticationStatement
-        [Theory, MemberData(nameof(ReadAuthenticationStatementTheoryData))]
+        [Theory, MemberData(nameof(ReadAuthenticationStatementTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAuthenticationStatement(Saml2TheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAuthenticationStatement", theoryData);
@@ -345,7 +346,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region Saml2AuthorizationDecisionStatement
-        [Theory, MemberData(nameof(ReadAuthorizationDecisionStatementTheoryData))]
+        [Theory, MemberData(nameof(ReadAuthorizationDecisionStatementTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAuthorizationDecisionStatement(Saml2TheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAuthorizationDecisionStatement", theoryData);
@@ -357,7 +358,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
                 theoryData.ExpectedException.ProcessNoException();
 
                 IdentityComparer.AreEqual(statement, theoryData.AuthorizationDecision, context);
-                
+
             }
             catch (Exception ex)
             {
@@ -387,7 +388,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region Saml2Conditions
-        [Theory, MemberData(nameof(ReadConditionsTheoryData))]
+        [Theory, MemberData(nameof(ReadConditionsTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadConditions(Saml2TheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadConditions", theoryData);
@@ -422,7 +423,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
                             NotOnOrAfter = DateTime.ParseExact("2017-03-18T18:33:37.080Z", Saml2Constants.AcceptedDateTimeFormats, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None)
                         },
                         Xml = @"<Conditions NotBefore=""2017-03-17T18:33:37.080Z"" NotOnOrAfter=""2017-03-18T18:33:37.080Z"" xmlns=""urn:oasis:names:tc:SAML:2.0:assertion""/>",
-                        First = true, 
+                        First = true,
                         Saml2Serializer = new Saml2SerializerPublic(),
                         TestId = "Saml2ConditionsEmpty"
                     }
@@ -432,7 +433,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region SamlEvidence
-        [Theory, MemberData(nameof(ReadEvidenceTheoryData))]
+        [Theory, MemberData(nameof(ReadEvidenceTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadEvidence(Saml2TheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadEvidence", theoryData);
@@ -465,15 +466,54 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
                         ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenReadException), "IDX13122"),
                         Saml2Serializer = new Saml2SerializerPublic(),
                         TestId = "Saml2EvidenceEmpty"
+                    },
+                    new Saml2TheoryData
+                    {
+                        // Element from a foreign namespace as the only child — not part of the SAML 2.0 EvidenceType choice.
+                        Xml = "<Evidence xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\"><x:Other xmlns:x=\"urn:test:other\"/></Evidence>",
+                        ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenReadException), "IDX13122"),
+                        Saml2Serializer = new Saml2SerializerPublic(),
+                        TestId = "Saml2EvidenceUnexpectedChildForeignNamespace"
+                    },
+                    new Saml2TheoryData
+                    {
+                        // Valid AssertionIDRef followed by an element not in the choice — must surface as a read exception, not silently succeed.
+                        Xml = "<Evidence xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\"><AssertionIDRef>_abc</AssertionIDRef><x:Other xmlns:x=\"urn:test:other\"/></Evidence>",
+                        ExpectedException = new ExpectedException(typeof(Saml2SecurityTokenReadException), "IDX13102", ignoreInnerException: true),
+                        Saml2Serializer = new Saml2SerializerPublic(),
+                        TestId = "Saml2EvidenceValidContentThenUnexpectedChild"
                     }
                 };
             }
+        }
+
+        // Bounds the work performed when reading an Evidence element with content outside the
+        // declared choice. Runs on a worker task with a small budget so the assertion is reached
+        // even if the serializer fails to make progress.
+        [Fact]
+        public async Task ReadEvidenceCompletesOnUnexpectedChildElements()
+        {
+            const string xml =
+                "<Evidence xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\">" +
+                "<x:Other xmlns:x=\"urn:test:other\"/>" +
+                "</Evidence>";
+
+            var serializer = new Saml2SerializerPublic();
+            var task = Task.Run(() =>
+            {
+                var reader = XmlUtilities.CreateDictionaryReader(xml);
+                Assert.Throws<Saml2SecurityTokenReadException>(() => serializer.ReadEvidencePublic(reader));
+            });
+
+            var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(1)));
+            Assert.Same(task, completed);
+            await task;
         }
         #endregion
 
         #region Saml2ProxyRestriction
 
-        [Theory, MemberData(nameof(WriteSaml2ProxyRestrictionTheoryData))]
+        [Theory, MemberData(nameof(WriteSaml2ProxyRestrictionTheoryData), DisableDiscoveryEnumeration = true)]
         public void WriteSaml2ProxyRestriction(Saml2TheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.WriteSaml2ProxyRestriction", theoryData);
@@ -521,7 +561,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2.Tests
         #endregion
 
         #region Saml2Subject
-        [Theory, MemberData(nameof(ReadSubjectTheoryData))]
+        [Theory, MemberData(nameof(ReadSubjectTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadSubject(Saml2TheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadSubject", theoryData);

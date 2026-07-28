@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\build\commonTest.props" />
 
@@ -13,15 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.16.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.IdentityModel.Abstractions\Microsoft.IdentityModel.Abstractions.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Reference Include="System.Net.Http" />
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http" Version="$(SystemNetHttp)" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="$(SystemTextRegularExpressions)" />
   </ItemGroup>
 
 </Project>

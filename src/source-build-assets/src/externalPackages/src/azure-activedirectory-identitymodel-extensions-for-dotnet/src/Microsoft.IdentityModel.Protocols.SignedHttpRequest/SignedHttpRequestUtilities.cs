@@ -75,7 +75,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
 
         internal static async Task<JsonWebKey> DecryptSymmetricPopKeyAsync(JsonWebTokenHandler jwtTokenHandler, string jwe, SignedHttpRequestValidationContext signedHttpRequestValidationContext, CancellationToken cancellationToken)
         {
-            if(string.IsNullOrEmpty(jwe))
+            if (string.IsNullOrEmpty(jwe))
                 throw LogHelper.LogArgumentNullException(nameof(jwe));
 
             var jweJwt = jwtTokenHandler.ReadJsonWebToken(jwe);
@@ -92,9 +92,13 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
             var tokenDecryptionParameters = new TokenValidationParameters()
             {
                 TokenDecryptionKeys = decryptionKeys,
+                // CodeQL [SM04387] intentional: Validation disabled as it is not applicable during pop key decryption.
                 RequireSignedTokens = false,
+                // CodeQL [SM03926] intentional: Validation disabled as it is not applicable during pop key decryption.
                 ValidateIssuer = false,
+                // CodeQL [SM03926] intentional: Validation disabled as it is not applicable during pop key decryption.
                 ValidateAudience = false,
+                // CodeQL [SM03926] intentional: Validation disabled as it is not applicable during pop key decryption.
                 ValidateLifetime = false,
                 ValidateIssuerSigningKey = false,
             };
@@ -106,7 +110,12 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
             }
             catch (Exception e)
             {
-                throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidPopKeyException(LogHelper.FormatInvariant(LogMessages.IDX23018, string.Join(", ", decryptionKeys.Select(x => x?.KeyId ?? "Null")), e), e));
+                throw LogHelper.LogExceptionMessage(new SignedHttpRequestInvalidPopKeyException(
+                    LogHelper.FormatInvariant(
+                        LogMessages.IDX23018,
+                        LogHelper.MarkAsNonPII(string.Join(", ", decryptionKeys.Select(x => x?.KeyId ?? "Null"))),
+                        e),
+                    e));
             }
         }
     }

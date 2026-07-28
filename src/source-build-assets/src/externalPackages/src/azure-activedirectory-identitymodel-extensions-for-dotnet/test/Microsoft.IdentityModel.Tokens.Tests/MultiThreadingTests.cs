@@ -14,7 +14,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class MultiThreadingTokenTests
     {
-        [Theory, MemberData(nameof(MultiThreadingCreateAndVerifyTestCases))]
+        [Theory, MemberData(nameof(MultiThreadingCreateAndVerifyTestCases), DisableDiscoveryEnumeration = true)]
         public void MultiThreadingCreateAndVerify(MultiThreadingTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.MultiThreadingCreateAndVerify", theoryData);

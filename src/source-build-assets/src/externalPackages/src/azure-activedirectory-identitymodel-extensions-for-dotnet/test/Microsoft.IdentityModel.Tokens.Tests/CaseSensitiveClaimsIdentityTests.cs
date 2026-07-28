@@ -1,10 +1,14 @@
-﻿// Copyright (c) Microsoft Corporation.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.TestUtils;
 using Newtonsoft.Json.Linq;
@@ -25,7 +29,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             [JwtRegisteredClaimNames.Aud] = Default.Audience,
         };
 
-        [Theory, MemberData(nameof(GetCaseSensitiveClaimsIdentityTheoryData))]
+        [Theory, MemberData(nameof(GetCaseSensitiveClaimsIdentityTheoryData), DisableDiscoveryEnumeration = true)]
         public void FindAll_DoesCaseSensitiveSearch(CaseSensitiveClaimsIdentityTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.FindAll_DoesCaseSensitiveSearch", theoryData);
@@ -45,7 +49,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(GetCaseSensitiveClaimsIdentityTheoryData))]
+        [Theory, MemberData(nameof(GetCaseSensitiveClaimsIdentityTheoryData), DisableDiscoveryEnumeration = true)]
         public void FindFirst_DoesCaseSensitiveSearch(CaseSensitiveClaimsIdentityTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.FindFirst_DoesCaseSensitiveSearch", theoryData);
@@ -65,7 +69,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(GetCaseSensitiveClaimsIdentityTheoryData))]
+        [Theory, MemberData(nameof(GetCaseSensitiveClaimsIdentityTheoryData), DisableDiscoveryEnumeration = true)]
         public void HasClaim_DoesCaseSensitiveSearch(CaseSensitiveClaimsIdentityTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.HasClaim_DoesCaseSensitiveSearch", theoryData);
@@ -134,6 +138,15 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 
             Assert.Equal(validationParameters.NameClaimType, claimsIdentity.NameClaimType);
             Assert.Equal(validationParameters.RoleClaimType, claimsIdentity.RoleClaimType);
+        }
+
+        [Fact]
+        public void Clone_ReturnsCaseSensitiveClaimsIdentity()
+        {
+            var claimsIdentity = new CaseSensitiveClaimsIdentity();
+            var clone = claimsIdentity.Clone();
+
+            Assert.True(clone is CaseSensitiveClaimsIdentity);
         }
 
         public static TheoryData<CaseSensitiveClaimsIdentityTheoryData> GetCaseSensitiveClaimsIdentityTheoryData
@@ -214,6 +227,42 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
+        [Fact]
+        public void CaseSensitiveClaimsIdentity_IsSerializableTest()
+        {
+            // arrange
+            CaseSensitiveClaimsIdentity claimsIdentity = (CaseSensitiveClaimsIdentity)CreateCaseSensitiveClaimsIdentity(new JObject
+            {
+                [UpperCaseClaimName] = LowerCaseClaimValue,
+            });
+            CaseSensitiveClaimsIdentity deserializedClaimsIdentity;
+
+            // act
+            var memoryStream = new MemoryStream();
+            var serializerOptions = new JsonSerializerOptions()
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles
+            };
+
+            JsonSerializer.Serialize(memoryStream, claimsIdentity, typeof(CaseSensitiveClaimsIdentity), serializerOptions);
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            deserializedClaimsIdentity = (CaseSensitiveClaimsIdentity)JsonSerializer.Deserialize(memoryStream, typeof(CaseSensitiveClaimsIdentity), serializerOptions);
+
+            // assert
+            Assert.NotNull(deserializedClaimsIdentity);
+            Assert.Equal(claimsIdentity.NameClaimType, deserializedClaimsIdentity.NameClaimType);
+            Assert.Equal(claimsIdentity.RoleClaimType, deserializedClaimsIdentity.RoleClaimType);
+        }
+
+        [Fact]
+        public void CaseSensitiveClaimsIdentity_DerivedClassCanSetToken()
+        {
+            var jwt = new JwtSecurityToken();
+            CaseSensitiveClaimsIdentity claimsIdentity = new TestCaseSensitveClaimsIdentity(jwt);
+
+            Assert.Same(jwt, claimsIdentity.SecurityToken);
+        }
+
         public class CaseSensitiveClaimsIdentityTheoryData(string testId) : TheoryDataBase(testId)
         {
             internal ClaimsIdentity ClaimsIdentity { get; set; }
@@ -222,6 +271,14 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             internal bool ExpectedHasClaim { get; set; }
             internal string ExpectedClaim { get; set; }
             internal List<string> ExpectedClaims { get; set; }
+        }
+
+        public class TestCaseSensitveClaimsIdentity : CaseSensitiveClaimsIdentity
+        {
+            public TestCaseSensitveClaimsIdentity(SecurityToken token)
+            {
+                SecurityToken = token ?? throw new ArgumentNullException(nameof(token));
+            }
         }
 
         private static ClaimsIdentity CreateCaseSensitiveClaimsIdentity(JObject claims, TokenValidationParameters validationParameters = null)

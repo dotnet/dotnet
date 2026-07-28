@@ -1,8 +1,7 @@
-﻿// Copyright (c) Microsoft Corporation.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
-using System.CodeDom;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.TestUtils;
 using Xunit;
@@ -13,7 +12,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class CallContextTests
     {
-        [Theory, MemberData(nameof(CallContextTestTheoryData))]
+        [Theory, MemberData(nameof(CallContextTestTheoryData), DisableDiscoveryEnumeration = true)]
         public void LoggerInstanceTests(CallContextTheoryData theoryData)
         {
             var context = new CallContext(theoryData.ActivityId) { DebugId = theoryData.TestId };
@@ -26,11 +25,11 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             Assert.Null(context.PropertyBag);
         }
 
-        public static TheoryData<TheoryDataBase> CallContextTestTheoryData
+        public static TheoryData<CallContextTheoryData> CallContextTestTheoryData
         {
             get
             {
-                var theoryData = new TheoryData<TheoryDataBase>();
+                var theoryData = new TheoryData<CallContextTheoryData>();
 
                 theoryData.Add(new CallContextTheoryData
                 {

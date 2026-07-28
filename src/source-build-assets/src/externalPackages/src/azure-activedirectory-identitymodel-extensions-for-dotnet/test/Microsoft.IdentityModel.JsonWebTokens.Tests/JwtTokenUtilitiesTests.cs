@@ -5,12 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
-using System.Security.Claims;
+using System.Reflection;
+using System.Text;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Experimental;
+using Moq;
 using Xunit;
 
 namespace Microsoft.IdentityModel.JsonWebTokens.Tests
@@ -19,7 +23,11 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
     {
         // Used for formatting a message for testing with one parameter.
         private const string TestMessageOneParam = "This is the parameter: '{0}'.";
-        
+        private static readonly SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(KeyingMaterial.DefaultSymmetricSecurityKey_128.Key)
+        {
+            KeyId = KeyingMaterial.DefaultSymmetricSecurityKey_256.KeyId,
+        };
+
         [Fact]
         public void LogSecurityArtifactTest()
         {
@@ -123,26 +131,6 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
         }
 
         [Fact]
-        public void ClaimTypeMappingIsIndependent()
-        {
-            // Each handler should have its own instance of the ClaimTypeMap
-            var jwtClaimsMapping = JwtSecurityTokenHandler.DefaultInboundClaimTypeMap;
-            var jsonClaimsMapping = JsonWebTokenHandler.DefaultInboundClaimTypeMap;
-
-            Assert.NotEmpty(jwtClaimsMapping);
-            Assert.NotEmpty(jsonClaimsMapping);
-
-            Assert.Equal(jwtClaimsMapping, jsonClaimsMapping);
-
-            // Clearing one should not affect the other
-            jwtClaimsMapping.Clear();
-
-            Assert.Empty(jwtClaimsMapping);
-            Assert.NotEmpty(jsonClaimsMapping);
-
-        }
-
-        [Fact]
         public void ResolveTokenSigningKey()
         {
             var testKeyId = Guid.NewGuid().ToString();
@@ -229,6 +217,344 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             resolvedKey = JwtTokenUtilities.ResolveTokenSigningKey(null, null, tvp, GetConfigurationNoMatchingKeyMock());
             Assert.Null(resolvedKey);
         }
+
+        #region DecryptJwtToken Tests
+        [Fact]
+        public void DecryptJwtToken_WhenValidationParametersIsNull_ThrowsException()
+        {
+            // Arrange
+            var expectedExceptionParamName = "validationParameters";
+            TokenValidationParameters validationParameters = null;
+
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentNullException>(() =>
+                JwtTokenUtilities.DecryptJwtToken(
+                    securityToken: null,
+                    validationParameters: validationParameters,
+                    decryptionParameters: null));
+
+            Assert.Equal(expectedExceptionParamName, exception.ParamName);
+        }
+
+        [Fact]
+        public void DecryptJwtToken_WhenJwtTokenDecryptionParametersIsNull_ThrowsException()
+        {
+            // Arrange
+            var expectedExceptionParamName = "decryptionParameters";
+            var validationParameters = new TokenValidationParameters();
+            JwtTokenDecryptionParameters decryptionParameters = null;
+
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentNullException>(() =>
+                JwtTokenUtilities.DecryptJwtToken(
+                    securityToken: null,
+                    validationParameters: validationParameters,
+                    decryptionParameters: decryptionParameters));
+
+            Assert.Equal(expectedExceptionParamName, exception.ParamName);
+        }
+
+        [Fact]
+        public void DecryptJwtToken_WhenCryptoProviderFactoryIsNull_ThrowsException()
+        {
+            // Arrange
+            var securityKey = new SymmetricSecurityKey(KeyingMaterial.DefaultSymmetricSecurityKey_128.Key)
+            {
+                KeyId = KeyingMaterial.DefaultSymmetricSecurityKey_256.KeyId,
+            };
+
+            // Get the private _cryptoProviderFactory field and set it to null.
+            var fieldInfo = typeof(SecurityKey).GetField("_cryptoProviderFactory", BindingFlags.NonPublic | BindingFlags.Instance);
+            fieldInfo.SetValue(securityKey, null);
+
+            using var listener = new SampleListener();
+            IdentityModelEventSource.ShowPII = false;
+            IdentityModelEventSource.Logger.LogLevel = EventLevel.Warning;
+            listener.EnableEvents(IdentityModelEventSource.Logger, EventLevel.Warning);
+
+            var keys = new List<SecurityKey>()
+            {
+                securityKey,
+            };
+
+            var validationParameters = new TokenValidationParameters()
+            {
+                CryptoProviderFactory = null,
+            };
+            var decryptionParameters = new JwtTokenDecryptionParameters
+            {
+                Keys = keys,
+            };
+
+            var expectedWarning = LogHelper.FormatInvariant(
+                Tokens.LogMessages.IDX10607,
+                LogHelper.MarkAsNonPII(securityKey.KeyId));
+            var expectedExceptionMessage = new MessageDetail(
+                Tokens.LogMessages.IDX10609,
+                LogHelper.MarkAsSecurityArtifact(decryptionParameters.EncodedToken,
+                JwtTokenUtilities.SafeLogJwtToken)).Message;
+
+            // Act & Assert
+            var exception = Assert.Throws<SecurityTokenDecryptionFailedException>(() =>
+                JwtTokenUtilities.DecryptJwtToken(
+                    securityToken: null,
+                    validationParameters: validationParameters,
+                    decryptionParameters: decryptionParameters));
+
+            Assert.Contains(expectedWarning, listener.TraceBuffer);
+            Assert.Contains(expectedExceptionMessage, listener.TraceBuffer);
+            Assert.Equal(expectedExceptionMessage, exception.Message);
+        }
+
+        [Fact]
+        public void DecryptJwtToken_WhenEncIsNotSupported_ThrowsException()
+        {
+            // Arrange
+            var securityKey = symmetricSecurityKey;
+            using var listener = new SampleListener();
+            IdentityModelEventSource.ShowPII = false;
+            IdentityModelEventSource.Logger.LogLevel = EventLevel.Warning;
+            listener.EnableEvents(IdentityModelEventSource.Logger, EventLevel.Warning);
+
+            var keys = new List<SecurityKey>()
+            {
+                securityKey,
+            };
+            var securityToken = new JwtSecurityToken();
+            var decryptionParameters = new JwtTokenDecryptionParameters
+            {
+                Alg = "an algorithm",
+                Enc = "unsupported-algorithm",
+                Keys = keys,
+            };
+
+            var mockCryptoProviderFactory = new Mock<CryptoProviderFactory>();
+            mockCryptoProviderFactory
+                .Setup(factory => factory.IsSupportedAlgorithm(It.IsAny<string>(), It.IsAny<SecurityKey>()))
+                .Returns(false);
+
+            var validationParameters = new TokenValidationParameters()
+            {
+                CryptoProviderFactory = mockCryptoProviderFactory.Object,
+            };
+
+            var expectedWarning = LogHelper.FormatInvariant(
+                Tokens.LogMessages.IDX10611,
+                LogHelper.MarkAsNonPII(decryptionParameters.Enc),
+                LogHelper.MarkAsNonPII(securityKey.KeyId));
+            var expectedExceptionMessage = new MessageDetail(
+                        Tokens.LogMessages.IDX10619,
+                        LogHelper.MarkAsNonPII(decryptionParameters.Alg),
+                        LogHelper.MarkAsNonPII(decryptionParameters.Enc)).Message;
+
+            // Act & Assert
+            var exception = Assert.Throws<SecurityTokenDecryptionFailedException>(() =>
+                JwtTokenUtilities.DecryptJwtToken(securityToken, validationParameters, decryptionParameters));
+
+            Assert.Contains(expectedWarning, listener.TraceBuffer);
+            Assert.Contains(expectedExceptionMessage, listener.TraceBuffer);
+            Assert.Equal(expectedExceptionMessage, exception.Message);
+        }
+
+        [Fact]
+        public void DecryptJwtToken_WhenNoKeys_ThrowsException()
+        {
+            // Arrange
+            using var listener = new SampleListener();
+            IdentityModelEventSource.ShowPII = false;
+            IdentityModelEventSource.Logger.LogLevel = EventLevel.Warning;
+            listener.EnableEvents(IdentityModelEventSource.Logger, EventLevel.Warning);
+
+            var securityToken = new JwtSecurityToken();
+            var decryptionParameters = new JwtTokenDecryptionParameters()
+            {
+                Keys = new List<SecurityKey>(),
+            };
+
+            var mockCryptoProviderFactory = new Mock<CryptoProviderFactory>();
+            mockCryptoProviderFactory
+                .Setup(factory => factory.IsSupportedAlgorithm(It.IsAny<string>(), It.IsAny<SecurityKey>()))
+                .Returns(false);
+
+            var validationParameters = new TokenValidationParameters()
+            {
+                CryptoProviderFactory = mockCryptoProviderFactory.Object,
+            };
+
+            var expectedExceptionMessage = new MessageDetail(
+                        Tokens.LogMessages.IDX10609,
+                        LogHelper.MarkAsSecurityArtifact(decryptionParameters.EncodedToken, JwtTokenUtilities.SafeLogJwtToken)).Message;
+
+            // Act & Assert
+            var exception = Assert.Throws<SecurityTokenDecryptionFailedException>(() =>
+                JwtTokenUtilities.DecryptJwtToken(securityToken, validationParameters, decryptionParameters));
+
+            Assert.Contains(expectedExceptionMessage, listener.TraceBuffer);
+            Assert.Equal(expectedExceptionMessage, exception.Message);
+        }
+
+        [Fact]
+        public void DecryptJwtToken_WhenDecryptionFails_ThrowsException()
+        {
+            // Arrange
+            var securityKey = NotDefault.SymmetricSigningKey256;
+            var jsonWebTokenHandler = new JsonWebTokenHandler();
+            var jweCreatedInMemory = jsonWebTokenHandler.CreateToken(
+                Default.PayloadString,
+                Default.SymmetricSigningCredentials,
+                Default.SymmetricEncryptingCredentials);
+            var securityToken = new JsonWebToken(jweCreatedInMemory);
+
+            using var listener = new SampleListener();
+            IdentityModelEventSource.ShowPII = false;
+            IdentityModelEventSource.Logger.LogLevel = EventLevel.Warning;
+            listener.EnableEvents(IdentityModelEventSource.Logger, EventLevel.Warning);
+
+            var keys = new List<SecurityKey>()
+            {
+                securityKey,
+            };
+            var decryptionParameters = new JwtTokenDecryptionParameters
+            {
+                Alg = securityToken.Alg,
+                AuthenticationTagBytes = securityToken.AuthenticationTagBytes,
+                CipherTextBytes = securityToken.CipherTextBytes,
+                DecompressionFunction = JwtTokenUtilities.DecompressToken,
+                Enc = securityToken.Enc,
+                EncodedToken = securityToken.EncodedToken,
+                HeaderAsciiBytes = securityToken.HeaderAsciiBytes,
+                InitializationVectorBytes = securityToken.InitializationVectorBytes,
+                MaximumDeflateSize = jsonWebTokenHandler.MaximumTokenSizeInBytes,
+                Keys = keys,
+                Zip = securityToken.Zip,
+            };
+
+            var validationParameters = new TokenValidationParameters()
+            {
+                IssuerSigningKey = Default.SymmetricSigningKey256,
+                TokenDecryptionKey = securityKey,
+            };
+
+            var keysAttempted = new StringBuilder().AppendLine(validationParameters.TokenDecryptionKey.KeyId);
+            var incompleteExceptionMessage = new MessageDetail(
+                        Tokens.LogMessages.IDX10603,
+                        LogHelper.MarkAsNonPII(keysAttempted.ToString()),
+                        string.Empty,   // Using empty since actual exception contains file paths, which are machine specific.
+                        LogHelper.MarkAsSecurityArtifact(decryptionParameters.EncodedToken, JwtTokenUtilities.SafeLogJwtToken)).Message;
+            // Get partial messages as the actual exception message contains file paths.
+            var partialExceptionMessage = incompleteExceptionMessage.Substring(
+                0,
+                incompleteExceptionMessage.IndexOf(securityKey.KeyId) + securityKey.KeyId.Length);
+
+            // Act & Assert
+            var exception = Assert.Throws<SecurityTokenDecryptionFailedException>(() =>
+                JwtTokenUtilities.DecryptJwtToken(securityToken, validationParameters, decryptionParameters));
+
+            Assert.Contains(partialExceptionMessage, listener.TraceBuffer);
+            Assert.Contains(partialExceptionMessage, exception.Message);
+        }
+
+        [Theory, MemberData(nameof(DecompressionFailTheoryData), DisableDiscoveryEnumeration = true)]
+        public void DecryptJwtToken_WhenDecompressionFails_ThrowsException(DecompressionFailureTheoryData theoryData)
+        {
+            // Arrange
+            var jsonWebTokenHandler = new JsonWebTokenHandler();
+            CompressionProviderFactory.Default = theoryData.CompressionProviderFactory;
+            var securityToken = new JsonWebToken(theoryData.JwtEncodedString);
+
+            using var listener = new SampleListener();
+            IdentityModelEventSource.ShowPII = false;
+            IdentityModelEventSource.Logger.LogLevel = EventLevel.Warning;
+            listener.EnableEvents(IdentityModelEventSource.Logger, EventLevel.Warning);
+
+            var kwp = Default.JWECompressionTokenValidationParameters.TokenDecryptionKey.CryptoProviderFactory.CreateKeyWrapProviderForUnwrap(Default.JWECompressionTokenValidationParameters.TokenDecryptionKey, securityToken.Alg);
+            var unwrappedKey = kwp.UnwrapKey(securityToken.EncryptedKeyBytes);
+
+            var keys = new List<SecurityKey>()
+            {
+                new SymmetricSecurityKey(unwrappedKey),
+            };
+            var decryptionParameters = new JwtTokenDecryptionParameters
+            {
+                Alg = securityToken.Alg,
+                AuthenticationTagBytes = securityToken.AuthenticationTagBytes,
+                CipherTextBytes = securityToken.CipherTextBytes,
+                DecompressionFunction = JwtTokenUtilities.DecompressToken,
+                Enc = securityToken.Enc,
+                EncodedToken = securityToken.EncodedToken,
+                HeaderAsciiBytes = securityToken.HeaderAsciiBytes,
+                InitializationVectorBytes = securityToken.InitializationVectorBytes,
+                MaximumDeflateSize = jsonWebTokenHandler.MaximumTokenSizeInBytes,
+                Keys = keys,
+                Zip = securityToken.Zip,
+            };
+            var validationParameters = Default.JWECompressionTokenValidationParameters;
+
+            var exceptionMessage = LogHelper.FormatInvariant(Tokens.LogMessages.IDX10679, LogHelper.MarkAsNonPII(decryptionParameters.Zip));
+            string innerExceptionMessage = string.Empty;
+            if (theoryData.ValidateInnerExceptionMessage)
+                innerExceptionMessage = LogHelper.FormatInvariant(theoryData.InnerExceptionMessageId, LogHelper.MarkAsNonPII(decryptionParameters.Zip));
+
+            // Act & Assert
+            var exception = Assert.Throws<SecurityTokenDecompressionFailedException>(() =>
+                JwtTokenUtilities.DecryptJwtToken(securityToken, validationParameters, decryptionParameters));
+
+            Assert.Contains(exceptionMessage, listener.TraceBuffer);
+            Assert.Contains(exceptionMessage, exception.Message);
+            Assert.Equal(theoryData.InnerExceptionType, exception.InnerException.GetType());
+            if (theoryData.ValidateInnerExceptionMessage)
+            {
+                Assert.Contains(innerExceptionMessage, listener.TraceBuffer);
+                Assert.Contains(innerExceptionMessage, exception.InnerException.Message);
+            }
+        }
+
+        public static TheoryData<DecompressionFailureTheoryData> DecompressionFailTheoryData()
+        {
+            var compressionProviderFactoryForCustom2 = new CompressionProviderFactory()
+            {
+                CustomCompressionProvider = new SampleCustomCompressionProviderDecompressAndCompressAlwaysFail("MyAlgorithm")
+            };
+
+            return new TheoryData<DecompressionFailureTheoryData>() {
+                new DecompressionFailureTheoryData
+                {
+                    TestId = "NotSupportedAlgorithm",
+                    JwtEncodedString = ReferenceTokens.JWECompressionTokenWithUnsupportedAlgorithm,
+                    CompressionProviderFactory = CompressionProviderFactory.Default,
+                    InnerExceptionType = typeof(NotSupportedException),
+                    ValidateInnerExceptionMessage = true,
+                    InnerExceptionMessageId = Tokens.LogMessages.IDX10682,
+                },
+                new DecompressionFailureTheoryData
+                {
+                    TestId = "InvalidToken",
+                    JwtEncodedString = ReferenceTokens.JWEInvalidCompressionTokenWithDEF,
+                    CompressionProviderFactory = CompressionProviderFactory.Default,
+                    InnerExceptionType = typeof(InvalidDataException),
+                    ValidateInnerExceptionMessage = false,
+                },
+                new DecompressionFailureTheoryData
+                {
+                    TestId = "NotSupportedAlgorithmFromCustomCompressionProvider",
+                    JwtEncodedString = ReferenceTokens.JWECompressionTokenWithDEF,
+                    CompressionProviderFactory = compressionProviderFactoryForCustom2,
+                    InnerExceptionType = typeof(SecurityTokenDecompressionFailedException),
+                    ValidateInnerExceptionMessage = true,
+                    InnerExceptionMessageId = Tokens.LogMessages.IDX10679,
+                }
+            };
+        }
+
+        public class DecompressionFailureTheoryData : TheoryDataBase
+        {
+            public string JwtEncodedString;
+            public CompressionProviderFactory CompressionProviderFactory;
+            public Type InnerExceptionType;
+            public bool ValidateInnerExceptionMessage;
+            public string InnerExceptionMessageId;
+        }
+        #endregion
 
         private BaseConfiguration GetConfigurationMock()
         {

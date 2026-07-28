@@ -26,7 +26,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
         // Claim - the name:value pair, that can be inserted into a Json object: string jsonboject =  $$"""{{{ArrayClaim}}}""";
         // Object - the Claim is wrapped inside an object, simplifies wrting tests that read the json,
         // otherwise each test would have to write: string jsonString =  $$"""{{{ArrayClaim}}}""";
-        public static string ArrayStrings=
+        public static string ArrayStrings =
             """
             "arrayValue", "arrayValue"
             """;

@@ -78,19 +78,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
         public DateTime? NotOnOrAfter
         {
             get { return _notOnOrAfter; }
-            set
-            {
-                value = DateTimeUtil.ToUniversalTime(value);
-
-                // NotBefore must be earlier than NotOnOrAfter
-                if (value != null && NotBefore.HasValue)
-                {
-                    if (value.Value <= NotBefore.Value)
-                        throw LogExceptionMessage(new ArgumentException(FormatInvariant(LogMessages.IDX13514, MarkAsNonPII(value), MarkAsNonPII(NotBefore))));
-                }
-
-                _notOnOrAfter = value;
-            }
+            set { _notOnOrAfter = DateTimeUtil.ToUniversalTime(value); }
         }
 
         /// <summary>

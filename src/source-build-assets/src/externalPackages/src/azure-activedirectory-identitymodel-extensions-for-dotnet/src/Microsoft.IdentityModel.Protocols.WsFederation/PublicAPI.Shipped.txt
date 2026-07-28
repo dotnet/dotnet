@@ -1,0 +1,208 @@
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Attributes.EntityId = "entityID" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Attributes.Id = "ID" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Attributes.ProtocolSupportEnumeration = "protocolSupportEnumeration" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Attributes.Type = "type" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Attributes.Use = "use" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Elements.EntityDescriptor = "EntityDescriptor" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Elements.IdpssoDescriptor = "IDPSSODescriptor" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Elements.KeyDescriptor = "KeyDescriptor" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Elements.PassiveRequestorEndpoint = "PassiveRequestorEndpoint" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Elements.RoleDescriptor = "RoleDescriptor" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Elements.SecurityTokenServiceEndpoint = "SecurityTokenServiceEndpoint" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Elements.SpssoDescriptor = "SPSSODescriptor" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.KeyUse.Signing = "signing" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.MetadataNamespace = "urn:oasis:names:tc:SAML:2.0:metadata" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Namespace = "http://docs.oasis-open.org/wsfed/federation/200706" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.PreferredPrefix = "fed" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Types.ApplicationServiceType = "ApplicationServiceType" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Types.SecurityTokenServiceType = "SecurityTokenServiceType" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationActions.Attribute = "wattr1.0" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationActions.Pseudonym = "wpseudo1.0" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationActions.SignIn = "wsignin1.0" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationActions.SignOut = "wsignout1.0" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationActions.SignOutCleanup = "wsignoutcleanup1.0" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.AlreadySignedIn = "AlreadySignedIn" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.BadRequest = "BadRequest" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.IssuerNameNotSupported = "IssuerNameNotSupported" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.NeedFresherCredentials = "NeedFresherCredentials" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.NoMatchInScope = "NoMatchInScope" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.NoPseudonymInScope = "NoPseudonymInScope" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.NotSignedIn = "NotSignedIn" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.RstParameterNotAccepted = "RstParameterNotAccepted" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.SpecificPolicy = "SpecificPolicy" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.UnsupportedClaimsDialect = "UnsupportedClaimsDialect" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes.UnsupportedEncoding = "UnsupportedEncoding" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wa = "wa" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wattr = "wattr" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wattrptr = "wattrptr" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wauth = "wauth" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wct = "wct" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wctx = "wctx" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wencoding = "wencoding" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wfed = "wfed" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wfresh = "wfresh" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Whr = "whr" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wp = "wp" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wpseudo = "wpseudo" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wpseudoptr = "wpseudoptr" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wreply = "wreply" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wreq = "wreq" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wreqptr = "wreqptr" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wres = "wres" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wresult = "wresult" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wresultptr = "wresultptr" -> string
+const Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames.Wtrealm = "wtrealm" -> string
+const Microsoft.IdentityModel.Xml.WsAddressing.Elements.Address = "Address" -> string
+const Microsoft.IdentityModel.Xml.WsAddressing.Elements.EndpointReference = "EndpointReference" -> string
+const Microsoft.IdentityModel.Xml.WsAddressing.Namespace = "http://www.w3.org/2005/08/addressing" -> string
+const Microsoft.IdentityModel.Xml.WsAddressing.PreferredPrefix = "wsa" -> string
+const Microsoft.IdentityModel.Xml.WsPolicy.Elements.AppliesTo = "AppliesTo" -> string
+const Microsoft.IdentityModel.Xml.WsPolicy.Namespace = "http://schemas.xmlsoap.org/ws/2004/09/policy" -> string
+const Microsoft.IdentityModel.Xml.WsPolicy.PreferredPrefix = "wsp" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants_1_3.Actions.Issue = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants_1_3.Namespace = "http://docs.oasis-open.org/ws-sx/ws-trust/200512" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants_1_3.PreferredPrefix = "t" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants_1_4.Actions.Issue = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants_1_4.Namespace = "http://docs.oasis-open.org/ws-sx/ws-trust/200802" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants_1_4.PreferredPrefix = "t" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants_2005.Actions.Issue = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants_2005.Namespace = "http://schemas.xmlsoap.org/ws/2005/02/trust" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants_2005.PreferredPrefix = "trust" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.KeyType = "KeyType" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.Lifetime = "Lifetime" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.RequestedAttachedReference = "RequestedAttachedReference" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.RequestedSecurityToken = "RequestedSecurityToken" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.RequestedUnattachedReference = "RequestedUnattachedReference" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.RequestSecurityTokenResponse = "RequestSecurityTokenResponse" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.RequestSecurityTokenResponseCollection = "RequestSecurityTokenResponseCollection" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.RequestType = "RequestType" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.SecurityTokenReference = "SecurityTokenReference" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Elements.TokenType = "TokenType" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Namespaces.WsTrust1_3 = "http://docs.oasis-open.org/ws-sx/ws-trust/200512" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Namespaces.WsTrust1_4 = "http://docs.oasis-open.org/ws-sx/ws-trust/200802" -> string
+const Microsoft.IdentityModel.Xml.WsTrustConstants.Namespaces.WsTrust2005 = "http://schemas.xmlsoap.org/ws/2005/02/trust" -> string
+const Microsoft.IdentityModel.Xml.WsUtility.Elements.Created = "Created" -> string
+const Microsoft.IdentityModel.Xml.WsUtility.Elements.Expires = "Expires" -> string
+const Microsoft.IdentityModel.Xml.WsUtility.Namespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" -> string
+const Microsoft.IdentityModel.Xml.WsUtility.PreferredPrefix = "wsu" -> string
+Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor
+Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor.ActiveTokenEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor.ActiveTokenEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor.KeyInfos.get -> System.Collections.Generic.List<Microsoft.IdentityModel.Xml.KeyInfo>
+Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor.KeyInfos.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor.SecurityTokenServiceTypeRoleDescriptor() -> void
+Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor.TokenEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor.TokenEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration.KeyInfos.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Xml.KeyInfo>
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration.Signature.get -> Microsoft.IdentityModel.Xml.Signature
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration.Signature.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration.SigningCredentials.get -> Microsoft.IdentityModel.Tokens.SigningCredentials
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration.SigningCredentials.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration.WsFederationConfiguration() -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfigurationRetriever
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfigurationRetriever.GetConfigurationAsync(string address, Microsoft.IdentityModel.Protocols.IDocumentRetriever retriever, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration>
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfigurationRetriever.WsFederationConfigurationRetriever() -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfigurationValidator
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfigurationValidator.Validate(Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration configuration) -> Microsoft.IdentityModel.Protocols.ConfigurationValidationResult
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfigurationValidator.WsFederationConfigurationValidator() -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Attributes
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Elements
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.KeyUse
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Namespaces
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.Types
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationActions
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationFaultCodes
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConstants.WsFederationParameterNames
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationException
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationException.WsFederationException() -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationException.WsFederationException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationException.WsFederationException(string message) -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationException.WsFederationException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.CreateSignInUrl() -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.CreateSignOutUrl() -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.IsSignInMessage.get -> bool
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.IsSignOutMessage.get -> bool
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wa.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wa.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wattr.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wattr.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wattrptr.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wattrptr.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wauth.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wauth.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wct.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wct.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wctx.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wctx.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wencoding.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wencoding.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wfed.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wfed.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wfresh.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wfresh.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Whr.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Whr.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wp.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wp.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wpseudo.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wpseudo.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wpseudoptr.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wpseudoptr.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wreply.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wreply.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wreq.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wreq.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wreqptr.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wreqptr.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wres.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wres.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wresult.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wresult.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wresultptr.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wresultptr.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.WsFederationMessage() -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.WsFederationMessage(Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage wsFederationMessage) -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.WsFederationMessage(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string[]>> parameters) -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wtrealm.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.Wtrealm.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.PreferredPrefix.get -> string
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.PreferredPrefix.set -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.ReadMetadata(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.WriteMetadata(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration configuration) -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.WsFederationMetadataSerializer() -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationReadException
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationReadException.WsFederationReadException() -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationReadException.WsFederationReadException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationReadException.WsFederationReadException(string message) -> void
+Microsoft.IdentityModel.Protocols.WsFederation.WsFederationReadException.WsFederationReadException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Xml.WsAddressing
+Microsoft.IdentityModel.Xml.WsAddressing.Elements
+Microsoft.IdentityModel.Xml.WsPolicy
+Microsoft.IdentityModel.Xml.WsPolicy.Elements
+Microsoft.IdentityModel.Xml.WsTrustConstants
+Microsoft.IdentityModel.Xml.WsTrustConstants_1_3
+Microsoft.IdentityModel.Xml.WsTrustConstants_1_3.Actions
+Microsoft.IdentityModel.Xml.WsTrustConstants_1_4
+Microsoft.IdentityModel.Xml.WsTrustConstants_1_4.Actions
+Microsoft.IdentityModel.Xml.WsTrustConstants_2005
+Microsoft.IdentityModel.Xml.WsTrustConstants_2005.Actions
+Microsoft.IdentityModel.Xml.WsTrustConstants.Elements
+Microsoft.IdentityModel.Xml.WsTrustConstants.Namespaces
+Microsoft.IdentityModel.Xml.WsUtility
+Microsoft.IdentityModel.Xml.WsUtility.Elements
+static Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfigurationRetriever.GetAsync(string address, Microsoft.IdentityModel.Protocols.IDocumentRetriever retriever, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration>
+static Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfigurationRetriever.GetAsync(string address, System.Net.Http.HttpClient httpClient, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration>
+static Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfigurationRetriever.GetAsync(string address, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration>
+static Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.FromQueryString(string queryString) -> Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage
+static Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.FromUri(System.Uri uri) -> Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage
+virtual Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.GetToken() -> string
+virtual Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMessage.GetTokenUsingXmlReader() -> string
+virtual Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.ReadEntityDescriptor(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Protocols.WsFederation.WsFederationConfiguration
+virtual Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.ReadKeyDescriptorForSigning(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Xml.KeyInfo
+virtual Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.ReadPassiveRequestorEndpoint(System.Xml.XmlReader reader) -> string
+virtual Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.ReadSecurityTokenServiceEndpoint(System.Xml.XmlReader reader) -> string
+virtual Microsoft.IdentityModel.Protocols.WsFederation.WsFederationMetadataSerializer.ReadSecurityTokenServiceTypeRoleDescriptor(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Protocols.WsFederation.SecurityTokenServiceTypeRoleDescriptor

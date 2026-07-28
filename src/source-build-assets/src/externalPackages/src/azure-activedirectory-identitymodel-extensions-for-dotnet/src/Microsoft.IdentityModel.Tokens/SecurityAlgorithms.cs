@@ -85,6 +85,11 @@ namespace Microsoft.IdentityModel.Tokens
         public const string RsaSsaPssSha384 = "PS384";
         public const string RsaSsaPssSha512 = "PS512";
 
+        // See: https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/ (RFC 9964 pending)
+        public const string MlDsa44 = "ML-DSA-44";
+        public const string MlDsa65 = "ML-DSA-65";
+        public const string MlDsa87 = "ML-DSA-87";
+
         // See: https://datatracker.ietf.org/doc/html/rfc7518#section-5.1
         public const string Aes128CbcHmacSha256 = "A128CBC-HS256";
         public const string Aes192CbcHmacSha384 = "A192CBC-HS384";

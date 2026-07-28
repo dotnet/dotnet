@@ -8,11 +8,11 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Telemetry;
 using Microsoft.IdentityModel.Tokens.Saml;
 using static Microsoft.IdentityModel.Logging.LogHelper;
 
@@ -23,12 +23,14 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
     /// <summary>
     /// A <see cref="SecurityTokenHandler"/> designed for creating and validating Saml2 Tokens. See: http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf
     /// </summary>
-    public class Saml2SecurityTokenHandler : SecurityTokenHandler
+    public partial class Saml2SecurityTokenHandler : SecurityTokenHandler
     {
         private const string _actor = "Actor";
         private const string _className = "Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler";
         private Saml2Serializer _serializer = new Saml2Serializer();
         private string _actorClaimName = DefaultActorClaimName;
+
+        internal Telemetry.ITelemetryClient TelemetryClient = new Telemetry.TelemetryClient();
 
         /// <summary>
         /// Default value of the Actor Claim Name used when processing actor claims.
@@ -104,7 +106,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
                     }
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -272,8 +274,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
             ValidateSubject(samlToken, validationParameters);
             var issuer = ValidateIssuer(samlToken.Issuer, samlToken, validationParameters);
 
-            if (samlToken.Assertion.Conditions != null)
-                ValidateTokenReplay(samlToken.Assertion.Conditions.NotOnOrAfter, samlToken.Assertion.CanonicalString, validationParameters);
+            ValidateTokenReplay(samlToken.Assertion.Conditions?.NotOnOrAfter, samlToken.Assertion.CanonicalString, validationParameters);
 
             ValidateIssuerSecurityKey(samlToken.SigningKey, samlToken, validationParameters);
             validatedToken = samlToken;
@@ -363,6 +364,23 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
         protected virtual void ValidateConfirmationData(Saml2SecurityToken samlToken, TokenValidationParameters validationParameters, Saml2SubjectConfirmationData confirmationData)
         {
             LogHelper.LogInformation(LogMessages.IDX13951);
+        }
+
+        private static void RecordSignatureValidationTelemetry(
+            Telemetry.ITelemetryClient telemetryClient,
+            string errorType,
+            SecurityToken securityToken,
+            string algorithm,
+            SecurityKey key)
+        {
+            if (CryptoTelemetry.RecordSignatureValidationTelemetry)
+            {
+                telemetryClient.IncrementSignatureValidationCounter(
+                    errorType,
+                    securityToken.Issuer,
+                    algorithm,
+                    key);
+            }
         }
 
         /// <summary>
@@ -458,6 +476,13 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
                         samlToken.Assertion.Signature.Verify(key, validationParameters.CryptoProviderFactory ?? key.CryptoProviderFactory);
 
+                        RecordSignatureValidationTelemetry(
+                            TelemetryClient,
+                            TelemetryConstants.SignatureValidationErrors.None,
+                            samlToken,
+                            samlToken.Assertion.Signature.SignedInfo.SignatureMethod,
+                            key);
+
                         if (LogHelper.IsEnabled(EventLogLevel.Informational))
                             LogHelper.LogInformation(TokenLogMessages.IDX10242, token);
 
@@ -466,12 +491,19 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
                     }
                     catch (Exception ex)
                     {
+                        RecordSignatureValidationTelemetry(
+                            TelemetryClient,
+                            TelemetryConstants.SignatureValidationErrors.SignatureVerificationFailed,
+                            samlToken,
+                            samlToken.Assertion.Signature.SignedInfo.SignatureMethod,
+                            key);
+
                         exceptionStrings.AppendLine(ex.ToString());
                     }
 
                     if (key != null)
                     {
-                        keysAttempted.Append(key.ToString()).Append(" , KeyId: ").AppendLine(key.KeyId);
+                        keysAttempted.Append("KeyId: ").AppendLine(key.KeyId);
                         if (canMatchKey && !keyMatched && key.KeyId != null)
                             keyMatched = samlToken.Assertion.Signature.KeyInfo.MatchesKey(key);
                     }
@@ -481,14 +513,15 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
             if (canMatchKey)
             {
                 if (keyMatched)
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidSignatureException(LogHelper.FormatInvariant(TokenLogMessages.IDX10514, keysAttempted, samlToken.Assertion.Signature.KeyInfo, exceptionStrings, samlToken)));
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidSignatureException(
+                        LogHelper.FormatInvariant(TokenLogMessages.IDX10514, LogHelper.MarkAsNonPII(keysAttempted), samlToken.Assertion.Signature.KeyInfo, exceptionStrings, samlToken)));
 
                 ValidateIssuer(samlToken.Issuer, samlToken, validationParameters);
                 ValidateConditions(samlToken, validationParameters);
             }
 
             if (keysAttempted.Length > 0)
-                throw LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(FormatInvariant(TokenLogMessages.IDX10512, keysAttempted, exceptionStrings, samlToken)));
+                throw LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(FormatInvariant(TokenLogMessages.IDX10512, LogHelper.MarkAsNonPII(keysAttempted), exceptionStrings, samlToken)));
 
             throw LogHelper.LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(TokenLogMessages.IDX10500));
         }
@@ -545,7 +578,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
             if (token.Length > MaximumTokenSizeInBytes)
                 throw LogExceptionMessage(new ArgumentException(FormatInvariant(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes))));
 
-            using (var reader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(token), XmlDictionaryReaderQuotas.Max))
+            using (var reader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(token), BoundedXmlDictionaryReaderQuotas.Quotas))
             {
                 return ReadSaml2Token(reader);
             }
@@ -649,7 +682,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
                 var audienceRestriction = new Saml2AudienceRestriction(tokenDescriptor.Audiences);
                 if (!string.IsNullOrEmpty(tokenDescriptor.Audience))
                     audienceRestriction.Audiences.Add(tokenDescriptor.Audience);
-                    conditions.AudienceRestrictions.Add(audienceRestriction);
+                conditions.AudienceRestrictions.Add(audienceRestriction);
             }
             else if (!string.IsNullOrEmpty(tokenDescriptor.Audience))
                 conditions.AudienceRestrictions.Add(new Saml2AudienceRestriction(tokenDescriptor.Audience));
@@ -1044,7 +1077,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
                 ValidateAudience(audienceRestriction.Audiences, samlToken, validationParameters);
             }
-            
+
             if (validationParameters.RequireAudience && !foundAudienceRestriction)
                 throw LogExceptionMessage(new Saml2SecurityTokenException(LogMessages.IDX13002));
         }
@@ -1078,13 +1111,13 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
             Saml2Attribute actorAttribute = null;
             var claims = new Collection<Claim>();
-            
+
             // search through attribute values to see if the there is an embedded actor.
             foreach (string value in attribute.Values)
             {
                 if (value != null)
                 {
-                    using (var dictionaryReader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(value), XmlDictionaryReaderQuotas.Max))
+                    using (var dictionaryReader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(value), BoundedXmlDictionaryReaderQuotas.Quotas))
                     {
                         dictionaryReader.MoveToContent();
                         dictionaryReader.ReadStartElement(_actor);

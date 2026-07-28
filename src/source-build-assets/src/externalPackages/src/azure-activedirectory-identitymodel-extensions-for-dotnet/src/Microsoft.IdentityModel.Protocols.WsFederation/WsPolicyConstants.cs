@@ -8,7 +8,7 @@ namespace Microsoft.IdentityModel.Xml
     /// </summary>
     public static class WsPolicy
     {
-        #pragma warning disable 1591
+#pragma warning disable 1591
 
         public const string Namespace = "http://schemas.xmlsoap.org/ws/2004/09/policy";
         public const string PreferredPrefix = "wsp";
@@ -18,7 +18,7 @@ namespace Microsoft.IdentityModel.Xml
             public const string AppliesTo = "AppliesTo";
         }
 
-        #pragma warning restore 1591
+#pragma warning restore 1591
     }
 }
- 
+

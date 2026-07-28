@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Xml;
 using Microsoft.IdentityModel.TestUtils;
@@ -41,7 +40,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             TestUtilities.AssertFailIfErrors($"{this}.GetSets", context.Errors);
         }
 
-        [Theory, MemberData(nameof(ConstructorTheoryData))]
+        [Theory, MemberData(nameof(ConstructorTheoryData), DisableDiscoveryEnumeration = true)]
         public void Constructor(EnvelopedSignatureTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.Constructor", theoryData);
@@ -53,7 +52,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
                 if (theoryData.ExpectSignature)
                 {
                     if (envelopedReader.Signature == null)
-                        Assert.False(true, "theoryData.ExpectSignature == true && envelopedReader.ExpectSignature == null");
+                        Assert.Fail("theoryData.ExpectSignature == true && envelopedReader.ExpectSignature == null");
 
                     envelopedReader.Signature.Verify(theoryData.SecurityKey, theoryData.SecurityKey.CryptoProviderFactory);
                 }
@@ -84,7 +83,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ReadSignedXmlTheoryData))]
+        [Theory, MemberData(nameof(ReadSignedXmlTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadSignedXml(EnvelopedSignatureTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadSignedXml", theoryData);
@@ -92,12 +91,12 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             try
             {
                 var envelopedReader = XmlUtilities.CreateEnvelopedSignatureReader(theoryData.Xml);
-                while (envelopedReader.Read());
+                while (envelopedReader.Read()) ;
 
                 if (theoryData.ExpectSignature)
                 {
                     if (envelopedReader.Signature == null)
-                        Assert.False(true, "theoryData.ExpectSignature == true && envelopedReader.Signature == null");
+                        Assert.Fail("theoryData.ExpectSignature == true && envelopedReader.Signature == null");
 
                     envelopedReader.Signature.Verify(theoryData.SecurityKey, theoryData.CryptoProviderFactory);
                 }
@@ -164,7 +163,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ReadXmlElementsTheoryData))]
+        [Theory, MemberData(nameof(ReadXmlElementsTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadXmlElements(EnvelopedSignatureTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadXmlElements", theoryData);
@@ -179,7 +178,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
                 else
                     envelopedReader = new EnvelopedSignatureReader(reader, theoryData.XmlElementReader);
 
-                while (envelopedReader.Read());
+                while (envelopedReader.Read()) ;
 
                 if (theoryData.XmlElementReader != null)
                 {
@@ -213,9 +212,9 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
                 var samlString = CreateSamlTokenString();
                 var saml2String = CreateSaml2TokenString();
                 var samlpMesage = File.ReadAllText("SamlpMessage.xml");
-                var samlpTokenKey = new X509SecurityKey(new X509Certificate2(Convert.FromBase64String("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")));
-                var samlpKey = new X509SecurityKey(new X509Certificate2(Convert.FromBase64String("MIIGvzCCBKegAwIBAgICAZUwDQYJKoZIhvcNAQELBQAwgYYxCzAJBgNVBAYTAkNaMQ8wDQYDVQQHEwZQcmFndWUxGTAXBgNVBAoTEENaLk5JQywgei5zLnAuby4xMTAvBgNVBAMTKENaLk5JQyBTSEEyIFJvb3QgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxGDAWBgkqhkiG9w0BCQEWCWNhQG5pYy5jejAeFw0xODAyMDYxMDM5MDJaFw0yMDAyMDYxMDM5MDJaMH0xCzAJBgNVBAYTAkNaMQ8wDQYDVQQHEwZQcmFndWUxDzANBgNVBAoTBkNaLk5JQzEwMC4GA1UEAxMnbW9qZWlkLnJlZ3Rlc3QubmljLmN6IHNpZGFzYW1sIG1ldGFkYXRhMRowGAYJKoZIhvcNAQkBFgtyb290QG5pYy5jejCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANUq8haz + ZNnLBWRLPLQKSyg7TlQDVyLxxMmxFhCT8OXArkjIsZvcwNNeMDB6aOhk0Zs97t + 7lEgC2MuiY9GnoC0DV + TAUf7 + MzlHuE0oCmR9jiJPsikBEsRDHpvHi9rZv4HK2TCsee / 5dDi7tP7bMnRvDOAt7lR + KuLQNaXtDWrXC4bjeNdO / mcy3UeKy + dW2Diqz8YMbRrxM29wAweaUSJ6npU9KTnx0 / dq / +IM4R1gO62t + 6vjxqiryEFcvdb6lGHc6qC9TYuHaGZBfXiT2goK4NbOr9dfLuixQ8Jd3oN88Qqt7r5u20VLCB06BIQHBgzJTHaSsi5MT5ymtx8lTpkR6MHXGue//QTZPi5DVBonb1B+ilgWdG7jK5yTBA6BkQSbbFp4uHM3IWdExErV/FPeyN9T7Au0kf7Jp73m7gMjD6ytC9xSI082ELufkjmerLTB0SoNPEsfAzUgDQeJ4DhsWg9kiK1/nhakjENefVW3FA2rZYBsRZkZr/uGdg/XEnw34ooeh+sTsj4QF5nWeuGmq0nu08hSTLv6YYfGwJny0TNekmfNoNL7Ip1RoRenl2ayruqvMSEzh4z5D1m4hW6zwmsRj0X8FJOk9pOr0NbHVsr2RuefmKNntk2bXMYq8dO3xSRASmdVmgmoyoQGJrnh1E0SihxCFNgiHqyGQ1JAgMBAAGjggE9MIIBOTAJBgNVHRMEAjAAMBEGCWCGSAGG+EIBAQQEAwIEsDAdBgNVHQ4EFgQU0HAvIqGfYUW/akxHd9SNK2O4GwEwgbsGA1UdIwSBszCBsIAUzxJQXpMfXwleF48WV0F6n3lyhLihgYykgYkwgYYxCzAJBgNVBAYTAkNaMQ8wDQYDVQQHEwZQcmFndWUxGTAXBgNVBAoTEENaLk5JQywgei5zLnAuby4xMTAvBgNVBAMTKENaLk5JQyBTSEEyIFJvb3QgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxGDAWBgkqhkiG9w0BCQEWCWNhQG5pYy5jeoIJAJxtRGsvNinfMBQGA1UdEgQNMAuBCWNhQG5pYy5jejAWBgNVHREEDzANgQtyb290QG5pYy5jejAOBgNVHQ8BAf8EBAMCBaAwDQYJKoZIhvcNAQELBQADggIBAIytUqXh7AU/OunkSpUTaEY5Ze2sdV76JPwYVzNn2O6hCyzGvPXARP0IchUv8Vy+eCFLctUxvCbUS6aC+ObKgGXq4MxoSV8lijMLEW9crCpFDoLLd3LQw0GjVk2mCE7XTuaT0choPYlZmjv+wF2ZKm5/B+Qjek2j7SkY1yn7hxgJdd5ljHE6wmDXLJ8gHuVBNwvc5iHDjHYh7jL5c5jCDBcr1fFCsIARU05RAkfpWurl8GKY8t6IPm7iopOLjru3Gl45ZBdVrAPMQ8Fz1M9VElUJ6ngeKkXHkSwGhCBG3X0MYsltND6mZSkJqN0nOs+cJ6HHO8IZW1f2pH3aCTUSDYWoaZbK74NC6d61sr5Rth4foLQnMzCS5RaXuANMvyZW3Ol5ScvLl/KRZM4f4CB6rmYinyHfXIoPF+uCjavyOYnW1RDBASg0Ld/WUJlWb75m5GNkRELIc4c5FU54ysMW9o5wnGpQvtXNdCBJK8tAyZO9Wf2hjZeOZgJ6r1IngfSeSFu7EOFqWnwVOF+3juwWOLCwxrKcURAEngwH01ydwU3oG/rN+7JtdS3IwfaBt9sfDiLQ60qec/6PQc643UztE6oToHLRXsidwrObwyAKLSFJoh/uxWT85JgAoekq5zBen94HfELfMEc9tex6Qlf1tLDs7OWD6Mlw6j9aAcw/4Nfh")));
-                var xmlWithTwoSamlTokens = CreateSignedXmlWithEmbededTokens(new List<SecurityToken> { CreateSamlToken(), CreateSamlToken()}, Default.SymmetricSigningCredentials, Default.AsymmetricSigningCredentials);
+                var samlpTokenKey = new X509SecurityKey(CertificateHelper.LoadX509Certificate("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"));
+                var samlpKey = new X509SecurityKey(CertificateHelper.LoadX509Certificate("MIIGvzCCBKegAwIBAgICAZUwDQYJKoZIhvcNAQELBQAwgYYxCzAJBgNVBAYTAkNaMQ8wDQYDVQQHEwZQcmFndWUxGTAXBgNVBAoTEENaLk5JQywgei5zLnAuby4xMTAvBgNVBAMTKENaLk5JQyBTSEEyIFJvb3QgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxGDAWBgkqhkiG9w0BCQEWCWNhQG5pYy5jejAeFw0xODAyMDYxMDM5MDJaFw0yMDAyMDYxMDM5MDJaMH0xCzAJBgNVBAYTAkNaMQ8wDQYDVQQHEwZQcmFndWUxDzANBgNVBAoTBkNaLk5JQzEwMC4GA1UEAxMnbW9qZWlkLnJlZ3Rlc3QubmljLmN6IHNpZGFzYW1sIG1ldGFkYXRhMRowGAYJKoZIhvcNAQkBFgtyb290QG5pYy5jejCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBANUq8haz + ZNnLBWRLPLQKSyg7TlQDVyLxxMmxFhCT8OXArkjIsZvcwNNeMDB6aOhk0Zs97t + 7lEgC2MuiY9GnoC0DV + TAUf7 + MzlHuE0oCmR9jiJPsikBEsRDHpvHi9rZv4HK2TCsee / 5dDi7tP7bMnRvDOAt7lR + KuLQNaXtDWrXC4bjeNdO / mcy3UeKy + dW2Diqz8YMbRrxM29wAweaUSJ6npU9KTnx0 / dq / +IM4R1gO62t + 6vjxqiryEFcvdb6lGHc6qC9TYuHaGZBfXiT2goK4NbOr9dfLuixQ8Jd3oN88Qqt7r5u20VLCB06BIQHBgzJTHaSsi5MT5ymtx8lTpkR6MHXGue//QTZPi5DVBonb1B+ilgWdG7jK5yTBA6BkQSbbFp4uHM3IWdExErV/FPeyN9T7Au0kf7Jp73m7gMjD6ytC9xSI082ELufkjmerLTB0SoNPEsfAzUgDQeJ4DhsWg9kiK1/nhakjENefVW3FA2rZYBsRZkZr/uGdg/XEnw34ooeh+sTsj4QF5nWeuGmq0nu08hSTLv6YYfGwJny0TNekmfNoNL7Ip1RoRenl2ayruqvMSEzh4z5D1m4hW6zwmsRj0X8FJOk9pOr0NbHVsr2RuefmKNntk2bXMYq8dO3xSRASmdVmgmoyoQGJrnh1E0SihxCFNgiHqyGQ1JAgMBAAGjggE9MIIBOTAJBgNVHRMEAjAAMBEGCWCGSAGG+EIBAQQEAwIEsDAdBgNVHQ4EFgQU0HAvIqGfYUW/akxHd9SNK2O4GwEwgbsGA1UdIwSBszCBsIAUzxJQXpMfXwleF48WV0F6n3lyhLihgYykgYkwgYYxCzAJBgNVBAYTAkNaMQ8wDQYDVQQHEwZQcmFndWUxGTAXBgNVBAoTEENaLk5JQywgei5zLnAuby4xMTAvBgNVBAMTKENaLk5JQyBTSEEyIFJvb3QgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxGDAWBgkqhkiG9w0BCQEWCWNhQG5pYy5jeoIJAJxtRGsvNinfMBQGA1UdEgQNMAuBCWNhQG5pYy5jejAWBgNVHREEDzANgQtyb290QG5pYy5jejAOBgNVHQ8BAf8EBAMCBaAwDQYJKoZIhvcNAQELBQADggIBAIytUqXh7AU/OunkSpUTaEY5Ze2sdV76JPwYVzNn2O6hCyzGvPXARP0IchUv8Vy+eCFLctUxvCbUS6aC+ObKgGXq4MxoSV8lijMLEW9crCpFDoLLd3LQw0GjVk2mCE7XTuaT0choPYlZmjv+wF2ZKm5/B+Qjek2j7SkY1yn7hxgJdd5ljHE6wmDXLJ8gHuVBNwvc5iHDjHYh7jL5c5jCDBcr1fFCsIARU05RAkfpWurl8GKY8t6IPm7iopOLjru3Gl45ZBdVrAPMQ8Fz1M9VElUJ6ngeKkXHkSwGhCBG3X0MYsltND6mZSkJqN0nOs+cJ6HHO8IZW1f2pH3aCTUSDYWoaZbK74NC6d61sr5Rth4foLQnMzCS5RaXuANMvyZW3Ol5ScvLl/KRZM4f4CB6rmYinyHfXIoPF+uCjavyOYnW1RDBASg0Ld/WUJlWb75m5GNkRELIc4c5FU54ysMW9o5wnGpQvtXNdCBJK8tAyZO9Wf2hjZeOZgJ6r1IngfSeSFu7EOFqWnwVOF+3juwWOLCwxrKcURAEngwH01ydwU3oG/rN+7JtdS3IwfaBt9sfDiLQ60qec/6PQc643UztE6oToHLRXsidwrObwyAKLSFJoh/uxWT85JgAoekq5zBen94HfELfMEc9tex6Qlf1tLDs7OWD6Mlw6j9aAcw/4Nfh"));
+                var xmlWithTwoSamlTokens = CreateSignedXmlWithEmbededTokens(new List<SecurityToken> { CreateSamlToken(), CreateSamlToken() }, Default.SymmetricSigningCredentials, Default.AsymmetricSigningCredentials);
                 var xmlWithSamlAndSaml2Tokens = CreateSignedXmlWithEmbededTokens(new List<SecurityToken> { CreateSamlToken(), CreateSaml2Token() }, Default.SymmetricSigningCredentials, Default.AsymmetricSigningCredentials);
                 var xmlWithSaml2AndSamlTokens = CreateSignedXmlWithEmbededTokens(new List<SecurityToken> { CreateSaml2Token(), CreateSamlToken() }, Default.SymmetricSigningCredentials, Default.AsymmetricSigningCredentials);
                 var xmlWithTwoSaml2Tokens = CreateSignedXmlWithEmbededTokens(new List<SecurityToken> { CreateSaml2Token(), CreateSaml2Token() }, Default.SymmetricSigningCredentials, Default.AsymmetricSigningCredentials);
@@ -333,7 +332,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             }
         }
 
-        private static string CreateSignedXmlWithEmbededTokens(IList<SecurityToken> samlTokens, SigningCredentials xmlSigningCredentials, SigningCredentials tokenSigningCredentials )
+        private static string CreateSignedXmlWithEmbededTokens(IList<SecurityToken> samlTokens, SigningCredentials xmlSigningCredentials, SigningCredentials tokenSigningCredentials)
         {
             var ms = new MemoryStream();
             var writer = XmlDictionaryWriter.CreateTextWriter(ms, Encoding.UTF8, false);

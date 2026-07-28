@@ -1,0 +1,219 @@
+const System.IdentityModel.Tokens.Jwt.JsonClaimValueTypes.Json = "JSON" -> string
+const System.IdentityModel.Tokens.Jwt.JsonClaimValueTypes.JsonArray = "JSON_ARRAY" -> string
+const System.IdentityModel.Tokens.Jwt.JsonClaimValueTypes.JsonNull = "JSON_NULL" -> string
+const System.IdentityModel.Tokens.Jwt.JwtConstants.DirectKeyUseAlg = "dir" -> string
+const System.IdentityModel.Tokens.Jwt.JwtConstants.HeaderType = "JWT" -> string
+const System.IdentityModel.Tokens.Jwt.JwtConstants.HeaderTypeAlt = "http://openid.net/specs/jwt/1.0" -> string
+const System.IdentityModel.Tokens.Jwt.JwtConstants.JsonCompactSerializationRegex = "^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]*$" -> string
+const System.IdentityModel.Tokens.Jwt.JwtConstants.JweCompactSerializationRegex = "^[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]*\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+\\.[A-Za-z0-9-_]+$" -> string
+const System.IdentityModel.Tokens.Jwt.JwtConstants.TokenType = "JWT" -> string
+const System.IdentityModel.Tokens.Jwt.JwtConstants.TokenTypeAlt = "urn:ietf:params:oauth:token-type:jwt" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Alg = "alg" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Apu = "apu" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Apv = "apv" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Cty = "cty" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Enc = "enc" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Epk = "epk" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.IV = "iv" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Jku = "jku" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Jwk = "jwk" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Kid = "kid" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Typ = "typ" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.X5c = "x5c" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.X5t = "x5t" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.X5u = "x5u" -> string
+const System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.Zip = "zip" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Acr = "acr" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Actort = "actort" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Address = "address" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Alg = "alg" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Amr = "amr" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.AtHash = "at_hash" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Aud = "aud" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.AuthTime = "auth_time" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Azp = "azp" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Birthdate = "birthdate" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.CHash = "c_hash" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Email = "email" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.EmailVerified = "email_verified" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Exp = "exp" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.FamilyName = "family_name" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Gender = "gender" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.GivenName = "given_name" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Iat = "iat" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Iss = "iss" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti = "jti" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Locale = "locale" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.MiddleName = "middle_name" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Name = "name" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.NameId = "nameid" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Nbf = "nbf" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Nickname = "nickname" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Nonce = "nonce" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.PhoneNumber = "phone_number" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.PhoneNumberVerified = "phone_number_verified" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Picture = "picture" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.PreferredUsername = "preferred_username" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Prn = "prn" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Profile = "profile" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sid = "sid" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub = "sub" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Typ = "typ" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.UniqueName = "unique_name" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.UpdatedAt = "updated_at" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Website = "website" -> string
+const System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.ZoneInfo = "zoneinfo" -> string
+override System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Id.get -> string
+override System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Issuer.get -> string
+override System.IdentityModel.Tokens.Jwt.JwtSecurityToken.SecurityKey.get -> Microsoft.IdentityModel.Tokens.SecurityKey
+override System.IdentityModel.Tokens.Jwt.JwtSecurityToken.SigningKey.get -> Microsoft.IdentityModel.Tokens.SecurityKey
+override System.IdentityModel.Tokens.Jwt.JwtSecurityToken.SigningKey.set -> void
+override System.IdentityModel.Tokens.Jwt.JwtSecurityToken.ToString() -> string
+override System.IdentityModel.Tokens.Jwt.JwtSecurityToken.UnsafeToString() -> string
+override System.IdentityModel.Tokens.Jwt.JwtSecurityToken.ValidFrom.get -> System.DateTime
+override System.IdentityModel.Tokens.Jwt.JwtSecurityToken.ValidTo.get -> System.DateTime
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CanReadToken(string token) -> bool
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CanValidateToken.get -> bool
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CanWriteToken.get -> bool
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateToken(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ReadToken(string token) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ReadToken(System.Xml.XmlReader reader, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.TokenType.get -> System.Type
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateToken(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters, out Microsoft.IdentityModel.Tokens.SecurityToken validatedToken) -> System.Security.Claims.ClaimsPrincipal
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.TokenValidationResult>
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.WriteToken(Microsoft.IdentityModel.Tokens.SecurityToken token) -> string
+override System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.WriteToken(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.SecurityToken token) -> void
+static System.IdentityModel.Tokens.Jwt.JwtHeader.Base64UrlDeserialize(string base64UrlEncodedJsonString) -> System.IdentityModel.Tokens.Jwt.JwtHeader
+static System.IdentityModel.Tokens.Jwt.JwtPayload.Base64UrlDeserialize(string base64UrlEncodedJsonString) -> System.IdentityModel.Tokens.Jwt.JwtPayload
+static System.IdentityModel.Tokens.Jwt.JwtPayload.Deserialize(string jsonString) -> System.IdentityModel.Tokens.Jwt.JwtPayload
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenConverter.Convert(Microsoft.IdentityModel.JsonWebTokens.JsonWebToken token) -> System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimFilter -> System.Collections.Generic.ISet<string>
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap -> System.Collections.Generic.IDictionary<string, string>
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultMapInboundClaims -> bool
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultOutboundAlgorithmMap -> System.Collections.Generic.IDictionary<string, string>
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap -> System.Collections.Generic.IDictionary<string, string>
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.JsonClaimTypeProperty.get -> string
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.JsonClaimTypeProperty.set -> void
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ShortClaimTypeProperty.get -> string
+static System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ShortClaimTypeProperty.set -> void
+System.IdentityModel.Tokens.Jwt.JsonClaimValueTypes
+System.IdentityModel.Tokens.Jwt.JwtConstants
+System.IdentityModel.Tokens.Jwt.JwtHeader
+System.IdentityModel.Tokens.Jwt.JwtHeader.Alg.get -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.Cty.get -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.Enc.get -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.EncryptingCredentials.get -> Microsoft.IdentityModel.Tokens.EncryptingCredentials
+System.IdentityModel.Tokens.Jwt.JwtHeader.IV.get -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader() -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.EncryptingCredentials encryptingCredentials, System.Collections.Generic.IDictionary<string, string> outboundAlgorithmMap, string tokenType, System.Collections.Generic.IDictionary<string, object> additionalHeaderClaims) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.EncryptingCredentials encryptingCredentials, System.Collections.Generic.IDictionary<string, string> outboundAlgorithmMap, string tokenType) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.EncryptingCredentials encryptingCredentials, System.Collections.Generic.IDictionary<string, string> outboundAlgorithmMap) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.EncryptingCredentials encryptingCredentials) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, System.Collections.Generic.IDictionary<string, string> outboundAlgorithmMap, string tokenType, System.Collections.Generic.IDictionary<string, object> additionalInnerHeaderClaims) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, System.Collections.Generic.IDictionary<string, string> outboundAlgorithmMap, string tokenType) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, System.Collections.Generic.IDictionary<string, string> outboundAlgorithmMap) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.JwtHeader(Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials) -> void
+System.IdentityModel.Tokens.Jwt.JwtHeader.Kid.get -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.SigningCredentials.get -> Microsoft.IdentityModel.Tokens.SigningCredentials
+System.IdentityModel.Tokens.Jwt.JwtHeader.Typ.get -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.X5c.get -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.X5t.get -> string
+System.IdentityModel.Tokens.Jwt.JwtHeader.Zip.get -> string
+System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames
+System.IdentityModel.Tokens.Jwt.JwtHeaderParameterNames.JwtHeaderParameterNames() -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload
+System.IdentityModel.Tokens.Jwt.JwtPayload.Acr.get -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload.Actort.get -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload.AddClaim(System.Security.Claims.Claim claim) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.AddClaims(System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.Amr.get -> System.Collections.Generic.IList<string>
+System.IdentityModel.Tokens.Jwt.JwtPayload.Aud.get -> System.Collections.Generic.IList<string>
+System.IdentityModel.Tokens.Jwt.JwtPayload.AuthTime.get -> int?
+System.IdentityModel.Tokens.Jwt.JwtPayload.Azp.get -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload.CHash.get -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload.Exp.get -> int?
+System.IdentityModel.Tokens.Jwt.JwtPayload.Expiration.get -> long?
+System.IdentityModel.Tokens.Jwt.JwtPayload.Iat.get -> int?
+System.IdentityModel.Tokens.Jwt.JwtPayload.Iss.get -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload.IssuedAt.get -> System.DateTime
+System.IdentityModel.Tokens.Jwt.JwtPayload.Jti.get -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload.JwtPayload() -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.JwtPayload(string issuer, string audience, System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims, System.Collections.Generic.IDictionary<string, object> claimsCollection, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.JwtPayload(string issuer, string audience, System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.JwtPayload(string issuer, string audience, System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims, System.DateTime? notBefore, System.DateTime? expires) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.JwtPayload(string issuer, string audience, System.Collections.Generic.IList<string> audiences, System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims, System.Collections.Generic.IDictionary<string, object> claimsCollection, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.JwtPayload(string issuer, System.Collections.Generic.IList<string> audiences, System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims, System.Collections.Generic.IDictionary<string, object> claimsCollection, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.JwtPayload(System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims) -> void
+System.IdentityModel.Tokens.Jwt.JwtPayload.Nbf.get -> int?
+System.IdentityModel.Tokens.Jwt.JwtPayload.Nonce.get -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload.NotBefore.get -> long?
+System.IdentityModel.Tokens.Jwt.JwtPayload.Sub.get -> string
+System.IdentityModel.Tokens.Jwt.JwtPayload.ValidFrom.get -> System.DateTime
+System.IdentityModel.Tokens.Jwt.JwtPayload.ValidTo.get -> System.DateTime
+System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames
+System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.JwtRegisteredClaimNames() -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Actor.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Audiences.get -> System.Collections.Generic.IEnumerable<string>
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Claims.get -> System.Collections.Generic.IEnumerable<System.Security.Claims.Claim>
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.EncryptingCredentials.get -> Microsoft.IdentityModel.Tokens.EncryptingCredentials
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Header.get -> System.IdentityModel.Tokens.Jwt.JwtHeader
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.InnerToken.get -> System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.JwtSecurityToken(string issuer = null, string audience = null, System.Collections.Generic.IEnumerable<System.Security.Claims.Claim> claims = null, System.DateTime? notBefore = null, System.DateTime? expires = null, Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials = null) -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.JwtSecurityToken(string jwtEncodedString) -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.JwtSecurityToken(System.IdentityModel.Tokens.Jwt.JwtHeader header, System.IdentityModel.Tokens.Jwt.JwtPayload payload, string rawHeader, string rawPayload, string rawSignature) -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.JwtSecurityToken(System.IdentityModel.Tokens.Jwt.JwtHeader header, System.IdentityModel.Tokens.Jwt.JwtPayload payload) -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.JwtSecurityToken(System.IdentityModel.Tokens.Jwt.JwtHeader header, System.IdentityModel.Tokens.Jwt.JwtSecurityToken innerToken, string rawHeader, string rawEncryptedKey, string rawInitializationVector, string rawCiphertext, string rawAuthenticationTag) -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Payload.get -> System.IdentityModel.Tokens.Jwt.JwtPayload
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawAuthenticationTag.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawCiphertext.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawData.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawEncryptedKey.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawHeader.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawInitializationVector.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawPayload.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.RawSignature.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.SignatureAlgorithm.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.SigningCredentials.get -> Microsoft.IdentityModel.Tokens.SigningCredentials
+System.IdentityModel.Tokens.Jwt.JwtSecurityToken.Subject.get -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenConverter
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DecryptToken(System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> string
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.InboundClaimFilter.get -> System.Collections.Generic.ISet<string>
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.InboundClaimFilter.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.InboundClaimTypeMap.get -> System.Collections.Generic.IDictionary<string, string>
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.InboundClaimTypeMap.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.JwtSecurityTokenHandler() -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.MapInboundClaims.get -> bool
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.MapInboundClaims.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.OutboundAlgorithmMap.get -> System.Collections.Generic.IDictionary<string, string>
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.OutboundClaimTypeMap.get -> System.Collections.Generic.IDictionary<string, string>
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.OutboundClaimTypeMap.set -> void
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ReadJwtToken(string token) -> System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateTokenPayload(System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Security.Claims.ClaimsPrincipal
+virtual System.IdentityModel.Tokens.Jwt.JwtHeader.Base64UrlEncode() -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtHeader.SerializeToJson() -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtPayload.Base64UrlEncode() -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtPayload.Claims.get -> System.Collections.Generic.IEnumerable<System.Security.Claims.Claim>
+virtual System.IdentityModel.Tokens.Jwt.JwtPayload.SerializeToJson() -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityToken.EncodedHeader.get -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityToken.EncodedPayload.get -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityToken.IssuedAt.get -> System.DateTime
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateActorValue(System.Security.Claims.ClaimsIdentity actor) -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateClaimsIdentity(System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtToken, string issuer, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Security.Claims.ClaimsIdentity
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateEncodedJwt(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateEncodedJwt(string issuer, string audience, System.Security.Claims.ClaimsIdentity subject, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt, Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, Microsoft.IdentityModel.Tokens.EncryptingCredentials encryptingCredentials, System.Collections.Generic.IDictionary<string, object> claimCollection) -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateEncodedJwt(string issuer, string audience, System.Security.Claims.ClaimsIdentity subject, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt, Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, Microsoft.IdentityModel.Tokens.EncryptingCredentials encryptingCredentials) -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateEncodedJwt(string issuer, string audience, System.Security.Claims.ClaimsIdentity subject, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt, Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials) -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateJwtSecurityToken(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateJwtSecurityToken(string issuer = null, string audience = null, System.Security.Claims.ClaimsIdentity subject = null, System.DateTime? notBefore = null, System.DateTime? expires = null, System.DateTime? issuedAt = null, Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials = null) -> System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateJwtSecurityToken(string issuer, string audience, System.Security.Claims.ClaimsIdentity subject, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt, Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, Microsoft.IdentityModel.Tokens.EncryptingCredentials encryptingCredentials, System.Collections.Generic.IDictionary<string, object> claimCollection) -> System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.CreateJwtSecurityToken(string issuer, string audience, System.Security.Claims.ClaimsIdentity subject, System.DateTime? notBefore, System.DateTime? expires, System.DateTime? issuedAt, Microsoft.IdentityModel.Tokens.SigningCredentials signingCredentials, Microsoft.IdentityModel.Tokens.EncryptingCredentials encryptingCredentials) -> System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ResolveIssuerSigningKey(string token, System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.SecurityKey
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ResolveTokenDecryptionKey(string token, System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.SecurityKey
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateAudience(System.Collections.Generic.IEnumerable<string> audiences, System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateIssuer(string issuer, System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> string
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateIssuerSecurityKey(Microsoft.IdentityModel.Tokens.SecurityKey key, System.IdentityModel.Tokens.Jwt.JwtSecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateLifetime(System.DateTime? notBefore, System.DateTime? expires, System.IdentityModel.Tokens.Jwt.JwtSecurityToken jwtToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateSignature(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+virtual System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateTokenReplay(System.DateTime? expires, string securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
