@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,9 +17,9 @@ namespace NuGet.Protocol
         {
         }
 
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token)
         {
-            SymbolPackageUpdateResourceV3 symbolPackageUpdateResource = null;
+            SymbolPackageUpdateResourceV3? symbolPackageUpdateResource = null;
 
             var serviceIndex = await source.GetResourceAsync<ServiceIndexResourceV3>(token);
 
@@ -29,20 +27,21 @@ namespace NuGet.Protocol
             {
                 var baseUrl = serviceIndex.GetServiceEntryUri(ServiceTypes.SymbolPackagePublish);
 
-                HttpSource httpSource = null;
+                HttpSource? httpSource = null;
                 var sourceUri = baseUrl?.AbsoluteUri;
                 if (!string.IsNullOrEmpty(sourceUri))
                 {
                     if (!(new Uri(sourceUri)).IsFile)
                     {
-                        var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token);
+                        var httpSourceResource = await source.GetResourceAsync<HttpSourceResource>(token)
+                            ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(HttpSourceResource)}.");
                         httpSource = httpSourceResource.HttpSource;
                     }
-                    symbolPackageUpdateResource = new SymbolPackageUpdateResourceV3(sourceUri, httpSource);
+                    symbolPackageUpdateResource = new SymbolPackageUpdateResourceV3(sourceUri!, httpSource);
                 }
             }
 
-            var result = new Tuple<bool, INuGetResource>(symbolPackageUpdateResource != null, symbolPackageUpdateResource);
+            var result = new Tuple<bool, INuGetResource?>(symbolPackageUpdateResource != null, symbolPackageUpdateResource);
             return result;
         }
     }

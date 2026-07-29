@@ -95,7 +95,7 @@ namespace NuGet.PackageManagement.Test.Telemetry
         }
 
         [Fact]
-        public void CreateWithVulnerabilityInfoBarFixWithCopilot_WithValidProperties_CreatedWithoutPiiData()
+        public void CreateWithFixVulnerabilitiesWithCopilot_WithValidProperties_CreatedWithoutPiiData()
         {
             // Arrange
             var nuGetTelemetryService = SetupTelemetryListener();
@@ -103,7 +103,7 @@ namespace NuGet.PackageManagement.Test.Telemetry
             var navigationType = NavigationType.Button;
             var navigationOrigin = NavigationOrigin.VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot;
 
-            var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarFixWithCopilot(FixVulnerabilitiesWithCopilotErrorType.None);
+            var evt = NavigatedTelemetryEvent.CreateWithFixVulnerabilitiesWithCopilot(navigationOrigin, FixVulnerabilitiesWithCopilotErrorType.None);
 
             // Act
             nuGetTelemetryService.EmitTelemetryEvent(evt);
@@ -118,30 +118,40 @@ namespace NuGet.PackageManagement.Test.Telemetry
             Assert.Empty(_lastTelemetryEvent.GetPiiData());
         }
 
+        public static IEnumerable<object[]> FixVulnerabilitiesOriginsAndErrorTypes()
+        {
+            NavigationOrigin[] origins =
+            {
+                NavigationOrigin.VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot,
+                NavigationOrigin.ErrorList_FixVulnerabilitiesWithCopilot,
+            };
+
+            foreach (NavigationOrigin origin in origins)
+            {
+                foreach (FixVulnerabilitiesWithCopilotErrorType errorType in Enum.GetValues(typeof(FixVulnerabilitiesWithCopilotErrorType)).Cast<FixVulnerabilitiesWithCopilotErrorType>())
+                {
+                    yield return new object[] { origin, errorType };
+                }
+            }
+        }
+
         [Theory]
-        [InlineData(FixVulnerabilitiesWithCopilotErrorType.None)]
-        [InlineData(FixVulnerabilitiesWithCopilotErrorType.CopilotNotReady)]
-        [InlineData(FixVulnerabilitiesWithCopilotErrorType.ServiceBrokerNotAvailable)]
-        [InlineData(FixVulnerabilitiesWithCopilotErrorType.CopilotServiceNotAvailable)]
-        [InlineData(FixVulnerabilitiesWithCopilotErrorType.McpToolServiceNotAvailable)]
-        [InlineData(FixVulnerabilitiesWithCopilotErrorType.CopilotAccessDenied)]
-        [InlineData(FixVulnerabilitiesWithCopilotErrorType.NuGetSolverNotAvailable)]
-        [InlineData(FixVulnerabilitiesWithCopilotErrorType.McpServerInfoServiceNotAvailable)]
-        [InlineData(FixVulnerabilitiesWithCopilotErrorType.McpServerNotActive)]
-        public void CreateWithVulnerabilityInfoBarFixWithCopilot_WithAllErrorTypes_CreatesEventWithCorrectProperties(FixVulnerabilitiesWithCopilotErrorType errorType)
+        [MemberData(nameof(FixVulnerabilitiesOriginsAndErrorTypes))]
+        public void CreateWithFixVulnerabilitiesWithCopilot_WithOriginAndErrorType_CreatesEventWithCorrectProperties(NavigationOrigin navigationOrigin, FixVulnerabilitiesWithCopilotErrorType errorType)
         {
             // Arrange
             var nuGetTelemetryService = SetupTelemetryListener();
 
+            var evt = NavigatedTelemetryEvent.CreateWithFixVulnerabilitiesWithCopilot(navigationOrigin, errorType);
+
             // Act
-            var evt = NavigatedTelemetryEvent.CreateWithVulnerabilityInfoBarFixWithCopilot(errorType);
             nuGetTelemetryService.EmitTelemetryEvent(evt);
 
             // Assert
             Assert.NotNull(_lastTelemetryEvent);
             Assert.Equal(3, _lastTelemetryEvent.Count);
             Assert.Equal(NavigationType.Button, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
-            Assert.Equal(NavigationOrigin.VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Equal(navigationOrigin, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
             Assert.Equal(errorType, _lastTelemetryEvent[NavigatedTelemetryEvent.ErrorTypePropertyName]);
         }
 

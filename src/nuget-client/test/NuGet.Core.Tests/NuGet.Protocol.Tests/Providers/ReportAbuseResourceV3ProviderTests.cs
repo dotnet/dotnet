@@ -36,7 +36,7 @@ namespace NuGet.Protocol.Tests.Providers
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
-            Tuple<bool, INuGetResource> result = await _target.TryCreate(sourceRepository, CancellationToken.None);
+            Tuple<bool, INuGetResource?> result = await _target.TryCreate(sourceRepository, CancellationToken.None);
 
             Assert.True(result.Item1);
             Assert.IsType<ReportAbuseResourceV3>(result.Item2);
@@ -61,7 +61,7 @@ namespace NuGet.Protocol.Tests.Providers
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
-            Tuple<bool, INuGetResource> result = await _target.TryCreate(sourceRepository, CancellationToken.None);
+            Tuple<bool, INuGetResource?> result = await _target.TryCreate(sourceRepository, CancellationToken.None);
 
             Assert.True(result.Item1);
             Assert.IsType<ReportAbuseResourceV3>(result.Item2);
@@ -80,7 +80,7 @@ namespace NuGet.Protocol.Tests.Providers
             };
             var sourceRepository = new SourceRepository(_packageSource, resourceProviders);
 
-            Tuple<bool, INuGetResource> result = await _target.TryCreate(sourceRepository, CancellationToken.None);
+            Tuple<bool, INuGetResource?> result = await _target.TryCreate(sourceRepository, CancellationToken.None);
 
             Assert.True(result.Item1);
             Assert.IsType<ReportAbuseResourceV3>(result.Item2);

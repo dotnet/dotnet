@@ -83,7 +83,7 @@ if [ "$DOTNET_SDK_TEST_VERSIONS" != "" ]; then
     done
 else
     # Get CLI Branches for testing
-    cat build/DotNetSdkTestVersions.txt | while IFS=$'\r' read -r CliArgs || [[ -n $line ]];
+    cat build/DotNetSdkTestVersions.txt | while IFS=$'\r' read -r CliArgs || [[ -n $CliArgs ]];
     do
         if [ "${CliArgs:0:1}" != "#" ] || [ "$CliArgs" == "" ]; then
             echo "'cli/dotnet-install.sh -InstallDir $NETSDK_FOR_TESTING_DIR -NoPath $CliArgs'"

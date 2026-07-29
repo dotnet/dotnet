@@ -10,7 +10,7 @@ NuGet.Protocol.AmbientAuthenticationState.Block() -> void
 NuGet.Protocol.AmbientAuthenticationState.Increment() -> void
 NuGet.Protocol.AmbientAuthenticationState.IsBlocked.get -> bool
 NuGet.Protocol.AutoCompleteResourceV2Feed
-~NuGet.Protocol.AutoCompleteResourceV2Feed.AutoCompleteResourceV2Feed(NuGet.Protocol.HttpSourceResource httpSourceResource, string baseAddress, NuGet.Configuration.PackageSource packageSource) -> void
+NuGet.Protocol.AutoCompleteResourceV2Feed.AutoCompleteResourceV2Feed(NuGet.Protocol.HttpSourceResource! httpSourceResource, string! baseAddress, NuGet.Configuration.PackageSource! packageSource) -> void
 NuGet.Protocol.AutoCompleteResourceV2FeedProvider
 NuGet.Protocol.AutoCompleteResourceV2FeedProvider.AutoCompleteResourceV2FeedProvider() -> void
 NuGet.Protocol.AutoCompleteResourceV3
@@ -220,26 +220,26 @@ NuGet.Protocol.Core.Types.PackageSearchMetadataExtensions
 NuGet.Protocol.Core.Types.PackageSearchResource
 NuGet.Protocol.Core.Types.PackageSearchResource.PackageSearchResource() -> void
 NuGet.Protocol.Core.Types.PackageUpdateResource
-~NuGet.Protocol.Core.Types.PackageUpdateResource.Delete(string packageId, string packageVersion, System.Func<string, string> getApiKey, System.Func<string, bool> confirm, bool noServiceEndpoint, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
-~NuGet.Protocol.Core.Types.PackageUpdateResource.Delete(string packageId, string packageVersion, System.Func<string, string> getApiKey, System.Func<string, bool> confirm, bool noServiceEndpoint, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
-~NuGet.Protocol.Core.Types.PackageUpdateResource.PackageUpdateResource(string source, NuGet.Protocol.HttpSource httpSource) -> void
-~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
-~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
-~NuGet.Protocol.Core.Types.PackageUpdateResource.PushAsync(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, bool allowSnupkg, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
-~NuGet.Protocol.Core.Types.PackageUpdateResource.Settings.get -> NuGet.Configuration.ISettings
-~NuGet.Protocol.Core.Types.PackageUpdateResource.Settings.set -> void
-~NuGet.Protocol.Core.Types.PackageUpdateResource.SourceUri.get -> System.Uri
+NuGet.Protocol.Core.Types.PackageUpdateResource.Delete(string! packageId, string! packageVersion, System.Func<string!, string!>! getApiKey, System.Func<string!, bool>! confirm, bool noServiceEndpoint, NuGet.Common.ILogger! log) -> System.Threading.Tasks.Task!
+NuGet.Protocol.Core.Types.PackageUpdateResource.Delete(string! packageId, string! packageVersion, System.Func<string!, string!>! getApiKey, System.Func<string!, bool>! confirm, bool noServiceEndpoint, bool allowInsecureConnections, NuGet.Common.ILogger! log) -> System.Threading.Tasks.Task!
+NuGet.Protocol.Core.Types.PackageUpdateResource.PackageUpdateResource(string! source, NuGet.Protocol.HttpSource? httpSource) -> void
+NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string!>! packagePaths, string! symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string!, string!>! getApiKey, System.Func<string!, string!>! getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3? symbolPackageUpdateResource, NuGet.Common.ILogger! log) -> System.Threading.Tasks.Task!
+NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string!>! packagePaths, string! symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string!, string!>! getApiKey, System.Func<string!, string!>! getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3? symbolPackageUpdateResource, bool allowInsecureConnections, NuGet.Common.ILogger! log) -> System.Threading.Tasks.Task!
+NuGet.Protocol.Core.Types.PackageUpdateResource.PushAsync(System.Collections.Generic.IList<string!>! packagePaths, string! symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string!, string!>! getApiKey, System.Func<string!, string!>! getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, bool allowSnupkg, bool allowInsecureConnections, NuGet.Common.ILogger! log) -> System.Threading.Tasks.Task!
+NuGet.Protocol.Core.Types.PackageUpdateResource.Settings.get -> NuGet.Configuration.ISettings?
+NuGet.Protocol.Core.Types.PackageUpdateResource.Settings.set -> void
+NuGet.Protocol.Core.Types.PackageUpdateResource.SourceUri.get -> System.Uri!
 NuGet.Protocol.Core.Types.PluginFindPackageByIdResource
-~NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.PluginFindPackageByIdResource(NuGet.Protocol.Plugins.IPlugin plugin, NuGet.Protocol.Plugins.IPluginMulticlientUtilities utilities, NuGet.Configuration.PackageSource packageSource) -> void
+NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.PluginFindPackageByIdResource(NuGet.Protocol.Plugins.IPlugin! plugin, NuGet.Protocol.Plugins.IPluginMulticlientUtilities! utilities, NuGet.Configuration.PackageSource! packageSource) -> void
 NuGet.Protocol.Core.Types.PluginResource
-~NuGet.Protocol.Core.Types.PluginResource.GetPluginAsync(NuGet.Protocol.Plugins.OperationClaim requiredClaim, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.PluginResource.GetPluginResult>
+NuGet.Protocol.Core.Types.PluginResource.GetPluginAsync(NuGet.Protocol.Plugins.OperationClaim requiredClaim, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.PluginResource.GetPluginResult?>!
 NuGet.Protocol.Core.Types.PluginResource.GetPluginResult
-~NuGet.Protocol.Core.Types.PluginResource.GetPluginResult.Plugin.get -> NuGet.Protocol.Plugins.IPlugin
-~NuGet.Protocol.Core.Types.PluginResource.GetPluginResult.PluginMulticlientUtilities.get -> NuGet.Protocol.Plugins.IPluginMulticlientUtilities
-~NuGet.Protocol.Core.Types.PluginResource.PluginResource(System.Collections.Generic.IEnumerable<NuGet.Protocol.Plugins.PluginCreationResult> pluginCreationResults, NuGet.Configuration.PackageSource packageSource, NuGet.Configuration.ICredentialService credentialService) -> void
+NuGet.Protocol.Core.Types.PluginResource.GetPluginResult.Plugin.get -> NuGet.Protocol.Plugins.IPlugin!
+NuGet.Protocol.Core.Types.PluginResource.GetPluginResult.PluginMulticlientUtilities.get -> NuGet.Protocol.Plugins.IPluginMulticlientUtilities!
+NuGet.Protocol.Core.Types.PluginResource.PluginResource(System.Collections.Generic.IEnumerable<NuGet.Protocol.Plugins.PluginCreationResult!>! pluginCreationResults, NuGet.Configuration.PackageSource! packageSource, NuGet.Configuration.ICredentialService? credentialService) -> void
 NuGet.Protocol.Core.Types.PluginResourceProvider
 NuGet.Protocol.Core.Types.PluginResourceProvider.PluginResourceProvider() -> void
-~NuGet.Protocol.Core.Types.PluginResourceProvider.PluginResourceProvider(NuGet.Protocol.Plugins.IPluginManager pluginManager) -> void
+NuGet.Protocol.Core.Types.PluginResourceProvider.PluginResourceProvider(NuGet.Protocol.Plugins.IPluginManager! pluginManager) -> void
 NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo
 NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo.ContentUri.get -> string!
 NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo.ContentUri.set -> void
@@ -318,8 +318,8 @@ NuGet.Protocol.Core.Types.SourceRepositoryProvider.PackageSourceProvider.get -> 
 NuGet.Protocol.Core.Types.SourceRepositoryProvider.SourceRepositoryProvider(NuGet.Configuration.IPackageSourceProvider! packageSourceProvider, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! resourceProviders) -> void
 NuGet.Protocol.Core.Types.SourceRepositoryProvider.SourceRepositoryProvider(NuGet.Configuration.ISettings! settings, System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! resourceProviders) -> void
 NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3
-~NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3.SourceUri.get -> System.Uri
-~NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3.SymbolPackageUpdateResourceV3(string source, NuGet.Protocol.HttpSource httpSource) -> void
+NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3.SourceUri.get -> System.Uri!
+NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3.SymbolPackageUpdateResourceV3(string! source, NuGet.Protocol.HttpSource? httpSource) -> void
 NuGet.Protocol.Core.Types.UserAgent
 NuGet.Protocol.Core.Types.UserAgentStringBuilder
 NuGet.Protocol.Core.Types.UserAgentStringBuilder.Build() -> string!
@@ -336,25 +336,25 @@ NuGet.Protocol.Core.Types.VersionInfo.VersionInfo(NuGet.Versioning.NuGetVersion!
 NuGet.Protocol.Core.Types.VersionInfo.VersionInfo(NuGet.Versioning.NuGetVersion! version, long? downloadCount) -> void
 NuGet.Protocol.Core.Types.VersionInfo.VersionInfo(NuGet.Versioning.NuGetVersion! version, string? downloadCount) -> void
 NuGet.Protocol.DependencyInfoResourceV2Feed
-~NuGet.Protocol.DependencyInfoResourceV2Feed.DependencyInfoResourceV2Feed(NuGet.Protocol.V2FeedParser feedParser, NuGet.Protocol.Core.Types.SourceRepository source) -> void
+NuGet.Protocol.DependencyInfoResourceV2Feed.DependencyInfoResourceV2Feed(NuGet.Protocol.V2FeedParser! feedParser, NuGet.Protocol.Core.Types.SourceRepository! source) -> void
 NuGet.Protocol.DependencyInfoResourceV2FeedProvider
 NuGet.Protocol.DependencyInfoResourceV2FeedProvider.DependencyInfoResourceV2FeedProvider() -> void
 NuGet.Protocol.DependencyInfoResourceV3
-~NuGet.Protocol.DependencyInfoResourceV3.DependencyInfoResourceV3(NuGet.Protocol.HttpSource client, NuGet.Protocol.RegistrationResourceV3 regResource, NuGet.Protocol.Core.Types.SourceRepository source) -> void
+NuGet.Protocol.DependencyInfoResourceV3.DependencyInfoResourceV3(NuGet.Protocol.HttpSource! client, NuGet.Protocol.RegistrationResourceV3! regResource, NuGet.Protocol.Core.Types.SourceRepository! source) -> void
 NuGet.Protocol.DependencyInfoResourceV3Provider
 NuGet.Protocol.DependencyInfoResourceV3Provider.DependencyInfoResourceV3Provider() -> void
 NuGet.Protocol.DownloadResourcePlugin
-~NuGet.Protocol.DownloadResourcePlugin.DownloadResourcePlugin(NuGet.Protocol.Plugins.IPlugin plugin, NuGet.Protocol.Plugins.IPluginMulticlientUtilities utilities, NuGet.Configuration.PackageSource packageSource) -> void
+NuGet.Protocol.DownloadResourcePlugin.DownloadResourcePlugin(NuGet.Protocol.Plugins.IPlugin! plugin, NuGet.Protocol.Plugins.IPluginMulticlientUtilities! utilities, NuGet.Configuration.PackageSource! packageSource) -> void
 NuGet.Protocol.DownloadResourcePluginProvider
 NuGet.Protocol.DownloadResourcePluginProvider.DownloadResourcePluginProvider() -> void
 NuGet.Protocol.DownloadResourceV2Feed
-~NuGet.Protocol.DownloadResourceV2Feed.DownloadResourceV2Feed(NuGet.Protocol.V2FeedParser feedParser) -> void
-~NuGet.Protocol.DownloadResourceV2Feed.DownloadResourceV2Feed(NuGet.Protocol.V2FeedParser feedParser, string source) -> void
+NuGet.Protocol.DownloadResourceV2Feed.DownloadResourceV2Feed(NuGet.Protocol.V2FeedParser! feedParser) -> void
+NuGet.Protocol.DownloadResourceV2Feed.DownloadResourceV2Feed(NuGet.Protocol.V2FeedParser! feedParser, string! source) -> void
 NuGet.Protocol.DownloadResourceV2FeedProvider
 NuGet.Protocol.DownloadResourceV2FeedProvider.DownloadResourceV2FeedProvider() -> void
 NuGet.Protocol.DownloadResourceV3
-~NuGet.Protocol.DownloadResourceV3.DownloadResourceV3(string source, NuGet.Protocol.HttpSource client, NuGet.Protocol.RegistrationResourceV3 regResource) -> void
-~NuGet.Protocol.DownloadResourceV3.DownloadResourceV3(string source, NuGet.Protocol.HttpSource client, string packageBaseAddress) -> void
+NuGet.Protocol.DownloadResourceV3.DownloadResourceV3(string! source, NuGet.Protocol.HttpSource! client, NuGet.Protocol.RegistrationResourceV3! regResource) -> void
+NuGet.Protocol.DownloadResourceV3.DownloadResourceV3(string! source, NuGet.Protocol.HttpSource! client, string! packageBaseAddress) -> void
 NuGet.Protocol.DownloadResourceV3Provider
 NuGet.Protocol.DownloadResourceV3Provider.DownloadResourceV3Provider() -> void
 NuGet.Protocol.DownloadTimeoutStream
@@ -589,7 +589,7 @@ NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(strin
 NuGet.Protocol.JsonExtensions
 NuGet.Protocol.JsonProperties
 NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed
-~NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed.LegacyFeedCapabilityResourceV2Feed(NuGet.Protocol.V2FeedParser feedParser, string baseAddress) -> void
+NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed.LegacyFeedCapabilityResourceV2Feed(NuGet.Protocol.V2FeedParser! feedParser, string! baseAddress) -> void
 NuGet.Protocol.LocalAutoCompleteResource
 NuGet.Protocol.LocalAutoCompleteResource.GetPackageVersionsFromLocalPackageRepository(string! packageId, string! versionPrefix, bool includePrerelease, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
 NuGet.Protocol.LocalAutoCompleteResource.LocalAutoCompleteResource(NuGet.Protocol.FindLocalPackagesResource! localResource) -> void
@@ -609,16 +609,16 @@ NuGet.Protocol.LocalMetadataResource.LocalMetadataResource(NuGet.Protocol.FindLo
 NuGet.Protocol.LocalMetadataResourceProvider
 NuGet.Protocol.LocalMetadataResourceProvider.LocalMetadataResourceProvider() -> void
 NuGet.Protocol.LocalPackageArchiveDownloader
-~NuGet.Protocol.LocalPackageArchiveDownloader.ContentReader.get -> NuGet.Packaging.IAsyncPackageContentReader
-~NuGet.Protocol.LocalPackageArchiveDownloader.CopyNupkgFileToAsync(string destinationFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~NuGet.Protocol.LocalPackageArchiveDownloader.CoreReader.get -> NuGet.Packaging.Core.IAsyncPackageCoreReader
+NuGet.Protocol.LocalPackageArchiveDownloader.ContentReader.get -> NuGet.Packaging.IAsyncPackageContentReader!
+NuGet.Protocol.LocalPackageArchiveDownloader.CopyNupkgFileToAsync(string! destinationFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+NuGet.Protocol.LocalPackageArchiveDownloader.CoreReader.get -> NuGet.Packaging.Core.IAsyncPackageCoreReader!
 NuGet.Protocol.LocalPackageArchiveDownloader.Dispose() -> void
-~NuGet.Protocol.LocalPackageArchiveDownloader.GetPackageHashAsync(string hashAlgorithm, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string>
-~NuGet.Protocol.LocalPackageArchiveDownloader.LocalPackageArchiveDownloader(string source, string packageFilePath, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Common.ILogger logger) -> void
-~NuGet.Protocol.LocalPackageArchiveDownloader.SetExceptionHandler(System.Func<System.Exception, System.Threading.Tasks.Task<bool>> handleExceptionAsync) -> void
-~NuGet.Protocol.LocalPackageArchiveDownloader.SetThrottle(System.Threading.SemaphoreSlim throttle) -> void
-~NuGet.Protocol.LocalPackageArchiveDownloader.SignedPackageReader.get -> NuGet.Packaging.Signing.ISignedPackageReader
-~NuGet.Protocol.LocalPackageArchiveDownloader.Source.get -> string
+NuGet.Protocol.LocalPackageArchiveDownloader.GetPackageHashAsync(string! hashAlgorithm, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+NuGet.Protocol.LocalPackageArchiveDownloader.LocalPackageArchiveDownloader(string! source, string! packageFilePath, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Common.ILogger! logger) -> void
+NuGet.Protocol.LocalPackageArchiveDownloader.SetExceptionHandler(System.Func<System.Exception!, System.Threading.Tasks.Task<bool>!>! handleExceptionAsync) -> void
+NuGet.Protocol.LocalPackageArchiveDownloader.SetThrottle(System.Threading.SemaphoreSlim? throttle) -> void
+NuGet.Protocol.LocalPackageArchiveDownloader.SignedPackageReader.get -> NuGet.Packaging.Signing.ISignedPackageReader!
+NuGet.Protocol.LocalPackageArchiveDownloader.Source.get -> string!
 NuGet.Protocol.LocalPackageFileCache
 NuGet.Protocol.LocalPackageFileCache.LocalPackageFileCache() -> void
 NuGet.Protocol.LocalPackageFileCache.UpdateLastAccessTime(string! nupkgMetadataPath) -> void
@@ -735,7 +735,7 @@ NuGet.Protocol.PackageDeprecationMetadata.Message.get -> string?
 NuGet.Protocol.PackageDeprecationMetadata.PackageDeprecationMetadata() -> void
 NuGet.Protocol.PackageDeprecationMetadata.Reasons.get -> System.Collections.Generic.IEnumerable<string!>!
 NuGet.Protocol.PackageDetailsUriResourceV3
-~NuGet.Protocol.PackageDetailsUriResourceV3.GetUri(string id, NuGet.Versioning.NuGetVersion version) -> System.Uri
+NuGet.Protocol.PackageDetailsUriResourceV3.GetUri(string! id, NuGet.Versioning.NuGetVersion! version) -> System.Uri!
 NuGet.Protocol.PackageDetailsUriResourceV3Provider
 NuGet.Protocol.PackageDetailsUriResourceV3Provider.PackageDetailsUriResourceV3Provider() -> void
 NuGet.Protocol.PackageMetadataResourceV2Feed
@@ -823,7 +823,7 @@ NuGet.Protocol.PackageSearchMetadataV2Feed.Title.get -> string!
 NuGet.Protocol.PackageSearchMetadataV2Feed.Version.get -> NuGet.Versioning.NuGetVersion!
 NuGet.Protocol.PackageSearchMetadataV2Feed.Vulnerabilities.get -> System.Collections.Generic.IEnumerable<NuGet.Protocol.PackageVulnerabilityMetadata!>?
 NuGet.Protocol.PackageSearchResourceV2Feed
-~NuGet.Protocol.PackageSearchResourceV2Feed.PackageSearchResourceV2Feed(NuGet.Protocol.HttpSourceResource httpSourceResource, string baseAddress, NuGet.Configuration.PackageSource packageSource) -> void
+NuGet.Protocol.PackageSearchResourceV2Feed.PackageSearchResourceV2Feed(NuGet.Protocol.HttpSourceResource! httpSourceResource, string! baseAddress, NuGet.Configuration.PackageSource! packageSource) -> void
 NuGet.Protocol.PackageSearchResourceV2FeedProvider
 NuGet.Protocol.PackageSearchResourceV2FeedProvider.PackageSearchResourceV2FeedProvider() -> void
 NuGet.Protocol.PackageSearchResourceV3
@@ -1362,29 +1362,29 @@ NuGet.Protocol.RegistrationResourceV3Provider
 NuGet.Protocol.RegistrationResourceV3Provider.RegistrationResourceV3Provider() -> void
 NuGet.Protocol.RegistrationUtility
 NuGet.Protocol.RemotePackageArchiveDownloader
-~NuGet.Protocol.RemotePackageArchiveDownloader.ContentReader.get -> NuGet.Packaging.IAsyncPackageContentReader
-~NuGet.Protocol.RemotePackageArchiveDownloader.CopyNupkgFileToAsync(string destinationFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~NuGet.Protocol.RemotePackageArchiveDownloader.CoreReader.get -> NuGet.Packaging.Core.IAsyncPackageCoreReader
+NuGet.Protocol.RemotePackageArchiveDownloader.ContentReader.get -> NuGet.Packaging.IAsyncPackageContentReader!
+NuGet.Protocol.RemotePackageArchiveDownloader.CopyNupkgFileToAsync(string! destinationFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+NuGet.Protocol.RemotePackageArchiveDownloader.CoreReader.get -> NuGet.Packaging.Core.IAsyncPackageCoreReader!
 NuGet.Protocol.RemotePackageArchiveDownloader.Dispose() -> void
-~NuGet.Protocol.RemotePackageArchiveDownloader.GetPackageHashAsync(string hashAlgorithm, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string>
-~NuGet.Protocol.RemotePackageArchiveDownloader.RemotePackageArchiveDownloader(string source, NuGet.Protocol.Core.Types.FindPackageByIdResource resource, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger) -> void
-~NuGet.Protocol.RemotePackageArchiveDownloader.SetExceptionHandler(System.Func<System.Exception, System.Threading.Tasks.Task<bool>> handleExceptionAsync) -> void
-~NuGet.Protocol.RemotePackageArchiveDownloader.SetThrottle(System.Threading.SemaphoreSlim throttle) -> void
-~NuGet.Protocol.RemotePackageArchiveDownloader.SignedPackageReader.get -> NuGet.Packaging.Signing.ISignedPackageReader
-~NuGet.Protocol.RemotePackageArchiveDownloader.Source.get -> string
+NuGet.Protocol.RemotePackageArchiveDownloader.GetPackageHashAsync(string! hashAlgorithm, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+NuGet.Protocol.RemotePackageArchiveDownloader.RemotePackageArchiveDownloader(string! source, NuGet.Protocol.Core.Types.FindPackageByIdResource! resource, NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger) -> void
+NuGet.Protocol.RemotePackageArchiveDownloader.SetExceptionHandler(System.Func<System.Exception!, System.Threading.Tasks.Task<bool>!>! handleExceptionAsync) -> void
+NuGet.Protocol.RemotePackageArchiveDownloader.SetThrottle(System.Threading.SemaphoreSlim? throttle) -> void
+NuGet.Protocol.RemotePackageArchiveDownloader.SignedPackageReader.get -> NuGet.Packaging.Signing.ISignedPackageReader!
+NuGet.Protocol.RemotePackageArchiveDownloader.Source.get -> string!
 NuGet.Protocol.RemoteV2FindPackageByIdResource
-~NuGet.Protocol.RemoteV2FindPackageByIdResource.PackageSource.get -> NuGet.Configuration.PackageSource
-~NuGet.Protocol.RemoteV2FindPackageByIdResource.RemoteV2FindPackageByIdResource(NuGet.Configuration.PackageSource packageSource, NuGet.Protocol.HttpSource httpSource) -> void
+NuGet.Protocol.RemoteV2FindPackageByIdResource.PackageSource.get -> NuGet.Configuration.PackageSource!
+NuGet.Protocol.RemoteV2FindPackageByIdResource.RemoteV2FindPackageByIdResource(NuGet.Configuration.PackageSource! packageSource, NuGet.Protocol.HttpSource! httpSource) -> void
 NuGet.Protocol.RemoteV2FindPackageByIdResourceProvider
 NuGet.Protocol.RemoteV2FindPackageByIdResourceProvider.RemoteV2FindPackageByIdResourceProvider() -> void
 NuGet.Protocol.RemoteV3FindPackageByIdResource
-~NuGet.Protocol.RemoteV3FindPackageByIdResource.RemoteV3FindPackageByIdResource(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, NuGet.Protocol.HttpSource httpSource) -> void
-~NuGet.Protocol.RemoteV3FindPackageByIdResource.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository
+NuGet.Protocol.RemoteV3FindPackageByIdResource.RemoteV3FindPackageByIdResource(NuGet.Protocol.Core.Types.SourceRepository! sourceRepository, NuGet.Protocol.HttpSource! httpSource) -> void
+NuGet.Protocol.RemoteV3FindPackageByIdResource.SourceRepository.get -> NuGet.Protocol.Core.Types.SourceRepository!
 NuGet.Protocol.RemoteV3FindPackageByIdResourceProvider
 NuGet.Protocol.RemoteV3FindPackageByIdResourceProvider.RemoteV3FindPackageByIdResourceProvider() -> void
 NuGet.Protocol.ReportAbuseResourceV3
-~NuGet.Protocol.ReportAbuseResourceV3.GetReportAbuseUrl(string id, NuGet.Versioning.NuGetVersion version) -> System.Uri
-~NuGet.Protocol.ReportAbuseResourceV3.ReportAbuseResourceV3(string uriTemplate) -> void
+NuGet.Protocol.ReportAbuseResourceV3.GetReportAbuseUrl(string! id, NuGet.Versioning.NuGetVersion! version) -> System.Uri!
+NuGet.Protocol.ReportAbuseResourceV3.ReportAbuseResourceV3(string? uriTemplate) -> void
 NuGet.Protocol.ReportAbuseResourceV3Provider
 NuGet.Protocol.ReportAbuseResourceV3Provider.ReportAbuseResourceV3Provider() -> void
 NuGet.Protocol.RepositoryCertificateInfo
@@ -1453,7 +1453,7 @@ NuGet.Protocol.TokenStore.GetToken(System.Uri! sourceUri) -> string?
 NuGet.Protocol.TokenStore.TokenStore() -> void
 NuGet.Protocol.TokenStore.Version.get -> System.Guid
 NuGet.Protocol.V2FeedListResource
-~NuGet.Protocol.V2FeedListResource.V2FeedListResource(NuGet.Protocol.IV2FeedParser feedParser, NuGet.Protocol.Core.Types.ILegacyFeedCapabilityResource feedCapabilities, string baseAddress) -> void
+NuGet.Protocol.V2FeedListResource.V2FeedListResource(NuGet.Protocol.IV2FeedParser! feedParser, NuGet.Protocol.Core.Types.ILegacyFeedCapabilityResource! feedCapabilities, string! baseAddress) -> void
 NuGet.Protocol.V2FeedListResourceProvider
 NuGet.Protocol.V2FeedListResourceProvider.V2FeedListResourceProvider() -> void
 NuGet.Protocol.V2FeedPackageInfo
@@ -1543,18 +1543,18 @@ NuGet.Repositories.NuGetv3LocalRepository.RepositoryRoot.get -> string!
 NuGet.Repositories.NuGetv3LocalRepositoryUtility
 abstract NuGet.Protocol.Core.Types.AutoCompleteResource.IdStartsWith(string! packageIdPrefix, bool includePrerelease, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
 abstract NuGet.Protocol.Core.Types.AutoCompleteResource.VersionStartsWith(string! packageId, string! versionPrefix, bool includePrerelease, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
-~abstract NuGet.Protocol.Core.Types.DependencyInfoResource.ResolvePackage(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
-~abstract NuGet.Protocol.Core.Types.DependencyInfoResource.ResolvePackages(string packageId, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>>
-~abstract NuGet.Protocol.Core.Types.DownloadResource.GetDownloadResourceResultAsync(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, string globalPackagesFolder, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult>
-~abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.CopyNupkgToStreamAsync(string id, NuGet.Versioning.NuGetVersion version, System.IO.Stream destination, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.DoesPackageExistAsync(string id, NuGet.Versioning.NuGetVersion version, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.GetAllVersionsAsync(string id, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
-~abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.GetDependencyInfoAsync(string id, NuGet.Versioning.NuGetVersion version, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo>
-~abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader>
-~abstract NuGet.Protocol.Core.Types.HttpHandlerResource.ClientHandler.get -> System.Net.Http.HttpClientHandler
-~abstract NuGet.Protocol.Core.Types.HttpHandlerResource.MessageHandler.get -> System.Net.Http.HttpMessageHandler
-~abstract NuGet.Protocol.Core.Types.LegacyFeedCapabilityResource.SupportsIsAbsoluteLatestVersionAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-~abstract NuGet.Protocol.Core.Types.LegacyFeedCapabilityResource.SupportsSearchAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+abstract NuGet.Protocol.Core.Types.DependencyInfoResource.ResolvePackage(NuGet.Packaging.Core.PackageIdentity! package, NuGet.Frameworks.NuGetFramework! projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo?>!
+abstract NuGet.Protocol.Core.Types.DependencyInfoResource.ResolvePackages(string! packageId, NuGet.Frameworks.NuGetFramework! projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo!>!>!
+abstract NuGet.Protocol.Core.Types.DownloadResource.GetDownloadResourceResultAsync(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Protocol.Core.Types.PackageDownloadContext! downloadContext, string! globalPackagesFolder, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult!>!
+abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.CopyNupkgToStreamAsync(string! id, NuGet.Versioning.NuGetVersion! version, System.IO.Stream! destination, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.DoesPackageExistAsync(string! id, NuGet.Versioning.NuGetVersion! version, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.GetAllVersionsAsync(string! id, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
+abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.GetDependencyInfoAsync(string! id, NuGet.Versioning.NuGetVersion! version, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo?>!
+abstract NuGet.Protocol.Core.Types.FindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader?>!
+abstract NuGet.Protocol.Core.Types.HttpHandlerResource.ClientHandler.get -> System.Net.Http.HttpClientHandler!
+abstract NuGet.Protocol.Core.Types.HttpHandlerResource.MessageHandler.get -> System.Net.Http.HttpMessageHandler!
+abstract NuGet.Protocol.Core.Types.LegacyFeedCapabilityResource.SupportsIsAbsoluteLatestVersionAsync(NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
+abstract NuGet.Protocol.Core.Types.LegacyFeedCapabilityResource.SupportsSearchAsync(NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 abstract NuGet.Protocol.Core.Types.ListResource.ListAsync(string! searchTerm, bool prerelease, bool allVersions, bool includeDelisted, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Common.IEnumerableAsync<NuGet.Protocol.Core.Types.IPackageSearchMetadata!>!>!
 abstract NuGet.Protocol.Core.Types.ListResource.Source.get -> string!
 ~abstract NuGet.Protocol.Core.Types.MetadataResource.Exists(NuGet.Packaging.Core.PackageIdentity identity, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
@@ -1632,38 +1632,38 @@ const NuGet.Protocol.JsonProperties.Url = "url" -> string!
 const NuGet.Protocol.JsonProperties.Version = "version" -> string!
 const NuGet.Protocol.JsonProperties.Versions = "versions" -> string!
 const NuGet.Protocol.JsonProperties.Vulnerabilities = "vulnerabilities" -> string!
-~override NuGet.Protocol.AutoCompleteResourceV2Feed.IdStartsWith(string packageIdPrefix, bool includePrerelease, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string>>
-~override NuGet.Protocol.AutoCompleteResourceV2Feed.VersionStartsWith(string packageId, string versionPrefix, bool includePrerelease, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
-~override NuGet.Protocol.AutoCompleteResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.AutoCompleteResourceV2Feed.IdStartsWith(string! packageIdPrefix, bool includePrerelease, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
+override NuGet.Protocol.AutoCompleteResourceV2Feed.VersionStartsWith(string! packageId, string! versionPrefix, bool includePrerelease, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
+override NuGet.Protocol.AutoCompleteResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.AutoCompleteResourceV3.IdStartsWith(string! packageIdPrefix, bool includePrerelease, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
 override NuGet.Protocol.AutoCompleteResourceV3.VersionStartsWith(string! packageId, string! versionPrefix, bool includePrerelease, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
 override NuGet.Protocol.AutoCompleteResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.Core.Types.NullSourceCacheContext.Clone() -> NuGet.Protocol.Core.Types.SourceCacheContext!
 override NuGet.Protocol.Core.Types.NullSourceCacheContext.GeneratedTempFolder.get -> string!
 override NuGet.Protocol.Core.Types.NullSourceCacheContext.WithRefreshCacheTrue() -> NuGet.Protocol.Core.Types.SourceCacheContext!
-~override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.CopyNupkgToStreamAsync(string id, NuGet.Versioning.NuGetVersion version, System.IO.Stream destination, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.DoesPackageExistAsync(string id, NuGet.Versioning.NuGetVersion version, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.GetAllVersionsAsync(string id, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
-~override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.GetDependencyInfoAsync(string id, NuGet.Versioning.NuGetVersion version, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo>
-~override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader>
-~override NuGet.Protocol.Core.Types.PluginResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.CopyNupkgToStreamAsync(string! id, NuGet.Versioning.NuGetVersion! version, System.IO.Stream! destination, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.DoesPackageExistAsync(string! id, NuGet.Versioning.NuGetVersion! version, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.GetAllVersionsAsync(string! id, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
+override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.GetDependencyInfoAsync(string! id, NuGet.Versioning.NuGetVersion! version, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo?>!
+override NuGet.Protocol.Core.Types.PluginFindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader?>!
+override NuGet.Protocol.Core.Types.PluginResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo.Equals(object? obj) -> bool
 override NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo.GetHashCode() -> int
 override NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo.ToString() -> string!
 override NuGet.Protocol.Core.Types.SourceRepository.ToString() -> string!
-~override NuGet.Protocol.DependencyInfoResourceV2Feed.ResolvePackage(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
-~override NuGet.Protocol.DependencyInfoResourceV2Feed.ResolvePackages(string packageId, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>>
-~override NuGet.Protocol.DependencyInfoResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.DependencyInfoResourceV3.ResolvePackage(NuGet.Packaging.Core.PackageIdentity package, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>
-~override NuGet.Protocol.DependencyInfoResourceV3.ResolvePackages(string packageId, NuGet.Frameworks.NuGetFramework projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo>>
-~override NuGet.Protocol.DependencyInfoResourceV3.ResolvePackages(string packageId, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo>>
-~override NuGet.Protocol.DependencyInfoResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.DownloadResourcePlugin.GetDownloadResourceResultAsync(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, string globalPackagesFolder, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult>
-~override NuGet.Protocol.DownloadResourcePluginProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.DownloadResourceV2Feed.GetDownloadResourceResultAsync(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, string globalPackagesFolder, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult>
-~override NuGet.Protocol.DownloadResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.DownloadResourceV3.GetDownloadResourceResultAsync(NuGet.Packaging.Core.PackageIdentity identity, NuGet.Protocol.Core.Types.PackageDownloadContext downloadContext, string globalPackagesFolder, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult>
-~override NuGet.Protocol.DownloadResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.DependencyInfoResourceV2Feed.ResolvePackage(NuGet.Packaging.Core.PackageIdentity! package, NuGet.Frameworks.NuGetFramework! projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo?>!
+override NuGet.Protocol.DependencyInfoResourceV2Feed.ResolvePackages(string! packageId, NuGet.Frameworks.NuGetFramework! projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo!>!>!
+override NuGet.Protocol.DependencyInfoResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.DependencyInfoResourceV3.ResolvePackage(NuGet.Packaging.Core.PackageIdentity! package, NuGet.Frameworks.NuGetFramework! projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo?>!
+override NuGet.Protocol.DependencyInfoResourceV3.ResolvePackages(string! packageId, NuGet.Frameworks.NuGetFramework! projectFramework, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.SourcePackageDependencyInfo!>!>!
+override NuGet.Protocol.DependencyInfoResourceV3.ResolvePackages(string! packageId, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo!>!>!
+override NuGet.Protocol.DependencyInfoResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.DownloadResourcePlugin.GetDownloadResourceResultAsync(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Protocol.Core.Types.PackageDownloadContext! downloadContext, string! globalPackagesFolder, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult!>!
+override NuGet.Protocol.DownloadResourcePluginProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.DownloadResourceV2Feed.GetDownloadResourceResultAsync(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Protocol.Core.Types.PackageDownloadContext! downloadContext, string! globalPackagesFolder, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult!>!
+override NuGet.Protocol.DownloadResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.DownloadResourceV3.GetDownloadResourceResultAsync(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Protocol.Core.Types.PackageDownloadContext! downloadContext, string! globalPackagesFolder, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult!>!
+override NuGet.Protocol.DownloadResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.DownloadTimeoutStream.CanRead.get -> bool
 override NuGet.Protocol.DownloadTimeoutStream.CanSeek.get -> bool
 override NuGet.Protocol.DownloadTimeoutStream.CanWrite.get -> bool
@@ -1677,7 +1677,7 @@ override NuGet.Protocol.DownloadTimeoutStream.ReadAsync(byte[]! buffer, int offs
 override NuGet.Protocol.DownloadTimeoutStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
 override NuGet.Protocol.DownloadTimeoutStream.SetLength(long value) -> void
 override NuGet.Protocol.DownloadTimeoutStream.Write(byte[]! buffer, int offset, int count) -> void
-~override NuGet.Protocol.FeedTypeResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.FeedTypeResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.FindPackagesById(string! id, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Collections.Generic.IEnumerable<NuGet.Protocol.LocalPackageInfo!>!
 override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.GetPackage(NuGet.Packaging.Core.PackageIdentity! identity, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
 override NuGet.Protocol.FindLocalPackagesResourcePackagesConfig.GetPackage(System.Uri! path, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> NuGet.Protocol.LocalPackageInfo?
@@ -1708,15 +1708,15 @@ override NuGet.Protocol.HttpFileSystemBasedFindPackageByIdResource.DoesPackageEx
 override NuGet.Protocol.HttpFileSystemBasedFindPackageByIdResource.GetAllVersionsAsync(string! id, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
 override NuGet.Protocol.HttpFileSystemBasedFindPackageByIdResource.GetDependencyInfoAsync(string! id, NuGet.Versioning.NuGetVersion! version, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo?>!
 override NuGet.Protocol.HttpFileSystemBasedFindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader?>!
-~override NuGet.Protocol.HttpFileSystemBasedFindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.HttpFileSystemBasedFindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! sourceRepository, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.HttpHandlerResourceV3.ClientHandler.get -> System.Net.Http.HttpClientHandler!
 override NuGet.Protocol.HttpHandlerResourceV3.MessageHandler.get -> System.Net.Http.HttpMessageHandler!
 override NuGet.Protocol.HttpHandlerResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.HttpSourceAuthenticationHandler.Dispose(bool disposing) -> void
 override NuGet.Protocol.HttpSourceAuthenticationHandler.SendAsync(System.Net.Http.HttpRequestMessage! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
 override NuGet.Protocol.HttpSourceResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
-~override NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed.SupportsIsAbsoluteLatestVersionAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-~override NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed.SupportsSearchAsync(NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
+override NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed.SupportsIsAbsoluteLatestVersionAsync(NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
+override NuGet.Protocol.LegacyFeedCapabilityResourceV2Feed.SupportsSearchAsync(NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>!
 override NuGet.Protocol.LocalAutoCompleteResource.IdStartsWith(string! packageIdPrefix, bool includePrerelease, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<string!>!>!
 override NuGet.Protocol.LocalAutoCompleteResource.VersionStartsWith(string! packageId, string! versionPrefix, bool includePrerelease, NuGet.Protocol.Core.Types.SourceCacheContext! sourceCacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
 override NuGet.Protocol.LocalAutoCompleteResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
@@ -1764,29 +1764,29 @@ override NuGet.Protocol.MetadataFieldConverter.WriteJson(Newtonsoft.Json.JsonWri
 ~override NuGet.Protocol.MetadataResourceV3.Exists(string packageId, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
 ~override NuGet.Protocol.MetadataResourceV3.GetLatestVersions(System.Collections.Generic.IEnumerable<string> packageIds, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, NuGet.Versioning.NuGetVersion>>>
 ~override NuGet.Protocol.MetadataResourceV3.GetVersions(string packageId, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
-~override NuGet.Protocol.MetadataResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.MetadataResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.Model.PackageVulnerabilityInfo.Equals(object? obj) -> bool
 override NuGet.Protocol.Model.PackageVulnerabilityInfo.GetHashCode() -> int
 override NuGet.Protocol.NuGetVersionConverter.CanConvert(System.Type! objectType) -> bool
 override NuGet.Protocol.NuGetVersionConverter.ReadJson(Newtonsoft.Json.JsonReader! reader, System.Type! objectType, object? existingValue, Newtonsoft.Json.JsonSerializer! serializer) -> object?
 override NuGet.Protocol.NuGetVersionConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
 override NuGet.Protocol.ODataServiceDocumentResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
-~override NuGet.Protocol.PackageDetailsUriResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.PackageDetailsUriResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 ~override NuGet.Protocol.PackageMetadataResourceV2Feed.GetMetadataAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata>
 ~override NuGet.Protocol.PackageMetadataResourceV2Feed.GetMetadataAsync(string packageId, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
 ~override NuGet.Protocol.PackageMetadataResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
 ~override NuGet.Protocol.PackageMetadataResourceV3.GetMetadataAsync(NuGet.Packaging.Core.PackageIdentity package, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.IPackageSearchMetadata>
 ~override NuGet.Protocol.PackageMetadataResourceV3.GetMetadataAsync(string packageId, bool includePrerelease, bool includeUnlisted, NuGet.Protocol.Core.Types.SourceCacheContext sourceCacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
 ~override NuGet.Protocol.PackageMetadataResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.PackageSearchResourceV2Feed.SearchAsync(string searchTerm, NuGet.Protocol.Core.Types.SearchFilter filters, int skip, int take, NuGet.Common.ILogger log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
+override NuGet.Protocol.PackageSearchResourceV2Feed.SearchAsync(string! searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filters, int skip, int take, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata!>!>!
 override NuGet.Protocol.PackageSearchResourceV2Feed.SupportsPackageTypeFiltering.get -> bool
-~override NuGet.Protocol.PackageSearchResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.PackageSearchResourceV2FeedProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.PackageSearchResourceV3.SearchAsync(string! searchTerm, NuGet.Protocol.Core.Types.SearchFilter! filter, int skip, int take, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.IPackageSearchMetadata!>!>!
 override NuGet.Protocol.PackageSearchResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.PackageSearchResourceV3.SupportsPackageTypeFiltering.get -> bool
-~override NuGet.Protocol.PackageUpdateResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.PackageUpdateResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.PluginFindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.PackageUpdateResourceV2Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.PackageUpdateResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.PluginFindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.Plugins.OutboundRequestContext<TResult>.HandleCancelResponse() -> void
 override NuGet.Protocol.Plugins.OutboundRequestContext<TResult>.HandleFault(NuGet.Protocol.Plugins.Message! fault) -> void
 override NuGet.Protocol.Plugins.OutboundRequestContext<TResult>.HandleProgress(NuGet.Protocol.Plugins.Message! progress) -> void
@@ -1849,19 +1849,19 @@ override NuGet.Protocol.Providers.VulnerabilityInfoResourceV3Provider.TryCreate(
 override NuGet.Protocol.ProxyAuthenticationHandler.SendAsync(System.Net.Http.HttpRequestMessage! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
 override NuGet.Protocol.RawSearchResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 ~override NuGet.Protocol.RegistrationResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.RemoteV2FindPackageByIdResource.CopyNupkgToStreamAsync(string id, NuGet.Versioning.NuGetVersion version, System.IO.Stream destination, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~override NuGet.Protocol.RemoteV2FindPackageByIdResource.DoesPackageExistAsync(string id, NuGet.Versioning.NuGetVersion version, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~override NuGet.Protocol.RemoteV2FindPackageByIdResource.GetAllVersionsAsync(string id, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
-~override NuGet.Protocol.RemoteV2FindPackageByIdResource.GetDependencyInfoAsync(string id, NuGet.Versioning.NuGetVersion version, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo>
-~override NuGet.Protocol.RemoteV2FindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader>
-~override NuGet.Protocol.RemoteV2FindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.RemoteV3FindPackageByIdResource.CopyNupkgToStreamAsync(string id, NuGet.Versioning.NuGetVersion version, System.IO.Stream destination, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~override NuGet.Protocol.RemoteV3FindPackageByIdResource.DoesPackageExistAsync(string id, NuGet.Versioning.NuGetVersion version, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~override NuGet.Protocol.RemoteV3FindPackageByIdResource.GetAllVersionsAsync(string id, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion>>
-~override NuGet.Protocol.RemoteV3FindPackageByIdResource.GetDependencyInfoAsync(string id, NuGet.Versioning.NuGetVersion version, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo>
-~override NuGet.Protocol.RemoteV3FindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader>
-~override NuGet.Protocol.RemoteV3FindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository sourceRepository, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.ReportAbuseResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.RemoteV2FindPackageByIdResource.CopyNupkgToStreamAsync(string! id, NuGet.Versioning.NuGetVersion! version, System.IO.Stream! destination, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+override NuGet.Protocol.RemoteV2FindPackageByIdResource.DoesPackageExistAsync(string! id, NuGet.Versioning.NuGetVersion! version, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+override NuGet.Protocol.RemoteV2FindPackageByIdResource.GetAllVersionsAsync(string! id, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
+override NuGet.Protocol.RemoteV2FindPackageByIdResource.GetDependencyInfoAsync(string! id, NuGet.Versioning.NuGetVersion! version, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo?>!
+override NuGet.Protocol.RemoteV2FindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader?>!
+override NuGet.Protocol.RemoteV2FindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! sourceRepository, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.RemoteV3FindPackageByIdResource.CopyNupkgToStreamAsync(string! id, NuGet.Versioning.NuGetVersion! version, System.IO.Stream! destination, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+override NuGet.Protocol.RemoteV3FindPackageByIdResource.DoesPackageExistAsync(string! id, NuGet.Versioning.NuGetVersion! version, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+override NuGet.Protocol.RemoteV3FindPackageByIdResource.GetAllVersionsAsync(string! id, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Versioning.NuGetVersion!>!>!
+override NuGet.Protocol.RemoteV3FindPackageByIdResource.GetDependencyInfoAsync(string! id, NuGet.Versioning.NuGetVersion! version, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo?>!
+override NuGet.Protocol.RemoteV3FindPackageByIdResource.GetPackageDownloaderAsync(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<NuGet.Packaging.IPackageDownloader?>!
+override NuGet.Protocol.RemoteV3FindPackageByIdResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! sourceRepository, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.ReportAbuseResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.RepositorySignatureResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.SafeBoolConverter.CanConvert(System.Type! objectType) -> bool
 override NuGet.Protocol.SafeBoolConverter.CanRead.get -> bool
@@ -1878,10 +1878,10 @@ override NuGet.Protocol.SemanticVersionConverter.ReadJson(Newtonsoft.Json.JsonRe
 override NuGet.Protocol.SemanticVersionConverter.WriteJson(Newtonsoft.Json.JsonWriter! writer, object? value, Newtonsoft.Json.JsonSerializer! serializer) -> void
 override NuGet.Protocol.ServerWarningLogHandler.SendAsync(System.Net.Http.HttpRequestMessage! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
 override NuGet.Protocol.ServiceIndexResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
-~override NuGet.Protocol.SymbolPackageUpdateResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
-~override NuGet.Protocol.V2FeedListResource.ListAsync(string searchTerm, bool prerelease, bool allVersions, bool includeDelisted, NuGet.Common.ILogger logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Common.IEnumerableAsync<NuGet.Protocol.Core.Types.IPackageSearchMetadata>>
-~override NuGet.Protocol.V2FeedListResource.Source.get -> string
-~override NuGet.Protocol.V2FeedListResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource>>
+override NuGet.Protocol.SymbolPackageUpdateResourceV3Provider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
+override NuGet.Protocol.V2FeedListResource.ListAsync(string! searchTerm, bool prerelease, bool allVersions, bool includeDelisted, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Common.IEnumerableAsync<NuGet.Protocol.Core.Types.IPackageSearchMetadata!>!>!
+override NuGet.Protocol.V2FeedListResource.Source.get -> string!
+override NuGet.Protocol.V2FeedListResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.V3FeedListResourceProvider.TryCreate(NuGet.Protocol.Core.Types.SourceRepository! source, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Tuple<bool, NuGet.Protocol.Core.Types.INuGetResource?>!>!
 override NuGet.Protocol.VersionInfoConverter.CanConvert(System.Type! objectType) -> bool
 override NuGet.Protocol.VersionInfoConverter.CanWrite.get -> bool
@@ -1895,7 +1895,7 @@ static NuGet.Protocol.CachingUtility.ComputeHash(string! value, bool addIdentifi
 static NuGet.Protocol.CachingUtility.IsFileAlreadyOpen(string! filePath) -> bool
 static NuGet.Protocol.CachingUtility.ReadCacheFile(System.TimeSpan maxAge, string! cacheFile) -> System.IO.Stream?
 static NuGet.Protocol.CachingUtility.RemoveInvalidFileNameChars(string! value) -> string!
-~static NuGet.Protocol.Core.Types.FindPackageByIdResource.GetDependencyInfo(NuGet.Packaging.NuspecReader reader) -> NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo
+static NuGet.Protocol.Core.Types.FindPackageByIdResource.GetDependencyInfo(NuGet.Packaging.NuspecReader! reader) -> NuGet.Protocol.Core.Types.FindPackageByIdDependencyInfo!
 static NuGet.Protocol.Core.Types.HttpSourceCacheContext.Create(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, bool isFirstAttempt) -> NuGet.Protocol.Core.Types.HttpSourceCacheContext!
 static NuGet.Protocol.Core.Types.HttpSourceCacheContext.Create(NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, int retryCount) -> NuGet.Protocol.Core.Types.HttpSourceCacheContext!
 static NuGet.Protocol.Core.Types.NuGetTestMode.Enabled.get -> bool
@@ -1911,7 +1911,7 @@ static NuGet.Protocol.Core.Types.OfflineFeedUtility.ThrowIfInvalidOrNotFound(str
 ~static NuGet.Protocol.Core.Types.PackageSearchMetadataExtensions.WithVersions(this NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata, System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo> versions) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
 ~static NuGet.Protocol.Core.Types.PackageSearchMetadataExtensions.WithVersions(this NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata, System.Func<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>> valueFactory) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
 ~static NuGet.Protocol.Core.Types.PackageSearchMetadataExtensions.WithVersions(this NuGet.Protocol.Core.Types.IPackageSearchMetadata metadata, System.Func<System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.VersionInfo>>> asyncValueFactory) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata
-~static NuGet.Protocol.Core.Types.PackageUpdateResource.ForceDeleteDirectory(string path) -> void
+static NuGet.Protocol.Core.Types.PackageUpdateResource.ForceDeleteDirectory(string! path) -> void
 static NuGet.Protocol.Core.Types.Repository.CreateProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.INuGetResourceProvider!>! resourceProviders) -> NuGet.Protocol.Core.Types.ISourceRepositoryProvider!
 static NuGet.Protocol.Core.Types.Repository.CreateProvider(System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.INuGetResourceProvider!>! resourceProviders, string? rootPath) -> NuGet.Protocol.Core.Types.ISourceRepositoryProvider!
 static NuGet.Protocol.Core.Types.Repository.CreateSource(System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>! resourceProviders, NuGet.Configuration.PackageSource! source) -> NuGet.Protocol.Core.Types.SourceRepository!
@@ -1928,11 +1928,11 @@ static NuGet.Protocol.Events.ProtocolDiagnostics.HttpEvent -> NuGet.Protocol.Eve
 static NuGet.Protocol.Events.ProtocolDiagnostics.NupkgCopiedEvent -> NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticsNupkgCopiedEventHandler?
 static NuGet.Protocol.Events.ProtocolDiagnostics.ResourceEvent -> NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticResourceEventHandler?
 static NuGet.Protocol.Events.ProtocolDiagnostics.ServiceIndexEntryEvent -> NuGet.Protocol.Events.ProtocolDiagnostics.ProtocolDiagnosticServiceIndexEntryEventHandler?
-~static NuGet.Protocol.FactoryExtensionsV3.GetCoreV2(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
-~static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.ProviderFactory factory) -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>>
-~static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
-~static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, string source) -> NuGet.Protocol.Core.Types.SourceRepository
-~static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, string source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository
+static NuGet.Protocol.FactoryExtensionsV3.GetCoreV2(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory! factory, NuGet.Configuration.PackageSource! source) -> NuGet.Protocol.Core.Types.SourceRepository!
+static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.ProviderFactory! factory) -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>!
+static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory! factory, NuGet.Configuration.PackageSource! source) -> NuGet.Protocol.Core.Types.SourceRepository!
+static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory! factory, string! source) -> NuGet.Protocol.Core.Types.SourceRepository!
+static NuGet.Protocol.FactoryExtensionsV3.GetCoreV3(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory! factory, string! source, NuGet.Protocol.FeedType type) -> NuGet.Protocol.Core.Types.SourceRepository!
 static NuGet.Protocol.FeedTypeUtility.GetFeedType(NuGet.Configuration.PackageSource! packageSource) -> NuGet.Protocol.FeedType
 static NuGet.Protocol.GetDownloadResultUtility.CleanUpDirectDownloads(NuGet.Protocol.Core.Types.PackageDownloadContext! downloadContext) -> void
 static NuGet.Protocol.GetDownloadResultUtility.GetDownloadResultAsync(NuGet.Protocol.HttpSource! client, NuGet.Packaging.Core.PackageIdentity! identity, System.Uri! uri, NuGet.Protocol.Core.Types.PackageDownloadContext! downloadContext, string! globalPackagesFolder, NuGet.Common.ILogger! logger, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<NuGet.Protocol.Core.Types.DownloadResourceResult!>!
@@ -2002,7 +2002,7 @@ static NuGet.Protocol.LocalFolderUtility.IsPossiblePackageMatch(System.IO.FileIn
 static NuGet.Protocol.LocalFolderUtility.IsPossiblePackageMatch(System.IO.FileInfo! file, string! id) -> bool
 static NuGet.Protocol.LocalFolderUtility.ResolvePackageFromPath(string! packagePath, bool isSnupkg = false) -> System.Collections.Generic.IEnumerable<string!>!
 static NuGet.Protocol.NullThrottle.Instance.get -> NuGet.Protocol.NullThrottle!
-~static NuGet.Protocol.PackageDetailsUriResourceV3.CreateOrNull(string uriTemplate) -> NuGet.Protocol.PackageDetailsUriResourceV3
+static NuGet.Protocol.PackageDetailsUriResourceV3.CreateOrNull(string? uriTemplate) -> NuGet.Protocol.PackageDetailsUriResourceV3?
 static NuGet.Protocol.Plugins.AutomaticProgressReporter.Create(NuGet.Protocol.Plugins.IConnection! connection, NuGet.Protocol.Plugins.Message! request, System.TimeSpan interval, System.Threading.CancellationToken cancellationToken) -> NuGet.Protocol.Plugins.AutomaticProgressReporter!
 static NuGet.Protocol.Plugins.ConnectionOptions.CreateDefault(NuGet.Common.IEnvironmentVariableReader? reader = null) -> NuGet.Protocol.Plugins.ConnectionOptions!
 static NuGet.Protocol.Plugins.JsonSerializationUtilities.Deserialize<T>(string! json) -> T?
@@ -2034,9 +2034,9 @@ static NuGet.Protocol.TimeoutUtility.StartWithTimeout(System.Func<System.Threadi
 static NuGet.Protocol.TimeoutUtility.StartWithTimeout<T>(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T>!>! getTask, System.TimeSpan timeout, string? timeoutMessage, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<T>!
 static NuGet.Protocol.TokenStore.Instance.get -> NuGet.Protocol.TokenStore!
 static NuGet.Protocol.V2FeedUtilities.CreatePackageSearchResult(NuGet.Protocol.V2FeedPackageInfo! package, NuGet.Protocol.MetadataReferenceCache! metadataCache, NuGet.Protocol.Core.Types.SearchFilter! filter, NuGet.Protocol.V2FeedParser! feedParser, NuGet.Common.ILogger! log, System.Threading.CancellationToken cancellationToken) -> NuGet.Protocol.Core.Types.IPackageSearchMetadata!
-~static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.ProviderFactory factory) -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider>>
-~static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, NuGet.Configuration.PackageSource source) -> NuGet.Protocol.Core.Types.SourceRepository
-~static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory factory, string source) -> NuGet.Protocol.Core.Types.SourceRepository
+static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.ProviderFactory! factory) -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>!
+static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory! factory, NuGet.Configuration.PackageSource! source) -> NuGet.Protocol.Core.Types.SourceRepository!
+static NuGet.Protocol.VisualStudio.FactoryExtensionsVS.GetVisualStudio(this NuGet.Protocol.Core.Types.Repository.RepositoryFactory! factory, string! source) -> NuGet.Protocol.Core.Types.SourceRepository!
 static NuGet.Repositories.NuGetv3LocalRepositoryUtility.GetPackage(System.Collections.Generic.IReadOnlyList<NuGet.Repositories.NuGetv3LocalRepository!>! repositories, string! id, NuGet.Versioning.NuGetVersion! version) -> NuGet.Repositories.LocalPackageSourceInfo?
 static readonly NuGet.Protocol.Core.Types.UserAgentStringBuilder.DefaultNuGetClientName -> string!
 static readonly NuGet.Protocol.HttpRequestMessageConfiguration.Default -> NuGet.Protocol.HttpRequestMessageConfiguration!
@@ -2082,7 +2082,7 @@ static readonly NuGet.Protocol.ServiceTypes.Version500 -> string!
 static readonly NuGet.Protocol.ServiceTypes.Version510 -> string!
 static readonly NuGet.Protocol.ServiceTypes.Versioned -> string!
 static readonly NuGet.Protocol.StreamExtensions.BufferSize -> int
-~virtual NuGet.Protocol.Core.Types.DependencyInfoResource.ResolvePackages(string packageId, NuGet.Protocol.Core.Types.SourceCacheContext cacheContext, NuGet.Common.ILogger log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo>>
+virtual NuGet.Protocol.Core.Types.DependencyInfoResource.ResolvePackages(string! packageId, NuGet.Protocol.Core.Types.SourceCacheContext! cacheContext, NuGet.Common.ILogger! log, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<NuGet.Protocol.Core.Types.RemoteSourceDependencyInfo!>!>!
 virtual NuGet.Protocol.Core.Types.Repository.ProviderFactory.GetCoreV3() -> System.Collections.Generic.IEnumerable<System.Lazy<NuGet.Protocol.Core.Types.INuGetResourceProvider!>!>!
 virtual NuGet.Protocol.Core.Types.ResourceProvider.After.get -> System.Collections.Generic.IEnumerable<string!>!
 virtual NuGet.Protocol.Core.Types.ResourceProvider.Before.get -> System.Collections.Generic.IEnumerable<string!>!

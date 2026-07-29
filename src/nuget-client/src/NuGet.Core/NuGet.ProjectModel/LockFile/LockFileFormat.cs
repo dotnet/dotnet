@@ -46,6 +46,7 @@ namespace NuGet.ProjectModel
         private const string FrameworkAssembliesProperty = "frameworkAssemblies";
         private const string RuntimeProperty = "runtime";
         private const string CompileProperty = "compile";
+        private const string AnalyzersProperty = "analyzers";
         private const string NativeProperty = "native";
         private const string BuildProperty = "build";
         private const string BuildMultiTargetingProperty = "buildMultiTargeting";
@@ -410,6 +411,14 @@ namespace NuGet.ProjectModel
                 var ordered = library.CompileTimeAssemblies.OrderBy(assembly => assembly.Path, StringComparer.Ordinal);
 
                 writer.WritePropertyName(CompileProperty);
+                JsonUtility.WriteObject(writer, ordered, WriteFileItem);
+            }
+
+            if (library.AnalyzerAssets.Count > 0)
+            {
+                var ordered = library.AnalyzerAssets.OrderBy(assembly => assembly.Path, StringComparer.Ordinal);
+
+                writer.WritePropertyName(AnalyzersProperty);
                 JsonUtility.WriteObject(writer, ordered, WriteFileItem);
             }
 
