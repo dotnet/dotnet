@@ -96,6 +96,7 @@ namespace Microsoft.DotNet.Cli.Test.Tests
         [DataRow("--nologo")]
         [DataRow("-nologo")]
         [DataRow("/nologo")]
+        [DataRow("--no-banner")]
         public void MTPCommandTranslatesNoLogoOptionToNoBanner(string optionAlias)
         {
             var command = new TestCommandDefinition.MicrosoftTestingPlatform();
@@ -156,6 +157,99 @@ namespace Microsoft.DotNet.Cli.Test.Tests
 
             forwarded.Should().Contain("--property:UseCurrentRuntimeIdentifier=True",
                 $"{optionAlias} should be forwarded to MSBuild as UseCurrentRuntimeIdentifier=True so restore and build target the current runtime.");
+        }
+
+        [TestMethod]
+        public void MTPCommandParsesGlobalMaximumFailedTests()
+        {
+            var command = new TestCommandDefinition.MicrosoftTestingPlatform();
+            var parseResult = command.Parse(["--maximum-failed-tests", "5"]);
+
+            parseResult.Errors.Should().BeEmpty();
+            parseResult.GetValue(command.MaximumFailedTestsOption).Should().Be(5);
+            parseResult.UnmatchedTokens.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        [DataRow("--maximum-failed-tests=5")]
+        [DataRow("--maximum-failed-tests:5")]
+        public void MTPCommandParsesInlineGlobalMaximumFailedTests(string argument)
+        {
+            var command = new TestCommandDefinition.MicrosoftTestingPlatform();
+            var parseResult = command.Parse([argument]);
+
+            parseResult.Errors.Should().BeEmpty();
+            parseResult.GetValue(command.MaximumFailedTestsOption).Should().Be(5);
+        }
+
+        [TestMethod]
+        [DataRow("0")]
+        [DataRow("-1")]
+        public void MTPCommandRejectsNonPositiveGlobalMaximumFailedTests(string value)
+        {
+            var command = new TestCommandDefinition.MicrosoftTestingPlatform();
+            var parseResult = command.Parse(["--maximum-failed-tests", value]);
+
+            parseResult.Errors.Should().NotBeEmpty();
+        }
+
+        [TestMethod]
+        [DataRow("500ms", 500.0)]
+        [DataRow("2s", 2_000.0)]
+        [DataRow("1.5m", 90_000.0)]
+        public void MTPCommandParsesGlobalTimeout(string value, double expectedMilliseconds)
+        {
+            var command = new TestCommandDefinition.MicrosoftTestingPlatform();
+            var parseResult = command.Parse(["--timeout", value]);
+
+            parseResult.Errors.Should().BeEmpty();
+            parseResult.GetValue(command.TimeoutOption)!.Value.TotalMilliseconds.Should().Be(expectedMilliseconds);
+            parseResult.UnmatchedTokens.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        [DataRow("--timeout=2s")]
+        [DataRow("--timeout:2s")]
+        public void MTPCommandParsesInlineGlobalTimeout(string argument)
+        {
+            var command = new TestCommandDefinition.MicrosoftTestingPlatform();
+            var parseResult = command.Parse([argument]);
+
+            parseResult.Errors.Should().BeEmpty();
+            parseResult.GetValue(command.TimeoutOption).Should().Be(TimeSpan.FromSeconds(2));
+        }
+
+        [TestMethod]
+        [DataRow("200")]
+        [DataRow("0s")]
+        [DataRow("-1s")]
+        [DataRow("50d")]
+        [DataRow("invalid")]
+        public void MTPCommandRejectsInvalidGlobalTimeout(string value)
+        {
+            var command = new TestCommandDefinition.MicrosoftTestingPlatform();
+            var parseResult = command.Parse(["--timeout", value]);
+
+            parseResult.Errors.Should().NotBeEmpty();
+        }
+
+        [TestMethod]
+        public void MTPCommandForwardsPolicyOptionsAfterSeparator()
+        {
+            var command = new TestCommandDefinition.MicrosoftTestingPlatform();
+            var parseResult = command.Parse([
+                "--maximum-failed-tests", "5",
+                "--timeout", "1m",
+                "--",
+                "--maximum-failed-tests", "2",
+                "--timeout", "10s"]);
+
+            parseResult.Errors.Should().BeEmpty();
+            parseResult.GetValue(command.MaximumFailedTestsOption).Should().Be(5);
+            parseResult.GetValue(command.TimeoutOption).Should().Be(TimeSpan.FromMinutes(1));
+            parseResult.UnmatchedTokens.Should().Equal(
+                "--maximum-failed-tests", "2",
+                "--timeout", "10s");
         }
 
         [TestMethod]
