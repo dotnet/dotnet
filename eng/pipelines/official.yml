@@ -72,6 +72,7 @@ extends:
       networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     featureFlags:
       binskimScanAllExtensions: true
+      useBinskimResponseFile: true
       incrementalSDLBinaryAnalysis: true
       autoEnablePREfastWithNewRuleset: false
       autoEnableRoslynWithNewRuleset: false
@@ -121,7 +122,7 @@ extends:
         # (--DirectoryExclusionList, which takes semicolon-separated glob patterns).
         #
         # Note: Keep these in sync with componentgovernance.ignoreDirectories above.
-        additionalComponentDetectorArgs: '--DirectoryExclusionList artifacts/bin/Microsoft.DotNet.SourceBuild.Tests;artifacts/obj/toolset/Publish/artifacts-layout;src/arcade/src/Microsoft.DotNet.SignTool.Tests/Resources;src/sdk/test/TestAssets/TestPackages;src/wpf/.tools'
+        additionalComponentDetectorArgs: '--DirectoryExclusionList **/artifacts/bin/Microsoft.DotNet.SourceBuild.Tests/**;**/artifacts/obj/toolset/Publish/artifacts-layout/**;**/src/arcade/src/Microsoft.DotNet.SignTool.Tests/Resources/**;**/src/sdk/test/TestAssets/TestPackages/**;**/src/wpf/.tools/**'
       autobaseline:
         isMainPipeline: true
 

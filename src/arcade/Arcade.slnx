@@ -50,11 +50,11 @@
   <Project Path="src/Microsoft.DotNet.Arcade.Sdk/Microsoft.DotNet.Arcade.Sdk.csproj" />
   <Project Path="src/Microsoft.DotNet.ArcadeAzureIntegration/Microsoft.DotNet.ArcadeAzureIntegration.csproj" />
   <Project Path="src/Microsoft.DotNet.ArcadeLogging/Microsoft.DotNet.ArcadeLogging.csproj" />
-  <Project Path="src/Microsoft.DotNet.Baselines.Tasks/Microsoft.DotNet.Baselines.Tasks.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Manifest/Microsoft.DotNet.Build.Manifest.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Archives/Microsoft.DotNet.Build.Tasks.Archives.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Feed/Microsoft.DotNet.Build.Tasks.Feed.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Installers/Microsoft.DotNet.Build.Tasks.Installers.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.Installers.Tests/Microsoft.DotNet.Build.Tasks.Installers.Tests.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Packaging/src/Microsoft.DotNet.Build.Tasks.Packaging.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.TargetFramework/src/Microsoft.DotNet.Build.Tasks.TargetFramework.csproj" />
   <Project Path="src/Microsoft.DotNet.Build.Tasks.Templating/src/Microsoft.DotNet.Build.Tasks.Templating.csproj" />

@@ -53,7 +53,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.ScenarioHelpers
             string submitterJobDisplayName = null,
             string queueId = null,
             string previousHelixJobName = null,
-            int? initialWorkItemCount = null)
+            int? initialWorkItemCount = null,
+            string stageAttempt = null)
             => new(
                 jobName,
                 status,
@@ -62,7 +63,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.ScenarioHelpers
                 submitterJobDisplayName: submitterJobDisplayName,
                 queueId: queueId,
                 previousHelixJobName: previousHelixJobName,
-                initialWorkItemCount: initialWorkItemCount);
+                initialWorkItemCount: initialWorkItemCount,
+                stageAttempt: stageAttempt);
 
         public static HelixJobPassFail PassFail(string[] passed = null, string[] failed = null)
             => new(passed ?? [], failed ?? []);

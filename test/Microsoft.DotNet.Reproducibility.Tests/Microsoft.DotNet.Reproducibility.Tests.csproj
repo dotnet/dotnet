@@ -33,6 +33,12 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceBuiltSdkTarballPath2">
         <Value>$(SourceBuiltSdkTarballPath2)</Value>
       </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceBuiltArtifactsTarballPath1">
+        <Value>$(SourceBuiltArtifactsTarballPath1)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceBuiltArtifactsTarballPath2">
+        <Value>$(SourceBuiltArtifactsTarballPath2)</Value>
+      </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>
 

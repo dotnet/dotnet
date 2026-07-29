@@ -9,9 +9,6 @@
     <DiskUsageCommand Condition="'$(BuildOS)' != 'windows'">df -h $(RepoRoot)</DiskUsageCommand>
     <BuildServerShutdownTimeoutInMilliseconds Condition="'$(BuildServerShutdownTimeoutInMilliseconds)' == ''">300000</BuildServerShutdownTimeoutInMilliseconds>
     <BuildServerShutdownTimeoutInSeconds Condition="'$(BuildServerShutdownTimeoutInSeconds)' == ''">$([MSBuild]::Divide($(BuildServerShutdownTimeoutInMilliseconds), 1000))</BuildServerShutdownTimeoutInSeconds>
-    <RepoVBCSCompilerPath>$([MSBuild]::NormalizePath('$(DotNetRoot)', 'sdk', '$(NETCoreSdkVersion)', 'Roslyn', 'bincore', 'VBCSCompiler.dll'))</RepoVBCSCompilerPath>
-    <RepoBuildServerShutdownCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command &quot;$p = Start-Process -FilePath '$(DotNetTool)' -ArgumentList 'exec','$(RepoVBCSCompilerPath)','-shutdown','-pipename:$(RepoSharedCompilationId)' -NoNewWindow -PassThru; if (-not $p.WaitForExit($(BuildServerShutdownTimeoutInMilliseconds))) { Write-Warning 'Repo compiler server shutdown timed out; terminating process.'; $p.Kill($true); exit 124 }; exit $p.ExitCode&quot;</RepoBuildServerShutdownCommand>
-    <RepoBuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; exec &quot;$(RepoVBCSCompilerPath)&quot; -shutdown -pipename:$(RepoSharedCompilationId) &amp; _repo_build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); kill $_repo_build_server_shutdown_pid 2&gt;/dev/null) &amp; _repo_build_server_shutdown_watchdog_pid=$!; wait $_repo_build_server_shutdown_pid; _repo_build_server_shutdown_exit_code=$?; kill $_repo_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_repo_build_server_shutdown_exit_code</RepoBuildServerShutdownCommand>
     <BuildServerShutdownCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command &quot;$p = Start-Process -FilePath '$(DotNetTool)' -ArgumentList '-d','build-server','shutdown','--vbcscompiler' -NoNewWindow -PassThru; if (-not $p.WaitForExit($(BuildServerShutdownTimeoutInMilliseconds))) { Write-Warning 'Build server shutdown timed out; terminating process.'; $p.Kill($true); exit 124 }; exit $p.ExitCode&quot;</BuildServerShutdownCommand>
     <BuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; -d build-server shutdown --vbcscompiler &amp; _build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); kill $_build_server_shutdown_pid 2&gt;/dev/null) &amp; _build_server_shutdown_watchdog_pid=$!; wait $_build_server_shutdown_pid; _build_server_shutdown_exit_code=$?; kill $_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_build_server_shutdown_exit_code</BuildServerShutdownCommand>
 
@@ -19,7 +16,6 @@
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
 
     <!-- Pass down configuration properties -->
-    <CommonArgs>$(CommonArgs) /p:SharedCompilationId=$(RepoSharedCompilationId)</CommonArgs>
     <CommonArgs Condition="'$(SkipSetTargetArchitecture)' != 'true'">$(CommonArgs) /p:TargetArchitecture=$(TargetArchitecture)</CommonArgs>
     <CommonArgs Condition="'$(SkipSetTargetOS)' != 'true'">$(CommonArgs) /p:TargetOS=$(TargetOS)</CommonArgs>
 
@@ -597,6 +593,7 @@
     </PropertyGroup>
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.LogRepoBuildDiagnostics" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="RepoBuild"
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)Build.complete"
@@ -635,13 +632,26 @@
                           $(AspNetRazorBuildServerLogDir)"
              Condition="'$(EnableExtraDebugging)' == 'true'" />
 
+    <!-- Build the repository. When MinimalConsoleLogOutput is true the console output is redirected
+         to $(RepoConsoleLogFile) instead of the console. -->
     <Exec Command="$(FullCommand)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
+          YieldDuringToolExecution="true"
           IgnoreStandardErrorWarningFormat="true"
-          YieldDuringToolExecution="true">
+          StandardOutputImportance="$(RepoStandardOutputImportance)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
+
+    <!-- Surface the repo build's warningsNotAsErrors in the orchestrator build so
+         they're visible in the CI/build summary. They're re-emitted with their original warning code
+         so warnNotAsError (Directory.Build.rsp) keeps them as warnings rather than the blanket
+         -warnAsError promoting the otherwise code-less Exec warnings to errors. This is only needed
+         when the console output was redirected to the log file (MinimalConsoleLogOutput); otherwise
+         the diagnostics already appear on the console. -->
+    <LogRepoBuildDiagnostics LogFile="$(RepoConsoleLogFile)"
+                             WarningCodes="$(RepoBuildWarningCodesToSurface)"
+                             Condition="'$(MinimalConsoleLogOutput)' == 'true' and '$(RepoBuildWarningCodesToSurface)' != ''" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Building $(RepositoryName)...done" />
 
@@ -653,9 +663,15 @@
     <OnError ExecuteTargets="MoveDotNetBuildLogs;LogRepoBuildError" />
   </Target>
 
-  <!-- Propagate errors to the output when using the minimal console log feature. -->
+  <!-- Propagate errors to the output when using the minimal console log feature. Every log line is
+       printed; error and surfaced-warning lines are promoted to real diagnostics so they appear in
+       the build summary. -->
   <Target Name="LogRepoBuildError" Condition="'$(MinimalConsoleLogOutput)' == 'true'">
-    <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="Exists('$(RepoConsoleLogFile)')" />
+    <LogRepoBuildDiagnostics LogFile="$(RepoConsoleLogFile)"
+                             WarningCodes="$(RepoBuildWarningCodesToSurface)"
+                             PrintAllLines="true"
+                             Condition="Exists('$(RepoConsoleLogFile)')" />
+
     <Message Importance="High" Text="'$(RepositoryName)' failed during build." />
     <Message Importance="High" Text="See '$(RepoConsoleLogFile)' for more information." Condition="Exists('$(RepoConsoleLogFile)')" />
   </Target>
@@ -706,7 +722,10 @@
       <LogManifestNotFoundError Condition="('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1') and '@(RepoAssetManifest)' == ''">true</LogManifestNotFoundError>
     </PropertyGroup>
 
-    <Message Importance="High" Text="$([System.IO.File]::ReadAllText('$(RepoConsoleLogFile)'))" Condition="'$(LogManifestNotFoundError)' == 'true' and '$(MinimalConsoleLogOutput)' == 'true' and Exists('$(RepoConsoleLogFile)')" />
+    <LogRepoBuildDiagnostics LogFile="$(RepoConsoleLogFile)"
+                             WarningCodes="$(RepoBuildWarningCodesToSurface)"
+                             PrintAllLines="true"
+                             Condition="'$(LogManifestNotFoundError)' == 'true' and '$(MinimalConsoleLogOutput)' == 'true' and Exists('$(RepoConsoleLogFile)')" />
     <Error Text="No repository asset manifest files found at '$(RepoAssetManifestsDir)*.xml'. This often means the build failed but did not log an error." Condition="'$(LogManifestNotFoundError)' == 'true'" />
 
     <GetKnownArtifactsFromAssetManifests AssetManifests="@(RepoAssetManifest)">
@@ -825,13 +844,6 @@
       Don't run when source building to prevent the build from hanging indefinitely - https://github.com/dotnet/source-build/issues/4796
     -->
     <!-- Use an external timeout wrapper so timeout failures are absorbed by IgnoreExitCode instead of logged as MSBuild task errors. -->
-    <Exec Command="$(RepoBuildServerShutdownCommand)"
-          Condition="'$(DotNetBuildSourceOnly)' != 'true'"
-          EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache)"
-          ContinueOnError="WarnAndContinue"
-          IgnoreStandardErrorWarningFormat="true"
-          IgnoreExitCode="true" />
-
     <Exec Command="$(BuildServerShutdownCommand)"
           Condition="'$(DotNetBuildSourceOnly)' != 'true'"
           EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache)"

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -22,7 +20,7 @@ namespace NuGet.Protocol
 
         [Obsolete("Use constructor with source parameter")]
         public DownloadResourceV2Feed(V2FeedParser feedParser)
-            : this(feedParser, source: null)
+            : this(feedParser, source: string.Empty)
         {
         }
 
@@ -65,12 +63,10 @@ namespace NuGet.Protocol
                 token.ThrowIfCancellationRequested();
 
                 var sourcePackage = identity as SourcePackageDependencyInfo;
-                bool isFromUri = sourcePackage?.PackageHash != null
-                                && sourcePackage?.DownloadUri != null;
 
                 try
                 {
-                    if (isFromUri)
+                    if (sourcePackage?.PackageHash != null && sourcePackage.DownloadUri != null)
                     {
                         // If this is a SourcePackageDependencyInfo object with everything populated
                         // and it is from an online source, use the machine cache and download it using the

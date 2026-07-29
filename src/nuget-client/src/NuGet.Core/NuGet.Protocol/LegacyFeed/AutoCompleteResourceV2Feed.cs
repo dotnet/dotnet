@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,14 +20,14 @@ namespace NuGet.Protocol
     {
         private readonly HttpSource _httpSource;
         private readonly Uri _baseUri;
-        private readonly IEnvironmentVariableReader _environmentVariableReader;
+        private readonly IEnvironmentVariableReader? _environmentVariableReader;
 
         public AutoCompleteResourceV2Feed(HttpSourceResource httpSourceResource, string baseAddress, Configuration.PackageSource packageSource)
             : this(httpSourceResource, baseAddress, packageSource, environmentVariableReader: null)
         {
         }
 
-        internal AutoCompleteResourceV2Feed(HttpSourceResource httpSourceResource, string baseAddress, Configuration.PackageSource packageSource, IEnvironmentVariableReader environmentVariableReader)
+        internal AutoCompleteResourceV2Feed(HttpSourceResource httpSourceResource, string baseAddress, Configuration.PackageSource packageSource, IEnvironmentVariableReader? environmentVariableReader)
         {
             if (httpSourceResource == null)
             {
@@ -93,8 +91,13 @@ namespace NuGet.Protocol
                     new HttpSourceRequest(apiEndpointUri, logger),
                     async stream =>
                     {
-                        var seekableStream = await stream.AsSeekableStreamAsync(token);
-                        return await System.Text.Json.JsonSerializer.DeserializeAsync(seekableStream, JsonContext.Default.StringArray, token);
+                        if (stream == null)
+                        {
+                            return Array.Empty<string>();
+                        }
+
+                        var seekableStream = (await stream.AsSeekableStreamAsync(token))!;
+                        return await System.Text.Json.JsonSerializer.DeserializeAsync(seekableStream, JsonContext.Default.StringArray, token) ?? Array.Empty<string>();
                     },
                     logger,
                     token);
@@ -105,18 +108,23 @@ namespace NuGet.Protocol
                     new HttpSourceRequest(apiEndpointUri, logger),
                     async stream =>
                     {
+                        if (stream == null)
+                        {
+                            return Array.Empty<string>();
+                        }
+
                         if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
                         {
-                            var seekableStream = await stream.AsSeekableStreamAsync(token);
-                            return await System.Text.Json.JsonSerializer.DeserializeAsync(seekableStream, JsonContext.Default.StringArray, token);
+                            var seekableStream = (await stream.AsSeekableStreamAsync(token))!;
+                            return await System.Text.Json.JsonSerializer.DeserializeAsync(seekableStream, JsonContext.Default.StringArray, token) ?? Array.Empty<string>();
                         }
                         else
                         {
-                            using var reader = new StreamReader(await stream.AsSeekableStreamAsync(token));
+                            using var reader = new StreamReader((await stream.AsSeekableStreamAsync(token))!);
                             using var jsonReader = new JsonTextReader(reader);
 #pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
                             var serializer = Newtonsoft.Json.JsonSerializer.Create();
-                            return serializer.Deserialize<string[]>(jsonReader);
+                            return serializer.Deserialize<string[]>(jsonReader) ?? Array.Empty<string>();
 #pragma warning restore IL2026, IL3050
                         }
                     },
