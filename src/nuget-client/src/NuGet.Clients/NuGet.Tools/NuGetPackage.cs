@@ -441,40 +441,39 @@ namespace NuGetVSExtension
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-            foreach (var windowFrame in VsUtility.GetDocumentWindows(uiShell))
+            IVsHierarchy projectHierarchy = await project.ToVsHierarchyAsync();
+            return await FindExistingNuGetWindowFrameAsync(
+                (IVsUIHierarchy)projectHierarchy,
+                (uint)VSConstants.VSITEMID.Root,
+                project.FullName);
+        }
+
+        private async Task<IVsWindowFrame> FindExistingNuGetWindowFrameAsync(
+            IVsUIHierarchy hierarchy,
+            uint itemId,
+            string documentName)
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            var uiShellOpenDocument = await this.GetServiceAsync<SVsUIShellOpenDocument, IVsUIShellOpenDocument>();
+            Assumes.Present(uiShellOpenDocument);
+
+            Guid editorType = GuidList.guidNuGetEditorType;
+            var hr = uiShellOpenDocument.IsSpecificDocumentViewOpen(
+                hierarchy,
+                itemId,
+                documentName,
+                ref editorType,
+                null,
+                (uint)__VSIDOFLAGS.IDO_IgnoreLogicalView,
+                out _,
+                out _,
+                out IVsWindowFrame windowFrame,
+                out int isOpen);
+
+            if (ErrorHandler.Succeeded(hr) && isOpen != 0)
             {
-                object docView;
-                var hr = windowFrame.GetProperty(
-                    (int)__VSFPROPID.VSFPROPID_DocView,
-                    out docView);
-                if (hr == VSConstants.S_OK
-                    && docView is PackageManagerWindowPane)
-                {
-                    var packageManagerWindowPane = (PackageManagerWindowPane)docView;
-                    if (packageManagerWindowPane.Model.IsSolution)
-                    {
-                        // the window is the solution package manager
-                        continue;
-                    }
-
-                    var projects = packageManagerWindowPane.Model.Context.Projects;
-                    if (projects.Count() != 1)
-                    {
-                        continue;
-                    }
-
-                    IProjectContextInfo existingProject = projects.First();
-                    IServiceBroker serviceBroker = await ServiceBrokerProvider.Value.GetAsync();
-                    IProjectMetadataContextInfo projectMetadata = await existingProject.GetMetadataAsync(
-                        serviceBroker,
-                        CancellationToken.None);
-
-                    if (string.Equals(projectMetadata.Name, project.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return windowFrame;
-                    }
-                }
+                return windowFrame;
             }
 
             return null;
@@ -802,25 +801,13 @@ namespace NuGetVSExtension
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            var uiShell = await this.GetServiceAsync<SVsUIShell, IVsUIShell>();
-            foreach (var windowFrame in VsUtility.GetDocumentWindows(uiShell))
-            {
-                object property;
-                var hr = windowFrame.GetProperty(
-                    (int)__VSFPROPID.VSFPROPID_DocData,
-                    out property);
-                var packageManagerControl = VsUtility.GetPackageManagerControl(windowFrame);
-                if (hr == VSConstants.S_OK
-                    &&
-                    property is IVsSolution
-                    &&
-                    packageManagerControl != null)
-                {
-                    return windowFrame;
-                }
-            }
+            var solution = await this.GetServiceAsync<SVsSolution, IVsSolution>();
+            Assumes.Present(solution);
 
-            return null;
+            return await FindExistingNuGetWindowFrameAsync(
+                (IVsUIHierarchy)solution,
+                (uint)VSConstants.VSITEMID.Root,
+                await SolutionManager.Value.GetSolutionFilePathAsync());
         }
 
         private static string GetSearchText(string parameterString)

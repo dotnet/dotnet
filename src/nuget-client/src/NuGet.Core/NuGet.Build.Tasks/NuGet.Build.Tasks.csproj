@@ -48,7 +48,6 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' ">
-    <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
   </ItemGroup>
 

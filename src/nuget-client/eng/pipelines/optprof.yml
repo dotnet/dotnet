@@ -15,7 +15,9 @@ resources:
         - release-5.11.x
   - pipeline: DartLab
     source: DartLab
-    branch: main
+    branch: refs/heads/main
+    tags:
+    - Production
   - pipeline: DartLab.OptProf
     source: DartLab.OptProf
     branch: main
@@ -24,8 +26,8 @@ resources:
   repositories:
   - repository: DartLabTemplates
     type: git
-    name: DartLab.Templates
-    ref: refs/heads/main
+    name: DevDiv/DartLab
+    ref: refs/tags/Production
   - repository: DartLabOptProfTemplates
     type: git
     name: DartLab.OptProf
@@ -37,16 +39,22 @@ parameters:
   type: boolean
   default: false
 
-# Whether or not to delete the test machines after the run completes.
-- name: testMachineCleanUpStrategy
+- name: testMachineHoldStrategy
   type: string
-  default: delete
+  default: None
   values:
-  - delete
-  - stop
+  - None
+  - Completion
+  - Execution
+  - Failure
+  - Timeout
+
+- name: isExperimental
+  type: boolean
+  default: false
 
 stages:
-- template: \templates\stages\visual-studio\single-runsettings.yml@DartLabOptProfTemplates
+- template: \templates\stages\visual-studio\single-runsettings.cloudtest.yml@DartLabOptProfTemplates
   parameters:
     ##### Required #####
     runSettingsURI: $(RunSettingsURI)
@@ -56,18 +64,22 @@ stages:
     displayName: OptProf Profiling Workflow
     variables:
     - name: optDropName
-      value: OptimizationInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(resources.pipeline.ComponentBuildUnderTest.sourceCommit)/$(Build.BuildId)/$(System.StageId)/$(System.StageAttempt)
+      ${{ if parameters.isExperimental }}:
+        value: OptimizationInputs/Experimental/$(System.TeamProject)/$(Build.Repository.Name)/$(resources.pipeline.ComponentBuildUnderTest.sourceCommit)/$(Build.BuildId)/$(System.StageId)/$(System.StageAttempt)
+      ${{ else }}:
+        value: OptimizationInputs/$(System.TeamProject)/$(Build.Repository.Name)/$(resources.pipeline.ComponentBuildUnderTest.sourceCommit)/$(Build.BuildId)/$(System.StageId)/$(System.StageAttempt)
     - name: RunSettingsURI
       value: $[dependencies.TestMachineConfiguration.outputs['SetRunSettingsURI.RunSettingsURI']]
     optOptimizationInputsDropName: $(optDropName)
     cloudBuildResourceName: ComponentBuildUnderTest
     # Remove this parameter if you don't want LKG support
     previousOptimizationInputsDropName: $(PreviousOptimizationInputsDropName)
-    testLabPoolName: VS-Platform
-    testMachineCleanUpStrategy: ${{parameters.testMachineCleanUpStrategy}}
+    owner: nugetclienteng
+    testMachineLab: Nuget
+    testMachineHoldStrategy: ${{ parameters.testMachineHoldStrategy }}
     visualStudioSigning: Test
     ##### Step Hooks #####
-    preTestMachineConfigurationStepList:
+    preTestMachineConfigurationSteps:
     - powershell: "Get-ChildItem Env: | Sort-Object Name | Format-Table -Wrap -AutoSize"
       displayName: 'Print Environment Variables'
     - powershell: |
@@ -204,7 +216,7 @@ stages:
         usePat: true
         dropMetadataContainerName: "DropMetadata-Product"
     # Remove this step hook and it's task if you don't want LKG support
-    prePublishOptimizationInputsDropStepList:
+    prePublishOptimizationInputsDropSteps:
     # Set parameter for PreviousOptimizationInputsDropName
     - powershell: |
         try {
@@ -228,9 +240,9 @@ stages:
           throw
         }
       displayName: Set PreviousOptimizationInputsDropName
-    postPublishOptimizationInputsDropStepList:
+    postPublishOptimizationInputsDropSteps:
     # Tag commit with OptizationInputsDrop name
-    - template: \steps\powershell\execute-script.yml@DartLabTemplates
+    - template: \templates\steps\powershell\execute-script.yml@DartLabTemplates
       parameters:
         displayName: Create OptimizationInputs Tag in Repository
         condition: and(succeeded(), or(in(variables['Build.Reason'], 'ResourceTrigger'), eq('${{parameters.CreateGitTagOnManualRun}}', 'true')))

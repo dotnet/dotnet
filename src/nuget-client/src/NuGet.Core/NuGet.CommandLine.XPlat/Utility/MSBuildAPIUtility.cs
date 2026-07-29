@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -723,6 +724,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="transitive">Include transitive packages/projects in the result</param>
         /// <returns>FrameworkPackages collection with top-level and transitive package/project
         /// references for each framework, or null on error</returns>
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
         internal static List<FrameworkPackages> GetResolvedVersions(
             Project project, IEnumerable<string> userInputFrameworks, LockFile assetsFile, bool transitive)
         {
@@ -924,7 +926,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="framework">Framework to get reference(s) for</param>
         /// <returns>List of Items containing the package reference for the package.
         /// If the libraryDependency is null then it returns all package references</returns>
-        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("AOT", "IL2026", Justification = "Temporary VMR unblock: the NuGet CLI intentionally runs MSBuild in-process. Replace with proper annotations in NuGet/Home#14987.")]
+        [RequiresUnreferencedCode("In-process MSBuild execution loads task assemblies and loggers via reflection and is not trim-safe.")]
         private static IEnumerable<InstalledPackageReference> GetPackageReferencesFromTargets(Project project, string framework)
         {
             var globalProperties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

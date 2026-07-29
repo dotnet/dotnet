@@ -134,6 +134,11 @@ Para evitar que NuGet restaure paquetes durante la compilación, abra el cuadro 
         <target state="translated">No se guardó la solución. Guarde la solución antes de administrar paquetes NuGet.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
+        <source>Ask Copilot to fix NuGet package vulnerabilities</source>
+        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <note>Do not translate Copilot or NuGet</note>
+      </trans-unit>
     </body>
   </file>
 </xliff>
