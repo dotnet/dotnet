@@ -24,6 +24,20 @@ public sealed class TestResult(
 
     public string Method { get; } = method ?? string.Empty;
 
+    /// <summary>
+    /// Stable, fully qualified test identifier (<c>TypeName.Method</c>) independent of the
+    /// framework-provided display name. Used as the AzDO <c>automatedTestName</c> so a test keeps
+    /// a consistent identity even when a custom display name is used (xUnit) or the framework only
+    /// reports the method name (MSTest). Falls back to the method or display name when type/method
+    /// information is unavailable.
+    /// </summary>
+    public string FullyQualifiedName { get; } =
+        !string.IsNullOrEmpty(typeName) && !string.IsNullOrEmpty(method)
+            ? $"{typeName}.{method}"
+            : !string.IsNullOrEmpty(method)
+                ? method
+                : name ?? string.Empty;
+
     public double DurationSeconds { get; } = durationSeconds;
 
     public string Result { get; } = result ?? string.Empty;

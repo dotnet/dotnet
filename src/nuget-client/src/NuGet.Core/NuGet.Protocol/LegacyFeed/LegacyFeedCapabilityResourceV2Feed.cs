@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -69,7 +67,7 @@ namespace NuGet.Protocol
                 SupportsSearch = true
             };
 
-            XDocument document;
+            XDocument? document;
             try
             {
                 document = await _feedParser.LoadXmlAsync(
@@ -80,15 +78,21 @@ namespace NuGet.Protocol
                     log: log,
                     token: token);
 
-                var metadata = DataServiceMetadataExtractor.Extract(document);
+                if (document != null)
+                {
+                    var metadata = DataServiceMetadataExtractor.Extract(document);
 
-                capabilities.SupportsIsAbsoluteLatestVersion = metadata
-                    .SupportedProperties
-                    .Contains("IsAbsoluteLatestVersion");
+                    if (metadata != null)
+                    {
+                        capabilities.SupportsIsAbsoluteLatestVersion = metadata
+                            .SupportedProperties
+                            .Contains("IsAbsoluteLatestVersion");
 
-                capabilities.SupportsSearch = metadata
-                    .SupportedMethodNames
-                    .Contains("Search");
+                        capabilities.SupportsSearch = metadata
+                            .SupportedMethodNames
+                            .Contains("Search");
+                    }
+                }
             }
             catch
             {
@@ -100,16 +104,16 @@ namespace NuGet.Protocol
 
         private class Capabilities
         {
-            public string MetadataUri { get; set; }
+            public string? MetadataUri { get; set; }
             public bool SupportsIsAbsoluteLatestVersion { get; set; }
             public bool SupportsSearch { get; set; }
         }
 
         private class DataServiceMetadata
         {
-            public HashSet<string> SupportedMethodNames { get; set; }
+            public HashSet<string> SupportedMethodNames { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            public HashSet<string> SupportedProperties { get; set; }
+            public HashSet<string> SupportedProperties { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -117,7 +121,7 @@ namespace NuGet.Protocol
         /// </summary>
         private static class DataServiceMetadataExtractor
         {
-            public static DataServiceMetadata Extract(XDocument schemaDocument)
+            public static DataServiceMetadata? Extract(XDocument schemaDocument)
             {
                 // Get all entity containers
                 var entityContainers = from e in schemaDocument.Descendants()
@@ -127,7 +131,7 @@ namespace NuGet.Protocol
                 // Find the entity container with the Packages entity set
                 var result = (from e in entityContainers
                               let entitySet = e.Elements().FirstOrDefault(el => el.Name.LocalName == "EntitySet")
-                              let name = entitySet != null ? entitySet.Attribute("Name").Value : null
+                              let name = entitySet != null ? entitySet.Attribute("Name")?.Value : null
                               where name != null && name.Equals("Packages", StringComparison.OrdinalIgnoreCase)
                               select new { Container = e, EntitySet = entitySet }).FirstOrDefault();
 
@@ -137,9 +141,9 @@ namespace NuGet.Protocol
                 }
 
                 var packageEntityContainer = result.Container;
-                var packageEntityTypeAttribute = result.EntitySet.Attribute("EntityType");
+                var packageEntityTypeAttribute = result.EntitySet?.Attribute("EntityType");
 
-                string packageEntityName = null;
+                string? packageEntityName = null;
                 if (packageEntityTypeAttribute != null)
                 {
                     packageEntityName = packageEntityTypeAttribute.Value;
@@ -148,7 +152,7 @@ namespace NuGet.Protocol
                 var methodNames =
                     from e in packageEntityContainer.Elements()
                     where e.Name.LocalName == "FunctionImport"
-                    select e.Attribute("Name").Value;
+                    select e.Attribute("Name")!.Value;
 
                 var metadata = new DataServiceMetadata
                 {
@@ -166,7 +170,7 @@ namespace NuGet.Protocol
 
             private static IEnumerable<string> ExtractSupportedProperties(
                 XDocument schemaDocument,
-                string packageEntityName)
+                string? packageEntityName)
             {
                 packageEntityName = TrimNamespace(packageEntityName);
 
@@ -182,14 +186,19 @@ namespace NuGet.Protocol
                 {
                     return from e in packageEntity.Elements()
                            where e.Name.LocalName == "Property"
-                           select e.Attribute("Name").Value;
+                           select e.Attribute("Name")!.Value;
                 }
 
                 return Enumerable.Empty<string>();
             }
 
-            private static string TrimNamespace(string packageEntityName)
+            private static string? TrimNamespace(string? packageEntityName)
             {
+                if (packageEntityName == null)
+                {
+                    return null;
+                }
+
                 var lastIndex = packageEntityName.LastIndexOf('.');
                 if (lastIndex > 0 && lastIndex < packageEntityName.Length)
                 {

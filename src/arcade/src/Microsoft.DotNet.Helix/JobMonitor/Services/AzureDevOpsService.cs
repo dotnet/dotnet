@@ -404,7 +404,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     new Uri(_options.CollectionUri, UriKind.Absolute),
                     _options.TeamProject,
                     testRunId.ToString(CultureInfo.InvariantCulture),
-                    _options.SystemAccessToken),
+                    _options.SystemAccessToken,
+                    _options.UseFullyQualifiedTestName),
                 _logger);
 
             async Task<TestResultUploadSummary> UploadWorkItemAsync(WorkItemTestResults workItem)

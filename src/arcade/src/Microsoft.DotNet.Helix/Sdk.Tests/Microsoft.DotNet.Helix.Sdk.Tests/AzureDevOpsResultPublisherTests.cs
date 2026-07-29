@@ -29,5 +29,44 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             Assert.Equal(TimeSpan.FromMinutes(5), client.Timeout);
         }
+
+        [Theory]
+        [InlineData("Passed", true)]
+        [InlineData("NotExecuted", true)]
+        [InlineData("Inconclusive", true)]
+        [InlineData("Failed", false)]
+        [InlineData("None", false)]
+        public void ComputeAllPassed_SingleResult_OnlyFailedAndNoneCountAsFailure(string result, bool expectedAllPassed)
+        {
+            var results = new[] { new AggregatedResult(AggregationType.Single, "Test1", 1, result) };
+
+            Assert.Equal(expectedAllPassed, AzureDevOpsResultPublisher.ComputeAllPassed(results));
+        }
+
+        [Fact]
+        public void ComputeAllPassed_InconclusiveDataDrivenRollup_DoesNotFailTheWorkItem()
+        {
+            // Mirrors the rollup the aggregator produces for a theory with some passing and some
+            // skipped data rows: no data row failed, but the mix isn't a clean pass or skip either.
+            var results = new[]
+            {
+                new AggregatedResult(AggregationType.Single, "Test1", 1, "Passed"),
+                new AggregatedResult(AggregationType.DataDriven, "Test2", 1, "Inconclusive"),
+            };
+
+            Assert.True(AzureDevOpsResultPublisher.ComputeAllPassed(results));
+        }
+
+        [Fact]
+        public void ComputeAllPassed_AnyFailedResult_FailsTheWorkItem()
+        {
+            var results = new[]
+            {
+                new AggregatedResult(AggregationType.Single, "Test1", 1, "Passed"),
+                new AggregatedResult(AggregationType.DataDriven, "Test2", 1, "Failed"),
+            };
+
+            Assert.False(AzureDevOpsResultPublisher.ComputeAllPassed(results));
+        }
     }
 }

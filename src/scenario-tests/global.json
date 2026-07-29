@@ -1,4 +1,9 @@
 {
+  "sdk": {
+    "version": "11.0.100-preview.5.26302.115",
+    "allowPrerelease": true,
+    "rollForward": "latestFeature"
+  },
   "tools": {
     "dotnet": "11.0.100-preview.5.26302.115",
     "runtimes": {

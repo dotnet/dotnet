@@ -63,6 +63,7 @@ macro(config_compiler_and_linker)
   unset(GTEST_HAS_PTHREAD)
   if (NOT gtest_disable_pthreads AND NOT MINGW)
     # Defines CMAKE_USE_PTHREADS_INIT and CMAKE_THREAD_LIBS_INIT.
+    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads)
     if (CMAKE_USE_PTHREADS_INIT)
       set(GTEST_HAS_PTHREAD ON)
@@ -255,7 +256,12 @@ function(cxx_executable name dir libs)
 endfunction()
 
 if(gtest_build_tests)
-  find_package(Python3)
+  # Only the interpreter is needed for Python tests. Specifying the component
+  # explicitly avoids a crash in CMake <= 3.23's FindPython3 module when no
+  # Python installation is present (the module calls list(GET) on an empty
+  # list).  QUIET lets the build continue without Python tests instead of
+  # failing outright.
+  find_package(Python3 COMPONENTS Interpreter QUIET)
 endif()
 
 # cxx_test_with_flags(name cxx_flags libs srcs...)

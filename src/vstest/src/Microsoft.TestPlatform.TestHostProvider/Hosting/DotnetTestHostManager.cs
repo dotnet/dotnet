@@ -64,7 +64,6 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private readonly IDotnetHostHelper _dotnetHostHelper;
     private readonly IEnvironment _platformEnvironment;
     private readonly IProcessHelper _processHelper;
-    private readonly IRunSettingsHelper _runsettingHelper;
     private readonly IFileHelper _fileHelper;
     private readonly IWindowsRegistryHelper _windowsRegistryHelper;
     private readonly IEnvironmentVariableHelper _environmentVariableHelper;
@@ -81,6 +80,12 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private string? _dotnetHostPath;
     private bool _captureOutput;
     private bool _createNoNewWindow;
+
+    // True when the target platform was inferred by the platform rather than pinned by the user. Read from
+    // the run settings in Initialize (RunConfiguration.IsTargetPlatformInferred), so this per-request fact
+    // travels with the run settings instead of the process-wide RunSettingsHelper singleton. Defaults to
+    // true (inferred), matching the historical RunSettingsHelper default when no marker is present.
+    private bool _isDefaultTargetArchitecture = true;
     private protected TestHostManagerCallbacks? _testHostManagerCallbacks;
 
     /// <summary>
@@ -92,7 +97,6 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
             new FileHelper(),
             new DotnetHostHelper(),
             new PlatformEnvironment(),
-            RunSettingsHelper.Instance,
             new WindowsRegistryHelper(),
             new EnvironmentVariableHelper())
     {
@@ -105,7 +109,6 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     /// <param name="fileHelper">File helper instance.</param>
     /// <param name="dotnetHostHelper">DotnetHostHelper helper instance.</param>
     /// <param name="platformEnvironment">Platform Environment</param>
-    /// <param name="runsettingHelper">RunsettingHelper instance</param>
     /// <param name="windowsRegistryHelper">WindowsRegistryHelper instance</param>
     /// <param name="environmentVariableHelper">EnvironmentVariableHelper instance</param>
     internal DotnetTestHostManager(
@@ -113,7 +116,6 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         IFileHelper fileHelper,
         IDotnetHostHelper dotnetHostHelper,
         IEnvironment platformEnvironment,
-        IRunSettingsHelper runsettingHelper,
         IWindowsRegistryHelper windowsRegistryHelper,
         IEnvironmentVariableHelper environmentVariableHelper)
     {
@@ -121,7 +123,6 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         _fileHelper = fileHelper;
         _dotnetHostHelper = dotnetHostHelper;
         _platformEnvironment = platformEnvironment;
-        _runsettingHelper = runsettingHelper;
         _windowsRegistryHelper = windowsRegistryHelper;
         _environmentVariableHelper = environmentVariableHelper;
     }
@@ -205,6 +206,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         _architecture = runConfiguration.TargetPlatform;
         _targetFramework = runConfiguration.TargetFramework;
         _dotnetHostPath = runConfiguration.DotnetHostPath;
+        _isDefaultTargetArchitecture = runConfiguration.IsTargetPlatformInferred;
     }
 
     /// <inheritdoc/>
@@ -483,7 +485,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
 
             // We silently force x64 only if the target architecture is the default one and is not specified by user
             // through --arch or runsettings or -- RunConfiguration.TargetPlatform=arch
-            bool forceToX64 = _runsettingHelper.IsDefaultTargetArchitecture && SilentlyForceToX64(sourcePath);
+            bool forceToX64 = _isDefaultTargetArchitecture && SilentlyForceToX64(sourcePath);
             EqtTrace.Verbose($"DotnetTestHostmanager: Current process architetcure '{_processHelper.GetCurrentProcessArchitecture()}'");
             bool isSameArchitecture = IsSameArchitecture(_architecture, _processHelper.GetCurrentProcessArchitecture());
             var currentProcessPath = _processHelper.GetCurrentProcessFileName()!;
@@ -505,7 +507,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                 EqtTrace.Verbose($"DotnetTestHostmanager: Searching muxer for the architecture '{targetArchitecture}', OS '{_platformEnvironment.OperatingSystem}' framework '{_targetFramework}' SDK platform architecture '{_platformEnvironment.Architecture}'");
                 if (forceToX64)
                 {
-                    EqtTrace.Verbose($"DotnetTestHostmanager: Forcing the search to x64 architecure, IsDefaultTargetArchitecture '{_runsettingHelper.IsDefaultTargetArchitecture}' OS '{_platformEnvironment.OperatingSystem}' framework '{_targetFramework}'");
+                    EqtTrace.Verbose($"DotnetTestHostmanager: Forcing the search to x64 architecure, IsDefaultTargetArchitecture '{_isDefaultTargetArchitecture}' OS '{_platformEnvironment.OperatingSystem}' framework '{_targetFramework}'");
                 }
 
                 // Check if DOTNET_ROOT resolution should be bypassed.

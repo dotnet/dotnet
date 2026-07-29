@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TestRunnerName>XUnitV3</TestRunnerName>
+    <OutputType>Exe</OutputType>
+    <!--
+      The assembly-level [ConditionalAssembly] in this project always evaluates to false,
+      which tags every test in the assembly with the 'category=failing' trait. Filter out
+      tests with that trait so the deliberately failing test is skipped, which validates
+      that ConditionalAssemblyAttribute is applied to all tests in the assembly. After the
+      filter, no tests run, so ignore the MTP "zero tests" exit code (8).
+
+      Keep the argument string in one property and surface it through both
+      TestRunnerAdditionalArguments and Arguments so it applies to direct execution and
+      to Helix XUnitV3 work item creation paths that only propagate Arguments.
+    -->
+    <ConditionalAssemblyFilterArguments>--filter-not-trait "category=failing" --ignore-exit-code 8</ConditionalAssemblyFilterArguments>
+    <TestRunnerAdditionalArguments>$(ConditionalAssemblyFilterArguments)</TestRunnerAdditionalArguments>
+    <Arguments>$(ConditionalAssemblyFilterArguments)</Arguments>
+    <!--
+      This project lives alongside Microsoft.DotNet.XUnitV3Extensions.Tests.csproj in the
+      same folder. Restrict default compile globbing to just this project's source so the
+      assembly-level attribute and failing test don't bleed into the sibling project.
+    -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="AlwaysFalseConditionalAssemblyTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Microsoft.DotNet.XUnitV3Extensions.csproj" />
+  </ItemGroup>
+
+</Project>
+

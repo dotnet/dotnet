@@ -12,6 +12,7 @@ using Microsoft.Build.BackEnd;
 using Microsoft.Build.Eventing;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Framework.Utilities;
 using Microsoft.Build.Shared;
 
 #nullable disable
@@ -139,6 +140,18 @@ namespace Microsoft.Build.CommandLine
                 return new OutOfProcTaskHostTaskResult(
                                 TaskCompleteType.CrashedDuringInitialization,
                                 exceptionToReturn,
+                                "TaskInstantiationFailureError",
+                                [taskName, taskLocation, String.Empty]);
+            }
+
+            // TypeLoader.Load returns null (rather than throwing) when the requested type cannot be
+            // found in the assembly. Guard against that here so we surface an actionable diagnostic
+            // instead of crashing later with an opaque NullReferenceException.
+            if (taskType == null)
+            {
+                return new OutOfProcTaskHostTaskResult(
+                                TaskCompleteType.CrashedDuringInitialization,
+                                new TypeLoadException(),
                                 "TaskInstantiationFailureError",
                                 [taskName, taskLocation, String.Empty]);
             }
@@ -443,19 +456,17 @@ namespace Microsoft.Build.CommandLine
         /// Logs errors from TaskLoader
         /// </summary>
         private void LogErrorDelegate(string taskLocation, int taskLine, int taskColumn, string message, params object[] messageArgs)
-        {
-            buildEngine.LogErrorEvent(new BuildErrorEventArgs(
-                null,
-                null,
-                taskLocation,
-                taskLine,
-                taskColumn,
-                0,
-                0,
-                ResourceUtilities.FormatString(AssemblyResources.GetString(message), messageArgs),
-                null,
-                taskName));
-        }
+            => buildEngine.LogErrorEvent(new BuildErrorEventArgs(
+                subcategory: null,
+                code: null,
+                file: taskLocation,
+                lineNumber: taskLine,
+                columnNumber: taskColumn,
+                endLineNumber: 0,
+                endColumnNumber: 0,
+                message: MessageFormatter.Format(AssemblyResources.GetString(message), messageArgs),
+                helpKeyword: null,
+                senderName: taskName));
 
         /// <summary>
         /// Filters null elements from a string[] task output.

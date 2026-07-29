@@ -13,10 +13,11 @@
 
     Instead, every bundled product publishes ITSELF exactly once. A product's own build emits
     the DLLs together with the matching .config / binding redirects, so publishing it guarantees
-    a self-consistent set. The output lands in a canonical, per-(project, TFM) folder that the
-    tool packages then harvest via globs at pack time. A product is never published more than
-    once per build, even though several tool packages bundle it, because each inner (per-TFM)
-    build's Build target runs exactly once.
+    a self-consistent set. The output lands in a per-TFM publish folder under the product's own
+    bin ($(ArtifactsBinDir)<ProjectName>\$(Configuration)\<TargetFramework>\publish\) that the tool
+    packages then harvest via globs at pack time. A product is never published more than once per
+    build, even though several tool packages bundle it, because each inner (per-TFM) build's Build
+    target runs exactly once.
 
     Opt a product in with:
       <PropertyGroup>
@@ -30,9 +31,13 @@
   -->
 
   <PropertyGroup Condition="'$(PublishForPackaging)' == 'true' and '$(TargetFramework)' != ''">
-    <!-- Canonical publish dir for THIS product+TFM. Consumers (tool packages) compute the same
-         path as $(TestPlatformPackagingPublishRoot)<ProjectName>\<TargetFramework>\. -->
-    <_PackagingPublishDir>$(TestPlatformPackagingPublishRoot)$(MSBuildProjectName)\$(TargetFramework)\</_PackagingPublishDir>
+    <!-- Publish into a stable, RID-independent folder under the product's own bin:
+         $(ArtifactsBinDir)<ProjectName>\$(Configuration)\<TargetFramework>\publish\. We spell this
+         out rather than using $(OutputPath)publish\ because $(OutputPath) picks up the
+         RuntimeIdentifier subfolder for RID-qualified builds (e.g. net462\win7-x64\), whereas the
+         tool packages that harvest this content recompute the same RID-less path from the producer
+         name + TFM. Both sides therefore agree on one predictable location. -->
+    <_PackagingPublishDir>$(ArtifactsBinDir)$(MSBuildProjectName)\$(Configuration)\$(TargetFramework)\publish\</_PackagingPublishDir>
   </PropertyGroup>
 
   <!--

@@ -23,11 +23,19 @@ public sealed class AggregatedResult(
     string? stackTrace = null,
     string? skipReason = null,
     bool isFlaky = false,
-    int? attemptId = null)
+    int? attemptId = null,
+    string? fullyQualifiedName = null)
 {
     public AggregationType AggregationType { get; } = aggregationType;
 
     public string Name { get; } = name ?? string.Empty;
+
+    /// <summary>
+    /// Stable, fully qualified identifier for the test this result represents. Shared by all
+    /// iterations/data rows of the same test method so aggregation and AzDO identity are stable
+    /// regardless of the framework-provided display name. Falls back to <see cref="Name"/>.
+    /// </summary>
+    public string FullyQualifiedName { get; } = fullyQualifiedName ?? name ?? string.Empty;
 
     public double DurationSeconds { get; } = durationSeconds;
 
@@ -49,6 +57,14 @@ public sealed class AggregatedResult(
 public sealed class ResultAggregator
 {
     public IReadOnlyList<AggregatedResult> Aggregate(IEnumerable<IEnumerable<TestResult>>? results)
+        => Aggregate(results, useFullyQualifiedName: false);
+
+    /// <param name="useFullyQualifiedName">
+    /// When <see langword="true"/>, tests are grouped by their <see cref="TestResult.FullyQualifiedName"/>
+    /// instead of the display name. This keeps identity stable and avoids merging same-named methods
+    /// from different classes (a common problem for MSTest, whose display name is only the method name).
+    /// </param>
+    public IReadOnlyList<AggregatedResult> Aggregate(IEnumerable<IEnumerable<TestResult>>? results, bool useFullyQualifiedName)
     {
         if (results is null)
         {
@@ -89,7 +105,8 @@ public sealed class ResultAggregator
                 result.FailureMessage,
                 result.StackTrace,
                 result.SkipReason,
-                attemptId: attemptId);
+                attemptId: attemptId,
+                fullyQualifiedName: result.FullyQualifiedName);
         }
 
         string GetDataDrivenResult(IReadOnlyList<TestResult> groupedResults)
@@ -136,7 +153,7 @@ public sealed class ResultAggregator
             return (false, GetResult(groupedResults[0]));
         }
 
-        AggregatedResult ProcessNamedTest(string name, IReadOnlyList<List<TestResult>> byIterationThenName)
+        AggregatedResult ProcessNamedTest(string name, string fullyQualifiedName, IReadOnlyList<List<TestResult>> byIterationThenName)
         {
             if (byIterationThenName.Count == 1)
             {
@@ -151,7 +168,8 @@ public sealed class ResultAggregator
                     name,
                     singleRun.Sum(static r => r.DurationSeconds),
                     GetDataDrivenResult(singleRun),
-                    [.. singleRun.Select(testResult => CreateResultFromTest(testResult))]);
+                    [.. singleRun.Select(testResult => CreateResultFromTest(testResult))],
+                    fullyQualifiedName: fullyQualifiedName);
             }
 
             bool hasDataDriven = byIterationThenName.Any(static x => x.Count > 1);
@@ -195,7 +213,8 @@ public sealed class ResultAggregator
                         partialDuration,
                         aggregateResult,
                         [.. dataDrivenTests.Select((r, index) => CreateResultFromTest(r, index + 1))],
-                        isFlaky: isFlaky));
+                        isFlaky: isFlaky,
+                        fullyQualifiedName: fullyQualifiedName));
                 }
 
                 string aggregateOutcome = "Inconclusive";
@@ -217,7 +236,8 @@ public sealed class ResultAggregator
                     name,
                     totalDuration,
                     aggregateOutcome,
-                    subResults);
+                    subResults,
+                    fullyQualifiedName: fullyQualifiedName);
             }
 
             var reruns = byIterationThenName.Select(static run => run[0]).ToList();
@@ -257,7 +277,8 @@ public sealed class ResultAggregator
                         single.Result,
                         attachments: single.Attachments,
                         failureMessage: single.FailureMessage,
-                        stackTrace: single.StackTrace);
+                        stackTrace: single.StackTrace,
+                        fullyQualifiedName: result.FullyQualifiedName);
                 }
 
                 return result;
@@ -273,7 +294,8 @@ public sealed class ResultAggregator
                 result.FailureMessage,
                 result.StackTrace,
                 isFlaky: result.IsFlaky,
-                attemptId: result.AttemptId);
+                attemptId: result.AttemptId,
+                fullyQualifiedName: result.FullyQualifiedName);
         }
 
         var partials = new List<Dictionary<string, List<TestResult>>>();
@@ -282,7 +304,7 @@ public sealed class ResultAggregator
             var perAttempt = new Dictionary<string, List<TestResult>>(StringComparer.Ordinal);
             foreach (TestResult result in resultSet)
             {
-                string basicName = ParseBasicName(result.Name);
+                string basicName = ParseBasicName(useFullyQualifiedName ? result.FullyQualifiedName : result.Name);
                 if (!perAttempt.TryGetValue(basicName, out List<TestResult>? list))
                 {
                     list = [];
@@ -326,7 +348,13 @@ public sealed class ResultAggregator
                     }
                 }
 
-                aggregate.Add(ProcessNamedTest(pair.Key, fullSet));
+                // When grouping by fully qualified name, every member of the group shares the same
+                // FQN, so any member is representative. When using legacy (display-name) grouping a
+                // single group can contain unrelated tests (e.g. MSTest methods that share a name
+                // across classes); picking one member's FQN would be order-dependent and misleading,
+                // so fall back to the group key instead.
+                string groupFullyQualifiedName = useFullyQualifiedName ? currentSet[0].FullyQualifiedName : pair.Key;
+                aggregate.Add(ProcessNamedTest(pair.Key, groupFullyQualifiedName, fullSet));
             }
         }
 

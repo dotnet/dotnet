@@ -6,10 +6,6 @@ parameters:
   type: string
   default: ''
 
-- name: desiredIbc
-  type: string
-  default: ''
-
 - name: desiredFinalVersionKind
   type: string
   default: ''
@@ -111,7 +107,6 @@ stages:
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
       isOfficialBuild: ${{ parameters.isOfficialBuild }}
-      desiredIbc: ${{ parameters.desiredIbc }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       scope: ${{ parameters.scope }}

@@ -465,8 +465,8 @@ available to tests during runtime.
 An adapter may provide a section in runsettings for users. See [mstest config][]
 and [nunit config][] for more details.
 
-[mstest config]: TODO
-[nunit config]: TODO
+[mstest config]: https://learn.microsoft.com/dotnet/core/testing/unit-testing-mstest-configure
+[nunit config]: https://docs.nunit.org/articles/vs-test-adapter/Adapter-Settings.html
 
 # Execution thread apartment state
 
