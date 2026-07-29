@@ -227,11 +227,6 @@ jobs:
   # to ~95% during CodeQL finalize and risks out-of-disk failures. Redirect the CodeQL CLI download +
   # database location to C: (which has free headroom) on Windows only; other platforms are unaffected
   # and keep the default Agent.TempDirectory.
-  #
-  # This must be conditioned on the compile-time pool.os parameter, not a runtime expression:
-  # pipeline-level 'variables:' with $[ ] expressions evaluate before an agent is assigned, so
-  # Agent.OS / Agent.TempDirectory are empty at that scope and the redirect silently no-ops.
-  # https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/1es-pipeline-templates/features/sdlanalysis/codeql
   - ${{ if eq(parameters.pool.os, 'windows') }}:
     - name: Codeql.ADO.Agent.TempDirectory
       value: 'C:\codeql_temp'
