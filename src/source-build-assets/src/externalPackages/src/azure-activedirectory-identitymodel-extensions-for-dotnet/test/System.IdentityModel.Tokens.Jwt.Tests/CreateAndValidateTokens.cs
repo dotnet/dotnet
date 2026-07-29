@@ -165,7 +165,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             TestUtilities.AssertFailIfErrors(context.Diffs);
         }
 
-        [Theory, MemberData(nameof(RoundTripTokensUsingCacheTheoryData))]
+        [Theory, MemberData(nameof(RoundTripTokensUsingCacheTheoryData), DisableDiscoveryEnumeration = true)]
         public void RoundTripTokensUsingCache(JwtTheoryData theoryData)
         {
             var handler = new JwtSecurityTokenHandler();
@@ -390,7 +390,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         }
 
 
-        [Theory, MemberData(nameof(RoundTripTokensTheoryData))]
+        [Theory, MemberData(nameof(RoundTripTokensTheoryData), DisableDiscoveryEnumeration = true)]
         public void RoundTripTokens(JwtTheoryData theoryData)
         {
             var handler = new JwtSecurityTokenHandler();
@@ -611,8 +611,6 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 ValidationParameters = Default.SymmetricEncryptSignTokenValidationParameters
             });
 
-#if NET462 || NET_CORE
-            // RsaPss is not supported on .NET < 4.6
             var rsaPssSigningCredentials = new SigningCredentials(Default.AsymmetricSigningKey, SecurityAlgorithms.RsaSsaPssSha256);
             theoryData.Add(new JwtTheoryData
             {
@@ -631,12 +629,11 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                     ValidateIssuer = false,
                 }
             });
-#endif
 
             return theoryData;
         }
 
-        [Theory, MemberData(nameof(SerializeDeserializeJwtTokensTheoryData))]
+        [Theory, MemberData(nameof(SerializeDeserializeJwtTokensTheoryData), DisableDiscoveryEnumeration = true)]
         public void SerializeDeserializeJwtTokens(JwtTheoryData theoryData)
         {
             var handler = new JwtSecurityTokenHandler();
@@ -679,7 +676,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             }
         }
 
-        [Theory, MemberData(nameof(RoundTripJWEParams))]
+        [Theory, MemberData(nameof(RoundTripJWEParams), DisableDiscoveryEnumeration = true)]
         public void RoundTripJWETokens(string testId, SecurityTokenDescriptor tokenDescriptor, TokenValidationParameters validationParameters, ExpectedException ee)
         {
             var handler = new JwtSecurityTokenHandler();
@@ -875,7 +872,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             return theoryData;
         }
 
-        [Theory, MemberData(nameof(CreationJWEParams))]
+        [Theory, MemberData(nameof(CreationJWEParams), DisableDiscoveryEnumeration = true)]
         public void CreateJWETokens(string testId, string jweToken, TokenValidationParameters validationParameters, JwtPayload expectedPayload, ExpectedException ee)
         {
             var handler = new JwtSecurityTokenHandler();
@@ -897,7 +894,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 if (!IdentityComparer.AreEqual(outerToken.Payload, outerToken.InnerToken.Payload, context))
                     context.Diffs.Add("outerToken.Payload != outerToken.InnerToken.Payload");
 
-                foreach(KeyValuePair<string, object> claim in expectedPayload)
+                foreach (KeyValuePair<string, object> claim in expectedPayload)
                 {
                     if (!outerToken.Payload.ContainsKey(claim.Key))
                     {
@@ -983,7 +980,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 handler.CreateEncodedJwt((SecurityTokenDescriptor)null);
                 ee.ProcessNoException(errors);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ee.ProcessException(ex, errors);
             }
@@ -1051,7 +1048,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             string encodedJwt = jwtHandler.WriteToken(new JwtSecurityToken(new JwtHeader(), payload));
             var validationParameters = new TokenValidationParameters
             {
-                IssuerValidator = (issuer, st, tvp) => { return issuer;},
+                IssuerValidator = (issuer, st, tvp) => { return issuer; },
                 RequireSignedTokens = false,
                 ValidateAudience = false,
                 ValidateLifetime = false,
@@ -1066,13 +1063,13 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
                 JsonClaims.ClaimNamesAsDictionary);
             IdentityComparer.AreEqual(claimsPrincipal.Identity as ClaimsIdentity, expectedIdentity, context);
 
-            jwtToken = new JwtSecurityToken( new JwtHeader(), new JwtPayload(Default.Issuer, null, ClaimSets.EntityAsJsonClaim(Default.Issuer, Default.Issuer), null, null));
+            jwtToken = new JwtSecurityToken(new JwtHeader(), new JwtPayload(Default.Issuer, null, ClaimSets.EntityAsJsonClaim(Default.Issuer, Default.Issuer), null, null));
             encodedJwt = jwtHandler.WriteToken(jwtToken);
             SecurityToken validatedToken;
             var cp = jwtHandler.ValidateToken(encodedJwt, validationParameters, out validatedToken);
             IdentityComparer.AreEqual(
                 cp.FindFirst(typeof(Entity).ToString()),
-                new Claim(typeof(Entity).ToString(), JsonSerializer.Serialize(Entity.Default), JsonClaimValueTypes.Json, Default.Issuer, Default.Issuer, cp.Identity as ClaimsIdentity ),
+                new Claim(typeof(Entity).ToString(), JsonSerializer.Serialize(Entity.Default), JsonClaimValueTypes.Json, Default.Issuer, Default.Issuer, cp.Identity as ClaimsIdentity),
                 context);
             TestUtilities.AssertFailIfErrors(context.Diffs);
         }
@@ -1110,7 +1107,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
             CompareContext context = new CompareContext { IgnoreType = true };
             IdentityComparer.AreEqual(principal.Claims, expectedIdentity.Claims, context);
-            TestUtilities.AssertFailIfErrors(GetType().ToString()+".RoleClaims", context.Diffs);
+            TestUtilities.AssertFailIfErrors(GetType().ToString() + ".RoleClaims", context.Diffs);
         }
 
         [Fact]
@@ -1220,8 +1217,6 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         /// <summary>
         /// First string is expected, others are not.
         /// </summary>
-        /// <param name="names"></param>
-        /// <param name="roles"></param>
         private void CheckNamesAndRole(string[] names, string[] roles, ClaimsPrincipal principal, string expectedNameClaimType = ClaimsIdentity.DefaultNameClaimType, string expectedRoleClaimType = ClaimsIdentity.DefaultRoleClaimType)
         {
             ClaimsIdentity identity = principal.Identity as ClaimsIdentity;
@@ -1243,8 +1238,6 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
         /// <summary>
         /// First role is expected, others are not.
         /// </summary>
-        /// <param name="names"></param>
-        /// <param name="roles"></param>
         private void CheckForRoles(IEnumerable<string> expectedRoles, IEnumerable<string> unexpectedRoles, ClaimsPrincipal principal, string expectedRoleClaimType = ClaimsIdentity.DefaultRoleClaimType)
         {
             ClaimsIdentity identity = principal.Identity as ClaimsIdentity;

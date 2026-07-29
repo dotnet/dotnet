@@ -72,7 +72,7 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public void AddDictionaryKeysToIgnoreWhenComparing(params string[] keyValues)
         {
-            foreach(string keyValue in keyValues)
+            foreach (string keyValue in keyValues)
                 DictionaryKeysToIgnoreWhenComparing.Add(keyValue);
         }
 
@@ -83,6 +83,19 @@ namespace Microsoft.IdentityModel.TestUtils
         public List<string> Diffs { get; set; } = new List<string>();
 
         public bool ExpectRawData { get; set; }
+
+        public bool ValidateProperty(Type type, string propertyName)
+        {
+            if (PropertiesToIgnoreWhenComparing != null
+            && PropertiesToIgnoreWhenComparing.TryGetValue(type, out List<string> propertiesToIgnore))
+            {
+                foreach (var val in propertiesToIgnore)
+                    if (string.Equals(val, propertyName, StringComparison.OrdinalIgnoreCase))
+                        return false;
+            }
+
+            return true;
+        }
 
         public Dictionary<Type, List<string>> PropertiesToIgnoreWhenComparing { get; set; } = new Dictionary<Type, List<string>>();
 

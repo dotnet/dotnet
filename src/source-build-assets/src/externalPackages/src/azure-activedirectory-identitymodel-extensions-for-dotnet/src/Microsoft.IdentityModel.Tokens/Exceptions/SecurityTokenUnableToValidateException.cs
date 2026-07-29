@@ -44,7 +44,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// Initializes a new instance of the <see cref="SecurityTokenSignatureKeyNotFoundException"/> class.
         /// </summary>
         /// <param name="validationFailure">The validation failures.</param>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
         public SecurityTokenUnableToValidateException(ValidationFailure validationFailure, string message)
             : base(message)
         {
@@ -54,7 +54,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Initializes a new instance of the <see cref="SecurityTokenSignatureKeyNotFoundException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
         public SecurityTokenUnableToValidateException(string message)
             : base(message)
         {
@@ -63,8 +63,8 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Initializes a new instance of the <see cref="SecurityTokenSignatureKeyNotFoundException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
-        /// <param name="innerException">A <see cref="Exception"/> that represents the root cause of the exception.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
+        /// <param name="innerException">An <see cref="Exception"/> that represents the root cause of the exception.</param>
         public SecurityTokenUnableToValidateException(string message, Exception innerException)
             : base(message, innerException)
         {

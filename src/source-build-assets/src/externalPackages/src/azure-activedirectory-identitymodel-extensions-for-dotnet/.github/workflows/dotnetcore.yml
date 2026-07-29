@@ -1,4 +1,8 @@
-name: .NET Core
+name: "Run unit tests"
+
+permissions:
+  contents: read
+  pull-requests: write
 
 on:
   push:
@@ -14,35 +18,38 @@ on:
       - dev
 
 env:
-  TargetNet9: True
-  TargetNet8: True
+  TargetNetNext: False
 
 jobs:
   build:
     runs-on: windows-latest
-    continue-on-error: true
-    name: Wilson GitHub Action Test
+    continue-on-error: false
+
+    name: "Build and run unit tests"
     steps:
+    - name: Set git core.longpaths flag
+      run: |
+          git config --system core.longpaths true
+
     - name: Checkout repository
-      uses: actions/checkout@v4.1.1
+      uses: actions/checkout@v5
 
-    - name: Setup .NET 6.0.x
-      uses: actions/setup-dotnet@v4.0.0
+    - name: Setup .NET 6.x
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: '6.x'
 
-    - name: Setup .NET 8.0.x
-      uses: actions/setup-dotnet@v4.0.0
+    - name: Setup .NET SDK from global.json
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        global-json-file: ./global.json
 
-    - name: Setup .NET 9.0.x
-      uses: actions/setup-dotnet@v4.0.0
-      with:
-        dotnet-version: 9.0.100-preview.4.24267.66
+    - name: Strong name bypass
+      run: |
+          regedit /s .\build\strongNameBypass.reg
 
     - name: Run the tests
-      run: dotnet test Wilson.sln
+      run: dotnet test Wilson.sln --settings:./build/CodeCoverage.runsettings
 
     # Run baseline package validation
     - name: Pack

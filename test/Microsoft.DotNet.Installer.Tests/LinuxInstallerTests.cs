@@ -90,6 +90,18 @@ public partial class LinuxInstallerTests : IDisposable
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
     private const string DowngradeFxVersionsScript = "downgrade-fx-versions.sh";
+    private const string ContainerNuGetPluginsDir = "/root/.nuget/plugins";
+    private const string ContainerCredentialProviderCacheDir = "/root/.local/share/MicrosoftCredentialProvider";
+    private static readonly string[] NuGetAuthEnvironmentVariables =
+    [
+        "ARTIFACTS_CREDENTIALPROVIDER_EXTERNAL_FEED_ENDPOINTS",
+        "ARTIFACTS_CREDENTIALPROVIDER_FEED_ENDPOINTS",
+        "ARTIFACTS_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED",
+        "NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED",
+        "VSS_NUGET_ACCESSTOKEN",
+        "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS",
+        "VSS_NUGET_URI_PREFIXES"
+    ];
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
     public static bool IncludeDebTests => Config.TestDebPackages;
@@ -382,8 +394,9 @@ public partial class LinuxInstallerTests : IDisposable
             buildCompleted = true;
 
             // Mount the host log directory to the container
-            string optionalRunArgs = $"-v {hostLogDir}:{containerLogDir}";
-            output = _dockerHelper.Run(tag, tag, testCommand, optionalRunArgs: optionalRunArgs);
+            List<string> optionalRunArgs = [$"-v {QuoteDockerArgument($"{hostLogDir}:{containerLogDir}")}"];
+            optionalRunArgs.AddRange(GetNuGetAuthDockerRunArgs());
+            output = _dockerHelper.Run(tag, tag, testCommand, optionalRunArgs: string.Join(' ', optionalRunArgs));
 
             int testResultsSummaryIndex = output.IndexOf("Tests run: ");
             if (testResultsSummaryIndex >= 0)
@@ -424,6 +437,47 @@ public partial class LinuxInstallerTests : IDisposable
 
         return scenarioTestsBinary.Replace(_contextDir, "").Replace("\\", "/");
     }
+
+    private static IEnumerable<string> GetNuGetAuthDockerRunArgs()
+    {
+        List<string> args = NuGetAuthEnvironmentVariables
+            .Where(envVar => !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(envVar)))
+            .Select(envVar => $"-e {envVar}")
+            .ToList();
+
+        if (args.Count == 0)
+        {
+            return args;
+        }
+
+        string? home = Environment.GetEnvironmentVariable("HOME");
+        if (string.IsNullOrWhiteSpace(home))
+        {
+            home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        }
+
+        if (string.IsNullOrWhiteSpace(home))
+        {
+            return args;
+        }
+
+        string pluginsDir = Path.Combine(home, ".nuget", "plugins");
+        if (Directory.Exists(pluginsDir))
+        {
+            args.Add($"-v {QuoteDockerArgument($"{pluginsDir}:{ContainerNuGetPluginsDir}:ro")}");
+        }
+
+        string credentialProviderCacheDir = Path.Combine(home, ".local", "share", "MicrosoftCredentialProvider");
+        if (Directory.Exists(credentialProviderCacheDir))
+        {
+            args.Add($"-v {QuoteDockerArgument($"{credentialProviderCacheDir}:{ContainerCredentialProviderCacheDir}")}");
+        }
+
+        return args;
+    }
+
+    private static string QuoteDockerArgument(string value) =>
+        $"\"{value.Replace("\"", "\\\"")}\"";
 
     private List<string> GetPackageList(string baseImage, PackageType packageType)
     {

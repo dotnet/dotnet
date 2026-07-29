@@ -1,12 +1,13 @@
 # CodeQL configuration file
 #
 # Check the following link for more information:
-# https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/configuring-codeql3000-ado-pipelines#excluding-external-libraries-test-files-generated-files-docs
+# https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/troubleshooting/bugs/generated-library-code#configuring-exclusion-file
 
 path_classifiers:
   test:
-    - "test/**"
-    - "perf/**"
+  # All sub-directories are automatically matched. For example: test matches anything in the directory and all its subdirectories.
+  # Do not add /** wildcard at the end of a directory path.
+    - "test"
+    - "benchmark"
   docs:
-    - "docs/**"
-    - "samples/**"
+    - "docs"

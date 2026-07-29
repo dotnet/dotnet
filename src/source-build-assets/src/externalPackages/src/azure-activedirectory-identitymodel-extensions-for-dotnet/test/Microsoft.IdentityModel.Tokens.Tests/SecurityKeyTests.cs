@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.TestUtils;
 using Xunit;
 
@@ -23,7 +25,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 #endif
         }
 
-        [Theory, MemberData(nameof(CompareJwkThumbprintsTestCases))]
+        [Theory, MemberData(nameof(CompareJwkThumbprintsTestCases), DisableDiscoveryEnumeration = true)]
         public void CompareJwkThumbprints(JsonWebKeyConverterTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CompareJwkThumbprints", theoryData);
@@ -89,7 +91,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                     SecurityKey = KeyingMaterial.DefaultX509Key_2048_Public,
                     TestId = nameof(KeyingMaterial.DefaultX509Key_2048_Public)
                 });
-#if NET472 || NET_CORE
+#if NET472 || NET
                 theoryData.Add(new JsonWebKeyConverterTheoryData
                 {
                     SecurityKey = KeyingMaterial.Ecdsa256Key_Public,
@@ -107,7 +109,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(CreateInternalIdsTestCases))]
+        [Theory, MemberData(nameof(CreateInternalIdsTestCases), DisableDiscoveryEnumeration = true)]
         public void CreateInternalIds(SecurityKeyTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CreateInternalIds", theoryData);
@@ -171,8 +173,8 @@ namespace Microsoft.IdentityModel.Tokens.Tests
                         ExpectedInternalId = Base64UrlEncoder.Encode(KeyingMaterial.JsonWebKeyRsa_2048_Public.ComputeJwkThumbprint()),
                         TestId = nameof(KeyingMaterial.JsonWebKeyRsa_2048_Public)
                     },
-#if NET472 || NET_CORE
-                    // EcdsaSecurityKey should have InternalId set to its jwk thumbprint on NET472 and NET_CORE.
+#if NET472 || NET
+                    // EcdsaSecurityKey should have InternalId set to its jwk thumbprint on NET472 and NET.
                     new SecurityKeyTheoryData
                     {
                         SecurityKey = KeyingMaterial.Ecdsa256Key_Public,
@@ -208,6 +210,39 @@ namespace Microsoft.IdentityModel.Tokens.Tests
         public void CanComputeJwkThumbprint()
         {
             Assert.False(new CustomSecurityKey().CanComputeJwkThumbprint(), "CustomSecurityKey shouldn't be able to compute JWK thumbprint if CanComputeJwkThumbprint() is not overriden.");
+        }
+
+        // Tests a SecurityKey object, to ensure the InternalId is set exactly once when faced with concurrent calls.
+        [Fact]
+        public async Task InternalId_ConcurrencyTest()
+        {
+            // Arrange
+            var numTasks = 10;
+            var barrier = new Barrier(numTasks);
+            var key = new CustomSecurityKey();
+            string[] internalIds = new string[numTasks];
+            Task[] tasks = new Task[numTasks];
+
+            for (int i = 0; i < numTasks; i++)
+            {
+                var index = i;
+                tasks[i] = Task.Run(() =>
+                {
+                    barrier.SignalAndWait();
+                    internalIds[index] = key.InternalId;
+                });
+            }
+
+            // Act
+            await Task.WhenAll(tasks);
+
+            // Assert
+            Assert.All(internalIds, id => Assert.NotNull(id));
+            var firstId = internalIds[0];
+            for (int i = 1; i < numTasks; i++)
+            {
+                Assert.Same(firstId, internalIds[i]);
+            }
         }
 
         public class SecurityKeyTheoryData : TheoryDataBase

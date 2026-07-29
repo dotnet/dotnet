@@ -13,7 +13,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
 {
     public class DelegatingXmlDictionaryReaderTests
     {
-        [Theory, MemberData(nameof(ReadXmlTheoryData))]
+        [Theory, MemberData(nameof(ReadXmlTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadXml(DelegatingXmlDictionaryReaderTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadXml", theoryData);
@@ -40,7 +40,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(ReadPartialXmlWithUniqueIdTheoryData))]
+        [Theory, MemberData(nameof(ReadPartialXmlWithUniqueIdTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadPartialXml(DelegatingXmlDictionaryReaderTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadXml", theoryData);

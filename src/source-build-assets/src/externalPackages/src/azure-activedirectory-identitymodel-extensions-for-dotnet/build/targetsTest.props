@@ -1,8 +1,12 @@
 <Project>
+  <!-- TargetNetNext must be set to True to build with next version of NET locally you can uncomment this PropertyGroup or set it in a CLI arg -->
+  <!-- <PropertyGroup>
+    <TargetNetNext>True</TargetNetNext> 
+  </PropertyGroup> -->
+
   <PropertyGroup>
-    <TestTargets Condition="'$(LocalBuild)' != 'True'">net462;net472;net6.0;net8.0</TestTargets>
-    <TestTargets Condition="'$(LocalBuild)' == 'True'">net8.0</TestTargets>
-    <TestTargets Condition="'$(TargetNet9)' == 'True'">$(TestTargets);net9.0</TestTargets>
-    <TestOnlyCoreTargets>net6.0</TestOnlyCoreTargets>
-  </PropertyGroup>
+    <TestTargets Condition="'$(LocalBuild)' != 'True'">net462;net472;net6.0;net8.0;net9.0;net10.0</TestTargets>
+    <TestTargets Condition="'$(LocalBuild)' == 'True'">net8.0;net9.0;net10.0</TestTargets>
+    <TestTargets Condition="'$(TargetNetNext)'== 'True'">$(TestTargets)</TestTargets>
+</PropertyGroup>
 </Project>

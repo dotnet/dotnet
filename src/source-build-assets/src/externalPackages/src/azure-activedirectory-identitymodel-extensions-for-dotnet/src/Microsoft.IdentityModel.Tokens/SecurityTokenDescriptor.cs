@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Security.Claims;
 using System.Threading;
 
@@ -105,5 +106,15 @@ namespace Microsoft.IdentityModel.Tokens
         /// values will be overridden.
         /// </summary>
         public ClaimsIdentity Subject { get; set; }
+
+        /// <summary>
+        /// Indicates if <c>kid</c> and <c>x5t</c> should be included in the header of a JSON web token (JWT)
+        ///
+        /// <remarks>
+        /// Only applies to JWTs
+        /// </remarks>
+        /// </summary>
+        [DefaultValue(true)]
+        public bool IncludeKeyIdInHeader { get; set; } = true;
     }
 }

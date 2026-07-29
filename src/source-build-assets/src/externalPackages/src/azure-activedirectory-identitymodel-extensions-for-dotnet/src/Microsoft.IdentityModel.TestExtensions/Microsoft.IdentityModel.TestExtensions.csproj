@@ -8,10 +8,14 @@
     <DelaySign>true</DelaySign>
     <Description>Microsoft.IdentityModel.TestExtensions</Description>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Microsoft.IdentityModel.TestExtensions</PackageId>
     <SignAssembly>true</SignAssembly>
     <Nullable>enable</Nullable>
     <EnablePackageValidation>false</EnablePackageValidation>
+    <!-- Suppress IL2026 (RequiresUnreferencedCode) and IL3050 (RequiresDynamicCode) warnings for System.Text.Json serialization.
+         TestExtensions is a test utility library that does not require AOT compatibility. -->
+    <NoWarn>$(NoWarn);IL2026;IL3050</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,8 +24,8 @@
     <ProjectReference Include="..\System.IdentityModel.Tokens.Jwt\System.IdentityModel.Tokens.Jwt.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftVersion)" />
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+    <PackageReference Include="System.Text.Json" Version="$(SystemTextJsonVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">

@@ -1,5 +1,6 @@
 {
   "sdk": {
+    "version": "10.0.300",
     "allowPrerelease": true,
     "paths": [
       "$host$"
@@ -17,6 +18,6 @@
     "xcopy-msbuild": "18.0.0"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.26324.4"
+    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.26371.2"
   }
 }

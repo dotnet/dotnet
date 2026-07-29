@@ -8,7 +8,7 @@ namespace Microsoft.IdentityModel.TestUtils
 {
     public class SampleListener : EventListener
     {
-        public string TraceBuffer { get; set; }
+        public string TraceBuffer { get; set; } = string.Empty;
 
         protected override void OnEventWritten(EventWrittenEventArgs eventData)
         {

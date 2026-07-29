@@ -50,7 +50,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             TestUtilities.AssertFailIfErrors($"{this}.GetSets", context.Errors);
         }
 
-        [Theory, MemberData(nameof(ConstructorTheoryData))]
+        [Theory, MemberData(nameof(ConstructorTheoryData), DisableDiscoveryEnumeration = true)]
         public void Constructor(ExclusiveCanonicalizationTransformTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.Constructor", theoryData);
@@ -83,7 +83,7 @@ namespace Microsoft.IdentityModel.Tokens.Xml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ProcessAndDigestTheoryData))]
+        [Theory, MemberData(nameof(ProcessAndDigestTheoryData), DisableDiscoveryEnumeration = true)]
         public void ProcessAndDigest(ExclusiveCanonicalizationTransformTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}", "ProcessAndDigest", true);

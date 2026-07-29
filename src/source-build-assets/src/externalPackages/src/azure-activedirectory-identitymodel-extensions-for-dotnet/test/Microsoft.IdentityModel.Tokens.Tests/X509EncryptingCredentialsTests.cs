@@ -12,7 +12,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class X509EncryptingCredentialsTests
     {
-        [Theory, MemberData(nameof(ConstructorsTheoryData))]
+        [Theory, MemberData(nameof(ConstructorsTheoryData), DisableDiscoveryEnumeration = true)]
         public void Constructors(X509EncryptingCredentialsTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.Constructors", theoryData);

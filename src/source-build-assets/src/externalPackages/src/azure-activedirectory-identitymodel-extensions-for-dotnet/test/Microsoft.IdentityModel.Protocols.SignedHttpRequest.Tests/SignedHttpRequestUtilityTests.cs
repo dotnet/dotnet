@@ -35,7 +35,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             Assert.Equal("PoP abcd", SignedHttpRequestUtilities.CreateSignedHttpRequestHeader("abcd"));
         }
 
-        [Theory, MemberData(nameof(AppendHeadersTheoryData))]
+        [Theory, MemberData(nameof(AppendHeadersTheoryData), DisableDiscoveryEnumeration = true)]
         public void AppendHeaders(SignedHttpRequestUtilityTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.AppendHeaders", theoryData);
@@ -58,7 +58,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(CreateJwkClaimTheoryData))]
+        [Theory, MemberData(nameof(CreateJwkClaimTheoryData), DisableDiscoveryEnumeration = true)]
         public void CreateJwkClaim(SignedHttpRequestUtilityTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CreateJwkClaim", theoryData);
@@ -257,13 +257,13 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ToHttpRequestDataAsyncTheoryData))]
+        [Theory, MemberData(nameof(ToHttpRequestDataAsyncTheoryData), DisableDiscoveryEnumeration = true)]
         public async Task ToHttpRequestDataAsync(SignedHttpRequestUtilityTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ToHttpRequestDataAsync", theoryData);
             try
             {
-                var httpRequestData = await SignedHttpRequestUtilities.ToHttpRequestDataAsync(theoryData.HttpRequestMessage).ConfigureAwait(false);
+                var httpRequestData = await SignedHttpRequestUtilities.ToHttpRequestDataAsync(theoryData.HttpRequestMessage);
                 IdentityComparer.AreStringsEqual(httpRequestData.Method, theoryData.ExpectedHttpRequestData.Method, context);
                 IdentityComparer.AreUrisEqual(httpRequestData.Uri, theoryData.ExpectedHttpRequestData.Uri, context);
                 IdentityComparer.AreBytesEqual(httpRequestData.Body, theoryData.ExpectedHttpRequestData.Body, context);
@@ -367,15 +367,15 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
                     new SignedHttpRequestUtilityTheoryData
                     {
                         HttpRequestMessage = SignedHttpRequestTestUtils.CreateHttpRequestMessage(
-                            HttpMethod.Get, 
-                            new Uri("https://www.contoso.com/"), 
+                            HttpMethod.Get,
+                            new Uri("https://www.contoso.com/"),
                             new List<KeyValuePair<string, string>>()
                             {
                                 new KeyValuePair<string, string> ("h1", "value1"),
                                 new KeyValuePair<string, string> ("h2", "value2")
                             },
                             Encoding.UTF8.GetBytes("abcd")
-                        ), 
+                        ),
                         ExpectedHttpRequestData = new HttpRequestData()
                         {
                             Method = "GET",

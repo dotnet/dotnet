@@ -16,7 +16,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
     /// </summary>
     public class JwtSecurityTokenTestVariation
     {
-        public JwtSecurityTokenTestVariation() 
+        public JwtSecurityTokenTestVariation()
         {
         }
 
@@ -41,20 +41,20 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
     public class JwtTestUtilities
     {
-        public static string GetJwtParts( string jwt, string whichParts )
+        public static string GetJwtParts(string jwt, string whichParts)
         {
-            string[] parts = jwt.Split( '.' );
-            if ( string.Equals( whichParts, "AllParts", StringComparison.OrdinalIgnoreCase ) )
+            string[] parts = jwt.Split('.');
+            if (string.Equals(whichParts, "AllParts", StringComparison.OrdinalIgnoreCase))
             {
-                return string.Format( "{0}.{1}.{2}", parts[0], parts[1], parts[2] );
-            }
-            
-            if ( string.Equals( whichParts, "Parts-0-1", StringComparison.OrdinalIgnoreCase ) )
-            {
-                return string.Format( "{0}.{1}.", parts[0], parts[1] );
+                return string.Format("{0}.{1}.{2}", parts[0], parts[1], parts[2]);
             }
 
-            Console.WriteLine( string.Format("Hey, the 'whichParts' parameter wasn't recognized: '{0}'.  Returning'string.Empty' hope that is what you wanted", whichParts ) );
+            if (string.Equals(whichParts, "Parts-0-1", StringComparison.OrdinalIgnoreCase))
+            {
+                return string.Format("{0}.{1}.", parts[0], parts[1]);
+            }
+
+            Console.WriteLine(string.Format("Hey, the 'whichParts' parameter wasn't recognized: '{0}'.  Returning'string.Empty' hope that is what you wanted", whichParts));
             return string.Empty;
         }
     }

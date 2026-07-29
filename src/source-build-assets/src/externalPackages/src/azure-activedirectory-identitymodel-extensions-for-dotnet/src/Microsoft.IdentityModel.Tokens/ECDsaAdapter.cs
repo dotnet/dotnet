@@ -2,10 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Logging;
+
+#if NET462 || NETSTANDARD2_0
+using System.Runtime.InteropServices;
+#endif
+
+#if NET472 || NETSTANDARD2_0 || NET6_0_OR_GREATER
+using System.Runtime.CompilerServices;
+#endif
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -37,7 +43,7 @@ namespace Microsoft.IdentityModel.Tokens
             if (SupportsECParameters()) CreateECDsaFunction = CreateECDsaUsingECParams;
             else CreateECDsaFunction = CreateECDsaUsingCNGKey;
 #else
-        CreateECDsaFunction = CreateECDsaUsingCNGKey;
+            CreateECDsaFunction = CreateECDsaUsingCNGKey;
 #endif
         }
 
@@ -309,7 +315,7 @@ namespace Microsoft.IdentityModel.Tokens
             else
                 throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10645, (curve.Oid.Value ?? curve.Oid.FriendlyName) ?? "null")));
         }
-            
+
 
         /// <summary>
         /// Determines whether user application's runtime supports <see cref="ECParameters"/> structure.

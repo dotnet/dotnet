@@ -15,7 +15,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class TamperedTokenTests
     {
-        [Theory, MemberData(nameof(JwtSignatureTruncationTheoryData))]
+        [Theory, MemberData(nameof(JwtSignatureTruncationTheoryData), DisableDiscoveryEnumeration = true)]
         public async Task JwtSignatureTruncation(ValidateTokenTheoryData theoryData)
         {
             CompareContext compareContext = TestUtilities.WriteHeader($"{this}.JwtSignatureTruncation", theoryData);

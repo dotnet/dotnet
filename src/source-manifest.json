@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 322031,
+      "barId": 324852,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "4e21b419f8adadeb519bee472464824b1cff603e"
+      "commitSha": "c5d54a9de6e0e20a85e37fa3576a37235276772b"
     },
     {
       "barId": 288647,
@@ -19,16 +19,16 @@
       "commitSha": "85903b5f57bd64d0cf0af7316c1e368de12f8234"
     },
     {
-      "barId": 322353,
+      "barId": 324535,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "dcc1f020691a5c47baf6ea7276b4312c6ed9cbf1"
+      "commitSha": "b0e826c1f29e30dfe49535b4194f960cafbc3510"
     },
     {
-      "barId": 322750,
+      "barId": 323843,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "22ece04c03d0c81dc77ffe61475be4c4b37ebe71"
+      "commitSha": "79426f6bca18ed1a4672669157bbff8f4b2ab513"
     },
     {
       "barId": 309789,
@@ -37,10 +37,10 @@
       "commitSha": "4fb38398b3058d2040cfdb033a1aae3945ddb78a"
     },
     {
-      "barId": 322883,
+      "barId": 323900,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "f2c66f1831164b89cf774dddc85c7144745b8421"
+      "commitSha": "58334908fcb426996886e8aa3107851aa479d020"
     },
     {
       "barId": 322820,
@@ -49,16 +49,16 @@
       "commitSha": "ba95998da076270d7d92d544d8ec8aeb0bdf8ab8"
     },
     {
-      "barId": 322850,
+      "barId": 324916,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "bf5c14cc242233fa4309ebc8e6254c290f511661"
+      "commitSha": "32593ca81f8aae7b0d41c1a7198529c3365106b8"
     },
     {
-      "barId": 322653,
+      "barId": 324622,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "2806fa446eb407ee3a4ea48c620a0b2b46fe02aa"
+      "commitSha": "07e5dbddc0154145ed167c08fdedcc64e0e5613b"
     },
     {
       "barId": 311986,
@@ -67,10 +67,10 @@
       "commitSha": "898dc0f10fd374e0d67cae4aaeb24d326c3320cd"
     },
     {
-      "barId": 318284,
+      "barId": 324207,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "2f0706500f7cd2e165498edd87d23891cb24b197"
+      "commitSha": "8cdb39a4c8c950016b96f823612816194cc51b7e"
     },
     {
       "barId": 317177,

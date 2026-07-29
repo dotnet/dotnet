@@ -19,8 +19,6 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 
         public JsonWebKey JsonWebKey { get; set; }
 
-        public JsonWebKey6x JsonWebKey6x { get; set; }
-
         public ExpectedException JsonReaderExpectedException { get; set; } = ExpectedException.NoExceptionExpected;
 
         public ExpectedException JsonSerializerExpectedException { get; set; } = ExpectedException.NoExceptionExpected;
