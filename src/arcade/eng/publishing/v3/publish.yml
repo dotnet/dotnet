@@ -98,12 +98,6 @@ stages:
     - task: NuGetAuthenticate@1
       displayName: 'Authenticate to AzDO Feeds'
 
-    - task: PowerShell@2
-      displayName: Enable cross-org publishing
-      inputs:
-        filePath: $(System.DefaultWorkingDirectory)/eng/common/enable-cross-org-publishing.ps1
-        arguments: -token $(dn-bot-all-orgs-artifact-feeds-rw)
-
     - task: AzureCLI@2
       displayName: Get aka.ms client certificate
       inputs:
@@ -150,7 +144,6 @@ stages:
           /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/'
           /p:PackageBasePath='$(Build.ArtifactStagingDirectory)/PackageArtifacts/'
           /p:PublishInstallersAndChecksums=true
-          /p:AzureDevOpsFeedsKey='$(dn-bot-all-orgs-artifact-feeds-rw)'
           /p:AkaMSClientId=$(akams-app-id)
           /p:AkaMSClientCertificate=$(Agent.TempDirectory)/akamsclientcert.pfx
           ${{ parameters.artifactsPublishingAdditionalParameters }} 
