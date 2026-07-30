@@ -6,8 +6,8 @@
 using System.CommandLine;
 using Microsoft.DotNet.Cli.Extensions;
 using Microsoft.DotNet.Cli.Utils;
-using Microsoft.DotNet.ProjectTools;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.DotNet.FileBasedPrograms;
 
 namespace Microsoft.DotNet.Cli.Commands.NuGet;
 
