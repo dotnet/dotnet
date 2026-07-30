@@ -286,10 +286,6 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>b25932e8d128b5242f1d89691f8e8171b82774c0</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Mvc.Api.Analyzers" Version="11.0.0-preview.7.26363.117">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>b25932e8d128b5242f1d89691f8e8171b82774c0</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.Extensions.FileProviders.Embedded" Version="11.0.0-preview.7.26363.117">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>b25932e8d128b5242f1d89691f8e8171b82774c0</Sha>
