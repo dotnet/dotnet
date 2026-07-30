@@ -48,7 +48,7 @@
     <SystemMemoryVersion>4.6.3</SystemMemoryVersion>
     <SystemNumericsVectorsVersion>4.6.1</SystemNumericsVectorsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.2</SystemRuntimeCompilerServicesUnsafeVersion>
-    <SystemSecurityCryptographyPkcsVersion>10.0.8</SystemSecurityCryptographyPkcsVersion>
+    <SystemSecurityCryptographyPkcsVersion>10.0.10</SystemSecurityCryptographyPkcsVersion>
     <SystemSecurityCryptographyXmlVersion>10.0.10</SystemSecurityCryptographyXmlVersion>
     <SystemThreadingTasksExtensionsVersion>4.6.3</SystemThreadingTasksExtensionsVersion>
     <SystemValueTupleVersion>4.6.2</SystemValueTupleVersion>
@@ -59,7 +59,7 @@
     <SystemMemoryVersion>4.6.3</SystemMemoryVersion>
     <SystemNumericsVectorsVersion>4.6.1</SystemNumericsVectorsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.2</SystemRuntimeCompilerServicesUnsafeVersion>
-    <SystemSecurityCryptographyPkcsVersion>10.0.8</SystemSecurityCryptographyPkcsVersion>
+    <SystemSecurityCryptographyPkcsVersion>10.0.10</SystemSecurityCryptographyPkcsVersion>
     <SystemSecurityCryptographyXmlVersion>10.0.10</SystemSecurityCryptographyXmlVersion>
     <SystemThreadingTasksExtensionsVersion>4.6.3</SystemThreadingTasksExtensionsVersion>
     <SystemValueTupleVersion>4.6.2</SystemValueTupleVersion>
