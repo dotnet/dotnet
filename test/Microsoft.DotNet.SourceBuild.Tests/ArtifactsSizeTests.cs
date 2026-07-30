@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
@@ -27,7 +26,7 @@ public class ArtifactsSizeTests : SdkTests
 
     public ArtifactsSizeTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
-    [ConditionalFact(typeof(ArtifactsSizeTests), nameof(IncludeArtifactsSizeTests))]
+    [Fact(Skip = "Condition not met: IncludeArtifactsSizeTests", SkipUnless = nameof(IncludeArtifactsSizeTests))]
     public void CheckZeroSizeArtifacts()
     {
         ProcessTarball(Config.SdkTarballPath!, SdkType);

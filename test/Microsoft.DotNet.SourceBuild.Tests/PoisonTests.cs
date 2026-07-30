@@ -6,7 +6,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests
 {
@@ -16,7 +15,7 @@ namespace Microsoft.DotNet.SourceBuild.Tests
 
         public PoisonTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
         
-        [ConditionalFact(typeof(PoisonTests), nameof(IncludePoisonTests))]
+        [Fact(Skip = "Condition not met: IncludePoisonTests", SkipUnless = nameof(IncludePoisonTests))]
         public void VerifyUsage()
         {
             if (!File.Exists(Config.PoisonReportPath))

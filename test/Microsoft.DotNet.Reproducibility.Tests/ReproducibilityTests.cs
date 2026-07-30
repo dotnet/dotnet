@@ -11,7 +11,6 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.Reproducibility.Tests;
 
@@ -31,7 +30,7 @@ public class ReproducibilityTests
     public static bool IncludeSourceBuiltArtifactsReproducibilityTests =>
         !string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath1) && !string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath2);
 
-    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeMsftReproducibilityTests))]
+    [Fact(Skip = "Condition not met: IncludeMsftReproducibilityTests", SkipUnless = nameof(IncludeMsftReproducibilityTests))]
     public void MsftSdkTarballIsReproducible()
     {
         CompareTarballs(
@@ -43,7 +42,7 @@ public class ReproducibilityTests
             updatedBaselineFileName: "UpdatedMsftReproducibilityBaseline.diff");
     }
 
-    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeSourceBuiltReproducibilityTests))]
+    [Fact(Skip = "Condition not met: IncludeSourceBuiltReproducibilityTests", SkipUnless = nameof(IncludeSourceBuiltReproducibilityTests))]
     public void SourceBuiltSdkTarballIsReproducible()
     {
         CompareTarballs(
@@ -55,7 +54,7 @@ public class ReproducibilityTests
             updatedBaselineFileName: "UpdatedSourceBuiltReproducibilityBaseline.diff");
     }
 
-    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeSourceBuiltArtifactsReproducibilityTests))]
+    [Fact(Skip = "Condition not met: IncludeSourceBuiltArtifactsReproducibilityTests", SkipUnless = nameof(IncludeSourceBuiltArtifactsReproducibilityTests))]
     public void SourceBuiltArtifactsTarballIsReproducible()
     {
         CompareTarballs(

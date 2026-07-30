@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
@@ -34,7 +33,7 @@ public class SourcelinkTests : SdkTests
     /// <summary>
     /// Verifies that all symbols have valid sourcelinks.
     /// </summary>
-    [ConditionalFact(typeof(SourcelinkTests), nameof(IncludeSourceLinkTests))]
+    [Fact(Skip = "Condition not met: IncludeSourceLinkTests", SkipUnless = nameof(IncludeSourceLinkTests))]
     public void VerifySourcelinks()
     {
         try

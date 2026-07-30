@@ -5,9 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
-using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.Tests;
 
@@ -37,7 +35,7 @@ public class CentralPackageManagementTests
     ///
     /// This test scans all repos in the VMR for this conflict pattern.
     /// </summary>
-    [ConditionalFact(typeof(CentralPackageManagementTests), nameof(IncludeCpmTests))]
+    [Fact(Skip = "Condition not met: IncludeCpmTests", SkipUnless = nameof(IncludeCpmTests))]
     public void ImplicitPackageReferences_ShouldNotConflictWithPackageVersionEntries()
     {
         string repoRoot = Config.RepoRoot!;

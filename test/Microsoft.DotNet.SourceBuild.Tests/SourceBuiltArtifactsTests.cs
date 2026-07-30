@@ -7,9 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
@@ -19,7 +17,7 @@ public class SourceBuiltArtifactsTests : SdkTests
 
     public SourceBuiltArtifactsTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-    [ConditionalFact(typeof(SourceBuiltArtifactsTests), nameof(IncludeSourceBuiltArtifactsTests))]
+    [Fact(Skip = "Condition not met: IncludeSourceBuiltArtifactsTests", SkipUnless = nameof(IncludeSourceBuiltArtifactsTests))]
     public void VerifyVersionFile()
     {
         Assert.NotNull(Config.SourceBuiltArtifactsPath);
@@ -60,7 +58,7 @@ public class SourceBuiltArtifactsTests : SdkTests
         }
     }
 
-    [ConditionalFact(typeof(SourceBuiltArtifactsTests), nameof(IncludeSourceBuiltArtifactsTests))]
+    [Fact(Skip = "Condition not met: IncludeSourceBuiltArtifactsTests", SkipUnless = nameof(IncludeSourceBuiltArtifactsTests))]
     public void EnsureNoSymbolsNupkgs()
     {
         Assert.NotNull(Config.SourceBuiltArtifactsPath);

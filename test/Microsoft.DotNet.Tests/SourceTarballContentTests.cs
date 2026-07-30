@@ -9,7 +9,6 @@ using System.IO.Compression;
 using System.Linq;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.Tests;
 
@@ -41,7 +40,7 @@ public class SourceTarballContentTests
     /// Detects files excluded by export-ignore directives in .gitattributes files.
     /// See https://github.com/dotnet/source-build/issues/5472
     /// </summary>
-    [ConditionalFact(typeof(SourceTarballContentTests), nameof(IncludeSourceTarballContentTests))]
+    [Fact(Skip = "Condition not met: IncludeSourceTarballContentTests", SkipUnless = nameof(IncludeSourceTarballContentTests))]
     public void CompareSourceTarballToGitRepository()
     {
         string repoRoot = Config.RepoRoot!;

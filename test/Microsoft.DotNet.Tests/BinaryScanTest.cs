@@ -6,8 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Xunit;
-using Xunit.Abstractions;
-using TestUtilities;
 
 namespace Microsoft.DotNet.Tests
 {
@@ -22,7 +20,7 @@ namespace Microsoft.DotNet.Tests
             OutputHelper = outputHelper;
         }
 
-        [ConditionalFact(typeof(BinaryScanTest), nameof(IncludeBinaryScanTest))]
+        [Fact(Skip = "Condition not met: IncludeBinaryScanTest", SkipUnless = nameof(IncludeBinaryScanTest))]
         public void ScanForBinaries()
         {
             Assert.True(

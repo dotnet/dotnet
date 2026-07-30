@@ -10,7 +10,6 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
@@ -147,7 +146,7 @@ public class LicenseScanTests : TestBase
         _targetName = dirName == repoName ? repoName : $"{repoName}.{dirName}";
     }
 
-    [ConditionalFact(typeof(LicenseScanTests), nameof(IncludeLicenseScanTests))]
+    [Fact(Skip = "Condition not met: IncludeLicenseScanTests", SkipUnless = nameof(IncludeLicenseScanTests))]
     public void ScanForLicenses()
     {
         Assert.NotNull(Config.LicenseScanPath);

@@ -9,7 +9,6 @@ using System.Security.AccessControl;
 using System.Threading.Tasks;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
@@ -27,7 +26,7 @@ public class OmniSharpTests : SdkTests
 
     public OmniSharpTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-    [ConditionalTheoryAttribute(typeof(OmniSharpTests), nameof(IncludeOmniSharpTests))]
+    [Theory(Skip = "Condition not met: IncludeOmniSharpTests", SkipUnless = nameof(IncludeOmniSharpTests))]
     [InlineData(DotNetTemplate.BlazorWasm)]
     [InlineData(DotNetTemplate.ClassLib)]
     [InlineData(DotNetTemplate.Console)]

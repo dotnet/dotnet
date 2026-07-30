@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 using Microsoft.DotNet.UnifiedBuild.Tasks;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;

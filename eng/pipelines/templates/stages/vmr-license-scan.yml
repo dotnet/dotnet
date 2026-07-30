@@ -125,9 +125,8 @@ stages:
     - script: >
         dotnet test
         $(Build.SourcesDirectory)/test/Microsoft.DotNet.SourceBuild.Tests/Microsoft.DotNet.SourceBuild.Tests.csproj
-        --filter "FullyQualifiedName=Microsoft.DotNet.SourceBuild.Tests.LicenseScanTests.ScanForLicenses"
-        --logger:'trx;LogFileName=$(Agent.JobName)_LicenseScan.trx'
-        --logger:'console;verbosity=detailed'
+        --filter-method "Microsoft.DotNet.SourceBuild.Tests.LicenseScanTests.ScanForLicenses"
+        --output Detailed
         -c Release
         -bl:$(Build.SourcesDirectory)/artifacts/log/Debug/BuildTests_$(date +"%m%d%H%M%S").binlog
         -flp:LogFile=$(Build.SourcesDirectory)/artifacts/logs/BuildTests_$(date +"%m%d%H%M%S").log
