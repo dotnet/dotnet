@@ -44,7 +44,7 @@ namespace NuGet.SolutionRestoreManager
             IComponentModel componentModel = await this.GetServiceAsync<SComponentModel, IComponentModel>();
 
             SolutionRestoreBuildHandler restoreHandler = componentModel.GetService<SolutionRestoreBuildHandler>();
-            await restoreHandler.InitializeAsync(this);
+            await restoreHandler.InitializeAsync(this, componentModel);
             _handler = restoreHandler;
 
             await SolutionRestoreCommand.InitializeAsync(this);

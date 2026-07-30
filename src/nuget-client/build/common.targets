@@ -13,6 +13,21 @@
     <DefineConstants Condition="'$(TargetFramework)' != '$(NETFXTargetFramework)'">$(DefineConstants);IS_CORECLR</DefineConstants>
   </PropertyGroup>
 
+  <!--
+    Microsoft.VisualStudio.ProjectSystem a dependency on Microsoft.Build.Tasks.Core, which in turn has a dependency on
+    System.Security.Cryptography.Xml, which has had more than one security vulnerabilities in the past.
+    While we use ProjectSystem APIs, we don't directly use the other two, and we only use ProjectSystem at build time,
+    not runtime or tests.
+    Therefore, we'll abuse PrunePackageReference in a way it wasn't intended, to exclude these packages from the graph,
+    so we never need to worry about NuGetAudit warnings or internal scanning tools again for these packages.
+  -->
+  <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <RestoreEnablePackagePruning>true</RestoreEnablePackagePruning>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PrunePackageReference Include="Microsoft.Build.Tasks.Core" Version="$(MicrosoftBuildVersion)" />
+  </ItemGroup>
+
   <!-- Include shared files for test netcore projects -->
   <ItemGroup Condition="'$(SkipShared)' != 'true' AND '$(TestProject)' == 'true' ">
     <Compile Include="$(BuildCommonDirectory)TestShared\*.cs" />
