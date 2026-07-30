@@ -411,6 +411,22 @@
       "tool": "binskim",
       "ruleId": "BA2018",
       "createdDate": "2026-07-27 01:55:14Z"
+    },
+    "f2e40fb2d23e3c0ffada5bb10db86e970f7d8900a55ad931df484c6f182831a0": {
+      "signature": "f2e40fb2d23e3c0ffada5bb10db86e970f7d8900a55ad931df484c6f182831a0",
+      "alternativeSignatures": [
+        "aae087ef575b5d6db7092f0cfc8c77072602ca35eebd0cdc0d69de64ef23bcef",
+        "e1ce406984ee010ea22029e03c41bcda3c1ddfd2d975cd46843f00bd505b74b8",
+        "8f26625e8ac289307416f2c8b7da70c4832546db8be7d2c77fffb2152e8fbbed"
+      ],
+      "target": "runtimes/win-x86/lib/net11.0/DirectWriteForwarder.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260729.23/Microsoft_WindowsDesktop_App_Runtime_win-x86_11_0_0-rc_1_26379_123_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-07-30 04:35:19Z"
     }
   }
 }
