@@ -40,6 +40,23 @@
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.Package.dll" CertificateName="3PartySHA2" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(ArcadeSigningValidation)' == 'true'">
+    <ItemsToSign Remove="@(ItemsToSign)" />
+    <ItemsToSign Include="$(ArtifactsPackagesDir)**\*" />
+    <ItemsToSign Include="$(VisualStudioSetupOutputPath)**\*.vsix" />
+
+    <!-- Test fixture assemblies without Microsoft copyright must use a third-party certificate. -->
+    <FileSignInfo Include="ProjectOne.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="ContainerOne.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="ContainerTwo.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="EmptyPKT.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="CustomTargetFrameworkAttribute.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="VisualStudio.Mac.Banana.dll" CertificateName="3PartySHA2" />
+
+    <!-- The Debian fixture contains symbolic links that cannot be traversed on Windows. -->
+    <FileSignInfo Include="data.tar.gz" CertificateName="None" DoNotUnpack="true" />
+  </ItemGroup>
+
   <!--
     Arcade does not contribute any artifacts that will be redisted by shipping packages in other components
     while building the VMR. Therefore, we can safely skip signing the artifacts.
