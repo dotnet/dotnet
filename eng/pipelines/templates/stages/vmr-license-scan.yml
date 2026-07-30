@@ -122,19 +122,8 @@ stages:
         artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
     steps:
 
-    # The shared source-build test container ships the latest .NET 10 SDK, which does not
-    # satisfy this branch's global.json (different feature band), so the container's system
-    # 'dotnet' cannot run the tests. Install the global.json-matched SDK and use it instead.
-    # Tracking: dotnet/source-build#5623
-    - script: |
-        source ./eng/common/tools.sh
-        InitializeDotNetCli true
-        echo "##vso[task.setvariable variable=DotNetPath]$_InitializeDotNetCli"
-      displayName: Install .NET SDK
-      workingDirectory: $(Build.SourcesDirectory)
-
     - script: >
-        $(DotNetPath)/dotnet test
+        ./eng/common/dotnet.sh test
         $(Build.SourcesDirectory)/test/Microsoft.DotNet.SourceBuild.Tests/Microsoft.DotNet.SourceBuild.Tests.csproj
         --filter "FullyQualifiedName=Microsoft.DotNet.SourceBuild.Tests.LicenseScanTests.ScanForLicenses"
         --logger:'trx;LogFileName=$(Agent.JobName)_LicenseScan.trx'
