@@ -1,16 +1,30 @@
 #nullable enable
 ~const Microsoft.IdentityModel.Tokens.ConfirmationClaimTypes.Jkt = "jkt" -> string
+~const Microsoft.IdentityModel.Tokens.JsonWebAlgorithmsKeyTypes.Akp = "AKP" -> string
+~const Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.Priv = "priv" -> string
+~const Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.Pub = "pub" -> string
+~const Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa44 = "ML-DSA-44" -> string
+~const Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa65 = "ML-DSA-65" -> string
+~const Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa87 = "ML-DSA-87" -> string
 ~Microsoft.IdentityModel.Tokens.Cnf.Jkt.get -> string
 ~Microsoft.IdentityModel.Tokens.Experimental.MessageDetail.Message.get -> string
 ~Microsoft.IdentityModel.Tokens.Experimental.MessageDetail.MessageDetail(string formatString, params object[] parameters) -> void
 ~Microsoft.IdentityModel.Tokens.Experimental.MessageDetail.MessageDetail(string message) -> void
 ~Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError>.Equals(Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError> other) -> bool
+~Microsoft.IdentityModel.Tokens.JsonWebKey.Priv.get -> string
+~Microsoft.IdentityModel.Tokens.JsonWebKey.Priv.set -> void
+~Microsoft.IdentityModel.Tokens.JsonWebKey.Pub.get -> string
+~Microsoft.IdentityModel.Tokens.JsonWebKey.Pub.set -> void
+~Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.MLDsa.get -> System.Security.Cryptography.MLDsa
+~Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.MlDsaSecurityKey(System.Security.Cryptography.MLDsa mlDsa) -> void
 ~Microsoft.IdentityModel.Tokens.SecurityTokenUnableToValidateException.SecurityTokenUnableToValidateException(Microsoft.IdentityModel.Tokens.ValidationFailure validationFailure, string message) -> void
 ~override Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError>.Equals(object obj) -> bool
 ~override Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError>.ToString() -> string
+~override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.ComputeJwkThumbprint() -> byte[]
 ~static Microsoft.IdentityModel.Tokens.Experimental.MessageDetail.NullParameter(string parameterName) -> Microsoft.IdentityModel.Tokens.Experimental.MessageDetail
 ~static Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError>.operator !=(Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError> left, Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError> right) -> bool
 ~static Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError>.operator ==(Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError> left, Microsoft.IdentityModel.Tokens.Experimental.ValidationResult<TResult, TError> right) -> bool
+~static Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.ConvertFromMlDsaSecurityKey(Microsoft.IdentityModel.Tokens.MlDsaSecurityKey key) -> Microsoft.IdentityModel.Tokens.JsonWebKey
 ~virtual Microsoft.IdentityModel.Tokens.AlgorithmValidator.Invoke(string algorithm, Microsoft.IdentityModel.Tokens.SecurityKey securityKey, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> bool
 ~virtual Microsoft.IdentityModel.Tokens.AudienceValidator.Invoke(System.Collections.Generic.IEnumerable<string> audiences, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> bool
 ~virtual Microsoft.IdentityModel.Tokens.IssuerSigningKeyResolver.Invoke(string token, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, string kid, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.SecurityKey>
@@ -586,6 +600,8 @@ Microsoft.IdentityModel.Tokens.KeyWrapProvider
 Microsoft.IdentityModel.Tokens.KeyWrapProvider.Dispose() -> void
 Microsoft.IdentityModel.Tokens.KeyWrapProvider.KeyWrapProvider() -> void
 Microsoft.IdentityModel.Tokens.LifetimeValidator
+Microsoft.IdentityModel.Tokens.MlDsaSecurityKey
+Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.Dispose() -> void
 Microsoft.IdentityModel.Tokens.PrivateKeyStatus
 Microsoft.IdentityModel.Tokens.PrivateKeyStatus.DoesNotExist = 1 -> Microsoft.IdentityModel.Tokens.PrivateKeyStatus
 Microsoft.IdentityModel.Tokens.PrivateKeyStatus.Exists = 0 -> Microsoft.IdentityModel.Tokens.PrivateKeyStatus
@@ -1047,6 +1063,10 @@ override Microsoft.IdentityModel.Tokens.JsonWebKey.KeyId.get -> string
 override Microsoft.IdentityModel.Tokens.JsonWebKey.KeyId.set -> void
 override Microsoft.IdentityModel.Tokens.JsonWebKey.KeySize.get -> int
 override Microsoft.IdentityModel.Tokens.JsonWebKey.ToString() -> string
+override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.CanComputeJwkThumbprint() -> bool
+override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.HasPrivateKey.get -> bool
+override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.KeySize.get -> int
+override Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.PrivateKeyStatus.get -> Microsoft.IdentityModel.Tokens.PrivateKeyStatus
 override Microsoft.IdentityModel.Tokens.RsaKeyWrapProvider.Algorithm.get -> string
 override Microsoft.IdentityModel.Tokens.RsaKeyWrapProvider.Context.get -> string
 override Microsoft.IdentityModel.Tokens.RsaKeyWrapProvider.Context.set -> void
@@ -1274,6 +1294,7 @@ virtual Microsoft.IdentityModel.Tokens.Experimental.ValidationError.GetException
 virtual Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters.Clone() -> Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters!
 virtual Microsoft.IdentityModel.Tokens.Experimental.ValidationParameters.CreateClaimsIdentity(Microsoft.IdentityModel.Tokens.SecurityToken! securityToken, string! issuer) -> System.Security.Claims.ClaimsIdentity!
 virtual Microsoft.IdentityModel.Tokens.InMemoryCryptoProviderCache.Dispose(bool disposing) -> void
+virtual Microsoft.IdentityModel.Tokens.MlDsaSecurityKey.Dispose(bool disposing) -> void
 virtual Microsoft.IdentityModel.Tokens.RsaKeyWrapProvider.IsSupportedAlgorithm(Microsoft.IdentityModel.Tokens.SecurityKey key, string algorithm) -> bool
 virtual Microsoft.IdentityModel.Tokens.SecurityKey.CanComputeJwkThumbprint() -> bool
 virtual Microsoft.IdentityModel.Tokens.SecurityKey.ComputeJwkThumbprint() -> byte[]

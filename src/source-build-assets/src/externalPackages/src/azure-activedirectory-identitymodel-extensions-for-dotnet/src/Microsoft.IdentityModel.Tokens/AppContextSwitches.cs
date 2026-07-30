@@ -99,6 +99,20 @@ namespace Microsoft.IdentityModel.Tokens
         internal static bool UseCapitalizedXMLTypeAttr => _useCapitalizedXMLTypeAttr ??= (AppContext.TryGetSwitch(UseCapitalizedXMLTypeAttrSwitch, out bool useCapitalizedXMLTypeAttr) && useCapitalizedXMLTypeAttr);
 
         /// <summary>
+        /// Controls whether the Signed HTTP Request 'p' (path) claim is compared case-sensitively (ordinal) per RFC 3986 section 3.3.
+        /// On the 8.x line the comparison is case-insensitive (OrdinalIgnoreCase) by default; set the switch to <c>true</c> to opt in to the case-sensitive (Ordinal) comparison.
+        /// </summary>
+        internal const string UseCaseSensitivePClaimComparisonSwitch = "Switch.Microsoft.IdentityModel.SignedHttpRequest.UseCaseSensitivePClaimComparison";
+
+        // Single source of truth for the default, referenced by both the property below and ResetAllSwitches() so they cannot diverge.
+        // 9.x: true (secure, case-sensitive). 8.x servicing (this line): false (legacy, case-insensitive) to stay non-breaking.
+        internal const bool UseCaseSensitivePClaimComparisonDefault = false;
+
+        private static bool? _useCaseSensitivePClaimComparison;
+
+        internal static bool UseCaseSensitivePClaimComparison => _useCaseSensitivePClaimComparison ??= (AppContext.TryGetSwitch(UseCaseSensitivePClaimComparisonSwitch, out bool useCaseSensitivePClaimComparison) ? useCaseSensitivePClaimComparison : UseCaseSensitivePClaimComparisonDefault);
+
+        /// <summary>
         /// Used for testing to reset all switches to its default value.
         /// </summary>
         internal static void ResetAllSwitches()
@@ -123,6 +137,11 @@ namespace Microsoft.IdentityModel.Tokens
 
             _useCapitalizedXMLTypeAttr = null;
             AppContext.SetSwitch(UseCapitalizedXMLTypeAttrSwitch, false);
+
+            // Opt-in switch (default false on the 8.x line). Reset to the declared default rather than a hardcoded value
+            // because AppContext cannot truly un-set a switch.
+            _useCaseSensitivePClaimComparison = null;
+            AppContext.SetSwitch(UseCaseSensitivePClaimComparisonSwitch, UseCaseSensitivePClaimComparisonDefault);
         }
     }
 }
