@@ -186,25 +186,15 @@ addresses each:
    wait" scheme. → Resubmission-not-possible is treated as an actionable hard
    failure so the invocation fails fast instead of hanging (§2.3.3).
 
-Each of these cases is pinned by a pipeline-emulating test in
-`JobMonitorRunnerTests` (the `AttemptScoped_*` suite): `RetryOnlyMonitor`
-(case 1), `StrandedWaitingPreviousWork` (cases 2/3, mirroring #17156),
-`FastRerun_CurrentIncarnationExists` (case 4),
-`UnlinkedRerunDuplicates_HigherAttemptWinsOutcome` (case 5), and
-`UnresubmittablePreviousWork_FailsFast` (case 6). The `MultiAttempt_*` tests
-additionally exercise the end-to-end lineage across five stage attempts —
-including an attempt in which the monitor never ran — verifying that only
-still-unfinished streams are carried forward and that a stream which has passed
-in any prior attempt is never resubmitted again.
-
 ### 2.4 Upload invariants
 
 Upload is restart-resilient but logically independent from retry.
 
-1. The same Helix job's test results are never uploaded twice. The durable
+1. A Helix job has at most one durably completed, tagged test run. The durable
    deduplication signal is the Helix-job-name tag on completed AzDO test runs.
-2. For every completed Helix job not already uploaded, all available test
-   results are uploaded.
+   An interrupted, untagged upload is intentionally replayed.
+2. For every completed Helix job without a completed, tagged upload, all
+   available test results are uploaded.
 3. Uploads happen in lineage order — oldest incarnation first. If both an
    original job and its resubmission have completed and neither has been
    uploaded, the original uploads first.
@@ -235,15 +225,17 @@ Exit code is `0` only when both checks pass; otherwise `1`. Cancellation
 The runner must be safe to re-run after any abrupt termination. In
 particular:
 
-- Partial uploads must not cause duplicate uploads on the next run.
+- Completed, tagged uploads must not be repeated. Interrupted, untagged uploads
+  are intentionally replayed on the next run.
 - Retry candidates must be rediscovered from Helix job properties, not from
   prior in-memory state.
-- Cancellation must drain in-flight uploads before exiting so partially
-  uploaded results are not lost.
-- On cancellation, in-flight Helix jobs should receive a best-effort cancel
-  request even though the runner's own cancellation token has already
-  fired. This requires a fresh, short-lived cancellation budget for the
-  cleanup path.
+- Cancellation must not wait for pending or in-flight uploads. An upload that
+  does not complete remains untagged and is rediscovered and re-uploaded by a
+  later invocation.
+- On cancellation, immediately emit the timeout report, then best-effort cancel
+  the latest in-flight Helix job incarnation in each lineage even though the
+  runner's own cancellation token has already fired. This cleanup uses a fresh,
+  bounded cancellation token so it cannot extend shutdown indefinitely.
 
 Re-attach spans stage attempts. Within the same attempt (a monitor job-retry or
 a crashed-and-restarted monitor process) the runner re-attaches to the same
@@ -326,8 +318,10 @@ or the runner will silently fail to see its own jobs.
 3. Perform the one-shot retry pass (§5.3).
 4. Enter the poll loop (§5.4) until the build finishes or cancellation
    fires.
-5. On cancellation (timeout), drain pending uploads, emit a timeout report
-   (§5.6), best-effort cancel in-flight Helix jobs (§2.6), and exit `1`.
+5. On cancellation (timeout), do not wait for pending uploads. Immediately emit
+   a timeout report (§5.6), use a fresh bounded token to best-effort cancel the
+   latest in-flight Helix jobs (§2.6), and exit `1`. Incomplete uploads remain
+   untagged and are retried by a later invocation.
 6. On normal completion, emit the final summary and exit per §2.5.
 
 ### 5.3 Retry pass
@@ -455,16 +449,16 @@ lines are plain logger output.
 
 ### 5.9 Test-result upload pipeline
 
-Uploads are fire-and-forget tasks tracked for later draining:
+Uploads are asynchronous tasks tracked for normal completion:
 
 - Each upload is queued asynchronously and tracked. Multiple uploads may
   proceed concurrently.
 - An upload retries indefinitely on transient errors; only cancellation
   exits the retry loop.
-- Both the normal-termination and cancellation paths wait for queued
-  uploads to drain before exiting. The cancellation drain uses a fresh
-  cancellation budget so uploads in progress when the runner token fires
-  are not abandoned.
+- The normal-termination path waits for queued uploads to drain before exiting.
+- The cancellation path does not wait for pending or in-flight uploads. If an
+  upload has not completed and applied its Helix-job tag, it remains untagged;
+  durable-state discovery causes a later invocation to upload it again.
 
 The upload sequence per job is: create (or reuse) a test run with the plain
 `{TestRunName}`, download results, upload them, complete the test run and tag
@@ -483,8 +477,8 @@ least one work item), or `Waiting` (no work items observed yet).
 
 ## 6. Externally observable formats
 
-These shapes are observed by other tools, downstream parsers, or tests and
-must be preserved:
+These shapes are observed by other tools or downstream parsers and must be
+preserved:
 
 - AzDO test-run tag: `helixjob<guid-without-dashes>`, applied to a completed
   test run as an object-form tag (`{ "name": "..." }`).
