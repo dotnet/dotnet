@@ -3,11 +3,11 @@
 
 #nullable disable
 
-using System.CommandLine;
 using Microsoft.DotNet.Cli.Extensions;
 using Microsoft.DotNet.Cli.Utils;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.DotNet.FileBasedPrograms;
+using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.DotNet.Cli.Commands.NuGet;
 
