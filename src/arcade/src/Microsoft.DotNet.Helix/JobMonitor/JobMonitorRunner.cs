@@ -67,16 +67,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             _delayFunc = delayFunc ?? Task.Delay;
             Directory.CreateDirectory(_options.WorkingDirectory);
 
-            // The Helix submitter (JobSender) records each job's Source as
-            //   {prefix}/{teamProject}/{repository}/{branch}
-            // where prefix is derived from BUILD_REASON / SYSTEM_TEAMPROJECT. Mirror that
-            // derivation here so the monitor's Job.ListAsync query returns the same set of
-            // jobs regardless of whether the build is a PR, scheduled, manual, IndividualCI,
-            // BatchedCI, or internal official run.
             _helixSource = HelixJobSource.Compute(
                 _options.BuildReason,
                 _options.TeamProject,
-                $"{_options.Organization}/{_options.RepositoryName}",
+                _options.Organization,
+                _options.RepositoryName,
                 _options.SourceBranch);
 
             _reporter = new StatusReporter(_logger, _options, _helix, _state);
@@ -329,7 +324,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             {
                 await _reporter.LogPollStatusAsync(stageJobs, completedJobNames, cancellationToken);
                 loopState.LastObservedJobCount = stageJobs.Count;
-                loopState.LastObservedCompletedCount = completedJobs.Count;
+                loopState.LastObservedCompletedCount = completedJobNames.Count;
                 loopState.LastStatusLogAt = DateTime.UtcNow;
             }
 

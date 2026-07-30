@@ -36,7 +36,7 @@ Instructions for setting up the GitHub to dev.azure.com/dnceng/internal mirror a
 
 Azure DevOps has detailed documentation on how to create builds that are linked from GitHub repositories which can be found [here](https://docs.microsoft.com/en-us/azure/devops/build-release/actions/ci-build-github?view=vsts); however, before going through those steps, keep in mind that our process differs from the steps in the official documentation in a few key places:
 
-* The YAML tutorial links to a .NET Core sample repository for an example of a simple `azure-pipelines.yml` file. Instead of using that repository, use [our sample repository](https://github.com/dotnet/arcade-validation).
+* The YAML tutorial links to a .NET Core sample repository for an example of a simple `azure-pipelines.yml` file. Instead of using that repository, use one of our dotnet repositories (for example, [dotnet/arcade](https://github.com/dotnet/arcade)).
 
 ## Azure DevOps service connection
 
