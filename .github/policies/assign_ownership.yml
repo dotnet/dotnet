@@ -9,6 +9,11 @@ configuration:
       if:
       - payloadType: Pull_Request
       - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
+      - or:
         - filesMatchPattern:
             pattern: 'src/arcade/.*'
             matchAny: true
@@ -21,6 +26,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/aspnetcore/.*'
@@ -35,6 +45,11 @@ configuration:
     #   if:
     #   - payloadType: Pull_Request
     #   - or:
+    #     - isAction:
+    #         action: Opened
+    #     - isAction:
+    #         action: Synchronize
+    #   - or:
     #     - filesMatchPattern:
     #         pattern: 'src/cecil/.*'
     #         matchAny: true
@@ -47,6 +62,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/command-line-api/.*'
@@ -61,6 +81,11 @@ configuration:
       if:
       - payloadType: Pull_Request
       - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
+      - or:
         - filesMatchPattern:
             pattern: 'src/deployment-tools/.*'
             matchAny: true
@@ -73,6 +98,11 @@ configuration:
     # - description: 
     #   if:
     #   - payloadType: Pull_Request
+    #   - or:
+    #     - isAction:
+    #         action: Opened
+    #     - isAction:
+    #         action: Synchronize
     #   - or:
     #     - filesMatchPattern:
     #         pattern: 'src/diagnostics/.*'
@@ -87,6 +117,11 @@ configuration:
       if:
       - payloadType: Pull_Request
       - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
+      - or:
         - filesMatchPattern:
             pattern: 'src/efcore/.*'
             matchAny: true
@@ -99,6 +134,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/emsdk/.*'
@@ -113,6 +153,11 @@ configuration:
       if:
       - payloadType: Pull_Request
       - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
+      - or:
         - filesMatchPattern:
             pattern: 'src/fsharp/.*'
             matchAny: true
@@ -125,6 +170,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/msbuild/.*'
@@ -139,6 +189,11 @@ configuration:
       if:
       - payloadType: Pull_Request
       - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
+      - or:
         - filesMatchPattern:
             pattern: 'src/nuget-client/.*'
             matchAny: true
@@ -151,6 +206,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/razor/.*'
@@ -165,6 +225,11 @@ configuration:
       if:
       - payloadType: Pull_Request
       - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
+      - or:
         - filesMatchPattern:
             pattern: 'src/roslyn/.*'
             matchAny: true
@@ -177,6 +242,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/runtime/.*'
@@ -191,6 +261,11 @@ configuration:
     #   if:
     #   - payloadType: Pull_Request
     #   - or:
+    #     - isAction:
+    #         action: Opened
+    #     - isAction:
+    #         action: Synchronize
+    #   - or:
     #     - filesMatchPattern:
     #         pattern: 'src/scenario-tests/.*'
     #         matchAny: true
@@ -203,6 +278,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/sdk/.*'
@@ -217,6 +297,11 @@ configuration:
       if:
       - payloadType: Pull_Request
       - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
+      - or:
         - filesMatchPattern:
             pattern: 'src/source-build-assets/.*'
             matchAny: true
@@ -229,6 +314,11 @@ configuration:
     # - description: 
     #   if:
     #   - payloadType: Pull_Request
+    #   - or:
+    #     - isAction:
+    #         action: Opened
+    #     - isAction:
+    #         action: Synchronize
     #   - or:
     #     - filesMatchPattern:
     #         pattern: 'src/sourcelink/.*'
@@ -243,6 +333,11 @@ configuration:
     #   if:
     #   - payloadType: Pull_Request
     #   - or:
+    #     - isAction:
+    #         action: Opened
+    #     - isAction:
+    #         action: Synchronize
+    #   - or:
     #     - filesMatchPattern:
     #         pattern: 'src/symreader/.*'
     #         matchAny: true
@@ -255,6 +350,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/templating/.*'
@@ -269,6 +369,11 @@ configuration:
       if:
       - payloadType: Pull_Request
       - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
+      - or:
         - filesMatchPattern:
             pattern: 'src/vstest/.*'
             matchAny: true
@@ -281,6 +386,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/windowsdesktop/.*'
@@ -295,6 +405,11 @@ configuration:
       if:
       - payloadType: Pull_Request
       - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
+      - or:
         - filesMatchPattern:
             pattern: 'src/winforms/.*'
             matchAny: true
@@ -307,6 +422,11 @@ configuration:
     - description: 
       if:
       - payloadType: Pull_Request
+      - or:
+        - isAction:
+            action: Opened
+        - isAction:
+            action: Synchronize
       - or:
         - filesMatchPattern:
             pattern: 'src/wpf/.*'
