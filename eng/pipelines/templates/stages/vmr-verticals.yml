@@ -729,6 +729,7 @@ stages:
           - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
             - Browser_Shortstack_wasm
             - Browser_Multithreaded_Shortstack_wasm
+            - Browser_CoreCLR_Shortstack
             - Wasi_Shortstack_wasm
             - Android_Shortstack_arm64
             - Android_Shortstack_arm
