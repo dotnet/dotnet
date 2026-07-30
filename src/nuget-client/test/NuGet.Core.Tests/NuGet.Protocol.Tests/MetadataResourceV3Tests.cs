@@ -67,12 +67,12 @@ namespace NuGet.Protocol.Tests
 
             // Act
             using var sourceCacheContext = new SourceCacheContext();
-            IEnumerable<KeyValuePair<string, NuGetVersion>> latest = await resource.GetLatestVersions(new[] { "deepequal" }, includePrerelease: false, includeUnlisted: true, sourceCacheContext, NullLogger.Instance, CancellationToken.None);
+            IEnumerable<KeyValuePair<string, NuGetVersion?>> latest = await resource.GetLatestVersions(new[] { "deepequal" }, includePrerelease: false, includeUnlisted: true, sourceCacheContext, NullLogger.Instance, CancellationToken.None);
 
             // Assert
-            KeyValuePair<string, NuGetVersion> result = Assert.Single(latest);
+            KeyValuePair<string, NuGetVersion?> result = Assert.Single(latest);
             Assert.Equal("deepequal", result.Key);
-            Assert.Equal("1.4.0", result.Value.ToNormalizedString());
+            Assert.Equal("1.4.0", result.Value!.ToNormalizedString());
         }
 
         [Theory]
