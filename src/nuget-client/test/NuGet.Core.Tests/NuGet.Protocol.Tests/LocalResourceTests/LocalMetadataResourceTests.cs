@@ -110,7 +110,7 @@ namespace NuGet.Protocol.Tests
                     token: CancellationToken.None);
 
                 // Assert
-                Assert.Equal("2.0.1+githash.0faef", result.ToFullString());
+                Assert.Equal("2.0.1+githash.0faef", result!.ToFullString());
             }
         }
 
@@ -144,7 +144,7 @@ namespace NuGet.Protocol.Tests
                     token: CancellationToken.None);
 
                 // Assert
-                Assert.Equal("2.0.2-alpha.1.2.3+githash.0faef", result.ToFullString());
+                Assert.Equal("2.0.2-alpha.1.2.3+githash.0faef", result!.ToFullString());
             }
         }
 

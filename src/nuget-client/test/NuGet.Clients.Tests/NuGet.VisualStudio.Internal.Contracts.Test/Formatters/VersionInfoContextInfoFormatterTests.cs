@@ -20,6 +20,7 @@ namespace NuGet.VisualStudio.Internal.Contracts.Test
         {
             var formatters = new IMessagePackFormatter[]
                 {
+                    PackageDependencyGroupFormatter.Instance,
                     PackageSearchMetadataContextInfoFormatter.Instance,
                     PackageVulnerabilityMetadataContextInfoFormatter.Instance
                 };
