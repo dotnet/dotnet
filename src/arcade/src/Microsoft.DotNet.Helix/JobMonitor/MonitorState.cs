@@ -11,6 +11,14 @@ using Microsoft.DotNet.Helix.JobMonitor.Models;
 
 namespace Microsoft.DotNet.Helix.JobMonitor
 {
+    internal enum TestResultUploadState
+    {
+        Queued,
+        InProgress,
+        DurablyCompleted,
+        Failed,
+    }
+
     /// <summary>
     /// Thread-safe container for every piece of runtime state the monitor accumulates while
     /// observing a single invocation. Mutations from the main poll loop and from background
@@ -28,9 +36,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         // by GetSubmitterChainKey to walk back through PreviousHelixJobName links across polls.
         private readonly Dictionary<string, HelixJobInfo> _associatedJobs = new(StringComparer.OrdinalIgnoreCase);
 
-        // Helix jobs whose results have been uploaded to Azure DevOps in this or a prior
-        // monitor invocation. Seeded on entry from the AzDO test-run tags.
-        private readonly HashSet<string> _processedHelixJobs = new(StringComparer.OrdinalIgnoreCase);
+        // Upload lifecycle for each Helix job observed by this invocation. Jobs discovered from
+        // Azure DevOps completion tags are seeded as DurablyCompleted. A queued/in-progress job
+        // must not be treated as durable: cancellation may abandon it, in which case the absent
+        // tag causes a later invocation to replay the upload.
+        private readonly Dictionary<string, TestResultUploadState> _testResultUploadStates = new(StringComparer.OrdinalIgnoreCase);
 
         // Tracks the latest outcome for each logical work item, keyed by
         // (SubmitterChainKey, WorkItemName). See GetSubmitterChainKey for the keying rationale.
@@ -156,21 +166,54 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             {
                 foreach (string jobName in jobNames)
                 {
-                    _processedHelixJobs.Add(jobName);
+                    _testResultUploadStates[jobName] = TestResultUploadState.DurablyCompleted;
                 }
             }
         }
 
+        public bool TryQueueHelixJobUpload(string jobName)
+        {
+            lock (_sync)
+            {
+                if (_testResultUploadStates.ContainsKey(jobName))
+                {
+                    return false;
+                }
+
+                _testResultUploadStates[jobName] = TestResultUploadState.Queued;
+                return true;
+            }
+        }
+
+        public void MarkHelixJobUploadInProgress(string jobName)
+        {
+            lock (_sync)
+            {
+                _testResultUploadStates[jobName] = TestResultUploadState.InProgress;
+            }
+        }
+
+        public void MarkHelixJobUploadFailed(string jobName)
+        {
+            lock (_sync)
+            {
+                _testResultUploadStates[jobName] = TestResultUploadState.Failed;
+            }
+        }
+
         /// <summary>
-        /// Marks the given Helix job as processed and increments <see cref="ProcessedJobCount"/>.
-        /// Returns true if this is the first time the job was marked.
+        /// Marks the given Helix job as durably completed and increments
+        /// <see cref="ProcessedJobCount"/>. This must only be called after Azure DevOps has
+        /// completed and tagged the test run.
         /// </summary>
         public bool TryMarkHelixJobProcessed(string jobName)
         {
             lock (_sync)
             {
-                if (_processedHelixJobs.Add(jobName))
+                if (!_testResultUploadStates.TryGetValue(jobName, out TestResultUploadState state)
+                    || state != TestResultUploadState.DurablyCompleted)
                 {
+                    _testResultUploadStates[jobName] = TestResultUploadState.DurablyCompleted;
                     _processedJobCount++;
                     return true;
                 }
@@ -183,7 +226,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         {
             lock (_sync)
             {
-                return _processedHelixJobs.Contains(jobName);
+                return _testResultUploadStates.TryGetValue(jobName, out TestResultUploadState state)
+                    && state == TestResultUploadState.DurablyCompleted;
             }
         }
 

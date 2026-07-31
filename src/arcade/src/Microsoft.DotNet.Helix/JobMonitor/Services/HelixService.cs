@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -73,6 +74,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             CancellationToken cancellationToken)
         {
             List<WorkItemTestResults> downloadedFiles = [];
+            List<Exception> transientFailures = [];
             string outputDirectory = _fileSystem.PathCombine(workingDirectory, SanitizeDirName(jobName));
             _fileSystem.CreateDirectory(outputDirectory);
 
@@ -110,6 +112,20 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                         await blobClient.DownloadToAsync(destinationFile, cancellationToken);
                         workItemFiles.Add(destinationFile);
                     }
+                    catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                    {
+                        throw;
+                    }
+                    catch (Exception ex) when (TransientFailureDetector.IsTransient(ex))
+                    {
+                        transientFailures.Add(ex);
+                        _logger.LogWarning(ex,
+                            "Transient failure downloading '{FileName}' for '{JobName}/{WorkItemName}'. "
+                            + "The remaining files will still be attempted before the download is retried.",
+                            file.Name,
+                            jobName,
+                            workItemName);
+                    }
                     catch (Exception ex)
                     {
                         _logger.LogWarning(ex, "Failed to download '{FileName}' for '{JobName}/{WorkItemName}'.", file.Name, jobName, workItemName);
@@ -117,6 +133,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 }
 
                 downloadedFiles.Add(new WorkItemTestResults(jobName, workItemName, workItemFiles));
+            }
+
+            if (transientFailures.Count > 0)
+            {
+                throw new IOException(
+                    $"One or more transient test-result downloads failed for Helix job '{jobName}'.",
+                    new AggregateException(transientFailures));
             }
 
             return downloadedFiles;
