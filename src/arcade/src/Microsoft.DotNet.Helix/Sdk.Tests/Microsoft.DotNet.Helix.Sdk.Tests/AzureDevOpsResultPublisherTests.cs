@@ -68,5 +68,25 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             Assert.False(AzureDevOpsResultPublisher.ComputeAllPassed(results));
         }
+
+        [Fact]
+        public void ReportingParameters_PreserveDefaultAndExplicitWriteRetryBehavior()
+        {
+            var defaultParameters = new AzureDevOpsReportingParameters(
+                CollectionUri: new Uri("https://dev.azure.com/dnceng-public/"),
+                TeamProject: "public",
+                TestRunId: "123");
+            var explicitParameters = new AzureDevOpsReportingParameters(
+                new Uri("https://dev.azure.com/dnceng-public/"),
+                "public",
+                "123",
+                AccessToken: null,
+                UseFullyQualifiedTestName: false,
+                RetryWrites: false);
+
+            Assert.True(defaultParameters.RetryWrites);
+            Assert.False(explicitParameters.RetryWrites);
+        }
+
     }
 }
