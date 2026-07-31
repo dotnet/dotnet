@@ -116,8 +116,8 @@ extends:
                       exit 1
                     }
 
-                    # Add VS Interactive experiences team (from devdiv) as reviewer
-                    $team = "10a2f33b-3b3d-47a9-a22f-6bb09247bb63"
+                    # Add our Test Agent Team (from devdiv) as reviewer
+                    $team = "36ea7e54-f558-41df-8bc8-9e06ea8e1f86"
 
                     $insertArgs = @(
                       "create-insertion"

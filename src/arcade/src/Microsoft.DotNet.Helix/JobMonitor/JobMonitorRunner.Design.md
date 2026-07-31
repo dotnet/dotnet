@@ -198,7 +198,11 @@ Upload is restart-resilient but logically independent from retry.
 3. Uploads happen in lineage order — oldest incarnation first. If both an
    original job and its resubmission have completed and neither has been
    uploaded, the original uploads first.
-4. Upload failures are logged but never affect pass/fail.
+4. Upload failures are logged as warnings but never affect pass/fail. Read-only
+   download failures are retried a bounded number of times. State-changing
+   operations are not replayed by the queue after an ambiguous failure because
+   they may have partially succeeded. A failed upload remains untagged so a
+   later monitor invocation may replay it in a new run.
 5. A failed original Helix job may be resubmitted on entry and still have
    its original test results uploaded during the same invocation if those
    results were not uploaded earlier.
@@ -281,7 +285,9 @@ behaviorally; method names are illustrative.
 - **List work items for a job** — return all work-item summaries.
 - **Download test results** — given a job and a set of work-item names,
   download recognized result files into a working directory. Individual
-  per-work-item failures must not abort the batch.
+  per-file failures must not prevent the remaining files from being attempted.
+  After the batch, transient failures cause the read-only download phase to be
+  retried; permanent failures are logged and omitted.
 - **Cancel a job** — best-effort cancellation.
 - **Resubmit failed work items** — given the original job and a set of
   failed (or unfinished) work items, submit a new Helix job that contains only
@@ -449,12 +455,21 @@ lines are plain logger output.
 
 ### 5.9 Test-result upload pipeline
 
-Uploads are asynchronous tasks tracked for normal completion:
+Uploads are asynchronous tasks tracked for normal completion. Their in-memory
+lifecycle distinguishes queued, in-progress, durably completed, and failed
+uploads; only a completed, tagged test run is considered durable.
 
 - Each upload is queued asynchronously and tracked. Multiple uploads may
   proceed concurrently.
-- An upload retries indefinitely on transient errors; only cancellation
-  exits the retry loop.
+- Test results are downloaded before the AzDO test run is created. Transient
+  download failures are safe to retry and use a bounded retry budget.
+- The queue invokes each state-changing phase — create the run, publish results,
+  and complete/tag the run — once. The monitor's adapters also disable automatic
+  retries for those writes because an error response may arrive after the
+  service has partially committed the request. Replaying it could duplicate
+  test runs, results, or attachments.
+- Permanent failures, exhausted safe retries, and ambiguous write failures are
+  logged as warnings and stop the upload task without affecting pass/fail.
 - The normal-termination path waits for queued uploads to drain before exiting.
 - The cancellation path does not wait for pending or in-flight uploads. If an
   upload has not completed and applied its Helix-job tag, it remains untagged;

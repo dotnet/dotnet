@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Arcade.Common;
@@ -121,6 +123,30 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 [new DownloadCall("https://storage/nested/testResults.xml", "?resultSas", expectedResultFile),
                  new DownloadCall("https://storage/failed.trx", "?resultSas", fileSystem.PathCombine(workItemDirectory, "failed.trx"))],
                 blobClientFactory.Downloads);
+        }
+
+        [Fact]
+        public async Task DownloadTestResultsAsync_ReportsTransientFileFailureAfterAttemptingBatch()
+        {
+            var api = CreateApi();
+            api.Job
+                .Setup(j => j.ResultsAsync("job", It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new JobResultsUri { ResultsUriRSAS = "?resultSas" });
+            api.WorkItem
+                .Setup(w => w.ListFilesAsync("work-item", "job", false, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ImmutableList.Create(
+                    new UploadedFile("first.trx", "https://storage/first.trx"),
+                    new UploadedFile("second.trx", "https://storage/second.trx")));
+
+            var blobClientFactory = new FakeBlobClientFactory();
+            blobClientFactory.DownloadFailures["https://storage/first.trx"] =
+                new HttpRequestException("Injected transient failure.", null, HttpStatusCode.ServiceUnavailable);
+
+            Func<Task> action = () => CreateService(api.Api.Object, blobClientFactory, new MockFileSystem())
+                .DownloadTestResultsAsync("job", ["work-item"], "work", CancellationToken.None);
+
+            await Assert.ThrowsAsync<IOException>(action);
+            Assert.Equal(2, blobClientFactory.Downloads.Count);
         }
 
         [Fact]
@@ -422,6 +448,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             public HashSet<string> FailDownloadsFor { get; } = new(StringComparer.OrdinalIgnoreCase);
 
+            public Dictionary<string, Exception> DownloadFailures { get; } = new(StringComparer.OrdinalIgnoreCase);
+
             public string DownloadedText { get; set; } = "[]";
 
             public string DownloadedTextUri { get; private set; }
@@ -470,6 +498,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 public Task DownloadToAsync(string destinationFile, CancellationToken cancellationToken)
                 {
                     _factory.Downloads.Add(new DownloadCall(_blobUri, _sasToken, destinationFile));
+                    if (_factory.DownloadFailures.TryGetValue(_blobUri, out Exception failure))
+                    {
+                        throw failure;
+                    }
+
                     if (_factory.FailDownloadsFor.Contains(_blobUri))
                     {
                         throw new InvalidOperationException("Injected download failure.");

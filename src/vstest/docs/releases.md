@@ -1479,7 +1479,7 @@ See full log [here](https://github.com/microsoft/vstest/compare/v16.5.0-preview-
 * Correct name and link for RFC 17 [#2232](https://github.com/microsoft/vstest/pull/2232)
 
 See full log [here](https://github.com/microsoft/vstest/compare/v16.4.0...v16.5.0)
-See changes since the last preview [here](https://github.com/microsoft/vstest/compare/16.5.0-preview-20200203-01...v16.5.0)
+See changes since the last preview [here](https://github.com/microsoft/vstest/compare/v16.5.0-preview-20200203-01...v16.5.0)
 
 ### Drops
 

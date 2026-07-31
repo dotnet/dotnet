@@ -75,7 +75,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _options.SourceBranch);
 
             _reporter = new StatusReporter(_logger, _options, _helix, _state);
-            _uploads = new TestResultUploadQueue(_logger, _options, _azdo, _helix, _state, Delay);
+            _uploads = new TestResultUploadQueue(_logger, _options, _azdo, _helix, _state);
         }
 
         public async Task<int> RunAsync(CancellationToken cancellationToken)
@@ -299,7 +299,6 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             foreach (HelixJobInfo job in completedJobs.Where(j => !_state.IsHelixJobProcessed(j.JobName)))
             {
                 await ReconcileCompletedJobAsync(job, queueUpload: true, cancellationToken);
-                _state.TryMarkHelixJobProcessed(job.JobName);
             }
 
             // Second pass: ensure outcomes for every completed job (any attempt) are reflected in
@@ -390,7 +389,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
             if (queueUpload && !alreadyUploadedByPriorAttempt)
             {
-                _uploads.Enqueue(helixJob, workItems, cancellationToken);
+                if (_state.TryQueueHelixJobUpload(helixJob.JobName))
+                {
+                    _uploads.Enqueue(helixJob, workItems, cancellationToken);
+                }
             }
 
             if (!alreadyUploadedByPriorAttempt)
