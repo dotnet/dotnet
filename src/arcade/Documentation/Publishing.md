@@ -16,7 +16,7 @@ In V3, a single job or stage 'Publish Using Darc' handles all publishing for all
 The [maestro promotion pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=750) is a pipeline used to publish the packages to the target channel(s).
 `Add-build-to-channel` queues a new build of this pipeline and waits for it to publish assets to the appropriate locations. The publishing job is run against Arcade's main branch by default, meaning that repositories do not need to take an Arcade update to be able to publish to newly created channels or get most publishing fixes.
 
-Example from arcade-validation:
+Example:
 
 ![V3-publishing](./V3-publishing.PNG)
 
@@ -125,7 +125,6 @@ These steps are needed for Arcade versions before `10.0.0`. After that, V3 is th
     Examples of the use of the basic onboarding scenario can be found in  the following repos:
 
     * [Arcade](../azure-pipelines.yml)
-    * [Arcade-Validation](https://github.com/dotnet/arcade-validation/blob/main/azure-pipelines.yml)
     * [Arcade-Services](https://github.com/dotnet/arcade-services/blob/main/azure-pipelines.yml)
 
 2. Create or update eng/Publishing.props, adding the following MSBuild property:
@@ -141,10 +140,6 @@ These steps are needed for Arcade versions before `10.0.0`. After that, V3 is th
            </PropertyGroup>
         </Project>
      ```
-
-   Example of the use of Publishing.props can be found in the following repos :
-
-   * [Arcade-Validation](https://github.com/dotnet/arcade-validation/blob/6009d37b7ecacbb0bc1e0c5a601b8d7e3b2e5fa5/eng/Publishing.props#L4)
 
 The pipeline for a build with stages enabled will look like the one shown below.
 

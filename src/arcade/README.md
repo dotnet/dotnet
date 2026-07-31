@@ -6,12 +6,10 @@ Arcade is intended to provide well-understood and consistent mechanisms for cons
 
 ## Validation & Dependency Flow Status
 
-**[Arcade validation policy and process](Documentation/Validation/Overview.md)**
-
 |Flow|BarViz Link|
 |---|---|
-|Current Version of Arcade in `.NET Eng - Latest`|[Link](https://maestro.dot.net/2/https:%2F%2Fdev.azure.com%2Fdnceng%2Finternal%2F_git%2Fdotnet-arcade/latest/graph)|
-|Latest Version of Arcade Being Validated|[Link](https://maestro.dot.net/9/https:%2F%2Fdev.azure.com%2Fdnceng%2Finternal%2F_git%2Fdotnet-arcade/latest/graph)|
+|Current Version of Arcade in `.NET Eng - Latest`|[Link](https://maestro.dot.net/channel/2/azdo:dnceng:internal:dotnet-arcade/build/latest)|
+|Latest Version of Arcade Being Validated|[Link](https://maestro.dot.net/channel/9/azdo:dnceng:internal:dotnet-arcade/build/latest)|
 
 ## Build Statuses
 
@@ -19,7 +17,6 @@ Arcade is intended to provide well-understood and consistent mechanisms for cons
 |---|---|
 |Arcade Public CI|[![Build Status](https://dev.azure.com/dnceng-public/public/_apis/build/status%2Fdotnet%2Farcade%2Farcade-pr?branchName=main)](https://dev.azure.com/dnceng-public/public/_build/latest?definitionId=283&branchName=main)|
 |Arcade Official Build|[![Build Status](https://dev.azure.com/dnceng/internal/_apis/build/status/dotnet/arcade/arcade-official-ci?branchName=main)](https://dev.azure.com/dnceng/internal/_build/latest?definitionId=6&branchName=main)| 
-|Arcade Validation|[![Build Status](https://dev.azure.com/dnceng/internal/_apis/build/status/dotnet/arcade-validation/dotnet-arcade-validation-official?branchName=main)](https://dev.azure.com/dnceng/internal/_build/latest?definitionId=282&branchName=main)|
 
 ## Getting Started
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.CommandLine;
+using Azure.Identity;
 
 namespace Microsoft.DotNet.Helix.JobMonitor
 {
@@ -241,7 +242,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         {
             HelixAccessToken ??= Environment.GetEnvironmentVariable("HELIX_ACCESSTOKEN");
 #if DEBUG
-            SystemAccessToken ??= new Azure.Identity.DefaultAzureCredential(includeInteractiveCredentials: true)
+            SystemAccessToken ??= new ChainedTokenCredential(
+                    new AzureCliCredential(),
+                    new VisualStudioCredential(),
+                    new VisualStudioCodeCredential())
                 .GetToken(new Azure.Core.TokenRequestContext(["499b84ac-1321-427f-aa17-267ca6975798/.default"]))
                 .Token;
 #endif
