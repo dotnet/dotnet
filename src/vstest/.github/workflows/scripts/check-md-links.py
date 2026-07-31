@@ -36,10 +36,12 @@ import os
 import re
 import sys
 
-# Markdown link [text](url): require non-empty text and url, like the original
-# `grep -oP '\[([^\]]+)\]\(([^\)]+)\)'` followed by extracting the `(...)` part.
-_LINK_RE = re.compile(r"\[[^\]]+\]\([^\)]+\)")
-_PAREN_RE = re.compile(r"\([^\)]+\)")
+# Markdown link [text](url): require non-empty text and url, and capture only the
+# url. The original `grep -oP '\[([^\]]+)\]\(([^\)]+)\)'` piped into a second grep
+# for `(...)` also matched parentheses inside the link *text*, so a link such as
+# `[TestExecution.StatsChange notification (Runner)](#anchor)` yielded both `Runner`
+# and the real url, and `Runner` was then reported as a missing file.
+_LINK_RE = re.compile(r"\[[^\]]+\]\(([^\)]+)\)")
 
 # HTML anchor: value of a name= or id= attribute inside an <a ...> tag. The tag/attr
 # match is case-insensitive; the extracted value is compared case-sensitively (as the
@@ -141,15 +143,18 @@ def collect_default_files():
 
 
 def extract_links(path):
-    """Yield every url found in markdown `[text](url)` links, reproducing the
-    `grep ... | grep ... | tr -d '()'` pipeline (including its multi-paren quirk)."""
+    """Yield the url of every markdown `[text](url)` link found in `path`."""
     for line in read_lines(path):
-        for m1 in _LINK_RE.finditer(line):
-            for m2 in _PAREN_RE.finditer(m1.group(0)):
-                yield m2.group(0).replace("(", "").replace(")", "")
+        for m in _LINK_RE.finditer(line):
+            yield m.group(1)
 
 
 def main(argv):
+    # The report contains non-ASCII status marks; on Windows the console defaults
+    # to cp1252 and writing them would raise UnicodeEncodeError.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
     out_dir = os.environ.get("OUT_DIR", "/tmp/gh-aw/agent")
     os.makedirs(out_dir, exist_ok=True)
 
@@ -246,7 +251,9 @@ def main(argv):
             if source_dir == "":
                 source_dir = "."
             target_path = normalize_target("{}/{}".format(source_dir, rel_path))
-            if not os.path.isfile(target_path):
+            # os.path.exists, not os.path.isfile: links may legitimately point at a
+            # directory (e.g. `./RFCs`), which isfile() would report as broken.
+            if not os.path.exists(target_path):
                 broken_count += 1
                 msg = "\u274c {} (file not found: {}) in {}".format(url, target_path, source_file)
                 results.append(msg)
