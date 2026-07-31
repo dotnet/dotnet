@@ -18,15 +18,7 @@
 
   <PropertyGroup>
     <Deterministic Condition="'$(Deterministic)' == ''">true</Deterministic>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Deterministic)' == 'true' and $([MSBuild]::IsOSPlatform('Linux'))">
-    <DeterministicTimestamp Condition="'$(DeterministicTimestamp)' == '' and '$(SOURCE_DATE_EPOCH)' != ''">$(SOURCE_DATE_EPOCH)</DeterministicTimestamp>
-    <TarTimestamp Condition="'$(DeterministicTimestamp)' == 'true'">@$([System.DateTimeOffset]::UtcNow.ToUnixTimeSeconds())</TarTimestamp>
-    <TarTimestamp Condition="$(DeterministicTimestamp.Contains('-'))">$(DeterministicTimestamp)</TarTimestamp>
-    <TarTimestamp Condition="'$(DeterministicTimestamp)' != '' and '$(DeterministicTimestamp)' != 'false' and !$(DeterministicTimestamp.Contains('-'))">@$(DeterministicTimestamp)</TarTimestamp>
-    <TarTimestampArgument Condition="'$(TarTimestamp)' != '' and '$(DeterministicTimestamp)' != 'false'">--mtime="$(TarTimestamp)" </TarTimestampArgument>
-    <ReproducibleTarArgs>--sort=name $(TarTimestampArgument) --owner=0 --group=0 --numeric-owner</ReproducibleTarArgs>
+    <TarDirectoryDeterministicTimestamp Condition="'$(DeterministicTimestamp)' != 'true' and '$(DeterministicTimestamp)' != 'false'">$(DeterministicTimestamp)</TarDirectoryDeterministicTimestamp>
   </PropertyGroup>
 
   <ItemGroup>
@@ -222,12 +214,12 @@
           Outputs="$(UnifiedSymbolsTarball)">
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(UnifiedSymbolsTarball)'))" />
 
-    <Exec Command="tar $(ReproducibleTarArgs) --numeric-owner --owner=2001 --group=2001 -czf $(UnifiedSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSymbolsRootDir)"
-          Condition="'$(ReproducibleTarArgs)' != ''" />
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(UnifiedSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSymbolsRootDir)"
-          Condition="'$(ReproducibleTarArgs)' == ''" />
+    <TarDirectory SourceDirectory="$(IntermediateSymbolsRootDir)"
+                  DestinationFile="$(UnifiedSymbolsTarball)"
+                  Compression="GZip"
+                  Format="Gnu"
+                  Overwrite="true"
+                  DeterministicTimestamp="$(TarDirectoryDeterministicTimestamp)" />
 
     <Message Importance="High" Text="Packaged all symbols in '$(UnifiedSymbolsTarball)'" />
   </Target>
@@ -248,12 +240,12 @@
                             SdkSymbolsLayoutPath="$(IntermediateSdkSymbolsLayout)"
                             FailOnMissingPDBs="false" />
 
-    <Exec Command="tar $(ReproducibleTarArgs) --numeric-owner --owner=2001 --group=2001 -czf $(SdkSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSdkSymbolsLayout)"
-          Condition="'$(ReproducibleTarArgs)' != ''" />
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(SdkSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSdkSymbolsLayout)"
-          Condition="'$(ReproducibleTarArgs)' == ''" />
+    <TarDirectory SourceDirectory="$(IntermediateSdkSymbolsLayout)"
+                  DestinationFile="$(SdkSymbolsTarball)"
+                  Compression="GZip"
+                  Format="Gnu"
+                  Overwrite="true"
+                  DeterministicTimestamp="$(TarDirectoryDeterministicTimestamp)" />
 
     <Message Importance="High" Text="Packaged sdk symbols in '$(SdkSymbolsTarball)'" />
 
@@ -300,7 +292,13 @@
     </PropertyGroup>
 
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(PrebuiltsTarball)'))" />
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -zcf $(PrebuiltsTarball) -C $(PrebuiltsTarballWorkingDir) ." />
+
+    <TarDirectory SourceDirectory="$(PrebuiltsTarballWorkingDir)"
+                  DestinationFile="$(PrebuiltsTarball)"
+                  Compression="GZip"
+                  Format="Gnu"
+                  Overwrite="true"
+                  DeterministicTimestamp="$(TarDirectoryDeterministicTimestamp)" />
 
     <Message Text="Tarball '$(PrebuiltsTarball)' was successfully created from '$(PrebuiltsTarballWorkingDir)'" Importance="High" />
 
