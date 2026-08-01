@@ -17,7 +17,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 return new AzureBlobClient(new BlobClient(new Uri(blobUri), options));
             }
 
-            string strippedUri = blobUri.Contains('?') ? blobUri.Substring(0, blobUri.LastIndexOf('?', StringComparison.Ordinal)) : blobUri;
+            string strippedUri = blobUri.Contains('?') ? blobUri.Substring(0, blobUri.LastIndexOf('?')) : blobUri;
             return new AzureBlobClient(new BlobClient(new Uri(strippedUri), new AzureSasCredential(sasToken), options));
         }
 
