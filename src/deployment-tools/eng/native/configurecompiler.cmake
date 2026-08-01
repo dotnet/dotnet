@@ -21,6 +21,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/configureoptimization.cmake)
 
 if(MSVC)
     add_compile_options(/Zi /FC /Zc:strictStrings)
+    add_compile_options(/Wall)
 elseif (CLR_CMAKE_HOST_UNIX)
     add_compile_options(-g)
     add_compile_options(-Wall)

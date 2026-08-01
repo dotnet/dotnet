@@ -5,6 +5,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.DotNet.Helix.Client.Models;
@@ -17,6 +19,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
     {
         private readonly List<HelixSnapshot> _responses = [];
         private readonly HashSet<string> _downloadFailureJobs = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Queue<Exception>> _downloadFailures = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, IReadOnlyCollection<WorkItemSummary>> _customWorkItems = new(StringComparer.OrdinalIgnoreCase);
         private int _getJobsCallCount;
 
@@ -40,6 +43,21 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
 
         public FakeHelixService FailDownloadForJob(string jobName) { _downloadFailureJobs.Add(jobName); return this; }
         public void ClearDownloadFailures() { _downloadFailureJobs.Clear(); }
+
+        public FakeHelixService FailNextDownloadForJob(string jobName, Exception exception = null)
+        {
+            if (!_downloadFailures.TryGetValue(jobName, out Queue<Exception> failures))
+            {
+                failures = [];
+                _downloadFailures[jobName] = failures;
+            }
+
+            failures.Enqueue(exception ?? new HttpRequestException(
+                "Injected transient download failure.",
+                null,
+                HttpStatusCode.ServiceUnavailable));
+            return this;
+        }
 
         public FakeHelixService WithWorkItems(string jobName, IReadOnlyCollection<WorkItemSummary> workItems)
         {
@@ -80,6 +98,12 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             if (_downloadFailureJobs.Contains(jobName))
             {
                 throw new InvalidOperationException($"Injected download failure for Helix job '{jobName}'.");
+            }
+
+            if (_downloadFailures.TryGetValue(jobName, out Queue<Exception> failures)
+                && failures.Count > 0)
+            {
+                throw failures.Dequeue();
             }
 
             if (CurrentSnapshot.TestResultsByJob.TryGetValue(jobName, out List<WorkItemTestResults> explicitResults))

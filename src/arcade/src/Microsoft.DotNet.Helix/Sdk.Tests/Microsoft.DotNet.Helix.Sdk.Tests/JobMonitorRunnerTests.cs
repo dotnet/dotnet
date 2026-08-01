@@ -414,10 +414,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         [Fact]
-        public async Task PassedHelixWork_UploadFailsOnce_RetriesAndProcessesResults()
+        public async Task PassedHelixWork_TransientUploadFailure_DoesNotReplayAmbiguousWrite()
         {
             var azdo = new FakeAzureDevOpsService();
             var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
             int delayCount = 0;
 
             azdo.FailNextUpload();
@@ -440,7 +441,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                     ],
                 });
 
-            var runner = new JobMonitorRunner(DefaultOptions(), NullLogger.Instance, azdo, helix,
+            var runner = new JobMonitorRunner(DefaultOptions(), logger, azdo, helix,
                 (_, _) =>
                 {
                     delayCount++;
@@ -449,13 +450,112 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
             exitCode.Should().Be(0);
-            azdo.UploadTestResultsCallCount.Should().Be(2);
-            delayCount.Should().Be(1);
-            // The first attempt creates a run then fails mid-upload, orphaning it (untagged,
-            // never completed). The retry creates a second run that uploads and completes.
-            azdo.CreatedTestRuns.Should().HaveCount(2);
+            azdo.UploadTestResultsCallCount.Should().Be(1);
+            delayCount.Should().Be(0);
+            azdo.CreatedTestRuns.Should().ContainSingle();
+            azdo.CompletedTestRunIds.Should().BeEmpty();
+            azdo.UploadedJobNames.Should().BeEmpty();
+            logger.Messages.Should().Contain(message =>
+                message.Contains("not safe to replay in this invocation", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public async Task PassedHelixWork_TransientCompletionFailure_DoesNotReplayCompletionSequence()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+            int delayCount = 0;
+
+            azdo.FailNextComplete();
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Test Linux", "completed", "succeeded"));
+
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"]),
+                });
+
+            var runner = new JobMonitorRunner(DefaultOptions(), logger, azdo, helix,
+                (_, _) =>
+                {
+                    delayCount++;
+                    return Task.CompletedTask;
+                });
+
+            int exitCode = await runner.RunAsync(CancellationToken.None);
+
+            exitCode.Should().Be(0);
+            azdo.CreateTestRunCallCount.Should().Be(1);
+            azdo.UploadTestResultsCallCount.Should().Be(1);
+            azdo.CompleteTestRunCallCount.Should().Be(1);
+            delayCount.Should().Be(0);
+            azdo.CompletedTestRunIds.Should().BeEmpty();
+            logger.Messages.Should().Contain(message =>
+                message.Contains("not safe to replay in this invocation", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public async Task PassedHelixWork_PermanentUploadFailure_DoesNotHangOrFailBuild()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+
+            azdo.FailNextUpload(new InvalidOperationException("Injected permanent upload failure."));
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Test Linux", "completed", "succeeded"));
+
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"]),
+                });
+
+            var runner = CreateRunner(azdo, helix, logger: logger);
+            int exitCode = await runner.RunAsync(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10));
+
+            exitCode.Should().Be(0);
+            azdo.CreateTestRunCallCount.Should().Be(1);
+            azdo.UploadTestResultsCallCount.Should().Be(1);
+            azdo.CompleteTestRunCallCount.Should().Be(0);
+            azdo.CompletedTestRunIds.Should().BeEmpty();
+            logger.Messages.Should().Contain(message =>
+                message.Contains("The failure is not retryable", StringComparison.Ordinal)
+                && message.Contains("later monitor invocation may retry the upload", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public async Task PassedHelixWork_TransientDownloadFailure_RetriesBeforeCreatingTestRun()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Test Linux", "completed", "succeeded"));
+
+            helix.FailNextDownloadForJob("helix-linux");
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"]),
+                });
+
+            var runner = CreateRunner(azdo, helix);
+
+            int exitCode = await runner.RunAsync(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10));
+
+            exitCode.Should().Be(0);
+            azdo.CreateTestRunCallCount.Should().Be(1);
+            azdo.UploadTestResultsCallCount.Should().Be(1);
+            azdo.CompleteTestRunCallCount.Should().Be(1);
             azdo.CompletedTestRunIds.Should().ContainSingle();
-            azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
         }
 
         /// <summary>
@@ -1778,6 +1878,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         {
             var azdo = new FakeAzureDevOpsService();
             var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
 
             // The upload of helix-finished starts but never completes and ignores cancellation,
             // simulating an upload stuck in a non-cancellable network call when the timeout fires.
@@ -1801,7 +1902,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 });
 
             using var cts = new CancellationTokenSource();
-            var runner = new JobMonitorRunner(DefaultOptions(), NullLogger.Instance, azdo, helix,
+            var runner = new JobMonitorRunner(DefaultOptions(), logger, azdo, helix,
                 async (_, _) =>
                 {
                     // Cancel once the (stuck) upload is genuinely in flight.
@@ -1822,6 +1923,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             // monitor invocation re-uploads it.
             azdo.UploadedJobNames.Should().BeEmpty();
             azdo.UploadCompleted.Task.IsCompleted.Should().BeFalse();
+            logger.Messages.Should().Contain(message =>
+                message.Contains("Helix job(s) were unfinished or unprocessed", StringComparison.Ordinal)
+                && message.Contains("helix-finished", StringComparison.Ordinal));
 
             // Release the stuck upload so the abandoned task can finish.
             uploadGate.TrySetResult();
