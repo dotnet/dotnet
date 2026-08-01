@@ -10,6 +10,13 @@ namespace Microsoft.DotNet.ScenarioTests.Common;
 
 public static class ExecuteHelper
 {
+    // Grace period to wait for a killed process tree to fully exit. A parameterless
+    // WaitForExit() after Kill(true) blocks until the redirected stdout/stderr pipes
+    // reach EOF; a surviving grandchild (e.g. the web app spawned by `dotnet run`) that
+    // inherited those handles can keep them open indefinitely, hanging the test until the
+    // pipeline task timeout. Bounding the wait lets the run fail fast instead.
+    public const int KillGraceMilliseconds = 30_000;
+
     public static (Process Process, string StdOut, string StdErr) ExecuteProcess(
         string fileName,
         string args,
@@ -63,7 +70,11 @@ public static class ExecuteHelper
         {
             outputHelper.WriteLine($"Killing: {fileName} {args}");
             process.Kill(true);
-            process.WaitForExit();
+            if (!process.WaitForExit(KillGraceMilliseconds))
+            {
+                outputHelper.WriteLine("Process tree did not fully exit within the kill grace period; " +
+                    "abandoning wait to avoid hanging on inherited stdout/stderr handles.");
+            }
             ProcessStartInfo startInfo = process.StartInfo;
             string msg = $" {startInfo.FileName} {startInfo.Arguments} timed out after " +
                 $"{millisecondTimeout} milliseconds" +
