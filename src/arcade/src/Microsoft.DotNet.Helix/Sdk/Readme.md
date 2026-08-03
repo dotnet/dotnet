@@ -143,6 +143,10 @@ What this means in practice:
 3. If the failure is a real product/test bug, fix it and push a new commit — that triggers a new
    build with a fresh submitter + monitor pair.
 
+By default, the monitor fails when its stage completes without producing any Helix jobs in any
+attempt. For stages where an empty test selection is expected, set `allowNoHelixJobs: true` on the
+monitor template. The equivalent tool switch is `--allow-no-helix-jobs`.
+
 #### Fully qualified test names
 
 By default the monitor reports each test to Azure DevOps using the framework-provided display name
