@@ -85,10 +85,10 @@
       "commitSha": "4a08ab901db14c68441cbf043468ccbeaf6ae967"
     },
     {
-      "barId": 322820,
+      "barId": 325256,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "ba95998da076270d7d92d544d8ec8aeb0bdf8ab8"
+      "commitSha": "498c8fc665b5b06915b2536f4691b80162a5a8dd"
     },
     {
       "barId": 324651,
@@ -127,10 +127,10 @@
       "commitSha": "c73f02dc21cc53262431529f1e30da0ea079d0e5"
     },
     {
-      "barId": 325075,
+      "barId": 325236,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "e730a84f992711a67aea0b247ab7770346041902"
+      "commitSha": "f83da244a56359d7cd460cf2bef3f8fc9d8da15f"
     },
     {
       "barId": 324840,
@@ -139,10 +139,10 @@
       "commitSha": "3eba0600f08661e8ba1f4c5758a41e0ea4b805f1"
     },
     {
-      "barId": 324702,
+      "barId": 325317,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "826fb0372c4bc93f2a6f62d5a0eb3e57b9529ce9"
+      "commitSha": "1cc70ff0034cb36ab3f45677fa4a7d4a7751ad32"
     },
     {
       "barId": 291267,
