@@ -55,10 +55,10 @@
       "commitSha": "32593ca81f8aae7b0d41c1a7198529c3365106b8"
     },
     {
-      "barId": 324622,
+      "barId": 325364,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "07e5dbddc0154145ed167c08fdedcc64e0e5613b"
+      "commitSha": "090cb5d12f8498bdb54b60028a9a993c3c174022"
     },
     {
       "barId": 311986,
@@ -98,7 +98,7 @@
     {
       "path": "source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
       "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
-      "commitSha": "e67b25be77532af9ba405670b34b4d263d505fde"
+      "commitSha": "ee19952f21d5c170a778bdca901b67076a1cd8f8"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/cssparser",
