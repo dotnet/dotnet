@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <TargetFramework>$(NetMinimum)</TargetFramework>
     <OutputType>Exe</OutputType>
     <IsPackable>true</IsPackable>
     <PackAsTool>true</PackAsTool>
+    <RollForward>Major</RollForward>
     <ToolCommandName>dotnet-helix-job-monitor</ToolCommandName>
     <Description>Standalone Helix Job Monitor tool for Azure DevOps pipelines</Description>
   </PropertyGroup>
