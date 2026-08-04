@@ -69,6 +69,10 @@
     <SystemSecurityCryptographyXmlVersion>10.0.10</SystemSecurityCryptographyXmlVersion>
     <!-- sdk dependencies -->
     <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
+    <!-- testfx dependencies. Overrides the Arcade default to pick up the automatic DOTNET_ROOT configuration for
+         app host launches (https://github.com/microsoft/testfx/pull/10413), which the test projects rely on to run
+         against the repo-local .NET installation. Restored from the test-tools feed, see https://aka.ms/mstest/preview. -->
+    <MicrosoftTestingPlatformVersion>2.4.0-preview.26403.13</MicrosoftTestingPlatformVersion>
   </PropertyGroup>
 
 </Project>
