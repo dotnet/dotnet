@@ -78,7 +78,7 @@ function source_only_toolset_init() {
   fi
 
   if [ ! -f "$packageVersionsPath" ]; then
-    echo "Cannot find PackagesVersions.props.  Debugging info:"
+    echo "Cannot find PackageVersions.props.  Debugging info:"
     echo "  Attempted custom PVP path: $custom_packages_dir/PackageVersions.props"
     echo "  Attempted previously-source-built path: ${packagesPreviouslySourceBuiltDir}PackageVersions.props"
     echo "  Attempted archive path: $packagesArchiveDir"
