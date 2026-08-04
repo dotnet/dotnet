@@ -76,9 +76,10 @@ namespace NuGet.Protocol
 
         private static IEnumerable<VersionInfo> GetVersions(PackageSearchMetadata metadata, SearchFilter filter)
         {
-            var uniqueVersions = new HashSet<Versioning.NuGetVersion>(metadata.ParsedVersions.Length + 1);
-            var versions = new List<VersionInfo>(metadata.ParsedVersions.Length + 1);
-            foreach (var ver in metadata.ParsedVersions)
+            var parsedVersions = metadata.ParsedVersions ?? Array.Empty<VersionInfo>();
+            var uniqueVersions = new HashSet<Versioning.NuGetVersion>(parsedVersions.Length + 1);
+            var versions = new List<VersionInfo>(parsedVersions.Length + 1);
+            foreach (var ver in parsedVersions)
             {
                 if ((filter.IncludePrerelease || !ver.Version.IsPrerelease) && uniqueVersions.Add(ver.Version))
                 {

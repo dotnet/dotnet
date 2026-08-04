@@ -59,13 +59,13 @@ namespace NuGet.Protocol.Tests
                 // Assert
                 Assert.Equal("deepequal", result.Identity.Id, StringComparer.OrdinalIgnoreCase);
                 Assert.Equal("0.9.0", result.Identity.Version.ToNormalizedString());
-                Assert.True(result.Authors.Contains("James Foster"));
+                Assert.True(result.Authors!.Contains("James Foster"));
                 Assert.Equal("An extensible deep comparison library for .NET", result.Description);
                 Assert.Null(result.IconUrl);
                 Assert.Null(result.LicenseUrl);
-                Assert.Equal("http://github.com/jamesfoster/DeepEqual", result.ProjectUrl.ToString());
+                Assert.Equal("http://github.com/jamesfoster/DeepEqual", result.ProjectUrl!.ToString());
                 Assert.Equal("https://api.nuget.org/v3/catalog0/data/2015.02.03.18.34.51/deepequal.0.9.0.json",
-                    result.CatalogUri.ToString());
+                    result.CatalogUri!.ToString());
                 Assert.Equal(DateTimeOffset.Parse("2013-08-28T09:19:10.013Z"), result.Published);
                 Assert.False(result.RequireLicenseAcceptance);
                 Assert.Equal(result.Description, result.Summary);
@@ -73,7 +73,7 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal("DeepEqual", result.Title);
                 Assert.True(result.IsListed);
 
-                var vulnerability = Assert.Single(result.Vulnerabilities);
+                var vulnerability = Assert.Single(result.Vulnerabilities!);
                 Assert.Equal(2, vulnerability.Severity);
                 Assert.Equal("https://contoso.test/advisory/1", vulnerability.AdvisoryUrl.OriginalString);
             }
