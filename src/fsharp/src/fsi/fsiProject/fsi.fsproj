@@ -25,8 +25,8 @@
     <IntermediateOutputPath>$(ArtifactsDir)obj/$(MSBuildProjectName)/$(Configuration)/</IntermediateOutputPath>
   </PropertyGroup>
 
-  <!-- Override vulnerable System.Security.Cryptography.Xml pulled in transitively by Microsoft.Build.Tasks.Core (via FSharp.Build) on .NET (NU1903). net472 is excluded because it has no such transitive and the override's dependencies conflict with System.ValueTuple there. -->
-  <ItemGroup Condition="'$(TargetFramework)' == '$(FSharpNetCoreProductTargetFramework)'">
+  <!-- Override vulnerable System.Security.Cryptography.Xml pulled in transitively by Microsoft.Build.Tasks.Core (via FSharp.Build) on .NET (NU1903). net472 is excluded because it has no such transitive and the override's dependencies conflict with System.ValueTuple there. In source-build the vulnerable transitive is already pinned/overridden centrally, so adding it explicitly here would produce a duplicate PackageReference (NU1504). -->
+  <ItemGroup Condition="'$(TargetFramework)' == '$(FSharpNetCoreProductTargetFramework)' and '$(DotNetBuildSourceOnly)' != 'true'">
     <PackageReference Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityCryptographyXmlVersion)" />
   </ItemGroup>
 
