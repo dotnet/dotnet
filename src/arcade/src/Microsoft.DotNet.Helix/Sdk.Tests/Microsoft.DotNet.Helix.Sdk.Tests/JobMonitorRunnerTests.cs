@@ -24,13 +24,14 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         /// <summary>
         /// Single pipeline job goes from queued → in progress → completed (succeeded).
         /// No Helix jobs are ever submitted.
-        /// The monitor should poll 3 times and exit with code 0.
+        /// The monitor should poll 3 times and exit with code 1.
         /// </summary>
         [Fact]
-        public async Task SinglePipelineJobSucceeds_NoHelixJobs_ExitZero()
+        public async Task SinglePipelineJobSucceeds_NoHelixJobs_ExitOne()
         {
             var azdo = new FakeAzureDevOpsService();
             var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
 
             // Poll 1: other job is queued
             azdo.AddTimelineResponse(
@@ -52,13 +53,38 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             helix.AddResponse(jobs: []);
             helix.AddResponse(jobs: []);
 
-            var runner = CreateRunner(azdo, helix);
+            var runner = CreateRunner(azdo, helix, logger: logger);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            exitCode.Should().Be(0);
+            exitCode.Should().Be(1);
             azdo.TimelineCallCount.Should().Be(3);
             azdo.CreatedTestRuns.Should().BeEmpty();
             azdo.UploadedJobNames.Should().BeEmpty();
+            logger.Messages.Should().Contain(message =>
+                message.Contains("No Helix jobs were submitted by this stage in any attempt."));
+        }
+
+        [Fact]
+        public async Task SinglePipelineJobSucceeds_NoHelixJobsAllowed_ExitZero()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Build Linux", "completed", "succeeded"));
+            helix.AddResponse(jobs: []);
+
+            JobMonitorOptions options = DefaultOptions();
+            options.AllowNoHelixJobs = true;
+            var runner = new JobMonitorRunner(options, logger, azdo, helix, NoDelay);
+
+            int exitCode = await runner.RunAsync(CancellationToken.None);
+
+            exitCode.Should().Be(0);
+            logger.Messages.Should().NotContain(message =>
+                message.Contains("No Helix jobs were submitted by this stage in any attempt."));
         }
 
         /// <summary>
@@ -156,10 +182,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         /// <summary>
         /// Two pipeline jobs (plus the monitor). No Helix jobs submitted.
         /// Both pipeline jobs pass.
-        /// The monitor should exit with code 0.
+        /// The monitor should exit with code 1.
         /// </summary>
         [Fact]
-        public async Task TwoPipelineJobs_AllPassed_NoHelixJobs_ExitZero()
+        public async Task TwoPipelineJobs_AllPassed_NoHelixJobs_ExitOne()
         {
             var azdo = new FakeAzureDevOpsService();
             var helix = new FakeHelixService();
@@ -189,7 +215,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix);
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            exitCode.Should().Be(0);
+            exitCode.Should().Be(1);
             azdo.TimelineCallCount.Should().Be(3);
             azdo.CreatedTestRuns.Should().BeEmpty();
             azdo.UploadedJobNames.Should().BeEmpty();
@@ -203,10 +229,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         /// attempt=1 records for the retried jobs are replaced. Non-retried jobs
         /// (Build Linux) keep their attempt=1 records.
         /// The retried Windows job queues, runs, then passes.
-        /// The monitor should exit 0 on the retry.
+        /// The monitor should still exit 1 because no Helix jobs exist in either attempt.
         /// </summary>
         [Fact]
-        public async Task RetryAfterFailure_RetriedJobPasses_ExitZero()
+        public async Task RetryAfterFailure_RetriedJobPasses_NoHelixJobs_ExitOne()
         {
             // --- First run (attempt 1) ---
             var azdo1 = new FakeAzureDevOpsService();
@@ -281,10 +307,107 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner2 = CreateRunner(azdo2, helix2);
             int exitCode2 = await runner2.RunAsync(CancellationToken.None);
 
-            exitCode2.Should().Be(0);
+            exitCode2.Should().Be(1);
             azdo2.TimelineCallCount.Should().Be(3);
             azdo2.CreatedTestRuns.Should().BeEmpty();
             azdo2.UploadedJobNames.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Three jobs (monitor + Build Linux + Build Windows). Build Linux submits Helix work
+        /// that passes; Build Windows submits nothing and fails → attempt 1 exits 1.
+        /// Then a retry happens (attempt 2): only the monitor and Build Windows re-run, and the
+        /// retried Build Windows again submits no Helix jobs before passing. Build Linux was not
+        /// retried, so its passed attempt-1 Helix job is still discoverable for the build.
+        /// The no-Helix-jobs gate is cross-attempt aware: because Helix jobs WERE submitted by
+        /// this stage in a previous attempt, the monitor must NOT fail with "no Helix jobs" on the
+        /// retry — it should exit 0.
+        /// </summary>
+        [Fact]
+        public async Task RetryAfterFailure_RetriedJobSubmitsNothing_PreviousAttemptHadHelixJobs_ExitZero()
+        {
+            // --- First run (attempt 1) ---
+            // Build Linux submits a Helix job (passes); Build Windows submits nothing and fails.
+            var azdo1 = new FakeAzureDevOpsService();
+            var helix1 = new FakeHelixService();
+
+            // Poll 1: both jobs in progress; Build Linux's Helix job is running.
+            azdo1.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Build Linux", "inProgress"),
+                PipelineJob("Build Windows", "inProgress"));
+
+            // Poll 2: Build Linux passed, Build Windows failed (it submitted no Helix work).
+            azdo1.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Build Linux", "completed", "succeeded"),
+                PipelineJob("Build Windows", "completed", "failed"));
+
+            // Retry pass + poll 1 see the Helix job running (attempt 1).
+            helix1.AddResponse(
+                jobs: [HelixJob("helix-linux", "running", stageName: "Test",
+                    submitterJobName: "Build Linux", stageAttempt: "1")]);
+
+            // Poll 2 sees the Helix job finished — its work item passed.
+            helix1.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished", stageName: "Test",
+                    submitterJobName: "Build Linux", stageAttempt: "1")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"]),
+                });
+
+            JobMonitorOptions options1 = DefaultOptions();
+            options1.StageAttempt = "1";
+            var runner1 = new JobMonitorRunner(options1, NullLogger.Instance, azdo1, helix1, NoDelay);
+
+            int exitCode1 = await runner1.RunAsync(CancellationToken.None);
+
+            // Attempt 1 fails because Build Windows failed (a non-monitor pipeline failure), even
+            // though Helix jobs were submitted and passed.
+            exitCode1.Should().Be(1);
+
+            // --- Retry (attempt 2): monitor and Build Windows re-run ---
+            // Build Windows again submits no Helix jobs. Build Linux was not retried, so its
+            // passed attempt-1 Helix job is still returned for the build.
+            var azdo2 = new FakeAzureDevOpsService();
+            var helix2 = new FakeHelixService();
+            var logger = new RecordingLogger();
+
+            // Poll 1: Linux still passed (attempt 1), Windows in progress (attempt 2).
+            azdo2.AddTimelineResponse(
+                MonitorJob(attempt: 2, previousAttempts: [PreviousAttempt(1)]),
+                PipelineJob("Build Linux", "completed", "succeeded"),
+                PipelineJob("Build Windows", "inProgress", attempt: 2,
+                    previousAttempts: [PreviousAttempt(1)]));
+
+            // Poll 2: Windows completed (passed this time), still no Helix work submitted.
+            azdo2.AddTimelineResponse(
+                MonitorJob(attempt: 2, previousAttempts: [PreviousAttempt(1)]),
+                PipelineJob("Build Linux", "completed", "succeeded"),
+                PipelineJob("Build Windows", "completed", "succeeded", attempt: 2,
+                    previousAttempts: [PreviousAttempt(1)]));
+
+            // The only Helix job for the build is Build Linux's passed attempt-1 job.
+            helix2.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished", stageName: "Test",
+                    submitterJobName: "Build Linux", stageAttempt: "1")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"]),
+                });
+
+            JobMonitorOptions options2 = DefaultOptions();
+            options2.StageAttempt = "2";
+            var runner2 = new JobMonitorRunner(options2, logger, azdo2, helix2, NoDelay);
+
+            int exitCode2 = await runner2.RunAsync(CancellationToken.None);
+
+            // The retry must not exit 1 for "no Helix jobs": a previous attempt submitted Helix
+            // work, so the stage did produce jobs.
+            exitCode2.Should().Be(0);
+            logger.Messages.Should().NotContain(message =>
+                message.Contains("No Helix jobs were submitted by this stage in any attempt."));
         }
 
         /// <summary>
@@ -832,7 +955,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         /// ignore it entirely. Only the job in the monitor's own stage matters.
         /// </summary>
         [Fact]
-        public async Task StageScopedMonitor_IgnoresJobsOutsideStage_ExitZero()
+        public async Task StageScopedMonitor_IgnoresJobsOutsideStage_NoHelixJobs_ExitOne()
         {
             var azdo = new FakeAzureDevOpsService();
             var helix = new FakeHelixService();
@@ -860,9 +983,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix, stageName: "Test");
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            // Monitor only watches Test stage — Test Linux passed, no Helix → exit 0
+            // Monitor only watches Test stage — Test Linux passed, but no Helix → exit 1
             // Build Windows being in progress doesn't block the monitor.
-            exitCode.Should().Be(0);
+            exitCode.Should().Be(1);
             azdo.TimelineCallCount.Should().Be(2);
             azdo.UploadedJobNames.Should().BeEmpty();
         }
@@ -872,7 +995,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         /// The monitor should ignore that Helix job entirely.
         /// </summary>
         [Fact]
-        public async Task StageScopedMonitor_IgnoresHelixJobsFromOtherStage_ExitZero()
+        public async Task StageScopedMonitor_IgnoresHelixJobsFromOtherStage_ExitOne()
         {
             var azdo = new FakeAzureDevOpsService();
             var helix = new FakeHelixService();
@@ -893,8 +1016,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix, stageName: "Test");
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            // Test stage is done, no Helix jobs in Test stage → exit 0
-            exitCode.Should().Be(0);
+            // Test stage is done, no Helix jobs in Test stage → exit 1
+            exitCode.Should().Be(1);
             azdo.TimelineCallCount.Should().Be(1);
             azdo.UploadedJobNames.Should().BeEmpty();
             azdo.CreatedTestRuns.Should().BeEmpty();
@@ -1402,7 +1525,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         /// another stage must not be resubmitted or uploaded by this monitor.
         /// </summary>
         [Fact]
-        public async Task StageScopedMonitor_DoesNotResubmitFailedHelixJobsOutsideStage_ExitZero()
+        public async Task StageScopedMonitor_DoesNotResubmitFailedHelixJobsOutsideStage_ExitOne()
         {
             var azdo = new FakeAzureDevOpsService();
             var helix = new FakeHelixService();
@@ -1425,7 +1548,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var runner = CreateRunner(azdo, helix, stageName: "Test");
             int exitCode = await runner.RunAsync(CancellationToken.None);
 
-            exitCode.Should().Be(0);
+            exitCode.Should().Be(1);
             helix.Resubmissions.Should().BeEmpty();
             azdo.UploadedJobNames.Should().BeEmpty();
             azdo.CreatedTestRuns.Should().BeEmpty();
