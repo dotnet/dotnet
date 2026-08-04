@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.Build</PackageId>
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    <PackageVersion>18.7.1</PackageVersion>
+    <AssemblyName>Microsoft.Build</AssemblyName>
+    <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
+    <Description>This package contains the Microsoft.Build assembly which is used to create, edit, and evaluate MSBuild projects.</Description>
+    <PackageProjectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>MSBuild</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <ProjectReference Include="../../microsoft.build.framework/18.7.1/Microsoft.Build.Framework.18.7.1.csproj" />
+    <ProjectReference Include="../../system.configuration.configurationmanager/10.0.4/System.Configuration.ConfigurationManager.10.0.4.csproj" />
+    <ProjectReference Include="../../system.reflection.metadataloadcontext/10.0.4/System.Reflection.MetadataLoadContext.10.0.4.csproj" />
+    <ProjectReference Include="../../system.diagnostics.eventlog/10.0.4/System.Diagnostics.EventLog.10.0.4.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/10.0.4/System.Security.Cryptography.ProtectedData.10.0.4.csproj" />
+  </ItemGroup>
+
+</Project>
