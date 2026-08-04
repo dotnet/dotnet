@@ -41,9 +41,12 @@ extends:
       componentgovernance:
         # All of the SBRPs must be ignored because it is possible some of them are for vulnerable versions.
         # Because they are reference only packages they are not vulnerable themselves.
+        # The ANTLR Maven plugin is not built or included in the produced C# package.
         ignoreDirectories: |
           artifacts/sb,
-          src/referencePackages
+          src/referencePackages,
+          src/externalPackages/src/antlr4/antlr4-maven-plugin,
+          artifacts/obj/antlr4/clone/antlr4-maven-plugin
       policheck:
         enabled: true
       sourceAnalysisPool:
