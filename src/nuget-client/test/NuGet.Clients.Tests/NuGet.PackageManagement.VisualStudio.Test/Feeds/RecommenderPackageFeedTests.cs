@@ -180,7 +180,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             // Arrange
             var metadataResource = new Mock<MetadataResource>();
             metadataResource.Setup(e => e.GetLatestVersions(It.IsAny<IEnumerable<string>>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<SourceCacheContext>(), It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync([new KeyValuePair<string, NuGetVersion>("packageb", new NuGetVersion(2, 0, 0))]);
+                .ReturnsAsync([new KeyValuePair<string, NuGetVersion?>("packageb", new NuGetVersion(2, 0, 0))]);
 
             var packageMetadataResource = Mock.Of<PackageMetadataResource>();
 

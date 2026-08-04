@@ -71,7 +71,7 @@ namespace NuGet.CommandLine.XPlat
                 }
 
                 WriteStringIfNotNullOrWhiteSpace(writer, JsonProperties.ProjectUrl, value.ProjectUrl?.ToString());
-                PackageDeprecationMetadata packageDeprecationMetadata = value.GetDeprecationMetadataAsync().Result;
+                PackageDeprecationMetadata? packageDeprecationMetadata = value.GetDeprecationMetadataAsync().Result;
                 WriteStringIfNotNullOrWhiteSpace(writer, JsonProperties.Deprecation, packageDeprecationMetadata?.Message);
             }
 

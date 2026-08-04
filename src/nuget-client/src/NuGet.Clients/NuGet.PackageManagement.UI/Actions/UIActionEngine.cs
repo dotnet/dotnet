@@ -857,7 +857,7 @@ namespace NuGet.PackageManagement.UI
             return new PackageLicenseInfo(
                 metadata.Identity.Id,
                 PackageLicenseUtilities.GenerateLicenseLinks(metadata),
-                metadata.Authors);
+                metadata.Authors ?? string.Empty);
         }
 
         private async ValueTask<bool> ShouldContinueDueToDotnetDeprecationAsync(
