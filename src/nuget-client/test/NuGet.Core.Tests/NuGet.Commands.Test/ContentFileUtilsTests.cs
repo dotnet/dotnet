@@ -86,6 +86,38 @@ public sealed class ContentFileUtilsTests
         Assert.Equal(BuildAction.Parse("None"), vbFile.BuildAction);
     }
 
+    /// <summary>
+    /// A contentFiles include beginning with '\' or '/' (e.g. "\any\any\data\*")
+    ///  must still match, honoring buildAction/copyToOutput. Otherwise the entry is silently
+    /// dropped and falls back to the default Compile build action.
+    /// </summary>
+    [Theory]
+    [InlineData("any/any/data/*")]      // canonical
+    [InlineData(@"\any\any\data\*")]    // leading-backslash form
+    [InlineData("/any/any/data/*")]     // leading forward slash
+    [InlineData(@"any\any\data\*")]     // backslash separators, no leading separator
+    public void GetContentFileGroup_IncludeWithLeadingSeparator_MatchesFile(string include)
+    {
+        // Arrange
+        var nuspec = CreateNuspecWithContentFiles((include, null, "None"));
+
+        var group = new ContentItemGroup();
+        group.Properties[ManagedCodeConventions.PropertyNames.CodeLanguage] = "any";
+        group.Items.Add(new ContentItem { Path = "contentFiles/any/any/data/sample.txt" });
+
+        // Act
+        List<LockFileContentFile> result = ContentFileUtils.GetContentFileGroup(
+            nuspec,
+            new List<ContentItemGroup> { group });
+
+        // Assert
+        LockFileContentFile item = Assert.Single(result);
+        Assert.Equal("contentFiles/any/any/data/sample.txt", item.Path);
+
+        // None proves the glob matched. If it didn't match, the default would be Compile.
+        Assert.Equal(BuildAction.Parse("None"), item.BuildAction);
+    }
+
     private static NuspecReader CreateNuspecWithContentFiles(
         params (string include, string? exclude, string buildAction)[] entries)
     {

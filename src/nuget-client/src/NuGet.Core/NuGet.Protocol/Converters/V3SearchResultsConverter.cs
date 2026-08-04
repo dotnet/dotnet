@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using Newtonsoft.Json;
 using NuGet.Protocol.Model;
@@ -22,7 +20,7 @@ namespace NuGet.Protocol.Converters
 
         public override bool CanConvert(Type objectType) => objectType == typeof(V3SearchResults);
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             if (objectType != typeof(V3SearchResults))
             {
@@ -45,7 +43,7 @@ namespace NuGet.Protocol.Converters
                 switch (reader.TokenType)
                 {
                     case JsonToken.PropertyName:
-                        switch ((string)reader.Value)
+                        switch ((string)reader.Value!)
                         {
                             case "totalHits":
                                 if (long.TryParse(reader.ReadAsString(), out var totalHits))
@@ -73,7 +71,10 @@ namespace NuGet.Protocol.Converters
                                 {
                                     var searchResult = serializer.Deserialize<PackageSearchMetadata>(reader);
 
-                                    searchResults.Data.Add(searchResult);
+                                    if (searchResult != null)
+                                    {
+                                        searchResults.Data.Add(searchResult);
+                                    }
 
                                     if (searchResults.Data.Count >= _take)
                                     {
@@ -104,7 +105,7 @@ namespace NuGet.Protocol.Converters
             return searchResults;
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }

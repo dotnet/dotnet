@@ -123,7 +123,7 @@ namespace NuGet.Protocol
         private static async Task<Uri?> GetDownloadUrlFromItemAsync(RegistrationResourceV3 regResource, PackageIdentity identity, SourceCacheContext sourceCacheContext, ILogger log, CancellationToken token)
         {
             // Read the url from the registration information
-            RegistrationLeafItem leaf = await regResource.GetPackageMetadataItemAsync(identity, sourceCacheContext, log, token);
+            RegistrationLeafItem? leaf = await regResource.GetPackageMetadataItemAsync(identity, sourceCacheContext, log, token);
 
             return leaf?.PackageContent;
         }
@@ -131,7 +131,7 @@ namespace NuGet.Protocol
         private static async Task<Uri?> GetDownloadUrlFromJObjectAsync(RegistrationResourceV3 regResource, PackageIdentity identity, SourceCacheContext sourceCacheContext, ILogger log, CancellationToken token)
         {
             // Read the url from the registration information
-            JObject blob = await regResource.GetPackageMetadata(identity, sourceCacheContext, log, token);
+            JObject? blob = await regResource.GetPackageMetadata(identity, sourceCacheContext, log, token);
 
             if (blob != null
                 && blob["packageContent"] != null)
