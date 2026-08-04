@@ -37,7 +37,7 @@ namespace NuGet.Protocol.Tests
             var latestVersion = await metadataResource.GetLatestVersion("WindowsAzure.Storage", true, false, NullSourceCacheContext.Instance, NullLogger.Instance, CancellationToken.None);
 
             // Assert
-            Assert.Equal("6.2.2-preview", latestVersion.ToNormalizedString());
+            Assert.Equal("6.2.2-preview", latestVersion!.ToNormalizedString());
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace NuGet.Protocol.Tests
             var latestVersion = await metadataResource.GetLatestVersion("WindowsAzure.Storage", false, false, NullSourceCacheContext.Instance, NullLogger.Instance, CancellationToken.None);
 
             // Assert
-            Assert.Equal("6.2.0", latestVersion.ToNormalizedString());
+            Assert.Equal("6.2.0", latestVersion!.ToNormalizedString());
         }
 
         [Fact]
@@ -185,9 +185,9 @@ namespace NuGet.Protocol.Tests
 
             // Assert
             Assert.Equal("WindowsAzure.Storage", versions[1].Key);
-            Assert.Equal("6.2.2-preview", versions[1].Value.ToNormalizedString());
+            Assert.Equal("6.2.2-preview", versions[1].Value!.ToNormalizedString());
             Assert.Equal("xunit", versions[0].Key);
-            Assert.Equal("2.2.0-beta1-build3239", versions[0].Value.ToNormalizedString());
+            Assert.Equal("2.2.0-beta1-build3239", versions[0].Value!.ToNormalizedString());
         }
 
         [Fact]

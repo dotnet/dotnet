@@ -1,10 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.IO.Compression;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
@@ -14,7 +12,7 @@ namespace Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 
 public sealed class AzureDevOpsResultPublisher : IDisposable
 {
-    private const int TestListBuckets = 32;
+    private const int DefaultRetryCount = 10;
     private static readonly TimeSpan s_httpClientTimeout = TimeSpan.FromMinutes(5);
     private static readonly JsonSerializerOptions s_serializerOptions = new(JsonSerializerDefaults.Web)
     {
@@ -95,8 +93,6 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
 
             _logger.LogDebug("Uploaded {Count} results", publishedTestCount);
 
-            // TODO - Do we need this?
-            // await SendMetadataAsync(resultList, cancellationToken);
             return publishedTestCount;
         }
         catch (TerminalError ex)
@@ -104,105 +100,6 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
             _logger.LogError(ex, "Failed to upload test results to Azure DevOps.");
             throw;
         }
-    }
-
-    private static async Task SendMetadataAsync(
-        IEnumerable<AggregatedResult> allTestResults,
-        CancellationToken cancellationToken)
-    {
-        var partitionedResults = new Dictionary<int, List<TestListRow>>();
-        var resultCounts = new Dictionary<string, int>(StringComparer.Ordinal);
-
-        void ProcessResultForMetadata(AggregatedResult result)
-        {
-            resultCounts[result.Result] = resultCounts.TryGetValue(result.Result, out int count) ? count + 1 : 1;
-            if (!string.Equals(result.Result, "Passed", StringComparison.Ordinal))
-            {
-                return;
-            }
-
-            string name = result.Name;
-            string? argumentHash = null;
-            string partitionKey = name;
-            int parenthesisIndex = name.IndexOf('(');
-            if (parenthesisIndex >= 0)
-            {
-                string argumentList = name[(parenthesisIndex + 1)..].TrimEnd(')');
-                name = name[..parenthesisIndex];
-                argumentHash = Convert.ToBase64String(SHA1.HashData(Encoding.UTF8.GetBytes(argumentList)));
-                partitionKey = name + argumentHash;
-            }
-
-            int bucket = SHA1.HashData(Encoding.UTF8.GetBytes(partitionKey))[0] % TestListBuckets;
-            if (!partitionedResults.TryGetValue(bucket, out List<TestListRow>? testNames))
-            {
-                testNames = [];
-                partitionedResults[bucket] = testNames;
-            }
-
-            testNames.Add(new TestListRow(name, argumentHash));
-        }
-
-        void ProcessTestForMetadata(AggregatedResult result)
-        {
-            if (result.AggregationType == AggregationType.DataDriven && result.SubResults.Count > 0)
-            {
-                foreach (AggregatedResult subResult in result.SubResults)
-                {
-                    ProcessTestForMetadata(subResult);
-                }
-            }
-            else if (result.AggregationType == AggregationType.Single)
-            {
-                ProcessResultForMetadata(result);
-            }
-        }
-
-        foreach (AggregatedResult result in allTestResults)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ProcessTestForMetadata(result);
-        }
-        /*
-        var uploadedUrls = new Dictionary<int, string>();
-        foreach ((int key, List<TestListRow>? testNames) in partitionedResults)
-        {
-            byte[] csvBytes = CreateCompressedCsv(testNames);
-            string fileName = $"{Guid.NewGuid():N}.csv.gz";
-            uploadedUrls[key] = await _uploadClient.UploadAsync(csvBytes, fileName, "application/gzip", cancellationToken);
-        }
-
-        var dataModel = new
-        {
-            version = 2,
-            rerun_tests = backChannelCases,
-            test_lists = uploadedUrls,
-            partitions = TestListBuckets,
-            result_counts = resultCounts,
-        };
-
-        byte[] rawBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(dataModel, s_serializerOptions));
-        byte[] compressedBytes = Compress(rawBytes);
-        string base64Data = Convert.ToBase64String(compressedBytes);
-        string fileNameBase = $"__helix_metadata_{Guid.NewGuid():N}.json.gz";
-
-        await SendWithRetryAsync(
-            HttpMethod.Post,
-            $"{_azdoParameters.TeamProject}/_apis/test/runs/{_azdoParameters.TestRunId}/attachments?api-version=7.1-preview.1",
-            new TestRunAttachmentRequest(fileNameBase, base64Data),
-            cancellationToken);
-
-        string metadataUrl = await _uploadClient.UploadAsync(compressedBytes, fileNameBase, "application/gzip", cancellationToken);
-        await _eventClient.SendAsync(
-            new
-            {
-                Type = "AzureDevOpsTestRunMetadata",
-                TestRunProject = _azdoParameters.TeamProject,
-                TestRunId = _azdoParameters.TestRunId,
-                Url = metadataUrl,
-            },
-            cancellationToken);
-        */
     }
 
     private async Task<IReadOnlyList<PublishedTestCase>> PublishResultsAsync(
@@ -216,6 +113,7 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
             HttpMethod.Post,
             $"{_azdoParameters.TeamProject}/_apis/test/runs/{_azdoParameters.TestRunId}/results?api-version=7.1-preview.6",
             testCaseResults,
+            _azdoParameters.RetryWrites ? DefaultRetryCount : 0,
             cancellationToken);
 
         IReadOnlyList<PublishedTestCaseResultReference> publishedResults = await ReadPublishedResultsAsync(response, cancellationToken);
@@ -294,7 +192,12 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
             ? $"{_azdoParameters.TeamProject}/_apis/test/runs/{_azdoParameters.TestRunId}/results/{testId}/attachments?testSubResultId={subId}&api-version=7.1-preview.1"
             : $"{_azdoParameters.TeamProject}/_apis/test/runs/{_azdoParameters.TestRunId}/results/{testId}/attachments?api-version=7.1-preview.1";
 
-        using HttpResponseMessage response = await SendWithRetryAsync(HttpMethod.Post, path, request, cancellationToken);
+        using HttpResponseMessage response = await SendWithRetryAsync(
+            HttpMethod.Post,
+            path,
+            request,
+            _azdoParameters.RetryWrites ? DefaultRetryCount : 0,
+            cancellationToken);
         _ = response;
     }
 
@@ -483,9 +386,10 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
         HttpMethod method,
         string relativePath,
         object? payload,
+        int retryCount,
         CancellationToken cancellationToken)
     {
-        int triesLeft = 10;
+        int triesLeft = retryCount;
         string? body = payload is null ? null : JsonSerializer.Serialize(payload, s_serializerOptions);
         if (!string.IsNullOrEmpty(body))
         {
@@ -629,51 +533,9 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
             subResults);
     }
 
-    private static byte[] CreateCompressedCsv(IEnumerable<TestListRow> rows)
-    {
-        var builder = new StringBuilder();
-        foreach (TestListRow row in rows)
-        {
-            builder.Append(EscapeCsv(row.TestName));
-            builder.Append(',');
-            builder.Append(EscapeCsv(row.ArgumentHash));
-            builder.AppendLine();
-        }
-
-        return Compress(Encoding.UTF8.GetBytes(builder.ToString()));
-    }
-
-    private static string EscapeCsv(string? value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return string.Empty;
-        }
-
-        if (!value.Contains('"') && !value.Contains(',') && !value.Contains('\n') && !value.Contains('\r'))
-        {
-            return value;
-        }
-
-        return $"\"{value.Replace("\"", "\"\"")}\"";
-    }
-
-    private static byte[] Compress(ReadOnlySpan<byte> rawBytes)
-    {
-        using var target = new MemoryStream();
-        using (var gzip = new GZipStream(target, CompressionLevel.SmallestSize, leaveOpen: true))
-        {
-            gzip.Write(rawBytes);
-        }
-
-        return target.ToArray();
-    }
-
     private sealed record ConvertedResult(PublishedTestCase Converted, AggregatedResult Aggregated);
 
     private sealed record ChunkPair(PublishedSubResult Converted, AggregatedResult Aggregated);
-
-    private sealed record TestListRow(string TestName, string? ArgumentHash);
 
     private sealed record TestRunAttachmentRequest(string FileName, string Stream);
 

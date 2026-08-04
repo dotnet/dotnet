@@ -201,7 +201,8 @@ namespace Dotnet.Integration.Test
                 // We need to ensure that this points to the correct SDK directory because this value
                 // is used to locate many Tasks - especially those located by relative path or name.
                 ["MSBuildExtensionsPath"] = SdkDirectory.FullName,
-                ["PATH"] = $"{_cliDirectory}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}"
+                ["PATH"] = $"{_cliDirectory}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}",
+                ["DOTNET_CLI_ENABLEAOT"] = "false"
             };
 
             if (enableDiagnostics)
