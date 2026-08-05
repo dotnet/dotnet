@@ -44,6 +44,28 @@ public class BrowserTests(ITestOutputHelper logger) : DotNetWatchTestBase(logger
     }
 
     [PlatformSpecificFact(TestPlatforms.Windows | TestPlatforms.Linux)] // https://github.com/dotnet/sdk/issues/53061
+    public async Task OriginValidation_Environment()
+    {
+        var testAsset = TestAssets.CopyTestAsset("WatchRazorWithDeps")
+            .WithSource();
+
+        var kestrelUrl = $"http://localhost:{TestOptions.GetTestPort()}";
+        var browserUrl = $"http://myhost:1234";
+
+        App.UseTestBrowser();
+        App.EnvironmentVariables.Add("DOTNET_WATCH_AUTO_RELOAD_WS_ORIGINS", "myhost");
+        App.EnvironmentVariables.Add("TEST_BROWSER_ORIGIN_HEADER", browserUrl);
+
+        App.Start(testAsset, ["--urls", kestrelUrl], relativeProjectDirectory: "RazorApp", testFlags: TestFlags.ReadKeyFromStdin);
+
+        // Verify that the connection has been rejected:
+        await App.WaitUntilOutputContains($"🧪 Fetching '{kestrelUrl}/_framework/aspnetcore-browser-refresh.js'");
+        await App.WaitUntilOutputContains($"🧪 Setting Origin header to '{browserUrl}'.");
+
+        await App.WaitUntilOutputContains(MessageDescriptor.ConnectedToRefreshServer, "Browser #1");
+    }
+
+    [PlatformSpecificFact(TestPlatforms.Windows | TestPlatforms.Linux)] // https://github.com/dotnet/sdk/issues/53061
     public async Task BrowserDiagnostics()
     {
         var testAsset = TestAssets.CopyTestAsset("WatchRazorWithDeps")
@@ -51,18 +73,18 @@ public class BrowserTests(ITestOutputHelper logger) : DotNetWatchTestBase(logger
 
         App.UseTestBrowser();
 
-        var url = $"http://localhost:{TestOptions.GetTestPort()}";
+        var kestrelUrl = $"http://localhost:{TestOptions.GetTestPort()}";
         var projectDisplay = $"RazorApp ({ToolsetInfo.CurrentTargetFramework})";
 
-        App.Start(testAsset, ["--urls", url], relativeProjectDirectory: "RazorApp", testFlags: TestFlags.ReadKeyFromStdin);
+        App.Start(testAsset, ["--urls", kestrelUrl], relativeProjectDirectory: "RazorApp", testFlags: TestFlags.ReadKeyFromStdin);
 
         await App.WaitUntilOutputContains(MessageDescriptor.UsingBrowserRefreshMiddleware);
         await App.WaitUntilOutputContains(MessageDescriptor.ConfiguredToLaunchBrowser);
         await App.WaitUntilOutputContains(MessageDescriptor.WaitingForChanges);
 
         // Verify the browser has been launched.
-        await App.WaitUntilOutputContains($"🧪 Test browser opened at '{url}'.");
-        await App.WaitUntilOutputContains($"🧪 Setting Origin header to '{url}'.");
+        await App.WaitUntilOutputContains($"🧪 Fetching '{kestrelUrl}/_framework/aspnetcore-browser-refresh.js'");
+        await App.WaitUntilOutputContains($"🧪 Setting Origin header to '{kestrelUrl}'.");
 
         // Verify the browser connected to the refresh server.
         await App.WaitUntilOutputContains(MessageDescriptor.ConnectedToRefreshServer, "Browser #1");

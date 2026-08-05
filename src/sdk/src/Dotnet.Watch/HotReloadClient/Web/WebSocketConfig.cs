@@ -4,10 +4,11 @@
 #nullable enable
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.DotNet.HotReload;
 
-internal readonly struct WebSocketConfig(int port, int? securePort, string? hostName)
+internal readonly struct WebSocketConfig(int port, int? securePort, string? hostName, ImmutableArray<string> additionalAllowedOrigins)
 {
     /// <summary>
     /// 0 to auto-assign.
@@ -35,8 +36,21 @@ internal readonly struct WebSocketConfig(int port, int? securePort, string? host
     }
 
     public IEnumerable<string> GetAllowedOriginDomains()
-        => hostName != null ? [HostName] : ["localhost", "127.0.0.1"];
+    {
+        yield return "localhost";
+        yield return "127.0.0.1";
+
+        foreach (var origin in additionalAllowedOrigins)
+        {
+            yield return origin;
+        }
+
+        if (hostName != null)
+        {
+            yield return hostName;
+        }
+    }
 
     public WebSocketConfig WithSecurePort(int? value)
-        => new(port, value, hostName);
+        => new(port, value, hostName, additionalAllowedOrigins);
 }
