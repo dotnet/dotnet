@@ -49,6 +49,13 @@ else
   node_reuse=${node_reuse:-true}
 fi
 
+# Set to true to build with MSBuild's multi-threaded mode (-mt). Enabled by default for local builds and not run on CI.
+if [[ "$ci" == true ]]; then
+  msbuild_multi_threaded=${msbuild_multi_threaded:-false}
+else
+  msbuild_multi_threaded=${msbuild_multi_threaded:-true}
+fi
+
 # Configures warning treatment in msbuild.
 warn_as_error=${warn_as_error:-true}
 
@@ -587,9 +594,9 @@ function MSBuild {
     }
   }
 
-  # Add -mt flag for MSBuild multithreaded mode if enabled via environment variable
+  # Build with MSBuild's multi-threaded mode.
   local mt_switch=""
-  if [[ "${MSBUILD_MT_ENABLED:-}" == "1" ]]; then
+  if [[ "$msbuild_multi_threaded" == true ]]; then
     mt_switch="-mt"
   fi
 

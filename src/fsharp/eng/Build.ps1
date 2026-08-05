@@ -45,6 +45,7 @@ param (
     [switch]$procdump,
     [switch]$deployExtensions,
     [switch]$prepareMachine,
+    [bool][Alias('mt')]$msbuildMultiThreaded = $true,
     [switch]$useGlobalNuGetCache = $true,
     [switch]$dontUseGlobalNuGetCache = $false,
     [switch]$warnAsError = $true,
@@ -78,6 +79,12 @@ param (
 
 Set-StrictMode -version 2.0
 $ErrorActionPreference = "Stop"
+
+# MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
+# tools.ps1 reads $msbuildMultiThreaded, so this has to be settled before Arcade is imported.
+if ($ci -and -not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
+    $msbuildMultiThreaded = $false
+}
 $BuildCategory = ""
 $BuildMessage = ""
 
@@ -140,6 +147,7 @@ function Print-Usage() {
     Write-Host "  -msbuildEngine <value>        Msbuild engine to use to run build ('dotnet', 'vs', or unspecified)."
     Write-Host "  -procdump                     Monitor test runs with procdump"
     Write-Host "  -prepareMachine               Prepare machine for CI run, clean up processes after build"
+    Write-Host "  -msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: -mt)"
     Write-Host "  -dontUseGlobalNuGetCache      Do not use the global NuGet cache"
     Write-Host "  -noVisualStudio               Only build fsc and fsi as .NET Core applications. No Visual Studio required. '-configuration', '-verbosity', '-norestore', '-rebuild' are supported."
     Write-Host "  -productBuild                 Build the repository in product-build mode."

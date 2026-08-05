@@ -37,6 +37,8 @@ product_build=''
 from_vmr=''
 warn_as_error=true
 warn_not_as_error=''
+# Empty means "not specified"; tools.sh defaults it to on for local builds and off on CI.
+msbuild_multi_threaded=''
 from_vmr=''
 
 source "$DIR/common/native/init-os-and-arch.sh"
@@ -84,6 +86,7 @@ Options:
     --verbosity|-v                    MSBuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]
     --warnAsError                     Sets warnaserror msbuild parameter: 'true' or 'false'
     --warnNotAsError                  Sets a semi-colon delimited list of warning codes that should not be treated as errors
+    --msbuildMultiThreaded|--mt       Sets MSBuild's multi-threaded mode, i.e. the -mt switch: 'true' or 'false'
 
     --runtime-source-feed             Additional feed that can be used when downloading .NET runtimes and SDKs
     --runtime-source-feed-key         Key for feed that can be used when downloading .NET runtimes and SDKs
@@ -264,6 +267,11 @@ while [[ $# -gt 0 ]]; do
             shift
             [ -z "${1:-}" ] && __error "Missing value for parameter --warnNotAsError" && __usage
             warn_not_as_error="${1:-}"
+            ;;
+        -msbuildmultithreaded|-mt)
+            shift
+            [ -z "${1:-}" ] && __error "Missing value for parameter --msbuildMultiThreaded" && __usage
+            msbuild_multi_threaded="${1:-}"
             ;;
         *)
             msbuild_args[${#msbuild_args[*]}]="$1"

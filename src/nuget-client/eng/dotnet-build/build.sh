@@ -15,6 +15,8 @@ product_build=false
 from_vmr=false
 ci=false
 node_reuse=true
+# Empty means "not specified"; defaults to on for local builds and off on CI (see below).
+msbuild_multi_threaded=''
 binary_log=false
 warn_as_error=true
 warn_not_as_error=''
@@ -61,6 +63,10 @@ while [[ $# > 0 ]]; do
       ;;
     --nodereuse)
       node_reuse=$2
+      shift
+      ;;
+    --msbuildmultithreaded|--mt)
+      msbuild_multi_threaded=$2
       shift
       ;;
     --warnaserror)
@@ -138,6 +144,13 @@ if [[ "$ci" == true ]]; then
   node_reuse=false
 fi
 
+# MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI unless it was
+# explicitly requested via --msbuildMultiThreaded.
+mt_switch=""
+if [[ "$msbuild_multi_threaded" == true || (-z "$msbuild_multi_threaded" && "$ci" != true) ]]; then
+  mt_switch="-mt"
+fi
+
 warnaserror_switch=""
 if [[ "$warn_as_error" == true ]]; then
   warnaserror_switch="/warnaserror"
@@ -148,4 +161,4 @@ if [[ -n "$warn_not_as_error" && "$warn_as_error" == true ]]; then
   warnnotaserror_switch="/warnnotaserror:$warn_not_as_error /p:AdditionalWarningsNotAsErrors=${warn_not_as_error//;/%3B}"
 fi
 
-"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl $warnaserror_switch $warnnotaserror_switch ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
+"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse $mt_switch /p:ContinuousIntegrationBuild=$ci $bl $warnaserror_switch $warnnotaserror_switch ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}

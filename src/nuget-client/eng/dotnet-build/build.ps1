@@ -10,6 +10,7 @@ param (
   [switch][Alias('pb')]$productBuild,
   [switch]$fromVMR,
   [bool]$nodeReuse = $true,
+  [bool][Alias('mt')]$msbuildMultiThreaded = $true,
   [bool]$warnAsError = $true,
   [string]$warnNotAsError = '',
   [Parameter(ValueFromRemainingArguments = $true)][string[]]$properties
@@ -35,6 +36,10 @@ try {
       $binaryLog = $true
     }
     $nodeReuse = $false
+    # MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
+    if (-not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
+      $msbuildMultiThreaded = $false
+    }
   }
 
   Build

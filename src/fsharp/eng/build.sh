@@ -34,6 +34,7 @@ usage()
   echo "  --skipAnalyzers                Do not run analyzers during build operations"
   echo "  --skipBuild                    Do not run the build"
   echo "  --prepareMachine               Prepare machine for CI run, clean up processes after build"
+  echo "  --msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: --mt)"
   echo "  --sourceBuild                  Build the repository in source-only mode."
   echo "  --productBuild                 Build the repository in product-build mode."
   echo "  --fromVMR                      Set when building from within the VMR"
@@ -75,6 +76,8 @@ ci=false
 skip_analyzers=false
 skip_build=false
 prepare_machine=false
+# Empty means "not specified"; tools.sh defaults it to on for local builds and off on CI.
+msbuild_multi_threaded=''
 source_build=false
 product_build=false
 from_vmr=false
@@ -166,6 +169,10 @@ while [[ $# > 0 ]]; do
       ;;
     --preparemachine)
       prepare_machine=true
+      ;;
+    --msbuildmultithreaded|--mt)
+      msbuild_multi_threaded=$2
+      shift
       ;;
     --docker)
       docker=true

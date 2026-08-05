@@ -43,6 +43,7 @@ usage()
   echo "  --pipelinesLog           Promote msbuild errors/warnings to Azure Pipelines timeline issues; defaults to on in CI (short: -pl)"
   echo "  --prepareMachine         Prepare machine for CI run, clean up processes after build"
   echo "  --nodeReuse <value>      Sets nodereuse msbuild parameter ('true' or 'false')"
+  echo "  --msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: --mt)"
   echo "  --warnAsError <value>    Sets warnaserror msbuild parameter ('true' or 'false')"
   echo "  --warnNotAsError <value> Sets a semi-colon delimited list of warning codes that should not be treated as errors"
   echo "  --buildCheck <value>     Sets /check msbuild parameter"
@@ -85,6 +86,8 @@ clean=false
 warn_as_error=true
 warn_not_as_error=''
 node_reuse=true
+# Empty means "not specified"; tools.sh defaults it to on for local builds and off on CI.
+msbuild_multi_threaded=''
 build_check=false
 binary_log=false
 binary_log_name=''
@@ -197,6 +200,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -nodereuse)
       node_reuse=$2
+      shift
+      ;;
+    -msbuildmultithreaded|-mt)
+      msbuild_multi_threaded=$2
       shift
       ;;
     -buildcheck)

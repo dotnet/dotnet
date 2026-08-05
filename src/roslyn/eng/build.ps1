@@ -41,6 +41,7 @@ param (
   [switch]$skipDocumentation = $false,
   [switch][Alias('d')]$deployExtensions,
   [switch]$prepareMachine,
+  [bool][Alias('mt')]$msbuildMultiThreaded = $true,
   [switch]$useGlobalNuGetCache = $true,
   [switch]$warnAsError = $false,
   [string]$warnNotAsError = "",
@@ -78,6 +79,12 @@ param (
 
 Set-StrictMode -version 2.0
 $ErrorActionPreference = "Stop"
+
+# MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
+# tools.ps1 reads $msbuildMultiThreaded, so this has to be settled before Arcade is imported.
+if ($ci -and -not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
+  $msbuildMultiThreaded = $false
+}
 
 function Print-Usage() {
   Write-Host "Common settings:"
@@ -118,6 +125,7 @@ function Print-Usage() {
   Write-Host "  -runAnalyzers             Run analyzers during build operations (short: -a)"
   Write-Host "  -skipDocumentation        Skip generation of XML documentation files"
   Write-Host "  -prepareMachine           Prepare machine for CI run, clean up processes after build"
+  Write-Host "  -msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: -mt)"
   Write-Host "  -useGlobalNuGetCache      Use global NuGet cache."
   Write-Host "  -warnAsError              Treat all warnings as errors"
   Write-Host "  -warnNotAsError <codes>   Suppress specific warnings from being treated as errors (semi-colon delimited)"

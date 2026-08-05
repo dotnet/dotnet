@@ -99,6 +99,10 @@ Build the repository in product mode (short: -pb).
 .PARAMETER fromVMR
 Set when building from within the VMR.
 
+.PARAMETER MSBuildMultiThreaded
+Sets MSBuild's multi-threaded mode, i.e. the -mt switch (short: -mt). Defaults to on for local builds and is not
+run on CI unless explicitly requested.
+
 .EXAMPLE
 Building both native and managed projects.
 
@@ -202,6 +206,10 @@ param(
 
     # Passed through to tools.ps1 MSBuild function
     [string]$warnNotAsError = '',
+
+    # Passed through to tools.ps1 MSBuild function
+    [Alias('mt')]
+    [bool]$msbuildMultiThreaded = $true,
 
     # Capture the rest
     [Parameter(ValueFromRemainingArguments = $true)]
@@ -346,6 +354,11 @@ $restore = $RunRestore
 # Disable node reuse - Workaround perpetual issues in node reuse and custom task assemblies
 $nodeReuse = $false
 $env:MSBUILDDISABLENODEREUSE=1
+
+# MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
+if ($CI -and -not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
+    $msbuildMultiThreaded = $false
+}
 
 # Ensure passing neither -bl nor -nobl on CI avoids errors in tools.ps1. This is needed because both parameters are
 # $false by default i.e. they always exist. (We currently avoid binary logs but that is made visible in the YAML.)

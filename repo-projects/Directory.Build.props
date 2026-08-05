@@ -115,6 +115,10 @@
 
     <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)ci</CommonArgs>
 
+    <!-- MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI.
+         Set DotNetBuildMT to explicitly opt in or out for all repo builds. -->
+    <CommonArgs Condition="'$(DotNetBuildMT)' != ''">$(CommonArgs) $(FlagParameterPrefix)mt $(DotNetBuildMT)</CommonArgs>
+
     <!-- Pass down configuration properties -->
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</CommonArgs>
@@ -212,11 +216,6 @@
 
     <!-- If MSBuild exits early, make sure debug output like 'MSBuild_*.failure.txt' ends up in a place we can see it. -->
     <EnvironmentVariables Include="MSBUILDDEBUGPATH=$(ArtifactsLogRepoDir)" />
-  </ItemGroup>
-
-  <!-- Enable MSBuild -mt mode when DotNetBuildMT is true -->
-  <ItemGroup Condition="'$(DotNetBuildMT)' == 'true'">
-    <EnvironmentVariables Include="MSBUILD_MT_ENABLED=1" />
   </ItemGroup>
 
   <!-- NOTE: This is for internal testing only; real CI should not have node reuse.
