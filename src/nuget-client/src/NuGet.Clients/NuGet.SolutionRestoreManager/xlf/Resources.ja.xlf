@@ -136,7 +136,7 @@ NuGet がビルド中にパッケージを復元しないようにするには�
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>
-        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <target state="translated">NuGet パッケージの脆弱性を修正するよう Copilot に依頼する</target>
         <note>Do not translate Copilot or NuGet</note>
       </trans-unit>
     </body>

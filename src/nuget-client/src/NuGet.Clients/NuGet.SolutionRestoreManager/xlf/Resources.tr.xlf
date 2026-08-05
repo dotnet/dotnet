@@ -136,7 +136,7 @@ NuGet'in derleme sırasında paketleri geri yüklemesini önlemek için Visual S
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>
-        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <target state="translated">Copilot’tan NuGet paketi güvenlik açıklarını düzeltmesini isteyin</target>
         <note>Do not translate Copilot or NuGet</note>
       </trans-unit>
     </body>
