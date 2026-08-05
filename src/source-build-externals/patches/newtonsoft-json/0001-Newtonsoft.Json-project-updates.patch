@@ -4,9 +4,22 @@ Date: Tue, 15 Aug 2023 09:49:47 -0500
 Subject: [PATCH] Newtonsoft.Json project updates
 
 ---
+ Src/global.json                           |  2 +-
  Src/Newtonsoft.Json/Newtonsoft.Json.csproj | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ 2 files changed, 6 insertions(+), 11 deletions(-)
 
+diff --git a/Src/global.json b/Src/global.json
+index 18b4598f..ea886fba 100644
+--- a/Src/global.json
++++ b/Src/global.json
+@@ -1,6 +1,6 @@
+ {
+   "sdk": {
+-    "version": "6.0.400",
++    "version": "8.0.126",
+     "rollForward": "latestFeature"
+   }
+ }
 diff --git a/Src/Newtonsoft.Json/Newtonsoft.Json.csproj b/Src/Newtonsoft.Json/Newtonsoft.Json.csproj
 index 47c63018..c939e71a 100644
 --- a/Src/Newtonsoft.Json/Newtonsoft.Json.csproj
