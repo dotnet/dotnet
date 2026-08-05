@@ -136,7 +136,7 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>
-        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <target state="translated">要求 Copilot 修正 NuGet 套件弱點</target>
         <note>Do not translate Copilot or NuGet</note>
       </trans-unit>
     </body>

@@ -136,7 +136,7 @@ Aby uniemożliwić narzędziu NuGet przywracanie pakietów podczas kompilacji, o
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>
-        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <target state="translated">Poproś funkcję Copilot o usunięcie luk w zabezpieczeniach pakietu NuGet</target>
         <note>Do not translate Copilot or NuGet</note>
       </trans-unit>
     </body>

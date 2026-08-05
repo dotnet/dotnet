@@ -136,7 +136,7 @@ Wenn Sie verhindern möchten, dass NuGet Pakete während des Builds wiederherste
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>
-        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <target state="translated">Copilot fragen, Sicherheitsrisiken in NuGet-Paketen zu beheben</target>
         <note>Do not translate Copilot or NuGet</note>
       </trans-unit>
     </body>

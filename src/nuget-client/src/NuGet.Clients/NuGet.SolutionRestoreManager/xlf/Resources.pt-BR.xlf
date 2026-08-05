@@ -136,7 +136,7 @@ Para impedir que o NuGet restaure pacotes durante o build, abra a caixa de diál
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>
-        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <target state="translated">Peça ao Copilot para corrigir vulnerabilidades do pacote NuGet</target>
         <note>Do not translate Copilot or NuGet</note>
       </trans-unit>
     </body>

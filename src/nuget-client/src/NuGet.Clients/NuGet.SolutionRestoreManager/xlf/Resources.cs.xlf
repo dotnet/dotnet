@@ -136,7 +136,7 @@ Když nechcete, aby aplikace NuGet obnovovala balíčky během vytváření sest
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>
-        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <target state="translated">Požádejte Copilota o opravu ohrožení zabezpečení balíčku NuGet.</target>
         <note>Do not translate Copilot or NuGet</note>
       </trans-unit>
     </body>
