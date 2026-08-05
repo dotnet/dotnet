@@ -16,6 +16,8 @@
     found when the task is loaded by the SDK's MSBuild.
   -->
   <ItemGroup>
+    <SdkAssembly Include="$(SdkReferenceDir)Microsoft.Build.Framework.dll" />
+    <SdkAssembly Include="$(SdkReferenceDir)Microsoft.Build.Utilities.Core.dll" />
     <SdkAssembly Include="$(SdkReferenceDir)Newtonsoft.Json.dll" />
 
     <SdkAssemblyReference
