@@ -57,7 +57,7 @@
     <MicrosoftExtensionsLoggingConsoleVersion>10.0.1</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftExtensionsLoggingVersion>10.0.1</MicrosoftExtensionsLoggingVersion>
     <MicrosoftExtensionsHostingVersion>10.0.1</MicrosoftExtensionsHostingVersion>
-    <SystemSecurityCryptographyXmlVersion>10.0.8</SystemSecurityCryptographyXmlVersion>
+    <SystemSecurityCryptographyXmlVersion>10.0.10</SystemSecurityCryptographyXmlVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
     <OctokitVersion>14.0.0</OctokitVersion>
