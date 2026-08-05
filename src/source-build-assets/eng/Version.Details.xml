@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="source-build-assets" Sha="5da2de22f7c6e2ebe7ed4c16c614b00183145d3c" BarId="325270" />
+  <ProductDependencies>
+    <Dependency Name="Microsoft.Bcl.Cryptography" Version="11.0.0-rc.1.26401.101">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>5da2de22f7c6e2ebe7ed4c16c614b00183145d3c</Sha>
+    </Dependency>
+  </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="Microsoft.Build" Version="18.11.0-1.26401.101">
       <Uri>https://github.com/dotnet/dotnet</Uri>
