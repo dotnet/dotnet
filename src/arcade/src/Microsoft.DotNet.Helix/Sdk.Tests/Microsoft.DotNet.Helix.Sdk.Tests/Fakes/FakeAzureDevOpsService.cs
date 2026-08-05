@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
@@ -20,7 +22,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         private readonly object _sync = new();
         private readonly List<AzureDevOpsTimelineRecord[]> _timelineResponses = [];
         private readonly HashSet<string> _previouslyProcessedJobs = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Queue<Exception> _createFailures = [];
         private readonly Queue<Exception> _uploadFailures = [];
+        private readonly Queue<Exception> _completeFailures = [];
         private readonly HashSet<(string JobName, string WorkItemName)> _recordedFailedTests
             = new(FailedTestWorkItemComparer.Instance);
         private readonly HashSet<(string JobName, string WorkItemName)> _uploadFailedTests
@@ -35,6 +39,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         public List<string> UploadedJobNames { get; } = [];
         public int CreateTestRunCallCount { get; private set; }
         public int UploadTestResultsCallCount { get; private set; }
+        public int CompleteTestRunCallCount { get; private set; }
         public TaskCompletionSource UploadStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         public TaskCompletionSource UploadCompleted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         public Task UploadBlocker { get; set; } = Task.CompletedTask;
@@ -74,11 +79,31 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             return this;
         }
 
+        public FakeAzureDevOpsService FailNextCreate(Exception exception = null)
+        {
+            lock (_sync)
+            {
+                _createFailures.Enqueue(exception ?? CreateTransientFailure("Injected test-run creation failure."));
+            }
+
+            return this;
+        }
+
         public FakeAzureDevOpsService FailNextUpload(Exception exception = null)
         {
             lock (_sync)
             {
-                _uploadFailures.Enqueue(exception ?? new InvalidOperationException("Injected upload failure."));
+                _uploadFailures.Enqueue(exception ?? CreateTransientFailure("Injected test-result upload failure."));
+            }
+
+            return this;
+        }
+
+        public FakeAzureDevOpsService FailNextComplete(Exception exception = null)
+        {
+            lock (_sync)
+            {
+                _completeFailures.Enqueue(exception ?? CreateTransientFailure("Injected test-run completion failure."));
             }
 
             return this;
@@ -158,11 +183,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             lock (_sync)
             {
                 CreateTestRunCallCount++;
+                if (_createFailures.Count > 0)
+                {
+                    throw _createFailures.Dequeue();
+                }
 
-                // Matches the real AzureDevOpsService: every call creates a brand new in-progress
-                // run. The service never reuses an existing run, so a transient upload failure that
-                // re-enters the retry loop leaves an orphaned (untagged) run behind — exactly the
-                // crash-resilience behavior described in the design.
                 int id = Interlocked.Increment(ref _nextTestRunId);
                 CreatedTestRuns.Add(name);
                 return Task.FromResult(id);
@@ -173,7 +198,14 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         {
             lock (_sync)
             {
+                CompleteTestRunCallCount++;
+                if (_completeFailures.Count > 0)
+                {
+                    throw _completeFailures.Dequeue();
+                }
+
                 CompletedTestRunIds.Add(testRunId);
+                _previouslyProcessedJobs.Add(helixJobName);
                 foreach (string workItemName in failedWorkItems ?? [])
                 {
                     if (!string.IsNullOrEmpty(workItemName))
@@ -221,7 +253,6 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
                 foreach (string jobName in results.Select(r => r.JobName).Distinct(StringComparer.OrdinalIgnoreCase))
                 {
                     UploadedJobNames.Add(jobName);
-                    _previouslyProcessedJobs.Add(jobName);
                 }
 
                 foreach (WorkItemTestResults result in results)
@@ -235,6 +266,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             UploadCompleted.TrySetResult();
             return summaries;
         }
+
+        private static HttpRequestException CreateTransientFailure(string message)
+            => new(message, null, HttpStatusCode.ServiceUnavailable);
 
         private sealed class FailedTestWorkItemComparer : IEqualityComparer<(string JobName, string WorkItemName)>
         {

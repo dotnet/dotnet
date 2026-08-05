@@ -18,7 +18,6 @@ on:
   slash_command:
     name: analyze-build-failure
     events: [pull_request_comment]
-    strategy: centralized
   roles: [admin, maintainer, write]
   reaction: "eyes"
   # Gate the AI pipeline on the fetch job so the agent only runs when a binlog
@@ -77,6 +76,21 @@ mcp-servers:
 jobs:
   fetch-binlog:
     name: Fetch binlogs (Azure Pipelines)
+    # Cheap pre-gate. This job is a dependency of gh-aw's `pre_activation`, so it
+    # runs BEFORE the role / command-position check. Without a guard it would
+    # download hundreds of MB of binlogs on *every* comment in the repository,
+    # which any public commenter could trigger repeatedly. This expression is
+    # only the free first filter — `author_association` is coarse (in an
+    # org-owned repo every org member reports MEMBER regardless of the
+    # permission they actually hold here), so the step below resolves the
+    # commenter's real repository permission before anything is downloaded.
+    # `pre_activation` remains the authoritative role + command-position check,
+    # and `activation` additionally requires `binlog-found == 'true'`.
+    if: >-
+      github.event.repository.fork == false &&
+      github.event.issue.pull_request &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+      contains(github.event.comment.body, '/analyze-build-failure')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -90,8 +104,45 @@ jobs:
       ado-build-id: ${{ steps.fetch.outputs.ado-build-id }}
       ado-build-url: ${{ steps.fetch.outputs.ado-build-url }}
     steps:
+      # `author_association` in the job-level `if:` cannot tell an org member
+      # with read-only access apart from a maintainer, so resolve the real
+      # repository permission here — before any download — and match it against
+      # the same `roles: [admin, maintainer, write]` this command declares.
+      # Check `role_name` and `permission` together: `role_name` reports the
+      # precise role (so `maintain` and `triage` stay distinct) while
+      # `permission` is the coarse legacy field, and a custom org role reports a
+      # non-standard name in `role_name` while still showing its push access in
+      # `permission`. Accepting the union of the two covers every shape without
+      # depending on which field carries the role. On any API failure `gh` emits
+      # an error document that has neither field, so the check falls into the
+      # deny branch; failing closed is the safe direction for a pre-gate.
+      - name: Verify the commenter has write access
+        id: perm
+        if: github.event_name == 'issue_comment'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMENTER: ${{ github.event.comment.user.login }}
+        run: |
+          set +e
+          resp=$(gh api "repos/${GITHUB_REPOSITORY}/collaborators/${COMMENTER}/permission" 2>/dev/null)
+          role=$(printf '%s' "${resp}" | jq -r '.role_name // empty' 2>/dev/null)
+          perm=$(printf '%s' "${resp}" | jq -r '.permission // empty' 2>/dev/null)
+          authorized=false
+          for r in "${role}" "${perm}"; do
+            case "${r}" in
+              admin|maintain|maintainer|write) authorized=true ;;
+            esac
+          done
+          if [ "${authorized}" = "true" ]; then
+            echo "'${COMMENTER}' has '${role:-${perm}}' access to ${GITHUB_REPOSITORY}; proceeding."
+          else
+            echo "::warning::'${COMMENTER}' does not have write access to ${GITHUB_REPOSITORY} (resolved role '${role:-none}'); skipping the binlog download."
+          fi
+          echo "authorized=${authorized}" >> "$GITHUB_OUTPUT"
+
       - name: Download binlogs from the PR's latest failed Azure Pipelines build
         id: fetch
+        if: github.event_name != 'issue_comment' || steps.perm.outputs.authorized == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_AW_REPO: ${{ github.repository }}

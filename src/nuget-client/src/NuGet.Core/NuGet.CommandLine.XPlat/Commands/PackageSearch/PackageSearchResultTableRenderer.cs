@@ -83,7 +83,7 @@ namespace NuGet.CommandLine.XPlat
             {
                 string packageId = result.Identity.Id;
                 string version = result.Identity.Version.ToNormalizedString();
-                string owners = result.Owners;
+                string? owners = result.Owners;
                 string downloads = "N/A";
 
                 if (result.DownloadCount != null)
@@ -97,7 +97,7 @@ namespace NuGet.CommandLine.XPlat
                 }
                 else if (verbosity == PackageSearchVerbosity.Detailed)
                 {
-                    PackageDeprecationMetadata packageDeprecationMetadata = await result.GetDeprecationMetadataAsync();
+                    PackageDeprecationMetadata? packageDeprecationMetadata = await result.GetDeprecationMetadataAsync();
                     string vulnerable = "N/A";
                     string projectUri = "N/A";
                     string deprecation = "N/A";

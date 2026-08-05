@@ -3,6 +3,7 @@
 
 using System;
 using System.CommandLine;
+using Azure.Identity;
 
 namespace Microsoft.DotNet.Helix.JobMonitor
 {
@@ -63,6 +64,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// code and AzDO test failures do not influence retries or the final exit code.
         /// </summary>
         public bool FailWorkItemsWithFailedTests { get; set; } = true;
+
+        /// <summary>
+        /// When true, the monitor may succeed when the stage completes without producing any
+        /// Helix jobs in any attempt. Defaults to false so missing submissions fail the monitor.
+        /// </summary>
+        public bool AllowNoHelixJobs { get; set; }
 
         public bool Verbose { get; set; }
 
@@ -165,6 +172,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 DefaultValueFactory = _ => true
             };
 
+            Option<bool> allowNoHelixJobsOption = new("--allow-no-helix-jobs")
+            {
+                Description = "Allow the monitor to succeed when the stage completes without producing any Helix jobs in any attempt."
+            };
+
             Option<bool> verboseOption = new("--verbose")
             {
                 Description = "Enable verbose job monitor logging."
@@ -197,6 +209,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             rootCommand.Options.Add(stageAttemptOption);
             rootCommand.Options.Add(testResultUploadParallelismOption);
             rootCommand.Options.Add(failWorkItemsWithFailedTestsOption);
+            rootCommand.Options.Add(allowNoHelixJobsOption);
             rootCommand.Options.Add(verboseOption);
             rootCommand.Options.Add(useFullyQualifiedTestNameOption);
 
@@ -220,6 +233,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     StageAttempt = parseResult.GetValue(stageAttemptOption),
                     TestResultUploadParallelism = parseResult.GetValue(testResultUploadParallelismOption),
                     FailWorkItemsWithFailedTests = parseResult.GetValue(failWorkItemsWithFailedTestsOption),
+                    AllowNoHelixJobs = parseResult.GetValue(allowNoHelixJobsOption),
                     Verbose = parseResult.GetValue(verboseOption),
                     UseFullyQualifiedTestName = parseResult.GetValue(useFullyQualifiedTestNameOption),
                 };
@@ -241,7 +255,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         {
             HelixAccessToken ??= Environment.GetEnvironmentVariable("HELIX_ACCESSTOKEN");
 #if DEBUG
-            SystemAccessToken ??= new Azure.Identity.DefaultAzureCredential(includeInteractiveCredentials: true)
+            SystemAccessToken ??= new ChainedTokenCredential(
+                    new AzureCliCredential(),
+                    new VisualStudioCredential(),
+                    new VisualStudioCodeCredential())
                 .GetToken(new Azure.Core.TokenRequestContext(["499b84ac-1321-427f-aa17-267ca6975798/.default"]))
                 .Token;
 #endif

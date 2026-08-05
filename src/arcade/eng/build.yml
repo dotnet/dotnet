@@ -97,8 +97,7 @@ stages:
 
 # Promote the build to '.NET Eng - Latest' using the current/default Arcade. Runs after a successful
 # build, and - when validation is enabled - after ValidateSdk passes, so a build can still be promoted
-# when validation is disabled. Main only: release branches keep using dotnet/arcade-validation for
-# this gate (see #17046). The assets were already published to '.NET Eng - Validation' by the
+# when validation is disabled. The assets were already published to '.NET Eng - Validation' by the
 # post-build publish stage, so this uses --skip-assets-publishing.
 - ${{ if eq(variables['Build.SourceBranch'], parameters.promotionSourceBranch) }}:
   - stage: PromoteToLatest

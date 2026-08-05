@@ -91,11 +91,11 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(HelixAccessToken)' != '' ">
-    <HelixTargetQueue Include="(AlmaLinux.9.Amd64)Ubuntu.2204.Amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
+    <HelixTargetQueue Include="(AlmaLinux.9.Amd64)azurelinux.3.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)AlmaLinux.9.Amd64</TestRunName>
     </HelixTargetQueue>
     <HelixTargetQueue Include="Windows.11.Amd64.Client"/>
-    <HelixTargetQueue Include="(Debian.13.Amd64)ubuntu.2204.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
+    <HelixTargetQueue Include="(Debian.13.Amd64)azurelinux.3.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)Debian.13.Amd64</TestRunName>
     </HelixTargetQueue>
     <HelixTargetQueue Include="OSX.26.Arm64"/>
@@ -108,11 +108,11 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(HelixAccessToken)' == '' ">
-    <HelixTargetQueue Include="(AlmaLinux.9.Amd64.Open)Ubuntu.2204.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
+    <HelixTargetQueue Include="(AlmaLinux.9.Amd64.Open)azurelinux.3.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)AlmaLinux.9.Amd64.Open</TestRunName>
     </HelixTargetQueue>
     <HelixTargetQueue Include="Windows.11.Amd64.Client.Open"/>
-    <HelixTargetQueue Include="(Debian.13.Amd64.Open)ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
+    <HelixTargetQueue Include="(Debian.13.Amd64.Open)azurelinux.3.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)Debian.13.Amd64.Open</TestRunName>
     </HelixTargetQueue>
     <HelixTargetQueue Include="OSX.26.Arm64.Open"/>

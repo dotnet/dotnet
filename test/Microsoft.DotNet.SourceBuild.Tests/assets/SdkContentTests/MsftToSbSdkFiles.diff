@@ -24,6 +24,7 @@ index ------------
 -./packs/Microsoft.NETCore.App.Host.portable-rid/x.y.z/runtimes/portable-rid/native/
 -./packs/Microsoft.NETCore.App.Host.portable-rid/x.y.z/runtimes/portable-rid/native/apphost
 -./packs/Microsoft.NETCore.App.Host.portable-rid/x.y.z/runtimes/portable-rid/native/coreclr_delegates.h
+-./packs/Microsoft.NETCore.App.Host.portable-rid/x.y.z/runtimes/portable-rid/native/host_error_codes.h
 -./packs/Microsoft.NETCore.App.Host.portable-rid/x.y.z/runtimes/portable-rid/native/hostfxr.h
 -./packs/Microsoft.NETCore.App.Host.portable-rid/x.y.z/runtimes/portable-rid/native/libnethost.a
 -./packs/Microsoft.NETCore.App.Host.portable-rid/x.y.z/runtimes/portable-rid/native/libnethost.so
@@ -36,6 +37,7 @@ index ------------
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/apphost
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/coreclr_delegates.h
++./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/host_error_codes.h
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/hostfxr.h
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/libnethost.a
 +./packs/Microsoft.NETCore.App.Host.banana-rid/x.y.z/runtimes/banana-rid/native/libnethost.so

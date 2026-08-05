@@ -1,7 +1,7 @@
-# Validates that the *newly built* Arcade SDK's SignTool can sign a curated set of artifact types
-# (packages, VSIXes, .deb/.rpm/.pkg, loose assemblies, nested containers, ...). Ported from
-# dotnet/arcade-validation's Validate_Signing_{Windows,Linux,MacOS} jobs, with an added step that
-# bootstraps the newly produced SDK (use-built-sdk.ps1) before signing so the new SignTool is used.
+# Validates that the Arcade SDK's SignTool can sign a curated set of artifact types (packages,
+# VSIXes, .deb/.rpm/.pkg, loose assemblies, nested containers, ...). Ported from
+# dotnet/arcade-validation's Validate_Signing_{Windows,Linux,MacOS} jobs. By default, the jobs
+# bootstrap the newly produced SDK (use-built-sdk.ps1) before signing so the new SignTool is used.
 #
 # The signing inputs are the existing SignTool unit-test resources
 # (src/Microsoft.DotNet.SignTool.Tests/Resources) - a superset of arcade-validation's - so no binary
@@ -9,7 +9,7 @@
 # set of clean, signable inputs (that folder also holds deliberately-malformed/non-signable inputs
 # used by the unit tests), defined once and shared by all three jobs.
 #
-# One of the parallel jobs of the official build's ValidateSdk stage.
+# Used by the official build's ValidateSdk stage and the standalone signing-validation pipeline.
 #
 # NOTE: real signing uses MicroBuild/ESRP and only runs in the internal official build; not testable
 # locally or in PR. Needs @dotnet/dnceng review and a real official-build run to confirm (especially
@@ -17,6 +17,8 @@
 
 parameters:
   microbuildUseESRP: false
+  enablePreviewMicrobuild: false
+  useBuiltSdk: true
   # Curated, clean signable inputs from src/Microsoft.DotNet.SignTool.Tests/Resources, shared by all
   # jobs (CopyFiles 'contents' minimatch, one pattern per line).
   signingTestPackages: |
@@ -43,11 +45,13 @@ jobs:
     name: Validate_Signing_Windows
     displayName: Validate Signing (Windows)
     enableMicrobuild: true
+    enablePreviewMicrobuild: ${{ parameters.enablePreviewMicrobuild }}
     microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
     artifacts:
-      download:
-        name: Artifacts_Windows_NT_Release
-        path: build_stage_artifacts
+      ${{ if eq(parameters.useBuiltSdk, true) }}:
+        download:
+          name: Artifacts_Windows_NT_Release
+          path: build_stage_artifacts
       publish:
         logs:
           name: Logs_ValidateSigning_Windows_$(_BuildConfig)
@@ -72,12 +76,13 @@ jobs:
     - checkout: self
       clean: true
     steps:
-    # Point the repo at the newly produced Arcade/Helix SDK so the sign below uses the new SignTool.
-    # Pure file edit (no darc / no az), so a plain PowerShell step is enough - no service connection.
-    - powershell: >
-        .\eng\validation\use-built-sdk.ps1
-        -PackagesSource $(System.DefaultWorkingDirectory)/build_stage_artifacts
-      displayName: Use newly built SDK
+    - ${{ if eq(parameters.useBuiltSdk, true) }}:
+      # Point the repo at the newly produced Arcade/Helix SDK so the sign below uses the new SignTool.
+      # Pure file edit (no darc / no az), so a plain PowerShell step is enough - no service connection.
+      - powershell: >
+          .\eng\validation\use-built-sdk.ps1
+          -PackagesSource $(System.DefaultWorkingDirectory)/build_stage_artifacts
+        displayName: Use newly built SDK
     - task: CopyFiles@2
       displayName: Stage signing test packages
       inputs:
@@ -99,7 +104,9 @@ jobs:
         /p:DotNetSignType=$(_SignType)
         /p:TeamName=$(TeamName)
         /p:OfficialBuildId=$(Build.BuildNumber)
-      displayName: Sign with the newly built SignTool
+        /p:PostBuildSign=false
+        /p:ArcadeSigningValidation=true
+      displayName: Sign staged artifacts
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
@@ -108,12 +115,14 @@ jobs:
     name: Validate_Signing_Linux
     displayName: Validate Signing (Linux)
     enableMicrobuild: true
+    enablePreviewMicrobuild: ${{ parameters.enablePreviewMicrobuild }}
     enableMicrobuildForMacAndLinux: true
     microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
     artifacts:
-      download:
-        name: Artifacts_Windows_NT_Release
-        path: build_stage_artifacts
+      ${{ if eq(parameters.useBuiltSdk, true) }}:
+        download:
+          name: Artifacts_Windows_NT_Release
+          path: build_stage_artifacts
       publish:
         logs:
           name: Logs_ValidateSigning_Linux_$(_BuildConfig)
@@ -135,12 +144,13 @@ jobs:
     - checkout: self
       clean: true
     steps:
-    # Point the repo at the newly produced Arcade/Helix SDK so the sign below uses the new SignTool.
-    # Pure file edit (no darc / no az), so a plain PowerShell step is enough - no service connection.
-    - pwsh: >
-        ./eng/validation/use-built-sdk.ps1
-        -PackagesSource $(System.DefaultWorkingDirectory)/build_stage_artifacts
-      displayName: Use newly built SDK
+    - ${{ if eq(parameters.useBuiltSdk, true) }}:
+      # Point the repo at the newly produced Arcade/Helix SDK so the sign below uses the new SignTool.
+      # Pure file edit (no darc / no az), so a plain PowerShell step is enough - no service connection.
+      - pwsh: >
+          ./eng/validation/use-built-sdk.ps1
+          -PackagesSource $(System.DefaultWorkingDirectory)/build_stage_artifacts
+        displayName: Use newly built SDK
     - task: CopyFiles@2
       displayName: Stage signing test packages
       inputs:
@@ -162,7 +172,9 @@ jobs:
         /p:DotNetSignType=$(_SignType)
         /p:TeamName=$(TeamName)
         /p:OfficialBuildId=$(Build.BuildNumber)
-      displayName: Sign with the newly built SignTool
+        /p:PostBuildSign=false
+        /p:ArcadeSigningValidation=true
+      displayName: Sign staged artifacts
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
@@ -171,12 +183,14 @@ jobs:
     name: Validate_Signing_MacOS
     displayName: Validate Signing (macOS)
     enableMicrobuild: true
+    enablePreviewMicrobuild: ${{ parameters.enablePreviewMicrobuild }}
     enableMicrobuildForMacAndLinux: true
     microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
     artifacts:
-      download:
-        name: Artifacts_Windows_NT_Release
-        path: build_stage_artifacts
+      ${{ if eq(parameters.useBuiltSdk, true) }}:
+        download:
+          name: Artifacts_Windows_NT_Release
+          path: build_stage_artifacts
       publish:
         logs:
           name: Logs_ValidateSigning_MacOS_$(_BuildConfig)
@@ -197,12 +211,13 @@ jobs:
     - checkout: self
       clean: true
     steps:
-    # Point the repo at the newly produced Arcade/Helix SDK so the sign below uses the new SignTool.
-    # Pure file edit (no darc / no az), so a plain PowerShell step is enough - no service connection.
-    - pwsh: >
-        ./eng/validation/use-built-sdk.ps1
-        -PackagesSource $(System.DefaultWorkingDirectory)/build_stage_artifacts
-      displayName: Use newly built SDK
+    - ${{ if eq(parameters.useBuiltSdk, true) }}:
+      # Point the repo at the newly produced Arcade/Helix SDK so the sign below uses the new SignTool.
+      # Pure file edit (no darc / no az), so a plain PowerShell step is enough - no service connection.
+      - pwsh: >
+          ./eng/validation/use-built-sdk.ps1
+          -PackagesSource $(System.DefaultWorkingDirectory)/build_stage_artifacts
+        displayName: Use newly built SDK
     - task: CopyFiles@2
       displayName: Stage signing test packages
       inputs:
@@ -224,6 +239,8 @@ jobs:
         /p:DotNetSignType=$(_SignType)
         /p:TeamName=$(TeamName)
         /p:OfficialBuildId=$(Build.BuildNumber)
-      displayName: Sign with the newly built SignTool
+        /p:PostBuildSign=false
+        /p:ArcadeSigningValidation=true
+      displayName: Sign staged artifacts
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)

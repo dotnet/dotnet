@@ -21,6 +21,8 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 [TestClass]
 public class MtpUnderVstestTests : AcceptanceTestBase
 {
+    private const string MtpTestHostDisableFeatureFlag = "VSTEST_DISABLE_MTP_TESTHOST";
+
     // MtpMSTestProject is an MSTest project built as an MTP application (EnableMSTestRunner): three tests
     // pass, one fails, one is skipped.
     private const string MtpApp = "MtpMSTestProject.dll";
@@ -28,6 +30,30 @@ public class MtpUnderVstestTests : AcceptanceTestBase
     // MSTestProject1 is a classic vstest MSTest project driven by the vstest testhost: one passes, one
     // fails, one is skipped.
     private const string ClassicApp = "MSTestProject1.dll";
+
+    [TestMethod]
+    [TestMatrix(testHost: Target.Net)]
+    public void MtpApplicationIsNotRunWhenMtpTestHostIsDisabled(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var arguments = PrepareArguments(
+            GetAssetFullPath(MtpApp),
+            testAdapterPath: null,
+            runSettings: string.Empty,
+            FrameworkArgValue,
+            runnerInfo.InIsolationValue,
+            resultsDirectory: TempDirectory.Path);
+        var environmentVariables = new Dictionary<string, string?>
+        {
+            [MtpTestHostDisableFeatureFlag] = "1",
+        };
+
+        InvokeVsTest(arguments, environmentVariables);
+
+        ExitCodeEquals(1);
+        StdErrorContains("Could not find testhost for test source");
+    }
 
     [TestMethod]
     // MTP apps are .NET (Core) applications. Pin the testhost axis to .NET so we drive the net11.0 MTP app
@@ -46,7 +72,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
             runnerInfo.InIsolationValue,
             resultsDirectory: TempDirectory.Path);
 
-        InvokeVsTest(arguments);
+        InvokeVsTestWithMtpTestHostEnabled(arguments);
 
         ValidateSummaryStatus(3, 1, 1);
     }
@@ -68,7 +94,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
             runnerInfo.InIsolationValue,
             resultsDirectory: TempDirectory.Path);
 
-        InvokeVsTest(arguments);
+        InvokeVsTestWithMtpTestHostEnabled(arguments);
 
         // Classic 1/1/1 + MTP 3/1/1 aggregated into one run summary.
         ValidateSummaryStatus(4, 2, 2);
@@ -92,7 +118,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
             resultsDirectory: TempDirectory.Path);
         arguments = string.Concat(arguments, $" /logger:trx;LogFileName={trxFileName}");
 
-        InvokeVsTest(arguments);
+        InvokeVsTestWithMtpTestHostEnabled(arguments);
 
         ValidateSummaryStatus(4, 2, 2);
 
@@ -121,7 +147,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
             resultsDirectory: TempDirectory.Path);
         arguments = string.Concat(arguments, " /Blame");
 
-        InvokeVsTest(arguments);
+        InvokeVsTestWithMtpTestHostEnabled(arguments);
 
         ValidateSummaryStatus(3, 1, 1);
     }
@@ -161,7 +187,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
             ["CHECK_RUNSETTINGS_VAR"] = "1",
         };
 
-        InvokeVsTest(arguments, env);
+        InvokeVsTestWithMtpTestHostEnabled(arguments, env);
 
         // The guarded test passes only if MTP_FROM_RUNSETTINGS reached the host with the runsettings value.
         ValidateSummaryStatus(3, 1, 1);
@@ -187,7 +213,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
             resultsDirectory: TempDirectory.Path);
         arguments = string.Concat(arguments, $" /logger:trx;LogFileName={trxFileName}");
 
-        InvokeVsTest(arguments);
+        InvokeVsTestWithMtpTestHostEnabled(arguments);
 
         // MtpMSTestProject has five test cases: three pass, one fails, one is skipped.
         ValidateSummaryStatus(3, 1, 1);
@@ -234,7 +260,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
             ["TEST_ASSET_SAMPLE_COLLECTOR_PATH"] = collectorSourceDirectory,
         };
 
-        InvokeVsTest(arguments, env);
+        InvokeVsTestWithMtpTestHostEnabled(arguments, env);
 
         // The run must complete with the usual summary rather than hang at shutdown. MtpMSTestProject has
         // five test cases: three pass, one fails, one is skipped.
@@ -260,5 +286,12 @@ public class MtpUnderVstestTests : AcceptanceTestBase
             .Where(file => !file.StartsWith(collectorSourceDirectoryPrefix, StringComparison.OrdinalIgnoreCase))
             .ToList();
         Assert.HasCount(5, testCaseAttachments, "Expected one per-test-case attachment for each started MtpMSTestProject test case forwarded on the MTP path.");
+    }
+
+    private void InvokeVsTestWithMtpTestHostEnabled(string arguments, Dictionary<string, string?>? environmentVariables = null)
+    {
+        environmentVariables ??= [];
+        environmentVariables[MtpTestHostDisableFeatureFlag] = "0";
+        InvokeVsTest(arguments, environmentVariables);
     }
 }

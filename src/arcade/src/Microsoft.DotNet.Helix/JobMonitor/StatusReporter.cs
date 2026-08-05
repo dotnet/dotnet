@@ -207,6 +207,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             LogError("One or more non-monitor pipeline jobs failed.");
         }
 
+        public void LogNoHelixJobsFailure()
+        {
+            LogError($"No Helix jobs were submitted by this stage in any attempt. Stage: '{_options.StageName}', BuildId: {_options.BuildId}.");
+        }
+
         /// <summary>
         /// Emits the final aggregated failure block (one block listing every still-failing
         /// work item, prefixed with the test-results URL).

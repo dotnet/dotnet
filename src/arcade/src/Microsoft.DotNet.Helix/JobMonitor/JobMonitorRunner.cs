@@ -67,20 +67,15 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             _delayFunc = delayFunc ?? Task.Delay;
             Directory.CreateDirectory(_options.WorkingDirectory);
 
-            // The Helix submitter (JobSender) records each job's Source as
-            //   {prefix}/{teamProject}/{repository}/{branch}
-            // where prefix is derived from BUILD_REASON / SYSTEM_TEAMPROJECT. Mirror that
-            // derivation here so the monitor's Job.ListAsync query returns the same set of
-            // jobs regardless of whether the build is a PR, scheduled, manual, IndividualCI,
-            // BatchedCI, or internal official run.
             _helixSource = HelixJobSource.Compute(
                 _options.BuildReason,
                 _options.TeamProject,
-                $"{_options.Organization}/{_options.RepositoryName}",
+                _options.Organization,
+                _options.RepositoryName,
                 _options.SourceBranch);
 
             _reporter = new StatusReporter(_logger, _options, _helix, _state);
-            _uploads = new TestResultUploadQueue(_logger, _options, _azdo, _helix, _state, Delay);
+            _uploads = new TestResultUploadQueue(_logger, _options, _azdo, _helix, _state);
         }
 
         public async Task<int> RunAsync(CancellationToken cancellationToken)
@@ -304,7 +299,6 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             foreach (HelixJobInfo job in completedJobs.Where(j => !_state.IsHelixJobProcessed(j.JobName)))
             {
                 await ReconcileCompletedJobAsync(job, queueUpload: true, cancellationToken);
-                _state.TryMarkHelixJobProcessed(job.JobName);
             }
 
             // Second pass: ensure outcomes for every completed job (any attempt) are reflected in
@@ -329,7 +323,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             {
                 await _reporter.LogPollStatusAsync(stageJobs, completedJobNames, cancellationToken);
                 loopState.LastObservedJobCount = stageJobs.Count;
-                loopState.LastObservedCompletedCount = completedJobs.Count;
+                loopState.LastObservedCompletedCount = completedJobNames.Count;
                 loopState.LastStatusLogAt = DateTime.UtcNow;
             }
 
@@ -352,6 +346,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             if (anyNonMonitorFailure)
             {
                 _reporter.LogNonMonitorPipelineFailure();
+                return 1;
+            }
+
+            if (_state.AssociatedJobsCount == 0 && !_options.AllowNoHelixJobs)
+            {
+                _reporter.LogNoHelixJobsFailure();
                 return 1;
             }
 
@@ -395,7 +395,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
             if (queueUpload && !alreadyUploadedByPriorAttempt)
             {
-                _uploads.Enqueue(helixJob, workItems, cancellationToken);
+                if (_state.TryQueueHelixJobUpload(helixJob.JobName))
+                {
+                    _uploads.Enqueue(helixJob, workItems, cancellationToken);
+                }
             }
 
             if (!alreadyUploadedByPriorAttempt)

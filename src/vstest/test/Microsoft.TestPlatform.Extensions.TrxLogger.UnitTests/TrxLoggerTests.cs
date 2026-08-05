@@ -1030,6 +1030,72 @@ public class TrxLoggerTests
         File.Delete(logger.TrxFile);
     }
 
+    [TestMethod]
+    public void TrxFileShouldPreserveAstralCharactersInTestNameAndStdOut()
+    {
+        // XmlPersistenceTests covers the sanitizer in isolation, but the thing users report is
+        // about the bytes that end up in the .trx. This goes through the whole logger - test
+        // result in, real file out, re-parsed from disk - so it would also catch a regression
+        // that lives outside the sanitizer, such as a string reaching the DOM without going
+        // through SaveSimpleData.
+        const string testName = "party \U0001F389 done";
+        const string stdOut = "output \U0001F389 here";
+
+        _parameters[TrxLoggerConstants.LogFileNameKey] = "astral.trx";
+        _testableTrxLogger.Initialize(_events.Object, _parameters);
+
+        var pass = CreatePassTestResultEventArgsMock(testName, new List<TestResultMessage> { new(TestResultMessage.StandardOutCategory, stdOut) });
+        _testableTrxLogger.TestResultHandler(new object(), pass.Object);
+        _testableTrxLogger.TestRunCompleteHandler(new object(), CreateTestRunCompleteEventArgs());
+
+        var trxFile = _testableTrxLogger.TrxFile!;
+
+        // The emoji must be in the file as a real character, not as the literal text \ud83c\udf89.
+        var rawTrxContent = File.ReadAllText(trxFile);
+        Assert.Contains(testName, rawTrxContent, "The astral character in the test name was mangled on the way into the trx.");
+        Assert.DoesNotContain(@"\ud83c", rawTrxContent, "The astral character was escaped into literal text instead of being written as-is.");
+
+        // And the file must still be parseable, with the character surviving the round trip
+        // through both an attribute value and element text.
+        using FileStream file = File.OpenRead(trxFile);
+        using XmlReader reader = XmlReader.Create(file);
+        XDocument document = XDocument.Load(reader);
+        var ns = document.Root!.GetDefaultNamespace();
+
+        var resultNode = document.Descendants(ns + "UnitTestResult").First();
+        Assert.AreEqual(testName, resultNode.Attributes("testName").First().Value);
+        Assert.AreEqual(stdOut, resultNode.Descendants(ns + "StdOut").First().Value);
+    }
+
+    [TestMethod]
+    public void TrxFileShouldRemainParseableWhenTestNameContainsLoneSurrogate()
+    {
+        // The counterpart to the test above, and the reason the fix escapes lone surrogates
+        // instead of simply allowing all of \uD800-\uDFFF through. A lone surrogate is not a
+        // valid Unicode scalar value and XmlWriter throws on one, so escaping it is what keeps
+        // the trx writable and parseable at all. Letting it through would trade a bug that
+        // mangles one string for a bug that breaks every consumer of the file at read time.
+        const string testName = "lone \ud800 surrogate";
+
+        _parameters[TrxLoggerConstants.LogFileNameKey] = "lone-surrogate.trx";
+        _testableTrxLogger.Initialize(_events.Object, _parameters);
+
+        var pass = CreatePassTestResultEventArgsMock(testName);
+        _testableTrxLogger.TestResultHandler(new object(), pass.Object);
+        _testableTrxLogger.TestRunCompleteHandler(new object(), CreateTestRunCompleteEventArgs());
+
+        var trxFile = _testableTrxLogger.TrxFile!;
+        Assert.IsTrue(File.Exists(trxFile), "The trx must still be written when a test name contains a lone surrogate.");
+
+        using FileStream file = File.OpenRead(trxFile);
+        using XmlReader reader = XmlReader.Create(file);
+        XDocument document = XDocument.Load(reader);
+        var ns = document.Root!.GetDefaultNamespace();
+
+        var resultNode = document.Descendants(ns + "UnitTestResult").First();
+        Assert.AreEqual(@"lone \ud800 surrogate", resultNode.Attributes("testName").First().Value);
+    }
+
     private void ValidateTestIdAndNameInTrx()
     {
         TestCase testCase = CreateTestCase("TestCase");

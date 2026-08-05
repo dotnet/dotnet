@@ -33,6 +33,8 @@
 
 #include "gtest/gtest.h"
 
+#include <iterator>
+
 // Verifies that the command line flag variables can be accessed in
 // code once "gtest.h" has been #included.
 // Do not move it after other gtest #includes.
@@ -87,6 +89,20 @@ void operator<<(ConvertibleGlobalType&, int);
 static_assert(sizeof(decltype(std::declval<ConvertibleGlobalType&>()
                               << 1)(*)()) > 0,
               "error in operator<< overload resolution");
+
+namespace {
+
+template <bool MutableResult, bool ConstResult>
+struct ConvertibleToBool {
+  explicit operator bool() { return MutableResult; }
+  explicit operator bool() const { return ConstResult; }
+};
+
+struct Bitfield {
+  bool bit : 1;
+};
+
+}  // namespace
 
 namespace testing {
 namespace internal {
@@ -3699,6 +3715,15 @@ TEST(AssertionTest, AppendUserMessage) {
 TEST(AssertionTest, ASSERT_TRUE) {
   ASSERT_TRUE(2 > 1);  // NOLINT
   EXPECT_FATAL_FAILURE(ASSERT_TRUE(2 < 1), "2 < 1");
+
+  ASSERT_TRUE((ConvertibleToBool<true, false>()));
+  ASSERT_TRUE((std::add_const_t<ConvertibleToBool<false, true>>()));
+
+  Bitfield bf = {true};
+  ASSERT_TRUE(bf.bit);                                             // &
+  ASSERT_TRUE(Bitfield{true}.bit);                                 // &&
+  ASSERT_TRUE(static_cast<const Bitfield&>(Bitfield{true}).bit);   // const&
+  ASSERT_TRUE(static_cast<const Bitfield&&>(Bitfield{true}).bit);  // const&&
 }
 
 // Tests ASSERT_TRUE(predicate) for predicates returning AssertionResult.
@@ -3725,6 +3750,15 @@ TEST(AssertionTest, ASSERT_FALSE) {
                        "Value of: 2 > 1\n"
                        "  Actual: true\n"
                        "Expected: false");
+
+  ASSERT_FALSE((ConvertibleToBool<false, true>()));
+  ASSERT_FALSE((std::add_const_t<ConvertibleToBool<true, false>>()));
+
+  Bitfield bf = {false};
+  ASSERT_FALSE(bf.bit);                                              // &
+  ASSERT_FALSE(Bitfield{false}.bit);                                 // &&
+  ASSERT_FALSE(static_cast<const Bitfield&>(Bitfield{false}).bit);   // const&
+  ASSERT_FALSE(static_cast<const Bitfield&&>(Bitfield{false}).bit);  // const&&
 }
 
 // Tests ASSERT_FALSE(predicate) for predicates returning AssertionResult.
@@ -4426,6 +4460,15 @@ TEST(ExpectTest, EXPECT_TRUE) {
                           "  Actual: false\n"
                           "Expected: true");
   EXPECT_NONFATAL_FAILURE(EXPECT_TRUE(2 > 3), "2 > 3");
+
+  EXPECT_TRUE((ConvertibleToBool<true, false>()));
+  EXPECT_TRUE((std::add_const_t<ConvertibleToBool<false, true>>()));
+
+  Bitfield bf = {true};
+  EXPECT_TRUE(bf.bit);                                             // &
+  EXPECT_TRUE(Bitfield{true}.bit);                                 // &&
+  EXPECT_TRUE(static_cast<const Bitfield&>(Bitfield{true}).bit);   // const&
+  EXPECT_TRUE(static_cast<const Bitfield&&>(Bitfield{true}).bit);  // const&&
 }
 
 // Tests EXPECT_TRUE(predicate) for predicates returning AssertionResult.
@@ -4455,6 +4498,15 @@ TEST(ExpectTest, EXPECT_FALSE) {
                           "  Actual: true\n"
                           "Expected: false");
   EXPECT_NONFATAL_FAILURE(EXPECT_FALSE(2 < 3), "2 < 3");
+
+  EXPECT_FALSE((ConvertibleToBool<false, true>()));
+  EXPECT_FALSE((std::add_const_t<ConvertibleToBool<true, false>>()));
+
+  Bitfield bf = {false};
+  EXPECT_FALSE(bf.bit);                                              // &
+  EXPECT_FALSE(Bitfield{false}.bit);                                 // &&
+  EXPECT_FALSE(static_cast<const Bitfield&>(Bitfield{false}).bit);   // const&
+  EXPECT_FALSE(static_cast<const Bitfield&&>(Bitfield{false}).bit);  // const&&
 }
 
 // Tests EXPECT_FALSE(predicate) for predicates returning AssertionResult.
@@ -5803,9 +5855,8 @@ class ParseFlagsTest : public Test {
   // to specify the array sizes.
 
 #define GTEST_TEST_PARSING_FLAGS_(argv1, argv2, expected, should_print_help) \
-  TestParsingFlags(sizeof(argv1) / sizeof(*argv1) - 1, argv1,                \
-                   sizeof(argv2) / sizeof(*argv2) - 1, argv2, expected,      \
-                   should_print_help)
+  TestParsingFlags(std::size(argv1) - 1, argv1, std::size(argv2) - 1, argv2, \
+                   expected, should_print_help)
 };
 
 // Tests parsing an empty command line.
