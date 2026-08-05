@@ -136,7 +136,7 @@ Pour empêcher NuGet de restaurer les packages lors de la génération, ouvrez l
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>
-        <target state="new">Ask Copilot to fix NuGet package vulnerabilities</target>
+        <target state="translated">Demander à Copilot de corriger les vulnérabilités du package NuGet</target>
         <note>Do not translate Copilot or NuGet</note>
       </trans-unit>
     </body>
