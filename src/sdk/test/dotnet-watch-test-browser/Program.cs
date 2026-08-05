@@ -12,8 +12,6 @@ if (args is not [var urlArg])
     return -1;
 }
 
-Log($"Test browser opened at '{urlArg}'.");
-
 var url = new Uri(urlArg, UriKind.Absolute);
 var origin = Environment.GetEnvironmentVariable("TEST_BROWSER_ORIGIN_HEADER") ?? urlArg;
 
@@ -99,7 +97,7 @@ static async Task<(string[] url, string key)> GetWebSocketUrlsAndPublicKey(Uri b
 {
     var refreshScriptUrl = new Uri(baseUrl, "/_framework/aspnetcore-browser-refresh.js");
 
-    Log($"Fetching: {refreshScriptUrl}");
+    Log($"Fetching '{refreshScriptUrl}'");
 
     using var httpClient = new HttpClient();
     var content = await httpClient.GetStringAsync(refreshScriptUrl);
