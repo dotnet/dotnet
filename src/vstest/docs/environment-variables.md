@@ -127,6 +127,12 @@ This document lists environment variables that are currently handled by VSTest s
 
 ## Feature Control Variables (Disable Features)
 
+### VSTEST_DISABLE_MTP_TESTHOST
+- **Description**: Disables the experimental capability to discover and run Microsoft.Testing.Platform (MTP) test applications under VSTest.
+- **Default**: `1` (disabled)
+- **Values**: Set to `0` to opt in to the experimental MTP testhost; any other value keeps it disabled
+- **Example**: `VSTEST_DISABLE_MTP_TESTHOST=0`
+
 ### VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING
 - **Description**: Disables artifact post-processing functionality.
 - **Values**: Set to any non-zero value to disable
