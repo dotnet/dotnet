@@ -8,6 +8,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-dotnet dependencies -->
     <dotnetefPackageVersion>10.0.12</dotnetefPackageVersion>
     <MicrosoftBclAsyncInterfacesPackageVersion>10.0.12</MicrosoftBclAsyncInterfacesPackageVersion>
+    <MicrosoftBclCryptographyPackageVersion>10.0.12</MicrosoftBclCryptographyPackageVersion>
     <MicrosoftBclTimeProviderPackageVersion>10.0.12</MicrosoftBclTimeProviderPackageVersion>
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26376.103</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildTasksArchivesPackageVersion>10.0.0-beta.26376.103</MicrosoftDotNetBuildTasksArchivesPackageVersion>
@@ -124,6 +125,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-dotnet dependencies -->
     <dotnetefVersion>$(dotnetefPackageVersion)</dotnetefVersion>
     <MicrosoftBclAsyncInterfacesVersion>$(MicrosoftBclAsyncInterfacesPackageVersion)</MicrosoftBclAsyncInterfacesVersion>
+    <MicrosoftBclCryptographyVersion>$(MicrosoftBclCryptographyPackageVersion)</MicrosoftBclCryptographyVersion>
     <MicrosoftBclTimeProviderVersion>$(MicrosoftBclTimeProviderPackageVersion)</MicrosoftBclTimeProviderVersion>
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildTasksArchivesVersion>$(MicrosoftDotNetBuildTasksArchivesPackageVersion)</MicrosoftDotNetBuildTasksArchivesVersion>

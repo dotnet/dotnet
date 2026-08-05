@@ -295,6 +295,10 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>e0c9b3f934e7b97b360f4ce3692ab45b9634ae1d</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.Bcl.Cryptography" Version="10.0.12">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>e0c9b3f934e7b97b360f4ce3692ab45b9634ae1d</Sha>
+    </Dependency>
     <!-- Transitive package to provide coherency in dotnet/extensions -->
     <Dependency Name="Microsoft.Bcl.TimeProvider" Version="10.0.12">
       <Uri>https://github.com/dotnet/dotnet</Uri>
