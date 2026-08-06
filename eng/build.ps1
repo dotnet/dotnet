@@ -25,6 +25,7 @@ Param(
   [switch][Alias('cwb')]$cleanWhileBuilding,
   [switch][Alias('nobl')]$excludeCIBinarylog,
   [bool]$nodeReuse,
+  [bool][Alias('mt')]$msbuildMultiThreaded = $true,
   [switch]$prepareMachine,
   [string]$projects,
   [bool] $warnAsError = $true,
@@ -62,6 +63,7 @@ function Get-Usage() {
   Write-Host "  -cleanWhileBuilding         Cleans each repo after building (reduces disk space usage, short: -cwb)"
   Write-Host "  -excludeCIBinarylog         Don't output binary log (short: -nobl)"
   Write-Host "  -nodeReuse <value>          Sets nodereuse msbuild parameter ('true' or 'false')"
+  Write-Host "  -msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: -mt)"
   Write-Host "  -prepareMachine             Prepare machine for CI run, clean up processes after build"
   Write-Host "  -projects <value>           Project or solution file to build"
   Write-Host "  -warnAsError <value>        Sets warnaserror msbuild parameter ('true' or 'false')"
@@ -128,6 +130,10 @@ try {
       $binaryLog = $true
     }
     $nodeReuse = $false
+    # MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
+    if (-not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
+      $msbuildMultiThreaded = $false
+    }
   }
 
   Build
