@@ -331,7 +331,7 @@ jobs:
       value: ''
 
   - name: baseArguments
-    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
+    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine $(commandPrefix)mt 1 $(commandPrefix)nodeReuse 1 -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
