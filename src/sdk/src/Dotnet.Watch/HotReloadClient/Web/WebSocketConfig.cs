@@ -39,6 +39,7 @@ internal readonly struct WebSocketConfig(int port, int? securePort, string? host
     {
         yield return "localhost";
         yield return "127.0.0.1";
+        yield return "[::1]";
 
         foreach (var origin in additionalAllowedOrigins)
         {
