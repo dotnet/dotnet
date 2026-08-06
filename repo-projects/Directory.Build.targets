@@ -836,16 +836,22 @@
       depend on this one don't wait for it. The artifacts dir is isolated to this repo and nothing
       else reads from it, and the deletion is best effort, so nothing needs to observe the result.
 
-      Redirecting all three standard streams is required, not cosmetic: Exec waits on the pipes it
-      hands out, so a detached process that inherits them keeps Exec blocked for the full delete.
+      Exec waits until the pipes it hands out are closed, not just until the process it started
+      exits, so the child must not end up holding a copy of them.
+
+      On Windows "start /B" is not enough: cmd passes the spawned process an inheritable copy of
+      those pipes, so Exec stays blocked for the whole delete even though start itself returns
+      immediately. Redirecting the streams doesn't change that. Start-Process goes through
+      ShellExecute, which doesn't inherit handles, so Exec is released right away.
+
+      On Unix redirecting to /dev/null is required, not cosmetic: without it the backgrounded
+      process inherits Exec's pipes and Exec blocks for the full delete.
     -->
     <PropertyGroup>
-      <RepoCleanLogFile>$(ArtifactsLogRepoDir)CleanupRepo.log</RepoCleanLogFile>
-      <RepoCleanCommand Condition="'$(BuildOS)' == 'windows'">start "" /B cmd /c rmdir "$(RepoArtifactsDir.TrimEnd('\'))" /s /q &gt; "$(RepoCleanLogFile)" 2&gt;&amp;1</RepoCleanCommand>
-      <RepoCleanCommand Condition="'$(BuildOS)' != 'windows'">nohup rm -rf "$(RepoArtifactsDir)" &gt; "$(RepoCleanLogFile)" 2&gt;&amp;1 &lt;/dev/null &amp;</RepoCleanCommand>
+      <RepoCleanCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command "Start-Process cmd -ArgumentList '/c','rmdir /s /q \&quot;$(RepoArtifactsDir.TrimEnd('\'))\&quot;' -WindowStyle Hidden"</RepoCleanCommand>
+      <RepoCleanCommand Condition="'$(BuildOS)' != 'windows'">nohup rm -rf "$(RepoArtifactsDir)" &gt; /dev/null 2&gt;&amp;1 &lt;/dev/null &amp;</RepoCleanCommand>
     </PropertyGroup>
 
-    <MakeDir Directories="$(ArtifactsLogRepoDir)" />
     <Exec Command="$(RepoCleanCommand)" IgnoreExitCode="true" IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
