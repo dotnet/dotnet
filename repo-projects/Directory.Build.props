@@ -72,10 +72,12 @@
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
     <FlagParameterPrefix>-</FlagParameterPrefix>
     <ArcadeFalseBoolBuildArg>0</ArcadeFalseBoolBuildArg>
+    <ArcadeTrueBoolBuildArg>1</ArcadeTrueBoolBuildArg>
   </PropertyGroup>
   <PropertyGroup Condition="'$(BuildOS)' != 'windows'">
     <FlagParameterPrefix>--</FlagParameterPrefix>
     <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
+    <ArcadeTrueBoolBuildArg>true</ArcadeTrueBoolBuildArg>
   </PropertyGroup>
 
   <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds. -->
@@ -117,7 +119,8 @@
 
     <!-- MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI.
          Set DotNetBuildMT to explicitly opt in or out for all repo builds. -->
-    <CommonArgs Condition="'$(DotNetBuildMT)' != ''">$(CommonArgs) $(FlagParameterPrefix)mt $(DotNetBuildMT)</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)mt $(ArcadeTrueBoolBuildArg)</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt $(ArcadeFalseBoolBuildArg)</CommonArgs>
 
     <!-- Pass down configuration properties -->
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
