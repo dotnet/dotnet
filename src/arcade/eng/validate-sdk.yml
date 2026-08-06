@@ -22,7 +22,7 @@ jobs:
           name: Logs_ValidateSdk_Windows_NT_Release
     timeoutInMinutes: 90
     variables:
-    - group: Publish-Build-Assets
+    - group: Arcade-Promotion-GitHub
     - _BuildConfig: ${{ parameters.buildConfig }}
     - _BuildArgs: ${{ parameters.buildArgs }}
     - _ValidateBlobFeedUrl: ${{ parameters.validateBlobFeedUrl }}
