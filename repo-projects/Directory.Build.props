@@ -71,13 +71,16 @@
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
     <FlagParameterPrefix>-</FlagParameterPrefix>
-    <ArcadeFalseBoolBuildArg>0</ArcadeFalseBoolBuildArg>
-    <ArcadeTrueBoolBuildArg>1</ArcadeTrueBoolBuildArg>
   </PropertyGroup>
   <PropertyGroup Condition="'$(BuildOS)' != 'windows'">
     <FlagParameterPrefix>--</FlagParameterPrefix>
-    <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
-    <ArcadeTrueBoolBuildArg>true</ArcadeTrueBoolBuildArg>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Value to pass to an Arcade build script parameter that takes a boolean. PowerShell's [bool]
+         parameters only bind 1/0 (not the strings 'true'/'false') and the shell scripts normalize
+         1/0 to true/false, so 1/0 is the one form that works on every platform. -->
+    <ArcadeFalseBoolBuildArg>0</ArcadeFalseBoolBuildArg>
+    <ArcadeTrueBoolBuildArg>1</ArcadeTrueBoolBuildArg>
   </PropertyGroup>
 
   <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds. -->

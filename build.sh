@@ -274,8 +274,6 @@ while [[ $# > 0 ]]; do
       ;;
     -msbuildmultithreaded|-mt)
       msbuild_multi_threaded=$2
-      # Flow the explicit choice down to the individual repo builds as well.
-      properties+=( "/p:DotNetBuildMT=$2" )
       shift
       ;;
     -preparemachine)
@@ -302,8 +300,16 @@ if [[ "$ci" == true ]]; then
   fi
 fi
 
+# tools.sh fills in the default below, so remember whether -mt was passed explicitly.
+msbuild_multi_threaded_explicit=$msbuild_multi_threaded
+
 source "$scriptroot/eng/common/tools.sh"
 source "$scriptroot/eng/source-build-toolset-init.sh"
+
+# Flow an explicit -mt choice down to the individual repo builds as well.
+if [[ -n "$msbuild_multi_threaded_explicit" ]]; then
+  properties+=( "/p:DotNetBuildMT=$msbuild_multi_threaded" )
+fi
 
 # Default properties
 properties+=( "/p:RepoRoot=$repo_root" )

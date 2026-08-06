@@ -140,6 +140,11 @@ if [[ "$binary_log" == true ]]; then
   bl="/bl:\"${repo_root}artifacts/log/${configuration}/Build.binlog\""
 fi
 
+# Accept 1/0 in addition to true/false for boolean arguments (see eng/common/tools.sh).
+for v in node_reuse warn_as_error msbuild_multi_threaded; do
+  case "${!v}" in 1) printf -v "$v" true ;; 0) printf -v "$v" false ;; esac
+done
+
 if [[ "$ci" == true ]]; then
   node_reuse=false
 fi
