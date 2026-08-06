@@ -38,6 +38,7 @@ usage()
   echo "  --skipDocumentation        Skip generation of XML documentation files"
   echo "  --prepareMachine           Prepare machine for CI run, clean up processes after build"
   echo "  --msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: --mt)"
+  echo "  --nodeReuse <value>        Sets nodereuse msbuild parameter ('true' or 'false')"
   echo "  --warnAsError              Treat all warnings as errors"
   echo "  --warnNotAsError <codes>   Suppress specific warnings from being treated as errors (semi-colon delimited)"
   echo "  --sourceBuild              Build the repository in source-only mode"
@@ -186,6 +187,11 @@ while [[ $# > 0 ]]; do
       ;;
     --msbuildmultithreaded|--mt)
       msbuild_multi_threaded=$2
+      args="$args $1"
+      shift
+      ;;
+    --nodereuse)
+      node_reuse=$2
       args="$args $1"
       shift
       ;;

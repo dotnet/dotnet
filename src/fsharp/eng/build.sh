@@ -35,6 +35,7 @@ usage()
   echo "  --skipBuild                    Do not run the build"
   echo "  --prepareMachine               Prepare machine for CI run, clean up processes after build"
   echo "  --msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: --mt)"
+  echo "  --nodeReuse <value>            Sets nodereuse msbuild parameter ('true' or 'false')"
   echo "  --sourceBuild                  Build the repository in source-only mode."
   echo "  --productBuild                 Build the repository in product-build mode."
   echo "  --fromVMR                      Set when building from within the VMR"
@@ -172,6 +173,10 @@ while [[ $# > 0 ]]; do
       ;;
     --msbuildmultithreaded|--mt)
       msbuild_multi_threaded=$2
+      shift
+      ;;
+    --nodereuse)
+      node_reuse=$2
       shift
       ;;
     --docker)

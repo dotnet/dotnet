@@ -103,6 +103,10 @@ Set when building from within the VMR.
 Sets MSBuild's multi-threaded mode, i.e. the -mt switch (short: -mt). Defaults to on for local builds and is not
 run on CI unless explicitly requested.
 
+.PARAMETER NodeReuse
+Sets the nodereuse msbuild parameter. Node reuse is disabled by default in this repository as a workaround for
+issues with custom task assemblies; passing this parameter explicitly overrides that.
+
 .EXAMPLE
 Building both native and managed projects.
 
@@ -210,6 +214,9 @@ param(
     # Passed through to tools.ps1 MSBuild function
     [Alias('mt')]
     [bool]$msbuildMultiThreaded = $true,
+
+    # Passed through to tools.ps1 MSBuild function
+    [bool]$nodeReuse = $false,
 
     # Capture the rest
     [Parameter(ValueFromRemainingArguments = $true)]
@@ -351,9 +358,12 @@ $restore = $RunRestore
 
 # Though VS Code may indicate $nodeReuse is unused, tools.ps1 uses them.
 
-# Disable node reuse - Workaround perpetual issues in node reuse and custom task assemblies
-$nodeReuse = $false
-$env:MSBUILDDISABLENODEREUSE=1
+# Disable node reuse - Workaround perpetual issues in node reuse and custom task assemblies.
+# An explicitly passed -nodeReuse value wins.
+if (-not $PSBoundParameters.ContainsKey('nodeReuse')) {
+    $nodeReuse = $false
+    $env:MSBUILDDISABLENODEREUSE=1
+}
 
 # MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
 if ($CI -and -not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {

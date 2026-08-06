@@ -46,6 +46,7 @@ param (
     [switch]$deployExtensions,
     [switch]$prepareMachine,
     [bool][Alias('mt')]$msbuildMultiThreaded = $true,
+    [bool]$nodeReuse = $false,
     [switch]$useGlobalNuGetCache = $true,
     [switch]$dontUseGlobalNuGetCache = $false,
     [switch]$warnAsError = $true,
@@ -148,6 +149,7 @@ function Print-Usage() {
     Write-Host "  -procdump                     Monitor test runs with procdump"
     Write-Host "  -prepareMachine               Prepare machine for CI run, clean up processes after build"
     Write-Host "  -msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('1' or '0') (short: -mt)"
+    Write-Host "  -nodeReuse <value>            Sets nodereuse msbuild parameter ('1' or '0')"
     Write-Host "  -dontUseGlobalNuGetCache      Do not use the global NuGet cache"
     Write-Host "  -noVisualStudio               Only build fsc and fsi as .NET Core applications. No Visual Studio required. '-configuration', '-verbosity', '-norestore', '-rebuild' are supported."
     Write-Host "  -productBuild                 Build the repository in product-build mode."
@@ -172,8 +174,6 @@ function Process-Arguments() {
     if ($dontUseGlobalNugetCache -or $ci) {
         $script:useGlobalNugetCache = $False
     }
-
-    $script:nodeReuse = $False;
 
     if ($testAll) {
         $script:testDesktop = $True
