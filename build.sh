@@ -274,6 +274,8 @@ while [[ $# > 0 ]]; do
       ;;
     -msbuildmultithreaded|-mt)
       msbuild_multi_threaded=$2
+      # Flow the explicit choice down to the individual repo builds as well.
+      properties+=( "/p:DotNetBuildMT=$2" )
       shift
       ;;
     -preparemachine)

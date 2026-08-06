@@ -63,7 +63,7 @@ function Get-Usage() {
   Write-Host "  -cleanWhileBuilding         Cleans each repo after building (reduces disk space usage, short: -cwb)"
   Write-Host "  -excludeCIBinarylog         Don't output binary log (short: -nobl)"
   Write-Host "  -nodeReuse <value>          Sets nodereuse msbuild parameter ('true' or 'false')"
-  Write-Host "  -msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: -mt)"
+  Write-Host "  -msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('1' or '0') (short: -mt)"
   Write-Host "  -prepareMachine             Prepare machine for CI run, clean up processes after build"
   Write-Host "  -projects <value>           Project or solution file to build"
   Write-Host "  -warnAsError <value>        Sets warnaserror msbuild parameter ('true' or 'false')"
@@ -100,6 +100,8 @@ if ($buildRepoTests) { $arguments += "/p:DotNetBuildTests=true" }
 if ($cleanWhileBuilding) { $arguments += "/p:CleanWhileBuilding=true" }
 if ($branding) { $arguments += "/p:RepoDotNetFinalVersionKind=$branding" }
 if ($officialBuildId) { $arguments += "/p:OfficialBuildId=$officialBuildId" }
+# Flow the explicit choice down to the individual repo builds as well.
+if ($PSBoundParameters.ContainsKey('msbuildMultiThreaded')) { $arguments += "/p:DotNetBuildMT=$msbuildMultiThreaded" }
 
 function Build {
   $toolsetBuildProj = InitializeToolset
