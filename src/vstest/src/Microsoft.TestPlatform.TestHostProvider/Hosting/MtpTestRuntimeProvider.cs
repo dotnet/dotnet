@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Host;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
 
@@ -29,9 +30,10 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
 /// <see cref="NotSupportedException"/>. Instead it:
 /// <list type="bullet">
 ///   <item><description>
-///     claims MTP sources via <see cref="ISourceAwareTestRuntimeProvider"/> (source-aware detection using the
-///     build-time Microsoft.Testing.Platform marker), so it is selected ahead of the generic testhost providers
-///     that match only by target framework; and
+///     when <c>VSTEST_DISABLE_MTP_TESTHOST</c> is set to <c>0</c>, claims MTP sources via
+///     <see cref="ISourceAwareTestRuntimeProvider"/> (source-aware detection using the build-time
+///     Microsoft.Testing.Platform marker), so it is selected ahead of the generic testhost providers that match
+///     only by target framework; and
 ///   </description></item>
 ///   <item><description>
 ///     supplies its own discovery/execution proxy managers via <see cref="IProxyManagerFactory"/>, so the
@@ -78,7 +80,7 @@ public class MtpTestRuntimeProvider : ISourceAwareTestRuntimeProvider, IProxyMan
     // application. A mixed set (some MTP, some classic) is split into separate configurations upstream, so each
     // group asked here is homogeneous.
     bool ISourceAwareTestRuntimeProvider.CanExecuteCurrentRunConfiguration(string? runsettingsXml, IEnumerable<string> sources)
-        => AllSourcesAreMicrosoftTestingPlatform(sources);
+        => !FeatureFlag.Instance.IsSet(FeatureFlag.VSTEST_DISABLE_MTP_TESTHOST) && AllSourcesAreMicrosoftTestingPlatform(sources);
 
     void ITestRuntimeProvider.SetCustomLauncher(ITestHostLauncher customLauncher)
     {
