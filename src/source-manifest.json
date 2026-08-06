@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 324852,
+      "barId": 325974,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "c5d54a9de6e0e20a85e37fa3576a37235276772b"
+      "commitSha": "3437c3bfe304c55493bba155ae4733fb7de9d401"
     },
     {
       "barId": 288647,
@@ -19,10 +19,10 @@
       "commitSha": "85903b5f57bd64d0cf0af7316c1e368de12f8234"
     },
     {
-      "barId": 324535,
+      "barId": 325569,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "b0e826c1f29e30dfe49535b4194f960cafbc3510"
+      "commitSha": "cc6117b7c07cf674ea392ed7cbc6ea19da82ea73"
     },
     {
       "barId": 323843,
@@ -49,16 +49,16 @@
       "commitSha": "4523c6b295293775312d4af7a8a757b0aff018a6"
     },
     {
-      "barId": 324916,
+      "barId": 325617,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "32593ca81f8aae7b0d41c1a7198529c3365106b8"
+      "commitSha": "0b8c5430c40cade6f55942d3b70e3954c97c01db"
     },
     {
-      "barId": 324622,
+      "barId": 325599,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "07e5dbddc0154145ed167c08fdedcc64e0e5613b"
+      "commitSha": "f7cee0442e70fd2cecb27d7d279ac25986be32d1"
     },
     {
       "barId": 311986,
@@ -98,7 +98,7 @@
     {
       "path": "source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
       "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
-      "commitSha": "e67b25be77532af9ba405670b34b4d263d505fde"
+      "commitSha": "ee19952f21d5c170a778bdca901b67076a1cd8f8"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/cssparser",
