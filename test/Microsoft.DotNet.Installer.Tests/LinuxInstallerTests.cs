@@ -104,6 +104,7 @@ public partial class LinuxInstallerTests : IDisposable
     private const int RpmTransFileTriggerNameTag = 5079;
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
+    public static bool ExcludeRpmTests => !IncludeRpmTests;
     public static bool IncludeDebTests => Config.TestDebPackages;
 
     private enum PackageType
@@ -138,7 +139,7 @@ public partial class LinuxInstallerTests : IDisposable
         }
     }
 
-    [Theory(Skip = "Condition not met: IncludeRpmTests", SkipUnless = nameof(IncludeRpmTests))]
+    [Theory(SkipWhen = nameof(ExcludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
     public async Task RpmScenarioTest(string repo, string tag)
     {
@@ -162,7 +163,7 @@ public partial class LinuxInstallerTests : IDisposable
         DistroTest($"{repo}:{tag}", PackageType.Deb);
     }
 
-    [Theory(Skip = "Condition not met: IncludeRpmTests", SkipUnless = nameof(IncludeRpmTests))]
+    [Theory(SkipWhen = nameof(ExcludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
     public async Task RpmPackageMetadataTest(string repo, string tag)
     {
@@ -185,7 +186,7 @@ public partial class LinuxInstallerTests : IDisposable
     /// </summary>
     /// <param name="image">The container image used to exercise the RPM package lifecycle.</param>
     /// <returns>A task that represents the asynchronous test operation.</returns>
-    [Theory(Skip = "Condition not met: IncludeRpmTests", SkipUnless = nameof(IncludeRpmTests))]
+    [Theory(SkipWhen = nameof(ExcludeRpmTests))]
     [InlineData("mcr.microsoft.com/azurelinux/base/core:3.0")]
     public async Task RpmDnxPackageLifecycleTest(string image)
     {
@@ -208,7 +209,7 @@ public partial class LinuxInstallerTests : IDisposable
         DnxPackageLifecycleTest(image, PackageType.Deb);
     }
 
-    [Fact(Skip = "Condition not met: IncludeRpmTests", SkipUnless = nameof(IncludeRpmTests))]
+    [Fact(SkipWhen = nameof(ExcludeRpmTests))]
     public void ValidateRpmPackageList()
     {
         ValidatePackageList(PackageType.Rpm);
