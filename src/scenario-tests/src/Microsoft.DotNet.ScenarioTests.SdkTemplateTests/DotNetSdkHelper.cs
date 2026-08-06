@@ -206,7 +206,7 @@ internal class DotNetSdkHelper
                 if (e.Data?.Contains("Application started. Press Ctrl+C to shut down.") ?? false)
                 {
                     process.Kill(true);
-                    process.WaitForExit();
+                    process.WaitForExit(ExecuteHelper.KillGraceMilliseconds);
                 }
             });
         }
@@ -244,7 +244,7 @@ internal class DotNetSdkHelper
                 await Task.Delay(5000);
             }
             TerminateProcess(process.Handle, 0);
-            process.WaitForExit();
+            process.WaitForExit(ExecuteHelper.KillGraceMilliseconds);
         }
 
         bool checkProcess(string projectDirectory, Process process)
