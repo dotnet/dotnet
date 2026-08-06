@@ -133,7 +133,7 @@ internal sealed class Listener(Transport transport, IHotReloadAgent agent, Actio
             }
             catch (Exception e)
             {
-                log($"Unable to set environment variable '{name}' = '{value}': {e.Message}");
+                log($"Unable to set environment variable '{name}': {e.Message}");
             }
         }
 
