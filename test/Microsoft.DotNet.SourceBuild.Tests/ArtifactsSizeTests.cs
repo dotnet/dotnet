@@ -22,11 +22,11 @@ public class ArtifactsSizeTests : SdkTests
     private readonly List<string> _newExclusions = new List<string>();
     private readonly Dictionary<string, int> _filePathCountMap = new();
     private readonly ExclusionsHelper _exclusionsHelper = new ExclusionsHelper("ZeroSizeExclusions.txt", Config.LogsDirectory, nameof(ArtifactsSizeTests));
-    public static bool IncludeArtifactsSizeTests => !string.IsNullOrWhiteSpace(Config.SdkTarballPath);
+    public static bool ExcludeArtifactsSizeTests => string.IsNullOrWhiteSpace(Config.SdkTarballPath);
 
     public ArtifactsSizeTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
-    [Fact(Skip = "Condition not met: IncludeArtifactsSizeTests", SkipUnless = nameof(IncludeArtifactsSizeTests))]
+    [Fact(SkipWhen = nameof(ExcludeArtifactsSizeTests))]
     public void CheckZeroSizeArtifacts()
     {
         ProcessTarball(Config.SdkTarballPath!, SdkType);

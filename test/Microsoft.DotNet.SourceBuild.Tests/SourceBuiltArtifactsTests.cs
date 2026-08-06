@@ -13,11 +13,11 @@ namespace Microsoft.DotNet.SourceBuild.Tests;
 
 public class SourceBuiltArtifactsTests : SdkTests
 {
-    public static bool IncludeSourceBuiltArtifactsTests => !string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsPath);
+    public static bool ExcludeSourceBuiltArtifactsTests => string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsPath);
 
     public SourceBuiltArtifactsTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-    [Fact(Skip = "Condition not met: IncludeSourceBuiltArtifactsTests", SkipUnless = nameof(IncludeSourceBuiltArtifactsTests))]
+    [Fact(SkipWhen = nameof(ExcludeSourceBuiltArtifactsTests))]
     public void VerifyVersionFile()
     {
         Assert.NotNull(Config.SourceBuiltArtifactsPath);
@@ -58,7 +58,7 @@ public class SourceBuiltArtifactsTests : SdkTests
         }
     }
 
-    [Fact(Skip = "Condition not met: IncludeSourceBuiltArtifactsTests", SkipUnless = nameof(IncludeSourceBuiltArtifactsTests))]
+    [Fact(SkipWhen = nameof(ExcludeSourceBuiltArtifactsTests))]
     public void EnsureNoSymbolsNupkgs()
     {
         Assert.NotNull(Config.SourceBuiltArtifactsPath);

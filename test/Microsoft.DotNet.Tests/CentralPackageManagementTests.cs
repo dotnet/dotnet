@@ -21,7 +21,7 @@ public class CentralPackageManagementTests
 {
     private ITestOutputHelper OutputHelper { get; }
 
-    public static bool IncludeCpmTests => !string.IsNullOrWhiteSpace(Config.RepoRoot);
+    public static bool ExcludeCpmTests => string.IsNullOrWhiteSpace(Config.RepoRoot);
 
     public CentralPackageManagementTests(ITestOutputHelper outputHelper)
     {
@@ -35,7 +35,7 @@ public class CentralPackageManagementTests
     ///
     /// This test scans all repos in the VMR for this conflict pattern.
     /// </summary>
-    [Fact(Skip = "Condition not met: IncludeCpmTests", SkipUnless = nameof(IncludeCpmTests))]
+    [Fact(SkipWhen = nameof(ExcludeCpmTests))]
     public void ImplicitPackageReferences_ShouldNotConflictWithPackageVersionEntries()
     {
         string repoRoot = Config.RepoRoot!;

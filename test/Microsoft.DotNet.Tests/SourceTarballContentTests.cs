@@ -21,9 +21,9 @@ public class SourceTarballContentTests
 
     private ITestOutputHelper OutputHelper { get; }
 
-    public static bool IncludeSourceTarballContentTests =>
-        !string.IsNullOrWhiteSpace(Config.RepoRoot) &&
-        !string.IsNullOrWhiteSpace(Config.SourceTarballPath);
+    public static bool ExcludeSourceTarballContentTests =>
+        string.IsNullOrWhiteSpace(Config.RepoRoot) ||
+        string.IsNullOrWhiteSpace(Config.SourceTarballPath);
 
     public SourceTarballContentTests(ITestOutputHelper outputHelper)
     {
@@ -40,7 +40,7 @@ public class SourceTarballContentTests
     /// Detects files excluded by export-ignore directives in .gitattributes files.
     /// See https://github.com/dotnet/source-build/issues/5472
     /// </summary>
-    [Fact(Skip = "Condition not met: IncludeSourceTarballContentTests", SkipUnless = nameof(IncludeSourceTarballContentTests))]
+    [Fact(SkipWhen = nameof(ExcludeSourceTarballContentTests))]
     public void CompareSourceTarballToGitRepository()
     {
         string repoRoot = Config.RepoRoot!;

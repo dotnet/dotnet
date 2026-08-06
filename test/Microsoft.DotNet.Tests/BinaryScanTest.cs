@@ -13,14 +13,14 @@ namespace Microsoft.DotNet.Tests
     public class BinaryScanTest
     {
         private ITestOutputHelper OutputHelper { get; }
-        public static bool IncludeBinaryScanTest => !RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        public static bool ExcludeBinaryScanTest => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         public BinaryScanTest(ITestOutputHelper outputHelper)
         {
             OutputHelper = outputHelper;
         }
 
-        [Fact(Skip = "Condition not met: IncludeBinaryScanTest", SkipUnless = nameof(IncludeBinaryScanTest))]
+        [Fact(SkipWhen = nameof(ExcludeBinaryScanTest))]
         public void ScanForBinaries()
         {
             Assert.True(

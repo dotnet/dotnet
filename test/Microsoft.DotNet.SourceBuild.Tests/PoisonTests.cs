@@ -11,11 +11,11 @@ namespace Microsoft.DotNet.SourceBuild.Tests
 {
     public class PoisonTests : SdkTests
     {
-        public static bool IncludePoisonTests => !string.IsNullOrWhiteSpace(Config.PoisonReportPath);
+        public static bool ExcludePoisonTests => string.IsNullOrWhiteSpace(Config.PoisonReportPath);
 
         public PoisonTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
         
-        [Fact(Skip = "Condition not met: IncludePoisonTests", SkipUnless = nameof(IncludePoisonTests))]
+        [Fact(SkipWhen = nameof(ExcludePoisonTests))]
         public void VerifyUsage()
         {
             if (!File.Exists(Config.PoisonReportPath))

@@ -21,16 +21,16 @@ public class ReproducibilityTests
 
     public ReproducibilityTests(ITestOutputHelper outputHelper) => OutputHelper = outputHelper;
 
-    public static bool IncludeMsftReproducibilityTests =>
-        !string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath1) && !string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath2);
+    public static bool ExcludeMsftReproducibilityTests =>
+        string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath1) || string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath2);
 
-    public static bool IncludeSourceBuiltReproducibilityTests =>
-        !string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath1) && !string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath2);
+    public static bool ExcludeSourceBuiltReproducibilityTests =>
+        string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath1) || string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath2);
 
-    public static bool IncludeSourceBuiltArtifactsReproducibilityTests =>
-        !string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath1) && !string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath2);
+    public static bool ExcludeSourceBuiltArtifactsReproducibilityTests =>
+        string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath1) || string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath2);
 
-    [Fact(Skip = "Condition not met: IncludeMsftReproducibilityTests", SkipUnless = nameof(IncludeMsftReproducibilityTests))]
+    [Fact(SkipWhen = nameof(ExcludeMsftReproducibilityTests))]
     public void MsftSdkTarballIsReproducible()
     {
         CompareTarballs(
@@ -42,7 +42,7 @@ public class ReproducibilityTests
             updatedBaselineFileName: "UpdatedMsftReproducibilityBaseline.diff");
     }
 
-    [Fact(Skip = "Condition not met: IncludeSourceBuiltReproducibilityTests", SkipUnless = nameof(IncludeSourceBuiltReproducibilityTests))]
+    [Fact(SkipWhen = nameof(ExcludeSourceBuiltReproducibilityTests))]
     public void SourceBuiltSdkTarballIsReproducible()
     {
         CompareTarballs(
@@ -54,7 +54,7 @@ public class ReproducibilityTests
             updatedBaselineFileName: "UpdatedSourceBuiltReproducibilityBaseline.diff");
     }
 
-    [Fact(Skip = "Condition not met: IncludeSourceBuiltArtifactsReproducibilityTests", SkipUnless = nameof(IncludeSourceBuiltArtifactsReproducibilityTests))]
+    [Fact(SkipWhen = nameof(ExcludeSourceBuiltArtifactsReproducibilityTests))]
     public void SourceBuiltArtifactsTarballIsReproducible()
     {
         CompareTarballs(

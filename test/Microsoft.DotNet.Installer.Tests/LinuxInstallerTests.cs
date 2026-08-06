@@ -103,9 +103,8 @@ public partial class LinuxInstallerTests : IDisposable
     private const int RpmFileGhost = 1 << 6;
     private const int RpmTransFileTriggerNameTag = 5079;
 
-    public static bool IncludeRpmTests => Config.TestRpmPackages;
-    public static bool ExcludeRpmTests => !IncludeRpmTests;
-    public static bool IncludeDebTests => Config.TestDebPackages;
+    public static bool ExcludeRpmTests => !Config.TestRpmPackages;
+    public static bool ExcludeDebTests => !Config.TestDebPackages;
 
     private enum PackageType
     {
@@ -154,7 +153,7 @@ public partial class LinuxInstallerTests : IDisposable
         DistroTest($"{repo}:{tag}", PackageType.Rpm);
     }
 
-    [Theory(Skip = "Condition not met: IncludeDebTests", SkipUnless = nameof(IncludeDebTests))]
+    [Theory(SkipWhen = nameof(ExcludeDebTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebScenarioTest(string repo, string tag)
     {
@@ -172,7 +171,7 @@ public partial class LinuxInstallerTests : IDisposable
         ValidatePackageMetadata($"{repo}:{tag}", PackageType.Rpm);
     }
 
-    [Theory(Skip = "Condition not met: IncludeDebTests", SkipUnless = nameof(IncludeDebTests))]
+    [Theory(SkipWhen = nameof(ExcludeDebTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebPackageMetadataTest(string repo, string tag)
     {
@@ -200,7 +199,7 @@ public partial class LinuxInstallerTests : IDisposable
     /// </summary>
     /// <param name="image">The container image used to exercise the Debian package lifecycle.</param>
     /// <returns>A task that represents the asynchronous test operation.</returns>
-    [Theory(Skip = "Condition not met: IncludeDebTests", SkipUnless = nameof(IncludeDebTests))]
+    [Theory(SkipWhen = nameof(ExcludeDebTests))]
     [InlineData("debian:bookworm")]
     public async Task DebDnxPackageLifecycleTest(string image)
     {
@@ -215,7 +214,7 @@ public partial class LinuxInstallerTests : IDisposable
         ValidatePackageList(PackageType.Rpm);
     }
 
-    [Fact(Skip = "Condition not met: IncludeDebTests", SkipUnless = nameof(IncludeDebTests))]
+    [Fact(SkipWhen = nameof(ExcludeDebTests))]
     public void ValidateDebPackageList()
     {
         ValidatePackageList(PackageType.Deb);
