@@ -112,6 +112,32 @@ extends:
         enabled: true
       credscan:
         suppressionsFile: $(Build.SourcesDirectory)/.config/CredScanSuppressions.json
+      componentgovernance:
+        # Ignore directories that produce spurious SBoM/component-detection warnings.
+        #
+        #   artifacts/bin/Microsoft.DotNet.SourceBuild.Tests                         -> "Failed to process NuGet lockfile" on OmniSharp test project.assets.json files.
+        #   src/arcade/src/Microsoft.DotNet.SignTool.Tests/Resources                 -> "Error parsing NuGet component" on fake/unsigned .nupkg test resources.
+        #   src/sdk/test/TestAssets/TestPackages                                     -> "The file doesn't appear to be a Dockerfile" on template test assets.
+        #   src/templating/artifacts/bin/Microsoft.TemplateEngine.TestTemplates      -> "The file doesn't appear to be a Dockerfile" on built template test assets.
+        #   src/templating/test/Microsoft.TemplateEngine.TestTemplates/test_templates -> "The file doesn't appear to be a Dockerfile" on template test assets.
+        #   src/wpf/.tools                                                           -> "The file doesn't appear to be a Dockerfile" on vendored strawberry-perl's dockerfile.pm.
+        #
+        # Note: Keep these in sync with the sbom.additionalComponentDetectorArgs below.
+        ignoreDirectories: |
+          artifacts/bin/Microsoft.DotNet.SourceBuild.Tests,
+          src/arcade/src/Microsoft.DotNet.SignTool.Tests/Resources,
+          src/sdk/test/TestAssets/TestPackages,
+          src/templating/artifacts/bin/Microsoft.TemplateEngine.TestTemplates,
+          src/templating/test/Microsoft.TemplateEngine.TestTemplates/test_templates,
+          src/wpf/.tools
+      sbom:
+        # The "Generate SBoM Manifest" task is separate from the Component Governance scan above
+        # and does NOT honor componentgovernance.ignoreDirectories. It runs the same Component
+        # Detection engine, but directory exclusions must be passed via its component detector args
+        # (--DirectoryExclusionList, which takes semicolon-separated glob patterns).
+        #
+        # Note: Keep these in sync with componentgovernance.ignoreDirectories above.
+        additionalComponentDetectorArgs: '--DirectoryExclusionList **/artifacts/bin/Microsoft.DotNet.SourceBuild.Tests/**;**/src/arcade/src/Microsoft.DotNet.SignTool.Tests/Resources/**;**/src/sdk/test/TestAssets/TestPackages/**;**/src/templating/artifacts/bin/Microsoft.TemplateEngine.TestTemplates/**;**/src/templating/test/Microsoft.TemplateEngine.TestTemplates/test_templates/**;**/src/wpf/.tools/**'
 
     containers:
       ${{ variables.almaLinuxContainerName }}:
