@@ -85,8 +85,8 @@ clean=false
 
 warn_as_error=true
 warn_not_as_error=''
-node_reuse=true
-# Empty means "not specified"; tools.sh defaults it to on for local builds and off on CI.
+# Empty means "not specified"; tools.sh defaults these to on for local builds and off on CI.
+node_reuse=''
 msbuild_multi_threaded=''
 build_check=false
 binary_log=false
@@ -231,11 +231,6 @@ fi
 
 if [[ "$ci" == true ]]; then
   pipelines_log=true
-  # Disable node reuse on CI unless explicitly opted in via MSBUILD_NODEREUSE_ENABLED.
-  # Internal testing only; this env var will be replaced with a switch (https://github.com/dotnet/arcade/issues/17013) and must not be depended on.
-  if [[ "${MSBUILD_NODEREUSE_ENABLED:-}" != "1" ]]; then
-    node_reuse=false
-  fi
   if [[ "$exclude_ci_binary_log" == false ]]; then
     binary_log=true
   fi

@@ -300,15 +300,19 @@ if [[ "$ci" == true ]]; then
   fi
 fi
 
-# tools.sh fills in the default below, so remember whether -mt was passed explicitly.
+# tools.sh fills in the defaults below, so remember whether these were passed explicitly.
 msbuild_multi_threaded_explicit=$msbuild_multi_threaded
+node_reuse_explicit=$node_reuse
 
 source "$scriptroot/eng/common/tools.sh"
 source "$scriptroot/eng/source-build-toolset-init.sh"
 
-# Flow an explicit -mt choice down to the individual repo builds as well.
+# Flow the explicit choices down to the individual repo builds as well.
 if [[ -n "$msbuild_multi_threaded_explicit" ]]; then
   properties+=( "/p:DotNetBuildMT=$msbuild_multi_threaded" )
+fi
+if [[ -n "$node_reuse_explicit" ]]; then
+  properties+=( "/p:DotNetBuildNodeReuse=$node_reuse" )
 fi
 
 # Default properties

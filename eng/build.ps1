@@ -100,8 +100,9 @@ if ($buildRepoTests) { $arguments += "/p:DotNetBuildTests=true" }
 if ($cleanWhileBuilding) { $arguments += "/p:CleanWhileBuilding=true" }
 if ($branding) { $arguments += "/p:RepoDotNetFinalVersionKind=$branding" }
 if ($officialBuildId) { $arguments += "/p:OfficialBuildId=$officialBuildId" }
-# Flow the explicit choice down to the individual repo builds as well.
+# Flow the explicit choices down to the individual repo builds as well.
 if ($PSBoundParameters.ContainsKey('msbuildMultiThreaded')) { $arguments += "/p:DotNetBuildMT=$msbuildMultiThreaded" }
+if ($PSBoundParameters.ContainsKey('nodeReuse')) { $arguments += "/p:DotNetBuildNodeReuse=$nodeReuse" }
 
 function Build {
   $toolsetBuildProj = InitializeToolset
@@ -131,7 +132,10 @@ try {
     if (-not $excludeCIBinarylog) {
       $binaryLog = $true
     }
-    $nodeReuse = $false
+    # Node reuse isn't used on CI unless it was explicitly requested via -nodeReuse.
+    if (-not $PSBoundParameters.ContainsKey('nodeReuse')) {
+      $nodeReuse = $false
+    }
     # MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
     if (-not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
       $msbuildMultiThreaded = $false

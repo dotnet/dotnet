@@ -114,11 +114,14 @@
     <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)ci</CommonArgs>
 
     <!-- MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI.
-         Set DotNetBuildMT to explicitly opt in or out for all repo builds.
-         1/0 is used instead of true/false because PowerShell's [bool] parameters only bind 1/0;
-         the shell scripts normalize 1/0 to true/false, so it's the one form that works everywhere. -->
+         Set DotNetBuildMT to explicitly opt in or out for all repo builds. -->
     <CommonArgs Condition="'$(DotNetBuildMT)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
     <CommonArgs Condition="'$(DotNetBuildMT)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
+
+    <!-- MSBuild node reuse is on by default for local builds and isn't used on CI.
+         Set DotNetBuildNodeReuse to explicitly opt in or out for all repo builds. -->
+    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 1</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 0</CommonArgs>
 
     <!-- Pass down configuration properties -->
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
@@ -217,15 +220,6 @@
 
     <!-- If MSBuild exits early, make sure debug output like 'MSBuild_*.failure.txt' ends up in a place we can see it. -->
     <EnvironmentVariables Include="MSBUILDDEBUGPATH=$(ArtifactsLogRepoDir)" />
-  </ItemGroup>
-
-  <!-- NOTE: This is for internal testing only; real CI should not have node reuse.
-       Follow-up to replace this env var with a proper switch: https://github.com/dotnet/arcade/issues/17013
-       Enable MSBuild node reuse when DotNetBuildNodeReuse is set and the repository hasn't opted out.
-       By default CI builds force nodeReuse=false; opting in keeps the worker MSBuild nodes alive
-       between invocations. A repository can opt out by setting <UseNodeReuse>false</UseNodeReuse>. -->
-  <ItemGroup Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(UseNodeReuse)' != 'false'">
-    <EnvironmentVariables Include="MSBUILD_NODEREUSE_ENABLED=1" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">
