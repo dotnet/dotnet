@@ -35,7 +35,10 @@ try {
     if (-not $excludeCIBinarylog) {
       $binaryLog = $true
     }
-    $nodeReuse = $false
+    # Node reuse isn't used on CI unless it was explicitly requested via -nodeReuse.
+    if (-not $PSBoundParameters.ContainsKey('nodeReuse')) {
+      $nodeReuse = $false
+    }
     # MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
     if (-not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
       $msbuildMultiThreaded = $false

@@ -14,8 +14,8 @@ source_build=false
 product_build=false
 from_vmr=false
 ci=false
-node_reuse=true
-# Empty means "not specified"; defaults to on for local builds and off on CI (see below).
+# Empty means "not specified"; these default to on for local builds and off on CI (see below).
+node_reuse=''
 msbuild_multi_threaded=''
 binary_log=false
 warn_as_error=true
@@ -146,7 +146,9 @@ for v in node_reuse warn_as_error msbuild_multi_threaded; do
 done
 
 if [[ "$ci" == true ]]; then
-  node_reuse=false
+  node_reuse=${node_reuse:-false}
+else
+  node_reuse=${node_reuse:-true}
 fi
 
 # MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI unless it was
