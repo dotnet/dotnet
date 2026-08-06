@@ -64,7 +64,7 @@ internal sealed class BrowserRefreshServer(
                     builder.UseUrls($"http://{hostName}:{port}");
                 }
 
-                var allowedHosts = new List<string>() { "localhost", "127.0.0.1" };
+                var allowedHosts = new List<string>() { "localhost", "127.0.0.1", "[::1]" };
 
                 if (!autoReloadWebSocketOrigins.IsDefault)
                 {
