@@ -1,44 +1,29 @@
-# Instructions
+# NuGet.Client Copilot instructions
 
-## General Guidelines
+NuGet.Client is the .NET codebase for NuGet's client tooling and libraries across Visual Studio, the .NET CLI, MSBuild, and `nuget.exe`.
 
-- When creating pull requests, always follow the [PR template](PULL_REQUEST_TEMPLATE.md).
-- Always format before submitting a pull request.
-- Before implementing any code changes, read all files in the `docs/` folder. It contains the NuGet development guidelines, including rules for SDKAnalysisLevel gating, public API policies, error handling patterns, and feature design requirements.
-- Do not manually edit `.xlf` files. These files are generated from `.resx` files during build and are managed by the OneLocBuild localization pipeline — any manual edits will be overwritten. When adding or modifying localized strings, edit only the `.resx` file, then build. The build will regenerate the `.Designer.cs` and `.xlf` files. Include all three (`.resx`, `.Designer.cs`, `.xlf`) in your pull request.
-- Branches should be named as `dev-<user>-<topic>` (e.g., `dev-nkolev92-fixFlakyTest`).
+## Development environment
 
-## Coding Standards
+- Build and test only the projects relevant to the change.
+- On Windows:
+  - Run `.\configure.ps1` before the first build.
+  - Build with the `dotnet` or `msbuild` CLI.
+- On Linux and macOS:
+  - Run `. ./configure.sh` before the first build. It must be sourced, not executed.
+  - Build with `dotnet`, or run `./build.sh` to build all the cross-platform projects. Avoid building `NuGet.sln`, since it includes a few Windows-only projects.
+- Run `dotnet test` to execute tests. Use `--filter` to run a subset.
+- Use NuGet Central Package Management: declare package versions in `Directory.Packages.props` and add versionless `PackageReference` items to project files. Read the [package-update guidance](../docs/updating-packages.md) before changing dependency versions.
 
-- Use the following coding guidelines: https://github.com/NuGet/NuGet.Client/blob/dev/docs/coding-guidelines.md
-- Never use reflection.
-- When using value tuples, never use `var` (e.g., `var result = Method()`), but always use decomposed names (e.g., `(var name, var value) = Method()`).
-- All new classes must be nullable enabled. `#nullable disable` is not allowed in new code.
+## Task-specific guidance
 
-## Project-Specific Rules
+Before implementing code changes, identify and read the guidance relevant to the task. In particular:
 
-- All files in the repository are nullable by default (project-level nullable enable). No need to add `#nullable enable` directives to individual files.
+- For new features and behavior changes, read the [feature guide](../docs/feature-guide.md), including its requirements for feature configuration, `SdkAnalysisLevel` gating, and restore and pack considerations.
+- For public API additions, changes, removals, or shipping, read the [NuGet SDK guidance](../docs/nuget-sdk.md).
+- For C# implementation and error-handling patterns, read the [C# conventions and guidelines](agent_docs/csharp.md).
+- For localized resources, read the [localization guidance](agent_docs/localization.md).
+- For nullable migrations, read the [nullable migration guidance](agent_docs/nullable-migrations.md).
+- For performance measurements, read the [benchmarking guidance](agent_docs/benchmarking.md).
+- Before creating a branch or pull request, read the [Git and pull request guidance](agent_docs/git-workflow.md).
 
-## Benchmarking
-
-When asked to benchmark code or measure performance, use the `NuGet.Benchmarks` project at `test/TestExtensions/NuGet.Benchmarks/`. Create a new `.cs` file in that directory (it is git-ignored) with a class that implements `IBenchmark` and annotates benchmark methods with `[Benchmark]`. No changes to `Program.cs` are needed — it auto-discovers all `IBenchmark` implementations. Run with:
-
-```bash
-dotnet run -c Release --project test/TestExtensions/NuGet.Benchmarks/NuGet.Benchmarks.csproj
-```
-
-See `test/TestExtensions/NuGet.Benchmarks/README.md` for details and an example.
-
-## Nullable Migration Rules
-
-- **Shipped.txt format must be precise** — e.g. `string![]!` not `string![]`, `byte[]?` not `byte?[]`. Always match the format of existing base class entries in the same file.
-- **`~` (oblivious) entries get replaced in place** — replace the `~` prefixed line with the annotated line in `PublicAPI.Shipped.txt`. Do not add to `PublicAPI.Unshipped.txt`.
-- **Internal types don't need Shipped.txt updates** — only public API surfaces require `PublicAPI.Shipped.txt` changes.
-- **Don't suppress nullability with `!`** when the value genuinely can be null — make the type honest, let callers handle it.
-- **Covariant return nullability** — `byte[]` override of `byte[]?` base is valid in C# 9+. Use it when a subclass guarantees non-null.
-- **`Debug.Assert(x != null)` + `x!` can be replaced** by removing both when the parameter is non-null typed and all callers are nullable-enabled.
-- **`required` on private/internal types** is cleaner than `null!` field initializers.
-- **TryCreate/TryGet patterns** — out params need `?`, callers use `!` after the success guard. Out parameters that are guaranteed non-null when the method returns true should be annotated with `[NotNullWhen(true)]`. Don't annotate `[NotNullWhen]` unless it's actually true for all code paths.
-- **Work in batches** — group related files, fix source, fix cascading, build, repeat. If this means we need multiple pull requests for enabling nullable, that's fine. Don't try to do it all in one go.
-
-
+The repository's broader development documentation is indexed in [CONTRIBUTING.md](../CONTRIBUTING.md).
