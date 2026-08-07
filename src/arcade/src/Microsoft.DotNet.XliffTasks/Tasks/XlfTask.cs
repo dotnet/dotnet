@@ -10,6 +10,16 @@ namespace XliffTasks.Tasks
 {
     public abstract class XlfTask : Task
     {
+        /// <summary>
+        /// The language of the neutral (language-agnostic) .xlf file, which is handed to the
+        /// localization system as the source of truth for the strings to translate.
+        ///
+        /// English is the source language and therefore never a translation target, so it is not a
+        /// legal <c>XlfLanguages</c> entry (the targets validate this) and unambiguously identifies
+        /// the neutral file.
+        /// </summary>
+        internal const string NeutralLanguage = "en";
+
         internal XlfTask()
         {
         }
@@ -87,20 +97,27 @@ namespace XliffTasks.Tasks
             return document;
         }
 
+        internal static bool IsNeutralLanguage(string language)
+        {
+            return string.Equals(language, NeutralLanguage, StringComparison.OrdinalIgnoreCase);
+        }
+
         internal static string GetXlfPath(string sourcePath, string language)
         {
             string directory = Path.GetDirectoryName(sourcePath);
             string filename = Path.GetFileNameWithoutExtension(sourcePath);
             string extension = Path.GetExtension(sourcePath);
 
+            string languageSuffix = IsNeutralLanguage(language) ? string.Empty : $".{language}";
+
             string xlfExtension;
             if (extension.Equals(".resx", StringComparison.OrdinalIgnoreCase))
             {
-                xlfExtension = $".{language}.xlf";
+                xlfExtension = $"{languageSuffix}.xlf";
             }
             else
             {
-                xlfExtension = $"{extension}.{language}.xlf";
+                xlfExtension = $"{extension}{languageSuffix}.xlf";
             }
 
             return Path.Combine(directory, "xlf", filename + xlfExtension);
