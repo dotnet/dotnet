@@ -59,8 +59,6 @@ extends:
               name: $(DncEngInternalBuildPool)
               demands: ImageOverride -equals 1es-windows-2022
             variables:
-            # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
-            - group: Publish-Build-Assets
             - name: _OfficialBuildArgs
               value: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
             strategy:
