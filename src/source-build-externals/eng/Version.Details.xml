@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.Build" Version="17.8.5">
-      <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>b5265ef370a651f8c3458110b804e5cbf869eeb5</Sha>
-    </Dependency>
-    <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.msbuild" Version="17.8.5-preview-24055-02">
-      <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>b5265ef370a651f8c3458110b804e5cbf869eeb5</Sha>
-      <SourceBuild RepoName="msbuild" ManagedOnly="true" />
-    </Dependency>
     <Dependency Name="System.Text.Json" Version="8.0.6">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>d5fbb450c262fdab41bc94f8964865cd513c34d3</Sha>
@@ -21,9 +11,9 @@
       <Sha>d5fbb450c262fdab41bc94f8964865cd513c34d3</Sha>
       <SourceBuild RepoName="runtime" ManagedOnly="false" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.26278.3">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.26371.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>4b95fb1a9307265eb75f62d4937be50e6786e94e</Sha>
+      <Sha>444c2ef3c414558e2e409ee346f1faebb19687eb</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-assets" Version="8.0.0-alpha.1.26208.5">
