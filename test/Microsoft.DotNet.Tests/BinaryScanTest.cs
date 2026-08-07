@@ -20,7 +20,7 @@ namespace Microsoft.DotNet.Tests
             OutputHelper = outputHelper;
         }
 
-        [Fact(SkipWhen = nameof(ExcludeBinaryScanTest))]
+        [Fact(Skip = "Not supported on Windows", SkipWhen = nameof(ExcludeBinaryScanTest))]
         public void ScanForBinaries()
         {
             Assert.True(

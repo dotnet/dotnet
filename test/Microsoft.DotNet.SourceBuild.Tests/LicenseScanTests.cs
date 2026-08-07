@@ -146,7 +146,7 @@ public class LicenseScanTests : TestBase
         _targetName = dirName == repoName ? repoName : $"{repoName}.{dirName}";
     }
 
-    [Fact(SkipWhen = nameof(ExcludeLicenseScanTests))]
+    [Fact(Skip = "A license scan path is required", SkipWhen = nameof(ExcludeLicenseScanTests))]
     public void ScanForLicenses()
     {
         Assert.NotNull(Config.LicenseScanPath);

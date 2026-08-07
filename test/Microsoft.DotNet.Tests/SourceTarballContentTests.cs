@@ -40,7 +40,7 @@ public class SourceTarballContentTests
     /// Detects files excluded by export-ignore directives in .gitattributes files.
     /// See https://github.com/dotnet/source-build/issues/5472
     /// </summary>
-    [Fact(SkipWhen = nameof(ExcludeSourceTarballContentTests))]
+    [Fact(Skip = "A repository root and source tarball are required", SkipWhen = nameof(ExcludeSourceTarballContentTests))]
     public void CompareSourceTarballToGitRepository()
     {
         string repoRoot = Config.RepoRoot!;

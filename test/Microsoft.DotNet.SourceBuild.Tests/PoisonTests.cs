@@ -15,7 +15,7 @@ namespace Microsoft.DotNet.SourceBuild.Tests
 
         public PoisonTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
         
-        [Fact(SkipWhen = nameof(ExcludePoisonTests))]
+        [Fact(Skip = "A poison report is required", SkipWhen = nameof(ExcludePoisonTests))]
         public void VerifyUsage()
         {
             if (!File.Exists(Config.PoisonReportPath))

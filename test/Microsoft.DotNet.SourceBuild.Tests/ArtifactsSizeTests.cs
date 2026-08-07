@@ -26,7 +26,7 @@ public class ArtifactsSizeTests : SdkTests
 
     public ArtifactsSizeTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
-    [Fact(SkipWhen = nameof(ExcludeArtifactsSizeTests))]
+    [Fact(Skip = "An SDK tarball is required", SkipWhen = nameof(ExcludeArtifactsSizeTests))]
     public void CheckZeroSizeArtifacts()
     {
         ProcessTarball(Config.SdkTarballPath!, SdkType);

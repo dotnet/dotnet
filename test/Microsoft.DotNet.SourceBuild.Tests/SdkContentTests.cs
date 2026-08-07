@@ -63,7 +63,7 @@ public partial class SdkContentTests : SdkTests
     /// This makes the baseline durable between releases.  This does mean however, entries
     /// in the baseline may appear identical if the diff is version specific.
     /// </Summary>
-    [Fact(SkipWhen = nameof(ExcludeSdkContentTests))]
+    [Fact(Skip = "Both the Microsoft and source-built SDK tarballs are required", SkipWhen = nameof(ExcludeSdkContentTests))]
     public void CompareMsftToSbFileList()
     {
         const string msftFileListingFileName = "msftSdkFiles.txt";
@@ -80,7 +80,7 @@ public partial class SdkContentTests : SdkTests
         BaselineHelper.CompareBaselineContents("MsftToSbSdkFiles.diff", diff, OutputHelper, BaselineSubDir);
     }
 
-    [Fact(SkipWhen = nameof(ExcludeSdkContentTests))]
+    [Fact(Skip = "Both the Microsoft and source-built SDK tarballs are required", SkipWhen = nameof(ExcludeSdkContentTests))]
     public void CompareMsftToSbAssemblyVersions()
     {
         Assert.NotNull(Config.MsftSdkTarballPath);
@@ -116,7 +116,7 @@ public partial class SdkContentTests : SdkTests
         }
     }
 
-    [Fact(SkipWhen = nameof(ExcludeSdkContentTests))]
+    [Fact(Skip = "Both the Microsoft and source-built SDK tarballs are required", SkipWhen = nameof(ExcludeSdkContentTests))]
     public void CompareMsftToSbAPIs()
     {
         DirectoryInfo tempDir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
@@ -142,7 +142,7 @@ public partial class SdkContentTests : SdkTests
     /// Verifies that PackageReference versions in template nupkgs are consistent between
     /// the source-built and Microsoft-built SDKs (e.g. https://github.com/dotnet/source-build/issues/5493).
     /// </Summary>
-    [Fact(SkipWhen = nameof(ExcludeSdkContentTests))]
+    [Fact(Skip = "Both the Microsoft and source-built SDK tarballs are required", SkipWhen = nameof(ExcludeSdkContentTests))]
     public void CompareMsftToSbTemplatePackageVersions()
     {
         Assert.NotNull(Config.MsftSdkTarballPath);

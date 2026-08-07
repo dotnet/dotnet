@@ -35,7 +35,7 @@ public class CentralPackageManagementTests
     ///
     /// This test scans all repos in the VMR for this conflict pattern.
     /// </summary>
-    [Fact(SkipWhen = nameof(ExcludeCpmTests))]
+    [Fact(Skip = "A repository root is required", SkipWhen = nameof(ExcludeCpmTests))]
     public void ImplicitPackageReferences_ShouldNotConflictWithPackageVersionEntries()
     {
         string repoRoot = Config.RepoRoot!;

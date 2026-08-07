@@ -26,7 +26,7 @@ public class OmniSharpTests : SdkTests
 
     public OmniSharpTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-    [Theory(SkipWhen = nameof(ExcludeOmniSharpTests))]
+    [Theory(Skip = "OmniSharp is not available for the target architecture", SkipWhen = nameof(ExcludeOmniSharpTests))]
     [InlineData(DotNetTemplate.BlazorWasm)]
     [InlineData(DotNetTemplate.ClassLib)]
     [InlineData(DotNetTemplate.Console)]

@@ -138,7 +138,7 @@ public partial class LinuxInstallerTests : IDisposable
         }
     }
 
-    [Theory(SkipWhen = nameof(ExcludeRpmTests))]
+    [Theory(Skip = "RPM package testing is not enabled", SkipWhen = nameof(ExcludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
     public async Task RpmScenarioTest(string repo, string tag)
     {
@@ -153,7 +153,7 @@ public partial class LinuxInstallerTests : IDisposable
         DistroTest($"{repo}:{tag}", PackageType.Rpm);
     }
 
-    [Theory(SkipWhen = nameof(ExcludeDebTests))]
+    [Theory(Skip = "Debian package testing is not enabled", SkipWhen = nameof(ExcludeDebTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebScenarioTest(string repo, string tag)
     {
@@ -162,7 +162,7 @@ public partial class LinuxInstallerTests : IDisposable
         DistroTest($"{repo}:{tag}", PackageType.Deb);
     }
 
-    [Theory(SkipWhen = nameof(ExcludeRpmTests))]
+    [Theory(Skip = "RPM package testing is not enabled", SkipWhen = nameof(ExcludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
     public async Task RpmPackageMetadataTest(string repo, string tag)
     {
@@ -171,7 +171,7 @@ public partial class LinuxInstallerTests : IDisposable
         ValidatePackageMetadata($"{repo}:{tag}", PackageType.Rpm);
     }
 
-    [Theory(SkipWhen = nameof(ExcludeDebTests))]
+    [Theory(Skip = "Debian package testing is not enabled", SkipWhen = nameof(ExcludeDebTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebPackageMetadataTest(string repo, string tag)
     {
@@ -185,7 +185,7 @@ public partial class LinuxInstallerTests : IDisposable
     /// </summary>
     /// <param name="image">The container image used to exercise the RPM package lifecycle.</param>
     /// <returns>A task that represents the asynchronous test operation.</returns>
-    [Theory(SkipWhen = nameof(ExcludeRpmTests))]
+    [Theory(Skip = "RPM package testing is not enabled", SkipWhen = nameof(ExcludeRpmTests))]
     [InlineData("mcr.microsoft.com/azurelinux/base/core:3.0")]
     public async Task RpmDnxPackageLifecycleTest(string image)
     {
@@ -199,7 +199,7 @@ public partial class LinuxInstallerTests : IDisposable
     /// </summary>
     /// <param name="image">The container image used to exercise the Debian package lifecycle.</param>
     /// <returns>A task that represents the asynchronous test operation.</returns>
-    [Theory(SkipWhen = nameof(ExcludeDebTests))]
+    [Theory(Skip = "Debian package testing is not enabled", SkipWhen = nameof(ExcludeDebTests))]
     [InlineData("debian:bookworm")]
     public async Task DebDnxPackageLifecycleTest(string image)
     {
@@ -208,13 +208,13 @@ public partial class LinuxInstallerTests : IDisposable
         DnxPackageLifecycleTest(image, PackageType.Deb);
     }
 
-    [Fact(SkipWhen = nameof(ExcludeRpmTests))]
+    [Fact(Skip = "RPM package testing is not enabled", SkipWhen = nameof(ExcludeRpmTests))]
     public void ValidateRpmPackageList()
     {
         ValidatePackageList(PackageType.Rpm);
     }
 
-    [Fact(SkipWhen = nameof(ExcludeDebTests))]
+    [Fact(Skip = "Debian package testing is not enabled", SkipWhen = nameof(ExcludeDebTests))]
     public void ValidateDebPackageList()
     {
         ValidatePackageList(PackageType.Deb);

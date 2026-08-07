@@ -33,7 +33,7 @@ public class SourcelinkTests : SdkTests
     /// <summary>
     /// Verifies that all symbols have valid sourcelinks.
     /// </summary>
-    [Fact(SkipWhen = nameof(ExcludeSourceLinkTests))]
+    [Fact(Skip = "Only supported in official builds", SkipWhen = nameof(ExcludeSourceLinkTests))]
     public void VerifySourcelinks()
     {
         try

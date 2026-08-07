@@ -30,7 +30,7 @@ public class ReproducibilityTests
     public static bool ExcludeSourceBuiltArtifactsReproducibilityTests =>
         string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath1) || string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath2);
 
-    [Fact(SkipWhen = nameof(ExcludeMsftReproducibilityTests))]
+    [Fact(Skip = "Both Microsoft SDK tarballs are required", SkipWhen = nameof(ExcludeMsftReproducibilityTests))]
     public void MsftSdkTarballIsReproducible()
     {
         CompareTarballs(
@@ -42,7 +42,7 @@ public class ReproducibilityTests
             updatedBaselineFileName: "UpdatedMsftReproducibilityBaseline.diff");
     }
 
-    [Fact(SkipWhen = nameof(ExcludeSourceBuiltReproducibilityTests))]
+    [Fact(Skip = "Both source-built SDK tarballs are required", SkipWhen = nameof(ExcludeSourceBuiltReproducibilityTests))]
     public void SourceBuiltSdkTarballIsReproducible()
     {
         CompareTarballs(
@@ -54,7 +54,7 @@ public class ReproducibilityTests
             updatedBaselineFileName: "UpdatedSourceBuiltReproducibilityBaseline.diff");
     }
 
-    [Fact(SkipWhen = nameof(ExcludeSourceBuiltArtifactsReproducibilityTests))]
+    [Fact(Skip = "Both source-built artifacts tarballs are required", SkipWhen = nameof(ExcludeSourceBuiltArtifactsReproducibilityTests))]
     public void SourceBuiltArtifactsTarballIsReproducible()
     {
         CompareTarballs(

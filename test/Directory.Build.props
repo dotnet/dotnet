@@ -31,6 +31,11 @@
          availability of an SDK archive). Don't fail the run when all of a project's tests end up being
          skipped, which MTP otherwise reports via exit code 8 (zero tests ran). -->
     <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --ignore-exit-code 8</TestingPlatformCommandLineArguments>
+
+    <!-- Report which tests failed and why. MTP otherwise logs a single error pointing at a log file that
+         isn't part of the published artifacts, which makes CI failures undiagnosable from the build log. -->
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsTestProject)' == 'true'">

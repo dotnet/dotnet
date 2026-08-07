@@ -17,7 +17,7 @@ public class SourceBuiltArtifactsTests : SdkTests
 
     public SourceBuiltArtifactsTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-    [Fact(SkipWhen = nameof(ExcludeSourceBuiltArtifactsTests))]
+    [Fact(Skip = "A source-built artifacts path is required", SkipWhen = nameof(ExcludeSourceBuiltArtifactsTests))]
     public void VerifyVersionFile()
     {
         Assert.NotNull(Config.SourceBuiltArtifactsPath);
@@ -58,7 +58,7 @@ public class SourceBuiltArtifactsTests : SdkTests
         }
     }
 
-    [Fact(SkipWhen = nameof(ExcludeSourceBuiltArtifactsTests))]
+    [Fact(Skip = "A source-built artifacts path is required", SkipWhen = nameof(ExcludeSourceBuiltArtifactsTests))]
     public void EnsureNoSymbolsNupkgs()
     {
         Assert.NotNull(Config.SourceBuiltArtifactsPath);
