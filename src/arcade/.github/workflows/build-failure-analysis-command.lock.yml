@@ -1,4 +1,4 @@
-# gh-aw-metadata: {"schema_version":"v4","frontmatter_hash":"7e14c89acaf6a6c7fbb5977b304b415eeade3d5d672b8cd189b8c1dadb2374b0","body_hash":"de7f95d32118d8b18023824a90c693250c6556451686d60bbf5170c04bb5a87d","compiler_version":"v0.77.5","strict":true,"agent_id":"copilot"}
+# gh-aw-metadata: {"schema_version":"v4","frontmatter_hash":"a079236e09170dc1f04b2065b4d512b144fc631c0a037f4ee0c4d72b6fe21389","body_hash":"de7f95d32118d8b18023824a90c693250c6556451686d60bbf5170c04bb5a87d","compiler_version":"v0.77.5","strict":true,"agent_id":"copilot"}
 # gh-aw-manifest: {"version":1,"secrets":["GH_AW_GITHUB_MCP_SERVER_TOKEN","GH_AW_GITHUB_TOKEN","GITHUB_TOKEN"],"actions":[{"repo":"actions/checkout","sha":"de0fac2e4500dabe0009e67214ff5f5447ce83dd","version":"v6.0.2"},{"repo":"actions/download-artifact","sha":"3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c","version":"v8.0.1"},{"repo":"actions/github-script","sha":"3a2844b7e9c422d3c10d287c895573f7108da1b3","version":"v9.0.0"},{"repo":"actions/setup-node","sha":"48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e","version":"v6.4.0"},{"repo":"actions/upload-artifact","sha":"043fb46d1a93c77aae656e7c1c64a875d1fc6a0a","version":"v7.0.1"},{"repo":"github/gh-aw-actions/setup","sha":"3ea13c02d765410340d533515cb31a7eef2baaf0","version":"v0.77.5"}],"containers":[{"image":"ghcr.io/github/gh-aw-firewall/agent:0.25.58"},{"image":"ghcr.io/github/gh-aw-firewall/api-proxy:0.25.58"},{"image":"ghcr.io/github/gh-aw-firewall/squid:0.25.58"},{"image":"ghcr.io/github/gh-aw-mcpg:v0.3.22"},{"image":"ghcr.io/github/github-mcp-server:v1.1.0"},{"image":"mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-binlog-mcp-amd64"},{"image":"node:lts-alpine","digest":"sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14","pinned_image":"node:lts-alpine@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14"}]}
 #    ___                   _   _      
 #   / _ \                 | | (_)     
@@ -66,7 +66,7 @@ permissions: {}
 
 concurrency:
   cancel-in-progress: true
-  group: build-failure-analysis-${{ github.event.issue.number || github.event.pull_request.number || fromJSON(github.event.inputs.aw_context || github.event.client_payload.aw_context || '{}').item_number || github.run_id }}
+  group: build-failure-analysis-cmd-${{ github.event.issue.number || github.event.pull_request.number || fromJSON(github.event.inputs.aw_context || github.event.client_payload.aw_context || '{}').item_number || github.run_id }}
 
 run-name: "Build Failure Analysis (command)"
 
@@ -236,20 +236,20 @@ jobs:
         run: |
           bash "${RUNNER_TEMP}/gh-aw/actions/create_prompt_first.sh"
           {
-          cat << 'GH_AW_PROMPT_e19c6ca346db8d9c_EOF'
+          cat << 'GH_AW_PROMPT_46824752d4d70b5d_EOF'
           <system>
-          GH_AW_PROMPT_e19c6ca346db8d9c_EOF
+          GH_AW_PROMPT_46824752d4d70b5d_EOF
           cat "${RUNNER_TEMP}/gh-aw/prompts/xpia.md"
           cat "${RUNNER_TEMP}/gh-aw/prompts/temp_folder_prompt.md"
           cat "${RUNNER_TEMP}/gh-aw/prompts/markdown.md"
           cat "${RUNNER_TEMP}/gh-aw/prompts/safe_outputs_prompt.md"
-          cat << 'GH_AW_PROMPT_e19c6ca346db8d9c_EOF'
+          cat << 'GH_AW_PROMPT_46824752d4d70b5d_EOF'
           <safe-output-tools>
           Tools: add_comment(max:5), create_pull_request_review_comment(max:25), missing_tool, missing_data, noop(max:5)
           </safe-output-tools>
-          GH_AW_PROMPT_e19c6ca346db8d9c_EOF
+          GH_AW_PROMPT_46824752d4d70b5d_EOF
           cat "${RUNNER_TEMP}/gh-aw/prompts/mcp_cli_tools_prompt.md"
-          cat << 'GH_AW_PROMPT_e19c6ca346db8d9c_EOF'
+          cat << 'GH_AW_PROMPT_46824752d4d70b5d_EOF'
           <github-context>
           The following GitHub context information is available for this workflow:
           {{#if github.actor}}
@@ -278,16 +278,16 @@ jobs:
           {{/if}}
           </github-context>
           
-          GH_AW_PROMPT_e19c6ca346db8d9c_EOF
+          GH_AW_PROMPT_46824752d4d70b5d_EOF
           cat "${RUNNER_TEMP}/gh-aw/prompts/github_mcp_tools_with_safeoutputs_prompt.md"
           if [ "$GITHUB_EVENT_NAME" = "issue_comment" ] && [ -n "$GH_AW_IS_PR_COMMENT" ] || [ "$GITHUB_EVENT_NAME" = "pull_request_review_comment" ] || [ "$GITHUB_EVENT_NAME" = "pull_request_review" ]; then
             cat "${RUNNER_TEMP}/gh-aw/prompts/pr_context_prompt.md"
           fi
-          cat << 'GH_AW_PROMPT_e19c6ca346db8d9c_EOF'
+          cat << 'GH_AW_PROMPT_46824752d4d70b5d_EOF'
           </system>
           {{#runtime-import .github/workflows/shared/build-failure-analysis-shared.md}}
           {{#runtime-import .github/workflows/build-failure-analysis-command.md}}
-          GH_AW_PROMPT_e19c6ca346db8d9c_EOF
+          GH_AW_PROMPT_46824752d4d70b5d_EOF
           } > "$GH_AW_PROMPT"
       - name: Interpolate variables and render templates
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
@@ -449,6 +449,7 @@ jobs:
           GH_AW_PR_NUMBER_VALUE: ${{ needs.fetch-binlog.outputs.pr-number }}
         name: Export agent context
         run: "# See build-failure-analysis.md for the binlog path conventions. The\n# per-leg binlogs are read through the binlog-mcp MCP server (mounted at\n# `/data/binlogs`); GH_AW_BINLOG_HOST_PATH points at the Azure DevOps\n# build for human-facing references.\nBINLOG_DIR=\"/data/binlogs\"\nLIST=\"\"\nif [ \"${GH_AW_BINLOG_FOUND_VALUE:-false}\" = \"true\" ] && [ -d /tmp/binlogs ]; then\n  for f in /tmp/binlogs/*.binlog; do\n    [ -f \"$f\" ] || continue\n    LIST=\"${LIST}${BINLOG_DIR}/$(basename \"$f\")\"$'\\n'\n  done\nfi\nFIRST=$(printf '%s' \"$LIST\" | head -1)\n{\n  echo \"GH_AW_BUILD_OUTCOME=failure\"\n  echo \"GH_AW_BINLOG_DIR=${BINLOG_DIR}\"\n  echo \"GH_AW_BINLOG_PATH=${FIRST}\"\n  echo \"GH_AW_BINLOG_HOST_PATH=${GH_AW_ADO_BUILD_URL_VALUE}\"\n  echo \"GH_AW_PR_NUMBER=${GH_AW_PR_NUMBER_VALUE}\"\n  echo \"GH_AW_PR_HEAD_SHA=${GH_AW_PR_HEAD_SHA_VALUE}\"\n  echo \"GH_AW_PR_MERGE_SHA=${GH_AW_PR_MERGE_SHA_VALUE}\"\n  echo \"GH_AW_WORKSPACE=${GH_AW_GITHUB_WORKSPACE}\"\n  echo \"GH_AW_BINLOG_LIST<<GH_AW_EOF\"\n  printf '%s' \"$LIST\"\n  echo \"GH_AW_EOF\"\n} >> \"$GITHUB_ENV\"\n"
+        shell: bash
 
       - name: Configure Git credentials
         env:
@@ -520,15 +521,15 @@ jobs:
           mkdir -p "${RUNNER_TEMP}/gh-aw/safeoutputs"
           mkdir -p /tmp/gh-aw/safeoutputs
           mkdir -p /tmp/gh-aw/mcp-logs/safeoutputs
-          cat > "${RUNNER_TEMP}/gh-aw/safeoutputs/config.json" << 'GH_AW_SAFE_OUTPUTS_CONFIG_5ecaf17f590bd42c_EOF'
-          {"add_comment":{"hide_older_comments":true,"max":5,"target":"*"},"create_pull_request_review_comment":{"max":25,"side":"RIGHT","target":"*"},"create_report_incomplete_issue":{},"missing_data":{},"missing_tool":{},"noop":{"max":5,"report-as-issue":"false"},"report_incomplete":{}}
-          GH_AW_SAFE_OUTPUTS_CONFIG_5ecaf17f590bd42c_EOF
+          cat > "${RUNNER_TEMP}/gh-aw/safeoutputs/config.json" << 'GH_AW_SAFE_OUTPUTS_CONFIG_c0372008256dd3ca_EOF'
+          {"add_comment":{"hide_older_comments":true,"max":5,"target":"triggering"},"create_pull_request_review_comment":{"max":25,"side":"RIGHT","target":"triggering"},"create_report_incomplete_issue":{},"missing_data":{},"missing_tool":{},"noop":{"max":5,"report-as-issue":"false"},"report_incomplete":{}}
+          GH_AW_SAFE_OUTPUTS_CONFIG_c0372008256dd3ca_EOF
       - name: Generate Safe Outputs Tools
         env:
           GH_AW_TOOLS_META_JSON: |
             {
               "description_suffixes": {
-                "add_comment": " CONSTRAINTS: Maximum 5 comment(s) can be added. Target: *. Supports reply_to_id for discussion threading.",
+                "add_comment": " CONSTRAINTS: Maximum 5 comment(s) can be added. Target: triggering. Supports reply_to_id for discussion threading.",
                 "create_pull_request_review_comment": " CONSTRAINTS: Maximum 25 review comment(s) can be created. Comments will be on the RIGHT side of the diff."
               },
               "repo_params": {},
@@ -754,7 +755,7 @@ jobs:
           
           mkdir -p /home/runner/.copilot
           GH_AW_NODE=$(which node 2>/dev/null || command -v node 2>/dev/null || echo node)
-          cat << GH_AW_MCP_CONFIG_52a98f7acae51b49_EOF | "$GH_AW_NODE" "${RUNNER_TEMP}/gh-aw/actions/start_mcp_gateway.cjs"
+          cat << GH_AW_MCP_CONFIG_e03550f7dff7a471_EOF | "$GH_AW_NODE" "${RUNNER_TEMP}/gh-aw/actions/start_mcp_gateway.cjs"
           {
             "mcpServers": {
               "binlog-mcp": {
@@ -812,7 +813,7 @@ jobs:
               "payloadDir": "${MCP_GATEWAY_PAYLOAD_DIR}"
             }
           }
-          GH_AW_MCP_CONFIG_52a98f7acae51b49_EOF
+          GH_AW_MCP_CONFIG_e03550f7dff7a471_EOF
       - name: Mount MCP servers as CLIs
         id: mount-mcp-clis
         continue-on-error: true
@@ -1496,29 +1497,72 @@ jobs:
           GH_HOST="${GITHUB_SERVER_URL#https://}"
           GH_HOST="${GH_HOST#http://}"
           echo "GH_HOST=${GH_HOST}" >> "$GITHUB_ENV"
-      - name: Verify the commenter has write access
+      - name: Verify the comment invokes the command and the commenter has write access
         id: perm
         if: github.event_name == 'issue_comment'
         run: |
           set +e
+          # --- 1. Command position (free; do this before the API call) ------
+          # The job-level `if:` can only use `contains()`, a plain substring
+          # test, so a comment that merely mentions the command — or an edited
+          # old comment quoting it — still reaches this job and pays for the
+          # download before `pre_activation` throws the result away. That check
+          # runs too late by construction, so reproduce it here.
+          #
+          # gh-aw trims the body and requires the command to be the FIRST token:
+          # `/^\/([a-zA-Z0-9][a-zA-Z0-9._-]*)(?=$|\s)/` over the trimmed text,
+          # then an equality comparison on the captured name
+          # (actions/setup/js/slash_command_matcher.cjs). `awk 'NF {print $1;
+          # exit}'` is the same rule: skip leading whitespace/blank lines, take
+          # the first whitespace-delimited token. The token is delimited by
+          # whitespace or end-of-input, exactly the `(?=$|\s)` lookahead, so
+          # `/analyze-build-failure-now` correctly does NOT match. `tr -d '\r'`
+          # is needed because JS `.trim()` and `\s` treat CR as whitespace while
+          # awk's default field splitting does not.
+          # KEEP IN SYNC with `on.command.name` below.
+          first_word=$(printf '%s' "${COMMENT_BODY}" | tr -d '\r' | awk 'NF {print $1; exit}')
+          if [ "${first_word}" != "/${COMMAND_NAME}" ]; then
+            # Never echo the raw token: it is attacker-controlled and `::`-
+            # prefixed text is interpreted by the runner as a workflow command.
+            safe_word=$(printf '%s' "${first_word}" | tr -cd 'A-Za-z0-9/._-' | cut -c1-40)
+            echo "Comment does not start with '/${COMMAND_NAME}' (first token: '${safe_word}'); skipping the binlog download."
+            echo "authorized=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # --- 2. Repository permission -------------------------------------
+          # `COMMENTER` is interpolated into an API path and into log output, so
+          # give it the same shape check `PR_NUMBER` and `BUILD_ID` get below.
+          # GitHub logins are alphanumerics and hyphens; anything else (a bot
+          # login such as `github-actions[bot]`, or an empty value) is rejected
+          # here instead of being sent to the API.
+          if ! printf '%s' "${COMMENTER}" | grep -qE '^[A-Za-z0-9-]+$'; then
+            echo "::warning::Commenter login is missing or malformed; skipping the binlog download."
+            echo "authorized=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Read the response first and extract with `jq` rather than using
+          # `gh api --jq`: on a non-2xx response `gh` prints the error document
+          # to stdout, which `--jq` does not filter, so the raw JSON would end
+          # up in `perm` and get echoed into the log. Extracting the field
+          # ourselves yields an empty string for any error shape.
           resp=$(gh api "repos/${GITHUB_REPOSITORY}/collaborators/${COMMENTER}/permission" 2>/dev/null)
-          role=$(printf '%s' "${resp}" | jq -r '.role_name // empty' 2>/dev/null)
           perm=$(printf '%s' "${resp}" | jq -r '.permission // empty' 2>/dev/null)
-          authorized=false
-          for r in "${role}" "${perm}"; do
-            case "${r}" in
-              admin|maintain|maintainer|write) authorized=true ;;
-            esac
-          done
+          case "${perm}" in
+            admin|write) authorized=true ;;
+            *)           authorized=false ;;
+          esac
           if [ "${authorized}" = "true" ]; then
-            echo "'${COMMENTER}' has '${role:-${perm}}' access to ${GITHUB_REPOSITORY}; proceeding."
+            echo "'${COMMENTER}' has '${perm}' access to ${GITHUB_REPOSITORY}; proceeding."
           else
-            echo "::warning::'${COMMENTER}' does not have write access to ${GITHUB_REPOSITORY} (resolved role '${role:-none}'); skipping the binlog download."
+            echo "::warning::'${COMMENTER}' does not have write access to ${GITHUB_REPOSITORY} (resolved permission '${perm:-none}'); skipping the binlog download."
           fi
           echo "authorized=${authorized}" >> "$GITHUB_OUTPUT"
         env:
+          COMMAND_NAME: analyze-build-failure
           COMMENTER: ${{ github.event.comment.user.login }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
           GH_TOKEN: ${{ github.token }}
+        shell: bash
       - name: Download binlogs from the PR's latest failed Azure Pipelines build
         id: fetch
         if: github.event_name != 'issue_comment' || steps.perm.outputs.authorized == 'true'
@@ -1781,6 +1825,7 @@ jobs:
           GH_AW_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.issue.number || fromJSON(github.event.inputs.aw_context || github.event.client_payload.aw_context || '{}').item_number }}
+        shell: bash
       - name: Upload analysis artifact
         if: steps.fetch.outputs.binlog-found == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -1920,7 +1965,7 @@ jobs:
           GH_AW_ALLOWED_DOMAINS: "*.vsblob.vsassets.io,api.business.githubcopilot.com,api.enterprise.githubcopilot.com,api.github.com,api.githubcopilot.com,api.individual.githubcopilot.com,api.nuget.org,api.snapcraft.io,archive.ubuntu.com,azure.archive.ubuntu.com,azuresearch-usnc.nuget.org,azuresearch-ussc.nuget.org,builds.dotnet.microsoft.com,ci.dot.net,crl.geotrust.com,crl.globalsign.com,crl.identrust.com,crl.sectigo.com,crl.thawte.com,crl.usertrust.com,crl.verisign.com,crl3.digicert.com,crl4.digicert.com,crls.ssl.com,dc.services.visualstudio.com,dist.nuget.org,dot.net,dotnet.microsoft.com,dotnetcli.blob.core.windows.net,github.com,host.docker.internal,json-schema.org,json.schemastore.org,keyserver.ubuntu.com,nuget.org,nuget.pkg.github.com,nugetregistryv2prod.blob.core.windows.net,ocsp.digicert.com,ocsp.geotrust.com,ocsp.globalsign.com,ocsp.identrust.com,ocsp.sectigo.com,ocsp.ssl.com,ocsp.thawte.com,ocsp.usertrust.com,ocsp.verisign.com,oneocsp.microsoft.com,packagecloud.io,packages.cloud.google.com,packages.microsoft.com,pkgs.dev.azure.com,ppa.launchpad.net,raw.githubusercontent.com,registry.npmjs.org,s.symcb.com,s.symcd.com,security.ubuntu.com,telemetry.enterprise.githubcopilot.com,ts-crl.ws.symantec.com,ts-ocsp.ws.symantec.com,www.googleapis.com,www.microsoft.com"
           GITHUB_SERVER_URL: ${{ github.server_url }}
           GITHUB_API_URL: ${{ github.api_url }}
-          GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG: "{\"add_comment\":{\"hide_older_comments\":true,\"max\":5,\"target\":\"*\"},\"create_pull_request_review_comment\":{\"max\":25,\"side\":\"RIGHT\",\"target\":\"*\"},\"create_report_incomplete_issue\":{},\"missing_data\":{},\"missing_tool\":{},\"noop\":{\"max\":5,\"report-as-issue\":\"false\"},\"report_incomplete\":{}}"
+          GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG: "{\"add_comment\":{\"hide_older_comments\":true,\"max\":5,\"target\":\"triggering\"},\"create_pull_request_review_comment\":{\"max\":25,\"side\":\"RIGHT\",\"target\":\"triggering\"},\"create_report_incomplete_issue\":{},\"missing_data\":{},\"missing_tool\":{},\"noop\":{\"max\":5,\"report-as-issue\":\"false\"},\"report_incomplete\":{}}"
         with:
           github-token: ${{ secrets.GH_AW_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
           script: |

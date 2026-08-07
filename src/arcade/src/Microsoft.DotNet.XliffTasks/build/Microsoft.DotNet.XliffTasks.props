@@ -25,6 +25,13 @@
       Set this to to false to skip all xlf processing.
     -->
     <EnableXlfLocalization Condition="'$(EnableXlfLocalization)' == ''">true</EnableXlfLocalization>
+
+    <!--
+      Set this to true to also generate a neutral (language-agnostic) .xlf file next to the
+      per-language .xlf files, e.g. `xlf\Resources.xlf` next to `xlf\Resources.cs.xlf`.
+      These are the files handed to the localization system (OneLocBuild) as its input.
+    -->
+    <CreateNeutralXlf Condition="'$(CreateNeutralXlf)' == ''">false</CreateNeutralXlf>
   </PropertyGroup>
 
   <ItemDefinitionGroup>

@@ -16,12 +16,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 {
     /// <summary>
     /// Fire-and-forget queue for AzDO test-result uploads. Each queued upload runs as an
-    /// independent task. Transient read failures use bounded retries; state-changing Azure
-    /// DevOps writes are attempted once to avoid replay after an ambiguous response. On normal
-    /// completion the queue is drained so results in flight when the runner exits are not lost. On
-    /// cancellation the queue is intentionally NOT drained: cancelling the in-flight Helix jobs
-    /// takes priority, and any unfinished upload is re-uploaded in full by a later monitor
-    /// invocation (a Helix job is only "processed" once its test run reaches the Completed state).
+    /// independent task. Transient reads and test-result/attachment publishing use bounded
+    /// retries; test-run creation and completion are attempted once. On normal completion the
+    /// queue is drained so results in flight when the runner exits are not lost. On cancellation
+    /// the queue is intentionally NOT drained: cancelling the in-flight Helix jobs takes priority,
+    /// and any unfinished upload is re-uploaded in full by a later monitor invocation (a Helix job
+    /// is only "processed" once its test run reaches the Completed state).
     /// </summary>
     internal sealed class TestResultUploadQueue
     {
@@ -194,6 +194,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             try
             {
                 T result = default;
+                Exception lastException = null;
                 var retry = new ExponentialRetry
                 {
                     MaxAttempts = retryCount + 1,
@@ -202,29 +203,24 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 bool succeeded = await retry.RunAsync(
                     async attempt =>
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
-
                         try
                         {
                             result = await operation();
                             return true;
                         }
-                        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-                        {
-                            throw;
-                        }
                         catch (Exception ex) when (
-                            TransientFailureDetector.IsTransient(ex)
-                            && attempt < retryCount)
+                            !cancellationToken.IsCancellationRequested
+                            && TransientFailureDetector.IsTransient(ex))
                         {
+                            lastException = ex;
                             _logger.LogDebug(ex,
                                 "Failed to {OperationDescription} for job {JobName}. Test run ID was {TestRunId}. "
-                                + "Transient retry {Retry} of {RetryCount}; retrying after delay.",
+                                + "Transient attempt {Attempt} of {AttemptCount} failed.",
                                 operationDescription,
                                 helixJob.DisplayName,
                                 testRunId,
                                 attempt + 1,
-                                retryCount);
+                                retryCount + 1);
                             return false;
                         }
                     },
@@ -233,7 +229,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 if (!succeeded)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    throw new InvalidOperationException("Upload retry loop exited unexpectedly.");
+                    throw lastException ?? new InvalidOperationException("Upload retry loop exited unexpectedly.");
                 }
 
                 return (true, result);
