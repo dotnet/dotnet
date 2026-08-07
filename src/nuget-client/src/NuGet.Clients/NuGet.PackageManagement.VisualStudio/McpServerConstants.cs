@@ -10,6 +10,7 @@ namespace NuGet.PackageManagement.VisualStudio
         // Display name of the NuGet "fix vulnerabilities" tool exposed by the NuGet MCP server.
         // Must match the tool name defined in the NuGet MCP Server.
         public const string NuGetSolverToolName = "fix_vulnerable_packages";
+        public const string PackageSourceMappingToolName = "review_supply_chain_security";
 
         // This value must match the server name registered in mcp.json. Keep both in sync.
         public const string NuGetMcpServerName = "NuGet";
