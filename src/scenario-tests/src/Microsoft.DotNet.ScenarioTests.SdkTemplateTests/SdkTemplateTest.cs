@@ -23,10 +23,10 @@ public class SdkTemplateTest
         TargetRid = targetRid;
     }
 
-    internal void Execute(DotNetSdkHelper dotNetHelper, string testRoot, string[]? frameworks = null, string? PreMadeSolution = null)
+    internal void Execute(DotNetSdkHelper dotNetHelper, string testRoot, string[]? frameworks = null, string? PreMadeSolution = null, int retryCounter = 0)
     {
         // Don't use the cli language name in the project name because it may contain '#': https://github.com/dotnet/roslyn/issues/51692
-        string projectName = $"{ScenarioName}_{Template}_{Language}";
+        string projectName = $"{ScenarioName}_{Template}_{Language}" + (retryCounter > 0 ? $"_Retry{retryCounter}" : "");
         string customNewArgs = Template.IsAspNetCore() && NoHttps ? "--no-https" : string.Empty;
         string projectDirectory = Path.Combine(testRoot, projectName);
 
@@ -68,7 +68,18 @@ public class SdkTemplateTest
         {
             if (Template.IsAspNetCore())
             {
-                dotNetHelper.ExecuteRunWeb(projectDirectory);
+                try
+                {
+                    dotNetHelper.ExecuteRunWeb(projectDirectory);
+                }
+                catch (InvalidOperationException ex)
+                when (ex.Data["IsAddressInUseException"] is true &&
+                      retryCounter < 3 && // retry up to three times if we get an AdressInUseException
+                      PreMadeSolution == null) // only do this when generating a new project since a pre-made solution won't get a new port
+                {
+                    Execute(dotNetHelper, testRoot, frameworks, PreMadeSolution, retryCounter + 1);
+                    return;
+                }
             }
             else if (Template.isUIApp())
             {

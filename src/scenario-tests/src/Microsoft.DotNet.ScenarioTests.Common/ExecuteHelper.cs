@@ -103,7 +103,13 @@ public static class ExecuteHelper
                 $"{Environment.NewLine}Exit code: {result.Process.ExitCode}" +
                 $"{Environment.NewLine}{result.StdOut}" +
                 $"{Environment.NewLine}{result.StdErr}";
-            throw new InvalidOperationException(msg);
+
+            var ex = new InvalidOperationException(msg);
+            if (result.StdErr.Contains("Microsoft.AspNetCore.Connections.AddressInUseException"))
+            {
+                ex.Data["IsAddressInUseException"] = true;
+            }
+            throw ex;
         }
     }
 }

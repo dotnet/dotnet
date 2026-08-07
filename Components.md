@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@efce34e](https://github.com/dotnet/arcade/tree/efce34e9f9f25af27e2b471fbbf8c21f1ac2e318)*
+*[dotnet/arcade@a249c75](https://github.com/dotnet/arcade/tree/a249c754b0f0ac7f313f659343fe24a4a73d573a)*
 - `src/aspire`  
 *[microsoft/aspire@5fa9337](https://github.com/microsoft/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
@@ -46,11 +46,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@d839c41](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCd839c41c85988aadc213e8e42269ecd7883a1790)*
 - `src/scenario-tests`  
-*[dotnet/scenario-tests@623d5a2](https://github.com/dotnet/scenario-tests/tree/623d5a21e18d6d1f370b5b9d1ebaf8d687464c0b)*
+*[dotnet/scenario-tests@35ad058](https://github.com/dotnet/scenario-tests/tree/35ad058513d080958eb4534859b8977e3d6234ff)*
 - `src/sdk`  
-*[dotnet/sdk@18761f0](https://github.com/dotnet/sdk/tree/18761f0e65a2056caf0a6e311979358a539c2dcf)*
+*[dotnet/sdk@c4859f3](https://github.com/dotnet/sdk/tree/c4859f3b162a1cc9569313fd1a1ef41ca4e2022f)*
 - `src/source-build-assets`  
-*[dotnet/source-build-assets@898cae0](https://github.com/dotnet/source-build-assets/tree/898cae04468e9be69ab78fcc27bb70d676ae16b6)*
+*[dotnet/source-build-assets@9693cbc](https://github.com/dotnet/source-build-assets/tree/9693cbc172a06845f5b8799bdf098c055d728166)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@1c80016](https://github.com/dotnet/source-build-externals/tree/1c800169e674c7becf88434a0d2817453cf91dd7)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -86,7 +86,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@0710a78](https://github.com/dotnet/symreader/tree/0710a7892d89999956e8808c28e9dd0512bd53f3)*
 - `src/templating`  
-*[dotnet/templating@f5f6eb5](https://github.com/dotnet/templating/tree/f5f6eb5420398b365107b9be9e5cb6290626e39f)*
+*[dotnet/templating@5e02510](https://github.com/dotnet/templating/tree/5e02510389b93426cd94b5d2bbb10c9205d0bdbb)*
 - `src/test-templates`  
 *[dotnet/test-templates@47c90e1](https://github.com/dotnet/test-templates/tree/47c90e140b027225b799ca8413af10ee3d5f1126)*
 - `src/vstest`  
