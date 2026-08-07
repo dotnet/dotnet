@@ -6,8 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Xunit;
-using Xunit.Abstractions;
-using TestUtilities;
 
 namespace Microsoft.DotNet.Tests
 {
@@ -15,14 +13,14 @@ namespace Microsoft.DotNet.Tests
     public class BinaryScanTest
     {
         private ITestOutputHelper OutputHelper { get; }
-        public static bool IncludeBinaryScanTest => !RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        public static bool ExcludeBinaryScanTest => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         public BinaryScanTest(ITestOutputHelper outputHelper)
         {
             OutputHelper = outputHelper;
         }
 
-        [ConditionalFact(typeof(BinaryScanTest), nameof(IncludeBinaryScanTest))]
+        [Fact(Skip = "Not supported on Windows", SkipWhen = nameof(ExcludeBinaryScanTest))]
         public void ScanForBinaries()
         {
             Assert.True(

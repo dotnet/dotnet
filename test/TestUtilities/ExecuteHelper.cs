@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace TestUtilities;
 
