@@ -1,0 +1,10 @@
+{
+  "tools": {
+    "dotnet-ef": {
+      "version": "11.0.0-rc.1.26405.103"
+    },
+    "microsoft.dotnet.helix.jobmonitor": {
+      "version": "11.0.0-beta.26405.103"
+    }
+  }
+}
