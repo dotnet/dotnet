@@ -385,7 +385,16 @@
           // The actual items that appear by default; in most cases, you'd leave this array empty.
           "default": [],
           "allowItemEditing": true,
-          "allowAdditionsAndRemovals": true
+          "allowAdditionsAndRemovals": true,
+          "commands": [
+            {
+              "vsct": {
+                "text": "@VSOptions_Button_PackageSourceMappingReview;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "set": "98154E19-E6A4-426D-94B8-FB54E73511BA", // guidReviewPackageSourceMappingCmdSetString
+                "id": 256 // cmdidReviewPackageSourceMapping
+              }
+            }
+          ]
         }
       }
     }

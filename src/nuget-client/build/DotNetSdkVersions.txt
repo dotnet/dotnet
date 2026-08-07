@@ -1,2 +1,3 @@
 # Each line represents arguments for the .NET SDK installer script (https://learn.microsoft.com/dotnet/core/tools/dotnet-install-script)
 -Channel 10.0.3xx
+-Channel 11.0.1xx -Quality preview

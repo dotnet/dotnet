@@ -57,6 +57,16 @@
         <target state="translated">cmdRestorePackages</target>
         <note />
       </trans-unit>
+      <trans-unit id="cmdidReviewPackageSourceMapping|ButtonText">
+        <source>ReviewPackageSourceMapping</source>
+        <target state="new">ReviewPackageSourceMapping</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidReviewPackageSourceMapping|CommandName">
+        <source>cmdidReviewPackageSourceMapping</source>
+        <target state="new">cmdidReviewPackageSourceMapping</target>
+        <note />
+      </trans-unit>
       <trans-unit id="cmdidSourceSettings|ButtonText">
         <source>&amp;Package Manager Settings</source>
         <target state="translated">&amp;Paket-Manager-Einstellungen</target>
