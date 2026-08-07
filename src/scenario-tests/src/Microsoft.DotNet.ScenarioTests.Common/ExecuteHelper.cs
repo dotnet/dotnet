@@ -82,13 +82,21 @@ public static class ExecuteHelper
             throw new InvalidOperationException(msg);
         }
 
-        string output = stdOutput.ToString().Trim();
+        string output;
+        lock (stdOutput)
+        {
+            output = stdOutput.ToString().Trim();
+        }
         if (logOutput && !string.IsNullOrWhiteSpace(output))
         {
             outputHelper.WriteLine(output);
         }
 
-        string error = stdError.ToString().Trim();
+        string error;
+        lock (stdError)
+        {
+            error = stdError.ToString().Trim();
+        }
         if (logOutput && !string.IsNullOrWhiteSpace(error))
         {
             outputHelper.WriteLine(error);
