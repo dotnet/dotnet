@@ -33,9 +33,9 @@
     <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --ignore-exit-code 8</TestingPlatformCommandLineArguments>
 
     <!-- Report which tests failed and why. MTP otherwise logs a single error pointing at a log file that
-         isn't part of the published artifacts, which makes CI failures undiagnosable from the build log. -->
+         isn't part of the published artifacts, which makes CI failures undiagnosable from the build log.
+         This only adds output for tests that actually fail, so a passing run stays as quiet as before. -->
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
-    <TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsTestProject)' == 'true'">
