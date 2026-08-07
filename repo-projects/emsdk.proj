@@ -1,5 +1,14 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <PropertyGroup>
+    <!-- Emsdk's Node and Python tools execute on the build host, not the product target. -->
+    <SkipSetTargetArchitecture>true</SkipSetTargetArchitecture>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)arch $(BuildArchitecture)</BuildArgs>
+
+    <SkipSetTargetOS>true</SkipSetTargetOS>
+    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)os $(BuildOS)</BuildArgs>
+  </PropertyGroup>
+
   <ItemGroup>
     <RepositoryReference Include="arcade" />
   </ItemGroup>
