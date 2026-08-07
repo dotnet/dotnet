@@ -304,4 +304,19 @@
     <value>The NuGet MCP Server is not active. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</value>
     <comment>Do not translate GitHub or Copilot</comment>
   </data>
+  <data name="VSOptions_Button_PackageSourceMappingReview" xml:space="preserve">
+    <value>Review with GitHub Copilot</value>
+    <comment>Do not translate "GitHub Copilot"</comment>
+  </data>
+  <data name="Prompt_ReviewPackageSourceMapping" xml:space="preserve">
+    <value>Review this repository's package source mappings.</value>
+  </data>
+  <data name="Error_PackageSourceMappingToolNotAvailable" xml:space="preserve">
+    <value>The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
+  <data name="Title_PackageSourceMappingWithCopilot" xml:space="preserve">
+    <value>Package Source Mapping with GitHub Copilot</value>
+    <comment>Do not translate "GitHub Copilot"</comment>
+  </data>
 </root>
