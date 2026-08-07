@@ -59,6 +59,11 @@ extends:
           name: $(DncEngInternalBuildPool)
           image: 1es-windows-2022
           os: windows
+      codeql:
+        compiled:
+          # Compiler instrumentation changes generated source paths, invalidating byte-for-byte comparisons.
+          enabled: false
+        runSourceLanguagesInSourceAnalysis: false
 
     containers:
       ${{ variables.centOSStreamContainerName }}:
