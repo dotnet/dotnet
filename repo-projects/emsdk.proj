@@ -1,5 +1,14 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <!--
+    emsdk provides the Emscripten toolchain, which is a build-time tool that runs on the build host.
+    Override the target OS/architecture/RID passed to emsdk's build with the host values. These args
+    come after CommonArgs on the command line, so they take precedence.
+  -->
+  <PropertyGroup Condition="'$(TargetOS)' == 'browser'">
+    <BuildArgs>$(BuildArgs) /p:TargetOS=$(BuildOS) /p:TargetArchitecture=$(BuildArchitecture) /p:TargetRid=$(BuildRid) /p:PortableTargetRid=$(BuildRid)</BuildArgs>
+  </PropertyGroup>
+
   <ItemGroup>
     <RepositoryReference Include="arcade" />
   </ItemGroup>
