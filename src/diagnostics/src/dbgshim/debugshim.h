@@ -17,6 +17,7 @@
 #include <metahost.h>
 #include <dn-u16.h>
 #include "runtimeinfo.h"
+#include "dbgshim.h"
 
 #if defined (HOST_WINDOWS) && defined(HOST_X86)
 #define CLRDEBUGINFO_RESOURCE_NAME W("CLRDEBUGINFOWINDOWSX86")
@@ -47,20 +48,9 @@
 #define CLR_DAC_MODULE_NAME_W W("mscordacwks")
 #define MAIN_DBI_MODULE_NAME_W W("mscordbi")
 
-// The cDAC (contract-based data access) is bundled next to dbgshim and is never downloaded.
+// The cDAC and universal DBI are bundled next to dbgshim and are never downloaded.
 #define CORECLR_CDAC_MODULE_NAME_W W("mscordaccore_universal")
-
-// Controls how OpenVirtualProcess locates the data-access layer when a data-access interface
-// (for example IXCLRDataProcess) is requested. Mirrors the diagnostics CDacLoadPolicy.
-enum CDacLoadPolicy
-{
-    // Prefer the co-located cDAC; fall back to the legacy DAC via the library provider. (default)
-    CDacLoadPolicy_PreferCDac = 0,
-    // Use only the cDAC; do not fall back to the legacy DAC.
-    CDacLoadPolicy_CDacOnly = 1,
-    // Use only the legacy DAC; do not try the cDAC.
-    CDacLoadPolicy_LegacyDacOnly = 2,
-};
+#define UNIVERSAL_DBI_MODULE_NAME_W W("mscordbi_universal")
 
 // A small dbgshim-owned control interface, implemented by the same object as ICLRDebugging, that
 // lets a consumer attach a cDAC load policy to the debugging object before requesting a data-access
@@ -71,9 +61,8 @@ MIDL_INTERFACE("2D3B4F6A-1C7E-4B2A-9E5D-7F1A6C0B8D34")
 ICLRDebuggingPolicy : public IUnknown
 {
 public:
-    // policy is a CDacLoadPolicy value.
-    virtual HRESULT STDMETHODCALLTYPE SetCDacLoadPolicy(DWORD policy) = 0;
-    virtual HRESULT STDMETHODCALLTYPE GetCDacLoadPolicy(DWORD* pPolicy) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetCDacLoadPolicy(CDacLoadPolicy policy) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetCDacLoadPolicy(CDacLoadPolicy* pPolicy) = 0;
 };
 
 #define MAX_BUILDID_SIZE 24
@@ -222,8 +211,8 @@ public:
     STDMETHOD(CanUnloadNow(HMODULE hModule));
 
     // ICLRDebuggingPolicy methods:
-    STDMETHOD(SetCDacLoadPolicy(DWORD policy));
-    STDMETHOD(GetCDacLoadPolicy(DWORD* pPolicy));
+    STDMETHOD(SetCDacLoadPolicy(CDacLoadPolicy policy));
+    STDMETHOD(GetCDacLoadPolicy(CDacLoadPolicy* pPolicy));
 
     // IUnknown methods:
     STDMETHOD(QueryInterface(REFIID riid, void **ppvObject));
@@ -280,5 +269,12 @@ private:
     CDacLoadPolicy m_cdacLoadPolicy;
 
 };  // class CLRDebuggingImpl
+
+// Resolves the paths to the cDAC and DBI bundled with dbgshim (or the DOTNET_CDAC_PATH/DOTNET_DBI_PATH
+// overrides), returning false if either is missing.
+bool GetCDacAndDbiPaths(SString& cdacPath, SString& dbiPath);
+
+// Picks the final HRESULT after the different activation attempts (cDAC vs. fallback) have completed.
+HRESULT SelectActivationResult(HRESULT cdacHr, HRESULT fallbackHr, bool cdacEvaluated);
 
 #endif
