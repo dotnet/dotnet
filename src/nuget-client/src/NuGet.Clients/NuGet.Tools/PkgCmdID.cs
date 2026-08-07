@@ -19,5 +19,6 @@ namespace NuGetVSExtension
         public const int cmdidUpdatePackage = 0x0500;
         public const int cmdidUpdatePackages = 0x0600;
         public const int cmdidClearNuGetLocalResources = 0x0100;
+        public const int cmdidReviewPackageSourceMapping = 0x0100;
     }
 }
