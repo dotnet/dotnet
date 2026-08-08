@@ -108,8 +108,20 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
                     try
                     {
+                        DateTimeOffset downloadStartedAt = DateTimeOffset.UtcNow;
+                        _logger.LogDebug(
+                            "Downloading test result file '{FileName}' for '{JobName}/{WorkItemName}'.",
+                            file.Name,
+                            jobName,
+                            workItemName);
                         IBlobClient blobClient = _blobClientFactory.CreateBlobClient(file.Link, resultsUri.ResultsUriRSAS);
                         await blobClient.DownloadToAsync(destinationFile, cancellationToken);
+                        _logger.LogDebug(
+                            "Downloaded test result file '{FileName}' for '{JobName}/{WorkItemName}' in {Elapsed}.",
+                            file.Name,
+                            jobName,
+                            workItemName,
+                            DateTimeOffset.UtcNow - downloadStartedAt);
                         workItemFiles.Add(destinationFile);
                     }
                     catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -380,7 +392,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             return builder.ToImmutable();
         }
 
-        private static async Task<T> RetryAsync<T>(Func<Task<T>> action, CancellationToken cancellationToken)
+        private async Task<T> RetryAsync<T>(Func<Task<T>> action, CancellationToken cancellationToken)
         {
             Exception last = null;
             T result = default;
@@ -391,6 +403,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 DelayConstant = 0,
                 MinRandomFactor = 1,
                 MaxRandomFactor = 1,
+                RetryDelayCallback = (failedAttempt, delay) =>
+                    _logger.LogDebug(
+                        "Transient Helix request failure on attempt {Attempt} of {AttemptCount}. "
+                        + "Waiting {RetryDelay} before the next attempt.",
+                        failedAttempt,
+                        5,
+                        delay),
             };
 
             bool succeeded = await retryHandler.RunAsync(
