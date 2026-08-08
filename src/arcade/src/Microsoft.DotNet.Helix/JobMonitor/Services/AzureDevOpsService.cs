@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Arcade.Common;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
 using Microsoft.Extensions.Logging;
@@ -407,8 +408,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _options.TeamProject,
                 testRunId.ToString(CultureInfo.InvariantCulture),
                 _options.SystemAccessToken,
-                _options.UseFullyQualifiedTestName,
-                RetryWrites: false);
+                _options.UseFullyQualifiedTestName);
             using var publisher = new AzureDevOpsResultPublisher(
                 reportingParameters,
                 _logger);
@@ -490,9 +490,41 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 return content;
             }
 
-            return retryTransientFailures
-                ? await RetryHelper.RetryAsync(SendOnceAsync, cancellationToken)
-                : await SendOnceAsync();
+            if (!retryTransientFailures)
+            {
+                return await SendOnceAsync();
+            }
+
+            string result = null;
+            Exception lastException = null;
+            var retryHandler = new ExponentialRetry
+            {
+                MaxAttempts = 5,
+                DelayBase = 2,
+                DelayConstant = 0,
+                MinRandomFactor = 1,
+                MaxRandomFactor = 1,
+            };
+
+            bool succeeded = await retryHandler.RunAsync(
+                async _ =>
+                {
+                    try
+                    {
+                        result = await SendOnceAsync();
+                        return RetryResult.Success;
+                    }
+                    catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+                    {
+                        lastException = ex;
+                        return RetryResult.Retry();
+                    }
+                },
+                cancellationToken);
+
+            return succeeded
+                ? result
+                : throw lastException ?? new InvalidOperationException("Retry failed without completing the Azure DevOps request.");
         }
 
         // Honors Azure DevOps rate limiting guidance:

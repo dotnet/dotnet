@@ -29,43 +29,57 @@ namespace Microsoft.Arcade.Common
         public double MinRandomFactor { get; set; } = 0.5;
         public double MaxRandomFactor { get; set; } = 1.0;
 
+        /// <summary>
+        /// Maximum exponential delay. A longer server-provided retry delay is still honored.
+        /// </summary>
+        public TimeSpan? MaximumDelay { get; set; }
+
         public CancellationToken DefaultCancellationToken { get; set; } = CancellationToken.None;
 
-        public Task<bool> RunAsync(Func<int, Task<bool>> actionSuccessfulAsync)
+        public Task<bool> RunAsync(Func<int, Task<RetryResult>> actionAsync)
         {
-            return RunAsync(actionSuccessfulAsync, DefaultCancellationToken);
+            return RunAsync(actionAsync, DefaultCancellationToken);
         }
 
         public async Task<bool> RunAsync(
-            Func<int, Task<bool>> actionSuccessfulAsync,
+            Func<int, Task<RetryResult>> actionAsync,
             CancellationToken cancellationToken)
         {
             for (int i = 0; i < MaxAttempts; i++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 string attempt = $"Attempt {i + 1}/{MaxAttempts}";
                 Trace.TraceInformation(attempt);
 
-                if (await actionSuccessfulAsync(i))
+                RetryResult result = await actionAsync(i);
+                if (result.Succeeded)
                 {
                     return true;
+                }
+
+                if (i == MaxAttempts - 1)
+                {
+                    return false;
                 }
 
                 double randomFactor =
                     _random.NextDouble() * (MaxRandomFactor - MinRandomFactor) + MinRandomFactor;
 
-                TimeSpan delay = TimeSpan.FromSeconds(
+                TimeSpan exponentialDelay = TimeSpan.FromSeconds(
                     (Math.Pow(DelayBase, i) + DelayConstant) * randomFactor);
+                if (MaximumDelay is TimeSpan maximumDelay && exponentialDelay > maximumDelay)
+                {
+                    exponentialDelay = maximumDelay;
+                }
+
+                TimeSpan delay = result.RetryAfter is TimeSpan retryAfter
+                    ? TimeSpan.FromTicks(Math.Max(exponentialDelay.Ticks, retryAfter.Ticks))
+                    : exponentialDelay;
 
                 Trace.TraceInformation($"{attempt} failed. Waiting {delay} before next try.");
 
-                try
-                {
-                    await Task.Delay(delay, cancellationToken);
-                }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
+                await Task.Delay(delay, cancellationToken);
             }
             return false;
         }

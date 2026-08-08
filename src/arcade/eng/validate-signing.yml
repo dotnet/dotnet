@@ -57,7 +57,6 @@ jobs:
           name: Logs_ValidateSigning_Windows_$(_BuildConfig)
     timeoutInMinutes: 90
     variables:
-    - group: Publish-Build-Assets
     - name: TeamName
       value: DotNetCore
     - template: /eng/common/templates-official/variables/pool-providers.yml@self
@@ -128,7 +127,6 @@ jobs:
           name: Logs_ValidateSigning_Linux_$(_BuildConfig)
     timeoutInMinutes: 90
     variables:
-    - group: Publish-Build-Assets
     - name: TeamName
       value: DotNetCore
     - name: _BuildConfig
@@ -196,7 +194,6 @@ jobs:
           name: Logs_ValidateSigning_MacOS_$(_BuildConfig)
     timeoutInMinutes: 90
     variables:
-    - group: Publish-Build-Assets
     - name: TeamName
       value: DotNetCore
     - name: _BuildConfig

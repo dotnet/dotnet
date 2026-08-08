@@ -4,6 +4,7 @@
 using System;
 using System.Net.Http;
 using System.Reflection;
+using System.Threading;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -70,22 +71,30 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         [Fact]
-        public void ReportingParameters_PreserveDefaultAndExplicitWriteRetryBehavior()
+        public void HttpClientTimeoutIsTransient()
         {
-            var defaultParameters = new AzureDevOpsReportingParameters(
-                CollectionUri: new Uri("https://dev.azure.com/dnceng-public/"),
-                TeamProject: "public",
-                TestRunId: "123");
-            var explicitParameters = new AzureDevOpsReportingParameters(
-                new Uri("https://dev.azure.com/dnceng-public/"),
-                "public",
-                "123",
-                AccessToken: null,
-                UseFullyQualifiedTestName: false,
-                RetryWrites: false);
+            Assert.True(AzureDevOpsResultPublisher.IsTransientException(
+                new OperationCanceledException("The request timed out.", new TimeoutException()),
+                CancellationToken.None));
+        }
 
-            Assert.True(defaultParameters.RetryWrites);
-            Assert.False(explicitParameters.RetryWrites);
+        [Fact]
+        public void CallerCancellationIsNotTransient()
+        {
+            using var cancellation = new CancellationTokenSource();
+            cancellation.Cancel();
+
+            Assert.False(AzureDevOpsResultPublisher.IsTransientException(
+                new OperationCanceledException("The request timed out.", new TimeoutException()),
+                cancellation.Token));
+        }
+
+        [Fact]
+        public void CancellationWithoutTimeoutIsNotTransient()
+        {
+            Assert.False(AzureDevOpsResultPublisher.IsTransientException(
+                new OperationCanceledException(),
+                CancellationToken.None));
         }
 
     }

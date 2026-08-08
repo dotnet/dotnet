@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Net.Sockets;
+using Microsoft.Arcade.Common;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +14,8 @@ namespace Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 
 public sealed class AzureDevOpsResultPublisher : IDisposable
 {
-    private const int DefaultRetryCount = 10;
+    private const int DefaultAttemptCount = 10;
+    private static readonly TimeSpan s_maximumRetryDelay = TimeSpan.FromSeconds(30);
     private static readonly TimeSpan s_httpClientTimeout = TimeSpan.FromMinutes(5);
     private static readonly JsonSerializerOptions s_serializerOptions = new(JsonSerializerDefaults.Web)
     {
@@ -113,7 +116,7 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
             HttpMethod.Post,
             $"{_azdoParameters.TeamProject}/_apis/test/runs/{_azdoParameters.TestRunId}/results?api-version=7.1-preview.6",
             testCaseResults,
-            _azdoParameters.RetryWrites ? DefaultRetryCount : 0,
+            DefaultAttemptCount,
             cancellationToken);
 
         IReadOnlyList<PublishedTestCaseResultReference> publishedResults = await ReadPublishedResultsAsync(response, cancellationToken);
@@ -196,7 +199,7 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
             HttpMethod.Post,
             path,
             request,
-            _azdoParameters.RetryWrites ? DefaultRetryCount : 0,
+            DefaultAttemptCount,
             cancellationToken);
         _ = response;
     }
@@ -386,81 +389,106 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
         HttpMethod method,
         string relativePath,
         object? payload,
-        int retryCount,
+        int attemptCount,
         CancellationToken cancellationToken)
     {
-        int triesLeft = retryCount;
         string? body = payload is null ? null : JsonSerializer.Serialize(payload, s_serializerOptions);
         if (!string.IsNullOrEmpty(body))
         {
             s_lastSendContent = body;
         }
 
-        while (true)
+        HttpResponseMessage? successfulResponse = null;
+        Exception? lastException = null;
+        var retryHandler = new ExponentialRetry
         {
-            Uri baseUri = _azdoParameters.CollectionUri.AbsoluteUri.EndsWith('/')
-                ? _azdoParameters.CollectionUri
-                : new Uri(_azdoParameters.CollectionUri.AbsoluteUri + '/', UriKind.Absolute);
+            MaxAttempts = attemptCount,
+            DelayBase = 3,
+            DelayConstant = 0,
+            MinRandomFactor = 1,
+            MaxRandomFactor = 1,
+            MaximumDelay = s_maximumRetryDelay,
+        };
 
-            using var request = new HttpRequestMessage(method, new Uri(baseUri, relativePath));
-            if (body is not null)
+        bool succeeded = await retryHandler.RunAsync(
+            async _ =>
             {
-                request.Content = new StringContent(body, Encoding.UTF8, "application/json");
-            }
+                Uri baseUri = _azdoParameters.CollectionUri.AbsoluteUri.EndsWith('/')
+                    ? _azdoParameters.CollectionUri
+                    : new Uri(_azdoParameters.CollectionUri.AbsoluteUri + '/', UriKind.Absolute);
 
-            HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
-            if (response.IsSuccessStatusCode)
-            {
-                return response;
-            }
-
-            string responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
-            bool isServerError = (int)response.StatusCode >= 500;
-            if ((isServerError || response.StatusCode == HttpStatusCode.TooManyRequests) && triesLeft > 0)
-            {
-                TimeSpan retryDelay = GetRetryDelay(response) ?? TimeSpan.FromSeconds(response.StatusCode == HttpStatusCode.TooManyRequests ? 30 : 3);
-                response.Dispose();
-                triesLeft--;
-                _logger.LogDebug("Hit HTTP {StatusCode} from Azure DevOps. Waiting {DelaySeconds:0.###} seconds and trying again ({TriesLeft} retries left).",
-                    (int)response.StatusCode,
-                    retryDelay.TotalSeconds,
-                    triesLeft);
-                await Task.Delay(retryDelay, cancellationToken);
-                continue;
-            }
-
-            if (responseBody.Contains("It may have been deleted", StringComparison.OrdinalIgnoreCase)
-                || responseBody.Contains("not authorized to access this resource", StringComparison.OrdinalIgnoreCase)
-                || responseBody.Contains("cannot be added or updated for a test run which is in Completed state", StringComparison.OrdinalIgnoreCase)
-                || response.StatusCode == HttpStatusCode.Forbidden
-                || response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                response.Dispose();
-                throw new TerminalError(responseBody);
-            }
-
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(s_lastSendContent))
+                using var request = new HttpRequestMessage(method, new Uri(baseUri, relativePath));
+                if (body is not null)
                 {
-                    /* TODO
-                    await _uploadClient.UploadAsync(
-                        Encoding.UTF8.GetBytes(s_lastSendContent),
-                        "__failed_azdo_request_content.json",
-                        "text/plain; charset=UTF-8",
-                        cancellationToken);
-                    */
+                    request.Content = new StringContent(body, Encoding.UTF8, "application/json");
                 }
-            }
-            catch (Exception uploadException)
-            {
-                _logger.LogError(uploadException, "Failed to upload failed request payload.");
-            }
 
-            response.Dispose();
-            throw new AzureDevOpsReportingError($"Azure DevOps request failed with status code {(int)response.StatusCode}: {responseBody}");
-        }
+                try
+                {
+                    HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        successfulResponse = response;
+                        return RetryResult.Success;
+                    }
+
+                    using (response)
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                        bool isTransientStatus = (int)response.StatusCode >= 500
+                            || response.StatusCode == HttpStatusCode.TooManyRequests;
+                        if (isTransientStatus)
+                        {
+                            TimeSpan? retryAfter = GetRetryDelay(response);
+                            if (response.StatusCode == HttpStatusCode.TooManyRequests && retryAfter is null)
+                            {
+                                retryAfter = TimeSpan.FromSeconds(30);
+                            }
+
+                            _logger.LogDebug(
+                                "Hit HTTP {StatusCode} from Azure DevOps. Retrying.",
+                                (int)response.StatusCode);
+                            lastException = new AzureDevOpsReportingError(
+                                $"Azure DevOps request failed with status code {(int)response.StatusCode}: {responseBody}");
+                            return RetryResult.Retry(retryAfter);
+                        }
+
+                        if (responseBody.Contains("It may have been deleted", StringComparison.OrdinalIgnoreCase)
+                            || responseBody.Contains("not authorized to access this resource", StringComparison.OrdinalIgnoreCase)
+                            || responseBody.Contains("cannot be added or updated for a test run which is in Completed state", StringComparison.OrdinalIgnoreCase)
+                            || response.StatusCode == HttpStatusCode.Forbidden
+                            || response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            throw new TerminalError(responseBody);
+                        }
+
+                        throw new AzureDevOpsReportingError(
+                            $"Azure DevOps request failed with status code {(int)response.StatusCode}: {responseBody}");
+                    }
+                }
+                catch (Exception ex) when (IsTransientException(ex, cancellationToken))
+                {
+                    lastException = ex;
+                    _logger.LogDebug(
+                        ex,
+                        "Transient Azure DevOps request failure. Retrying.");
+                    return RetryResult.Retry();
+                }
+            },
+            cancellationToken);
+
+        return succeeded && successfulResponse is not null
+            ? successfulResponse
+            : throw lastException ?? new InvalidOperationException("Azure DevOps retry loop exited unexpectedly.");
     }
+
+    internal static bool IsTransientException(Exception exception, CancellationToken cancellationToken)
+        => !cancellationToken.IsCancellationRequested
+            && exception is OperationCanceledException { InnerException: TimeoutException }
+                or HttpRequestException
+            or TimeoutException
+            or SocketException
+            or IOException;
 
     private static TimeSpan? GetRetryDelay(HttpResponseMessage response)
     {

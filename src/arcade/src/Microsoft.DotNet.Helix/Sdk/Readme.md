@@ -78,6 +78,7 @@ Useful parameters:
 - `helixAccessToken`: optional token for authenticated Helix access on internal builds.
 - `pollingIntervalSeconds`: how often the job monitor checks for new completed jobs.
 - `timeoutInMinutes`: overall timeout for the job monitor.
+- `continueOnError`: allow the pipeline to continue when the monitor job fails. Defaults to `false`.
 - `useFullyQualifiedTestName`: report fully qualified test names to Azure DevOps (see [Fully qualified test names](#fully-qualified-test-names)). Defaults to `false`.
 
 Behavior notes:

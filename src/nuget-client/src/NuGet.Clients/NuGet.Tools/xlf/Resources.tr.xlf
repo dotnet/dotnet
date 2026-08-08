@@ -67,6 +67,11 @@
         <target state="translated">En az bir kaynak seçilmelidir.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_PackageSourceMappingToolNotAvailable">
+        <source>The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
+        <target state="new">The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Error_PackageSourceName_Missing">
         <source>A name must be provided.</source>
         <target state="translated">Bir ad sağlanmalıdır.</target>
@@ -160,6 +165,11 @@
       <trans-unit id="Prompt_FixNuGetPackageVulnerabilities">
         <source>Fix my NuGet package vulnerabilities</source>
         <target state="translated">NuGet paketimdeki güvenlik açıklarını düzelt</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Prompt_ReviewPackageSourceMapping">
+        <source>Review this repository's package source mappings.</source>
+        <target state="new">Review this repository's package source mappings.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -271,6 +281,16 @@
         <source>Fix Vulnerabilities with GitHub Copilot</source>
         <target state="translated">GitHub Copilot ile güvenlik açıklarını düzelt</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Title_PackageSourceMappingWithCopilot">
+        <source>Package Source Mapping with GitHub Copilot</source>
+        <target state="new">Package Source Mapping with GitHub Copilot</target>
+        <note>Do not translate "GitHub Copilot"</note>
+      </trans-unit>
+      <trans-unit id="VSOptions_Button_PackageSourceMappingReview">
+        <source>Review with GitHub Copilot</source>
+        <target state="new">Review with GitHub Copilot</target>
+        <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>

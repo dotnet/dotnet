@@ -12,8 +12,7 @@ stages:
     displayName: Publish Assets and Symbols
     timeoutInMinutes: 120
     variables:
-    - group: AzureDevOps-Artifact-Feeds-Pats
-    - group: Publish-Build-Assets
+    - group: Arcade-Publishing-Client-Ids
 
     - template: /eng/common/templates-official/post-build/common-variables.yml@self
 
@@ -116,7 +115,7 @@ stages:
         scriptType: ps
         scriptLocation: inlineScript
         inlineScript: |
-          # MaestroAppClientId provided by Publish-Build-Assets
+          # MaestroAppClientId provided by Arcade-Publishing-Client-Ids
           $token = (az account get-access-token --resource "$(MaestroAppClientId)" | ConvertFrom-Json).accessToken
           
           echo "##vso[task.setvariable variable=MaestroToken;isOutput=true;isSecret=true]$token"
