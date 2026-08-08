@@ -33,7 +33,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         private readonly IAzureDevOpsService _azdo;
         private readonly IHelixService _helix;
         private readonly MonitorState _monitorState;
-        private readonly List<Task> _pending = [];
+        private readonly List<PendingUpload> _pending = [];
 
         public TestResultUploadQueue(
             ILogger logger,
@@ -52,16 +52,19 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         public void Enqueue(HelixJobInfo helixJob, IReadOnlyCollection<WorkItemSummary> workItems, CancellationToken cancellationToken)
         {
             IReadOnlyList<string> workItemNames = [.. workItems.Select(w => w.Name)];
+            var pendingUpload = new PendingUpload(helixJob);
             // Scheduling uses CancellationToken.None so the upload task is always allowed to start.
             // The upload body still observes the runner's token, so when the runner is cancelled the
             // upload stops promptly and the job's results are re-uploaded by a later invocation.
-            Task uploadTask = Task.Run(() => UploadAsync(helixJob, workItemNames, cancellationToken), CancellationToken.None);
-            _pending.Add(uploadTask);
+            pendingUpload.Task = Task.Run(
+                () => UploadAsync(pendingUpload, workItemNames, cancellationToken),
+                CancellationToken.None);
+            _pending.Add(pendingUpload);
         }
 
         public void Prune()
         {
-            _pending.RemoveAll(static task => task.IsCompleted);
+            _pending.RemoveAll(static upload => upload.Task.IsCompleted);
         }
 
         public async Task DrainAsync(CancellationToken cancellationToken)
@@ -75,7 +78,26 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             _logger.LogInformation("Waiting for {Count} pending test result upload(s) to complete.", _pending.Count);
             try
             {
-                await Task.WhenAll(_pending).WaitAsync(cancellationToken);
+                Task allUploads = Task.WhenAll(_pending.Select(upload => upload.Task));
+                if (_options.Verbose)
+                {
+                    LogPendingUploads();
+                    TimeSpan heartbeatInterval = TimeSpan.FromSeconds(Math.Max(1, _options.PollingIntervalSeconds));
+                    while (!allUploads.IsCompleted)
+                    {
+                        Task heartbeat = Task.Delay(heartbeatInterval, cancellationToken);
+                        if (await Task.WhenAny(allUploads, heartbeat) == allUploads)
+                        {
+                            break;
+                        }
+
+                        cancellationToken.ThrowIfCancellationRequested();
+                        Prune();
+                        LogPendingUploads();
+                    }
+                }
+
+                await allUploads.WaitAsync(cancellationToken);
             }
             catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
             {
@@ -85,12 +107,14 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         }
 
         private async Task UploadAsync(
-            HelixJobInfo helixJob,
+            PendingUpload pendingUpload,
             IReadOnlyCollection<string> workItemNames,
             CancellationToken cancellationToken)
         {
+            HelixJobInfo helixJob = pendingUpload.HelixJob;
             _monitorState.MarkHelixJobUploadInProgress(helixJob.JobName);
 
+            SetPhase(pendingUpload, $"downloading Helix test results for {workItemNames.Count} work item(s)");
             (bool downloadedSuccessfully, IReadOnlyList<WorkItemTestResults> downloaded) = await TryExecuteWithRetryAsync(
                 () => _helix.DownloadTestResultsAsync(
                         helixJob.JobName,
@@ -104,10 +128,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 cancellationToken);
             if (!downloadedSuccessfully)
             {
+                SetPhase(pendingUpload, "failed while downloading Helix test results");
                 _monitorState.MarkHelixJobUploadFailed(helixJob.JobName);
                 return;
             }
 
+            SetPhase(pendingUpload, "creating the Azure DevOps test run");
             (bool created, int testRunId) = await TryExecuteAsync(
                 () => _azdo.CreateTestRunAsync(helixJob.TestRunName, cancellationToken),
                 "create the Azure DevOps test run",
@@ -116,10 +142,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 cancellationToken);
             if (!created)
             {
+                SetPhase(pendingUpload, "failed while creating the Azure DevOps test run");
                 _monitorState.MarkHelixJobUploadFailed(helixJob.JobName);
                 return;
             }
 
+            SetPhase(pendingUpload, $"publishing {downloaded.Count} work item(s) to Azure DevOps test run {testRunId}");
             (bool uploadedSuccessfully, IReadOnlyDictionary<(string JobName, string WorkItemName), TestResultUploadSummary> testResults)
                 = await TryExecuteAsync(
                     () => _azdo.UploadTestResultsAsync(testRunId, downloaded, cancellationToken),
@@ -129,6 +157,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     cancellationToken);
             if (!uploadedSuccessfully)
             {
+                SetPhase(pendingUpload, $"failed while publishing to Azure DevOps test run {testRunId}");
                 _monitorState.MarkHelixJobUploadFailed(helixJob.JobName);
                 return;
             }
@@ -145,6 +174,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     .Select(kv => kv.Key.WorkItemName)
             ];
 
+            SetPhase(pendingUpload, $"completing and tagging Azure DevOps test run {testRunId}");
             (bool completed, _) = await TryExecuteAsync(
                 async () =>
                 {
@@ -157,10 +187,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 cancellationToken);
             if (!completed)
             {
+                SetPhase(pendingUpload, $"failed while completing Azure DevOps test run {testRunId}");
                 _monitorState.MarkHelixJobUploadFailed(helixJob.JobName);
                 return;
             }
 
+            SetPhase(pendingUpload, $"completed Azure DevOps test run {testRunId}");
             _monitorState.TryMarkHelixJobProcessed(helixJob.JobName);
 
             long uploadedCount = testResults.Values.Sum(r => r.UploadedCount);
@@ -198,6 +230,16 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 var retry = new ExponentialRetry
                 {
                     MaxAttempts = retryCount + 1,
+                    RetryDelayCallback = (failedAttempt, delay) =>
+                        _logger.LogDebug(
+                            "Failed to {OperationDescription} for job {JobName}. Test run ID was {TestRunId}. "
+                            + "Waiting {RetryDelay} before attempt {NextAttempt} of {AttemptCount}.",
+                            operationDescription,
+                            helixJob.DisplayName,
+                            testRunId,
+                            delay,
+                            failedAttempt + 1,
+                            retryCount + 1),
                 };
 
                 bool succeeded = await retry.RunAsync(
@@ -254,6 +296,82 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     testRunId,
                     failureKind);
                 return (false, default);
+            }
+        }
+
+        private void SetPhase(PendingUpload upload, string phase)
+        {
+            upload.SetPhase(phase);
+            if (_options.Verbose)
+            {
+                _logger.LogDebug(
+                    "Test result upload for job '{JobName}' entered phase '{Phase}' after {Elapsed}.",
+                    upload.HelixJob.DisplayName,
+                    phase,
+                    DateTimeOffset.UtcNow - upload.StartedAt);
+            }
+        }
+
+        private void LogPendingUploads()
+        {
+            if (_pending.Count == 0)
+            {
+                return;
+            }
+
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            string details = string.Join(
+                Environment.NewLine,
+                _pending
+                    .OrderBy(upload => upload.StartedAt)
+                    .Select(upload =>
+                    {
+                        (string phase, DateTimeOffset phaseStartedAt) = upload.GetPhase();
+                        return $"- {upload.HelixJob.DisplayName}: phase='{phase}', "
+                            + $"phase elapsed={now - phaseStartedAt:c}, total elapsed={now - upload.StartedAt:c}";
+                    }));
+
+            _logger.LogDebug(
+                "{Count} test result upload(s) remain pending:{nl}{Details}",
+                _pending.Count,
+                Environment.NewLine,
+                details);
+        }
+
+        private sealed class PendingUpload
+        {
+            private readonly object _sync = new();
+            private string _phase = "queued";
+            private DateTimeOffset _phaseStartedAt;
+
+            public PendingUpload(HelixJobInfo helixJob)
+            {
+                HelixJob = helixJob;
+                StartedAt = DateTimeOffset.UtcNow;
+                _phaseStartedAt = StartedAt;
+            }
+
+            public HelixJobInfo HelixJob { get; }
+
+            public DateTimeOffset StartedAt { get; }
+
+            public Task Task { get; set; }
+
+            public void SetPhase(string phase)
+            {
+                lock (_sync)
+                {
+                    _phase = phase;
+                    _phaseStartedAt = DateTimeOffset.UtcNow;
+                }
+            }
+
+            public (string Phase, DateTimeOffset PhaseStartedAt) GetPhase()
+            {
+                lock (_sync)
+                {
+                    return (_phase, _phaseStartedAt);
+                }
             }
         }
 
