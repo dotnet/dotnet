@@ -94,6 +94,42 @@ namespace NuGet.Build.Tasks.Pack.Test
         }
 
         [Fact]
+        public void GetPackOutputItemsTaskTests_Execute_NuspecHasNoVersion_FallsBackToProjectVersion()
+        {
+            using var testDirectory = TestDirectory.Create();
+            var nuspecPath = Path.Combine(testDirectory.Path, "test-no-version.nuspec");
+            File.WriteAllText(nuspecPath, """
+                <?xml version="1.0" encoding="utf-8"?>
+                <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+                  <metadata>
+                    <id>NuspecPackage</id>
+                    <authors>Test</authors>
+                    <description>desc</description>
+                  </metadata>
+                </package>
+                """);
+
+            var outputItemTask = new GetPackOutputItemsTask
+            {
+                PackageId = "ProjectPackageId",
+                PackageVersion = "1.2.3",
+                PackageOutputPath = testDirectory.Path,
+                NuspecOutputPath = testDirectory.Path,
+                SymbolPackageFormat = "snupkg",
+                NuspecFile = nuspecPath,
+            };
+
+            Assert.True(outputItemTask.Execute());
+
+            string[] actualPackageFiles = outputItemTask.OutputPackItems
+                .Select(item => Path.GetFileName(item.ItemSpec))
+                .Where(name => name.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+
+            actualPackageFiles.Should().BeEquivalentTo(new[] { "NuspecPackage.1.2.3.nupkg" });
+        }
+
+        [Fact]
         public void GetPackOutputItemsTaskTests_Execute_EntireMetadataFromNuspecPropertiesToken_ResolvesIdAndVersion()
         {
             using var testDirectory = TestDirectory.Create();
