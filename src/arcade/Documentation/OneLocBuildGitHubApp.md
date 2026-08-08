@@ -1,6 +1,6 @@
 # Authenticating OneLocBuild's GitHub check-in with the GitHub App
 
-This document explains how a repository gains access to, and opts in to, the **GitHub App**
+This document explains how a repository gains access to the default **GitHub App**
 authentication path for the OneLocBuild localization check-in PR. It supplements the main
 [OneLocBuild in Arcade](OneLocBuild.md) documentation.
 
@@ -8,29 +8,33 @@ authentication path for the OneLocBuild localization check-in PR. It supplements
 
 When OneLocBuild is configured for a GitHub-based repo (`RepoType: gitHub`), the task opens or
 updates a pull request to check in localized files. The GitHub App authentication path mints a
-repository-scoped installation token (`ghs_…`) at build time, avoiding a stored GitHub credential.
+short-lived installation token (`ghs_…`) at build time, avoiding a stored GitHub credential. The
+repositories accessible to the token are determined by the GitHub App installation configuration
+(all repositories or the selected repositories).
 [GitHub installation tokens expire after one hour](https://docs.github.com/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app#generating-an-installation-access-token).
 
 The GitHub App used for this is **`dotnet OneLoc Localization`** (owned by `@dotnet-bot`). Its only
 job is to open/update the localization check-in PR on your repository.
 
-## How it works (opt-in, backward-compatible)
+## How it works
 
-The App path is **opt-in** and does not change behavior for any repo that doesn't configure it. In
+The App path is enabled by default. In
 [`onelocbuild.yml`](/eng/common/core-templates/job/onelocbuild.yml), the App token is minted only
 when **all** of the following are true:
 
-- `UseGitHubAppAuthentication` is `true`, **and**
+- `UseGitHubAppAuthentication` is `true` (the default), **and**
 - `RepoType` is `gitHub`, **and**
 - the build is running in the **`internal`** Azure DevOps project (the App service connection and
   Key Vault key are scoped to `dnceng/internal`).
 
-When those hold, the job runs [`get-github-app-token.yml`](/eng/common/templates/steps/get-github-app-token.yml),
+When those hold, the job runs [`get-github-app-token.yml`](/eng/common/core-templates/steps/get-github-app-token.yml),
 which signs a JWT with the App's RSA key in Key Vault, exchanges it for an installation token, and
 passes that token to the OneLocBuild task via `gitHubPatVariable`.
 
-If `UseGitHubAppAuthentication` is `false` — or the build runs in any project other than `internal`
-(e.g. `DevDiv`, `public`) — the job uses the existing `GithubPat` parameter.
+If `UseGitHubAppAuthentication` is explicitly set to `false` — or the build runs in any project
+other than `internal` (e.g. `DevDiv`, `public`) — the job uses the existing `GithubPat` parameter.
+This is a template-selection fallback only: if App token minting or authentication fails after the
+App path is selected, the job fails and does not retry with the PAT.
 
 ## Gaining access
 
@@ -39,8 +43,8 @@ If `UseGitHubAppAuthentication` is `false` — or the build runs in any project 
 1. **The App must be installed on the GitHub org/account that owns your target repo, and your
    specific repository must be selected in that installation.** The App can only open a PR against a
    repository it is installed on. This is what actually grants the App permission to your repo.
-2. **Your pipeline must opt in** by setting `UseGitHubAppAuthentication: true` in the
-   `onelocbuild.yml` template call.
+2. **Your pipeline must use the default App path** by leaving `UseGitHubAppAuthentication` set to
+   `true` in the `onelocbuild.yml` template call.
 
 ### Step 1 — Request that your repository be added to the App installation
 
@@ -62,10 +66,10 @@ managed by the .NET Engineering Services (dnceng) team. To have your repo added:
 > is not yet installed, dnceng will need to install and approve it in that org first, which may
 > require an org owner's approval.
 
-### Step 2 — Opt your pipeline in
+### Step 2 — Use the default App path
 
-Once your repo is part of the App installation, add the GitHub App parameters to your OneLocBuild
-template call. For example:
+Once your repo is part of the App installation, no authentication parameter is required in the
+OneLocBuild template call. For example:
 
 ```yaml
 - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
@@ -73,18 +77,17 @@ template call. For example:
     parameters:
       LclSource: lclFilesfromPackage
       LclPackageId: 'LCL-JUNO-PROD-YOURREPO'
-      # Opt in to GitHub App authentication for the check-in PR:
-      UseGitHubAppAuthentication: true
 ```
 
 The dnceng service connection, App client ID, Key Vault, and key name are centralized as defaults in
-the Arcade template. They can be overridden for separately provisioned infrastructure.
+the Arcade template. They can be overridden for separately provisioned infrastructure. A pipeline
+can temporarily set `UseGitHubAppAuthentication: false` to select the PAT path instead.
 
 ### GitHub App parameters
 
 | **Parameter** | **Default** | **Notes** |
 |:-:|:-:|-|
-| `UseGitHubAppAuthentication` | `false` | Activates the App path for GitHub repos in `dnceng/internal`. |
+| `UseGitHubAppAuthentication` | `true` | Activates the App path for GitHub repos in `dnceng/internal`. Set to `false` to select the PAT path. |
 | `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The Azure DevOps **WIF service connection** whose identity has `Sign` permission on the App's Key Vault key. |
 | `GitHubAppClientId` | `'Iv23lijBU8x3gc9lDOc9'` | The GitHub App's **Client ID** (used as the JWT `iss` claim). |
 | `GitHubAppKeyVaultName` | `'EngKeyVault'` | The Key Vault holding the App's RSA signing key. |

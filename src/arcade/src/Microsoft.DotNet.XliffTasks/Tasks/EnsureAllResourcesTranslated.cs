@@ -27,6 +27,13 @@ namespace XliffTasks.Tasks
 
                 foreach (string language in Languages)
                 {
+                    // The neutral .xlf file is an input to the localization system, not a
+                    // translation, so its untranslated resources are expected.
+                    if (XlfTask.IsNeutralLanguage(language))
+                    {
+                        continue;
+                    }
+
                     string xlfPath = XlfTask.GetXlfPath(sourceDocumentPath, language);
                     XlfDocument xlfDocument;
 

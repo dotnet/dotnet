@@ -463,13 +463,19 @@ uploads; only a completed, tagged test run is considered durable.
   proceed concurrently.
 - Test results are downloaded before the AzDO test run is created. Transient
   download failures are safe to retry and use a bounded retry budget.
-- The queue invokes each state-changing phase — create the run, publish results,
-  and complete/tag the run — once. The monitor's adapters also disable automatic
-  retries for those writes because an error response may arrive after the
-  service has partially committed the request. Replaying it could duplicate
-  test runs, results, or attachments.
-- Permanent failures, exhausted safe retries, and ambiguous write failures are
-  logged as warnings and stop the upload task without affecting pass/fail.
+- Test-run creation and completion/tagging are each attempted once. These
+  lifecycle writes determine the durable upload boundary, so replaying an
+  ambiguous response could create an extra run or incorrectly mark an
+  incompletely uploaded run as processed.
+- Publishing test results and their attachments uses bounded retries for
+  throttling, server errors, and transient transport failures. These Azure
+  DevOps POST APIs do not expose an idempotency key or document deduplication.
+  A timeout or connection failure can occur after the service commits the
+  request but before the response reaches the client, so retrying may create
+  duplicate results or attachments. The design accepts that risk to avoid
+  losing an entire job's test results after a transient failure.
+- Permanent failures and exhausted retries are logged as warnings and stop the
+  upload task without affecting pass/fail.
 - The normal-termination path waits for queued uploads to drain before exiting.
 - The cancellation path does not wait for pending or in-flight uploads. If an
   upload has not completed and applied its Helix-job tag, it remains untagged;
