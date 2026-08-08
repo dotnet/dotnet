@@ -92,6 +92,25 @@ imports:
 # Azure DevOps by the fetch-binlog job into a directory, uploaded as an
 # artifact, downloaded by the agent job to `/tmp/binlogs`, and mounted
 # read-only into this container at `/data/binlogs` by the gh-aw MCP gateway.
+#
+# NOT pinned by digest, and that is a gh-aw v0.77.5 limitation, not a choice.
+# This container is handed the binlogs of an unmerged, possibly external PR and
+# its output is what the agent reports back, so "whatever this tag points at
+# today" is a supply-chain decision made by whoever last pushed the tag — and
+# the tag does move: it resolved to sha256:9f1e2c3e8281... from 2026-07-16
+# until 2026-08-03, when it became
+# sha256:ee7b7e5c6e162f3f0061822aa7183260626f1a1e986d04ba9915ab197a37932c.
+# v0.77.5 validates `container` against `^[a-zA-Z0-9][a-zA-Z0-9/:_.-]*$`, which
+# has no `@`, so `image@sha256:...` is rejected at compile time and the
+# generated `download_docker_images.sh` pulls this image by bare tag while every
+# other image in the lock is digest-pinned. gh-aw >= v0.83.x resolves and pins
+# the digest automatically (verified: microsoft/testfx on v0.83.4 emits
+# `digest` + `pinned_image` in its `gh-aw-manifest` and pulls by `@sha256:`), so
+# this is fixed by bumping the compiler this repo pins rather than by editing
+# this line.
+# Refresh/inspect the current digest with:
+#   docker buildx imagetools inspect \
+#     mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-binlog-mcp-amd64
 mcp-servers:
   binlog-mcp:
     container: "mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-binlog-mcp-amd64"
@@ -127,6 +146,7 @@ jobs:
     steps:
       - name: Download binlogs from the failed Azure Pipelines build
         id: fetch
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           GH_AW_REPO: ${{ github.repository }}
@@ -449,6 +469,7 @@ steps:
       path: /tmp/binlogs
 
   - name: Export agent context
+    shell: bash
     env:
       GH_AW_BINLOG_FOUND_VALUE: ${{ needs.fetch-binlog.outputs.binlog-found }}
       GH_AW_PR_NUMBER_VALUE: ${{ needs.fetch-binlog.outputs.pr-number }}
@@ -511,6 +532,16 @@ safe-outputs:
   add-comment:
     max: 5
     target: "*"
+    # Hiding superseded comments is scoped to the posting workflow's id
+    # (`GH_AW_WORKFLOW_ID`, the workflow FILE stem — here
+    # `build-failure-analysis` vs `build-failure-analysis-command`), so this
+    # workflow only ever hides its own comments: a re-run via
+    # `/analyze-build-failure` leaves this stale automatic analysis visible next
+    # to the fresh one. dotnet/sdk fixes that with the object form
+    # (`hide-older-comments: {enabled: true, match: [...]}`), but the gh-aw
+    # v0.77.5 schema this repo pins types `hide-older-comments` as a
+    # `templatable_boolean` with no object/`match` variant, so it cannot be
+    # expressed here. Fixed by bumping the compiler, not by editing this line.
     hide-older-comments: true
   create-pull-request-review-comment:
     max: 25

@@ -8,5 +8,4 @@ public sealed record AzureDevOpsReportingParameters(
     string TeamProject,
     string TestRunId,
     string? AccessToken = null,
-    bool UseFullyQualifiedTestName = false,
-    bool RetryWrites = true);
+    bool UseFullyQualifiedTestName = false);

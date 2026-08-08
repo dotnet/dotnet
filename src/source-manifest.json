@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 325552,
+      "barId": 326135,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "ee33d0a22bd4d047ee9ba696c11ccce7b4f31474"
+      "commitSha": "d89b0f58e31eda800074a454cf6f2a699d339b94"
     },
     {
       "barId": 325722,
@@ -61,10 +61,10 @@
       "commitSha": "e45cc3de8a44d5b92cdad6e0ca7f8a5852c2afbd"
     },
     {
-      "barId": 325739,
+      "barId": 326127,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "d6ddaa20a79e748b56a78c1f3522a13edb87255e"
+      "commitSha": "73bc1f9f8f517cdfd52fec7db945a3b039f15017"
     },
     {
       "barId": 326260,
@@ -73,22 +73,22 @@
       "commitSha": "b0622a0834c029d7bfc3244b600eef4f0057a4bf"
     },
     {
-      "barId": 325931,
+      "barId": 326232,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "c36f112e7ad108b8f52e5d7028d2ecc09a4015f2"
+      "commitSha": "26b8250248974f0b9859817a5c9ee985203800cd"
     },
     {
-      "barId": 325183,
+      "barId": 326016,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "2ae7f9895b958af492f8790a500fe6bd504c54a4"
+      "commitSha": "8464a981481551b4bd4c22e9e170fddfc613bcba"
     },
     {
-      "barId": 325828,
+      "barId": 326131,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a86dbf92e2f7f362a1d85923b0d74b6254271963"
+      "commitSha": "ddbc6ec7cc56950eed19bfdc2db3de541284a9c1"
     },
     {
       "barId": 325458,
@@ -121,10 +121,10 @@
       "commitSha": "5d631bd233d96c6a08d90c26402c18e139b5a2a7"
     },
     {
-      "barId": 325735,
+      "barId": 325991,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "52484fe2ab255735c594fa92097716095b6b88d6"
+      "commitSha": "3dfb5be22b7c98cdfb56aba152805c09426bb1e4"
     },
     {
       "barId": 325323,

@@ -119,7 +119,6 @@ stages:
             name: ReleaseConfigs
             path: release_configs
         variables:
-        - group: Publish-Build-Assets
         - template: /eng/common/templates-official/variables/pool-providers.yml@self
         pool:
           name: $(DncEngInternalBuildPool)

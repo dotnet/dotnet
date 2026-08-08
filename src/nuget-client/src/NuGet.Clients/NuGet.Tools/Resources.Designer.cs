@@ -187,6 +187,15 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again..
+        /// </summary>
+        internal static string Error_PackageSourceMappingToolNotAvailable {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceMappingToolNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A name must be provided..
         /// </summary>
         internal static string Error_PackageSourceName_Missing {
@@ -372,6 +381,15 @@ namespace NuGetVSExtension {
         internal static string Prompt_FixNuGetPackageVulnerabilities {
             get {
                 return ResourceManager.GetString("Prompt_FixNuGetPackageVulnerabilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Review this repository&apos;s package source mappings..
+        /// </summary>
+        internal static string Prompt_ReviewPackageSourceMapping {
+            get {
+                return ResourceManager.GetString("Prompt_ReviewPackageSourceMapping", resourceCulture);
             }
         }
         
@@ -588,6 +606,24 @@ namespace NuGetVSExtension {
         internal static string Title_FixVulnerabilitiesWithCopilot {
             get {
                 return ResourceManager.GetString("Title_FixVulnerabilitiesWithCopilot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package Source Mapping with GitHub Copilot.
+        /// </summary>
+        internal static string Title_PackageSourceMappingWithCopilot {
+            get {
+                return ResourceManager.GetString("Title_PackageSourceMappingWithCopilot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Review with GitHub Copilot.
+        /// </summary>
+        internal static string VSOptions_Button_PackageSourceMappingReview {
+            get {
+                return ResourceManager.GetString("VSOptions_Button_PackageSourceMappingReview", resourceCulture);
             }
         }
     }
