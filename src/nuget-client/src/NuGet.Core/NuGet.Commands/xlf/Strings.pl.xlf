@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pl" original="../Strings.resx">
     <body>
@@ -691,7 +691,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
         <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
 Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
-        <target state="translated">Projekt {0} próbuje przywrócić zduplikowane struktury, które są obsługiwane tylko w domyślnym programie rozpoznawania nazw, gdy zestaw .NET SDK ma wersję {1} lub nowszą.
+        <target state="translated">Projekt {0} próbuje przywrócić zduplikowane struktury, które są obsługiwane tylko w domyślnym programie rozpoznawania nazw, gdy zestaw .NET SDK jest w wersji {1} lub nowszej.
 Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby korzystać z tej funkcji.</target>
         <note />
       </trans-unit>
@@ -1115,7 +1115,7 @@ Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby kor
       </trans-unit>
       <trans-unit id="RestrictedPackageIdWarning">
         <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
-        <target state="new">The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</target>
+        <target state="translated">Identyfikator pakietu „{0}” jest nieprawidłowy. Identyfikatory pakietów muszą zaczynać się literą, cyfrą lub podkreśleniem i zawierać tylko litery ASCII, cyfry, kropki (.), łączniki (-) i podkreślenia (_), bez kolejno następujących po sobie kropek lub łączników.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1464,7 +1464,7 @@ Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby kor
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
         <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="new">There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</target>
+        <target state="translated">Istnieją źródła pakietów ({0}) zdefiniowane w konfiguracji. W przypadku korzystania z centralnego zarządzania pakietami zmapuj źródła pakietów za pomocą mapowania źródła pakietu (https://aka.ms/nuget-package-source-mapping) lub określ pojedyncze źródło pakietu. Zdefiniowane są następujące źródła: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">
@@ -1485,25 +1485,25 @@ Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby kor
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Poniżej przedstawiono źródło „Inne niż HTTPS”: {0}
+        <target state="translated">Poniżej podano źródło „Inne niż HTTPS”: {0}
 Menedżer NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Poniżej przedstawiono źródła „Inne niż HTTPS”: {0}
+        <target state="translated">Poniżej podano źródła „Inne niż HTTPS”: {0}
 Menedżer NuGet wymaga źródeł HTTPS. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">
         <source>{0} depends on {1} but {2} was not found. {3} was resolved instead.</source>
-        <target state="translated">{0} jest zależny od {1}, ale {2} nie został znaleziony. Zamiast tego {3} został rozwiązany.</target>
+        <target state="translated">Wersja {0} jest zależna od {1}, ale nie znaleziono {2}. Zamiast tego rozwiązano {3}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_MinVersionNonInclusive">
         <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
-        <target state="translated">{0} nie zapewnia łącznego dolnego ograniczenia dla zależności {1}. {2} został rozwiązany zamiast tego.</target>
+        <target state="translated">Wersja {0} nie zapewnia łącznego dolnego ograniczenia dla zależności {1}. Zamiast tego rozwiązano {2}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">

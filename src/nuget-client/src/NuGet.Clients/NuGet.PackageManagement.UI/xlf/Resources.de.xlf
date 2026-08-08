@@ -839,7 +839,7 @@
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
         <source>{0} version {1} to {2} version {3}</source>
-        <target state="translated">Von {0}, Version {1}, auf {2}, Version {3}</target>
+        <target state="translated">Von {0}, Version {1} auf {2}, Version {3}</target>
         <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
       </trans-unit>
       <trans-unit id="Preview_UnknownProject">
@@ -913,22 +913,22 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
-        <target state="new">The name specified has already been added to the list of available package sources. Provide a unique name.</target>
+        <target state="translated">Der angegebene Name wurde der Liste der verfügbaren Paketquellen bereits hinzugefügt. Geben Sie einen eindeutigen Namen an.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
-        <target state="new">The source specified has already been added to the list of available package sources. Provide a unique source.</target>
+        <target state="translated">Die angegebene Quelle wurde der Liste der verfügbaren Paketquellen bereits hinzugefügt. Geben Sie eine eindeutige Quelle an.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Das Laden von Paketen wurde abgebrochen.</target>
+        <target state="translated">Laden von Paketen abgebrochen</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
         <source>An error occurred while loading packages</source>
-        <target state="translated">Fehler beim Laden von Paketen.</target>
+        <target state="translated">Fehler beim Laden der Pakete</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
@@ -1028,7 +1028,7 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="new">There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Für die ausgewählte Paketversion ist keine Infodatei verfügbar. Weitere Informationen finden Sie unter [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1263,7 +1263,7 @@ Fehler: {1}</target>
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
         <source>Follow the instructions at {0} to return to the previous state.</source>
-        <target state="new">Follow the instructions at {0} to return to the previous state.</target>
+        <target state="translated">Befolgen Sie die Anweisungen unter {0}, um zum vorherigen Zustand zurückzukehren.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

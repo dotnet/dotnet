@@ -34,17 +34,17 @@
       </trans-unit>
       <trans-unit id="MachineWidePackageSourcesListBox.AccessibleName">
         <source>Machine-wide package sources</source>
-        <target state="translated">Sources de package sur l'ordinateur :</target>
+        <target state="translated">Sources de package sur l’ordinateur :</target>
         <note />
       </trans-unit>
       <trans-unit id="MachineWideSourcesLabel.Text">
         <source>&amp;Machine-wide package sources:</source>
-        <target state="translated">Sources de package sur l'&amp;ordinateur :</target>
+        <target state="translated">Sources de package sur l’&amp;ordinateur :</target>
         <note />
       </trans-unit>
       <trans-unit id="NewPackageNameLabel.Text">
         <source>&amp;Name:</source>
-        <target state="translated">&amp;Nom :</target>
+        <target state="translated">&amp;Nom :</target>
         <note />
       </trans-unit>
       <trans-unit id="NewPackageSourceLabel.Text">

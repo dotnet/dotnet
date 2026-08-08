@@ -184,7 +184,7 @@
       </trans-unit>
       <trans-unit id="Delete_MissingArguments">
         <source>Provide arguments for package id and package version.</source>
-        <target state="new">Provide arguments for package id and package version.</target>
+        <target state="translated">Specificare gli argomenti per l'ID e la versione del pacchetto.</target>
         <note />
       </trans-unit>
       <trans-unit id="Delete_PackageIdAndVersion_Description">
@@ -271,7 +271,7 @@
       </trans-unit>
       <trans-unit id="Error_AssetsFileNotFound">
         <source>No assets file was found for `{0}`. Run restore before running this command.</source>
-        <target state="new">No assets file was found for `{0}`. Run restore before running this command.</target>
+        <target state="translated">Non è stato trovato alcun file di asset per `{0}`. Eseguire restore prima di eseguire questo comando.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotObtainSearchSource">
@@ -330,7 +330,7 @@ Do not translate "PackageVersion"</note>
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}
 NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">L'operazione '{0}' è in esecuzione con origini 'HTTP': {1}
-NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario impostare esplicitamente 'allowInsecureConnections' su true nel file NuGet.Config. Vedi https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
+NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario impostare esplicitamente 'allowInsecureConnections' su true nel file NuGet.Config. Vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server uris</note>
       </trans-unit>
       <trans-unit id="Error_InvalidCultureInfo">
@@ -370,7 +370,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="Error_MultipleProjectOrSolutionFilesInDirectory">
         <source>The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</source>
-        <target state="new">The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</target>
+        <target state="translated">La directory '{0}' contiene più file di progetto o di soluzione. Specificare il file di progetto o di soluzione da usare.</target>
         <note>{0} - Directory</note>
       </trans-unit>
       <trans-unit id="Error_NoDgSpec">
@@ -410,7 +410,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</source>
-        <target state="new">Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</target>
+        <target state="translated">Percorso mancante o non valido: '{0}'. Specificare il percorso di un progetto o di un file di soluzione, un'app basata su file o una directory di progetto.</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -437,7 +437,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="Error_ProjectAssetsFilePropertyNotFound">
         <source>Project '{0}' does not have MSBuild property ProjectAssetsFile defined. This may indicate that this project does not support NuGet PackageReference, or that project customization has prevented the .NET SDK setting default values.</source>
-        <target state="translated">Non è stata definita la proprietà ProjectAssetsFile di MSBuild per il progetto ‘{0}’.. Ciò può significare che il progetto non supporta PackageReference di NuGet oppure che la personalizzazione del progetto ha impedito l'impostazione dei valori predefiniti di .NET SDK.</target>
+        <target state="translated">Non è stata definita la proprietà ProjectAssetsFile di MSBuild per il progetto ‘{0}'.. Ciò può significare che il progetto non supporta PackageReference di NuGet oppure che la personalizzazione del progetto ha impedito l'impostazione dei valori predefiniti di .NET SDK.</target>
         <note>{0} - Path to the project with the error</note>
       </trans-unit>
       <trans-unit id="Error_TrustFingerPrintAlreadyExist">
@@ -558,12 +558,12 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingAssetsFile">
         <source>Unable to read the assets file `{0}`. Make sure the file has the correct format.</source>
-        <target state="new">Unable to read the assets file `{0}`. Make sure the file has the correct format.</target>
+        <target state="translated">Non è possibile leggere il file di asset `{0}`. Assicurarsi che il formato del file sia corretto.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingReferenceFromProject">
         <source>Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore.</source>
-        <target state="new">Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore.</target>
+        <target state="translated">Non è possibile leggere un riferimento al pacchetto dal progetto `{0}`. Eseguire restore per assicurarsi che il file di progetto e il file project.assets.json siano sincronizzati.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_FrameworkDescription">
@@ -792,9 +792,9 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
         <source>Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
-usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
-For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Non è possibile usare contemporaneamente nello stesso comando le operazioni --list e --clear. Specificare una sola operazione.
+utilizzo: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+Per altre informazioni, visitare https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_NoArguments">
@@ -810,9 +810,9 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
         <source>Specify an operation i.e. --list or --clear.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Specify an operation i.e. --list or --clear.
-usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
-For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Specificare un'operazione, ad esempio --list o --clear.
+utilizzo: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+Per altre informazioni, visitare https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="NoServiceEndpoint_Description">
@@ -1086,7 +1086,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="Push_MissingArguments">
         <source>Specify the path to the package.</source>
-        <target state="new">Specify the path to the package.</target>
+        <target state="translated">Specificare il percorso del pacchetto.</target>
         <note />
       </trans-unit>
       <trans-unit id="Push_Package_ApiKey_Description">
@@ -1204,7 +1204,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="SignCommandNoTimestamperWarning">
         <source>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools</source>
-        <target state="new">The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools</target>
+        <target state="translated">Non è stata fornita alcuna opzione '-timestamper'. Non verrà aggiunto un timestamp al pacchetto firmato. Per altre informazioni su questa opzione, visitare https://docs.microsoft.com/dotnet/core/tools</target>
         <note>Please don't localize '--timestamper'</note>
       </trans-unit>
       <trans-unit id="SignCommandOutputDirectoryDescription">
@@ -1239,7 +1239,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Consente le connessioni HTTP per aggiungere o aggiornare i pacchetti. Nota: questo metodo non è sicuro. Per ulteriori informazioni sulle opzioni di sicurezza, vedere https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Consente connessioni HTTP per l'aggiunta o l'aggiornamento di pacchetti. Nota: questo metodo non è sicuro. Per le opzioni di sicurezza, vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandFormatDescription">
@@ -1394,7 +1394,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">
         <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1})</source>
-        <target state="new">The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1})</target>
+        <target state="translated">Il pacchetto {0} fa riferimento a versioni diverse del pacchetto per framework di destinazione diversi. Ciò non è supportato da questo comando. Modificare direttamente il file di progetto. ({1})</target>
         <note>0 - The package id
 1 - The project path</note>
       </trans-unit>
@@ -1493,7 +1493,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Run restore for project '{1}' before running this command.</source>
-        <target state="new">The file '{0}' does not appear to be a NuGet assets file. Run restore for project '{1}' before running this command.</target>
+        <target state="translated">Il file '{0}' non sembra essere un file di asset NuGet. Eseguire restore per il progetto '{1}' prima di eseguire questo comando.</target>
         <note>{0} - Assets file path, {1} - Project name</note>
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithoutProject">

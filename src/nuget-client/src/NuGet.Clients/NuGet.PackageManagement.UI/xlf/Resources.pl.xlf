@@ -913,12 +913,12 @@ Błąd: {1}</target>
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
-        <target state="new">The name specified has already been added to the list of available package sources. Provide a unique name.</target>
+        <target state="translated">Określona nazwa została już dodana do listy dostępnych źródeł pakietów. Podaj unikatową nazwę.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
-        <target state="new">The source specified has already been added to the list of available package sources. Provide a unique source.</target>
+        <target state="translated">Określone źródło zostało już dodane do listy dostępnych źródeł pakietów. Podaj unikatowe źródło.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
@@ -933,12 +933,12 @@ Błąd: {1}</target>
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Załadowano koniec listy pakietów</target>
+        <target state="translated">Koniec załadowanej listy pakietów</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
         <source>Package list loaded</source>
-        <target state="translated">Załadowano listę pakietów</target>
+        <target state="translated">Załadowana lista pakietów</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_By">
@@ -1028,7 +1028,7 @@ Błąd: {1}</target>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="new">There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Brak dostępnego pliku README dla wybranej wersji pakietu. Aby uzyskać więcej informacji, odwiedź witrynę [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1263,7 +1263,7 @@ Błąd: {1}</target>
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
         <source>Follow the instructions at {0} to return to the previous state.</source>
-        <target state="new">Follow the instructions at {0} to return to the previous state.</target>
+        <target state="translated">Postępuj zgodnie z instrukcjami opisanymi na stronie {0}, aby powrócić do poprzedniego stanu.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

@@ -141,7 +141,7 @@ nuget client-certs List</target>
       </trans-unit>
       <trans-unit id="CommandInvalidArgumentException">
         <source>Invalid value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Invalid value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Podano nieprawidłową wartość dla „{0}”. Aby uzyskać listę akceptowanych wartości, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="CommandMSBuildPath">
@@ -527,7 +527,7 @@ nuget locals global-packages -list</target>
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
         <source>NoCache is deprecated and has been renamed to NoHttpCache. Use NoHttpCache instead.</source>
-        <target state="new">NoCache is deprecated and has been renamed to NoHttpCache. Use NoHttpCache instead.</target>
+        <target state="translated">Element NoCache jest przestarzały i jego nazwa została zmieniona na NoHttpCache. Zamiast tego użyj elementu NoHttpCache.</target>
         <note>Do not translate NoCache and NoHttpCache</note>
       </trans-unit>
       <trans-unit id="Option_ConfigFile">
@@ -922,7 +922,7 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">Odcisk cyfrowy certyfikatu SHA-256, SHA-384 lub SHA-512 używany do przeszukiwania lokalnego magazynu certyfikatów w zakresie danego certyfikatu.
+        <target state="translated">Odcisk cyfrowy certyfikatu SHA-256, SHA-384 lub SHA-512 używany do przeszukiwania lokalnego magazynu certyfikatów na potrzeby danego certyfikatu.
 Magazyn certyfikatów można określić za pomocą opcji -CertificateStoreName i -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
@@ -930,7 +930,7 @@ Magazyn certyfikatów można określić za pomocą opcji -CertificateStoreName i
         <source>Password for the certificate, if needed.
 This option can be used to specify the password for the certificate. If no password is provided, the command will prompt for a password at run time, unless the -NonInteractive option is passed.</source>
         <target state="translated">Hasło certyfikatu, jeśli jest potrzebne.
-Tej opcji można użyć do określenia hasła certyfikatu. Jeśli hasło nie zostanie podane, polecenie wyświetli monit z prośbą o podanie hasła w czasie wykonywania, chyba że zostanie przekazana opcja -NonInteractive.</target>
+Tej opcji można używać do określania hasła certyfikatu. Jeśli hasło nie zostanie podane, polecenie wyświetli monit z prośbą o podanie hasła w czasie wykonywania, chyba że zostanie przekazana opcja -NonInteractive.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificatePathDescription">
@@ -956,8 +956,8 @@ Ta opcja powinna być używana podczas określania certyfikatu za pomocą opcji 
         <source>Subject name of the certificate used to search a local certificate store for the certificate. 
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">Nazwa podmiotu certyfikatu używanego do wyszukiwania certyfikatu w lokalnym magazynie certyfikatów. /
-Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości liter przy użyciu podanej wartości, co spowoduje znalezienie wszystkich certyfikatów, których nazwa tematu zawiera ten ciąg znaków, niezależnie od innych wartości tematu.
+        <target state="translated">Nazwa podmiotu certyfikatu używanego do wyszukiwania lokalnego magazynu certyfikatów na potrzeby certyfikatu. 
+Wyszukiwanie polega na porównywaniu ciągów bez rozróżniania wielkości liter przy użyciu podanej wartości, co spowoduje znalezienie wszystkich certyfikatów, których nazwa podmiotu zawiera ten ciąg znaków, niezależnie od innych wartości podmiotu.
 Magazyn certyfikatów można określić za pomocą opcji -CertificateStoreName i -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
@@ -987,33 +987,33 @@ nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -Outp
       </trans-unit>
       <trans-unit id="SignCommandMissingArgumentException">
         <source>No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Nie podano wartości dla elementu „{0}”, która jest wymagana w przypadku używania opcji „{1}”. Aby uzyskać listę akceptowanych wartości, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note>0 - primary param name
 1 - other param name</note>
       </trans-unit>
       <trans-unit id="SignCommandMultipleCertificateException">
         <source>Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Do określenia certyfikatu użyto wielu opcji. Aby uzyskać listę akceptowanych sposobów dostarczenia certyfikatu, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoArgumentException">
         <source>No value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Brak podanej wartości dla „{0}”. Aby uzyskać listę akceptowanych wartości, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="SignCommandNoCertificateException">
         <source>No certificate was provided. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No certificate was provided. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Nie podano żadnego certyfikatu. Aby uzyskać listę akceptowanych sposobów dostarczenia certyfikatu, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoPackageException">
         <source>No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Nie dostarczono żadnego pakietu. Aby uzyskać listę akceptowanych sposobów dostarczenia pakietu, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoTimestamperWarning">
         <source>The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Nie podano opcji „-Timestamper”. Podpisany pakiet nie zostanie oznaczony sygnaturą czasową. Aby dowiedzieć się więcej o tej opcji, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandOutputDirectoryDescription">
@@ -1064,7 +1064,7 @@ nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Zezwala na połączenia HTTP na potrzeby dodawania lub aktualizowania pakietów. Uwaga: ta metoda nie jest bezpieczna. Aby uzyskać więcej informacji na temat bezpiecznych opcji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Zezwala na połączenia HTTP na potrzeby dodawania lub aktualizowania pakietów. Uwaga: ta metoda nie jest bezpieczna. Aby uzyskać więcej informacji na temat opcji zabezpieczeń, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandDescription">

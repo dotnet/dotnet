@@ -109,7 +109,7 @@
       </trans-unit>
       <trans-unit id="ArgumentNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="translated">引數不能為 Null 或空白。</target>
+        <target state="translated">引數不得為 Null 或空白。</target>
         <note />
       </trans-unit>
       <trans-unit id="AskForRestoreMessage">
@@ -374,7 +374,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 [true]。</target>
+        <target state="translated">NuGet 需要 HTTPS 來源。若要使用 HTTP 來源，您必須在 NuGet.Config 檔案中將 'allowInsecureConnections' 明確設定為 true。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -574,7 +574,7 @@
       </trans-unit>
       <trans-unit id="Label_InstalledVersionsCount">
         <source>Versions: {0}</source>
-        <target state="translated">版本：{0}</target>
+        <target state="translated">版本: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_Installed_DeprecatedWarning">
@@ -759,7 +759,7 @@
       </trans-unit>
       <trans-unit id="Link_configuration">
         <source>Common NuGet configurations; How settings are applied.</source>
-        <target state="translated">一般 NuGet 設定: 如何套用設定。</target>
+        <target state="translated">一般 NuGet 設定; 如何套用設定。</target>
         <note />
       </trans-unit>
       <trans-unit id="Migrator_PackageIdColumnHeader">
@@ -834,7 +834,7 @@
       </trans-unit>
       <trans-unit id="PackageVersionWithTransitiveOrigins">
         <source>{0} by {1}</source>
-        <target state="translated">{0}，由 {1} 修改</target>
+        <target state="translated">{0} 來自於 {1}</target>
         <note>{0} - Version of package, {1} - Packages that transitively reference the package</note>
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
@@ -913,12 +913,12 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
-        <target state="new">The name specified has already been added to the list of available package sources. Provide a unique name.</target>
+        <target state="translated">指定的名稱已新增至可用套件來源清單中。請提供唯一的名稱。</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
-        <target state="new">The source specified has already been added to the list of available package sources. Provide a unique source.</target>
+        <target state="translated">指定的來源已新增至可用套件來源清單中。請提供唯一的來源。</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
@@ -928,7 +928,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
         <source>An error occurred while loading packages</source>
-        <target state="translated">載入套件時發生錯誤</target>
+        <target state="translated">載入套件期間發生錯誤</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
@@ -943,7 +943,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_By">
         <source>by</source>
-        <target state="translated">由</target>
+        <target state="translated">作者</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ByAuthor">
@@ -953,7 +953,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_ByOwner">
         <source>by {0}</source>
-        <target state="translated">由 {0}</target>
+        <target state="translated">作者 {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_Changes">
@@ -1028,7 +1028,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="new">There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">所選套件版本沒有可用的 README。如需詳細資訊，請瀏覽 [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)。</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1263,7 +1263,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
         <source>Follow the instructions at {0} to return to the previous state.</source>
-        <target state="new">Follow the instructions at {0} to return to the previous state.</target>
+        <target state="translated">遵循 {0} 的指示以回到先前的狀態。</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">
@@ -1353,7 +1353,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Warn_Adding_HttpSource">
         <source>You are attempting to add an HTTP source, which is insecure. Would you like to proceed with adding this insecure HTTP source?</source>
-        <target state="translated">您正在嘗試新增不安全的 HTTP 來源。您是否要繼續新增此不安全的 HTTP 來源?</target>
+        <target state="translated">您正在嘗試新增不安全的 HTTP 來源。您要繼續新增此不安全的 HTTP 來源嗎?</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_HTTPSource">

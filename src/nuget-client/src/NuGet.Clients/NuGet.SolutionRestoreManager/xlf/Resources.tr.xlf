@@ -84,7 +84,7 @@ Eksik paketler: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
         <source>NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">NuGet Paket geri yüklemesi {0} projesi için başarısız oldu: {1}. Ayrıntılı uyarılar ve hatalar için Hata listesi penceresine bakın.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
@@ -99,7 +99,7 @@ Eksik paketler: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedWithError">
         <source>NuGet package restore failed. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet package restore failed. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">NuGet paketi geri yüklemesi başarısız oldu. Ayrıntılı uyarılar ve hatalar için Hata listesi penceresine bakın.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreOptOutMessage">
@@ -116,7 +116,7 @@ NuGet'in derleme sırasında paketleri geri yüklemesini önlemek için Visual S
       </trans-unit>
       <trans-unit id="RelativeGlobalPackagesFolder">
         <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
-        <target state="new">'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</target>
+        <target state="translated">nuget.config dosyasındaki 'globalPackagesFolder' veya ortam değişkeni '{0}', göreli bir yoldur ve çözüm kaydedilmemiştir. Çözümünüzü kaydedin veya tam yol olan bir 'globalPackagesFolder' yapılandırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoredPackage">
@@ -131,7 +131,7 @@ NuGet'in derleme sırasında paketleri geri yüklemesini önlemek için Visual S
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="new">Solution is not saved. Save your solution before managing NuGet packages.</target>
+        <target state="translated">Çözüm kaydedilmedi. NuGet paketlerini yönetmeden önce çözümünüzü kaydedin.</target>
         <note />
       </trans-unit>
     </body>

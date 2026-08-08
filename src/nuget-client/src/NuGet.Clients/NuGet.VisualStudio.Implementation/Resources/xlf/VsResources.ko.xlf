@@ -85,7 +85,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="InvalidSource">
         <source>The specified source '{0}' is invalid. Provide a valid source.</source>
-        <target state="new">The specified source '{0}' is invalid. Provide a valid source.</target>
+        <target state="translated">지정된 소스 '{0}'이(가) 올바르지 않습니다. 유효한 소스를 제공하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageAssemblyBrowseObjectClassName">
