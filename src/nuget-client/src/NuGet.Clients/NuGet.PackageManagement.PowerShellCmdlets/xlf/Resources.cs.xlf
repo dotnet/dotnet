@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Cmdlet_CommandObsolete">
         <source>This Command/Parameter combination has been deprecated and will be removed in the next release. Consider using the new command that replaces it: '{0}'.</source>
-        <target state="new">This Command/Parameter combination has been deprecated and will be removed in the next release. Consider using the new command that replaces it: '{0}'.</target>
+        <target state="translated">Tahle kombinace příkazu a parametru se už nepoužívá a bude v příští verzi odebraná. Zkuste použít nový příkaz, který ho nahrazuje: {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Cmdlet_DeprecatedFrameworkContinue">
@@ -227,7 +227,7 @@
       </trans-unit>
       <trans-unit id="Host_PSNotInstalled">
         <source>Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Install PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</source>
-        <target state="new">Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Install PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</target>
+        <target state="translated">Chyba: Package Manager Console vyžaduje modul runtime PowerShell 2.0, který se v počítači nenašel. Nainstalujte PowerShell 2.0 z adresy http://support.microsoft.com/kb/968929 a spusťte Visual Studio znovu.</target>
         <note />
       </trans-unit>
       <trans-unit id="PowerShellHostTitle">
@@ -242,12 +242,12 @@
       </trans-unit>
       <trans-unit id="UnknownSource">
         <source>Source '{0}' not found. Provide an HTTP or local source.</source>
-        <target state="new">Source '{0}' not found. Provide an HTTP or local source.</target>
+        <target state="translated">Zdroj {0} se nenašel. Zadejte HTTP nebo místní zdroj.</target>
         <note>{0} is the source</note>
       </trans-unit>
       <trans-unit id="UnknownSourceType">
         <source>Unsupported type of source '{0}'. Provide an HTTP or local source.</source>
-        <target state="new">Unsupported type of source '{0}'. Provide an HTTP or local source.</target>
+        <target state="translated">Nepodporovaný typ zdroje {0}. Zadejte HTTP nebo místní zdroj.</target>
         <note>{0} is the input source.</note>
       </trans-unit>
       <trans-unit id="UnknownSourceWithId">

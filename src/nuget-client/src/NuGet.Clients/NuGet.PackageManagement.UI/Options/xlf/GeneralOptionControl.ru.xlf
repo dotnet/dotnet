@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="BindingRedirectsHeader.Text">
         <source>Binding Redirects</source>
-        <target state="translated">Перенаправления привязок</target>
+        <target state="translated">Перенаправление привязок</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagementHeader.Text">

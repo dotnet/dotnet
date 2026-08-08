@@ -34,12 +34,12 @@
       </trans-unit>
       <trans-unit id="InvalidPortableFrameworksDueToHyphen">
         <source>Invalid portable frameworks '{0}'. A hyphen may not be in any of the portable framework names.</source>
-        <target state="translated">Marcos de trabajo portátiles no válidos "{0}". No puede haber un guion en ninguno de los nombres de marcos de trabajo portátiles.</target>
+        <target state="translated">Marcos de trabajo portables no válidos "{0}". No puede haber un guion en ninguno de los nombres de marcos de trabajo portables.</target>
         <note>{0} is the invalid portable framework string.</note>
       </trans-unit>
       <trans-unit id="MissingPortableFrameworks">
         <source>Invalid portable frameworks for '{0}'. A portable framework must have at least one framework in the profile.</source>
-        <target state="translated">Marcos portátiles no válidos para "{0}". Un marco de trabajo portátil debe tener al menos un marco en el perfil.</target>
+        <target state="translated">Marcos portables no válidos para "{0}". Un marco de trabajo portable debe tener al menos un marco en el perfil.</target>
         <note>{0} is the invalid portable framework string.</note>
       </trans-unit>
     </body>

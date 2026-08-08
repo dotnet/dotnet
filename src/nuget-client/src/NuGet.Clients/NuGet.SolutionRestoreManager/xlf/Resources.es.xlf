@@ -84,7 +84,7 @@ Paquetes que faltan: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
         <source>NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">No se pudo restaurar el paquete de NuGet para el proyecto {0}: {1}. Consulte la ventana Lista de errores para obtener advertencias y errores detallados.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
@@ -99,7 +99,7 @@ Paquetes que faltan: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedWithError">
         <source>NuGet package restore failed. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet package restore failed. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">No se pudo restaurar el paquete de NuGet. Consulte la ventana Lista de errores para obtener advertencias y errores detallados.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreOptOutMessage">
@@ -116,7 +116,7 @@ Para evitar que NuGet restaure paquetes durante la compilación, abra el cuadro 
       </trans-unit>
       <trans-unit id="RelativeGlobalPackagesFolder">
         <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
-        <target state="new">'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</target>
+        <target state="translated">"globalPackagesFolder" del archivo nuget.config o la variable de entorno es "{0}", una ruta de acceso relativa y la solución no se guarda. Guarde la solución o configure un objeto "globalPackagesFolder", que es una ruta de acceso completa.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoredPackage">
@@ -131,7 +131,7 @@ Para evitar que NuGet restaure paquetes durante la compilación, abra el cuadro 
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="new">Solution is not saved. Save your solution before managing NuGet packages.</target>
+        <target state="translated">No se guardó la solución. Guarde la solución antes de administrar paquetes NuGet.</target>
         <note />
       </trans-unit>
     </body>

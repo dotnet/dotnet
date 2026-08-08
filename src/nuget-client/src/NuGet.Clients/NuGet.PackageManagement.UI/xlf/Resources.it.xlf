@@ -374,7 +374,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file.</source>
-        <target state="translated">NuGet richiede origini HTTPS. Per usare un'origine HTTP, devi impostare in modo esplicito "allowInsecureConnections" su "Vero" nel file NuGet.Config.</target>
+        <target state="translated">NuGet richiede origini HTTPS. Per usare un'origine HTTP, è necessario impostare in modo esplicito "allowInsecureConnections" su "true" nel file NuGet.Config.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_MetadataNotFound">
@@ -913,12 +913,12 @@ Errore: {1}</target>
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
-        <target state="new">The name specified has already been added to the list of available package sources. Provide a unique name.</target>
+        <target state="translated">Il nome specificato è già stato aggiunto all'elenco delle origini pacchetto disponibili. Specificare un nome univoco.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
-        <target state="new">The source specified has already been added to the list of available package sources. Provide a unique source.</target>
+        <target state="translated">L'origine specificata è già stata aggiunta all'elenco delle origini pacchetto disponibili. Specificare un'origine univoca.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
@@ -1028,7 +1028,7 @@ Errore: {1}</target>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="new">There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Nessun file README disponibile per la versione del pacchetto selezionata. Per altre informazioni, vedere [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1263,7 +1263,7 @@ Errore: {1}</target>
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
         <source>Follow the instructions at {0} to return to the previous state.</source>
-        <target state="new">Follow the instructions at {0} to return to the previous state.</target>
+        <target state="translated">Seguire le istruzioni riportate in {0} per tornare allo stato precedente.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

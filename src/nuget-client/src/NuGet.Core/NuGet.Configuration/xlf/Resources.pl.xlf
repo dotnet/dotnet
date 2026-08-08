@@ -165,7 +165,7 @@
       </trans-unit>
       <trans-unit id="NoWritteableConfig">
         <source>There is no NuGet.Config that could be used for writing settings. Create one at the desired location and restart the client.</source>
-        <target state="new">There is no NuGet.Config that could be used for writing settings. Create one at the desired location and restart the client.</target>
+        <target state="translated">Brak pliku NuGet.Config, którego można użyć dla ustawień zapisywania. Utwórz taki plik w żądanej lokalizacji, a następnie ponownie uruchom klienta.</target>
         <note />
       </trans-unit>
       <trans-unit id="OwnersItemMustHaveAtLeastOneOwner">

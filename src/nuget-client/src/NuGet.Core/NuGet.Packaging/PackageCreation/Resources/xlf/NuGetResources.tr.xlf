@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="IncompatibleSchema">
         <source>The schema version of '{0}' is incompatible with version {1} of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</source>
-        <target state="new">The schema version of '{0}' is incompatible with version {1} of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</target>
+        <target state="translated">'{0}' şema sürümü NuGet {1} sürümü ile uyumsuz. NuGet'i http://go.microsoft.com/fwlink/?LinkId=213942 adresinden en son sürümüne yükseltin.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPackageId">
@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
         <source>Invalid assembly reference '{0}'. Ensure that a file named '{0}' exists in the lib directory.</source>
-        <target state="translated">Geçersiz derleme başvurusu '{0}'. lib dizininde '{0}' adında bir dosya olduğundan emin olun.</target>
+        <target state="translated">Geçersiz derleme başvurusu '{0}'. Kitaplık dizininde '{0}' adında bir dosya olduğundan emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReferenceFile">

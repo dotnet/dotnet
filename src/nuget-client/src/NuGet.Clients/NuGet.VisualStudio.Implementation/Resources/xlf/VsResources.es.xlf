@@ -80,12 +80,12 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="InvalidNuGetVersionString">
         <source>The provided version string is not a valid nuget version.</source>
-        <target state="translated">La cadena de la versión proporcionada no es una versión nuget válida.</target>
+        <target state="translated">La cadena de la versión proporcionada no es una versión de nuget válida.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidSource">
         <source>The specified source '{0}' is invalid. Provide a valid source.</source>
-        <target state="new">The specified source '{0}' is invalid. Provide a valid source.</target>
+        <target state="translated">El origen "{0}" especificado no es válido. Proporcione un origen válido.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageAssemblyBrowseObjectClassName">

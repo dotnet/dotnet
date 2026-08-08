@@ -184,7 +184,7 @@
       </trans-unit>
       <trans-unit id="Delete_MissingArguments">
         <source>Provide arguments for package id and package version.</source>
-        <target state="new">Provide arguments for package id and package version.</target>
+        <target state="translated">パッケージ ID とパッケージ バージョンの引数を指定してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="Delete_PackageIdAndVersion_Description">
@@ -271,7 +271,7 @@
       </trans-unit>
       <trans-unit id="Error_AssetsFileNotFound">
         <source>No assets file was found for `{0}`. Run restore before running this command.</source>
-        <target state="new">No assets file was found for `{0}`. Run restore before running this command.</target>
+        <target state="translated">`{0}` のアセット ファイルが見つかりませんでした。このコマンドを実行する前に復元を実行してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_CannotObtainSearchSource">
@@ -370,7 +370,7 @@ NuGet には HTTPS ソースが必要です。HTTP ソースを使用するに�
       </trans-unit>
       <trans-unit id="Error_MultipleProjectOrSolutionFilesInDirectory">
         <source>The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</source>
-        <target state="new">The directory '{0}' contains multiple project or solution files. Specify which project or solution file to use.</target>
+        <target state="translated">ディレクトリ '{0}' に複数のプロジェクト ファイルまたはソリューション ファイルが含まれています。使用するプロジェクトまたはソリューション ファイルを指定してください。</target>
         <note>{0} - Directory</note>
       </trans-unit>
       <trans-unit id="Error_NoDgSpec">
@@ -410,7 +410,7 @@ NuGet には HTTPS ソースが必要です。HTTP ソースを使用するに�
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</source>
-        <target state="new">Missing or invalid path '{0}'. Provide a path to a project, solution file, file-based app, or project directory.</target>
+        <target state="translated">パス '{0}' が見つからないか無効です。プロジェクト、ソリューション ファイル、ファイルベースのアプリ、またはプロジェクト ディレクトリへのパスを指定してください。</target>
         <note>{0} - Input path argument</note>
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
@@ -558,12 +558,12 @@ NuGet には HTTPS ソースが必要です。HTTP ソースを使用するに�
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingAssetsFile">
         <source>Unable to read the assets file `{0}`. Make sure the file has the correct format.</source>
-        <target state="new">Unable to read the assets file `{0}`. Make sure the file has the correct format.</target>
+        <target state="translated">アセット ファイル `{0}` を読み取れません。ファイルの形式が正しいことを確認してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_ErrorReadingReferenceFromProject">
         <source>Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore.</source>
-        <target state="new">Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore.</target>
+        <target state="translated">プロジェクト `{0}` からパッケージ参照を読み取れません。復元を実行して、プロジェクト ファイルと project.assets.json ファイルを同期状態にしてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_FrameworkDescription">
@@ -792,9 +792,9 @@ NuGet には HTTPS ソースが必要です。HTTP ソースを使用するに�
         <source>Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
-usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
-For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">同じコマンド内で --list と --clear の両方の操作を使用することはできません。1 つの操作のみを指定してください。
+使用法: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+詳細については、https://docs.nuget.org/docs/reference/command-line-reference にアクセスしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_NoArguments">
@@ -810,9 +810,9 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <source>Specify an operation i.e. --list or --clear.
 usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
 For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Specify an operation i.e. --list or --clear.
-usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
-For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">--list または --clear のいずれかの操作を指定します。
+使用法: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+詳細については、https://docs.nuget.org/docs/reference/command-line-reference にアクセスしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="NoServiceEndpoint_Description">
@@ -1086,7 +1086,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="Push_MissingArguments">
         <source>Specify the path to the package.</source>
-        <target state="new">Specify the path to the package.</target>
+        <target state="translated">パッケージへのパスを指定します。</target>
         <note />
       </trans-unit>
       <trans-unit id="Push_Package_ApiKey_Description">
@@ -1204,7 +1204,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="SignCommandNoTimestamperWarning">
         <source>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools</source>
-        <target state="new">The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools</target>
+        <target state="translated">'--timestamper' オプションが指定されていませんでした。してください署名済みのパッケージにはタイムスタンプが付けられません。このオプションの詳細については、https://docs.microsoft.com/dotnet/core/tools にアクセスしてください</target>
         <note>Please don't localize '--timestamper'</note>
       </trans-unit>
       <trans-unit id="SignCommandOutputDirectoryDescription">
@@ -1394,7 +1394,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">
         <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1})</source>
-        <target state="new">The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1})</target>
+        <target state="translated">パッケージ {0} は、ターゲット フレームワークごとに異なるバージョンのパッケージを参照します。これは、このコマンドではサポートされていません。プロジェクト ファイルを直接編集してください。({1})</target>
         <note>0 - The package id
 1 - The project path</note>
       </trans-unit>
@@ -1493,12 +1493,12 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. Run restore for project '{1}' before running this command.</source>
-        <target state="new">The file '{0}' does not appear to be a NuGet assets file. Run restore for project '{1}' before running this command.</target>
+        <target state="translated">ファイル '{0}' は NuGet 資産ファイルではない可能性があります。このコマンドを実行する前に、プロジェクト '{1}' の復元を実行してください。</target>
         <note>{0} - Assets file path, {1} - Project name</note>
       </trans-unit>
       <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithoutProject">
         <source>The file '{0}' does not appear to be a NuGet assets file. For more information, see https://aka.ms/dotnet/nuget/why#older-project-format</source>
-        <target state="translated">ファイル '{0}' は NuGet アセット ファイルではない可能性があります。詳細については、https://aka.ms/dotnet/nuget/why#older-project-format を参照してください</target>
+        <target state="translated">ファイル '{0}' は NuGet 資産ファイルではない可能性があります。詳しくは、https://aka.ms/dotnet/nuget/why#older-project-format を参照してください</target>
         <note>{0} - Assets file path</note>
       </trans-unit>
       <trans-unit id="WhyCommand_FrameworksOption_Description">

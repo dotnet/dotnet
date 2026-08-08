@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="IncompatibleSchema">
         <source>The schema version of '{0}' is incompatible with version {1} of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</source>
-        <target state="new">The schema version of '{0}' is incompatible with version {1} of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</target>
+        <target state="translated">'{0}' 的結構描述版本與 NuGet 版本 {1} 不相容。從 http://go.microsoft.com/fwlink/?LinkId=213942 將 NuGet 升級為最新版本。</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPackageId">
@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Manifest_InvalidReference">
         <source>Invalid assembly reference '{0}'. Ensure that a file named '{0}' exists in the lib directory.</source>
-        <target state="translated">組件參考 '{0}' 無效。請確定 lib 目錄中存在名稱為 '{0}' 的檔案。</target>
+        <target state="translated">組件參考 '{0}' 無效。請確定程式庫目錄中存在名稱為 '{0}' 的檔案。</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidReferenceFile">

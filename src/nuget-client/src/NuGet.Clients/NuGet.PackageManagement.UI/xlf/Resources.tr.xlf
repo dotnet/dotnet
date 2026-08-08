@@ -599,7 +599,7 @@
       </trans-unit>
       <trans-unit id="Label_MultiplePackageVulnerableVersionToolTip">
         <source>These installed package versions contain vulnerabilities: {0}</source>
-        <target state="translated">Bu kurulu paket sürümleri şu güvenlik açıklarını içeriyor: {0}</target>
+        <target state="translated">Bu yüklü paket sürümleri güvenlik açıkları içeriyor: {0}</target>
         <note>{0} are package versions</note>
       </trans-unit>
       <trans-unit id="Label_NetworkError">
@@ -839,7 +839,7 @@
       </trans-unit>
       <trans-unit id="Preview_PackageUpdate">
         <source>{0} version {1} to {2} version {3}</source>
-        <target state="translated">{0} sürüm {1} - {2} sürüm {3}</target>
+        <target state="translated">{0} kimlikli {1} sürümünden {2} kimlikli {3} sürümüne</target>
         <note>{0} = Old package ID, {1} = Old package version, {2} = New package ID, {3} = New package version</note>
       </trans-unit>
       <trans-unit id="Preview_UnknownProject">
@@ -913,17 +913,17 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
-        <target state="new">The name specified has already been added to the list of available package sources. Provide a unique name.</target>
+        <target state="translated">Belirtilen ad zaten kullanılabilir paket kaynakları listesine eklendi. Benzersiz bir ad sağlayın.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
-        <target state="new">The source specified has already been added to the list of available package sources. Provide a unique source.</target>
+        <target state="translated">Belirtilen kaynak zaten kullanılabilir paket kaynakları listesine eklendi. Benzersiz bir kaynak sağlayın.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Paketleri yükleme işlemi iptal edildi</target>
+        <target state="translated">Paket yükleme iptal edildi</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
@@ -933,7 +933,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Yüklenen paket listesinin sonu</target>
+        <target state="translated">Paket listesinin sonu yüklendi</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
@@ -943,7 +943,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Text_By">
         <source>by</source>
-        <target state="translated">yazar</target>
+        <target state="translated">hazırlayan</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ByAuthor">
@@ -1028,7 +1028,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="new">There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Seçili paket sürümü için kullanılabilir bir BENİOKU dosyası yok. Daha fazla bilgi için [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme) adresini ziyaret edin.</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1263,7 +1263,7 @@ Hata: {1}</target>
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
         <source>Follow the instructions at {0} to return to the previous state.</source>
-        <target state="new">Follow the instructions at {0} to return to the previous state.</target>
+        <target state="translated">Önceki duruma dönmek için {0} adresindeki yönergeleri izleyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

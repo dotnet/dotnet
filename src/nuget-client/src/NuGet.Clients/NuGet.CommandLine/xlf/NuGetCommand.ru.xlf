@@ -141,7 +141,7 @@ nuget client-certs List</target>
       </trans-unit>
       <trans-unit id="CommandInvalidArgumentException">
         <source>Invalid value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Invalid value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Недопустимое значение "{0}". Список допустимых значений см. по адресу https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="CommandMSBuildPath">
@@ -527,7 +527,7 @@ nuget locals global-packages -list</target>
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
         <source>NoCache is deprecated and has been renamed to NoHttpCache. Use NoHttpCache instead.</source>
-        <target state="new">NoCache is deprecated and has been renamed to NoHttpCache. Use NoHttpCache instead.</target>
+        <target state="translated">NoCache больше не рекомендуется к использованию и переименован в NoHttpCache. Вместо этого используйте NoHttpCache.</target>
         <note>Do not translate NoCache and NoHttpCache</note>
       </trans-unit>
       <trans-unit id="Option_ConfigFile">
@@ -922,14 +922,14 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
       <trans-unit id="SignCommandCertificateFingerprintDescription">
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">Отпечаток сертификата SHA-256, SHA-384 или SHA-512, используемый для поиска сертификата в локальном хранилище.
+        <target state="translated">Отпечаток сертификата SHA-256, SHA-384 или SHA-512, который используется для поиска сертификата в локальном хранилище сертификатов.
 Хранилище сертификатов можно указать с помощью параметров -CertificateStoreName и -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificatePasswordDescription">
         <source>Password for the certificate, if needed.
 This option can be used to specify the password for the certificate. If no password is provided, the command will prompt for a password at run time, unless the -NonInteractive option is passed.</source>
-        <target state="translated">Пароль для сертификата, если необходимо.
+        <target state="translated">Пароль для сертификата, если необходим.
 Этот параметр можно использовать для указания пароля для сертификата. Если пароль не указан, команда запросит пароль во время выполнения, если не передан параметр -NonInteractive.</target>
         <note />
       </trans-unit>
@@ -941,15 +941,15 @@ This option can be used to specify the password for the certificate. If no passw
       <trans-unit id="SignCommandCertificateStoreLocationDescription">
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Имя хранилища сертификатов X.509, используемое для поиска сертификата. По умолчанию используется "CurrentUser", хранилище сертификатов X.509 для данного пользователя.
-Этот параметр следует использовать при задании сертификата с помощью параметров -CertificateSubjectName или -CertificateFingerprint.</target>
+        <target state="translated">Имя хранилища сертификатов X.509, используемое для поиска сертификата. По умолчанию используется "CurrentUser", хранилище сертификатов X.509, используемое текущим пользователем.
+Этот параметр следует использовать при указании сертификата с помощью параметров -CertificateSubjectName или -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Имя хранилища сертификатов X.509, используемое для поиска сертификата. По умолчанию используется "My", хранилище сертификатов X.509 для персональных сертификатов.
-Этот параметр следует использовать при задании сертификата с помощью параметров -CertificateSubjectName или -CertificateFingerprint.</target>
+        <target state="translated">Название хранилища сертификатов X.509, которое следует использовать для поиска сертификата. По умолчанию используется "My", хранилище сертификатов X.509 для персональных сертификатов.
+Этот параметр следует использовать при указании сертификата с помощью параметров -CertificateSubjectName или -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateSubjectNameDescription">
@@ -957,7 +957,7 @@ This option should be used when specifying the certificate via -CertificateSubje
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
         <target state="translated">Имя субъекта сертификата, используемое для поиска сертификата в локальном хранилище сертификатов. 
-Поиск производится сравнением строк без учета регистра с предоставленным значением. Будут обнаружены все сертификаты с именем субъекта, содержащим эту строку, независимо от значений других субъектов.
+Поиск представляет собой сравнение строк без учета регистра с использованием предоставленного значения, которое найдет все сертификаты с именем субъекта, содержащим эту строку, независимо от других значений субъекта.
 Хранилище сертификатов можно указать с помощью параметров -CertificateStoreName и -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
@@ -987,33 +987,33 @@ nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -Outp
       </trans-unit>
       <trans-unit id="SignCommandMissingArgumentException">
         <source>No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Не указано значение для "{0}" необходимое при использовании параметра "{1}". Список допустимых значений см. по адресу https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note>0 - primary param name
 1 - other param name</note>
       </trans-unit>
       <trans-unit id="SignCommandMultipleCertificateException">
         <source>Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Для указания сертификата использовалось несколько вариантов. Допустимые способы предоставления сертификатов см. на странице https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoArgumentException">
         <source>No value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Не указано значение для "{0}". Список допустимых значений см. по адресу https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="SignCommandNoCertificateException">
         <source>No certificate was provided. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No certificate was provided. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Сертификат не предоставлен. Допустимые способы предоставления сертификатов см. на странице https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoPackageException">
         <source>No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">Пакет не указан. Список допустимых способов предоставления пакета можно найти по адресу https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoTimestamperWarning">
         <source>The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">The '-Timestamper' option was not provided. The signed package will not be timestamped. Чтобы узнать больше об этом параметре, посетите страницу https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandOutputDirectoryDescription">

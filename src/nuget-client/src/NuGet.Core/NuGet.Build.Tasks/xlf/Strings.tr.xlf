@@ -118,7 +118,7 @@
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
         <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</source>
-        <target state="new">RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</target>
+        <target state="translated">RestoreNoCache kullanım dışı bırakıldı ve RestoreNoHttpCache olarak yeniden adlandırıldı. Bunun yerine RestoreNoHttpCache kullanın.</target>
         <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
       </trans-unit>
       <trans-unit id="Log_RunningStaticGraphRestoreCommand">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="NoCompatibleTargetFramework">
         <source>Project '{0}' targets '{2}'. It cannot be referenced by a project that targets '{1}'.</source>
-        <target state="translated">Proje '{0}'hedefleri'{2}'.  '{1}' öğesini hedefleyen bir proje tarafından başvurulamaz.</target>
+        <target state="translated">'{0}' projesi '{2}' çerçevesini hedefliyor. Buna, '{1}' çerçevesini hedefleyen bir proje tarafından başvurulamaz.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectsProvidedToTask">

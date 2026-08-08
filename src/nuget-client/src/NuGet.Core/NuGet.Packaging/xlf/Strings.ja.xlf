@@ -316,7 +316,7 @@
       </trans-unit>
       <trans-unit id="FailToLoadPackagesConfig">
         <source>Failed to load packages.config as XML file. Check that it is valid.</source>
-        <target state="new">Failed to load packages.config as XML file. Check that it is valid.</target>
+        <target state="translated">packages.config を XML ファイルとして読み込むことができませんでした。有効であることを確認してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="FailToWritePackagesConfig">
@@ -654,7 +654,7 @@
       </trans-unit>
       <trans-unit id="PackageMinVersionNotSatisfied">
         <source>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget</source>
-        <target state="new">The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget</target>
+        <target state="translated">'{0}' パッケージを使用するには NuGet クライアントのバージョンが '{1}' 以上でなければなりませんが、現在の NuGet バージョンは '{2}' です。NuGet をアップグレードするには、https://docs.nuget.org/consume/installing-nuget にアクセスしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageSignatureVerificationLog">
@@ -786,7 +786,7 @@
       </trans-unit>
       <trans-unit id="SignedPackageAlreadySigned">
         <source>The package already contains a signature. Remove the existing signature before adding a new signature.</source>
-        <target state="new">The package already contains a signature. Remove the existing signature before adding a new signature.</target>
+        <target state="translated">パッケージには、既に署名が含まれています。新しい署名を追加する前に、既存の署名を削除してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignedPackageArchiveIOExtraRead">
@@ -811,12 +811,12 @@
       </trans-unit>
       <trans-unit id="SignedPackagePackageAlreadyCountersigned">
         <source>The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.</source>
-        <target state="new">The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.</target>
+        <target state="translated">パッケージには、既にリポジトリ副署名が含まれています。新しいリポジトリ副署名を追加する前に既存の署名を削除してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignedPackageUnableToAccessSignature">
         <source>The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</source>
-        <target state="new">The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</target>
+        <target state="translated">パッケージが、署名操作を実行するための正しい方法で開かれませんでした。パッケージの署名属性にアクセスするには、ストリームベースのコンストラクターを使用してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="SigningCannotBeDoneInPlace">
