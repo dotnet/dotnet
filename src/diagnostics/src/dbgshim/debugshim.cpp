@@ -64,10 +64,6 @@ static HRESULT OpenCorDebugProcessWithProvider(
     IUnknown** ppProcess,
     CLR_DEBUGGING_PROCESS_FLAGS* pFlags);
 static VOID RetargetDacIfNeeded(DWORD* pdwTimeStamp, DWORD* pdwSizeOfImage);
-static HRESULT SelectActivationResult(
-    HRESULT cdacHr,
-    HRESULT fallbackHr,
-    bool cdacEvaluated);
 static HRESULT TryGetContractDescriptorAddress(
     ULONG64 moduleBaseAddress,
     IUnknown* pDataTarget,
@@ -302,9 +298,10 @@ static HRESULT OpenCorDebugProcessWithCDac(
     CLR_DEBUGGING_PROCESS_FLAGS* pFlags)
 {
     SString dbiModulePath;
-    if (!GetDbiPath(dbiModulePath))
+    SString cdacModulePath;
+    if (!GetCDacAndDbiPaths(cdacModulePath, dbiModulePath))
     {
-        return E_FAIL;
+        return CORDBG_E_DEBUG_COMPONENT_MISSING;
     }
 
     HMODULE hDbi = LoadLibraryW(dbiModulePath);
@@ -320,19 +317,14 @@ static HRESULT OpenCorDebugProcessWithCDac(
         return CORDBG_E_MISSING_DEBUGGER_EXPORTS;
     }
 
-    SString cdacModulePath;
-    HRESULT hr = E_FAIL;
-    if (GetCDacPath(cdacModulePath))
-    {
-        hr = ovpFn(
-            moduleBaseAddress,
-            pDataTarget,
-            cdacModulePath,
-            pMaxDebuggerSupportedVersion,
-            riidProcess,
-            ppProcess,
-            pFlags);
-    }
+    HRESULT hr = ovpFn(
+        moduleBaseAddress,
+        pDataTarget,
+        cdacModulePath,
+        pMaxDebuggerSupportedVersion,
+        riidProcess,
+        ppProcess,
+        pFlags);
 
     if (SUCCEEDED(hr) && ppProcess != NULL && *ppProcess == NULL)
     {
@@ -712,13 +704,11 @@ static HRESULT LoadResolvedLibraries(
     return hr;
 }
 
-// Selects the final HRESULT after the cDAC and/or fallback activation attempts have run.
-//   - A cDAC success wins, then a fallback success.
-//   - On total failure, if the cDAC was evaluated (any policy other than LegacyDacOnly) its error
-//     is surfaced so tools can log why the cDAC rejected the target.
-//   - Otherwise (LegacyDacOnly) the fallback error is surfaced. Callers seed fallbackHr with
-//     E_POINTER so the LegacyDacOnly no-provider case preserves its historical HRESULT.
-static HRESULT SelectActivationResult(
+// Picks the final HRESULT after a cDAC attempt (cdacHr) and a legacy fallback attempt (fallbackHr).
+// On total failure the cDAC error is surfaced when it was attempted so tools can log why the cDAC
+// rejected the target. E_NOTIMPL does not describe a target rejection, so the fallback error is more
+// actionable in that case.
+HRESULT SelectActivationResult(
     HRESULT cdacHr,
     HRESULT fallbackHr,
     bool cdacEvaluated)
@@ -731,7 +721,7 @@ static HRESULT SelectActivationResult(
     {
         return fallbackHr;
     }
-    if (cdacEvaluated)
+    if (cdacEvaluated && cdacHr != E_NOTIMPL)
     {
         return cdacHr;
     }
@@ -1203,7 +1193,7 @@ static bool GetDbiPath(SString& dbiPath)
 {
     return GetBundledLibraryPath(
         W("DOTNET_DBI_PATH"),
-        MAKEDLLNAME_W(MAIN_DBI_MODULE_NAME_W),
+        MAKEDLLNAME_W(UNIVERSAL_DBI_MODULE_NAME_W),
         dbiPath);
 }
 
@@ -1213,6 +1203,30 @@ static bool GetCDacPath(SString& cdacPath)
         W("DOTNET_CDAC_PATH"),
         MAKEDLLNAME_W(CORECLR_CDAC_MODULE_NAME_W),
         cdacPath);
+}
+
+bool GetCDacAndDbiPaths(SString& cdacPath, SString& dbiPath)
+{
+    SString resolvedDbiPath;
+    SString resolvedCDacPath;
+    if (!GetDbiPath(resolvedDbiPath) || !GetCDacPath(resolvedCDacPath))
+    {
+        return false;
+    }
+
+    DWORD dbiAttributes = GetFileAttributesW(resolvedDbiPath);
+    DWORD cdacAttributes = GetFileAttributesW(resolvedCDacPath);
+    if (dbiAttributes == INVALID_FILE_ATTRIBUTES ||
+        (dbiAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0 ||
+        cdacAttributes == INVALID_FILE_ATTRIBUTES ||
+        (cdacAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+    {
+        return false;
+    }
+
+    cdacPath.Set(resolvedCDacPath);
+    dbiPath.Set(resolvedDbiPath);
+    return true;
 }
 
 // Loads the given DAC/cDAC module and creates the requested data-access interface from it by
@@ -1464,23 +1478,23 @@ static bool IsDataAccessInterface(REFIID riid)
     return riid == IID_IXCLRDataProcess_Local || riid == IID_ISOSDacInterface_Local;
 }
 
-STDMETHODIMP CLRDebuggingImpl::SetCDacLoadPolicy(DWORD policy)
+STDMETHODIMP CLRDebuggingImpl::SetCDacLoadPolicy(CDacLoadPolicy policy)
 {
     if (policy > CDacLoadPolicy_LegacyDacOnly)
     {
         return E_INVALIDARG;
     }
-    m_cdacLoadPolicy = (CDacLoadPolicy)policy;
+    m_cdacLoadPolicy = policy;
     return S_OK;
 }
 
-STDMETHODIMP CLRDebuggingImpl::GetCDacLoadPolicy(DWORD* pPolicy)
+STDMETHODIMP CLRDebuggingImpl::GetCDacLoadPolicy(CDacLoadPolicy* pPolicy)
 {
     if (pPolicy == NULL)
     {
         return E_POINTER;
     }
-    *pPolicy = (DWORD)m_cdacLoadPolicy;
+    *pPolicy = m_cdacLoadPolicy;
     return S_OK;
 }
 
