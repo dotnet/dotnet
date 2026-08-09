@@ -3,6 +3,7 @@
 
 using Azure.Core;
 using Azure.Identity;
+using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -61,6 +62,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public string LocalViewVisibility { get; set; } = "collection";
 
+        public IRetryHandler FeedReadinessRetryHandler = GeneralUtils.CreateDefaultRetryHandler();
+
         /// <summary>
         /// Number of characters from the commit SHA prefix that should be included in the feed name.
         /// </summary>
@@ -74,6 +77,65 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public override bool Execute()
         {
             return ExecuteAsync().GetAwaiter().GetResult();
+        }
+
+        public async Task<bool> WaitForFeedReadyAsync(
+            string feedUrl,
+            HttpClient httpClient,
+            IRetryHandler retryHandler)
+        {
+            HttpStatusCode? lastStatusCode = null;
+            Exception lastException = null;
+
+            bool success = await retryHandler.RunAsync(async attempt =>
+            {
+                try
+                {
+                    using HttpResponseMessage response = await httpClient.GetAsync(feedUrl);
+                    lastStatusCode = response.StatusCode;
+                    lastException = null;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RetryResult.Success;
+                    }
+
+                    Log.LogMessage(
+                        MessageImportance.Low,
+                        $"Feed '{feedUrl}' is not ready for publishing. Attempt {attempt + 1} returned HTTP {(int)response.StatusCode} ({response.StatusCode}).");
+
+                    TimeSpan? retryAfter = response.Headers.RetryAfter?.Delta;
+                    if (retryAfter == null && response.Headers.RetryAfter?.Date is DateTimeOffset retryDate)
+                    {
+                        retryAfter = retryDate - DateTimeOffset.UtcNow;
+                        if (retryAfter < TimeSpan.Zero)
+                        {
+                            retryAfter = TimeSpan.Zero;
+                        }
+                    }
+
+                    return RetryResult.Retry(retryAfter);
+                }
+                catch (Exception e) when (e is HttpRequestException || e is TaskCanceledException)
+                {
+                    lastStatusCode = null;
+                    lastException = e;
+                    Log.LogMessage(
+                        MessageImportance.Low,
+                        $"Feed '{feedUrl}' is not ready for publishing. Attempt {attempt + 1} failed: {e.Message}");
+                    return RetryResult.Retry();
+                }
+            });
+
+            if (!success)
+            {
+                string failure = lastStatusCode is HttpStatusCode statusCode
+                    ? $"HTTP {(int)statusCode} ({statusCode})"
+                    : lastException?.Message ?? "an unknown error";
+                Log.LogError($"Feed '{feedUrl}' was created, but did not become ready for publishing after retrying. Last failure: {failure}.");
+            }
+
+            return success;
         }
 
         private async Task<bool> ExecuteAsync()
@@ -183,7 +245,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 TargetFeedURL = $"https://pkgs.dev.azure.com/{AzureDevOpsOrg}/{AzureDevOpsProject}/_packaging/{baseFeedName}/nuget/v3/index.json";
                 TargetFeedName = baseFeedName;
 
-                Log.LogMessage(MessageImportance.High, $"Feed '{TargetFeedURL}' created successfully!");
+                Log.LogMessage(MessageImportance.High, $"Feed '{TargetFeedURL}' created. Waiting for publishing permissions to become effective...");
+                using (HttpClient readinessClient = new HttpClient(new HttpClientHandler { CheckCertificateRevocationList = true }))
+                {
+                    readinessClient.DefaultRequestHeaders.Authorization = GeneralUtils.CreateAzdoAuthHeader(AzureDevOpsPersonalAccessToken);
+                    if (!await WaitForFeedReadyAsync(TargetFeedURL, readinessClient, FeedReadinessRetryHandler))
+                    {
+                        return false;
+                    }
+                }
+
+                Log.LogMessage(MessageImportance.High, $"Feed '{TargetFeedURL}' created successfully and is ready for publishing!");
             }
             catch (Exception e)
             {

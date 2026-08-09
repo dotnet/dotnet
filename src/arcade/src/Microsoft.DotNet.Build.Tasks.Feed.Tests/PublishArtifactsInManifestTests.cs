@@ -288,8 +288,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             {
                 InternalBuild = true,
                 BuildEngine = buildEngine,
-                MaxRetryCount = 5, // In case the default changes, lock to 5 so the test data works
-                RetryDelayMilliseconds = 10 // retry faster in test
+                MaxRetryCount = 5,
+                RetryHandler = new ExponentialRetry
+                {
+                    MaxAttempts = 5,
+                    DelayBase = 1
+                }
             };
             TargetFeedConfig config = new TargetFeedConfig(TargetFeedContentType.Package, "testUrl", FeedType.AzDoNugetFeed, "tokenValue");
 
@@ -432,6 +436,49 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             {
                 throw new HttpRequestException("Connection reset by peer.");
             }
+        }
+
+        [Fact]
+        public async Task PushNugetPackageUsesExponentialRetryForFailedUploads()
+        {
+            var buildEngine = new MockBuildEngine();
+            var retryDelays = new List<TimeSpan>();
+            var task = new PublishArtifactsInManifestV3
+            {
+                InternalBuild = true,
+                BuildEngine = buildEngine,
+                MaxRetryCount = 3,
+                RetryHandler = new ExponentialRetry
+                {
+                    MaxAttempts = 3,
+                    DelayBase = 1,
+                    RetryDelayCallback = (_, delay) => retryDelays.Add(delay)
+                }
+            };
+            var config = new TargetFeedConfig(TargetFeedContentType.Package, "testUrl", FeedType.AzDoNugetFeed, "tokenValue");
+            var testPackagePath = TestInputs.GetFullPath(Path.Combine("Nupkgs", "test-package-a.1.0.0.nupkg"));
+            int attempts = 0;
+
+            await task.PushNugetPackageAsync(
+                config,
+                null,
+                testPackagePath,
+                "1234",
+                "version",
+                "feedaccount",
+                "feedvisibility",
+                "feedname",
+                AttemptPushPackageCallback: (_, _, _, _) =>
+                {
+                    attempts++;
+                    return Task.FromResult(attempts == 3
+                        ? NuGetFeedUploadPackageResult.Success
+                        : NuGetFeedUploadPackageResult.Failed);
+                });
+
+            attempts.Should().Be(3);
+            retryDelays.Should().HaveCount(2);
+            buildEngine.BuildErrorEvents.Should().BeEmpty();
         }
 
 

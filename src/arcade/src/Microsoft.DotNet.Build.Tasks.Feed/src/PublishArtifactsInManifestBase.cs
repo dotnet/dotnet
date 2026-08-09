@@ -1636,11 +1636,23 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             try
             {
                 Log.LogMessage(MessageImportance.Normal, $"Pushing package {id}@{version} to target feed {feedConfig.TargetURL}");
-                int attemptIndex = 0;
-
-                do
+                var packagePushRetryHandler = new ExponentialRetry
                 {
-                    attemptIndex++;
+                    MaxAttempts = MaxRetryCount,
+                    DelayBase = RetryHandler.DelayBase,
+                    DelayConstant = RetryHandler.DelayConstant,
+                    MinRandomFactor = RetryHandler.MinRandomFactor,
+                    MaxRandomFactor = RetryHandler.MaxRandomFactor,
+                    MaximumDelay = RetryHandler.MaximumDelay,
+                    RetryDelayCallback = RetryHandler.RetryDelayCallback,
+                    DefaultCancellationToken = RetryHandler.DefaultCancellationToken
+                };
+                int attemptsMade = 0;
+
+                await packagePushRetryHandler.RunAsync(async attempt =>
+                {
+                    int attemptIndex = attempt + 1;
+                    attemptsMade = attemptIndex;
                     string feedUri = $"https://pkgs.dev.azure.com/{feedAccount}/{feedVisibility}_packaging/{feedName}/nuget/v2";
 
                     NuGetFeedUploadPackageResult result;
@@ -1654,7 +1666,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     {
                         // We have just pushed this package so we know it exists and is identical to our local copy
                         packageStatus = PackageFeedStatus.ExistsAndIdenticalToLocal;
-                        break;
+                        return RetryResult.Success;
                     }
                     else if (result == NuGetFeedUploadPackageResult.AlreadyExists)
                     {
@@ -1669,34 +1681,31 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             case PackageFeedStatus.ExistsAndIdenticalToLocal:
                                 {
                                     Log.LogMessage(MessageImportance.Normal, $"Package '{localPackageLocation}' already exists on '{feedConfig.TargetURL}' but has the same content; skipping push");
-                                    break;
+                                    return RetryResult.Success;
                                 }
                             case PackageFeedStatus.ExistsAndDifferent:
                                 {
                                     Log.LogError($"Package '{localPackageLocation}' already exists on '{feedConfig.TargetURL}' with different content.");
-                                    break;
+                                    return RetryResult.Success;
                                 }
                             default:
                                 {
-                                    // For either case (unknown exception or 404, we will retry the push and check again.  Linearly increase back-off time on each retry.
-                                    Log.LogMessage(MessageImportance.Low, $"Hit error checking package status after failed push: '{packageStatus}'. Will retry after {RetryDelayMilliseconds * attemptIndex} ms.");
-                                    await Task.Delay(RetryDelayMilliseconds * attemptIndex).ConfigureAwait(false);
-                                    break;
+                                    Log.LogMessage(MessageImportance.Low, $"Hit error checking package status after failed push: '{packageStatus}'. Will retry with exponential backoff.");
+                                    return RetryResult.Retry();
                                 }
                         }
                     }
                     else
                     {
                         packageStatus = PackageFeedStatus.Unknown;
+                        Log.LogMessage(MessageImportance.Low, $"Attempt # {attemptIndex} failed to push {localPackageLocation}. Will retry with exponential backoff.");
+                        return RetryResult.Retry();
                     }
-                }
-                while (packageStatus != PackageFeedStatus.ExistsAndIdenticalToLocal && // Success
-                       packageStatus != PackageFeedStatus.ExistsAndDifferent &&        // Give up: Non-retriable error
-                       attemptIndex <= MaxRetryCount);                                              // Give up: Too many retries
+                });
 
                 if (packageStatus != PackageFeedStatus.ExistsAndIdenticalToLocal)
                 {
-                    Log.LogError($"Failed to publish package '{id}@{version}' to '{feedConfig.TargetURL}' after {MaxRetryCount} attempts. (Final status: {packageStatus})");
+                    Log.LogError($"Failed to publish package '{id}@{version}' to '{feedConfig.TargetURL}' after {attemptsMade} attempts. (Final status: {packageStatus})");
                 }
                 else
                 {
