@@ -168,10 +168,6 @@
     <!-- emscripten workload package when testing workloads -->
     <!-- we're using MicrosoftDotNetApiCompatTaskPackageVersion since the emscripten workload package ID contains a changing version. This one uses sdk-style feature band version numbers. -->
     <MicrosoftNETRuntimeEmscriptenVersion>$(MicrosoftDotNetApiCompatTaskPackageVersion)</MicrosoftNETRuntimeEmscriptenVersion>
-    <!-- The emsdk package IDs contain the Emscripten version and the RID, so we track their version through the
-         Internal package instead, which emsdk versions identically to all of the packages we actually reference.
-         This also makes a VMR build flow in the version of the emsdk it just built. -->
-    <EmsdkPackageVersion>$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</EmsdkPackageVersion>
     <NodePackageVersion>$(runtimewinx64MicrosoftNETCoreRuntimeWasmNodeTransportPackageVersion)</NodePackageVersion>
     <!-- The package path for python in src/mono/mono.proj needs to be updated if this changes-->
     <EmsdkVersion>6.0.2</EmsdkVersion>
