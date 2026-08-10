@@ -25,6 +25,7 @@ Param(
   [switch][Alias('cwb')]$cleanWhileBuilding,
   [switch][Alias('nobl')]$excludeCIBinarylog,
   [bool]$nodeReuse,
+  [bool][Alias('mt')]$msbuildMultiThreaded = $false,
   [switch]$prepareMachine,
   [string]$projects,
   [bool] $warnAsError = $true,
@@ -62,6 +63,7 @@ function Get-Usage() {
   Write-Host "  -cleanWhileBuilding         Cleans each repo after building (reduces disk space usage, short: -cwb)"
   Write-Host "  -excludeCIBinarylog         Don't output binary log (short: -nobl)"
   Write-Host "  -nodeReuse <value>          Sets nodereuse msbuild parameter ('true' or 'false')"
+  Write-Host "  -msbuildMultiThreaded <value> Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('1' or '0') (short: -mt)"
   Write-Host "  -prepareMachine             Prepare machine for CI run, clean up processes after build"
   Write-Host "  -projects <value>           Project or solution file to build"
   Write-Host "  -warnAsError <value>        Sets warnaserror msbuild parameter ('true' or 'false')"
@@ -79,9 +81,6 @@ $actions = @("/p:Restore=true", "/p:Build=true", "/p:Publish=true")
 
 if ($test) {
   $actions = @("/p:Restore=true", "/p:Build=true", "/p:Test=true", "/p:IsTestRun=true")
-
-  # Workaround for vstest hangs: https://github.com/microsoft/vstest/issues/10760
-  $env:MSBUILDENSURESTDOUTFORTASKPROCESSES="1"
 }
 
 $arguments = @()
@@ -98,6 +97,9 @@ if ($buildRepoTests) { $arguments += "/p:DotNetBuildTests=true" }
 if ($cleanWhileBuilding) { $arguments += "/p:CleanWhileBuilding=true" }
 if ($branding) { $arguments += "/p:RepoDotNetFinalVersionKind=$branding" }
 if ($officialBuildId) { $arguments += "/p:OfficialBuildId=$officialBuildId" }
+# Flow the explicit choices down to the individual repo builds as well.
+if ($PSBoundParameters.ContainsKey('msbuildMultiThreaded')) { $arguments += "/p:DotNetBuildMT=$msbuildMultiThreaded" }
+if ($PSBoundParameters.ContainsKey('nodeReuse')) { $arguments += "/p:DotNetBuildNodeReuse=$nodeReuse" }
 
 function Build {
   $toolsetBuildProj = InitializeToolset
@@ -127,7 +129,10 @@ try {
     if (-not $excludeCIBinarylog) {
       $binaryLog = $true
     }
-    $nodeReuse = $false
+    # Node reuse isn't used on CI unless it was explicitly requested via -nodeReuse.
+    if (-not $PSBoundParameters.ContainsKey('nodeReuse')) {
+      $nodeReuse = $false
+    }
   }
 
   Build
