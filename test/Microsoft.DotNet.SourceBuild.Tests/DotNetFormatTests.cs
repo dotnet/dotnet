@@ -3,7 +3,6 @@
 
 using System.IO;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 

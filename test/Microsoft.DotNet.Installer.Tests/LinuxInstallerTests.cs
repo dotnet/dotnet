@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.DotNet.Build.Tasks.Installers;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Formats.Tar;
@@ -16,9 +15,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.Installer.Tests;
 
@@ -106,8 +103,8 @@ public partial class LinuxInstallerTests : IDisposable
     private const int RpmFileGhost = 1 << 6;
     private const int RpmTransFileTriggerNameTag = 5079;
 
-    public static bool IncludeRpmTests => Config.TestRpmPackages;
-    public static bool IncludeDebTests => Config.TestDebPackages;
+    public static bool ExcludeRpmTests => !Config.TestRpmPackages;
+    public static bool ExcludeDebTests => !Config.TestDebPackages;
 
     private enum PackageType
     {
@@ -141,7 +138,7 @@ public partial class LinuxInstallerTests : IDisposable
         }
     }
 
-    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    [Theory(Skip = "RPM package testing is not enabled", SkipWhen = nameof(ExcludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
     public async Task RpmScenarioTest(string repo, string tag)
     {
@@ -156,7 +153,7 @@ public partial class LinuxInstallerTests : IDisposable
         DistroTest($"{repo}:{tag}", PackageType.Rpm);
     }
 
-    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    [Theory(Skip = "Debian package testing is not enabled", SkipWhen = nameof(ExcludeDebTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebScenarioTest(string repo, string tag)
     {
@@ -165,7 +162,7 @@ public partial class LinuxInstallerTests : IDisposable
         DistroTest($"{repo}:{tag}", PackageType.Deb);
     }
 
-    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    [Theory(Skip = "RPM package testing is not enabled", SkipWhen = nameof(ExcludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
     public async Task RpmPackageMetadataTest(string repo, string tag)
     {
@@ -174,7 +171,7 @@ public partial class LinuxInstallerTests : IDisposable
         ValidatePackageMetadata($"{repo}:{tag}", PackageType.Rpm);
     }
 
-    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    [Theory(Skip = "Debian package testing is not enabled", SkipWhen = nameof(ExcludeDebTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-noble")]
     public async Task DebPackageMetadataTest(string repo, string tag)
     {
@@ -188,7 +185,7 @@ public partial class LinuxInstallerTests : IDisposable
     /// </summary>
     /// <param name="image">The container image used to exercise the RPM package lifecycle.</param>
     /// <returns>A task that represents the asynchronous test operation.</returns>
-    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    [Theory(Skip = "RPM package testing is not enabled", SkipWhen = nameof(ExcludeRpmTests))]
     [InlineData("mcr.microsoft.com/azurelinux/base/core:3.0")]
     public async Task RpmDnxPackageLifecycleTest(string image)
     {
@@ -202,7 +199,7 @@ public partial class LinuxInstallerTests : IDisposable
     /// </summary>
     /// <param name="image">The container image used to exercise the Debian package lifecycle.</param>
     /// <returns>A task that represents the asynchronous test operation.</returns>
-    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    [Theory(Skip = "Debian package testing is not enabled", SkipWhen = nameof(ExcludeDebTests))]
     [InlineData("debian:bookworm")]
     public async Task DebDnxPackageLifecycleTest(string image)
     {
@@ -211,13 +208,13 @@ public partial class LinuxInstallerTests : IDisposable
         DnxPackageLifecycleTest(image, PackageType.Deb);
     }
 
-    [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    [Fact(Skip = "RPM package testing is not enabled", SkipWhen = nameof(ExcludeRpmTests))]
     public void ValidateRpmPackageList()
     {
         ValidatePackageList(PackageType.Rpm);
     }
 
-    [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    [Fact(Skip = "Debian package testing is not enabled", SkipWhen = nameof(ExcludeDebTests))]
     public void ValidateDebPackageList()
     {
         ValidatePackageList(PackageType.Deb);

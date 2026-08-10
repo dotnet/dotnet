@@ -40,8 +40,10 @@
 
   <!-- External dependencies -->
   <ItemGroup>
-    <PackageVersion Include="xunit.extensibility.core" Version="$(XUnitVersion)" />
-    <PackageVersion Include="xunit.extensibility.execution" Version="$(XUnitVersion)" />
+    <PackageVersion Include="xunit.v3" Version="$(XUnitV3Version)" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="$(XUnitV3Version)" />
+    <!-- Pulled in transitively by xunit.v3. Pin it forward. -->
+    <PackageVersion Include="Microsoft.Testing.Platform.MSBuild" Version="$(MicrosoftTestingPlatformVersion)" />
   </ItemGroup>
 
 </Project>

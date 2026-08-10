@@ -3,7 +3,43 @@
   <Import Project="..\Directory.Build.props" />
 
   <PropertyGroup>
-    <VSTestResultsDirectory>$(ArtifactsTestResultsDir)</VSTestResultsDirectory>
+    <IsTestProject Condition="'$(IsTestProject)' == '' and $(MSBuildProjectName.EndsWith('.Tests'))">true</IsTestProject>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+    <!-- xUnit.net v3 test projects are self-executing applications. -->
+    <OutputType>Exe</OutputType>
+    <IsTestingPlatformApplication>true</IsTestingPlatformApplication>
+    <!-- Make the generated entry point run tests through Microsoft.Testing.Platform. Without this xunit
+         generates one that falls back to its own in-process console runner, which doesn't understand any
+         of the MTP arguments below. -->
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+
+    <!-- Write test reports alongside the rest of the build output instead of MTP's default of a TestResults
+         folder next to the test binaries. The trailing slash is trimmed as it would otherwise escape the
+         closing quote of the argument. -->
+    <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --results-directory "$(ArtifactsTestResultsDir.TrimEnd('\/'))"</TestingPlatformCommandLineArguments>
+
+    <!-- Emit the reports that CI publishes. MTP doesn't produce any by default, and every pipeline that
+         publishes results from this repo globs for trx. These writers are xunit's own, so no additional
+         Microsoft.Testing.Extensions.* package is needed. -->
+    <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --report-xunit-trx --report-xunit-trx-filename "$(MSBuildProjectName).trx"</TestingPlatformCommandLineArguments>
+    <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --report-xunit-xml --report-xunit-xml-filename "$(MSBuildProjectName).xml"</TestingPlatformCommandLineArguments>
+    <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --report-xunit-html --report-xunit-html-filename "$(MSBuildProjectName).html"</TestingPlatformCommandLineArguments>
+
+    <!-- Many of these tests are conditional on the build configuration (i.e. source-only, official build,
+         availability of an SDK archive). Don't fail the run when all of a project's tests end up being
+         skipped, which MTP otherwise reports via exit code 8 (zero tests ran). -->
+    <TestingPlatformCommandLineArguments>$(TestingPlatformCommandLineArguments) --ignore-exit-code 8</TestingPlatformCommandLineArguments>
+
+    <!-- Report which tests failed and why. MTP otherwise logs a single error pointing at a log file that
+         isn't part of the published artifacts, which makes CI failures undiagnosable from the build log.
+         This only adds output for tests that actually fail, so a passing run stays as quiet as before. -->
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
 
 </Project>

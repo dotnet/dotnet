@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <DefaultExcludesInProjectFolder>$(DefaultExcludesInProjectFolder);assets/**/*</DefaultExcludesInProjectFolder>
-    <VSTestLogger>console%3bverbosity=normal;trx%3bverbosity=diagnostic%3bLogFileName=$(MSBuildProjectName).trx</VSTestLogger>
-    <VSTestCLIRunSettings Condition="'$(DotnetTool)' != ''">$(VSTestCLIRunSettings);RunConfiguration.DotNetHostPath=$(DotnetTool)</VSTestCLIRunSettings>
   </PropertyGroup>
 
   <ItemGroup>
