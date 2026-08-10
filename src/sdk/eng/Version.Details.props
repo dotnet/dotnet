@@ -81,8 +81,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftNetCompilersToolsetFrameworkPackageVersion>5.10.0-1.26363.117</MicrosoftNetCompilersToolsetFrameworkPackageVersion>
     <MicrosoftNETHostModelPackageVersion>11.0.0-preview.7.26363.117</MicrosoftNETHostModelPackageVersion>
     <MicrosoftNETILLinkTasksPackageVersion>11.0.0-preview.7.26363.117</MicrosoftNETILLinkTasksPackageVersion>
-    <MicrosoftNETRuntimeEmscripten506Cachewinx64PackageVersion>11.0.0-preview.7.26360.111</MicrosoftNETRuntimeEmscripten506Cachewinx64PackageVersion>
-    <MicrosoftNETRuntimeEmscripten602Cachewinx64PackageVersion>11.0.0-preview.7.26325.102</MicrosoftNETRuntimeEmscripten602Cachewinx64PackageVersion>
+    <MicrosoftNETRuntimeEmscriptenInternalPackageVersion>11.0.0-preview.7.26363.117</MicrosoftNETRuntimeEmscriptenInternalPackageVersion>
     <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>11.1.0-preview.26363.117</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
     <MicrosoftNETSdkWindowsDesktopPackageVersion>11.0.0-preview.7.26363.117</MicrosoftNETSdkWindowsDesktopPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>18.10.0-preview-26363-117</MicrosoftNETTestSdkPackageVersion>
@@ -221,8 +220,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftNetCompilersToolsetFrameworkVersion>$(MicrosoftNetCompilersToolsetFrameworkPackageVersion)</MicrosoftNetCompilersToolsetFrameworkVersion>
     <MicrosoftNETHostModelVersion>$(MicrosoftNETHostModelPackageVersion)</MicrosoftNETHostModelVersion>
     <MicrosoftNETILLinkTasksVersion>$(MicrosoftNETILLinkTasksPackageVersion)</MicrosoftNETILLinkTasksVersion>
-    <MicrosoftNETRuntimeEmscripten506Cachewinx64Version>$(MicrosoftNETRuntimeEmscripten506Cachewinx64PackageVersion)</MicrosoftNETRuntimeEmscripten506Cachewinx64Version>
-    <MicrosoftNETRuntimeEmscripten602Cachewinx64Version>$(MicrosoftNETRuntimeEmscripten602Cachewinx64PackageVersion)</MicrosoftNETRuntimeEmscripten602Cachewinx64Version>
+    <MicrosoftNETRuntimeEmscriptenInternalVersion>$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</MicrosoftNETRuntimeEmscriptenInternalVersion>
     <MicrosoftNETSdkRazorSourceGeneratorsTransportVersion>$(MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion)</MicrosoftNETSdkRazorSourceGeneratorsTransportVersion>
     <MicrosoftNETSdkWindowsDesktopVersion>$(MicrosoftNETSdkWindowsDesktopPackageVersion)</MicrosoftNETSdkWindowsDesktopVersion>
     <MicrosoftNETTestSdkVersion>$(MicrosoftNETTestSdkPackageVersion)</MicrosoftNETTestSdkVersion>

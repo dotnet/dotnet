@@ -34,6 +34,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetXUnitConsoleRunnerPackageVersion>2.9.3-beta.26363.117</MicrosoftDotNetXUnitConsoleRunnerPackageVersion>
     <MicrosoftDotNetXUnitExtensionsPackageVersion>11.0.0-beta.26363.117</MicrosoftDotNetXUnitExtensionsPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.10.0-1.26363.117</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftNETRuntimeEmscriptenInternalPackageVersion>11.0.0-preview.7.26363.117</MicrosoftNETRuntimeEmscriptenInternalPackageVersion>
     <MicrosoftNETSdkILPackageVersion>11.0.0-preview.7.26363.117</MicrosoftNETSdkILPackageVersion>
     <MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportPackageVersion>11.0.100-preview.7.26363.117</MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>11.0.0-preview.7.26363.117</MicrosoftNETCoreAppRefPackageVersion>
@@ -150,6 +151,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetXUnitConsoleRunnerVersion>$(MicrosoftDotNetXUnitConsoleRunnerPackageVersion)</MicrosoftDotNetXUnitConsoleRunnerVersion>
     <MicrosoftDotNetXUnitExtensionsVersion>$(MicrosoftDotNetXUnitExtensionsPackageVersion)</MicrosoftDotNetXUnitExtensionsVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
+    <MicrosoftNETRuntimeEmscriptenInternalVersion>$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</MicrosoftNETRuntimeEmscriptenInternalVersion>
     <MicrosoftNETSdkILVersion>$(MicrosoftNETSdkILPackageVersion)</MicrosoftNETSdkILVersion>
     <MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportPackageVersion)</MicrosoftNETWorkloadEmscriptenCurrentManifest110100TransportVersion>
     <MicrosoftNETCoreAppRefVersion>$(MicrosoftNETCoreAppRefPackageVersion)</MicrosoftNETCoreAppRefVersion>

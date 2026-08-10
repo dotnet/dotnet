@@ -28,9 +28,9 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Runtime.Emscripten.6.0.2.Cache.win-x64" Version="11.0.0-preview.7.26325.102">
+    <Dependency Name="Microsoft.NET.Runtime.Emscripten.Internal" Version="11.0.0-preview.7.26363.117">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>1358fe9202089df7bdb79282a191c9dbbb773a06</Sha>
+      <Sha>b25932e8d128b5242f1d89691f8e8171b82774c0</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Build" Version="18.10.0-1.26363.117">
       <Uri>https://github.com/dotnet/dotnet</Uri>
@@ -485,10 +485,6 @@
     <Dependency Name="Microsoft.Build.TaskAuthoring.Analyzer" Version="18.10.0-1.26363.117">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>b25932e8d128b5242f1d89691f8e8171b82774c0</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.NET.Runtime.Emscripten.5.0.6.Cache.win-x64" Version="11.0.0-preview.7.26360.111">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>50dbab4de210e882172b07934e9666313b7065f1</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
