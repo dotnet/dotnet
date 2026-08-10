@@ -235,6 +235,7 @@ steps:
   displayName: Set additional command arguments
 
 - script: $(InstallDarc.dotnetPath) run --project $(Build.SourcesDirectory)/eng/tools/BuildComparer/BuildComparer.csproj
+    -bl:"$(Build.SourcesDirectory)/artifacts/AssetBaselines/BuildComparer.${{ parameters.command }}.binlog"
     ${{ parameters.command }}
     -vmrAssetBasePath "$(Build.ArtifactStagingDirectory)/vmr-assets"
     -msftAssetBasePath "$(Build.ArtifactStagingDirectory)/base-assets"

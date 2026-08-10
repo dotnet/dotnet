@@ -17,7 +17,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
     public class SamlSerializerTests
     {
         #region SamlAction
-        [Theory, MemberData(nameof(ReadActionTheoryData))]
+        [Theory, MemberData(nameof(ReadActionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAction(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAction", theoryData);
@@ -96,7 +96,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlAdvice
-        [Theory, MemberData(nameof(ReadAdviceTheoryData))]
+        [Theory, MemberData(nameof(ReadAdviceTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAdvice(SamlTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAdvice", theoryData);
@@ -161,7 +161,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlAssertion
-        [Theory, MemberData(nameof(ReadAssertionTheoryData))]
+        [Theory, MemberData(nameof(ReadAssertionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAssertion(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAssertion", theoryData);
@@ -182,7 +182,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(ReadAssertionTheoryData))]
+        [Theory, MemberData(nameof(ReadAssertionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAssertionUsingDictionaryReader(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAssertionUsingDictionaryReader", theoryData);
@@ -203,7 +203,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(ReadAssertionTheoryData))]
+        [Theory, MemberData(nameof(ReadAssertionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAssertionUsingXDocumentReader(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAssertionUsingXDocumentReader", theoryData);
@@ -348,7 +348,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
             }
         }
 
-        [Theory, MemberData(nameof(WriteAssertionTheoryData))]
+        [Theory, MemberData(nameof(WriteAssertionTheoryData), DisableDiscoveryEnumeration = true)]
         public void WriteAssertion(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.WriteToken", theoryData);
@@ -413,7 +413,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlAttribute
-        [Theory, MemberData(nameof(ReadAttributeTheoryData))]
+        [Theory, MemberData(nameof(ReadAttributeTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAttribute(SamlTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ReadAttribute", theoryData);
@@ -498,7 +498,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlAttributeStatement
-        [Theory, MemberData(nameof(ReadAttributeStatementTheoryData))]
+        [Theory, MemberData(nameof(ReadAttributeStatementTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAttributeStatement(SamlTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAttributeStatement", theoryData);
@@ -558,7 +558,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlAudienceRestrictionCondition
-        [Theory, MemberData(nameof(ReadAudienceRestrictionConditionTheoryData))]
+        [Theory, MemberData(nameof(ReadAudienceRestrictionConditionTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAudienceRestrictionCondition(SamlTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAudienceRestrictionCondition", theoryData);
@@ -625,7 +625,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlAuthenticationStatement
-        [Theory, MemberData(nameof(ReadAuthenticationStatementTheoryData))]
+        [Theory, MemberData(nameof(ReadAuthenticationStatementTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAuthenticationStatement(SamlTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAuthenticationStatement", theoryData);
@@ -744,7 +744,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlAuthorizationDecisionStatement
-        [Theory, MemberData(nameof(ReadAuthorizationDecisionStatementTheoryData))]
+        [Theory, MemberData(nameof(ReadAuthorizationDecisionStatementTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadAuthorizationDecisionStatement(SamlTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadAuthorizationDecisionStatement", theoryData);
@@ -844,7 +844,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlConditions
-        [Theory, MemberData(nameof(ReadConditionsTheoryData))]
+        [Theory, MemberData(nameof(ReadConditionsTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadConditions(SamlTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadConditions", theoryData);
@@ -914,7 +914,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlEvidence
-        [Theory, MemberData(nameof(ReadEvidenceTheoryData))]
+        [Theory, MemberData(nameof(ReadEvidenceTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadEvidence(SamlTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadEvidence", theoryData);
@@ -987,7 +987,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
         #endregion
 
         #region SamlSubject
-        [Theory, MemberData(nameof(ReadSubjectTheoryData))]
+        [Theory, MemberData(nameof(ReadSubjectTheoryData), DisableDiscoveryEnumeration = true)]
         public void ReadSubject(SamlTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ReadSubject", theoryData);

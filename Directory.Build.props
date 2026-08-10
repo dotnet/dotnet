@@ -3,7 +3,8 @@
   <PropertyGroup>
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
     <DotNetBuildFromVMR>true</DotNetBuildFromVMR>
-    <Nullable>enable</Nullable>
+    <!-- Use the product's test functionality without any Arcade support. MTP doesn't need that. -->
+    <DisableArcadeTestFramework>true</DisableArcadeTestFramework>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)eng/RuntimeIdentifier.props" />
@@ -68,6 +69,7 @@
     <DisableArcadeExcludeFromBuildSupport>true</DisableArcadeExcludeFromBuildSupport>
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
 
+    <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <!-- Don't run NuGetAudit on offline builds -->
     <NuGetAudit Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">false</NuGetAudit>
@@ -78,8 +80,6 @@
     <NuGetAudit Condition="'$(OfficialBuild)' == 'true'">false</NuGetAudit>
     <!-- Explicitly set NuGetAuditModel level as it's currently disabled in the product. -->
     <NuGetAuditMode>all</NuGetAuditMode>
-    <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
-    <WarningsNotAsErrors Condition="'$(OfficialBuildId)' == ''">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
     
     <BootstrapArcadeRepos>arcade;source-build-assets</BootstrapArcadeRepos>
   </PropertyGroup>

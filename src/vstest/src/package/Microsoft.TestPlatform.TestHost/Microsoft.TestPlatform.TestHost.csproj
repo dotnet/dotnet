@@ -90,7 +90,7 @@
       <!-- Canonical folders that the testhost projects publish/build into (see
            eng/PublishForPackaging.targets). Populated during the solution Build pass, which
            completes before any package Pack pass, so they are present here. -->
-      <_NetTestHostPublishDir>$(TestPlatformPackagingPublishRoot)testhost\$(NetCoreAppMinimum)\</_NetTestHostPublishDir>
+      <_NetTestHostPublishDir>$(ArtifactsBinDir)testhost\$(Configuration)\$(NetCoreAppMinimum)\publish\</_NetTestHostPublishDir>
       <_NetTestHostX86Dir>$(ArtifactsBinDir)testhost.x86\$(Configuration)\$(NetCoreAppMinimum)\win-x86\</_NetTestHostX86Dir>
     </PropertyGroup>
     <Error Condition="!Exists('$(_NetTestHostPublishDir)')"

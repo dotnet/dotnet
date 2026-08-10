@@ -49,6 +49,19 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         [Fact]
+        public async Task CreateTestRunAsync_DoesNotRetryAmbiguousWrite()
+        {
+            var handler = new RecordingHttpMessageHandler(_ =>
+                new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
+            using var service = new AzureDevOpsService(CreateOptions(), NullLogger.Instance, new HttpClient(handler));
+
+            Func<Task> action = () => service.CreateTestRunAsync("Test Run", CancellationToken.None);
+
+            await action.Should().ThrowAsync<HttpRequestException>();
+            handler.Requests.Should().ContainSingle();
+        }
+
+        [Fact]
         public async Task CompleteTestRunAsync_SendsCompletedStateAndHelixJobTag()
         {
             var handler = new RecordingHttpMessageHandler(_ =>
@@ -71,6 +84,23 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             var tags = body["tags"].Should().BeOfType<JArray>().Subject;
             tags.Should().ContainSingle();
             tags[0].Value<string>("name").Should().Be(HelixJobTag);
+        }
+
+        [Fact]
+        public async Task CompleteTestRunAsync_DoesNotRetryAmbiguousWrite()
+        {
+            var handler = new RecordingHttpMessageHandler(_ =>
+                new HttpResponseMessage(HttpStatusCode.ServiceUnavailable));
+            using var service = new AzureDevOpsService(CreateOptions(), NullLogger.Instance, new HttpClient(handler));
+
+            Func<Task> action = () => service.CompleteTestRunAsync(
+                123,
+                HelixJobGuid,
+                [],
+                CancellationToken.None);
+
+            await action.Should().ThrowAsync<HttpRequestException>();
+            handler.Requests.Should().ContainSingle();
         }
 
         [Fact]

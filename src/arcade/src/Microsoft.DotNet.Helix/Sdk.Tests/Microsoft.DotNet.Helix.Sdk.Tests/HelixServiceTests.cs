@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Arcade.Common;
@@ -124,6 +126,30 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         [Fact]
+        public async Task DownloadTestResultsAsync_ReportsTransientFileFailureAfterAttemptingBatch()
+        {
+            var api = CreateApi();
+            api.Job
+                .Setup(j => j.ResultsAsync("job", It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new JobResultsUri { ResultsUriRSAS = "?resultSas" });
+            api.WorkItem
+                .Setup(w => w.ListFilesAsync("work-item", "job", false, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ImmutableList.Create(
+                    new UploadedFile("first.trx", "https://storage/first.trx"),
+                    new UploadedFile("second.trx", "https://storage/second.trx")));
+
+            var blobClientFactory = new FakeBlobClientFactory();
+            blobClientFactory.DownloadFailures["https://storage/first.trx"] =
+                new HttpRequestException("Injected transient failure.", null, HttpStatusCode.ServiceUnavailable);
+
+            Func<Task> action = () => CreateService(api.Api.Object, blobClientFactory, new MockFileSystem())
+                .DownloadTestResultsAsync("job", ["work-item"], "work", CancellationToken.None);
+
+            await Assert.ThrowsAsync<IOException>(action);
+            Assert.Equal(2, blobClientFactory.Downloads.Count);
+        }
+
+        [Fact]
         public async Task CancelJobAsync_DelegatesToHelixApiJobCancelAsync()
         {
             var api = CreateApi();
@@ -150,7 +176,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 });
 
             HelixJobInfo result = await CreateService(api.Api.Object)
-                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("missing")], CancellationToken.None);
+                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("missing")], targetStageAttempt: null, CancellationToken.None);
 
             Assert.Null(result);
             api.Storage.Verify(s => s.NewAsync(It.IsAny<ContainerCreationRequest>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -169,7 +195,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             };
 
             HelixJobInfo result = await CreateService(api.Api.Object, blobClientFactory)
-                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("work-a")], CancellationToken.None);
+                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("work-a")], targetStageAttempt: null, CancellationToken.None);
 
             Assert.Null(result);
             api.Storage.Verify(s => s.NewAsync(It.IsAny<ContainerCreationRequest>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -221,7 +247,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             };
 
             HelixJobInfo result = await CreateService(api.Api.Object, blobClientFactory)
-                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("WORK-A"), WorkItem("work-b")], CancellationToken.None);
+                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("WORK-A"), WorkItem("work-b")], targetStageAttempt: null, CancellationToken.None);
 
             Assert.Equal("new-job", result.JobName);
             Assert.Equal("running", result.Status);
@@ -340,7 +366,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             };
 
             await CreateService(api.Api.Object, blobClientFactory)
-                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("work-a")], CancellationToken.None);
+                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("work-a")], targetStageAttempt: null, CancellationToken.None);
 
             Assert.NotNull(capturedRequest);
             return capturedRequest;
@@ -422,6 +448,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             public HashSet<string> FailDownloadsFor { get; } = new(StringComparer.OrdinalIgnoreCase);
 
+            public Dictionary<string, Exception> DownloadFailures { get; } = new(StringComparer.OrdinalIgnoreCase);
+
             public string DownloadedText { get; set; } = "[]";
 
             public string DownloadedTextUri { get; private set; }
@@ -470,6 +498,11 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 public Task DownloadToAsync(string destinationFile, CancellationToken cancellationToken)
                 {
                     _factory.Downloads.Add(new DownloadCall(_blobUri, _sasToken, destinationFile));
+                    if (_factory.DownloadFailures.TryGetValue(_blobUri, out Exception failure))
+                    {
+                        throw failure;
+                    }
+
                     if (_factory.FailDownloadsFor.Contains(_blobUri))
                     {
                         throw new InvalidOperationException("Injected download failure.");

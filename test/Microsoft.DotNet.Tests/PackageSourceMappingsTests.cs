@@ -8,7 +8,6 @@ using System.IO.Compression;
 using System.Xml.Linq;
 using Microsoft.DotNet.UnifiedBuild.Tasks;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.Tests
 {

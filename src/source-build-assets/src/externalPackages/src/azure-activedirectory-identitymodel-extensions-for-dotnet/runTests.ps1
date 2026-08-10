@@ -1,4 +1,9 @@
-param([string]$buildType="Debug", [string]$dotnetDir="c:\Program Files\dotnet", [string]$root=$PSScriptRoot, [string]$failBuildOnTest="YES")
+param(
+    [string]$buildType="Debug",
+    [string]$dotnetDir="c:\Program Files\dotnet",
+    [string]$root=$PSScriptRoot,
+    [string]$failBuildOnTest="YES",
+    [bool]$runningInCI=$false)
 
 ################################################# Functions ############################################################
 
@@ -26,20 +31,42 @@ function WriteSectionFooter($sectionName)
 ################################################# Functions ############################################################
 
 WriteSectionHeader("runTests.ps1");
+
+if (Test-Path $env:TargetNetNext)
+{
+    Write-Host "using TargetNetNext from env:"  $env:TargetNetNext
+}
+else 
+{
+    Write-Host "using TargetNetNext as false"
+    $env:TargetNetNext = "False"
+}
+
+
 Write-Host "buildType:       " $buildType;
 Write-Host "dotnetDir:       " $dotnetDir
 Write-Host "root:            " $root;
 Write-Host "failBuildOnTest: " $failBuildOnTest;
 Write-Host "slnFile:         " $slnFile;
+Write-Host "runningInCI:     " $runningInCI;
 
+$runSettingsPath = $PSScriptRoot + "\build\CodeCoverage.runsettings"
 [xml]$buildConfiguration = Get-Content $PSScriptRoot\buildConfiguration.xml
 $dotnetexe = "$dotnetDir\dotnet.exe";
 $startTime = Get-Date
+
 Write-Host "Start Time:     " $startTime
 Write-Host "PSScriptRoot:   " $PSScriptRoot;
 Write-Host "dotnetexe:      " $dotnetexe;
 
 $ErrorActionPreference = "Stop"
+
+$tempToUse = $env:TEMP;
+
+if ($runningInCI) {
+    # Temp dir used in ADO
+    $tempToUse = "C:\__w\_temp";
+}
 
 $testProjects = $buildConfiguration.SelectNodes("root/projects/test/project")
 foreach ($testProject in $testProjects)
@@ -50,10 +77,10 @@ foreach ($testProject in $testProjects)
 
         $name = $testProject.name;
         Write-Host ">>> Set-Location $root\test\$name"
-        pushd
+        Push-Location
         Set-Location $root\test\$name
-        Write-Host ">>> Start-Process -Wait -PassThru -NoNewWindow $dotnetexe 'test $name.csproj' --filter category!=nonwindowstests --no-build --no-restore -nodereuse:false -v n -c $buildType"
-        $p = Start-Process -Wait -PassThru -NoNewWindow $dotnetexe "test $name.csproj --filter category!=nonwindowstests --no-build --no-restore -nodereuse:false -v n -c $buildType"
+        Write-Host ">>> Start-Process -Wait -PassThru -NoNewWindow $dotnetexe 'test $name.csproj' --filter category!=nonwindowstests --no-build --no-restore -nodereuse:false -v n -c $buildType --collect ""Code Coverage"" --settings ""$runSettingsPath"" --logger trx --results-directory ""$tempToUse"""
+        $p = Start-Process -Wait -PassThru -NoNewWindow $dotnetexe "test $name.csproj --filter category!=nonwindowstests --no-build --no-restore -nodereuse:false -v n -c $buildType --collect ""Code Coverage"" --settings ""$runSettingsPath"" --logger trx --results-directory ""$tempToUse"""
 
         if($p.ExitCode -ne 0)
         {
@@ -68,7 +95,7 @@ foreach ($testProject in $testProjects)
         }
         $testExitCode = $p.ExitCode + $testExitCode
 
-        popd
+        Pop-Location
 
         WriteSectionFooter("End Test");
     }

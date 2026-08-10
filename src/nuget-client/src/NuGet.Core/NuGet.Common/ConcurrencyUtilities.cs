@@ -243,16 +243,19 @@ namespace NuGet.Common
         {
             get
             {
-                if (_basePath != null)
+                string? basePath = _basePath;
+                if (basePath != null)
                 {
-                    return _basePath;
+                    return basePath;
                 }
 
-                _basePath = Path.Combine(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "lock");
+                basePath = Path.Combine(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "lock");
 
-                Directory.CreateDirectory(_basePath);
+                Directory.CreateDirectory(basePath);
 
-                return _basePath;
+                _basePath = basePath;
+
+                return basePath;
             }
         }
 

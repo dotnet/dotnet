@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# Normalizes the value of a boolean build argument. Accepts 1/0 in addition to true/false so that
+# the same value works with the PowerShell scripts, whose [bool] parameters only bind 1/0.
+function NormalizeBoolArg {
+  case "${1:-}" in
+    1) echo true ;;
+    0) echo false ;;
+    *) echo "${1:-}" ;;
+  esac
+}
+
 # Initialize variables if they aren't already defined.
 
 # CI mode - set to true on CI server for PR validation build or official build.
@@ -33,13 +43,20 @@ restore=${restore:-true}
 verbosity=${verbosity:-'minimal'}
 
 # Set to true to reuse msbuild nodes. Recommended to not reuse on CI.
+node_reuse=$(NormalizeBoolArg "${node_reuse:-}")
 if [[ "$ci" == true ]]; then
   node_reuse=${node_reuse:-false}
 else
   node_reuse=${node_reuse:-true}
 fi
 
+# Set to true to build with MSBuild's multi-threaded mode (-mt). Opt-in for now, so off unless it was
+# explicitly requested. It's intended to become the default for local builds once it has proven out.
+msbuild_multi_threaded=$(NormalizeBoolArg "${msbuild_multi_threaded:-}")
+msbuild_multi_threaded=${msbuild_multi_threaded:-false}
+
 # Configures warning treatment in msbuild.
+warn_as_error=$(NormalizeBoolArg "${warn_as_error:-}")
 warn_as_error=${warn_as_error:-true}
 
 # Specifies semi-colon delimited list of warning codes that should not be treated as errors.
@@ -496,13 +513,6 @@ function MSBuild {
       Write-PipelineTelemetryError -category 'Build'  "Binary log must be enabled in CI build, or explicitly opted-out from with the -noBinaryLog switch."
       ExitWithExitCode 1
     fi
-
-    # Node reuse must be disabled in CI builds unless explicitly opted in via MSBUILD_NODEREUSE_ENABLED.
-    # Internal testing only; this env var will be replaced with a switch (https://github.com/dotnet/arcade/issues/17013) and must not be depended on.
-    if [[ "$node_reuse" == true && "${MSBUILD_NODEREUSE_ENABLED:-}" != "1" ]]; then
-      Write-PipelineTelemetryError -category 'Build'  "Node reuse must be disabled in CI build."
-      ExitWithExitCode 1
-    fi
   fi
 
   InitializeBuildTool
@@ -534,15 +544,15 @@ function MSBuild {
     }
   }
 
-  # Add -mt flag for MSBuild multithreaded mode if enabled via environment variable
+  # Build with MSBuild's multi-threaded mode.
   local mt_switch=""
-  if [[ "${MSBUILD_MT_ENABLED:-}" == "1" ]]; then
+  if [[ "$msbuild_multi_threaded" == true ]]; then
     mt_switch="-mt"
   fi
 
   local warnnotaserror_switch=""
   if [[ -n "$warn_not_as_error" && "$warn_as_error" == true ]]; then
-    warnnotaserror_switch="/warnnotaserror:$warn_not_as_error /p:AdditionalWarningsNotAsErrors=$warn_not_as_error"
+    warnnotaserror_switch="/warnnotaserror:$warn_not_as_error /p:AdditionalWarningsNotAsErrors=${warn_not_as_error//;/%3B}"
   fi
 
   RunBuildTool "$_InitializeBuildToolCommand" /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse $warnaserror_switch $mt_switch $warnnotaserror_switch /p:TreatWarningsAsErrors=$warn_as_error /p:ContinuousIntegrationBuild=$ci "$@"

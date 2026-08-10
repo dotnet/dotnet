@@ -3,6 +3,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using Microsoft.IdentityModel.Tokens.Experimental;
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -23,7 +24,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Initializes a new instance of the <see cref="SecurityTokenInvalidSignatureException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
         public SecurityTokenInvalidSignatureException(string message)
             : base(message)
         {
@@ -32,8 +33,8 @@ namespace Microsoft.IdentityModel.Tokens
         /// <summary>
         /// Initializes a new instance of the <see cref="SecurityTokenInvalidSignatureException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
-        /// <param name="innerException">A <see cref="Exception"/> that represents the root cause of the exception.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
+        /// <param name="innerException">An <see cref="Exception"/> that represents the root cause of the exception.</param>
         public SecurityTokenInvalidSignatureException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -48,5 +49,28 @@ namespace Microsoft.IdentityModel.Tokens
             : base(info, context)
         {
         }
+
+        #region Experimental
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecurityTokenInvalidSignatureException"/> class.
+        /// </summary>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
+        /// <param name="validationError">The <see cref="ValidationError"/> that is associated with the exception.</param>
+        internal SecurityTokenInvalidSignatureException(string message, ValidationError validationError)
+            : base(message, validationError)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecurityTokenInvalidSignatureException"/> class.
+        /// </summary>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
+        /// <param name="validationError">The <see cref="ValidationError"/> that is associated with the exception.</param>
+        /// <param name="innerException">An <see cref="Exception"/> that represents the root cause of the exception.</param>
+        internal SecurityTokenInvalidSignatureException(string message, ValidationError validationError, Exception innerException)
+            : base(message, validationError, innerException)
+        {
+        }
+        #endregion
     }
 }

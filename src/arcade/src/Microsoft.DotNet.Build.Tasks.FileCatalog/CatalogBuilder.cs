@@ -238,33 +238,18 @@ namespace Microsoft.DotNet.Build.Tasks.FileCatalog
         /// </summary>
         private static byte[] DeriveListIdentifier(List<Member> members)
         {
-            using var sha256 = SHA256.Create();
+            using IncrementalHash sha256 = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
             foreach (Member member in members)
             {
-                sha256.TransformBlock(member.Identifier, 0, member.Identifier.Length, null, 0);
+                sha256.AppendData(member.Identifier);
             }
 
-            sha256.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-
-            byte[] identifier = new byte[ListIdentifierLength];
-            Array.Copy(sha256.Hash!, identifier, ListIdentifierLength);
-            return identifier;
+            byte[] hash = sha256.GetHashAndReset();
+            return hash.AsSpan(0, ListIdentifierLength).ToArray();
         }
 
-        private static int CompareBytes(byte[] x, byte[] y)
-        {
-            int min = Math.Min(x.Length, y.Length);
-            for (int i = 0; i < min; i++)
-            {
-                int diff = x[i] - y[i];
-                if (diff != 0)
-                {
-                    return diff;
-                }
-            }
-
-            return x.Length - y.Length;
-        }
+        private static int CompareBytes(byte[] x, byte[] y) =>
+            x.AsSpan().SequenceCompareTo(y.AsSpan());
 
         private readonly struct Member
         {

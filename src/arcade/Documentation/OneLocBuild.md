@@ -11,6 +11,11 @@ To make OneLocBuild easier to use, we have integrated the task into Arcade. This
 
 To see your repo's current loc configuration, please refer to https://aka.ms/locstats.
 
+> **Authenticating the check-in PR:** GitHub-based repos can use a short-lived, repository-scoped
+> **GitHub App** installation token for the localization check-in PR. See
+> [Authenticating OneLocBuild's GitHub check-in with the GitHub App](OneLocBuildGitHubApp.md)
+> for access requirements and configuration details.
+
 ## Onboarding to OneLocBuild Using Arcade
 
 Onboarding to OneLocBuild is a simple process:
@@ -195,6 +200,11 @@ The parameters that can be passed to the template are as follows:
 | `LanguageSet` | `VS_Main_Languages` | This defines the `LanguageSet` of the LocProject.json as described in the [OneLocBuild task documentation](https://dev.azure.com/ceapex/CEINTL/_wiki/wikis/CEINTL.wiki/107/Localization-with-OneLocBuild-Task?anchor=languageset%2C-languages-(required)). |
 | `LclSource` | `LclFilesInRepo` | This passes the `LclSource` input to the OneLocBuild task as described in [its documentation](https://dev.azure.com/ceapex/CEINTL/_wiki/wikis/CEINTL.wiki/107/Localization-with-OneLocBuild-Task?anchor=languageset%2C-languages-(required)). For most repos, this should be set to `LclFilesfromPackage`. |
 | `LclPackageId` | `''` | When `LclSource` is set to `LclFilesfromPackage`, this passes in the package ID as described in the [OneLocBuild task documentation](https://dev.azure.com/ceapex/CEINTL/_wiki/wikis/CEINTL.wiki/107/Localization-with-OneLocBuild-Task?anchor=scenario-2%3A-lcl-files-from-a-package). |
+| `UseGitHubAppAuthentication` | `true` | Use GitHub App authentication for the check-in PR (`dnceng/internal` + `RepoType: gitHub` only). Set to `false` to temporarily use the PAT path. See [the GitHub App doc](OneLocBuildGitHubApp.md). |
+| `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The dnceng/internal WIF service connection used to sign the App JWT. Override only when using separately provisioned infrastructure. |
+| `GitHubAppClientId` | `'Iv23lijBU8x3gc9lDOc9'` | The GitHub App's Client ID. |
+| `GitHubAppKeyVaultName` | `'EngKeyVault'` | Key Vault holding the App's RSA signing key. |
+| `GitHubAppKeyName` | `'oneloc-localization-app-key'` | Name of the App's RSA signing key in the Key Vault. |
 | `condition` | `''` | Allows for conditionalizing the template's steps on build-time variables. |
 | `JobNameSuffix` | `''` | Allows for custom job name suffix. This is helpful for disambiguation in case of need for more then one OneLocBuild job run - e.g. as a way to set multiple package IDs. |
 

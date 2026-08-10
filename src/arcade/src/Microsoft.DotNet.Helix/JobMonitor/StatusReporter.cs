@@ -203,7 +203,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         public void LogNonMonitorPipelineFailure()
         {
+            // DO NOT CHANGE THIS LINE - it's matched by Build Analysis to ignore a failure
             LogError("One or more non-monitor pipeline jobs failed.");
+        }
+
+        public void LogNoHelixJobsFailure()
+        {
+            LogError($"No Helix jobs were submitted by this stage in any attempt. Stage: '{_options.StageName}', BuildId: {_options.BuildId}.");
         }
 
         /// <summary>
@@ -235,6 +241,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 lines.Add($"{childPrefix}└─ Console: {failure.ConsoleOutput}");
             }
 
+            // DO NOT CHANGE THIS LINE - it's matched by Build Analysis to ignore a failure
             LogError($"Failed work item information:{Environment.NewLine}Test results: {GetTestResultsUri()}{Environment.NewLine}{string.Join(Environment.NewLine, lines)}");
         }
 

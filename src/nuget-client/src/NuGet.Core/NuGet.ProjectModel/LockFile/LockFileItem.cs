@@ -12,6 +12,7 @@ namespace NuGet.ProjectModel
     public class LockFileItem : IEquatable<LockFileItem>
     {
         public static readonly string AliasesProperty = "aliases";
+        public static readonly string CompilerApiVersionProperty = "compilerApiVersion";
         private static readonly object PropertiesLock = new object();
 
         public LockFileItem(string path)

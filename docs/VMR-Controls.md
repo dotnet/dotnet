@@ -24,7 +24,7 @@ Let’s enumerate this in terms of the desired results:
 Based on these scenarios, we can imagine groups of controls that will be required to satisfy them:
 - **Context controls** – These controls identify what phase of the build is currently executing. These controls are *infrastructure* controls that are useful for differentiating the context in which build infrastructure happens to be executing. For instance, arcade targets might be used in the orchestration layer as well as the outer and inner build, and it will be necessary to differentiate these cases. In addition, a general context control differentiates Unified Build scenarios from non-UB scenarios. This is useful for repos that keep their official builds.
 - **Resource controls** – Controls what set of resources are available to the build. This may influence what product is produced. The biggest one here would be source alone vs. any binary/external resources. 
-- **Output controls** - Set of switches controlling what outputs are produced from the VMR build. Architecture, configuration, IBC data sources, if tests are built, etc.
+- **Output controls** - Set of switches controlling what outputs are produced from the VMR build. Architecture, configuration, if tests are built, etc.
 - **Organizational controls** – Switches that identify who (organization) is executing a build. They could control both product and resource availability. For instance, RH may not want telemetry in the output product, but presumably this could also be used to activate an alternative signing infra.
 
 In addition, some ‘derivative’ controls are added for common scenarios.

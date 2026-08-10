@@ -1,7 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Net;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore.Cosmos.Internal;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
@@ -2149,7 +2148,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("hh", 1.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("hh", 1, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2163,7 +2162,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("mi", 1.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("mi", 1, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2177,7 +2176,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("ss", 1.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("ss", 1, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2191,7 +2190,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("ms", 1000000000000.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("ms", 1000000000000, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -2209,7 +2208,7 @@ WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 
                 AssertSql(
                     """
-SELECT VALUE DateTimeAdd("ms", -1000000000000.0, c["OrderDate"])
+SELECT VALUE DateTimeAdd("ms", -1000000000000, c["OrderDate"])
 FROM root c
 WHERE ((c["$type"] = "Order") AND (c["OrderDate"] != null))
 """);
@@ -3451,7 +3450,7 @@ FROM root c
     {
         // Always throws for sync.
         if (async)
-       {
+        {
             Assert.Equal(
                 CosmosStrings.OffsetRequiresLimit,
                 (await Assert.ThrowsAsync<InvalidOperationException>(() => base.Skip_orderby_const(async))).Message);
@@ -3637,7 +3636,9 @@ WHERE (c["Title"] = @value)
     {
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Collection_projection_skip(async));
 
-        Assert.Equal(CosmosStrings.NonEmbeddedIncludeNotSupported("Navigation: Order.OrderDetails (ICollection<OrderDetail>) Collection ToDependent OrderDetail Inverse: Order"), ex.Message);
+        Assert.Equal(
+            CosmosStrings.NonEmbeddedIncludeNotSupported(
+                "Navigation: Order.OrderDetails (ICollection<OrderDetail>) Collection ToDependent OrderDetail Inverse: Order"), ex.Message);
 
         AssertSql();
     }
@@ -3646,7 +3647,9 @@ WHERE (c["Title"] = @value)
     {
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Collection_projection_take(async));
 
-        Assert.Equal(CosmosStrings.NonEmbeddedIncludeNotSupported("Navigation: Order.OrderDetails (ICollection<OrderDetail>) Collection ToDependent OrderDetail Inverse: Order"), ex.Message);
+        Assert.Equal(
+            CosmosStrings.NonEmbeddedIncludeNotSupported(
+                "Navigation: Order.OrderDetails (ICollection<OrderDetail>) Collection ToDependent OrderDetail Inverse: Order"), ex.Message);
 
         AssertSql();
     }
@@ -3655,7 +3658,9 @@ WHERE (c["Title"] = @value)
     {
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Collection_projection_skip_take(async));
 
-        Assert.Equal(CosmosStrings.NonEmbeddedIncludeNotSupported("Navigation: Order.OrderDetails (ICollection<OrderDetail>) Collection ToDependent OrderDetail Inverse: Order"), ex.Message);
+        Assert.Equal(
+            CosmosStrings.NonEmbeddedIncludeNotSupported(
+                "Navigation: Order.OrderDetails (ICollection<OrderDetail>) Collection ToDependent OrderDetail Inverse: Order"), ex.Message);
 
         AssertSql();
     }
@@ -3697,7 +3702,7 @@ WHERE (c["Title"] = @value)
                             .OrderBy(o => o.OrderID)
                             .Select(o => o),
                         elementSorter: e => (e.OrderID, e.ProductID),
-                        elementAsserter: (e, a2) => { AssertEqual(e, a2); });
+                        elementAsserter: (e, a2) => AssertEqual(e, a2));
                 }
 
                 AssertSql(
@@ -4146,10 +4151,7 @@ WHERE (c["$type"] = "OrderDetail")
             });
 
     public override void Query_composition_against_ienumerable_set()
-        => Fixture.NoSyncTest(() =>
-        {
-            base.Query_composition_against_ienumerable_set();
-        });
+        => Fixture.NoSyncTest(base.Query_composition_against_ienumerable_set);
 
     public override Task ToListAsync_with_canceled_token()
         => Fixture.NoSyncTest(
@@ -4847,7 +4849,6 @@ WHERE ((c["$type"] = "Order") AND (((DateTimePart("ns", c["OrderDate"]) % 1000) 
 
     #region ToPageAsync
 
-
     // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/285 (MaxItemCount not respected)
     [ConditionalFact(typeof(CosmosTestEnvironment), nameof(CosmosTestEnvironment.IsNotLinuxEmulator))]
     public virtual async Task ToPageAsync()
@@ -4903,7 +4904,6 @@ FROM root c
 ORDER BY c["id"]
 """);
     }
-
 
     // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/285 (MaxItemCount not respected)
     [ConditionalFact(typeof(CosmosTestEnvironment), nameof(CosmosTestEnvironment.IsNotLinuxEmulator))]

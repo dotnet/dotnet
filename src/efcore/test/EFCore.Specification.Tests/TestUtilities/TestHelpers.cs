@@ -3,7 +3,6 @@
 
 using System.Collections;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using Microsoft.EntityFrameworkCore.Design.Internal;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -80,10 +79,7 @@ public abstract class TestHelpers
                     replaceServices(builder);
                 }
 
-                if (addDesignTimeServices != null)
-                {
-                    addDesignTimeServices(services);
-                }
+                addDesignTimeServices?.Invoke(services);
 
                 ConfigureProviderServices(provider, services);
                 services.AddEntityFrameworkDesignTimeServices(reporter);
@@ -292,13 +288,10 @@ public abstract class TestHelpers
             && expected.FirstOrDefault(e => e != null) is T nonNullElement
             && nonNullElement.GetType().GetInterface(nameof(IComparable)) == null)
         {
-            if (elementAsserter != null)
-            {
-                throw new InvalidOperationException(
-                    "Element asserter will not be used because results are not properly ordered - either remove asserter from the AssertQuery, add element sorter or set assertOrder to 'true'.");
-            }
-
-            return AssertResults(expected, actual);
+            return elementAsserter != null
+                ? throw new InvalidOperationException(
+                    "Element asserter will not be used because results are not properly ordered - either remove asserter from the AssertQuery, add element sorter or set assertOrder to 'true'.")
+                : AssertResults(expected, actual);
         }
 
         elementSorter ??= (e => e);
@@ -333,17 +326,9 @@ public abstract class TestHelpers
         foreach (var method in methods)
         {
             var parameters = method.GetParameters();
-            var hasAsyncParameter = parameters.Length == 1
-                && parameters[0].ParameterType == typeof(bool);
+            var paramList = string.Join(", ", parameters.Select(x => $"{x.ParameterType.ShortDisplayName()} {x.Name}"));
+            var argList = string.Join(", ", parameters.Select(x => x.Name));
 
-            if (parameters.Length > 0
-                && !hasAsyncParameter)
-            {
-                continue;
-            }
-
-            var paramList = hasAsyncParameter ? "bool async" : "";
-            var argList = hasAsyncParameter ? "async" : "";
             if (method.ReturnType == typeof(Task))
             {
                 methodCalls.Append(

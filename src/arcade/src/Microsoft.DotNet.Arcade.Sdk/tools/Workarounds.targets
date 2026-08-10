@@ -46,9 +46,18 @@
 
     Project that produce tools packages use .nuspec file in order to include all the needed dependencies.
     This target translates common msbuild properties to NuSpec properties.
-  -->
+
+    Starting with https://github.com/NuGet/NuGet.Client/pull/7531, GetPackOutputItemsTask needs NuspecProperties.
+    This task runs during _GetOutputItemsFromPack target (which _CalculateInputsOutputsForPack depends on).
+    To ensure we have set the NuspecProperties early enough, we need to include InitializeStandardNuspecProperties in GenerateNuspecDependsOn.
+    The GenerateNuspecDependsOn targets are guaranteed to run before _CalculateInputsOutputsForPack.
+    This was preferred over BeforeTargets="_CalculateInputsOutputsForPack;GenerateNuspec" to avoid depending on a private target name.
+   -->
+  <PropertyGroup>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);InitializeStandardNuspecProperties</GenerateNuspecDependsOn>
+  </PropertyGroup>
+
   <Target Name="InitializeStandardNuspecProperties"
-          BeforeTargets="GenerateNuspec"
           DependsOnTargets="_InitializeNuspecRepositoryInformationPropertiesWorkaround"
           Condition="'$(IsPackable)' == 'true'">
 
@@ -258,7 +267,7 @@
   <UsingTask TaskName="NormalizeSdkRootDriveCasing"
              TaskFactory="RoslynCodeTaskFactory"
              AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
-             Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != ''">
+             Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != '' and $([MSBuild]::VersionLessThan('$(MSBuildVersion)', '18.9'))">
     <ParameterGroup>
       <SdkRoot ParameterType="System.String" Required="true" />
       <Override ParameterType="System.String" />
@@ -514,7 +523,7 @@ public class NormalizeSdkRootDriveCasing : Task
   </UsingTask>
 
   <Target Name="NormalizeNetCoreSdkRootCasing"
-          Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != '' and '$(DisableNetCoreSdkRootDriveCasingWorkaround)' != 'true'">
+          Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != '' and '$(DisableNetCoreSdkRootDriveCasingWorkaround)' != 'true' and $([MSBuild]::VersionLessThan('$(MSBuildVersion)', '18.9'))">
     <NormalizeSdkRootDriveCasing SdkRoot="$(NetCoreSdkRoot)" Override="$(NetCoreSdkRootDriveCasingOverride)">
       <Output TaskParameter="Result" PropertyName="NetCoreSdkRoot" />
     </NormalizeSdkRootDriveCasing>

@@ -20,6 +20,21 @@
 
   <ItemGroup>
     <Content Include="testassets\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Microsoft.DotNet.Arcade.Sdk\tools\Tests.targets"
+             Link="testassets\ArcadeSdkTools\Tests.targets"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Microsoft.DotNet.Arcade.Sdk\tools\VSTest.targets"
+             Link="testassets\ArcadeSdkTools\VSTest.targets"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Microsoft.DotNet.Arcade.Sdk\tools\XUnit\XUnit.Runner.targets"
+             Link="testassets\ArcadeSdkTools\XUnit\XUnit.Runner.targets"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Microsoft.DotNet.Arcade.Sdk\tools\XUnitV3\XUnitV3.Runner.targets"
+             Link="testassets\ArcadeSdkTools\XUnitV3\XUnitV3.Runner.targets"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Microsoft.DotNet.Arcade.Sdk\tools\Microsoft.Testing.Platform\Microsoft.Testing.Platform.targets"
+             Link="testassets\ArcadeSdkTools\Microsoft.Testing.Platform\Microsoft.Testing.Platform.targets"
+             CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepositoryEngineeringDir)common\**\*" LinkBase="testassets\boilerplate\eng\common\" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepoRoot)build.sh" LinkBase="testassets\boilerplate\" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="$(RepoRoot)Build.cmd" LinkBase="testassets\boilerplate\" CopyToOutputDirectory="PreserveNewest" />

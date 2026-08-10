@@ -1,26 +1,38 @@
 # template-Build-run-tests-sign.yml
+parameters:
+- name: TargetNetNext
+  type: string
+  default: "False"
 
 steps:
 - script: echo $(BuildConfiguration)
   displayName: 'display Build Configuration'
 
-- script: echo $(WilsonVersion)
-  displayName: 'display WilsonVersion'
+- script: echo $(MicrosoftIdentityModelVersion)
+  displayName: 'display MicrosoftIdentityModelVersion'
 
+# Primary SDK from global.json
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk 2.x'
+  displayName: 'Use .NET SDK from global.json'
+  inputs:
+    useGlobalJson: true
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+# Additional .NET SDKs needed for targeting older frameworks
+- task: UseDotNet@2
+  displayName: 'Use .Net Core SDK 2.x'
   inputs:
     version: 2.x
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk 6.x'
+  displayName: 'Use .Net Core SDK 6.x'
   inputs:
     version: 6.x
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk 8.x'
+  displayName: 'Use .Net Core SDK 8.x'
   inputs:
     version: 8.x
     installationPath: $(Agent.ToolsDirectory)/dotnet
@@ -28,9 +40,8 @@ steps:
 - task: UseDotNet@2
   displayName: 'Use .Net Core SDK 9.x'
   inputs:
-    version: 9.0.100-preview.4.24267.66
-    includePreviewVersions: true
-  condition: eq(variables['TargetNet9'], 'True')
+    version: 9.x
+    installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet --list-sdks'
@@ -39,36 +50,55 @@ steps:
     custom: '--list-sdks'
 
 - task: PowerShell@2
-  displayName: "Install Strawberry Perl"
-  inputs:
-    targetType: filePath
-    filePath: $(Build.SourcesDirectory)\$(WilsonSourceDirectory)build\install-strawberry-perl.ps1
-    arguments: >
-      -ci_path "$(Build.SourcesDirectory)"
-      -debug
-  condition: and(succeeded(), eq(variables['PipelineType'], 'onebranch'))
-
-- powershell: |
-      perl "$(Build.SourcesDirectory)\$(WilsonSourceDirectory)src\VerifyResourceUsage.pl"
   displayName: 'Verify error messages are all used.'
+  inputs:
+    filePath: $(Build.SourcesDirectory)\$(WilsonSourceDirectory)Tools\VerifyResourceUsage.ps1
 
 - powershell: |
     regedit /s .\build\strongNameBypass.reg
   displayName: 'Strong Name Bypass'
+
+- powershell: |
+    $nugetSourceIsExternal = (dotnet nuget list source --format Short).Contains("https://api.nuget.org/v3/index.json")
+    if ($nugetSourceIsExternal) {
+        dotnet nuget remove source NuGet
+        dotnet nuget add source https://identitydivision.pkgs.visualstudio.com/_packaging/IDDP/nuget/v3/index.json -n IDDP
+        dotnet nuget list source
+    }
+  workingDirectory: '$(Build.SourcesDirectory)\$(WilsonSourceDirectory)'
+  displayName: 'Remove external "NuGet" Source and add "IDDP artifacts" as a NuGet Source, if needed.'
+  env:
+    DOTNET_NOLOGO: 1
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
     command: 'build'
     projects: '$(WilsonSourceDirectory)Product.proj'
-    arguments: '/r:True /p:Configuration=$(BuildConfiguration) /p:Platform="Any CPU" /verbosity:m /p:SourceLinkCreate=true'
+    arguments: '/r:True /p:Configuration=$(BuildConfiguration) /p:Platform="Any CPU" /verbosity:m /p:SourceLinkCreate=true /p:TargetNetNext=${{ parameters.TargetNetNext }}'
+  env:
+    TargetNetNext: ${{ parameters.TargetNetNext }}
 
 - task: PowerShell@2
   displayName: 'Run Tests'
   inputs:
     targetType: filePath
     filePath: ./$(WilsonSourceDirectory)runTests.ps1
-    arguments: '-buildType $(BuildConfiguration)'
+    arguments: '-buildType $(BuildConfiguration) -runningInCI $True -dotnetDir "$(Agent.ToolsDirectory)/dotnet"'
+  env:
+    TargetNetNext: ${{ parameters.TargetNetNext }}
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFormat: 'XUnit'
+    testResultsFiles: '**/*.trx'
+    searchFolder: '$(Agent.TempDirectory)'
+
+- task: PublishCodeCoverageResults@2
+  condition: succeededOrFailed()
+  inputs:
+    summaryFileLocation: '$(Agent.TempDirectory)/**/*.cobertura.xml'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: [staging]\ProductBinaries'
@@ -123,19 +153,23 @@ steps:
 #Sign Wilson 7x task group
 - template: template-sign-wilson.yaml
 
+# Temporarily suppress NU5128 warning for .NET 10.0 preview framework
+# NU5128 occurs when NuGet packaging validation can't find exact matches between
+# target frameworks in dependencies and lib/ref folders. This is expected for
+# preview .NET versions due to tooling lag and will resolve when .NET 10.0 RTMs.
 - task: DotNetCoreCLI@2
   displayName: 'Pack libraries'
   inputs:
     command: 'pack'
-    arguments: '--no-restore'
+    arguments: '--no-restore /p:TargetNetNext=${{ parameters.TargetNetNext }} /p:WarningsNotAsErrors=NU5128'
     packDirectory: '$(Build.SourcesDirectory)\artifacts'
     nobuild: true
     verbosityPack: 'Minimal'
     configuration: $(BuildConfiguration)
     packagesToPack: '$(WilsonSourceDirectory)Product.proj'
-    feedsToUse: 'config'
-    nugetConfigPath: Nuget.config
     externalFeedCredentials: 'Internal Analyzers'
+  env:
+    TargetNetNext: ${{ parameters.TargetNetNext }}
 
 - task: onebranch.pipeline.signing@1
   displayName: 'Sign Packages with OneBranch'
@@ -174,7 +208,7 @@ steps:
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@2
   displayName: 'TSA upload to Codebase: WILSON Stamp: Azure'
   inputs:
-    GdnPublishTsaOnboard: false 
+    GdnPublishTsaOnboard: false
     GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)/build/tsaConfig.json'
   continueOnError: true
   condition: and(succeeded(), eq(variables['PipelineType'], 'legacy'))
@@ -187,7 +221,7 @@ steps:
 
 - task: NuGetCommand@2
   displayName: 'Upload NuGet Package to VSTS NuGet'
-  condition: eq(variables['WilsonVersion'], '')
+  condition: eq(variables['MicrosoftIdentityModelVersion'], '')
   inputs:
     command: push
     packagesToPush: '$(Build.Repository.LocalPath)\artifacts\*.nupkg'
@@ -199,6 +233,13 @@ steps:
   inputs:
     PathtoPublish: '$(Build.SourcesDirectory)\artifacts'
     ArtifactName: '$(Build.BuildNumber)-nuget-package'
+
+- task: BuildQualityChecks@9
+  displayName: 'Check Warnings'
+  inputs:
+    checkWarnings: true
+    warningFailOption: 'build'
+    showStatistics: true
 
 - task: mspremier.PostBuildCleanup.PostBuildCleanup-task.PostBuildCleanup@3
   displayName: 'Clean Agent Directories'

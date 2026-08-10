@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NuGet.Commands;
@@ -74,44 +75,44 @@ namespace NuGet.Build.Tasks.Pack
 
         private (string packageId, NuGetVersion version) GetPackageIdAndVersion()
         {
-            string packageId = PackageId;
-            var packageVersion = PackageVersion;
-            NuGetVersion version = null;
-
             // Extract the version from the nuspec file if it exists and is valid, otherwise use the version from the project.
-            if (!string.IsNullOrWhiteSpace(NuspecFile) && File.Exists(NuspecFile))
+            if (string.IsNullOrWhiteSpace(NuspecFile) || !File.Exists(NuspecFile))
             {
-                bool hasVersionInNuspecProperties = false;
-                if (NuspecProperties != null && NuspecProperties.Length > 0)
-                {
-                    PackArgs packArgs = new PackArgs() { Version = packageVersion };
-                    PackTaskLogic.SetPackArgsPropertiesFromNuspecProperties(packArgs, MSBuildStringUtility.TrimAndExcludeNullOrEmpty(NuspecProperties));
-                    // If the logic depends only on checking for a non-null value, it may incorrectly  detect cases where the parsing logic changes the version based on a key other than the "version" key.
-                    // Currently, supported only version property in NuspecProperties.
-                    if (packArgs.Properties.ContainsKey("version"))
-                    {
-                        packageVersion = packArgs.Version;
-                        hasVersionInNuspecProperties = true;
-                    }
-                }
-
-                var nuspecReader = new NuspecReader(NuspecFile);
-                packageId = nuspecReader.GetId();
-                if (!hasVersionInNuspecProperties)
-                {
-                    version = nuspecReader.GetVersion();
-                }
+                return (PackageId, ParseVersion(PackageVersion));
             }
 
-            if (version == null && !NuGetVersion.TryParse(packageVersion, out version))
+            // Build property bag from NuspecProperties, exactly as PackTaskLogic/PackCommandRunner does.
+            PackArgs packArgs = new PackArgs();
+            if (NuspecProperties != null && NuspecProperties.Length > 0)
             {
-                throw new ArgumentException(string.Format(
-                    CultureInfo.CurrentCulture,
-                    Strings.InvalidPackageVersion,
-                    packageVersion));
+                PackTaskLogic.SetPackArgsPropertiesFromNuspecProperties(packArgs, MSBuildStringUtility.TrimAndExcludeNullOrEmpty(NuspecProperties));
             }
 
-            return (packageId, version);
+            // Preprocess the raw nuspec stream first — matching how Pack calls Preprocessor.Process in
+            // Manifest.ReadFrom before parsing XML — then create NuspecReader from the result.
+            using Stream fileStream = File.OpenRead(NuspecFile);
+            string preprocessed = Preprocessor.Process(fileStream, packArgs.GetPropertyValue);
+            var nuspecReader = new NuspecReader(new MemoryStream(Encoding.UTF8.GetBytes(preprocessed)));
+            string packageId = nuspecReader.GetId();
+            if (packArgs.Version is not null)
+            {
+                return (packageId, ParseVersion(packArgs.Version));
+            }
+
+            return (packageId, nuspecReader.GetVersion() ?? ParseVersion(PackageVersion));
+
+            static NuGetVersion ParseVersion(string packageVersion)
+            {
+                if (!NuGetVersion.TryParse(packageVersion, out var version))
+                {
+                    throw new ArgumentException(string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.InvalidPackageVersion,
+                        packageVersion));
+                }
+
+                return version;
+            }
         }
     }
 }

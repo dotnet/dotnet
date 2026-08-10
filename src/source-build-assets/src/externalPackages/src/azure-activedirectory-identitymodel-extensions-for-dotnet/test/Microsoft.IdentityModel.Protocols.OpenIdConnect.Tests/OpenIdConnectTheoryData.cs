@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,5 +23,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         public string OpenIdConnectMetadataFileName { get; set; }
 
         public SigningCredentials SigningCredentials { get; set; }
+
+        public Action<OpenIdConnectConfiguration> AdditionalValidation { get; set; }
     }
 }

@@ -5,12 +5,14 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace TestUtilities;
 
 public static class ExecuteHelper
 {
+    private const int KillGraceMilliseconds = 30_000;
+
     public static (Process Process, string StdOut, string StdErr) ExecuteProcess(
         string fileName,
         string args,
@@ -76,7 +78,11 @@ public static class ExecuteHelper
         {
             outputHelper.WriteLine($"Process did not exit. Killing {fileName} {args} after waiting {millisecondTimeout} milliseconds.");
             process.Kill(true);
-            process.WaitForExit();
+            if (!process.WaitForExit(KillGraceMilliseconds))
+            {
+                throw new InvalidOperationException(
+                    $"Process tree did not exit within {KillGraceMilliseconds} milliseconds after it was killed.");
+            }
         }
 
         string output;

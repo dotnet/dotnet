@@ -10,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Arcade.Common;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
 using Microsoft.Extensions.Logging;
@@ -318,6 +319,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     ["name"] = name,
                     ["state"] = "InProgress",
                 },
+                retryTransientFailures: false,
                 cancellationToken: cancellationToken);
             return result?["id"]?.ToObject<int>() ?? 0;
         }
@@ -360,6 +362,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             await SendAsync(new HttpMethod("PATCH"),
                 $"{_options.CollectionUri}{_options.TeamProject}/_apis/test/runs/{testRunId}?api-version=7.1",
                 body,
+                retryTransientFailures: false,
                 cancellationToken: cancellationToken);
         }
 
@@ -391,6 +394,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 HttpMethod.Post,
                 $"{_options.CollectionUri}{_options.TeamProject}/_apis/test/Runs/{testRunId}/attachments?api-version=7.1",
                 body,
+                retryTransientFailures: false,
                 cancellationToken: cancellationToken);
         }
 
@@ -399,12 +403,14 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             IReadOnlyList<WorkItemTestResults> results,
             CancellationToken cancellationToken)
         {
+            var reportingParameters = new AzureDevOpsReportingParameters(
+                new Uri(_options.CollectionUri, UriKind.Absolute),
+                _options.TeamProject,
+                testRunId.ToString(CultureInfo.InvariantCulture),
+                _options.SystemAccessToken,
+                _options.UseFullyQualifiedTestName);
             using var publisher = new AzureDevOpsResultPublisher(
-                new AzureDevOpsReportingParameters(
-                    new Uri(_options.CollectionUri, UriKind.Absolute),
-                    _options.TeamProject,
-                    testRunId.ToString(CultureInfo.InvariantCulture),
-                    _options.SystemAccessToken),
+                reportingParameters,
                 _logger);
 
             async Task<TestResultUploadSummary> UploadWorkItemAsync(WorkItemTestResults workItem)
@@ -440,18 +446,28 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             return testSummaries.ToDictionary(t => (t.WorkItem.JobName, t.WorkItem.WorkItemName), t => t.Summary);
         }
 
-        private async Task<JObject> SendAsync(HttpMethod method, string requestUri, JToken body = null, CancellationToken cancellationToken = default)
+        private async Task<JObject> SendAsync(
+            HttpMethod method,
+            string requestUri,
+            JToken body = null,
+            bool retryTransientFailures = true,
+            CancellationToken cancellationToken = default)
         {
-            string content = await SendForStringAsync(method, requestUri, body, cancellationToken);
+            string content = await SendForStringAsync(method, requestUri, body, retryTransientFailures, cancellationToken);
             return string.IsNullOrWhiteSpace(content) ? [] : JObject.Parse(content);
         }
 
         // Sends a request and returns the raw response body as a string. Used for endpoints
         // (such as test-run attachment downloads) that do not return JSON, where SendAsync's
         // JObject parsing would fail or discard the payload.
-        private async Task<string> SendForStringAsync(HttpMethod method, string requestUri, JToken body = null, CancellationToken cancellationToken = default)
+        private async Task<string> SendForStringAsync(
+            HttpMethod method,
+            string requestUri,
+            JToken body = null,
+            bool retryTransientFailures = true,
+            CancellationToken cancellationToken = default)
         {
-            return await RetryHelper.RetryAsync(async () =>
+            async Task<string> SendOnceAsync()
             {
                 using var request = new HttpRequestMessage(method, requestUri);
                 if (body != null)
@@ -464,12 +480,51 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 if (!response.IsSuccessStatusCode)
                 {
                     await HonorRateLimitAsync(response, requestUri, cancellationToken);
-                    throw new HttpRequestException($"Request to {requestUri} failed with {(int)response.StatusCode} {response.ReasonPhrase}. {content}");
+                    throw new HttpRequestException(
+                        $"Request to {requestUri} failed with {(int)response.StatusCode} {response.ReasonPhrase}. {content}",
+                        null,
+                        response.StatusCode);
                 }
 
                 await HonorRateLimitAsync(response, requestUri, cancellationToken);
                 return content;
-            }, cancellationToken);
+            }
+
+            if (!retryTransientFailures)
+            {
+                return await SendOnceAsync();
+            }
+
+            string result = null;
+            Exception lastException = null;
+            var retryHandler = new ExponentialRetry
+            {
+                MaxAttempts = 5,
+                DelayBase = 2,
+                DelayConstant = 0,
+                MinRandomFactor = 1,
+                MaxRandomFactor = 1,
+            };
+
+            bool succeeded = await retryHandler.RunAsync(
+                async _ =>
+                {
+                    try
+                    {
+                        result = await SendOnceAsync();
+                        return RetryResult.Success;
+                    }
+                    catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+                    {
+                        lastException = ex;
+                        return RetryResult.Retry();
+                    }
+                },
+                cancellationToken);
+
+            return succeeded
+                ? result
+                : throw lastException ?? new InvalidOperationException("Retry failed without completing the Azure DevOps request.");
         }
 
         // Honors Azure DevOps rate limiting guidance:

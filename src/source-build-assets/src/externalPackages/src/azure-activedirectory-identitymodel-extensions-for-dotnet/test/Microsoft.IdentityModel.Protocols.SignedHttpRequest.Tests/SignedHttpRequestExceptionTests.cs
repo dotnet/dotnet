@@ -13,7 +13,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests
 {
     public class SignedHttpRequestExceptionTests
     {
-        [Theory, MemberData(nameof(ExceptionTypes))]
+        [Theory, MemberData(nameof(ExceptionTypes), DisableDiscoveryEnumeration = true)]
         public void SerializeAndDeserialzeExceptions(SignedHttpExceptionTypeTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.{nameof(SerializeAndDeserialzeExceptions)}", theoryData);

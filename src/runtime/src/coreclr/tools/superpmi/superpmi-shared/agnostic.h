@@ -241,6 +241,14 @@ struct Agnostic_CORINFO_ASYNC_INFO
     DWORDLONG finishSuspensionWithContinuationContextMethHnd;
 };
 
+struct Agnostic_CORINFO_WASM_WELLKNOWN_GLOBALS
+{
+    DWORDLONG stackPointer;
+    DWORDLONG imageBase;
+    DWORDLONG tableBase;
+    DWORDLONG asyncContinuation;
+};
+
 struct Agnostic_GetAwaitReturnCallResult
 {
     DWORDLONG methodHnd;
@@ -283,6 +291,13 @@ struct Agnostic_CORINFO_RESOLVED_TOKEN
 {
     Agnostic_CORINFO_RESOLVED_TOKENin inValue;
     Agnostic_CORINFO_RESOLVED_TOKENout outValue;
+};
+
+struct Agnostic_GetAwaitAwaiterInContinuationCall
+{
+    DWORDLONG                       callerHnd;
+    Agnostic_CORINFO_RESOLVED_TOKEN ResolvedToken;
+    DWORD                           isUnsafe;
 };
 
 struct Agnostic_GetFieldInfo

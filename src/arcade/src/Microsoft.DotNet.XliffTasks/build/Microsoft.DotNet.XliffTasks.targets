@@ -36,15 +36,30 @@
       there is an outer build trigger that calls inner UpdateXlf serially.
     -->
     <_IsInnerXlfBuild Condition="'$(TargetFrameworks)' != '' and '$(TargetFramework)' != ''">true</_IsInnerXlfBuild>
+
+    <_XlfLanguages>$(XlfLanguages)</_XlfLanguages>
+    <_XlfLanguages Condition="'$(CreateNeutralXlf)' == 'true'">$(XlfLanguages);en</_XlfLanguages>
+
+    <!-- The language list delimited on both ends so that entries can be matched unambiguously. -->
+    <_XlfLanguagesDelimited>;$(XlfLanguages.ToLowerInvariant().Replace(' ', ''));</_XlfLanguagesDelimited>
   </PropertyGroup>
+
+  <Target Name="_ValidateXlfLanguages">
+    <Error Condition="$(_XlfLanguagesDelimited.Contains(';en;'))"
+           Text="'en' is the source language and cannot be listed in XlfLanguages. Set CreateNeutralXlf=true to produce a neutral .xlf file instead." />
+  </Target>
 
   <!-- Updates the list of XlfSource items that drives incremental update (see above) -->
   <Target Name="UpdateXlfSourceList"
           DependsOnTargets="GetXlfSources">
     <MakeDir Directories="$(XlfIntermediateOutputPath)" />
 
+    <!--
+      The language list is recorded alongside the sources so that changing it (including toggling
+      CreateNeutralXlf) invalidates the incremental marker and triggers an update.
+    -->
     <WriteLinesToFile File="$(_XlfSourceList)"
-                      Lines="@(XlfSource)"
+                      Lines="@(XlfSource);$(_XlfLanguages)"
                       Overwrite="true"
                       WriteOnlyWhenDifferent="true" />
 
@@ -78,11 +93,11 @@
   </Target>
 
   <Target Name="_UpdateXlf"
-          DependsOnTargets="GetXlfSources;UpdateXlfSourceList"
+          DependsOnTargets="_ValidateXlfLanguages;GetXlfSources;UpdateXlfSourceList"
           Inputs="@(XlfSource);$(_XlfSourceList)"
           Outputs="$(_UpdateXlfLastRun)">
     <UpdateXlf Sources="@(XlfSource)"
-               Languages="$(XlfLanguages)"
+               Languages="$(_XlfLanguages)"
                AllowModification="$(_AllowXlfModification)" />
 
     <Touch Files="$(_UpdateXlfLastRun)" AlwaysCreate="true" />
@@ -117,9 +132,9 @@
   </Target>
 
   <Target Name="GatherXlf"
-          DependsOnTargets="GetXlfSources;EnsureXlfIsUpToDate">
+          DependsOnTargets="_ValidateXlfLanguages;GetXlfSources;EnsureXlfIsUpToDate">
     <GatherXlf Sources="@(XlfSource)"
-               Languages="$(XlfLanguages)"
+               Languages="$(_XlfLanguages)"
                TranslatedOutputDirectory="$(XlfIntermediateOutputPath)">
       <Output TaskParameter="Outputs" ItemName="Xlf" />
     </GatherXlf>
@@ -140,7 +155,7 @@
 
     <TransformTemplates Templates="@(_VSTemplatesToLocalize)"
                         UnstructuredResources="@(UnstructuredResource)"
-                        Languages="$(XlfLanguages)"
+                        Languages="$(_XlfLanguages)"
                         TranslatedOutputDirectory="$(XlfIntermediateOutputPath)"
                         Condition="'@(VSTemplate)' != '' and '@(UnstructuredResource)' != ''">
       <Output TaskParameter="TransformedTemplates" ItemName="VSTemplate" />
@@ -165,18 +180,18 @@
     Sorts the trans-unit elements in the .xlf files by the value of their id attributes.
   -->
   <Target Name="SortXlf"
-          DependsOnTargets="GetXlfSources">
+          DependsOnTargets="_ValidateXlfLanguages;GetXlfSources">
     <SortXlf Sources="@(XlfSource)"
-             Languages="$(XlfLanguages)" />
+             Languages="$(_XlfLanguages)" />
   </Target>
 
   <!--
     Checks that all trans-unit elements in the .xlf files have an up-to-date translation.
   -->
   <Target Name="EnsureAllResourcesTranslated"
-          DependsOnTargets="GetXlfSources">
+          DependsOnTargets="_ValidateXlfLanguages;GetXlfSources">
     <EnsureAllResourcesTranslated Sources="@(XlfSource)"
-                                  Languages="$(XlfLanguages)" />
+                                  Languages="$(_XlfLanguages)" />
   </Target>
 
 </Project>

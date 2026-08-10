@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <DefaultExcludesInProjectFolder>$(DefaultExcludesInProjectFolder);assets/**/*</DefaultExcludesInProjectFolder>
-    <VSTestLogger>console%3bverbosity=normal;trx%3bverbosity=diagnostic%3bLogFileName=$(MSBuildProjectName).trx</VSTestLogger>
-    <VSTestCLIRunSettings Condition="'$(DotnetTool)' != ''">$(VSTestCLIRunSettings);RunConfiguration.DotNetHostPath=$(DotnetTool)</VSTestCLIRunSettings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +30,12 @@
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceBuiltSdkTarballPath2">
         <Value>$(SourceBuiltSdkTarballPath2)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceBuiltArtifactsTarballPath1">
+        <Value>$(SourceBuiltArtifactsTarballPath1)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceBuiltArtifactsTarballPath2">
+        <Value>$(SourceBuiltArtifactsTarballPath2)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>

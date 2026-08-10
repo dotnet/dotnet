@@ -12,10 +12,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using Xunit;
-
-#pragma warning disable CS3016 // Arrays as attribute arguments is not CLS-compliant
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
 {
@@ -146,7 +143,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         }
 
 
-        [Theory, MemberData(nameof(ValidateAuthenticationResponseTheoryData))]
+        [Theory, MemberData(nameof(ValidateAuthenticationResponseTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateAuthenticationResponse(OidcProtocolValidatorTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ValidateAuthenticationResponse", theoryData);
@@ -277,7 +274,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateTokenResponseTheoryData))]
+        [Theory, MemberData(nameof(ValidateTokenResponseTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateTokenResponse(OidcProtocolValidatorTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ValidateTokenResponse", theoryData);
@@ -376,7 +373,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateUserInfoResponseTheoryData))]
+        [Theory, MemberData(nameof(ValidateUserInfoResponseTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateUserInfoResponse(OidcProtocolValidatorTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ValidateUserInfoResponse", theoryData);
@@ -498,7 +495,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateIdTokenTheoryData))]
+        [Theory, MemberData(nameof(ValidateIdTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateIdToken(OidcProtocolValidatorTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ValidateIdToken", theoryData);
@@ -726,7 +723,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateCHashTheoryData))]
+        [Theory, MemberData(nameof(ValidateCHashTheoryData), DisableDiscoveryEnumeration = true)]
         private void ValidateCHash(OidcProtocolValidatorTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateCHash", theoryData);
@@ -960,7 +957,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateJWEPayloadCHashTheoryData))]
+        [Theory, MemberData(nameof(ValidateJWEPayloadCHashTheoryData), DisableDiscoveryEnumeration = true)]
         private void ValidateJWEPayloadCHash(OidcProtocolValidatorTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateJWEPayloadCHash", theoryData);
@@ -1091,7 +1088,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateNonceTheoryData))]
+        [Theory, MemberData(nameof(ValidateNonceTheoryData), DisableDiscoveryEnumeration = true)]
         private void ValidateNonce(OidcProtocolValidatorTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ValidateNonce", theoryData);
@@ -1317,7 +1314,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateAtHashTheoryData))]
+        [Theory, MemberData(nameof(ValidateAtHashTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateAtHash(OidcProtocolValidatorTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ValidateAtHash", theoryData);
@@ -1429,7 +1426,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateJWEPayloadAtHashTheoryData))]
+        [Theory, MemberData(nameof(ValidateJWEPayloadAtHashTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateJWEPayloadAtHash(OidcProtocolValidatorTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.ValidateJWEPayloadAtHash", theoryData);
@@ -1470,7 +1467,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(ValidateStateTheoryData))]
+        [Theory, MemberData(nameof(ValidateStateTheoryData), DisableDiscoveryEnumeration = true)]
         public void ValidateState(OidcProtocolValidatorTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.ValidateState", theoryData);
@@ -1629,7 +1626,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
                 Assert.Equal(hashFound, expectedHash);
         }
 
-        [Theory, MemberData(nameof(HashAlgorithmExtensibilityTheoryData))]
+        [Theory, MemberData(nameof(HashAlgorithmExtensibilityTheoryData), DisableDiscoveryEnumeration = true)]
         public void HashAlgorithmExtensibility(OpenIdConnectProtocolValidator protocolValidator, string alg, Type algorithmType, ExpectedException ee)
         {
             ee.Verbose = false;
@@ -1702,7 +1699,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
             }
         }
 
-        [Theory, MemberData(nameof(GetHashAlgorithmTheoryData))]
+        [Theory, MemberData(nameof(GetHashAlgorithmTheoryData), DisableDiscoveryEnumeration = true)]
         public void GetHashAlgorithm(OpenIdConnectProtocolValidator protocolValidator, string alg, Type algorithmType, ExpectedException ee)
         {
             ee.Verbose = false;
@@ -1813,5 +1810,3 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
         }
     }
 }
-
-#pragma warning restore CS3016 // Arrays as attribute arguments is not CLS-compliant

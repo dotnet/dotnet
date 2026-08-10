@@ -23,15 +23,6 @@ parameters:
     - lite
     - full
 
-- name: desiredIBC
-  displayName: 'Enable IBC?'
-  type: string
-  default: 'Default (disabled)'
-  values:
-    - Enabled
-    - Disabled
-    - Default (disabled)
-
 - name: desiredFinalVersionKind
   displayName: 'Final version kind'
   type: string
@@ -134,7 +125,6 @@ extends:
     - template: /eng/pipelines/templates/stages/vmr-build.yml@self
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
-        desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         scope: ${{ parameters.buildScope }}
         isOfficialBuild: false

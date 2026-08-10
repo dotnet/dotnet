@@ -9,14 +9,6 @@
     <IsSourceFile>false</IsSourceFile>
     <IsSourceFile Condition="$([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src/')) OR $([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src\'))">true</IsSourceFile>
     <SrcPackageFolder>$(RepoRoot)src\package\</SrcPackageFolder>
-    <!--
-      Canonical root for per-product publish outputs consumed by the src/package/* self-contained
-      "tool" packages (Microsoft.TestPlatform, .CLI, .Portable, ...). A bundled product publishes
-      itself exactly once per (project, TFM) into
-      $(TestPlatformPackagingPublishRoot)<ProjectName>\<TargetFramework>\, and the tool packages
-      harvest those folders via globs at pack time. See eng/PublishForPackaging.targets.
-    -->
-    <TestPlatformPackagingPublishRoot Condition="'$(TestPlatformPackagingPublishRoot)' == ''">$(ArtifactsDir)publish\</TestPlatformPackagingPublishRoot>
     <Nullable>enable</Nullable>
     <!-- When building the .NET product, there's no need to publish Windows PDBs. Any conversion to Windows PDBs will be done during staging, if necessary. -->
     <PublishWindowsPdb Condition="'$(DotNetBuild)' == 'true'">false</PublishWindowsPdb>
@@ -58,7 +50,7 @@
       https://github.com/dotnet/arcade/blob/66c9c5397d599af40f2a94989241944f5a73442a/src/Microsoft.DotNet.Arcade.Sdk/tools/TargetFrameworkDefaults.props#L16-L18
       Because I don't want to complexify further the logic on VSTest just for that, I will set it to NetMinimum.
     -->
-    <NetPrevious Condition=" $(NetPrevious) == '' ">$(NetMinimum)</NetPrevious>
+    <NetPrevious Condition=" '$(NetPrevious)' == '' ">$(NetMinimum)</NetPrevious>
 
     <!--
       vstest.console.exe is shipped with VS, we can use the version of .NET Framework that VS requires to run (this might differ from the version is requires to install).

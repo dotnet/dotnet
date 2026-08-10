@@ -10,7 +10,7 @@ namespace Microsoft.IdentityModel.TestUtils
     /// <summary>
     /// A mock <see cref="HttpMessageHandler"/>.
     /// </summary>
-   public class MockHttpMessageHandler : HttpMessageHandler
+    public class MockHttpMessageHandler : HttpMessageHandler
     {
         private HttpResponseMessage _httpResponseMessage;
         private HttpResponseMessage _errorHttpResponseMessageOnFirstSend;
@@ -46,8 +46,8 @@ namespace Microsoft.IdentityModel.TestUtils
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        { 
-            if (!_firstSend  || _errorHttpResponseMessageOnFirstSend == null)
+        {
+            if (!_firstSend || _errorHttpResponseMessageOnFirstSend == null)
             {
                 return await Task.FromResult(_httpResponseMessage).ConfigureAwait(false);
             }

@@ -101,6 +101,43 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             { KeyingMaterial.X509SecurityKeySelfSigned2048_SHA512, KeyingMaterial.X509SecurityKeySelfSigned2048_SHA512_Public, "X509Key3" }
         };
 
+        private static List<Tuple<MlDsaSecurityKey, MlDsaSecurityKey, string, string>> _mlDsaSecurityKeys;
+        public static List<Tuple<MlDsaSecurityKey, MlDsaSecurityKey, string, string>> MlDsaSecurityKeys => _mlDsaSecurityKeys ??= new List<Tuple<MlDsaSecurityKey, MlDsaSecurityKey, string, string>>
+        {
+            Tuple.Create(MlDsaKeyingMaterial.MlDsa44Key, MlDsaKeyingMaterial.MlDsa44Key_Public, "MlDsa44Key", SecurityAlgorithms.MlDsa44),
+            Tuple.Create(MlDsaKeyingMaterial.MlDsa65Key, MlDsaKeyingMaterial.MlDsa65Key_Public, "MlDsa65Key", SecurityAlgorithms.MlDsa65),
+            Tuple.Create(MlDsaKeyingMaterial.MlDsa87Key, MlDsaKeyingMaterial.MlDsa87Key_Public, "MlDsa87Key", SecurityAlgorithms.MlDsa87)
+        };
+
+        private static List<Tuple<JsonWebKey, JsonWebKey, string, string>> _jsonMlDsaSecurityKeys;
+        public static List<Tuple<JsonWebKey, JsonWebKey, string, string>> JsonMlDsaSecurityKeys => _jsonMlDsaSecurityKeys ??= new List<Tuple<JsonWebKey, JsonWebKey, string, string>>
+        {
+            Tuple.Create(MlDsaKeyingMaterial.JsonWebKeyMlDsa44, MlDsaKeyingMaterial.JsonWebKeyMlDsa44_Public, "JsonMlDsa44Key", SecurityAlgorithms.MlDsa44),
+            Tuple.Create(MlDsaKeyingMaterial.JsonWebKeyMlDsa65, MlDsaKeyingMaterial.JsonWebKeyMlDsa65_Public, "JsonMlDsa65Key", SecurityAlgorithms.MlDsa65),
+            Tuple.Create(MlDsaKeyingMaterial.JsonWebKeyMlDsa87, MlDsaKeyingMaterial.JsonWebKeyMlDsa87_Public, "JsonMlDsa87Key", SecurityAlgorithms.MlDsa87)
+        };
+
+        private static List<Tuple<X509SecurityKey, X509SecurityKey, string, string>> _x509MlDsaSecurityKeys;
+        public static List<Tuple<X509SecurityKey, X509SecurityKey, string, string>> X509MlDsaSecurityKeys => _x509MlDsaSecurityKeys ??= new List<Tuple<X509SecurityKey, X509SecurityKey, string, string>>
+        {
+            Tuple.Create(MlDsaKeyingMaterial.X509MlDsa44Key, MlDsaKeyingMaterial.X509MlDsa44Key, "X509MlDsa44Key", SecurityAlgorithms.MlDsa44),
+            Tuple.Create(MlDsaKeyingMaterial.X509MlDsa65Key, MlDsaKeyingMaterial.X509MlDsa65Key, "X509MlDsa65Key", SecurityAlgorithms.MlDsa65),
+            Tuple.Create(MlDsaKeyingMaterial.X509MlDsa87Key, MlDsaKeyingMaterial.X509MlDsa87Key, "X509MlDsa87Key", SecurityAlgorithms.MlDsa87)
+        };
+
+        public static void AddMlDsaAlgorithmVariations(SignatureProviderTheoryData theoryData, string algorithm, TheoryData<SignatureProviderTheoryData> variations)
+        {
+            // ML-DSA has a 1:1 mapping between key and algorithm — no algorithm variations like ECDSA.
+            variations.Add(new SignatureProviderTheoryData
+            {
+                SigningAlgorithm = algorithm,
+                SigningKey = theoryData.SigningKey,
+                TestId = theoryData.TestId + algorithm,
+                VerifyAlgorithm = algorithm,
+                VerifyKey = theoryData.VerifyKey
+            });
+        }
+
         public static void AddECDsaAlgorithmVariations(SignatureProviderTheoryData theoryData, TheoryData<SignatureProviderTheoryData> variations)
         {
             foreach (var algorithm in ECDsaSigningAlgorithms)

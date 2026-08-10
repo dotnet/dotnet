@@ -64,7 +64,7 @@ namespace Microsoft.IdentityModel.Tokens
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(bytes);
+                ArrayPool<byte>.Shared.Return(bytes, clearArray: true);
             }
         }
 
@@ -108,7 +108,7 @@ namespace Microsoft.IdentityModel.Tokens
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(bytes);
+                ArrayPool<byte>.Shared.Return(bytes, clearArray: true);
             }
         }
 
@@ -161,7 +161,7 @@ namespace Microsoft.IdentityModel.Tokens
             TX parameter,
             Func<byte[], int, TX, T> action)
         {
-            
+
             int size = encoding.GetMaxByteCount(length);
             byte[] bytes = ArrayPool<byte>.Shared.Rent(size);
             try
@@ -171,7 +171,7 @@ namespace Microsoft.IdentityModel.Tokens
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(bytes);
+                ArrayPool<byte>.Shared.Return(bytes, clearArray: true);
             }
         }
     }

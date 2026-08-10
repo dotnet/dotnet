@@ -17,24 +17,24 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
         /// </summary>
         public Saml2SecurityTokenWriteException()
             : base()
-        {}
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Saml2SecurityTokenWriteException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
         public Saml2SecurityTokenWriteException(string message)
             : base(message)
-        {}
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Saml2SecurityTokenWriteException"/> class.
         /// </summary>
-        /// <param name="message">Addtional information to be included in the exception and displayed to user.</param>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
         /// <param name="innerException">A <see cref="Exception"/> that represents the root cause of the exception.</param>
         public Saml2SecurityTokenWriteException(string message, Exception innerException)
             : base(message, innerException)
-        {}
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Saml2SecurityTokenWriteException"/> class.
@@ -43,6 +43,6 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
         /// <param name="context">The contextual information about the source or destination.</param>
         protected Saml2SecurityTokenWriteException(SerializationInfo info, StreamingContext context)
             : base(info, context)
-        {}
+        { }
     }
 }

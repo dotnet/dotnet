@@ -5,7 +5,7 @@ project(native)
 include(${CLR_ENG_NATIVE_DIR}/configurecompiler.cmake)
 
 if(MSVC)
-    add_compile_options(/W1)
+    add_compile_options(/W3)
 
     # Host components don't try to handle asynchronous exceptions
     add_compile_options(/EHsc)

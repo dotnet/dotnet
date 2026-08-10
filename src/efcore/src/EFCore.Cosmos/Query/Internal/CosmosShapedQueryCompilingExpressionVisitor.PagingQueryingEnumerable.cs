@@ -5,7 +5,7 @@
 
 using Microsoft.EntityFrameworkCore.Cosmos.Diagnostics.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.Extensions.Internal;
-using Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal;
+using CosmosSqlQuery = Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal.CosmosSqlQuery;
 
 namespace Microsoft.EntityFrameworkCore.Cosmos.Query.Internal;
 
@@ -166,10 +166,35 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
                     while (maxItemCount > 0)
                     {
                         queryRequestOptions.MaxItemCount = maxItemCount;
-                        using var feedIterator = cosmosClient.CreateQuery(
-                            _cosmosContainer, sqlQuery, _cosmosQueryContext.SessionTokenStorage, continuationToken, queryRequestOptions);
+                        using var responseMessage = await _cosmosQueryContext.ExecutionStrategy.ExecuteAsync(
+                                (CosmosClient: cosmosClient,
+                                    Container: _cosmosContainer,
+                                    SqlQuery: sqlQuery,
+                                    _cosmosQueryContext.SessionTokenStorage,
+                                    ContinuationToken: continuationToken,
+                                    QueryRequestOptions: queryRequestOptions),
+                                static async (_, state, cancellationToken) =>
+                                {
+                                    using var feedIterator = state.CosmosClient.CreateQuery(
+                                        state.Container, state.SqlQuery, state.SessionTokenStorage, state.ContinuationToken,
+                                        state.QueryRequestOptions);
 
-                        using var responseMessage = await feedIterator.ReadNextAsync(_cancellationToken).ConfigureAwait(false);
+                                    var responseMessage = await feedIterator.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+                                    try
+                                    {
+                                        responseMessage.EnsureSuccessStatusCode();
+                                    }
+                                    catch
+                                    {
+                                        responseMessage.Dispose();
+                                        throw;
+                                    }
+
+                                    return responseMessage;
+                                },
+                                null,
+                                _cancellationToken)
+                            .ConfigureAwait(false);
 
                         _commandLogger.ExecutedReadNext(
                             responseMessage.Diagnostics.GetClientElapsedTime(),
@@ -179,19 +204,17 @@ public partial class CosmosShapedQueryCompilingExpressionVisitor
                             _cosmosPartitionKey,
                             sqlQuery);
 
-                        responseMessage.EnsureSuccessStatusCode();
-
                         var data = CosmosResponseStreamHelper.ExtractContentAsMemory(responseMessage.Content);
 
                         data = ShaperProcessingExpressionVisitor.ExtractDocuments(data);
 
                         while (ShaperProcessingExpressionVisitor.TryMaterializeNextJsonCollectionItem(
-                            _cosmosQueryContext, data,
-                            _shaper, results.Count,
-                            out var bytesConsumed, out var result))
+                                   _cosmosQueryContext, data,
+                                   _shaper, results.Count,
+                                   out var bytesConsumed, out var result))
                         {
                             results.Add(result);
-                            data = data.Slice(bytesConsumed);
+                            data = data[bytesConsumed..];
                             maxItemCount--;
                         }
 

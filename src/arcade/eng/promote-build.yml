@@ -22,7 +22,7 @@ parameters:
   default: ' '
 
 - name: ArtifactsPublishingAdditionalParameters
-  displayName: Additional (MSBuild) properties for general asset publishing
+  displayName: Additional (MSBuild) properties for general asset publishing (for example, /p:BuildQuality=preview)
   type: string
   default: ' '
 

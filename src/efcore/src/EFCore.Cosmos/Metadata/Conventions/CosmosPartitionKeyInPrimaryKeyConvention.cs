@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.EntityFrameworkCore.Cosmos.Metadata.Internal;
-using Newtonsoft.Json.Linq;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.EntityFrameworkCore.Metadata.Conventions;
@@ -76,9 +75,7 @@ public class CosmosPartitionKeyInPrimaryKeyConvention :
     public virtual void ProcessEntityTypeAdded(
         IConventionEntityTypeBuilder entityTypeBuilder,
         IConventionContext<IConventionEntityTypeBuilder> context)
-    {
-        ProcessIdProperty(entityTypeBuilder);
-    }
+        => ProcessIdProperty(entityTypeBuilder);
 
     /// <inheritdoc />
     public virtual void ProcessForeignKeyOwnershipChanged(

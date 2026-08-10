@@ -54,7 +54,7 @@ public class PlatformArgumentProcessorTests
     {
         var capabilities = new PlatformArgumentProcessorCapabilities();
         Assert.AreEqual("/Platform", capabilities.CommandName);
-        var expected = "--Platform|/Platform:<Platform type>\r\n      Target platform architecture to be used for test execution. \r\n      Valid values are x86, x64 and ARM.";
+        var expected = "--Platform|/Platform:<Platform type>\r\n      Target platform architecture to be used for test execution. \r\n      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.";
         Assert.AreEqual(expected: expected.NormalizeLineEndings().ShowWhiteSpace(), capabilities.HelpContentResourceName.NormalizeLineEndings().ShowWhiteSpace());
 
         Assert.AreEqual(HelpContentPriority.PlatformArgumentProcessorHelpPriority, capabilities.HelpPriority);

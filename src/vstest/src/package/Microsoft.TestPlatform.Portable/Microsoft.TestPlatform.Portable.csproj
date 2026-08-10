@@ -107,19 +107,19 @@
     <None Include="$(OutputPath)net48\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="tools\net462\Microsoft.Extensions.DependencyModel.dll" />
     <None Include="$(OutputPath)net48\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="tools\net462\Microsoft.Extensions.FileSystemGlobbing.dll" />
     <None Include="$(OutputPath)net48\Microsoft.CodeCoverage.IO\Microsoft.CodeCoverage.IO.dll" Pack="true" PackagePath="tools\net462\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\cs\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\de\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\es\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\fr\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\it\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\ja\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\ko\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\pl\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\pt-BR\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\ru\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\tr\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\zh-Hans\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\zh-Hant\Microsoft.CodeCoverage.IO.dll" />
+    <None Include="$(OutputPath)net48\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\cs\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\de\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\es\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\fr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\it\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\ja\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\ko\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\pl\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\ru\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\tr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)net48\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net462\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" />
     <None Include="$(OutputPath)net48\System.Collections.Immutable.dll" Pack="true" PackagePath="tools\net462\System.Collections.Immutable.dll" />
     <None Include="$(OutputPath)net48\System.Reflection.Metadata.dll" Pack="true" PackagePath="tools\net462\System.Reflection.Metadata.dll" />
     <None Include="$(OutputPath)net48\System.Memory.dll" Pack="true" PackagePath="tools\net462\System.Memory.dll" />
@@ -130,19 +130,19 @@
     <None Include="$(OutputPath)netstandard2.0\Microsoft.Extensions.DependencyModel.dll" Pack="true" PackagePath="tools\net8.0\Microsoft.Extensions.DependencyModel.dll" />
     <None Include="$(OutputPath)netstandard2.0\Microsoft.Extensions.FileSystemGlobbing.dll" Pack="true" PackagePath="tools\net8.0\Microsoft.Extensions.FileSystemGlobbing.dll" />
     <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\Microsoft.CodeCoverage.IO.dll" Pack="true" PackagePath="tools\net8.0\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\cs\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\de\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\es\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\fr\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\it\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\ja\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\ko\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\pl\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\pt-BR\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\ru\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\tr\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\zh-Hans\Microsoft.CodeCoverage.IO.dll" />
-    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\zh-Hant\Microsoft.CodeCoverage.IO.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\cs\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\cs\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\de\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\de\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\es\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\es\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\fr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\fr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\it\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\it\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ja\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\ja\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ko\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\ko\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\pl\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\pl\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\pt-BR\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\ru\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\ru\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\tr\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\tr\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\zh-Hans\Microsoft.CodeCoverage.IO.resources.dll" />
+    <None Include="$(OutputPath)netstandard2.0\Microsoft.CodeCoverage.IO\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" Pack="true" PackagePath="tools\net8.0\zh-Hant\Microsoft.CodeCoverage.IO.resources.dll" />
     <None Include="$(OutputPath)netstandard2.0\System.Collections.Immutable.dll" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\System.Collections.Immutable.dll" />
     <None Include="$(OutputPath)netstandard2.0\System.Reflection.Metadata.dll" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\System.Reflection.Metadata.dll" />
     <None Include="$(OutputPath)net8.0\Microsoft.Internal.Dia\x64\msdia140.dll" Pack="true" PackagePath="tools\net8.0\TestHostNetFramework\x64\msdia140.dll" />
@@ -184,7 +184,7 @@
           Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(NetFrameworkRunnerTargetFramework)'"
           Returns="@(TfmSpecificPackageFile)">
     <PropertyGroup>
-      <_PortableNetFxRunnerPublishDir>$(TestPlatformPackagingPublishRoot)vstest.console\$(NetFrameworkRunnerTargetFramework)\</_PortableNetFxRunnerPublishDir>
+      <_PortableNetFxRunnerPublishDir>$(ArtifactsBinDir)vstest.console\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\publish\</_PortableNetFxRunnerPublishDir>
     </PropertyGroup>
     <Error Condition="!Exists('$(_PortableNetFxRunnerPublishDir)')"
            Text="Expected published .NET Framework runner at '$(_PortableNetFxRunnerPublishDir)'. It is produced by src\vstest.console\vstest.console.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
@@ -275,7 +275,7 @@
           Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(NetCoreAppMinimum)'"
           Returns="@(TfmSpecificPackageFile)">
     <PropertyGroup>
-      <_PortableNetRunnerPublishDir>$(TestPlatformPackagingPublishRoot)vstest.console\$(NetCoreAppMinimum)\</_PortableNetRunnerPublishDir>
+      <_PortableNetRunnerPublishDir>$(ArtifactsBinDir)vstest.console\$(Configuration)\$(NetCoreAppMinimum)\publish\</_PortableNetRunnerPublishDir>
     </PropertyGroup>
     <Error Condition="!Exists('$(_PortableNetRunnerPublishDir)')"
            Text="Expected published .NET runner at '$(_PortableNetRunnerPublishDir)'. It is produced by src\vstest.console\vstest.console.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />
@@ -355,7 +355,7 @@
           Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(OS)' == 'Windows_NT' and '$(TargetFramework)' == '$(NetCoreAppMinimum)'"
           Returns="@(TfmSpecificPackageFile)">
     <PropertyGroup>
-      <_PortableNetFrameworkTestHostPublishDir>$(TestPlatformPackagingPublishRoot)testhost\$(NetFrameworkMinimum)\</_PortableNetFrameworkTestHostPublishDir>
+      <_PortableNetFrameworkTestHostPublishDir>$(ArtifactsBinDir)testhost\$(Configuration)\$(NetFrameworkMinimum)\publish\</_PortableNetFrameworkTestHostPublishDir>
     </PropertyGroup>
     <Error Condition="!Exists('$(_PortableNetFrameworkTestHostPublishDir)')"
            Text="Expected published .NET Framework testhost at '$(_PortableNetFrameworkTestHostPublishDir)'. It is produced by src\testhost\testhost.csproj during the build when packing; ensure the build ran with -pack (Arcade sets __ImportPackTargets)." />

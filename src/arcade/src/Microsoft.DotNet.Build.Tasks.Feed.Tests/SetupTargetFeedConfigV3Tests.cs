@@ -414,6 +414,48 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             actualFeeds.Should().BeEquivalentTo(expectedFeeds);
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void NoAzureDevOpsFeedKeyFallsBackToEntra(bool publishInstallersAndChecksums)
+        {
+            // FeedKeys intentionally omits the AzDO feed key so that the AzDO NuGet feeds
+            // exercise the Entra-based authentication fallback (no key => null token).
+            var installersKey = new TaskItem(PublishingConstants.FeedStagingForInstallers);
+            installersKey.SetMetadata("Key", InstallersTargetStaticFeedKey);
+            var checksumsKey = new TaskItem(PublishingConstants.FeedStagingForChecksums);
+            checksumsKey.SetMetadata("Key", ChecksumsTargetStaticFeedKey);
+            var feedKeysWithoutAzureDevOps = new ITaskItem[] { installersKey, checksumsKey };
+
+            var buildEngine = new MockBuildEngine();
+            var channelConfig = PublishingConstants.ChannelInfos.First(c => c.Id == 2);
+            var config = new SetupTargetFeedConfigV3(
+                    channelConfig,
+                    isInternalBuild: false,
+                    isStableBuild: false,
+                    repositoryName: "test-repo",
+                    commitSha: "c0c0c0c0",
+                    publishInstallersAndChecksums,
+                    feedKeysWithoutAzureDevOps,
+                    Array.Empty<ITaskItem>(),
+                    latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                    buildEngine: buildEngine,
+                    symbolVisibility
+                );
+
+            var actualFeeds = config.Setup();
+
+            // The AzDO NuGet feeds must still be produced (not dropped) when no key is present...
+            var azureDevOpsFeeds = actualFeeds.Where(f => f.Type == FeedType.AzDoNugetFeed).ToList();
+            azureDevOpsFeeds.Should().NotBeEmpty();
+
+            // ...and they must carry no key so the publisher uses Entra-based authentication.
+            azureDevOpsFeeds.Should().OnlyContain(f => string.IsNullOrEmpty(f.Token));
+
+            // A missing AzDO feed key must no longer be treated as an error.
+            buildEngine.BuildErrorEvents.Should().BeEmpty();
+        }
+
         private bool AreEquivalent(List<TargetFeedConfig> expectedItems, List<TargetFeedConfig> actualItems) 
         {
             if (expectedItems.Count() != actualItems.Count())
@@ -453,6 +495,40 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
 
             Action shouldPassNonShippingOnly = () => new TargetFeedSpecification(new TargetFeedContentType[] { TargetFeedContentType.Package }, "FooFeed", AssetSelection.NonShippingOnly);
             shouldPassNonShippingOnly.Should().NotThrow();
+        }
+
+        [Fact]
+        public void NullFeedKeysAndOverridesAreTreatedAsEmpty()
+        {
+            // MSBuild passes null (not an empty array) for an empty ItemGroup, e.g. when publishing
+            // with Entra/WIF auth and no feed key is supplied. The constructor must tolerate this.
+            var buildEngine = new MockBuildEngine();
+            var channelConfig = PublishingConstants.ChannelInfos.First(c => c.Id == 2);
+
+            SetupTargetFeedConfigV3 config = null;
+            Action construct = () => config = new SetupTargetFeedConfigV3(
+                channelConfig,
+                isInternalBuild: true,
+                isStableBuild: false,
+                repositoryName: "test-repo",
+                commitSha: "c0c0c0c0",
+                publishInstallersAndChecksums: true,
+                feedKeys: null,
+                feedOverrides: null,
+                [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
+                buildEngine,
+                symbolVisibility);
+
+            construct.Should().NotThrow();
+
+            var feeds = config.Setup();
+
+            feeds.Should().NotBeEmpty();
+            // With no feed keys supplied, the AzDO feeds are still produced (not dropped) but resolve
+            // to a null token so the publisher falls back to Entra-based authentication downstream.
+            var azdoFeeds = feeds.Where(f => f.Type == FeedType.AzDoNugetFeed).ToList();
+            azdoFeeds.Should().NotBeEmpty();
+            azdoFeeds.Should().OnlyContain(f => f.Token == null);
         }
     }
 }

@@ -25,8 +25,7 @@ namespace XliffTasks.Tasks
 
         protected override void ExecuteCore()
         {
-            int index = 0;
-            ITaskItem[] outputs = new ITaskItem[Sources.Length * Languages.Length];
+            List<ITaskItem> outputs = new();
             HashSet<string> outputPaths = new(StringComparer.OrdinalIgnoreCase);
 
             foreach (ITaskItem source in Sources)
@@ -35,17 +34,22 @@ namespace XliffTasks.Tasks
 
                 foreach (string language in Languages)
                 {
+                    // The neutral .xlf file is not a translation and produces no satellite assembly.
+                    if (XlfTask.IsNeutralLanguage(language))
+                    {
+                        continue;
+                    }
+
                     string xlfPath = XlfTask.GetXlfPath(sourceDocumentPath, language);
                     TaskItem xlf = new(source) { ItemSpec = xlfPath };
                     xlf.SetMetadata(MetadataKey.XlfSource, source.ItemSpec);
                     xlf.SetMetadata(MetadataKey.XlfTranslatedFullPath, GetTranslatedOutputPath(source, language, outputPaths));
                     xlf.SetMetadata(MetadataKey.XlfLanguage, language);
-                    outputs[index++] = xlf;
+                    outputs.Add(xlf);
                 }
             }
 
-            Release.Assert(index == outputs.Length);
-            Outputs = outputs;
+            Outputs = outputs.ToArray();
         }
 
         private string GetTranslatedOutputPath(ITaskItem source, string language, HashSet<string> outputPaths)

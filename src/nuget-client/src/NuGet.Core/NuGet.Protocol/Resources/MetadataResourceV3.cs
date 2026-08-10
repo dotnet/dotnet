@@ -1,11 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,14 +23,14 @@ namespace NuGet.Protocol
     public class MetadataResourceV3 : MetadataResource
     {
         private RegistrationResourceV3 _regResource;
-        private readonly Common.IEnvironmentVariableReader _environmentVariableReader;
+        private readonly Common.IEnvironmentVariableReader? _environmentVariableReader;
 
         public MetadataResourceV3(RegistrationResourceV3 regResource)
             : this(regResource, environmentVariableReader: null)
         {
         }
 
-        internal MetadataResourceV3(RegistrationResourceV3 regResource, Common.IEnvironmentVariableReader environmentVariableReader)
+        internal MetadataResourceV3(RegistrationResourceV3 regResource, Common.IEnvironmentVariableReader? environmentVariableReader)
             : base()
         {
             _regResource = regResource ?? throw new ArgumentNullException(nameof(regResource));
@@ -43,7 +42,7 @@ namespace NuGet.Protocol
         /// </summary>
         /// <param name="includePrerelease">include versions with prerelease labels</param>
         /// <param name="includeUnlisted">not implemented yet</param>
-        public override async Task<IEnumerable<KeyValuePair<string, NuGetVersion>>> GetLatestVersions(
+        public override async Task<IEnumerable<KeyValuePair<string, NuGetVersion?>>> GetLatestVersions(
             IEnumerable<string> packageIds,
             bool includePrerelease,
             bool includeUnlisted,
@@ -51,7 +50,7 @@ namespace NuGet.Protocol
             Common.ILogger log,
             CancellationToken token)
         {
-            var results = new List<KeyValuePair<string, NuGetVersion>>();
+            var results = new List<KeyValuePair<string, NuGetVersion?>>();
 
             foreach (var id in packageIds)
             {
@@ -79,7 +78,7 @@ namespace NuGet.Protocol
                 // find the latest
                 var latest = allVersions.OrderByDescending(p => p, VersionComparer.VersionRelease).FirstOrDefault();
 
-                results.Add(new KeyValuePair<string, NuGetVersion>(id, latest));
+                results.Add(new KeyValuePair<string, NuGetVersion?>(id, latest));
             }
 
             return results;
@@ -95,14 +94,14 @@ namespace NuGet.Protocol
             // TODO: get the url and just check the headers?
             if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
             {
-                RegistrationLeafItem item = await _regResource.GetPackageMetadataItemAsync(identity, sourceCacheContext, log, token);
+                RegistrationLeafItem? item = await _regResource.GetPackageMetadataItemAsync(identity, sourceCacheContext, log, token);
 
                 // TODO: listed check
                 return item != null;
             }
             else if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
             {
-                RegistrationLeafItem item = await _regResource.GetPackageMetadataItemAsync(identity, sourceCacheContext, log, token);
+                RegistrationLeafItem? item = await _regResource.GetPackageMetadataItemAsync(identity, sourceCacheContext, log, token);
 
                 // TODO: listed check
                 return item != null;
@@ -163,12 +162,19 @@ namespace NuGet.Protocol
 
             foreach (RegistrationLeafItem item in items.NoAllocEnumerate())
             {
-                NuGetVersion version = item.CatalogEntry.Version;
-
-                if (version != null)
+                if (item.CatalogEntry is null)
                 {
-                    versions.Add(version);
+                    continue;
                 }
+
+                NuGetVersion? version = item.CatalogEntry.Version;
+
+                if (version is null)
+                {
+                    throw new InvalidDataException(packageId);
+                }
+
+                versions.Add(version);
             }
 
             return versions;
@@ -188,15 +194,16 @@ namespace NuGet.Protocol
 
             foreach (var catalogEntry in entries)
             {
-                NuGetVersion version = null;
-
-                if (catalogEntry["version"] != null
-                    && NuGetVersion.TryParse(catalogEntry["version"].ToString(), out version))
+                JToken? versionToken = catalogEntry["version"];
+                if (versionToken == null
+                    || !NuGetVersion.TryParse(versionToken.ToString(), out NuGetVersion? version))
                 {
-                    if (includePrerelease || !version.IsPrerelease)
-                    {
-                        versions.Add(version);
-                    }
+                    throw new InvalidDataException(packageId);
+                }
+
+                if (includePrerelease || !version.IsPrerelease)
+                {
+                    versions.Add(version);
                 }
             }
 
@@ -209,7 +216,7 @@ namespace NuGet.Protocol
             Common.ILogger log,
             CancellationToken token)
         {
-            JObject metadata = await _regResource.GetPackageMetadata(identity, sourceCacheContext, log, token);
+            JObject? metadata = await _regResource.GetPackageMetadata(identity, sourceCacheContext, log, token);
 
             // TODO: listed check
             return metadata != null;
