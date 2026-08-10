@@ -95,5 +95,31 @@ namespace Microsoft.DotNet.Arcade.Sdk.Tests
             Assert.False(succeeded);
             Assert.Equal(2, attempts);
         }
+
+        [Fact]
+        public async Task RetryDelayCallbackReportsActualDelay()
+        {
+            var retry = new ExponentialRetry
+            {
+                MaxAttempts = 2,
+                DelayBase = 3,
+                DelayConstant = 0,
+                MinRandomFactor = 1,
+                MaxRandomFactor = 1,
+                RetryDelayCallback = (attempt, delay) =>
+                {
+                    Assert.Equal(1, attempt);
+                    Assert.Equal(TimeSpan.FromSeconds(1), delay);
+                },
+            };
+
+            int attempts = 0;
+            bool succeeded = await retry.RunAsync(
+                _ => Task.FromResult(++attempts == 1 ? RetryResult.Retry() : RetryResult.Success),
+                CancellationToken.None);
+
+            Assert.True(succeeded);
+            Assert.Equal(2, attempts);
+        }
     }
 }
