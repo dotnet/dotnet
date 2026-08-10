@@ -54,6 +54,7 @@ usage()
   echo "  --clean-while-building          Cleans each repo after building (reduces disk space usage, short: -cwb)"
   echo "  --excludeCIBinarylog            Don't output binary log (short: -nobl)"
   echo "  --nodeReuse <value>             Sets nodereuse msbuild parameter ('true' or 'false')"
+  echo "  --msbuildMultiThreaded <value>  Sets MSBuild's multi-threaded mode, i.e. the -mt switch ('true' or 'false') (short: --mt)"
   echo "  --prepareMachine                Prepare machine for CI run, clean up processes after build"
   echo "  --projects <value>              Project or solution file to build"
   echo "  --use-mono-runtime              Output uses the mono runtime"
@@ -113,6 +114,8 @@ build_check=false
 ci=''
 exclude_ci_binary_log=''
 node_reuse=''
+# Empty means "not specified"; tools.sh leaves it off unless it's explicitly requested.
+msbuild_multi_threaded=''
 prepare_machine=''
 warn_as_error=''
 targetOS=''
@@ -269,6 +272,10 @@ while [[ $# > 0 ]]; do
       node_reuse=$2
       shift
       ;;
+    -msbuildmultithreaded|-mt)
+      msbuild_multi_threaded=$2
+      shift
+      ;;
     -preparemachine)
       prepare_machine=true
       ;;
@@ -293,8 +300,20 @@ if [[ "$ci" == true ]]; then
   fi
 fi
 
+# tools.sh fills in the defaults below, so remember whether these were passed explicitly.
+msbuild_multi_threaded_explicit=$msbuild_multi_threaded
+node_reuse_explicit=$node_reuse
+
 source "$scriptroot/eng/common/tools.sh"
 source "$scriptroot/eng/source-build-toolset-init.sh"
+
+# Flow the explicit choices down to the individual repo builds as well.
+if [[ -n "$msbuild_multi_threaded_explicit" ]]; then
+  properties+=( "/p:DotNetBuildMT=$msbuild_multi_threaded" )
+fi
+if [[ -n "$node_reuse_explicit" ]]; then
+  properties+=( "/p:DotNetBuildNodeReuse=$node_reuse" )
+fi
 
 # Default properties
 properties+=( "/p:RepoRoot=$repo_root" )
