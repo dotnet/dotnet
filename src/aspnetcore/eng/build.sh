@@ -37,7 +37,7 @@ product_build=''
 from_vmr=''
 warn_as_error=true
 warn_not_as_error=''
-# Empty means "not specified"; tools.sh defaults it to on for local builds and off on CI.
+# Empty means "not specified"; tools.sh leaves it off unless it's explicitly requested.
 msbuild_multi_threaded=''
 from_vmr=''
 

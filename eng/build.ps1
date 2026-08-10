@@ -25,7 +25,7 @@ Param(
   [switch][Alias('cwb')]$cleanWhileBuilding,
   [switch][Alias('nobl')]$excludeCIBinarylog,
   [bool]$nodeReuse,
-  [bool][Alias('mt')]$msbuildMultiThreaded = $true,
+  [bool][Alias('mt')]$msbuildMultiThreaded = $false,
   [switch]$prepareMachine,
   [string]$projects,
   [bool] $warnAsError = $true,
@@ -135,10 +135,6 @@ try {
     # Node reuse isn't used on CI unless it was explicitly requested via -nodeReuse.
     if (-not $PSBoundParameters.ContainsKey('nodeReuse')) {
       $nodeReuse = $false
-    }
-    # MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
-    if (-not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
-      $msbuildMultiThreaded = $false
     }
   }
 

@@ -151,10 +151,10 @@ else
   node_reuse=${node_reuse:-true}
 fi
 
-# MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI unless it was
-# explicitly requested via --msbuildMultiThreaded.
+# MSBuild's multi-threaded mode is opt-in for now, so it's off unless it was explicitly requested
+# via --msbuildMultiThreaded.
 mt_switch=""
-if [[ "$msbuild_multi_threaded" == true || (-z "$msbuild_multi_threaded" && "$ci" != true) ]]; then
+if [[ "$msbuild_multi_threaded" == true ]]; then
   mt_switch="-mt"
 fi
 
