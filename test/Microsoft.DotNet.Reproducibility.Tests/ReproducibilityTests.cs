@@ -11,7 +11,6 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.Reproducibility.Tests;
 
@@ -22,16 +21,16 @@ public class ReproducibilityTests
 
     public ReproducibilityTests(ITestOutputHelper outputHelper) => OutputHelper = outputHelper;
 
-    public static bool IncludeMsftReproducibilityTests =>
-        !string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath1) && !string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath2);
+    public static bool ExcludeMsftReproducibilityTests =>
+        string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath1) || string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath2);
 
-    public static bool IncludeSourceBuiltReproducibilityTests =>
-        !string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath1) && !string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath2);
+    public static bool ExcludeSourceBuiltReproducibilityTests =>
+        string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath1) || string.IsNullOrWhiteSpace(Config.SourceBuiltSdkTarballPath2);
 
-    public static bool IncludeSourceBuiltArtifactsReproducibilityTests =>
-        !string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath1) && !string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath2);
+    public static bool ExcludeSourceBuiltArtifactsReproducibilityTests =>
+        string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath1) || string.IsNullOrWhiteSpace(Config.SourceBuiltArtifactsTarballPath2);
 
-    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeMsftReproducibilityTests))]
+    [Fact(Skip = "Both Microsoft SDK tarballs are required", SkipWhen = nameof(ExcludeMsftReproducibilityTests))]
     public void MsftSdkTarballIsReproducible()
     {
         CompareTarballs(
@@ -43,7 +42,7 @@ public class ReproducibilityTests
             updatedBaselineFileName: "UpdatedMsftReproducibilityBaseline.diff");
     }
 
-    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeSourceBuiltReproducibilityTests))]
+    [Fact(Skip = "Both source-built SDK tarballs are required", SkipWhen = nameof(ExcludeSourceBuiltReproducibilityTests))]
     public void SourceBuiltSdkTarballIsReproducible()
     {
         CompareTarballs(
@@ -55,7 +54,7 @@ public class ReproducibilityTests
             updatedBaselineFileName: "UpdatedSourceBuiltReproducibilityBaseline.diff");
     }
 
-    [ConditionalFact(typeof(ReproducibilityTests), nameof(IncludeSourceBuiltArtifactsReproducibilityTests))]
+    [Fact(Skip = "Both source-built artifacts tarballs are required", SkipWhen = nameof(ExcludeSourceBuiltArtifactsReproducibilityTests))]
     public void SourceBuiltArtifactsTarballIsReproducible()
     {
         CompareTarballs(

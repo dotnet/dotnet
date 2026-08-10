@@ -53,7 +53,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 throw new ArgumentException("A non-empty Helix source filter must be provided.", nameof(source));
             }
 
-            IImmutableList<JobSummary> jobs = await RetryHelper.RetryAsync(
+            IImmutableList<JobSummary> jobs = await RetryAsync(
                 async () => await _helixApi.Job.ListAsync(source: source, count: 100_000),
                 cancellationToken);
 
@@ -78,11 +78,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string outputDirectory = _fileSystem.PathCombine(workingDirectory, SanitizeDirName(jobName));
             _fileSystem.CreateDirectory(outputDirectory);
 
-            JobResultsUri resultsUri = await RetryHelper.RetryAsync(() => _helixApi.Job.ResultsAsync(jobName), cancellationToken);
+            JobResultsUri resultsUri = await RetryAsync(() => _helixApi.Job.ResultsAsync(jobName), cancellationToken);
 
             foreach (string workItemName in workItemNames)
             {
-                IImmutableList<UploadedFile> availableFiles = await RetryHelper.RetryAsync(
+                IImmutableList<UploadedFile> availableFiles = await RetryAsync(
                     () => _helixApi.WorkItem.ListFilesAsync(workItemName, jobName, false),
                     cancellationToken);
 
@@ -165,7 +165,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string jobName,
             CancellationToken cancellationToken)
         {
-            return await RetryHelper.RetryAsync(async () =>
+            return await RetryAsync(async () =>
             {
                 IImmutableList<WorkItemSummary> workItems = await _helixApi.WorkItem.ListAsync(jobName);
                 return workItems
@@ -178,7 +178,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string jobName,
             CancellationToken cancellationToken)
         {
-            await RetryHelper.RetryAsync(
+            await RetryAsync(
                 async () =>
                 {
                     await _helixApi.Job.CancelAsync(jobName, cancellationToken: cancellationToken);
@@ -209,7 +209,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 string.Join(Environment.NewLine + "- ", workItemsToLog));
 
             // 1. Read the original job's metadata so we can clone its queue, type, source, and properties.
-            JobDetails details = await RetryHelper.RetryAsync(
+            JobDetails details = await RetryAsync(
                 () => _helixApi.Job.DetailsAsync(originalJobName),
                 cancellationToken);
 
@@ -228,7 +228,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string originalJobListJson;
             try
             {
-                originalJobListJson = await RetryHelper.RetryAsync(
+                originalJobListJson = await RetryAsync(
                     async () =>
                     {
                         IBlobClient jobListBlob = _blobClientFactory.CreateBlobClient(details.JobList);
@@ -276,7 +276,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string filteredJobListJson = filteredEntries.ToString(Formatting.Indented);
 
             // 4. Create a fresh storage container for the new job list and upload it.
-            ContainerInformation container = await RetryHelper.RetryAsync(
+            ContainerInformation container = await RetryAsync(
                 () => _helixApi.Storage.NewAsync(
                     new ContainerCreationRequest(expirationInDays: 30, desiredName: "joblists", targetQueue: details.QueueId),
                     cancellationToken),
@@ -286,7 +286,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             var containerUri = new Uri($"https://{container.StorageAccountName}.blob.core.windows.net/{container.ContainerName}");
             IBlobClient jobListBlobClient = _blobClientFactory.CreateBlobClient(containerUri, blobName, container.WriteToken);
 
-            await RetryHelper.RetryAsync(
+            await RetryAsync(
                 async () =>
                 {
                     await jobListBlobClient.UploadAsync(BinaryData.FromString(filteredJobListJson), overwrite: true, cancellationToken);
@@ -327,7 +327,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             };
 
             string idempotencyKey = Guid.NewGuid().ToString("N");
-            JobCreationResult newJob = await RetryHelper.RetryAsync(
+            JobCreationResult newJob = await RetryAsync(
                 () => _helixApi.Job.NewAsync(creationRequest, idempotencyKey, cancellationToken: cancellationToken),
                 cancellationToken);
 
@@ -378,6 +378,40 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             }
 
             return builder.ToImmutable();
+        }
+
+        private static async Task<T> RetryAsync<T>(Func<Task<T>> action, CancellationToken cancellationToken)
+        {
+            Exception last = null;
+            T result = default;
+            var retryHandler = new ExponentialRetry
+            {
+                MaxAttempts = 5,
+                DelayBase = 2,
+                DelayConstant = 0,
+                MinRandomFactor = 1,
+                MaxRandomFactor = 1,
+            };
+
+            bool succeeded = await retryHandler.RunAsync(
+                async _ =>
+                {
+                    try
+                    {
+                        result = await action();
+                        return RetryResult.Success;
+                    }
+                    catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+                    {
+                        last = ex;
+                        return RetryResult.Retry();
+                    }
+                },
+                cancellationToken);
+
+            return succeeded
+                ? result
+                : throw last ?? new InvalidOperationException("Retry failed without capturing an exception.");
         }
 
         private static string GetStringPropertyFromProperties(JToken properties, string name)

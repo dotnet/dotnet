@@ -7,10 +7,6 @@
 
     <DiskUsageCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile "Get-PSDrive -PSProvider FileSystem -Name (Get-Item "$(RepoRoot.TrimEnd('\'))").PSDrive.Name"</DiskUsageCommand>
     <DiskUsageCommand Condition="'$(BuildOS)' != 'windows'">df -h $(RepoRoot)</DiskUsageCommand>
-    <BuildServerShutdownTimeoutInMilliseconds Condition="'$(BuildServerShutdownTimeoutInMilliseconds)' == ''">300000</BuildServerShutdownTimeoutInMilliseconds>
-    <BuildServerShutdownTimeoutInSeconds Condition="'$(BuildServerShutdownTimeoutInSeconds)' == ''">$([MSBuild]::Divide($(BuildServerShutdownTimeoutInMilliseconds), 1000))</BuildServerShutdownTimeoutInSeconds>
-    <BuildServerShutdownCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command &quot;$p = Start-Process -FilePath '$(DotNetTool)' -ArgumentList '-d','build-server','shutdown','--vbcscompiler' -NoNewWindow -PassThru; if (-not $p.WaitForExit($(BuildServerShutdownTimeoutInMilliseconds))) { Write-Warning 'Build server shutdown timed out; terminating process.'; $p.Kill($true); exit 124 }; exit $p.ExitCode&quot;</BuildServerShutdownCommand>
-    <BuildServerShutdownCommand Condition="'$(BuildOS)' != 'windows'">&quot;$(DotNetTool)&quot; -d build-server shutdown --vbcscompiler &amp; _build_server_shutdown_pid=$!; (sleep $(BuildServerShutdownTimeoutInSeconds); kill $_build_server_shutdown_pid 2&gt;/dev/null) &amp; _build_server_shutdown_watchdog_pid=$!; wait $_build_server_shutdown_pid; _build_server_shutdown_exit_code=$?; kill $_build_server_shutdown_watchdog_pid 2&gt;/dev/null; exit $_build_server_shutdown_exit_code</BuildServerShutdownCommand>
 
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
@@ -828,48 +824,35 @@
   </Target>
 
   <Target Name="CleanupRepo"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)CleanupRepo.complete"
           DependsOnTargets="BackupProjectAssetsJsonFiles"
           Condition="'$(IsUtilityProject)' != 'true' and
                      '$(CleanWhileBuilding)' == 'true' and
                      Exists('$(RepoArtifactsDir)')">
-    <!--
-      Some repositories (WinForms) use source generators that open files manually and keep file handles open on the compiler server (CsWin32).
-      These source generators are written incorrectly (a source generator should never do IO itself),
-      but the required features to read in binary files as input to a source generator don't exist.
-      To work around these source generators, shut down the compiler server so we can delete the obj directories.
-      Don't fail the build when shutdown returns a failure.
-
-      Don't run when source building to prevent the build from hanging indefinitely - https://github.com/dotnet/source-build/issues/4796
-    -->
-    <!-- Use an external timeout wrapper so timeout failures are absorbed by IgnoreExitCode instead of logged as MSBuild task errors. -->
-    <Exec Command="$(BuildServerShutdownCommand)"
-          Condition="'$(DotNetBuildSourceOnly)' != 'true'"
-          EnvironmentVariables="NUGET_PACKAGES=$(RepoArtifactsPackageCache)"
-          ContinueOnError="WarnAndContinue"
-          IgnoreStandardErrorWarningFormat="true"
-          IgnoreExitCode="true" />
-
     <Message Text="DirSize After Building $(RepositoryName)" Importance="High" />
     <Exec Command="$(DiskUsageCommand)" />
 
-    <!-- Cleanup the entire repo artifacts dir. Ignore failures as this is best effort.
-         Don't use Removedir as ContinueOnError on it doesn't work when using warnaserror/TreatWarningsAsErrors. -->
+    <!--
+      Delete the entire repo artifacts dir in a detached background process so that repos which
+      depend on this one don't wait for it. The artifacts dir is isolated to this repo and nothing
+      else reads from it, and the deletion is best effort, so nothing needs to observe the result.
+
+      Exec waits until the pipes it hands out are closed, not just until the process it started
+      exits, so the child must not end up holding a copy of them.
+
+      On Windows "start /B" is not enough: cmd passes the spawned process an inheritable copy of
+      those pipes, so Exec stays blocked for the whole delete even though start itself returns
+      immediately. Redirecting the streams doesn't change that. Start-Process goes through
+      ShellExecute, which doesn't inherit handles, so Exec is released right away.
+
+      On Unix redirecting to /dev/null is required, not cosmetic: without it the backgrounded
+      process inherits Exec's pipes and Exec blocks for the full delete.
+    -->
     <PropertyGroup>
-      <RepoCleanCommand Condition="'$(BuildOS)' == 'windows'">rmdir "$(RepoArtifactsDir.TrimEnd('\'))" /s /q</RepoCleanCommand>
-      <RepoCleanCommand Condition="'$(BuildOS)' != 'windows'">rm -rf "$(RepoArtifactsDir)"</RepoCleanCommand>
+      <RepoCleanCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile -Command "Start-Process cmd -ArgumentList '/c','rmdir /s /q \&quot;$(RepoArtifactsDir.TrimEnd('\'))\&quot;' -WindowStyle Hidden"</RepoCleanCommand>
+      <RepoCleanCommand Condition="'$(BuildOS)' != 'windows'">nohup rm -rf "$(RepoArtifactsDir)" &gt; /dev/null 2&gt;&amp;1 &lt;/dev/null &amp;</RepoCleanCommand>
     </PropertyGroup>
 
     <Exec Command="$(RepoCleanCommand)" IgnoreExitCode="true" IgnoreStandardErrorWarningFormat="true" />
-
-    <Message Text="DirSize After CleanupRepo $(RepositoryName)" Importance="High" />
-    <Exec Command="$(DiskUsageCommand)" />
-
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)CleanupRepo.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
   </Target>
 
   <PropertyGroup>

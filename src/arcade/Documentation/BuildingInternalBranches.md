@@ -8,7 +8,7 @@ For instance, let's say runtime has an internal fix in `internal/release/9.0`. R
 
 ## The Solution
 
-1. Request and obtain access to the following entitlement: https://coreidentity.microsoft.com/manage/Entitlement/entitlement/netdailyinte-q2ql 
+1. Request and obtain access to this [entitlement](https://myaccess.microsoft.com/@microsoft.onmicrosoft.com#/access-packages/be3adebf-1263-40f5-8aa9-ac7b4bd1d7f9).
 2. Add/Enable internal NuGet Sources - This step adds `-internal` feeds that correspond to non-internal feeds (e.g. `dotnet9-internal` if `dotnet9` is present). It also *enables* `darc-int-*` sources added for stable packages.
    
    **All platforms (w/Powershell core installed)**

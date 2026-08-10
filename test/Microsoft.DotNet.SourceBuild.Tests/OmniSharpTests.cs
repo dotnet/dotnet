@@ -9,7 +9,6 @@ using System.Security.AccessControl;
 using System.Threading.Tasks;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
@@ -23,11 +22,11 @@ public class OmniSharpTests : SdkTests
 
     private string OmniSharpDirectory { get; } = Path.Combine(DotNetHelper.ProjectsDirectory, nameof(OmniSharpTests));
 
-    public static bool IncludeOmniSharpTests => Config.TargetArchitecture != "ppc64le" && Config.TargetArchitecture != "s390x";
+    public static bool ExcludeOmniSharpTests => Config.TargetArchitecture is "ppc64le" or "s390x";
 
     public OmniSharpTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
-    [ConditionalTheoryAttribute(typeof(OmniSharpTests), nameof(IncludeOmniSharpTests))]
+    [Theory(Skip = "OmniSharp is not available for the target architecture", SkipWhen = nameof(ExcludeOmniSharpTests))]
     [InlineData(DotNetTemplate.BlazorWasm)]
     [InlineData(DotNetTemplate.ClassLib)]
     [InlineData(DotNetTemplate.Console)]

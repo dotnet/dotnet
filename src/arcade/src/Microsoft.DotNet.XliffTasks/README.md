@@ -51,7 +51,9 @@ Note `XliffTasks` does not force the items into a sorted order if they are not a
 
 `ErrorOnOutOfDateXlf` - When set to true the build will produce an error if the .xlf files are out-of-date with respect to the source files. Defaults to true.
 
-`XlfLanguages` - The set of locales to which the project is localized. Defaults to the thirteen locales supported by Visual Studio: `cs;de;es;fr;it;ja;ko;pl;pt-BR;ru;tr;zh-Hans;zh-Hant`.
+`XlfLanguages` - The set of locales to which the project is localized. Defaults to the thirteen locales supported by Visual Studio: `cs;de;es;fr;it;ja;ko;pl;pt-BR;ru;tr;zh-Hans;zh-Hant`. Note that `en` is the source language and is therefore not a valid `XlfLanguages` entry; the build fails if it is listed there.
+
+`CreateNeutralXlf` - When set to true, a neutral (language-agnostic) .xlf file is generated and kept up-to-date next to the per-language .xlf files, e.g. `xlf\Resources.xlf` next to `xlf\Resources.cs.xlf`. This is the file handed to the localization system (OneLocBuild) as the source of strings to translate. Defaults to false.
 
 ## Source File Properties
 

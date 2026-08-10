@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Microsoft.DotNet.Installer.Tests;
 

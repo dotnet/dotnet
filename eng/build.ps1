@@ -79,9 +79,6 @@ $actions = @("/p:Restore=true", "/p:Build=true", "/p:Publish=true")
 
 if ($test) {
   $actions = @("/p:Restore=true", "/p:Build=true", "/p:Test=true", "/p:IsTestRun=true")
-
-  # Workaround for vstest hangs: https://github.com/microsoft/vstest/issues/10760
-  $env:MSBUILDENSURESTDOUTFORTASKPROCESSES="1"
 }
 
 $arguments = @()

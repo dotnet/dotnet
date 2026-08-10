@@ -28,6 +28,7 @@
            Without it, the build falls back to the hardcoded WilsonCurrentVersion which may not match the release version. -->
       <BuildCommandArgs>$(BuildCommandArgs) /p:WilsonVersion=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:FileVersion=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion).$(FileVersionRevision)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftBclCryptographyVersion=$(IdentityModelMicrosoftBclCryptographyVersion)</BuildCommandArgs>
       <!-- Disable trimming/AOT analysis. On net8.0+ IsAotCompatible=true pulls in the
            Microsoft.NET.ILLink.Tasks/.Analyzers packages, which are not available in the
            offline source-build package feed. -->

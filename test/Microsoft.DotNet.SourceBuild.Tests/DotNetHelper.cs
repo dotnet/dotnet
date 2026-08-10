@@ -11,7 +11,6 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 

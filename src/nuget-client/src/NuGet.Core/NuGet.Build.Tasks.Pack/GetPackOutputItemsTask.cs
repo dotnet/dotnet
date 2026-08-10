@@ -99,7 +99,7 @@ namespace NuGet.Build.Tasks.Pack
                 return (packageId, ParseVersion(packArgs.Version));
             }
 
-            return (packageId, nuspecReader.GetVersion());
+            return (packageId, nuspecReader.GetVersion() ?? ParseVersion(PackageVersion));
 
             static NuGetVersion ParseVersion(string packageVersion)
             {

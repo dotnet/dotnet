@@ -3,7 +3,8 @@
   <PropertyGroup>
     <Configuration Condition="$(Configuration) == ''">Release</Configuration>
     <DotNetBuildFromVMR>true</DotNetBuildFromVMR>
-    <Nullable>enable</Nullable>
+    <!-- Use the product's test functionality without any Arcade support. MTP doesn't need that. -->
+    <DisableArcadeTestFramework>true</DisableArcadeTestFramework>
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)eng/RuntimeIdentifier.props" />
@@ -68,6 +69,7 @@
     <DisableArcadeExcludeFromBuildSupport>true</DisableArcadeExcludeFromBuildSupport>
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
 
+    <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <!-- Don't run NuGetAudit on offline builds -->
     <NuGetAudit Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">false</NuGetAudit>
