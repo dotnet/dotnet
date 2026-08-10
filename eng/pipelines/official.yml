@@ -11,8 +11,14 @@ trigger:
       - internal/release/*
 
 schedules:
-  - cron: "0 12 * * 0,6" # run every Saturday and Sunday at 12:00 (UTC)
-    displayName: Signed main build on weekends
+  - cron: "0 12 * * 6" # run every Saturday at 12:00 (UTC)
+    displayName: Signed main build on Saturdays
+    branches:
+      include:
+      - main
+    always: true
+  - cron: "0 12 * * 0" # run every Sunday at 12:00 (UTC)
+    displayName: Unsigned CodeQL main build on Sundays
     branches:
       include:
       - main
@@ -46,7 +52,7 @@ variables:
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
 
 - name: Codeql.DoNotStartTimes
-  value: 'Mon;Tue;Wed;Thu;Fri;Sat' # run only on the scheduled build on Sunday
+  value: 'Mon;Tue;Wed;Thu;Fri;Sat' # run only on the unsigned scheduled build on Sunday
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: skipComponentGovernanceDetection  # we run CG on internal builds only
@@ -183,7 +189,7 @@ extends:
     - template: /eng/pipelines/templates/stages/vmr-scan.yml@self
     - template: /eng/pipelines/templates/stages/vmr-build.yml@self
       parameters:
-        ${{ if and(eq(variables.isScheduleTrigger, 'true'), eq(variables['Build.CronSchedule.DisplayName'], 'Signed main build on weekends')) }}:
+        ${{ if and(eq(variables.isScheduleTrigger, 'true'), eq(variables['Build.CronSchedule.DisplayName'], 'Signed main build on Saturdays')) }}:
           desiredSigning: Signed (Real)
         ${{ else }}:
           desiredSigning: ${{ parameters.desiredSigning }}
