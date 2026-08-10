@@ -4,9 +4,17 @@
     emsdk provides the Emscripten toolchain, which is a build-time tool that runs on the build host.
     Override the target OS/architecture/RID passed to emsdk's build with the host values. These args
     come after CommonArgs on the command line, so they take precedence.
+
+    Use the portable host RID rather than $(BuildRid): $(BuildRid) can be distro-specific (e.g.
+    azurelinux.3.0-x64), but emsdk resolves its prebuilt toolchain from
+    runtime.<rid>.Microsoft.NETCore.Runtime.Wasm.*.Transport packages, which only exist for portable
+    RIDs. It also compares TargetRid against its own (portable) BuildRid to decide whether it needs
+    to cross-build the toolchain from source.
   -->
   <PropertyGroup Condition="'$(TargetOS)' == 'browser'">
-    <BuildArgs>$(BuildArgs) /p:TargetOS=$(BuildOS) /p:TargetArchitecture=$(BuildArchitecture) /p:TargetRid=$(BuildRid) /p:PortableTargetRid=$(BuildRid)</BuildArgs>
+    <_EmsdkHostRid>$(BuildOS)-$(BuildArchitecture)</_EmsdkHostRid>
+    <_EmsdkHostRid Condition="'$(BuildOS)' == 'windows'">win-$(BuildArchitecture)</_EmsdkHostRid>
+    <BuildArgs>$(BuildArgs) /p:TargetOS=$(BuildOS) /p:TargetArchitecture=$(BuildArchitecture) /p:TargetRid=$(_EmsdkHostRid) /p:PortableTargetRid=$(_EmsdkHostRid)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
