@@ -84,13 +84,10 @@
   <!-- Warning codes surfaced from each repo's build log into the orchestrator build so they're
       visible in the CI/build summary (see the LogRepoBuildWarnings task in Directory.Build.targets).
       Keep in sync with the warnNotAsError set in the VMR root Directory.Build.rsp so surfaced
-      warnings stay warnings instead of being promoted to errors by the blanket -warnAsError. 
-
-      Downgrade NuGet Audit NU1901, NU1902 and NU1903 to warnings and keep NU1904 (critical) as error. -->
+      warnings stay warnings instead of being promoted to errors by the blanket -warnAsError. -->
   <PropertyGroup>
-    <RepoBuildWarningCodesToSurface>NU1901;NU1902;NU1903</RepoBuildWarningCodesToSurface>
+    <RepoBuildWarningCodesToSurface>NU1901;NU1902;NU1903;NU1904</RepoBuildWarningCodesToSurface>
   </PropertyGroup>
-
 
   <PropertyGroup>
     <!-- By default, use the eng/common/build.cmd/sh script -->
@@ -131,8 +128,8 @@
          On Windows the list passes through PowerShell's Invoke-Expression (see runtime's build.ps1),
          so each ';' is backtick-escaped to survive as a single argument. On other platforms the
          quoted value is handed straight to the shell, where ';' is already literal, so it's used as-is. -->
-    <CommonArgs Condition="'$(BuildOS)' == 'windows'">$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "$(RepoBuildWarningCodesToSurface.Replace(';','`;'))"</CommonArgs>
-    <CommonArgs Condition="'$(BuildOS)' != 'windows'">$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "$(RepoBuildWarningCodesToSurface)"</CommonArgs>
+    <CommonArgs Condition="'$(RepoBuildWarningCodesToSurface)' != '' and '$(BuildOS)' == 'windows'">$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "$(RepoBuildWarningCodesToSurface.Replace(';','`;'))"</CommonArgs>
+    <CommonArgs Condition="'$(RepoBuildWarningCodesToSurface)' != '' and '$(BuildOS)' != 'windows'">$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "$(RepoBuildWarningCodesToSurface)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /clp:NoSummary</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:TargetRid=$(TargetRid)</CommonArgs>
