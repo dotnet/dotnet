@@ -14,7 +14,6 @@ internal class ToolingFilesValidation : IValidationStep
     private static readonly string[] ToolingFilePatterns = new[]
     {
         "^eng/Version\\.Details\\.xml$",
-        "^src/source-manifest\\.json$",
         "^eng/Version\\.props$",
         "^eng/Version\\.Details\\.props$",
         "^global\\.json$",
