@@ -6,8 +6,8 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26407.2</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26407.2</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26407.6</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26407.6</MicrosoftDotNetHelixSdkPackageVersion>
     <!-- dotnet-arcade-services dependencies -->
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26374.1</MicrosoftDotNetDarcLibPackageVersion>
     <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.26374.1</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
@@ -18,7 +18,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-diagnostics dependencies -->
     <MicrosoftSymbolManifestGeneratorPackageVersion>8.0.0-preview.24461.2</MicrosoftSymbolManifestGeneratorPackageVersion>
     <!-- dotnet-dnceng dependencies -->
-    <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.26406.2</MicrosoftDncEngSecretManagerPackageVersion>
+    <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.26407.1</MicrosoftDncEngSecretManagerPackageVersion>
     <!-- dotnet-msbuild dependencies -->
     <MicrosoftBuildPackageVersion>17.12.50</MicrosoftBuildPackageVersion>
     <MicrosoftBuildFrameworkPackageVersion>17.12.50</MicrosoftBuildFrameworkPackageVersion>
