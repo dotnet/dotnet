@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -25,6 +26,129 @@ using Strings = NuGet.CommandLine.XPlat.Strings;
 
 public class SingleProjectTests
 {
+    [Fact]
+    public void CreateDgSpecForVulnerabilityScan_WhenNoAuditWarningsAreErrors_ReturnsOriginalDgSpec()
+    {
+        PackageSpec packageSpec = CreatePackageSpec();
+        DependencyGraphSpec dgSpec = CreateDgSpec(packageSpec);
+
+        DependencyGraphSpec scanDgSpec = PackageUpdateCommandRunner.CreateDgSpecForVulnerabilityScan(dgSpec);
+
+        scanDgSpec.Should().BeSameAs(dgSpec);
+    }
+
+    [Fact]
+    public void CreateDgSpecForVulnerabilityScan_WhenAllAuditWarningsAreNotErrors_ReturnsOriginalDgSpec()
+    {
+        PackageSpec packageSpec = CreatePackageSpec();
+        WarningProperties warningProperties = packageSpec.RestoreMetadata.ProjectWideWarningProperties;
+        warningProperties.AllWarningsAsErrors = true;
+        warningProperties.WarningsNotAsErrors.UnionWith(
+        [
+            NuGetLogCode.NU1901,
+            NuGetLogCode.NU1902,
+            NuGetLogCode.NU1903,
+            NuGetLogCode.NU1904,
+        ]);
+        DependencyGraphSpec dgSpec = CreateDgSpec(packageSpec);
+
+        DependencyGraphSpec scanDgSpec = PackageUpdateCommandRunner.CreateDgSpecForVulnerabilityScan(dgSpec);
+
+        scanDgSpec.Should().BeSameAs(dgSpec);
+    }
+
+    [Fact]
+    public void CreateDgSpecForVulnerabilityScan_WhenAllWarningsAreErrors_ClonesAndRemovesAuditWarningsAsErrors()
+    {
+        PackageSpec packageSpec = CreatePackageSpec();
+        WarningProperties warningProperties = packageSpec.RestoreMetadata.ProjectWideWarningProperties;
+        warningProperties.AllWarningsAsErrors = true;
+        warningProperties.WarningsAsErrors.UnionWith(
+        [
+            NuGetLogCode.NU1901,
+            NuGetLogCode.NU1902,
+            NuGetLogCode.NU1603,
+        ]);
+        DependencyGraphSpec dgSpec = CreateDgSpec(packageSpec);
+
+        DependencyGraphSpec scanDgSpec = PackageUpdateCommandRunner.CreateDgSpecForVulnerabilityScan(dgSpec);
+        PackageSpec scanPackageSpec = scanDgSpec.Projects.Single();
+
+        scanDgSpec.Should().NotBeSameAs(dgSpec);
+        scanPackageSpec.Should().NotBeSameAs(packageSpec);
+        scanPackageSpec.RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors.Should().BeFalse();
+        scanPackageSpec.RestoreMetadata.ProjectWideWarningProperties.WarningsAsErrors.Should().BeEquivalentTo([NuGetLogCode.NU1603]);
+        warningProperties.AllWarningsAsErrors.Should().BeTrue();
+        warningProperties.WarningsAsErrors.Should().BeEquivalentTo(
+        [
+            NuGetLogCode.NU1901,
+            NuGetLogCode.NU1902,
+            NuGetLogCode.NU1603,
+        ]);
+    }
+
+    [Fact]
+    public void CreateDgSpecForVulnerabilityScan_WhenExplicitAuditWarningIsAnError_ClonesAndRemovesAuditWarningAsError()
+    {
+        PackageSpec packageSpec = CreatePackageSpec();
+        packageSpec.RestoreMetadata.ProjectWideWarningProperties.WarningsAsErrors.Add(NuGetLogCode.NU1903);
+        DependencyGraphSpec dgSpec = CreateDgSpec(packageSpec);
+
+        DependencyGraphSpec scanDgSpec = PackageUpdateCommandRunner.CreateDgSpecForVulnerabilityScan(dgSpec);
+        PackageSpec scanPackageSpec = scanDgSpec.Projects.Single();
+
+        scanDgSpec.Should().NotBeSameAs(dgSpec);
+        scanPackageSpec.RestoreMetadata.ProjectWideWarningProperties.WarningsAsErrors.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void CreateDgSpecForVulnerabilityScan_WhenUnrelatedWarningIsAnError_ReturnsOriginalDgSpec()
+    {
+        PackageSpec packageSpec = CreatePackageSpec();
+        packageSpec.RestoreMetadata.ProjectWideWarningProperties.WarningsAsErrors.Add(NuGetLogCode.NU1603);
+        DependencyGraphSpec dgSpec = CreateDgSpec(packageSpec);
+
+        DependencyGraphSpec scanDgSpec = PackageUpdateCommandRunner.CreateDgSpecForVulnerabilityScan(dgSpec);
+
+        scanDgSpec.Should().BeSameAs(dgSpec);
+    }
+
+    [Fact]
+    public void CreateDgSpecForVulnerabilityScan_WithMixedProjects_OnlyClonesProjectThatFailsOnAuditWarnings()
+    {
+        PackageSpec projectWithAuditErrors = CreatePackageSpec("ProjectWithAuditErrors");
+        projectWithAuditErrors.RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors = true;
+        PackageSpec projectWithoutAuditErrors = CreatePackageSpec("ProjectWithoutAuditErrors");
+        DependencyGraphSpec dgSpec = CreateDgSpec(projectWithAuditErrors, projectWithoutAuditErrors);
+
+        DependencyGraphSpec scanDgSpec = PackageUpdateCommandRunner.CreateDgSpecForVulnerabilityScan(dgSpec);
+
+        scanDgSpec.Projects.Single(project => project.RestoreMetadata.ProjectUniqueName == projectWithAuditErrors.RestoreMetadata.ProjectUniqueName)
+            .Should().NotBeSameAs(projectWithAuditErrors);
+        scanDgSpec.Projects.Single(project => project.RestoreMetadata.ProjectUniqueName == projectWithoutAuditErrors.RestoreMetadata.ProjectUniqueName)
+            .Should().BeSameAs(projectWithoutAuditErrors);
+    }
+
+    private static PackageSpec CreatePackageSpec(string projectName = "TestProject")
+    {
+        return new TestPackageSpecFactory(
+            fullPath: $"{projectName}.csproj",
+            directory: ".",
+            builder => builder.WithProperty("TargetFramework", "net9.0")).Build();
+    }
+
+    private static DependencyGraphSpec CreateDgSpec(params PackageSpec[] packageSpecs)
+    {
+        DependencyGraphSpec dgSpec = new DependencyGraphSpec();
+        foreach (PackageSpec packageSpec in packageSpecs)
+        {
+            dgSpec.AddProject(packageSpec);
+            dgSpec.AddRestore(packageSpec.RestoreMetadata.ProjectUniqueName);
+        }
+
+        return dgSpec;
+    }
+
     [Fact]
     public async Task SingleTarget_SinglePackage_UpdatesCorrectPackageVersion()
     {
