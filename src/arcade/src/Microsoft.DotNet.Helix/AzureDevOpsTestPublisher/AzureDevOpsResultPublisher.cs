@@ -51,7 +51,20 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
     {
         var testResultReader = new LocalTestResultsReader(_logger);
 
-        Task<IReadOnlyList<TestResult>>[] parseTasks = [.. testResultFiles.Select(file => testResultReader.ReadResultFileAsync(file, cancellationToken))];
+        async Task<IReadOnlyList<TestResult>> ParseAsync(string file)
+        {
+            DateTimeOffset startedAt = DateTimeOffset.UtcNow;
+            _logger.LogDebug("Parsing test result file '{FilePath}'.", file);
+            IReadOnlyList<TestResult> results = await testResultReader.ReadResultFileAsync(file, cancellationToken);
+            _logger.LogDebug(
+                "Parsed {ResultCount} test result(s) from '{FilePath}' in {Elapsed}.",
+                results.Count,
+                file,
+                DateTimeOffset.UtcNow - startedAt);
+            return results;
+        }
+
+        Task<IReadOnlyList<TestResult>>[] parseTasks = [.. testResultFiles.Select(ParseAsync)];
         IReadOnlyList<TestResult>[] parsedResults = await Task.WhenAll(parseTasks);
         if (parsedResults.Length == 0)
         {
@@ -408,10 +421,19 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
             MinRandomFactor = 1,
             MaxRandomFactor = 1,
             MaximumDelay = s_maximumRetryDelay,
+            RetryDelayCallback = (failedAttempt, delay) =>
+                _logger.LogDebug(
+                    "Azure DevOps {Method} request to '{RequestPath}' failed on attempt {Attempt} of {AttemptCount}. "
+                    + "Waiting {RetryDelay} before the next attempt.",
+                    method,
+                    relativePath,
+                    failedAttempt,
+                    attemptCount,
+                    delay),
         };
 
         bool succeeded = await retryHandler.RunAsync(
-            async _ =>
+            async attempt =>
             {
                 Uri baseUri = _azdoParameters.CollectionUri.AbsoluteUri.EndsWith('/')
                     ? _azdoParameters.CollectionUri
@@ -425,9 +447,25 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
 
                 try
                 {
+                    DateTimeOffset requestStartedAt = DateTimeOffset.UtcNow;
+                    _logger.LogDebug(
+                        "Sending Azure DevOps {Method} request to '{RequestPath}', attempt {Attempt} of {AttemptCount}.",
+                        method,
+                        relativePath,
+                        attempt + 1,
+                        attemptCount);
                     HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
                     if (response.IsSuccessStatusCode)
                     {
+                        _logger.LogDebug(
+                            "Azure DevOps {Method} request to '{RequestPath}' completed with HTTP {StatusCode} "
+                            + "on attempt {Attempt} of {AttemptCount} after {Elapsed}.",
+                            method,
+                            relativePath,
+                            (int)response.StatusCode,
+                            attempt + 1,
+                            attemptCount,
+                            DateTimeOffset.UtcNow - requestStartedAt);
                         successfulResponse = response;
                         return RetryResult.Success;
                     }
@@ -446,8 +484,14 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
                             }
 
                             _logger.LogDebug(
-                                "Hit HTTP {StatusCode} from Azure DevOps. Retrying.",
-                                (int)response.StatusCode);
+                                "Azure DevOps {Method} request to '{RequestPath}' returned HTTP {StatusCode} "
+                                + "on attempt {Attempt} of {AttemptCount} after {Elapsed}. Retrying.",
+                                method,
+                                relativePath,
+                                (int)response.StatusCode,
+                                attempt + 1,
+                                attemptCount,
+                                DateTimeOffset.UtcNow - requestStartedAt);
                             lastException = new AzureDevOpsReportingError(
                                 $"Azure DevOps request failed with status code {(int)response.StatusCode}: {responseBody}");
                             return RetryResult.Retry(retryAfter);
@@ -471,7 +515,12 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
                     lastException = ex;
                     _logger.LogDebug(
                         ex,
-                        "Transient Azure DevOps request failure. Retrying.");
+                        "Transient Azure DevOps {Method} request failure for '{RequestPath}' on attempt "
+                        + "{Attempt} of {AttemptCount}. Retrying.",
+                        method,
+                        relativePath,
+                        attempt + 1,
+                        attemptCount);
                     return RetryResult.Retry();
                 }
             },

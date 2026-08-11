@@ -421,11 +421,25 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     return new TestResultUploadSummary(true, 0);
                 }
 
+                DateTimeOffset waitStartedAt = DateTimeOffset.UtcNow;
+                _logger.LogDebug(
+                    "Work item '{WorkItemName}' in job '{JobName}' is waiting for a test-result upload slot. "
+                    + "{AvailableSlots} slot(s) are currently available.",
+                    workItem.WorkItemName,
+                    workItem.JobName,
+                    _uploadSemaphore.CurrentCount);
                 await _uploadSemaphore.WaitAsync(cancellationToken);
 
                 try
                 {
-                    _logger.LogDebug("Publishing test results for work item '{WorkItemName}' in job '{JobName}'...", workItem.WorkItemName, workItem.JobName);
+                    DateTimeOffset uploadStartedAt = DateTimeOffset.UtcNow;
+                    _logger.LogDebug(
+                        "Work item '{WorkItemName}' in job '{JobName}' acquired a test-result upload slot after {WaitElapsed}. "
+                        + "Parsing and publishing {FileCount} file(s).",
+                        workItem.WorkItemName,
+                        workItem.JobName,
+                        uploadStartedAt - waitStartedAt,
+                        workItem.TestResultFiles.Count);
                     TestResultUploadSummary summary = await publisher.UploadTestResultsWithSummaryAsync(
                         workItem.TestResultFiles,
                         new
@@ -434,6 +448,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                             HelixWorkItemName = workItem.WorkItemName
                         },
                         cancellationToken);
+                    _logger.LogDebug(
+                        "Work item '{WorkItemName}' in job '{JobName}' finished parsing and publishing after {UploadElapsed}.",
+                        workItem.WorkItemName,
+                        workItem.JobName,
+                        DateTimeOffset.UtcNow - uploadStartedAt);
                     return summary;
                 }
                 finally
@@ -504,6 +523,15 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 DelayConstant = 0,
                 MinRandomFactor = 1,
                 MaxRandomFactor = 1,
+                RetryDelayCallback = (failedAttempt, delay) =>
+                    _logger.LogDebug(
+                        "Azure DevOps {Method} request to '{RequestUri}' failed on attempt {Attempt} of {AttemptCount}. "
+                        + "Waiting {RetryDelay} before the next attempt.",
+                        method,
+                        requestUri,
+                        failedAttempt,
+                        5,
+                        delay),
             };
 
             bool succeeded = await retryHandler.RunAsync(

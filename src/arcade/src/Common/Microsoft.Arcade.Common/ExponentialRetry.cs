@@ -34,6 +34,11 @@ namespace Microsoft.Arcade.Common
         /// </summary>
         public TimeSpan? MaximumDelay { get; set; }
 
+        /// <summary>
+        /// Invoked after a failed attempt when another attempt will be made. The first argument
+        /// is the one-based number of the failed attempt and the second is the computed delay.
+        /// </summary>
+        public Action<int, TimeSpan> RetryDelayCallback { get; set; }
         public CancellationToken DefaultCancellationToken { get; set; } = CancellationToken.None;
 
         public Task<bool> RunAsync(Func<int, Task<RetryResult>> actionAsync)
@@ -78,6 +83,7 @@ namespace Microsoft.Arcade.Common
                     : exponentialDelay;
 
                 Trace.TraceInformation($"{attempt} failed. Waiting {delay} before next try.");
+                RetryDelayCallback?.Invoke(i + 1, delay);
 
                 await Task.Delay(delay, cancellationToken);
             }
