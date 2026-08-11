@@ -87,6 +87,7 @@ Options:
     --warnAsError                     Sets warnaserror msbuild parameter: 'true' or 'false'
     --warnNotAsError                  Sets a semi-colon delimited list of warning codes that should not be treated as errors
     --msbuildMultiThreaded|--mt       Sets MSBuild's multi-threaded mode, i.e. the -mt switch: 'true' or 'false'
+    --nodeReuse                       Sets nodereuse msbuild parameter: 'true' or 'false'
 
     --runtime-source-feed             Additional feed that can be used when downloading .NET runtimes and SDKs
     --runtime-source-feed-key         Key for feed that can be used when downloading .NET runtimes and SDKs
@@ -273,6 +274,11 @@ while [[ $# -gt 0 ]]; do
             [ -z "${1:-}" ] && __error "Missing value for parameter --msbuildMultiThreaded" && __usage
             msbuild_multi_threaded="${1:-}"
             ;;
+        -nodereuse)
+            shift
+            [ -z "${1:-}" ] && __error "Missing value for parameter --nodeReuse" && __usage
+            node_reuse="${1:-}"
+            ;;
         *)
             msbuild_args[${#msbuild_args[*]}]="$1"
             ;;
@@ -369,6 +375,13 @@ fi
 
 # Initialize global variables need to be set before the import of Arcade is imported
 restore=$run_restore
+
+# Disable node reuse - Workaround perpetual issues in node reuse and custom task assemblies.
+# An explicitly passed --nodeReuse value wins.
+if [[ -z "${node_reuse:-}" ]]; then
+    node_reuse=false
+    export MSBUILDDISABLENODEREUSE=1
+fi
 
 # Ensure passing neither --bl nor --nobl on CI avoids errors in tools.sh. This is needed because we set both variables
 # to false by default i.e. they always exist. (We currently avoid binary logs but that is made visible in the YAML.)
