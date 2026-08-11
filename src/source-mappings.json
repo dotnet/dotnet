@@ -56,7 +56,8 @@
       "name": "roslyn",
       "defaultRemote": "https://github.com/dotnet/roslyn",
       "exclude": [
-        "src/Compilers/Test/Resources/Core/MetadataTests/Invalid/Obfuscated*.dll"
+        "src/Compilers/Test/Resources/Core/MetadataTests/Invalid/Obfuscated*.dll",
+        "src/Compilers/Test/Resources/Core/MetadataTests/Invalid/Signatures/SignatureCycle2.exe"
       ]
     },
     {
