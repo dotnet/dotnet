@@ -13,4 +13,4 @@ while [[ -h $source ]]; do
 done
 
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
-"$scriptroot/../common/build.sh" --restore --build --projects "$scriptroot/dotnet-build.proj" $@
+"$scriptroot/../common/build.sh" --restore --build --projects "$scriptroot/dotnet-build.proj" "$@"
