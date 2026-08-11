@@ -25,17 +25,12 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
             _repoRoot = repoRoot ?? throw new ArgumentNullException(nameof(repoRoot));
         }
 
-        public async Task<(int exitCode, string output, string error)> RunPowerShellScript(string configFilePath, string password = null)
+        public async Task<(int exitCode, string output, string error)> RunPowerShellScript(string configFilePath, string credential = null)
         {
             var scriptPath = Path.Combine(_repoRoot, "eng", "common", "SetupNugetSources.ps1");
             var arguments = $"-ExecutionPolicy Bypass -File \"{scriptPath}\" -ConfigFile \"{configFilePath}\"";
-            
-            if (!string.IsNullOrEmpty(password))
-            {
-                arguments += $" -Password \"{password}\"";
-            }
 
-            return await RunProcess("powershell.exe", arguments, _repoRoot);
+            return await RunProcess("powershell.exe", arguments, _repoRoot, credential);
         }
 
         public async Task<(int exitCode, string output, string error)> RunShellScript(string configFilePath, string credToken = null)
@@ -49,16 +44,16 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
             }
 
             var arguments = $"\"{scriptPath}\" \"{configFilePath}\"";
-            if (!string.IsNullOrEmpty(credToken))
-            {
-                arguments += $" \"{credToken}\"";
-            }
 
             var shell = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "bash.exe" : "/bin/bash";
-            return await RunProcess(shell, arguments, _repoRoot);
+            return await RunProcess(shell, arguments, _repoRoot, credToken);
         }
 
-        private async Task<(int exitCode, string output, string error)> RunProcess(string fileName, string arguments, string workingDirectory = null)
+        private async Task<(int exitCode, string output, string error)> RunProcess(
+            string fileName,
+            string arguments,
+            string workingDirectory = null,
+            string credential = null)
         {
             var process = new Process
             {
@@ -73,6 +68,11 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
                     WorkingDirectory = workingDirectory ?? Directory.GetCurrentDirectory()
                 }
             };
+
+            if (!string.IsNullOrEmpty(credential))
+            {
+                process.StartInfo.EnvironmentVariables["Token"] = credential;
+            }
 
             var outputBuilder = new StringBuilder();
             var errorBuilder = new StringBuilder();
@@ -122,4 +122,3 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
         }
     }
 }
-
