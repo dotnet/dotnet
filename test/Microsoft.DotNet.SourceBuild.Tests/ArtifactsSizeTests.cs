@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
@@ -23,11 +22,11 @@ public class ArtifactsSizeTests : SdkTests
     private readonly List<string> _newExclusions = new List<string>();
     private readonly Dictionary<string, int> _filePathCountMap = new();
     private readonly ExclusionsHelper _exclusionsHelper = new ExclusionsHelper("ZeroSizeExclusions.txt", Config.LogsDirectory, nameof(ArtifactsSizeTests));
-    public static bool IncludeArtifactsSizeTests => !string.IsNullOrWhiteSpace(Config.SdkTarballPath);
+    public static bool ExcludeArtifactsSizeTests => string.IsNullOrWhiteSpace(Config.SdkTarballPath);
 
     public ArtifactsSizeTests(ITestOutputHelper outputHelper) : base(outputHelper) {}
 
-    [ConditionalFact(typeof(ArtifactsSizeTests), nameof(IncludeArtifactsSizeTests))]
+    [Fact(Skip = "An SDK tarball is required", SkipWhen = nameof(ExcludeArtifactsSizeTests))]
     public void CheckZeroSizeArtifacts()
     {
         ProcessTarball(Config.SdkTarballPath!, SdkType);

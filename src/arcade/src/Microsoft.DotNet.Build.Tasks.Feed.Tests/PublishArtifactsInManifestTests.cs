@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -286,8 +288,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
             {
                 InternalBuild = true,
                 BuildEngine = buildEngine,
-                MaxRetryCount = 5, // In case the default changes, lock to 5 so the test data works
-                RetryDelayMilliseconds = 10 // retry faster in test
+                MaxRetryCount = 5,
+                RetryHandler = new ExponentialRetry
+                {
+                    MaxAttempts = 5,
+                    DelayBase = 1
+                }
             };
             TargetFeedConfig config = new TargetFeedConfig(TargetFeedContentType.Package, "testUrl", FeedType.AzDoNugetFeed, "tokenValue");
 
@@ -336,6 +342,143 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 timesCalled.Should().BeLessThanOrEqualTo(task.MaxRetryCount);
             }
             expectedFailure.Should().Be(task.Log.HasLoggedErrors);
+        }
+
+        [Fact]
+        public async Task NuGetFeedUploadPackageAsyncLogsFailedResponse()
+        {
+            var buildEngine = new MockBuildEngine();
+            var task = new PublishArtifactsInManifestV3
+            {
+                BuildEngine = buildEngine
+            };
+            using var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                ReasonPhrase = "Package Rejected",
+                Content = new StringContent("The package metadata is invalid.", Encoding.UTF8, "text/plain")
+            };
+            using HttpClient client = FakeHttpClient.WithResponses(response);
+            using var packageStream = new MemoryStream([1, 2, 3]);
+
+            NuGetFeedUploadPackageResult result = await NuGetFeedUploadPackageAsync(
+                client,
+                "test-feed",
+                "https://pkgs.dev.azure.com/dnceng/_packaging/test-feed/nuget/v2",
+                packageStream,
+                task.Log);
+
+            result.Should().Be(NuGetFeedUploadPackageResult.Failed);
+            buildEngine.BuildMessageEvents.Should().Contain(message =>
+                message.Message.Contains("HTTP 400 (Package Rejected)") &&
+                message.Message.Contains("The package metadata is invalid."));
+            buildEngine.BuildErrorEvents.Should().BeEmpty();
+            buildEngine.BuildWarningEvents.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task NuGetFeedUploadPackageAsyncLogsRequestException()
+        {
+            var buildEngine = new MockBuildEngine();
+            var task = new PublishArtifactsInManifestV3
+            {
+                BuildEngine = buildEngine
+            };
+            using var client = new HttpClient(new ThrowingHttpMessageHandler());
+            using var packageStream = new MemoryStream([1, 2, 3]);
+
+            NuGetFeedUploadPackageResult result = await NuGetFeedUploadPackageAsync(
+                client,
+                "test-feed",
+                "https://pkgs.dev.azure.com/dnceng/_packaging/test-feed/nuget/v2",
+                packageStream,
+                task.Log);
+
+            result.Should().Be(NuGetFeedUploadPackageResult.Failed);
+            buildEngine.BuildMessageEvents.Should().Contain(message =>
+                message.Message.Contains("HttpRequestException") &&
+                message.Message.Contains("Connection reset by peer."));
+            buildEngine.BuildErrorEvents.Should().BeEmpty();
+            buildEngine.BuildWarningEvents.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task NuGetFeedUploadPackageAsyncBoundsLoggedResponseBody()
+        {
+            const string omittedText = "This text should not be logged.";
+            var buildEngine = new MockBuildEngine();
+            var task = new PublishArtifactsInManifestV3
+            {
+                BuildEngine = buildEngine
+            };
+            using var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                Content = new StringContent(new string('a', 4096) + omittedText)
+            };
+            using HttpClient client = FakeHttpClient.WithResponses(response);
+            using var packageStream = new MemoryStream([1, 2, 3]);
+
+            NuGetFeedUploadPackageResult result = await NuGetFeedUploadPackageAsync(
+                client,
+                "test-feed",
+                "https://pkgs.dev.azure.com/dnceng/_packaging/test-feed/nuget/v2",
+                packageStream,
+                task.Log);
+
+            result.Should().Be(NuGetFeedUploadPackageResult.Failed);
+            buildEngine.BuildMessageEvents.Should().Contain(message =>
+                message.Message.Contains(new string('a', 4096) + " [truncated]") &&
+                !message.Message.Contains(omittedText));
+        }
+
+        private sealed class ThrowingHttpMessageHandler : HttpMessageHandler
+        {
+            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                throw new HttpRequestException("Connection reset by peer.");
+            }
+        }
+
+        [Fact]
+        public async Task PushNugetPackageUsesExponentialRetryForFailedUploads()
+        {
+            var buildEngine = new MockBuildEngine();
+            var retryDelays = new List<TimeSpan>();
+            var task = new PublishArtifactsInManifestV3
+            {
+                InternalBuild = true,
+                BuildEngine = buildEngine,
+                MaxRetryCount = 3,
+                RetryHandler = new ExponentialRetry
+                {
+                    MaxAttempts = 3,
+                    DelayBase = 1,
+                    RetryDelayCallback = (_, delay) => retryDelays.Add(delay)
+                }
+            };
+            var config = new TargetFeedConfig(TargetFeedContentType.Package, "testUrl", FeedType.AzDoNugetFeed, "tokenValue");
+            var testPackagePath = TestInputs.GetFullPath(Path.Combine("Nupkgs", "test-package-a.1.0.0.nupkg"));
+            int attempts = 0;
+
+            await task.PushNugetPackageAsync(
+                config,
+                null,
+                testPackagePath,
+                "1234",
+                "version",
+                "feedaccount",
+                "feedvisibility",
+                "feedname",
+                AttemptPushPackageCallback: (_, _, _, _) =>
+                {
+                    attempts++;
+                    return Task.FromResult(attempts == 3
+                        ? NuGetFeedUploadPackageResult.Success
+                        : NuGetFeedUploadPackageResult.Failed);
+                });
+
+            attempts.Should().Be(3);
+            retryDelays.Should().HaveCount(2);
+            buildEngine.BuildErrorEvents.Should().BeEmpty();
         }
 
 
