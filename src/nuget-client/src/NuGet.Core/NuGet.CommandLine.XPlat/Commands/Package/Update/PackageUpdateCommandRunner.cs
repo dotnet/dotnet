@@ -25,6 +25,14 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update;
 
 internal static class PackageUpdateCommandRunner
 {
+    private static readonly NuGetLogCode[] AuditWarningCodes =
+    {
+        NuGetLogCode.NU1901,
+        NuGetLogCode.NU1902,
+        NuGetLogCode.NU1903,
+        NuGetLogCode.NU1904,
+    };
+
     // This overload sets static state, so should not be used in tests.
     internal static Task<int> Run(PackageUpdateArgs args, IVirtualProjectBuilder? virtualProjectBuilder, CancellationToken cancellationToken)
     {
@@ -132,7 +140,13 @@ internal static class PackageUpdateCommandRunner
         IPackageUpdateIO packageUpdateIO,
         CancellationToken cancellationToken)
     {
-        LockFile assetsFile = await packageUpdateIO.GetProjectAssetsFileAsync(dgSpec, projectPath, logger, cancellationToken);
+        // A lot of people use TreatWarningsAsErrors, and when restore failed because of audit warnings, we need a way for them to fix it.
+        // If the project's restore is already up to date, disabling warnings as errors will cause no-op checks to fail, making the restore longer than
+        // necessary. But if there's a real failure, the assets file might be stale, and we don't want to use it. While it's possible
+        // there are non-vulnerability related warnings that be treated as errors, customers are unlikely to run dotnet package update --vulnerable when
+        // restore fails for other reasons. So, it's a good enough compromise.
+        DependencyGraphSpec scanDgSpec = CreateDgSpecForVulnerabilityScan(dgSpec);
+        LockFile assetsFile = await packageUpdateIO.GetProjectAssetsFileAsync(scanDgSpec, projectPath, logger, cancellationToken);
         PackageSpec projectSpec = assetsFile.PackageSpec;
 
         bool auditModeAll = IsNuGetAuditModeSetToAll(projectSpec);
@@ -239,6 +253,62 @@ internal static class PackageUpdateCommandRunner
                 }
             }
             return false;
+        }
+    }
+
+    internal static DependencyGraphSpec CreateDgSpecForVulnerabilityScan(DependencyGraphSpec dgSpec)
+    {
+        if (!dgSpec.Projects.Any(ProjectWillFailOnAuditWarnings))
+        {
+            return dgSpec;
+        }
+
+        var scanDgSpec = new DependencyGraphSpec();
+
+        foreach (PackageSpec project in dgSpec.Projects)
+        {
+            if (ProjectWillFailOnAuditWarnings(project))
+            {
+                PackageSpec projectClone = project.Clone();
+                WarningProperties warningProperties = projectClone.RestoreMetadata.ProjectWideWarningProperties;
+                warningProperties.AllWarningsAsErrors = false;
+                warningProperties.WarningsAsErrors.ExceptWith(AuditWarningCodes);
+                scanDgSpec.AddProject(projectClone);
+            }
+            else
+            {
+                scanDgSpec.AddProject(project);
+            }
+        }
+
+        foreach (string restoreEntry in dgSpec.Restore)
+        {
+            scanDgSpec.AddRestore(restoreEntry);
+        }
+
+        return scanDgSpec;
+
+        bool ProjectWillFailOnAuditWarnings(PackageSpec project)
+        {
+            WarningProperties warningProperties = project.RestoreMetadata.ProjectWideWarningProperties;
+
+            bool allAuditWarningsAreNotErrors =
+                warningProperties.WarningsNotAsErrors.Contains(NuGetLogCode.NU1901) &&
+                warningProperties.WarningsNotAsErrors.Contains(NuGetLogCode.NU1902) &&
+                warningProperties.WarningsNotAsErrors.Contains(NuGetLogCode.NU1903) &&
+                warningProperties.WarningsNotAsErrors.Contains(NuGetLogCode.NU1904);
+
+            if (allAuditWarningsAreNotErrors)
+            {
+                return false;
+            }
+
+            if (warningProperties.AllWarningsAsErrors)
+            {
+                return true;
+            }
+
+            return warningProperties.WarningsAsErrors.Overlaps(AuditWarningCodes);
         }
     }
 
