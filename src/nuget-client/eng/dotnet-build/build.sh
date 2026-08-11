@@ -14,7 +14,9 @@ source_build=false
 product_build=false
 from_vmr=false
 ci=false
-node_reuse=true
+# Empty means "not specified"; these default to on for local builds and off on CI (see below).
+node_reuse=''
+msbuild_multi_threaded=''
 binary_log=false
 warn_as_error=true
 warn_not_as_error=''
@@ -61,6 +63,10 @@ while [[ $# > 0 ]]; do
       ;;
     --nodereuse)
       node_reuse=$2
+      shift
+      ;;
+    --msbuildmultithreaded|--mt)
+      msbuild_multi_threaded=$2
       shift
       ;;
     --warnaserror)
@@ -134,8 +140,22 @@ if [[ "$binary_log" == true ]]; then
   bl="/bl:\"${repo_root}artifacts/log/${configuration}/Build.binlog\""
 fi
 
+# Accept 1/0 in addition to true/false for boolean arguments (see eng/common/tools.sh).
+for v in node_reuse warn_as_error msbuild_multi_threaded; do
+  case "${!v}" in 1) printf -v "$v" true ;; 0) printf -v "$v" false ;; esac
+done
+
 if [[ "$ci" == true ]]; then
-  node_reuse=false
+  node_reuse=${node_reuse:-false}
+else
+  node_reuse=${node_reuse:-true}
+fi
+
+# MSBuild's multi-threaded mode is opt-in for now, so it's off unless it was explicitly requested
+# via --msbuildMultiThreaded.
+mt_switch=""
+if [[ "$msbuild_multi_threaded" == true ]]; then
+  mt_switch="-mt"
 fi
 
 warnaserror_switch=""
@@ -148,4 +168,4 @@ if [[ -n "$warn_not_as_error" && "$warn_as_error" == true ]]; then
   warnnotaserror_switch="/warnnotaserror:$warn_not_as_error /p:AdditionalWarningsNotAsErrors=${warn_not_as_error//;/%3B}"
 fi
 
-"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse /p:ContinuousIntegrationBuild=$ci $bl $warnaserror_switch $warnnotaserror_switch ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}
+"$DOTNET" msbuild /m /nologo /clp:Summary /v:$verbosity /nr:$node_reuse $mt_switch /p:ContinuousIntegrationBuild=$ci $bl $warnaserror_switch $warnnotaserror_switch ${dotnetArguments[@]+"${dotnetArguments[@]}"} ${args[@]+"${args[@]}"}

@@ -6,17 +6,16 @@ using System.IO;
 using System.Text.RegularExpressions;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests
 {
     public class PoisonTests : SdkTests
     {
-        public static bool IncludePoisonTests => !string.IsNullOrWhiteSpace(Config.PoisonReportPath);
+        public static bool ExcludePoisonTests => string.IsNullOrWhiteSpace(Config.PoisonReportPath);
 
         public PoisonTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
         
-        [ConditionalFact(typeof(PoisonTests), nameof(IncludePoisonTests))]
+        [Fact(Skip = "A poison report is required", SkipWhen = nameof(ExcludePoisonTests))]
         public void VerifyUsage()
         {
             if (!File.Exists(Config.PoisonReportPath))

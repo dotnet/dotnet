@@ -11,6 +11,11 @@ references:
       subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
       name: helixkv
 
+keys:
+  oneloc-localization-app-key:
+    type: RSA
+    size: 2048
+
 secrets:
   BotAccount-dotnet-maestro-bot:
     type: github-account

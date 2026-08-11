@@ -537,6 +537,53 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         [Fact]
+        public async Task VerboseDrainReportsPendingUploadPhaseAndElapsedTime()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+            var uploadRelease = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            azdo.UploadBlocker = uploadRelease.Task;
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Test Linux", "completed", "succeeded"));
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"]),
+                },
+                testResultsByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] =
+                    [
+                        new WorkItemTestResults("helix-linux", "workitem-1", ["a.trx"])
+                    ],
+                });
+
+            JobMonitorOptions options = DefaultOptions();
+            options.Verbose = true;
+            options.PollingIntervalSeconds = 1;
+            var runner = new JobMonitorRunner(options, logger, azdo, helix, NoDelay);
+
+            Task<int> run = runner.RunAsync(CancellationToken.None);
+            await azdo.UploadStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            await Task.Delay(TimeSpan.FromMilliseconds(1200));
+            uploadRelease.SetResult();
+
+            int exitCode = await run.WaitAsync(TimeSpan.FromSeconds(5));
+
+            exitCode.Should().Be(0);
+            logger.Messages.Should().Contain(message =>
+                message.Contains("test result upload(s) remain pending", StringComparison.Ordinal)
+                && message.Contains("helix-linux", StringComparison.Ordinal)
+                && message.Contains("phase='publishing 1 work item(s) to Azure DevOps test run", StringComparison.Ordinal)
+                && message.Contains("phase elapsed=", StringComparison.Ordinal)
+                && message.Contains("total elapsed=", StringComparison.Ordinal));
+        }
+
+        [Fact]
         public async Task PassedHelixWork_TransientUploadFailure_DoesNotReplayAmbiguousWrite()
         {
             var azdo = new FakeAzureDevOpsService();

@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 326135,
+      "barId": 326310,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "d89b0f58e31eda800074a454cf6f2a699d339b94"
+      "commitSha": "212960245c74330fbfb71776563638061e35446c"
     },
     {
-      "barId": 325722,
+      "barId": 326141,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "31b9bcde346e9782682e14b654a5d98238bf74fe"
+      "commitSha": "92f07e298d5c5a629385b8b0a32d7164b1b53906"
     },
     {
       "barId": 324339,
@@ -55,28 +55,28 @@
       "commitSha": "ea778bb414648883fca4219bf7a69286bf82dd6b"
     },
     {
-      "barId": 325788,
+      "barId": 326212,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "e45cc3de8a44d5b92cdad6e0ca7f8a5852c2afbd"
+      "commitSha": "e02ab1fa8eae232bfeb965347daf01ddc7cb496d"
     },
     {
-      "barId": 326127,
+      "barId": 326147,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "73bc1f9f8f517cdfd52fec7db945a3b039f15017"
+      "commitSha": "a4c3e091ec9b389e39a0dbbc0d08640ab77e4f69"
     },
     {
-      "barId": 325915,
+      "barId": 326394,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "513d6698d42d554ca6d855c6c148a9802d20f310"
+      "commitSha": "1c763d1ebebec5e8f37f965f4c76fe53b03b7527"
     },
     {
-      "barId": 326232,
+      "barId": 326357,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "26b8250248974f0b9859817a5c9ee985203800cd"
+      "commitSha": "14b601ec5edfeecbc70368890e8676fe5c29da83"
     },
     {
       "barId": 326016,
