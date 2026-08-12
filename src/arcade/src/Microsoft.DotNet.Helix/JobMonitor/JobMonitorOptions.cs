@@ -4,6 +4,7 @@
 using System;
 using System.CommandLine;
 using Azure.Identity;
+using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
 
 namespace Microsoft.DotNet.Helix.JobMonitor
 {
@@ -55,6 +56,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         public string StageAttempt { get; set; }
 
         public int TestResultUploadParallelism { get; set; } = 4;
+
+        public TestResultAttachmentMode TestResultAttachmentMode { get; set; } = TestResultAttachmentMode.Failed;
 
         /// <summary>
         /// When true (the default), a Helix work item that exited 0 but whose uploaded test
@@ -166,6 +169,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 DefaultValueFactory = _ => 4
             };
 
+            Option<TestResultAttachmentMode> testResultAttachmentModeOption = new("--test-result-attachment-mode")
+            {
+                Description = "Controls per-test output attachments: Failed (default) uploads output only for failed tests, All uploads output for every test, and None suppresses per-test output attachments.",
+                DefaultValueFactory = _ => TestResultAttachmentMode.Failed
+            };
+
             Option<bool> failWorkItemsWithFailedTestsOption = new("--fail-on-failed-tests")
             {
                 Description = "When true (default), Helix work items that exit 0 but have failed AzDO test results are treated as failed (counted toward the monitor's exit code and resubmitted by a later invocation's retry pass). Pass --fail-on-failed-tests false to fall back to exit-code-only outcomes.",
@@ -208,6 +217,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             rootCommand.Options.Add(stageNameOption);
             rootCommand.Options.Add(stageAttemptOption);
             rootCommand.Options.Add(testResultUploadParallelismOption);
+            rootCommand.Options.Add(testResultAttachmentModeOption);
             rootCommand.Options.Add(failWorkItemsWithFailedTestsOption);
             rootCommand.Options.Add(allowNoHelixJobsOption);
             rootCommand.Options.Add(verboseOption);
@@ -232,6 +242,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     StageName = parseResult.GetValue(stageNameOption),
                     StageAttempt = parseResult.GetValue(stageAttemptOption),
                     TestResultUploadParallelism = parseResult.GetValue(testResultUploadParallelismOption),
+                    TestResultAttachmentMode = parseResult.GetValue(testResultAttachmentModeOption),
                     FailWorkItemsWithFailedTests = parseResult.GetValue(failWorkItemsWithFailedTestsOption),
                     AllowNoHelixJobs = parseResult.GetValue(allowNoHelixJobsOption),
                     Verbose = parseResult.GetValue(verboseOption),

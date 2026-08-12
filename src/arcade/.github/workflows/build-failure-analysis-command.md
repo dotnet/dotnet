@@ -38,10 +38,17 @@ if: needs.fetch-binlog.outputs.binlog-found == 'true'
 # job.) Keep `pull-requests: read` here so the AI agent job stays
 # least-privilege — do NOT raise it to `write`, that would hand PR-write scope
 # to the agent job unnecessarily.
+#
+# Do NOT add `copilot-requests: write` here. That permission switches gh-aw's
+# generated lock from `COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}`
+# to `${{ github.token }}`, and the ephemeral Actions token is not entitled for
+# inference against api.githubcopilot.com in this org — every agent run then
+# dies in ~2s with "Authentication failed with provider ... (HTTP 403)" on both
+# /models and /chat/completions, before it reads the prompt or opens a binlog.
+# `update-default-versions.md` omits it and works; keep this consistent.
 permissions:
   contents: read
   pull-requests: read
-  copilot-requests: write
 
 concurrency:
   # Distinct from the automatic workflow's group (`build-failure-analysis-<pr>`).
@@ -376,7 +383,19 @@ jobs:
             mkdir -p /tmp/ax
             # Hard-cap the bytes written to disk regardless of Content-Length:
             # stream through `head -c` (cap + 1) and bound total time.
-            curl -sSL --retry 3 --max-time 300 "${url}" 2>/dev/null | head -c $((MAX_ZIP_BYTES + 1)) > /tmp/a.zip || true
+            # `curl_rc` captures curl's OWN status: the pipeline's status is
+            # `head`'s (which succeeds even when curl dies mid-transfer), so a
+            # timed-out or interrupted download would otherwise be invisible
+            # here and only resurface below as an unreadable archive —
+            # indistinguishable from a hostile one, and costing the whole leg
+            # and with it the entire analysis (see the all-legs guard below).
+            # Nothing is appended to the pipeline and errexit is not toggled
+            # around it: this step already runs with errexit off (`set +e` at
+            # the top), so the pipeline cannot abort it, and a trailing
+            # `|| true` would run `true` — itself a command — resetting
+            # PIPESTATUS before curl's status could be read.
+            curl -sSL --retry 3 --retry-delay 2 --max-time 600 "${url}" 2>/dev/null | head -c $((MAX_ZIP_BYTES + 1)) > /tmp/a.zip
+            curl_rc=${PIPESTATUS[0]}
             ZIP_BYTES=$(stat -c%s /tmp/a.zip 2>/dev/null || echo 0)
             if [ "${ZIP_BYTES}" -eq 0 ]; then
               echo "::warning::Skipping ${name}: empty or failed download."; continue
@@ -384,17 +403,31 @@ jobs:
             if [ "${ZIP_BYTES}" -gt "${MAX_ZIP_BYTES}" ]; then
               echo "::warning::Skipping ${name}: download exceeded ${MAX_ZIP_BYTES} bytes."; continue
             fi
-            # Bound the listing with `timeout` so a hostile/huge archive can't
-            # hang the runner during `unzip -l`. Run the pipeline in a subshell
-            # with `pipefail` and FAIL CLOSED on a non-zero exit: if `timeout`
-            # kills `unzip -l`, its partial output can still end in a numeric
-            # column and undercount the total, bypassing the size guard below —
-            # so a failed/timed-out listing skips the artifact rather than
-            # trusting the parsed value.
-            UNCOMP=$(set -o pipefail; timeout 60 unzip -l /tmp/a.zip 2>/dev/null | tail -1 | awk '{print $1}') \
-              || { echo "::warning::Skipping ${name}: 'unzip -l' failed or timed out; cannot verify uncompressed size."; continue; }
+            # Only here can a non-zero curl status mean a genuinely failed
+            # transfer: an oversized artifact makes `head` close the pipe early
+            # and curl exit on SIGPIPE, and that case was just skipped above.
+            if [ "${curl_rc}" -ne 0 ]; then
+              echo "::warning::Skipping ${name}: download failed or was truncated (curl exit ${curl_rc})."; continue
+            fi
+            # Bound the probe with `timeout` so a hostile/huge archive can't
+            # hang the runner. `unzip -Zt` prints ONE summary line
+            # ("<n> files, <x> bytes uncompressed, <y> bytes compressed")
+            # instead of `unzip -l`'s per-entry listing, so the total is read
+            # from a fixed column rather than by `tail -1`-ing a table whose
+            # last line shifts with the entry list. (Measured on real
+            # `Logs_Build_*` legs both forms agree and both are fast — this is
+            # a robustness and parsing change, not a speed fix; the observed
+            # "failed or timed out" warnings came from unreadable archives,
+            # which the curl status check above now reports accurately.) Run
+            # the pipeline in a subshell with `pipefail` and FAIL CLOSED on a
+            # non-zero exit: if `timeout` kills the probe, its partial output
+            # can still end in a numeric column and undercount the total,
+            # bypassing the size guard below — so a failed probe skips the
+            # artifact rather than trusting the parsed value.
+            UNCOMP=$(set -o pipefail; timeout 60 unzip -Zt /tmp/a.zip 2>/dev/null | awk '{print $3}') \
+              || { echo "::warning::Skipping ${name}: 'unzip -Zt' failed or timed out; cannot verify uncompressed size."; continue; }
             # Fail safe: if the uncompressed size isn't a plain integer (corrupt
-            # zip / unexpected or timed-out `unzip -l` output), we can't verify
+            # zip / unexpected or timed-out `unzip -Zt` output), we can't verify
             # it — skip the artifact rather than let a non-numeric value bypass
             # the `-gt` guard.
             if ! printf '%s' "${UNCOMP}" | grep -qE '^[0-9]+$'; then
