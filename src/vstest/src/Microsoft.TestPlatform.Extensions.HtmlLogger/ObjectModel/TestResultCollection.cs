@@ -15,6 +15,12 @@ public class TestResultCollection
 {
     private readonly string _source;
 
+    /// <summary>
+    /// Guards <see cref="ResultList"/> and <see cref="FailedResultList"/>, which are appended to
+    /// from multiple threads while tests execute in parallel.
+    /// </summary>
+    private readonly object _resultsLock = new();
+
     public TestResultCollection(string source) => _source = source ?? throw new ArgumentNullException(nameof(source));
 
     /// <summary>
@@ -46,4 +52,23 @@ public class TestResultCollection
     /// List of failed test results.
     /// </summary>
     [DataMember] public List<TestResult>? FailedResultList { get; set; }
+
+    /// <summary>
+    /// Adds a result to <see cref="ResultList"/>, and to <see cref="FailedResultList"/> when the
+    /// result is a failure. Safe to call concurrently from multiple threads.
+    /// </summary>
+    internal void AddResult(TestResult testResult, bool isFailed)
+    {
+        lock (_resultsLock)
+        {
+            if (isFailed)
+            {
+                FailedResultList ??= new List<TestResult>();
+                FailedResultList.Add(testResult);
+            }
+
+            ResultList ??= new List<TestResult>();
+            ResultList.Add(testResult);
+        }
+    }
 }

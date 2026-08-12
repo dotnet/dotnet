@@ -308,6 +308,11 @@ Fehlerdetails: {1}: {2}</target>
         <target state="translated">{1} でタイムスタンプ形式 '{2}' を使用して {0} の使用可能なファイル名を取得できません。</target>
         <note />
       </trans-unit>
+      <trans-unit id="TrxLoggerWriteFailed">
+        <source>Failed to write the results file '{0}'. {1}</source>
+        <target state="new">Failed to write the results file '{0}'. {1}</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

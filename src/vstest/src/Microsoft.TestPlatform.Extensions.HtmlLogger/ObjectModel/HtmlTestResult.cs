@@ -16,6 +16,12 @@ namespace Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel;
 public class TestResult
 {
     /// <summary>
+    /// Guards <see cref="InnerTestResults"/>, which is appended to from multiple threads when
+    /// data driven results are reported concurrently during parallel execution.
+    /// </summary>
+    private readonly object _innerResultsLock = new();
+
+    /// <summary>
     /// Fully qualified name of the Test Result.
     /// </summary>
     [DataMember] public string? FullyQualifiedName { get; set; }
@@ -54,4 +60,16 @@ public class TestResult
     /// The list of TestResults that are children to the current Test Result.
     /// </summary>
     [DataMember] public List<TestResult>? InnerTestResults { get; set; }
+
+    /// <summary>
+    /// Adds a child result. Safe to call concurrently from multiple threads.
+    /// </summary>
+    internal void AddInnerTestResult(TestResult innerTestResult)
+    {
+        lock (_innerResultsLock)
+        {
+            InnerTestResults ??= new List<TestResult>();
+            InnerTestResults.Add(innerTestResult);
+        }
+    }
 }

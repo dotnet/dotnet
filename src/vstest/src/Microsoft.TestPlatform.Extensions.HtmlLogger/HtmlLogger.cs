@@ -169,21 +169,11 @@ public class HtmlLogger : ITestLoggerWithParameters
         switch (e.Level)
         {
             case TestMessageLevel.Informational:
-                if (TestRunDetails.RunLevelMessageInformational == null)
-                {
-                    TestRunDetails.RunLevelMessageInformational = new List<string>();
-                }
-
-                TestRunDetails.RunLevelMessageInformational.Add(e.Message);
+                TestRunDetails.AddInformationalMessage(e.Message);
                 break;
             case TestMessageLevel.Warning:
             case TestMessageLevel.Error:
-                if (TestRunDetails.RunLevelMessageErrorAndWarning == null)
-                {
-                    TestRunDetails.RunLevelMessageErrorAndWarning = new List<string>();
-                }
-
-                TestRunDetails.RunLevelMessageErrorAndWarning.Add(e.Message);
+                TestRunDetails.AddErrorOrWarningMessage(e.Message);
                 break;
             default:
                 EqtTrace.Info("htmlLogger.TestMessageHandler: The test message level is unrecognized: {0}",
@@ -219,13 +209,19 @@ public class HtmlLogger : ITestLoggerWithParameters
         ResultCollectionDictionary.TryGetValue(e.Result.TestCase.Source, out var testResultCollection);
         if (testResultCollection == null)
         {
-            testResultCollection = new TestResultCollection(e.Result.TestCase.Source)
+            var newTestResultCollection = new TestResultCollection(e.Result.TestCase.Source)
             {
                 ResultList = new List<ObjectModel.TestResult>(),
                 FailedResultList = new List<ObjectModel.TestResult>(),
             };
-            ResultCollectionDictionary.TryAdd(e.Result.TestCase.Source, testResultCollection);
-            TestRunDetails.ResultCollectionList!.Add(testResultCollection);
+
+            // GetOrAdd is atomic: only the thread whose instance was actually stored publishes it
+            // to the result collection list, so no duplicate entries can appear there.
+            testResultCollection = ResultCollectionDictionary.GetOrAdd(e.Result.TestCase.Source, newTestResultCollection);
+            if (ReferenceEquals(testResultCollection, newTestResultCollection))
+            {
+                TestRunDetails.AddResultCollection(testResultCollection);
+            }
         }
 
         Interlocked.Increment(ref _totalTests);
@@ -249,12 +245,7 @@ public class HtmlLogger : ITestLoggerWithParameters
         // Check for parent execution id to store the test results in hierarchical way
         if (parentExecutionId == Guid.Empty)
         {
-            if (e.Result.Outcome == TestOutcome.Failed)
-            {
-                testResultCollection.FailedResultList!.Add(testResult);
-            }
-
-            testResultCollection.ResultList!.Add(testResult);
+            testResultCollection.AddResult(testResult, e.Result.Outcome == TestOutcome.Failed);
         }
         else
         {
@@ -268,9 +259,7 @@ public class HtmlLogger : ITestLoggerWithParameters
 
         if (Results.TryGetValue(parentExecutionId, out var parentTestResult))
         {
-            parentTestResult.InnerTestResults ??= new List<ObjectModel.TestResult>();
-
-            parentTestResult.InnerTestResults.Add(testResult);
+            parentTestResult.AddInnerTestResult(testResult);
         }
     }
 
