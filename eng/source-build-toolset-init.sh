@@ -152,6 +152,9 @@ function source_only_toolset_init() {
 
   # toolset prep steps
   source "$repo_root/eng/common/tools.sh"
+  local previous_pipelines_log=$pipelines_log
+  pipelines_log=false
+
   InitializeBuildTool
 
   initSourceOnlyBinaryLog=""
@@ -171,6 +174,7 @@ function source_only_toolset_init() {
 
   # Set _InitializeToolset so that eng/common/tools.sh doesn't attempt to restore the arcade toolset again.
   _InitializeToolset="${bootstrapArcadeDir}/toolset/Build.proj"
+  pipelines_log=$previous_pipelines_log
 
   echo "Source-only toolset initialization complete"
 }
