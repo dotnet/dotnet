@@ -4,7 +4,7 @@
     <VersionMajor>10</VersionMajor>
     <VersionMinor>0</VersionMinor>
     <VersionSDKMinor>3</VersionSDKMinor>
-    <VersionSDKMinorPatch>4</VersionSDKMinorPatch>
+    <VersionSDKMinorPatch>3</VersionSDKMinorPatch>
     <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
     <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
     <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
@@ -52,6 +52,7 @@
     <!-- nuget dependencies -->
     <NuGetProtocolVersion>7.0.3</NuGetProtocolVersion>
     <NuGetProjectModelVersion>7.0.3</NuGetProjectModelVersion>
+    <NuGetPackagingVersion>7.0.3</NuGetPackagingVersion>
     <!-- runtime dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.1</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>10.0.1</MicrosoftExtensionsLoggingConsoleVersion>
