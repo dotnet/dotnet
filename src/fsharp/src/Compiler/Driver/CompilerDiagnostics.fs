@@ -398,10 +398,15 @@ type PhasedDiagnostic with
         | 3395 -> false // tcImplicitConversionUsedForMethodArg - off by default
         | 3559 -> false // typrelNeverRefinedAwayFromTop - off by default
         | 3560 -> false // tcCopyAndUpdateRecordChangesAllFields - off by default
+        | 3575 -> false // tcMoreConcreteTiebreakerUsed - off by default
+        | 3576 -> false // tcGenericOverloadBypassed - off by default
         | 3579 -> false // alwaysUseTypedStringInterpolation - off by default
         | 3582 -> false // infoIfFunctionShadowsUnionCase - off by default
         | 3570 -> false // tcAmbiguousDiscardDotLambda - off by default
         | 3878 -> false // tcAttributeIsNotValidForUnionCaseWithFields - off by default
+        | 3905 -> false // tcRecordTypeDefinitionSpreadFieldShadowsSpreadField - off by default
+        | 3906 -> false // tcRecordExplicitFieldShadowsSpreadField - off by default
+        | 3907 -> false // tcRecordExprSpreadFieldShadowsSpreadField - off by default
         | _ ->
             match x.Exception with
             | DiagnosticEnabledWithLanguageFeature(_, _, _, enabled) -> enabled
@@ -1014,11 +1019,36 @@ type Exception with
                     FSComp.SR.csNoOverloadsFound methodName
                     + optionalParts
                     + (FSComp.SR.csAvailableOverloads (formatOverloads overloads))
-                | PossibleCandidates(methodName, [], _) -> FSComp.SR.csMethodIsOverloaded methodName
-                | PossibleCandidates(methodName, overloads, _) ->
-                    FSComp.SR.csMethodIsOverloaded methodName
-                    + optionalParts
-                    + FSComp.SR.csCandidates (formatOverloads overloads)
+                | PossibleCandidates(methodName, [], _, _) -> FSComp.SR.csMethodIsOverloaded methodName
+                | PossibleCandidates(methodName, overloads, _, incomparableInfo) ->
+                    let baseMessage =
+                        FSComp.SR.csMethodIsOverloaded methodName
+                        + optionalParts
+                        + FSComp.SR.csCandidates (formatOverloads overloads)
+
+                    match incomparableInfo with
+                    | Some info ->
+                        let formatPositions positions =
+                            match positions with
+                            | [ p ] -> FSComp.SR.csConcretenessPosition p
+                            | _ ->
+                                positions
+                                |> List.map string
+                                |> String.concat ", "
+                                |> FSComp.SR.csConcretenessPositions
+
+                        let line1 =
+                            FSComp.SR.formatDashItem (
+                                FSComp.SR.csConcretenessMoreConcreteAt (info.Method1Signature, formatPositions info.Method1BetterPositions)
+                            )
+
+                        let line2 =
+                            FSComp.SR.formatDashItem (
+                                FSComp.SR.csConcretenessMoreConcreteAt (info.Method2Signature, formatPositions info.Method2BetterPositions)
+                            )
+
+                        baseMessage + nl + FSComp.SR.csIncomparableConcreteness (line1 + nl + line2)
+                    | None -> baseMessage
 
             os.AppendString msg
 
