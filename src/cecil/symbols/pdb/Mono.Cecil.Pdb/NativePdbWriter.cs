@@ -271,6 +271,7 @@ namespace Mono.Cecil.Pdb {
 
 		public void Dispose ()
 		{
+			writer.Close ();
 		}
 	}
 
