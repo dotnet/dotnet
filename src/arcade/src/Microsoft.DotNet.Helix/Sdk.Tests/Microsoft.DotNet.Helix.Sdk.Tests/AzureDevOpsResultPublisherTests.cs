@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
+using Microsoft.DotNet.Helix.JobMonitor;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
@@ -14,6 +15,18 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 {
     public class AzureDevOpsResultPublisherTests
     {
+        [Fact]
+        public void AttachmentModeDefaultsToFailed()
+        {
+            var reportingParameters = new AzureDevOpsReportingParameters(
+                new Uri("https://dev.azure.com/dnceng-public/"),
+                "public",
+                "123");
+
+            Assert.Equal(TestResultAttachmentMode.Failed, reportingParameters.TestResultAttachmentMode);
+            Assert.Equal(TestResultAttachmentMode.Failed, new JobMonitorOptions().TestResultAttachmentMode);
+        }
+
         [Fact]
         public void Constructor_ConfiguresHttpClientTimeoutForLongUploads()
         {

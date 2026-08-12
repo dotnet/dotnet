@@ -408,7 +408,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _options.TeamProject,
                 testRunId.ToString(CultureInfo.InvariantCulture),
                 _options.SystemAccessToken,
-                _options.UseFullyQualifiedTestName);
+                _options.UseFullyQualifiedTestName,
+                _options.TestResultAttachmentMode);
             using var publisher = new AzureDevOpsResultPublisher(
                 reportingParameters,
                 _logger);

@@ -49,7 +49,7 @@ public sealed class AzureDevOpsResultPublisher : IDisposable
 
     public async Task<TestResultUploadSummary> UploadTestResultsWithSummaryAsync(List<string> testResultFiles, object resultMetadata, CancellationToken cancellationToken = default)
     {
-        var testResultReader = new LocalTestResultsReader(_logger);
+        var testResultReader = new LocalTestResultsReader(_logger, _azdoParameters.TestResultAttachmentMode);
 
         async Task<IReadOnlyList<TestResult>> ParseAsync(string file)
         {
