@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ja" original="../Strings.resx">
     <body>
@@ -220,17 +220,17 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">'HTTP' ソースを使用して '{0}' 操作を実行しています: {1}。NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を [true] に明示的に設定する必要があります。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <target state="translated">'HTTP' ソースを使用して '{0}' 操作を実行しています: {1}。NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を true に明示的に設定する必要があります。詳しくは、https://aka.ms/nuget-https-everywhere を参照してください。</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single_Short">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">'HTTP' ソースを使用して '{0}' 操作を実行しています: {1}。NuGet には HTTPS ソースが必要です。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <target state="translated">'HTTP' ソースを使用して '{0}' 操作を実行しています: {1}。NuGet には HTTPS ソースが必要です。詳しくは、https://aka.ms/nuget-https-everywhere を参照してください。</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">'HTTP' ソースで '{0}' 操作を実行しています: {1}。NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を [true] に明示的に設定する必要があります。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <target state="translated">'HTTP' ソースを使用して '{0}' 操作を実行しています: {1}。NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を true に明示的に設定する必要があります。詳しくは、https://aka.ms/nuget-https-everywhere を参照してください。</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Error_IncompatiblePackageType">
@@ -1115,7 +1115,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="RestrictedPackageIdWarning">
         <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
-        <target state="new">The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</target>
+        <target state="translated">パッケージ ID '{0}' が無効です。パッケージ ID は英字、数字、またはアンダースコアで始まり、ASCII 文字、数字、ドット (.)、ダッシュ (-)、およびアンダースコア (_) のみを含めることができます。連続するドットやダッシュは使用できません。</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1464,7 +1464,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
         <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="new">There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</target>
+        <target state="translated">お客様の構成には {0} 個のパッケージ ソースが定義されています。中央パッケージ管理を使用する場合は、パッケージ ソース マッピング (https://aka.ms/nuget-package-source-mapping) を使用してパッケージ ソースをマップするか、単一のパッケージ ソースを指定してください。次のソースが定義されています: {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">
@@ -1498,7 +1498,7 @@ NuGet には HTTPS ソースが必要です。詳しくは、https://aka.ms/nuge
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">
         <source>{0} depends on {1} but {2} was not found. {3} was resolved instead.</source>
-        <target state="translated">{0} は {1} によって異なりますが、{2} が見つかりませんでした。代わりに {3} が解決されました。</target>
+        <target state="translated">{0} は {1} に依存しますが、{2} が見つかりませんでした。代わりに {3} が解決されました。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_MinVersionNonInclusive">

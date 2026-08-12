@@ -88,7 +88,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Папка «{0}» удалена.</target>
+        <target state="translated">Папка "{0}" удалена.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
@@ -219,12 +219,12 @@
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="new">Solution is not saved. Save your solution before managing NuGet packages.</target>
+        <target state="translated">Решение не сохранено. Сохраните решение перед управлением пакетами NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink">
         <source>migration document</source>
-        <target state="translated">документе о миграции</target>
+        <target state="translated">документ по миграции</target>
         <note>The text has the document hyperlink applied to it.</note>
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_After">
@@ -234,14 +234,14 @@
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink_Before">
         <source>The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, refer to the</source>
-        <target state="new">The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, refer to the</target>
+        <target state="translated">Произошел сбой операции NuGet, так как часть пакетов несовместима с вашим проектом. Платформа проекта "{0}" ("{1}") устарела. Для получения более подробных сведений о том, как перевести ваши проекты на поддерживаемую платформу, обратитесь к</target>
         <note>This text goes immediately before the document link.
 {0} is the full name of the deprecated framework (e.g. ".NETFramework,Version=v4.5").
 {1} is the short folder representation of the framework (e.g. "net45").</note>
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_ProjectList">
         <source>The following project(s) target the deprecated framework:</source>
-        <target state="translated">Проекты, использующие устаревшую платформу:</target>
+        <target state="translated">Проекты, использующие нерекомендуемую платформу:</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToGetCPSPackageInstallationService">
@@ -266,7 +266,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">Каталог «{0}» не пуст. Пропуск…</target>
+        <target state="translated">Каталог "{0}" не пуст. Пропуск…</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">

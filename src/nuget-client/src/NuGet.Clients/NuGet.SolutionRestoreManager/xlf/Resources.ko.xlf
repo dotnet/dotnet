@@ -84,7 +84,7 @@ Missing packages: {0}</source>
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
         <source>NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">프로젝트 {0}에 대한 NuGet 패키지 복원에 실패했습니다. {1}. 경고 및 오류에 대한 자세한 내용은 오류 목록 창을 참조하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
@@ -99,7 +99,7 @@ Missing packages: {0}</source>
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedWithError">
         <source>NuGet package restore failed. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet package restore failed. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">NuGet 패키지 복원에 실패했습니다. 경고 및 오류에 대한 자세한 내용은 오류 목록 창을 참조하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreOptOutMessage">
@@ -116,7 +116,7 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
       </trans-unit>
       <trans-unit id="RelativeGlobalPackagesFolder">
         <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
-        <target state="new">'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</target>
+        <target state="translated">nuget.config 파일의 'globalPackagesFolder' 또는 환경 변수가 '{0}'입니다. 상대 경로 및 솔루션이 저장되지 않았습니다. 솔루션을 저장하거나 전체 경로인 'globalPackagesFolder'를 구성하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoredPackage">
@@ -131,7 +131,7 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="new">Solution is not saved. Save your solution before managing NuGet packages.</target>
+        <target state="translated">솔루션이 저장되지 않았습니다. NuGet 패키지를 관리하려면 먼저 솔루션을 저장하세요.</target>
         <note />
       </trans-unit>
     </body>

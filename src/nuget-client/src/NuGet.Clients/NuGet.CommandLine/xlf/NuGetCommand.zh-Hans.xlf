@@ -141,7 +141,7 @@ nuget client-certs List</target>
       </trans-unit>
       <trans-unit id="CommandInvalidArgumentException">
         <source>Invalid value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Invalid value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">为“{0}”提供的值无效。有关接受值的列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="CommandMSBuildPath">
@@ -527,7 +527,7 @@ nuget locals global-packages -list</target>
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
         <source>NoCache is deprecated and has been renamed to NoHttpCache. Use NoHttpCache instead.</source>
-        <target state="new">NoCache is deprecated and has been renamed to NoHttpCache. Use NoHttpCache instead.</target>
+        <target state="translated">NoCache 已弃用，并且已重命名为 NoHttpCache。请改为使用 NoHttpCache。</target>
         <note>Do not translate NoCache and NoHttpCache</note>
       </trans-unit>
       <trans-unit id="Option_ConfigFile">
@@ -987,33 +987,33 @@ nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -Outp
       </trans-unit>
       <trans-unit id="SignCommandMissingArgumentException">
         <source>No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">没有为“{0}”提供值，但使用“{1}”选项时需要该值。有关接受值的列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note>0 - primary param name
 1 - other param name</note>
       </trans-unit>
       <trans-unit id="SignCommandMultipleCertificateException">
         <source>Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">已使用多个选项来指定证书。要获取接受的证书提供方式列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoArgumentException">
         <source>No value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No value provided for '{0}'. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">没有为“{0}”提供值。有关接受值的列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note>{0} - argument name</note>
       </trans-unit>
       <trans-unit id="SignCommandNoCertificateException">
         <source>No certificate was provided. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No certificate was provided. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">未提供任何证书。要获取接受的证书提供方式列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoPackageException">
         <source>No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">没有提供任何包。要获取接受的包提供方式列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoTimestamperWarning">
         <source>The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">未提供 "-Timestamper" 选项。已签名的包将不会加盖时间戳。要了解有关此选项的详细信息，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandOutputDirectoryDescription">

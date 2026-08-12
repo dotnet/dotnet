@@ -24,37 +24,37 @@
       </trans-unit>
       <trans-unit id="Error_CopilotAccessDenied">
         <source>Access denied. Ensure you are signed in to GitHub Copilot.</source>
-        <target state="new">Access denied. Ensure you are signed in to GitHub Copilot.</target>
+        <target state="translated">访问被拒绝。请确保你已登录 GitHub Copilot。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotNotReady">
         <source>GitHub Copilot is not ready. Ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot is not ready. Ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">GitHub Copilot 未就绪。请确保已安装并登录 GitHub Copilot。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
         <source>GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">GitHub Copilot 服务不可用。请确保已安装并登录 GitHub Copilot。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpServerInfoServiceNotAvailable">
         <source>Unable to determine the status of the NuGet MCP Server. Ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">Unable to determine the status of the NuGet MCP Server. Ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">无法确定 NuGet MCP 服务器的状态。请确保已安装并登录 GitHub Copilot。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpServerNotActive">
         <source>The NuGet MCP Server is not active. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="new">The NuGet MCP Server is not active. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <target state="translated">NuGet MCP 服务器未处于活动状态。请在 GitHub Copilot 聊天窗口中启用 NuGet MCP 服务器，然后重试。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_McpToolServiceNotAvailable">
         <source>MCP Tool Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
-        <target state="new">MCP Tool Service is not available. Ensure GitHub Copilot is installed and signed in.</target>
+        <target state="translated">MCP 工具服务不可用。请确保已安装并登录 GitHub Copilot。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_NuGetSolverNotAvailable">
         <source>The NuGet Solver tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="new">The NuGet Solver tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <target state="translated">NuGet 求解器工具不可用。请在 GitHub Copilot 聊天窗口中启用 NuGet MCP 服务器，然后重试。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingPattern_Missing">
@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="Error_ServiceBrokerNotAvailable">
         <source>Service Broker is not available. Ensure Visual Studio is running correctly.</source>
-        <target state="new">Service Broker is not available. Ensure Visual Studio is running correctly.</target>
+        <target state="translated">Service Broker 不可用。请确保 Visual Studio 正常运行。</target>
         <note />
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -169,7 +169,7 @@
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="new">Solution is not saved. Save your solution before managing NuGet packages.</target>
+        <target state="translated">解决方案未保存。请先保存你的解决方案，然后再管理 NuGet 包。</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">

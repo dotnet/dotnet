@@ -84,7 +84,7 @@ Brakujące pakiety: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
         <source>NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">Przywrócenie pakietu NuGet dla projektu {0} nie powiodło się: {1}. W oknie Lista błędów znajdują się szczegółowe ostrzeżenia i błędy.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
@@ -99,7 +99,7 @@ Brakujące pakiety: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedWithError">
         <source>NuGet package restore failed. See the Error List window for detailed warnings and errors.</source>
-        <target state="new">NuGet package restore failed. See the Error List window for detailed warnings and errors.</target>
+        <target state="translated">Przywrócenie pakietu NuGet nie powiodło się. W oknie Lista błędów znajdują się szczegółowe ostrzeżenia i błędy.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreOptOutMessage">
@@ -116,7 +116,7 @@ Aby uniemożliwić narzędziu NuGet przywracanie pakietów podczas kompilacji, o
       </trans-unit>
       <trans-unit id="RelativeGlobalPackagesFolder">
         <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
-        <target state="new">'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</target>
+        <target state="translated">Wartość „globalPackagesFolder” z pliku nuget.config lub zmiennej środowiskowej to „{0}”. Ścieżka względna i rozwiązanie nie zostały zapisane. Zapisz swoje rozwiązanie lub skonfiguruj wartość „globalPackagesFolder” będącą pełną ścieżką.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoredPackage">
@@ -131,7 +131,7 @@ Aby uniemożliwić narzędziu NuGet przywracanie pakietów podczas kompilacji, o
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="new">Solution is not saved. Save your solution before managing NuGet packages.</target>
+        <target state="translated">Nie zapisano rozwiązania. Zapisz rozwiązanie zanim zaczniesz zarządzać pakietami NuGet.</target>
         <note />
       </trans-unit>
     </body>
