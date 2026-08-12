@@ -32,10 +32,10 @@
 
   <!-- Don't redistribute MSBuild assemblies. -->
   <ItemGroup>
-    <PackageReference Update="Microsoft.Build" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
-    <PackageReference Update="Microsoft.Build.Framework" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
-    <PackageReference Update="Microsoft.Build.Tasks.Core" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
-    <PackageReference Update="Microsoft.Build.Utilities.Core" ExcludeAsses="runtime" NoWarn="NU1901;NU1902;NU1903;NU1904" />
+    <PackageReference Update="Microsoft.Build" ExcludeAssets="runtime" />
+    <PackageReference Update="Microsoft.Build.Framework" ExcludeAssets="runtime" />
+    <PackageReference Update="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" />
+    <PackageReference Update="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <!-- Publish assets and include them in the package under $(BuildTaskTargetFolder) directory. -->

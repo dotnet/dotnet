@@ -9,7 +9,7 @@
   <PropertyGroup>
     <MicrosoftCciVersion>4.0.0-rc3-24214-00</MicrosoftCciVersion>
     <MicrosoftSignedWixVersion>3.14.1-11131.2940454</MicrosoftSignedWixVersion>
-    <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.6</MicrosoftWixToolsetSdkVersion>
+    <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.14</MicrosoftWixToolsetSdkVersion>
     <!-- Overwrite XUnitVersion/XUnitAnalyzersVersion/XUnitRunnerConsoleVersion/XUnitRunnerVisualStudioVersion/MicrosoftTestingPlatformVersion that comes from the Arcade SDK to be in sync as Arcade doesn't use a live Arcade SDK.
          Keep in sync with DefaultVersions.props. -->
     <XUnitVersion>2.9.3</XUnitVersion>
@@ -64,18 +64,18 @@
 
   <!-- external -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.60.0" />
+    <PackageVersion Include="Azure.Core" Version="1.61.0" />
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.1" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="AwesomeAssertions" Version="9.5.0" />
-    <PackageVersion Include="Handlebars.Net" Version="2.1.6" />
+    <PackageVersion Include="Handlebars.Net" Version="2.4.1" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="10.0.0" />
     <PackageVersion Include="LZMA-SDK" Version="22.1.1" />
     <PackageVersion Include="Microsoft.ApplicationInsights" Version="3.1.2" />
     <PackageVersion Include="Microsoft.Data.OData" Version="5.8.5" />
     <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.5" />
-    <PackageVersion Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.736901" />
+    <PackageVersion Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.740901" />
     <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="4.1.737102" />
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.86.1" />
     <PackageVersion Include="Microsoft.OpenApi" Version="3.9.0" />

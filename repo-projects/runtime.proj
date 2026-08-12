@@ -63,6 +63,9 @@
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="cecil" />
     <RepositoryReference Include="command-line-api" />
+    <!-- The browser (WebAssembly) runtime build needs the Emscripten toolchain provided by emsdk.
+         emsdk is a host build tool, so its .proj builds it for the host even in this browser vertical. -->
+    <RepositoryReference Include="emsdk" Condition="'$(TargetOS)' == 'browser'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
