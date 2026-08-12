@@ -216,6 +216,18 @@
 
     <!-- If MSBuild exits early, make sure debug output like 'MSBuild_*.failure.txt' ends up in a place we can see it. -->
     <EnvironmentVariables Include="MSBUILDDEBUGPATH=$(ArtifactsLogRepoDir)" />
+
+    <!-- MSBuild worker nodes and task hosts are keyed by a handshake that folds in MSBUILDNODEHANDSHAKESALT.
+         The VMR builds all repos one after another on a single machine, but a node caches process-wide state
+         (most notably its temp directory) for its entire lifetime, and some repos build under a different
+         TEMP: roslyn substs T: onto its own temp directory and deletes the drive again when it's done. A node
+         left running by one repo build and then reused by the next therefore keeps writing to the previous
+         repo's temp directory, which fails once that directory is gone
+         (e.g. "MSB6003: ... Could not find a part of the path 'T:\MSBuildTemp...'").
+         A per-repo salt keeps nodes reusable within a repo build while making them unshareable across repo
+         builds. Always set (not just when node reuse is explicitly requested) because node reuse is on by
+         default for local dev builds. -->
+    <EnvironmentVariables Include="MSBUILDNODEHANDSHAKESALT=dotnet-vmr-$(RepositoryName)" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">
