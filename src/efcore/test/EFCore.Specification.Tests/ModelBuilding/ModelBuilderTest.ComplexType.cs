@@ -509,9 +509,9 @@ public abstract partial class ModelBuilderTest
 
         [Fact(Skip = "Issue #35613")]
         public virtual void Properties_can_have_provider_type_set()
-            => Properties_can_have_provider_type_set<byte[]>();
+            => Properties_can_have_provider_type_set_implementation<byte[]>();
 
-        protected virtual void Properties_can_have_provider_type_set<TBytes>()
+        protected virtual void Properties_can_have_provider_type_set_implementation<TBytes>()
         {
             var modelBuilder = CreateModelBuilder();
 
@@ -590,9 +590,9 @@ public abstract partial class ModelBuilderTest
 
         [Fact(Skip = "Issue #35613")]
         public virtual void Properties_can_have_non_generic_value_converter_set()
-            => Properties_can_have_non_generic_value_converter_set<byte[]>();
+            => Properties_can_have_non_generic_value_converter_set_implementation<byte[]>();
 
-        protected virtual void Properties_can_have_non_generic_value_converter_set<TBytes>()
+        protected virtual void Properties_can_have_non_generic_value_converter_set_implementation<TBytes>()
         {
             var modelBuilder = CreateModelBuilder();
 
@@ -634,9 +634,9 @@ public abstract partial class ModelBuilderTest
 
         [Fact(Skip = "Issue #35613")]
         public virtual void Properties_can_have_custom_type_value_converter_type_set()
-            => Properties_can_have_custom_type_value_converter_type_set<byte[]>();
+            => Properties_can_have_custom_type_value_converter_type_set_implementation<byte[]>();
 
-        protected virtual void Properties_can_have_custom_type_value_converter_type_set<TBytes>()
+        protected virtual void Properties_can_have_custom_type_value_converter_type_set_implementation<TBytes>()
         {
             var modelBuilder = CreateModelBuilder();
 
@@ -2310,6 +2310,37 @@ public abstract partial class ModelBuilderTest
             var alternateKey = entityType.GetKeys().Single(k => !k.IsPrimaryKey());
             Assert.Same(upProperty, alternateKey.Properties.Single());
             Assert.Same(entityType, alternateKey.DeclaringEntityType);
+        }
+
+        [Fact]
+        public virtual void Can_use_alternate_key_on_complex_property_as_principal_key()
+        {
+            var modelBuilder = CreateModelBuilder();
+
+            modelBuilder
+                .Ignore<Order>()
+                .Ignore<IndexedClass>()
+                .Entity<ComplexProperties>(b =>
+                {
+                    b.Ignore(e => e.Customer);
+                    b.Ignore(e => e.CollectionQuarks);
+                    b.Ignore(e => e.QuarksCollection);
+                    b.Ignore(e => e.DoubleProperty);
+                    b.HasAlternateKey(e => e.Quarks.Up);
+                    b.HasMany(e => e.Customers).WithOne()
+                        .HasForeignKey("ParentUp")
+                        .HasPrincipalKey("Quarks.Up");
+                });
+
+            var model = modelBuilder.FinalizeModel();
+            var entityType = model.FindEntityType(typeof(ComplexProperties))!;
+            var quarksType = entityType.GetComplexProperties().Single(p => p.Name == nameof(ComplexProperties.Quarks))
+                .ComplexType;
+            var upProperty = quarksType.FindProperty(nameof(Quarks.Up))!;
+
+            var foreignKey = model.GetEntityTypes().Single(t => t.ClrType == typeof(Customer)).GetForeignKeys()
+                .Single(fk => fk.PrincipalEntityType == entityType);
+            Assert.Same(upProperty, foreignKey.PrincipalKey.Properties.Single());
         }
 
         [Fact]
