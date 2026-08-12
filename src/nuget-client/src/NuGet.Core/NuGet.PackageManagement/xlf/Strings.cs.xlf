@@ -59,27 +59,27 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFile">
         <source>Added file '{0}'.</source>
-        <target state="translated">Byl přidaný soubor {0}.</target>
+        <target state="translated">Přidal se soubor {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">Byl přidaný soubor {0} do složky {1}.</target>
+        <target state="translated">Přidal se soubor {0} do složky {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'.</source>
-        <target state="translated">Byl odebraný soubor {0}.</target>
+        <target state="translated">Odebral se soubor {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
         <source>Removed file '{0}' from folder '{1}'.</source>
-        <target state="translated">Soubor {0} byl přesunutý ze složky {1}.</target>
+        <target state="translated">Soubor {0} se odebral ze složky {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Byla odebraná složka {0}.</target>
+        <target state="translated">Odebrala se složka {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfo">
@@ -114,7 +114,7 @@
       </trans-unit>
       <trans-unit id="ErrorWritingPackagesConfig">
         <source>An error occurred while writing file '{0}': {1}</source>
-        <target state="translated">Došlo k chybě při zápisu souboru {0}: {1}.</target>
+        <target state="translated">Došlo k chybě při zápisu souboru {0}: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_DirectoryDoesNotExist">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Máte spuštěnu operaci {0} se zdrojem HTTP: {1}. NuGet vyžaduje zdroje HTTPS. Pokud chcete použít zdroj HTTP, musíte v souboru NuGet.Config explicitně nastavit možnost allowInsecureConnections na true. Další informace najdete na https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Máte spuštěnu operaci {0} se zdrojem HTTP: {1}. NuGet vyžaduje zdroje HTTPS. Pokud chcete použít zdroj HTTP, musíte v souboru NuGet.Config explicitně nastavit parametr allowInsecureConnections na true. Další informace najdete na https://aka.ms/nuget-https-everywhere.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
       </trans-unit>
       <trans-unit id="Error_InvalidLockFileInput">
@@ -154,7 +154,7 @@
       </trans-unit>
       <trans-unit id="ExceptionWhenTryingToAddSource">
         <source>Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</source>
-        <target state="new">Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</target>
+        <target state="translated">Objevila se výjimka {0} při pokusu o přidání zdroje {1}. Ověřte, že jsou k dispozici všechny online zdroje balíčků.</target>
         <note />
       </trans-unit>
       <trans-unit id="FileConflictMessage">
@@ -274,7 +274,7 @@
       </trans-unit>
       <trans-unit id="PackageNotFoundInPrimarySources">
         <source>Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</source>
-        <target state="new">Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</target>
+        <target state="translated">Balíček {0} se nenašel v následujících primárních zdrojích: {1}. Ověřte, že jsou všechny online zdroje balíčků dostupné (NEBO) že jsou správně zadané ID a verze balíčku.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundOnSource">
@@ -336,12 +336,12 @@
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
         <source>Removed package '{0}' from folder '{1}'</source>
-        <target state="translated">Ze složky {1} byl odebraný balíček {0}.</target>
+        <target state="translated">Ze složky {1} se odebral balíček {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovedPackageFromPackagesConfig">
         <source>Removed package '{0}' from '{1}'</source>
-        <target state="translated">Z {1} byl odebraný balíček {0}.</target>
+        <target state="translated">Z {1} se odebral balíček {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovingPackageFromFolder">
@@ -401,7 +401,7 @@
       </trans-unit>
       <trans-unit id="SolutionDirectoryNotAvailable">
         <source>Solution is not opened or not saved. Ensure you have an open and saved solution.</source>
-        <target state="new">Solution is not opened or not saved. Ensure you have an open and saved solution.</target>
+        <target state="translated">Řešení není otevřené nebo není uložené. Zkontrolujte, že je řešení otevřené a uložené.</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionManagerNotAvailableForUninstall">
@@ -444,7 +444,7 @@
       </trans-unit>
       <trans-unit id="UnableToGatherPackageFromSource">
         <source>Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</source>
-        <target state="new">Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</target>
+        <target state="translated">Nejde získat balíček {0} ze zdroje {1}. Ověřte, že jsou k dispozici všechny online zdroje balíčků.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToResolveDependencyInfo">
@@ -497,7 +497,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">Soubor {0} se přeskočí, protože byl upravený.</target>
+        <target state="translated">Soubor {0} se přeskočí, protože se upravil.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">

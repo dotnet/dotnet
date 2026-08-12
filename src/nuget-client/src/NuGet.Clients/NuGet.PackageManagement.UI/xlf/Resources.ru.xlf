@@ -139,7 +139,7 @@
       </trans-unit>
       <trans-unit id="Button_Cancel">
         <source>_Cancel</source>
-        <target state="translated">_Отмена</target>
+        <target state="translated">_Отменить</target>
         <note>DoNotShowThisAgain, Button_Cancel, Button_Copy and Button_Apply must have underscore in different letters. See https://docs.microsoft.com/windows/apps/design/input/access-keys#choose-access-keys</note>
       </trans-unit>
       <trans-unit id="Button_Copy">
@@ -544,7 +544,7 @@
       </trans-unit>
       <trans-unit id="Label_Details">
         <source>Details</source>
-        <target state="translated">Сведения</target>
+        <target state="translated">Подробности</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_Downloads">
@@ -913,32 +913,32 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
         <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
-        <target state="new">The name specified has already been added to the list of available package sources. Provide a unique name.</target>
+        <target state="translated">Указанное имя уже было добавлено в список доступных источников пакетов. Укажите уникальное имя.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
         <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
-        <target state="new">The source specified has already been added to the list of available package sources. Provide a unique source.</target>
+        <target state="translated">Указанный источник уже был добавлен в список доступных источников пакетов. Укажите уникальный источник.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
         <source>Canceled loading packages</source>
-        <target state="translated">Загрузка пакетов отменена.</target>
+        <target state="translated">Загрузка пакетов отменена</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_ErrorOccurred">
         <source>An error occurred while loading packages</source>
-        <target state="translated">При загрузке пакетов произошла ошибка.</target>
+        <target state="translated">Произошла ошибка при загрузке пакетов</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_NoMoreItems">
         <source>End of package list loaded</source>
-        <target state="translated">Загрузка достигла конца списка пакетов.</target>
+        <target state="translated">Конец загруженного списка пакетов</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Ready">
         <source>Package list loaded</source>
-        <target state="translated">Список пакетов загружен.</target>
+        <target state="translated">Список пакетов загружен</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_By">
@@ -1028,7 +1028,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="new">There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Нет доступного файла сведений для выбранной версии пакета. Дополнительные сведения см. на странице [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1068,7 +1068,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Text_PackageLevelTransitive">
         <source>Transitive</source>
-        <target state="translated">Транзитивное</target>
+        <target state="translated">Транзитивный</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageMappingsAutoCreate">
@@ -1263,7 +1263,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
         <source>Follow the instructions at {0} to return to the previous state.</source>
-        <target state="new">Follow the instructions at {0} to return to the previous state.</target>
+        <target state="translated">Следуйте инструкциям по адресу {0}, чтобы вернуться к предыдущему состоянию.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">
@@ -1358,7 +1358,7 @@ Error: {1}</source>
       </trans-unit>
       <trans-unit id="Warning_HTTPSource">
         <source>AllowInsecureConnections is enabled and allows http access. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere.</source>
-        <target state="translated">AllowInsecureConnections включен и разрешает доступ по протоколу HTTP. Примечание. Этот метод небезопасен. Безопасные варианты см. на странице https://aka.ms/nuget-https-everywhere.</target>
+        <target state="translated">Параметр AllowInsecureConnections включен и разрешает доступ по протоколу HTTP. Примечание. Этот метод небезопасен. Безопасные варианты см. на странице https://aka.ms/nuget-https-everywhere.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ProjectJson">

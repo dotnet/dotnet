@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ArgumentNullOrEmpty">
         <source>Argument cannot be null or empty.</source>
-        <target state="translated">引數不能為 Null 或空白。</target>
+        <target state="translated">引數不得為 Null 或空白。</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidDependencyTarget">

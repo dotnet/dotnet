@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 325974,
+      "barId": 326415,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "3437c3bfe304c55493bba155ae4733fb7de9d401"
+      "commitSha": "f0580c1beaa25ecdb341ad8396df48acf433fbec"
     },
     {
       "barId": 288647,
@@ -25,10 +25,10 @@
       "commitSha": "cc6117b7c07cf674ea392ed7cbc6ea19da82ea73"
     },
     {
-      "barId": 323843,
+      "barId": 326298,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "79426f6bca18ed1a4672669157bbff8f4b2ab513"
+      "commitSha": "c269b982bdef148f92489ef4179cdc59094f652c"
     },
     {
       "barId": 309789,
@@ -37,22 +37,22 @@
       "commitSha": "4fb38398b3058d2040cfdb033a1aae3945ddb78a"
     },
     {
-      "barId": 325987,
+      "barId": 326461,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "3470a257a8ac8fd14f345f6e294dfbe2c642f416"
+      "commitSha": "401cb340c5f4e99b9f1b5cf39cf2ede4e71b8d3c"
     },
     {
-      "barId": 322820,
+      "barId": 326020,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "ba95998da076270d7d92d544d8ec8aeb0bdf8ab8"
+      "commitSha": "4523c6b295293775312d4af7a8a757b0aff018a6"
     },
     {
-      "barId": 325617,
+      "barId": 326124,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "0b8c5430c40cade6f55942d3b70e3954c97c01db"
+      "commitSha": "8a8b83db7ef1e79d47725dddbea66b4408fedd76"
     },
     {
       "barId": 325599,

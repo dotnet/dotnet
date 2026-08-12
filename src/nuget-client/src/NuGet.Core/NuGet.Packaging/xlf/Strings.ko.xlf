@@ -315,7 +315,7 @@
       </trans-unit>
       <trans-unit id="FailToLoadPackagesConfig">
         <source>Failed to load packages.config as XML file. Check that it is valid.</source>
-        <target state="new">Failed to load packages.config as XML file. Check that it is valid.</target>
+        <target state="translated">packages.config를 XML 파일로 로드하지 못했습니다. 유효한지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="FailToWritePackagesConfig">
@@ -653,7 +653,7 @@
       </trans-unit>
       <trans-unit id="PackageMinVersionNotSatisfied">
         <source>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget</source>
-        <target state="new">The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget</target>
+        <target state="translated">'{0}' 패키지에는 NuGet 클라이언트 버전 '{1}' 이상이 필요하지만 현재 NuGet 버전은 '{2}'입니다. NuGet을 업그레이드하려면 https://docs.nuget.org/consume/installing-nuget으로 이동하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageSignatureVerificationLog">
@@ -745,7 +745,7 @@
       </trans-unit>
       <trans-unit id="SignFailureCertificateInvalidProviderType">
         <source>The following certificate cannot be used for package signing as the private key provider is unsupported:</source>
-        <target state="translated">개인 키 공급자가 지원되지 않으므로 다음 인증서를 패키지 서명에 사용할 수 없습니다.</target>
+        <target state="translated">프라이빗 키 공급자가 지원되지 않으므로 다음 인증서를 패키지 서명에 사용할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignatureContainsInvalidAttribute">
@@ -785,7 +785,7 @@
       </trans-unit>
       <trans-unit id="SignedPackageAlreadySigned">
         <source>The package already contains a signature. Remove the existing signature before adding a new signature.</source>
-        <target state="new">The package already contains a signature. Remove the existing signature before adding a new signature.</target>
+        <target state="translated">패키지에 이미 서명이 있습니다. 새 서명을 추가하기 전에 기존 서명을 제거하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignedPackageArchiveIOExtraRead">
@@ -810,12 +810,12 @@
       </trans-unit>
       <trans-unit id="SignedPackagePackageAlreadyCountersigned">
         <source>The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.</source>
-        <target state="new">The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.</target>
+        <target state="translated">패키지에 이미 리포지토리 연대 서명이 있습니다. 새 리포지토리 연대 서명을 추가하기 전에 기존 서명을 제거하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignedPackageUnableToAccessSignature">
         <source>The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</source>
-        <target state="new">The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</target>
+        <target state="translated">서명 작업을 수행할 패키지가 제대로 열리지 않았습니다. 패키지의 서명 특성에 액세스할 수 있도록 스트림 기반 생성자를 사용하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="SigningCannotBeDoneInPlace">
@@ -979,8 +979,8 @@
     Fingerprint (SHA-256):  {2}
     Certificate (PEM):
 {3}</source>
-        <target state="translated">다음 X.509 루트 인증서는 {0}에 있는 인증서 번들에 없으므로 신뢰할 수 없습니다.  자세한 내용은 NU3042에 대한 설명서를 참조하세요.
-    제목:  {1}
+        <target state="translated">다음 X.509 루트 인증서는 {0}의 인증서 번들에 없으므로 신뢰할 수 없습니다.  자세한 내용은 NU3042에 대한 설명서를 참조하세요.
+    주체:  {1}
     지문(SHA-256):  {2}
     인증서(PEM):
 {3}</target>
@@ -993,7 +993,7 @@
     Certificate (PEM):
 {2}</source>
         <target state="translated">다음 X.509 루트 인증서는 인증서 번들을 찾을 수 없으므로 신뢰할 수 없습니다.  자세한 내용은 NU3042에 대한 설명서를 참조하세요.
-    제목:  {0}
+    주체:  {0}
     지문(SHA-256):  {1}
     인증서(PEM):
 {2}</target>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="fr" original="../Strings.resx">
     <body>
@@ -220,17 +220,17 @@
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Vous exécutez l’opération « {0} » avec une source « HTTP » : {1}. NuGet exige des sources HTTPS. Pour utiliser une source HTTP, vous devez explicitement définir « allowInsecureConnections » sur la valeur true dans votre fichier NuGet.Config. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <target state="translated">Vous exécutez l'opération « {0} » avec une source 'HTTP' : {1}. NuGet nécessite des sources HTTPS. Pour utiliser une source HTTP, vous devez définir explicitement « allowInsecureConnections » sur true dans votre fichier NuGet.Config. Reportez-vous à https://aka.ms/nuget-https-everywhere pour plus d'informations.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single_Short">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Vous exécutez l’opération « {0} » avec une source « HTTP » : {1}. NuGet exige des sources HTTPS. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <target state="translated">Vous exécutez l'opération « {0} » avec une source 'HTTP' : {1}. NuGet nécessite des sources HTTPS. Reportez-vous à https://aka.ms/nuget-https-everywhere pour plus d'informations.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSources_Multiple">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Vous exécutez l’opération « {0} » avec des sources « HTTP » : {1}. NuGet exige des sources HTTPS. Pour utiliser des sources HTTP, vous devez explicitement définir « allowInsecureConnections » sur la valeur true dans votre fichier NuGet.Config. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <target state="translated">Vous exécutez l'opération « {0} » avec des sources « HTTP » : {1}. NuGet nécessite des sources HTTPS. Pour utiliser des sources HTTP, vous devez définir explicitement « allowInsecureConnections » sur true dans votre fichier NuGet.Config. Reportez-vous à https://aka.ms/nuget-https-everywhere pour plus d'informations.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Error_IncompatiblePackageType">
@@ -616,7 +616,7 @@
       </trans-unit>
       <trans-unit id="Invalid_AttributeValue">
         <source>The {0} value: `{1}` is invalid. Valid example: `{2}`</source>
-        <target state="translated">La valeur {0} : `{1}` n’est pas valide. Exemple valide : `{2}`</target>
+        <target state="translated">La valeur {0} : « {1} » n’est pas valide. Exemple valide : « {2} »</target>
         <note>{0} - is the attribute
 {1} is the invalid value of the attribute.
 {2} a valid attriibute value example</note>
@@ -691,8 +691,8 @@ Pour plus d'informations, visitez https://docs.nuget.org/docs/reference/command-
       <trans-unit id="Log_AliasingSupportedInNewDependencyResolver">
         <source>The project {0} is attempting to restore duplicate frameworks, which are supported only in the default dependency resolver when the .NET SDK is version {1} or newer.
 Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this feature.</source>
-        <target state="translated">Le projet {0} tente de restaurer des infrastructure en double, ce qui est pris en charge uniquement par le résolveur de dépendances par défaut lorsque la version du Kit de développement logiciel (SDK) .NET est {1} ou ultérieure.
-Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez RestoreUseLegacyDependencyResolver pour utiliser cette fonctionnalité.</target>
+        <target state="translated">Le projet {0} tente de restaurer des frameworks en double, qui ne sont pris en charge par le résolveur de dépendances par défaut que si le SDK .NET est de la version spécifiée {1} ou ultérieure.
+Mettez à jour votre SDK .NET ou supprimez RestoreUseLegacyDependencyResolver pour utiliser cette fonctionnalité.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_AllProjectsUpToDate">
@@ -1115,7 +1115,7 @@ Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez Re
       </trans-unit>
       <trans-unit id="RestrictedPackageIdWarning">
         <source>The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</source>
-        <target state="new">The package ID '{0}' is invalid. Package IDs must start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_), with no consecutive dots or dashes.</target>
+        <target state="translated">L’ID de package « {0} » n’est pas valide. Les ID de package doivent commencer par une lettre, un chiffre ou un trait de soulignement, et contenir uniquement des lettres ASCII, des chiffres, des points (.), des tirets (–) et des traits de soulignement (_), sans points ni tirets consécutifs.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateFileNotFound">
@@ -1459,12 +1459,12 @@ Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez Re
       </trans-unit>
       <trans-unit id="Warning_AuditSourceWithoutVulnerabilityData">
         <source>Audit source '{0}' did not provide any vulnerability data.</source>
-        <target state="translated">La source d’audit « {0} » n’a fourni aucune donnée de vulnérabilité.</target>
+        <target state="translated">La source d'audit « {0} » n'a fourni aucune donnée sur la vulnérabilité.</target>
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
         <source>There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
-        <target state="new">There are {0} package sources defined in your configuration. When using central package management, map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</target>
+        <target state="translated">Des sources de packages sont {0} définies dans votre configuration. Lorsque vous utilisez la gestion centrale des packages, mappez vos sources de package avec le mappage de source de package (https://aka.ms/nuget-package-source-mapping) ou spécifier une seule source de package. Les sources suivantes sont définies : {1}</target>
         <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
       </trans-unit>
       <trans-unit id="Warning_DuplicatePropertyKey">
@@ -1485,15 +1485,15 @@ Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez Re
       <trans-unit id="Warning_List_HttpSource">
         <source>The following is a 'Non-HTTPS' source: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Ce qui suit est une source « non HTTPS » : {0}
-NuGet nécessite des sources HTTPS. Reportez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <target state="translated">Ce qui suit est une source « Non HTTPS » : {0}
+NuGet nécessite des sources HTTPS. Reportez-vous à https://aka.ms/nuget-https-everywhere pour découvrir plus d’informations.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_List_HttpSources">
         <source>The following are 'Non-HTTPS' sources: {0}
 NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Les sources suivantes sont des sources « non HTTPS » : {0}
-NuGet nécessite des sources HTTPS. Reportez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <target state="translated">Les sources suivantes sont des sources « Non HTTPS » : {0}
+NuGet nécessite des sources HTTPS. Reportez-vous à https://aka.ms/nuget-https-everywhere pour découvrir plus d’informations.</target>
         <note>{0} - list of server URIs</note>
       </trans-unit>
       <trans-unit id="Warning_MinVersionDoesNotExist">
@@ -1503,7 +1503,7 @@ NuGet nécessite des sources HTTPS. Reportez-vous à https://aka.ms/nuget-https-
       </trans-unit>
       <trans-unit id="Warning_MinVersionNonInclusive">
         <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
-        <target state="translated">{0} ne fournit pas de limite inférieure inclusive pour la dépendance {1}. {2} a été résolu à la place.</target>
+        <target state="translated">{0} ne fournit pas de limite inférieure inclusive pour la dépendance {1}. {2} a été résolu à la place</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_MonoAndroidFrameworkDeprecated">
