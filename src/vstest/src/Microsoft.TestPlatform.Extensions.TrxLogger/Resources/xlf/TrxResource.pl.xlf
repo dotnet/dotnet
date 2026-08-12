@@ -308,6 +308,11 @@ Fehlerdetails: {1}: {2}</target>
         <target state="translated">Nie można znaleźć dostępnej nazwy pliku dla elementu {0} przy użyciu formatu sygnatury czasowej „{2}” o {1}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="TrxLoggerWriteFailed">
+        <source>Failed to write the results file '{0}'. {1}</source>
+        <target state="new">Failed to write the results file '{0}'. {1}</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

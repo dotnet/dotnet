@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -13,6 +14,7 @@ using System.Xml;
 using System.Xml.Linq;
 
 using Microsoft.TestPlatform.Extensions.TrxLogger.Utility;
+using Microsoft.TestPlatform.Extensions.TrxLogger.XML;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -1174,6 +1176,92 @@ public class TrxLoggerTests
             "Passed test count should be exact under concurrent updates");
         Assert.AreEqual(expectedFailed, _testableTrxLogger.FailedTestCount,
             "Failed test count should be exact under concurrent updates");
+    }
+
+    [TestMethod]
+    public void TestMessageHandlerShouldBeThreadSafeForRunLevelErrorsAndWarnings()
+    {
+        const int threadCount = 10;
+        const int messagesPerThread = 100;
+        var barrier = new Barrier(threadCount);
+
+        var tasks = Enumerable.Range(0, threadCount).Select(t => Task.Run(() =>
+        {
+            barrier.SignalAndWait(TestContext.CancellationToken);
+            for (int i = 0; i < messagesPerThread; i++)
+            {
+                var args = new TestRunMessageEventArgs(TestMessageLevel.Warning, $"warning_{t}_{i}");
+                _testableTrxLogger.TestMessageHandler(new object(), args);
+            }
+        }, TestContext.CancellationToken)).ToArray();
+
+        Task.WaitAll(tasks, TestContext.CancellationToken);
+
+        Assert.HasCount(threadCount * messagesPerThread, _testableTrxLogger.GetRunLevelErrorsAndWarnings(),
+            "No run level warning should be lost under concurrent updates");
+    }
+
+    [TestMethod]
+    public void TestMessageHandlerShouldBeThreadSafeForRunLevelInformationalMessages()
+    {
+        const int threadCount = 10;
+        const int messagesPerThread = 100;
+        var barrier = new Barrier(threadCount);
+
+        var tasks = Enumerable.Range(0, threadCount).Select(t => Task.Run(() =>
+        {
+            barrier.SignalAndWait(TestContext.CancellationToken);
+            for (int i = 0; i < messagesPerThread; i++)
+            {
+                var args = new TestRunMessageEventArgs(TestMessageLevel.Informational, $"info_{t}_{i}");
+                _testableTrxLogger.TestMessageHandler(new object(), args);
+            }
+        }, TestContext.CancellationToken)).ToArray();
+
+        Task.WaitAll(tasks, TestContext.CancellationToken);
+
+        var lines = _testableTrxLogger.GetRunLevelInformationalMessage()
+            .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        Assert.HasCount(threadCount * messagesPerThread, lines,
+            "No run level informational message should be lost or corrupted under concurrent updates");
+    }
+
+    [TestMethod]
+    public void TestResultHandlerShouldCreateExactlyOneTestRunUnderConcurrency()
+    {
+        const int threadCount = 10;
+        const int testsPerThread = 50;
+        var barrier = new Barrier(threadCount);
+        var observedRunIds = new ConcurrentBag<Guid>();
+
+        var tasks = Enumerable.Range(0, threadCount).Select(t => Task.Run(() =>
+        {
+            barrier.SignalAndWait(TestContext.CancellationToken);
+            for (int i = 0; i < testsPerThread; i++)
+            {
+                var testCase = CreateTestCase($"Test_{t}_{i}");
+                var result = new VisualStudio.TestPlatform.ObjectModel.TestResult(testCase) { Outcome = TestOutcome.Passed };
+                _testableTrxLogger.TestResultHandler(new object(), new Mock<TestResultEventArgs>(result).Object);
+                observedRunIds.Add(_testableTrxLogger.LoggerTestRun!.Id);
+            }
+        }, TestContext.CancellationToken)).ToArray();
+
+        Task.WaitAll(tasks, TestContext.CancellationToken);
+
+        Assert.HasCount(1, observedRunIds.Distinct().ToList(),
+            "Only a single test run should be created, even when results arrive concurrently");
+    }
+
+    [TestMethod]
+    public void PopulateTrxFileShouldNotThrowWhenTheFileCannotBeWritten()
+    {
+        var rootElement = new XmlPersistence().CreateRootElement("TestRun");
+
+        // The file does not exist, so opening it with FileMode.Truncate raises a FileNotFoundException,
+        // which is an IOException. It should be reported, not propagated.
+        var missingFile = Path.Combine(DefaultTestRunDirectory, $"missing_{Guid.NewGuid():N}.trx");
+
+        _testableTrxLogger.PopulateTrxFile(missingFile, rootElement);
     }
 
     private static TestCase CreateTestCase(string testCaseName)

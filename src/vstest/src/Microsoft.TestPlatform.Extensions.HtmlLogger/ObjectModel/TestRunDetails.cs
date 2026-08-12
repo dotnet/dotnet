@@ -15,6 +15,13 @@ namespace Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel;
 public sealed class TestRunDetails
 {
     /// <summary>
+    /// Guards the run level message lists, which are created on first use, and
+    /// <see cref="ResultCollectionList"/>. All of them are mutated from multiple threads while
+    /// tests execute in parallel.
+    /// </summary>
+    private readonly object _syncLock = new();
+
+    /// <summary>
     /// Test run summary of all test results.
     /// </summary>
     [DataMember] public TestRunSummary? Summary { get; set; }
@@ -33,4 +40,40 @@ public sealed class TestRunDetails
     /// List of all the results
     /// </summary>
     [DataMember] public List<TestResultCollection>? ResultCollectionList = new();
+
+    /// <summary>
+    /// Adds an informational run level message. Safe to call concurrently from multiple threads.
+    /// </summary>
+    internal void AddInformationalMessage(string message)
+    {
+        lock (_syncLock)
+        {
+            RunLevelMessageInformational ??= new List<string>();
+            RunLevelMessageInformational.Add(message);
+        }
+    }
+
+    /// <summary>
+    /// Adds an error or warning run level message. Safe to call concurrently from multiple threads.
+    /// </summary>
+    internal void AddErrorOrWarningMessage(string message)
+    {
+        lock (_syncLock)
+        {
+            RunLevelMessageErrorAndWarning ??= new List<string>();
+            RunLevelMessageErrorAndWarning.Add(message);
+        }
+    }
+
+    /// <summary>
+    /// Adds a result collection. Safe to call concurrently from multiple threads.
+    /// </summary>
+    internal void AddResultCollection(TestResultCollection resultCollection)
+    {
+        lock (_syncLock)
+        {
+            ResultCollectionList ??= new List<TestResultCollection>();
+            ResultCollectionList.Add(resultCollection);
+        }
+    }
 }
