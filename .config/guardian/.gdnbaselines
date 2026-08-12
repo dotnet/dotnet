@@ -7,426 +7,138 @@
   "baselines": {
     "default": {
       "name": "default",
-      "createdDate": "2026-07-27 01:55:14Z",
-      "lastUpdatedDate": "2026-07-27 01:55:14Z"
+      "createdDate": "2026-08-12 03:04:30Z",
+      "lastUpdatedDate": "2026-08-12 03:04:30Z"
     }
   },
   "results": {
-    "7af20123dab1a9b542f0c9ab1f7b1aa0f894e29bce704ba74fe50a16f7e5b460": {
-      "signature": "7af20123dab1a9b542f0c9ab1f7b1aa0f894e29bce704ba74fe50a16f7e5b460",
-      "alternativeSignatures": [
-        "91ed2c8bc46beb1b7d782085dd4b974c17a900acb5298457a310aca4bfd57031",
-        "ac2733b95196749a543b54d4651a65c23487ebd455c005102015b5a239c8493c",
-        "41c0db3b51c64e0ad7278d74dfeb0a59dd3fec3693ab3bdcfc65f682a0399ba0"
-      ],
-      "target": "tools/python.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "7350c93251b22a6750e1ca75724fc381daa0450623d8e74dfb5cf1136d3bb5e1": {
-      "signature": "7350c93251b22a6750e1ca75724fc381daa0450623d8e74dfb5cf1136d3bb5e1",
-      "alternativeSignatures": [
-        "b780f9111741752085d5378489d55908ee926e9c2efe5a66319e0b5b3af65803",
-        "15307495a03b792b553f15b341446a7f42739ed94fa0ff22919953eba64e324f",
-        "04e43cd6b47516743c7e70736a76900a59cd31769295910ad896d40964dad998"
-      ],
-      "target": "tools/python313.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "5258ca2e85c030b8ee1f5dab440bc25e828aa6dcfecb17fae868b848b72a4c1a": {
-      "signature": "5258ca2e85c030b8ee1f5dab440bc25e828aa6dcfecb17fae868b848b72a4c1a",
-      "alternativeSignatures": [
-        "db75789a6cf57aace264c2d92c4520ce8c971ece5453cd8c019991e764571415",
-        "626219870c7a177a34f91d44b441a00379de2aa75edb3e39a3ea56caf4afacea",
-        "dea95b433b187085bb1bc5d0ed4af124f1833e0fa5771a5e477728c056c8fe1f"
-      ],
-      "target": "tools/pythonw.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "ca1ec3f33ee02536dd2d0a2b8bf0f299b9974d3fc052c30bc42477c1c8cfa37b": {
-      "signature": "ca1ec3f33ee02536dd2d0a2b8bf0f299b9974d3fc052c30bc42477c1c8cfa37b",
-      "alternativeSignatures": [
-        "ad78b7d600d28ea10d3863269ebf3837b287907f3c3c9679ca647c0d1c49d49f",
-        "4b4894f9e1f8d9ab4fce2b01006dfc4ae113a506f27efb2cfce7e7e68401148b",
-        "fdf20c44526abb21083f276091368d1b8ec3d771e345295aed7a3653bd570c04"
-      ],
-      "target": "tools/bin/node.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Node_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "0fd42b41f375feceddda65c774ece90b25735d317d388fe824015f1c478279f2": {
-      "signature": "0fd42b41f375feceddda65c774ece90b25735d317d388fe824015f1c478279f2",
-      "alternativeSignatures": [
-        "ec10d3f8246e7db508a34ca06244ec02739147f8cb4d4d5b57fdcd1605039ab7",
-        "428229de9197e19bbd5b6029e4f2b5a485e23ca7f38f16ad5e0a6f05889b8b98",
-        "34d0ebff6012dd21c27870b837a9c22fbdb431470917b4ee201884cb89660bd8"
-      ],
-      "target": "tools/bin/node_js2c.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Node_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "264e8c73ac50f02dd5b7c940dc9e8baf2113fa451c2a79b04f1e1bc422a94336": {
-      "signature": "264e8c73ac50f02dd5b7c940dc9e8baf2113fa451c2a79b04f1e1bc422a94336",
-      "alternativeSignatures": [
-        "5a264b3348defb73f866cc0f92bc86991423a85aba5a9dae9f69e496e62c783b",
-        "de6db44037651f660aca0035846a51fcc3afcb9c3528190b06114a79a5609f9f",
-        "556f2047cb5821a9485a57639de31e7e900cd8b9b53d568e242551f761302253"
-      ],
-      "target": "tools/bin/nop.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Node_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "17ac08b6d33fadf191ef413d7f7584ccc5ebc50d30f9c6a5eaed1126f4ba5ccb": {
-      "signature": "17ac08b6d33fadf191ef413d7f7584ccc5ebc50d30f9c6a5eaed1126f4ba5ccb",
-      "alternativeSignatures": [
-        "b429414febfee2dbdd50bd7aaa824e4ec6cae09c911a336015f9f1512988be15",
-        "8c17b27e2c77f150ef2c66bb3c54e97928f609429a118891e14271ce3077ea72",
-        "efc3f33a7cd057e09bc6665003ef8870f5acbbb0a8a8311a045b46947fd83b22"
-      ],
-      "target": "tools/bin/wasm-as.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Sdk_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "0b7c6aef129b930ba5358993e006032f22735d90aa7586989b069ac77e472d74": {
-      "signature": "0b7c6aef129b930ba5358993e006032f22735d90aa7586989b069ac77e472d74",
-      "alternativeSignatures": [
-        "6751e49307d5df6c12ed23c2e97352286e81abf7f07c0a3e9025c011f8d12770",
-        "d6cc4b70f8f43cc0becc43b8e77105f42a2c9a792f5a1f8353f08673cb52fa70",
-        "e8653a2d96e3facae0ac43a36b4bb67b7989f6d1fcbc6daf021eb645ee65ef38"
-      ],
-      "target": "tools/bin/wasm-ctor-eval.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Sdk_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "d03c65d19c4990fc42f1feae58996191d7df507ae54eba956ba331dcf4058047": {
-      "signature": "d03c65d19c4990fc42f1feae58996191d7df507ae54eba956ba331dcf4058047",
-      "alternativeSignatures": [
-        "4f9e93de9ac5952b1a72fa8dfc09efc7e84bae7252d44f557f735c004e3d3372",
-        "2b40faa459ac1be4430eada4507f01ed866e4ab7d38e86d6a36f0c720833a4fd",
-        "8a183b42d3a4deea5d040a650053f0690a9a10ba95094d4de34066bf15f02702"
-      ],
-      "target": "tools/bin/wasm-dis.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Sdk_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "2e747dbe75776a4aabafaa2f23bb45bbce38a3de6f4f93b829ce26600859a04e": {
-      "signature": "2e747dbe75776a4aabafaa2f23bb45bbce38a3de6f4f93b829ce26600859a04e",
-      "alternativeSignatures": [
-        "52e3fe89285a4cb5ddabafd56f87f5a50113b7acca1c9917cd0a556675420e65",
-        "e324ed88432186914b06b3aec8ef76e6c51115c92f546016288d9929085afbd3",
-        "f4ddb3de2b8d41429153d1b41e03675a248a81a12b04027962912c9bfd6e0d6f"
-      ],
-      "target": "tools/bin/wasm-emscripten-finalize.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Sdk_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "a6e7ce3472550101e3cd0b1b15941c49b082b45167ed38ef8ca196f7e2cf645c": {
-      "signature": "a6e7ce3472550101e3cd0b1b15941c49b082b45167ed38ef8ca196f7e2cf645c",
-      "alternativeSignatures": [
-        "994dd58f6e41806f838abde100eb4c0cadf7c0829309dcb50d101ee0165f8a23",
-        "435a9d968a73c8da98cf16712580f8c5f6b1380fdec1890cb6acf544c08c0269",
-        "bfb180f138eb8b1476dbdcfeede9482dcb2025eb42d5f1b97b9c9056e0213d04"
-      ],
-      "target": "tools/bin/wasm-metadce.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Sdk_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "6e5ecd4fc595e17f9e95e30dedf7f71d9e89737530e21283cb58d40abbcac71c": {
-      "signature": "6e5ecd4fc595e17f9e95e30dedf7f71d9e89737530e21283cb58d40abbcac71c",
-      "alternativeSignatures": [
-        "7c1fc379cc66eccb5fa73ddc1e8d7faa427566ae959288e5da27f413588b839c",
-        "0a8ef3622b917f22e7c4a7a8ab395db49a461835b42ddc20b1e4e65994427962",
-        "c517d514e319491d00c7751490deff740dd1d0929522199ffce035b58cdf19a0"
-      ],
-      "target": "tools/bin/wasm-opt.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Sdk_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "d44a0244927c3f480c3b6cfb8a81feb699e0c394b41409979bafdb9c7dbc086b": {
-      "signature": "d44a0244927c3f480c3b6cfb8a81feb699e0c394b41409979bafdb9c7dbc086b",
-      "alternativeSignatures": [
-        "169ef96f2a411b07efad74c6f0fcb7c56ddbb570b0cab08d2b354f12dee143ad",
-        "0dc1158dc4fc6018829f3b076a655665394ab816d13958294330eaa84ea6fedc",
-        "11641df95ac9b1122b5154a10744ae0e295f401775daf2ffa22f957dd555346f"
-      ],
-      "target": "tools/bin/wasm-split.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Sdk_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "61b53d8bc71c8cfccce9335f05886f72cc3f21533c076b2e3c5a655c93d54b30": {
-      "signature": "61b53d8bc71c8cfccce9335f05886f72cc3f21533c076b2e3c5a655c93d54b30",
-      "alternativeSignatures": [
-        "ebc6e852d47b99754899e517567f64f5e33d31d20c30b241808bffae4de7c464",
-        "d924bce850f54901189b03cb69f308994e52482c8a0d444155619f3425619320",
-        "4ae2715bfa7f9d78727ccacacf200a7ad435707d36f76809a4fc2e6619576be6"
-      ],
-      "target": "tools/bin/wasm2js.exe",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Sdk_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
     "88aa008b3413217a4d951711e709189675c573b24d966856ae1bd92a3b95159c": {
       "signature": "88aa008b3413217a4d951711e709189675c573b24d966856ae1bd92a3b95159c",
       "alternativeSignatures": [
         "38c69cae1a5f75445e1f0e337a5d613ec56dc22061d9b31f7e012010a720a894",
-        "f87ce74c0a0dbf579eba804a898de174c757e46efaadb4b89bdae14989bb5fb1",
-        "e1f65eda8560a12168ecbd973658234cc7a37033985abd01b91892d43a92c2aa"
+        "851f653e816b2c5d3dfabcd79f674e1ab711ce6645f4da547672159a13f6d640",
+        "e33300e92b394d3d3bce766c0bfcdc02ea33010bc638d5414a234cd55d7fbf06"
       ],
       "target": "tools/DLLs/libcrypto-3.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26376_102_nupkg/",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26411_119_nupkg/",
       "memberOf": [
         "default"
       ],
       "tool": "binskim",
       "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
+      "createdDate": "2026-08-12 03:45:29Z"
     },
     "072d2bb83a1b48a3effb5a6b709b947772966d2fa3c8f9f759cc851f37ad7621": {
       "signature": "072d2bb83a1b48a3effb5a6b709b947772966d2fa3c8f9f759cc851f37ad7621",
       "alternativeSignatures": [
         "4e2d57fe128686b6fd202aa0bcbb53a9fb0330f65a7d1a9459d25a41af4ae95a",
-        "c71aa8bd3fc4cee6ea72852fe92ca85ab0a4a63df23fad26afc5ac862feaf6ee",
-        "c67c96cf0ae0b6503992346b14d79aace6b3735cc797c4bf9689391ff21ed9f3"
+        "6b8cd15bcb073995edb1a4417e67b1c63e8aeb8b0b001773a94d9d77494edea1",
+        "e6e1075778a2db5115d7772f8efcac2321cd23dbb5dcf8a6e71943d1d34f3640"
       ],
       "target": "tools/DLLs/libffi-8.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26376_102_nupkg/",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26411_119_nupkg/",
       "memberOf": [
         "default"
       ],
       "tool": "binskim",
       "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
+      "createdDate": "2026-08-12 03:45:29Z"
     },
     "ce3376ba906a04410c01f13804fe9ca7ece60cd83108d433b30c32c2d74a3022": {
       "signature": "ce3376ba906a04410c01f13804fe9ca7ece60cd83108d433b30c32c2d74a3022",
       "alternativeSignatures": [
         "143d29c0d0b6ce9f5ce443eec8dd79f4aeefaad281477f15f28cb97d8862f309",
-        "23b6a265be3d831ad994e6ca977e50dedf08909bda2cb8049620ad7039345674",
-        "00cc8636a2b3c0b99fcc7a09e03253d0f8760f7dbd19e8ce7478483a1e60a597"
+        "346d8537c7aedb345933b37dabac0784a1c3587dcf94dec7909f295b7988501e",
+        "9595bb76fe67199c6d4168d89bf659d9848570f7b8a0688acd0c75381de466ad"
       ],
       "target": "tools/DLLs/libssl-3.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26376_102_nupkg/",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26411_119_nupkg/",
       "memberOf": [
         "default"
       ],
       "tool": "binskim",
       "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "790e7a1846df61e45e2a81a59fd22beb372c8deb7c4e4aa9bf8ae0ff80eb5aba": {
-      "signature": "790e7a1846df61e45e2a81a59fd22beb372c8deb7c4e4aa9bf8ae0ff80eb5aba",
-      "alternativeSignatures": [
-        "f0229401fc2e22d6c90bba0eca5d1d7b01c03c2ac10d752965f259c6c62421e5",
-        "15f8fce8bd7614d50fa14825fe52216907a09211ec300a806b1e8d2e621222a7",
-        "fcec3d754e313e3ebbf8865bd4bd911449c67fa42065196914f04cb7a2435132"
-      ],
-      "target": "tools/DLLs/sqlite3.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Python_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2008",
-      "createdDate": "2026-07-27 01:55:14Z"
+      "createdDate": "2026-08-12 03:45:29Z"
     },
     "52381a07121ad8c6d8874d31fcc9ec0c878cdc13a221c23dfb68d6e003c42ffe": {
       "signature": "52381a07121ad8c6d8874d31fcc9ec0c878cdc13a221c23dfb68d6e003c42ffe",
       "alternativeSignatures": [
         "64f99807a8aefa32a77901a8609c12f874c18504137787403d98059825b290ae",
-        "387876986bdf9230266b965715dd58674f2a1aad8873474a61052264be84c62a",
-        "dbab8c0c16e2ff1fb64261b180cd788786d883c5d57fe3a29c28dd29b2542f2e"
+        "2f105ea32a2ffd5743d98d7a5193f769457b789dd443f844c54d39a1f0afdb75",
+        "39a64123d25153dd25809799277d30864aed70c124b2a1a59b37e33860ae6815"
       ],
       "target": "runtimes/win-x64/lib/net11.0/DirectWriteForwarder.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260726.2/Microsoft_WindowsDesktop_App_Runtime_win-x64_11_0_0-rc_1_26376_102_symbols_nupkg/",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/windowsdesktop/Microsoft_WindowsDesktop_App_Runtime_win-x64_11_0_0-rc_1_26411_119_nupkg/",
       "memberOf": [
         "default"
       ],
       "tool": "binskim",
       "ruleId": "BA2007",
-      "createdDate": "2026-07-27 01:55:14Z"
+      "createdDate": "2026-08-12 03:45:29Z"
     },
     "3675cd88be5ab5fc6ac1dc8bbb3f1c46e1b8014e71fef949cb5f976fd5bc839b": {
       "signature": "3675cd88be5ab5fc6ac1dc8bbb3f1c46e1b8014e71fef949cb5f976fd5bc839b",
       "alternativeSignatures": [
         "1ae7a929153ca1b67762a149da877f633a7e15e38f1b52e6ce52a734f38c3796",
-        "31f0f575b27847d04e9f16db5dd7dca6439d97d9eb204717d27378b519d79721",
-        "a7159af3e2873b30c4e97c762d09bae3afd9bf698432029620b8275fc3fe0e0f"
+        "9416ea74a9953949142a5e38c247769c304e364893a4175e104bb99802510f55",
+        "800875ef7615610e7ab8620ac6189fd514c8e1e9fc5583cad5b5ecbe30eae8fd"
       ],
       "target": "runtimes/win-x64/lib/net11.0/System.Printing.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260726.2/Microsoft_WindowsDesktop_App_Runtime_win-x64_11_0_0-rc_1_26376_102_symbols_nupkg/",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/windowsdesktop/Microsoft_WindowsDesktop_App_Runtime_win-x64_11_0_0-rc_1_26411_119_nupkg/",
       "memberOf": [
         "default"
       ],
       "tool": "binskim",
       "ruleId": "BA2007",
-      "createdDate": "2026-07-27 01:55:14Z"
+      "createdDate": "2026-08-12 03:45:29Z"
     },
     "c1e46aede103f65dba08e65a38c42251bd4f668f7a21e6247b8515ceb38b580a": {
       "signature": "c1e46aede103f65dba08e65a38c42251bd4f668f7a21e6247b8515ceb38b580a",
       "alternativeSignatures": [
         "e72417e8a2189829f556c94f92b7126b3de68741bcca30a8d44d6cd779dc9efd",
-        "c162eb1b273f3e7be10164117a29eeb38d48ff2c8c3716611421b27808011aab",
-        "a6fd3b242bd707128fc65e0767612efeb8a74fa454ce7e96668db3f8816528c8"
+        "d549b2bcf18db508ecf59a1798aa99be40d8fc7df96d642e37e2e46698c5e5db",
+        "a9b3cbad19b1b8f7f38de357995d0cc2b110c7a3035a175f8c12d25cb3ca6cb2"
       ],
       "target": "lib/net11.0/DirectWriteForwarder.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260727.5/runtime_win-x86_Microsoft_DotNet_Wpf_GitHub_11_0_0-rc_1_26377_105_symbols_nupkg/",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/wpf/runtime_win-x86_Microsoft_DotNet_Wpf_GitHub_11_0_0-rc_1_26411_119_nupkg/",
       "memberOf": [
         "default"
       ],
       "tool": "binskim",
       "ruleId": "BA2007",
-      "createdDate": "2026-07-27 16:34:07Z"
+      "createdDate": "2026-08-12 03:04:30Z"
     },
     "954e6b40a961af5eada6835e709385e8c6cea51fb00bd22dd19440a11912598c": {
       "signature": "954e6b40a961af5eada6835e709385e8c6cea51fb00bd22dd19440a11912598c",
       "alternativeSignatures": [
         "f28f7957f2bf617d1ce98533be1fac69fd0aadaef76314b7bd34d68c06c81393",
-        "90196756554f13f90d2ef0329a044adce753d54d8f5cf26e8ff65228465c1350",
-        "6c4302241cc1e35696203f9fc9bc97b030f8abd4b9ed5140346747b61559689d"
+        "2e1dd7b4e0f4a9e9b96155cd29ec1876705dbad180b723b2abf167443a7fb95d",
+        "6972196e28bc7a16b7f773ac5ae723c90382aec18e42b675267b3eb06d163287"
       ],
       "target": "lib/net11.0/System.Printing.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260727.5/runtime_win-x86_Microsoft_DotNet_Wpf_GitHub_11_0_0-rc_1_26377_105_symbols_nupkg/",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/NonShipping/wpf/runtime_win-x86_Microsoft_DotNet_Wpf_GitHub_11_0_0-rc_1_26411_119_nupkg/",
       "memberOf": [
         "default"
       ],
       "tool": "binskim",
       "ruleId": "BA2007",
-      "createdDate": "2026-07-27 16:34:07Z"
-    },
-    "37156ee3db9fa7161f14f3ba1e455e377f9d2f12f3d7d115e86836095aff80fe": {
-      "signature": "37156ee3db9fa7161f14f3ba1e455e377f9d2f12f3d7d115e86836095aff80fe",
-      "alternativeSignatures": [
-        "72bbfc726d1ac525f1e44751c043626a83a2b244a618506e72138c2974105d6d",
-        "95be3d2e3ed3e39fc64a00a796ce77c552ae02c4bd52638a9a96eff03ef26a2a",
-        "4bd6521b4ac4bef905156611c6de2d0aae3d185e3bc9ff9ea61e19b494562346"
-      ],
-      "target": "tools/emscripten/cache/ports/bullet/Bullet-version_1/bullet/Extras/CDTestFramework/GLUT32.DLL",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Cache_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2009",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "d414bc80f801c3ed62fb8b80ff8ab334bb81d4261b3d9531d02425de2f5a5354": {
-      "signature": "d414bc80f801c3ed62fb8b80ff8ab334bb81d4261b3d9531d02425de2f5a5354",
-      "alternativeSignatures": [
-        "63b6ef172d79483111d2039baae3c334e54c5030fc899a51e72ed51cc0d6597e",
-        "985313f3fa53a38dbdc6dbdcc54b6db243eadd4975ab3e7c2ce6f5647f344c81",
-        "bc9dad7c2cef00d56e004b6cfc73a87b57137ec107927f27e817093554f1c9dc"
-      ],
-      "target": "tools/emscripten/cache/ports/bullet/Bullet-version_1/bullet/Extras/CDTestFramework/GLUT32.DLL",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Cache_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2016",
-      "createdDate": "2026-07-27 01:55:14Z"
-    },
-    "64dc331c5829ff7cab40f887cc1ecaaf7ab2509ea4764a1ff6f477366040029c": {
-      "signature": "64dc331c5829ff7cab40f887cc1ecaaf7ab2509ea4764a1ff6f477366040029c",
-      "alternativeSignatures": [
-        "e600100e29335ce4b1bb4acc2785301cadee2c47edd9f691623b7036d4a3e63f",
-        "73fbd81ebb0659446c17b3c41355e9eeee2422dd8a7fe02c88f0e965e5f90776",
-        "889598cb413f332ada200163a1cf195be0402fa20de962b2c058cb9b2c858a7d"
-      ],
-      "target": "tools/emscripten/cache/ports/bullet/Bullet-version_1/bullet/Extras/CDTestFramework/GLUT32.DLL",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/emsdk/Microsoft_NET_Runtime_Emscripten_6_0_2_Cache_win-x64_11_0_0-rc_1_26376_102_nupkg/",
-      "memberOf": [
-        "default"
-      ],
-      "tool": "binskim",
-      "ruleId": "BA2018",
-      "createdDate": "2026-07-27 01:55:14Z"
+      "createdDate": "2026-08-12 03:04:30Z"
     },
     "f2e40fb2d23e3c0ffada5bb10db86e970f7d8900a55ad931df484c6f182831a0": {
       "signature": "f2e40fb2d23e3c0ffada5bb10db86e970f7d8900a55ad931df484c6f182831a0",
       "alternativeSignatures": [
         "aae087ef575b5d6db7092f0cfc8c77072602ca35eebd0cdc0d69de64ef23bcef",
-        "e1ce406984ee010ea22029e03c41bcda3c1ddfd2d975cd46843f00bd505b74b8",
-        "8f26625e8ac289307416f2c8b7da70c4832546db8be7d2c77fffb2152e8fbbed"
+        "98e77dddee0735190757d73e62bacf2bc9ac1ae546299f2d7dc366c9bee640ea",
+        "278eb23e396ffcc4599f7b5b5e9c45000b0382dd89abf5e0fa66812d03e5a7cf"
       ],
       "target": "runtimes/win-x86/lib/net11.0/DirectWriteForwarder.dll",
-      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260729.23/Microsoft_WindowsDesktop_App_Runtime_win-x86_11_0_0-rc_1_26379_123_symbols_nupkg/",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/packages/Release/Shipping/windowsdesktop/Microsoft_WindowsDesktop_App_Runtime_win-x86_11_0_0-rc_1_26411_119_nupkg/",
       "memberOf": [
         "default"
       ],
       "tool": "binskim",
       "ruleId": "BA2007",
-      "createdDate": "2026-07-30 04:35:19Z"
+      "createdDate": "2026-08-12 03:04:30Z"
     }
   }
 }
