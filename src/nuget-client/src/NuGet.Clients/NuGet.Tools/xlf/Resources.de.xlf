@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingToolNotAvailable">
         <source>The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="new">The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <target state="translated">Das Tool zur Paketquellzuordnung ist nicht verfügbar. Aktivieren Sie den NuGet MCP-Server im GitHub Copilot-Chatfenster, und versuchen Sie es erneut.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceName_Missing">
@@ -169,7 +169,7 @@
       </trans-unit>
       <trans-unit id="Prompt_ReviewPackageSourceMapping">
         <source>Review this repository's package source mappings.</source>
-        <target state="new">Review this repository's package source mappings.</target>
+        <target state="translated">Überprüfen Sie die Paketquellzuordnungen dieses Repositorys.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -284,12 +284,12 @@
       </trans-unit>
       <trans-unit id="Title_PackageSourceMappingWithCopilot">
         <source>Package Source Mapping with GitHub Copilot</source>
-        <target state="new">Package Source Mapping with GitHub Copilot</target>
+        <target state="translated">Paketquellzuordnung mit GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="VSOptions_Button_PackageSourceMappingReview">
         <source>Review with GitHub Copilot</source>
-        <target state="new">Review with GitHub Copilot</target>
+        <target state="translated">Mit GitHub Copilot überprüfen</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="clearLocalResources">

@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingToolNotAvailable">
         <source>The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="new">The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <target state="translated">L'outil de mappage de la source des packages n'est pas disponible. Activez le serveur MCP NuGet dans la fenêtre de conversation GitHub Copilot et réessayez.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceName_Missing">
@@ -169,7 +169,7 @@
       </trans-unit>
       <trans-unit id="Prompt_ReviewPackageSourceMapping">
         <source>Review this repository's package source mappings.</source>
-        <target state="new">Review this repository's package source mappings.</target>
+        <target state="translated">Passez en revue les mappages de source de package de ce référentiel.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -284,12 +284,12 @@
       </trans-unit>
       <trans-unit id="Title_PackageSourceMappingWithCopilot">
         <source>Package Source Mapping with GitHub Copilot</source>
-        <target state="new">Package Source Mapping with GitHub Copilot</target>
+        <target state="translated">Mappage de la source des packages avec GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="VSOptions_Button_PackageSourceMappingReview">
         <source>Review with GitHub Copilot</source>
-        <target state="new">Review with GitHub Copilot</target>
+        <target state="translated">Vérifier avec GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="clearLocalResources">

@@ -59,12 +59,12 @@
       </trans-unit>
       <trans-unit id="cmdidReviewPackageSourceMapping|ButtonText">
         <source>ReviewPackageSourceMapping</source>
-        <target state="new">ReviewPackageSourceMapping</target>
+        <target state="translated">ReviewPackageSourceMapping</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidReviewPackageSourceMapping|CommandName">
         <source>cmdidReviewPackageSourceMapping</source>
-        <target state="new">cmdidReviewPackageSourceMapping</target>
+        <target state="translated">cmdidReviewPackageSourceMapping</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidSourceSettings|ButtonText">
