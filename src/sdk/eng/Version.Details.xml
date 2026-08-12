@@ -413,25 +413,25 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Common" Version="10.0.111">
-      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
+    <Dependency Name="Microsoft.SourceLink.Common" Version="10.0.400">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="10.0.111">
-      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
+    <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="10.0.400">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitHub" Version="10.0.111">
-      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
+    <Dependency Name="Microsoft.SourceLink.GitHub" Version="10.0.400">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.GitLab" Version="10.0.111">
-      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
+    <Dependency Name="Microsoft.SourceLink.GitLab" Version="10.0.400">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="10.0.111">
-      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
+    <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="10.0.400">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
     <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
     <Dependency Name="Microsoft.Extensions.Logging" Version="10.0.11">
