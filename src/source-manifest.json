@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.26405.8",
+      "packageVersion": "8.0.0-beta.26410.9",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "dcc22d2c84bf1fbbe33978fdc46197968ff0aac5"
+      "commitSha": "0992a0f871c48ccc32eaa49ad89fea8022b8f597"
     },
     {
       "packageVersion": "8.0.0-preview.1.23557.2",
