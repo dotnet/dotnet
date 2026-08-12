@@ -10,17 +10,17 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>35b593bebfcba58f8e78298cef14c2761f5d86c6</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="10.0.110-servicing.26326.116">
+    <Dependency Name="Microsoft.NET.Sdk" Version="10.0.111-servicing.26373.116">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>f7d90799ce4ef09a0bb257852a57248d2a8fb8dd</Sha>
+      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Ref" Version="10.0.10">
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="10.0.11">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>f7d90799ce4ef09a0bb257852a57248d2a8fb8dd</Sha>
+      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.Platforms" Version="10.0.10-servicing.26326.116">
+    <Dependency Name="Microsoft.NETCore.Platforms" Version="10.0.11-servicing.26373.116">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>f7d90799ce4ef09a0bb257852a57248d2a8fb8dd</Sha>
+      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="10.0.0-beta.26329.109">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
