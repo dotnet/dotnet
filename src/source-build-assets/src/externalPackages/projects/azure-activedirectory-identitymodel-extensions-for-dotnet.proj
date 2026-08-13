@@ -5,23 +5,6 @@
     <CustomRepoBuild>true</CustomRepoBuild>
   </PropertyGroup>
 
-  <Target Name="ConfigureMicrosoftBclCryptographyPackageSource" AfterTargets="CreateNuGetConfig">
-    <!-- Standalone builds get Microsoft.Bcl.Cryptography from the dependency-flow feed. -->
-    <Copy SourceFiles="$(RepoRoot)NuGet.config"
-          DestinationFiles="$(NuGetConfigFile)"
-          Condition="'$(PreviouslySourceBuiltNupkgCacheDir)' == ''" />
-
-    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
-                            SourceName="Previously source-built"
-                            SourcePath="$(PreviouslySourceBuiltNupkgCacheDir)"
-                            Condition="'$(PreviouslySourceBuiltNupkgCacheDir)' != ''" />
-
-    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
-                            SourceName="SBA"
-                            SourcePath="$(ArtifactsPackagesDir)"
-                            Condition="'$(PreviouslySourceBuiltNupkgCacheDir)' == ''" />
-  </Target>
-
   <Target Name="CustomRepoBuild">
     <PropertyGroup>
       <SystemIdentityModelTokensJwtProject>$(ProjectDirectory)src/System.IdentityModel.Tokens.Jwt/System.IdentityModel.Tokens.Jwt.csproj</SystemIdentityModelTokensJwtProject>
@@ -34,7 +17,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftBclCryptographyVersion=$(MicrosoftBclCryptographyVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:MicrosoftBclCryptographyVersion=$(IdentityModelMicrosoftBclCryptographyVersion)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:IsAotCompatible=false /p:IsTrimmable=false</BuildCommandArgs>
 
       <PackCommandArgs>$(BuildCommandArgs) --output $(ProjectDirectory)pack</PackCommandArgs>

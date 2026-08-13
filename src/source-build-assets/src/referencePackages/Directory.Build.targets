@@ -50,7 +50,7 @@
   <Import Project="$(CustomizationsPropsPath)" Condition="Exists('$(CustomizationsPropsPath)')" />
 
   <!-- Keep in sync with available targeting packs under src/targetPacks/ILsrc. -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(UseLocalTargetingPack)' != 'false'">
     <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
       <TargetingPackVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(TargetFramework)', '^net\d+\.0$'))">$([System.Text.RegularExpressions.Regex]::Match('%(TargetFramework)', '\d+').Value).0.0</TargetingPackVersion>
     </KnownFrameworkReference>
@@ -107,7 +107,9 @@
   </Target>
 
   <!-- Use local targeting packs -->
-  <Target Name="UseLocalTargetingPack" AfterTargets="ResolveFrameworkReferences">
+  <Target Name="UseLocalTargetingPack"
+          AfterTargets="ResolveFrameworkReferences"
+          Condition="'$(UseLocalTargetingPack)' != 'false'">
     <ItemGroup>
       <ResolvedTargetingPack Path="$(ArtifactsBinDir)%(ResolvedTargetingPack.NuGetPackageId).%(ResolvedTargetingPack.NuGetPackageVersion)\pack"
                              PackageDirectory="$(ArtifactsBinDir)%(ResolvedTargetingPack.NuGetPackageId).%(ResolvedTargetingPack.NuGetPackageVersion)\pack" />
