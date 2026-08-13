@@ -33,7 +33,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         // All Helix jobs the monitor has observed for this build, keyed by Helix job name.
         // Overwritten per poll so the cached entry reflects the latest Helix-side state
         // (in particular the Finished timestamp transitioning from null to a value). Also used
-        // by GetSubmitterChainKey to walk back through PreviousHelixJobName links across polls.
+        // by GetHelixJobChainKey to walk back through PreviousHelixJobName links across polls.
         private readonly Dictionary<string, HelixJobInfo> _associatedJobs = new(StringComparer.OrdinalIgnoreCase);
 
         // Upload lifecycle for each Helix job observed by this invocation. Jobs discovered from
@@ -43,7 +43,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         private readonly Dictionary<string, TestResultUploadState> _testResultUploadStates = new(StringComparer.OrdinalIgnoreCase);
 
         // Tracks the latest outcome for each logical work item, keyed by
-        // (SubmitterChainKey, WorkItemName). See GetSubmitterChainKey for the keying rationale.
+        // (HelixJobChainKey, WorkItemName). See GetHelixJobChainKey for the keying rationale.
         private readonly Dictionary<(string ChainKey, string WorkItemName), bool> _workItemOutcomes
             = new(WorkItemOutcomeKeyComparer.Instance);
 
@@ -254,14 +254,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     return false;
                 }
 
-                string chainKey = GetSubmitterChainKeyLocked(helixJob);
+                string chainKey = GetHelixJobChainKeyLocked(helixJob);
                 foreach (WorkItemSummary wi in workItems)
                 {
-                    // Within the same AzDO submitter chain (i.e. resubmissions of the same
-                    // logical AzDO job), the latest result overwrites the prior one for the
-                    // same work item name. Across different submitter chains the key differs,
-                    // so identically-named work items in different AzDO jobs are tracked
-                    // independently.
+                    // Within the same Helix job lineage, the latest result overwrites the prior
+                    // one for the same work item name. Independent original Helix jobs have
+                    // different roots, even when they share an AzDO submitter and queue.
                     _workItemOutcomes[(chainKey, wi.Name)] = !wi.IsFailed;
                     TrackFailedWorkItemConsoleInfoLocked(helixJob, chainKey, wi);
                 }
@@ -306,7 +304,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                         continue;
                     }
 
-                    string chainKey = GetSubmitterChainKeyLocked(job);
+                    string chainKey = GetHelixJobChainKeyLocked(job);
                     var key = (chainKey, entry.Key.WorkItemName);
                     _workItemOutcomes[key] = false;
 
@@ -387,32 +385,21 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         }
 
         /// <summary>
-        /// Produces a key that rolls up work-item outcomes within a logical AzDO submitter
-        /// chain. When the job carries an AzDO <c>System.JobName</c>, the chain key is based
-        /// on that name combined with the Helix <c>QueueId</c> (so resubmissions of the same
-        /// AzDO job to the same queue share the same key while a single AzDO matrix leg that
-        /// fans out to multiple Helix queues — each producing its own Helix job under the
-        /// same <c>System.JobName</c> — stays distinct and cannot overwrite a sibling queue's
-        /// failure with a pass). When there is no submitter name (test scenarios, manual
-        /// Helix submissions), the chain is followed back through <c>PreviousHelixJobName</c>
-        /// links to the root and the root Helix job name is used instead, so that retries
-        /// still overwrite prior failures correctly.
+        /// Produces a key that rolls up work-item outcomes within a Helix resubmission lineage.
+        /// The chain is followed back through <c>PreviousHelixJobName</c> links and the root
+        /// Helix job name is used. This lets resubmissions overwrite prior outcomes without
+        /// folding independent original jobs that share the same AzDO submitter and Helix queue.
         /// </summary>
-        public string GetSubmitterChainKey(HelixJobInfo job)
+        public string GetHelixJobChainKey(HelixJobInfo job)
         {
             lock (_sync)
             {
-                return GetSubmitterChainKeyLocked(job);
+                return GetHelixJobChainKeyLocked(job);
             }
         }
 
-        private string GetSubmitterChainKeyLocked(HelixJobInfo job)
+        private string GetHelixJobChainKeyLocked(HelixJobInfo job)
         {
-            if (!string.IsNullOrEmpty(job.SubmitterJobName))
-            {
-                return FormatSubmitterChainKey(job.SubmitterJobName, job.QueueId);
-            }
-
             HelixJobInfo current = job;
             var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             while (current is not null
@@ -424,30 +411,19 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     return $"helix:{current.PreviousHelixJobName}";
                 }
 
-                if (!string.IsNullOrEmpty(previous.SubmitterJobName))
-                {
-                    return FormatSubmitterChainKey(previous.SubmitterJobName, previous.QueueId);
-                }
-
                 current = previous;
             }
 
             return $"helix:{(current?.JobName ?? job.JobName)}";
         }
 
-        private static string FormatSubmitterChainKey(string submitterJobName, string queueId)
-            => string.IsNullOrEmpty(queueId)
-                ? $"submitter:{submitterJobName}"
-                : $"submitter:{submitterJobName}|queue:{queueId}";
-
         /// <summary>
         /// From an arbitrary set of Helix jobs (possibly spanning multiple stage attempts),
-        /// return the single latest incarnation of each logical work stream — one job per
-        /// submitter chain key (§5.7). Within a stream, resubmission lineage is collapsed to the
-        /// leaf, and unlinked rerun duplicates (same submitter + queue on different stage
-        /// attempts, not connected by <c>PreviousHelixJobName</c>) are broken toward the highest
-        /// stage attempt. Used by the retry pass to decide, per stream, whether previous-attempt
-        /// work must be reconciled into the current attempt.
+        /// return the single latest incarnation of each logical work stream — one job per root
+        /// Helix job (§5.7). Within a stream, resubmission lineage is collapsed to the leaf.
+        /// Unlinked jobs remain independent even when they share an AzDO submitter and queue.
+        /// Used by the retry pass to decide, per stream, whether previous-attempt work must be
+        /// reconciled into the current attempt.
         /// </summary>
         public IReadOnlyList<HelixJobInfo> GetLatestIncarnationPerStream(IEnumerable<HelixJobInfo> jobs)
         {
@@ -456,7 +432,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 return
                 [
                     ..GetLatestHelixJobAttempts(jobs)
-                        .GroupBy(GetSubmitterChainKeyLocked, StringComparer.OrdinalIgnoreCase)
+                        .GroupBy(GetHelixJobChainKeyLocked, StringComparer.OrdinalIgnoreCase)
                         .Select(g => g
                             .OrderBy(j => ParseStageAttempt(j.StageAttempt))
                             .ThenBy(j => j.JobName, StringComparer.OrdinalIgnoreCase)
@@ -474,7 +450,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         {
             lock (_sync)
             {
-                string chainKey = GetSubmitterChainKeyLocked(job);
+                string chainKey = GetHelixJobChainKeyLocked(job);
                 foreach (WorkItemSummary wi in workItems)
                 {
                     var key = (chainKey, wi.Name);
@@ -513,9 +489,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// Orders Helix jobs from oldest incarnation to newest by following the
         /// <c>PreviousHelixJobName</c> link backwards, breaking ties toward the lower stage
         /// attempt. Used to ensure upload and outcome reconciliation process lineage in the
-        /// right order (older first, so newer incarnations supersede older ones) — including
-        /// unlinked rerun duplicates on different attempts, where the higher stage attempt must
-        /// reconcile last so it wins the outcome map (§5.7).
+        /// right order (older first, so newer incarnations supersede older ones).
         /// </summary>
         public static IReadOnlyList<HelixJobInfo> OrderHelixJobsOldToNew(IEnumerable<HelixJobInfo> jobs)
         {

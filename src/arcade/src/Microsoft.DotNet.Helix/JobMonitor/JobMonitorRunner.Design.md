@@ -104,9 +104,8 @@ be the source of truth for cross-invocation correctness.
 
 Retry is the mechanism that reconciles previous-attempt work into the current
 attempt (§2.1). It operates on *logical work streams*, not on attempts: a work
-stream is identified by the submitter chain key (§5.7) — the AzDO `System.JobName`
-plus the Helix queue — which is stable across both stage attempts and monitor
-resubmissions.
+stream is identified by the root Helix job in its `PreviousHelixJobName` lineage
+(§5.7), which is stable across monitor resubmissions.
 
 1. Retry runs exactly once per invocation, on entry, before polling begins.
 2. The set of work to resubmit is decided from a single Helix snapshot taken on
@@ -172,16 +171,11 @@ addresses each:
    current incarnation) and resubmit them. → Decisions are re-derived from the
    Helix snapshot each invocation (latest incarnation + attempt + status per
    stream), not from in-memory state, so partial progress is self-correcting.
-4. **Previous-attempt work that is still legitimately running during a fast stage
-   rerun.** A rerun submits a fresh current-attempt incarnation while the
-   previous one is still running; blindly resubmitting the previous unfinished
-   work would triple-submit. → When a current-attempt incarnation already exists
-   for a stream, the previous one is left alone (§2.3.3, first bullet).
-5. **Rerun duplicates that are not lineage-linked.** A stage rerun's fresh Helix
-   job has no `PreviousHelixJobName` link to its previous-attempt counterpart;
-   they collapse only by chain key. → Outcome ordering breaks ties toward the
-   higher stage attempt so the current attempt wins (§5.7).
-6. **Un-resubmittable work (e.g. purged queue).** Previous-attempt work that can
+4. **Independent jobs with identical submission metadata.** One AzDO job can
+   submit multiple original Helix jobs to the same queue, so submitter and queue
+   cannot safely identify a stream. → Only an explicit `PreviousHelixJobName`
+   lineage collapses jobs; unlinked jobs remain independent (§5.7).
+5. **Un-resubmittable work (e.g. purged queue).** Previous-attempt work that can
    never run again would loop forever under any "just wait" or "just resubmit and
    wait" scheme. → Resubmission-not-possible is treated as an actionable hard
    failure so the invocation fails fast instead of hanging (§2.3.3).
@@ -334,8 +328,7 @@ or the runner will silently fail to see its own jobs.
 
 1. Take a Helix snapshot of the whole stage (all attempts).
 2. Reduce it to the latest incarnation of each logical work stream (§2.3.3):
-   the leaf of each lineage chain, keyed by submitter chain key, preferring the
-   higher stage attempt on ties.
+   the leaf of each lineage chain, keyed by its root Helix job.
 3. For each latest incarnation, apply §2.3.3:
    - Current-attempt incarnation — leave it; it is already being driven.
    - Previous-attempt, completed and fully passed — leave it (terminal); it will
@@ -415,23 +408,16 @@ incarnations of the same item collapse onto a single entry.
 
 The chain key must be deterministic and uniqueness-preserving:
 
-- A single AzDO matrix leg that fans out to multiple Helix queues must
-  produce distinct keys (one per queue) so per-queue failures are
-  preserved.
+- Every original Helix job must produce a distinct key, including jobs submitted
+  by the same AzDO job to the same Helix queue.
 - An original Helix job and its resubmission(s) on the same queue must
   produce the same key so the latest incarnation overwrites the older one.
-- Because the chain key is built from the AzDO `System.JobName` + queue — both
-  stable across stage attempts — a rerun-stage incarnation of the same job on
-  the same queue collapses onto the same key as its previous-attempt
-  counterpart, even though the two Helix jobs are **not** linked by
-  `PreviousHelixJobName` (only monitor resubmissions set that link). The map
-  must therefore let the **later stage attempt win** when two incarnations share
-  a key: outcomes must be applied in order of (lineage depth, then stage
-  attempt), not by Helix job-name sort, or a stale previous-attempt outcome
-  could nondeterministically overwrite the current one.
+- Jobs not linked by `PreviousHelixJobName` remain distinct. In particular,
+  submitter name and queue are insufficient to correlate jobs across stage
+  attempts because one AzDO job may submit multiple jobs to the same queue.
 - If lineage cannot be resolved (the predecessor link points outside the
-  jobs the runner has observed), the key falls back to a Helix-job-bound
-  identifier so independent jobs don't collide.
+  jobs the runner has observed), the referenced predecessor name is used as
+  the root so later incarnations still resolve consistently.
 
 The same key drives a parallel map of "failed work item console info" used
 to build the final failure report. When a later incarnation of a work item
