@@ -444,7 +444,20 @@ namespace Microsoft.DotNet.SignTool
             processStartInfo.EnvironmentVariables.Add("PATH", path);
 
             var process = Process.Start(processStartInfo);
+            // Read stdout/stderr to avoid deadlock when the pipe buffer fills up.
+            string standardOutput = process.StandardOutput.ReadToEnd();
+            string standardError = process.StandardError.ReadToEnd();
             process.WaitForExit();
+
+            if (!string.IsNullOrWhiteSpace(standardOutput))
+            {
+                log.LogMessage(MessageImportance.Low, standardOutput);
+            }
+            if (!string.IsNullOrWhiteSpace(standardError))
+            {
+                log.LogMessage(MessageImportance.Low, standardError);
+            }
+
             return process.ExitCode == 0;
         }
 
