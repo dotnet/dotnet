@@ -1362,6 +1362,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNet11InternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal),
 
+            // .NET 11 Eng,
+            new TargetChannelConfig(
+                id: 10850,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["eng/net11"],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetEngFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
+
             // .NET 11 Workload Release,
             new TargetChannelConfig(
                 id: 8299,
