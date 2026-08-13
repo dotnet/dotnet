@@ -6,27 +6,27 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-binaryen dependencies -->
-    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26281.2</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
-    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26281.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
-    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26281.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
-    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26281.2</runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26281.2</runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26281.2</runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26281.2</runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26281.2</runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
+    <runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26411.2</runtimelinuxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
+    <runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26411.2</runtimelinuxmuslarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
+    <runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26411.2</runtimelinuxmuslx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
+    <runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26411.2</runtimelinuxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26411.2</runtimeosxarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26411.2</runtimeosxx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26411.2</runtimewinarm64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>10.0.0-alpha.1.26411.2</runtimewinx64MicrosoftNETCoreRuntimeWasmBinaryenTransportPackageVersion>
     <!-- dotnet-cpython dependencies -->
-    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>10.0.0-alpha.1.26281.1</runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
-    <runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>10.0.0-alpha.1.26281.1</runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
-    <runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>10.0.0-alpha.1.26281.1</runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
-    <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>10.0.0-alpha.1.26281.1</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
+    <runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>10.0.0-alpha.1.26407.2</runtimeosxarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
+    <runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>10.0.0-alpha.1.26407.2</runtimeosxx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
+    <runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>10.0.0-alpha.1.26407.2</runtimewinarm64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
+    <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>10.0.0-alpha.1.26407.2</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26279.112</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildTasksPackagingPackageVersion>10.0.0-beta.26279.112</MicrosoftDotNetBuildTasksPackagingPackageVersion>
-    <MicrosoftDotNetBuildTasksTemplatingPackageVersion>10.0.0-beta.26279.112</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26279.112</MicrosoftDotNetHelixSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26279.112</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26380.110</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildTasksPackagingPackageVersion>10.0.0-beta.26380.110</MicrosoftDotNetBuildTasksPackagingPackageVersion>
+    <MicrosoftDotNetBuildTasksTemplatingPackageVersion>10.0.0-beta.26380.110</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26380.110</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26380.110</MicrosoftDotNetXliffTasksPackageVersion>
     <!-- dotnet-emscripten dependencies -->
-    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>10.0.0-alpha.1.26281.2</MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>
+    <MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>10.0.0-alpha.1.26407.3</MicrosoftNETCoreRuntimeWasmEmscriptenTransportPackageVersion>
     <!-- dotnet-llvm-project dependencies -->
     <runtimelinuxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>19.1.0-alpha.1.25461.1</runtimelinuxarm64MicrosoftNETCoreRuntimeJITToolsPackageVersion>
     <runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>19.1.0-alpha.1.25461.1</runtimelinuxarm64MicrosoftNETCoreRuntimeMonoLLVMLibclangPackageVersion>
