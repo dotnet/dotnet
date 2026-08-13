@@ -7,8 +7,8 @@
     <aspireOutputPackageVersion>8.2.2-preview.1.24521.5</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>209bf5cfd6f0b329c31faa125790e1d1d820cdb5</aspnetcoreGitCommitHash>
     <aspnetcoreOutputPackageVersion>9.0.19-servicing.26370.16</aspnetcoreOutputPackageVersion>
-    <cecilGitCommitHash>d98c55d1363411ee1a0ff0c76c6e5d798e8147ec</cecilGitCommitHash>
-    <cecilOutputPackageVersion>0.11.5-alpha.26353.2</cecilOutputPackageVersion>
+    <cecilGitCommitHash>eebca361032c2a1ded7be6244b91b757d54be02a</cecilGitCommitHash>
+    <cecilOutputPackageVersion>0.11.5-alpha.26404.3</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>803d8598f98fb4efd94604b32627ee9407f246db</commandlineapiGitCommitHash>
     <commandlineapiOutputPackageVersion>0.1.532403</commandlineapiOutputPackageVersion>
     <deploymenttoolsGitCommitHash>b2d5c0c5841de4bc036ef4c84b5db3532504e5f3</deploymenttoolsGitCommitHash>
@@ -17,8 +17,8 @@
     <diagnosticsOutputPackageVersion>8.0.0-preview.24416.1</diagnosticsOutputPackageVersion>
     <efcoreGitCommitHash>d45c6483aa13a1c4ecc6e9da427ce6826ffb45a5</efcoreGitCommitHash>
     <efcoreOutputPackageVersion>9.0.19</efcoreOutputPackageVersion>
-    <emsdkGitCommitHash>dd379007ea0e38b82e87ca5fd61bb43b432eaf7a</emsdkGitCommitHash>
-    <emsdkOutputPackageVersion>9.0.19-servicing.26356.3</emsdkOutputPackageVersion>
+    <emsdkGitCommitHash>b2bf6cec0cb4ce281802ac3951bdd14287aad112</emsdkGitCommitHash>
+    <emsdkOutputPackageVersion>9.0.20-servicing.26406.7</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>47d4e3f91e4e5414b6dafbf14288b9c5a798ef99</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>9.0.101-beta.25070.7</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>07da1b9a89da6d00c5a5a6a385cdcebfdfed7110</msbuildGitCommitHash>
@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.26226.5</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>fc52718eccdb37693a40a518b1178b1e23114e68</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.12.0-3.25609.5</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>8381bdb01fe4a26e1f61370e779c78bb73ecc95b</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.19-servicing.26367.24</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>3879076d9a06ce098d37c3882fb1845a6627335b</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.20-servicing.26413.15</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>83d50199a618f84d9cb5d442dcc70c46023d1108</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.26407.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>8d8f587e1355c7eb641fb38f808dce29d0679230</sdkGitCommitHash>
+    <sdkGitCommitHash>ce399d894d4ca881b71c54afd9124bc7abd8ae4e</sdkGitCommitHash>
     <sourcebuildassetsGitCommitHash>9693cbc172a06845f5b8799bdf098c055d728166</sourcebuildassetsGitCommitHash>
     <sourcebuildassetsOutputPackageVersion>9.0.0-alpha.1.26405.2</sourcebuildassetsOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>1c800169e674c7becf88434a0d2817453cf91dd7</sourcebuildexternalsGitCommitHash>
