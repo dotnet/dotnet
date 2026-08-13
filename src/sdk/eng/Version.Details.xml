@@ -409,29 +409,29 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>f7d90799ce4ef09a0bb257852a57248d2a8fb8dd</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Git" Version="10.0.400">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>9cfaa55c729b551739508e80fcf27536866a3fc8</Sha>
+    <Dependency Name="Microsoft.Build.Tasks.Git" Version="10.0.111">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.Common" Version="10.0.400">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>9cfaa55c729b551739508e80fcf27536866a3fc8</Sha>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.AzureRepos.Git" Version="10.0.400">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>9cfaa55c729b551739508e80fcf27536866a3fc8</Sha>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.GitHub" Version="10.0.400">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>9cfaa55c729b551739508e80fcf27536866a3fc8</Sha>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.GitLab" Version="10.0.400">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>9cfaa55c729b551739508e80fcf27536866a3fc8</Sha>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
     <Dependency Name="Microsoft.SourceLink.Bitbucket.Git" Version="10.0.400">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>9cfaa55c729b551739508e80fcf27536866a3fc8</Sha>
+      <Sha>981be135426277fabd550b94fa14cdaf7271b9c2</Sha>
     </Dependency>
     <!-- Dependency required for flowing correct package version in source-build, using PVP flow. -->
     <Dependency Name="Microsoft.Extensions.Logging" Version="10.0.11">
@@ -561,9 +561,9 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>9cfaa55c729b551739508e80fcf27536866a3fc8</Sha>
     </Dependency>
-    <Dependency Name="System.Reflection.MetadataLoadContext" Version="10.0.10">
+    <Dependency Name="System.Reflection.MetadataLoadContext" Version="10.0.11">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>f7d90799ce4ef09a0bb257852a57248d2a8fb8dd</Sha>
+      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Testing.Platform" Version="2.1.0-preview.25571.1">
       <Uri>https://github.com/microsoft/testfx</Uri>
@@ -573,9 +573,9 @@
       <Uri>https://github.com/microsoft/testfx</Uri>
       <Sha>43e592148ac1c7916908477bdffcf2a345affa6d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Configuration.Ini" Version="10.0.10">
+    <Dependency Name="Microsoft.Extensions.Configuration.Ini" Version="10.0.11">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>f7d90799ce4ef09a0bb257852a57248d2a8fb8dd</Sha>
+      <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
