@@ -40,7 +40,9 @@
        One way we can achieve this is to intake .NET's normal version properties, and apply a bit of math to mimic how .NET would calculate assembly versions.
        See https://github.com/dotnet/arcade/blob/d27184f7cb92b4abb4b20e91ecb5c43bc43de65b/src/Microsoft.DotNet.Arcade.Sdk/src/CalculateAssemblyAndFileVersions.cs#L65 -->
   <Target Name="SetNuGetBuildNumber" BeforeTargets="SetBuildProperties">
-    <BuildArgs Condition="'$(_PatchNumber)' != ''">$(BuildArgs) /p:BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 50000))</BuildArgs>
+    <PropertyGroup>
+      <BuildArgs Condition="'$(_PatchNumber)' != ''">$(BuildArgs) /p:BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 50000))</BuildArgs>
+    </PropertyGroup>
   </Target>
 
 </Project>
