@@ -15,6 +15,8 @@ namespace Microsoft.SignCheck.Verification
     public class Exclusion
     {
         private string[] _exclusionParts;
+        private string[] _filePatterns = Array.Empty<string>();
+        private string[] _filePatternExceptions = Array.Empty<string>();
         private const int FilePatternsIndex = 0;
         private const int ParentFilesIndex = 1;
         private const int CommentIndex = 2;
@@ -27,10 +29,12 @@ namespace Microsoft.SignCheck.Verification
         /// Creates a new <see cref="Exclusion"/>.
         /// </summary>
         /// <param name="exclusion">A string representation of a file exclusion. An exclusion contains a number of fields, separated by
-        /// a ';'. The entry is formated as FILE_PATTERNS;PARENT_FILES;COMMENT. Additional fields are ignored and fields may be left
+        /// a ';'. The entry is formatted as FILE_PATTERNS;PARENT_FILES;COMMENT. Additional fields are ignored and fields may be left
         /// empty, e.g. ";B.txt" indicates an exclusion with no file patterns and one parent file.
         ///
-        /// The FILE_PATTERNS and PARENT_FILES fields may contain multiple values separated by a '|'.
+        /// The FILE_PATTERNS and PARENT_FILES fields may contain multiple values separated by a '|'. A file pattern prefixed
+        /// with '!' is an exception that prevents the entry from matching. Entries with exceptions must also contain a positive
+        /// file pattern.
         ///
         /// For example: "A.txt|C:\Dir1\B.txt;C.zip;" indicates an exclusion with two file patterns ("A.txt" and "C:\Dir1\B.txt") and one
         /// parent file ("C.zip").
@@ -40,6 +44,25 @@ namespace Microsoft.SignCheck.Verification
             if (!String.IsNullOrEmpty(exclusion))
             {
                 _exclusionParts = exclusion.Split(';');
+            }
+
+            string[] filePatterns = GetExclusionPart(FilePatternsIndex).Split('|');
+            _filePatterns = filePatterns
+                .Where(pattern => !pattern.StartsWith("!", StringComparison.Ordinal))
+                .ToArray();
+            _filePatternExceptions = filePatterns
+                .Where(pattern => pattern.StartsWith("!", StringComparison.Ordinal))
+                .Select(pattern => pattern.Substring(1))
+                .ToArray();
+
+            if (_filePatternExceptions.Any(String.IsNullOrEmpty))
+            {
+                throw new ArgumentException("An exclusion pattern exception must contain a pattern after '!'.", nameof(exclusion));
+            }
+
+            if (_filePatternExceptions.Length > 0 && !_filePatterns.Any(pattern => !String.IsNullOrEmpty(pattern)))
+            {
+                throw new ArgumentException("An exclusion entry with pattern exceptions must contain at least one positive file pattern.", nameof(exclusion));
             }
         }
 
@@ -52,15 +75,31 @@ namespace Microsoft.SignCheck.Verification
         }
 
         /// <summary>
-        /// Returns an array of file patterns or null if there are no entries. Each file pattern is separated by '|'.
+        /// Returns an array of file patterns. Each file pattern is separated by '|'.
         /// </summary>
         public string[] FilePatterns
         {
             get
             {
-                return GetExclusionPart(FilePatternsIndex).Split('|');
+                return _filePatterns.ToArray();
             }
         }
+
+        /// <summary>
+        /// Returns patterns that prevent this exclusion from matching. Each exception is prefixed with '!'
+        /// in the exclusion entry.
+        /// </summary>
+        public string[] FilePatternExceptions
+        {
+            get
+            {
+                return _filePatternExceptions.ToArray();
+            }
+        }
+
+        internal string[] FilePatternsForMatching => _filePatterns;
+
+        internal string[] FilePatternExceptionsForMatching => _filePatternExceptions;
 
         /// <summary>
         /// Returns an array of parent files or null if there are no entries. Each parent file is separated by '|'.
@@ -84,7 +123,15 @@ namespace Microsoft.SignCheck.Verification
         {
             get
             {
-                return FilePatterns.Length != 0 && !FilePatterns.All(fp => String.IsNullOrEmpty(fp));
+                return _filePatterns.Length != 0 && !_filePatterns.All(fp => String.IsNullOrEmpty(fp));
+            }
+        }
+
+        public bool HasFilePatternExceptions
+        {
+            get
+            {
+                return _filePatternExceptions.Length != 0;
             }
         }
 
