@@ -166,3 +166,4 @@ stages:
         JobLabel: 'AssetsPublishing'
         BinlogToolVersion: $(BinlogToolVersion)
         CustomSensitiveDataList: '$(AuthenticateMaestro.MaestroToken)'
+        enableInternalRuntimes: false
