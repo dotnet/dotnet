@@ -17,6 +17,8 @@ public abstract class SocketTestsBase
     protected const string Dummydata = "Dummy Data";
     protected const int Timeout = 10 * 1000;
 
+    public TestContext TestContext { get; set; }
+
     protected abstract TcpClient? Client { get; }
 
     [TestMethod]
@@ -31,7 +33,7 @@ public abstract class SocketTestsBase
     public void SocketEndpointShouldNotifyChannelOnDataAvailable()
     {
         var message = string.Empty;
-        ManualResetEvent waitForMessage = new(false);
+        using ManualResetEventSlim waitForMessage = new(false);
         SetupChannel(out ConnectedEventArgs? _)!.MessageReceived.Subscribe((s, e) =>
         {
             message = e.Data;
@@ -40,7 +42,7 @@ public abstract class SocketTestsBase
 
         WriteData(Client!);
 
-        waitForMessage.WaitOne();
+        Assert.IsTrue(waitForMessage.Wait(Timeout, TestContext.CancellationToken));
         Assert.AreEqual(Dummydata, message);
     }
 
