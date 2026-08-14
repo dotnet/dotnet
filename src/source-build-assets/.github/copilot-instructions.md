@@ -10,6 +10,11 @@ All general documentation is maintained in the [README.md](../README.md) to avoi
 - **NEVER** modify files inside `src/externalPackages/src/` (these are git submodules)
 - **NEVER** delete or recreate `Customizations.props` or `Customizations.cs` files
 - **NEVER** suggest adding preview/RC packages
+- **NEVER** add or generate `N.x` reference packages or current-TFM targeting
+  packages for a `release/N.0` branch or the corresponding development branch.
+  Source-build-assets may cover only older .NET versions; resolve current-version
+  dependencies through the current source-build dependency graph or
+  previously-source-built (PSB) packages.
 - **NEVER** ignore build failures in `./build.sh -sb`
 - **NEVER** hand-author `.nuspec` files for reference or text-only packages — they are
   no longer present in the source tree. Per-package metadata (description, license,
