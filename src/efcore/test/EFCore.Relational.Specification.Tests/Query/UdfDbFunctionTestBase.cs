@@ -1068,7 +1068,7 @@ public abstract class UdfDbFunctionTestBase<TFixture>(TFixture fixture) : IClass
 
         Assert.Equal(
             RelationalStrings.DbFunctionNullableValueReturnType(
-                context.Model.FindDbFunction(typeof(UDFSqlContext).GetMethod(nameof(UDFSqlContext.NullableValueReturnType)))!.ModelName,
+                context.Model.FindDbFunction(typeof(UDFSqlContext).GetMethod(nameof(UDFSqlContext.NullableValueReturnType))!)!.ModelName,
                 "int?"),
             exception.Message);
     }
