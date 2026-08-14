@@ -153,10 +153,24 @@ namespace NuGet.Credentials
                     }
 
                     var request = new GetAuthenticationCredentialsRequest(uri, isRetry, nonInteractive, _canShowDialog);
-                    var credentialResponse = (await plugin.Connection.SendRequestAndReceiveResponseAsync<GetAuthenticationCredentialsRequest, GetAuthenticationCredentialsResponse>(
+                    GetAuthenticationCredentialsResponse? credentialResponse = await plugin.Connection.SendRequestAndReceiveResponseAsync<GetAuthenticationCredentialsRequest, GetAuthenticationCredentialsResponse>(
                         MessageMethod.GetAuthenticationCredentials,
                         request,
-                        cancellationToken))!; // The existing provider contract requires the plugin to return a response.
+                        cancellationToken);
+
+                    if (credentialResponse == null)
+                    {
+                        // The connection returns no response once it is closing or closed - for example because the
+                        // plugin process was torn down while this request was in flight. Report that instead of
+                        // dereferencing null, which surfaces as a NullReferenceException that names neither the plugin
+                        // nor authentication and is very expensive to diagnose.
+                        throw new PluginException(
+                            string.Format(
+                                CultureInfo.CurrentCulture,
+                                Resources.SecurePluginException_ConnectionClosed,
+                                _discoveredPlugin.PluginFile.Path));
+                    }
+
                     if (credentialResponse.ResponseCode == MessageResponseCode.NotFound && nonInteractive)
                     {
                         _logger.LogWarning(
