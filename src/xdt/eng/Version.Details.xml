@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="xdt" Sha="2293c4c42809d258d5246ecaca1e986514cb425c" BarId="301941" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="xdt" Sha="7fb8cef14d9ae6bd729b04638f88d00f1ba7eb99" BarId="326361" />
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26115.104">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26409.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>2293c4c42809d258d5246ecaca1e986514cb425c</Sha>
+      <Sha>7fb8cef14d9ae6bd729b04638f88d00f1ba7eb99</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
