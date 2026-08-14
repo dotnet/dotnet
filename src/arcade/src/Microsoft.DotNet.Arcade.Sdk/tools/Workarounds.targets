@@ -243,7 +243,8 @@
     Knobs
     ~~~~~
     * $(DisableNetCoreSdkRootDriveCasingWorkaround)=true
-        Fully disables this workaround (the target is skipped).
+        Fully disables this workaround (the task is skipped; the target itself
+        still runs as a no-op - see the Wiring note below).
 
     * $(NetCoreSdkRootDriveCasingOverride)=lower | upper
         Deterministic escape hatch. Forces the $(NetCoreSdkRoot) drive letter to
@@ -261,6 +262,18 @@
     runs before the first .NET task host is launched. NetCoreSdkRoot is defined
     during evaluation, so it is available when the target runs, and the handshake
     salt reads the live (target-mutated) property value.
+
+    The target is deliberately UNCONDITIONAL; every guard lives on the task
+    invocation instead. A conditionally skipped InitialTarget is recorded as
+    TargetResultCode.Skipped, and MSBuild's results cache refuses to satisfy any
+    later build request for that configuration when one of its initial targets was
+    skipped (dotnet/msbuild#11753). The project is then rescheduled, which costs
+    node-wait time in the common case and turns a re-entrant build of the same
+    configuration into an MSB4006 "circular dependency" error. Because this file is
+    imported by every Arcade project, that would apply to the entire repository on
+    every non-Windows build, where the guards below are always false. Letting the
+    target run and succeed as a no-op keeps the results cache usable.
+    Do not move these conditions back onto the <Target> element.
     =========
   -->
 
@@ -522,9 +535,11 @@ public class NormalizeSdkRootDriveCasing : Task
     </Task>
   </UsingTask>
 
-  <Target Name="NormalizeNetCoreSdkRootCasing"
-          Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != '' and '$(DisableNetCoreSdkRootDriveCasingWorkaround)' != 'true' and $([MSBuild]::VersionLessThan('$(MSBuildVersion)', '18.9'))">
-    <NormalizeSdkRootDriveCasing SdkRoot="$(NetCoreSdkRoot)" Override="$(NetCoreSdkRootDriveCasingOverride)">
+  <!-- Intentionally unconditional. The guards live on the task; see the Wiring note above. -->
+  <Target Name="NormalizeNetCoreSdkRootCasing">
+    <NormalizeSdkRootDriveCasing Condition="'$(MSBuildRuntimeType)' == 'Full' and '$(NetCoreSdkRoot)' != '' and '$(DisableNetCoreSdkRootDriveCasingWorkaround)' != 'true' and $([MSBuild]::VersionLessThan('$(MSBuildVersion)', '18.9'))"
+                                 SdkRoot="$(NetCoreSdkRoot)"
+                                 Override="$(NetCoreSdkRootDriveCasingOverride)">
       <Output TaskParameter="Result" PropertyName="NetCoreSdkRoot" />
     </NormalizeSdkRootDriveCasing>
   </Target>
