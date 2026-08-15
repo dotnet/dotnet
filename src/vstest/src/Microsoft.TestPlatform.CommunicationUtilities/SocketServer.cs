@@ -166,7 +166,7 @@ public class SocketServer : ICommunicationEndPoint
     {
         client.Client.NoDelay = true;
 
-        if (Connected == null)
+        if (Connected is null)
         {
             return;
         }
@@ -177,7 +177,7 @@ public class SocketServer : ICommunicationEndPoint
         EqtTrace.Verbose("SocketServer.OnClientConnected: Client connected for endPoint: {0}, starting MessageLoopAsync:", _endPoint);
 
         // Start the message loop
-        Task.Run(() => client.MessageLoopAsync(_channel, error => StopOnError(error), _cancellation.Token)).ConfigureAwait(false);
+        _ = Task.Run(() => client.MessageLoopAsync(_channel, error => StopOnError(error), _cancellation.Token));
     }
 
     /// <summary>
