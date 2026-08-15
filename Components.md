@@ -12,9 +12,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@5fa9337](https://github.com/dotnet/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@209bf5c](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC209bf5cfd6f0b329c31faa125790e1d1d820cdb5)*
+*[_git/dotnet-aspnetcore@4e6235b](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC4e6235b8f9af12335ecd58a0a06b8f4105af2de0)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@3064a60](https://github.com/google/googletest/tree/3064a609c7a86ac9fb601a9cc5dea6ddb45ba49d)*
+    *[google/googletest@3940de9](https://github.com/google/googletest/tree/3940de91897160fea4815998e08d0fa3c2fb077e)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
     *[aspnet/MessagePack-CSharp@365965f](https://github.com/aspnet/MessagePack-CSharp/tree/365965f0d8c13c40ff8fde25882066b90f569c7a)*
 - `src/cecil`  
@@ -26,7 +26,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@513150c](https://github.com/dotnet/diagnostics/tree/513150c2f25077b1fcb194407e53c433c975f39b)*
 - `src/efcore`  
-*[_git/dotnet-efcore@d45c648](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GCd45c6483aa13a1c4ecc6e9da427ce6826ffb45a5)*
+*[_git/dotnet-efcore@e3050de](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GCe3050de15c005dfd3223da1475572044b72a6758)*
 - `src/emsdk`  
 *[dotnet/emsdk@b2bf6ce](https://github.com/dotnet/emsdk/tree/b2bf6cec0cb4ce281802ac3951bdd14287aad112)*
 - `src/fsharp`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@83d5019](https://github.com/dotnet/scenario-tests/tree/83d50199a618f84d9cb5d442dcc70c46023d1108)*
 - `src/sdk`  
-*[dotnet/sdk@459384d](https://github.com/dotnet/sdk/tree/459384d6cffb7b44ce2a03e790c1946587189100)*
+*[dotnet/sdk@b7cb810](https://github.com/dotnet/sdk/tree/b7cb81089af89db111181f2b7e0d4de9fc4da1ef)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@9693cbc](https://github.com/dotnet/source-build-assets/tree/9693cbc172a06845f5b8799bdf098c055d728166)*
 - `src/source-build-externals`  

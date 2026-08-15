@@ -39,6 +39,7 @@
 #include <deque>
 #include <forward_list>
 #include <functional>
+#include <iterator>
 #include <limits>
 #include <list>
 #include <map>
@@ -1784,7 +1785,7 @@ TEST(IsValidUTF8Test, IllFormedUTF8) {
       // too.
       {"\xEE\x80\x80", "\"\\xEE\\x80\\x80\"\n    As Text: \"\""}};
 
-  for (int i = 0; i < int(sizeof(kTestdata) / sizeof(kTestdata[0])); ++i) {
+  for (int i = 0; i < int(std::size(kTestdata)); ++i) {
     EXPECT_PRINT_TO_STRING_(kTestdata[i][0], kTestdata[i][1]);
   }
 }
@@ -2027,6 +2028,27 @@ TEST(PrintOneofTest, Basic) {
       "('testing::gtest_printers_test::NonPrintable(index = 2)' with value "
       "1-byte object <11>)",
       PrintToString(Type(NonPrintable{})));
+}
+
+TEST(PrintVariantTest, Monostate) {
+  EXPECT_EQ("(monostate)", PrintToString(std::monostate()));
+
+#if GTEST_HAS_EXCEPTIONS
+  struct ThrowOnMove {
+    ThrowOnMove() = default;
+    ThrowOnMove(ThrowOnMove&& other) { *this = std::move(other); }
+    ThrowOnMove& operator=(ThrowOnMove&&) {
+      (void)std::vector<bool>().at(0);
+      return *this;
+    }
+  };
+  std::variant<std::monostate, ThrowOnMove> v = std::monostate();
+  std::string res = PrintToString(v);
+  EXPECT_NE(res.find("::monostate(index = 0)' with value (monostate))"),
+            res.npos);
+  EXPECT_THROW(v = ThrowOnMove(), std::out_of_range);
+  EXPECT_EQ("(valueless)", PrintToString(v));
+#endif
 }
 
 #if GTEST_INTERNAL_HAS_COMPARE_LIB
