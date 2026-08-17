@@ -151,7 +151,7 @@
     <value>Credential provider gave an invalid response.</value>
   </data>
   <data name="SecurePluginException_ConnectionClosed" xml:space="preserve">
-    <value>The connection to credential plugin {0} was closed before it answered the credential request. The plugin process may have exited or been shut down while the request was in flight.</value>
+    <value>The connection to credential plugin '{0}' was closed before it answered the credential request. The plugin process may have exited or been shut down while the request was in flight.</value>
     <comment>{0} - plugin path</comment>
   </data>
   <data name="SecurePluginNotice_UsingPluginAsProvider" xml:space="preserve">

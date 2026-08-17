@@ -171,8 +171,8 @@ namespace NuGet.Build.Tasks
             {
                 try
                 {
-                    // Tear down plugin processes that the per-build process exit used to reclaim, so they do not
-                    // linger in a reused process - but at the end of the build, not the end of this restore.
+                    // Tear down plugin processes so they do not linger in a process reused across builds. Scheduled
+                    // for the end of the build, not the end of this restore.
                     ScheduleEndOfBuildStaticStateReset();
                 }
                 catch (Exception e)

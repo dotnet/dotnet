@@ -19,10 +19,8 @@ namespace NuGet.Protocol.Plugins
 
         static PluginLogger()
         {
-            // The log file is a live OS resource written to by the plugins, so it is discarded together with them at
-            // the end of the build rather than at the start of each restore. A plugin outlives the restore that
-            // created it - a build commonly restores several times - and closing the log underneath it would leave it
-            // holding a disposed logger.
+            // The log file is a live OS resource written to by the plugins, so it is discarded together with them
+            // when the build ends.
             StaticState.BuildEnded += ResetDefaultInstance;
         }
 

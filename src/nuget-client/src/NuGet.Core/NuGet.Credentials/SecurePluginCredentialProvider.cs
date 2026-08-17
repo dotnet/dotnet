@@ -161,9 +161,7 @@ namespace NuGet.Credentials
                     if (credentialResponse == null)
                     {
                         // The connection returns no response once it is closing or closed - for example because the
-                        // plugin process was torn down while this request was in flight. Report that instead of
-                        // dereferencing null, which surfaces as a NullReferenceException that names neither the plugin
-                        // nor authentication and is very expensive to diagnose.
+                        // plugin process was torn down while this request was in flight.
                         throw new PluginException(
                             string.Format(
                                 CultureInfo.CurrentCulture,

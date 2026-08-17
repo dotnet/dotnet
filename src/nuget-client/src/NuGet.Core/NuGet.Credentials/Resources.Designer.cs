@@ -160,7 +160,7 @@ namespace NuGet.Credentials {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The connection to credential plugin {0} was closed before it answered the credential request. The plugin process may have exited or been shut down while the request was in flight..
+        ///   Looks up a localized string similar to The connection to credential plugin &apos;{0}&apos; was closed before it answered the credential request. The plugin process may have exited or been shut down while the request was in flight..
         /// </summary>
         internal static string SecurePluginException_ConnectionClosed {
             get {
