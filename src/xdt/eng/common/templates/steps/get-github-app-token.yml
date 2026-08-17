@@ -1,5 +1,5 @@
 steps:
-- template: /eng/common/core-templates/steps/component-governance.yml
+- template: /eng/common/core-templates/steps/get-github-app-token.yml
   parameters:
     is1ESPipeline: false
 
