@@ -5,6 +5,12 @@
     <AssemblyName>Microsoft.TestPlatform.CrossPlatEngine</AssemblyName>
     <TargetFrameworks>$(NetFrameworkMinimum);$(ExtensionTargetFrameworks);$(NetCoreAppMinimum)</TargetFrameworks>
     <IsTestProject>false</IsTestProject>
+    <!-- The source-only MTP client package (Microsoft.Testing.Platform.ServerMode.Client.Sources)
+         compiles its own down-level nullable-annotation polyfills (System.Diagnostics.CodeAnalysis)
+         on net462/netstandard2.0. CrossPlatEngine already imports the identical attributes from
+         CoreUtilities (InternalsVisibleTo), so let the package defer to those to avoid CS0436
+         duplicate-type conflicts. No-op on net8.0 where the attributes are in-box. -->
+    <DefineConstants>$(DefineConstants);MTP_CLIENT_EXCLUDE_NULLABLE_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\Resources.resx">
@@ -20,6 +26,11 @@
     <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj">
       <FromP2P>true</FromP2P>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Source-only MTP server-mode JSON-RPC client: compiled into this assembly (no shipped DLL, no
+         runtime dependency, no new public API). Shipped by microsoft/testfx#10085. -->
+    <PackageReference Include="Microsoft.Testing.Platform.ServerMode.Client.Sources" Version="$(MicrosoftTestingPlatformServerModeClientSourcesVersion)" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System" />
