@@ -30,7 +30,7 @@ jobs:
     value: $(Agent.BuildDirectory)/vmr
   - ${{ if not(parameters.noPush) }}:
     - ${{ if and( eq(variables['System.TeamProject'], 'internal'), or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))) }}:
-      - group: DotNetBot-GitHub
+      - group: VMR Synchronization - Push
       - group: DotNetBot-GitHub-No-Scopes
       - name: vmrPublicUrl
         value: https://github.com/dotnet/dotnet
