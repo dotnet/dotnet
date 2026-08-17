@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <TempZipFolder>$(ArtifactsBinDir)DotNetRuntimeValidation\$(TargetArchitecture)\temp\zipcontents</TempZipFolder>
-    <DotNetRuntimeValidationZipFilePath>$(ArtifactsAssetsDir)DotNetRuntimeValidation-$(VersionPrefix)-$(VersionSuffix)-win-$(TargetArchitecture).zip</DotNetRuntimeValidationZipFilePath>
+    <DotNetRuntimeValidationZipFilePath>$(ArtifactsAssetsDir)DotNetRuntimeValidation-$(Version)-win-$(TargetArchitecture).zip</DotNetRuntimeValidationZipFilePath>
   </PropertyGroup>
 
   <!-- We just want to .zip these up -->
