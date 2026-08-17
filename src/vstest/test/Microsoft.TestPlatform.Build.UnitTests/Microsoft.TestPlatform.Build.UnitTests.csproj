@@ -21,10 +21,5 @@
     <!-- To solve potential vulnerability in Microsoft.Build.Utilities.Core 17.8.3, if the version is updated we can remove this direct dependency. -->
     <PackageReference Include="Microsoft.IO.Redist" Version="6.0.1" Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\src\package\Microsoft.CodeCoverage\Microsoft.CodeCoverage.targets"
-          Link="Microsoft.CodeCoverage.targets"
-          CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
 
 </Project>
