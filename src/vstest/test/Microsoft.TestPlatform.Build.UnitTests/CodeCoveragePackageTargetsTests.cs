@@ -2,11 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
-using Microsoft.Build.Evaluation;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.Build.UnitTests;
@@ -14,6 +14,8 @@ namespace Microsoft.TestPlatform.Build.UnitTests;
 [TestClass]
 public class CodeCoveragePackageTargetsTests
 {
+    public TestContext TestContext { get; set; } = null!;
+
     [TestMethod]
     public void CopyTraceDataCollectorArtifactsDoesNotOverwriteApplicationPublishFilesWhenCollectorIsNewer()
     {
@@ -51,14 +53,11 @@ public class CodeCoveragePackageTargetsTests
             File.SetLastWriteTimeUtc(collectorCollisionPath, now);
 
             string projectPath = Path.Combine(testDirectory, "test.proj");
-            string copyTaskAssemblyPath = typeof(Microsoft.Build.Tasks.Copy).Assembly.Location;
             File.WriteAllText(projectPath, $"""
                 <Project>
                   <PropertyGroup>
                     <PublishDir>{Escape(publishDirectory + Path.DirectorySeparatorChar)}</PublishDir>
                   </PropertyGroup>
-                  <UsingTask TaskName="Copy"
-                             AssemblyFile="{Escape(copyTaskAssemblyPath)}" />
                   <ItemGroup>
                     <ResolvedFileToPublish Include="{Escape(applicationCollisionPath)}"
                                            RelativePath="{collisionRelativePath}" />
@@ -68,10 +67,25 @@ public class CodeCoveragePackageTargetsTests
                 </Project>
                 """);
 
-            using var projectCollection = new ProjectCollection();
-            Project project = projectCollection.LoadProject(projectPath);
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = GetDotnetHostPath(),
+                Arguments = $"msbuild \"{projectPath}\" /t:ComputeFilesToPublish /nologo /nodeReuse:false /v:minimal",
+                CreateNoWindow = true,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+            };
 
-            Assert.IsTrue(project.Build("ComputeFilesToPublish", [new ConsoleLogger(LoggerVerbosity.Diagnostic)]));
+            using Process process = Process.Start(startInfo) ?? throw new InvalidOperationException("Failed to start MSBuild.");
+            Task<string> standardOutput = Task.Run(process.StandardOutput.ReadToEnd, TestContext.CancellationToken);
+            Task<string> standardError = Task.Run(process.StandardError.ReadToEnd, TestContext.CancellationToken);
+            process.WaitForExit();
+
+            Assert.AreEqual(
+                0,
+                process.ExitCode,
+                $"{standardOutput.GetAwaiter().GetResult()}{Environment.NewLine}{standardError.GetAwaiter().GetResult()}");
             Assert.AreEqual("application", File.ReadAllText(publishedCollisionPath));
             Assert.IsTrue(File.Exists(publishedUniquePath));
             Assert.AreEqual("unique collector", File.ReadAllText(publishedUniquePath));
@@ -80,6 +94,24 @@ public class CodeCoveragePackageTargetsTests
         {
             Directory.Delete(testDirectory, recursive: true);
         }
+    }
+
+    private static string GetDotnetHostPath()
+    {
+        string? dotnetHostPath = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH");
+        if (!string.IsNullOrEmpty(dotnetHostPath))
+        {
+            return dotnetHostPath;
+        }
+
+        string? dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT_X64")
+            ?? Environment.GetEnvironmentVariable("DOTNET_ROOT");
+        if (string.IsNullOrEmpty(dotnetRoot))
+        {
+            throw new InvalidOperationException("Could not locate the dotnet host.");
+        }
+
+        return Path.Combine(dotnetRoot, RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "dotnet.exe" : "dotnet");
     }
 
     private static string Escape(string value)
