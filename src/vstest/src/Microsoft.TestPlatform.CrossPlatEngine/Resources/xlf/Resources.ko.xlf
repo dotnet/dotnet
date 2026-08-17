@@ -182,6 +182,11 @@
         <target state="translated">적합한 테스트 런타임 공급자를 찾을 수 없습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="MtpTestCaseMissingNodeUid">
+        <source>Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</source>
+        <target state="new">Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SkippingSource">
         <source>Skipping source:</source>
         <target state="translated">원본을 건너뛰는 중:</target>
