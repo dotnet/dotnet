@@ -25,12 +25,12 @@ namespace NuGet.Tools.Commands
         public static readonly Guid CommandSet = GuidList.guidReviewPackageSourceMappingCmdSet;
 
         private readonly OleMenuCommandService _oleMenuCommandService;
-        private readonly IPackageSourceMappingService _packageSourceMappingService;
+        private readonly Lazy<IPackageSourceMappingService> _packageSourceMappingService;
         private readonly Lazy<IVsSolutionManager> _solutionManager;
 
         public PackageSourceMapperCommand(
             OleMenuCommandService oleMenuCommandService,
-            IPackageSourceMappingService packageSourceMappingService,
+            Lazy<IPackageSourceMappingService> packageSourceMappingService,
             Lazy<IVsSolutionManager> solutionManager)
         {
             _oleMenuCommandService = oleMenuCommandService ?? throw new ArgumentNullException(nameof(oleMenuCommandService));
@@ -58,7 +58,7 @@ namespace NuGet.Tools.Commands
         private void ExecutePackageSourceMapperCommand(object sender, EventArgs e)
         {
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(() =>
-                _packageSourceMappingService.LaunchReviewPackageSourceMappingAsync(CancellationToken.None))
+                _packageSourceMappingService.Value.LaunchReviewPackageSourceMappingAsync(CancellationToken.None))
                 .PostOnFailure(nameof(NuGetPackage), nameof(ExecutePackageSourceMapperCommand));
         }
     }
