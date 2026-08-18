@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Common;
@@ -20,6 +21,7 @@ namespace NuGet.Configuration
 
         internal const bool DefaultAllowInsecureConnections = false;
         internal const bool DefaultDisableTLSCertificateValidation = false;
+        internal static readonly TimeSpan DefaultMinPublishAge = TimeSpan.Zero;
 
         private int _hashCode;
         private string _source;
@@ -114,6 +116,41 @@ namespace NuGet.Configuration
         public bool DisableTLSCertificateValidation { get; set; } = DefaultDisableTLSCertificateValidation;
 
         /// <summary>
+        /// Gets or sets the minimum age a package must have been published before it can be selected for update.
+        /// Defaults to zero.
+        /// </summary>
+        public TimeSpan MinPublishAge
+        {
+            get => field;
+            set
+            {
+                if (value < TimeSpan.Zero)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(value),
+                        value,
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Resources.PackageSource_MinPublishAgeCannotBeNegative,
+                            value));
+                }
+
+                if (value.Ticks % TimeSpan.FromHours(1).Ticks != 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(value),
+                        value,
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Resources.PackageSource_MinPublishAgeMustBeWholeHours,
+                            value));
+                }
+
+                field = value;
+            }
+        } = DefaultMinPublishAge;
+
+        /// <summary>
         /// Whether the source is using the HTTP protocol, including HTTPS.
         /// </summary>
         public bool IsHttp => _isHttp;
@@ -175,7 +212,15 @@ namespace NuGet.Configuration
             {
                 disableTLSCertificateValidation = $"{DisableTLSCertificateValidation}";
             }
-            return new SourceItem(Name, Source, protocolVersion, allowInsecureConnections, disableTLSCertificateValidation);
+            string? minPublishAgeHours = null;
+            if (MinPublishAge != DefaultMinPublishAge)
+            {
+                minPublishAgeHours = MinPublishAge.TotalHours.ToString(CultureInfo.InvariantCulture);
+            }
+            return new SourceItem(Name, Source, protocolVersion, allowInsecureConnections, disableTLSCertificateValidation)
+            {
+                MinPublishAgeHours = minPublishAgeHours
+            };
         }
 
         public bool Equals(PackageSource? other)
@@ -214,6 +259,7 @@ namespace NuGet.Configuration
                 ProtocolVersion = ProtocolVersion,
                 AllowInsecureConnections = AllowInsecureConnections,
                 DisableTLSCertificateValidation = DisableTLSCertificateValidation,
+                MinPublishAge = MinPublishAge,
             };
         }
     }

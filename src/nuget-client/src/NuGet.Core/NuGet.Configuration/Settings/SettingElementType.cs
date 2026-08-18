@@ -50,5 +50,7 @@ namespace NuGet.Configuration
         Package,
 
         AuditSources,
+
+        MinPublishAgeExceptions,
     }
 }
