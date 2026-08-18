@@ -130,29 +130,6 @@ secrets:
       organizations: devdiv
       scopes: code drop
 
-  #DotNet-Symbol-Server-Pats
-  microsoft-symbol-server-pat:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: microsoft-symbol-server-pat
-      organizations: microsoftpublicsymbols
-      scopes: symbols_write  
-
-  symweb-symbol-server-pat:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-symweb-symbol-server-pat
-      organizations: microsoft
-      scopes: symbols_write
-
   dnceng-symbol-server-pat:
     type: azure-devops-access-token
     parameters:
