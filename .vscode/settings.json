@@ -1,5 +1,6 @@
 {
     "dotnet.defaultSolution": "disable",
+    "dotnet.fileBasedApps.enableAutomaticDiscovery": false,
     "workbench.colorCustomizations": {
         "activityBar.background": "#530856",
         "titleBar.activeBackground": "#740B78",
