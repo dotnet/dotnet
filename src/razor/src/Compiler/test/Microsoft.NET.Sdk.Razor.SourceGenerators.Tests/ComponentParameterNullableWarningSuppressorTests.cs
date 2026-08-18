@@ -2,7 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Razor.Compiler.Analyzers;
 using Microsoft.CodeAnalysis.Testing;
@@ -407,7 +409,8 @@ namespace Microsoft.CodeAnalysis.Razor.Analyzers.Tests
             var test = new CSharpAnalyzerTest<ComponentParameterNullableWarningSuppressor, DefaultVerifier>
             {
                 TestCode = source,
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net80,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net80.WithNuGetConfigFilePath(
+                    Path.Combine(TestProject.GetRepoRoot(), "NuGet.config")),
                 CompilerDiagnostics = CompilerDiagnostics.Warnings,
                 DisabledDiagnostics = { "CS1591" }, // Missing XML comment for publicly visible type or member
             };

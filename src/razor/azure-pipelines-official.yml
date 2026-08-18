@@ -16,9 +16,7 @@ variables:
   value: false
 - group: DotNet-DevDiv-Insertion-Workflow-Variables
 - name: _DevDivDropAccessToken
-  value: $(dn-bot-devdiv-drop-rw-code-rw)
-
-- group: DotNet-Roslyn-Insertion-Variables
+  value: ''
 - name: Razor.GitHubEmail
   value: dotnet-build-bot@microsoft.com
 - name: Razor.GitHubToken
@@ -278,6 +276,17 @@ extends:
             - powershell: Write-Host "##vso[task.setvariable variable=VisualStudio.DropName]Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)"
               displayName: Setting VisualStudio.DropName variable
 
+            - task: AzureCLI@2
+              displayName: Get DevDiv Drop Access Token
+              inputs:
+                azureSubscription: 'dnceng-devdiv-drop-rw-code-rw-wif'
+                scriptType: pscore
+                scriptLocation: inlineScript
+                inlineScript: |
+                  $token = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
+                  Write-Host "##vso[task.setvariable variable=_DevDivDropAccessToken;issecret=true]$token"
+              condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+
             # Publishes setup VSIXes to a drop.
             # Note: The insertion tool looks for the display name of this task in the logs.
             - task: 1ES.MicroBuildVstsDrop@1
@@ -431,7 +440,6 @@ extends:
             displayName: Get Branch Name
           - template: /eng/pipelines/insert.yml@self
             parameters:
-              devDivAzdoToken: $(dn-bot-devdiv-build-e-code-full-release-e-packaging-r)
               dncEngAzureSubscription: 'DncEng Insertion: Roslyn and Razor'
               componentBuildProjectName: internal
               sourceBranch: "$(ComponentBranchName)"
