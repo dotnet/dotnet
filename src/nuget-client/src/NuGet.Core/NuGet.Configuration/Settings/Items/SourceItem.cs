@@ -49,6 +49,20 @@ namespace NuGet.Configuration
             set => AddOrUpdateAttribute(ConfigurationConstants.DisableTLSCertificateValidation, value);
         }
 
+        public string? MinPublishAgeHours
+        {
+            get
+            {
+                if (Attributes.TryGetValue(ConfigurationConstants.MinPublishAgeHours, out var attribute))
+                {
+                    return Settings.ApplyEnvironmentTransform(attribute);
+                }
+
+                return null;
+            }
+            set => AddOrUpdateAttribute(ConfigurationConstants.MinPublishAgeHours, value);
+        }
+
         public SourceItem(string key, string value)
             : this(key, value, protocolVersion: "", allowInsecureConnections: "", disableTLSCertificateValidation: "")
         {
@@ -88,7 +102,10 @@ namespace NuGet.Configuration
 
         public override SettingBase Clone()
         {
-            var newSetting = new SourceItem(Key, Value, ProtocolVersion, AllowInsecureConnections, DisableTLSCertificateValidation);
+            var newSetting = new SourceItem(Key, Value, ProtocolVersion, AllowInsecureConnections, DisableTLSCertificateValidation)
+            {
+                MinPublishAgeHours = MinPublishAgeHours
+            };
 
             if (Origin != null)
             {

@@ -1,1 +1,24 @@
 #nullable enable
+NuGet.Configuration.PackageSource.MinPublishAge.get -> System.TimeSpan
+NuGet.Configuration.PackageSource.MinPublishAge.set -> void
+NuGet.Configuration.SourceItem.MinPublishAgeHours.get -> string?
+NuGet.Configuration.SourceItem.MinPublishAgeHours.set -> void
+static readonly NuGet.Configuration.ConfigurationConstants.MinPublishAgeHours -> string!
+static readonly NuGet.Configuration.ConfigurationConstants.MinPublishAgeExceptions -> string!
+NuGet.Configuration.MinPublishAgeExceptionItem
+NuGet.Configuration.MinPublishAgeExceptionItem.MinPublishAgeExceptionItem() -> void
+override NuGet.Configuration.MinPublishAgeExceptionItem.Clone() -> NuGet.Configuration.SettingBase!
+override NuGet.Configuration.MinPublishAgeExceptionItem.ElementName.get -> string!
+override NuGet.Configuration.MinPublishAgeExceptionItem.Equals(object? other) -> bool
+override NuGet.Configuration.MinPublishAgeExceptionItem.GetHashCode() -> int
+NuGet.Configuration.MinPublishAgeExceptionItem.Pattern.get -> string!
+NuGet.Configuration.MinPublishAgeExceptionItem.Pattern.init -> void
+NuGet.Configuration.MinPublishAgeExceptions
+NuGet.Configuration.MinPublishAgeExceptions.MinPublishAgeExceptions(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.MinPublishAgeExceptionItem!>! items) -> void
+NuGet.Configuration.MinPublishAgeExceptions.IsEnabled.get -> bool
+NuGet.Configuration.MinPublishAgeExceptions.FindException(string! packageId) -> NuGet.Configuration.MinPublishAgeExceptionItem?
+NuGet.Configuration.PackageSourceProvider.GetMinPublishAgeExceptionItems() -> System.Collections.Generic.IReadOnlyList<NuGet.Configuration.MinPublishAgeExceptionItem!>!
+NuGet.Configuration.PackageSourceProvider.GetMinPublishAgeExceptions() -> NuGet.Configuration.MinPublishAgeExceptions!
+NuGet.Configuration.PackageSourceProvider.RemoveMinPublishAgeExceptions() -> void
+NuGet.Configuration.PackageSourceProvider.SaveMinPublishAgeExceptions(System.Collections.Generic.IReadOnlyList<NuGet.Configuration.MinPublishAgeExceptionItem!>! exceptions) -> void
+NuGet.Configuration.SettingElementType.MinPublishAgeExceptions = 21 -> NuGet.Configuration.SettingElementType
