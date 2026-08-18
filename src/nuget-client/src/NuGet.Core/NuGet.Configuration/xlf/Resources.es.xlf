@@ -71,6 +71,11 @@
         <note>0 - attribute name
 1 - attribute value</note>
       </trans-unit>
+      <trans-unit id="Error_InvalidMinPublishAgeExceptionPattern">
+        <source>Minimum publish age exception pattern '{0}' is invalid.</source>
+        <target state="new">Minimum publish age exception pattern '{0}' is invalid.</target>
+        <note>0 - invalid package ID pattern</note>
+      </trans-unit>
       <trans-unit id="Error_ItemNeedsAtLeastOnePackagePattern">
         <source>Package source '{0}' must have at least one package pattern.</source>
         <target state="translated">El origen del paquete "{0}" debe tener al menos un patrón de paquete.</target>
@@ -177,6 +182,16 @@
         <source>Owners item must only have text content and cannot be empty.</source>
         <target state="translated">El elemento Propietarios solo debe tener contenido de texto y no puede estar vacío.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="PackageSource_MinPublishAgeCannotBeNegative">
+        <source>The minimum publish age cannot be negative. Value: '{0}'.</source>
+        <target state="new">The minimum publish age cannot be negative. Value: '{0}'.</target>
+        <note>0 - minimum publish age</note>
+      </trans-unit>
+      <trans-unit id="PackageSource_MinPublishAgeMustBeWholeHours">
+        <source>The minimum publish age must be specified in whole hours. Value: '{0}'.</source>
+        <target state="new">The minimum publish age must be specified in whole hours. Value: '{0}'.</target>
+        <note>0 - minimum publish age</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNullOrEmpty">
         <source>{0} cannot be null or empty.</source>
