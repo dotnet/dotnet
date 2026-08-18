@@ -6,9 +6,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Threading;
@@ -70,7 +72,10 @@ internal static class CSharpTestLspServerHelpers
             .AddParts(typeof(RazorTestLanguageServerFactory))
             .ExportProviderFactory.CreateExportProvider();
 
-        var metadataReferences = await ReferenceAssemblies.Default.ResolveAsync(language: LanguageNames.CSharp, cancellationToken);
+        var nugetConfigFilePath = Path.Combine(TestProject.GetRepoRoot(), "NuGet.config");
+        var metadataReferences = await ReferenceAssemblies.Default
+            .WithNuGetConfigFilePath(nugetConfigFilePath)
+            .ResolveAsync(language: LanguageNames.CSharp, cancellationToken);
         metadataReferences = metadataReferences.Add(ReferenceUtil.AspNetLatestComponents);
 
         var workspace = CreateCSharpTestWorkspace(csharpFiles, exportProvider, metadataReferences, razorMappingService, multiTargetProject);

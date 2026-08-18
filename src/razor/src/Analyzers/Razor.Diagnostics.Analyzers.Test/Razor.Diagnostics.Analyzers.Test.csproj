@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Razor.Diagnostics.Analyzers\Razor.Diagnostics.Analyzers.csproj" />
+    <ProjectReference Include="..\..\Shared\Microsoft.AspNetCore.Razor.Test.Common\Microsoft.AspNetCore.Razor.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>
