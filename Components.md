@@ -12,11 +12,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/microsoft-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/microsoft-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@03ef277](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC03ef277b368eb3b02122ca62f97d155845cfd5fa)*
+*[_git/dotnet-aspnetcore@f336360](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GCf336360dc385a9873a19f13e8b6f886311aa5db7)*
     - `src/aspnetcore/src/submodules/googletest`  
-    *[google/googletest@7140cd4](https://github.com/google/googletest/tree/7140cd416cecd7462a8aae488024abeee55598e4)*
+    *[google/googletest@3064a60](https://github.com/google/googletest/tree/3064a609c7a86ac9fb601a9cc5dea6ddb45ba49d)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
-    *[aspnet/MessagePack-CSharp@9614e6f](https://github.com/aspnet/MessagePack-CSharp/tree/9614e6f396e959ad67e4ba655d5ab6e1311bed23)*
+    *[aspnet/MessagePack-CSharp@365965f](https://github.com/aspnet/MessagePack-CSharp/tree/365965f0d8c13c40ff8fde25882066b90f569c7a)*
 - `src/cecil`  
 *[dotnet/cecil@fca1a68](https://github.com/dotnet/cecil/tree/fca1a685c57d208f52fd7e7ba48e2059e3bf0c34)*
 - `src/command-line-api`  
