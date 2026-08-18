@@ -193,7 +193,8 @@ namespace NuGet.Configuration.Test
                         {
                         new PackageSource("http://a.test", "a")
                             {
-                                IsEnabled = true
+                                IsEnabled = true,
+                                MinPublishAge = TimeSpan.FromHours(48)
                             },
                         new PackageSource("http://b.test", "b")
                             {
@@ -213,7 +214,7 @@ namespace NuGet.Configuration.Test
                 var result = SettingsTestUtils.RemoveWhitespace(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <configuration>
   <packageSources>
-    <add key=""a"" value=""http://a.test"" />
+    <add key=""a"" value=""http://a.test"" minPublishAgeHours=""48"" />
     <add key=""b"" value=""http://b.test"" />
   </packageSources>
   <disabledPackageSources>
@@ -1160,6 +1161,388 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
+        public void SaveMinPublishAgeExceptions_SavesAndLoadsPatterns()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            File.WriteAllText(
+                Path.Combine(directory.Path, "NuGet.Config"),
+                """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                </configuration>
+                """);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            // Act
+            packageSourceProvider.SaveMinPublishAgeExceptions(new[]
+            {
+                new MinPublishAgeExceptionItem { Pattern = "System.*" },
+                new MinPublishAgeExceptionItem { Pattern = "Fabrikam.WebApi.Client" },
+            });
+
+            settings = new Settings(directory);
+            var provider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var exceptions = provider.GetMinPublishAgeExceptions();
+
+            // Assert
+            exceptions.IsEnabled.Should().BeTrue();
+            exceptions.FindException("System.Text.Json")!.Pattern.Should().Be("System.*");
+            exceptions.FindException("Fabrikam.WebApi.Client")!.Pattern.Should().Be("Fabrikam.WebApi.Client");
+            exceptions.FindException("Newtonsoft.Json").Should().BeNull();
+
+            provider.GetMinPublishAgeExceptionItems()
+                .Select(exception => exception.Pattern)
+                .Should()
+                .BeEquivalentTo("System.*", "Fabrikam.WebApi.Client");
+
+            var config = File.ReadAllText(Path.Combine(directory.Path, "NuGet.Config"));
+            config.Should().Contain("<minPublishAgeExceptions>");
+            config.Should().Contain("<package pattern=\"System.*\" />");
+            config.Should().Contain("<package pattern=\"Fabrikam.WebApi.Client\" />");
+            config.Should().NotContain("<clear />");
+        }
+
+        [Fact]
+        public void SaveMinPublishAgeExceptions_UpdatesExistingProvider()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            File.WriteAllText(
+                Path.Combine(directory.Path, "NuGet.Config"),
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="Legacy.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+
+            var provider = new PackageSourceProvider(
+                new Settings(directory),
+                TestConfigurationDefaults.NullInstance);
+
+            // Act
+            provider.SaveMinPublishAgeExceptions(new[]
+            {
+                new MinPublishAgeExceptionItem { Pattern = "Contoso.*" },
+            });
+
+            // Assert
+            provider.GetMinPublishAgeExceptionItems()
+                .Select(exception => exception.Pattern)
+                .Should()
+                .BeEquivalentTo("Contoso.*");
+        }
+
+        [Fact]
+        public void SaveMinPublishAgeExceptions_WithUnsupportedSettings_Throws()
+        {
+            // Arrange
+            var settings = new Mock<ISettings>();
+            var provider = new PackageSourceProvider(settings.Object, TestConfigurationDefaults.NullInstance);
+
+            // Act
+            var exception = Record.Exception(() => provider.SaveMinPublishAgeExceptions(Array.Empty<MinPublishAgeExceptionItem>()));
+
+            // Assert
+            exception.Should().BeOfType<NotSupportedException>();
+        }
+
+        [Fact]
+        public void LoadMinPublishAgeExceptions_WithoutPattern_ThrowsClearError()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            const string fileName = "NuGet.Config";
+            SettingsTestUtils.CreateConfigurationFile(
+                fileName,
+                directory,
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+
+            // Act
+            var exception = Record.Exception(() => new SettingsFile(directory));
+
+            // Assert
+            exception.Should().BeOfType<NuGetConfigurationException>();
+            exception.Message.Should().Contain("'pattern'");
+            exception.Message.Should().Contain("'package'");
+            exception.Message.Should().Contain(Path.Combine(directory.Path, fileName));
+        }
+
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("\t")]
+        public void MinPublishAgeException_WhitespacePattern_Throws(string pattern)
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            File.WriteAllText(
+                Path.Combine(directory.Path, "NuGet.Config"),
+                $"""
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="{pattern}" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+
+            // Act
+            var fileException = Record.Exception(() => new SettingsFile(directory));
+            var inMemoryException = Record.Exception(() => new MinPublishAgeExceptionItem { Pattern = pattern });
+
+            // Assert
+            fileException.Should().BeOfType<NuGetConfigurationException>();
+            fileException!.Message.Should().Contain(Path.Combine(directory.Path, "NuGet.Config"));
+            inMemoryException.Should().BeOfType<ArgumentException>();
+        }
+
+        [Fact]
+        public void MinPublishAgeException_TooLongPattern_Throws()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            string pattern = new string('a', 101);
+            File.WriteAllText(
+                Path.Combine(directory.Path, "NuGet.Config"),
+                $"""
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="{pattern}" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+
+            // Act
+            var fileException = Record.Exception(() => new SettingsFile(directory));
+            var inMemoryException = Record.Exception(() => new MinPublishAgeExceptionItem { Pattern = pattern });
+
+            // Assert
+            fileException.Should().BeOfType<NuGetConfigurationException>();
+            fileException!.Message.Should().Contain(Path.Combine(directory.Path, "NuGet.Config"));
+            fileException.Message.Should().Contain(pattern);
+            inMemoryException.Should().BeOfType<ArgumentOutOfRangeException>();
+        }
+
+        [Fact]
+        public void SaveMinPublishAgeExceptions_WithEmptyList_SavesEmptySection()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            File.WriteAllText(
+                Path.Combine(directory.Path, "NuGet.Config"),
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="System.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+
+            var provider = new PackageSourceProvider(
+                new Settings(directory),
+                TestConfigurationDefaults.NullInstance);
+
+            // Act
+            provider.SaveMinPublishAgeExceptions(Array.Empty<MinPublishAgeExceptionItem>());
+
+            // Assert
+            var config = File.ReadAllText(Path.Combine(directory.Path, "NuGet.Config"));
+            config.Should().Contain("<minPublishAgeExceptions />");
+            config.Should().NotContain("<clear />");
+            provider.GetMinPublishAgeExceptions().IsEnabled.Should().BeFalse();
+        }
+
+        [Fact]
+        public void MinPublishAgeExceptions_FindException_TrimsPattern()
+        {
+            // Arrange
+            var exceptions = new MinPublishAgeExceptions(new[]
+            {
+                new MinPublishAgeExceptionItem { Pattern = " System.* " },
+            });
+
+            // Act
+            var exception = exceptions.FindException("System.Text.Json");
+
+            // Assert
+            exception.Should().NotBeNull();
+            exception!.Pattern.Should().Be(" System.* ");
+        }
+
+        [Fact]
+        public void RemoveMinPublishAgeExceptions_RemovesAllExceptions()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            File.WriteAllText(
+                Path.Combine(directory.Path, "NuGet.Config"),
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="System.*" />
+                        <package pattern="Fabrikam.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+
+            var provider = new PackageSourceProvider(
+                new Settings(directory),
+                TestConfigurationDefaults.NullInstance);
+
+            // Act
+            provider.RemoveMinPublishAgeExceptions();
+
+            // Assert
+            provider.GetMinPublishAgeExceptionItems().Should().BeEmpty();
+        }
+
+        [Fact]
+        public void LoadMinPublishAgeExceptions_ChildConfigReplacesParentConfig()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            var childDirectory = Path.Combine(directory.Path, "child");
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="System.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """;
+
+            SettingsTestUtils.CreateConfigurationFile("NuGet.Config", directory, configContents);
+
+            configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="Fabrikam.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """;
+
+            SettingsTestUtils.CreateConfigurationFile("NuGet.Config", childDirectory, configContents);
+
+            // Act
+            var settings = Settings.LoadSettings(
+                childDirectory,
+                configFileName: null,
+                machineWideSettings: null,
+                loadUserWideSettings: false,
+                useTestingGlobalPath: false);
+            var exceptions = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance)
+                .GetMinPublishAgeExceptions();
+
+            // Assert
+            exceptions.FindException("Fabrikam.WebApi.Client").Should().NotBeNull();
+            exceptions.FindException("System.Text.Json").Should().BeNull();
+        }
+
+        [Fact]
+        public void LoadMinPublishAgeExceptions_EmptyChildConfigClearsParentConfig()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            var childDirectory = Path.Combine(directory.Path, "child");
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="System.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """;
+
+            SettingsTestUtils.CreateConfigurationFile("NuGet.Config", directory, configContents);
+
+            configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <minPublishAgeExceptions />
+                </configuration>
+                """;
+
+            SettingsTestUtils.CreateConfigurationFile("NuGet.Config", childDirectory, configContents);
+
+            // Act
+            var settings = Settings.LoadDefaultSettings(childDirectory);
+            var exceptions = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance)
+                .GetMinPublishAgeExceptions();
+
+            // Assert
+            exceptions.IsEnabled.Should().BeFalse();
+            exceptions.FindException("System.Text.Json").Should().BeNull();
+        }
+
+        [Fact]
+        public void SaveMinPublishAgeExceptions_ReplacesExceptionsAcrossHierarchy()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            var childDirectory = Path.Combine(directory.Path, "child");
+            var parentConfigPath = Path.Combine(directory.Path, Settings.DefaultSettingsFileName);
+            SettingsTestUtils.CreateConfigurationFile(
+                Settings.DefaultSettingsFileName,
+                directory,
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="Legacy.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+            var originalParentConfig = File.ReadAllText(parentConfigPath);
+            SettingsTestUtils.CreateConfigurationFile(
+                Settings.DefaultSettingsFileName,
+                childDirectory,
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="Contoso.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+
+            var settings = Settings.LoadDefaultSettings(childDirectory);
+            var provider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+
+            // Act
+            provider.SaveMinPublishAgeExceptions(new[]
+            {
+                new MinPublishAgeExceptionItem { Pattern = "Contoso.*" },
+                new MinPublishAgeExceptionItem { Pattern = "Microsoft.*" },
+            });
+
+            // Assert
+            var reloadedProvider = new PackageSourceProvider(
+                Settings.LoadSettings(
+                    childDirectory,
+                    configFileName: null,
+                    machineWideSettings: null,
+                    loadUserWideSettings: false,
+                    useTestingGlobalPath: false),
+                TestConfigurationDefaults.NullInstance);
+            reloadedProvider.GetMinPublishAgeExceptionItems()
+                .Select(exception => exception.Pattern)
+                .Should()
+                .BeEquivalentTo("Contoso.*", "Microsoft.*");
+            File.ReadAllText(Path.Combine(childDirectory, Settings.DefaultSettingsFileName))
+                .Should()
+                .NotContain("<clear />");
+            File.ReadAllText(parentConfigPath).Should().Be(originalParentConfig);
+        }
+
+        [Fact]
         public void SavePackage_KeepsBothNewAndOldSources()
         {
             using (var directory = TestDirectory.Create())
@@ -1462,6 +1845,41 @@ namespace NuGet.Configuration.Test
             var parsedSource = children[0];
             parsedSource.Key.Should().Be("default-http");
             parsedSource.DisableTLSCertificateValidation.Should().Be("True");
+        }
+
+        [Fact]
+        public void UpdatePackageSource_ShouldSaveMinPublishAgeHours()
+        {
+            using var directory = TestDirectory.Create();
+
+            // Arrange
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <packageSources>
+                        <add key="default-http" value="http://api.nuget.org/v3/index.json" />
+                    </packageSources>
+                </configuration>
+                """;
+
+            File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var source = packageSourceProvider.GetPackageSourceByName("default-http")!;
+
+            // Act
+            source.MinPublishAge = TimeSpan.FromDays(2);
+            packageSourceProvider.UpdatePackageSource(source, false, false);
+
+            // Assert
+            settings = new Settings(directory);
+            var packageSourcesSection = settings.GetSection("packageSources");
+            packageSourcesSection.Should().NotBeNull();
+            packageSourcesSection!.Items.Should().ContainSingle();
+
+            var parsedSource = packageSourcesSection.Items.Cast<SourceItem>().Single();
+            parsedSource.MinPublishAgeHours.Should().Be("48");
         }
 
         // Test that a source added in a high priority config file is not
