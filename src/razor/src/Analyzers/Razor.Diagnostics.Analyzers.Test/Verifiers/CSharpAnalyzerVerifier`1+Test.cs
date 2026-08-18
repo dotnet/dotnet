@@ -1,6 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.IO;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -14,6 +16,9 @@ public static partial class CSharpAnalyzerVerifier<TAnalyzer>
     {
         public Test()
         {
+            ReferenceAssemblies = ReferenceAssemblies.Default.WithNuGetConfigFilePath(
+                Path.Combine(TestProject.GetRepoRoot(), "NuGet.config"));
+
             SolutionTransforms.Add((solution, projectId) =>
             {
                 var compilationOptions = solution.GetProject(projectId)!.CompilationOptions;
