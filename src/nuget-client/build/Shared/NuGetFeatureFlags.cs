@@ -14,13 +14,13 @@ namespace NuGet.Shared
 
         static NuGetFeatureFlags()
         {
-            StaticState.StartMSBuildRestoreTasks += ResetCache;
+            StaticState.BuildEnded += ResetCache;
         }
 
         private static Lazy<bool> _isSystemTextJsonDeserializationEnabledByEnvironment =
             new Lazy<bool>(() => IsSystemTextJsonDeserializationEnabledByEnvironment(EnvironmentVariableWrapper.Instance));
 
-        /// <summary>Re-reads <c>NUGET_USE_SYSTEM_TEXT_JSON_DESERIALIZATION</c> from the current environment.</summary>
+        /// <summary>Discards the cached value so it is re-read from the environment on next use.</summary>
         internal static void ResetCache() =>
             _isSystemTextJsonDeserializationEnabledByEnvironment =
                 new Lazy<bool>(() => IsSystemTextJsonDeserializationEnabledByEnvironment(EnvironmentVariableWrapper.Instance));

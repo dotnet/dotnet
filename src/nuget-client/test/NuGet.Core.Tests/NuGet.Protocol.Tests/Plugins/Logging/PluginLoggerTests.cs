@@ -16,6 +16,9 @@ using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
 {
+    // Two of these tests raise StaticState's process-global events, which resets every subscriber in the process, so
+    // they must not run alongside tests that depend on that state.
+    [Collection(nameof(NuGet.Protocol.Tests.NotThreadSafeResourceCollection))]
     public class PluginLoggerTests : LogMessageTests
     {
         [Fact]
@@ -24,6 +27,51 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = Assert.Throws<ArgumentNullException>(() => new PluginLogger(environmentVariableReader: null));
 
             Assert.Equal("environmentVariableReader", exception.ParamName);
+        }
+
+        [Fact]
+        public void BuildEnded_DiscardsTheLog()
+        {
+            PluginLogger before = PluginLogger.DefaultInstance;
+            try
+            {
+                // The end of the build tears the plugins down, so the log they wrote to is closed with them.
+                StaticState.RaiseBuildEnded();
+
+                Assert.NotSame(before, PluginLogger.DefaultInstance);
+            }
+            finally
+            {
+                PluginLogger.ResetDefaultInstance();
+            }
+        }
+
+        [Fact]
+        public void Write_WhenDisposed_DoesNotThrow()
+        {
+            string original = Environment.GetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG");
+            string originalLogDir = Environment.GetEnvironmentVariable("NUGET_PLUGIN_LOG_DIRECTORY_PATH");
+
+            using (var testDirectory = TestDirectory.Create())
+            {
+                try
+                {
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_LOG_DIRECTORY_PATH", testDirectory.Path);
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG", bool.TrueString);
+
+                    var logger = new PluginLogger(EnvironmentVariableWrapper.Instance);
+                    logger.Dispose();
+
+                    // A plugin can still hold a logger that has been discarded, and teardown itself logs. Diagnostics
+                    // must never fail the operation being diagnosed.
+                    logger.Write(new StopwatchLogMessage(logger.Now, Stopwatch.Frequency));
+                }
+                finally
+                {
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_ENABLE_LOG", original);
+                    Environment.SetEnvironmentVariable("NUGET_PLUGIN_LOG_DIRECTORY_PATH", originalLogDir);
+                }
+            }
         }
 
         [Fact]
