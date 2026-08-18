@@ -31,7 +31,7 @@ namespace NuGet.Configuration
 
         static ProxyCache()
         {
-            StaticState.StartMSBuildRestoreTasks += ResetCache;
+            StaticState.BuildEnded += ResetCache;
         }
 
         private static ProxyCache FromDefaultSettings()
