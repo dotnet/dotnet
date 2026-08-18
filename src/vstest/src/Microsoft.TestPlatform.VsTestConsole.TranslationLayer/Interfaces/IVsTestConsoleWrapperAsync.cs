@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
-using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 
 namespace Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 
@@ -23,75 +22,6 @@ public interface IVsTestConsoleWrapperAsync
     /// </summary>
     [Obsolete("The async APIs don't work, use the sync API instead.")]
     Task StartSessionAsync();
-
-    /// <summary>
-    /// Asynchronous equivalent of <see cref="
-    /// IVsTestConsoleWrapper.StartTestSession(
-    ///     IList{string},
-    ///     string,
-    ///     ITestSessionEventsHandler)"/>.
-    /// </summary>
-    [Obsolete("The async APIs don't work, use the sync API instead.")]
-    Task<ITestSession?> StartTestSessionAsync(
-        IList<string> sources,
-        string? runSettings,
-        ITestSessionEventsHandler eventsHandler);
-
-    /// <summary>
-    /// Asynchronous equivalent of <see cref="
-    /// IVsTestConsoleWrapper.StartTestSession(
-    ///     IList{string},
-    ///     string,
-    ///     TestPlatformOptions,
-    ///     ITestSessionEventsHandler)"/>.
-    /// </summary>
-    [Obsolete("The async APIs don't work, use the sync API instead.")]
-    Task<ITestSession?> StartTestSessionAsync(
-        IList<string> sources,
-        string? runSettings,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler);
-
-    /// <summary>
-    /// Asynchronous equivalent of <see cref="
-    /// IVsTestConsoleWrapper.StartTestSession(
-    ///     IList{string},
-    ///     string,
-    ///     TestPlatformOptions,
-    ///     ITestSessionEventsHandler,
-    ///     ITestHostLauncher)"/>.
-    /// </summary>
-    [Obsolete("The async APIs don't work, use the sync API instead.")]
-    Task<ITestSession?> StartTestSessionAsync(
-        IList<string> sources,
-        string? runSettings,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler,
-        ITestHostLauncher testHostLauncher);
-
-    /// <summary>
-    /// Asynchronous equivalent of <see cref="
-    /// IVsTestConsoleWrapper.StopTestSession(
-    ///     TestSessionInfo,
-    ///     ITestSessionEventsHandler)"/>.
-    /// </summary>
-    [Obsolete("The async APIs don't work, use the sync API instead.")]
-    Task<bool> StopTestSessionAsync(
-        TestSessionInfo? testSessionInfo,
-        ITestSessionEventsHandler eventsHandler);
-
-    /// <summary>
-    /// Asynchronous equivalent of <see cref="
-    /// IVsTestConsoleWrapper.StopTestSession(
-    ///     TestSessionInfo,
-    ///     TestPlatformOptions,
-    ///     ITestSessionEventsHandler)"/>.
-    /// </summary>
-    [Obsolete("This API is not final yet and is subject to changes.", false)]
-    Task<bool> StopTestSessionAsync(
-        TestSessionInfo? testSessionInfo,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler);
 
     /// <summary>
     /// Asynchronous equivalent of <see cref="

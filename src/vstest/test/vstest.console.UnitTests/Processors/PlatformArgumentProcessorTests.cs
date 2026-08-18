@@ -16,6 +16,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [TestClass]
 public class PlatformArgumentProcessorTests
 {
+    private readonly CommandLineOptions _commandLineOptions = new();
     private readonly PlatformArgumentExecutor _executor;
     private readonly TestableRunSettingsProvider _runSettingsProvider;
     private readonly IRunSettingsHelper _runSettingsHelper;
@@ -24,26 +25,25 @@ public class PlatformArgumentProcessorTests
     {
         _runSettingsProvider = new TestableRunSettingsProvider();
         _runSettingsHelper = new RunSettingsHelper();
-        _executor = new PlatformArgumentExecutor(CommandLineOptions.Instance, _runSettingsProvider, _runSettingsHelper);
+        _executor = new PlatformArgumentExecutor(_commandLineOptions, _runSettingsProvider, _runSettingsHelper);
     }
 
     [TestCleanup]
     public void TestCleanup()
     {
-        CommandLineOptions.Reset();
     }
 
     [TestMethod]
     public void GetMetadataShouldReturnPlatformArgumentProcessorCapabilities()
     {
-        var processor = new PlatformArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), _runSettingsHelper);
+        var processor = new PlatformArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Metadata.Value is PlatformArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnPlatformArgumentExecutor()
     {
-        var processor = new PlatformArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), _runSettingsHelper);
+        var processor = new PlatformArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Executor!.Value is PlatformArgumentExecutor);
     }
 
@@ -54,7 +54,7 @@ public class PlatformArgumentProcessorTests
     {
         var capabilities = new PlatformArgumentProcessorCapabilities();
         Assert.AreEqual("/Platform", capabilities.CommandName);
-        var expected = "--Platform|/Platform:<Platform type>\r\n      Target platform architecture to be used for test execution. \r\n      Valid values are x86, x64 and ARM.";
+        var expected = "--Platform|/Platform:<Platform type>\r\n      Target platform architecture to be used for test execution. \r\n      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.";
         Assert.AreEqual(expected: expected.NormalizeLineEndings().ShowWhiteSpace(), capabilities.HelpContentResourceName.NormalizeLineEndings().ShowWhiteSpace());
 
         Assert.AreEqual(HelpContentPriority.PlatformArgumentProcessorHelpPriority, capabilities.HelpPriority);
@@ -102,7 +102,7 @@ public class PlatformArgumentProcessorTests
     public void InitializeShouldSetCommandLineOptionsArchitecture()
     {
         _executor.Initialize("x64");
-        Assert.AreEqual(ObjectModel.Architecture.X64, CommandLineOptions.Instance.TargetArchitecture);
+        Assert.AreEqual(ObjectModel.Architecture.X64, _commandLineOptions.TargetArchitecture);
         Assert.AreEqual(nameof(ObjectModel.Architecture.X64), _runSettingsProvider.QueryRunSettingsNode(PlatformArgumentExecutor.RunSettingsPath));
     }
 
@@ -110,7 +110,7 @@ public class PlatformArgumentProcessorTests
     public void InitializeShouldNotConsiderCaseSensitivityOfTheArgumentPassed()
     {
         _executor.Initialize("ArM");
-        Assert.AreEqual(ObjectModel.Architecture.ARM, CommandLineOptions.Instance.TargetArchitecture);
+        Assert.AreEqual(ObjectModel.Architecture.ARM, _commandLineOptions.TargetArchitecture);
         Assert.AreEqual(nameof(ObjectModel.Architecture.ARM), _runSettingsProvider.QueryRunSettingsNode(PlatformArgumentExecutor.RunSettingsPath));
     }
 

@@ -113,34 +113,6 @@ internal interface ITranslationLayerRequestSenderAsync : IDisposable
         ITestHostLauncher customTestHostLauncher);
 
     /// <summary>
-    /// Asynchronous equivalent of <see cref="
-    /// ITranslationLayerRequestSender.StartTestSession(
-    ///     IList{string},
-    ///     string,
-    ///     TestPlatformOptions,
-    ///     ITestSessionEventsHandler,
-    ///     ITestHostLauncher)"/>.
-    /// </summary>
-    Task<TestSessionInfo?> StartTestSessionAsync(
-        IList<string> sources,
-        string? runSettings,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler,
-        ITestHostLauncher? testHostLauncher);
-
-    /// <summary>
-    /// Asynchronous equivalent of <see cref="
-    /// ITranslationLayerRequestSender.StopTestSession(
-    ///     TestSessionInfo,
-    ///     TestPlatformOptions,
-    ///     ITestSessionEventsHandler)"/>.
-    /// </summary>
-    Task<bool> StopTestSessionAsync(
-        TestSessionInfo? testSessionInfo,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler);
-
-    /// <summary>
     /// Provides back all attachments to test platform for additional processing (for example
     /// merging).
     /// </summary>

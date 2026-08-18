@@ -86,7 +86,7 @@ namespace Microsoft.IdentityModel.Tokens
             }
         }
 
-#region FOR TESTING ONLY
+        #region FOR TESTING ONLY
         internal static unsafe void Encrypt(
             SafeKeyHandle keyHandle,
             byte[] nonce,
@@ -132,7 +132,7 @@ namespace Microsoft.IdentityModel.Tokens
                 }
             }
         }
-#endregion
+        #endregion
     }
 
     internal static class AesBCryptModes

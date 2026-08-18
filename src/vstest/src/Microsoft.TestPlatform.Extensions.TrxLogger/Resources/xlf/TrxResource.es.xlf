@@ -308,6 +308,11 @@ Fehlerdetails: {1}: {2}</target>
         <target state="translated">No se encuentra ningún nombre de archivo disponible para {0} con el formato de marca de tiempo "{2}" en {1}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="TrxLoggerWriteFailed">
+        <source>Failed to write the results file '{0}'. {1}</source>
+        <target state="new">Failed to write the results file '{0}'. {1}</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

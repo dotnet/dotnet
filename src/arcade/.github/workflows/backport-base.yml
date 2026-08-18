@@ -186,27 +186,92 @@ jobs:
               should_open_pull_request = false;
             } catch { }
 
-            // download and apply patch
+            // Download both the commit series and the complete PR diff. The complete diff lets us
+            // verify whether the resulting merge commit represents the entire PR change.
             const patch_file = 'changes.patch';
+            const diff_file = 'changes.diff';
+            const merged_diff_file = 'merged-change.diff';
             await exec.exec(`bash -c "gh pr diff --patch ${pr_number} > ${patch_file}"`);
-
+            await exec.exec(`bash -c "gh pr diff ${pr_number} > ${diff_file}"`);
             const additional_switches = process.env.ADDITIONAL_GIT_AM_SWITCHES?.trim() || '';
+
+            async function getPatchId(file) {
+              const result = await exec.getExecOutput(`bash -c "git patch-id --verbatim < ${file}"`);
+              return result.stdout.trim().split(/\s+/)[0] || '';
+            }
+
+            // Squash and single-commit rebase commits can represent the complete PR change, but
+            // replaying the original commit series can fail on an intermediate commit. Prefer the
+            // merged change when its parent diff exactly matches the complete PR diff.
+            let merged_change_applied = false;
+            let merged_change_output = '';
+            const merge_commit = source_pr.merge_commit_sha;
+            if (merge_commit && !additional_switches) {
+              try {
+                try {
+                  await exec.exec(`git cat-file -e ${merge_commit}^{commit}`);
+                } catch {
+                  await exec.exec(`git fetch origin ${merge_commit}`);
+                }
+
+                const parent_result = await exec.getExecOutput(`git show -s --format=%P ${merge_commit}`);
+                const parents = parent_result.stdout.trim().split(/\s+/).filter(parent => parent.length > 0);
+                if (parents.length === 1) {
+                  await exec.exec(`bash -c "git diff ${parents[0]} ${merge_commit} > ${merged_diff_file}"`);
+
+                  const source_patch_id = await getPatchId(diff_file);
+                  const merged_patch_id = await getPatchId(merged_diff_file);
+                  if (source_patch_id && source_patch_id === merged_patch_id) {
+                    const cherry_pick_command = `git cherry-pick ${merge_commit}`;
+                    const cherry_pick_result = await exec.getExecOutput(cherry_pick_command, [], { ignoreReturnCode: true });
+                    merged_change_output = `$ ${cherry_pick_command}\n\n${cherry_pick_result.stdout}${cherry_pick_result.stderr}`;
+                    if (cherry_pick_result.exitCode === 0) {
+                      console.log('Applied the complete merged PR change.');
+                      merged_change_applied = true;
+                    } else {
+                      console.log('Applying the complete merged PR change failed; falling back to the original commit series.');
+                      await exec.exec('git cherry-pick --abort', [], { ignoreReturnCode: true });
+                    }
+                  } else {
+                    console.log('The merge commit does not represent the complete PR change; falling back to the original commit series.');
+                  }
+                } else {
+                  console.log(`The merge commit has ${parents.length} parents; falling back to the original commit series.`);
+                }
+              } catch (error) {
+                core.warning(`Could not apply the complete merged PR change; falling back to the original commit series: ${error}`);
+                await exec.exec('git cherry-pick --abort', [], { ignoreReturnCode: true });
+              }
+            } else if (additional_switches) {
+              console.log('Additional git am switches were supplied; applying the original commit series.');
+            }
+
             const base_switches = '--3way --empty=keep --ignore-whitespace --keep-non-patch';
             const git_am_command = additional_switches
               ? `git am ${base_switches} ${additional_switches} ${patch_file}`
               : `git am ${base_switches} ${patch_file}`;
-            let git_am_output = `$ ${git_am_command}\n\n`;
+            let git_am_output = merged_change_output.length > 0
+              ? `${merged_change_output}\n\n$ ${git_am_command}\n\n`
+              : `$ ${git_am_command}\n\n`;
             let git_am_failed = false;
-            try {
-              await exec.exec(git_am_command, [], {
-                listeners: {
-                  stdout: function stdout(data) { git_am_output += data; },
-                  stderr: function stderr(data) { git_am_output += data; }
-                }
-              });
-            } catch (error) {
-              git_am_output += error;
-              git_am_failed = true;
+            if (!merged_change_applied) {
+              try {
+                await exec.exec(`git fetch origin refs/pull/${pr_number}/head`);
+              } catch (error) {
+                core.warning(`Could not fetch refs/pull/${pr_number}/head. Three-way patch application may not have all required objects: ${error}`);
+              }
+
+              try {
+                await exec.exec(git_am_command, [], {
+                  listeners: {
+                    stdout: function stdout(data) { git_am_output += data; },
+                    stderr: function stderr(data) { git_am_output += data; }
+                  }
+                });
+              } catch (error) {
+                git_am_output += error;
+                git_am_failed = true;
+              }
             }
 
             if (git_am_failed) {
@@ -236,7 +301,7 @@ jobs:
 
               // Stage changes (excluding patch file)
               await exec.exec(`git add -A`);
-              await exec.exec(`git reset HEAD ${patch_file}`);
+              await exec.exec(`git reset HEAD -- ${patch_file} ${diff_file} ${merged_diff_file}`);
 
               // Check for remaining conflicts
               const diff_command = 'git diff --name-only --diff-filter=U';

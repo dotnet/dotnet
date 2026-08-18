@@ -135,39 +135,6 @@ internal class TestPlatform : ITestPlatform
         return false;
     }
 
-    /// <inheritdoc/>
-    public bool StartTestSession(
-        IRequestData requestData,
-        StartTestSessionCriteria testSessionCriteria,
-        ITestSessionEventsHandler eventsHandler,
-        Dictionary<string, SourceDetail> sourceToSourceDetailMap,
-        IWarningLogger warningLogger)
-    {
-        ValidateArg.NotNull(testSessionCriteria, nameof(testSessionCriteria));
-
-        RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(testSessionCriteria.RunSettings);
-        TestAdapterLoadingStrategy strategy = runConfiguration.TestAdapterLoadingStrategy;
-
-        AddExtensionAssemblies(testSessionCriteria.RunSettings, strategy);
-
-        if (!runConfiguration.DesignMode)
-        {
-            return false;
-        }
-
-        IProxyTestSessionManager? testSessionManager = _testEngine.GetTestSessionManager(requestData, testSessionCriteria, sourceToSourceDetailMap, warningLogger);
-        if (testSessionManager == null)
-        {
-            // The test session manager is null because the combination of runsettings and
-            // sources tells us we should run in-process (i.e. in vstest.console). Because
-            // of this no session will be created because there's no testhost to be launched.
-            // Expecting a subsequent call to execute tests with the same set of parameters.
-            return false;
-        }
-
-        return testSessionManager.StartSession(eventsHandler, requestData);
-    }
-
     private void PopulateExtensions(string? runSettings, IEnumerable<string> sources)
     {
         RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runSettings);
@@ -279,7 +246,13 @@ internal class TestPlatform : ITestPlatform
         // Otherwise we will always get a "No suitable test runtime provider found for this run." error.
         // I (@haplois) will modify this behavior later on, but we also need to consider legacy adapters
         // and make sure they still work after modification.
-        string? runSettings = RunSettingsManager.Instance.ActiveRunSettings.SettingsXml;
+        //
+        // The inbox extensions are loaded once, at type initialization, using the default adapter
+        // loading strategy. We intentionally do not read the ambient RunSettingsManager singleton
+        // here: this runs before any request's run settings are known (see the note above), so it
+        // could only ever observe the default settings anyway. Request-specific test adapter paths
+        // are still loaded later, per request, through the normal PopulateExtensions flow.
+        string? runSettings = null;
         RunConfiguration runConfiguration = XmlRunSettingsUtilities.GetRunConfigurationNode(runSettings);
         TestAdapterLoadingStrategy strategy = runConfiguration.TestAdapterLoadingStrategy;
 

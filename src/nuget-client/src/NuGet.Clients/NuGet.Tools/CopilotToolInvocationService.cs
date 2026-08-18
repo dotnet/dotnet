@@ -12,6 +12,8 @@ using Microsoft.VisualStudio.Copilot;
 using Microsoft.VisualStudio.Copilot.Internal.Mcp;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.ServiceBroker;
+using NuGet.Common;
+using NuGet.PackageManagement.Telemetry;
 using NuGet.VisualStudio;
 
 namespace NuGetVSExtension
@@ -115,6 +117,39 @@ namespace NuGetVSExtension
                     (copilotService as IDisposable)?.Dispose();
                 }
             }
+        }
+
+        /// <summary>
+        /// Handles a session creation error by showing a user-facing warning message and emitting a telemetry event.
+        /// </summary>
+        /// <param name="error">The error returned from <see cref="TryCreateToolSessionAsync"/>.</param>
+        /// <param name="toolNotAvailableMessage">The user-facing message to display when <see cref="CopilotToolSessionError.ToolNotAvailable"/>.</param>
+        /// <param name="warningTitle">The title for the warning message box.</param>
+        /// <param name="telemetryEvent">Optional telemetry event to emit. If null, no telemetry is sent.</param>
+        internal static void HandleSessionError(
+            CopilotToolSessionError error,
+            string toolNotAvailableMessage,
+            string warningTitle,
+            TelemetryEvent? telemetryEvent)
+        {
+            string message = error switch
+            {
+                CopilotToolSessionError.CopilotNotReady => Resources.Error_CopilotNotReady,
+                CopilotToolSessionError.ServiceBrokerNotAvailable => Resources.Error_ServiceBrokerNotAvailable,
+                CopilotToolSessionError.CopilotServiceNotAvailable => Resources.Error_CopilotServiceNotAvailable,
+                CopilotToolSessionError.McpToolServiceNotAvailable => Resources.Error_McpToolServiceNotAvailable,
+                CopilotToolSessionError.McpServerInfoServiceNotAvailable => Resources.Error_McpServerInfoServiceNotAvailable,
+                CopilotToolSessionError.McpServerNotActive => Resources.Error_McpServerNotActive,
+                CopilotToolSessionError.ToolNotAvailable => toolNotAvailableMessage,
+                _ => throw new ArgumentOutOfRangeException(nameof(error), error, null),
+            };
+
+            if (telemetryEvent is not null)
+            {
+                TelemetryActivity.EmitTelemetryEvent(telemetryEvent);
+            }
+
+            MessageHelper.ShowWarningMessage(message, warningTitle);
         }
 
         internal static bool IsToolAvailable(

@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -90,13 +89,18 @@ namespace NuGet.Credentials
         /// <returns>A credential object.</returns>
         public Task<CredentialResponse> GetAsync(
             Uri uri,
-            IWebProxy proxy,
+            IWebProxy? proxy,
             CredentialRequestType type,
-            string message,
+            string? message,
             bool isRetry,
             bool nonInteractive,
             CancellationToken cancellationToken)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
             CredentialResponse taskResponse;
             if (type == CredentialRequestType.Proxy)
             {
@@ -123,7 +127,7 @@ namespace NuGet.Credentials
                 {
                     response = GetPluginResponse(request, cancellationToken);
                 }
-                catch (PluginUnexpectedStatusException) when (PassVerbosityFlag(request))
+                catch (PluginUnexpectedStatusException) when (PassVerbosityFlag(request.Verbosity))
                 {
                     // older providers may throw if the verbosity flag is sent,
                     // so retry without it
@@ -180,9 +184,10 @@ namespace NuGet.Credentials
 
             // only apply -verbosity flag if set and != Normal
             // since normal is default
-            if (PassVerbosityFlag(request))
+            string? verbosity = request.Verbosity;
+            if (PassVerbosityFlag(verbosity))
             {
-                argumentString += $" -verbosity {request.Verbosity.ToLower(CultureInfo.InvariantCulture)}";
+                argumentString += $" -verbosity {verbosity.ToLower(CultureInfo.InvariantCulture)}";
             }
 
             var startInfo = new ProcessStartInfo
@@ -200,8 +205,7 @@ namespace NuGet.Credentials
                 StandardErrorEncoding = Encoding.UTF8,
             };
 
-            string stdOut = null;
-            var exitCode = Execute(startInfo, cancellationToken, out stdOut);
+            var exitCode = Execute(startInfo, cancellationToken, out string stdOut);
 
             var status = (PluginCredentialResponseExitCode)exitCode;
 
@@ -268,12 +272,13 @@ namespace NuGet.Credentials
             // It should be logged at the Information level so it will appear if Verbosity >= Normal.
             process.ErrorDataReceived += (object o, DataReceivedEventArgs e) =>
             {
-                if (!string.IsNullOrWhiteSpace(e?.Data))
+                string? data = e?.Data;
+                if (!string.IsNullOrWhiteSpace(data))
                 {
                     // This is a workaround for mono issue: https://github.com/NuGet/Home/issues/4004
                     if (!process.HasExited)
                     {
-                        _logger.LogInformation($"{process.ProcessName}: {e.Data}");
+                        _logger.LogInformation($"{process.ProcessName}: {data}");
                     }
                 }
             };
@@ -303,10 +308,10 @@ namespace NuGet.Credentials
             return process.ExitCode;
         }
 
-        private bool PassVerbosityFlag(PluginCredentialRequest request)
+        private static bool PassVerbosityFlag([NotNullWhen(true)] string? verbosity)
         {
-            return request.Verbosity != null
-                && !string.Equals(request.Verbosity, NormalVerbosity, StringComparison.OrdinalIgnoreCase);
+            return verbosity != null
+                && !string.Equals(verbosity, NormalVerbosity, StringComparison.OrdinalIgnoreCase);
         }
 
         private static void Kill(Process p)

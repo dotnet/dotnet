@@ -286,6 +286,24 @@ public class TestRequestSenderTests
         Assert.AreEqual(message, TimoutErrorMessage);
     }
 
+    [TestMethod]
+    public void CheckVersionWithTestHostShouldThrowWithTestHostErrorIfTestHostExitsDuringNegotiation()
+    {
+        // The test host connected but then exited during protocol negotiation, for example it crashed while
+        // deserializing the version check message when reflection-based serialization is disabled (issue #16274).
+        // OnClientProcessExit records the standard error and signals the exit. CheckVersionWithTestHost must stop
+        // waiting immediately and surface that error, instead of blocking for the whole connection timeout and
+        // reporting a generic timeout message.
+        SetupFakeCommunicationChannel();
+        _testRequestSender.OnClientProcessExit("System.InvalidOperationException: Reflection-based serialization has been disabled for this application.");
+
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost()).Message;
+
+        Assert.Contains("Test host process crashed", message);
+        Assert.Contains("Reflection-based serialization has been disabled", message);
+        Assert.AreNotEqual(TimoutErrorMessage, message);
+    }
+
     #endregion
 
     #region Discovery Protocol Tests

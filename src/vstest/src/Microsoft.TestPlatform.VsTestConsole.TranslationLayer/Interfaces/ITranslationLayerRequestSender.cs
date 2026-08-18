@@ -137,35 +137,6 @@ internal interface ITranslationLayerRequestSender : IDisposable, ITranslationLay
         ITestHostLauncher customTestHostLauncher);
 
     /// <summary>
-    /// Starts a new test session.
-    /// </summary>
-    ///
-    /// <param name="sources">Sources for test run.</param>
-    /// <param name="runSettings">Run settings for test run.</param>
-    /// <param name="options">Options to be passed into the platform.</param>
-    /// <param name="eventsHandler">Event handler for test session events.</param>
-    /// <param name="testHostLauncher">Custom test host launcher.</param>
-    /// <returns></returns>
-    TestSessionInfo? StartTestSession(
-        IList<string> sources,
-        string? runSettings,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler,
-        ITestHostLauncher? testHostLauncher);
-
-    /// <summary>
-    /// Stops the test session.
-    /// </summary>
-    ///
-    /// <param name="testSessionInfo">Test session info.</param>
-    /// <param name="options">Test Platform options.</param>
-    /// <param name="eventsHandler">Event handler for test session events.</param>
-    bool StopTestSession(
-        TestSessionInfo? testSessionInfo,
-        TestPlatformOptions? options,
-        ITestSessionEventsHandler eventsHandler);
-
-    /// <summary>
     /// Ends the session.
     /// </summary>
     void EndSession();

@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
@@ -27,14 +26,14 @@ public class SourcelinkTests : SdkTests
 {
     private static string SourcelinkRoot { get; } = Path.Combine(Directory.GetCurrentDirectory(), nameof(SourcelinkTests));
 
-    public static bool IncludeSourceLinkTests => Config.IsOfficialBuild;
+    public static bool ExcludeSourceLinkTests => !Config.IsOfficialBuild;
 
     public SourcelinkTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
     /// <summary>
     /// Verifies that all symbols have valid sourcelinks.
     /// </summary>
-    [ConditionalFact(typeof(SourcelinkTests), nameof(IncludeSourceLinkTests))]
+    [Fact(Skip = "Only supported in official builds", SkipWhen = nameof(ExcludeSourceLinkTests))]
     public void VerifySourcelinks()
     {
         try
@@ -128,7 +127,7 @@ public class SourcelinkTests : SdkTests
                     logOutput: false,
                     excludeInfo: true, // Exclude info messages, as there can be 1,000+ processes
                     millisecondTimeout: 60000,
-                    configureCallback: (process) => DotNetHelper.ConfigureProcess(process, null));
+                    configureCallback: (process) => DotNetHelper.ConfigureProcess(process, DotNetHelper.ProjectsDirectory));
                 elapsed = DateTime.UtcNow - startTime;
                 exitCode = executeResult.Process?.ExitCode ?? -1;
 

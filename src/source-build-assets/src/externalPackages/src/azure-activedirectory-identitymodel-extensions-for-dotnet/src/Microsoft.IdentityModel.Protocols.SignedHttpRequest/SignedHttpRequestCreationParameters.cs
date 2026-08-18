@@ -52,19 +52,19 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// Gets or sets a value indicating whether the <see cref="SignedHttpRequestClaimTypes.Q"/> claim should be created and added or not.
         /// </summary>
         /// <remarks>https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-3</remarks> 
-        public bool CreateQ { get; set; } = false;
+        public bool CreateQ { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="SignedHttpRequestClaimTypes.H"/> claim should be created and added or not.
         /// </summary>
         /// <remarks>https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-3</remarks> 
-        public bool CreateH { get; set; } = false;
+        public bool CreateH { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="SignedHttpRequestClaimTypes.B"/> claim should be created and added or not.
         /// </summary>
         /// <remarks>https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-3</remarks> 
-        public bool CreateB { get; set; } = false;
+        public bool CreateB { get; set; }
 
         /// <summary>
         /// Default value for the <see cref="TimeAdjustment"/>.

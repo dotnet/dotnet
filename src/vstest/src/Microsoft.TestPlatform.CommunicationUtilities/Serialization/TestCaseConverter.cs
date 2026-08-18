@@ -39,7 +39,7 @@ internal class TestCaseConverter : JsonConverter<TestCase>
                 return null;
             }
 
-            var testProperty = StjSafe.Deserialize<TestProperty>(keyElement.GetRawText(), options);
+            var testProperty = StjSafe.Deserialize<TestProperty>(keyElement, options);
 
             if (testProperty is null)
             {

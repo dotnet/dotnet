@@ -1,15 +1,14 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Net;
 
 namespace NuGet.Credentials
 {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+    /// <summary>
+    /// Represents the result of a credential provider request.
+    /// </summary>
     public class CredentialResponse
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         /// <summary>
         /// Creates a credential response object without giving credentials. This constructor is used only if the
@@ -26,12 +25,11 @@ namespace NuGet.Credentials
         /// credential provider was able to get credentials.
         /// </summary>
         /// <param name="credentials">The credentials fetched by the credential provider.</param>
-
         public CredentialResponse(ICredentials credentials) : this(credentials, CredentialStatus.Success)
         {
         }
 
-        private CredentialResponse(ICredentials credentials, CredentialStatus status)
+        private CredentialResponse(ICredentials? credentials, CredentialStatus status)
         {
             if ((credentials != null && status != CredentialStatus.Success) ||
                 (credentials == null && status == CredentialStatus.Success))
@@ -43,11 +41,14 @@ namespace NuGet.Credentials
             Status = status;
         }
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-        public ICredentials Credentials { get; }
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        /// <summary>
+        /// Gets the credentials returned by the provider, or <see langword="null"/> when the request did not succeed.
+        /// </summary>
+        public ICredentials? Credentials { get; }
+
+        /// <summary>
+        /// Gets the status of the credential provider request.
+        /// </summary>
         public CredentialStatus Status { get; }
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

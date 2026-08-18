@@ -12,8 +12,6 @@ using NetTopologySuite.Geometries;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-#nullable disable
-
 public class AdHocMiscellaneousQuerySqlServerTest(NonSharedFixture fixture) : AdHocMiscellaneousQueryRelationalTestBase(fixture)
 {
     protected override ITestStoreFactory NonSharedTestStoreFactory
@@ -67,7 +65,7 @@ INSERT ZeroKey VALUES (NULL)
             0, 10, i =>
             {
                 using var ctx = contextFactory.CreateDbContext();
-                var result = ctx.Posts.Where(x => x.Blog.Id > 1).Include(x => x.Blog).ToList();
+                var result = ctx.Posts.Where(x => x.Blog!.Id > 1).Include(x => x.Blog).ToList();
 
                 Assert.Equal(198, result.Count);
             });
@@ -76,7 +74,7 @@ INSERT ZeroKey VALUES (NULL)
             0, 10, i =>
             {
                 using var ctx = contextFactory.CreateDbContext();
-                var result = ctx.Posts.Where(x => x.Blog.Id > 1).Include(x => x.Blog).Include(x => x.Comments).ToList();
+                var result = ctx.Posts.Where(x => x.Blog!.Id > 1).Include(x => x.Blog).Include(x => x.Comments).ToList();
 
                 Assert.Equal(198, result.Count);
             });
@@ -85,7 +83,7 @@ INSERT ZeroKey VALUES (NULL)
             0, 10, i =>
             {
                 using var ctx = contextFactory.CreateDbContext();
-                var result = ctx.Posts.Where(x => x.Blog.Id > 1).Include(x => x.Blog).ThenInclude(b => b.Author).ToList();
+                var result = ctx.Posts.Where(x => x.Blog!.Id > 1).Include(x => x.Blog).ThenInclude(b => b!.Author).ToList();
 
                 Assert.Equal(198, result.Count);
             });
@@ -102,7 +100,7 @@ INSERT ZeroKey VALUES (NULL)
             0, 10, async (i, ct) =>
             {
                 using var ctx = contextFactory.CreateDbContext();
-                var result = await ctx.Posts.Where(x => x.Blog.Id > 1).Include(x => x.Blog).ToListAsync();
+                var result = await ctx.Posts.Where(x => x.Blog!.Id > 1).Include(x => x.Blog).ToListAsync();
 
                 Assert.Equal(198, result.Count);
             });
@@ -111,7 +109,7 @@ INSERT ZeroKey VALUES (NULL)
             0, 10, async (i, ct) =>
             {
                 using var ctx = contextFactory.CreateDbContext();
-                var result = await ctx.Posts.Where(x => x.Blog.Id > 1).Include(x => x.Blog).Include(x => x.Comments)
+                var result = await ctx.Posts.Where(x => x.Blog!.Id > 1).Include(x => x.Blog).Include(x => x.Comments)
                     .ToListAsync();
 
                 Assert.Equal(198, result.Count);
@@ -121,7 +119,7 @@ INSERT ZeroKey VALUES (NULL)
             0, 10, async (i, ct) =>
             {
                 using var ctx = contextFactory.CreateDbContext();
-                var result = await ctx.Posts.Where(x => x.Blog.Id > 1).Include(x => x.Blog).ThenInclude(b => b.Author)
+                var result = await ctx.Posts.Where(x => x.Blog!.Id > 1).Include(x => x.Blog).ThenInclude(b => b!.Author)
                     .ToListAsync();
 
                 Assert.Equal(198, result.Count);
@@ -131,10 +129,10 @@ INSERT ZeroKey VALUES (NULL)
     // Protected so that it can be used by inheriting tests, and so that things like unused setters are not removed.
     protected class Context5456(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<Blog> Blogs { get; set; }
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<Author> Authors { get; set; }
+        public DbSet<Blog> Blogs { get; set; } = null!;
+        public DbSet<Post> Posts { get; set; } = null!;
+        public DbSet<Comment> Comments { get; set; } = null!;
+        public DbSet<Author> Authors { get; set; } = null!;
 
         public Task SeedAsync()
         {
@@ -150,27 +148,27 @@ INSERT ZeroKey VALUES (NULL)
         public class Blog
         {
             public int Id { get; set; }
-            public List<Post> Posts { get; set; }
-            public Author Author { get; set; }
+            public List<Post> Posts { get; set; } = null!;
+            public Author? Author { get; set; }
         }
 
         public class Author
         {
             public int Id { get; set; }
-            public List<Blog> Blogs { get; set; }
+            public List<Blog> Blogs { get; set; } = null!;
         }
 
         public class Post
         {
             public int Id { get; set; }
-            public Blog Blog { get; set; }
-            public List<Comment> Comments { get; set; }
+            public Blog? Blog { get; set; }
+            public List<Comment> Comments { get; set; } = null!;
         }
 
         public class Comment
         {
             public int Id { get; set; }
-            public Post Blog { get; set; }
+            public Post? Blog { get; set; }
         }
     }
 
@@ -223,7 +221,7 @@ WHERE [c].[Id] = @id
     // Protected so that it can be used by inheriting tests, and so that things like unused setters are not removed.
     protected class Context8864(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Customer> Customers { get; set; } = null!;
 
         public Task SeedAsync()
         {
@@ -240,7 +238,7 @@ WHERE [c].[Id] = @id
         public class Customer
         {
             public int Id { get; set; }
-            public string Name { get; set; }
+            public string? Name { get; set; }
         }
     }
 
@@ -285,7 +283,7 @@ WHERE [w].[Val] = 1
 
     protected class Context9214(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<Widget9214> Widgets { get; set; }
+        public DbSet<Widget9214> Widgets { get; set; } = null!;
 
 #pragma warning disable IDE0060 // Remove unused parameter
         public static int AddOne(int num)
@@ -303,8 +301,8 @@ WHERE [w].[Val] = 1
 
             modelBuilder.Entity<Widget9214>().ToTable("Widgets", "foo");
 
-            modelBuilder.HasDbFunction(typeof(Context9214).GetMethod(nameof(AddOne)));
-            modelBuilder.HasDbFunction(typeof(Context9214).GetMethod(nameof(AddTwo))).HasSchema("dbo");
+            modelBuilder.HasDbFunction(typeof(Context9214).GetMethod(nameof(AddOne))!);
+            modelBuilder.HasDbFunction(typeof(Context9214).GetMethod(nameof(AddTwo))!).HasSchema("dbo");
         }
 
         public async Task SeedAsync()
@@ -352,32 +350,30 @@ END
     {
         var contextFactory = await InitializeNonSharedTest<Context9277>(seed: c => c.SeedAsync());
 
-        using (var context = contextFactory.CreateDbContext())
+        using var context = contextFactory.CreateDbContext();
+        var valueParam = new SqlParameter
         {
-            var valueParam = new SqlParameter
-            {
-                ParameterName = "Value",
-                Value = 0,
-                Direction = ParameterDirection.Output,
-                SqlDbType = SqlDbType.Int
-            };
+            ParameterName = "Value",
+            Value = 0,
+            Direction = ParameterDirection.Output,
+            SqlDbType = SqlDbType.Int
+        };
 
-            Assert.Equal(0, valueParam.Value);
+        Assert.Equal(0, valueParam.Value);
 
-            var blogs = context.Blogs.FromSqlRaw(
-                    "[dbo].[GetPersonAndVoteCount]  @id, @Value out",
-                    new SqlParameter { ParameterName = "id", Value = 1 },
-                    valueParam)
-                .ToList();
+        var blogs = context.Blogs.FromSqlRaw(
+                "[dbo].[GetPersonAndVoteCount]  @id, @Value out",
+                new SqlParameter { ParameterName = "id", Value = 1 },
+                valueParam)
+            .ToList();
 
-            Assert.Single(blogs);
-            Assert.Equal(1, valueParam.Value);
-        }
+        Assert.Single(blogs);
+        Assert.Equal(1, valueParam.Value);
     }
 
     protected class Context9277(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<Blog9277> Blogs { get; set; }
+        public DbSet<Blog9277> Blogs { get; set; } = null!;
 
         public async Task SeedAsync()
         {
@@ -424,18 +420,17 @@ BEGIN
     {
         var contextFactory = await InitializeNonSharedTest<Context12482>();
 
-        using (var context = contextFactory.CreateDbContext())
-        {
-            context.AddRange(
-                new Context12482.BaseEntity { Value = 10.0999 },
-                new Context12482.BaseEntity { Value = -12345 },
-                new Context12482.BaseEntity { Value = "String Value" },
-                new Context12482.BaseEntity { Value = new DateTime(2020, 1, 1) });
+        using var context = contextFactory.CreateDbContext();
+        context.AddRange(
+            new Context12482.BaseEntity { Value = 10.0999 },
+            new Context12482.BaseEntity { Value = -12345 },
+            new Context12482.BaseEntity { Value = "String Value" },
+            new Context12482.BaseEntity { Value = new DateTime(2020, 1, 1) });
 
-            context.SaveChanges();
+        context.SaveChanges();
 
-            AssertSql(
-                """
+        AssertSql(
+            """
 @p0='10.0999' (Nullable = true) (DbType = Object)
 @p1='-12345' (Nullable = true) (DbType = Object)
 @p2='String Value' (Size = 12) (DbType = Object)
@@ -453,13 +448,12 @@ INSERT ([Value])
 VALUES (i.[Value])
 OUTPUT INSERTED.[Id], i._Position;
 """);
-        }
     }
 
     // Protected so that it can be used by inheriting tests, and so that things like unused setters are not removed.
     protected class Context12482(DbContextOptions options) : DbContext(options)
     {
-        public virtual DbSet<BaseEntity> BaseEntities { get; set; }
+        public virtual DbSet<BaseEntity> BaseEntities { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             => modelBuilder.Entity<BaseEntity>();
@@ -469,7 +463,7 @@ OUTPUT INSERTED.[Id], i._Position;
             public int Id { get; set; }
 
             [Column(TypeName = "sql_variant")]
-            public object Value { get; set; }
+            public object? Value { get; set; }
         }
     }
 
@@ -498,7 +492,7 @@ ORDER BY [p].[Id]
     {
         var contextFactory = await InitializeNonSharedTest<Context12518>(seed: c => c.SeedAsync());
         using var context = contextFactory.CreateDbContext();
-        var result = context.Parents.OrderBy(e => e.Id).Select(p => (ulong?)p.Child.ULongRowVersion).FirstOrDefault();
+        var result = context.Parents.OrderBy(e => e.Id).Select(p => (ulong?)p.Child!.ULongRowVersion).FirstOrDefault();
 
         AssertSql(
             """
@@ -511,8 +505,8 @@ ORDER BY [p].[Id]
 
     protected class Context12518(DbContextOptions options) : DbContext(options)
     {
-        public virtual DbSet<Parent12518> Parents { get; set; }
-        public virtual DbSet<Child12518> Children { get; set; }
+        public virtual DbSet<Parent12518> Parents { get; set; } = null!;
+        public virtual DbSet<Child12518> Children { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -539,7 +533,7 @@ ORDER BY [p].[Id]
         {
             public Guid Id { get; set; } = Guid.NewGuid();
             public Guid? ChildId { get; set; }
-            public Child12518 Child { get; set; }
+            public Child12518? Child { get; set; }
         }
 
         public class Child12518
@@ -547,7 +541,7 @@ ORDER BY [p].[Id]
             public Guid Id { get; set; } = Guid.NewGuid();
             public ulong ULongRowVersion { get; set; }
             public Guid ParentId { get; set; }
-            public Parent12518 Parent { get; set; }
+            public Parent12518? Parent { get; set; }
         }
     }
 
@@ -580,7 +574,7 @@ WHERE [r].[MyTime] = @testDateList1
     // Protected so that it can be used by inheriting tests, and so that things like unused setters are not removed.
     protected class Context13118(DbContextOptions options) : DbContext(options)
     {
-        public virtual DbSet<ReproEntity13118> ReproEntity { get; set; }
+        public virtual DbSet<ReproEntity13118> ReproEntity { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             => modelBuilder.Entity<ReproEntity13118>(e => e.Property("MyTime").HasColumnType("smalldatetime"));
@@ -957,7 +951,7 @@ WHERE [d].[SmallDateTime] IN (@dateTimes1, @dateTimes2, @dateTimes3, @dateTimes4
 
     protected class Context14095(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<DatesAndPrunes14095> Dates { get; set; }
+        public DbSet<DatesAndPrunes14095> Dates { get; set; } = null!;
 
         public Task SeedAsync()
         {
@@ -1100,7 +1094,7 @@ ORDER BY [r].[Id]
     // Protected so that it can be used by inheriting tests, and so that things like unused setters are not removed.
     protected class Context15518(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<Repo> Repos { get; set; }
+        public DbSet<Repo> Repos { get; set; } = null!;
 
         public Task SeedAsync()
         {
@@ -1114,7 +1108,7 @@ ORDER BY [r].[Id]
         public class Repo
         {
             public int Id { get; set; }
-            public string Name { get; set; }
+            public string? Name { get; set; }
         }
     }
 
@@ -1127,22 +1121,21 @@ ORDER BY [r].[Id]
     {
         var contextFactory = await InitializeNonSharedTest<Context19206>(seed: c => c.SeedAsync());
 
-        using (var context = contextFactory.CreateDbContext())
-        {
-            var query = from t1 in context.Tests.FromSql(
-                            $"Select * from Tests Where Type = {Context19206.TestType19206.Unit}")
-                        from t2 in context.Tests.FromSql(
-                            $"Select * from Tests Where Type = {Context19206.TestType19206.Integration}")
-                        select new { t1, t2 };
+        using var context = contextFactory.CreateDbContext();
+        var query = from t1 in context.Tests.FromSql(
+                        $"Select * from Tests Where Type = {Context19206.TestType19206.Unit}")
+                    from t2 in context.Tests.FromSql(
+                        $"Select * from Tests Where Type = {Context19206.TestType19206.Integration}")
+                    select new { t1, t2 };
 
-            var result = query.ToList();
+        var result = query.ToList();
 
-            var item = Assert.Single(result);
-            Assert.Equal(Context19206.TestType19206.Unit, item.t1.Type);
-            Assert.Equal(Context19206.TestType19206.Integration, item.t2.Type);
+        var item = Assert.Single(result);
+        Assert.Equal(Context19206.TestType19206.Unit, item.t1.Type);
+        Assert.Equal(Context19206.TestType19206.Integration, item.t2.Type);
 
-            AssertSql(
-                """
+        AssertSql(
+            """
 p0='0'
 p1='1'
 
@@ -1154,13 +1147,12 @@ CROSS JOIN (
     Select * from Tests Where Type = @p1
 ) AS [m0]
 """);
-        }
     }
 
     // Protected so that it can be used by inheriting tests, and so that things like unused setters are not removed.
     protected class Context19206(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<Test> Tests { get; set; }
+        public DbSet<Test> Tests { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1195,7 +1187,7 @@ CROSS JOIN (
     {
         var contextFactory = await InitializeNonSharedTest<Context21666>(
             onConfiguring: options => ((IDbContextOptionsBuilderInfrastructure)options).AddOrUpdateExtension(
-                options.Options.FindExtension<SqlServerOptionsExtension>()
+                options.Options.FindExtension<SqlServerOptionsExtension>()!
                     .WithConnection(null)
                     .WithConnectionString(SqlServerTestStore.CreateConnectionString(NonSharedStoreName))));
 
@@ -1213,7 +1205,7 @@ CROSS JOIN (
     // Protected so that it can be used by inheriting tests, and so that things like unused setters are not removed.
     protected class Context21666(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<List> Lists { get; set; }
+        public DbSet<List> Lists { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1254,7 +1246,7 @@ WHERE [l].[Name] = N'My Location'
     // Protected so that it can be used by inheriting tests, and so that things like unused setters are not removed.
     protected class Context23282(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<Location> Locations { get; set; }
+        public DbSet<Location> Locations { get; set; } = null!;
 
         public Task SeedAsync()
         {
@@ -1277,14 +1269,14 @@ WHERE [l].[Name] = N'My Location'
         [Owned]
         public class Address
         {
-            public string Line1 { get; set; }
-            public string Line2 { get; set; }
-            public string Town { get; set; }
-            public string County { get; set; }
-            public string Postcode { get; set; }
+            public string? Line1 { get; set; }
+            public string? Line2 { get; set; }
+            public string? Town { get; set; }
+            public string? County { get; set; }
+            public string? Postcode { get; set; }
             public int Value { get; set; }
 
-            public Point Point { get; set; }
+            public Point? Point { get; set; }
         }
 
         public class Location
@@ -1292,8 +1284,8 @@ WHERE [l].[Name] = N'My Location'
             [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
             public Guid Id { get; set; }
 
-            public string Name { get; set; }
-            public Address Address { get; set; }
+            public string? Name { get; set; }
+            public Address? Address { get; set; }
         }
     }
 
@@ -1362,7 +1354,7 @@ ORDER BY [m0].[Id]
     {
         public long Id { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 
     protected class Message24216
@@ -1382,14 +1374,14 @@ ORDER BY [m0].[Id]
 
         public long GenderId { get; set; }
 
-        public string StatusMessage { get; set; }
+        public string? StatusMessage { get; set; }
     }
 
     // Protected so that it can be used by inheriting tests, and so that things like unused setters are not removed.
     protected class Context24216(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<Gender24216> Gender { get; set; }
-        public DbSet<Message24216> Message { get; set; }
+        public DbSet<Gender24216> Gender { get; set; } = null!;
+        public DbSet<Message24216> Message { get; set; } = null!;
 
         public IQueryable<PersonStatus24216> GetPersonStatusAsOf(long personId, DateTime asOf)
             => FromExpression(() => GetPersonStatusAsOf(personId, asOf));
@@ -1401,7 +1393,7 @@ ORDER BY [m0].[Id]
             modelBuilder.HasDbFunction(
                 typeof(Context24216).GetMethod(
                     nameof(GetPersonStatusAsOf),
-                    [typeof(long), typeof(DateTime)]));
+                    [typeof(long), typeof(DateTime)])!);
         }
     }
 
@@ -1450,7 +1442,7 @@ GROUP BY [d].[Id]
 
     protected class Context27427(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<DemoEntity> DemoEntities { get; set; }
+        public DbSet<DemoEntity> DemoEntities { get; set; } = null!;
     }
 
     protected class DemoEntity
@@ -1550,7 +1542,7 @@ FROM [Entities] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [e]
 
     protected class Context30478(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<Entity30478> Entities { get; set; }
+        public DbSet<Entity30478> Entities { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -1622,15 +1614,15 @@ FROM [Entities] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [e]
     protected class Entity30478
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public Json30478 Reference { get; set; }
-        public List<Json30478> Collection { get; set; }
+        public string? Name { get; set; }
+        public Json30478? Reference { get; set; }
+        public List<Json30478> Collection { get; set; } = null!;
     }
 
     protected class Json30478
     {
-        public string Name { get; set; }
-        public JsonNested30478 Nested { get; set; }
+        public string? Name { get; set; }
+        public JsonNested30478? Nested { get; set; }
     }
 
     protected class JsonNested30478
@@ -2399,22 +2391,11 @@ ORDER BY [o2].[Id]
 
         AssertSql(
             """
-SELECT (
-    SELECT MIN([o].[HourlyRate])
-    FROM [TimeSheets] AS [t0]
-    LEFT JOIN [Order] AS [o] ON [t0].[OrderId] = [o].[Id]
-    WHERE [t0].[OrderId] IS NOT NULL AND [t].[OrderId] = [t0].[OrderId]) AS [HourlyRate], (
-    SELECT MIN([c].[Id])
-    FROM [TimeSheets] AS [t1]
-    INNER JOIN [Project] AS [p] ON [t1].[ProjectId] = [p].[Id]
-    INNER JOIN [Customers] AS [c] ON [p].[CustomerId] = [c].[Id]
-    WHERE [t1].[OrderId] IS NOT NULL AND [t].[OrderId] = [t1].[OrderId]) AS [CustomerId], (
-    SELECT MIN([c0].[Name])
-    FROM [TimeSheets] AS [t2]
-    INNER JOIN [Project] AS [p0] ON [t2].[ProjectId] = [p0].[Id]
-    INNER JOIN [Customers] AS [c0] ON [p0].[CustomerId] = [c0].[Id]
-    WHERE [t2].[OrderId] IS NOT NULL AND [t].[OrderId] = [t2].[OrderId]) AS [CustomerName]
+SELECT MIN([o].[HourlyRate]) AS [HourlyRate], MIN([c].[Id]) AS [CustomerId], MIN([c].[Name]) AS [CustomerName]
 FROM [TimeSheets] AS [t]
+LEFT JOIN [Order] AS [o] ON [t].[OrderId] = [o].[Id]
+INNER JOIN [Project] AS [p] ON [t].[ProjectId] = [p].[Id]
+INNER JOIN [Customers] AS [c] ON [p].[CustomerId] = [c].[Id]
 WHERE [t].[OrderId] IS NOT NULL
 GROUP BY [t].[OrderId]
 """);
@@ -2653,15 +2634,15 @@ WHERE 1 = [t].[Id]
             .GroupBy(w => 1)
             .Select(g => g
                 .Where(wCurrent =>
-                    EF.Functions.DateDiffSecond(wCurrent.StartedAt, wCurrent.CompletedAt) >
-                    EF.Functions.StandardDeviationSample(g.Select(w => EF.Functions.DateDiffSecond(w.StartedAt, w.CompletedAt))))
+                    EF.Functions.DateDiffSecond(wCurrent.StartedAt, wCurrent.CompletedAt)
+                    > EF.Functions.StandardDeviationSample(g.Select(w => EF.Functions.DateDiffSecond(w.StartedAt, w.CompletedAt))))
                 .ToList())
             .ToListAsync();
     }
 
     protected class Context37327(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<WorkUnit> WorkUnits { get; set; }
+        public DbSet<WorkUnit> WorkUnits { get; set; } = null!;
 
         public class WorkUnit
         {
@@ -2697,6 +2678,22 @@ ORDER BY [d].[Id]
 SELECT [u].[Id], [u].[Name]
 FROM [Users] AS [u]
 WHERE [u].[Name] LIKE N'Name%'
+""");
+    }
+
+    public override async Task Entity_equality_with_Contains_and_Parameter(bool async)
+    {
+        await base.Entity_equality_with_Contains_and_Parameter(async);
+
+        AssertSql(
+            """
+@entity_equality_details_Id1='1'
+@entity_equality_details_Id2='2'
+
+SELECT [b].[Id], [b].[DetailsId], [b].[Name]
+FROM [Blogs] AS [b]
+LEFT JOIN [BlogDetails] AS [b0] ON [b].[DetailsId] = [b0].[Id]
+WHERE [b0].[Id] IN (@entity_equality_details_Id1, @entity_equality_details_Id2)
 """);
     }
 
@@ -3205,40 +3202,6 @@ ORDER BY [s].[PickupStatusId]
 """);
     }
 
-    public override async Task GroupBy_after_join_then_whole_object()
-    {
-        await base.GroupBy_after_join_then_whole_object();
-
-        AssertSql(
-            """
-SELECT [s1].[PickupStatusId], [s3].[pickupStatusId], [s3].[Count], [s3].[c]
-FROM (
-    SELECT [s].[PickupStatusId]
-    FROM [Statuses] AS [s]
-    LEFT JOIN (
-        SELECT [r].[PickupStatusId] AS [pickupStatusId]
-        FROM [Requests] AS [r]
-        GROUP BY [r].[PickupStatusId]
-    ) AS [r0] ON [s].[PickupStatusId] = [r0].[pickupStatusId]
-    GROUP BY [s].[PickupStatusId]
-) AS [s1]
-LEFT JOIN (
-    SELECT [s2].[pickupStatusId], [s2].[Count], [s2].[c], [s2].[PickupStatusId0]
-    FROM (
-        SELECT [r1].[pickupStatusId], [r1].[Count], 1 AS [c], [s0].[PickupStatusId] AS [PickupStatusId0], ROW_NUMBER() OVER(PARTITION BY [s0].[PickupStatusId] ORDER BY [s0].[PickupStatusId], [r1].[pickupStatusId]) AS [row]
-        FROM [Statuses] AS [s0]
-        LEFT JOIN (
-            SELECT [r2].[PickupStatusId] AS [pickupStatusId], COUNT(*) AS [Count]
-            FROM [Requests] AS [r2]
-            GROUP BY [r2].[PickupStatusId]
-        ) AS [r1] ON [s0].[PickupStatusId] = [r1].[pickupStatusId]
-    ) AS [s2]
-    WHERE [s2].[row] <= 1
-) AS [s3] ON [s1].[PickupStatusId] = [s3].[PickupStatusId0]
-ORDER BY [s1].[PickupStatusId]
-""");
-    }
-
     public override async Task Second_join_after_then_whole_object()
     {
         await base.Second_join_after_then_whole_object();
@@ -3334,6 +3297,144 @@ ORDER BY [s].[PickupStatusId]
 """);
     }
 
+    public override async Task GroupBy_after_join_then_whole_object()
+    {
+        await base.GroupBy_after_join_then_whole_object();
+
+        AssertSql(
+            """
+SELECT [s1].[PickupStatusId], [s3].[pickupStatusId], [s3].[Count], [s3].[marker], [s3].[c]
+FROM (
+    SELECT [s].[PickupStatusId]
+    FROM [Statuses] AS [s]
+    LEFT JOIN (
+        SELECT [r].[PickupStatusId] AS [pickupStatusId]
+        FROM [Requests] AS [r]
+        GROUP BY [r].[PickupStatusId]
+    ) AS [r0] ON [s].[PickupStatusId] = [r0].[pickupStatusId]
+    GROUP BY [s].[PickupStatusId]
+) AS [s1]
+LEFT JOIN (
+    SELECT [s2].[pickupStatusId], [s2].[Count], [s2].[marker], [s2].[c], [s2].[PickupStatusId0]
+    FROM (
+        SELECT [r1].[pickupStatusId], [r1].[Count], [r1].[marker], 1 AS [c], [s0].[PickupStatusId] AS [PickupStatusId0], ROW_NUMBER() OVER(PARTITION BY [s0].[PickupStatusId] ORDER BY [s0].[PickupStatusId], [r1].[pickupStatusId]) AS [row]
+        FROM [Statuses] AS [s0]
+        LEFT JOIN (
+            SELECT [r2].[PickupStatusId] AS [pickupStatusId], COUNT(*) AS [Count], 1 AS [marker]
+            FROM [Requests] AS [r2]
+            GROUP BY [r2].[PickupStatusId]
+        ) AS [r1] ON [s0].[PickupStatusId] = [r1].[pickupStatusId]
+    ) AS [s2]
+    WHERE [s2].[row] <= 1
+) AS [s3] ON [s1].[PickupStatusId] = [s3].[PickupStatusId0]
+ORDER BY [s1].[PickupStatusId]
+""");
+    }
+
+    public override async Task GroupBy_after_join_then_whole_object_nested_in_wrapper()
+    {
+        await base.GroupBy_after_join_then_whole_object_nested_in_wrapper();
+
+        // SQL is intentionally identical to the flat GroupBy_after_join_then_whole_object variant -- the wrapper is
+        // client-side-only nesting, so it changes no SQL. This test exists to exercise the nested-node rekey path.
+        AssertSql(
+            """
+SELECT [s1].[PickupStatusId], [s3].[pickupStatusId], [s3].[Count], [s3].[marker], [s3].[c]
+FROM (
+    SELECT [s].[PickupStatusId]
+    FROM [Statuses] AS [s]
+    LEFT JOIN (
+        SELECT [r].[PickupStatusId] AS [pickupStatusId]
+        FROM [Requests] AS [r]
+        GROUP BY [r].[PickupStatusId]
+    ) AS [r0] ON [s].[PickupStatusId] = [r0].[pickupStatusId]
+    GROUP BY [s].[PickupStatusId]
+) AS [s1]
+LEFT JOIN (
+    SELECT [s2].[pickupStatusId], [s2].[Count], [s2].[marker], [s2].[c], [s2].[PickupStatusId0]
+    FROM (
+        SELECT [r1].[pickupStatusId], [r1].[Count], [r1].[marker], 1 AS [c], [s0].[PickupStatusId] AS [PickupStatusId0], ROW_NUMBER() OVER(PARTITION BY [s0].[PickupStatusId] ORDER BY [s0].[PickupStatusId], [r1].[pickupStatusId]) AS [row]
+        FROM [Statuses] AS [s0]
+        LEFT JOIN (
+            SELECT [r2].[PickupStatusId] AS [pickupStatusId], COUNT(*) AS [Count], 1 AS [marker]
+            FROM [Requests] AS [r2]
+            GROUP BY [r2].[PickupStatusId]
+        ) AS [r1] ON [s0].[PickupStatusId] = [r1].[pickupStatusId]
+    ) AS [s2]
+    WHERE [s2].[row] <= 1
+) AS [s3] ON [s1].[PickupStatusId] = [s3].[PickupStatusId0]
+ORDER BY [s1].[PickupStatusId]
+""");
+    }
+
+    public override async Task GroupBy_after_join_then_whole_object_dto_memberinit()
+    {
+        await base.GroupBy_after_join_then_whole_object_dto_memberinit();
+
+        AssertSql(
+            """
+SELECT [s1].[PickupStatusId], [s3].[PickupStatusId], [s3].[Count], [s3].[marker], [s3].[c]
+FROM (
+    SELECT [s].[PickupStatusId]
+    FROM [Statuses] AS [s]
+    LEFT JOIN (
+        SELECT [r].[PickupStatusId]
+        FROM [Requests] AS [r]
+        GROUP BY [r].[PickupStatusId]
+    ) AS [r0] ON [s].[PickupStatusId] = [r0].[PickupStatusId]
+    GROUP BY [s].[PickupStatusId]
+) AS [s1]
+LEFT JOIN (
+    SELECT [s2].[PickupStatusId], [s2].[Count], [s2].[marker], [s2].[c], [s2].[PickupStatusId0]
+    FROM (
+        SELECT [r1].[PickupStatusId], [r1].[Count], [r1].[marker], 1 AS [c], [s0].[PickupStatusId] AS [PickupStatusId0], ROW_NUMBER() OVER(PARTITION BY [s0].[PickupStatusId] ORDER BY [s0].[PickupStatusId], [r1].[PickupStatusId]) AS [row]
+        FROM [Statuses] AS [s0]
+        LEFT JOIN (
+            SELECT [r2].[PickupStatusId], COUNT(*) AS [Count], 1 AS [marker]
+            FROM [Requests] AS [r2]
+            GROUP BY [r2].[PickupStatusId]
+        ) AS [r1] ON [s0].[PickupStatusId] = [r1].[PickupStatusId]
+    ) AS [s2]
+    WHERE [s2].[row] <= 1
+) AS [s3] ON [s1].[PickupStatusId] = [s3].[PickupStatusId0]
+ORDER BY [s1].[PickupStatusId]
+""");
+    }
+
+    public override async Task GroupBy_after_join_then_whole_object_struct()
+    {
+        await base.GroupBy_after_join_then_whole_object_struct();
+
+        AssertSql(
+            """
+SELECT [s1].[PickupStatusId], [s3].[PickupStatusId], [s3].[Count], [s3].[marker], [s3].[c]
+FROM (
+    SELECT [s].[PickupStatusId]
+    FROM [Statuses] AS [s]
+    LEFT JOIN (
+        SELECT [r].[PickupStatusId]
+        FROM [Requests] AS [r]
+        GROUP BY [r].[PickupStatusId]
+    ) AS [r0] ON [s].[PickupStatusId] = [r0].[PickupStatusId]
+    GROUP BY [s].[PickupStatusId]
+) AS [s1]
+LEFT JOIN (
+    SELECT [s2].[PickupStatusId], [s2].[Count], [s2].[marker], [s2].[c], [s2].[PickupStatusId0]
+    FROM (
+        SELECT [r1].[PickupStatusId], [r1].[Count], [r1].[marker], 1 AS [c], [s0].[PickupStatusId] AS [PickupStatusId0], ROW_NUMBER() OVER(PARTITION BY [s0].[PickupStatusId] ORDER BY [s0].[PickupStatusId], [r1].[PickupStatusId]) AS [row]
+        FROM [Statuses] AS [s0]
+        LEFT JOIN (
+            SELECT [r2].[PickupStatusId], COUNT(*) AS [Count], 1 AS [marker]
+            FROM [Requests] AS [r2]
+            GROUP BY [r2].[PickupStatusId]
+        ) AS [r1] ON [s0].[PickupStatusId] = [r1].[PickupStatusId]
+    ) AS [s2]
+    WHERE [s2].[row] <= 1
+) AS [s3] ON [s1].[PickupStatusId] = [s3].[PickupStatusId0]
+ORDER BY [s1].[PickupStatusId]
+""");
+    }
+
     public override async Task Two_left_joined_nonentity_objects_second_marker_orphaned()
     {
         await base.Two_left_joined_nonentity_objects_second_marker_orphaned();
@@ -3393,6 +3494,24 @@ ORDER BY [s0].[PickupStatusId]
 """);
     }
 
+    public override async Task Query_when_null_key_in_database_should_throw()
+    {
+        await base.Query_when_null_key_in_database_should_throw();
+
+        AssertSql(
+            """
+SELECT [z].[Id]
+FROM [ZeroKey] AS [z]
+""");
+    }
+
+    public override async Task Mapping_JsonElement_property_throws_a_meaningful_exception()
+    {
+        await base.Mapping_JsonElement_property_throws_a_meaningful_exception();
+
+        AssertSql();
+    }
+
     public override async Task Struct_composed_user_marker_projection_into_subquery_self_heals()
     {
         await base.Struct_composed_user_marker_projection_into_subquery_self_heals();
@@ -3414,4 +3533,8 @@ ORDER BY [s0].[PickupStatusId]
     }
 
     #endregion
+
+    [Fact]
+    public virtual void Check_all_tests_overridden()
+        => TestHelpers.AssertAllMethodsOverridden(GetType());
 }

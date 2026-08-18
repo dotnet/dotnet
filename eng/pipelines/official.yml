@@ -11,8 +11,14 @@ trigger:
       - internal/release/*
 
 schedules:
-  - cron: "0 12 * * 0,6" # run every Saturday and Sunday at 12:00 (UTC)
-    displayName: Signed main build on weekends
+  - cron: "0 12 * * 6" # run every Saturday at 12:00 (UTC)
+    displayName: Signed main build on Saturdays
+    branches:
+      include:
+      - main
+    always: true
+  - cron: "0 12 * * 0" # run every Sunday at 12:00 (UTC)
+    displayName: Unsigned CodeQL main build on Sundays
     branches:
       include:
       - main
@@ -30,15 +36,6 @@ parameters:
     - Unsigned
     - Default (unsigned for non release-branch builds)
 
-- name: desiredIBC
-  displayName: 'Enable IBC?'
-  type: string
-  default: 'Default (disabled for non-release branch builds)'
-  values:
-    - Enabled
-    - Disabled
-    - Default (disabled for non-release branch builds)
-
 - name: desiredFinalVersionKind
   displayName: 'Final version kind'
   type: string
@@ -55,7 +52,7 @@ variables:
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
 
 - name: Codeql.DoNotStartTimes
-  value: 'Mon;Tue;Wed;Thu;Fri;Sat' # run only on the scheduled build on Sunday
+  value: 'Mon;Tue;Wed;Thu;Fri;Sat' # run only on the unsigned scheduled build on Sunday
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: skipComponentGovernanceDetection  # we run CG on internal builds only
@@ -81,6 +78,7 @@ extends:
       networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     featureFlags:
       binskimScanAllExtensions: true
+      useBinskimResponseFile: true
       incrementalSDLBinaryAnalysis: true
       autoEnablePREfastWithNewRuleset: false
       autoEnableRoslynWithNewRuleset: false
@@ -130,7 +128,7 @@ extends:
         # (--DirectoryExclusionList, which takes semicolon-separated glob patterns).
         #
         # Note: Keep these in sync with componentgovernance.ignoreDirectories above.
-        additionalComponentDetectorArgs: '--DirectoryExclusionList artifacts/bin/Microsoft.DotNet.SourceBuild.Tests;artifacts/obj/toolset/Publish/artifacts-layout;src/arcade/src/Microsoft.DotNet.SignTool.Tests/Resources;src/sdk/test/TestAssets/TestPackages;src/wpf/.tools'
+        additionalComponentDetectorArgs: '--DirectoryExclusionList **/artifacts/bin/Microsoft.DotNet.SourceBuild.Tests/**;**/artifacts/obj/toolset/Publish/artifacts-layout/**;**/src/arcade/src/Microsoft.DotNet.SignTool.Tests/Resources/**;**/src/sdk/test/TestAssets/TestPackages/**;**/src/wpf/.tools/**'
       autobaseline:
         isMainPipeline: true
 
@@ -191,11 +189,10 @@ extends:
     - template: /eng/pipelines/templates/stages/vmr-scan.yml@self
     - template: /eng/pipelines/templates/stages/vmr-build.yml@self
       parameters:
-        ${{ if and(eq(variables.isScheduleTrigger, 'true'), eq(variables['Build.CronSchedule.DisplayName'], 'Signed main build on weekends')) }}:
+        ${{ if and(eq(variables.isScheduleTrigger, 'true'), eq(variables['Build.CronSchedule.DisplayName'], 'Signed main build on Saturdays')) }}:
           desiredSigning: Signed (Real)
         ${{ else }}:
           desiredSigning: ${{ parameters.desiredSigning }}
-        desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isOfficialBuild: true
         scope: full

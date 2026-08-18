@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -237,6 +237,12 @@ namespace Microsoft.Build.Execution
         private bool _reportFileAccesses;
 
         /// <summary>
+        /// The configuration for allowed unknown attributes/elements during parsing.
+        /// Loaded on the main node and serialized to worker nodes.
+        /// </summary>
+        private ParserIgnoreConfiguration _ParserIgnoreConfiguration = ParserIgnoreConfiguration.Empty;
+
+        /// <summary>
         /// Constructor for those who intend to set all properties themselves.
         /// </summary>
         public BuildParameters()
@@ -262,6 +268,7 @@ namespace Microsoft.Build.Execution
 
             _globalProperties = new PropertyDictionary<ProjectPropertyInstance>(projectCollection.GlobalPropertiesCollection);
             _propertiesFromCommandLine = projectCollection.PropertiesFromCommandLine;
+            _ParserIgnoreConfiguration = projectCollection.ParserIgnoreConfiguration;
         }
 
         /// <summary>
@@ -330,6 +337,7 @@ namespace Microsoft.Build.Execution
             IsTelemetryEnabled = other.IsTelemetryEnabled;
             ProjectCacheDescriptor = other.ProjectCacheDescriptor;
             _enableTargetOutputLogging = other.EnableTargetOutputLogging;
+            _ParserIgnoreConfiguration = other._ParserIgnoreConfiguration;
         }
 
         /// <summary>
@@ -361,6 +369,22 @@ namespace Microsoft.Build.Execution
         /// Gets the environment variables which were set when this build was created.
         /// </summary>
         public IDictionary<string, string> BuildProcessEnvironment => BuildProcessEnvironmentInternal;
+
+        internal void SetBuildProcessEnvironmentVariable(string name, string value)
+        {
+            Dictionary<string, string> environment = new(BuildProcessEnvironmentInternal, CommunicationsUtilities.EnvironmentVariableComparer);
+
+            if (value is null)
+            {
+                environment.Remove(name);
+            }
+            else
+            {
+                environment[name] = value;
+            }
+
+            _buildProcessEnvironment = environment.ToFrozenDictionary(CommunicationsUtilities.EnvironmentVariableComparer);
+        }
 
         /// <summary>
         /// The name of the culture to use during the build.
@@ -807,6 +831,16 @@ namespace Microsoft.Build.Execution
         }
 
         /// <summary>
+        /// Gets or sets the configuration for allowed unknown attributes/elements during parsing.
+        /// When set, this configuration is used for parsing and evaluation.
+        /// </summary>
+        internal ParserIgnoreConfiguration ParserIgnoreConfiguration
+        {
+            get => _ParserIgnoreConfiguration;
+            set => _ParserIgnoreConfiguration = value;
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating if the build is allowed to interact with the user.
         /// </summary>
         public bool Interactive
@@ -978,6 +1012,7 @@ namespace Microsoft.Build.Execution
             translator.Translate(ref _reportFileAccesses);
             translator.Translate(ref _enableTargetOutputLogging);
             translator.Translate(ref _multiThreaded);
+            translator.Translate(ref _ParserIgnoreConfiguration, ParserIgnoreConfiguration.FactoryForDeserialization);
 
             // ProjectRootElementCache is not transmitted.
             // ResetCaches is not transmitted.

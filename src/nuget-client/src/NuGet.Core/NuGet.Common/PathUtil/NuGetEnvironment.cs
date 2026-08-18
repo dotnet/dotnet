@@ -32,7 +32,7 @@ namespace NuGet.Common
 
         static NuGetEnvironment()
         {
-            StaticState.StartMSBuildRestoreTasks += ResetEnvironmentCaches;
+            StaticState.BuildEnded += ResetEnvironmentCaches;
         }
 
         /// <summary>

@@ -1,8 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using NameSpace1;
@@ -48,7 +46,7 @@ namespace Microsoft.EntityFrameworkCore.Query
                 => modelBuilder.Entity<ZeroKey2951>().ToTable("ZeroKey", t => t.ExcludeFromMigrations())
                     .Property(z => z.Id).ValueGeneratedNever();
 
-            public DbSet<ZeroKey2951> ZeroKeys { get; set; }
+            public DbSet<ZeroKey2951> ZeroKeys { get; set; } = null!;
 
             public class ZeroKey2951
             {
@@ -138,20 +136,20 @@ namespace Microsoft.EntityFrameworkCore.Query
             public class Entity11818
             {
                 public int Id { get; set; }
-                public string Name { get; set; }
+                public string? Name { get; set; }
             }
 
             public class AnotherEntity11818
             {
                 public int Id { get; set; }
-                public string Name { get; set; }
+                public string? Name { get; set; }
                 public bool Exists { get; set; }
             }
 
             public class MaumarEntity11818
             {
                 public int Id { get; set; }
-                public string Name { get; set; }
+                public string? Name { get; set; }
                 public bool Exists { get; set; }
             }
         }
@@ -176,15 +174,15 @@ namespace Microsoft.EntityFrameworkCore.Query
             {
                 var mb = modelBuilder.Entity(typeof(TestQuery));
 
-                mb.HasBaseType((Type)null);
+                mb.HasBaseType((Type)null!);
                 mb.HasNoKey();
-                mb.ToTable((string)null);
+                mb.ToTable((string)null!);
 
                 mb = modelBuilder.Entity(typeof(NameSpace2.TestQuery));
 
-                mb.HasBaseType((Type)null);
+                mb.HasBaseType((Type)null!);
                 mb.HasNoKey();
-                mb.ToTable((string)null);
+                mb.ToTable((string)null!);
             }
         }
 
@@ -216,11 +214,11 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         protected class Context27954(DbContextOptions options) : DbContext(options)
         {
-            public DbSet<MyEntity> MyEntities { get; set; }
+            public DbSet<MyEntity> MyEntities { get; set; } = null!;
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
                 => modelBuilder
-                    .HasDbFunction(typeof(MyEntity).GetMethod(nameof(MyEntity.Modify)))
+                    .HasDbFunction(typeof(MyEntity).GetMethod(nameof(MyEntity.Modify))!)
                     .HasName("ModifyDate")
                     .HasStoreType("datetime")
                     .HasSchema("dbo");
@@ -253,7 +251,7 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         protected class Context34752(DbContextOptions options) : DbContext(options)
         {
-            public DbSet<Entity> Entities { get; set; }
+            public DbSet<Entity> Entities { get; set; } = null!;
 
             public class Entity
             {
@@ -299,12 +297,12 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         protected class InlinedRedactingContext(DbContextOptions options) : DbContext(options)
         {
-            public DbSet<TestEntity> TestEntities { get; set; }
+            public DbSet<TestEntity> TestEntities { get; set; } = null!;
 
             public class TestEntity
             {
                 public int Id { get; set; }
-                public string Name { get; set; }
+                public string Name { get; set; } = null!;
             }
         }
 
@@ -322,7 +320,7 @@ namespace Microsoft.EntityFrameworkCore.Query
             using var context = contextFactory.CreateDbContext();
 
             List<Context36311.BlogDetails> details = [new() { Id = 1 }, new() { Id = 2 }];
-            var query = context.Blogs.Where(b => details.Contains(b.Details));
+            var query = context.Blogs.Where(b => details.Contains(b.Details!));
 
             var result = async
                 ? await query.ToListAsync()
@@ -331,20 +329,20 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         protected class Context36311(DbContextOptions options) : DbContext(options)
         {
-            public DbSet<Blog> Blogs { get; set; }
+            public DbSet<Blog> Blogs { get; set; } = null!;
 
             public class Blog
             {
                 public int Id { get; set; }
-                public string Name { get; set; }
+                public string? Name { get; set; }
 
-                public BlogDetails Details { get; set; }
+                public BlogDetails? Details { get; set; }
             }
 
             public class BlogDetails
             {
                 public int Id { get; set; }
-                public string Name { get; set; }
+                public string? Name { get; set; }
             }
         }
 
@@ -376,7 +374,7 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         protected class Context36247(DbContextOptions options) : DbContext(options)
         {
-            public DbSet<User> Users { get; set; }
+            public DbSet<User> Users { get; set; } = null!;
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
                 => modelBuilder.Entity<User>().Property(e => e.Name)
@@ -418,15 +416,17 @@ namespace Microsoft.EntityFrameworkCore.Query
         //   for a MemberInit-bound value type, a zeroed default(T) -- matching LINQ-to-Objects
         //   DefaultIfEmpty semantics for a value-type sequence, which never yields a true null) on a
         //   no-match (a synthetic "marker" column is added inside the LEFT JOIN subquery so the shaper can
-        //   distinguish a no-match row from a matched row whose members happen to be null).
+        //   distinguish a no-match row from a matched row whose members happen to be null). A second join
+        //   after the DefaultIfEmpty, and GroupBy applied after the left join then reduced via a to-one
+        //   subquery / FirstOrDefault, also correctly materialize the whole non-entity object as null on a
+        //   no-match (the marker survives the shaper rebuild across the subsequent join / grouping).
         // DEFERRED (still failing, tracked as #30915 follow-ups; these tests assert the throw /
         //   translation failure): constructor-bound (read-only) reference-type DTO and positional record
         //   struct (fail to translate: ReplacingExpressionVisitor's constructor-parameter fold is
         //   deliberately restricted to ValueTuple/Tuple -- see ValueTuple_whole_object_from_nullable_side --
         //   since only those BCL types have a closed, guaranteed constructor-to-property contract; an
         //   arbitrary named type's "matching name" convention can't be verified and could silently fold to
-        //   the wrong value for a transforming constructor); GroupBy-after-join and a second join after
-        //   the DefaultIfEmpty (the shaper rebuild loses the marker); plain inner with no aggregate / no
+        //   the wrong value for a transforming constructor); plain inner with no aggregate / no
         //   pushdown; Union and other set operations over the projection; and server-side OrderBy/Where
         //   null-checks against the whole non-entity projection.
 
@@ -454,8 +454,8 @@ namespace Microsoft.EntityFrameworkCore.Query
             // status 1 -> matched, Count 2
             Assert.Equal(1, result[0].PickupStatusId);
             Assert.NotNull(result[0].countInfo);
-            Assert.Equal(1, result[0].countInfo.pickupStatusId);
-            Assert.Equal(2, result[0].countInfo.Count);
+            Assert.Equal(1, result[0].countInfo!.pickupStatusId);
+            Assert.Equal(2, result[0].countInfo!.Count);
 
             // status 2 -> no match, whole non-entity object is null
             Assert.Equal(2, result[1].PickupStatusId);
@@ -464,8 +464,8 @@ namespace Microsoft.EntityFrameworkCore.Query
             // status 3 -> matched, Count 1
             Assert.Equal(3, result[2].PickupStatusId);
             Assert.NotNull(result[2].countInfo);
-            Assert.Equal(3, result[2].countInfo.pickupStatusId);
-            Assert.Equal(1, result[2].countInfo.Count);
+            Assert.Equal(3, result[2].countInfo!.pickupStatusId);
+            Assert.Equal(1, result[2].countInfo!.Count);
         }
 
         [Fact]
@@ -488,8 +488,8 @@ namespace Microsoft.EntityFrameworkCore.Query
             // status 1 -> matched, Count 2
             Assert.Equal(1, result[0].PickupStatusId);
             Assert.NotNull(result[0].countInfo);
-            Assert.Equal(1, result[0].countInfo.pickupStatusId);
-            Assert.Equal(2, result[0].countInfo.Count);
+            Assert.Equal(1, result[0].countInfo!.pickupStatusId);
+            Assert.Equal(2, result[0].countInfo!.Count);
 
             // status 2 -> no match, whole non-entity object is null
             Assert.Equal(2, result[1].PickupStatusId);
@@ -498,8 +498,8 @@ namespace Microsoft.EntityFrameworkCore.Query
             // status 3 -> matched, Count 1
             Assert.Equal(3, result[2].PickupStatusId);
             Assert.NotNull(result[2].countInfo);
-            Assert.Equal(3, result[2].countInfo.pickupStatusId);
-            Assert.Equal(1, result[2].countInfo.Count);
+            Assert.Equal(3, result[2].countInfo!.pickupStatusId);
+            Assert.Equal(1, result[2].countInfo!.Count);
         }
 
         [Fact]
@@ -593,8 +593,8 @@ namespace Microsoft.EntityFrameworkCore.Query
             // status 1 -> matched, Count 2
             Assert.Equal(1, result[0].PickupStatusId);
             Assert.NotNull(result[0].countInfo);
-            Assert.Equal(1, result[0].countInfo.PickupStatusId);
-            Assert.Equal(2, result[0].countInfo.Count);
+            Assert.Equal(1, result[0].countInfo!.PickupStatusId);
+            Assert.Equal(2, result[0].countInfo!.Count);
 
             // status 2 -> no match, whole DTO object is null
             Assert.Equal(2, result[1].PickupStatusId);
@@ -603,8 +603,8 @@ namespace Microsoft.EntityFrameworkCore.Query
             // status 3 -> matched, Count 1
             Assert.Equal(3, result[2].PickupStatusId);
             Assert.NotNull(result[2].countInfo);
-            Assert.Equal(3, result[2].countInfo.PickupStatusId);
-            Assert.Equal(1, result[2].countInfo.Count);
+            Assert.Equal(3, result[2].countInfo!.PickupStatusId);
+            Assert.Equal(1, result[2].countInfo!.Count);
         }
 
         [Fact]
@@ -778,9 +778,143 @@ namespace Microsoft.EntityFrameworkCore.Query
                 .GroupBy(e => e.s.PickupStatusId, (key, els) => new { key, anyInfo = els.Select(e => e.countInfo).FirstOrDefault() })
                 .OrderBy(e => e.key);
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => query.ToListAsync());
-            Assert.Contains("Nullable object must have a value", ex.Message);
-            // #30915 TODO: currently throws on base; flip to assert results if/when fixed.
+            var result = await query.ToListAsync();
+
+            Assert.Equal(3, result.Count);
+
+            // status 1 -> matched, Count 2
+            Assert.Equal(1, result[0].key);
+            Assert.NotNull(result[0].anyInfo);
+            Assert.Equal(1, result[0].anyInfo!.pickupStatusId);
+            Assert.Equal(2, result[0].anyInfo!.Count);
+
+            // status 2 -> no match on the left join; whole non-entity object is null after grouping
+            Assert.Equal(2, result[1].key);
+            Assert.Null(result[1].anyInfo);
+
+            // status 3 -> matched, Count 1
+            Assert.Equal(3, result[2].key);
+            Assert.NotNull(result[2].anyInfo);
+            Assert.Equal(3, result[2].anyInfo!.pickupStatusId);
+            Assert.Equal(1, result[2].anyInfo!.Count);
+        }
+
+        [Fact]
+        public virtual async Task GroupBy_after_join_then_whole_object_nested_in_wrapper()
+        {
+            var contextFactory = await InitializeNonSharedTest<Context30915>(seed: Seed30915);
+            using var context = contextFactory.CreateDbContext();
+
+            var categories = context.Requests
+                .GroupBy(r => r.PickupStatusId, (k, els) => new { pickupStatusId = k, Count = els.Count() });
+
+            var query = (from s in context.Statuses
+                         join c in categories on s.PickupStatusId equals c.pickupStatusId into g
+                         from countInfo in g.DefaultIfEmpty()
+                         select new { s, countInfo })
+                .GroupBy(
+                    e => e.s.PickupStatusId,
+                    (key, els) => new { key, wrapper = new { anyInfo = els.Select(e => e.countInfo).FirstOrDefault() } })
+                .OrderBy(e => e.key);
+
+            var result = await query.ToListAsync();
+
+            Assert.Equal(3, result.Count);
+
+            Assert.Equal(1, result[0].key);
+            Assert.NotNull(result[0].wrapper);
+            Assert.NotNull(result[0].wrapper.anyInfo);
+            Assert.Equal(2, result[0].wrapper.anyInfo!.Count);
+
+            Assert.Equal(2, result[1].key);
+            Assert.NotNull(result[1].wrapper);
+            Assert.Null(result[1].wrapper.anyInfo);
+
+            Assert.Equal(3, result[2].key);
+            Assert.NotNull(result[2].wrapper);
+            Assert.NotNull(result[2].wrapper.anyInfo);
+            Assert.Equal(1, result[2].wrapper.anyInfo!.Count);
+        }
+
+        [Fact]
+        public virtual async Task GroupBy_after_join_then_whole_object_dto_memberinit()
+        {
+            // Same GroupBy-after-join to-one lowering as GroupBy_after_join_then_whole_object, but the whole
+            // object is a MemberInit-bound DTO (CountDto30915) rather than an anonymous New -- this exercises
+            // the VisitMemberInit re-key path in GroupingElementShaperRemappingExpressionVisitor, which the
+            // anonymous-type tests never reach (they are New-only).
+            var contextFactory = await InitializeNonSharedTest<Context30915>(seed: Seed30915);
+            using var context = contextFactory.CreateDbContext();
+
+            var categories = context.Requests
+                .GroupBy(r => r.PickupStatusId, (k, els) => new Context30915.CountDto30915 { PickupStatusId = k, Count = els.Count() });
+
+            var query = (from s in context.Statuses
+                         join c in categories on s.PickupStatusId equals c.PickupStatusId into g
+                         from countInfo in g.DefaultIfEmpty()
+                         select new { s, countInfo })
+                .GroupBy(e => e.s.PickupStatusId, (key, els) => new { key, anyInfo = els.Select(e => e.countInfo).FirstOrDefault() })
+                .OrderBy(e => e.key);
+
+            var result = await query.ToListAsync();
+
+            Assert.Equal(3, result.Count);
+
+            // status 1 -> matched, Count 2
+            Assert.Equal(1, result[0].key);
+            Assert.NotNull(result[0].anyInfo);
+            Assert.Equal(1, result[0].anyInfo!.PickupStatusId);
+            Assert.Equal(2, result[0].anyInfo!.Count);
+
+            // status 2 -> no match on the left join; whole DTO object is null after grouping
+            Assert.Equal(2, result[1].key);
+            Assert.Null(result[1].anyInfo);
+
+            // status 3 -> matched, Count 1
+            Assert.Equal(3, result[2].key);
+            Assert.NotNull(result[2].anyInfo);
+            Assert.Equal(3, result[2].anyInfo!.PickupStatusId);
+            Assert.Equal(1, result[2].anyInfo!.Count);
+        }
+
+        [Fact]
+        public virtual async Task GroupBy_after_join_then_whole_object_struct()
+        {
+            // MemberInit-bound value type (CountStruct30915) reduced through the GroupBy-after-join to-one
+            // lowering. A value-type sequence's FirstOrDefault never yields a true null, so the no-match group
+            // yields default(CountStruct30915) (zeroed fields), mirroring LINQ-to-Objects DefaultIfEmpty
+            // semantics -- same as the direct Struct_whole_object_LeftJoin case.
+            var contextFactory = await InitializeNonSharedTest<Context30915>(seed: Seed30915);
+            using var context = contextFactory.CreateDbContext();
+
+            var categories = context.Requests
+                .GroupBy(r => r.PickupStatusId, (k, els) => new Context30915.CountStruct30915 { PickupStatusId = k, Count = els.Count() });
+
+            var query = (from s in context.Statuses
+                         join c in categories on s.PickupStatusId equals c.PickupStatusId into g
+                         from countInfo in g.DefaultIfEmpty()
+                         select new { s, countInfo })
+                .GroupBy(e => e.s.PickupStatusId, (key, els) => new { key, anyInfo = els.Select(e => e.countInfo).FirstOrDefault() })
+                .OrderBy(e => e.key);
+
+            var result = await query.ToListAsync();
+
+            Assert.Equal(3, result.Count);
+
+            // status 1 -> matched, Count 2
+            Assert.Equal(1, result[0].key);
+            Assert.Equal(1, result[0].anyInfo.PickupStatusId);
+            Assert.Equal(2, result[0].anyInfo.Count);
+
+            // status 2 -> no match; whole struct defaults to zeroed fields (value-type DefaultIfEmpty semantics)
+            Assert.Equal(2, result[1].key);
+            Assert.Equal(0, result[1].anyInfo.PickupStatusId);
+            Assert.Equal(0, result[1].anyInfo.Count);
+
+            // status 3 -> matched, Count 1
+            Assert.Equal(3, result[2].key);
+            Assert.Equal(3, result[2].anyInfo.PickupStatusId);
+            Assert.Equal(1, result[2].anyInfo.Count);
         }
 
         [Fact]
@@ -900,11 +1034,11 @@ namespace Microsoft.EntityFrameworkCore.Query
             var categories = context.Requests
                 .GroupBy(r => r.PickupStatusId, (k, els) => new { pickupStatusId = k, Count = els.Count() });
 
-            var query = (from s in context.Statuses
-                         join c in categories on s.PickupStatusId equals c.pickupStatusId into g
-                         from countInfo in g.DefaultIfEmpty()
-                         orderby (countInfo == null ? 0 : countInfo.Count), s.PickupStatusId
-                         select new { s.PickupStatusId, Count = countInfo == null ? 0 : countInfo.Count });
+            var query = from s in context.Statuses
+                        join c in categories on s.PickupStatusId equals c.pickupStatusId into g
+                        from countInfo in g.DefaultIfEmpty()
+                        orderby (countInfo == null ? 0 : countInfo.Count), s.PickupStatusId
+                        select new { s.PickupStatusId, Count = countInfo == null ? 0 : countInfo.Count };
 
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => query.ToListAsync());
             Assert.Contains("could not be translated", ex.Message);
@@ -957,12 +1091,12 @@ namespace Microsoft.EntityFrameworkCore.Query
             var categories = context.Requests
                 .GroupBy(r => r.PickupStatusId, (k, els) => new { pickupStatusId = k, Count = els.Count() });
 
-            var query = (from s in context.Statuses
-                         join c in categories on s.PickupStatusId equals c.pickupStatusId into g
-                         from countInfo in g.DefaultIfEmpty()
-                         where countInfo != null
-                         orderby s.PickupStatusId
-                         select s.PickupStatusId);
+            var query = from s in context.Statuses
+                        join c in categories on s.PickupStatusId equals c.pickupStatusId into g
+                        from countInfo in g.DefaultIfEmpty()
+                        where countInfo != null
+                        orderby s.PickupStatusId
+                        select s.PickupStatusId;
 
             // Server-side null-check against a whole non-entity projection from the nullable side
             // currently cannot be translated.
@@ -980,12 +1114,12 @@ namespace Microsoft.EntityFrameworkCore.Query
             var categories = context.Requests
                 .GroupBy(r => r.PickupStatusId, (k, els) => new { pickupStatusId = k, Count = els.Count() });
 
-            var query = (from s in context.Statuses
-                         join c in categories on s.PickupStatusId equals c.pickupStatusId into g
-                         from countInfo in g.DefaultIfEmpty()
-                         where countInfo == null
-                         orderby s.PickupStatusId
-                         select s.PickupStatusId);
+            var query = from s in context.Statuses
+                        join c in categories on s.PickupStatusId equals c.pickupStatusId into g
+                        from countInfo in g.DefaultIfEmpty()
+                        where countInfo == null
+                        orderby s.PickupStatusId
+                        select s.PickupStatusId;
 
             // Server-side null-check against a whole non-entity projection from the nullable side
             // currently cannot be translated.
@@ -1041,7 +1175,13 @@ namespace Microsoft.EntityFrameworkCore.Query
             using var context = contextFactory.CreateDbContext();
 
             var categories = context.Requests
-                .GroupBy(r => r.PickupStatusId, (k, els) => new { pickupStatusId = k, Count = els.Count(), Name = "cat" });
+                .GroupBy(
+                    r => r.PickupStatusId, (k, els) => new
+                    {
+                        pickupStatusId = k,
+                        Count = els.Count(),
+                        Name = "cat"
+                    });
 
             var query = from s in context.Statuses
                         join c in categories on s.PickupStatusId equals c.pickupStatusId into g
@@ -1326,7 +1466,13 @@ namespace Microsoft.EntityFrameworkCore.Query
 
             var query = context.Statuses
                 .LeftJoin(categories, s => s.PickupStatusId, c => c.pickupStatusId, (s, first) => new { s.PickupStatusId, first })
-                .LeftJoin(categories, e => e.PickupStatusId, c => c.pickupStatusId, (e, second) => new { e.PickupStatusId, e.first, second })
+                .LeftJoin(
+                    categories, e => e.PickupStatusId, c => c.pickupStatusId, (e, second) => new
+                    {
+                        e.PickupStatusId,
+                        e.first,
+                        second
+                    })
                 .OrderBy(e => e.PickupStatusId);
 
             var result = await query.ToListAsync();
@@ -1336,11 +1482,11 @@ namespace Microsoft.EntityFrameworkCore.Query
             // status 1 -> both joins matched, Count 2
             Assert.Equal(1, result[0].PickupStatusId);
             Assert.NotNull(result[0].first);
-            Assert.Equal(1, result[0].first.pickupStatusId);
-            Assert.Equal(2, result[0].first.Count);
+            Assert.Equal(1, result[0].first!.pickupStatusId);
+            Assert.Equal(2, result[0].first!.Count);
             Assert.NotNull(result[0].second);
-            Assert.Equal(1, result[0].second.pickupStatusId);
-            Assert.Equal(2, result[0].second.Count);
+            Assert.Equal(1, result[0].second!.pickupStatusId);
+            Assert.Equal(2, result[0].second!.Count);
 
             // status 2 -> neither join matched; both whole non-entity objects are null.
             // The first object's marker passes through the second join's outer-shaper remap,
@@ -1352,11 +1498,11 @@ namespace Microsoft.EntityFrameworkCore.Query
             // status 3 -> both joins matched, Count 1
             Assert.Equal(3, result[2].PickupStatusId);
             Assert.NotNull(result[2].first);
-            Assert.Equal(3, result[2].first.pickupStatusId);
-            Assert.Equal(1, result[2].first.Count);
+            Assert.Equal(3, result[2].first!.pickupStatusId);
+            Assert.Equal(1, result[2].first!.Count);
             Assert.NotNull(result[2].second);
-            Assert.Equal(3, result[2].second.pickupStatusId);
-            Assert.Equal(1, result[2].second.Count);
+            Assert.Equal(3, result[2].second!.pickupStatusId);
+            Assert.Equal(1, result[2].second!.Count);
         }
 
         [Fact]
@@ -1416,7 +1562,9 @@ namespace Microsoft.EntityFrameworkCore.Query
                          join c in categories on s.PickupStatusId equals c.pickupStatusId into g
                          from countInfo in g.DefaultIfEmpty()
                          select new { s.PickupStatusId, countInfo })
-                .Join(context.Statuses, e => e.PickupStatusId, s2 => s2.PickupStatusId, (e, s2) => new { s2.PickupStatusId, wrapper = new { e.countInfo } })
+                .Join(
+                    context.Statuses, e => e.PickupStatusId, s2 => s2.PickupStatusId,
+                    (e, s2) => new { s2.PickupStatusId, wrapper = new { e.countInfo } })
                 .OrderBy(e => e.PickupStatusId);
 
             var result = await query.ToListAsync();
@@ -1635,23 +1783,23 @@ namespace Microsoft.EntityFrameworkCore.Query
             // status 1 -> two matched rows, each with a pair whose entities reference status 1
             Assert.Equal(1, result[0].PickupStatusId);
             Assert.NotNull(result[0].pair);
-            Assert.Equal(1, result[0].pair.s2.PickupStatusId);
+            Assert.Equal(1, result[0].pair!.s2!.PickupStatusId);
             Assert.Equal(1, result[1].PickupStatusId);
             Assert.NotNull(result[1].pair);
-            Assert.Equal(1, result[1].pair.s2.PickupStatusId);
+            Assert.Equal(1, result[1].pair!.s2!.PickupStatusId);
 
             // status 2 -> no match. The inner shaper is a transparent-identifier { r, s2 } whose decomposed
             // members are entities; the wrapper itself materializes (non-null) with both entity members null,
             // rather than the whole pair being nulled (the pair is not a single user-projected non-entity object).
             Assert.Equal(2, result[2].PickupStatusId);
             Assert.NotNull(result[2].pair);
-            Assert.Null(result[2].pair.r);
-            Assert.Null(result[2].pair.s2);
+            Assert.Null(result[2].pair!.r);
+            Assert.Null(result[2].pair!.s2);
 
             // status 3 -> matched
             Assert.Equal(3, result[3].PickupStatusId);
             Assert.NotNull(result[3].pair);
-            Assert.Equal(3, result[3].pair.s2.PickupStatusId);
+            Assert.Equal(3, result[3].pair!.s2!.PickupStatusId);
         }
 
         [Fact]
@@ -1774,7 +1922,12 @@ namespace Microsoft.EntityFrameworkCore.Query
             var query = from f in firstLevel
                         join s2 in context.Statuses on f.PickupStatusId equals s2.PickupStatusId
                         orderby s2.PickupStatusId
-                        select new { s2.PickupStatusId, s2.Name, f.Count };
+                        select new
+                        {
+                            s2.PickupStatusId,
+                            s2.Name,
+                            f.Count
+                        };
 
             var result = await query.ToListAsync();
 
@@ -1824,21 +1977,20 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         protected class Context30915(DbContextOptions options) : DbContext(options)
         {
-            public DbSet<PickupStatus30915> Statuses { get; set; }
-            public DbSet<PickupRequest30915> Requests { get; set; }
+            public DbSet<PickupStatus30915> Statuses { get; set; } = null!;
+            public DbSet<PickupRequest30915> Requests { get; set; } = null!;
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
-                => modelBuilder.Entity<PickupStatus30915>(
-                    b =>
-                    {
-                        b.HasKey(e => e.PickupStatusId);
-                        b.Property(e => e.PickupStatusId).ValueGeneratedNever();
-                    });
+                => modelBuilder.Entity<PickupStatus30915>(b =>
+                {
+                    b.HasKey(e => e.PickupStatusId);
+                    b.Property(e => e.PickupStatusId).ValueGeneratedNever();
+                });
 
             public class PickupStatus30915
             {
                 public int PickupStatusId { get; set; }
-                public string Name { get; set; }
+                public string Name { get; set; } = null!;
             }
 
             public class PickupRequest30915

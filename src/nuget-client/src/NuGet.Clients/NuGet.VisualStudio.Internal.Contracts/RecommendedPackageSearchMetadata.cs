@@ -25,32 +25,32 @@ namespace NuGet.VisualStudio.Internal.Contracts
         }
 
         // Implement IPackageSearchMetadata by delegating to the inner instance
-        public string Authors => _inner.Authors;
+        public string? Authors => _inner.Authors;
         public IEnumerable<PackageDependencyGroup> DependencySets => _inner.DependencySets;
-        public string Description => _inner.Description;
+        public string? Description => _inner.Description;
         public long? DownloadCount => _inner.DownloadCount;
-        public Uri IconUrl => _inner.IconUrl;
+        public Uri? IconUrl => _inner.IconUrl;
         public PackageIdentity Identity => _inner.Identity;
-        public Uri LicenseUrl => _inner.LicenseUrl;
-        public Uri ProjectUrl => _inner.ProjectUrl;
-        public string ReadmeFileUrl => _inner.ReadmeFileUrl;
-        public Uri ReadmeUrl => _inner.ReadmeUrl;
-        public Uri ReportAbuseUrl => _inner.ReportAbuseUrl;
-        public Uri PackageDetailsUrl => _inner.PackageDetailsUrl;
+        public Uri? LicenseUrl => _inner.LicenseUrl;
+        public Uri? ProjectUrl => _inner.ProjectUrl;
+        public string? ReadmeFileUrl => _inner.ReadmeFileUrl;
+        public Uri? ReadmeUrl => _inner.ReadmeUrl;
+        public Uri? ReportAbuseUrl => _inner.ReportAbuseUrl;
+        public Uri? PackageDetailsUrl => _inner.PackageDetailsUrl;
         public DateTimeOffset? Published => _inner.Published;
-        public IReadOnlyList<string> OwnersList => _inner.OwnersList;
-        public string Owners => _inner.Owners;
+        public IReadOnlyList<string>? OwnersList => _inner.OwnersList;
+        public string? Owners => _inner.Owners;
         public bool RequireLicenseAcceptance => _inner.RequireLicenseAcceptance;
-        public string Summary => _inner.Summary;
-        public string Tags => _inner.Tags;
+        public string? Summary => _inner.Summary;
+        public string? Tags => _inner.Tags;
         public string Title => _inner.Title;
         public bool IsListed => _inner.IsListed;
         public bool PrefixReserved => _inner.PrefixReserved;
-        public LicenseMetadata LicenseMetadata => _inner.LicenseMetadata;
-        public Task<PackageDeprecationMetadata> GetDeprecationMetadataAsync() => _inner.GetDeprecationMetadataAsync();
+        public LicenseMetadata? LicenseMetadata => _inner.LicenseMetadata;
+        public Task<PackageDeprecationMetadata?> GetDeprecationMetadataAsync() => _inner.GetDeprecationMetadataAsync();
 
         public Task<IEnumerable<VersionInfo>> GetVersionsAsync() => _inner.GetVersionsAsync();
 
-        public IEnumerable<PackageVulnerabilityMetadata> Vulnerabilities => _inner.Vulnerabilities;
+        public IEnumerable<PackageVulnerabilityMetadata>? Vulnerabilities => _inner.Vulnerabilities;
     }
 }

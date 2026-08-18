@@ -12,7 +12,7 @@ namespace Microsoft.IdentityModel.Tokens
     public class RsaKeyWrapProvider : KeyWrapProvider
     {
         private Lazy<AsymmetricAdapter> _asymmetricAdapter;
-        private bool _disposed = false;
+        private bool _disposed;
         private bool _willUnwrap;
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Microsoft.IdentityModel.Tokens
         internal AsymmetricAdapter CreateAsymmetricAdapter()
         {
             if (!IsSupportedAlgorithm(Key, Algorithm))
-                throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10661, LogHelper.MarkAsNonPII(Algorithm), Key)));
+                throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10661, LogHelper.MarkAsNonPII(Algorithm), LogHelper.MarkAsNonPII(Key.KeyId))));
 
             return new AsymmetricAdapter(Key, Algorithm, _willUnwrap);
         }

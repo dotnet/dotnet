@@ -27,8 +27,15 @@
       <_CoreRuntimeConfigPath>$(_TargetDir)$(_TargetFileNameNoExt).runtimeconfig.json</_CoreRuntimeConfigPath>
       <_CoreDepsPath>$(_TargetDir)$(_TargetFileNameNoExt).deps.json</_CoreDepsPath>
 
-      <_TestRunner Condition="'%(TestToRun.Architecture)'=='x86' And Exists('$(DotNetRoot)x86\dotnet.exe')">$(DotNetRoot)x86\dotnet.exe</_TestRunner>
-      <_TestRunner Condition="'$(_TestRunner)'==''">$(DotNetTool)</_TestRunner>
+      <_TestArchitecture>%(TestToRun.Architecture)</_TestArchitecture>
+      <_DotNetToolArchitecture>%(TestToRun.DotNetToolArchitecture)</_DotNetToolArchitecture>
+      <_DotNetHostRoot>%(TestToRun.DotNetHostRoot)</_DotNetHostRoot>
+      <_DotNetExecutableName>$([System.IO.Path]::GetFileName('$(DotNetTool)'))</_DotNetExecutableName>
+      <_ArchitectureSpecificDotNetTool Condition="'$(_DotNetHostRoot)' != ''">$([System.IO.Path]::Combine('$(_DotNetHostRoot)', '$(_TestArchitecture)', '$(_DotNetExecutableName)'))</_ArchitectureSpecificDotNetTool>
+
+      <_TestRunner></_TestRunner>
+      <_TestRunner Condition="'$(_TestArchitecture)' == '$(_DotNetToolArchitecture)'">$(DotNetTool)</_TestRunner>
+      <_TestRunner Condition="'$(_TestRunner)' == '' and Exists('$(_ArchitectureSpecificDotNetTool)')">$(_ArchitectureSpecificDotNetTool)</_TestRunner>
 
       <_TestRunnerArgs>exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" $(TestRuntimeAdditionalArguments) "$(NuGetPackageRoot)xunit.runner.console/$(XUnitVersion)/tools/$(_TestRunnerTargetFramework)/xunit.console.dll" "$(_TestAssembly)" -noautoreporters -xml "%(TestToRun.ResultsXmlPath)" -html "%(TestToRun.ResultsHtmlPath)" $(_TestRunnerAdditionalArguments)</_TestRunnerArgs>
     </PropertyGroup>
@@ -44,6 +51,15 @@
       <_TestRunner Condition="'$(_TestRuntime)' == 'Mono'">$(MonoTool)</_TestRunner>
       <_TestRunner Condition="'$(_TestRuntime)' != 'Mono'">$(_XUnitConsoleExePath)</_TestRunner>
     </PropertyGroup>
+
+    <Error Condition="'$(_TestRuntime)' == 'Core' and '$(_TestRunner)' == '' and '$(_ArchitectureSpecificDotNetTool)' == ''"
+           Text="Test architecture '$(_TestArchitecture)' requires a matching dotnet host, but its path cannot be determined. Set DotNetRoot to the installation root containing architecture-specific host subdirectories." />
+    <Error Condition="'$(_TestRuntime)' == 'Core' and '$(_TestRunner)' == '' and '$(_ArchitectureSpecificDotNetTool)' != ''"
+           Text="Test architecture '$(_TestArchitecture)' requires a matching dotnet host at '$(_ArchitectureSpecificDotNetTool)', but that host is not installed." />
+    <Error Condition="'$(_TestRuntime)' == 'Full' and '%(TestToRun.Architecture)' != 'x86' and '%(TestToRun.Architecture)' != 'x64'"
+           Text="The xUnit .NET Framework runner does not support test architecture '%(TestToRun.Architecture)'." />
+    <Error Condition="'$(_TestRuntime)' == 'Mono' and '%(TestToRun.Architecture)' != '%(TestToRun.CurrentProcessArchitecture)'"
+           Text="The Mono xUnit runner cannot switch from the current '%(TestToRun.CurrentProcessArchitecture)' architecture to '%(TestToRun.Architecture)'." />
 
     <PropertyGroup>
       <_TestRunnerCommand>"$(_TestRunner)" $(_TestRunnerArgs)</_TestRunnerCommand>

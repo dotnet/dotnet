@@ -386,10 +386,10 @@
       <trans-unit id="PlatformArgumentHelp">
         <source>--Platform|/Platform:&lt;Platform type&gt;
       Target platform architecture to be used for test execution. 
-      Valid values are x86, x64 and ARM.</source>
-        <target state="translated">--Platform|/Platform:&lt;tipoPlataforma&gt;
-      Arquitectura de la plataforma de destino que se usará para la ejecución de pruebas. 
-      Los valores válidos son x86, x64 y ARM.</target>
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</source>
+        <target state="new">--Platform|/Platform:&lt;Platform type&gt;
+      Target platform architecture to be used for test execution. 
+      Valid values are x86, x64, ARM, ARM64, S390x, Ppc64le, RiscV64 and LoongArch64.</target>
         <note />
       </trans-unit>
       <trans-unit id="SwitchToIsolationInMultiTargetingMode">
@@ -400,12 +400,12 @@
       <trans-unit id="FrameworkArgumentHelp">
         <source>--Framework|/Framework:&lt;Framework Version&gt;
       Target .Net Framework version to be used for test execution. 
-      Valid values are ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0" etc.
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
       Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</source>
-        <target state="translated">--Framework|/Framework:&lt;Versión de Framework&gt;
-      Versión de .NET Framework de destino que se usará para la ejecución de pruebas. 
-      Los valores válidos son ".NETFramework,Version=v4.5.1", ".NETCoreApp,Version=v1.0", etc.
-      Otros valores admitidos son Framework40, Framework45, FrameworkCore10 y FrameworkUap10.</target>
+        <target state="new">--Framework|/Framework:&lt;Framework Version&gt;
+      Target .Net Framework version to be used for test execution. 
+      Valid values are short names such as net48 and net10.0, or long names such as ".NETFramework,Version=v4.8" and ".NETCoreApp,Version=v10.0".
+      Other supported values are Framework40, Framework45, FrameworkCore10 and FrameworkUap10.</target>
         <note />
       </trans-unit>
       <trans-unit id="FrameworkVersionRequired">
@@ -1172,16 +1172,6 @@
       <trans-unit id="RequestHandlerConnectionTimedOut">
         <source>Waiting for request handler connection timed out after {0} seconds.</source>
         <target state="translated">Se ha agotado el tiempo de espera de la conexión del controlador de solicitudes después de {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StartTestSessionTimedOut">
-        <source>Waiting for start test session timed out after {0} seconds.</source>
-        <target state="translated">Se ha agotado el tiempo de espera de la sesión de prueba de inicio después de {0} segundos.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StopTestSessionTimedOut">
-        <source>Waiting for stop test session timed out after {0} seconds.</source>
-        <target state="translated">Se ha agotado el tiempo de espera para detener la sesión de prueba después de {0} segundos.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorHostingCommunicationChannel">

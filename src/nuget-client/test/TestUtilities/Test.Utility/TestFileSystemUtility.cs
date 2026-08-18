@@ -141,7 +141,8 @@ namespace NuGet.Test.Utility
 
             if (dir == null)
             {
-                throw new Exception("Failed to determine the path to the .NET SDK");
+                var configureScript = NuGet.Common.RuntimeEnvironmentHelper.IsWindows ? "configure.ps1" : "configure.sh";
+                throw new Exception($"Failed to determine the path to the .NET SDK. Run {configureScript} to set up the test environment.");
             }
 
             return null;

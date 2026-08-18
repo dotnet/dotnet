@@ -112,12 +112,12 @@ namespace Microsoft.IdentityModel.TestUtils
         {
             get;
             set;
-        } = null;
+        }
         public bool ValidateTokenReplay
         {
             get;
             set;
-        } = false;
+        }
 
         public string SecurityToken
         {

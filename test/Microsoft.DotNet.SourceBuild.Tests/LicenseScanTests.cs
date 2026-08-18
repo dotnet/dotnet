@@ -10,7 +10,6 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
@@ -124,7 +123,7 @@ public class LicenseScanTests : TestBase
 
     private readonly string _targetName;
     private readonly string _relativeScanPath;
-    public static bool IncludeLicenseScanTests => !string.IsNullOrWhiteSpace(Config.LicenseScanPath);
+    public static bool ExcludeLicenseScanTests => string.IsNullOrWhiteSpace(Config.LicenseScanPath);
 
     public LicenseScanTests(ITestOutputHelper outputHelper) : base(outputHelper)
     {
@@ -147,7 +146,7 @@ public class LicenseScanTests : TestBase
         _targetName = dirName == repoName ? repoName : $"{repoName}.{dirName}";
     }
 
-    [ConditionalFact(typeof(LicenseScanTests), nameof(IncludeLicenseScanTests))]
+    [Fact(Skip = "A license scan path is required", SkipWhen = nameof(ExcludeLicenseScanTests))]
     public void ScanForLicenses()
     {
         Assert.NotNull(Config.LicenseScanPath);

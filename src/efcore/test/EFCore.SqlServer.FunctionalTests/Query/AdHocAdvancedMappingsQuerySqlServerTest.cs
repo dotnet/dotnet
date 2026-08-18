@@ -3,8 +3,6 @@
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-#nullable disable
-
 public class AdHocAdvancedMappingsQuerySqlServerTest(NonSharedFixture fixture) : AdHocAdvancedMappingsQueryRelationalTestBase(fixture)
 {
     protected override ITestStoreFactory NonSharedTestStoreFactory
@@ -343,4 +341,50 @@ FROM [Books] AS [b]
 GROUP BY [b].[Id]
 """);
     }
+
+    public override async Task TPC_query_with_generic_derived_types_returns_correct_types(bool async)
+    {
+        await base.TPC_query_with_generic_derived_types_returns_correct_types(async);
+
+        AssertSql(
+            """
+SELECT [u].[Id], [u].[Value], [u].[Value1], [u].[Discriminator]
+FROM (
+    SELECT [r].[Id], [r].[Value], NULL AS [Value1], N'ReproEntity<int>' AS [Discriminator]
+    FROM [ReproEntity<int>] AS [r]
+    UNION ALL
+    SELECT [r0].[Id], NULL AS [Value], [r0].[Value] AS [Value1], N'ReproEntity<string>' AS [Discriminator]
+    FROM [ReproEntity<string>] AS [r0]
+) AS [u]
+ORDER BY [u].[Id]
+""");
+    }
+
+    public override async Task TPC_query_with_generic_derived_types_OfType_returns_correct_types(bool async)
+    {
+        await base.TPC_query_with_generic_derived_types_OfType_returns_correct_types(async);
+
+        AssertSql(
+            """
+SELECT [u].[Id], [u].[Value], [u].[Discriminator]
+FROM (
+    SELECT [r].[Id], [r].[Value], N'ReproEntity<int>' AS [Discriminator]
+    FROM [ReproEntity<int>] AS [r]
+) AS [u]
+ORDER BY [u].[Id]
+""",
+            //
+            """
+SELECT [u].[Id], [u].[Value1], [u].[Discriminator]
+FROM (
+    SELECT [r].[Id], [r].[Value] AS [Value1], N'ReproEntity<string>' AS [Discriminator]
+    FROM [ReproEntity<string>] AS [r]
+) AS [u]
+ORDER BY [u].[Id]
+""");
+    }
+
+    [Fact]
+    public virtual void Check_all_tests_overridden()
+        => TestHelpers.AssertAllMethodsOverridden(GetType());
 }

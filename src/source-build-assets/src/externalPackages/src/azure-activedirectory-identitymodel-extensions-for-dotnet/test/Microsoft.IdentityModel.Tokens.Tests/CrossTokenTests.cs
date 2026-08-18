@@ -20,7 +20,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
     /// </summary>
     public class CrossTokenTests
     {
-        [Theory, MemberData(nameof(CrossTokenValidateTokenTheoryData))]
+        [Theory, MemberData(nameof(CrossTokenValidateTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public void CrossTokenValidateToken(CrossTokenTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CrossTokenValidateToken", theoryData);
@@ -81,7 +81,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
             }
         }
 
-        [Theory, MemberData(nameof(CanReadTokenTheoryData))]
+        [Theory, MemberData(nameof(CanReadTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public void CanReadToken(TokenHandlerTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CanReadToken", theoryData);

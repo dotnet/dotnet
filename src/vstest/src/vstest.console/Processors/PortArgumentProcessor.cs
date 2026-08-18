@@ -8,7 +8,6 @@ using System.Globalization;
 
 using Microsoft.VisualStudio.TestPlatform.Client.DesignMode;
 using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
-using Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
@@ -32,11 +31,13 @@ internal class PortArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsHelper _runSettingsHelper;
     private readonly CommandLineOptions _commandLineOptions;
+    private readonly ITestRequestManager _testRequestManager;
 
-    public PortArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsHelper runSettingsHelper)
+    public PortArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsHelper runSettingsHelper, ITestRequestManager testRequestManager)
     {
         _commandLineOptions = commandLineOptions;
         _runSettingsHelper = runSettingsHelper;
+        _testRequestManager = testRequestManager;
     }
 
     /// <summary>
@@ -51,7 +52,7 @@ internal class PortArgumentProcessor : IArgumentProcessor
     public Lazy<IArgumentExecutor>? Executor
     {
         get => _executor ??= new Lazy<IArgumentExecutor>(() =>
-            new PortArgumentExecutor(_commandLineOptions, TestRequestManager.Instance, _runSettingsHelper));
+            new PortArgumentExecutor(_commandLineOptions, _testRequestManager, _runSettingsHelper));
 
         set => _executor = value;
     }

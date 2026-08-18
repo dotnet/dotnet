@@ -11,6 +11,11 @@ references:
       subscription: a4fc5514-21a9-4296-bfaf-5c7ee7fa35d1
       name: helixkv
 
+keys:
+  oneloc-localization-app-key:
+    type: RSA
+    size: 2048
+
 secrets:
   BotAccount-dotnet-maestro-bot:
     type: github-account
@@ -44,29 +49,6 @@ secrets:
     type: text
     parameters:
       description: Client id for akams app
-
-  #AzureDevOps-Artifact-Feeds-Pats
-  dn-bot-dnceng-artifact-feeds-rw:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-dnceng-artifact-feeds
-      organizations: dnceng
-      scopes: packaging_write
-
-  dn-bot-all-orgs-artifact-feeds-rw:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-all-orgs-artifact-feeds
-      organizations: dnceng devdiv dotnet-security-partners
-      scopes: packaging_write
 
   #OneLocBuildVariables
   dn-bot-ceapex-package-r:

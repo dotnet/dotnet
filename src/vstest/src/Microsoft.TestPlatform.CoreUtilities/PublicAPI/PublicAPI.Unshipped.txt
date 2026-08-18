@@ -1,1 +1,9 @@
 ﻿#nullable enable
+*REMOVED*Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.StartTestSessionStart() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.StartTestSessionStop() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.StopTestSessionStart() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.StopTestSessionStop() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerStartTestSessionStart() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerStartTestSessionStop() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerStopTestSessionStart() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces.ITestPlatformEventSource.TranslationLayerStopTestSessionStop() -> void

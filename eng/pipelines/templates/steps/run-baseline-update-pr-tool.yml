@@ -55,6 +55,7 @@ steps:
 
       ${{ parameters.dotnetPath }}/dotnet run \
         --project eng/tools/CreateBaselineUpdatePR/ \
+        -bl:"$(Build.StagingDirectory)/BuildLogs/CreateBaselineUpdatePR.${{ parameters.pipeline }}.binlog" \
         --property:RestoreSources="$restoreSources" \
         "${{ parameters.pipeline }}" \
         "${{ parameters.repoUrl }}" \
@@ -69,3 +70,4 @@ steps:
     condition: succeededOrFailed()
     env:
       GIT_TOKEN: ${{ parameters.token }}
+

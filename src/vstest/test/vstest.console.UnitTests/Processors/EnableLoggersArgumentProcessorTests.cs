@@ -15,21 +15,15 @@ using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Res
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 
 [TestClass]
-// Because runsettings tests use the instance of RunSettingsManager which is static.
 [DoNotParallelize]
 public class EnableLoggersArgumentProcessorTests
 {
+    private readonly RunSettingsManager _runSettingsManager = new();
+
     [TestInitialize]
     public void Initialize()
     {
-        RunSettingsManager.Instance = null;
         RunTestsArgumentProcessorTests.SetupMockExtensions();
-    }
-
-    [TestCleanup]
-    public void Cleanup()
-    {
-        RunSettingsManager.Instance = null;
     }
 
     [TestMethod]
@@ -72,7 +66,7 @@ public class EnableLoggersArgumentProcessorTests
     [DataRow("TestLoggerExtension;==;;;Collection=http://localhost:8080/tfs/DefaultCollection;TeamProject=MyProject;BuildName=DailyBuild_20121130.1")]
     public void ExectorInitializeShouldThrowExceptionIfInvalidArgumentIsPassed(string argument)
     {
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         var e = Assert.ThrowsExactly<CommandLineException>(() => executor.Initialize(argument));
         string exceptionMessage = string.Format(CultureInfo.CurrentCulture, CommandLineResources.LoggerUriInvalid, argument);
         Assert.IsInstanceOfType<CommandLineException>(e);
@@ -82,7 +76,7 @@ public class EnableLoggersArgumentProcessorTests
     [TestMethod]
     public void ExecutorExecuteShouldReturnArgumentProcessorResultSuccess()
     {
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         var result = executor.Execute();
         Assert.AreEqual(ArgumentProcessorResult.Success, result);
     }
@@ -105,9 +99,9 @@ public class EnableLoggersArgumentProcessorTests
 
         var runSettings = new RunSettings();
         runSettings.LoadSettingsXml(settingsXml);
-        RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
 
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         executor.Initialize("DummyLoggerExtension");
 
         string expectedSettingsXml =
@@ -128,7 +122,7 @@ public class EnableLoggersArgumentProcessorTests
   </LoggerRunSettings>
 </RunSettings>";
 
-        Assert.AreEqual(expectedSettingsXml, RunSettingsManager.Instance.ActiveRunSettings?.SettingsXml);
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
     }
 
     [TestMethod]
@@ -149,9 +143,9 @@ public class EnableLoggersArgumentProcessorTests
 
         var runSettings = new RunSettings();
         runSettings.LoadSettingsXml(settingsXml);
-        RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
 
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         executor.Initialize("logger://DummyLoggerUri");
 
         string expectedSettingsXml =
@@ -172,7 +166,7 @@ public class EnableLoggersArgumentProcessorTests
   </LoggerRunSettings>
 </RunSettings>";
 
-        Assert.AreEqual(expectedSettingsXml, RunSettingsManager.Instance.ActiveRunSettings?.SettingsXml);
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
     }
 
     [TestMethod]
@@ -193,9 +187,9 @@ public class EnableLoggersArgumentProcessorTests
 
         var runSettings = new RunSettings();
         runSettings.LoadSettingsXml(settingsXml);
-        RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
 
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         executor.Initialize("logger://DummyLoggerUri;Collection=http://localhost:8080/tfs/DefaultCollection;TeamProject=MyProject;BuildName=DailyBuild_20121130.1");
 
         string expectedSettingsXml =
@@ -222,15 +216,15 @@ public class EnableLoggersArgumentProcessorTests
   </LoggerRunSettings>
 </RunSettings>";
 
-        Assert.AreEqual(expectedSettingsXml, RunSettingsManager.Instance.ActiveRunSettings?.SettingsXml);
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
     }
 
     [TestMethod]
     public void ExecutorInitializeShouldCorrectlyAddLoggerWhenRunSettingsNotPassed()
     {
-        RunSettingsManager.Instance.SetActiveRunSettings(new RunSettings());
+        _runSettingsManager.SetActiveRunSettings(new RunSettings());
 
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         executor.Initialize("logger://DummyLoggerUri;Collection=http://localhost:8080/tfs/DefaultCollection;TeamProject=MyProject;BuildName=DailyBuild_20121130.1");
 
         string expectedSettingsXml =
@@ -246,7 +240,7 @@ public class EnableLoggersArgumentProcessorTests
       </Logger>
     </Loggers>
   </LoggerRunSettings>";
-        Assert.Contains(expectedSettingsXml, RunSettingsManager.Instance.ActiveRunSettings!.SettingsXml!);
+        Assert.Contains(expectedSettingsXml, _runSettingsManager.ActiveRunSettings!.SettingsXml!);
     }
 
     [TestMethod]
@@ -281,9 +275,9 @@ public class EnableLoggersArgumentProcessorTests
 
         var runSettings = new RunSettings();
         runSettings.LoadSettingsXml(settingsXml);
-        RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
 
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         executor.Initialize("logger://DummyLoggerUri;Collection=http://localhost:8080/tfs/DefaultCollection;TeamProject=MyProject;BuildName=DailyBuild_20121130.1");
 
         string expectedSettingsXml =
@@ -319,7 +313,7 @@ public class EnableLoggersArgumentProcessorTests
   </LoggerRunSettings>
 </RunSettings>";
 
-        Assert.AreEqual(expectedSettingsXml, RunSettingsManager.Instance.ActiveRunSettings?.SettingsXml);
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
     }
 
     [TestMethod]
@@ -354,9 +348,9 @@ public class EnableLoggersArgumentProcessorTests
 
         var runSettings = new RunSettings();
         runSettings.LoadSettingsXml(settingsXml);
-        RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
 
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         executor.Initialize("tempLogger2");
 
         string expectedSettingsXml =
@@ -385,7 +379,7 @@ public class EnableLoggersArgumentProcessorTests
   </LoggerRunSettings>
 </RunSettings>";
 
-        Assert.AreEqual(expectedSettingsXml, RunSettingsManager.Instance.ActiveRunSettings?.SettingsXml);
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
     }
 
     [TestMethod]
@@ -420,9 +414,9 @@ public class EnableLoggersArgumentProcessorTests
 
         var runSettings = new RunSettings();
         runSettings.LoadSettingsXml(settingsXml);
-        RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
 
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         executor.Initialize("tempLoggER2");
 
         string expectedSettingsXml =
@@ -451,7 +445,7 @@ public class EnableLoggersArgumentProcessorTests
   </LoggerRunSettings>
 </RunSettings>";
 
-        Assert.AreEqual(expectedSettingsXml, RunSettingsManager.Instance.ActiveRunSettings?.SettingsXml);
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
     }
 
     [TestMethod]
@@ -494,9 +488,9 @@ public class EnableLoggersArgumentProcessorTests
 
         var runSettings = new RunSettings();
         runSettings.LoadSettingsXml(settingsXml);
-        RunSettingsManager.Instance.SetActiveRunSettings(runSettings);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
 
-        var executor = new EnableLoggerArgumentExecutor(RunSettingsManager.Instance);
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
         executor.Initialize("logger://DummyLoggerUri;Collection=http://localhost:8080/tfs/DefaultCollectionOverride;TeamProjectOverride=MyProject;BuildName=DailyBuild_20121130.1Override;NewAttr=value");
 
         string expectedSettingsXml =
@@ -533,6 +527,6 @@ public class EnableLoggersArgumentProcessorTests
   </LoggerRunSettings>
 </RunSettings>";
 
-        Assert.AreEqual(expectedSettingsXml, RunSettingsManager.Instance.ActiveRunSettings?.SettingsXml);
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
     }
 }

@@ -12,6 +12,7 @@ namespace Microsoft.IdentityModel.Validators
         public const string Common = "common";
         public const string OidcEndpoint = "/.well-known/openid-configuration";
         public const string FallbackAuthority = "https://login.microsoftonline.com/";
+        public const string CloudInstanceNameKey = "cloud_instance_name";
 
         /// <summary>
         /// Old TenantId claim: "http://schemas.microsoft.com/identity/claims/tenantid".

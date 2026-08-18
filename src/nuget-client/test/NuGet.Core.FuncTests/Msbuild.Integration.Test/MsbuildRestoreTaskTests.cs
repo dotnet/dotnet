@@ -843,7 +843,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
                 // Assert
                 Assert.True(result.ExitCode == 1, result.AllOutput);
 
-                result.AllOutput.Should().Contain($"error MSB4025: The project file could not be loaded. Could not find file '{projectB.ProjectPath}'");
+                result.AllOutput.Should().Contain($"error MSB4025: The project file");
             }
         }
 

@@ -1,0 +1,29 @@
+From 8993da90e5553ef338939bf5e2e986e631b62b79 Mon Sep 17 00:00:00 2001
+From: wigodbe <wigodbe@microsoft.com>
+Date: Tue, 14 Jul 2026 17:06:21 -0700
+Subject: [PATCH] Remove global.json
+
+---
+ global.json | 10 ----------
+ 1 file changed, 10 deletions(-)
+ delete mode 100644 global.json
+
+diff --git a/global.json b/global.json
+deleted file mode 100644
+index aefdc460..00000000
+--- a/global.json
++++ /dev/null
+@@ -1,10 +0,0 @@
+-{
+-    "sdk": {
+-        "version": "10.0.100",
+-        "allowPrerelease": false,
+-        "rollForward": "latestFeature"
+-    },
+-    "msbuild-sdks": {
+-        "Microsoft.Build.NoTargets": "3.7.56"
+-    }
+-}
+-- 
+2.50.1 (Apple Git-155)
+

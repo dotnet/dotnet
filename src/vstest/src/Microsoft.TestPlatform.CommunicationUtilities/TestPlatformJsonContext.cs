@@ -13,7 +13,6 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.Common.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
@@ -67,8 +66,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 [JsonSerializable(typeof(TestRunCompletePayload))]
 [JsonSerializable(typeof(TestRunChangedEventArgs))]
 [JsonSerializable(typeof(TestRunStatsPayload))]
-[JsonSerializable(typeof(StartTestSessionAckPayload))]
-[JsonSerializable(typeof(StopTestSessionAckPayload))]
 [JsonSerializable(typeof(TestProcessStartInfo))]
 [JsonSerializable(typeof(EditorAttachDebuggerPayload))]
 [JsonSerializable(typeof(TelemetryEvent))]
@@ -105,8 +102,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 [JsonSerializable(typeof(JsonDataSerializer.VersionedMessageForSerialization))]
 // --- Payload types SENT by VsTestConsoleRequestSender ---
 [JsonSerializable(typeof(TestRunRequestPayload))]
-[JsonSerializable(typeof(StartTestSessionPayload))]
-[JsonSerializable(typeof(StopTestSessionPayload))]
 [JsonSerializable(typeof(TestRunAttachmentsProcessingPayload))]
 [JsonSerializable(typeof(CustomHostLaunchAckPayload))]
 [JsonSerializable(typeof(EditorAttachDebuggerAckPayload))]
@@ -118,8 +113,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 [JsonSerializable(typeof(JsonDataSerializer.PayloadedMessage<DiscoveryCompletePayload>))]
 [JsonSerializable(typeof(JsonDataSerializer.PayloadedMessage<TestRunCompletePayload>))]
 [JsonSerializable(typeof(JsonDataSerializer.PayloadedMessage<TestRunChangedEventArgs>))]
-[JsonSerializable(typeof(JsonDataSerializer.PayloadedMessage<StartTestSessionAckPayload>))]
-[JsonSerializable(typeof(JsonDataSerializer.PayloadedMessage<StopTestSessionAckPayload>))]
 [JsonSerializable(typeof(JsonDataSerializer.PayloadedMessage<TestProcessStartInfo>))]
 [JsonSerializable(typeof(JsonDataSerializer.PayloadedMessage<EditorAttachDebuggerPayload>))]
 [JsonSerializable(typeof(JsonDataSerializer.PayloadedMessage<TelemetryEvent>))]

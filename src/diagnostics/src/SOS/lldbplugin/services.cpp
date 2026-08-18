@@ -1540,12 +1540,13 @@ LLDBServices::GetModuleBase(
 
 ULONG64
 LLDBServices::GetModuleSize(
+    /* const */ lldb::SBTarget& target,
     ULONG64 baseAddress,
     /* const */ lldb::SBModule& module)
 {
     ULONG64 size = 0;
 
-    // Find the first section with an valid base address
+    // Include section alignment gaps in the module range.
     int numSections = module.GetNumSections();
     for (int si = 0; si < numSections; si++)
     {
@@ -1558,7 +1559,15 @@ LLDBServices::GetModuleSize(
                 continue;
             }
  #endif
-            size += section.GetByteSize();
+            lldb::addr_t sectionAddress = section.GetLoadAddress(target);
+            lldb::addr_t sectionSize = section.GetByteSize();
+            if (sectionAddress == LLDB_INVALID_ADDRESS ||
+                sectionAddress < baseAddress ||
+                sectionSize > UINT64_MAX - sectionAddress)
+            {
+                continue;
+            }
+            size = std::max(size, sectionAddress + sectionSize - baseAddress);
         }
     }
     // For core dumps lldb doesn't return the section sizes when it
@@ -1984,7 +1993,7 @@ LLDBServices::LoadNativeSymbols(
                 path.append("/");
                 path.append(filename);
 
-                int moduleSize = GetModuleSize(moduleAddress, module);
+                int moduleSize = GetModuleSize(target, moduleAddress, module);
 
                 callback(&module, path.c_str(), moduleAddress, moduleSize);
             }
@@ -2073,7 +2082,7 @@ HRESULT LLDBServices::GetModuleInfo(
     }
     if (pSize)
     {
-        *pSize = GetModuleSize(moduleBase, module);
+        *pSize = GetModuleSize(target, moduleBase, module);
     }
     if (pTimestamp)
     {
@@ -2747,7 +2756,17 @@ LLDBServices::InitializeThreadInfo(lldb::SBProcess process)
     }
     SpecialThreadInfoHeader header;
     lldb::SBError error;
-    size_t read = process.ReadMemory(SpecialThreadInfoAddress, &header, sizeof(SpecialThreadInfoHeader), error);
+    uint64_t threadInfoAddress = SpecialThreadInfoAddress;
+    size_t read = process.ReadMemory(threadInfoAddress, &header, sizeof(SpecialThreadInfoHeader), error);
+    if ((error.Fail() || read != sizeof(header) ||
+         strncmp(header.signature, SPECIAL_THREADINFO_SIGNATURE, sizeof(SPECIAL_THREADINFO_SIGNATURE)) != 0)
+        && SpecialThreadInfoAddress != SpecialThreadInfoLegacyAddress)
+    {
+        // Fall back to the legacy address for dumps produced by older createdump binaries.
+        error.Clear();
+        threadInfoAddress = SpecialThreadInfoLegacyAddress;
+        read = process.ReadMemory(threadInfoAddress, &header, sizeof(SpecialThreadInfoHeader), error);
+    }
     if (error.Fail() || read != sizeof(header))
     {
         return;
@@ -2766,7 +2785,7 @@ LLDBServices::InitializeThreadInfo(lldb::SBProcess process)
     m_processId = header.pid;
     m_threadInfos.clear();
 
-    uint64_t address = SpecialThreadInfoAddress + sizeof(header);
+    uint64_t address = threadInfoAddress + sizeof(header);
     for (int index = 0; index < number; index++)
     {
         SpecialThreadInfoEntry entry;

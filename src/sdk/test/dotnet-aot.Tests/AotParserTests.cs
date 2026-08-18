@@ -3,6 +3,8 @@
 
 using System.CommandLine;
 using Microsoft.DotNet.Cli;
+using Microsoft.DotNet.Cli.CommandLine;
+using Microsoft.DotNet.Cli.Commands.Run;
 using Microsoft.DotNet.Cli.Extensions;
 using Microsoft.DotNet.Cli.Utils;
 using Microsoft.NET.TestFramework.Utilities;
@@ -17,7 +19,7 @@ namespace Microsoft.DotNet.Cli.Tests;
 ///  <see cref="CommandNotAvailableInAotException"/> so the bridge can fall back.
 /// </summary>
 [TestClass]
-public class AotParserTests
+public partial class AotParserTests
 {
     private static Exception? RecordException(Action action)
     {
@@ -70,12 +72,13 @@ public class AotParserTests
         Assert.IsEmpty(result.Errors);
     }
 
+    /// <summary>Verifies that an existing C# file is detected as an implicit file-based application.</summary>
     [TestMethod]
     public void DetectFileBasedApp_WhenFirstArgIsCSharpFile()
     {
         // `dotnet app.cs` is an implicit file-based app invocation. The AOT parser only sees the
         // path as an unmatched root argument, so the shared detection (reused from the managed CLI)
-        // identifies it so NativeEntryPoint can defer to the managed run pipeline.
+        // identifies it for external resolution and the narrow native run gate.
         var csFile = Path.Combine(Path.GetTempPath(), $"aot-filebased-{Guid.NewGuid():N}.cs");
         File.WriteAllText(csFile, "Console.WriteLine(\"hi\");");
         try
@@ -90,6 +93,39 @@ public class AotParserTests
         }
     }
 
+    /// <summary>Verifies that shorthand reparsing preserves run options, environment variables, and application arguments.</summary>
+    [TestMethod]
+    public void ParseFileBasedAppAsRunPreservesOptionsAndApplicationArguments()
+    {
+        string path = Path.Combine(Path.GetTempPath(), $"aot-filebased-{Guid.NewGuid():N}.cs");
+        File.WriteAllText(path, "Console.WriteLine(42);");
+        try
+        {
+            ParseResult? runParseResult = Parser.Parse([
+                path,
+                "--no-build",
+                "--no-launch-profile",
+                "-e", "TEST_SHORTHAND=value",
+                "--", "arg one", "--flag",
+            ]).TryParseFileBasedAppAsRun();
+
+            Assert.IsNotNull(runParseResult);
+            var definition = (RunCommandDefinition)runParseResult.CommandResult.Command;
+            Assert.AreEqual(path, runParseResult.GetValue(definition.FileOption));
+            Assert.IsTrue(runParseResult.HasOption(definition.NoBuildOption));
+            Assert.IsTrue(runParseResult.HasOption(definition.NoLaunchProfileOption));
+            IReadOnlyDictionary<string, string>? environmentVariables = runParseResult.GetValue(definition.EnvOption);
+            Assert.IsNotNull(environmentVariables);
+            Assert.AreEqual("value", environmentVariables["TEST_SHORTHAND"]);
+            Assert.AreSequenceEqual(["arg one", "--flag"], runParseResult.GetValue(definition.ApplicationArguments));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    /// <summary>Verifies that a built-in command is not treated as a file-based application.</summary>
     [TestMethod]
     public void DoesNotDetectFileBasedApp_ForBuiltInCommand()
     {
@@ -97,6 +133,7 @@ public class AotParserTests
         Assert.IsNull(result.GetFileBasedAppEntryPointToken());
     }
 
+    /// <summary>Verifies that a nonexistent C# path is not treated as a file-based application.</summary>
     [TestMethod]
     public void DoesNotDetectFileBasedApp_ForNonExistentFile()
     {
@@ -213,6 +250,61 @@ public class AotParserTests
         var exception = RecordException(() => Parser.Invoke(result));
 
         Assert.IsNull(exception);
+    }
+
+    /// <summary>Verifies that run help renders directly from the Native AOT command tree.</summary>
+    [TestMethod]
+    public void InvokeRunHelp_RendersFromAotWithoutFallback()
+    {
+        var result = Parser.Parse(["run", "--help"]);
+        var exception = RecordException(() => Parser.Invoke(result));
+
+        Assert.IsNull(exception);
+    }
+
+    /// <summary>Verifies that unsupported run options retain managed fallback.</summary>
+    [TestMethod]
+    public void InvokeUnsupportedRunShape_FallsBackToManaged()
+    {
+        var result = Parser.Parse([
+            "run",
+            "--file", "Program.cs",
+            "--no-build",
+            "--no-launch-profile",
+            "--configuration", "Release",
+        ]);
+
+        Assert.IsEmpty(result.Errors);
+        Assert.ThrowsExactly<CommandNotAvailableInAotException>(() => Parser.Invoke(result));
+    }
+
+    [TestMethod]
+    [DataRow("new")]
+    [DataRow("new --help")]
+    [DataRow("new console --help")]
+    [DataRow("new list --help")]
+    [DataRow("new install --help")]
+    public void InvokeNewHelp_FallsBackToManaged(string commandLine)
+    {
+        // The managed CLI replaces `new` with a template-engine-backed command whose help is
+        // generated dynamically (template short-name/args usage line, Arguments section, per-template
+        // options). The AOT definition has no static equivalent, so help for the `new` subtree must
+        // defer to the managed CLI rather than render the incomplete static help.
+        var result = Parser.Parse(commandLine.Split(' '));
+        Assert.ThrowsExactly<CommandNotAvailableInAotException>(() => Parser.Invoke(result));
+    }
+
+    [TestMethod]
+    [DataRow("test")]
+    [DataRow("test --help")]
+    public void InvokeTestHelp_FallsBackToManaged(string commandLine)
+    {
+        // In Microsoft.Testing.Platform mode the managed CLI builds the test project and forwards
+        // `--help` to the test application, which contributes the "Extension Options:" section and
+        // per-extension options. The AOT definition cannot reproduce that, so help for the `test`
+        // subtree must defer to the managed CLI. (Bare `test` also requires MSBuild and falls back.)
+        var result = Parser.Parse(commandLine.Split(' '));
+        Assert.ThrowsExactly<CommandNotAvailableInAotException>(() => Parser.Invoke(result));
     }
 
     [TestMethod]

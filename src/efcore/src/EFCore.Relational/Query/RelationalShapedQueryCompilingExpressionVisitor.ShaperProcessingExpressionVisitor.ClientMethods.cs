@@ -75,7 +75,8 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
             = typeof(ShaperProcessingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(MaterializeJsonStructuralType))!;
 
         private static readonly MethodInfo MaterializeJsonNullableValueStructuralTypeMethodInfo
-            = typeof(ShaperProcessingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(MaterializeJsonNullableValueStructuralType))!;
+            = typeof(ShaperProcessingExpressionVisitor).GetTypeInfo()
+                .GetDeclaredMethod(nameof(MaterializeJsonNullableValueStructuralType))!;
 
         private static readonly MethodInfo MaterializeJsonEntityCollectionMethodInfo
             = typeof(ShaperProcessingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(MaterializeJsonEntityCollection))!;
@@ -138,9 +139,9 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [EntityFrameworkInternal]
-        public static TValue ThrowExtractJsonPropertyException<TValue>(Exception exception, string entityType, string propertyName) => throw new InvalidOperationException(
+        [MethodImpl(MethodImplOptions.AggressiveInlining), EntityFrameworkInternal]
+        public static TValue ThrowExtractJsonPropertyException<TValue>(Exception exception, string entityType, string propertyName)
+            => throw new InvalidOperationException(
                 RelationalStrings.JsonErrorExtractingJsonProperty(entityType, propertyName),
                 exception);
 
@@ -185,6 +186,27 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                             inverseNavigation.SetIsLoadedWhenNoTracking(relatedEntity);
                         }
                     }
+                }
+            }
+            else if (trackingQuery
+                     && entity is null
+                     && relatedEntity != null
+                     && navigation is INavigation { ForeignKey.IsOwnership: true })
+            {
+                // The owner entity is null (e.g. due to a null required property), but the owned entity was
+                // materialized and tracked. Detach it and log a warning about inconsistent data.
+#pragma warning disable EF1001 // Internal EF Core API usage.
+                var entry = queryContext.TryGetEntry(relatedEntity);
+                entry?.SetEntityState(EntityState.Detached);
+#pragma warning restore EF1001 // Internal EF Core API usage.
+
+                if (queryContext.QueryLogger.ShouldLogSensitiveData())
+                {
+                    queryContext.QueryLogger.InconsistentOwnedDataSensitive(navigation, entry);
+                }
+                else
+                {
+                    queryContext.QueryLogger.InconsistentOwnedDataWarning(navigation);
                 }
             }
         }

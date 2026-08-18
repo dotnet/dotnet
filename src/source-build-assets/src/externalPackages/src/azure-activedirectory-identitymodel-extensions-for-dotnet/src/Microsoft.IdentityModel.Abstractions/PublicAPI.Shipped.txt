@@ -1,0 +1,56 @@
+const Microsoft.IdentityModel.Abstractions.ObservabilityConstants.ActivityId = "ActivityId" -> string
+const Microsoft.IdentityModel.Abstractions.ObservabilityConstants.ClientId = "ClientId" -> string
+const Microsoft.IdentityModel.Abstractions.ObservabilityConstants.Duration = "Duration" -> string
+const Microsoft.IdentityModel.Abstractions.ObservabilityConstants.Succeeded = "Succeeded" -> string
+Microsoft.IdentityModel.Abstractions.EventLogLevel
+Microsoft.IdentityModel.Abstractions.EventLogLevel.Critical = 1 -> Microsoft.IdentityModel.Abstractions.EventLogLevel
+Microsoft.IdentityModel.Abstractions.EventLogLevel.Error = 2 -> Microsoft.IdentityModel.Abstractions.EventLogLevel
+Microsoft.IdentityModel.Abstractions.EventLogLevel.Informational = 4 -> Microsoft.IdentityModel.Abstractions.EventLogLevel
+Microsoft.IdentityModel.Abstractions.EventLogLevel.LogAlways = 0 -> Microsoft.IdentityModel.Abstractions.EventLogLevel
+Microsoft.IdentityModel.Abstractions.EventLogLevel.Verbose = 5 -> Microsoft.IdentityModel.Abstractions.EventLogLevel
+Microsoft.IdentityModel.Abstractions.EventLogLevel.Warning = 3 -> Microsoft.IdentityModel.Abstractions.EventLogLevel
+Microsoft.IdentityModel.Abstractions.IIdentityLogger
+Microsoft.IdentityModel.Abstractions.IIdentityLogger.IsEnabled(Microsoft.IdentityModel.Abstractions.EventLogLevel eventLogLevel) -> bool
+Microsoft.IdentityModel.Abstractions.IIdentityLogger.Log(Microsoft.IdentityModel.Abstractions.LogEntry entry) -> void
+Microsoft.IdentityModel.Abstractions.ITelemetryClient
+Microsoft.IdentityModel.Abstractions.ITelemetryClient.ClientId.get -> string
+Microsoft.IdentityModel.Abstractions.ITelemetryClient.ClientId.set -> void
+Microsoft.IdentityModel.Abstractions.ITelemetryClient.Initialize() -> void
+Microsoft.IdentityModel.Abstractions.ITelemetryClient.IsEnabled() -> bool
+Microsoft.IdentityModel.Abstractions.ITelemetryClient.IsEnabled(string eventName) -> bool
+Microsoft.IdentityModel.Abstractions.ITelemetryClient.TrackEvent(Microsoft.IdentityModel.Abstractions.TelemetryEventDetails eventDetails) -> void
+Microsoft.IdentityModel.Abstractions.ITelemetryClient.TrackEvent(string eventName, System.Collections.Generic.IDictionary<string, string> stringProperties = null, System.Collections.Generic.IDictionary<string, long> longProperties = null, System.Collections.Generic.IDictionary<string, bool> boolProperties = null, System.Collections.Generic.IDictionary<string, System.DateTime> dateTimeProperties = null, System.Collections.Generic.IDictionary<string, double> doubleProperties = null, System.Collections.Generic.IDictionary<string, System.Guid> guidProperties = null) -> void
+Microsoft.IdentityModel.Abstractions.LogEntry
+Microsoft.IdentityModel.Abstractions.LogEntry.CorrelationId.get -> string
+Microsoft.IdentityModel.Abstractions.LogEntry.CorrelationId.set -> void
+Microsoft.IdentityModel.Abstractions.LogEntry.EventLogLevel.get -> Microsoft.IdentityModel.Abstractions.EventLogLevel
+Microsoft.IdentityModel.Abstractions.LogEntry.EventLogLevel.set -> void
+Microsoft.IdentityModel.Abstractions.LogEntry.LogEntry() -> void
+Microsoft.IdentityModel.Abstractions.LogEntry.Message.get -> string
+Microsoft.IdentityModel.Abstractions.LogEntry.Message.set -> void
+Microsoft.IdentityModel.Abstractions.NullIdentityModelLogger
+Microsoft.IdentityModel.Abstractions.NullIdentityModelLogger.IsEnabled(Microsoft.IdentityModel.Abstractions.EventLogLevel eventLogLevel) -> bool
+Microsoft.IdentityModel.Abstractions.NullIdentityModelLogger.Log(Microsoft.IdentityModel.Abstractions.LogEntry entry) -> void
+Microsoft.IdentityModel.Abstractions.NullTelemetryClient
+Microsoft.IdentityModel.Abstractions.NullTelemetryClient.ClientId.get -> string
+Microsoft.IdentityModel.Abstractions.NullTelemetryClient.ClientId.set -> void
+Microsoft.IdentityModel.Abstractions.NullTelemetryClient.Initialize() -> void
+Microsoft.IdentityModel.Abstractions.NullTelemetryClient.IsEnabled() -> bool
+Microsoft.IdentityModel.Abstractions.NullTelemetryClient.IsEnabled(string eventName) -> bool
+Microsoft.IdentityModel.Abstractions.NullTelemetryClient.TrackEvent(Microsoft.IdentityModel.Abstractions.TelemetryEventDetails eventDetails) -> void
+Microsoft.IdentityModel.Abstractions.NullTelemetryClient.TrackEvent(string eventName, System.Collections.Generic.IDictionary<string, string> stringProperties = null, System.Collections.Generic.IDictionary<string, long> longProperties = null, System.Collections.Generic.IDictionary<string, bool> boolProperties = null, System.Collections.Generic.IDictionary<string, System.DateTime> dateTimeProperties = null, System.Collections.Generic.IDictionary<string, double> doubleProperties = null, System.Collections.Generic.IDictionary<string, System.Guid> guidProperties = null) -> void
+Microsoft.IdentityModel.Abstractions.ObservabilityConstants
+Microsoft.IdentityModel.Abstractions.TelemetryEventDetails
+Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.PropertyValues.get -> System.Collections.Generic.IDictionary<string, object>
+Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.TelemetryEventDetails() -> void
+static Microsoft.IdentityModel.Abstractions.NullIdentityModelLogger.Instance.get -> Microsoft.IdentityModel.Abstractions.NullIdentityModelLogger
+static Microsoft.IdentityModel.Abstractions.NullTelemetryClient.Instance.get -> Microsoft.IdentityModel.Abstractions.NullTelemetryClient
+virtual Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.Name.get -> string
+virtual Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.Name.set -> void
+virtual Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.Properties.get -> System.Collections.Generic.IReadOnlyDictionary<string, object>
+virtual Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.SetProperty(string key, bool value) -> void
+virtual Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.SetProperty(string key, double value) -> void
+virtual Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.SetProperty(string key, long value) -> void
+virtual Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.SetProperty(string key, string value) -> void
+virtual Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.SetProperty(string key, System.DateTime value) -> void
+virtual Microsoft.IdentityModel.Abstractions.TelemetryEventDetails.SetProperty(string key, System.Guid value) -> void

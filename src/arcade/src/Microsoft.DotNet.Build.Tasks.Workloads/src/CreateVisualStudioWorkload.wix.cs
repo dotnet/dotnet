@@ -381,6 +381,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                                 swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{sdkFeatureBand}");
                                 swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeMsiPack);
                                 swixProjectItem.SetMetadata(Metadata.IsPreview, "false");
+                                swixProjectItem.SetMetadata(Metadata.Platform, msiOutputItem.GetMetadata(Metadata.Platform));
+                                swixProjectItem.SetMetadata(Metadata.SwixPackageId, msiOutputItem.GetMetadata(Metadata.SwixPackageId));
 
                                 lock (swixProjectItems)
                                 {
@@ -425,6 +427,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                                 swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{manifestPackage.SdkFeatureBand}");
                                 swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeMsiPack);
                                 swixProjectItem.SetMetadata(Metadata.IsPreview, "false");
+                                swixProjectItem.SetMetadata(Metadata.Platform, msiOutputItem.GetMetadata(Metadata.Platform));
+                                swixProjectItem.SetMetadata(Metadata.SwixPackageId, msiOutputItem.GetMetadata(Metadata.SwixPackageId));
 
                                 lock (swixProjectItems)
                                 {
@@ -454,6 +458,8 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
                     swixProjectItem.SetMetadata(Metadata.SdkFeatureBand, $"{((WorkloadManifestPackage)msi.Package).SdkFeatureBand}");
                     swixProjectItem.SetMetadata(Metadata.PackageType, DefaultValues.PackageTypeMsiManifest);
                     swixProjectItem.SetMetadata(Metadata.IsPreview, "false");
+                    swixProjectItem.SetMetadata(Metadata.Platform, msiOutputItem.GetMetadata(Metadata.Platform));
+                    swixProjectItem.SetMetadata(Metadata.SwixPackageId, msiOutputItem.GetMetadata(Metadata.SwixPackageId));
 
                     lock (swixProjectItems)
                     {

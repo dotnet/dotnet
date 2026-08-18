@@ -118,27 +118,10 @@ internal static class TelemetryDataConstants
 
     public static readonly string AttachmentsProcessingState = "VS.AttachmentsProcessing.State";
 
-    // *********************Test Sessions****************************
-    public static readonly string ParallelEnabledDuringStartTestSession = "VS.TestSession.ParallelEnabled";
-
-    public static readonly string TestSessionId = "VS.TestSession.Id";
-
-    public static readonly string TestSessionSpawnedTesthostCount = "VS.TestSession.SpawnedTesthostCount";
-
-    public static readonly string TestSessionTesthostSpawnTimeInSec = "VS.TestSession.TesthostSpawnTimeInSec";
-
-    public static readonly string TestSessionState = "VS.TestSession.State";
-
-    public static readonly string TestSessionTotalSessionTimeInSec = "VS.TestSession.TotalSessionTimeInSec";
-
     // **************Events Name **********************************
     public static readonly string TestDiscoveryCompleteEvent = "vs/testplatform/testdiscoverysession";
 
     public static readonly string TestExecutionCompleteEvent = "vs/testplatform/testrunsession";
 
     public static readonly string TestAttachmentsProcessingCompleteEvent = "vs/testplatform/testattachmentsprocessingsession";
-
-    public static readonly string StartTestSessionCompleteEvent = "vs/testplatform/starttestsession";
-
-    public static readonly string StopTestSessionCompleteEvent = "vs/testplatform/stoptestsession";
 }

@@ -30,7 +30,7 @@ pack() {
   echo -e "Pack ...... "
   echo -e "===========================================================\n"
 
-  dotnet pack --no-build WilsonUnix.sln
+  dotnet pack --no-build WilsonUnix.sln -c Debug
   
   echo -e "\n"
   echo -e "==========================================================="

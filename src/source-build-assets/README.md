@@ -240,6 +240,16 @@ appropriate to add these types of package as allowed prebuilt via the `eng/Sourc
 file. See the [Eliminating pre-builts documentation](https://github.com/dotnet/source-build/blob/main/Documentation/eliminating-pre-builts.md)
 for detailed guidance.
 
+> **Important:** For a .NET `N` product release, reference packages in this repository must target only
+older .NET versions. Do not add `N.x` reference packages or current-TFM targeting packages to
+`release/N.0` or the corresponding development branch. A generated current-major reference package
+generally targets `netN.0` and depends on `Microsoft.NETCore.App.Ref` `N.0`. Source-build-assets is
+part of the bootstrap layer: it builds before runtime, while runtime depends on source-build-assets.
+Depending on the current product targeting pack would invert that dependency, create a build cycle,
+and undermine N-1 bootstrapping. Resolve current-version dependencies through the current
+source-build dependency graph or, when necessary to break a legitimate bootstrap cycle, use
+previously-source-built (PSB) packages instead of current-major reference-package API stubs.
+
 ``` bash
 ./generate.sh --package system.buffers,4.5.1
 ```

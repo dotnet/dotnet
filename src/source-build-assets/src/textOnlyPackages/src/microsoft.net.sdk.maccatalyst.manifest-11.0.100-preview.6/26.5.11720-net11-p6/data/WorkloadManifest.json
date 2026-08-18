@@ -1,0 +1,59 @@
+{
+	"version": "26.5.11720-net11-p6",
+	"workloads": {
+		"maccatalyst": {
+			"description": ".NET SDK Workload for building MacCatalyst applications.",
+			"packs": [
+				"Microsoft.MacCatalyst.Sdk.net11.0_26.5",
+				"Microsoft.MacCatalyst.Sdk.net10.0_26.0",
+				"Microsoft.MacCatalyst.Sdk.net10.0_26.5",
+				"Microsoft.MacCatalyst.Ref.net11.0_26.5",
+				"Microsoft.MacCatalyst.Runtime.maccatalyst.net11.0_26.5",
+				"Microsoft.MacCatalyst.Runtime.maccatalyst-x64.net11.0_26.5",
+				"Microsoft.MacCatalyst.Runtime.maccatalyst-arm64.net11.0_26.5",
+				"Microsoft.MacCatalyst.Templates.net9"
+			],
+			"extends": [
+				"microsoft-net-runtime-maccatalyst",
+				"microsoft-net-runtime-maccatalyst-net10",
+			]
+		},
+	},
+	"packs": {
+		"Microsoft.MacCatalyst.Sdk.net11.0_26.5": {
+			"kind": "sdk",
+			"version": "26.5.11720-net11-p6",
+		},
+		"Microsoft.MacCatalyst.Sdk.net10.0_26.0": {
+			"kind": "sdk",
+			"version": "26.0.11017",
+		},
+		"Microsoft.MacCatalyst.Sdk.net10.0_26.5": {
+			"kind": "sdk",
+			"version": "26.5.10301",
+		},
+		"Microsoft.MacCatalyst.Ref.net11.0_26.5": {
+			"kind": "framework",
+			"version": "26.5.11720-net11-p6"
+		},
+		"Microsoft.MacCatalyst.Runtime.maccatalyst.net11.0_26.5": {
+			"kind": "framework",
+			"version": "26.5.11720-net11-p6"
+		},
+		"Microsoft.MacCatalyst.Runtime.maccatalyst-x64.net11.0_26.5": {
+			"kind": "framework",
+			"version": "26.5.11720-net11-p6"
+		},
+		"Microsoft.MacCatalyst.Runtime.maccatalyst-arm64.net11.0_26.5": {
+			"kind": "framework",
+			"version": "26.5.11720-net11-p6"
+		},
+		"Microsoft.MacCatalyst.Templates.net9": {
+			"kind": "template",
+			"version": "26.5.11720-net11-p6",
+			"alias-to": {
+				"any": "Microsoft.MacCatalyst.Templates",
+			}
+		}
+	}
+}

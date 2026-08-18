@@ -160,7 +160,15 @@ internal class ListLoggersArgumentExecutor : IArgumentExecutor
         var extensionManager = TestLoggerExtensionManager.Create(new NullMessageLogger());
         foreach (var extension in extensionManager.TestExtensions)
         {
-            ConsoleOutput.Instance.WriteLine(extension.Value.GetType().FullName, OutputLevel.Information);
+            // Report the logger's type name from its discovery metadata instead of instantiating the
+            // extension. Our built-in ConsoleLogger is activated by injection and no longer exposes a
+            // parameterless constructor, so forcing extension.Value here would fail; and naming the
+            // available loggers should never require constructing them.
+            var loggerTypeName = extension.TestPluginInfo?.AssemblyQualifiedName is { } assemblyQualifiedName
+                ? assemblyQualifiedName.Split(',')[0]
+                : extension.Value.GetType().FullName;
+
+            ConsoleOutput.Instance.WriteLine(loggerTypeName, OutputLevel.Information);
             ConsoleOutput.Instance.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.AvailableExtensionsMetadataFormat, "Uri", extension.Metadata.ExtensionUri), OutputLevel.Information);
             ConsoleOutput.Instance.WriteLine(string.Format(CultureInfo.CurrentCulture, CommandLineResources.AvailableExtensionsMetadataFormat, "FriendlyName", string.Join(", ", extension.Metadata.FriendlyName)), OutputLevel.Information);
         }

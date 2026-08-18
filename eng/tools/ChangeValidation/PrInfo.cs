@@ -9,4 +9,5 @@ namespace ChangeValidation;
 
 internal record PrInfo(
     string TargetBranch, 
-    ImmutableList<string> ChangedFiles);
+    ImmutableList<string> ChangedFiles,
+    string MergeBaseCommit);

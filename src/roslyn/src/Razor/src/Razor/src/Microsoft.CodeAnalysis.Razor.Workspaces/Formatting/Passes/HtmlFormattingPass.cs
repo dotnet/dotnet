@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
@@ -109,6 +108,7 @@ internal sealed partial class HtmlFormattingPass(
         // there could be one edit to replace the whole line.
         changes = SourceTextDiffer.GetMinimalTextChanges(originalText, formattedText, DiffKind.Char);
         changes = FilterChangesInUnsupportedSpans(changes, razorCommentSpans);
+        changes = FilterOutNonWhitespaceChanges(changes);
 
         // Re-apply the changes to get the new formatted text
         formattedText = originalText.WithChanges(changes);
@@ -163,7 +163,7 @@ internal sealed partial class HtmlFormattingPass(
             // since we're at the point where we know for sure a newline was added, and there shouldn't
             // be too many of those scenarios, its worth being extra safe, because the pre-filtering is
             // at the mercy of the exact shape of the edits the Html formatter made.
-            if (IsInStringLiteral(originalPosition))
+            if (_documentMappingService.IsInStringLiteral(csharpDocument, csharpSyntaxRoot, originalPosition, multilineOnly: false))
             {
                 return false;
             }
@@ -176,7 +176,7 @@ internal sealed partial class HtmlFormattingPass(
             using var validChanges = new PooledArrayBuilder<TextChange>();
             foreach (var change in changes)
             {
-                if (IsInStringLiteral(change.Span.Start))
+                if (_documentMappingService.IsInStringLiteral(csharpDocument, csharpSyntaxRoot, change.Span.Start, multilineOnly: false))
                 {
                     continue;
                 }
@@ -198,16 +198,52 @@ internal sealed partial class HtmlFormattingPass(
             return validChanges.ToImmutableAndClear();
         }
 
-        bool IsInStringLiteral(int position)
+        ImmutableArray<TextChange> FilterOutNonWhitespaceChanges(ImmutableArray<TextChange> candidateChanges)
         {
-            if (_documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, position, out _, out var csharpIndex) &&
-                csharpSyntaxRoot.FindNode(new TextSpan(csharpIndex, 0), getInnermostNodeForTie: true) is { } csharpNode &&
-                csharpNode.IsStringLiteral())
+            if (candidateChanges.IsEmpty)
             {
-                return true;
+                return candidateChanges;
             }
 
-            return false;
+            // The character differ can split a collectively safe rewrite into changes that do not compare safely in isolation.
+            if (originalText.NonWhitespaceContentEquals(candidateChanges))
+            {
+                return candidateChanges;
+            }
+
+            var changedText = originalText.WithChanges(candidateChanges);
+            using var validChanges = new PooledArrayBuilder<TextChange>(capacity: candidateChanges.Length);
+
+            var positionDelta = 0;
+            var previousStart = -1;
+            foreach (var change in candidateChanges)
+            {
+                Debug.Assert(change.Span.Start >= previousStart);
+                previousStart = change.Span.Start;
+
+                var replacementLength = change.NewText?.Length ?? 0;
+                var changedStart = change.Span.Start + positionDelta;
+                var changedEnd = changedStart + replacementLength;
+                if (originalText.NonWhitespaceContentEquals(
+                    changedText,
+                    change.Span.Start,
+                    change.Span.End,
+                    changedStart,
+                    changedEnd))
+                {
+                    validChanges.Add(change);
+                }
+
+                positionDelta += replacementLength - change.Span.Length;
+            }
+
+            if (candidateChanges.Length == validChanges.Count)
+            {
+                return candidateChanges;
+            }
+
+            _logger.LogWarning("Ignoring non-whitespace changes returned by the HTML formatter.");
+            return validChanges.ToImmutableAndClear();
         }
     }
 

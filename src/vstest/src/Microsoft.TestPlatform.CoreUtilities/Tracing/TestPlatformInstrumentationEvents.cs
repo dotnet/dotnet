@@ -187,44 +187,4 @@ internal class TestPlatformInstrumentationEvents
     /// Events fired on session attachments processing complete in translation layer.
     /// </summary>
     public const int TranslationLayerTestRunAttachmentsProcessingStopEventId = 0x45;
-
-    /// <summary>
-    /// The start test session start event id.
-    /// </summary>
-    public const int StartTestSessionStartEventId = 0x46;
-
-    /// <summary>
-    /// The start test session stop event id.
-    /// </summary>
-    public const int StartTestSessionStopEventId = 0x47;
-
-    /// <summary>
-    /// The translation layer start test session start event id.
-    /// </summary>
-    public const int TranslationLayerStartTestSessionStartEventId = 0x48;
-
-    /// <summary>
-    /// The translation layer start test session stop event id.
-    /// </summary>
-    public const int TranslationLayerStartTestSessionStopEventId = 0x49;
-
-    /// <summary>
-    /// The stop test session start event id.
-    /// </summary>
-    public const int StopTestSessionStartEventId = 0x4A;
-
-    /// <summary>
-    /// The stop test session stop event id.
-    /// </summary>
-    public const int StopTestSessionStopEventId = 0x4B;
-
-    /// <summary>
-    /// The translation layer stop test session start event id.
-    /// </summary>
-    public const int TranslationLayerStopTestSessionStartEventId = 0x4C;
-
-    /// <summary>
-    /// The translation layer stop test session stop event id.
-    /// </summary>
-    public const int TranslationLayerStopTestSessionStopEventId = 0x4D;
 }

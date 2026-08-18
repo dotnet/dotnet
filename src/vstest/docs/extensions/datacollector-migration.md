@@ -5,7 +5,7 @@ This document will walk you through the changes that are required to migrate you
 ## Referencing DataCollector Framework
 Previously, `DataCollector` abstract class was present in `Microsoft.VisualStudio.QualityTools.ExecutionCommon.dll` under namespace `Microsoft.VisualStudio.TestTools.Execution`.
 
-Now, `DataCollector`abstract class is present in Object Model. Add reference to [`Microsoft.TestPlatform.ObjectModel`](https://www.nuget.org/packages/Microsoft.TestPlatform.ObjectModel/15.5.0-preview-20170810-02)  (preview) nuget package. DataCollector APIs are present under namespace `Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection`.
+Now, `DataCollector` abstract class is present in Object Model. Add reference to [`Microsoft.TestPlatform.ObjectModel`](https://www.nuget.org/packages/Microsoft.TestPlatform.ObjectModel) NuGet package. DataCollector APIs are present under namespace `Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection`.
 It is recommended to target your DataCollector to netstandard, so that it can also run cross-platform, i.e. on non-Windows operating systems.
 For more info, refer to this [guide](./datacollector.md).
 

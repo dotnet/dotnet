@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore.SqlServer.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-#nullable disable
-
 [ConditionalClass(typeof(SqlServerTestEnvironment), nameof(SqlServerTestEnvironment.IsTemporalTablesCascadeDeleteSupported))]
 public class TemporalOwnedQuerySqlServerTest : OwnedQueryRelationalTestBase<
     TemporalOwnedQuerySqlServerTest.TemporalOwnedQuerySqlServerFixture>
@@ -1974,10 +1972,7 @@ GROUP BY [o].[Id]
             foreach (var barton in bartons)
             {
                 barton.Simple = "Modified" + barton.Simple;
-                if (barton.Throned != null)
-                {
-                    barton.Throned.Property = "Modified" + barton.Throned.Property;
-                }
+                barton.Throned?.Property = "Modified" + barton.Throned.Property;
             }
 
             await context.SaveChangesAsync();

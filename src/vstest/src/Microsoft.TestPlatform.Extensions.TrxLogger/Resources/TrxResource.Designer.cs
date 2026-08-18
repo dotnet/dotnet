@@ -341,6 +341,15 @@ namespace Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to write the results file &apos;{0}&apos;. {1}.
+        /// </summary>
+        internal static string TrxLoggerWriteFailed {
+            get {
+                return ResourceManager.GetString("TrxLoggerWriteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Loaded Results.
         /// </summary>
         internal static string TS_AllResults {

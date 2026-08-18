@@ -121,6 +121,7 @@
 #include "predeftlsslot.h"
 #include "hillclimbing.h"
 #include "sos_md.h"
+#include "gcinfoprovider.h"
 
 #ifndef FEATURE_PAL
 
@@ -6704,10 +6705,12 @@ DECLARE_API(GCInfo)
     TADDR taStartAddr = (TADDR)0;
     TADDR taGCInfoAddr;
     BOOL dml = FALSE;
+    BOOL useLegacy = FALSE;
 
     CMDOption option[] =
     {   // name, vptr, type, hasValue
         {"/d", &dml, COBOOL, FALSE},
+        {"-legacy", &useLegacy, COBOOL, FALSE},
     };
     CMDValue arg[] =
     {   // vptr, type
@@ -6784,6 +6787,20 @@ DECLARE_API(GCInfo)
         ExtOut("preJIT generated code\n");
     }
 
+    // Use GCInfoData abstraction (tries ISOSDacInterface18 first, then legacy)
+    if (!useLegacy)
+    {
+        GCInfoData gcInfo;
+        CLRDATA_ADDRESS methodIP = TO_CDADDR(codeHeaderData.MethodStart);
+        HRESULT hr = GCInfoData::Create(methodIP, gcInfo);
+        if (SUCCEEDED(hr) && gcInfo.IsValid)
+        {
+            gcInfo.DumpToOutput(ExtOut);
+            return Status;
+        }
+    }
+
+    // Final fallback: raw GC info blob + DumpGCInfo (for older runtimes without Interface18)
     taGCInfoAddr = TO_TADDR(codeHeaderData.GCInfo);
 
     ExtOut("GC info %p\n", SOS_PTR(taGCInfoAddr));
@@ -7469,6 +7486,24 @@ HRESULT displayGcInfo(BOOL fWithGCInfo, const DacpCodeHeaderData& codeHeaderData
 
     if (fWithGCInfo)
     {
+        if (!g_gcEncodingInfo.Initialize())
+        {
+            return E_OUTOFMEMORY;
+        }
+
+        // Try the GCInfoData abstraction first (ISOSDacInterface18, then legacy decoder)
+        {
+            GCInfoData gcInfo;
+            CLRDATA_ADDRESS methodIP = TO_CDADDR(codeHeaderData.MethodStart);
+            HRESULT hr = GCInfoData::Create(methodIP, gcInfo);
+            if (SUCCEEDED(hr) && gcInfo.IsValid)
+            {
+                gcInfo.DumpToOutput(DecodeGCTableEntry);
+                return S_OK;
+            }
+        }
+
+        // Final fallback: raw GC info blob + DumpGCInfo (for older runtimes)
         // assume that GC encoding table is never more than 40 + methodSize * 2
         int tableSize = 0;
         if (!ClrSafeInt<int>::multiply(codeHeaderData.MethodSize, 2, tableSize) ||
@@ -7499,11 +7534,6 @@ HRESULT displayGcInfo(BOOL fWithGCInfo, const DacpCodeHeaderData& codeHeaderData
         // Skip the info header
         //
         unsigned int methodSize = (unsigned int)codeHeaderData.MethodSize;
-
-        if (!g_gcEncodingInfo.Initialize())
-        {
-            return E_OUTOFMEMORY;
-        }
 
         GCInfoToken gcInfoToken = { table, GCInfoVersion() };
         g_targetMachine->DumpGCInfo(gcInfoToken, methodSize, DecodeGCTableEntry, false /*encBytes*/, false /*bPrintHeader*/);
@@ -13432,21 +13462,70 @@ DECLARE_API(SetClrPath)
 //
 // Lists and selects the current runtime
 //
+static void DisplayCDacLoadPolicy()
+{
+    PCSTR cdacPolicy = "policy (default)";
+    switch (Runtime::GetCDacLoadPolicy())
+    {
+        case CDacLoadPolicy::UseCDac:
+            cdacPolicy = "true";
+            break;
+        case CDacLoadPolicy::UseLegacyDac:
+            cdacPolicy = "false";
+            break;
+        default:
+            break;
+    }
+    ExtOut("Settings:\n");
+    ExtOut("-> Use cDAC: %s\n", cdacPolicy);
+}
+
 DECLARE_API(runtimes)
 {
-    INIT_API_NODAC_PROBE_MANAGED("runtimes");
+    INIT_API_NOEE_PROBE_MANAGED("runtimes");
 
     BOOL bNetFx = FALSE;
     BOOL bNetCore = FALSE;
+    StringHolder useCDac;
     CMDOption option[] =
     {   // name, vptr, type, hasValue
         {"-netfx", &bNetFx, COBOOL, FALSE},
         {"-netcore", &bNetCore, COBOOL, FALSE},
+        {"--usecdac", &useCDac.data, COSTRING, TRUE},
     };
     if (!GetCMDOption(args, option, ARRAY_SIZE(option), NULL, 0, NULL))
     {
         return E_INVALIDARG;
     }
+    if (useCDac.data != nullptr)
+    {
+        CDacLoadPolicy policy;
+        if (_stricmp(useCDac.data, "true") == 0)
+        {
+            policy = CDacLoadPolicy::UseCDac;
+        }
+        else if (_stricmp(useCDac.data, "false") == 0)
+        {
+            policy = CDacLoadPolicy::UseLegacyDac;
+        }
+        else if (_stricmp(useCDac.data, "policy") == 0 || _stricmp(useCDac.data, "default") == 0)
+        {
+            policy = CDacLoadPolicy::Default;
+        }
+        else
+        {
+            ExtErr("Invalid --usecdac value '%s'. Expected true, false, policy, or default.\n", useCDac.data);
+            return E_INVALIDARG;
+        }
+        Runtime::SetCDacLoadPolicy(policy);
+        GetTarget()->Flush();
+    }
+    if (useCDac.data != nullptr && !bNetCore && !bNetFx)
+    {
+        DisplayCDacLoadPolicy();
+        return Status;
+    }
+    INIT_API_EE();
     if (bNetCore || bNetFx)
     {
 #ifndef FEATURE_PAL
@@ -13470,6 +13549,7 @@ DECLARE_API(runtimes)
     else
     {
         Target::DisplayStatus();
+        DisplayCDacLoadPolicy();
     }
     return Status;
 }

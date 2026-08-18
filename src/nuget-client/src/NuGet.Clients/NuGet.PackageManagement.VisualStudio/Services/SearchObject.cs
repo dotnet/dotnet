@@ -230,7 +230,10 @@ namespace NuGet.PackageManagement.VisualStudio
                 memoryCacheItem.UpdateSearchMetadata(packageSearchMetadata);
             }
 
-            NuGetPackageFileService.AddIconToCache(packageSearchMetadata.Identity, packageSearchMetadata.IconUrl);
+            if (packageSearchMetadata.IconUrl != null)
+            {
+                NuGetPackageFileService.AddIconToCache(packageSearchMetadata.Identity, packageSearchMetadata.IconUrl);
+            }
             if (localPackageSearchMetadata?.IconUrl != null)
             {
                 NuGetPackageFileService.AddLocalIconToCache(packageSearchMetadata.Identity, localPackageSearchMetadata.IconUrl);
@@ -287,7 +290,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 return null;
             }
 
-            IReadOnlyList<string> ownersList = packageSearchMetadata.OwnersList;
+            IReadOnlyList<string>? ownersList = packageSearchMetadata.OwnersList;
 
             if (ownersList is null || ownersList.Count == 0)
             {

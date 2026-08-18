@@ -3,8 +3,6 @@
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-#nullable disable
-
 public class NorthwindSelectQuerySqlServerTest : NorthwindSelectQueryRelationalTestBase<
     NorthwindQuerySqlServerFixture<NoopModelCustomizer>>
 {
@@ -2919,9 +2917,9 @@ ORDER BY [c0].[CustomerID]
             method switch
             {
                 nameof(Queryable.First) or
-                nameof(Queryable.FirstOrDefault) or
-                nameof(Queryable.Single) or
-                nameof(Queryable.SingleOrDefault) => """
+                    nameof(Queryable.FirstOrDefault) or
+                    nameof(Queryable.Single) or
+                    nameof(Queryable.SingleOrDefault) => """
 SELECT [o].[OrderID], [c1].[City], [c1].[Country], [c1].[ContactName]
 FROM [Orders] AS [o]
 LEFT JOIN (
@@ -2935,7 +2933,7 @@ LEFT JOIN (
 WHERE [o].[CustomerID] IS NOT NULL
 """,
                 nameof(Queryable.Last) or
-                nameof(Queryable.LastOrDefault) => """
+                    nameof(Queryable.LastOrDefault) => """
 SELECT [o].[OrderID], [c1].[City], [c1].[Country], [c1].[ContactName]
 FROM [Orders] AS [o]
 LEFT JOIN (
@@ -2949,7 +2947,7 @@ LEFT JOIN (
 WHERE [o].[CustomerID] IS NOT NULL
 """,
                 nameof(Queryable.ElementAt) or
-                nameof(Queryable.ElementAtOrDefault) => """
+                    nameof(Queryable.ElementAtOrDefault) => """
 SELECT [o].[OrderID], [c1].[City], [c1].[Country], [c1].[ContactName]
 FROM [Orders] AS [o]
 LEFT JOIN (

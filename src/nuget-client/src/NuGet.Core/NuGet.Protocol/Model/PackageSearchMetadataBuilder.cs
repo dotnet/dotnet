@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,49 +17,49 @@ namespace NuGet.Protocol.Core.Types
     public class PackageSearchMetadataBuilder
     {
         private readonly IPackageSearchMetadata _metadata;
-        private AsyncLazy<IEnumerable<VersionInfo>> _lazyVersionsFactory;
-        private AsyncLazy<PackageDeprecationMetadata> _lazyDeprecationFactory;
+        private AsyncLazy<IEnumerable<VersionInfo>>? _lazyVersionsFactory;
+        private AsyncLazy<PackageDeprecationMetadata?>? _lazyDeprecationFactory;
 
         public class ClonedPackageSearchMetadata : IPackageSearchMetadata
         {
             private static readonly AsyncLazy<IEnumerable<VersionInfo>> LazyEmptyVersionInfo =
                 AsyncLazy.New(Enumerable.Empty<VersionInfo>());
 
-            private static readonly AsyncLazy<PackageDeprecationMetadata> LazyNullDeprecationMetadata =
-                AsyncLazy.New((PackageDeprecationMetadata)null);
+            private static readonly AsyncLazy<PackageDeprecationMetadata?> LazyNullDeprecationMetadata =
+                AsyncLazy.New((PackageDeprecationMetadata?)null);
 
-            public string Authors { get; set; }
-            public IEnumerable<PackageDependencyGroup> DependencySets { get; set; }
-            public string Description { get; set; }
+            public string? Authors { get; set; }
+            public IEnumerable<PackageDependencyGroup> DependencySets { get; set; } = Enumerable.Empty<PackageDependencyGroup>();
+            public string? Description { get; set; }
             public long? DownloadCount { get; set; }
-            public Uri IconUrl { get; set; }
-            public PackageIdentity Identity { get; set; }
-            public Uri LicenseUrl { get; set; }
-            public IReadOnlyList<string> OwnersList { get; set; }
-            public string Owners { get; set; }
-            public Uri ProjectUrl { get; set; }
+            public Uri? IconUrl { get; set; }
+            public PackageIdentity Identity { get; set; } = null!;
+            public Uri? LicenseUrl { get; set; }
+            public IReadOnlyList<string>? OwnersList { get; set; }
+            public string? Owners { get; set; }
+            public Uri? ProjectUrl { get; set; }
             public DateTimeOffset? Published { get; set; }
-            public Uri ReadmeUrl { get; set; }
-            public string ReadmeFileUrl { get; set; }
-            public Uri ReportAbuseUrl { get; set; }
-            public Uri PackageDetailsUrl { get; set; }
+            public Uri? ReadmeUrl { get; set; }
+            public string? ReadmeFileUrl { get; set; }
+            public Uri? ReportAbuseUrl { get; set; }
+            public Uri? PackageDetailsUrl { get; set; }
             public bool RequireLicenseAcceptance { get; set; }
-            public string Summary { get; set; }
-            public string Tags { get; set; }
-            public string Title { get; set; }
+            public string? Summary { get; set; }
+            public string? Tags { get; set; }
+            public string Title { get; set; } = null!;
             public bool PrefixReserved { get; set; }
-            public LicenseMetadata LicenseMetadata { get; set; }
+            public LicenseMetadata? LicenseMetadata { get; set; }
 
-            internal AsyncLazy<IEnumerable<VersionInfo>> LazyVersionsFactory { get; set; }
+            internal AsyncLazy<IEnumerable<VersionInfo>>? LazyVersionsFactory { get; set; }
             public async Task<IEnumerable<VersionInfo>> GetVersionsAsync() => await (LazyVersionsFactory ?? LazyEmptyVersionInfo);
 
-            internal AsyncLazy<PackageDeprecationMetadata> LazyDeprecationFactory { get; set; }
-            public async Task<PackageDeprecationMetadata> GetDeprecationMetadataAsync() => await (LazyDeprecationFactory ?? LazyNullDeprecationMetadata);
-            public IEnumerable<PackageVulnerabilityMetadata> Vulnerabilities { get; set; }
+            internal AsyncLazy<PackageDeprecationMetadata?>? LazyDeprecationFactory { get; set; }
+            public async Task<PackageDeprecationMetadata?> GetDeprecationMetadataAsync() => await (LazyDeprecationFactory ?? LazyNullDeprecationMetadata);
+            public IEnumerable<PackageVulnerabilityMetadata>? Vulnerabilities { get; set; }
             public bool IsListed { get; set; }
             [Obsolete("PackagePath is recommended in place of PackageReader")]
-            public Func<PackageReaderBase> PackageReader { get; set; }
-            public string PackagePath { get; set; }
+            public Func<PackageReaderBase>? PackageReader { get; set; }
+            public string? PackagePath { get; set; }
 
             internal void CacheStrings(MetadataReferenceCache cache)
             {
@@ -71,7 +69,7 @@ namespace NuGet.Protocol.Core.Types
                 ReadmeFileUrl = cache.GetString(ReadmeFileUrl);
                 Summary = cache.GetString(Summary);
                 Tags = cache.GetString(Tags);
-                Title = cache.GetString(Title);
+                Title = cache.GetString(Title)!;
                 PackagePath = cache.GetString(PackagePath);
             }
         }
@@ -91,7 +89,7 @@ namespace NuGet.Protocol.Core.Types
             return this;
         }
 
-        public PackageSearchMetadataBuilder WithDeprecation(AsyncLazy<PackageDeprecationMetadata> lazyDeprecationFactory)
+        public PackageSearchMetadataBuilder WithDeprecation(AsyncLazy<PackageDeprecationMetadata?> lazyDeprecationFactory)
         {
             _lazyDeprecationFactory = lazyDeprecationFactory;
             return this;

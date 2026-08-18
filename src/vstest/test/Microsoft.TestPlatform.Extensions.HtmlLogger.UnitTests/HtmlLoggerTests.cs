@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger;
 using Microsoft.VisualStudio.TestPlatform.Extensions.HtmlLogger.ObjectModel;
@@ -34,6 +36,8 @@ public class HtmlLoggerTests
     private readonly Mock<IFileHelper> _mockFileHelper;
     private readonly Mock<XmlObjectSerializer> _mockXmlSerializer;
     private readonly Mock<IHtmlTransformer> _mockHtmlTransformer;
+
+    public TestContext TestContext { get; set; }
 
     public HtmlLoggerTests()
     {
@@ -675,6 +679,61 @@ public class HtmlLoggerTests
         Assert.IsNotNull(_htmlLogger.XmlFilePath);
         Assert.Contains("[1].xml", _htmlLogger.XmlFilePath);
         _mockFileHelper.Verify(x => x.GetStream(It.IsAny<string>(), FileMode.CreateNew, FileAccess.Write, FileShare.None), Times.AtLeast(2));
+    }
+
+    [TestMethod]
+    public void TestResultHandlerShouldCreateExactlyOneResultCollectionPerSourceUnderConcurrency()
+    {
+        const int threadCount = 10;
+        const int testsPerThread = 50;
+        var barrier = new Barrier(threadCount);
+
+        var tasks = Enumerable.Range(0, threadCount).Select(t => Task.Run(() =>
+        {
+            barrier.SignalAndWait(TestContext.CancellationToken);
+            for (int i = 0; i < testsPerThread; i++)
+            {
+                var testCase = CreateTestCase($"TestCase_{t}_{i}");
+                testCase.Source = "abc.dll";
+                var result = new ObjectModel.TestResult(testCase)
+                {
+                    Outcome = i % 2 == 0 ? TestOutcome.Passed : TestOutcome.Failed
+                };
+                _htmlLogger.TestResultHandler(new object(), new Mock<TestResultEventArgs>(result).Object);
+            }
+        }, TestContext.CancellationToken)).ToArray();
+
+        Task.WaitAll(tasks, TestContext.CancellationToken);
+
+        var resultCollectionList = _htmlLogger.TestRunDetails!.ResultCollectionList!;
+        Assert.HasCount(1, resultCollectionList, "Only one result collection should be created per source");
+        Assert.HasCount(threadCount * testsPerThread, resultCollectionList[0].ResultList!,
+            "No result should be lost under concurrent updates");
+        Assert.HasCount(threadCount * (testsPerThread / 2), resultCollectionList[0].FailedResultList!,
+            "No failed result should be lost under concurrent updates");
+    }
+
+    [TestMethod]
+    public void TestMessageHandlerShouldNotLoseMessagesUnderConcurrency()
+    {
+        const int threadCount = 10;
+        const int messagesPerThread = 100;
+        var barrier = new Barrier(threadCount);
+
+        var tasks = Enumerable.Range(0, threadCount).Select(t => Task.Run(() =>
+        {
+            barrier.SignalAndWait(TestContext.CancellationToken);
+            for (int i = 0; i < messagesPerThread; i++)
+            {
+                _htmlLogger.TestMessageHandler(new object(), new TestRunMessageEventArgs(TestMessageLevel.Informational, $"info_{t}_{i}"));
+                _htmlLogger.TestMessageHandler(new object(), new TestRunMessageEventArgs(TestMessageLevel.Error, $"error_{t}_{i}"));
+            }
+        }, TestContext.CancellationToken)).ToArray();
+
+        Task.WaitAll(tasks, TestContext.CancellationToken);
+
+        Assert.HasCount(threadCount * messagesPerThread, _htmlLogger.TestRunDetails!.RunLevelMessageInformational!);
+        Assert.HasCount(threadCount * messagesPerThread, _htmlLogger.TestRunDetails.RunLevelMessageErrorAndWarning!);
     }
 
     private static TestCase CreateTestCase(string testCaseName)

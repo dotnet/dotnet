@@ -139,22 +139,24 @@ public class SettingsProviderExtensionManager
     {
         var extensionManager = Create();
 
-        try
+        foreach (var settingsProvider in extensionManager.SettingsProvidersMap)
         {
-            foreach (var settingsProvider in extensionManager.SettingsProvidersMap)
+            try
             {
                 // Note: - The below Verbose call should not be under IsVerboseEnabled check as we want to
                 // call executor.Value even if logging is not enabled.
                 EqtTrace.Verbose("SettingsProviderExtensionManager: Loading settings provider {0}", settingsProvider.Value.Value);
             }
-        }
-        catch (Exception ex)
-        {
-            EqtTrace.Error("SettingsProviderExtensionManager: LoadAndInitialize: Exception occurred while loading extensions {0}", ex);
-
-            if (shouldThrowOnError)
+            catch (Exception ex)
             {
-                throw;
+                // Instantiating one settings provider must not prevent the remaining providers from
+                // being loaded. Log and move on unless the caller opted into failing.
+                EqtTrace.Error("SettingsProviderExtensionManager: LoadAndInitialize: Exception occurred while loading extension {0}: {1}", settingsProvider.Key, ex);
+
+                if (shouldThrowOnError)
+                {
+                    throw;
+                }
             }
         }
     }

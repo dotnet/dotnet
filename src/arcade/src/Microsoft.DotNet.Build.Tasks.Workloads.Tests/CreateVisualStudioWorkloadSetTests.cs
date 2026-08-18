@@ -94,14 +94,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
             files.Should().Contain(f => f.FileName.EndsWith("|workloadset.json"));
 
             // Verify the SWIX authoring for one of the workload set MSIs. 
-            ITaskItem workloadSetSwixItem = createWorkloadSetTask.SwixProjects.Where(s => s.ItemSpec.Contains(@"Microsoft.NET.Workloads.9.0.100.9.0.100-baseline.1.23464.1\arm64")).FirstOrDefault();
-            Assert.Equal(DefaultValues.PackageTypeMsiWorkloadSet, workloadSetSwixItem.GetMetadata(Metadata.PackageType));
-
+            ITaskItem workloadSetSwixItem = createWorkloadSetTask.SwixProjects.FirstOrDefault(
+                s => s.GetMetadata(Metadata.PackageType) == DefaultValues.PackageTypeMsiWorkloadSet);
             string msiSwr = File.ReadAllText(Path.Combine(Path.GetDirectoryName(workloadSetSwixItem.ItemSpec), "msi.swr"));
             Assert.Contains("package name=Microsoft.NET.Workloads.9.0.100.9.0.100-baseline.1.23464.1", msiSwr);
             Assert.Contains("version=12.8.45", msiSwr);
-            Assert.DoesNotContain("vs.package.chip=arm64", msiSwr);
-            Assert.Contains("vs.package.machineArch=arm64", msiSwr);
             Assert.Contains("vs.package.type=msi", msiSwr);
 
             // Verify package group SWIX project

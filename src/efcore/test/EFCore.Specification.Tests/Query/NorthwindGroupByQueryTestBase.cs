@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore.TestModels.Northwind;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-#nullable disable
-
 public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) : QueryTestBase<TFixture>(fixture)
     where TFixture : NorthwindQueryFixtureBase<NoopModelCustomizer>, new()
 {
@@ -32,7 +30,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertTranslationFailed(() =>
             AssertQueryScalar(
                 async,
-                ss => ss.Set<Order>().Where(o => o.Customer.City != "London")
+                ss => ss.Set<Order>().Where(o => o.Customer!.City != "London")
                     .GroupBy(o => o.CustomerID, (k, es) => new { k, es })
                     .Select(g => g.es.Average(int (o) => o.OrderID))));
 
@@ -224,7 +222,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<OrderDetail>()
-                .GroupBy(od => od.Order.CustomerID)
+                .GroupBy(od => od.Order!.CustomerID)
                 .Select(g => new { g.Key, Aggregate = g.Sum(od => od.OrderID) }),
             elementSorter: e => e.Key);
 
@@ -233,7 +231,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<OrderDetail>()
-                .GroupBy(od => od.Order.Customer.Country)
+                .GroupBy(od => od.Order!.Customer!.Country)
                 .Select(g => new { g.Key, Aggregate = g.Sum(od => od.OrderID) }),
             elementSorter: e => e.Key);
 
@@ -260,7 +258,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<Order>()
-                .GroupBy(o => o.OrderDate.Value.Day)
+                .GroupBy(o => o.OrderDate!.Value.Day)
                 .Select(g => new { g.Key, Count = g.Count() }),
             elementSorter: e => e.Key);
 
@@ -284,7 +282,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             async,
             ss => ss.Set<Order>()
                 .GroupBy(o => o.CustomerID)
-                .Select(g => new { g.Key, Sum = g.Sum(o => o.OrderID + o.CustomerID.Length) }),
+                .Select(g => new { g.Key, Sum = g.Sum(o => o.OrderID + o.CustomerID!.Length) }),
             elementSorter: e => e.Key,
             elementAsserter: (e, a) =>
             {
@@ -315,11 +313,11 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => await AssertQuery(
             async,
             ss => ss.Set<Order>()
-                .Where(o => o.CustomerID.StartsWith("A"))
+                .Where(o => o.CustomerID!.StartsWith("A"))
                 .Select(o => new
                 {
                     o.CustomerID,
-                    Age = 2020 - o.OrderDate.Value.Year,
+                    Age = 2020 - o.OrderDate!.Value.Year,
                     o.OrderID
                 })
                 .GroupBy(x => x.CustomerID)
@@ -351,8 +349,61 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
     public virtual Task GroupBy_with_aggregate_through_navigation_property(bool async)
         => AssertQuery(
             async,
-            ss => ss.Set<Order>().GroupBy(c => c.EmployeeID).Select(g => new { max = g.Max(i => i.Customer.Region) }),
+            ss => ss.Set<Order>().GroupBy(c => c.EmployeeID).Select(g => new { max = g.Max(i => i.Customer!.Region) }),
             elementSorter: e => e.max);
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_multiple_aggregates_sharing_same_navigation(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>()
+                .GroupBy(o => o.EmployeeID)
+                .Select(g => new
+                {
+                    g.Key,
+                    Londons = g.Sum(o => o.Customer!.City == "London" ? 1 : 0),
+                    Berlins = g.Sum(o => o.Customer!.City == "Berlin" ? 1 : 0),
+                    Total = g.Sum(o => o.OrderID),
+                    Count = g.Count()
+                }),
+            elementSorter: e => e.Key);
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_aggregate_through_two_level_navigation(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<OrderDetail>()
+                .GroupBy(od => od.ProductID)
+                .Select(g => new { g.Key, Londons = g.Sum(od => od.Order!.Customer!.City == "London" ? 1 : 0) }),
+            elementSorter: e => e.Key);
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_Count_with_predicate_through_navigation_property(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>()
+                .GroupBy(o => o.EmployeeID)
+                .Select(g => new { g.Key, Londons = g.Count(o => o.Customer!.City == "London") }),
+            elementSorter: e => e.Key);
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_key_and_aggregate_through_same_navigation(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>()
+                .GroupBy(o => o.Customer!.City)
+                .Select(g => new { g.Key, Londons = g.Count(o => o.Customer!.City == "London") }),
+            elementSorter: e => e.Key);
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_aggregate_through_navigation_in_intermediate_projection(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>()
+                .Select(o => new { o.EmployeeID, o.Customer!.City })
+                .GroupBy(x => x.EmployeeID)
+                .Select(g => new { g.Key, Londons = g.Sum(x => x.City == "London" ? 1 : 0) }),
+            elementSorter: e => e.Key);
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_with_aggregate_containing_complex_where(bool async)
@@ -588,15 +639,11 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
 
     protected class NominalType
     {
-        public string CustomerID { get; set; }
+        public string? CustomerID { get; set; }
         public uint? EmployeeID { get; set; }
 
-        public override bool Equals(object obj)
-            => obj is null
-                ? false
-                : ReferenceEquals(this, obj)
-                    ? true
-                    : obj.GetType() == GetType() && Equals((NominalType)obj);
+        public override bool Equals(object? obj)
+            => obj is not null && (ReferenceEquals(this, obj) || (obj.GetType() == GetType() && Equals((NominalType)obj)));
 
         public override int GetHashCode()
             => 0;
@@ -628,10 +675,10 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         public int Min { get; set; }
         public int Max { get; set; }
         public double Avg { get; set; }
-        public string CustomerId { get; set; }
+        public string? CustomerId { get; set; }
         public uint? EmployeeId { get; set; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj != null && (ReferenceEquals(this, obj) || (obj is CompositeDto dto && Equals(dto)));
 
         public override int GetHashCode()
@@ -820,7 +867,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
     public virtual Task GroupBy_anonymous_key_type_mismatch_with_aggregate(bool async)
         => AssertQuery(
             async,
-            ss => ss.Set<Order>().GroupBy(o => new { I0 = (int?)o.OrderDate.Value.Year })
+            ss => ss.Set<Order>().GroupBy(o => new { I0 = (int?)o.OrderDate!.Value.Year })
                 .OrderBy(g => g.Key.I0)
                 .Select(g => new { I0 = g.Count(), I1 = g.Key.I0 }),
             elementSorter: a => a.I1);
@@ -866,14 +913,11 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                     Container = new LastInChain { Name = "TotalAmount", Value = e.Sum(e => (decimal)e.OrderID) }
                 }),
             assertOrder: true,
-            elementAsserter: (e, a) =>
-            {
-                Assert.Equal(e.Container.Value, a.Container.Value);
-            });
+            elementAsserter: (e, a) => Assert.Equal(e.Container.Value, a.Container.Value));
 
     private class NoGroupByWrapper
     {
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj != null
                 && (ReferenceEquals(this, obj)
                     || obj is NoGroupByWrapper);
@@ -884,13 +928,13 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
 
     private class NoGroupByAggregationWrapper
     {
-        public LastInChain Container { get; set; }
+        public LastInChain Container { get; set; } = null!;
     }
 
     protected class LastInChain
     {
-        public string Name { get; set; }
-        public object Value { get; set; }
+        public string Name { get; set; } = null!;
+        public object Value { get; set; } = null!;
     }
 
     #endregion
@@ -1054,7 +1098,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 .GroupBy(
                     x => new
                     {
-                        OrderMonth = groupByMonth ? (int?)x.OrderDate.Value.Month : null,
+                        OrderMonth = groupByMonth ? (int?)x.OrderDate!.Value.Month : null,
                         Customer = groupByCustomer ? x.CustomerID : null
                     },
                     x => x,
@@ -1262,7 +1306,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
     public virtual Task GroupBy_optional_navigation_member_Aggregate(bool async)
         => AssertQuery(
             async,
-            ss => ss.Set<Order>().GroupBy(o => o.Customer.Country)
+            ss => ss.Set<Order>().GroupBy(o => o.Customer!.Country)
                 .Select(g => new { Country = g.Key, Count = g.Count() }),
             e => e.Country);
 
@@ -1298,7 +1342,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         // selector's member access is folded back to the tuple's constructor argument. Issue #22517.
         => AssertQuery(
             async,
-            ss => from t in ss.Set<Order>().GroupBy(o => o.CustomerID, (k, es) => new ValueTuple<string, int>(k, es.Count()))
+            ss => from t in ss.Set<Order>().GroupBy(o => o.CustomerID, (k, es) => new ValueTuple<string, int>(k!, es.Count()))
                   join c in ss.Set<Customer>() on t.Item1 equals c.CustomerID
                   select new { c.CustomerID, Count = t.Item2 },
             e => e.CustomerID);
@@ -1307,7 +1351,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
     public virtual Task GroupBy_multi_navigation_members_Aggregate(bool async)
         => AssertQuery(
             async,
-            ss => ss.Set<OrderDetail>().GroupBy(od => new { od.Order.CustomerID, od.Product.ProductName })
+            ss => ss.Set<OrderDetail>().GroupBy(od => new { od.Order!.CustomerID, od.Product!.ProductName })
                 .Select(g => new { CompositeKey = g.Key, Count = g.Count() }),
             e => e.CompositeKey.CustomerID + " " + e.CompositeKey.ProductName);
 
@@ -1344,7 +1388,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
     public virtual Task GroupBy_principal_key_property_optimization(bool async)
         => AssertQuery(
             async,
-            ss => ss.Set<Order>().GroupBy(o => o.Customer.CustomerID)
+            ss => ss.Set<Order>().GroupBy(o => o.Customer!.CustomerID)
                 .Select(g => new { g.Key, Count = g.Count() }));
 
     [Theory, MemberData(nameof(IsAsyncData))]
@@ -1368,7 +1412,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<Order>()
-                .GroupBy(o => o.Customer.CustomerID.Substring(0, 1))
+                .GroupBy(o => o.Customer!.CustomerID!.Substring(0, 1))
                 .Select(g => new { g.Key, Count = g.Count() }),
             elementSorter: e => (e.Key, e.Count),
             elementAsserter: (e, a) =>
@@ -1381,15 +1425,15 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
     public virtual Task GroupBy_complex_key_aggregate_2(bool async)
         => AssertQuery(
             async,
-            ss => from s in (from o in ss.Set<Order>()
-                             group o by o.OrderDate.Value.Month
-                             into g
-                             select new { Month = g.Key, Total = g.Sum(e => e.OrderID) })
+            ss => from s in from o in ss.Set<Order>()
+                            group o by o.OrderDate!.Value.Month
+                            into g
+                            select new { Month = g.Key, Total = g.Sum(e => e.OrderID) }
                   select new
                   {
                       s.Month,
                       s.Total,
-                      Payment = ss.Set<Order>().Where(e => e.OrderDate.Value.Month == s.Month).Sum(int (e) => e.OrderID)
+                      Payment = ss.Set<Order>().Where(e => e.OrderDate!.Value.Month == s.Month).Sum(int (e) => e.OrderID)
                   },
             elementSorter: e => (e.Month, e.Total),
             elementAsserter: (e, a) =>
@@ -1493,7 +1537,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 .OrderBy(t => t)
                 .Take(20)
                 .Skip(4)
-                .Select(e => e.Length));
+                .Select(e => e!.Length));
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_aggregate_Pushdown_followed_by_projecting_constant(bool async)
@@ -1632,7 +1676,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             async,
             ss =>
                 from c in ss.Set<Customer>()
-                join a in ss.Set<Order>().GroupBy(o => new { o.CustomerID, o.OrderDate.Value.Year })
+                join a in ss.Set<Order>().GroupBy(o => new { o.CustomerID, o.OrderDate!.Value.Year })
                         .Where(g => g.Count() > 5)
                         .Select(g => new { g.Key.CustomerID, LastOrderID = g.Max(o => o.OrderID) })
                         .Distinct()
@@ -1650,7 +1694,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                         .Select(g => new { CustomerID = g.Key, LastOrderID = g.Max(o => o.OrderID) })
                     on c.CustomerID equals a.CustomerID into grouping
                 from g in grouping.DefaultIfEmpty()
-                select new { c, LastOrderID = (int?)g.LastOrderID },
+                select new { c, LastOrderID = (int?)g!.LastOrderID },
             ss =>
                 from c in ss.Set<Customer>().Where(c => c.CustomerID.StartsWith("A"))
                 join a in ss.Set<Order>().GroupBy(o => o.CustomerID)
@@ -1667,12 +1711,12 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             async,
             ss =>
                 from o in ss.Set<Order>().Where(o => o.OrderID < 10400)
-                join i in (from c in ss.Set<Customer>()
-                           join a in ss.Set<Order>().GroupBy(o => o.CustomerID)
-                                   .Where(g => g.Count() > 5)
-                                   .Select(g => new { CustomerID = g.Key, LastOrderID = g.Max(o => o.OrderID) })
-                               on c.CustomerID equals a.CustomerID
-                           select new { c, a.LastOrderID })
+                join i in from c in ss.Set<Customer>()
+                          join a in ss.Set<Order>().GroupBy(o => o.CustomerID)
+                                  .Where(g => g.Count() > 5)
+                                  .Select(g => new { CustomerID = g.Key, LastOrderID = g.Max(o => o.OrderID) })
+                              on c.CustomerID equals a.CustomerID
+                          select new { c, a.LastOrderID }
                     on o.CustomerID equals i.c.CustomerID
                 select new
                 {
@@ -1763,8 +1807,8 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<Order>()
-                .Where(c => c.CustomerID.StartsWith("A"))
-                .Select(c => c.Customer.City)
+                .Where(c => c.CustomerID!.StartsWith("A"))
+                .Select(c => c.Customer!.City)
                 .Select(c => new
                 {
                     c1 = ss.Set<Product>().GroupBy(p => p.ProductID).Select(g => g.Key).ToArray(),
@@ -1788,18 +1832,16 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
     private class ProjectedType
     {
         public int Order { get; set; }
-        public string Customer { get; set; }
+        public string? Customer { get; set; }
 
         private bool Equals(ProjectedType other)
             => Equals(Order, other.Order);
 
-        public override bool Equals(object obj)
-            => obj is null
-                ? false
-                : ReferenceEquals(this, obj)
-                    ? true
-                    : obj.GetType() == GetType()
-                    && Equals((ProjectedType)obj);
+        public override bool Equals(object? obj)
+            => obj is not null
+                && (ReferenceEquals(this, obj)
+                    || (obj.GetType() == GetType()
+                        && Equals((ProjectedType)obj)));
 
         // ReSharper disable once NonReadonlyMemberInGetHashCode
         public override int GetHashCode()
@@ -1918,7 +1960,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<Order>()
-                .GroupBy(o => o.Customer.CustomerID)
+                .GroupBy(o => o.Customer!.CustomerID)
                 .Select(g => new { g.Key, Count = g.Count() })
                 .Where(x => x.Count != 2));
 
@@ -1927,7 +1969,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<Order>()
-                .GroupBy(o => o.Customer.CustomerID)
+                .GroupBy(o => o.Customer!.CustomerID)
                 .Select(g => new { g.Key, Count = g.Count() })
                 .Where(x => x.Count < 2 || x.Count > 2));
 
@@ -1962,11 +2004,11 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_Select_Entire_Entity_Where(bool async) // #31209
-    => AssertQuery(
-        async,
-        ss => ss.Set<Order>().GroupBy(o => o.CustomerID)
-            .Select(a => a.First())
-            .Where(x => x.EmployeeID == 6u));
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(o => o.CustomerID)
+                .Select(a => a.First())
+                .Where(x => x.EmployeeID == 6u));
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_Select_Entire_Entity_Where_Select(bool async) // #31209
@@ -2012,7 +2054,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             async,
             ss => ss.Set<Order>().GroupBy(o => o.CustomerID)
                 .Select(g => g.OrderByDescending(o => o.OrderDate).FirstOrDefault())
-                .Where(r => r.EmployeeID == 5u));
+                .Where(r => r!.EmployeeID == 5u));
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_ResultSelector_Entire_Entity_Where(bool async) // #31209
@@ -2040,6 +2082,54 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             ss => ss.Set<Order>().GroupBy(o => new { o.CustomerID, o.EmployeeID })
                 .Select(g => g.First())
                 .Select(p => p.OrderID));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_Select_Entire_Entity_OrderBy_navigation(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(o => o.CustomerID)
+                .Select(g => g.OrderBy(o => o.OrderID).First())
+                .OrderBy(o => o.Customer!.City)
+                .ThenBy(o => o.OrderID)
+                // Identity projection: the ordering by City is collation-sensitive, so the order
+                // itself is not asserted across providers.
+                .Select(o => o));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_Select_Entire_Entity_Select_navigation_member(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(o => o.CustomerID)
+                .Select(g => g.OrderBy(o => o.OrderID).First())
+                .Select(o => new { o.OrderID, o.Customer!.City }));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_Select_Entire_Entity_Where_navigation(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(o => o.CustomerID)
+                .Select(g => g.OrderBy(o => o.OrderID).First())
+                .Where(o => o.Customer!.City == "London"));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_Select_Entire_Entity_Select_referenced_twice(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(o => o.CustomerID)
+                .Select(g => g.OrderBy(o => o.OrderID).First())
+                .Select(o => new { First = o, Second = o }));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task GroupBy_Select_Entire_Entity_Join(bool async) // #28125
+        => AssertQuery(
+            async,
+            ss => ss.Set<Order>().GroupBy(o => o.CustomerID)
+                .Select(g => g.OrderBy(o => o.OrderID).First())
+                .Join(
+                    ss.Set<Customer>(),
+                    o => o.CustomerID,
+                    c => c.CustomerID,
+                    (o, c) => new { o.OrderID, c.City }));
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_aggregate_join_with_group_result(bool async)
@@ -2077,7 +2167,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 .GroupBy(o => o.CustomerID)
                 .Select(g => new { g.Key, Total = g.Count() })
                 .Join(
-                    ss.Set<Order>().Where(o => o.OrderDate.Value.Year == 1997)
+                    ss.Set<Order>().Where(o => o.OrderDate!.Value.Year == 1997)
                         .GroupBy(o => o.CustomerID)
                         .Select(g => new { g.Key, ThatYear = g.Count() }),
                     o => o.Key,
@@ -2118,7 +2208,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<Order>()
-                .GroupBy(o => new { o.CustomerID, o.OrderDate.Value.Year })
+                .GroupBy(o => new { o.CustomerID, o.OrderDate!.Value.Year })
                 .Select(g => new { g.Key.CustomerID, g.Key.Year })
                 .GroupBy(e => e.CustomerID)
                 .Select(g => new { g.Key, Count = g.Count() }),
@@ -2147,10 +2237,10 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => from id in
-                      (from o in ss.Set<Order>()
-                       group o by o.CustomerID
-                       into g
-                       select g.Min(x => x.OrderID))
+                      from o in ss.Set<Order>()
+                      group o by o.CustomerID
+                      into g
+                      select g.Min(x => x.OrderID)
                   from o in ss.Set<Order>()
                   where o.OrderID == id
                   select o);
@@ -2353,7 +2443,8 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 .Select(g =>
                     new
                     {
-                        g.Key, Max = g.Distinct().Select(e => e.OrderDate).Distinct().Max(),
+                        g.Key,
+                        Max = g.Distinct().Select(e => e.OrderDate).Distinct().Max(),
                     }),
             elementSorter: e => e.Key);
 
@@ -2366,7 +2457,8 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 .Select(g =>
                     new
                     {
-                        g.Key, Max = g.Where(e => e.OrderDate.HasValue).Select(e => e.OrderDate).Distinct().Max(),
+                        g.Key,
+                        Max = g.Where(e => e.OrderDate.HasValue).Select(e => e.OrderDate).Distinct().Max(),
                     }),
             elementSorter: e => e.Key);
 
@@ -2387,7 +2479,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<Order>().Where(e => e.OrderID < 10500).GroupBy(c => c.Customer),
-            elementSorter: e => e.Key.CustomerID,
+            elementSorter: e => e.Key!.CustomerID,
             elementAsserter: (e, a) => AssertGrouping(e, a));
 
     [Theory, MemberData(nameof(IsAsyncData))]
@@ -2459,14 +2551,14 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
 
     protected class RandomClass
     {
-        public string City { get; set; }
+        public string? City { get; set; }
         public int Constant { get; set; }
     }
 
     protected class RandomClassEqualityComparer : IEqualityComparer<RandomClass>
     {
-        public bool Equals(RandomClass x, RandomClass y)
-            => x.City == y.City && x.Constant == y.Constant;
+        public bool Equals(RandomClass? x, RandomClass? y)
+            => x is not null && y is not null && x.City == y.City && x.Constant == y.Constant;
 
         public int GetHashCode([DisallowNull] RandomClass obj)
             => HashCode.Combine(obj.City, obj.Constant);
@@ -2568,7 +2660,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
     public virtual Task GroupBy_Where_with_grouping_result(bool async)
         => AssertTranslationFailed(() => AssertQuery(
             async,
-            ss => ss.Set<Customer>().GroupBy(c => c.City).Where(e => e.Key.StartsWith("s"))));
+            ss => ss.Set<Customer>().GroupBy(c => c.City).Where(e => e.Key!.StartsWith("s"))));
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task GroupBy_OrderBy_with_grouping_result(bool async)
@@ -2618,7 +2710,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<Order>()
-                .GroupBy(o => o.Customer.CustomerID.Substring(0, 1))
+                .GroupBy(o => o.Customer!.CustomerID!.Substring(0, 1))
                 .Select(g => new { g.Key, Count = g.Skip(1).Take(2) }),
             elementSorter: e => (e.Key, e.Count),
             elementAsserter: (e, a) =>
@@ -2758,7 +2850,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             ss => ss.Set<OrderDetail>()
                 .GroupBy(od => od.Order.Customer)
                 .Select(g => new { g.Key, Aggregate = g.Sum(od => od.OrderID) }),
-            elementSorter: e => e.Key.CustomerID,
+            elementSorter: e => e.Key!.CustomerID,
             elementAsserter: (e, a) =>
             {
                 AssertEqual(e.Key, a.Key);
@@ -2782,8 +2874,8 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 .Select(g => new
                 {
                     g.Key,
-                    Id1 = g.Key.CustomerID,
-                    Id2 = g.Key.Customer.CustomerID,
+                    Id1 = g.Key!.CustomerID,
+                    Id2 = g.Key.Customer!.CustomerID,
                     Id3 = g.Key.OrderID,
                     Aggregate = g.Sum(od => od.OrderID)
                 }),
@@ -2923,9 +3015,9 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 .GroupBy(o => o.CustomerID)
                 .Select(e => new Result(e.Key)));
 
-    private class Result(string customerID)
+    private class Result(string? customerID)
     {
-        private readonly string _customerID = customerID;
+        private readonly string? _customerID = customerID;
     }
 
     #endregion
@@ -2963,7 +3055,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                     Subquery = c.Orders
                         .Select(o => new { First = o.CustomerID, Second = o.OrderID })
                         .GroupBy(x => x.First)
-                        .Select(g => new { Max = g.Max(int (x) => x.First.Length), Sum = g.Sum(int (x) => x.Second) }).ToList()
+                        .Select(g => new { Max = g.Max(int (x) => x.First!.Length), Sum = g.Sum(int (x) => x.Second) }).ToList()
                 }),
             elementSorter: e => e.Key,
             elementAsserter: (e, a) =>
@@ -2983,7 +3075,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                     Subquery = ss.Set<Order>()
                         .Select(o => new { First = o.CustomerID, Second = o.OrderID })
                         .GroupBy(x => x.First)
-                        .Select(g => new { Max = g.Max(int (x) => x.First.Length), Sum = g.Sum(int (x) => x.Second) }).ToList()
+                        .Select(g => new { Max = g.Max(int (x) => x.First!.Length), Sum = g.Sum(int (x) => x.Second) }).ToList()
                 }),
             elementSorter: e => e.Key,
             elementAsserter: (e, a) =>
@@ -3001,7 +3093,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 {
                     Key = c.CustomerID,
                     Subquery = c.Orders
-                        .Select(o => new { First = o.OrderID, Second = o.Customer.City + o.CustomerID })
+                        .Select(o => new { First = o.OrderID, Second = o.Customer!.City + o.CustomerID })
                         .GroupBy(x => x.Second)
                         .Select(g => new { Sum = g.Sum(int (x) => x.First), Count = g.Count(x => x.Second.StartsWith("Lon")) }).ToList()
                 }),
@@ -3017,12 +3109,12 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => from od in ss.Set<OrderDetail>()
-                  where od.Order.Customer.CustomerID == "ALFKI"
+                where od.Order!.Customer!.CustomerID == "ALFKI"
                   group od by od.ProductID
                   into grouping
                   select new
                   {
-                      Sum = grouping.Sum(x => x.ProductID + x.OrderID * 1000),
+                      Sum = grouping.Sum(x => x.ProductID + (x.OrderID * 1000)),
                       Subquery = (from c in ss.Set<Customer>()
                                   where c.CustomerID.Length < grouping.Min(int (x) => x.OrderID / 100)
                                   orderby c.CustomerID
@@ -3057,7 +3149,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
                 .Union(
                     ss.Set<Order>()
                         .GroupBy(o => o.CustomerID)
-                        .Select(g => new { CustomerID = g.Key, Sequence = 1 })),
+                        .Select(g => new { CustomerID = g.Key!, Sequence = 1 })),
             elementSorter: e => (e.CustomerID, e.Sequence));
 
     [Theory, MemberData(nameof(IsAsyncData))]
@@ -3137,8 +3229,8 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
         => AssertQuery(
             async,
             ss => ss.Set<Order>()
-                .Where(c => c.CustomerID.StartsWith("A"))
-                .Select(c => c.Customer.City)
+                .Where(c => c.CustomerID!.StartsWith("A"))
+                .Select(c => c.Customer!.City)
                 .Distinct()
                 .Select(c => new
                 {
@@ -3158,7 +3250,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             async,
             ss => ss.Set<Customer>()
                 .GroupBy(e => e.CustomerID)
-                .Where(g => g.Key.StartsWith("F"))
+                .Where(g => g.Key!.StartsWith("F"))
                 .Select(e => e.Key)
                 .Select(c => new { c, Orders = ss.Set<Order>().Where(o => o.CustomerID == c).ToList() }),
             elementSorter: e => e.c,
@@ -3174,7 +3266,7 @@ public abstract class NorthwindGroupByQueryTestBase<TFixture>(TFixture fixture) 
             async,
             ss => ss.Set<Order>()
                 .GroupBy(e => e.CustomerID)
-                .Where(g => g.Key.StartsWith("F"))
+                .Where(g => g.Key!.StartsWith("F"))
                 .Select(e => e.Key)
                 .Select(c => new { c, Orders = ss.Set<Order>().Where(o => o.CustomerID == c).ToList() }),
             elementSorter: e => e.c,

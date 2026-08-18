@@ -4,7 +4,8 @@
         // Automate opening PRs to merge release/10.0 to main
         "release/10.0":{
             "MergeToBranch": "main",
-            "ExtraSwitches": "-QuietComments"
+            "ExtraSwitches": "-QuietComments",
+            "ResetToTargetPaths": "global.json;NuGet.config;eng/Version.Details.xml;eng/Version.Details.props;eng/common/*"
         }
     }
 }

@@ -218,44 +218,4 @@ public interface ITestPlatformEventSource
     /// Mark the completion of translation layer test run attachments processing request.
     /// </summary>
     void TranslationLayerTestRunAttachmentsProcessingStop();
-
-    /// <summary>
-    /// The start of the test session start request.
-    /// </summary>
-    void StartTestSessionStart();
-
-    /// <summary>
-    /// The end of the test session start request.
-    /// </summary>
-    void StartTestSessionStop();
-
-    /// <summary>
-    /// Mark the start of a translation layer start test session request.
-    /// </summary>
-    void TranslationLayerStartTestSessionStart();
-
-    /// <summary>
-    /// Mark the end of a translation layer start test session request.
-    /// </summary>
-    void TranslationLayerStartTestSessionStop();
-
-    /// <summary>
-    /// The start of the test session stop request.
-    /// </summary>
-    void StopTestSessionStart();
-
-    /// <summary>
-    /// The end of the test session stop request.
-    /// </summary>
-    void StopTestSessionStop();
-
-    /// <summary>
-    /// Mark the start of a translation layer stop test session request.
-    /// </summary>
-    void TranslationLayerStopTestSessionStart();
-
-    /// <summary>
-    /// Mark the end of a translation layer stop test session request.
-    /// </summary>
-    void TranslationLayerStopTestSessionStop();
 }

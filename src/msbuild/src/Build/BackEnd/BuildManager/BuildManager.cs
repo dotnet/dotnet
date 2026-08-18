@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -38,6 +38,7 @@ using Microsoft.Build.Shared.Debugging;
 using Microsoft.Build.Shared.FileSystem;
 using Microsoft.Build.TelemetryInfra;
 using Microsoft.NET.StringTools;
+using CoordinatorConstants = Microsoft.Build.Framework.Coordinator.Constants;
 using ExceptionHandling = Microsoft.Build.Framework.ExceptionHandling;
 using ForwardingLoggerRecord = Microsoft.Build.Logging.ForwardingLoggerRecord;
 using LoggerDescription = Microsoft.Build.Logging.LoggerDescription;
@@ -426,12 +427,22 @@ namespace Microsoft.Build.Execution
             /// </summary>
             public string? Code { get; }
 
+            /// <summary>
+            /// When set, the deferred message is logged by raising this pre-built event (via
+            /// <see cref="ILoggingService.LogBuildEvent"/>) instead of a plain comment. This lets a caller emit
+            /// a dedicated, structured event type (recorded under its own binary-log record kind) rather than
+            /// communicating build/system data through an ad-hoc message. Internal plumbing — not part of the
+            /// public deferred-message contract; callers set it via the <see cref="BuildEventArgs"/> constructor.
+            /// </summary>
+            internal BuildEventArgs? BuildEvent { get; }
+
             public DeferredBuildMessage(string text, MessageImportance importance)
             {
                 Importance = importance;
                 Text = text;
                 FilePath = null;
                 Code = null;
+                BuildEvent = null;
             }
 
             public DeferredBuildMessage(string text, MessageImportance importance, string filePath)
@@ -440,6 +451,7 @@ namespace Microsoft.Build.Execution
                 Text = text;
                 FilePath = filePath;
                 Code = null;
+                BuildEvent = null;
             }
 
             /// <summary>
@@ -455,6 +467,24 @@ namespace Microsoft.Build.Execution
                 FilePath = null;
                 Code = code;
                 MessageSeverity = messageSeverity;
+                BuildEvent = null;
+            }
+
+            /// <summary>
+            /// Creates a deferred message backed by a pre-built <see cref="BuildEventArgs"/>. When the build
+            /// begins the event is raised as-is (via <see cref="ILoggingService.LogBuildEvent"/>), letting a
+            /// caller emit a dedicated, structured event type instead of an ad-hoc comment. <see cref="Text"/>
+            /// mirrors the event's message and <see cref="Importance"/> is taken from the event when it is a
+            /// <see cref="BuildMessageEventArgs"/> (otherwise <see cref="MessageImportance.Low"/>).
+            /// </summary>
+            /// <param name="buildEvent">The pre-built event to raise.</param>
+            public DeferredBuildMessage(BuildEventArgs buildEvent)
+            {
+                Importance = (buildEvent as BuildMessageEventArgs)?.Importance ?? MessageImportance.Low;
+                Text = buildEvent.Message ?? string.Empty;
+                FilePath = null;
+                Code = null;
+                BuildEvent = buildEvent;
             }
         }
 
@@ -588,6 +618,11 @@ namespace Microsoft.Build.Execution
                 // Initialize additional build parameters.
                 _buildParameters.BuildId = GetNextBuildId();
 
+                if (!Traits.Instance.EscapeHatches.DisableParseConfig)
+                {
+                    _buildParameters.ParserIgnoreConfiguration = _buildParameters.ProjectRootElementCache.ParserIgnoreConfiguration;
+                }
+
                 if (_buildParameters.UsesCachedResults() && _buildParameters.ProjectIsolationMode == ProjectIsolationMode.False)
                 {
                     // If input or output caches are used and the project isolation mode is set to
@@ -646,6 +681,15 @@ namespace Microsoft.Build.Execution
                     if (_coordinatorClient != null)
                     {
                         _buildParameters.MaxNodeCount = _coordinatorClient.GrantedNodes;
+
+                        if (_coordinatorClient.GrantId != Guid.Empty)
+                        {
+                            // Add the grant token to this build's environment snapshot so
+                            // task-launched child processes can join this coordinator grant.
+                            _buildParameters.SetBuildProcessEnvironmentVariable(
+                                CoordinatorConstants.GrantIdEnvVarName,
+                                _coordinatorClient.GrantId.ToString());
+                        }
 
                         if (_coordinatorClient.WaitDuration is TimeSpan waitDuration)
                         {
@@ -1190,6 +1234,18 @@ namespace Microsoft.Build.Execution
 
                             loggingService.LogTelemetry(buildEventContext: null, _buildTelemetry.EventName, _buildTelemetry.GetProperties());
 
+                            // Emit per-task execution details as a separate "build/tasks/details" event.
+                            // The SDK merges these into the aggregated build/tasks telemetry event,
+                            // providing parity with the Activity-based path used by VS telemetry.
+                            if (!Traits.Instance.ExcludeTasksDetailsFromTelemetry)
+                            {
+                                Dictionary<string, string>? tasksDetailsProperties = _telemetryConsumingLogger?.WorkerNodeTelemetryData.GetTasksDetailsProperties();
+                                if (tasksDetailsProperties is not null)
+                                {
+                                    loggingService.LogTelemetry(buildEventContext: null, TasksDetailsTelemetry.TasksDetailsEventName, tasksDetailsProperties);
+                                }
+                            }
+
                             EndBuildTelemetry();
 
                             // Clean telemetry to make it ready for next build submission.
@@ -1454,7 +1510,7 @@ namespace Microsoft.Build.Execution
         /// </summary>
         public void ShutdownAllNodes()
         {
-            Experimental.MSBuildClient.ShutdownServer(CancellationToken.None);
+            Microsoft.Build.Server.MSBuildClient.ShutdownServer(CancellationToken.None);
 
             _nodeManager ??= (INodeManager)((IBuildComponentHost)this).GetComponent(BuildComponentType.NodeManager);
             _nodeManager.ShutdownAllNodes();
@@ -3052,9 +3108,12 @@ namespace Microsoft.Build.Execution
                 {
                     // Reset the project root element cache if specified which ensures that projects will be re-loaded from disk.  We do not need to reset the
                     // cache on child nodes because the OutOfProcNode class sets "autoReloadFromDisk" to "true" which handles the case when a restore modifies
-                    // part of the import graph.
-                    _buildParameters?.ProjectRootElementCache?.Clear();
+                    // part of the import graph. The same reasoning applies to any cache that reloads from disk on the node running this build, such as the
+                    // one the MSBuild Server entry node reuses across builds, so the cache itself decides how much of it a restore invalidated.
+                    _buildParameters?.ProjectRootElementCache?.ClearCachesAfterBuildIfNeeded();
 
+                    // Unlike the XML cache, these hold negative results (a file that did not exist, a glob that matched nothing) which no
+                    // timestamp check can invalidate, and which restore invalidates precisely by creating files. They are always cleared.
                     FileMatcher.ClearCaches();
                     FileUtilities.ClearFileExistenceCache();
                 }
@@ -3403,6 +3462,13 @@ namespace Microsoft.Build.Execution
                         helpKeyword: null,
                         file: BuildEventFileInfo.Empty,
                         message: message.Text);
+                }
+                else if (message.BuildEvent is not null)
+                {
+                    // Raise the pre-built event as-is so it keeps its own event type. A deferred message has no
+                    // project/target context, so supply the Invalid context if the caller left it unset.
+                    message.BuildEvent.BuildEventContext ??= BuildEventContext.Invalid;
+                    loggingService.LogBuildEvent(message.BuildEvent);
                 }
                 else
                 {

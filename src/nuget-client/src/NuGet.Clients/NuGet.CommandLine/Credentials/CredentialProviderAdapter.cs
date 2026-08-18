@@ -35,9 +35,9 @@ namespace NuGet.Credentials
 
         public Task<CredentialResponse> GetAsync(
             Uri uri,
-            IWebProxy proxy,
+            IWebProxy? proxy,
             CredentialRequestType type,
-            string message,
+            string? message,
             bool isRetry,
             bool nonInteractive,
             CancellationToken cancellationToken)

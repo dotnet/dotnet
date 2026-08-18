@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Telemetry;
 using static Microsoft.IdentityModel.Logging.LogHelper;
 using TokenLogMessages = Microsoft.IdentityModel.Tokens.LogMessages;
 
@@ -22,7 +23,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
     /// which supports validating tokens passed as strings using <see cref="TokenValidationParameters"/>.
     /// </summary>
     ///
-    public class SamlSecurityTokenHandler : SecurityTokenHandler
+    public partial class SamlSecurityTokenHandler : SecurityTokenHandler
     {
         internal const string Actor = "Actor";
         private const string _className = "Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler";
@@ -30,7 +31,9 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         private IEqualityComparer<SamlSubject> _samlSubjectEqualityComparer = new SamlSubjectEqualityComparer();
         private SamlSerializer _serializer = new SamlSerializer();
 
-#region fields
+        internal Telemetry.ITelemetryClient TelemetryClient = new Telemetry.TelemetryClient();
+
+        #region fields
         /// <summary>
         /// Gets a value indicating whether this handler supports validation of tokens
         /// handled by this instance.
@@ -75,7 +78,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         {
             get { return _serializer; }
             set { _serializer = value ?? throw LogHelper.LogArgumentNullException(nameof(value)); }
-        } 
+        }
 
         /// <summary>
         /// Gets the securityToken type supported by this handler.
@@ -87,7 +90,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
 
         #endregion fields
 
-#region methods
+        #region methods
         /// <summary>
         /// Adds all Actors.
         /// </summary>
@@ -131,7 +134,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                 using (var sr = new StringReader(securityToken))
                 {
                     var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit };
-                    using (var reader = XmlDictionaryReader.CreateDictionaryReader(XmlReader.Create(sr, settings))) 
+                    using (var reader = XmlDictionaryReader.CreateDictionaryReader(XmlReader.Create(sr, settings)))
                     {
                         return CanReadToken(reader);
                     }
@@ -550,7 +553,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                                 writer.WriteStartElement(Actor);
                                 actorElementWritten = true;
                             }
-                       //     Serializer.WriteAttribute(writer, samlAttribute);
+                            //     Serializer.WriteAttribute(writer, samlAttribute);
                         }
                     }
 
@@ -755,7 +758,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             if (token.Length > MaximumTokenSizeInBytes)
                 throw LogExceptionMessage(new ArgumentException(FormatInvariant(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes))));
 
-            using (var reader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(token), XmlDictionaryReaderQuotas.Max))
+            using (var reader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(token), BoundedXmlDictionaryReaderQuotas.Quotas))
             {
                 return ReadSamlToken(reader);
             }
@@ -850,7 +853,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             {
                 if (attributeValue != null && attributeValue.Length > 0)
                 {
-                    using (var xmlReader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(attributeValue), XmlDictionaryReaderQuotas.Max))
+                    using (var xmlReader = XmlDictionaryReader.CreateTextReader(Encoding.UTF8.GetBytes(attributeValue), BoundedXmlDictionaryReaderQuotas.Quotas))
                     {
                         xmlReader.MoveToContent();
                         xmlReader.ReadStartElement(Actor);
@@ -939,7 +942,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             {
                 if (validationParameters.RequireAudience)
                     throw LogExceptionMessage(new SamlSecurityTokenException(LogMessages.IDX11401));
-               
+
                 return;
             }
 
@@ -982,7 +985,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
         /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         protected virtual void ValidateIssuerSecurityKey(SecurityKey securityKey, SecurityToken securityToken, TokenValidationParameters validationParameters)
         {
-           Validators.ValidateIssuerSecurityKey(securityKey, securityToken, validationParameters);
+            Validators.ValidateIssuerSecurityKey(securityKey, securityToken, validationParameters);
         }
 
         /// <summary>
@@ -1092,6 +1095,13 @@ namespace Microsoft.IdentityModel.Tokens.Saml
 
                         samlToken.Assertion.Signature.Verify(key, validationParameters.CryptoProviderFactory ?? key.CryptoProviderFactory);
 
+                        RecordSignatureValidationTelemetry(
+                            TelemetryClient,
+                            TelemetryConstants.SignatureValidationErrors.None,
+                            samlToken,
+                            samlToken.Assertion.Signature.SignedInfo.SignatureMethod,
+                            key);
+
                         if (LogHelper.IsEnabled(EventLogLevel.Informational))
                             LogHelper.LogInformation(TokenLogMessages.IDX10242, token);
 
@@ -1100,12 +1110,19 @@ namespace Microsoft.IdentityModel.Tokens.Saml
                     }
                     catch (Exception ex)
                     {
+                        RecordSignatureValidationTelemetry(
+                            TelemetryClient,
+                            TelemetryConstants.SignatureValidationErrors.SignatureVerificationFailed,
+                            samlToken,
+                            samlToken.Assertion.Signature.SignedInfo.SignatureMethod,
+                            key);
+
                         exceptionStrings.AppendLine(ex.ToString());
                     }
 
                     if (key != null)
                     {
-                        keysAttempted.Append(key.ToString()).Append(" , KeyId: ").AppendLine(key.KeyId);
+                        keysAttempted.Append("KeyId: ").AppendLine(key.KeyId);
                         if (canMatchKey && !keyMatched && key.KeyId != null)
                             keyMatched = samlToken.Assertion.Signature.KeyInfo.MatchesKey(key);
                     }
@@ -1115,14 +1132,15 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             if (canMatchKey)
             {
                 if (keyMatched)
-                    throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidSignatureException(LogHelper.FormatInvariant(TokenLogMessages.IDX10514, keysAttempted, samlToken.Assertion.Signature.KeyInfo, exceptionStrings, samlToken)));
+                    throw LogHelper.LogExceptionMessage(new SecurityTokenInvalidSignatureException(
+                        LogHelper.FormatInvariant(TokenLogMessages.IDX10514, LogHelper.MarkAsNonPII(keysAttempted), samlToken.Assertion.Signature.KeyInfo, exceptionStrings, samlToken)));
 
                 ValidateIssuer(samlToken.Issuer, samlToken, validationParameters);
                 ValidateConditions(samlToken, validationParameters);
             }
 
             if (keysAttempted.Length > 0)
-                throw LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(FormatInvariant(TokenLogMessages.IDX10512, keysAttempted, exceptionStrings, samlToken)));
+                throw LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(FormatInvariant(TokenLogMessages.IDX10512, LogHelper.MarkAsNonPII(keysAttempted), exceptionStrings, samlToken)));
 
             throw LogHelper.LogExceptionMessage(new SecurityTokenSignatureKeyNotFoundException(TokenLogMessages.IDX10500));
         }
@@ -1257,8 +1275,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml
             ValidateConditions(samlToken, validationParameters);
             var issuer = ValidateIssuer(samlToken.Issuer, samlToken, validationParameters);
 
-            if (samlToken.Assertion.Conditions != null)
-                ValidateTokenReplay(samlToken.Assertion.Conditions.NotOnOrAfter, samlToken.Assertion.CanonicalString, validationParameters);
+            ValidateTokenReplay(samlToken.Assertion.Conditions?.NotOnOrAfter, samlToken.Assertion.CanonicalString, validationParameters);
 
             ValidateIssuerSecurityKey(samlToken.SigningKey, samlToken, validationParameters);
             validatedToken = samlToken;
@@ -1328,7 +1345,23 @@ namespace Microsoft.IdentityModel.Tokens.Saml
 
             Serializer.WriteAssertion(writer, samlToken.Assertion);
         }
+        private static void RecordSignatureValidationTelemetry(
+            Telemetry.ITelemetryClient telemetryClient,
+            string errorType,
+            SecurityToken securityToken,
+            string algorithm,
+            SecurityKey key)
+        {
+            if (CryptoTelemetry.RecordSignatureValidationTelemetry)
+            {
+                telemetryClient.IncrementSignatureValidationCounter(
+                    errorType,
+                    securityToken.Issuer,
+                    algorithm,
+                    key);
+            }
+        }
 
-#endregion methods
+        #endregion methods
     }
 }

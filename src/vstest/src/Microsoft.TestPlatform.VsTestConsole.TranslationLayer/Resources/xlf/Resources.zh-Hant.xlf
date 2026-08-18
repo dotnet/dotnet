@@ -32,16 +32,6 @@
         <target state="translated">執行中的測試回合附件處理已中止。</target>
         <note />
       </trans-unit>
-      <trans-unit id="AbortedStartTestSession">
-        <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">開始測試工作階段作業已中止。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AbortedStopTestSession">
-        <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">停止測試工作階段作業已中止。</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

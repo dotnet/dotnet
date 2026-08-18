@@ -49,7 +49,7 @@ internal class ExceptionConverter : JsonConverter<Exception>
         Exception? innerException = null;
         if (root.TryGetProperty("InnerException", out var innerProp) && innerProp.ValueKind != JsonValueKind.Null)
         {
-            innerException = StjSafe.Deserialize<Exception>(innerProp.GetRawText(), options);
+            innerException = StjSafe.Deserialize<Exception>(innerProp, options);
         }
 
         var exception = new RemoteException(className, message, stackTrace, innerException);

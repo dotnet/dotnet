@@ -1,0 +1,777 @@
+#nullable enable
+const Microsoft.IdentityModel.Tokens.Saml.ClaimProperties.Namespace = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties" -> string
+const Microsoft.IdentityModel.Tokens.Saml.ClaimProperties.SamlNameIdentifierFormat = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/format" -> string
+const Microsoft.IdentityModel.Tokens.Saml.ClaimProperties.SamlNameIdentifierNameQualifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/namequalifier" -> string
+const Microsoft.IdentityModel.Tokens.Saml.ClaimProperties.SamlNameIdentifierSPNameQualifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/spnamequalifier" -> string
+const Microsoft.IdentityModel.Tokens.Saml.ClaimProperties.SamlNameIdentifierSPProvidedId = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/spprovidedid" -> string
+const Microsoft.IdentityModel.Tokens.Saml.ClaimProperties.SamlSubjectConfirmationData = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/confirmationdata" -> string
+const Microsoft.IdentityModel.Tokens.Saml.ClaimProperties.SamlSubjectConfirmationMethod = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/confirmationmethod" -> string
+const Microsoft.IdentityModel.Tokens.Saml.ClaimProperties.SamlSubjectKeyInfo = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/keyinfo" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AssertionIdPrefix = "SamlSecurityToken-" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.HardwareTokenString = "URI:urn:oasis:names:tc:SAML:1.0:am:HardwareToken" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.KerberosString = "urn:ietf:rfc:1510" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.PasswordString = "urn:oasis:names:tc:SAML:1.0:am:password" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.PgpString = "urn:oasis:names:tc:SAML:1.0:am:PGP" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.SecureRemotePasswordString = "urn:ietf:rfc:2945" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.SignatureString = "urn:ietf:rfc:3075" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.SpkiString = "urn:oasis:names:tc:SAML:1.0:am:SPKI" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.TlsClientString = "urn:ietf:rfc:2246" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.UnspecifiedString = "urn:oasis:names:tc:SAML:1.0:am:unspecified" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.WindowsString = "urn:federation:authentication:windows" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.X509String = "urn:oasis:names:tc:SAML:1.0:am:X509-PKI" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods.XkmsString = "urn:oasis:names:tc:SAML:1.0:am:XKMS" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.BearerConfirmationMethod = "urn:oasis:names:tc:SAML:1.0:cm:bearer" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.DefaultActionNamespace = "urn:oasis:names:tc:SAML:1.0:action:rwedc-negation" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.GeneratedDateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffZ" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.MajorVersionValue = "1" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.MinorVersionValue = "1" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Namespace = "urn:oasis:names:tc:SAML:1.0:assertion" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.NamespaceAttributePrefix = "NamespaceAttributePrefix" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.OasisWssSamlTokenProfile11 = "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Prefix = "saml" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Saml11Namespace = "urn:oasis:names:tc:SAML:1.0:assertion" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Statement = "Statement" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.SubjectStatement = "SubjectStatement" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.ActionType = "ActionType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.AdviceType = "AdviceType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.AssertionType = "AssertionType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.AttributeStatementType = "AttributeStatementType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.AttributeType = "AttributeType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.AudienceRestrictionType = "AudienceRestrictionType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.AuthnContextType = "AuthnContextType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.AuthnStatementType = "AuthnStatementType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.AuthorityBindingType = "AuthorityBindingType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.AuthzDecisionStatementType = "AuthzDecisionStatementType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.BaseIDAbstractType = "BaseIDAbstractType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.ConditionAbstractType = "ConditionAbstractType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.ConditionsType = "ConditionsType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.DoNotCacheConditionType = "DoNotCacheConditionType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.EncryptedElementType = "EncryptedElementType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.EvidenceType = "EvidenceType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.KeyInfoConfirmationDataType = "KeyInfoConfirmationDataType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.NameIDType = "NameIDType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.OneTimeUseType = "OneTimeUseType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.ProxyRestrictionType = "ProxyRestrictionType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.StatementAbstractType = "StatementAbstractType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.SubjectConfirmationDataType = "SubjectConfirmationDataType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.SubjectConfirmationType = "SubjectConfirmationType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.SubjectLocalityType = "SubjectLocalityType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types.SubjectType = "SubjectType" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.UnspecifiedAuthenticationMethod = "urn:oasis:names:tc:SAML:1.0:am:unspecified" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.UserName = "UserName" -> string
+const Microsoft.IdentityModel.Tokens.Saml.SamlConstants.UserNameNamespace = "urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.ClaimProperties.Namespace = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.ClaimProperties.SamlAttributeFriendlyName = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/friendlyname" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.ClaimProperties.SamlAttributeNameFormat = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/attributename" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.ClaimProperties.SamlNameIdentifierFormat = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/format" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.ClaimProperties.SamlNameIdentifierNameQualifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/namequalifier" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.ClaimProperties.SamlNameIdentifierSPNameQualifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/spnamequalifier" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.ClaimProperties.SamlNameIdentifierSPProvidedId = "http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/spprovidedid" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Address = "Address" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.AuthnInstant = "AuthnInstant" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Count = "Count" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Decision = "Decision" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.DNSName = "DNSName" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Format = "Format" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.FriendlyName = "FriendlyName" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.ID = "ID" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.InResponseTo = "InResponseTo" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.IssueInstant = "IssueInstant" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Method = "Method" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Name = "Name" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.NameFormat = "NameFormat" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.NameQualifier = "NameQualifier" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Namespace = "Namespace" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.NotBefore = "NotBefore" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.NotOnOrAfter = "NotOnOrAfter" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.OriginalIssuer = "OriginalIssuer" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Recipient = "Recipient" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Resource = "Resource" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.SessionIndex = "SessionIndex" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.SessionNotOnOrAfter = "SessionNotOnOrAfter" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.SPNameQualifier = "SPNameQualifier" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.SPProvidedID = "SPProvidedID" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Type = "type" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes.Version = "Version" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ConfirmationMethods.BearerString = "urn:oasis:names:tc:SAML:2.0:cm:bearer" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ConfirmationMethods.HolderOfKeyString = "urn:oasis:names:tc:SAML:2.0:cm:holder-of-key" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ConfirmationMethods.SenderVouchesString = "urn:oasis:names:tc:SAML:2.0:cm:sender-vouches" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Action = "Action" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Advice = "Advice" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Assertion = "Assertion" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AssertionIDRef = "AssertionIDRef" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AssertionURIRef = "AssertionURIRef" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Attribute = "Attribute" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AttributeStatement = "AttributeStatement" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AttributeValue = "AttributeValue" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Audience = "Audience" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AudienceRestriction = "AudienceRestriction" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AuthenticatingAuthority = "AuthenticatingAuthority" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AuthnContext = "AuthnContext" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AuthnContextClassRef = "AuthnContextClassRef" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AuthnContextDecl = "AuthnContextDecl" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AuthnContextDeclRef = "AuthnContextDeclRef" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AuthnStatement = "AuthnStatement" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.AuthzDecisionStatement = "AuthzDecisionStatement" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.BaseID = "BaseID" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Condition = "Condition" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Conditions = "Conditions" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.EncryptedAssertion = "EncryptedAssertion" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.EncryptedAttribute = "EncryptedAttribute" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.EncryptedID = "EncryptedID" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Evidence = "Evidence" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Issuer = "Issuer" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.NameID = "NameID" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.OneTimeUse = "OneTimeUse" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.ProxyRestricton = "ProxyRestriction" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Statement = "Statement" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.Subject = "Subject" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.SubjectConfirmation = "SubjectConfirmation" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.SubjectConfirmationData = "SubjectConfirmationData" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements.SubjectLocality = "SubjectLocality" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.EmailAddressString = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.EncryptedString = "urn:oasis:names:tc:SAML:2.0:nameid-format:encrypted" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.EntityString = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.KerberosString = "urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.PersistentString = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.TransientString = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.UnspecifiedString = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.WindowsDomainQualifiedNameString = "urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.X509SubjectNameString = "urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Namespace = "urn:oasis:names:tc:SAML:2.0:assertion" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.OasisWssSaml2TokenProfile11 = "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Prefix = "saml" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Saml2TokenProfile11 = "urn:oasis:names:tc:SAML:2.0:assertion" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.ActionType = "ActionType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.AdviceType = "AdviceType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.AssertionType = "AssertionType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.AttributeStatementType = "AttributeStatementType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.AttributeType = "AttributeType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.AudienceRestrictionType = "AudienceRestrictionType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.AuthnContextType = "AuthnContextType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.AuthnStatementType = "AuthnStatementType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.AuthzDecisionStatementType = "AuthzDecisionStatementType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.BaseIDAbstractType = "BaseIDAbstractType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.ConditionAbstractType = "ConditionAbstractType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.ConditionsType = "ConditionsType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.EncryptedElementType = "EncryptedElementType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.EvidenceType = "EvidenceType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.KeyInfoConfirmationDataType = "KeyInfoConfirmationDataType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.NameIDType = "NameIDType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.OneTimeUseType = "OneTimeUseType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.ProxyRestrictionType = "ProxyRestrictionType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.StatementAbstractType = "StatementAbstractType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.SubjectConfirmationDataType = "SubjectConfirmationDataType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.SubjectConfirmationType = "SubjectConfirmationType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.SubjectLocalityType = "SubjectLocalityType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types.SubjectType = "SubjectType" -> string
+const Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Version = "2.0" -> string
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.AuthenticationInformation(System.Uri authenticationMethod, System.DateTime authenticationInstant) -> void
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.AuthenticationInstant.get -> System.DateTime
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.AuthenticationInstant.set -> void
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.AuthenticationMethod.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.AuthorityBindings.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding>
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.DnsName.get -> string
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.DnsName.set -> void
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.IPAddress.get -> string
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.IPAddress.set -> void
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.NotOnOrAfter.get -> System.DateTime?
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.NotOnOrAfter.set -> void
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.Session.get -> string
+Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation.Session.set -> void
+Microsoft.IdentityModel.Tokens.Saml.ClaimProperties
+Microsoft.IdentityModel.Tokens.Saml.SamlAction
+Microsoft.IdentityModel.Tokens.Saml.SamlAction.Namespace.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml.SamlAction.Namespace.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAction.SamlAction(string value, System.Uri namespace) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAction.SamlAction(string value) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAction.Value.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAction.Value.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAdvice
+Microsoft.IdentityModel.Tokens.Saml.SamlAdvice.AssertionIdReferences.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Tokens.Saml.SamlAdvice.Assertions.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAssertion>
+Microsoft.IdentityModel.Tokens.Saml.SamlAdvice.SamlAdvice() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAdvice.SamlAdvice(System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlAssertion> assertions) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAdvice.SamlAdvice(System.Collections.Generic.IEnumerable<string> references, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlAssertion> assertions) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAdvice.SamlAdvice(System.Collections.Generic.IEnumerable<string> references) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.Advice.get -> Microsoft.IdentityModel.Tokens.Saml.SamlAdvice
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.Advice.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.AssertionId.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.AssertionId.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.CanonicalString.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.Conditions.get -> Microsoft.IdentityModel.Tokens.Saml.SamlConditions
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.Conditions.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.InclusiveNamespacesPrefixList.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.InclusiveNamespacesPrefixList.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.IssueInstant.get -> System.DateTime
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.IssueInstant.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.Issuer.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.Issuer.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.MajorVersion.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.MinorVersion.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.SamlAssertion(string assertionId, string issuer, System.DateTime issueInstant, Microsoft.IdentityModel.Tokens.Saml.SamlConditions samlConditions, Microsoft.IdentityModel.Tokens.Saml.SamlAdvice samlAdvice, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlStatement> samlStatements) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.Signature.get -> Microsoft.IdentityModel.Xml.Signature
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.Signature.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.SigningCredentials.get -> Microsoft.IdentityModel.Tokens.SigningCredentials
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.SigningCredentials.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAssertion.Statements.get -> System.Collections.Generic.IList<Microsoft.IdentityModel.Tokens.Saml.SamlStatement>
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.AttributeValueXsiType.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.AttributeValueXsiType.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.ClaimType.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.ClaimType.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.Name.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.Name.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.Namespace.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.Namespace.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.OriginalIssuer.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.OriginalIssuer.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.SamlAttribute(string ns, string name, string value) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.SamlAttribute(string ns, string name, System.Collections.Generic.IEnumerable<string> values) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttribute.Values.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.AttributeKey(Microsoft.IdentityModel.Tokens.Saml.SamlAttribute attribute) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.Equals(Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey other) -> bool
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.Equals(Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey x, Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey y) -> bool
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.GetHashCode(Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey obj) -> int
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.SamlAttributeKeyComparer() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeStatement
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeStatement.Attributes.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAttribute>
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeStatement.SamlAttributeStatement(Microsoft.IdentityModel.Tokens.Saml.SamlSubject samlSubject, Microsoft.IdentityModel.Tokens.Saml.SamlAttribute attribute) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAttributeStatement.SamlAttributeStatement(Microsoft.IdentityModel.Tokens.Saml.SamlSubject samlSubject, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlAttribute> attributes) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAudienceRestrictionCondition
+Microsoft.IdentityModel.Tokens.Saml.SamlAudienceRestrictionCondition.Audiences.get -> System.Collections.Generic.ICollection<System.Uri>
+Microsoft.IdentityModel.Tokens.Saml.SamlAudienceRestrictionCondition.SamlAudienceRestrictionCondition(System.Collections.Generic.IEnumerable<System.Uri> audiences) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAudienceRestrictionCondition.SamlAudienceRestrictionCondition(System.Uri audience) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.AuthenticationInstant.get -> System.DateTime
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.AuthenticationInstant.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.AuthenticationMethod.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.AuthenticationMethod.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.AuthorityBindings.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding>
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.DnsAddress.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.DnsAddress.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.IPAddress.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.IPAddress.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement.SamlAuthenticationStatement(Microsoft.IdentityModel.Tokens.Saml.SamlSubject samlSubject, string authenticationMethod, System.DateTime authenticationInstant, string dnsAddress, string ipAddress, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding> authorityBindings) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding.AuthorityKind.get -> System.Xml.XmlQualifiedName
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding.AuthorityKind.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding.Binding.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding.Binding.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding.Location.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding.Location.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding.SamlAuthorityBinding(System.Xml.XmlQualifiedName authorityKind, string binding, string location) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.Actions.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAction>
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.Decision.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.Decision.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.Evidence.get -> Microsoft.IdentityModel.Tokens.Saml.SamlEvidence
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.Evidence.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.Resource.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.Resource.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.SamlAuthorizationDecisionStatement(Microsoft.IdentityModel.Tokens.Saml.SamlSubject subject, string resource, string decision, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlAction> actions, Microsoft.IdentityModel.Tokens.Saml.SamlEvidence evidence) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.SamlAuthorizationDecisionStatement(Microsoft.IdentityModel.Tokens.Saml.SamlSubject subject, string resource, string decision, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlAction> actions) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlCondition
+Microsoft.IdentityModel.Tokens.Saml.SamlCondition.SamlCondition() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlConditions
+Microsoft.IdentityModel.Tokens.Saml.SamlConditions.Conditions.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlCondition>
+Microsoft.IdentityModel.Tokens.Saml.SamlConditions.NotBefore.get -> System.DateTime
+Microsoft.IdentityModel.Tokens.Saml.SamlConditions.NotBefore.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlConditions.NotOnOrAfter.get -> System.DateTime
+Microsoft.IdentityModel.Tokens.Saml.SamlConditions.NotOnOrAfter.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlConditions.SamlConditions(System.DateTime notBefore, System.DateTime notOnOrAfter, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlCondition> conditions) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlConditions.SamlConditions(System.DateTime notBefore, System.DateTime notOnOrAfter) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlConstants
+Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AccessDecision
+Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AuthenticationMethods
+Microsoft.IdentityModel.Tokens.Saml.SamlConstants.Types
+Microsoft.IdentityModel.Tokens.Saml.SamlDoNotCacheCondition
+Microsoft.IdentityModel.Tokens.Saml.SamlDoNotCacheCondition.SamlDoNotCacheCondition() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlEvidence
+Microsoft.IdentityModel.Tokens.Saml.SamlEvidence.AssertionIDReferences.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Tokens.Saml.SamlEvidence.Assertions.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAssertion>
+Microsoft.IdentityModel.Tokens.Saml.SamlEvidence.SamlEvidence(System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlAssertion> assertions) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlEvidence.SamlEvidence(System.Collections.Generic.IEnumerable<string> assertionIDReferences, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml.SamlAssertion> assertions) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlEvidence.SamlEvidence(System.Collections.Generic.IEnumerable<string> assertionIDReferences) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.Assertion.get -> Microsoft.IdentityModel.Tokens.Saml.SamlAssertion
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.SamlSecurityToken() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.SamlSecurityToken(Microsoft.IdentityModel.Tokens.Saml.SamlAssertion assertion) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenException
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenException.SamlSecurityTokenException() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenException.SamlSecurityTokenException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenException.SamlSecurityTokenException(string message) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenException.SamlSecurityTokenException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.SamlSecurityTokenHandler() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.SamlSubjectEqualityComparer.get -> System.Collections.Generic.IEqualityComparer<Microsoft.IdentityModel.Tokens.Saml.SamlSubject>
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.SamlSubjectEqualityComparer.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.Serializer.get -> Microsoft.IdentityModel.Tokens.Saml.SamlSerializer
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.Serializer.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenReadException
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenReadException.SamlSecurityTokenReadException() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenReadException.SamlSecurityTokenReadException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenReadException.SamlSecurityTokenReadException(string message) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenReadException.SamlSecurityTokenReadException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenWriteException
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenWriteException.SamlSecurityTokenWriteException() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenWriteException.SamlSecurityTokenWriteException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenWriteException.SamlSecurityTokenWriteException(string message) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenWriteException.SamlSecurityTokenWriteException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSerializer
+Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.DSigSerializer.get -> Microsoft.IdentityModel.Xml.DSigSerializer
+Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.DSigSerializer.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.Prefix.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.Prefix.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.SamlSerializer() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlStatement
+Microsoft.IdentityModel.Tokens.Saml.SamlStatement.SamlStatement() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.ConfirmationData.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.ConfirmationData.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.ConfirmationMethods.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.Key.get -> Microsoft.IdentityModel.Tokens.SecurityKey
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.Key.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.KeyInfo.get -> Microsoft.IdentityModel.Xml.KeyInfo
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.KeyInfo.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.Name.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.Name.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.NameFormat.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.NameFormat.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.NameQualifier.get -> string
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.NameQualifier.set -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.SamlSubject() -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.SamlSubject(string nameFormat, string nameQualifier, string name, System.Collections.Generic.IEnumerable<string> confirmations, string confirmationData) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubject.SamlSubject(string nameFormat, string nameQualifier, string name) -> void
+Microsoft.IdentityModel.Tokens.Saml.SamlSubjectStatement
+Microsoft.IdentityModel.Tokens.Saml.SamlSubjectStatement.SamlSubjectStatement() -> void
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.Address.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.Address.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.AuthenticationInformation(System.Uri authenticationMethod, System.DateTime authenticationInstant) -> void
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.AuthenticationInstant.get -> System.DateTime
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.AuthenticationInstant.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.AuthenticationMethod.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.DnsName.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.DnsName.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.NotOnOrAfter.get -> System.DateTime?
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.NotOnOrAfter.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.Session.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation.Session.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.ClaimProperties
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Action
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Action.Namespace.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Action.Namespace.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Action.Saml2Action(string value, System.Uri namespace) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Action.Value.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Action.Value.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Advice
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Advice.AssertionIdReferences.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Id>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Advice.Assertions.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Advice.AssertionUriReferences.get -> System.Collections.Generic.ICollection<System.Uri>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Advice.Saml2Advice() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Advice.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Advice
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Advice.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.CanonicalString.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Conditions.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Conditions.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Id.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Id
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Id.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.InclusiveNamespacesPrefixList.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.InclusiveNamespacesPrefixList.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.IssueInstant.get -> System.DateTime
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.IssueInstant.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Issuer.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Issuer.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Saml2Assertion(Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier issuer) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Signature.get -> Microsoft.IdentityModel.Xml.Signature
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Signature.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.SigningCredentials.get -> Microsoft.IdentityModel.Tokens.SigningCredentials
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.SigningCredentials.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Statements.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Statement>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Subject.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Subject.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion.Version.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.AttributeValueXsiType.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.AttributeValueXsiType.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.FriendlyName.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.FriendlyName.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.Name.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.Name.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.NameFormat.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.NameFormat.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.OriginalIssuer.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.OriginalIssuer.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.Saml2Attribute(string name, string value) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.Saml2Attribute(string name, System.Collections.Generic.IEnumerable<string> values) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.Saml2Attribute(string name) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute.Values.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeStatement
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeStatement.Attributes.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeStatement.Saml2AttributeStatement() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeStatement.Saml2AttributeStatement(Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute attribute) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeStatement.Saml2AttributeStatement(System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute> attributes) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AudienceRestriction
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AudienceRestriction.Audiences.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AudienceRestriction.Saml2AudienceRestriction(string audience) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AudienceRestriction.Saml2AudienceRestriction(System.Collections.Generic.IEnumerable<string> audiences) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext.AuthenticatingAuthorities.get -> System.Collections.Generic.ICollection<System.Uri>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext.ClassReference.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext.ClassReference.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext.DeclarationReference.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext.DeclarationReference.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext.Saml2AuthenticationContext() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext.Saml2AuthenticationContext(System.Uri classReference, System.Uri declarationReference) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext.Saml2AuthenticationContext(System.Uri classReference) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.AuthenticationContext.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.AuthenticationContext.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.AuthenticationInstant.get -> System.DateTime
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.AuthenticationInstant.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.Saml2AuthenticationStatement(Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext authenticationContext, System.DateTime authenticationInstant) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.Saml2AuthenticationStatement(Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext authenticationContext) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.SessionIndex.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.SessionIndex.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.SessionNotOnOrAfter.get -> System.DateTime?
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.SessionNotOnOrAfter.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.SubjectLocality.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement.SubjectLocality.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.Actions.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Action>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.Decision.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.Decision.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.Evidence.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.Evidence.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.Resource.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.Resource.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.Saml2AuthorizationDecisionStatement(System.Uri resource, string decision, System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml2.Saml2Action> actions) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement.Saml2AuthorizationDecisionStatement(System.Uri resource, string decision) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.AudienceRestrictions.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2AudienceRestriction>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.NotBefore.get -> System.DateTime?
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.NotBefore.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.NotOnOrAfter.get -> System.DateTime?
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.NotOnOrAfter.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.OneTimeUse.get -> bool
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.OneTimeUse.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.ProxyRestriction.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2ProxyRestriction
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.ProxyRestriction.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.Saml2Conditions() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions.Saml2Conditions(System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml2.Saml2AudienceRestriction> audienceRestrictions) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.AccessDecision
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Attributes
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ConfirmationMethods
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Elements
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.Types
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence.AssertionIdReferences.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Id>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence.Assertions.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence.AssertionUriReferences.get -> System.Collections.Generic.ICollection<System.Uri>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence.Saml2Evidence() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence.Saml2Evidence(Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion assertion) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence.Saml2Evidence(Microsoft.IdentityModel.Tokens.Saml2.Saml2Id idReference) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence.Saml2Evidence(System.Uri uriReference) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Id
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Id.Saml2Id() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Id.Saml2Id(string value) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Id.Value.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.EncryptingCredentials.get -> Microsoft.IdentityModel.Tokens.EncryptingCredentials
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.EncryptingCredentials.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.Format.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.Format.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.NameQualifier.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.NameQualifier.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.Saml2NameIdentifier(string name, System.Uri format) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.Saml2NameIdentifier(string name) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.SPNameQualifier.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.SPNameQualifier.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.SPProvidedId.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.SPProvidedId.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.Value.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier.Value.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2ProxyRestriction
+Microsoft.IdentityModel.Tokens.Saml2.Saml2ProxyRestriction.Audiences.get -> System.Collections.Generic.ICollection<System.Uri>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2ProxyRestriction.Count.get -> int?
+Microsoft.IdentityModel.Tokens.Saml2.Saml2ProxyRestriction.Count.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2ProxyRestriction.Saml2ProxyRestriction() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken.Assertion.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken.Saml2SecurityToken(Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion assertion) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenException
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenException.Saml2SecurityTokenException() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenException.Saml2SecurityTokenException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenException.Saml2SecurityTokenException(string message) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenException.Saml2SecurityTokenException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ActorClaimName.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ActorClaimName.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateActorString(System.Security.Claims.ClaimsIdentity actor) -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.Saml2SecurityTokenHandler() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.Serializer.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.Serializer.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenReadException
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenReadException.Saml2SecurityTokenReadException() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenReadException.Saml2SecurityTokenReadException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenReadException.Saml2SecurityTokenReadException(string message) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenReadException.Saml2SecurityTokenReadException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenWriteException
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenWriteException.Saml2SecurityTokenWriteException() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenWriteException.Saml2SecurityTokenWriteException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenWriteException.Saml2SecurityTokenWriteException(string message) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenWriteException.Saml2SecurityTokenWriteException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.DSigSerializer.get -> Microsoft.IdentityModel.Xml.DSigSerializer
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.DSigSerializer.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.Prefix.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.Prefix.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.Saml2Serializer() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Statement
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Statement.Saml2Statement() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject.NameId.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject.NameId.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject.Saml2Subject(Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier nameId) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject.Saml2Subject(Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation subjectConfirmation) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject.SubjectConfirmations.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation.Method.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation.Method.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation.NameIdentifier.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation.NameIdentifier.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation.Saml2SubjectConfirmation(System.Uri method, Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData subjectConfirmationData) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation.Saml2SubjectConfirmation(System.Uri method) -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation.SubjectConfirmationData.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation.SubjectConfirmationData.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.Address.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.Address.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.InResponseTo.get -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Id
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.InResponseTo.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.KeyInfos.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Xml.KeyInfo>
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.NotBefore.get -> System.DateTime?
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.NotBefore.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.NotOnOrAfter.get -> System.DateTime?
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.NotOnOrAfter.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.Recipient.get -> System.Uri
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.Recipient.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData.Saml2SubjectConfirmationData() -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality.Address.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality.Address.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality.DnsName.get -> string
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality.DnsName.set -> void
+Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality.Saml2SubjectLocality(string address, string dnsName) -> void
+override Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.Equals(object obj) -> bool
+override Microsoft.IdentityModel.Tokens.Saml.SamlAttributeKeyComparer.AttributeKey.GetHashCode() -> int
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.Id.get -> string
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.Issuer.get -> string
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.SecurityKey.get -> Microsoft.IdentityModel.Tokens.SecurityKey
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.SigningKey.get -> Microsoft.IdentityModel.Tokens.SecurityKey
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.SigningKey.set -> void
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.ValidFrom.get -> System.DateTime
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken.ValidTo.get -> System.DateTime
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CanReadToken(string securityToken) -> bool
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CanReadToken(System.Xml.XmlReader reader) -> bool
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CanValidateToken.get -> bool
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CanWriteToken.get -> bool
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateToken(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ReadToken(string token) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ReadToken(System.Xml.XmlReader reader, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ReadToken(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.TokenType.get -> System.Type
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateToken(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters, out Microsoft.IdentityModel.Tokens.SecurityToken validatedToken) -> System.Security.Claims.ClaimsPrincipal
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateToken(System.Xml.XmlReader reader, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters, out Microsoft.IdentityModel.Tokens.SecurityToken validatedToken) -> System.Security.Claims.ClaimsPrincipal
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.TokenValidationResult>
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.WriteToken(Microsoft.IdentityModel.Tokens.SecurityToken token) -> string
+override Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.WriteToken(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.SecurityToken token) -> void
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken.Id.get -> string
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken.Issuer.get -> string
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken.SecurityKey.get -> Microsoft.IdentityModel.Tokens.SecurityKey
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken.SigningKey.get -> Microsoft.IdentityModel.Tokens.SecurityKey
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken.SigningKey.set -> void
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken.ValidFrom.get -> System.DateTime
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken.ValidTo.get -> System.DateTime
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CanReadToken(string token) -> bool
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CanReadToken(System.Xml.XmlReader reader) -> bool
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CanValidateToken.get -> bool
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CanWriteToken.get -> bool
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateToken(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ReadToken(string token) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ReadToken(System.Xml.XmlReader reader, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ReadToken(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Tokens.SecurityToken
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.TokenType.get -> System.Type
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateToken(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters, out Microsoft.IdentityModel.Tokens.SecurityToken validatedToken) -> System.Security.Claims.ClaimsPrincipal
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateToken(System.Xml.XmlReader reader, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters, out Microsoft.IdentityModel.Tokens.SecurityToken validatedToken) -> System.Security.Claims.ClaimsPrincipal
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateTokenAsync(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Tokens.TokenValidationResult>
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.WriteToken(Microsoft.IdentityModel.Tokens.SecurityToken securityToken) -> string
+override Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.WriteToken(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.SecurityToken securityToken) -> void
+static Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement.ClaimType.get -> string
+static Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AcceptedDateTimeFormats -> string[]
+static Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AccessDecision.Deny.get -> string
+static Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AccessDecision.Indeterminate.get -> string
+static Microsoft.IdentityModel.Tokens.Saml.SamlConstants.AccessDecision.Permit.get -> string
+static Microsoft.IdentityModel.Tokens.Saml.SamlSubject.NameClaimType.get -> string
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.AcceptedDateTimeFormats -> string[]
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.AccessDecision.Deny.get -> string
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.AccessDecision.Indeterminate.get -> string
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.AccessDecision.Permit.get -> string
+static Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.DefaultActorClaimName -> string
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ConfirmationMethods.Bearer -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ConfirmationMethods.HolderOfKey -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.ConfirmationMethods.SenderVouches -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.EmailAddress -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.Encrypted -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.Entity -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.Kerberos -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.Persistent -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.Transient -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.Unspecified -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.WindowsDomainQualifiedName -> System.Uri
+static readonly Microsoft.IdentityModel.Tokens.Saml2.Saml2Constants.NameIdentifierFormats.X509SubjectName -> System.Uri
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.AddActorToAttributes(System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAttribute> attributes, System.Security.Claims.ClaimsIdentity subject) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ConsolidateAttributes(System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAttribute> attributes) -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAttribute>
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateAdvice(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml.SamlAdvice
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateAttribute(System.Security.Claims.Claim claim) -> Microsoft.IdentityModel.Tokens.Saml.SamlAttribute
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateAttributeStatement(Microsoft.IdentityModel.Tokens.Saml.SamlSubject subject, Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml.SamlAttributeStatement
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateAuthenticationStatement(Microsoft.IdentityModel.Tokens.Saml.SamlSubject subject, Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation authenticationInformation) -> Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateAuthorizationDecisionStatement(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateClaimsIdentities(Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken samlToken, string issuer, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Collections.Generic.IEnumerable<System.Security.Claims.ClaimsIdentity>
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateConditions(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml.SamlConditions
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateStatements(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor, Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation authenticationInformation) -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlStatement>
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateSubject(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml.SamlSubject
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateToken(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor, Microsoft.IdentityModel.Tokens.Saml.AuthenticationInformation authenticationInformation) -> Microsoft.IdentityModel.Tokens.SecurityToken
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.CreateXmlStringFromAttributes(System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml.SamlAttribute> attributes) -> string
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ProcessAttributeStatement(Microsoft.IdentityModel.Tokens.Saml.SamlAttributeStatement statement, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ProcessAuthenticationStatement(Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement statement, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ProcessAuthorizationDecisionStatement(Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement statement, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ProcessCustomSubjectStatement(Microsoft.IdentityModel.Tokens.Saml.SamlStatement statement, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ProcessStatements(Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken samlToken, string issuer, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Collections.Generic.IEnumerable<System.Security.Claims.ClaimsIdentity>
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ProcessSubject(Microsoft.IdentityModel.Tokens.Saml.SamlSubject subject, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ReadSamlToken(string token) -> Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ReadSamlToken(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ResolveIssuerSigningKey(string token, Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.SecurityKey
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.SetDelegateFromAttribute(Microsoft.IdentityModel.Tokens.Saml.SamlAttribute attribute, System.Security.Claims.ClaimsIdentity subject, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateAudience(System.Collections.Generic.IEnumerable<string> audiences, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateConditions(Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateIssuer(string issuer, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> string
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateIssuerSecurityKey(Microsoft.IdentityModel.Tokens.SecurityKey key, Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateIssuerSecurityKey(Microsoft.IdentityModel.Tokens.SecurityKey securityKey, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateLifetime(System.DateTime? notBefore, System.DateTime? expires, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateSignature(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.Saml.SamlSecurityToken
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSecurityTokenHandler.ValidateTokenReplay(System.DateTime? expiration, string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadAction(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlAction
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadAdvice(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlAdvice
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadAssertion(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlAssertion
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadAttribute(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlAttribute
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadAttributeStatement(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlAttributeStatement
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadAudienceRestrictionCondition(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlAudienceRestrictionCondition
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadAuthenticationStatement(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadAuthorityBinding(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadAuthorizationDecisionStatement(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadCondition(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlCondition
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadConditions(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlConditions
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadDoNotCacheCondition(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlDoNotCacheCondition
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadEvidence(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlEvidence
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadStatement(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlStatement
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.ReadSubject(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml.SamlSubject
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteAction(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlAction action) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteAdvice(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlAdvice advice) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteAssertion(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlAssertion assertion) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteAttribute(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlAttribute attribute) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteAttributeStatement(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlAttributeStatement statement) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteAudienceRestrictionCondition(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlAudienceRestrictionCondition audienceRestriction) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteAuthenticationStatement(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlAuthenticationStatement statement) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteAuthorityBinding(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlAuthorityBinding authorityBinding) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteAuthorizationDecisionStatement(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlAuthorizationDecisionStatement statement) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteCondition(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlCondition condition) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteConditions(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlConditions conditions) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteDoNotCacheCondition(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlDoNotCacheCondition condition) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteEvidence(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlEvidence evidence) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteStatement(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlStatement statement) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSerializer.WriteSubject(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml.SamlSubject subject) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSubjectStatement.Subject.get -> Microsoft.IdentityModel.Tokens.Saml.SamlSubject
+virtual Microsoft.IdentityModel.Tokens.Saml.SamlSubjectStatement.Subject.set -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ConsolidateAttributes(System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute> attributes) -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute>
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateAdvice(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Advice
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateAttribute(System.Security.Claims.Claim claim) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateAttributeStatement(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeStatement
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateAuthenticationStatement(Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation authenticationInformation) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateAuthorizationDecisionStatement(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateClaimsIdentity(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, string issuer, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> System.Security.Claims.ClaimsIdentity
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateConditions(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateIssuerNameIdentifier(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateStatements(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor, Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation authenticationInformation) -> System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml2.Saml2Statement>
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateStatements(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> System.Collections.Generic.IEnumerable<Microsoft.IdentityModel.Tokens.Saml2.Saml2Statement>
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateSubject(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.CreateToken(Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor, Microsoft.IdentityModel.Tokens.Saml2.AuthenticationInformation authenticationInformation) -> Microsoft.IdentityModel.Tokens.SecurityToken
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ProcessAttributeStatement(Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeStatement statement, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ProcessAuthenticationStatement(Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement statement, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ProcessAuthorizationDecisionStatement(Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement statement, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ProcessStatements(System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.Saml2.Saml2Statement> statements, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ProcessSubject(Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject subject, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ReadSaml2Token(string token) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ReadSaml2Token(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ResolveIssuerSigningKey(string token, Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.SecurityKey
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.SetClaimsIdentityActorFromAttribute(Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute attribute, System.Security.Claims.ClaimsIdentity identity, string issuer) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateAudience(System.Collections.Generic.IEnumerable<string> audiences, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateConditions(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateConfirmationData(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters, Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData confirmationData) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateIssuer(string issuer, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> string
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateIssuerSecurityKey(Microsoft.IdentityModel.Tokens.SecurityKey key, Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateLifetime(System.DateTime? notBefore, System.DateTime? expires, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateOneTimeUseCondition(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateSignature(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateSubject(Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityToken samlToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler.ValidateTokenReplay(System.DateTime? expirationTime, string securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAction(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Action
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAdvice(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Advice
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAssertion(System.Xml.XmlReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAttribute(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAttributeStatement(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeStatement
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAttributeValue(System.Xml.XmlDictionaryReader reader, Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute attribute) -> string
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAudienceRestriction(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AudienceRestriction
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAuthenticationContext(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAuthenticationStatement(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadAuthorizationDecisionStatement(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadConditions(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadEncryptedId(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadEvidence(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadIssuer(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadNameId(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadNameIdentifier(System.Xml.XmlDictionaryReader reader, string parentElement) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadProxyRestriction(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2ProxyRestriction
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadStatement(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Statement
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadSubject(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadSubjectConfirmation(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadSubjectConfirmationData(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.ReadSubjectLocality(System.Xml.XmlDictionaryReader reader) -> Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteAction(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2Action action) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteAdvice(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2Advice advice) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteAssertion(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2Assertion assertion) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteAttribute(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2Attribute attribute) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteAttributeStatement(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2AttributeStatement statement) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteAudienceRestriction(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2AudienceRestriction audienceRestriction) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteAuthenticationContext(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationContext authenticationContext) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteAuthenticationStatement(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthenticationStatement statement) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteAuthorizationDecisionStatement(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2AuthorizationDecisionStatement statement) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteConditions(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2Conditions conditions) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteEvidence(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2Evidence evidence) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteIssuer(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier nameIdentifier) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteNameId(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier nameIdentifier) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteNameIdType(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2NameIdentifier nameIdentifier) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteProxyRestriction(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2ProxyRestriction proxyRestriction) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteStatement(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2Statement statement) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteSubject(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2Subject subject) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteSubjectConfirmation(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmation subjectConfirmation) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteSubjectConfirmationData(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectConfirmationData subjectConfirmationData) -> void
+virtual Microsoft.IdentityModel.Tokens.Saml2.Saml2Serializer.WriteSubjectLocality(System.Xml.XmlWriter writer, Microsoft.IdentityModel.Tokens.Saml2.Saml2SubjectLocality subjectLocality) -> void

@@ -1,0 +1,19 @@
+<Project>
+  <Import Project="$(RepoRoot)\Directory.Build.props" />
+  <Import Project="$(NuGetPackageRoot)\microsoft.dotnet.build.tasks.packaging\$(MicrosoftDotNetBuildTasksPackagingVersion)\build\Microsoft.DotNet.Build.Tasks.Packaging.props" />
+  <Import Project="$([MSBuild]::GetPathOfFileAbove(Microsoft.NET.Runtime.Emscripten.Common.props))" />
+
+  <!--
+    This package carries no payload. It exists so that consumers have a single stable package ID to track the
+    version of the Emscripten packages by, since every other package this repo produces has the Emscripten
+    version and the RID in its ID. All packages built here share $(PackageVersion), so this one stands in for
+    all of them. Consumed by dotnet/runtime, see EmsdkPackageVersion in its eng/Versions.props.
+  -->
+  <PropertyGroup>
+    <PackageDescription>Records the version of the Emscripten packages built alongside it. Contains no files and is not meant to be referenced directly.</PackageDescription>
+    <Description>Records the version of the Emscripten packages built alongside it. Contains no files and is not meant to be referenced directly.</Description>
+  </PropertyGroup>
+
+  <Import Project="$(NuGetPackageRoot)\microsoft.dotnet.build.tasks.packaging\$(MicrosoftDotNetBuildTasksPackagingVersion)\build\Microsoft.DotNet.Build.Tasks.Packaging.targets" />
+  <Import Project="..\Directory.Build.targets" />
+</Project>

@@ -18,6 +18,7 @@
       <project name="Microsoft.IdentityModel.Abstractions" />
       <project name="Microsoft.IdentityModel.TestExtensions" />
       <project name="Microsoft.IdentityModel.LoggingExtensions" />
+      <project name="Microsoft.IdentityModel.Dpop" />
     </src>
     <test>
       <project name="Microsoft.IdentityModel.Logging.Tests" test="yes"/>
@@ -32,6 +33,7 @@
       <project name="Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests" test="yes" />
       <project name="Microsoft.IdentityModel.Protocols.SignedHttpRequest.Tests" test="yes" />
       <project name="Microsoft.IdentityModel.Validators.Tests" test="yes" />
+      <project name="Microsoft.IdentityModel.Dpop.Tests" test="yes" />
       <!-- <project name="Microsoft.IdentityModel.AotCompatibility.Tests" test="yes" /> -->
     </test>
   </projects>

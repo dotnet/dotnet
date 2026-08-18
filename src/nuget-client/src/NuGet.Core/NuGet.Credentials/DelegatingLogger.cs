@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,7 +41,7 @@ namespace NuGet.Credentials
             _semaphore.Wait();
             try
             {
-                _delegateLogger?.Log(message);
+                _delegateLogger.Log(message);
             }
             finally
             {
@@ -56,7 +54,7 @@ namespace NuGet.Credentials
             await _semaphore.WaitAsync();
             try
             {
-                await _delegateLogger?.LogAsync(message);
+                await _delegateLogger.LogAsync(message);
             }
             finally
             {

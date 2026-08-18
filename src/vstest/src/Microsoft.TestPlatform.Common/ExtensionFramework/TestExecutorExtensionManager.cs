@@ -77,10 +77,28 @@ internal class TestExecutorExtensionManager : TestExtensionManager<ITestExecutor
         // we prefer the second extension to the first.
         foreach (var testExtension in testExtensions2)
         {
-            if (testExtension.TestPluginInfo?.IdentifierData is not null
-                && cache.ContainsKey(testExtension.TestPluginInfo.IdentifierData))
+            if (testExtension.TestPluginInfo?.IdentifierData is null
+                || !cache.ContainsKey(testExtension.TestPluginInfo.IdentifierData))
             {
+                continue;
+            }
+
+            try
+            {
+                // Accessing Value instantiates the extension. A rogue extension (for example one
+                // without a parameterless constructor) throws here. Instantiating one bad extension
+                // must not prevent the remaining extensions from being merged, otherwise the whole
+                // executor extension manager fails to build and every executor becomes unreachable.
+                // Skip the failing extension and keep the version already present in the cache from
+                // the first list.
                 cache[testExtension.TestPluginInfo.IdentifierData] = new(testExtension.Value, testExtension.Metadata);
+            }
+            catch (Exception ex)
+            {
+                EqtTrace.Error(
+                    "TestExecutorExtensionManager: MergeTestExtensionLists: Failed to instantiate extension '{0}'. Skipping it. {1}",
+                    testExtension.TestPluginInfo.IdentifierData,
+                    ex);
             }
         }
 
@@ -197,24 +215,27 @@ internal class TestExecutorExtensionManager : TestExtensionManager<ITestExecutor
     {
         var executorExtensionManager = Create();
 
-        try
+        foreach (var executor in executorExtensionManager.TestExtensions)
         {
-            foreach (var executor in executorExtensionManager.TestExtensions)
+            try
             {
                 // Note: - The below Verbose call should not be under IsVerboseEnabled check as we want to
                 // call executor.Value even if logging is not enabled.
                 EqtTrace.Verbose("TestExecutorExtensionManager: Loading executor {0}", executor.Value);
             }
-        }
-        catch (Exception ex)
-        {
-            EqtTrace.Error(
-                "TestExecutorExtensionManager: LoadAndInitialize: Exception occurred while loading extensions {0}",
-                ex);
-
-            if (shouldThrowOnError)
+            catch (Exception ex)
             {
-                throw;
+                // Instantiating one executor must not prevent the remaining executors from being
+                // loaded. Log and move on to the next executor unless the caller opted into failing.
+                EqtTrace.Error(
+                    "TestExecutorExtensionManager: LoadAndInitialize: Exception occurred while loading extension {0}: {1}",
+                    executor.TestPluginInfo?.IdentifierData,
+                    ex);
+
+                if (shouldThrowOnError)
+                {
+                    throw;
+                }
             }
         }
     }

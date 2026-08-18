@@ -211,26 +211,6 @@ public static class MessageType
     public const string DataCollectionMessage = "DataCollection.SendMessage";
 
     /// <summary>
-    /// StartTestSession message.
-    /// </summary>
-    public const string StartTestSession = "TestSession.StartTestSession";
-
-    /// <summary>
-    /// StartTestSession callback message.
-    /// </summary>
-    public const string StartTestSessionCallback = "TestSession.StartTestSessionCallback";
-
-    /// <summary>
-    /// StopTestSession message.
-    /// </summary>
-    public const string StopTestSession = "TestSession.StopTestSession";
-
-    /// <summary>
-    /// StopTestSession callback message.
-    /// </summary>
-    public const string StopTestSessionCallback = "TestSession.StopTestSessionCallback";
-
-    /// <summary>
     /// Event message type sent to datacollector process right after test host process has started.
     /// </summary>
     public const string TestHostLaunched = "DataCollection.TestHostLaunched";

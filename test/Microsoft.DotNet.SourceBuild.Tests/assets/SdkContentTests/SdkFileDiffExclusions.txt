@@ -56,6 +56,5 @@
 ./sdk/x.y.z/Azure.Monitor.OpenTelemetry.Exporter.dll|msft
 ./sdk/x.y.z/Microsoft.Bcl.AsyncInterfaces.dll|msft
 ./sdk/x.y.z/OpenTelemetry.Extensions.Hosting.dll|msft
-./sdk/x.y.z/OpenTelemetry.PersistentStorage.*.dll|msft
 ./sdk/x.y.z/System.ClientModel.dll|msft
 ./sdk/x.y.z/System.Memory.Data.dll|msft

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 throw new ArgumentException("A non-empty Helix source filter must be provided.", nameof(source));
             }
 
-            IImmutableList<JobSummary> jobs = await RetryHelper.RetryAsync(
+            IImmutableList<JobSummary> jobs = await RetryAsync(
                 async () => await _helixApi.Job.ListAsync(source: source, count: 100_000),
                 cancellationToken);
 
@@ -73,14 +74,15 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             CancellationToken cancellationToken)
         {
             List<WorkItemTestResults> downloadedFiles = [];
+            List<Exception> transientFailures = [];
             string outputDirectory = _fileSystem.PathCombine(workingDirectory, SanitizeDirName(jobName));
             _fileSystem.CreateDirectory(outputDirectory);
 
-            JobResultsUri resultsUri = await RetryHelper.RetryAsync(() => _helixApi.Job.ResultsAsync(jobName), cancellationToken);
+            JobResultsUri resultsUri = await RetryAsync(() => _helixApi.Job.ResultsAsync(jobName), cancellationToken);
 
             foreach (string workItemName in workItemNames)
             {
-                IImmutableList<UploadedFile> availableFiles = await RetryHelper.RetryAsync(
+                IImmutableList<UploadedFile> availableFiles = await RetryAsync(
                     () => _helixApi.WorkItem.ListFilesAsync(workItemName, jobName, false),
                     cancellationToken);
 
@@ -106,9 +108,35 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
                     try
                     {
+                        DateTimeOffset downloadStartedAt = DateTimeOffset.UtcNow;
+                        _logger.LogDebug(
+                            "Downloading test result file '{FileName}' for '{JobName}/{WorkItemName}'.",
+                            file.Name,
+                            jobName,
+                            workItemName);
                         IBlobClient blobClient = _blobClientFactory.CreateBlobClient(file.Link, resultsUri.ResultsUriRSAS);
                         await blobClient.DownloadToAsync(destinationFile, cancellationToken);
+                        _logger.LogDebug(
+                            "Downloaded test result file '{FileName}' for '{JobName}/{WorkItemName}' in {Elapsed}.",
+                            file.Name,
+                            jobName,
+                            workItemName,
+                            DateTimeOffset.UtcNow - downloadStartedAt);
                         workItemFiles.Add(destinationFile);
+                    }
+                    catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                    {
+                        throw;
+                    }
+                    catch (Exception ex) when (TransientFailureDetector.IsTransient(ex))
+                    {
+                        transientFailures.Add(ex);
+                        _logger.LogWarning(ex,
+                            "Transient failure downloading '{FileName}' for '{JobName}/{WorkItemName}'. "
+                            + "The remaining files will still be attempted before the download is retried.",
+                            file.Name,
+                            jobName,
+                            workItemName);
                     }
                     catch (Exception ex)
                     {
@@ -117,6 +145,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 }
 
                 downloadedFiles.Add(new WorkItemTestResults(jobName, workItemName, workItemFiles));
+            }
+
+            if (transientFailures.Count > 0)
+            {
+                throw new IOException(
+                    $"One or more transient test-result downloads failed for Helix job '{jobName}'.",
+                    new AggregateException(transientFailures));
             }
 
             return downloadedFiles;
@@ -142,7 +177,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string jobName,
             CancellationToken cancellationToken)
         {
-            return await RetryHelper.RetryAsync(async () =>
+            return await RetryAsync(async () =>
             {
                 IImmutableList<WorkItemSummary> workItems = await _helixApi.WorkItem.ListAsync(jobName);
                 return workItems
@@ -155,7 +190,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string jobName,
             CancellationToken cancellationToken)
         {
-            await RetryHelper.RetryAsync(
+            await RetryAsync(
                 async () =>
                 {
                     await _helixApi.Job.CancelAsync(jobName, cancellationToken: cancellationToken);
@@ -167,6 +202,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         public async Task<HelixJobInfo> ResubmitWorkItemsAsync(
             HelixJobInfo originalJob,
             IReadOnlyCollection<WorkItemSummary> failedWorkItems,
+            string targetStageAttempt,
             CancellationToken cancellationToken)
         {
             string originalJobName = originalJob.JobName;
@@ -185,7 +221,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 string.Join(Environment.NewLine + "- ", workItemsToLog));
 
             // 1. Read the original job's metadata so we can clone its queue, type, source, and properties.
-            JobDetails details = await RetryHelper.RetryAsync(
+            JobDetails details = await RetryAsync(
                 () => _helixApi.Job.DetailsAsync(originalJobName),
                 cancellationToken);
 
@@ -204,7 +240,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string originalJobListJson;
             try
             {
-                originalJobListJson = await RetryHelper.RetryAsync(
+                originalJobListJson = await RetryAsync(
                     async () =>
                     {
                         IBlobClient jobListBlob = _blobClientFactory.CreateBlobClient(details.JobList);
@@ -252,7 +288,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string filteredJobListJson = filteredEntries.ToString(Formatting.Indented);
 
             // 4. Create a fresh storage container for the new job list and upload it.
-            ContainerInformation container = await RetryHelper.RetryAsync(
+            ContainerInformation container = await RetryAsync(
                 () => _helixApi.Storage.NewAsync(
                     new ContainerCreationRequest(expirationInDays: 30, desiredName: "joblists", targetQueue: details.QueueId),
                     cancellationToken),
@@ -262,7 +298,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             var containerUri = new Uri($"https://{container.StorageAccountName}.blob.core.windows.net/{container.ContainerName}");
             IBlobClient jobListBlobClient = _blobClientFactory.CreateBlobClient(containerUri, blobName, container.WriteToken);
 
-            await RetryHelper.RetryAsync(
+            await RetryAsync(
                 async () =>
                 {
                     await jobListBlobClient.UploadAsync(BinaryData.FromString(filteredJobListJson), overwrite: true, cancellationToken);
@@ -271,6 +307,22 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 cancellationToken);
 
             string newJobListUri = AppendSasIfPresent(jobListBlobClient.Uri, container.ReadToken);
+
+            // Stamp the resubmission with the resubmitting monitor's own stage attempt (when
+            // known) so the monitor gates on its own resubmission; otherwise preserve the
+            // original job's attempt (build + stage back-compat). Uses the same property name the
+            // Helix submitter stamps (HelixJobInfo.StageAttemptPropertyName / System.StageAttempt).
+            string resubmittedStageAttempt = !string.IsNullOrEmpty(targetStageAttempt)
+                ? targetStageAttempt
+                : GetStringPropertyFromProperties(details.Properties, HelixJobInfo.StageAttemptPropertyName);
+
+            ImmutableDictionary<string, string> resubmittedProperties =
+                ConvertPropertiesToImmutableDictionary(details.Properties)
+                    .SetItem(HelixJobInfo.PreviousHelixJobNamePropertyName, originalJobName);
+            if (!string.IsNullOrEmpty(resubmittedStageAttempt))
+            {
+                resubmittedProperties = resubmittedProperties.SetItem(HelixJobInfo.StageAttemptPropertyName, resubmittedStageAttempt);
+            }
 
             // 5. Build the new job creation request, copying over Source / Properties / Creator
             //    so the resubmitted job remains discoverable (BuildId, System.StageName, TestRunName, etc.).
@@ -283,12 +335,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 Creator = details.Creator,
                 DockerTag = details.DockerTag,
                 QueueAlias = details.QueueAlias,
-                Properties = ConvertPropertiesToImmutableDictionary(details.Properties)
-                    .SetItem(HelixJobInfo.PreviousHelixJobNamePropertyName, originalJobName),
+                Properties = resubmittedProperties,
             };
 
             string idempotencyKey = Guid.NewGuid().ToString("N");
-            JobCreationResult newJob = await RetryHelper.RetryAsync(
+            JobCreationResult newJob = await RetryAsync(
                 () => _helixApi.Job.NewAsync(creationRequest, idempotencyKey, cancellationToken: cancellationToken),
                 cancellationToken);
 
@@ -305,7 +356,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 submitterJobName,
                 submitterJobDisplayName,
                 details.QueueId,
-                originalJobName);
+                originalJobName,
+                stageAttempt: resubmittedStageAttempt);
 
             _logger.LogInformation("Resubmitted {Count} failed work item(s) from '{OriginalJobName}' as new job '{NewJobName}'{nl}{JobUri}",
                 filteredEntries.Count,
@@ -338,6 +390,47 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             }
 
             return builder.ToImmutable();
+        }
+
+        private async Task<T> RetryAsync<T>(Func<Task<T>> action, CancellationToken cancellationToken)
+        {
+            Exception last = null;
+            T result = default;
+            var retryHandler = new ExponentialRetry
+            {
+                MaxAttempts = 5,
+                DelayBase = 2,
+                DelayConstant = 0,
+                MinRandomFactor = 1,
+                MaxRandomFactor = 1,
+                RetryDelayCallback = (failedAttempt, delay) =>
+                    _logger.LogDebug(
+                        "Transient Helix request failure on attempt {Attempt} of {AttemptCount}. "
+                        + "Waiting {RetryDelay} before the next attempt.",
+                        failedAttempt,
+                        5,
+                        delay),
+            };
+
+            bool succeeded = await retryHandler.RunAsync(
+                async _ =>
+                {
+                    try
+                    {
+                        result = await action();
+                        return RetryResult.Success;
+                    }
+                    catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+                    {
+                        last = ex;
+                        return RetryResult.Retry();
+                    }
+                },
+                cancellationToken);
+
+            return succeeded
+                ? result
+                : throw last ?? new InvalidOperationException("Retry failed without capturing an exception.");
         }
 
         private static string GetStringPropertyFromProperties(JToken properties, string name)

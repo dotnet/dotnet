@@ -32,16 +32,6 @@
         <target state="translated">Se ha anulado el procesamiento de los datos adjuntos de la serie de pruebas activa.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AbortedStartTestSession">
-        <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">La operación de inicio de la sesión de prueba se ha anulado.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AbortedStopTestSession">
-        <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">La operación de detención de la sesión de prueba se ha anulado.</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

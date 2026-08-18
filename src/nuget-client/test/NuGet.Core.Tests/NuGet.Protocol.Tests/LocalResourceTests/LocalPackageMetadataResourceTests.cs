@@ -470,7 +470,7 @@ namespace NuGet.Protocol.Tests
                     token: CancellationToken.None);
 
                 // Assert
-                Assert.Equal("a", result.Identity.Id);
+                Assert.Equal("a", result!.Identity.Id);
                 Assert.Equal("1.0.0", result.Identity.Version.ToFullString());
             }
         }

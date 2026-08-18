@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
 using System.Collections.Generic;
@@ -44,7 +43,7 @@ namespace NuGet.Protocol
         /// <param name="package">package id and version</param>
         /// <param name="projectFramework">project target framework. This is used for finding the dependency group</param>
         /// <param name="token">cancellation token</param>
-        public override Task<SourcePackageDependencyInfo> ResolvePackage(
+        public override Task<SourcePackageDependencyInfo?> ResolvePackage(
             PackageIdentity package,
             NuGetFramework projectFramework,
             SourceCacheContext sourceCacheContext,
@@ -61,7 +60,7 @@ namespace NuGet.Protocol
                 throw new ArgumentNullException(nameof(projectFramework));
             }
 
-            SourcePackageDependencyInfo result = null;
+            SourcePackageDependencyInfo? result = null;
 
             try
             {
@@ -82,7 +81,7 @@ namespace NuGet.Protocol
                 throw new FatalProtocolException(error, ex);
             }
 
-            return Task.FromResult(result);
+            return Task.FromResult<SourcePackageDependencyInfo?>(result);
         }
 
         /// <summary>

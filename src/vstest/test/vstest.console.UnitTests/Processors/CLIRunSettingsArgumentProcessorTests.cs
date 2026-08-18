@@ -57,7 +57,7 @@ public class CliRunSettingsArgumentProcessorTests
 
     public CliRunSettingsArgumentProcessorTests()
     {
-        _commandLineOptions = CommandLineOptions.Instance;
+        _commandLineOptions = new CommandLineOptions();
         _settingsProvider = new TestableRunSettingsProvider();
         _runSettingsHelper = new RunSettingsHelper();
         _executor = new CliRunSettingsArgumentExecutor(_settingsProvider, _commandLineOptions, _runSettingsHelper);
@@ -66,20 +66,19 @@ public class CliRunSettingsArgumentProcessorTests
     [TestCleanup]
     public void Cleanup()
     {
-        CommandLineOptions.Reset();
     }
 
     [TestMethod]
     public void GetMetadataShouldReturnRunSettingsArgumentProcessorCapabilities()
     {
-        var processor = new CliRunSettingsArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), _runSettingsHelper);
+        var processor = new CliRunSettingsArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Metadata.Value is CliRunSettingsArgumentProcessorCapabilities);
     }
 
     [TestMethod]
     public void GetExecuterShouldReturnRunSettingsArgumentProcessorCapabilities()
     {
-        var processor = new CliRunSettingsArgumentProcessor(CommandLineOptions.Instance, new TestableRunSettingsProvider(), _runSettingsHelper);
+        var processor = new CliRunSettingsArgumentProcessor(_commandLineOptions, new TestableRunSettingsProvider(), _runSettingsHelper);
         Assert.IsTrue(processor.Executor!.Value is CliRunSettingsArgumentExecutor);
     }
 

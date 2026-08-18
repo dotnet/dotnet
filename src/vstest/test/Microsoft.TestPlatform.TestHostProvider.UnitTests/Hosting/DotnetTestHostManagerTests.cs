@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
@@ -43,7 +44,6 @@ public class DotnetTestHostManagerTests
     private readonly Mock<IWindowsRegistryHelper> _mockWindowsRegistry;
     private readonly Mock<IMessageLogger> _mockMessageLogger;
     private readonly Mock<IEnvironment> _mockEnvironment;
-    private readonly Mock<IRunSettingsHelper> _mockRunsettingHelper;
     private readonly TestRunnerConnectionInfo _defaultConnectionInfo;
     private readonly string[] _testSource = ["test.dll"];
     private readonly string _defaultTestHostPath;
@@ -68,11 +68,9 @@ public class DotnetTestHostManagerTests
         _mockEnvironment = new Mock<IEnvironment>();
         _mockWindowsRegistry = new Mock<IWindowsRegistryHelper>();
         _mockEnvironmentVariable = new Mock<IEnvironmentVariableHelper>();
-        _mockRunsettingHelper = new Mock<IRunSettingsHelper>();
         _defaultConnectionInfo = new TestRunnerConnectionInfo { Port = 123, ConnectionInfo = new TestHostConnectionInfo { Endpoint = "127.0.0.1:123", Role = ConnectionRole.Client }, RunnerProcessId = 0 };
 
         _mockEnvironment.SetupGet(e => e.Architecture).Returns((PlatformArchitecture)Enum.Parse(typeof(PlatformArchitecture), Constants.DefaultPlatform.ToString()));
-        _mockRunsettingHelper.SetupGet(r => r.IsDefaultTargetArchitecture).Returns(true);
         string defaultSourcePath = Path.Combine(_temp, "test.dll");
         _defaultTestHostPath = Path.Combine(_temp, "testhost.dll");
         _dotnetHostManager = new TestableDotnetTestHostManager(
@@ -80,7 +78,6 @@ public class DotnetTestHostManagerTests
             _mockFileHelper.Object,
             new DotnetHostHelper(_mockFileHelper.Object, _mockEnvironment.Object, _mockWindowsRegistry.Object, _mockEnvironmentVariable.Object, _mockProcessHelper.Object),
             _mockEnvironment.Object,
-            _mockRunsettingHelper.Object,
             _mockWindowsRegistry.Object,
             _mockEnvironmentVariable.Object);
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, string.Empty);
@@ -594,6 +591,52 @@ public class DotnetTestHostManagerTests
 
 
     [TestMethod]
+    [DataRow("<IsTargetPlatformInferred>true</IsTargetPlatformInferred>", "X64")]
+    [DataRow("", "X64")]
+    [DataRow("<IsTargetPlatformInferred>false</IsTargetPlatformInferred>", "ARM64")]
+    public void GetTestHostProcessStartInfoSilentlyForcesX64OnlyWhenTargetPlatformIsInferred(string isTargetPlatformInferredElement, string expectedMuxerArchitecture)
+    {
+        // Reproduces the silent x64 forcing scenario: an arm64 machine running a pre-net6.0 target framework, where
+        // no arm64 apphost exists, so the in-box host manager falls back to the x64 muxer. That fallback must happen
+        // only when the target platform was inferred; when the user pinned it (IsTargetPlatformInferred=false), the
+        // requested architecture must be honored instead. osx-arm64 is used so the test stays off the Windows
+        // testhost.exe path (which reads the real machine's PROCESSOR_ARCHITECTURE) and is deterministic on every CI OS.
+        _mockEnvironment.Setup(e => e.OperatingSystem).Returns(PlatformOperatingSystem.OSX);
+        _mockEnvironment.SetupGet(e => e.Architecture).Returns(PlatformArchitecture.ARM64);
+
+        // A mock host helper lets us observe which architecture's muxer the host manager decided to search for.
+        var mockDotnetHostHelper = new Mock<IDotnetHostHelper>();
+        string? resolvedMuxerPath = Path.Combine(_temp, "dotnet");
+        mockDotnetHostHelper
+            .Setup(dh => dh.TryGetDotnetPathByArchitecture(It.IsAny<PlatformArchitecture>(), It.IsAny<DotnetMuxerResolutionStrategy>(), out resolvedMuxerPath))
+            .Returns(true);
+
+        var dotnetHostManager = new TestableDotnetTestHostManager(
+            _mockProcessHelper.Object,
+            _mockFileHelper.Object,
+            mockDotnetHostHelper.Object,
+            _mockEnvironment.Object,
+            _mockWindowsRegistry.Object,
+            _mockEnvironmentVariable.Object);
+
+        // The runner runs as x64 (the default in this fixture) while targeting arm64, so we never short-circuit to the
+        // current process and always resolve a muxer, which is what makes the searched architecture observable.
+        var sourcePath = Path.Combine(_temp, "test.dll");
+        _mockFileHelper.Setup(fh => fh.Exists(Path.Combine(_temp, "testhost.dll"))).Returns(true);
+
+        var runsettings = $"<RunSettings><RunConfiguration><TargetPlatform>ARM64</TargetPlatform><TargetFrameworkVersion>net5.0</TargetFrameworkVersion>{isTargetPlatformInferredElement}</RunConfiguration></RunSettings>";
+        dotnetHostManager.Initialize(_mockMessageLogger.Object, runsettings);
+
+        dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
+
+        var expectedArchitecture = (PlatformArchitecture)Enum.Parse(typeof(PlatformArchitecture), expectedMuxerArchitecture);
+        mockDotnetHostHelper.Verify(
+            dh => dh.TryGetDotnetPathByArchitecture(expectedArchitecture, It.IsAny<DotnetMuxerResolutionStrategy>(), out resolvedMuxerPath),
+            Times.Once);
+    }
+
+
+    [TestMethod]
     public void GetTestHostProcessStartInfoShouldIncludeSourceDirectoryAsWorkingDirectory()
     {
         // Absolute path to the source directory
@@ -730,17 +773,13 @@ public class DotnetTestHostManagerTests
 
     [TestMethod]
 
-    // we can't put in a "default" value, and we don't have other way to determine if this provided value is the
-    // runtime default or the actual value that user provided, so right now the default will use the latest, instead
-    // or the more correct 1.0, it should be okay, as that version is not supported anymore anyway
-    [DataRow("net8.0", "8.0", true)]
-
-    // net9.0 is currently the latest released version, but it still has it's own runtime config, it is not the same as
-    // "latest" which means the latest you have on system. So if you have only 5.0 SDK then net8.0 will fail because it can't find net8.0,
-    // but latest would use net9.0 because that is the latest one on your system.
-    [DataRow("net9.0", "9.0", true)]
-    [DataRow("net9.0", "latest", false)]
-    public void GetTestHostProcessStartInfoShouldIncludeTestHostPathNextToTestRunnerIfTesthostDllIsNoFoundAndDepsFileNotFoundWithTheCorrectTfm(string tfm, string suffix, bool runtimeConfigExists)
+    // A native (e.g. C++) source has no real target framework. Even when a TargetFrameworkVersion ends up in
+    // the run settings (e.g. because vstest.console unified incompatible assemblies to a default framework, or
+    // the user set one), the built-in testhost fallback always rolls forward to the latest installed runtime via
+    // testhost-latest.runtimeconfig.json. We no longer ship version-specific testhost-<ver>.runtimeconfig.json files.
+    [DataRow("net8.0")]
+    [DataRow("net9.0")]
+    public void GetTestHostProcessStartInfoNativeFallbackAlwaysUsesLatestRuntimeConfigRegardlessOfTfm(string tfm)
     {
         // Absolute path to the source directory
         var sourcePath = Path.Combine(_temp, "test.dll");
@@ -755,12 +794,10 @@ public class DotnetTestHostManagerTests
         var testhostNextToRunner = Path.Combine(here, "testhost.dll");
         _mockFileHelper.Setup(ph => ph.Exists(testhostNextToRunner)).Returns(true);
 
-        _mockFileHelper.Setup(ph => ph.Exists(It.Is<string>(s => s.Contains($"{suffix}.runtimeconfig.json")))).Returns(runtimeConfigExists);
-
         _dotnetHostManager.Initialize(_mockMessageLogger.Object, $"<RunSettings><RunConfiguration><TargetFrameworkVersion>{tfm}</TargetFrameworkVersion></RunConfiguration></RunSettings>");
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(new[] { sourcePath }, null, _defaultConnectionInfo);
 
-        var expectedRuntimeConfigPath = Path.Combine(here, $"testhost-{suffix}.runtimeconfig.json");
+        var expectedRuntimeConfigPath = Path.Combine(here, "testhost-latest.runtimeconfig.json");
         Assert.Contains($"--runtimeconfig \"{expectedRuntimeConfigPath}\"", startInfo.Arguments!);
     }
 
@@ -1256,10 +1293,9 @@ public class DotnetTestHostManagerTests
             IFileHelper fileHelper,
             IDotnetHostHelper dotnetTestHostHelper,
             IEnvironment environment,
-            IRunSettingsHelper runsettingsHelper,
             IWindowsRegistryHelper windowsRegistryHelper,
             IEnvironmentVariableHelper environmentVariableHelper)
-            : base(processHelper, fileHelper, dotnetTestHostHelper, environment, runsettingsHelper, windowsRegistryHelper, environmentVariableHelper)
+            : base(processHelper, fileHelper, dotnetTestHostHelper, environment, windowsRegistryHelper, environmentVariableHelper)
         {
         }
 

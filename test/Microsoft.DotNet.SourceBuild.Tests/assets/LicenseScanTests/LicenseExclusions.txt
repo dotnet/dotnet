@@ -37,13 +37,6 @@ src/aspnetcore/src/Installers/Windows/**/*.wxl|unknown-license-reference
 src/aspnetcore/src/Installers/Windows/**/*.wxs|unknown-license-reference
 
 #
-# command-line-api
-#
-
-# False positive
-src/command-line-api/System.CommandLine.sln|json
-
-#
 # deployment-tools
 #
 

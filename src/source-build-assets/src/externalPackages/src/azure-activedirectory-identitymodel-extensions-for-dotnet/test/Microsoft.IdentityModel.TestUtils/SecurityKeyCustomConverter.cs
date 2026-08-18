@@ -23,7 +23,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-#if NET8_0_OR_GREATER
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -100,4 +99,3 @@ namespace Microsoft.IdentityModel.TestUtils
         }
     }
 }
-#endif

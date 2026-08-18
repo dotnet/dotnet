@@ -14,7 +14,7 @@ namespace NuGet.Protocol
 
         static PackageIdValidator()
         {
-            StaticState.StartMSBuildRestoreTasks += ResetCache;
+            StaticState.BuildEnded += ResetCache;
         }
 
         private static Lazy<bool> IsValidationDisabled = new Lazy<bool>(() =>

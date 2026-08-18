@@ -8,7 +8,7 @@ Testhost processes execute user tests. Assembly loading correctness and framewor
 
 ## Assembly Loading & Resolution
 
-- Keep `testhost.deps.json` dependency versions aligned with assemblies actually shipped in the CLI package.
+- The built-in testhost fallback for native (C++) runners ships the real generated `testhost.deps.json` (built from `testhost.dll`) next to the runner, so its dependency versions match the shipped assemblies by construction — it is not hand-maintained.
 - Prefer bin-directory resolution over deps.json parsing for speed and correctness.
 - TypeLoadException from version mismatches must produce diagnostic output identifying the missing assembly.
 - Test deps.json edge cases: self-contained apps, single-file publish, RID-specific native assets.

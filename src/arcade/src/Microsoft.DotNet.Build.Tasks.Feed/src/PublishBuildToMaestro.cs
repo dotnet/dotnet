@@ -18,6 +18,7 @@ using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.DarcLib;
 using Microsoft.DotNet.DarcLib.Models.Darc;
+using Microsoft.DotNet.Internal.Credentials;
 using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Microsoft.DotNet.Build.Manifest;
@@ -300,7 +301,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         private Local CreateLocal(Microsoft.Extensions.Logging.ILogger logger)
         {
-            var tokenProvider = new RemoteTokenProvider();
+            var tokenProvider = new ResolvedTokenProvider(null);
             // DarcLib changed Local's constructor shape; use reflection to tolerate both package versions during dependency flow.
             var oldConstructor = typeof(Local).GetConstructor(new[]
             {

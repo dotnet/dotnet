@@ -123,8 +123,15 @@ namespace NuGet.Common
 
             if (relativeUri != null)
             {
-                // Combine with the root dir
+                // .NET has multithreaded MSBuild where the process CWD is shared, so resolution must not depend on it.
+#if !NETFRAMEWORK
+                // Anchor to rootDirectory; Path.Combine would leak the CWD/drive for rooted-but-relative "local" like "C:" or "\foo".
+                return Path.IsPathFullyQualified(rootDirectory)
+                    ? Path.GetFullPath(local, rootDirectory)
+                    : Path.GetFullPath(Path.Combine(rootDirectory, local));
+#else
                 return Path.GetFullPath(Path.Combine(rootDirectory, local));
+#endif
             }
 
             var absoluteUri = TryCreateSourceUri(local, UriKind.Absolute);

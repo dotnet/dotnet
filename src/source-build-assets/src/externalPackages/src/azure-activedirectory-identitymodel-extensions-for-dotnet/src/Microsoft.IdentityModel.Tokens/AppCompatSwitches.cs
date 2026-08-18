@@ -7,13 +7,7 @@ namespace Microsoft.IdentityModel.Tokens;
 /// Identifiers used for switching between different app compat behaviors within the Microsoft.IdentityModel libraries.
 /// </summary>
 /// <remarks>
-/// The Microsoft.IdentityModel libraries use <see cref="System.AppContext" /> to turn on or off certain API behavioral
-/// changes that might have an effect on application compatibility. This class defines the set of switches that are
-/// available to modify library behavior. Application compatibility is favored as the default - so if your application
-/// needs to rely on the new behavior, you will need to enable the switch manually. Setting a switch's value can be
-/// done programmatically through the <see cref="System.AppContext.SetSwitch" /> method, or through other means such as
-/// setting it through MSBuild, app configuration, or registry settings. These alternate methods are described in the
-/// <see cref="System.AppContext.SetSwitch" /> documentation.
+/// Use <see cref="AppContextSwitches"/> instead.
 /// </remarks>
 public static class AppCompatSwitches
 {

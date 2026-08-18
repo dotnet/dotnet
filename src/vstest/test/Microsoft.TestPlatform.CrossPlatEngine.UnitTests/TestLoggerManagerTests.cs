@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 using Microsoft.TestPlatform.TestUtilities;
+using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.Exceptions;
 using Microsoft.VisualStudio.TestPlatform.Common.Logging;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
@@ -266,6 +267,113 @@ public class TestLoggerManagerTests
     {
         var testLoggerManager = new DummyTestLoggerManager();
         Assert.IsFalse(testLoggerManager.InitializeLoggerByUri(new Uri("logger://NotALogger"), null));
+    }
+
+    [TestMethod]
+    public void InitializeLoggerByUriShouldUseTheInstanceSuppliedByTheCompositionRootForAKnownLogger()
+    {
+        // The composition root (vstest.console) can hand a pre-configured instance of one of its own
+        // built-in loggers (for example ConsoleLogger with the parsed CommandLineOptions injected) to
+        // the logger manager through RequestData. When it does, that exact instance must be used and
+        // initialized instead of the logger being reflection-activated, which is how our shipped
+        // extensions get their dependencies by injection rather than reaching for process-wide singletons.
+        var injectedLogger = new Mock<ITestLogger>();
+        var requestData = new RequestData
+        {
+            KnownExtensionInstanceFactory = uri =>
+                uri.AbsoluteUri == new Uri(_loggerUri).AbsoluteUri ? injectedLogger.Object : null,
+        };
+        var testLoggerManager = new DummyTestLoggerManager(requestData);
+
+        var initialized = testLoggerManager.InitializeLoggerByUri(new Uri(_loggerUri), new());
+
+        Assert.IsTrue(initialized);
+        injectedLogger.Verify(l => l.Initialize(It.IsAny<TestLoggerEvents>(), It.IsAny<string>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void InitializeShouldUseTheCompositionRootInstanceForALoggerEnabledByFriendlyNameInDesignMode()
+    {
+        // Mirrors a user explicitly enabling the built-in console logger in run settings while in design
+        // mode. Design mode only suppresses adding the *default* logger at activation time; a logger the
+        // user asked for is still activated. The friendly name resolves to the logger URI, which the
+        // composition root's factory then services with an injected instance instead of a
+        // reflection-activated one.
+        var injectedLogger = new Mock<ITestLogger>();
+        var requestData = new RequestData
+        {
+            KnownExtensionInstanceFactory = uri =>
+                uri.AbsoluteUri == new Uri(_loggerUri).AbsoluteUri ? injectedLogger.Object : null,
+        };
+        var testLoggerManager = new DummyTestLoggerManager(requestData);
+
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                  <RunConfiguration>
+                    <DesignMode>true</DesignMode>
+                  </RunConfiguration>
+                  <LoggerRunSettings>
+                    <Loggers>
+                      <Logger friendlyName=""TestLoggerExtension"" enabled=""true"" />
+                    </Loggers>
+                  </LoggerRunSettings>
+                </RunSettings>";
+
+        testLoggerManager.Initialize(settingsXml);
+
+        injectedLogger.Verify(l => l.Initialize(It.IsAny<TestLoggerEvents>(), It.IsAny<string>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void InitializeLoggerByUriShouldFallBackToReflectionWhenTheCompositionRootHasNoInstance()
+    {
+        // Loggers the composition root does not know about (third-party loggers loaded via
+        // /testadapterpath, and any of our own not wired into the factory) must continue to be
+        // reflection-activated exactly as before: the factory returns null and we fall through to the
+        // extension manager. This keeps the injection seam closed to our own built-in extensions and
+        // does not widen any public extension point.
+        var requestData = new RequestData();
+        var testLoggerManager = new DummyTestLoggerManager(requestData);
+
+        var initialized = testLoggerManager.InitializeLoggerByUri(new Uri(_loggerUri), new());
+
+        Assert.IsTrue(initialized);
+    }
+
+    [TestMethod]
+    public void InitializeByAssemblyQualifiedNameShouldUseTheInstanceSuppliedByTheCompositionRootForAKnownLogger()
+    {
+        // This is the path our shipped ConsoleLogger actually takes: it is registered in run settings by
+        // assembly-qualified name (see TestRequestManager.AddConsoleLogger), not discovered through the
+        // logger extension manager, so it is activated by InitializeLoggerByType rather than by URI. The
+        // composition root's factory must service that path too, keyed by the extension URI declared on
+        // the resolved type, so the known logger receives its injected dependencies instead of being
+        // reflection-activated. Removing ConsoleLogger's parameterless constructor depends on exactly this.
+        var injectedLogger = new Mock<ITestLogger>();
+        var requestData = new RequestData
+        {
+            KnownExtensionInstanceFactory = uri =>
+                uri.AbsoluteUri == new Uri(_loggerUri).AbsoluteUri ? injectedLogger.Object : null,
+        };
+        var testLoggerManager = new DummyTestLoggerManager(requestData);
+
+        var assemblyQualifiedName = typeof(ValidLogger).AssemblyQualifiedName;
+        var codeBase = typeof(TestLoggerManagerTests).Assembly.Location;
+
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                  <LoggerRunSettings>
+                    <Loggers>
+                      <Logger assemblyQualifiedName=""" + assemblyQualifiedName + @""" codeBase=""" + codeBase + @"""></Logger>
+                    </Loggers>
+                  </LoggerRunSettings>
+                </RunSettings>";
+
+        testLoggerManager.Initialize(settingsXml);
+
+        injectedLogger.Verify(l => l.Initialize(It.IsAny<TestLoggerEvents>(), It.IsAny<string>()), Times.Once);
     }
 
     [TestMethod]

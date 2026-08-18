@@ -602,7 +602,8 @@
     <Copy
       SourceFiles="@(FilesToPublish)"
       DestinationFolder="$(OutputPath)%(FilesToPublish.TargetPath)%(FilesToPublish.Culture)"
-      Condition="'%(FilesToPublish.IsSymbolFile)' != 'true' or '%(FilesToPublish.IncludeAlways)' == 'true'"
+      Condition="('%(FilesToPublish.IsSymbolFile)' != 'true' or '%(FilesToPublish.IncludeAlways)' == 'true') and
+                 '%(FilesToPublish.InstallerOnly)' != 'true'"
       OverwriteReadOnlyFiles="true"
       SkipUnchangedFiles="true" />
 
@@ -616,13 +617,24 @@
     <Exec Condition="!$([MSBuild]::IsOsPlatform(Windows))" Command='find "$(OutputPath)" -type f ! -name "*.*" -exec chmod 755 {} \;' />
   </Target>
 
+  <!-- Installer-only files are copied after PublishToDisk performs its permission fix-up. -->
+  <Target Name="_SetInstallerOnlyPublishedFilePermissions"
+          AfterTargets="_PublishInstallerOnlyFilesToDisk"
+          Condition="!$([MSBuild]::IsOsPlatform(Windows))">
+    <Exec Command='find "$(OutputPath)" -type f -name "*" -exec chmod 644 {} \;' />
+    <Exec Command='find "$(OutputPath)" -type f -name "*.dylib" -exec chmod 755 {} \;' />
+    <Exec Command='find "$(OutputPath)" -type f -name "*.so" -exec chmod 755 {} \;' />
+    <Exec Command='find "$(OutputPath)" -type f ! -name "*.*" -exec chmod 755 {} \;' />
+  </Target>
+
   <Target Name="PublishSymbolsToDisk"
           DependsOnTargets="GetFilesToPublish">
     <Error Condition="'$(SymbolsOutputPath)' == ''" Text="Publishing a shared framework to disk requires the OutputPath to be set to the root of the path to write to." />
     <Copy
       SourceFiles="@(FilesToPublish)"
       DestinationFolder="$(SymbolsOutputPath)%(FilesToPublish.Culture)"
-      Condition="'%(FilesToPublish.IsSymbolFile)' == 'true'"
+      Condition="'%(FilesToPublish.IsSymbolFile)' == 'true' and
+                 '%(FilesToPublish.InstallerOnly)' != 'true'"
       OverwriteReadOnlyFiles="true"
       SkipUnchangedFiles="true" />
   </Target>

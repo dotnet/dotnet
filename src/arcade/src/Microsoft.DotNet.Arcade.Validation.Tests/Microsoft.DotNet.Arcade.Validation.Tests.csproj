@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Validation tests ported from dotnet/arcade-validation (src/Validation/tests).
+
+    These tests build small synthetic repositories using the Arcade SDK and assert
+    on Arcade's signing/build infrastructure behavior. They validate the *newly produced*
+    Arcade/Helix SDK rather than the bootstrap SDK pinned in global.json.
+
+    The newly produced SDK version and the local package feeds are passed to the test host via
+    runtimeconfig.json (see the SetValidationRuntimeConfigOptions target below and
+    RepoResources.Create, which reads them with AppContext.GetData). When unset, the tests fall
+    back to the version pinned in the copied global.json and the default public feeds.
+
+    This project is deliberately excluded from the Helix unit-test submission in
+    tests/UnitTests.proj: it spawns full build.ps1/build.sh sub-builds and must run on
+    a build agent that has the freshly built packages available in a local feed.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <!-- Heavy integration tests; never submit to Helix. -->
+    <EnableHelixJobMonitor>false</EnableHelixJobMonitor>
+    <!-- These are non-Helix tests: run them inline (via `build -test`) even when the pipeline sets
+         RunNonHelixTestsOnly=true to skip the inline execution of the Helix-routed unit tests. -->
+    <SkipTests>false</SkipTests>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AwesomeAssertions" />
+    <PackageReference Include="Microsoft.Build" />
+    <PackageReference Include="MSBuild.ProjectCreation" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Build + pack the SDKs these tests validate before this project runs, so it can be invoked
+         with `build.cmd -test` / `dotnet test` and restore the freshly produced packages from the local feed. -->
+    <ProjectReference Include="..\Microsoft.DotNet.Arcade.Sdk\Microsoft.DotNet.Arcade.Sdk.csproj;
+                               ..\Microsoft.DotNet.Helix\Sdk\Microsoft.DotNet.Helix.Sdk.csproj"
+                      Targets="Build;Pack"
+                      ReferenceOutputAssembly="false"
+                      SkipGetTargetFrameworkProperties="true"
+                      Private="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Include the eng/common directory so the synthetic repos use this repo's build scripts. -->
+    <None Include="$(RepositoryEngineeringDir)common\**" Link="inputs\eng\common\%(RecursiveDir)%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- Include global.json so the harness can read the fallback Arcade/.NET versions. -->
+    <None Include="$(RepoRoot)global.json" Link="inputs\%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!--
+    Flow the newly produced Arcade SDK version and local package feeds to the test host via
+    runtimeconfig.json (read with AppContext.GetData). This replaces the previous environment
+    variable / wrapper-script approach so the tests run as part of the normal build/test commands.
+  -->
+  <Target Name="SetValidationRuntimeConfigOptions" BeforeTargets="_GenerateRuntimeConfigurationFilesInputCache">
+    <PropertyGroup>
+      <ValidationArcadeSdkVersion Condition="'$(ValidationArcadeSdkVersion)' == ''">$(PackageVersion)</ValidationArcadeSdkVersion>
+      <ValidationLocalPackageFeeds Condition="'$(ValidationLocalPackageFeeds)' == ''">$(ArtifactsNonShippingPackagesDir)</ValidationLocalPackageFeeds>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).ArcadeSdkVersion">
+        <Value>$(ValidationArcadeSdkVersion)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).LocalPackageFeeds">
+        <Value>$(ValidationLocalPackageFeeds)</Value>
+      </RuntimeHostConfigurationOption>
+    </ItemGroup>
+  </Target>
+
+</Project>

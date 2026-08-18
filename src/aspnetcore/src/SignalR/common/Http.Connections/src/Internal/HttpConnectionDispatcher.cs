@@ -174,27 +174,29 @@ internal sealed partial class HttpConnectionDispatcher
             return;
         }
 
-        // Use the AuthenticateResult the authorization middleware already produced for this request.
-        // The /refresh endpoint is stamped with the hub's authorization metadata, so the middleware
-        // authenticates it against the endpoint's declared schemes and exposes the result via
-        // IAuthenticateResultFeature — the same source negotiate and the connect/poll paths read. This keeps
-        // /refresh consistent with those paths and avoids re-authenticating against the app's default scheme,
-        // which throws or picks the wrong credential in multi-scheme apps.
+        // Use the principal and AuthenticateResult produced by authentication middleware. Endpoints with
+        // authorization metadata cannot reach this dispatcher unless authorization middleware has run.
+        // On endpoints that allow anonymous access, a missing result means no identity was established, so
+        // treat context.User as the candidate and let the connection's user refresh policy decide whether
+        // the transition is valid.
         var authResult = context.Features.Get<IAuthenticateResultFeature>()?.AuthenticateResult;
-        if (authResult is null || !authResult.Succeeded)
-        {
-            await WriteRefreshErrorAsync(context, StatusCodes.Status401Unauthorized, "invalid_token");
-            return;
-        }
-
-        var newPrincipal = authResult.Principal ?? context.User;
+        var newPrincipal = authResult?.Principal ?? context.User;
         if (HasWindowsIdentity(connection.User) || HasWindowsIdentity(newPrincipal))
         {
             await WriteRefreshErrorAsync(context, StatusCodes.Status400BadRequest, "windows_identity_not_supported");
             return;
         }
 
-        var newExpiration = GetAuthenticationExpiration(authResult, context.User);
+        if (!connection.IsUserRefreshAccepted(newPrincipal, context))
+        {
+            LogUserChanged(connection.User, newPrincipal);
+            await WriteRefreshErrorAsync(context, StatusCodes.Status403Forbidden, "user_changed");
+            return;
+        }
+
+        var newExpiration = authResult is null
+            ? DateTimeOffset.MaxValue
+            : GetAuthenticationExpiration(authResult, context.User);
 
         if (options.OnAuthenticationRefresh is { } callback)
         {
@@ -206,7 +208,14 @@ internal sealed partial class HttpConnectionDispatcher
             }
         }
 
-        connection.UpdateUser(newPrincipal, newExpiration);
+        if (connection.UpdateUser(newPrincipal, newExpiration, context) == HttpConnectionContext.UserUpdateResult.Rejected)
+        {
+            // Revalidate atomically with the swap because the connection user or validation callback
+            // may have changed while the application callback was running.
+            LogUserChanged(connection.User, newPrincipal);
+            await WriteRefreshErrorAsync(context, StatusCodes.Status403Forbidden, "user_changed");
+            return;
+        }
 
         // Compute TTL for the response
         int? tokenLifetimeSeconds = null;
@@ -268,9 +277,9 @@ internal sealed partial class HttpConnectionDispatcher
 
     // Runs the application-provided OnAuthenticationRefresh callback for a re-authenticated principal. Shared by the
     // /refresh endpoint and the Long Polling poll path so both apply the same accept/reject policy.
-    private async ValueTask<bool> InvokeAuthenticationRefreshCallbackAsync(
+    private async Task<bool> InvokeAuthenticationRefreshCallbackAsync(
         HttpConnectionContext connection, HttpContext context,
-        Func<AuthenticationRefreshContext, ValueTask<bool>> callback, ClaimsPrincipal newPrincipal, DateTimeOffset newExpiration)
+        Func<AuthenticationRefreshContext, Task<bool>> callback, ClaimsPrincipal newPrincipal, DateTimeOffset newExpiration)
     {
         var refreshContext = new AuthenticationRefreshContext
         {
@@ -288,58 +297,6 @@ internal sealed partial class HttpConnectionDispatcher
         }
 
         return true;
-    }
-
-    private static bool ClaimsPrincipalContentEquals(ClaimsPrincipal current, ClaimsPrincipal incoming)
-    {
-        return SequenceEqual(current.Identities, incoming.Identities, ClaimsIdentityContentEquals);
-    }
-
-    private static bool ClaimsIdentityContentEquals(ClaimsIdentity current, ClaimsIdentity incoming)
-    {
-        if (!string.Equals(current.AuthenticationType, incoming.AuthenticationType, StringComparison.Ordinal)
-            || !string.Equals(current.NameClaimType, incoming.NameClaimType, StringComparison.Ordinal)
-            || !string.Equals(current.RoleClaimType, incoming.RoleClaimType, StringComparison.Ordinal)
-            || !string.Equals(current.Label, incoming.Label, StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        return SequenceEqual(current.Claims, incoming.Claims, ClaimContentEquals);
-    }
-
-    private static bool ClaimContentEquals(Claim current, Claim incoming)
-    {
-        return string.Equals(current.Type, incoming.Type, StringComparison.Ordinal)
-            && string.Equals(current.Value, incoming.Value, StringComparison.Ordinal)
-            && string.Equals(current.ValueType, incoming.ValueType, StringComparison.Ordinal)
-            && string.Equals(current.Issuer, incoming.Issuer, StringComparison.Ordinal)
-            && string.Equals(current.OriginalIssuer, incoming.OriginalIssuer, StringComparison.Ordinal);
-    }
-
-    private static bool SequenceEqual<T>(IEnumerable<T> current, IEnumerable<T> incoming, Func<T, T, bool> equals)
-    {
-        using var currentEnumerator = current.GetEnumerator();
-        using var incomingEnumerator = incoming.GetEnumerator();
-
-        while (true)
-        {
-            var currentHasValue = currentEnumerator.MoveNext();
-            if (currentHasValue != incomingEnumerator.MoveNext())
-            {
-                return false;
-            }
-
-            if (!currentHasValue)
-            {
-                return true;
-            }
-
-            if (!equals(currentEnumerator.Current, incomingEnumerator.Current))
-            {
-                return false;
-            }
-        }
     }
 
     private async Task ExecuteAsync(HttpContext context, ConnectionDelegate connectionDelegate, HttpConnectionDispatcherOptions options, ConnectionLogScope logScope)
@@ -706,6 +663,11 @@ internal sealed partial class HttpConnectionDispatcher
             return;
         }
 
+        if (await RejectIfConnectionUserChangedAsync(connection, context))
+        {
+            return;
+        }
+
         const int bufferSize = 4096;
 
         await connection.WriteLock.WaitAsync();
@@ -799,6 +761,11 @@ internal sealed partial class HttpConnectionDispatcher
             return;
         }
 
+        if (await RejectIfConnectionUserChangedAsync(connection, context))
+        {
+            return;
+        }
+
         Log.TerminatingConnection(_logger);
 
         // Dispose the connection, but don't wait for it. We assign it here so we can wait in tests
@@ -838,6 +805,20 @@ internal sealed partial class HttpConnectionDispatcher
                 Log.CannotChangeTransport(_logger, connection.TransportType, transportType);
                 await context.Response.WriteAsync("Cannot change transports mid-connection");
                 return false;
+        }
+
+        // Only connections that reuse their state across requests (Stateful Reconnect or Long
+        // Polling) re-enter here with an already-populated User; other transports handle a single
+        // request per connection. This must run before any connection state is mutated below so a
+        // rejected request leaves the existing connection fully intact. A registered user-refresh
+        // validator can use an application-specific identity mapping; otherwise the connection applies
+        // its secure standard-identity or unchanged-principal fallback.
+        if (connection.ClientReconnectExpected()
+            && await (options.EnableAuthenticationRefresh
+                ? RejectIfUserChangedAsync(connection, context)
+                : RejectIfConnectionUserChangedAsync(connection, context)))
+        {
+            return false;
         }
 
         // Set the IHttpConnectionFeature now that we can access it.
@@ -889,14 +870,6 @@ internal sealed partial class HttpConnectionDispatcher
         var currentUser = connection.User;
         if (currentUser is not null)
         {
-            var originalName = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var newName = newPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (originalName != newName)
-            {
-                // Log warning, different user
-                Log.UserNameChanged(_logger, originalName, newName);
-            }
-
             // WindowsIdentity is cloned on first poll and must not be swapped here (disposing the old
             // SafeHandles could race the application), so those connections keep the legacy behavior below.
             var authRefreshEligible = options.EnableAuthenticationRefresh
@@ -909,7 +882,7 @@ internal sealed partial class HttpConnectionDispatcher
                 // A refreshed token presents either different claims or a different expiration; a request that
                 // carries the same token (same claims and expiration) is not treated as a refresh so we don't
                 // run the callback or fire UserRefreshed on every poll/reconnect.
-                var principalChanged = !ClaimsPrincipalContentEquals(currentUser, newPrincipal)
+                var principalChanged = !HttpConnectionContext.ClaimsPrincipalContentEquals(currentUser, newPrincipal)
                     || newExpiration != connection.AuthenticationExpiration;
 
                 // A request that arrives carrying an older token than the one already applied (e.g. a poll that
@@ -976,7 +949,13 @@ internal sealed partial class HttpConnectionDispatcher
             // AuthenticationExpiration, so no separate swap or UpdateExpiration call is needed on this path.
             // If a concurrent /refresh applied a newer token between the stale check and here, UpdateUser skips
             // the rollback atomically with the swap.
-            connection.UpdateUser(newPrincipal, newExpiration);
+            if (connection.UpdateUser(newPrincipal, newExpiration, context) == HttpConnectionContext.UserUpdateResult.Rejected)
+            {
+                // Revalidate atomically with the swap because the connection user or validation callback
+                // may have changed while the application callback was running.
+                await WriteUserChangedResponseAsync(connection.User, newPrincipal, context);
+                return false;
+            }
         }
         else
         {
@@ -1146,6 +1125,47 @@ internal sealed partial class HttpConnectionDispatcher
         newHttpContext.Items = new Dictionary<object, object?>(context.Items);
 
         connection.HttpContext = newHttpContext;
+    }
+
+    // Send and delete requests do not refresh the connection user, so always enforce the connection's
+    // standard identity association rather than the replaceable user-refresh policy.
+    private async Task<bool> RejectIfConnectionUserChangedAsync(HttpConnectionContext connection, HttpContext context)
+    {
+        if (connection.IsUserAssociatedWithConnection(context.User))
+        {
+            return false;
+        }
+
+        await WriteUserChangedResponseAsync(connection.User, context.User, context);
+        return true;
+    }
+
+    // Long Polling polls and stateful reconnects can refresh the connection user, so apply the
+    // replaceable user-refresh policy before mutating any connection state.
+    private async Task<bool> RejectIfUserChangedAsync(HttpConnectionContext connection, HttpContext context)
+    {
+        if (connection.IsUserRefreshAccepted(context.User, context))
+        {
+            return false;
+        }
+
+        await WriteUserChangedResponseAsync(connection.User, context.User, context);
+        return true;
+    }
+
+    private async Task WriteUserChangedResponseAsync(ClaimsPrincipal? originalUser, ClaimsPrincipal newUser, HttpContext context)
+    {
+        LogUserChanged(originalUser, newUser);
+        context.Response.ContentType = "text/plain";
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        await context.Response.WriteAsync("The user associated with this connection changed.");
+    }
+
+    private void LogUserChanged(ClaimsPrincipal? originalUser, ClaimsPrincipal newUser)
+    {
+        var originalIdentity = originalUser is null ? null : HttpConnectionContext.GetUserIdentityKey(originalUser);
+        var newIdentity = HttpConnectionContext.GetUserIdentityKey(newUser);
+        Log.UserNameChangedRejected(_logger, originalIdentity?.Value, newIdentity?.Value);
     }
 
     private async Task<HttpConnectionContext?> GetConnectionAsync(HttpContext context)

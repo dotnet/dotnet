@@ -17,7 +17,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.CommandLine;
 [TestClass]
 public class TestRunResultAggregatorTests
 {
-    private readonly TestRunResultAggregator _resultAggregator = TestRunResultAggregator.Instance;
+    private readonly TestRunResultAggregator _resultAggregator = new TestRunResultAggregator();
     private readonly Mock<ITestRunRequest> _mockTestRunRequest;
 
     public TestRunResultAggregatorTests()

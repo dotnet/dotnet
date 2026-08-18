@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -396,7 +397,7 @@ internal sealed class MtpServerConnection : IDisposable
         _pending.Clear();
     }
 
-    private static (string fileName, string arguments, string workingDirectory) BuildLaunch(string source, int port)
+    internal static (string fileName, string arguments, string workingDirectory) BuildLaunch(string source, int port)
     {
         string serverArgs = $"{MtpConstants.ServerArgument} {MtpConstants.ClientPortArgument} {port} {MtpConstants.NoBannerArgument}";
         string workingDirectory = Path.GetDirectoryName(source) ?? Directory.GetCurrentDirectory();
@@ -407,12 +408,53 @@ internal sealed class MtpServerConnection : IDisposable
             return (source, serverArgs, workingDirectory);
         }
 
-        // A .NET MTP app is typically shipped as a dll with a sibling apphost .exe. Prefer the apphost
-        // if present, otherwise fall back to `dotnet <dll>`.
+        // A .NET MTP app is typically shipped as a dll with a sibling native apphost. Prefer the
+        // apphost if it is a usable executable for this platform, otherwise fall back to
+        // `dotnet <dll>`. The apphost file name is OS-specific: `Foo.exe` on Windows, but an
+        // extension-less `Foo` on Unix. Probing for `.exe` unconditionally is wrong on Unix: a
+        // payload built on Windows and run on Unix (for example tests built on a Windows agent and
+        // executed on a Linux Helix machine) can drag a Windows PE `Foo.exe` next to the dll.
+        // Launching that yields "Permission denied" (or "Exec format error" once it is +x), so the
+        // probe must be OS-aware and, on Unix, insist the candidate is actually executable.
+#if NETFRAMEWORK
+        // .NET Framework only runs on Windows, where the apphost is <name>.exe.
         string apphost = Path.ChangeExtension(source, ".exe");
-        return File.Exists(apphost)
+#else
+        string apphost = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? Path.ChangeExtension(source, ".exe")
+            : Path.ChangeExtension(source, null);
+#endif
+
+        return IsUsableApphost(apphost)
             ? (apphost, serverArgs, workingDirectory)
             : ("dotnet", $"\"{source}\" {serverArgs}", workingDirectory);
+    }
+
+    /// <summary>
+    /// Determines whether <paramref name="apphost"/> can be launched directly as a native executable
+    /// on the current platform. On Windows, presence is sufficient. On Unix, when built for a target
+    /// framework that exposes <c>File.GetUnixFileMode</c> (.NET 7+), the file must also
+    /// carry an execute bit; a file that merely exists (for example a Windows PE copied onto Unix) is
+    /// not a usable apphost and the caller should fall back to <c>dotnet &lt;dll&gt;</c>. On target
+    /// frameworks without that API (e.g. netstandard2.0) this degrades to an existence-only check —
+    /// the OS-aware probe in <see cref="BuildLaunch"/> already avoids the Windows-<c>.exe</c>-on-Unix
+    /// case, so the execute-bit check is defence-in-depth rather than the primary guard.
+    /// </summary>
+    internal static bool IsUsableApphost(string apphost)
+    {
+        if (!File.Exists(apphost))
+        {
+            return false;
+        }
+
+#if NET
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            const UnixFileMode executeBits = UnixFileMode.UserExecute | UnixFileMode.GroupExecute | UnixFileMode.OtherExecute;
+            return (File.GetUnixFileMode(apphost) & executeBits) != 0;
+        }
+#endif
+        return true;
     }
 
     public void Dispose()

@@ -36,7 +36,6 @@ public class TestEngine : ITestEngine
     private readonly ITestRuntimeProviderManager _testHostProviderManager;
     private readonly IProcessHelper _processHelper;
     private readonly IEnvironment _environment;
-    private readonly TestSessionPool? _testSessionPool;
 
     private ITestExtensionManager? _testExtensionManager;
 
@@ -55,13 +54,11 @@ public class TestEngine : ITestEngine
     internal TestEngine(
         ITestRuntimeProviderManager testHostProviderManager,
         IProcessHelper processHelper,
-        IEnvironment environment,
-        TestSessionPool? testSessionPool = null)
+        IEnvironment environment)
     {
         _testHostProviderManager = testHostProviderManager;
         _processHelper = processHelper;
         _environment = environment;
-        _testSessionPool = testSessionPool;
     }
 
     #region ITestEngine implementation
@@ -86,7 +83,6 @@ public class TestEngine : ITestEngine
 
         // Collecting IsParallel enabled.
         requestData.MetricsCollection.Add(TelemetryDataConstants.ParallelEnabledDuringDiscovery, isParallelRun ? "True" : "False");
-        requestData.MetricsCollection.Add(TelemetryDataConstants.TestSessionId, discoveryCriteria.TestSessionInfo?.Id.ToString() ?? string.Empty);
 
         // Get testhost managers by configuration, and either use it for in-process run. or for single source run.
         List<TestRuntimeProviderInfo> testHostManagers = GetTestRuntimeProvidersForUniqueConfigurations(discoveryCriteria.RunSettings!, sourceToSourceDetailMap, warningLogger, out ITestRuntimeProvider? testHostManager);
@@ -142,60 +138,13 @@ public class TestEngine : ITestEngine
             ThrowExceptionIfTestHostManagerIsNull(hostManager, runtimeProviderInfo.RunSettings);
             TPDebug.Assert(hostManager is not null, "hostManager is null");
 
-            // This function is used to either take a pre-existing proxy operation manager from
-            // the test pool or to create a new proxy operation manager on the spot.
-            Func<string, ProxyDiscoveryManager, ProxyOperationManager>
-                proxyOperationManagerCreator = (
-                    string source,
-                    ProxyDiscoveryManager proxyDiscoveryManager) =>
-                {
-                    TPDebug.Assert(discoveryCriteria.TestSessionInfo is not null, "discoveryCriteria.TestSessionInfo is null");
-
-                    // In case we have an active test session, we always prefer the already
-                    // created proxies instead of the ones that need to be created on the spot.
-                    var proxyOperationManager = (_testSessionPool ?? TestSessionPool.Instance).TryTakeProxy(
-                        discoveryCriteria.TestSessionInfo,
-                        source,
-                        runtimeProviderInfo.RunSettings,
-                        requestData);
-
-                    if (proxyOperationManager == null)
-                    {
-                        // If the proxy creation process based on test session info failed, then
-                        // we'll proceed with the normal creation process as if no test session
-                        // info was passed in in the first place.
-                        //
-                        // WARNING: This should not normally happen and it raises questions
-                        // regarding the test session pool operation and consistency.
-                        EqtTrace.Warning("ProxyDiscoveryManager creation with test session failed.");
-
-                        proxyOperationManager = new ProxyOperationManager(
-                            requestData,
-                            new TestRequestSender(requestData.ProtocolConfig!, hostManager),
-                            hostManager,
-                            // There is always at least one, and all of them have the same framework and architecture.
-                            runtimeProviderInfo.SourceDetails[0].Framework,
-                            proxyDiscoveryManager);
-                    }
-
-                    return proxyOperationManager;
-                };
-
-            // In case we have an active test session, we always prefer the already
-            // created proxies instead of the ones that need to be created on the spot.
-            return (discoveryCriteria.TestSessionInfo != null)
-                ? new ProxyDiscoveryManager(
-                    discoveryCriteria.TestSessionInfo,
-                    proxyOperationManagerCreator,
-                    discoveryDataAggregator,
-                    _testSessionPool)
-                : new ProxyDiscoveryManager(
-                    requestData,
-                    new TestRequestSender(requestData.ProtocolConfig!, hostManager),
-                    hostManager,
-                    // There is always at least one, and all of them have the same framework and architecture.
-                    runtimeProviderInfo.SourceDetails[0].Framework,
-                    discoveryDataAggregator);
+            return new ProxyDiscoveryManager(
+                requestData,
+                new TestRequestSender(requestData.ProtocolConfig!, hostManager),
+                hostManager,
+                // There is always at least one, and all of them have the same framework and architecture.
+                runtimeProviderInfo.SourceDetails[0].Framework,
+                discoveryDataAggregator);
         };
 
         return new ParallelProxyDiscoveryManager(requestData, proxyDiscoveryManagerCreator, discoveryDataAggregator, parallelLevel, testHostManagers);
@@ -222,7 +171,6 @@ public class TestEngine : ITestEngine
 
         // Collecting IsParallel enabled.
         requestData.MetricsCollection.Add(TelemetryDataConstants.ParallelEnabledDuringExecution, isParallelRun ? "True" : "False");
-        requestData.MetricsCollection.Add(TelemetryDataConstants.TestSessionId, testRunCriteria.TestSessionInfo?.Id.ToString() ?? string.Empty);
 
         var isDataCollectorEnabled = XmlRunSettingsUtilities.IsDataCollectionEnabled(testRunCriteria.TestRunSettings);
         var isInProcDataCollectorEnabled = XmlRunSettingsUtilities.IsInProcDataCollectionEnabled(testRunCriteria.TestRunSettings);
@@ -308,54 +256,6 @@ public class TestEngine : ITestEngine
 
         var requestSender = new TestRequestSender(requestData.ProtocolConfig!, hostManager);
 
-        if (testRunCriteria.TestSessionInfo != null)
-        {
-            // This function is used to either take a pre-existing proxy operation manager from
-            // the test pool or to create a new proxy operation manager on the spot.
-            Func<string, ProxyExecutionManager, ProxyOperationManager>
-                proxyOperationManagerCreator = (
-                    string source,
-                    ProxyExecutionManager proxyExecutionManager) =>
-                {
-                    var proxyOperationManager = (_testSessionPool ?? TestSessionPool.Instance).TryTakeProxy(
-                        testRunCriteria.TestSessionInfo,
-                        source,
-                        runtimeProviderInfo.RunSettings,
-                        requestData);
-
-                    if (proxyOperationManager == null)
-                    {
-                        // If the proxy creation process based on test session info failed, then
-                        // we'll proceed with the normal creation process as if no test session
-                        // info was passed in in the first place.
-                        //
-                        // WARNING: This should not normally happen and it raises questions
-                        // regarding the test session pool operation and consistency.
-                        EqtTrace.Warning("ProxyExecutionManager creation with test session failed.");
-
-                        proxyOperationManager = new ProxyOperationManager(
-                            requestData,
-                            requestSender,
-                            hostManager,
-                            // There is always at least one, and all of them have the same framework and architecture.
-                            runtimeProviderInfo.SourceDetails[0].Framework,
-                            proxyExecutionManager);
-                    }
-
-                    return proxyOperationManager;
-                };
-
-            // In case we have an active test session, data collection needs were
-            // already taken care of when first creating the session. As a consequence
-            // we always return this proxy instead of choosing between the vanilla
-            // execution proxy and the one with data collection enabled.
-            return new ProxyExecutionManager(
-                testRunCriteria.TestSessionInfo,
-                proxyOperationManagerCreator,
-                testRunCriteria.DebugEnabledForTestSession,
-                _testSessionPool);
-        }
-
         return isDataCollectorEnabled
             ? new ProxyExecutionManagerWithDataCollection(
                 requestData,
@@ -373,101 +273,6 @@ public class TestEngine : ITestEngine
                 hostManager,
                 // There is always at least one, and all of them have the same framework and architecture.
                 runtimeProviderInfo.SourceDetails[0].Framework!);
-    }
-
-    /// <inheritdoc/>
-    public IProxyTestSessionManager? GetTestSessionManager(
-        IRequestData requestData,
-        StartTestSessionCriteria testSessionCriteria,
-        IDictionary<string, SourceDetail> sourceToSourceDetailMap,
-        IWarningLogger warningLogger)
-    {
-        var parallelLevel = VerifyParallelSettingAndCalculateParallelLevel(
-            testSessionCriteria.Sources!.Count,
-            testSessionCriteria.RunSettings!);
-
-        bool isParallelRun = parallelLevel > 1;
-        requestData.MetricsCollection.Add(
-            TelemetryDataConstants.ParallelEnabledDuringStartTestSession,
-            isParallelRun ? "True" : "False");
-
-        var isDataCollectorEnabled = XmlRunSettingsUtilities.IsDataCollectionEnabled(testSessionCriteria.RunSettings);
-        var isInProcDataCollectorEnabled = XmlRunSettingsUtilities.IsInProcDataCollectionEnabled(testSessionCriteria.RunSettings);
-
-        List<TestRuntimeProviderInfo> testRuntimeProviders = GetTestRuntimeProvidersForUniqueConfigurations(testSessionCriteria.RunSettings!, sourceToSourceDetailMap, warningLogger, out var _);
-
-        if (ShouldRunInProcess(
-                testSessionCriteria.RunSettings!,
-                isParallelRun,
-                isDataCollectorEnabled || isInProcDataCollectorEnabled,
-                testRuntimeProviders))
-        {
-            // In this case all tests will be run in the current process (vstest.console), so there is no
-            // testhost to pre-start. No session will be created, and the session info will be null.
-            return null;
-        }
-
-        Func<TestRuntimeProviderInfo, ProxyOperationManager?> proxyCreator = testRuntimeProviderInfo =>
-        {
-            var sources = testRuntimeProviderInfo.SourceDetails.Select(x => x.Source!).ToList();
-            var hostManager = _testHostProviderManager.GetTestHostManagerByRunConfiguration(testRuntimeProviderInfo.RunSettings, sources);
-            ThrowExceptionIfTestHostManagerIsNull(hostManager, testRuntimeProviderInfo.RunSettings);
-
-            hostManager!.Initialize(TestSessionMessageLogger.Instance, testRuntimeProviderInfo.RunSettings!);
-            if (testSessionCriteria.TestHostLauncher != null)
-            {
-                hostManager.SetCustomLauncher(testSessionCriteria.TestHostLauncher);
-            }
-
-            var requestSender = new TestRequestSender(requestData.ProtocolConfig!, hostManager)
-            {
-                CloseConnectionOnOperationComplete = false
-            };
-
-            // TODO (copoiena): For now we don't support data collection alongside test
-            // sessions.
-            //
-            // The reason for this is that, in the case of Code Coverage for example, the
-            // data collector needs to pass some environment variables to the testhost process
-            // before the testhost process is started. This means that the data collector must
-            // be running when the testhost process is spawned, however the testhost process
-            // should be spawned during build, and it's problematic to have the data collector
-            // running during build because it must instrument the .dll files that don't exist
-            // yet.
-            return isDataCollectorEnabled
-                ? null
-                // ? new ProxyOperationManagerWithDataCollection(
-                //     requestData,
-                //     requestSender,
-                //     hostManager,
-                //     new ProxyDataCollectionManager(
-                //         requestData,
-                //         runsettingsXml,
-                //         testSessionCriteria.Sources))
-                //     {
-                //         CloseRequestSenderChannelOnProxyClose = true
-                //     }
-                : new ProxyOperationManager(
-                    requestData,
-                    requestSender,
-                    hostManager,
-                    // There is always at least one, and all of them have the same framework and architecture.
-                    testRuntimeProviderInfo.SourceDetails[0].Framework!)
-                {
-                    IsTestSessionEnabled = true
-                };
-        };
-
-        // TODO: This condition should be returning the maxParallel level to avoid pre-starting way too many testhosts, because maxParallel level,
-        // can be smaller than the number of sources to run.
-        var maxTesthostCount = isParallelRun ? testSessionCriteria.Sources.Count : 1;
-
-        return new ProxyTestSessionManager(testSessionCriteria, maxTesthostCount, proxyCreator, testRuntimeProviders, _testSessionPool)
-        {
-            // Individual proxy setup failures are tolerated since SetupChannel may fail if the
-            // testhost it tries to start is not compatible with the test session feature.
-            DisposalPolicy = ProxyDisposalOnCreationFailPolicy.AllowProxySetupFailures
-        };
     }
 
     private List<TestRuntimeProviderInfo> GetTestRuntimeProvidersForUniqueConfigurations(

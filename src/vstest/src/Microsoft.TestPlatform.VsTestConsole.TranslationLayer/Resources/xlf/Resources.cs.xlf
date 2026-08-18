@@ -32,16 +32,6 @@
         <target state="translated">Aktivní zpracovávání příloh testovacího běhu se přerušilo.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AbortedStartTestSession">
-        <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">Operace zahájení testovací relace se přerušila.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AbortedStopTestSession">
-        <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">Operace zastavení testovací relace se přerušila.</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -32,16 +32,6 @@
         <target state="translated">L'elaborazione degli allegati dell'esecuzione dei test attiva è stata interrotta.</target>
         <note />
       </trans-unit>
-      <trans-unit id="AbortedStartTestSession">
-        <source>The Start Test Session operation was aborted.</source>
-        <target state="translated">L'operazione di avvio della sessione di test è stata interrotta.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AbortedStopTestSession">
-        <source>The Stop Test Session operation was aborted.</source>
-        <target state="translated">L'operazione di arresto della sessione di test è stata interrotta.</target>
-        <note />
-      </trans-unit>
     </body>
   </file>
 </xliff>

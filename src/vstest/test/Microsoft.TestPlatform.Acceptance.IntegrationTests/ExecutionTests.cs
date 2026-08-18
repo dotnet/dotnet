@@ -388,6 +388,30 @@ public class ExecutionTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestMatrix(testHost: Net)]
+    public void ExplicitConsoleLoggerActivatesWhenRequestedByName(RunnerInfo runnerInfo)
+    {
+        // The built-in console logger is activated by the composition root (TestRequestManager) handing
+        // over a pre-built instance with the parsed CommandLineOptions injected, instead of being
+        // reflection-activated, and it no longer has a parameterless constructor. When the user asks for
+        // it explicitly with /logger:console it is registered in run settings by assembly-qualified name
+        // (UpdateConsoleLoggerIfExists) with no URI, so it goes through the assembly-qualified-name
+        // activation path. This is the path that broke when the parameterless constructor was removed, so
+        // this test guards that regression end-to-end. The pass/fail/skip summary asserted below is
+        // printed by the console logger itself, so a passing assertion proves it activated and ran.
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var testDll = GetAssetFullPath("MSTestProject1.dll");
+
+        var arguments = PrepareArguments(testDll, GetTestAdapterPath(), string.Empty, framework: string.Empty, _testEnvironment.InIsolationValue, resultsDirectory: TempDirectory.Path);
+        arguments = string.Concat(arguments, " /logger:\"console;verbosity=normal\"");
+        InvokeVsTest(arguments);
+
+        ValidateSummaryStatus(1, 1, 1);
+        ExitCodeEquals(1); // failing test in MSTestProject1
+    }
+
+    [TestMethod]
     // This is a built-in assembly filter test. It changes with vstest.version, so testing against 1 version of console is enough.
     [TestMatrix(console: Net, testHost: Net)]
     public void RunXunitTestsWhenProvidingAllDllsInBin(RunnerInfo runnerInfo)

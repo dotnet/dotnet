@@ -9,8 +9,6 @@ using Microsoft.EntityFrameworkCore.TestUtilities.Xunit;
 // ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
 namespace Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 public class BuiltInDataTypesSqliteTest : BuiltInDataTypesTestBase<BuiltInDataTypesSqliteTest.BuiltInDataTypesSqliteFixture>
 {
     public BuiltInDataTypesSqliteTest(BuiltInDataTypesSqliteFixture fixture, ITestOutputHelper testOutputHelper)
@@ -807,7 +805,7 @@ public class BuiltInDataTypesSqliteTest : BuiltInDataTypesTestBase<BuiltInDataTy
             {
                 Assert.Equal(
                     columnType.ToLowerInvariant(),
-                    typeMapper.FindMapping(property).StoreType.ToLowerInvariant());
+                    typeMapper.FindMapping(property)!.StoreType.ToLowerInvariant());
             }
         }
     }
@@ -1549,25 +1547,13 @@ LIMIT 1
     public virtual void Can_query_OrderBy_decimal_with_Turkish_culture()
     {
         using var context = CreateContext();
-        var min = new BuiltInDataTypes
-        {
-            Id = 227,
-            TestDecimal = 1.05m
-        };
+        var min = new BuiltInDataTypes { Id = 227, TestDecimal = 1.05m };
         context.Add(min);
 
-        var middle = new BuiltInDataTypes
-        {
-            Id = 228,
-            TestDecimal = 1.5m
-        };
+        var middle = new BuiltInDataTypes { Id = 228, TestDecimal = 1.5m };
         context.Add(middle);
 
-        var max = new BuiltInDataTypes
-        {
-            Id = 229,
-            TestDecimal = 2.5m
-        };
+        var max = new BuiltInDataTypes { Id = 229, TestDecimal = 2.5m };
         context.Add(max);
 
         context.SaveChanges();
@@ -1593,8 +1579,8 @@ SELECT "b"."Id", "b"."TestDecimal"
 FROM "BuiltInDataTypes" AS "b"
 ORDER BY "b"."TestDecimal" COLLATE "EF_DECIMAL"
 """,
-                //
-                """
+            //
+            """
 SELECT "b"."Id", "b"."Enum16", "b"."Enum32", "b"."Enum64", "b"."Enum8", "b"."EnumS8", "b"."EnumU16", "b"."EnumU32", "b"."EnumU64", "b"."PartitionId", "b"."TestBoolean", "b"."TestByte", "b"."TestCharacter", "b"."TestDateOnly", "b"."TestDateTime", "b"."TestDateTimeOffset", "b"."TestDecimal", "b"."TestDouble", "b"."TestInt16", "b"."TestInt32", "b"."TestInt64", "b"."TestSignedByte", "b"."TestSingle", "b"."TestTimeOnly", "b"."TestTimeSpan", "b"."TestUnsignedInt16", "b"."TestUnsignedInt32", "b"."TestUnsignedInt64"
 FROM "BuiltInDataTypes" AS "b"
 """);
@@ -1646,7 +1632,7 @@ FROM "ObjectBackedDataTypes" AS "o"
         using var context = CreateContext();
 
         var results = context.Set<ObjectBackedDataTypes>()
-            .Select(e => EF.Functions.Hex(e.Bytes)).ToList();
+            .Select(e => EF.Functions.Hex(e.Bytes!)).ToList();
 
         AssertSql(
             """
@@ -1655,7 +1641,7 @@ FROM "ObjectBackedDataTypes" AS "o"
 """);
 
         var expectedResults = context.Set<ObjectBackedDataTypes>().AsEnumerable()
-            .Select(e => string.Concat(e.Bytes.Select(b => b.ToString("X2")))).ToList();
+            .Select(e => string.Concat(e.Bytes!.Select(b => b.ToString("X2")))).ToList();
 
         Assert.Equal(expectedResults, results);
     }
@@ -1666,7 +1652,7 @@ FROM "ObjectBackedDataTypes" AS "o"
         using var context = CreateContext();
 
         var results = context.Set<ObjectBackedDataTypes>()
-            .Select(e => EF.Functions.Unhex(EF.Functions.Hex(e.Bytes))).ToList();
+            .Select(e => EF.Functions.Unhex(EF.Functions.Hex(e.Bytes!))!).ToList();
 
         AssertSql(
             """
@@ -1675,7 +1661,7 @@ FROM "ObjectBackedDataTypes" AS "o"
 """);
 
         var expectedResults = context.Set<ObjectBackedDataTypes>().AsEnumerable()
-            .Select(e => e.Bytes).ToList();
+            .Select(e => e.Bytes!).ToList();
 
         Assert.Equal(expectedResults, results);
     }
@@ -1686,7 +1672,7 @@ FROM "ObjectBackedDataTypes" AS "o"
         using var context = CreateContext();
 
         var results = context.Set<ObjectBackedDataTypes>()
-            .Select(e => EF.Functions.Unhex(EF.Functions.Hex(e.Bytes) + "!?", "!?")).ToList();
+            .Select(e => EF.Functions.Unhex(EF.Functions.Hex(e.Bytes!) + "!?", "!?")!).ToList();
 
         AssertSql(
             """
@@ -1695,7 +1681,7 @@ FROM "ObjectBackedDataTypes" AS "o"
 """);
 
         var expectedResults = context.Set<ObjectBackedDataTypes>().AsEnumerable()
-            .Select(e => e.Bytes).ToList();
+            .Select(e => e.Bytes!).ToList();
 
         Assert.Equal(expectedResults, results);
     }
@@ -1730,7 +1716,7 @@ WHERE unhex("o"."String") IS NULL
         using var context = CreateContext();
 
         var results = context.Set<ObjectBackedDataTypes>()
-            .Select(e => EF.Functions.Substr(e.Bytes, 2)).ToList();
+            .Select(e => EF.Functions.Substr(e.Bytes!, 2)).ToList();
 
         AssertSql(
             """
@@ -1739,7 +1725,7 @@ FROM "ObjectBackedDataTypes" AS "o"
 """);
 
         var expectedResults = context.Set<ObjectBackedDataTypes>().AsEnumerable()
-            .Select(e => e.Bytes.Skip(1).ToArray()).ToList();
+            .Select(e => e.Bytes!.Skip(1).ToArray()).ToList();
 
         Assert.Equal(expectedResults, results);
     }
@@ -1750,7 +1736,7 @@ FROM "ObjectBackedDataTypes" AS "o"
         using var context = CreateContext();
 
         var results = context.Set<ObjectBackedDataTypes>()
-            .Select(e => EF.Functions.Substr(e.Bytes, 1, 1)).ToList();
+            .Select(e => EF.Functions.Substr(e.Bytes!, 1, 1)).ToList();
 
         AssertSql(
             """
@@ -1759,7 +1745,7 @@ FROM "ObjectBackedDataTypes" AS "o"
 """);
 
         var expectedResults = context.Set<ObjectBackedDataTypes>().AsEnumerable()
-            .Select(e => e.Bytes.Take(1).ToArray()).ToList();
+            .Select(e => e.Bytes!.Take(1).ToArray()).ToList();
 
         Assert.Equal(expectedResults, results);
     }
@@ -2096,17 +2082,17 @@ ORDER BY "b"."Id", "b0"."Id"
         public int Id { get; set; }
         public long Integer { get; set; }
         public double Real { get; set; }
-        public string Text { get; set; }
-        public byte[] Blob { get; set; }
-        public string SomeString { get; set; }
+        public string Text { get; set; } = null!;
+        public byte[] Blob { get; set; } = null!;
+        public string SomeString { get; set; } = null!;
         public int Int { get; set; }
     }
 
     protected class MappedSizedDataTypes
     {
         public int Id { get; set; }
-        public string Nvarchar { get; set; }
-        public byte[] Binary { get; set; }
+        public string? Nvarchar { get; set; }
+        public byte[]? Binary { get; set; }
     }
 
     protected class MappedScaledDataTypes
@@ -2129,9 +2115,9 @@ ORDER BY "b"."Id", "b0"."Id"
         public int Id { get; set; }
         public long? Integer { get; set; }
         public double? Real { get; set; }
-        public string Text { get; set; }
-        public byte[] Blob { get; set; }
-        public string SomeString { get; set; }
+        public string? Text { get; set; }
+        public byte[]? Blob { get; set; }
+        public string? SomeString { get; set; }
         public int? Int { get; set; }
     }
 
@@ -2141,9 +2127,9 @@ ORDER BY "b"."Id", "b0"."Id"
         public int AltId { get; set; }
         public long Integer { get; set; }
         public double Real { get; set; }
-        public string Text { get; set; }
-        public byte[] Blob { get; set; }
-        public string SomeString { get; set; }
+        public string Text { get; set; } = null!;
+        public byte[] Blob { get; set; } = null!;
+        public string SomeString { get; set; } = null!;
         public int Int { get; set; }
     }
 
@@ -2151,8 +2137,8 @@ ORDER BY "b"."Id", "b0"."Id"
     {
         public int Id { get; set; }
         public int AltId { get; set; }
-        public string Nvarchar { get; set; }
-        public byte[] Binary { get; set; }
+        public string? Nvarchar { get; set; }
+        public byte[]? Binary { get; set; }
     }
 
     protected class MappedScaledDataTypesWithIdentity
@@ -2178,9 +2164,9 @@ ORDER BY "b"."Id", "b0"."Id"
         public int AltId { get; set; }
         public long? Integer { get; set; }
         public double? Real { get; set; }
-        public string Text { get; set; }
-        public byte[] Blob { get; set; }
-        public string SomeString { get; set; }
+        public string? Text { get; set; }
+        public byte[]? Blob { get; set; }
+        public string? SomeString { get; set; }
         public int? Int { get; set; }
     }
 }

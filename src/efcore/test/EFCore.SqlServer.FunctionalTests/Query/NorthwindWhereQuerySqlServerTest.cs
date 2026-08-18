@@ -3,8 +3,6 @@
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-#nullable disable
-
 public class NorthwindWhereQuerySqlServerTest : NorthwindWhereQueryRelationalTestBase<
     NorthwindQuerySqlServerFixture<NoopModelCustomizer>>
 {
@@ -71,7 +69,7 @@ WHERE [c].[City] = @city
 """,
             queryString, ignoreLineEndingDifferences: true, ignoreWhiteSpaceDifferences: true);
 
-        return null;
+        return null!;
     }
 
     public override async Task Where_indexer_closure(bool async)
@@ -1723,8 +1721,8 @@ WHERE [c].[CustomerID] = @customerId OR [c].[CustomerID] = @customerId1
     {
         await base.Two_parameters_with_same_case_insensitive_name_get_uniquified(async);
 
-AssertSql(
-"""
+        AssertSql(
+            """
 @customerID='ANATR' (Size = 5) (DbType = StringFixedLength)
 @customerId0='ALFKI' (Size = 5) (DbType = StringFixedLength)
 

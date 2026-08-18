@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Net;
 using System.Threading;
@@ -40,13 +38,18 @@ namespace NuGet.Credentials
         /// <param name="cancellationToken">Ignored.</param>
         public Task<CredentialResponse> GetAsync(
             Uri uri,
-            IWebProxy proxy,
+            IWebProxy? proxy,
             CredentialRequestType type,
-            string message,
+            string? message,
             bool isRetry,
             bool nonInteractive,
             CancellationToken cancellationToken)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
             if (isRetry)
             {
                 return Task.FromResult(new CredentialResponse(CredentialStatus.ProviderNotApplicable));

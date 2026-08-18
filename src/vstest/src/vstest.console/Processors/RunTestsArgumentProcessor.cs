@@ -6,7 +6,6 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
-using Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
 using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
@@ -28,11 +27,13 @@ internal class RunTestsArgumentProcessor : IArgumentProcessor
     private Lazy<IArgumentExecutor>? _executor;
     private readonly IRunSettingsProvider _runSettingsProvider;
     private readonly CommandLineOptions _commandLineOptions;
+    private readonly ITestRequestManager _testRequestManager;
 
-    public RunTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider)
+    public RunTestsArgumentProcessor(CommandLineOptions commandLineOptions, IRunSettingsProvider runSettingsProvider, ITestRequestManager testRequestManager)
     {
         _commandLineOptions = commandLineOptions;
         _runSettingsProvider = runSettingsProvider;
+        _testRequestManager = testRequestManager;
     }
 
     public Lazy<IArgumentProcessorCapabilities> Metadata
@@ -45,7 +46,7 @@ internal class RunTestsArgumentProcessor : IArgumentProcessor
             new RunTestsArgumentExecutor(
                 _commandLineOptions,
                 _runSettingsProvider,
-                TestRequestManager.Instance,
+                _testRequestManager,
                 new ArtifactProcessingManager(_commandLineOptions.TestSessionCorrelationId),
                 ConsoleOutput.Instance));
 

@@ -4,4 +4,12 @@
   <Import Project="$(RepositoryEngineeringDir)Microsoft.DotNet.SwaggerGenerator.MSBuild.InTree.targets" Condition="'$(UsingInTreeToolSwaggerGeneratorMSBuild)' == 'true'" />
   <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" Condition="'$(IsBuildTaskProject)' == 'true'" />
 
+  <!-- In CI's Test stage the non-Helix unit tests (e.g. the Arcade SDK validation RepoTests) run
+       inline via `build -test`, while the rest of arcade's unit tests run on Helix (submitted via
+       tests/UnitTests.proj). When RunNonHelixTestsOnly is set, default unit test projects to skip
+       their inline execution; a non-Helix test project opts back in by setting SkipTests=false. -->
+  <PropertyGroup Condition="'$(RunNonHelixTestsOnly)' == 'true' and '$(IsUnitTestProject)' == 'true' and '$(SkipTests)' == ''">
+    <SkipTests>true</SkipTests>
+  </PropertyGroup>
+
 </Project>

@@ -72,7 +72,7 @@ stages:
       ${{ else }}:
         scope: full
     ${{ else }}:
-      scope: full
+      scope: ${{ parameters.buildScope }}
     # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
     # This is enabled for all branches except main and 1xx
     excludeRuntimeDependentJobs: false

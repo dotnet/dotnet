@@ -126,7 +126,7 @@ FROM (
                         """
                     SELECT * FROM root c WHERE c["$type"] = "Customer"
                     """)
-                    .Where(c => c.ContactName.Contains("z"));
+                    .Where(c => c.ContactName!.Contains("z"));
 
                 var sql = query.ToQueryString();
 
@@ -155,7 +155,7 @@ WHERE CONTAINS(s["ContactName"], "z")
                 using var context = CreateContext();
                 var query = context.Set<Customer>().FromSqlRaw(
                         _eol + "    " + _eol + _eol + _eol + "SELECT" + _eol + @"* FROM root c WHERE c[""$type""] = ""Customer""")
-                    .Where(c => c.ContactName.Contains("z"));
+                    .Where(c => c.ContactName!.Contains("z"));
 
                 var actual = a
                     ? await query.ToArrayAsync()
@@ -194,7 +194,7 @@ WHERE CONTAINS(s["ContactName"], "z")
                             """
 SELECT * FROM root c WHERE c["$type"] = "Customer"
 """)
-                        .Where(c => c.ContactName.Contains("z")));
+                        .Where(c => c.ContactName!.Contains("z")));
 
                     using (var context = CreateContext())
                     {
@@ -207,7 +207,7 @@ SELECT * FROM root c WHERE c["$type"] = "Customer"
                 {
                     var query = EF.CompileQuery((NorthwindContext context) => context.Set<Customer>()
                         .FromSqlRaw("""SELECT * FROM root c WHERE c["$type"] = "Customer" """)
-                        .Where(c => c.ContactName.Contains("z")));
+                        .Where(c => c.ContactName!.Contains("z")));
 
                     using (var context = CreateContext())
                     {
@@ -236,7 +236,7 @@ WHERE CONTAINS(s["ContactName"], "z")
                 {
                     var query = EF.CompileAsyncQuery((NorthwindContext context) => context.Set<Customer>().FromSqlRaw(
                             """SELECT * FROM root c WHERE c["$type"] = "Customer" AND c["id"] = {0}""", "CONSH")
-                        .Where(c => c.ContactName.Contains("z")));
+                        .Where(c => c.ContactName!.Contains("z")));
 
                     using (var context = CreateContext())
                     {
@@ -249,7 +249,7 @@ WHERE CONTAINS(s["ContactName"], "z")
                 {
                     var query = EF.CompileQuery((NorthwindContext context) => context.Set<Customer>().FromSqlRaw(
                             """SELECT * FROM root c WHERE c["$type"] = "Customer" AND c["id"] = {0}""", "CONSH")
-                        .Where(c => c.ContactName.Contains("z")));
+                        .Where(c => c.ContactName!.Contains("z")));
 
                     using (var context = CreateContext())
                     {
@@ -667,7 +667,11 @@ WHERE (s["ContactName"] = s["CompanyName"])
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task FromSqlRaw_queryable_simple_projection_not_composed(bool async)
-        => Fixture.NoSyncTest(
+    {
+        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/335
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
+        return Fixture.NoSyncTest(
             async, async a =>
             {
                 using var context = CreateContext();
@@ -697,13 +701,44 @@ FROM (
 ) s
 """);
             });
+    }
+
+    [Fact]
+    public async Task FromSqlRaw_queryable_simple_with_missing_discriminator_throws()
+    {
+        using var context = CreateContext();
+        var query = context.Set<Order>()
+            .FromSqlRaw("""SELECT c.OrderID FROM root c""");
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => query.ToArrayAsync());
+
+        Assert.Equal(
+            CoreStrings.UnableToDiscriminate(context.Model.FindEntityType(typeof(Order))!.DisplayName(), null),
+            exception.Message);
+    }
+
+    [Fact]
+    public async Task FromSqlRaw_queryable_simple_with_missing_key_throws()
+    {
+        using var context = CreateContext();
+        var query = context.Set<Order>()
+            .FromSqlRaw("""SELECT "Order" AS "$type" FROM root c""");
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => query.ToArrayAsync());
+
+        Assert.Equal(
+            CoreStrings.InvalidKeyValue(
+                context.Model.FindEntityType(typeof(Order))!.DisplayName(),
+                "OrderID"),
+            exception.Message);
+    }
 
     [Fact]
     public async Task FromSqlRaw_queryable_simple_with_missing_key_and_non_tracking_throws()
     {
         using var context = CreateContext();
         var query = context.Set<Order>()
-            .FromSqlRaw("""SELECT * FROM root c WHERE c["$type"] = "Product" """)
+            .FromSqlRaw("""SELECT "Order" AS "$type" FROM root c""")
             .AsNoTracking();
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => query.ToArrayAsync());

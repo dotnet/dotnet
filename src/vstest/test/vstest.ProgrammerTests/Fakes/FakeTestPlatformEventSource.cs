@@ -104,26 +104,6 @@ internal class FakeTestPlatformEventSource : ITestPlatformEventSource
         // do nothing
     }
 
-    public void StartTestSessionStart()
-    {
-        // do nothing
-    }
-
-    public void StartTestSessionStop()
-    {
-        // do nothing
-    }
-
-    public void StopTestSessionStart()
-    {
-        // do nothing
-    }
-
-    public void StopTestSessionStop()
-    {
-        // do nothing
-    }
-
     public void TestHostAppDomainCreationStart()
     {
         // do nothing
@@ -190,26 +170,6 @@ internal class FakeTestPlatformEventSource : ITestPlatformEventSource
     }
 
     public void TranslationLayerInitializeStop()
-    {
-        // do nothing
-    }
-
-    public void TranslationLayerStartTestSessionStart()
-    {
-        // do nothing
-    }
-
-    public void TranslationLayerStartTestSessionStop()
-    {
-        // do nothing
-    }
-
-    public void TranslationLayerStopTestSessionStart()
-    {
-        // do nothing
-    }
-
-    public void TranslationLayerStopTestSessionStop()
     {
         // do nothing
     }

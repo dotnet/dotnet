@@ -15,3 +15,56 @@ Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.Name.get -> strin
 Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.Properties.get -> System.Collections.Generic.IDictionary<string!, object!>!
 Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent.TelemetryEvent(string! name, System.Collections.Generic.IDictionary<string!, object!>! properties) -> void
 Microsoft.VisualStudio.TestPlatform.ObjectModel.RunConfiguration.CreateNoNewWindow.get -> bool
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestPlatform.StartTestSession(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IRequestData! requestData, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria! criteria, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler! eventsHandler, System.Collections.Generic.Dictionary<string!, Microsoft.VisualStudio.TestPlatform.ObjectModel.SourceDetail!>! sourceToSourceDetailMap, Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.IWarningLogger! warningLogger) -> bool
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler.HandleStartTestSessionComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs? eventArgs) -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITestSessionEventsHandler.HandleStopTestSessionComplete(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs? eventArgs) -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionAckPayload
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionAckPayload.EventArgs.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionAckPayload.EventArgs.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionAckPayload.StartTestSessionAckPayload() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.HasCustomHostLauncher.get -> bool
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.HasCustomHostLauncher.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.IsDebuggingEnabled.get -> bool
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.IsDebuggingEnabled.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.RunSettings.get -> string?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.RunSettings.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.Sources.get -> System.Collections.Generic.IList<string!>?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.Sources.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.StartTestSessionPayload() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.TestPlatformOptions.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestPlatformOptions?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StartTestSessionPayload.TestPlatformOptions.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionAckPayload
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionAckPayload.EventArgs.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionAckPayload.EventArgs.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionAckPayload.StopTestSessionAckPayload() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.CollectMetrics.get -> bool
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.CollectMetrics.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.StopTestSessionPayload() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.Metrics.get -> System.Collections.Generic.IDictionary<string!, object!>?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.Metrics.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.StartTestSessionCompleteEventArgs() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria.RunSettings.get -> string?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria.RunSettings.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria.Sources.get -> System.Collections.Generic.IList<string!>?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria.Sources.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria.StartTestSessionCriteria() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria.TestHostLauncher.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces.ITestHostLauncher?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCriteria.TestHostLauncher.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.IsStopped.get -> bool
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.IsStopped.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.Metrics.get -> System.Collections.Generic.IDictionary<string!, object!>?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.Metrics.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.StopTestSessionCompleteEventArgs() -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.TestSessionInfo.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads.StopTestSessionPayload.TestSessionInfo.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.TestSessionInfo.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StartTestSessionCompleteEventArgs.TestSessionInfo.set -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.StopTestSessionCompleteEventArgs(Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo? testSessionInfo) -> void
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.TestSessionInfo.get -> Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.TestSessionInfo?
+*REMOVED*Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.StopTestSessionCompleteEventArgs.TestSessionInfo.set -> void

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,17 +22,17 @@ namespace NuGet.Protocol
     public class PackageMetadataResourceV3 : PackageMetadataResource
     {
         private readonly RegistrationResourceV3 _regResource;
-        private readonly ReportAbuseResourceV3 _reportAbuseResource;
-        private readonly ReadmeUriTemplateResource _readmeUriTemplateResource;
-        private readonly PackageDetailsUriResourceV3 _packageDetailsUriResource;
+        private readonly ReportAbuseResourceV3? _reportAbuseResource;
+        private readonly ReadmeUriTemplateResource? _readmeUriTemplateResource;
+        private readonly PackageDetailsUriResourceV3? _packageDetailsUriResource;
         private readonly HttpSource _client;
-        private readonly IEnvironmentVariableReader _environmentVariableReader;
+        private readonly IEnvironmentVariableReader? _environmentVariableReader;
 
         public PackageMetadataResourceV3(
             HttpSource client,
             RegistrationResourceV3 regResource,
-            ReportAbuseResourceV3 reportAbuseResource,
-            PackageDetailsUriResourceV3 packageDetailsUriResource)
+            ReportAbuseResourceV3? reportAbuseResource,
+            PackageDetailsUriResourceV3? packageDetailsUriResource)
         {
             _regResource = regResource;
             _client = client;
@@ -45,9 +43,9 @@ namespace NuGet.Protocol
         internal PackageMetadataResourceV3(
             HttpSource client,
             RegistrationResourceV3 regResource,
-            ReportAbuseResourceV3 reportAbuseResource,
-            PackageDetailsUriResourceV3 packageDetailsUriResource,
-            ReadmeUriTemplateResource readmeResource) : this(client, regResource, reportAbuseResource, packageDetailsUriResource)
+            ReportAbuseResourceV3? reportAbuseResource,
+            PackageDetailsUriResourceV3? packageDetailsUriResource,
+            ReadmeUriTemplateResource? readmeResource) : this(client, regResource, reportAbuseResource, packageDetailsUriResource)
         {
             _readmeUriTemplateResource = readmeResource;
         }
@@ -55,10 +53,10 @@ namespace NuGet.Protocol
         internal PackageMetadataResourceV3(
             HttpSource client,
             RegistrationResourceV3 regResource,
-            ReportAbuseResourceV3 reportAbuseResource,
-            PackageDetailsUriResourceV3 packageDetailsUriResource,
-            ReadmeUriTemplateResource readmeResource,
-            IEnvironmentVariableReader environmentVariableReader) : this(client, regResource, reportAbuseResource, packageDetailsUriResource, readmeResource)
+            ReportAbuseResourceV3? reportAbuseResource,
+            PackageDetailsUriResourceV3? packageDetailsUriResource,
+            ReadmeUriTemplateResource? readmeResource,
+            IEnvironmentVariableReader? environmentVariableReader) : this(client, regResource, reportAbuseResource, packageDetailsUriResource, readmeResource)
         {
             _environmentVariableReader = environmentVariableReader;
         }
@@ -90,7 +88,7 @@ namespace NuGet.Protocol
         /// <param name="token"></param>
         /// <returns>Package meta data.</returns>
         /// <remarks>The inlined entries are potentially going away soon</remarks>
-        public override async Task<IPackageSearchMetadata> GetMetadataAsync(
+        public override async Task<IPackageSearchMetadata?> GetMetadataAsync(
             PackageIdentity package,
             SourceCacheContext sourceCacheContext,
             Common.ILogger log,
@@ -131,7 +129,7 @@ namespace NuGet.Protocol
 
             var results = new List<PackageSearchMetadataRegistration>();
 
-            foreach (var registrationPage in registrationIndex.Items)
+            foreach (var registrationPage in registrationIndex.Items ?? Enumerable.Empty<RegistrationPage>())
             {
                 if (registrationPage == null)
                 {
@@ -148,7 +146,7 @@ namespace NuGet.Protocol
                         var rangeUri = registrationPage.Url;
                         var leafRegistrationPage = await GetRegistratioIndexPageAsync(_client, rangeUri, packageId, lower, upper, httpSourceCacheContext, log, token);
 
-                        if (registrationPage == null)
+                        if (leafRegistrationPage == null)
                         {
                             throw new InvalidDataException(registrationUri.AbsoluteUri);
                         }
@@ -172,7 +170,7 @@ namespace NuGet.Protocol
         /// <param name="stream">Stream data to read.</param>
         /// <param name="token">Cancellation token.</param>
         /// <returns></returns>
-        private async Task<T> DeserializeStreamDataAsync<T>(Stream stream, CancellationToken token)
+        private async Task<T?> DeserializeStreamDataAsync<T>(Stream? stream, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -195,13 +193,13 @@ namespace NuGet.Protocol
             }
         }
 
-        private static async Task<T> DeserializeStreamDataWithStjAsync<T>(Stream stream, CancellationToken token)
+        private static async Task<T?> DeserializeStreamDataWithStjAsync<T>(Stream stream, CancellationToken token)
         {
-            var typeInfo = (JsonTypeInfo<T>)Converters.PackageSearchJsonContext.Default.GetTypeInfo(typeof(T));
+            var typeInfo = (JsonTypeInfo<T>)Converters.PackageSearchJsonContext.Default.GetTypeInfo(typeof(T))!;
             return await System.Text.Json.JsonSerializer.DeserializeAsync(stream, typeInfo, token);
         }
 
-        private static T DeserializeStreamDataWithNsj<T>(Stream stream)
+        private static T? DeserializeStreamDataWithNsj<T>(Stream stream)
         {
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(streamReader))
@@ -221,12 +219,12 @@ namespace NuGet.Protocol
         /// <param name="log">Logger Instance.</param>
         /// <param name="token">Cancellation token.</param>
         /// <returns></returns>
-        private async Task<ValueTuple<RegistrationIndex, HttpSourceCacheContext>> LoadRegistrationIndexAsync(
+        private async Task<ValueTuple<RegistrationIndex?, HttpSourceCacheContext>> LoadRegistrationIndexAsync(
             HttpSource httpSource,
             Uri registrationUri,
             string packageId,
             SourceCacheContext cacheContext,
-            Func<HttpSourceResult, Task<RegistrationIndex>> processAsync,
+            Func<HttpSourceResult, Task<RegistrationIndex?>> processAsync,
             ILogger log,
             CancellationToken token)
         {
@@ -247,7 +245,7 @@ namespace NuGet.Protocol
                 log,
                 token);
 
-            return new ValueTuple<RegistrationIndex, HttpSourceCacheContext>(index, httpSourceCacheContext);
+            return new ValueTuple<RegistrationIndex?, HttpSourceCacheContext>(index, httpSourceCacheContext);
         }
 
         /// <summary>
@@ -262,7 +260,7 @@ namespace NuGet.Protocol
         /// <param name="log">Logger Instance.</param>
         /// <param name="token">Cancellation token.</param>
         /// <returns></returns>
-        private Task<RegistrationPage> GetRegistratioIndexPageAsync(
+        private Task<RegistrationPage?> GetRegistratioIndexPageAsync(
             HttpSource httpSource,
             string rangeUri,
             string packageId,
@@ -303,9 +301,14 @@ namespace NuGet.Protocol
             bool includeUnlisted,
             MetadataReferenceCache metadataCache)
         {
-            foreach (RegistrationLeafItem registrationLeaf in registrationPage.Items)
+            foreach (RegistrationLeafItem registrationLeaf in registrationPage.Items ?? Enumerable.Empty<RegistrationLeafItem>())
             {
-                PackageSearchMetadataRegistration catalogEntry = registrationLeaf.CatalogEntry;
+                PackageSearchMetadataRegistration? catalogEntry = registrationLeaf.CatalogEntry;
+                if (catalogEntry == null)
+                {
+                    continue;
+                }
+
                 NuGetVersion version = catalogEntry.Version;
                 bool listed = catalogEntry.IsListed;
 

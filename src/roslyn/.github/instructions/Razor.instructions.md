@@ -15,6 +15,9 @@ their original sub-tree layout
   The bug is more likely in existing logic than a missing feature.
 - **Helpers**: Review existing helpers (`UsingDirectiveHelper`, `AddUsingsHelper`, etc.)
   before writing new utility methods. Don't duplicate.
+- **Warning levels**: Track warnings with non-zero `RazorWarningLevel` values in
+  [`docs/razor/warning-levels.md`](../../docs/razor/warning-levels.md), including the diagnostic
+  ID, warning level, exact message, and trigger condition.
 
 ## File Types
 
@@ -37,6 +40,10 @@ their original sub-tree layout
   `solution.GetDocumentIdsWithFilePath(filePath)` then `solution.GetAdditionalDocument(documentId)`.
 - **Remote services**: Place the public stub method (calling `RunServiceAsync`) directly
   above its private implementation method.
+- **Visual Studio options**: Register Razor Advanced settings in
+  `Microsoft.VisualStudio.RazorExtension\UnifiedSettings\razor.registration.json`, localize
+  their UI text in `VSPackage.resx`, read them through `OptionsStorage`, and add remotely consumed
+  values to `ClientAdvancedSettings` so `IClientSettingsManager` synchronizes changes live.
 
 ## Adding OOP Remote Services
 

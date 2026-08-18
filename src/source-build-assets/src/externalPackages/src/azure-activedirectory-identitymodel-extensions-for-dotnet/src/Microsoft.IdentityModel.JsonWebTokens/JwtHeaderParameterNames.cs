@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 
 namespace Microsoft.IdentityModel.JsonWebTokens
 {
@@ -97,20 +96,20 @@ namespace Microsoft.IdentityModel.JsonWebTokens
     {
         // Please keep this alphabetical order
 
-        public static ReadOnlySpan<byte> Alg =>"alg"u8;
-        public static ReadOnlySpan<byte> Apu =>"apu"u8;
-        public static ReadOnlySpan<byte> Apv =>"apv"u8;
-        public static ReadOnlySpan<byte> Cty =>"cty"u8;
-        public static ReadOnlySpan<byte> Enc =>"enc"u8;
-        public static ReadOnlySpan<byte> Epk =>"epk"u8;
-        public static ReadOnlySpan<byte> IV  =>"iv"u8;
-        public static ReadOnlySpan<byte> Jku =>"jku"u8;
-        public static ReadOnlySpan<byte> Jwk =>"jwk"u8;
-        public static ReadOnlySpan<byte> Kid =>"kid"u8;
-        public static ReadOnlySpan<byte> Typ =>"typ"u8;
-        public static ReadOnlySpan<byte> X5c =>"x5c"u8;
-        public static ReadOnlySpan<byte> X5t =>"x5t"u8;
-        public static ReadOnlySpan<byte> X5u =>"x5u"u8;
-        public static ReadOnlySpan<byte> Zip =>"zip"u8;
+        public static ReadOnlySpan<byte> Alg => "alg"u8;
+        public static ReadOnlySpan<byte> Apu => "apu"u8;
+        public static ReadOnlySpan<byte> Apv => "apv"u8;
+        public static ReadOnlySpan<byte> Cty => "cty"u8;
+        public static ReadOnlySpan<byte> Enc => "enc"u8;
+        public static ReadOnlySpan<byte> Epk => "epk"u8;
+        public static ReadOnlySpan<byte> IV => "iv"u8;
+        public static ReadOnlySpan<byte> Jku => "jku"u8;
+        public static ReadOnlySpan<byte> Jwk => "jwk"u8;
+        public static ReadOnlySpan<byte> Kid => "kid"u8;
+        public static ReadOnlySpan<byte> Typ => "typ"u8;
+        public static ReadOnlySpan<byte> X5c => "x5c"u8;
+        public static ReadOnlySpan<byte> X5t => "x5t"u8;
+        public static ReadOnlySpan<byte> X5u => "x5u"u8;
+        public static ReadOnlySpan<byte> Zip => "zip"u8;
     }
 }

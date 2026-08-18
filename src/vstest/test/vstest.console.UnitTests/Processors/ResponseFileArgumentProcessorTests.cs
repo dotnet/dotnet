@@ -9,12 +9,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 [TestClass]
 public class ResponseFileArgumentProcessorTests
 {
-    [TestCleanup]
-    public void TestCleanup()
-    {
-        CommandLineOptions.Reset();
-    }
-
     [TestMethod]
     public void GetMetadataShouldReturnResponseFileArgumentProcessorCapabilities()
     {
