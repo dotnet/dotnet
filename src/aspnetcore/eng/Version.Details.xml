@@ -465,9 +465,9 @@
       <Uri>https://github.com/dotnet/extensions</Uri>
       <Sha>ccb356f31db9d894807c4fd0c97c2f41553d1524</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.JobMonitor" Version="11.0.0-beta.26412.2">
+    <Dependency Name="Microsoft.DotNet.Helix.JobMonitor" Version="11.0.0-beta.26412.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>2a4b873dc15423d356c0509a7ac9663276f39664</Sha>
+      <Sha>4e948e7c5bbfab4e87a02fc9b27bfaa068d0d4b3</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
