@@ -109,6 +109,36 @@ public class DotnetTestTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    public void RunDotnetTestWithCLIRunSettingsContainingBackslashes(RunnerInfo runnerInfo)
+    {
+        // Regression test for https://github.com/microsoft/vstest/issues/15043.
+        // VSTestCLIRunSettings used to be string[], which MSBuild expands into ITaskItem instances,
+        // and ITaskItem.ItemSpec rewrites \ to / on Unix. This runs on Linux and macOS too, which is
+        // where the bug reproduces.
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        // Point the VSTest targets at the task we just built. Without this the run silently falls back
+        // to whatever Microsoft.TestPlatform.Build.dll the SDK happens to ship, and on Unix that older
+        // task re-introduces the very normalization this test is here to catch.
+        var buildTaskPath = Path.Combine(
+            IntegrationTestEnvironment.PublishDirectory,
+            $"Microsoft.TestPlatform.Build.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg",
+            "lib",
+            "netstandard2.0",
+            "Microsoft.TestPlatform.Build.dll");
+        Assert.IsTrue(File.Exists(buildTaskPath), $"The locally built MSBuild task was not found at '{buildTaskPath}'.");
+
+        var projectPath = GetIsolatedTestAsset("BackslashParameterTestProject.csproj", runnerInfo.TargetFramework);
+        InvokeDotnetTest(
+            $@"{projectPath} --logger:""Console;Verbosity=normal"" -tl:off /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion} /p:VSTestTaskAssemblyFile=""{buildTaskPath}"" -- TestRunParameters.Parameter(name=\""pattern\"", value=\""Namespace\.Class\b\"")",
+            workingDirectory: Path.GetDirectoryName(projectPath));
+
+        ValidateSummaryStatus(1, 0, 0);
+        ExitCodeEquals(0);
+    }
+
+    [TestMethod]
     [TestMatrix(console: Net, testHost: Net)]
     public void RunDotnetTestShouldRespectLoggerVerbosityFromRunSettings(RunnerInfo runnerInfo)
     {

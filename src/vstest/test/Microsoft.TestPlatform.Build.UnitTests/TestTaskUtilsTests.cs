@@ -32,9 +32,7 @@ public class TestTaskUtilsTests
         const string arg1 = "RunConfiguration.ResultsDirectory=Path having Space";
         const string arg2 = "MSTest.DeploymentEnabled";
 
-        _vsTestTask.VSTestCLIRunSettings = new string[2];
-        _vsTestTask.VSTestCLIRunSettings[0] = arg1;
-        _vsTestTask.VSTestCLIRunSettings[1] = arg2;
+        _vsTestTask.VSTestCLIRunSettings = $"{arg1}\n{arg2}";
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
@@ -54,15 +52,89 @@ public class TestTaskUtilsTests
         const string arg1 = "RunConfiguration.ResultsDirectory=Path having Space";
         const string arg2 = "MSTest.DeploymentEnabled";
 
-        _vsTestTask.VSTestCLIRunSettings = new string[2];
-        _vsTestTask.VSTestCLIRunSettings[0] = arg1;
-        _vsTestTask.VSTestCLIRunSettings[1] = arg2;
+        _vsTestTask.VSTestCLIRunSettings = $"{arg1}\n{arg2}";
 
         var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
 
         Assert.Contains(" -- ", commandline);
         Assert.Contains($"\"{arg1}\"", commandline);
         Assert.Contains($"{arg2}", commandline);
+    }
+
+    [TestMethod]
+    public void CreateArgumentShouldPreserveBackslashesInCLIRunSettings()
+    {
+        // Backslashes in CLI run settings (e.g. regex patterns on Unix) must not be converted to forward slashes.
+        const string arg = @"NUnit.Where=namespace =~ /Abc\.Space1($|\.)/";
+
+        _vsTestTask.VSTestCLIRunSettings = arg;
+
+        var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
+
+        Assert.Contains(" -- ", commandline);
+        Assert.Contains(@"Abc\.Space1", commandline);
+    }
+
+    [TestMethod]
+    [DataRow(typeof(VSTestTask))]
+    [DataRow(typeof(VSTestTask2))]
+    public void VSTestCLIRunSettingsMustBindAsStringToSurviveUnixPathNormalization(Type taskType)
+    {
+        // MSBuild expands an array task parameter into ITaskItem instances, and ITaskItem.ItemSpec
+        // rewrites \ to / on Unix. That silently corrupted run settings containing backslashes, for
+        // example regex patterns (https://github.com/microsoft/vstest/issues/15043). A scalar string
+        // parameter is expanded as text and keeps the value intact, so the type must stay string.
+        var property = taskType.GetProperty(nameof(ITestTask.VSTestCLIRunSettings));
+
+        Assert.IsNotNull(property);
+        Assert.AreEqual(typeof(string), property.PropertyType);
+    }
+
+    [TestMethod]
+    public void CreateArgumentShouldSplitCLIRunSettingsOnSemicolon()
+    {
+        // dotnet test joins the arguments that follow "--" with a semicolon before it sets the
+        // VSTestCLIRunSettings property, so semicolon separated input has to keep working.
+        const string arg1 = "RunConfiguration.ResultsDirectory=Path having Space";
+        const string arg2 = "MSTest.DeploymentEnabled";
+
+        _vsTestTask.VSTestCLIRunSettings = $"{arg1};{arg2}";
+
+        var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
+
+        Assert.Contains(" -- ", commandline);
+        Assert.Contains($"\"{arg1}\"", commandline);
+        Assert.Contains($"{arg2}", commandline);
+    }
+
+    [TestMethod]
+    public void CreateArgumentShouldNotKeepCarriageReturnWhenCLIRunSettingsAreSeparatedByCrLf()
+    {
+        const string arg1 = "MSTest.DeploymentEnabled";
+        const string arg2 = "MSTest.MapInconclusiveToFailed";
+
+        _vsTestTask.VSTestCLIRunSettings = $"{arg1}\r\n{arg2}";
+
+        var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
+
+        Assert.Contains(" -- ", commandline);
+        Assert.Contains($" {arg1} ", commandline);
+        Assert.Contains($" {arg2}", commandline);
+        Assert.DoesNotContain("\r", commandline);
+    }
+
+    [TestMethod]
+    [DataRow("")]
+    [DataRow("   ")]
+    [DataRow(";")]
+    [DataRow("\n")]
+    public void CreateArgumentShouldNotAppendSeparatorWhenCLIRunSettingsAreEmpty(string cliRunSettings)
+    {
+        _vsTestTask.VSTestCLIRunSettings = cliRunSettings;
+
+        var commandline = TestTaskUtils.CreateCommandLineArguments(_vsTestTask);
+
+        Assert.DoesNotEndWith("--", commandline.TrimEnd(), $"Command line should not end with a lone '--'. Got: {commandline}");
     }
 
     [TestMethod]

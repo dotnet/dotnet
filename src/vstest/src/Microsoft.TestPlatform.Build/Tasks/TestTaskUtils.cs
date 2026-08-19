@@ -244,10 +244,14 @@ internal static class TestTaskUtils
         builder.AppendSwitchIfNotNull("--testSessionCorrelationId:", task.VSTestSessionCorrelationId);
 
         // VSTestCLIRunSettings should be last argument as vstest.console ignore options after "--" (CLIRunSettings option).
-        if (task.VSTestCLIRunSettings != null)
+        // The type is string (not string[]) so that MSBuild does not bind it as ITaskItem[], which normalizes
+        // backslashes to forward slashes on Unix and corrupts values such as "NUnit.Where=namespace =~ /Abc\.Space1/".
+        // Multiple settings are separated by newlines or semicolons.
+        var cliRunSettings = SplitCLIRunSettings(task.VSTestCLIRunSettings);
+        if (cliRunSettings.Count > 0)
         {
             builder.AppendSwitch("--");
-            foreach (var arg in task.VSTestCLIRunSettings)
+            foreach (var arg in cliRunSettings)
             {
                 builder.AppendSwitchIfNotNull(string.Empty, arg);
             }
@@ -354,6 +358,37 @@ internal static class TestTaskUtils
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Splits the value of VSTestCLIRunSettings into the individual settings to forward to vstest.console.
+    /// </summary>
+    /// <remarks>
+    /// Entries are separated by newlines or semicolons. Empty and whitespace-only entries are dropped so that
+    /// an unset or blank value does not append a lone "--" to the command line.
+    /// A single setting cannot contain a semicolon of its own. MSBuild unescapes the property before it
+    /// reaches this scalar string parameter, so %3B arrives as a plain semicolon and is split here, while
+    /// the former string[] parameter kept it as one entry. That escape route is gone on purpose, the array
+    /// form rewrote backslashes to forward slashes on Unix, which broke every setting holding a regex.
+    /// </remarks>
+    internal static List<string> SplitCLIRunSettings(string? value)
+    {
+        var settings = new List<string>();
+        if (StringUtils.IsNullOrWhiteSpace(value))
+        {
+            return settings;
+        }
+
+        foreach (var entry in value.Split(['\r', '\n', ';'], StringSplitOptions.RemoveEmptyEntries))
+        {
+            var trimmed = entry.Trim();
+            if (!StringUtils.IsNullOrEmpty(trimmed))
+            {
+                settings.Add(trimmed);
+            }
+        }
+
+        return settings;
     }
 
     /// <summary>
