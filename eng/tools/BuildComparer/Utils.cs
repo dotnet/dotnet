@@ -43,5 +43,5 @@ public static class Utils
     /// Determines if a package file should be ignored.
     /// </summary>
     public static bool IsIgnorablePackageFile(string filePath)
-        => filePath.EndsWith(".signature.p7s", StringComparison.OrdinalIgnoreCase) || filePath.EndsWith(".psmdcp", StringComparison.OrdinalIgnoreCase);
+        => filePath.EndsWith(".signature.p7s", StringComparison.OrdinalIgnoreCase);
 }
