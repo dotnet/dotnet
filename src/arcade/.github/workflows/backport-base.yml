@@ -45,7 +45,7 @@ jobs:
       repository_owners: ${{ inputs.repository_owners }}
 
   run_backport:
-    if: ${{ contains(format('{0},', inputs.repository_owners), format('{0},', github.repository_owner)) && github.event.issue.pull_request != '' && contains(github.event.comment.body, '/backport to') }}
+    if: ${{ contains(format('{0},', inputs.repository_owners), format('{0},', github.repository_owner)) && github.event.issue.pull_request != '' && contains(github.event.comment.body, '/backport ') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -61,7 +61,7 @@ jobs:
           if (context.eventName !== "issue_comment") throw "Error: This action only works on issue_comment events.";
 
           // extract the target branch name from the trigger phrase containing these characters: a-z, A-Z, digits, forward slash, dot, hyphen, underscore
-          const regex = /^\/backport to ([a-zA-Z\d\/\.\-\_]+)/;
+          const regex = /^\s*\/backport (?:to )?((?!to(?:\s|$))[a-zA-Z\d\/\.\-\_]+)/m;
           target_branch = regex.exec(context.payload.comment.body);
           if (target_branch == null) throw "Error: No backport branch found in the trigger phrase.";
 
