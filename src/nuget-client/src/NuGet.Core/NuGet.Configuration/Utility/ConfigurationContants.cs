@@ -87,6 +87,10 @@ namespace NuGet.Configuration
 
         public static readonly string MaxHttpRequestsPerSource = "maxHttpRequestsPerSource";
 
+        public static readonly string MinPublishAgeHours = "minPublishAgeHours";
+
+        public static readonly string MinPublishAgeExceptions = "minPublishAgeExceptions";
+
         public static readonly string NameAttribute = "name";
 
         public static readonly string NoProxy = "no_proxy";
