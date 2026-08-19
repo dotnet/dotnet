@@ -84,6 +84,8 @@
     <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
     <AwesomeAssertionsVersion>8.1.0</AwesomeAssertionsVersion>
     <MicrosoftTestingPlatformVersion>2.1.0</MicrosoftTestingPlatformVersion>
+    <!-- Source-only MTP server-mode client (compiled into CrossPlatEngine), shipped by microsoft/testfx#10085. Restored from the dotnet-tools feed already configured in NuGet.config. -->
+    <MicrosoftTestingPlatformServerModeClientSourcesVersion>2.4.0-preview.26410.1</MicrosoftTestingPlatformServerModeClientSourcesVersion>
     <MoqVersion>4.16.1</MoqVersion>
     <!-- For coverage use our own package on latest stable -->
     <MicrosoftCodeCoverageVersion>18.3.0</MicrosoftCodeCoverageVersion>
