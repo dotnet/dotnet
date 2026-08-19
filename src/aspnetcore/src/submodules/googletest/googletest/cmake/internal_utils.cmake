@@ -71,13 +71,14 @@ macro(config_compiler_and_linker)
     # as static libraries, as we don't have to rely on CRT DLLs being available.
     # CMake always defaults to using shared CRT libraries, so we override that
     # default here.
-    if (NOT BUILD_SHARED_LIBS AND NOT gtest_force_shared_crt AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+    if (NOT BUILD_SHARED_LIBS AND NOT gtest_force_shared_crt AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY
+        AND CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
       set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     endif()
 
     # Newlines inside flags variables break CMake's NMake generator.
     # TODO(vladl@google.com): Add -RTCs and -RTCu to debug builds.
-    set(cxx_base_flags "-GS -W4 -WX -wd4251 -wd4275 -nologo -J")
+    set(cxx_base_flags "-GS -W4 -wd4251 -wd4275 -nologo -J")
     set(cxx_base_flags "${cxx_base_flags} -D_UNICODE -DUNICODE -DWIN32 -D_WIN32")
     set(cxx_base_flags "${cxx_base_flags} -DSTRICT -DWIN32_LEAN_AND_MEAN")
     set(cxx_exception_flags "-EHsc -D_HAS_EXCEPTIONS=1")
