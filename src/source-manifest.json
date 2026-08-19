@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 327135,
+      "barId": 327748,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "09a0bcffb8286738e8679282171cd1ba548c8c52"
+      "commitSha": "a4c4c8800e2a0fd23856a2ba796cf9503dd83e56"
     },
     {
       "barId": 327577,
@@ -43,16 +43,16 @@
       "commitSha": "26a12eb6d7d9649d4e8d319b961f13a51281af68"
     },
     {
-      "barId": 327515,
+      "barId": 327710,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "d8bab12d3f78053322799c337d78440819a3eafa"
+      "commitSha": "6ffbeab884c5ee9f53732902643758f66b17bd8f"
     },
     {
-      "barId": 326849,
+      "barId": 327746,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "d3fab443a1cde90f68d9a272e7e776959936a84c"
+      "commitSha": "732b9ebd4504e8f111df592921f12eb8b0c5f807"
     },
     {
       "barId": 327725,
@@ -67,10 +67,10 @@
       "commitSha": "2023968affb292ebc367e4414d6a9b2057dfa0a8"
     },
     {
-      "barId": 327696,
+      "barId": 327739,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "5852280b14ea788872ce0f379b7b1fbb66c8230d"
+      "commitSha": "c0b7d5e39843fefabb3245fa596a6be096dfeec9"
     },
     {
       "barId": 327106,
