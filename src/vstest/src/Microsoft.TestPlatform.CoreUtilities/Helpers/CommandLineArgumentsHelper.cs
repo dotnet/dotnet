@@ -26,9 +26,9 @@ public class CommandLineArgumentsHelper
 
         for (int i = 0; i < args.Length; i++)
         {
-            if (args[i].StartsWith("-"))
+            if (args[i].StartsWith("-", StringComparison.Ordinal))
             {
-                if (i < args.Length - 1 && !args[i + 1].StartsWith("-"))
+                if (i < args.Length - 1 && !args[i + 1].StartsWith("-", StringComparison.Ordinal))
                 {
                     argsDictionary.Add(args[i], args[i + 1]);
                     i++;

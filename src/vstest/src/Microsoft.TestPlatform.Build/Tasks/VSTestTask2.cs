@@ -74,7 +74,7 @@ public class VSTestTask2 : ToolTask, ITestTask
 
         if (_canBePrependedWithAnsi)
         {
-            while (singleLine.StartsWith(_ansiReset))
+            while (singleLine.StartsWith(_ansiReset, StringComparison.Ordinal))
             {
                 wasPrependedWithAnsi = true;
                 singleLine = singleLine.Substring(_ansiReset.Length);
@@ -261,7 +261,7 @@ public class VSTestTask2 : ToolTask, ITestTask
 
     private bool TryGetMessage(string singleLine, out string name, out string?[] data)
     {
-        if (singleLine.StartsWith(_messageSplitter))
+        if (singleLine.StartsWith(_messageSplitter, StringComparison.Ordinal))
         {
             var parts = singleLine.Split(_messageSplitterArray, StringSplitOptions.None);
             name = parts[1];

@@ -522,7 +522,7 @@ public class DotnetTestHostManagerTests
 
         char separator = ';';
         var dotnetExeName = "dotnet.exe";
-        if (!Environment.OSVersion.Platform.ToString().StartsWith("Win"))
+        if (!Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal))
         {
             separator = ':';
             dotnetExeName = "dotnet";
