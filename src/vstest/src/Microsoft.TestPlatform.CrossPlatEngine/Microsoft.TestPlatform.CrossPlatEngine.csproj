@@ -10,7 +10,7 @@
          on net462/netstandard2.0. CrossPlatEngine already imports the identical attributes from
          CoreUtilities (InternalsVisibleTo), so let the package defer to those to avoid CS0436
          duplicate-type conflicts. No-op on net8.0 where the attributes are in-box. -->
-    <DefineConstants>$(DefineConstants);MTP_CLIENT_EXCLUDE_NULLABLE_ATTRIBUTES</DefineConstants>
+    <DefineConstants Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(DefineConstants);MTP_CLIENT_EXCLUDE_NULLABLE_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\Resources.resx">
@@ -30,7 +30,15 @@
   <ItemGroup>
     <!-- Source-only MTP server-mode JSON-RPC client: compiled into this assembly (no shipped DLL, no
          runtime dependency, no new public API). Shipped by microsoft/testfx#10085. -->
-    <PackageReference Include="Microsoft.Testing.Platform.ServerMode.Client.Sources" Version="$(MicrosoftTestingPlatformServerModeClientSourcesVersion)" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Testing.Platform.ServerMode.Client.Sources" Version="$(MicrosoftTestingPlatformServerModeClientSourcesVersion)" PrivateAssets="all" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <!-- Temporary, see dotnet/dotnet#8349: microsoft/testfx is not a VMR repo and does not produce
+         Microsoft.Testing.Platform.ServerMode.Client.Sources in source-only builds, so restoring it there
+         is a prebuilt and fails the build. Until the package is available to source-build, the MTP client
+         is compiled out, which drops running MTP applications under vstest (opt-in, off by default) from
+         source-only builds. Everything else is unaffected. -->
+    <Compile Remove="Client\MTP\**\*.cs" />
   </ItemGroup>
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System" />
