@@ -103,9 +103,9 @@ public class AeDebuggerArgumentProcessorTest
     public void AeDebuggerArgumentExecutor_WrongDirectoryPaths(string command, string? directoryPath)
     {
         _fileHelper.Setup(x => x.DirectoryExists(It.IsAny<string>()))
-            .Returns((string path) => directoryPath is null || !directoryPath.EndsWith(path));
+            .Returns((string path) => directoryPath is null || !directoryPath.EndsWith(path, StringComparison.Ordinal));
         _fileHelper.Setup(x => x.Exists(It.IsAny<string>()))
-            .Returns((string path) => path.EndsWith("procdump.exe") && path != "procdump.exe");
+            .Returns((string path) => path.EndsWith("procdump.exe", StringComparison.Ordinal) && path != "procdump.exe");
         _executor.Initialize(string.Format(CultureInfo.InvariantCulture, command, directoryPath));
         Assert.AreEqual(ArgumentProcessorResult.Fail, _executor.Execute());
     }

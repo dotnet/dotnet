@@ -596,7 +596,7 @@ internal class Converter
 
         // In case, fullyQualifiedName ends with testName, className is checked within remaining value of fullyQualifiedName.
         // Example: In case, testName = TestMethod1(2, 3, 4.0d) and fullyQualifiedName = TestProject1.Class1.TestMethod1(2, 3, 4.0d), className will be checked within 'TestProject1.Class1.' only
-        var nameToCheck = !fullyQualifiedName.Equals(testName, StringComparison.OrdinalIgnoreCase) && fullyQualifiedName.EndsWith(testName) ?
+        var nameToCheck = !fullyQualifiedName.Equals(testName, StringComparison.OrdinalIgnoreCase) && fullyQualifiedName.EndsWith(testName, StringComparison.Ordinal) ?
             fullyQualifiedName.Substring(0, fullyQualifiedName.Length - testName.Length) :
             fullyQualifiedName;
 
@@ -609,7 +609,7 @@ internal class Converter
         // C++ test case scenario (we would have a "::" instead of a '.')
         if (nameToCheck.Contains("::"))
         {
-            className = nameToCheck.Substring(0, nameToCheck.LastIndexOf("::"));
+            className = nameToCheck.Substring(0, nameToCheck.LastIndexOf("::", StringComparison.Ordinal));
 
             // rename for a consistent behavior for all tests.
             return className.Replace("::", ".");
@@ -653,7 +653,7 @@ internal class Converter
 
         var codeBase = source;
         var className = GetTestClassName(name, fullyQualifiedName, source);
-        var testMethodName = fullyQualifiedName.StartsWith($"{className}.") ? fullyQualifiedName.Remove(0, $"{className}.".Length) : fullyQualifiedName;
+        var testMethodName = fullyQualifiedName.StartsWith($"{className}.", StringComparison.Ordinal) ? fullyQualifiedName.Remove(0, $"{className}.".Length) : fullyQualifiedName;
         var testMethod = new TestMethod(testMethodName, className);
 
         var testElement = new UnitTestElement(testId, name, adapter, testMethod);
