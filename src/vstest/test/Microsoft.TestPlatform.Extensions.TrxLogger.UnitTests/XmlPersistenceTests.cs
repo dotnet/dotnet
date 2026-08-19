@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Xml;
 
 using Microsoft.TestPlatform.Extensions.TrxLogger.XML;
@@ -30,7 +31,7 @@ public class XmlPersistenceTests
         XmlPersistence.SaveObject(strWithInvalidCharForXml, node, null, "dummy");
 
         string expectedResult = "\\u0005\\u000b\\u000f\\ufffe\\u0000";
-        Assert.AreEqual(0, string.Compare(expectedResult, node.InnerXml));
+        Assert.AreEqual(0, string.Compare(expectedResult, node.InnerXml, StringComparison.Ordinal));
     }
 
     [TestMethod]
@@ -135,7 +136,7 @@ public class XmlPersistenceTests
         XmlPersistence.SaveObject(strWithValidCharForXml, node, null, "dummy");
 
         string expectedResult = "\t\n\r 섣�";
-        Assert.AreEqual(0, string.Compare(expectedResult, node.InnerXml));
+        Assert.AreEqual(0, string.Compare(expectedResult, node.InnerXml, StringComparison.Ordinal));
     }
 
     [TestMethod]
@@ -146,7 +147,7 @@ public class XmlPersistenceTests
         string strWithInvalidCharForXml = "This string has these \0 \v invalid characters";
         XmlPersistence.SaveObject(strWithInvalidCharForXml, node, null, "dummy");
         string expectedResult = "This string has these \\u0000 \\u000b invalid characters";
-        Assert.AreEqual(0, string.Compare(expectedResult, node.InnerXml));
+        Assert.AreEqual(0, string.Compare(expectedResult, node.InnerXml, StringComparison.Ordinal));
     }
 
     /// <summary>
