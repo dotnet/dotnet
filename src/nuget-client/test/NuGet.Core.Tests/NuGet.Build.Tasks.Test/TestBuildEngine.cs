@@ -24,6 +24,9 @@ namespace NuGet.Build.Tasks.Test
 
         private readonly IReadOnlyDictionary<string, string> _globalProperties;
 
+        private readonly Dictionary<RegisteredTaskObjectLifetime, Dictionary<object, object>> _registeredTaskObjects =
+            new Dictionary<RegisteredTaskObjectLifetime, Dictionary<object, object>>();
+
         public TestBuildEngine()
         {
             _globalProperties = new Dictionary<string, string>();
@@ -53,7 +56,15 @@ namespace NuGet.Build.Tasks.Test
 
         public IReadOnlyDictionary<string, string> GetGlobalProperties() => _globalProperties;
 
-        public object GetRegisteredTaskObject(object key, RegisteredTaskObjectLifetime lifetime) => throw new NotImplementedException();
+        public object GetRegisteredTaskObject(object key, RegisteredTaskObjectLifetime lifetime)
+        {
+            lock (_registeredTaskObjects)
+            {
+                return _registeredTaskObjects.TryGetValue(lifetime, out Dictionary<object, object> objects) && objects.TryGetValue(key, out object registered)
+                    ? registered
+                    : null;
+            }
+        }
 
         public void LogCustomEvent(CustomBuildEventArgs e)
         {
@@ -119,9 +130,64 @@ namespace NuGet.Build.Tasks.Test
 
         public void Reacquire() => throw new NotImplementedException();
 
-        public void RegisterTaskObject(object key, object obj, RegisteredTaskObjectLifetime lifetime, bool allowEarlyCollection) => throw new NotImplementedException();
+        /// <summary>
+        /// Registers a task object. As in MSBuild, an existing registration for the same key wins.
+        /// </summary>
+        public void RegisterTaskObject(object key, object obj, RegisteredTaskObjectLifetime lifetime, bool allowEarlyCollection)
+        {
+            lock (_registeredTaskObjects)
+            {
+                if (!_registeredTaskObjects.TryGetValue(lifetime, out Dictionary<object, object> objects))
+                {
+                    objects = new Dictionary<object, object>();
+                    _registeredTaskObjects.Add(lifetime, objects);
+                }
 
-        public object UnregisterTaskObject(object key, RegisteredTaskObjectLifetime lifetime) => throw new NotImplementedException();
+                if (!objects.ContainsKey(key))
+                {
+                    objects.Add(key, obj);
+                }
+            }
+        }
+
+        public object UnregisterTaskObject(object key, RegisteredTaskObjectLifetime lifetime)
+        {
+            lock (_registeredTaskObjects)
+            {
+                object registered = GetRegisteredTaskObject(key, lifetime);
+
+                if (registered != null)
+                {
+                    _registeredTaskObjects[lifetime].Remove(key);
+                }
+
+                return registered;
+            }
+        }
+
+        /// <summary>
+        /// Disposes the objects registered with the given lifetime, as MSBuild's node does when a build ends.
+        /// </summary>
+        public void DisposeRegisteredTaskObjects(RegisteredTaskObjectLifetime lifetime)
+        {
+            List<object> objects;
+
+            lock (_registeredTaskObjects)
+            {
+                if (!_registeredTaskObjects.TryGetValue(lifetime, out Dictionary<object, object> registered))
+                {
+                    return;
+                }
+
+                objects = new List<object>(registered.Values);
+                registered.Clear();
+            }
+
+            foreach (object obj in objects)
+            {
+                (obj as IDisposable)?.Dispose();
+            }
+        }
 
         public void Yield() => throw new NotImplementedException();
     }

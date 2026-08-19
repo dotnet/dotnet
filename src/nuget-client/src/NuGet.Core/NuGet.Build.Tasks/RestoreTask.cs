@@ -24,6 +24,12 @@ namespace NuGet.Build.Tasks
     [MSBuildMultiThreadableTask]
     public class RestoreTask : Microsoft.Build.Utilities.Task, ICancelableTask, IDisposable
     {
+        /// <summary>
+        /// The key under which <see cref="EndOfBuildStaticStateReset" /> is registered with the build engine. It is
+        /// constant so that every restore of a build shares the single registration.
+        /// </summary>
+        private const string EndOfBuildStaticStateResetKey = "NuGet.Build.Tasks.RestoreTask.BuildEnded";
+
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private readonly IEnvironmentVariableReader _environmentVariableReader;
         private bool _disposed = false;
@@ -165,14 +171,46 @@ namespace NuGet.Build.Tasks
             {
                 try
                 {
-                    // End of restore: tear down plugin processes that the per-build process exit used to reclaim, so they
-                    // do not linger in a reused process.
-                    StaticState.RaiseEndMSBuildRestoreTasks();
+                    // Tear down plugin processes so they do not linger in a process reused across builds. Scheduled
+                    // for the end of the build, not the end of this restore.
+                    ScheduleEndOfBuildStaticStateReset();
                 }
                 catch (Exception e)
                 {
+                    // Arranging the teardown must not fail the restore that just succeeded.
                     ExceptionUtilities.LogException(e, log);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Arranges for <see cref="StaticState.RaiseBuildEnded" /> to be raised once, when the build ends.
+        /// </summary>
+        /// <remarks>
+        /// A build routinely runs several restores in one process - the Arcade SDK, which the entire .NET stack builds
+        /// on, restores its toolset and then the solution from a single target - and a restore's own network work can
+        /// still be draining when <see cref="Execute" /> returns. So end of restore is not a safe point to discard
+        /// process-global state, and <see cref="Execute" /> cannot tell whether the build will restore again. MSBuild
+        /// disposes objects registered with <see cref="RegisteredTaskObjectLifetime.Build" /> when the build ends -
+        /// including before it reuses a node for the next build, which is the case the reset exists for - so
+        /// registering there raises the event exactly once, after the last restore. Hosts that do not implement
+        /// <see cref="IBuildEngine4" /> fall back to raising it here rather than not at all.
+        /// </remarks>
+        private void ScheduleEndOfBuildStaticStateReset()
+        {
+            if (BuildEngine is not IBuildEngine4 buildEngine)
+            {
+                StaticState.RaiseBuildEnded();
+                return;
+            }
+
+            if (buildEngine.GetRegisteredTaskObject(EndOfBuildStaticStateResetKey, RegisteredTaskObjectLifetime.Build) == null)
+            {
+                buildEngine.RegisterTaskObject(
+                    EndOfBuildStaticStateResetKey,
+                    new EndOfBuildStaticStateReset(),
+                    RegisteredTaskObjectLifetime.Build,
+                    allowEarlyCollection: false);
             }
         }
 
@@ -300,6 +338,23 @@ namespace NuGet.Build.Tasks
             }
 
             return restoredProjectOutputPaths.ToArray();
+        }
+
+        /// <summary>
+        /// Raises <see cref="StaticState.BuildEnded" /> when the build engine disposes it at the end of
+        /// the build. See <see cref="ScheduleEndOfBuildStaticStateReset" />.
+        /// </summary>
+        /// <remarks>
+        /// The build has finished by the time this runs, so there is no logger left to report to and MSBuild discards
+        /// anything thrown from here. Handlers of <see cref="StaticState.BuildEnded" /> are responsible for
+        /// guarding themselves, as that event documents.
+        /// </remarks>
+        private sealed class EndOfBuildStaticStateReset : IDisposable
+        {
+            public void Dispose()
+            {
+                StaticState.RaiseBuildEnded();
+            }
         }
     }
 }
