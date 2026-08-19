@@ -3,7 +3,6 @@
      eng/Versions.props / eng/Version.Details.props. Manually-pinned, single-use packages carry
      their literal version here directly (no indirection through eng/Versions.props). -->
 <Project>
-
   <ItemGroup>
     <!-- Optimization data (MIBC) — referenced via @(MIBCPackage) in Directory.Build.targets -->
     <PackageVersion Include="optimization.windows_nt-x86.mibc.runtime" Version="$(optimizationwindows_ntx86MIBCRuntimeVersion)" />
