@@ -44,10 +44,13 @@ vstest.console (entry point)
 | Release config | `./build.cmd -c Release -pack` | `./build.sh -c Release --pack` |
 | Unit tests | `./test.cmd` | `./test.sh` |
 | Specific tests | `./test.cmd -projects <pattern>` | `./test.sh -p <pattern>` |
+| Several test projects | `./test.cmd -projects "test\A\A.csproj;test\B\B.csproj"` | `./test.sh -p "test/A/A.csproj;test/B/B.csproj"` |
 | Smoke tests | `./test.cmd -projects smoke` | `./test.sh -p smoke` |
-| Single test by name | `./test.cmd -bl -c release /p:TestRunnerAdditionalArguments="'--filter TestName'"` | Similar |
+| Single test by name | `./test.cmd -bl -c release /p:TestRunnerAdditionalArguments="--filter TestName"` | Similar |
 
 CI builds use `-c Release`. Always build with Release config before submitting PRs.
+
+The `.cmd` wrappers pass arguments to PowerShell literally. See [Wrapper scripts pass arguments literally](#wrapper-scripts-pass-arguments-literally) before changing one.
 
 ## Test Structure
 
@@ -62,6 +65,27 @@ src/vstest.console/                         → test/vstest.console.UnitTests/
 Test categories: Unit (fast, default), Smoke (P0 e2e), Acceptance (full e2e with `--integrationTest`).
 
 ## Known Gotchas
+
+### Wrapper scripts pass arguments literally
+
+`build.cmd`, `test.cmd`, `restore.cmd`, `open-vs.cmd`, `open-code.cmd`, and `eng/RestoreInternal.cmd` invoke PowerShell with `-File`, so everything after the script path reaches the target script as a literal argument. The first five call `eng/build.ps1`, `eng/RestoreInternal.cmd` calls `eng/common/build.ps1`.
+
+They previously used the form `-command "& """<script>""" %*"`, which spliced `%*` into a string that PowerShell then parsed as source code. That caused two problems, both fixed:
+
+- `;` in an argument became a statement separator. `./test.cmd -projects "test\A\A.csproj;test\B\B.csproj"` ran `Build.ps1 -projects test\A\A.csproj` and then executed `test\B\B.csproj` as its own statement. On Windows `.csproj` is file-associated with Visual Studio, so every entry after the first opened a full IDE. Three agents ran this form at the same time and opened eighteen instances of Visual Studio.
+- Exit codes collapsed to `1`. `eng/build.ps1` ends with `exit $LastExitCode` to forward the real code, but `-command` discarded it, so `8` (filter matched no tests) and every other code arrived as `1`.
+
+Use `-File` in any new `.cmd` wrapper. Do not switch back to `-command`.
+
+Because arguments are no longer re-parsed, MSBuild properties need one level of quoting instead of two:
+
+```
+./test.cmd -bl -c release /p:TestRunnerAdditionalArguments="--filter TestName"
+```
+
+`eng/common/*` comes from Arcade and still uses `-command`. Do not edit those files here; fix them in the Arcade repository.
+
+Independent of the wrappers: never run a `.csproj` or `.sln` path as a command. The path is always an argument, as in `dotnet test <path>.csproj`.
 
 ### Binding Redirects
 

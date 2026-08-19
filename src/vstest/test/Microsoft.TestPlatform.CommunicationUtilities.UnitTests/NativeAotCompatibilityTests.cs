@@ -51,13 +51,22 @@ public class NativeAotCompatibilityTests
         var psi = new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = $"publish -r {rid} -v q --nologo",
+            Arguments = $"publish -c Release -r {rid} -v q --nologo",
             WorkingDirectory = TestAssetPath,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true,
         };
+
+        if (OperatingSystem.IsWindows())
+        {
+            var visualStudioInstallerPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                "Microsoft Visual Studio",
+                "Installer");
+            psi.Environment["PATH"] = $"{visualStudioInstallerPath}{Path.PathSeparator}{psi.Environment["PATH"]}";
+        }
 
         var outputBuilder = new StringBuilder();
 
@@ -93,12 +102,61 @@ public class NativeAotCompatibilityTests
                 line.Contains("CommunicationUtilities", StringComparison.OrdinalIgnoreCase)
                 && !line.Contains("Jsonite", StringComparison.OrdinalIgnoreCase)
                 && !line.Contains("TestPropertyConverter", StringComparison.OrdinalIgnoreCase)
+                && !line.Contains("TestPlatformJsonContext.Exception", StringComparison.OrdinalIgnoreCase)
                 && !line.Contains("DefaultJsonTypeInfoResolver", StringComparison.OrdinalIgnoreCase))
             .ToArray();
 
         Assert.IsEmpty(serializationWarnings,
             $"Expected zero serialization warnings from CommunicationUtilities, but found {serializationWarnings.Length}:\n"
             + string.Join("\n", serializationWarnings));
+
+        var executableName = OperatingSystem.IsWindows()
+            ? "NativeAotTranslationLayerConsumer.exe"
+            : "NativeAotTranslationLayerConsumer";
+        // Normalize — Process.Start measures the path as given, so leaving the ".." segments in
+        // makes it exceed MAX_PATH on longer checkout paths and fail with "filename too long".
+        var executablePath = Path.GetFullPath(Path.Combine(
+            TestAssetPath,
+            "..",
+            "..",
+            "..",
+            "artifacts",
+            "bin",
+            "TestAssets",
+            "NativeAotTranslationLayerConsumer",
+            "Release",
+            "net8.0",
+            rid,
+            "publish",
+            executableName));
+
+        Assert.IsTrue(File.Exists(executablePath), $"Published NativeAOT consumer not found at: {executablePath}");
+
+        var runOutputBuilder = new StringBuilder();
+        var runPsi = new ProcessStartInfo
+        {
+            FileName = executablePath,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        };
+
+        using var runProcess = Process.Start(runPsi)!;
+        runProcess.OutputDataReceived += (_, e) => { if (e.Data is not null) runOutputBuilder.AppendLine(e.Data); };
+        runProcess.ErrorDataReceived += (_, e) => { if (e.Data is not null) runOutputBuilder.AppendLine(e.Data); };
+        runProcess.BeginOutputReadLine();
+        runProcess.BeginErrorReadLine();
+
+        var runExited = runProcess.WaitForExit(TimeSpan.FromMinutes(1));
+        Assert.IsTrue(runExited, "NativeAOT consumer timed out.");
+        runProcess.WaitForExit();
+
+        Assert.AreEqual(
+            0,
+            runProcess.ExitCode,
+            $"NativeAOT consumer failed with exit code {runProcess.ExitCode}.\n\nOutput:\n{runOutputBuilder}");
+        Assert.Contains("NativeAOT serialization round trip succeeded.", runOutputBuilder.ToString());
     }
 }
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 #if !NETFRAMEWORK
 using System.Runtime.InteropServices;
 #endif
@@ -223,5 +224,32 @@ public class CodeCoverageDataAttachmentsHandlerTests
         Assert.HasCount(1, resultAttachmentSets);
         Assert.HasCount(1, resultAttachmentSets.First().Attachments);
         Assert.AreEqual("datacollector://microsoft/CodeCoverage/2.0", resultAttachmentSets.First().Uri.AbsoluteUri);
+    }
+
+    [TestMethod]
+    public void MergeCoverageReportsAsyncReturnsTaskOfIListOfString()
+    {
+        // The handler invokes this method through reflection and matches the result against
+        // Task<IList<string>>. Task<T> is invariant, so a version of Microsoft.CodeCoverage.IO that
+        // declared for example Task<List<string>> would stop matching, and coverage files would be
+        // returned unmerged instead of failing. Pin the shape so such a change is caught here.
+        var assemblyPath = Path.Combine(
+            Path.GetDirectoryName(typeof(CodeCoverageDataAttachmentsHandler).Assembly.Location)!,
+            "Microsoft.CodeCoverage.IO.dll");
+        Assert.IsTrue(File.Exists(assemblyPath), $"Expected '{assemblyPath}' to exist.");
+
+        var assembly = Assembly.LoadFrom(assemblyPath);
+        var coverageFileUtility = assembly.GetType("Microsoft.CodeCoverage.IO.CoverageFileUtility");
+        Assert.IsNotNull(coverageFileUtility);
+
+        var mergeOperation = Array.Find(assembly.GetTypes(), t => t.Name == "CoverageMergeOperation");
+        Assert.IsNotNull(mergeOperation);
+
+        var mergeMethod = coverageFileUtility.GetMethod(
+            "MergeCoverageReportsAsync",
+            [typeof(string), typeof(IList<string>), mergeOperation, typeof(bool), typeof(CancellationToken)]);
+        Assert.IsNotNull(mergeMethod);
+
+        Assert.AreEqual(typeof(Task<IList<string>>), mergeMethod.ReturnType);
     }
 }

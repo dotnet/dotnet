@@ -106,4 +106,48 @@ public class DotnetTestTests : AcceptanceTestBase
         ValidateSummaryStatus(1, 0, 0);
         ExitCodeEquals(0);
     }
+
+    [TestMethod]
+    [TestMatrix(console: Net, testHost: Net)]
+    public void RunDotnetTestShouldRespectLoggerVerbosityFromRunSettings(RunnerInfo runnerInfo)
+    {
+        // Regression test for https://github.com/microsoft/vstest/issues/10369
+        // When a .runsettings file configures the console logger with Verbosity=normal,
+        // that verbosity must be respected, not silently overridden to minimal by the
+        // MSBuild task injecting --logger:Console;Verbosity=minimal.
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var projectPath = GetIsolatedTestAsset("SimpleTestProject.csproj", runnerInfo.TargetFramework);
+        var runsettingsPath = Path.Combine(TempDirectory.Path, "logger-verbosity.runsettings");
+        File.WriteAllText(runsettingsPath, """
+            <?xml version="1.0" encoding="utf-8"?>
+            <RunSettings>
+              <RunConfiguration>
+                <MaxCpuCount>1</MaxCpuCount>
+              </RunConfiguration>
+              <LoggerRunSettings>
+                <Loggers>
+                  <Logger friendlyName="console" enabled="True">
+                    <Configuration>
+                      <Verbosity>normal</Verbosity>
+                    </Configuration>
+                  </Logger>
+                </Loggers>
+              </LoggerRunSettings>
+            </RunSettings>
+            """);
+
+        InvokeDotnetTest(
+            $@"""{projectPath}"" --settings ""{runsettingsPath}"" -tl:off /p:VSTestNoLogo=false /p:VSTestUseMSBuildOutput=false /p:PackageVersion={IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}",
+            workingDirectory: Path.GetDirectoryName(projectPath));
+
+        // ensure our dev version is used
+        StdOutputContains(GetFinalVersion(IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion));
+
+        // At normal verbosity the console logger prints individual skipped test names.
+        // Assert only on the name because Unix may insert ANSI color sequences around the
+        // localized result indicator. At minimal verbosity the skipped test name is absent.
+        StdOutputContains("SkippingTest");
+        ExitCodeEquals(1);
+    }
 }
