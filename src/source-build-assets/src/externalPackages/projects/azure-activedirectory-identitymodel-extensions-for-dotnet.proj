@@ -5,10 +5,21 @@
     <CustomRepoBuild>true</CustomRepoBuild>
   </PropertyGroup>
 
-  <Target Name="AddPreviouslySourceBuiltPackageSource" AfterTargets="CreateNuGetConfig">
+  <Target Name="ConfigureMicrosoftBclCryptographyPackageSource" AfterTargets="CreateNuGetConfig">
+    <!-- Standalone builds get Microsoft.Bcl.Cryptography from the dependency-flow feed. -->
+    <Copy SourceFiles="$(RepoRoot)NuGet.config"
+          DestinationFiles="$(NuGetConfigFile)"
+          Condition="'$(PreviouslySourceBuiltNupkgCacheDir)' == ''" />
+
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="Previously source-built"
-                            SourcePath="$(PreviouslySourceBuiltNupkgCacheDir)" />
+                            SourcePath="$(PreviouslySourceBuiltNupkgCacheDir)"
+                            Condition="'$(PreviouslySourceBuiltNupkgCacheDir)' != ''" />
+
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
+                            SourceName="SBA"
+                            SourcePath="$(ArtifactsPackagesDir)"
+                            Condition="'$(PreviouslySourceBuiltNupkgCacheDir)' == ''" />
   </Target>
 
   <Target Name="CustomRepoBuild">
