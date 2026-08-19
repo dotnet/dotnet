@@ -204,6 +204,27 @@ public class DataCollectionTestStartSerializationTests
         AssertPayloadFields(result);
     }
 
+#if NETFRAMEWORK
+    [TestMethod]
+    public void DeserializePayloadPreservesDataCollectionContextIds()
+    {
+        var json = V7Json
+            .Replace(
+                "\"Id\": \"00000000-0000-0000-0000-000000000000\"",
+                "\"Id\": \"78f02aaf-e74c-4fef-b200-3c553a2c598b\"")
+            .Replace(
+                "\"TestExecId\": null",
+                "\"TestExecId\": { \"Id\": \"f361aa68-e17d-47df-a8cc-cb9a0e820508\" }");
+
+        var message = JsonDataSerializer.Instance.DeserializeMessage(Minify(json));
+        var result = JsonDataSerializer.Instance.DeserializePayload<TestCaseStartEventArgs>(message);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(new Guid("78f02aaf-e74c-4fef-b200-3c553a2c598b"), result.Context.SessionId.Id);
+        Assert.AreEqual(new Guid("f361aa68-e17d-47df-a8cc-cb9a0e820508"), result.Context.TestExecId?.Id);
+    }
+#endif
+
     // ── Round-trip ───────────────────────────────────────────────────────
 
     [TestMethod]
