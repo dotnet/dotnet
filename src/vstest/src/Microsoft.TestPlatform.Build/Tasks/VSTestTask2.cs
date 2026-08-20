@@ -25,7 +25,7 @@ public class VSTestTask2 : ToolTask, ITestTask
     public string[]? VSTestLogger { get; set; }
     public bool VSTestListTests { get; set; }
     public string? VSTestDiag { get; set; }
-    public string[]? VSTestCLIRunSettings { get; set; }
+    public string? VSTestCLIRunSettings { get; set; }
     [Required]
     public ITaskItem? VSTestConsolePath { get; set; }
     public ITaskItem? VSTestResultsDirectory { get; set; }

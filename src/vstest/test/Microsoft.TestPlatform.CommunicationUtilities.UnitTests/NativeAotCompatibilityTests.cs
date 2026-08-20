@@ -65,7 +65,10 @@ public class NativeAotCompatibilityTests
                 Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
                 "Microsoft Visual Studio",
                 "Installer");
-            psi.Environment["PATH"] = $"{visualStudioInstallerPath}{Path.PathSeparator}{psi.Environment["PATH"]}";
+            // PATH is not guaranteed to be present, and the indexer throws when it is missing.
+            psi.Environment["PATH"] = psi.Environment.TryGetValue("PATH", out var existingPath) && !string.IsNullOrEmpty(existingPath)
+                ? $"{visualStudioInstallerPath}{Path.PathSeparator}{existingPath}"
+                : visualStudioInstallerPath;
         }
 
         var outputBuilder = new StringBuilder();
