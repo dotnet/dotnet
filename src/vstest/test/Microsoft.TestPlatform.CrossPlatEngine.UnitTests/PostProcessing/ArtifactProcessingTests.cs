@@ -144,12 +144,12 @@ public class ArtifactProcessingTests
         _fileHelperMock.Setup(x => x.GetStream(It.IsAny<string>(), It.IsAny<FileMode>(), It.IsAny<FileAccess>()))
             .Returns((string path, FileMode mode, FileAccess access) =>
             {
-                if (path.EndsWith("runsettings.xml"))
+                if (path.EndsWith("runsettings.xml", StringComparison.Ordinal))
                 {
                     return new MemoryStream(Encoding.UTF8.GetBytes(RunSettingsProviderExtensions.EmptyRunSettings));
                 }
 
-                if (path.EndsWith("executionComplete.json"))
+                if (path.EndsWith("executionComplete.json", StringComparison.Ordinal))
                 {
                     var testRunCompleteEventArgs = new TestRunCompleteEventArgs(null,
                     false,
@@ -192,7 +192,7 @@ public class ArtifactProcessingTests
         _fileHelperMock.Setup(x => x.GetStream(It.IsAny<string>(), It.IsAny<FileMode>(), It.IsAny<FileAccess>()))
             .Returns((string path, FileMode mode, FileAccess access) =>
             {
-                if (path.EndsWith("executionComplete.json"))
+                if (path.EndsWith("executionComplete.json", StringComparison.Ordinal))
                 {
                     var testRunCompleteEventArgs = new TestRunCompleteEventArgs(null,
                     false,
@@ -235,7 +235,7 @@ public class ArtifactProcessingTests
         _fileHelperMock.Setup(x => x.GetStream(It.IsAny<string>(), It.IsAny<FileMode>(), It.IsAny<FileAccess>()))
             .Returns((string path, FileMode mode, FileAccess access) =>
             {
-                if (path.EndsWith("runsettings.xml"))
+                if (path.EndsWith("runsettings.xml", StringComparison.Ordinal))
                 {
                     return new MemoryStream(Encoding.UTF8.GetBytes(RunSettingsProviderExtensions.EmptyRunSettings));
                 }
@@ -270,7 +270,7 @@ public class ArtifactProcessingTests
         _fileHelperMock.Setup(x => x.GetStream(It.IsAny<string>(), It.IsAny<FileMode>(), It.IsAny<FileAccess>()))
             .Returns((string path, FileMode mode, FileAccess access) =>
             {
-                if (path.EndsWith("executionComplete.json"))
+                if (path.EndsWith("executionComplete.json", StringComparison.Ordinal))
                 {
                     var testRunCompleteEventArgs = new TestRunCompleteEventArgs(null,
                     false,

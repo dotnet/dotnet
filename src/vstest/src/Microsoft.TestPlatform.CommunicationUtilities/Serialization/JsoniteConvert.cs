@@ -17,6 +17,7 @@ using Jsonite;
 using Microsoft.VisualStudio.TestPlatform.Common.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine.ClientProtocol;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
@@ -405,23 +406,77 @@ internal static class JsoniteConvert
     {
         if (value is not IDictionary<string, object> dict) return null;
         var id = dict.TryGetValue("Id", out var o) && o != null ? Guid.Parse(o.ToString()!) : Guid.NewGuid();
-        var info = new TestSessionInfo();
-        typeof(TestSessionInfo).GetProperty(nameof(TestSessionInfo.Id))!.SetValue(info, id);
-        return info;
+        return TestSessionInfoFactory.Create(id);
     }
 
     private static object? DeserializeDiscoveryCriteria(object? value)
     {
         if (value is not IDictionary<string, object> dict) return null;
-        var c = new DiscoveryCriteria(); var tp = typeof(DiscoveryCriteria);
-        if (dict.TryGetValue("AdapterSourceMap", out var asm) && asm != null) tp.GetProperty(nameof(DiscoveryCriteria.AdapterSourceMap))!.SetValue(c, ConvertTo(asm, typeof(Dictionary<string, IEnumerable<string>>)));
-        if (dict.TryGetValue("FrequencyOfDiscoveredTestsEvent", out var f) && f != null) tp.GetProperty(nameof(DiscoveryCriteria.FrequencyOfDiscoveredTestsEvent))!.SetValue(c, Convert.ToInt64(f, CultureInfo.InvariantCulture));
-        if (dict.TryGetValue("DiscoveredTestEventTimeout", out var t) && t != null) tp.GetProperty(nameof(DiscoveryCriteria.DiscoveredTestEventTimeout))!.SetValue(c, TimeSpan.Parse(t.ToString()!, CultureInfo.InvariantCulture));
-        if (dict.TryGetValue("RunSettings", out var rs) && rs != null) tp.GetProperty(nameof(DiscoveryCriteria.RunSettings))!.SetValue(c, rs.ToString());
+        var adapterSourceMap = dict.TryGetValue("AdapterSourceMap", out var asm) && asm != null
+            ? (Dictionary<string, IEnumerable<string>>)ConvertTo(asm, typeof(Dictionary<string, IEnumerable<string>>))!
+            : [];
+        var frequency = dict.TryGetValue("FrequencyOfDiscoveredTestsEvent", out var f) && f != null
+            ? Convert.ToInt64(f, CultureInfo.InvariantCulture)
+            : default;
+        var timeout = dict.TryGetValue("DiscoveredTestEventTimeout", out var t) && t != null
+            ? TimeSpan.Parse(t.ToString()!, CultureInfo.InvariantCulture)
+            : default;
+        var runSettings = dict.TryGetValue("RunSettings", out var rs) && rs != null ? rs.ToString() : null;
+        var testSessionInfo = dict.TryGetValue("TestSessionInfo", out var tsi) && tsi != null
+            ? (TestSessionInfo?)DeserializeTestSessionInfo(tsi)
+            : null;
+        var c = DiscoveryCriteriaFactory.Create(adapterSourceMap, frequency, timeout, runSettings, testSessionInfo);
         if (dict.TryGetValue("Package", out var p) && p != null) c.Package = p.ToString();
         if (dict.TryGetValue("TestCaseFilter", out var tcf) && tcf != null) c.TestCaseFilter = tcf.ToString();
-        if (dict.TryGetValue("TestSessionInfo", out var tsi) && tsi != null) c.TestSessionInfo = (TestSessionInfo?)DeserializeTestSessionInfo(tsi);
         return c;
+    }
+
+    private static object? DeserializeSessionId(object? value)
+    {
+        if (value is not IDictionary<string, object> dict
+            || !dict.TryGetValue("Id", out var id)
+            || id is null)
+        {
+            return null;
+        }
+
+        return new SessionId(Guid.Parse(id.ToString()!));
+    }
+
+    private static object? DeserializeTestExecId(object? value)
+    {
+        if (value is not IDictionary<string, object> dict
+            || !dict.TryGetValue("Id", out var id)
+            || id is null)
+        {
+            return null;
+        }
+
+        return new TestExecId(Guid.Parse(id.ToString()!));
+    }
+
+    private static object? DeserializeDataCollectionContext(object? value)
+    {
+        if (value is not IDictionary<string, object> dict
+            || !dict.TryGetValue("SessionId", out var sessionIdValue)
+            || DeserializeSessionId(sessionIdValue) is not SessionId sessionId)
+        {
+            return null;
+        }
+
+        var testCase = dict.TryGetValue("TestCase", out var testCaseValue)
+            ? (TestCase?)ConvertTo(testCaseValue, typeof(TestCase))
+            : null;
+        if (testCase is not null)
+        {
+            return new DataCollectionContext(sessionId, testCase);
+        }
+
+        var testExecId = dict.TryGetValue("TestExecId", out var testExecIdValue)
+            ? (TestExecId?)DeserializeTestExecId(testExecIdValue)
+            : null;
+
+        return new DataCollectionContext(sessionId, testExecId);
     }
 
     private static object? DeserializeTestExecutionContext(object? value)
@@ -495,6 +550,9 @@ internal static class JsoniteConvert
         if (targetType == typeof(UriDataAttachment)) return DeserializeUriDataAttachment(value);
         if (targetType == typeof(TestSessionInfo)) return DeserializeTestSessionInfo(value);
         if (targetType == typeof(DiscoveryCriteria)) return DeserializeDiscoveryCriteria(value);
+        if (targetType == typeof(SessionId)) return DeserializeSessionId(value);
+        if (targetType == typeof(TestExecId)) return DeserializeTestExecId(value);
+        if (targetType == typeof(DataCollectionContext)) return DeserializeDataCollectionContext(value);
         if (targetType == typeof(TestExecutionContext)) return DeserializeTestExecutionContext(value);
         if (targetType == typeof(TestProcessAttachDebuggerPayload)) return DeserializeTestProcessAttachDebuggerPayload(value);
         if (targetType == typeof(AfterTestRunEndResult)) return DeserializeAfterTestRunEndResult(value);
@@ -559,9 +617,15 @@ internal static class JsoniteConvert
                     { var et = prop.PropertyType.IsGenericType ? prop.PropertyType.GetGenericArguments()[0] : typeof(object); foreach (var i in ia) tl.Add(ConvertTo(i, et)); }
                     else
                     {
-                        var cv = ConvertTo(kvp.Value, prop.PropertyType);
-                        var bf = targetType.GetField($"<{prop.Name}>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
-                        if (bf is not null) bf.SetValue(inst, cv); else prop.GetSetMethod(nonPublic: true)?.Invoke(inst, new[] { cv });
+                        var setter = prop.GetSetMethod(nonPublic: true);
+                        if (setter is not null)
+                        {
+                            setter.Invoke(inst, new[] { ConvertTo(kvp.Value, prop.PropertyType) });
+                        }
+                        else
+                        {
+                            EqtTrace.Warning("JsoniteConvert: Property '{0}' on type '{1}' has no setter.", prop.Name, targetType.FullName);
+                        }
                     }
                 }
                 catch (Exception ex) { EqtTrace.Warning("JsoniteConvert: Failed to set property '{0}' on type '{1}': {2}", prop.Name, targetType.FullName, ex.Message); }

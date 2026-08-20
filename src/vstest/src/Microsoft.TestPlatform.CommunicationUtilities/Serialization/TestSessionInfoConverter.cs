@@ -12,8 +12,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
 
 /// <summary>
-/// JSON converter for <see cref="TestSessionInfo"/> that handles the private setter on <see cref="TestSessionInfo.Id"/>
-/// by using reflection to set the value after construction.
+/// JSON converter for <see cref="TestSessionInfo"/>.
 /// </summary>
 internal class TestSessionInfoConverter : JsonConverter<TestSessionInfo>
 {
@@ -32,10 +31,7 @@ internal class TestSessionInfoConverter : JsonConverter<TestSessionInfo>
             ? idProp.GetGuid()
             : Guid.NewGuid();
 
-        var info = new TestSessionInfo();
-        typeof(TestSessionInfo).GetProperty(nameof(TestSessionInfo.Id))!.SetValue(info, id);
-
-        return info;
+        return TestSessionInfoFactory.Create(id);
     }
 
     /// <inheritdoc/>

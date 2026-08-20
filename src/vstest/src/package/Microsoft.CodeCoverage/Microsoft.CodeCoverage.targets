@@ -34,10 +34,11 @@
 
   <!-- This target required to store deterministic sources mapping.
        It is modified version of https://github.com/coverlet-coverage/coverlet/blob/d1ca364b7dbff38abce0457d94c4ce1b7e3a4cd9/src/coverlet.collector/build/coverlet.collector.targets#L35 -->
-  <Target Condition="'$(NETCoreSdkVersion)' != '' and '$(DisableMsCoverageReferencedPathMaps)' != 'true'" Name="MsCoverageReferencedPathMaps" BeforeTargets="CoreCompile" DependsOnTargets="ResolveProjectReferences" >
+  <Target Condition="'$(NETCoreSdkVersion)' != '' and '$(DisableMsCoverageReferencedPathMaps)' != 'true' and '$(DesignTimeBuild)' != 'true'" Name="MsCoverageReferencedPathMaps" BeforeTargets="CoreCompile" DependsOnTargets="ResolveProjectReferences" >
     <MSBuild Projects="@(AnnotatedProjects->'%(FullPath)')"
              Targets="$(_msCoverageSourceRootTargetName)"
              Properties="TargetFramework=%(AnnotatedProjects.NearestTargetFramework)"
+             BuildInParallel="true"
              SkipNonexistentTargets="true">
       <Output TaskParameter="TargetOutputs"
               ItemName="_msCoverageLocalTopLevelSourceRoot" />
