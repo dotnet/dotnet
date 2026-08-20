@@ -21,6 +21,7 @@
 *.config    		text
 *.csproj    		text
 *.groovy			text
+*.js        		text
 *.json      		text
 *.lss       		text
 *.md        		text
@@ -41,6 +42,11 @@
 *.vcxproj.filters	text
 *.vsct				text
 *.vsixmanifest		text
+
+###############################################################################
+# Preserve the signed content's line endings for Authenticode verification
+###############################################################################
+src/Microsoft.DotNet.SignCheckLibrary.Tests/Resources/SignedJavaScript.js text eol=crlf
 
 ###############################################################################
 # Set file behavior to:
