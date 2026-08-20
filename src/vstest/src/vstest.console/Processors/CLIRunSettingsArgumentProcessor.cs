@@ -136,7 +136,7 @@ internal class CliRunSettingsArgumentExecutor : IArgumentsExecutor
             // but does not end with ") we start merging the params
             if (arg.StartsWith("TestRunParameters", StringComparison.OrdinalIgnoreCase))
             {
-                if (arg.EndsWith("\")"))
+                if (arg.EndsWith("\")", StringComparison.Ordinal))
                 {
                     // this parameter is complete
                     mergedArgs.Add(arg);
@@ -161,7 +161,7 @@ internal class CliRunSettingsArgumentExecutor : IArgumentsExecutor
             }
 
             // once we detect the end we add the whole parameter to the args
-            if (merge && arg.EndsWith("\")"))
+            if (merge && arg.EndsWith("\")", StringComparison.Ordinal))
             {
                 mergedArgs.Add(mergedArg);
                 mergedArg = string.Empty;
@@ -188,7 +188,7 @@ internal class CliRunSettingsArgumentExecutor : IArgumentsExecutor
                 continue;
             }
 
-            var indexOfSeparator = arg.IndexOf("=");
+            var indexOfSeparator = arg.IndexOf("=", StringComparison.Ordinal);
 
             if (indexOfSeparator <= 0 || indexOfSeparator >= arg.Length - 1)
             {
@@ -219,7 +219,7 @@ internal class CliRunSettingsArgumentExecutor : IArgumentsExecutor
 
         var match = runSettingsProvider.GetTestRunParameterNodeMatch(node);
 
-        if (string.Compare(match.Value, node) == 0)
+        if (string.Equals(match.Value, node, StringComparison.Ordinal))
         {
             runSettingsProvider.UpdateTestRunParameterSettingsNode(match);
             return true;

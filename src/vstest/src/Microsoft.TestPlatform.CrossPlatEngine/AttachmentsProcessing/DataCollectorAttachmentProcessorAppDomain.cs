@@ -99,7 +99,7 @@ internal class DataCollectorAttachmentProcessorAppDomain : IDataCollectorAttachm
                 {
                     string messagePayload = sr.ReadLine().Replace("\0", Environment.NewLine);
 
-                    if (messagePayload.StartsWith(_pipeShutdownMessagePrefix))
+                    if (messagePayload.StartsWith(_pipeShutdownMessagePrefix, StringComparison.Ordinal))
                     {
                         EqtTrace.Info($"DataCollectorAttachmentProcessorAppDomain.PipeReaderTask: Shutdown message received, message: {messagePayload}");
                         return;

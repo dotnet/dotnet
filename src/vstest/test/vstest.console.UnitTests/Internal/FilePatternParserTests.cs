@@ -172,7 +172,7 @@ public class FilePatternParserTests
     private static string TranslatePath(string path)
     {
         // RuntimeInformation has conflict when used
-        return Environment.OSVersion.Platform.ToString().StartsWith("Win")
+        return Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal)
             ? path
             : Regex.Replace(path.Replace("\\", "/"), @"(\w)\:/", @"/mnt/$1/");
     }

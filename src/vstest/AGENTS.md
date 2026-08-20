@@ -43,14 +43,28 @@ vstest.console (entry point)
 | Build + Pack | `./build.cmd -pack` | `./build.sh --pack` |
 | Release config | `./build.cmd -c Release -pack` | `./build.sh -c Release --pack` |
 | Unit tests | `./test.cmd` | `./test.sh` |
-| Specific tests | `./test.cmd -projects <pattern>` | `./test.sh -p <pattern>` |
-| Several test projects | `./test.cmd -projects "test\A\A.csproj;test\B\B.csproj"` | `./test.sh -p "test/A/A.csproj;test/B/B.csproj"` |
-| Smoke tests | `./test.cmd -projects smoke` | `./test.sh -p smoke` |
-| Single test by name | `./test.cmd -bl -c release /p:TestRunnerAdditionalArguments="--filter TestName"` | Similar |
+| Specific tests | `./test.cmd -projects <path-or-glob>` | `./test.sh --projects <path-or-glob>` |
+| Several test projects | `./test.cmd -projects "test\A\A.csproj;test\B\B.csproj"` | `./test.sh --projects "test/A/A.csproj;test/B/B.csproj"` |
+| Smoke tests | `./test.cmd -smokeTest` | `./test.sh --integrationTest` (smoke is a subset) |
+| Single test by name | `./test.cmd -c Release -filter "FullyQualifiedName~TestName"` | `./test.sh --property:'TestRunnerAdditionalArguments=--filter "FullyQualifiedName~TestName"'` |
 
 CI builds use `-c Release`. Always build with Release config before submitting PRs.
 
+`-projects` is resolved with `Resolve-Path`, so it takes a path or a glob. A bare nickname such as `smoke` or `htmllogger` fails with `Cannot find path`. Test categories are switches instead: `-smokeTest`, `-integrationTest`, `-compatibilityTest`, `-performanceTest`.
+
+Filtering by test name is a Windows-only wrapper parameter. `test.cmd` goes through `eng/build.ps1`, which owns `-filter` and the category switches; `test.sh` calls Arcade's `eng/common/build.sh` directly and has neither, so on Linux/macOS the filter is passed as an MSBuild property. Do not pass the filter as `/p:TestRunnerAdditionalArguments="--filter ..."` on Windows — `eng/build.ps1` throws *"Use --filter instead of passing filter as an additional argument to TestRunnerAdditionalArguments."* See [CONTRIBUTING.md](CONTRIBUTING.md#running-a-specific-test) for the Linux/macOS quoting rules.
+
+`test.cmd` does not set `DOTNET_ROOT`, so test executables built against the repo's preview TFM fail with *"You must install or update .NET to run this application."* This hits unit tests too, not only integration and smoke tests. Set it first:
+
+```powershell
+$env:DOTNET_ROOT = "$PWD\.dotnet"
+```
+
+`test.cmd` does not restore either. On a fresh clone, build once (`./build.cmd -c Release`) before running it, or pass `-restore -build`, otherwise it stops with `Toolset version <version> has not been restored.`
+
 The `.cmd` wrappers pass arguments to PowerShell literally. See [Wrapper scripts pass arguments literally](#wrapper-scripts-pass-arguments-literally) before changing one.
+
+[`.github/skills/vstest-build-test/SKILL.md`](.github/skills/vstest-build-test/SKILL.md) is the fuller build and test reference. Keep it and this section in agreement.
 
 ## Test Structure
 
@@ -77,10 +91,10 @@ They previously used the form `-command "& """<script>""" %*"`, which spliced `%
 
 Use `-File` in any new `.cmd` wrapper. Do not switch back to `-command`.
 
-Because arguments are no longer re-parsed, MSBuild properties need one level of quoting instead of two:
+Because arguments are no longer re-parsed, one level of quoting is enough instead of two, for wrapper parameters and `/p:` MSBuild properties alike. A single pair of quotes now reaches the target script intact:
 
 ```
-./test.cmd -bl -c release /p:TestRunnerAdditionalArguments="--filter TestName"
+./test.cmd -c Release -projects "test\Microsoft.TestPlatform.CrossPlatEngine.UnitTests\Microsoft.TestPlatform.CrossPlatEngine.UnitTests.csproj" -filter "FullyQualifiedName~MtpProxyExecutionManagerTests"
 ```
 
 `eng/common/*` comes from Arcade and still uses `-command`. Do not edit those files here; fix them in the Arcade repository.

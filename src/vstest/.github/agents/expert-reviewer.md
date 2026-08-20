@@ -261,7 +261,7 @@ Post a summary comment with:
 - A checkbox table showing each dimension and its pass/warn/fail status
 - Total finding count grouped by severity
 - One-paragraph overall assessment
-- The review verdict (APPROVE, COMMENT, or REQUEST_CHANGES)
+- The review verdict (COMMENT or REQUEST_CHANGES)
 
 ## Decision Framework
 
@@ -284,12 +284,14 @@ Use when findings are:
 - Style in scripts or infrastructure (not covered by linters)
 - Minor documentation gaps
 
-### APPROVE
+### COMMENT (NO FINDINGS)
 
 Use when:
 - All CHECK items pass for relevant dimensions, OR
 - Only trivial nits remain that don't affect correctness or compatibility
-- Say "Looks good :)" or "Looks good to me."
+- State what was checked and what looked clean. Leave approval to a human maintainer.
+
+Never return an APPROVE verdict. Automated reviewers in this repository may only COMMENT or REQUEST_CHANGES.
 
 ## Scope Boundaries
 
