@@ -25,6 +25,10 @@ namespace Microsoft.SignCheck.Verification
         // Minimum header size: 36 bytes standard header + 4 bytes reserve fields
         private const int MinHeaderSize = 40;
 
+        // Minimum size of the per-cabinet reserved area of a signed cabinet:
+        // a 4 byte header followed by the signature offset and size
+        private const ushort MinSignatureReserveSize = 12;
+
         public SignedCms ReadSecurityInfo(string path)
         {
             try
@@ -69,13 +73,16 @@ namespace Microsoft.SignCheck.Verification
                     reader.ReadByte();                       // offset 39: cbCFData
 
                     // The per-cabinet reserved area for signed CABs contains:
+                    //   uint32 header          - 0x00100000
                     //   uint32 signatureOffset - file offset to the PKCS#7 signature
                     //   uint32 signatureSize   - size of the PKCS#7 signature
-                    if (cbCFHeader < 8)
+                    // signtool writes 20 bytes and leaves the remaining 8 bytes zeroed.
+                    if (cbCFHeader < MinSignatureReserveSize)
                     {
                         return null;
                     }
 
+                    reader.ReadUInt32();                     // per-cabinet reserved header
                     uint signatureOffset = reader.ReadUInt32();
                     uint signatureSize = reader.ReadUInt32();
 
@@ -84,7 +91,7 @@ namespace Microsoft.SignCheck.Verification
                         return null;
                     }
 
-                    if (signatureOffset + signatureSize > (uint)fs.Length)
+                    if ((long)signatureOffset + signatureSize > fs.Length)
                     {
                         return null;
                     }

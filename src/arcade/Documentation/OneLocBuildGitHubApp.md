@@ -24,7 +24,7 @@ when **all** of the following are true:
 
 - `UseGitHubAppAuthentication` is `true` (the default), **and**
 - `RepoType` is `gitHub`, **and**
-- the build is running in the **`internal`** Azure DevOps project, or
+- the build is running in the **`dnceng/internal`** or **`DevDiv/DevDiv`** Azure DevOps project, or
   `UseGitHubAppAuthenticationInOtherProjects` is explicitly set to `true` for a separately
   provisioned service connection.
 
@@ -32,8 +32,8 @@ When those hold, the job runs [`get-github-app-token.yml`](/eng/common/core-temp
 which signs a JWT with the App's RSA key in Key Vault, exchanges it for an installation token, and
 passes that token to the OneLocBuild task via `gitHubPatVariable`.
 
-If `UseGitHubAppAuthentication` is explicitly set to `false`, or a project outside `internal`
-does not explicitly opt in, the job uses the existing `GithubPat` parameter. This is a
+If `UseGitHubAppAuthentication` is explicitly set to `false`, or a project outside the two
+supported projects does not explicitly opt in, the job uses the existing `GithubPat` parameter. This is a
 template-selection fallback only: if App token minting or authentication fails after the App path
 is selected, the job fails and does not retry with the PAT.
 
@@ -44,7 +44,7 @@ is selected, the job fails and does not retry with the PAT.
 1. **The App must be installed on the GitHub org/account that owns your target repo, and your
    specific repository must be selected in that installation.** The App can only open a PR against a
    repository it is installed on. This is what actually grants the App permission to your repo.
-2. **Your pipeline must use the App path.** In `dnceng/internal`, leave
+2. **Your pipeline must use the App path.** In `dnceng/internal` and `DevDiv/DevDiv`, leave
    `UseGitHubAppAuthentication` set to `true`. In another project, provision a project-scoped
    service connection and explicitly opt in as described below.
 
@@ -85,11 +85,18 @@ OneLocBuild template call. For example:
       LclPackageId: 'LCL-JUNO-PROD-YOURREPO'
 ```
 
-The dnceng service connection, App client ID, Key Vault, and key name are centralized as defaults in
-the Arcade template. They can be overridden for separately provisioned infrastructure. A pipeline
-can temporarily set `UseGitHubAppAuthentication: false` to select the PAT path instead.
+Arcade automatically selects the project-scoped service connection:
 
-For a pipeline outside `dnceng/internal`, keep using the wrapper appropriate for that pipeline
+| Azure DevOps project | Service connection |
+|---|---|
+| `dnceng/internal` | `dnceng-oneloc-githubapp` |
+| `DevDiv/DevDiv` | `devdiv-oneloc-githubapp` |
+
+The App client ID, Key Vault, and key name are also centralized in the Arcade template. A pipeline
+still needs one-time authorization to use its project's connection. It can temporarily set
+`UseGitHubAppAuthentication: false` to select the PAT path instead.
+
+For a pipeline outside `dnceng/internal` and `DevDiv/DevDiv`, keep using the wrapper appropriate for that pipeline
 (`templates/job` or `templates-official/job`) and explicitly select its project-scoped connection.
 This example uses the official wrapper:
 
@@ -109,9 +116,9 @@ the pipeline must be authorized to use the connection.
 
 | **Parameter** | **Default** | **Notes** |
 |:-:|:-:|-|
-| `UseGitHubAppAuthentication` | `true` | Activates the App path for GitHub repos in `dnceng/internal`, or in another project that explicitly opts in. Set to `false` to select the PAT path. |
-| `UseGitHubAppAuthenticationInOtherProjects` | `false` | Explicitly activates the App path outside `dnceng/internal`. Requires separately provisioned infrastructure. |
-| `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The Azure DevOps **WIF service connection** whose identity has `Sign` permission on the App's Key Vault key. |
+| `UseGitHubAppAuthentication` | `true` | Activates the App path for GitHub repos in `dnceng/internal` and `DevDiv/DevDiv`, or in another project that explicitly opts in. Set to `false` to select the PAT path. |
+| `UseGitHubAppAuthenticationInOtherProjects` | `false` | Explicitly activates the App path outside `dnceng/internal` and `DevDiv/DevDiv`. Requires separately provisioned infrastructure. |
+| `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The Azure DevOps **WIF service connection** used by `dnceng/internal` and explicit opt-ins. When the value remains the `dnceng-oneloc-githubapp` default, Arcade selects `devdiv-oneloc-githubapp` automatically in `DevDiv/DevDiv`; overrides to a different value are preserved. |
 | `GitHubAppClientId` | `'Iv23lijBU8x3gc9lDOc9'` | The GitHub App's **Client ID** (used as the JWT `iss` claim). |
 | `GitHubAppKeyVaultName` | `'EngKeyVault'` | The Key Vault holding the App's RSA signing key. |
 | `GitHubAppKeyName` | `'oneloc-localization-app-key'` | The name of the RSA key inside that Key Vault (the App's private key). |
@@ -131,7 +138,9 @@ The token is minted for the installation on the `GitHubOrg` account (default `do
 
 - **The App-token step is skipped.** The App path only activates when
   `UseGitHubAppAuthentication` is `true`, `RepoType` is `gitHub`, and the build runs in
-  `dnceng/internal` or explicitly sets `UseGitHubAppAuthenticationInOtherProjects: true`.
+  `dnceng/internal`, `DevDiv/DevDiv`, or explicitly sets `UseGitHubAppAuthenticationInOtherProjects: true`.
+- **The pipeline pauses for service-connection authorization.** Authorize the pipeline to use
+  `dnceng-oneloc-githubapp` in `dnceng/internal` or `devdiv-oneloc-githubapp` in `DevDiv/DevDiv`.
 - **Token minting fails with a Key Vault authorization error.** The service connection identity
   needs the `Key Vault Crypto User` role (or at least the `Sign` action) on the App's key. Contact
   First Responders.
@@ -142,6 +151,6 @@ The token is minted for the installation on the `GitHubOrg` account (default `do
 
 ## Scope and limitations
 
-- The default `dnceng-oneloc-githubapp` connection is only available in **`dnceng/internal`**.
+- Arcade has project-scoped defaults for **`dnceng/internal`** and **`DevDiv/DevDiv`**.
   Pipelines in other projects use `GithubPat` unless they explicitly opt in with a project-scoped
   service connection and signing-key access.
