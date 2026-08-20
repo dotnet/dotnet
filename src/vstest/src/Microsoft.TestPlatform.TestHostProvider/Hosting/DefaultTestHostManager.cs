@@ -261,7 +261,7 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
 
         StringBuilder testHostProcessName = new("testhost");
 
-        if (targetFramework.Name.StartsWith(".NETFramework,Version=v"))
+        if (targetFramework.Name.StartsWith(".NETFramework,Version=v", StringComparison.Ordinal))
         {
             // Transform target framework name into moniker.
             // e.g. ".NETFramework,Version=v4.7.2" -> "net472".

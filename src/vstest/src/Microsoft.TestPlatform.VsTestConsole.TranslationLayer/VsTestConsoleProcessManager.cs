@@ -91,7 +91,7 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
             throw new Exception(string.Format(CultureInfo.CurrentCulture, Resources.InvalidFilePath, vstestConsolePath));
         }
         _vstestConsolePath = vstestConsolePath;
-        _isNetCoreRunner = vstestConsolePath.EndsWith(".dll");
+        _isNetCoreRunner = vstestConsolePath.EndsWith(".dll", StringComparison.Ordinal);
     }
 
     public VsTestConsoleProcessManager(string vstestConsolePath, string dotnetExePath) : this(vstestConsolePath)

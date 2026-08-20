@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -65,7 +66,7 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
 
         int expectedNumberOfAttachments = 1;
         Assert.HasCount(expectedNumberOfAttachments, _runEventHandler.Attachments, _runEventHandler.ToString());
-        Assert.IsNotEmpty(_telemetryEventsHandler.Events.Where(e => e.Name.StartsWith("vs/codecoverage") && e.Properties.Any()));
+        Assert.IsNotEmpty(_telemetryEventsHandler.Events.Where(e => e.Name.StartsWith("vs/codecoverage", StringComparison.Ordinal) && e.Properties.Any()));
 
         AssertCoverageResults(_runEventHandler.Attachments);
 
@@ -87,7 +88,7 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
 
         // assert
         Assert.HasCount(6, _runEventHandler.TestResults, _runEventHandler.ToString());
-        Assert.IsNotEmpty(_telemetryEventsHandler.Events.Where(e => e.Name.StartsWith("vs/codecoverage") && e.Properties.Any()));
+        Assert.IsNotEmpty(_telemetryEventsHandler.Events.Where(e => e.Name.StartsWith("vs/codecoverage", StringComparison.Ordinal) && e.Properties.Any()));
 
         int expectedNumberOfAttachments = 1;
         Assert.HasCount(expectedNumberOfAttachments, _runEventHandler.Attachments, _runEventHandler.ToString());
@@ -113,7 +114,7 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
         // assert
         Assert.HasCount(6, _runEventHandler.TestResults, _runEventHandler.ToString());
         Assert.ContainsSingle(_runEventHandler.Attachments, _runEventHandler.ToString());
-        Assert.IsNotEmpty(_telemetryEventsHandler.Events.Where(e => e.Name.StartsWith("vs/codecoverage") && e.Properties.Any()));
+        Assert.IsNotEmpty(_telemetryEventsHandler.Events.Where(e => e.Name.StartsWith("vs/codecoverage", StringComparison.Ordinal) && e.Properties.Any()));
 
         AssertCoverageResults(_runEventHandler.Attachments);
 
