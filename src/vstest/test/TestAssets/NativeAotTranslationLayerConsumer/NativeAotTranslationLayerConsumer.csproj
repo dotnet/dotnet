@@ -10,14 +10,19 @@
     <PublishAot>true</PublishAot>
     <!-- Report per-warning details, not just assembly-level roll-ups. -->
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
-    <!-- Treat trimming/AoT warnings as errors so they fail the publish. -->
+    <!-- Compiler warnings fail the build. Trimming/AoT warnings deliberately do not: the publish has
+         to succeed so the compatibility test can read the warning list and assert on the subset that
+         comes from the serialization converters, ignoring the pre-existing ones elsewhere. -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ILLinkTreatWarningsAsErrors>false</ILLinkTreatWarningsAsErrors>
+    <IlcTreatWarningsAsErrors>false</IlcTreatWarningsAsErrors>
     <!-- Suppress pre-existing warnings from ObjectModel that are not in our scope. -->
     <NoWarn>$(NoWarn);NU1603;NETSDK1057</NoWarn>
-    <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2057;IL2067</WarningsNotAsErrors>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2026;IL2057;IL2067;IL2072;IL3050</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.CommunicationUtilities/Microsoft.TestPlatform.CommunicationUtilities.csproj" />
     <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.VsTestConsole.TranslationLayer/Microsoft.TestPlatform.VsTestConsole.TranslationLayer.csproj" />
   </ItemGroup>
 

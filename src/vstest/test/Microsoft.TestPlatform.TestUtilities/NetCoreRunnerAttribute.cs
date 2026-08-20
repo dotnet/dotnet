@@ -39,9 +39,9 @@ public class NetCoreRunnerAttribute : Attribute, ITestDataSource
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
     {
         var dataRows = new List<object[]>();
-        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win");
+        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal);
         // on non-windows we want to filter down only to netcoreapp runner, and net5.0 and newer.
-        Func<string, bool> filter = tfm => isWindows || !tfm.StartsWith("net4");
+        Func<string, bool> filter = tfm => isWindows || !tfm.StartsWith("net4", StringComparison.Ordinal);
         foreach (var fmw in _targetFrameworks.Split(';').Where(filter))
         {
             var runnerInfo = new RunnerInfo

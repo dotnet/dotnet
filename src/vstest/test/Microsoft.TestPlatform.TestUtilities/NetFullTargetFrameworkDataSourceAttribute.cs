@@ -52,7 +52,7 @@ public class NetFullTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
     {
         var dataRows = new List<object[]>();
-        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win");
+        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal);
         if (_useCoreRunner && isWindows)
         {
             var runnerInfo = new RunnerInfo

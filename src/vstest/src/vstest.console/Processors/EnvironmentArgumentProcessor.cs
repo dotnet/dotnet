@@ -100,8 +100,8 @@ internal class EnvironmentArgumentProcessor : IArgumentProcessor
 
             if (key.Contains("="))
             {
-                value = key.Substring(key.IndexOf("=") + 1);
-                key = key.Substring(0, key.IndexOf("="));
+                value = key.Substring(key.IndexOf("=", StringComparison.Ordinal) + 1);
+                key = key.Substring(0, key.IndexOf("=", StringComparison.Ordinal));
             }
 
             var node = _runSettingsProvider.QueryRunSettingsNode($"RunConfiguration.EnvironmentVariables.{key}");

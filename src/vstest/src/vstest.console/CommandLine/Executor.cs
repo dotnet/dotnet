@@ -466,7 +466,7 @@ internal class Executor
         string? assemblyVersion = Product.Version;
         if (!isDiag)
         {
-            var end = Product.Version?.IndexOf("-release");
+            var end = Product.Version?.IndexOf("-release", StringComparison.Ordinal);
 
             if (end >= 0)
             {

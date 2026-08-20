@@ -320,7 +320,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
         // We cannot be precise here procdump is at machine level so we can have more than one dump and not only the one for our test
         // We look for "at least" one dump file, is the best we can do without locking all tests.
         Assert.IsNotEmpty(Directory.GetFiles(TempDirectory.Path, "*.dmp", SearchOption.AllDirectories)
-            .Where(x => Path.GetFileNameWithoutExtension(x).StartsWith("testhost")));
+            .Where(x => Path.GetFileNameWithoutExtension(x).StartsWith("testhost", StringComparison.Ordinal)));
     }
 
     private static bool IsAdministrator()
@@ -346,7 +346,7 @@ public class BlameDataCollectorTests : AcceptanceTestBase
         }
 
         var dumps = attachments
-            .Where(a => a.EndsWith(".dmp"))
+            .Where(a => a.EndsWith(".dmp", StringComparison.Ordinal))
             // On Windows we might collect conhost which tells us nothing
             // or WerFault in case we would start hanging during crash
             // we don't want these to make cross-platform checks more difficult

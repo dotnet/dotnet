@@ -68,10 +68,35 @@ internal class LoggerUtilities
             logger.Configuration = outerNode;
         }
 
-        // Remove existing logger.
+        // Reuse the entry that is already in LoggerRunSettings when it describes the same logger,
+        // so that everything the command line does not mention (Configuration, CodeBase,
+        // AssemblyQualifiedName, and the friendlyName/uri pairing) survives. Rebuilding the entry
+        // from the command line alone silently discards those.
         var existingLoggerIndex = loggerRunSettings.GetExistingLoggerIndex(logger);
         if (existingLoggerIndex >= 0)
         {
+            var existingLogger = loggerRunSettings.LoggerSettingsList[existingLoggerIndex];
+
+            // Whatever the command line did spell out wins over the settings file.
+            if (logger.FriendlyName is not null)
+            {
+                existingLogger.FriendlyName = logger.FriendlyName;
+            }
+
+            if (logger.Uri is not null)
+            {
+                existingLogger.Uri = logger.Uri;
+            }
+
+            if (logger.Configuration is not null)
+            {
+                existingLogger.Configuration = logger.Configuration;
+            }
+
+            // Naming the logger on the command line enables it, even if the settings disabled it.
+            existingLogger.IsEnabled = true;
+            logger = existingLogger;
+
             loggerRunSettings.LoggerSettingsList.RemoveAt(existingLoggerIndex);
         }
 
