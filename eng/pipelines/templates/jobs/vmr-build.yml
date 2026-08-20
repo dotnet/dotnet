@@ -547,6 +547,36 @@ jobs:
       displayName: Download Shared Component Artifacts
 
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+    - task: PowerShell@2
+      displayName: Setup Internal Feeds
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Always use the VMR root's SetupNugetSources.ps1 rather than each inner repo's copy.
+          # The inner repo scripts dot-source that repo's eng/common/tools.ps1, which in turn imports
+          # the repo's configure-toolset.ps1. The root script only operates
+          # on the NuGet.config path passed to it, so it works for every repo.
+          # It's also convenient to use that so that changes don't need to be replicated on every
+          # inner repo's eng/common/ layout.
+          $setupScript = Join-Path "$(sourcesPath)" "eng/common/SetupNugetSources.ps1"
+
+          function Setup-NuGetFeeds($repoDir, $description) {
+            # Search for nuget.config using "Filter" to allow for case-insensitive matching.
+            $nugetConfigFile = Get-ChildItem -Path $repoDir -Filter "nuget.config" -File | Select-Object -First 1
+            $nugetConfig = if ($nugetConfigFile) { $nugetConfigFile.FullName } else { Join-Path $repoDir "NuGet.config" }
+            
+            Write-Host "Setting up internal NuGet feeds for $description"
+            & $setupScript $nugetConfig
+            Write-Host ""
+          }
+          
+          # Setup internal feeds for root NuGet.config
+          Setup-NuGetFeeds "$(sourcesPath)" "root NuGet.config"
+          
+          # Setup internal feeds for each global tool project that has a NuGet.config in the repo.
+          Get-ChildItem -Path "$(sourcesPath)/src" -Directory | ForEach-Object {
+            Setup-NuGetFeeds $_.FullName $_.Name
+          }
     # Necessary for PAT-less authentication
     - task: NuGetAuthenticate@1
 
