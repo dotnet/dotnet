@@ -22,7 +22,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 /// <para>
 /// This interface is public because the runtime providers that implement it live in a separate assembly
 /// (<c>Microsoft.TestPlatform.TestHostRuntimeProvider</c>). The concrete proxy managers stay internal to this
-/// assembly; providers create them through the public <see cref="MTP.MtpProxyManagerFactory"/> helper.
+/// assembly; providers create them through the public <c>MtpProxyManagerFactory</c> helper.
 /// </para>
 /// </remarks>
 public interface IProxyManagerFactory

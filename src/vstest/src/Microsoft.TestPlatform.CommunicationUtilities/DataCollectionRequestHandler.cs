@@ -150,7 +150,7 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
                         dataCollectionManager,
                         new DataCollectionTestCaseEventHandler(messageSink, dataCollectionManager),
                         JsonDataSerializer.Instance,
-                        new FileHelper(),
+                        new Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper(),
                         requestData);
                 }
             }
