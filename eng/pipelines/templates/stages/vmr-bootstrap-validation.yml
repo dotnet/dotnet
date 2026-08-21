@@ -1,0 +1,39 @@
+parameters:
+- name: pool_Windows
+  type: object
+  default:
+    name: $(defaultPoolName)
+    image: $(poolImage_Windows)
+    demands: ImageOverride -equals $(poolImage_Windows)
+    os: windows
+
+stages:
+- stage: VMR_Bootstrap_Validation
+  displayName: VMR Bootstrap Validation
+  dependsOn: []
+  variables:
+  - template: ../variables/vmr-build.yml
+    parameters:
+      desiredSigning: Unsigned
+      isOfficialBuild: false
+  jobs:
+  - template: ../jobs/vmr-build.yml
+    parameters:
+      buildName: Windows_Stage1
+      isBuiltFromVmr: true
+      sign: false
+      pool: ${{ parameters.pool_Windows }}
+      targetOS: windows
+      targetArchitecture: x64
+      brandingType: ${{ variables.brandingType }}
+
+  - template: ../jobs/vmr-build.yml
+    parameters:
+      buildName: Windows_Stage2
+      isBuiltFromVmr: true
+      sign: false
+      pool: ${{ parameters.pool_Windows }}
+      targetOS: windows
+      targetArchitecture: x64
+      brandingType: ${{ variables.brandingType }}
+      bootstrapArtifactsFrom: Windows_Stage1_x64
