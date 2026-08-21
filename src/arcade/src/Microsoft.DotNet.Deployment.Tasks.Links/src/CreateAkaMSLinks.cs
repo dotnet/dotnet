@@ -12,6 +12,7 @@ namespace Microsoft.DotNet.Deployment.Tasks.Links
     /// <summary>
     /// Creates or updates, in bulk, a set of aka.ms (redirection) links
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class CreateAkaMSLinks : AkaMSLinksBase
     {
         /// <summary>

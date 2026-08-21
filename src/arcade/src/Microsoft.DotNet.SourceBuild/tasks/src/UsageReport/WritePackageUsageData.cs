@@ -17,6 +17,7 @@ using Task = Microsoft.Build.Utilities.Task;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
 {
+    [MSBuildMultiThreadableTask]
     public class WritePackageUsageData : Microsoft.Build.Utilities.Task
     {
         public string[] RestoredPackageFiles { get; set; }

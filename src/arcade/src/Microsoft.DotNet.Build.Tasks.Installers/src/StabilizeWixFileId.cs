@@ -13,6 +13,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// it. This allows external tooling such as signature validators to rely on a stable identifier
     /// for certain files.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class StabilizeWixFileId : BuildTask
     {
         /// <summary>

@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 
 namespace Microsoft.DotNet.Arcade.Sdk
 {
+    [MSBuildMultiThreadableTask]
     public class GenerateChecksums : Microsoft.Build.Utilities.Task
     {
         /// <summary>

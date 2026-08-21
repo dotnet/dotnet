@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public class ReadNuGetPackageInfos : Microsoft.Build.Utilities.Task
     {
         [Required]

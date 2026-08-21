@@ -20,6 +20,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
     /// 
     /// Replaces Experimental="true" attribute of the Installation element with SystemComponent="true" in the VSIX manifest file.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public sealed class FinalizeInsertionVsixFile : Microsoft.Build.Utilities.Task
     {
         private const string VsixManifestPartName = "/extension.vsixmanifest";

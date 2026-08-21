@@ -14,6 +14,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
     /// <summary>
     /// Find the latest drop in a JSON list of VS drops.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public sealed class FindLatestDrop : Microsoft.Build.Utilities.Task
     {
         /// <summary>

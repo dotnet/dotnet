@@ -3,9 +3,11 @@
 
 using  Microsoft.Build.Utilities;
 using System.Diagnostics;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
+    [MSBuildMultiThreadableTask]
     public class LaunchDebugger : Microsoft.Build.Utilities.Task
     {
         public override bool Execute()

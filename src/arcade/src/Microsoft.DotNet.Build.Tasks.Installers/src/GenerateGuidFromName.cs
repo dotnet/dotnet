@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
+    [MSBuildMultiThreadableTask]
     public class GenerateGuidFromName : BuildTask
     {
         [Required]

@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
     /// Calculates the SessionConfiguration to be used in .runsettings for OptProf training 
     /// based on given OptProf.json configuration and VS bootstrapper information.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public sealed class GetRunSettingsSessionConfiguration : Microsoft.Build.Utilities.Task
     {
         /// <summary>

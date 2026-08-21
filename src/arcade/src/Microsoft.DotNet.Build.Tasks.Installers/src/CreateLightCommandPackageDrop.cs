@@ -7,6 +7,7 @@ using System.Text;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
+    [MSBuildMultiThreadableTask]
     public class CreateLightCommandPackageDrop : CreateWixCommandPackageDropBase
     {
         [Required]

@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// <remarks>
     /// Emits a file of the format specified by https://manpages.debian.org/bookworm/dpkg-dev/deb-md5sums.5.en.html
     /// </remarks>
+    [MSBuildMultiThreadableTask]
     public sealed class CreateMD5SumsFile : BuildTask
     {
         [Required]

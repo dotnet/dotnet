@@ -12,6 +12,7 @@ namespace Microsoft.DotNet.CMake.Sdk
     /// <summary>
     /// Creates a CMake File API query file to request codemodel information.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class CreateCMakeFileApiQuery : BuildTask
     {
         /// <summary>

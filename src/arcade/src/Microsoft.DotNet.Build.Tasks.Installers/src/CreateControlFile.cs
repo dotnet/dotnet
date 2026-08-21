@@ -9,6 +9,7 @@ using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
+    [MSBuildMultiThreadableTask]
     public sealed class CreateControlFile : BuildTask
     {
         [Required]

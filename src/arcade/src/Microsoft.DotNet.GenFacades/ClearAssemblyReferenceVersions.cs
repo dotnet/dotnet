@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.GenFacades
     /// <summary>
     /// Rewrites an Assembly's references to be version 0.0.0.0.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class ClearAssemblyReferenceVersions : BuildTask
     {
         /// <summary>

@@ -14,6 +14,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// <remarks>
     /// Implements the format specified in https://manpages.debian.org/bookworm/dpkg-dev/deb.5.en.html
     /// </remarks>
+    [MSBuildMultiThreadableTask]
     public sealed class CreateDebPackage : BuildTask
     {
         private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);

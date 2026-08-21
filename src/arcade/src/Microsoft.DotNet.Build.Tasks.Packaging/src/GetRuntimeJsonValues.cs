@@ -12,6 +12,7 @@ using System.Linq;
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
     // Read a runtime.json file into an msbuild item group
+    [MSBuildMultiThreadableTask]
     public class GetRuntimeJsonValues : Microsoft.Build.Utilities.Task
     {
         // runtime.json file path

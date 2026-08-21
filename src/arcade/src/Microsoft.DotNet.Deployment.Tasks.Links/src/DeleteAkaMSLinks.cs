@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Deployment.Tasks.Links
 {
+    [MSBuildMultiThreadableTask]
     public class DeleteAkaMSLinks : AkaMSLinksBase
     {
         /// <summary>

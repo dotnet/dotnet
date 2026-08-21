@@ -12,6 +12,7 @@ using System.Reflection.PortableExecutable;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
+    [MSBuildMultiThreadableTask]
     public class GetAssemblyReferences : BuildTask
     {
         [Required]

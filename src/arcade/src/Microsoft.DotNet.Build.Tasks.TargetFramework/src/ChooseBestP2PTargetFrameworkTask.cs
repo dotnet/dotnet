@@ -13,6 +13,7 @@ using NuGet.Frameworks;
 
 namespace Microsoft.DotNet.Build.Tasks.TargetFramework
 {
+    [MSBuildMultiThreadableTask]
     public class ChooseBestP2PTargetFrameworkTask : BuildTask
     {
         private const string NEAREST_TARGET_FRAMEWORK = "NearestTargetFramework";

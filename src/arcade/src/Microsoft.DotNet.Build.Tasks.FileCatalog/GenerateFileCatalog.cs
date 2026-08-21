@@ -13,6 +13,7 @@ namespace Microsoft.DotNet.Build.Tasks.FileCatalog
     /// (no <c>makecat.exe</c> / Windows SDK required). The catalog is unsigned and ready to be
     /// Authenticode-signed by the Arcade signing infrastructure (via <c>FileExtensionSignInfo</c>).
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class GenerateFileCatalog : BuildTask
     {
         /// <summary>The files to include in the catalog.</summary>

@@ -7,6 +7,7 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Arcade.Sdk
 {
+    [MSBuildMultiThreadableTask]
     public class GetAssemblyFullName : Microsoft.Build.Utilities.Task
     {
         [Required]

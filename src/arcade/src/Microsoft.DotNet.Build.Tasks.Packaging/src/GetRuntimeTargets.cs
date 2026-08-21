@@ -11,6 +11,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
+    [MSBuildMultiThreadableTask]
     public class GetRuntimeTargets : Microsoft.Build.Utilities.Task
     {
         // runtime.json file path

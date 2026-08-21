@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// <remarks>
     /// The format is specified at https://manpages.debian.org/bookworm/dpkg-dev/deb-changelog.5.en.html
     /// </remarks>
+    [MSBuildMultiThreadableTask]
     public sealed class CreateChangelogFile : BuildTask
     {
         [Required]

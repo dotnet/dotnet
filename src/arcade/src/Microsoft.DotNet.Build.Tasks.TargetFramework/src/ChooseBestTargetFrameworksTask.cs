@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.TargetFramework
 {
+    [MSBuildMultiThreadableTask]
     public class ChooseBestTargetFrameworksTask : BuildTask
     {
         [Required]

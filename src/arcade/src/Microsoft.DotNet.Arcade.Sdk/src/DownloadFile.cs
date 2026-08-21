@@ -14,6 +14,7 @@ using Tasks = System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Arcade.Sdk
 {
+    [MSBuildMultiThreadableTask]
     public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask
     {
         /// <summary>

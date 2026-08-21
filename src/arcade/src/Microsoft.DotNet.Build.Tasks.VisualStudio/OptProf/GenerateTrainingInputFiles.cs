@@ -16,6 +16,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
     /// Generates OptProf training input files for VS components listed in OptProf.json file and 
     /// their VSIX files located in the specified directory.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public sealed class GenerateTrainingInputFiles : Microsoft.Build.Utilities.Task
     {
         /// <summary>

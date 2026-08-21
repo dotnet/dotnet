@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
+    [MSBuildMultiThreadableTask]
     public sealed class GenerateCurrentVersion : BuildTask
     {
         /// <summary>

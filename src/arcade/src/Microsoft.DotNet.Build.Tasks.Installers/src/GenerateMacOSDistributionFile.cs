@@ -13,6 +13,7 @@ using System.Xml.Linq;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk
 {
+    [MSBuildMultiThreadableTask]
     public class GenerateMacOSDistributionFile : BuildTask
     {
         [Required]
