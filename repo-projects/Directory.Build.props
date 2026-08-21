@@ -109,11 +109,6 @@
 
     <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)ci</CommonArgs>
 
-    <!-- MSBuild's multi-threaded mode is opt-in for now, so it's off unless it's explicitly requested.
-         Set DotNetBuildMT to explicitly opt in or out for all repo builds. -->
-    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
-    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
-
     <!-- MSBuild node reuse is on by default for local builds and isn't used on CI.
          Set DotNetBuildNodeReuse to explicitly opt in or out for all repo builds. -->
     <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 1</CommonArgs>

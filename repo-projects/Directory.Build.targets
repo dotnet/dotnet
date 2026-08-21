@@ -8,9 +8,6 @@
     <DiskUsageCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile "Get-PSDrive -PSProvider FileSystem -Name (Get-Item "$(RepoRoot.TrimEnd('\'))").PSDrive.Name"</DiskUsageCommand>
     <DiskUsageCommand Condition="'$(BuildOS)' != 'windows'">df -h $(RepoRoot)</DiskUsageCommand>
 
-    <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
-    <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
-
     <!-- Pass down configuration properties -->
     <CommonArgs Condition="'$(SkipSetTargetArchitecture)' != 'true'">$(CommonArgs) /p:TargetArchitecture=$(TargetArchitecture)</CommonArgs>
     <CommonArgs Condition="'$(SkipSetTargetOS)' != 'true'">$(CommonArgs) /p:TargetOS=$(TargetOS)</CommonArgs>
@@ -44,6 +41,16 @@
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' != ''">$(BuildArgs) /p:EnableDefaultRidSpecificArtifacts=$(EnableDefaultRidSpecificArtifacts)</BuildArgs>
     <!-- If a repo has no RID-specific artifacts, then we expect the repo to not have any artifacts when only publishing RID-specific artifacts. -->
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true'">$(BuildArgs) /p:AllowEmptySignList=true</BuildArgs>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">
+    <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
+    <CommonArgs >$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
+
+    <!-- MSBuild's multi-threaded mode is opt-in for now, so it's off unless it's explicitly requested.
+         Set DotNetBuildMT to explicitly opt in or out for all repo builds. -->
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
   </PropertyGroup>
 
   <PropertyGroup>
