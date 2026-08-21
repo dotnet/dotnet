@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="emsdk" Sha="7cdb217445905f3342bbb0266a4497b9a014389a" BarId="326717" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="emsdk" Sha="1d599674e31ad86ca9e6e1dad7055b531e4d58e4" BarId="327888" />
   <ProductDependencies>
     <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Binaryen.Transport" Version="11.0.0-alpha.1.26411.1">
       <Uri>https://github.com/dotnet/binaryen</Uri>
@@ -236,25 +236,25 @@
       <Uri>https://github.com/dotnet/llvm-project</Uri>
       <Sha>8ae183bac6b9a8fc311b885cc6e261f77bbb7a57</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26411.119">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>7cdb217445905f3342bbb0266a4497b9a014389a</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.26411.119">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>7cdb217445905f3342bbb0266a4497b9a014389a</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Packaging" Version="11.0.0-beta.26411.119">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Packaging" Version="11.0.0-beta.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>7cdb217445905f3342bbb0266a4497b9a014389a</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.FileCatalog" Version="11.0.0-beta.26411.119">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.FileCatalog" Version="11.0.0-beta.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>7cdb217445905f3342bbb0266a4497b9a014389a</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="11.0.0-beta.26411.119">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="11.0.0-beta.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>7cdb217445905f3342bbb0266a4497b9a014389a</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
