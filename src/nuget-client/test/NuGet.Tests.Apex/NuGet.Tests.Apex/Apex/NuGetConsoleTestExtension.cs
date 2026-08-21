@@ -65,6 +65,11 @@ namespace NuGet.Tests.Apex
             _pmConsole.RunCommand(command, _timeout);
         }
 
+        public void ExecuteWithInputAndBackspace(string command, string input)
+        {
+            _pmConsole.RunCommandWithInputAndBackspace(command, input, _timeout);
+        }
+
         public void Clear()
         {
             _pmConsole.Clear();
