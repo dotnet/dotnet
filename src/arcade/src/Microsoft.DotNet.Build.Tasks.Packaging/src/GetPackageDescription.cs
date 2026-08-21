@@ -4,6 +4,7 @@
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -13,8 +14,9 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     [MSBuildMultiThreadableTask]
     public class GetPackageDescription : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
-        // avoid parsing the same document multiple times on a single node.
-        private static Dictionary<string, Dictionary<string, string>> s_descriptionCache = new Dictionary<string, Dictionary<string, string>>();
+        // avoid parsing the same document multiple times on a single node. Concurrent because
+        // instances of this task can run in parallel on the same node in multithreaded builds.
+        private static readonly ConcurrentDictionary<string, Dictionary<string, string>> s_descriptionCache = new();
 
         /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
         public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
@@ -62,15 +64,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 return false;
             }
 
-            Dictionary<string, string> descriptionTable = null;
-
-            if (!s_descriptionCache.TryGetValue(descriptionPath, out descriptionTable))
-            {
-                // no cache, load it now.
-                descriptionTable = LoadDescriptions(descriptionPath);
-
-                s_descriptionCache[descriptionPath] = descriptionTable;
-            }
+            Dictionary<string, string> descriptionTable = s_descriptionCache.GetOrAdd(descriptionPath, LoadDescriptions);
 
             string description = null;
 

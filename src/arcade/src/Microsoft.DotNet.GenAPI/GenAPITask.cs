@@ -201,7 +201,7 @@ namespace Microsoft.DotNet.GenAPI
             }
 
             string headerText = GetHeaderText(HeaderFile, _writerType, _syntaxWriterType);
-            bool loopPerAssembly = Directory.Exists(TaskEnvironment.GetAbsolutePath(OutputPath));
+            bool loopPerAssembly = !string.IsNullOrEmpty(OutputPath) && Directory.Exists(TaskEnvironment.GetAbsolutePath(OutputPath));
 
             if (loopPerAssembly)
             {

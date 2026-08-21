@@ -117,7 +117,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                 Log.LogMessage(MessageImportance.High, "Starting build metadata push to the Build Asset Registry...");
 
-                if (!Directory.Exists(TaskEnvironment.GetAbsolutePath(ManifestsPath)) && !IsAssetlessBuild)
+                if ((string.IsNullOrEmpty(ManifestsPath) || !Directory.Exists(TaskEnvironment.GetAbsolutePath(ManifestsPath))) && !IsAssetlessBuild)
                 {
                     Log.LogError($"Required folder '{ManifestsPath}' does not exist.");
                 }

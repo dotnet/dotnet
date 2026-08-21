@@ -88,7 +88,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                             // Only load Versions.props if there's a need to look for a version identifier (ie, there's a value listed that's not a parsable version).
                             if (runtimeItems.SelectMany(r => r.Value).Select(r => r.Key).FirstOrDefault(f => !SemanticVersion.TryParse(f, out SemanticVersion version)) != null)
                             {
-                                if (!File.Exists(TaskEnvironment.GetAbsolutePath(VersionsPropsPath)))
+                                if (string.IsNullOrEmpty(VersionsPropsPath) || !File.Exists(TaskEnvironment.GetAbsolutePath(VersionsPropsPath)))
                                 {
                                     Log.LogError($"Unable to find translation file {VersionsPropsPath}");
                                     return !Log.HasLoggedErrors;

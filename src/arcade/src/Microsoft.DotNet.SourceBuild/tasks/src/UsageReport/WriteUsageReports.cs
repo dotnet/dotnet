@@ -80,7 +80,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
                     item.GetMetadata("OriginBuildName"));
             }
 
-            if (File.Exists(TaskEnvironment.GetAbsolutePath(ProdConBuildManifestFile)))
+            if (!string.IsNullOrEmpty(ProdConBuildManifestFile) && File.Exists(TaskEnvironment.GetAbsolutePath(ProdConBuildManifestFile)))
             {
                 var xml = XElement.Parse(File.ReadAllText(TaskEnvironment.GetAbsolutePath(ProdConBuildManifestFile)));
                 foreach (var x in xml.Descendants("Package"))
@@ -94,7 +94,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
 
             var poisonNupkgFilenames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            if (File.Exists(TaskEnvironment.GetAbsolutePath(PoisonedReportFile)))
+            if (!string.IsNullOrEmpty(PoisonedReportFile) && File.Exists(TaskEnvironment.GetAbsolutePath(PoisonedReportFile)))
             {
                 foreach (string line in File.ReadAllLines(TaskEnvironment.GetAbsolutePath(PoisonedReportFile)))
                 {

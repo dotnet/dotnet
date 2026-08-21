@@ -10,9 +10,11 @@ namespace Microsoft.DotNet.PackageTesting.Tests
 {
     public class GetCompatibilePackageTargetFrameworksTests
     {
+        private readonly GetCompatiblePackageTargetFrameworks _task = new();
+
         public GetCompatibilePackageTargetFrameworksTests()
         {
-            GetCompatiblePackageTargetFrameworks.Initialize("netcoreapp3.1;net5.0;net6.0;net461;net462;net471;net472;netstandard2.0;netstandard2.1");
+            _task.Initialize("netcoreapp3.1;net5.0;net6.0;net461;net462;net471;net472;netstandard2.0;netstandard2.1");
         }
 
         public static IEnumerable<object[]> PackageTfmData => new List<object[]>
@@ -137,7 +139,7 @@ namespace Microsoft.DotNet.PackageTesting.Tests
         public void GetCompatibleFrameworks(List<string> filePaths, List<NuGetFramework> expectedTestFrameworks)
         {
             Package package = new("TestPackage", "1.0.0", filePaths, Enumerable.Empty<NuGetFramework>());
-            IEnumerable<NuGetFramework> actualTestFrameworks = GetCompatiblePackageTargetFrameworks.GetTestFrameworks(package, "netcoreapp3.1");
+            IEnumerable<NuGetFramework> actualTestFrameworks = _task.GetTestFrameworks(package, "netcoreapp3.1");
             CollectionsEqual(expectedTestFrameworks, actualTestFrameworks);
         }
 
@@ -153,7 +155,7 @@ namespace Microsoft.DotNet.PackageTesting.Tests
                 NuGetFramework.Parse("net6.0"),
             };
             Package package = new("TestPackage", "1.0.0", Enumerable.Empty<string>(), dependencyFrameworks);
-            IEnumerable<NuGetFramework> actualTestFrameworks = GetCompatiblePackageTargetFrameworks.GetTestFrameworks(package, "netcoreapp3.1");
+            IEnumerable<NuGetFramework> actualTestFrameworks = _task.GetTestFrameworks(package, "netcoreapp3.1");
 
             var expectedTestFrameworks = new[]
             {

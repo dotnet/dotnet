@@ -204,7 +204,7 @@ namespace Microsoft.DotNet.SignTool
 
             if (!DryRun)
             {
-                if (!File.Exists(TaskEnvironment.GetAbsolutePath(DotNetPath)))
+                if (string.IsNullOrEmpty(DotNetPath) || !File.Exists(TaskEnvironment.GetAbsolutePath(DotNetPath)))
                 {
                     Log.LogError($"DotNet was not found at this path: '{DotNetPath}'.");
                     return;
