@@ -10,10 +10,14 @@ using System.Text;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetPackageDescription : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GetPackageDescription : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         // avoid parsing the same document multiple times on a single node.
         private static Dictionary<string, Dictionary<string, string>> s_descriptionCache = new Dictionary<string, Dictionary<string, string>>();
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         [Required]
         public ITaskItem DescriptionFile
@@ -91,7 +95,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             {
                 Dictionary<string, string> descriptions = new Dictionary<string, string>();
 
-                var allMetadata = PackageMetadata.ReadFrom(descriptionPath);
+                var allMetadata = PackageMetadata.ReadFrom(TaskEnvironment.GetAbsolutePath(descriptionPath));
 
                 foreach (PackageMetadata metadata in allMetadata)
                 {

@@ -13,10 +13,14 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     /// This task will determine if a set of packages need to be stable based on another set.
     /// If not stable, it will append a pre-release suffix.  It will also standardize on 3-part versions.
     /// </summary>
-    public class ApplyPreReleaseSuffix : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class ApplyPreReleaseSuffix : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private Dictionary<string, Version> _stablePackageVersions;
         private PackageIndex _index;
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Original dependencies without pre-release specifier.
         /// </summary>
@@ -63,7 +67,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             if (PackageIndexes != null && PackageIndexes.Length > 0)
             {
-                _index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+                _index = PackageIndex.Load(PackageIndexes.Select(pi => TaskEnvironment.GetAbsolutePath(pi.GetMetadata("FullPath"))));
             }
             else
             {

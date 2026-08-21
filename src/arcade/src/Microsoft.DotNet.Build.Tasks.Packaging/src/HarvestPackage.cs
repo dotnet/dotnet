@@ -13,8 +13,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class HarvestPackage : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class HarvestPackage : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Package ID to harvest
         /// </summary>
@@ -249,7 +253,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                     string version = "unknown";
                     if (refAssm != null)
                     {
-                        version = VersionUtility.GetAssemblyVersion(Path.Combine(packagePath, refAssm))?.ToString() ?? version;
+                        version = VersionUtility.GetAssemblyVersion(TaskEnvironment.GetAbsolutePath(Path.Combine(packagePath, refAssm)))?.ToString() ?? version;
                     }
 
                     supportedFramework.SetMetadata("Version", version);
@@ -300,7 +304,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             foreach (var extension in s_includedExtensions)
             {
-                foreach (var packageFile in Directory.EnumerateFiles(pathToPackage, $"*{extension}", SearchOption.AllDirectories))
+                foreach (var packageFile in Directory.EnumerateFiles(TaskEnvironment.GetAbsolutePath(pathToPackage), $"*{extension}", SearchOption.AllDirectories))
                 {
                     string harvestPackagePath = packageFile.Substring(pathToPackage.Length + 1).Replace('\\', '/');
 
@@ -341,7 +345,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                         }
                     }
 
-                    var assemblyVersion = extension == s_dll ? VersionUtility.GetAssemblyVersion(packageFile) : null;
+                    var assemblyVersion = extension == s_dll ? VersionUtility.GetAssemblyVersion(TaskEnvironment.GetAbsolutePath(packageFile)) : null;
                     PackageItem liveFile = null;
 
                     foreach (var livePackagePath in targetPaths)
@@ -471,7 +475,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             {
                 var candidateFolder = Path.Combine(packageFolder, packageId, packageVersion);
 
-                if (Directory.Exists(candidateFolder))
+                if (Directory.Exists(TaskEnvironment.GetAbsolutePath(candidateFolder)))
                 {
                     return candidateFolder;
                 }
@@ -479,7 +483,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 // handle lower-case restore path
                 candidateFolder = Path.Combine(packageFolder, packageId.ToLowerInvariant(), packageVersion.ToLowerInvariant());
 
-                if (Directory.Exists(candidateFolder))
+                if (Directory.Exists(TaskEnvironment.GetAbsolutePath(candidateFolder)))
                 {
                     return candidateFolder;
                 }
@@ -612,7 +616,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         private IEnumerable<string> GetPackageItems(string packageFolder)
         {
-            return Directory.EnumerateFiles(packageFolder, "*", SearchOption.AllDirectories)
+            return Directory.EnumerateFiles(TaskEnvironment.GetAbsolutePath(packageFolder), "*", SearchOption.AllDirectories)
                 .Select(f => f.Substring(packageFolder.Length + 1).Replace('\\', '/'))
                 .Where(f => !ShouldSuppress(f));
         }

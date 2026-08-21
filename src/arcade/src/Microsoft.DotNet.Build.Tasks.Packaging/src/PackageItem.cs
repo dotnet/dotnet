@@ -15,7 +15,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         public PackageItem(ITaskItem item)
         {
             OriginalItem = item;
-            SourcePath = item.GetMetadata("FullPath");
+            SourcePath = new AbsolutePath(item.GetMetadata("FullPath"));
             SourceProject = GetMetadata("MSBuildSourceProjectFile");
             string value = GetMetadata("TargetFramework");
             if (!String.IsNullOrWhiteSpace(value))
@@ -40,7 +40,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             // SourcePath specifies recursive wildcard - do not allow, recursive directory may impact asset selection
             //   we don't want to attempt to expand the wildcard since the build may not yet be complete.
 
-            if (SourcePath.Contains("**"))
+            if (SourcePath.Value.Contains("**"))
             {
                 throw new ArgumentException($"Recursive wildcards \"**\" are not permitted in source paths for packages: {SourcePath}.  Recursive directory may impact asset selection and we don't want to attempt to expand the wildcard since the build may not yet be complete.");
             }
@@ -87,7 +87,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         public bool IsPlaceholder { get; }
         public bool IsRef { get; }
         public ITaskItem OriginalItem { get; }
-        public string SourcePath { get; }
+        public AbsolutePath SourcePath { get; }
         public string SourceProject { get; }
         public string AdditionalProperties { get; }
         public string UndefineProperties { get; }

@@ -12,13 +12,12 @@ using System.Linq;
 using System.Collections;
 using Newtonsoft.Json.Linq;
 using System.Xml.Linq;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
     public class PackageIndex
     {
-        static JsonSerializer s_serializer = CreateSerializer();
-
         static ConcurrentDictionary<string, PackageIndex> s_indexCache = new ConcurrentDictionary<string, PackageIndex>();
 
         public SortedDictionary<string, PackageInfo> Packages { get; set; } = new SortedDictionary<string, PackageInfo>();
@@ -32,7 +31,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         [JsonIgnore]
         public HashSet<string> IndexSources { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        public static PackageIndex Load(IEnumerable<string> packageIndexFiles)
+        public static PackageIndex Load(IEnumerable<AbsolutePath> packageIndexFiles)
         {
             string indexKey = String.Join("|",
                 packageIndexFiles.Select(packageIndexFile => new FileInfo(packageIndexFile))
@@ -62,18 +61,18 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             return result;
         }
 
-        public static PackageIndex Load(string packageIndexFile)
+        public static PackageIndex Load(AbsolutePath packageIndexFile)
         {
             using (var file = File.OpenText(packageIndexFile))
             using (var jsonTextReader = new JsonTextReader(file))
             {
-                var result = s_serializer.Deserialize<PackageIndex>(jsonTextReader);
-                result.IndexSources.Add(Path.GetFullPath(packageIndexFile));
+                var result = CreateSerializer().Deserialize<PackageIndex>(jsonTextReader);
+                result.IndexSources.Add(packageIndexFile.Value);
                 return result;
             }
         }
 
-        public void Save(string path)
+        public void Save(AbsolutePath path)
         {
             string directory = Path.GetDirectoryName(path);
             if (!String.IsNullOrEmpty(directory) && !Directory.Exists(directory))
@@ -83,10 +82,14 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             using (var file = File.CreateText(path))
             {
-                s_serializer.Serialize(file, this);
+                CreateSerializer().Serialize(file, this);
             }
         }
 
+        /// <remarks>
+        /// A new serializer is created per call: Newtonsoft's <see cref="JsonSerializer"/> is not
+        /// thread-safe, and multiple tasks may load or save indexes concurrently in multithreaded builds.
+        /// </remarks>
         private static JsonSerializer CreateSerializer()
         {
             var serializer = new JsonSerializer();
@@ -106,7 +109,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         /// Merges an index into the currently loaded index if not already merged.
         /// </summary>
         /// <param name="otherIndexFile"></param>
-        public void Merge(string otherIndexFile)
+        public void Merge(AbsolutePath otherIndexFile)
         {
             if (!IndexSources.Contains(otherIndexFile))
             {
@@ -118,7 +121,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         /// Merges a list of indexes into the currently loaded index if not already merged.
         /// </summary>
         /// <param name="otherIndexFiles"></param>
-        public void Merge(IEnumerable<string> otherIndexFiles)
+        public void Merge(IEnumerable<AbsolutePath> otherIndexFiles)
         {
             foreach(var otherIndexFile in otherIndexFiles)
             {
@@ -187,31 +190,31 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             }
         }
 
-        public void MergeInboxFromLayout(NuGetFramework framework, string layoutDirectory, bool addPackages = true)
+        public void MergeInboxFromLayout(NuGetFramework framework, AbsolutePath layoutDirectory, bool addPackages = true)
         {
             foreach(var file in Directory.EnumerateFiles(layoutDirectory, "*.dll", SearchOption.AllDirectories))
             {
                 var assemblyName = Path.GetFileNameWithoutExtension(file);
-                var assemblyVersion = VersionUtility.GetAssemblyVersion(file);
+                var assemblyVersion = VersionUtility.GetAssemblyVersion(new AbsolutePath(file));
 
                 TryAddInbox(assemblyName, framework, assemblyVersion, addPackages);
             }
         }
 
-        public void MergeFrameworkLists(string frameworkListDirectory, bool addPackages = true)
+        public void MergeFrameworkLists(AbsolutePath frameworkListDirectory, bool addPackages = true)
         {
             foreach (string frameworkDir in Directory.EnumerateDirectories(frameworkListDirectory))
             {
                 string targetFrameworkMoniker = Path.GetFileName(frameworkDir);
                 NuGetFramework framework = NuGetFramework.Parse(targetFrameworkMoniker);
-                foreach (string frameworkListPath in Directory.EnumerateFiles(frameworkDir, "*.xml"))
+                foreach (string frameworkListPath in Directory.EnumerateFiles(new AbsolutePath(frameworkDir), "*.xml"))
                 {
-                    MergeFrameworkList(framework, frameworkListPath, addPackages);
+                    MergeFrameworkList(framework, new AbsolutePath(frameworkListPath), addPackages);
                 }
             }
         }
 
-        public void MergeFrameworkList(NuGetFramework framework, string frameworkListPath, bool addPackages = true)
+        public void MergeFrameworkList(NuGetFramework framework, AbsolutePath frameworkListPath, bool addPackages = true)
         {
             XDocument frameworkList = XDocument.Load(frameworkListPath);
             foreach (var file in frameworkList.Element("FileList").Elements("File"))

@@ -16,11 +16,15 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     /// reference differ so in order to ensure the correct dependencies are applied we have to promote dependencies
     /// from a less specific ref to the more specific lib, and from a less specific lib to a more specific ref.
     /// </summary>
-    public class PromoteDependencies : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class PromoteDependencies : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private const string TargetFrameworkMetadataName = "TargetFramework";
 
         private PackageIndex index;
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         [Required]
         public ITaskItem[] Dependencies { get; set; }
@@ -34,7 +38,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         public override bool Execute()
         {
             index = PackageIndexes != null && PackageIndexes.Length > 0 ?
-                PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath"))) :
+                PackageIndex.Load(PackageIndexes.Select(pi => TaskEnvironment.GetAbsolutePath(pi.GetMetadata("FullPath")))) :
                 null;
 
             List<ITaskItem> promotedDependencies = new List<ITaskItem>();

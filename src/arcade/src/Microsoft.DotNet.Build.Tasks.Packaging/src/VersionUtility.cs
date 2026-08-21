@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
@@ -21,7 +22,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         }
 
 
-        public static Version GetAssemblyVersion(string assemblyPath)
+        public static Version GetAssemblyVersion(AbsolutePath assemblyPath)
         {
             using (var fileStream = new FileStream(assemblyPath, FileMode.Open, FileAccess.Read, FileShare.Delete | FileShare.Read))
             {

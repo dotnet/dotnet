@@ -11,8 +11,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetLayoutFiles : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GetLayoutFiles : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Package report files
         /// </summary>
@@ -55,7 +59,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             foreach(var packageReportFile in PackageReports)
             {
-                var packageReport = PackageReport.Load(packageReportFile);
+                var packageReport = PackageReport.Load(TaskEnvironment.GetAbsolutePath(packageReportFile));
 
                 foreach(var targetInfo in packageReport.Targets)
                 {
@@ -136,7 +140,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             {
                 var symbolSource = Path.ChangeExtension(source, symbolExtension);
 
-                if (File.Exists(symbolSource))
+                if (File.Exists(TaskEnvironment.GetAbsolutePath(symbolSource)))
                 {
                     var symbolItem = new TaskItem(symbolSource);
                     var symbolDestination = Path.Combine(DestinationDirectory, subfolder, Path.GetFileName(symbolSource));

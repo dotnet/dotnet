@@ -20,10 +20,10 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
     public static class NuGetUtility
     {
-        internal static IEnumerable<Version> GetAllVersionsForPackageId(string packageId, bool includePrerelease, bool includeUnlisted, TaskLoggingHelper log, CancellationToken cancellationToken)
+        internal static IEnumerable<Version> GetAllVersionsForPackageId(string packageId, bool includePrerelease, bool includeUnlisted, TaskLoggingHelper log, Microsoft.Build.Framework.AbsolutePath rootDirectory, CancellationToken cancellationToken)
         {
             List<Version> result = new List<Version>();
-            ISettings settings = Settings.LoadDefaultSettings(Directory.GetCurrentDirectory());
+            ISettings settings = Settings.LoadDefaultSettings(rootDirectory);
             IEnumerable<PackageSource> enabledSources = GetEnabledSources(settings);
             var logger = new NuGetLogger(log);
             Parallel.ForEach(enabledSources, (packageSource) =>
@@ -89,7 +89,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                            .FirstOrDefault();
         }
 
-        public static void WriteRuntimeGraph(string filePath, RuntimeGraph runtimeGraph)
+        public static void WriteRuntimeGraph(Microsoft.Build.Framework.AbsolutePath filePath, RuntimeGraph runtimeGraph)
         {
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             using (var textWriter = new StreamWriter(fileStream))

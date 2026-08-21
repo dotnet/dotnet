@@ -8,8 +8,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class FilterUnknownPackages : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class FilterUnknownPackages : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Original dependencies
         /// </summary>
@@ -38,7 +42,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             if (PackageIndexes != null && PackageIndexes.Length > 0)
             {
-                var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+                var index = PackageIndex.Load(PackageIndexes.Select(pi => TaskEnvironment.GetAbsolutePath(pi.GetMetadata("FullPath"))));
                 isKnownPackage = packageId => index.Packages.ContainsKey(packageId);
             }
             else

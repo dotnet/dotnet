@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Xunit;
 using AwesomeAssertions;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 {
@@ -13,7 +14,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
         [Fact]
         public void IndexCacheConsidersModifiedTime()
         {
-            string packageIndexFile = $"{nameof(IndexCacheConsidersModifiedTime)}.json";
+            AbsolutePath packageIndexFile = new AbsolutePath(Path.GetFullPath($"{nameof(IndexCacheConsidersModifiedTime)}.json"));
             
             PackageIndex packageIndex = new PackageIndex();
             packageIndex.Packages.Add("MyPackage", new PackageInfo());
@@ -24,7 +25,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
             packageIndex.Save(packageIndexFile);
 
             DateTime originalModifiedTime = File.GetLastWriteTimeUtc(packageIndexFile);
-            string[] packageIndexFiles = new[] { packageIndexFile };
+            AbsolutePath[] packageIndexFiles = new[] { packageIndexFile };
 
             packageIndex = PackageIndex.Load(packageIndexFiles);
             packageIndex.Packages.Should().HaveCount(1);

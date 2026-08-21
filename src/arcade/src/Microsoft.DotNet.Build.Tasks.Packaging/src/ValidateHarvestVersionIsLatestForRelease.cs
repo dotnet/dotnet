@@ -15,8 +15,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     /// MSBuild Task that validates if a package is harvesting
     /// the latest package version for a specific package release.
     /// </summary>
-    public class ValidateHarvestVersionIsLatestForRelease : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class ValidateHarvestVersionIsLatestForRelease : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Item containing all package reports where the item spec is the path to the report.
         /// </summary>
@@ -32,7 +36,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         private void ValidateHarvestVersionForReport(string packageReportPath)
         {
-            PackageReport packageReport = GetPackageReportFromPath(packageReportPath);
+            PackageReport packageReport = GetPackageReportFromPath(TaskEnvironment.GetAbsolutePath(packageReportPath));
             bool isHarvestingAssetsFromPackage = TryGetHarvestVersionFromReport(packageReport, out string harvestVersion, out int harvestMajor, out int harvestMinor);
 
             if (isHarvestingAssetsFromPackage)
@@ -60,7 +64,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         }
 
         // Making this method protected virtual for tests.
-        protected virtual PackageReport GetPackageReportFromPath(string path)
+        protected virtual PackageReport GetPackageReportFromPath(AbsolutePath path)
         {
             return PackageReport.Load(path);
         }
@@ -134,7 +138,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         // Making this method protected virtual for tests.
         protected virtual string GetLatestStableVersionForPackageRelease(string packageId, int releaseMajorVersion, int releaseMinorVersion)
         {
-            IEnumerable<Version> packageVersions = NuGetUtility.GetAllVersionsForPackageId(packageId, includePrerelease: false, includeUnlisted: false, Log, CancellationToken.None); 
+            IEnumerable<Version> packageVersions = NuGetUtility.GetAllVersionsForPackageId(packageId, includePrerelease: false, includeUnlisted: false, Log, TaskEnvironment.ProjectDirectory, CancellationToken.None); 
             Version latestPatchVersion = packageVersions.GetLatestPatchStableVersionForRelease(releaseMajorVersion, releaseMinorVersion);
             return (latestPatchVersion == null) ? string.Empty : $"{latestPatchVersion.Major}.{latestPatchVersion.Minor}.{latestPatchVersion.Build}";
         }

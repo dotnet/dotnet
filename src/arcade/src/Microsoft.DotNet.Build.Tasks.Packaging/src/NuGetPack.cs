@@ -14,7 +14,8 @@ using NuGet.Common;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class NuGetPack : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class NuGetPack : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         /// <summary>
         /// Target file paths to exclude when building the lib package for symbol server scenario
@@ -36,6 +37,9 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         private static readonly string _defaultPackedPackagePrefix = "transport";
         private static readonly string _symbolsPackageExtension = ".symbols.nupkg";
         private static readonly string _packageExtension = ".nupkg";
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         [Required]
         public ITaskItem[] Nuspecs
@@ -159,9 +163,9 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 return false;
             }
 
-            if (!Directory.Exists(OutputDirectory))
+            if (!Directory.Exists(TaskEnvironment.GetAbsolutePath(OutputDirectory)))
             {
-                Directory.CreateDirectory(OutputDirectory);
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(OutputDirectory));
             }
 
             Func<string, string> nuspecPropertyProvider = GetNuspecPropertyProviderFunction(NuspecProperties);
@@ -206,7 +210,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         private Manifest GetManifest(string nuspecPath, Func<string, string> nuspecPropertyProvider, bool isPackedPackage)
         {
-            using (var nuspecFile = File.Open(nuspecPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+            using (var nuspecFile = File.Open(TaskEnvironment.GetAbsolutePath(nuspecPath), FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
             {
                 string baseDirectoryPath = (string.IsNullOrEmpty(BaseDirectory)) ? Path.GetDirectoryName(nuspecPath) : BaseDirectory;
                 Manifest manifest = Manifest.ReadFrom(nuspecFile, nuspecPropertyProvider, false);
@@ -308,12 +312,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 }
 
                 var directory = Path.GetDirectoryName(nupkgPath);
-                if (!Directory.Exists(directory))
+                if (!Directory.Exists(TaskEnvironment.GetAbsolutePath(directory)))
                 {
-                    Directory.CreateDirectory(directory);
+                    Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(directory));
                 }
 
-                using (var fileStream = File.Create(nupkgPath))
+                using (var fileStream = File.Create(TaskEnvironment.GetAbsolutePath(nupkgPath)))
                 {
                     builder.Save(fileStream);
                 }
@@ -391,7 +395,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 if(Path.GetFileName(fileName) == "runtime.json" && file.Target == "")
                 {
                     string packedPackageSourcePath = Path.Combine(Path.GetDirectoryName(fileName), string.Join(".", _packageNamePrefix, Path.GetFileName(fileName)));
-                    file.Source = File.Exists(packedPackageSourcePath) ? packedPackageSourcePath : fileName;
+                    file.Source = File.Exists(TaskEnvironment.GetAbsolutePath(packedPackageSourcePath)) ? packedPackageSourcePath : fileName;
                     file.Target = "runtime.json";
                 }
                 manifestFiles.Add(file);

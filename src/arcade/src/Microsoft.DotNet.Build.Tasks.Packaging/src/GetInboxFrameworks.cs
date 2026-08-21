@@ -9,8 +9,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetInboxFrameworks : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GetInboxFrameworks : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public ITaskItem[] PackageIndexes
         {
@@ -54,7 +58,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             Log.LogMessage(MessageImportance.Low, "Determining inbox frameworks for {0}, {1}", AssemblyName, AssemblyVersion);
             
-            var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+            var index = PackageIndex.Load(PackageIndexes.Select(pi => TaskEnvironment.GetAbsolutePath(pi.GetMetadata("FullPath"))));
 
             InboxFrameworks = index.GetInboxFrameworks(AssemblyName, AssemblyVersion).Select(fx => fx.GetShortFolderName()).ToArray();
 

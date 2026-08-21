@@ -152,7 +152,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
             public Func<string, PackageReport> PackageReportFunc { get; set; }
             public Func<string, int, int, string> GetLatestStableVersionFunc { get; set; }
 
-            protected override PackageReport GetPackageReportFromPath(string path) => PackageReportFunc(path);
+            protected override PackageReport GetPackageReportFromPath(AbsolutePath path) => PackageReportFunc(path);
 
             protected override string GetLatestStableVersionForPackageRelease(string packageId, int majorVersion, int minorVersion) => GetLatestStableVersionFunc(packageId, majorVersion, minorVersion);
         }

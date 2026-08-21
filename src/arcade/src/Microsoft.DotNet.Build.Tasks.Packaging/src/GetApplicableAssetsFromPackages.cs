@@ -13,11 +13,15 @@ using System.Text;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetApplicableAssetsFromPackages : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GetApplicableAssetsFromPackages : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private Dictionary<string, List<PackageItem>> _packageToPackageItems;
         private Dictionary<string, PackageItem> _targetPathToPackageItem;
         private AggregateNuGetAssetResolver _resolver;
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         /// <summary>
         /// All items that make up packages to resolve from.  
@@ -204,7 +208,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         {
             yield return PackageItemAsResolvedAsset(packageItem);
 
-            string pdbPath = Path.ChangeExtension(packageItem.SourcePath, ".pdb");
+            AbsolutePath pdbPath = new AbsolutePath(Path.ChangeExtension(packageItem.SourcePath, ".pdb"));
             if (File.Exists(pdbPath))
             {
                 var pdbItem = new TaskItem(Path.ChangeExtension(packageItem.OriginalItem.ItemSpec, ".pdb"));

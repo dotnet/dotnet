@@ -7,6 +7,7 @@ using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 using AwesomeAssertions;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 {
@@ -15,7 +16,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
         [Fact]
         public void RuntimeGraphRoundTrips()
         {
-            string file = $"{nameof(RuntimeGraphRoundTrips)}.json";
+            AbsolutePath file = new AbsolutePath(Path.GetFullPath($"{nameof(RuntimeGraphRoundTrips)}.json"));
 
             if (File.Exists(file))
             {

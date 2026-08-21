@@ -13,8 +13,12 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetLastStablePackage : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GetLastStablePackage : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// List of packages to look up.
         /// The closest StablePackage version that is less than the version of each of these packages will be returned in LastStablePackages.
@@ -127,7 +131,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         public void GetLastStablePackagesFromIndex()
         {
-            var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+            var index = PackageIndex.Load(PackageIndexes.Select(pi => TaskEnvironment.GetAbsolutePath(pi.GetMetadata("FullPath"))));
 
             List<ITaskItem> lastStablePackages = new List<ITaskItem>();
 

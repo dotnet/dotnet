@@ -14,8 +14,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     /// Dependencies with a version will be raised to the lowest baseline version that satisfies
     /// the requested version.
     /// </summary>
-    public class ApplyBaseLine : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class ApplyBaseLine : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Original dependencies
         /// </summary>
@@ -102,7 +106,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         public void GetBaseLinedDependenciesFromIndex()
         {
-            var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+            var index = PackageIndex.Load(PackageIndexes.Select(pi => TaskEnvironment.GetAbsolutePath(pi.GetMetadata("FullPath"))));
 
             List<ITaskItem> baseLinedDependencies = new List<ITaskItem>();
 

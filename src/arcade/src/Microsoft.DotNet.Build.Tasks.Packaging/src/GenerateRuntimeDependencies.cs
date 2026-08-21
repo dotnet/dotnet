@@ -12,9 +12,13 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GenerateRuntimeDependencies : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GenerateRuntimeDependencies : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private const string c_emptyDependency = "none";
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         [Required]
         public ITaskItem[] Dependencies
@@ -141,7 +145,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 Directory.CreateDirectory(destRuntimeFileDir);
             }
 
-            NuGetUtility.WriteRuntimeGraph(destRuntimeFilePath, runtimeGraph);
+            NuGetUtility.WriteRuntimeGraph(TaskEnvironment.GetAbsolutePath(destRuntimeFilePath), runtimeGraph);
 
             return true;
         }

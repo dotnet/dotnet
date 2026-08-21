@@ -12,8 +12,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetApplicableAssetsFromPackageReports : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GetApplicableAssetsFromPackageReports : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string[] PackageReports { get; set; }
 
@@ -70,7 +74,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             foreach (var reportPath in PackageReports)
             {
-                var report = PackageReport.Load(reportPath);
+                var report = PackageReport.Load(TaskEnvironment.GetAbsolutePath(reportPath));
 
                 Target target = null;
                 if (report.Targets.TryGetValue(targetString, out target))

@@ -12,8 +12,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     /// <summary>
     /// Replaces package dependencies with meta-package dependencies where appropriate.
     /// </summary>
-    public class ApplyMetaPackages : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class ApplyMetaPackages : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Need the package id to ensure we don't add a meta-package reference for a package that depends on itself.
         /// </summary>
@@ -81,7 +85,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             }
 
             PackageIndex index = PackageIndexes != null && PackageIndexes.Length > 0 ?
-                PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath"))) :
+                PackageIndex.Load(PackageIndexes.Select(pi => TaskEnvironment.GetAbsolutePath(pi.GetMetadata("FullPath")))) :
                 null;
 
             // We cannot add a dependency to a meta-package from a package that itself is part of the meta-package otherwise we create a cycle

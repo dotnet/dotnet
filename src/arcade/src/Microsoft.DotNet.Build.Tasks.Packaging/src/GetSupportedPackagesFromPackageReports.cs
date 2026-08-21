@@ -11,8 +11,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetSupportedPackagesFromPackageReports : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GetSupportedPackagesFromPackageReports : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string[] PackageReports { get; set; }
 
@@ -24,7 +28,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             var supportedPackages = new List<ITaskItem>();
             foreach (var packageReport in PackageReports.NullAsEmpty())
             {
-                var report = PackageReport.Load(packageReport);
+                var report = PackageReport.Load(TaskEnvironment.GetAbsolutePath(packageReport));
                 var packageId = report.Id;
                 var packageVersion = report.Version;
 

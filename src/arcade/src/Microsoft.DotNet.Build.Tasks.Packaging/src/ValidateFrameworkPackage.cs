@@ -16,6 +16,7 @@ using PropertyNames = NuGet.Client.ManagedCodeConventions.PropertyNames;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
+    [MSBuildMultiThreadableTask]
     public class ValidateFrameworkPackage : ValidationTask
     {
         [Required]

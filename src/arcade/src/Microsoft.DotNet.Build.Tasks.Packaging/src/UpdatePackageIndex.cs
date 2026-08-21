@@ -16,9 +16,13 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class UpdatePackageIndex : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class UpdatePackageIndex : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private HashSet<string> _packageIdsToInclude;
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         /// <summary>
         /// File to update or create
@@ -86,7 +90,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         public override bool Execute()
         {
-            string indexFilePath = PackageIndexFile.GetMetadata("FullPath");
+            AbsolutePath indexFilePath = TaskEnvironment.GetAbsolutePath(PackageIndexFile.GetMetadata("FullPath"));
 
             PackageIndex index = File.Exists(indexFilePath) ?
                 index = PackageIndex.Load(indexFilePath) :
@@ -103,7 +107,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 UpdateFromPackage(index, package);
             }
 
-            foreach(var packageFolder in PackageFolders.NullAsEmpty().Select(f => f.GetMetadata("FullPath")))
+            foreach(var packageFolder in PackageFolders.NullAsEmpty().Select(f => new AbsolutePath(f.GetMetadata("FullPath"))))
             {
                 var nupkgs = Directory.EnumerateFiles(packageFolder, "*.nupkg", SearchOption.TopDirectoryOnly);
 
@@ -118,7 +122,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 else
                 {
                     var nuspecFolders = Directory.EnumerateFiles(packageFolder, "*.nuspec", SearchOption.AllDirectories)
-                        .Select(nuspec => Path.GetDirectoryName(nuspec));
+                        .Select(nuspec => new AbsolutePath(Path.GetDirectoryName(nuspec)));
 
                     foreach (var nuspecFolder in nuspecFolders)
                     {
@@ -161,14 +165,14 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             if (InboxFrameworkListFolder != null)
             {
-                index.MergeFrameworkLists(InboxFrameworkListFolder.GetMetadata("FullPath"));
+                index.MergeFrameworkLists(new AbsolutePath(InboxFrameworkListFolder.GetMetadata("FullPath")));
             }
 
             if (InboxFrameworkLayoutFolders != null)
             {
                 foreach(var inboxFrameworkLayoutFolder in InboxFrameworkLayoutFolders)
                 {
-                    var layoutDirectory = inboxFrameworkLayoutFolder.GetMetadata("FullPath");
+                    var layoutDirectory = new AbsolutePath(inboxFrameworkLayoutFolder.GetMetadata("FullPath"));
                     var targetFramework = NuGetFramework.Parse(inboxFrameworkLayoutFolder.GetMetadata("TargetFramework"));
 
                     index.MergeInboxFromLayout(targetFramework, layoutDirectory);
@@ -189,7 +193,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 // Given we will query the web for every package, we should run in parallel to try to optimize the performance.
                 Parallel.ForEach(index.Packages, (package) =>
                 {
-                    IEnumerable<Version> stablePackageVersions = NuGetUtility.GetAllVersionsForPackageId(package.Key, includePrerelease: false, includeUnlisted: false, Log, CancellationToken.None);
+                    IEnumerable<Version> stablePackageVersions = NuGetUtility.GetAllVersionsForPackageId(package.Key, includePrerelease: false, includeUnlisted: false, Log, TaskEnvironment.ProjectDirectory, CancellationToken.None);
                     package.Value.StableVersions.Clear();
                     package.Value.StableVersions.AddRange(stablePackageVersions);
                 });
@@ -205,7 +209,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             return !Log.HasLoggedErrors;
         }
 
-        private void UpdateFromFolderLayout(PackageIndex index, string path, bool filter = false)
+        private void UpdateFromFolderLayout(PackageIndex index, AbsolutePath path, bool filter = false)
         {
             var version = NuGetVersion.Parse(Path.GetFileName(path));
             var id = Path.GetFileName(Path.GetDirectoryName(path));
@@ -217,7 +221,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             var dlls = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
 
-            var assemblyVersions = dlls.Select(f => VersionUtility.GetAssemblyVersion(f));
+            var assemblyVersions = dlls.Select(f => VersionUtility.GetAssemblyVersion(new AbsolutePath(f)));
             var dllNames = dlls.Select(f => Path.GetFileNameWithoutExtension(f)).Distinct();
 
             UpdateFromValues(index, id, version, assemblyVersions, dllNames);
@@ -268,7 +272,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             {
                 try
                 {
-                    IEnumerable<Version> allStableVersions = NuGetUtility.GetAllVersionsForPackageId(id, includePrerelease: false, includeUnlisted: false, Log, CancellationToken.None);
+                    IEnumerable<Version> allStableVersions = NuGetUtility.GetAllVersionsForPackageId(id, includePrerelease: false, includeUnlisted: false, Log, TaskEnvironment.ProjectDirectory, CancellationToken.None);
                     info.StableVersions.AddRange(allStableVersions);
                 }
                 catch(NuGetProtocolException)

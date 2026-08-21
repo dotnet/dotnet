@@ -10,8 +10,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class SplitReferences : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class SplitReferences : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public ITaskItem[] References
         {
@@ -51,7 +55,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 return true;
 
             PackageIndex index = PackageIndexes != null && PackageIndexes.Length > 0 ?
-                PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath"))) :
+                PackageIndex.Load(PackageIndexes.Select(pi => TaskEnvironment.GetAbsolutePath(pi.GetMetadata("FullPath")))) :
                 null;
 
             Dictionary<string, ITaskItem> packageReferences = new Dictionary<string, ITaskItem>();

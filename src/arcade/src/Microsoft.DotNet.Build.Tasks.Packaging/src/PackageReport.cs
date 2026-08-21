@@ -29,7 +29,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         public Dictionary<string,Target> Targets { get; set; }
         public PackageAsset[] UnusedAssets { get; set; }
 
-        public void Save(string path)
+        public void Save(AbsolutePath path)
         {
             string directory = Path.GetDirectoryName(path);
             if (!Directory.Exists(directory))
@@ -50,7 +50,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             }
         }
 
-        public static PackageReport Load(string path)
+        public static PackageReport Load(AbsolutePath path)
         {
             using (var file = File.OpenText(path))
             using (var jsonTextReader = new JsonTextReader(file))

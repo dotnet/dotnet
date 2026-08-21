@@ -16,8 +16,11 @@ using PropertyNames = NuGet.Client.ManagedCodeConventions.PropertyNames;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public abstract class ValidationTask : Microsoft.Build.Utilities.Task
+    public abstract class ValidationTask : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Suppressions
         ///     Identity: suppression name
@@ -142,12 +145,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         private void LoadReport()
         {
-            _report = PackageReport.Load(ReportFile);
+            _report = PackageReport.Load(TaskEnvironment.GetAbsolutePath(ReportFile));
         }
         private void LoadIndex()
         {
             _index = PackageIndexes != null && PackageIndexes.Length > 0 ?
-                PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath"))) :
+                PackageIndex.Load(PackageIndexes.Select(pi => TaskEnvironment.GetAbsolutePath(pi.GetMetadata("FullPath")))) :
                 null;
         }
     }

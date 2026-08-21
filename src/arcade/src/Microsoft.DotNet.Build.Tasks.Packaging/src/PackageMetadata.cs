@@ -4,6 +4,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
@@ -13,7 +14,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         public string Description = null;
         public string[] CommonTypes = null;
 
-        public static IEnumerable<PackageMetadata> ReadFrom(string path)
+        public static IEnumerable<PackageMetadata> ReadFrom(AbsolutePath path)
         {
             string packageMetadata = File.ReadAllText(path);
 

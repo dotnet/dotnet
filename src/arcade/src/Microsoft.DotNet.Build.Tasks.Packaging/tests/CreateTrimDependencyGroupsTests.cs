@@ -9,6 +9,7 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 using AwesomeAssertions;
+using System.IO;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 {
@@ -26,11 +27,11 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
             _engine = new TestBuildEngine(_log);
 
 
-            var packageIndexPath = $"packageIndex.{Guid.NewGuid()}.json";
+            var packageIndexPath = new AbsolutePath(Path.GetFullPath($"packageIndex.{Guid.NewGuid()}.json"));
             PackageIndex index = new PackageIndex();
-            index.MergeFrameworkLists(FrameworkListsPath);
+            index.MergeFrameworkLists(new AbsolutePath(Path.GetFullPath(FrameworkListsPath)));
             index.Save(packageIndexPath);
-            packageIndexes = new[] { new TaskItem(packageIndexPath) };
+            packageIndexes = new[] { new TaskItem(packageIndexPath.Value) };
         }
 
         [Fact]
