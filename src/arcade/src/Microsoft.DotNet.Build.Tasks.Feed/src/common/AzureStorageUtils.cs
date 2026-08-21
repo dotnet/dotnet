@@ -136,7 +136,7 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
             }
         }
 
-        public async Task<bool> IsFileIdenticalToBlobAsync(string localFileFullPath, string blobPath) =>
+        public async Task<bool> IsFileIdenticalToBlobAsync(Microsoft.Build.Framework.AbsolutePath localFileFullPath, string blobPath) =>
             await GetBlob(blobPath).IsFileIdenticalToBlobAsync(localFileFullPath);
 
         public async Task<string> CreateContainerAsync(PublicAccessType publicAccess)

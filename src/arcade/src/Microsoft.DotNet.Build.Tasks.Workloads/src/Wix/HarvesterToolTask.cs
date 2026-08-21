@@ -10,6 +10,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
     /// <summary>
     /// A tool task to invoke the WiX harvesting tool (heat.exe).
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class HarvesterToolTask : WixToolTaskBase
     {
         private static readonly Dictionary<HeatSuppressions, string> s_SuppressionArguments = new()

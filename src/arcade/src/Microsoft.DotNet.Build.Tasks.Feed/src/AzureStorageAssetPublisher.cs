@@ -35,7 +35,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 {
                     if (options.PassIfExistingItemIdentical)
                     {
-                        if (!await blobClient.IsFileIdenticalToBlobAsync(file))
+                        if (!await blobClient.IsFileIdenticalToBlobAsync(new Microsoft.Build.Framework.AbsolutePath(file)))
                         {
                             _log.LogError($"Asset '{file}' already exists with different contents at '{blobClient.Uri}'");
                         }

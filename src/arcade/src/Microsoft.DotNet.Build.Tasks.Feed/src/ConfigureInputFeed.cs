@@ -8,8 +8,12 @@ using System;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
-    public class ConfigureInputFeed : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class ConfigureInputFeed : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public ITaskItem[] EnableFeeds { get; set; }
 
@@ -25,7 +29,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         {
             if (string.IsNullOrWhiteSpace(RepoRoot))
             {
-                RepoRoot = Directory.GetCurrentDirectory();
+                RepoRoot = TaskEnvironment.ProjectDirectory;
             }
             string nugetConfigLocation = Path.Combine(RepoRoot, "NuGet.config");
 
@@ -39,7 +43,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
             nugetConfigBody += $"</packageSources>{Environment.NewLine}";
             nugetConfigBody += $"</configuration>{Environment.NewLine}";
-            using (StreamWriter swriter = new StreamWriter(File.Create(nugetConfigLocation)))
+            using (StreamWriter swriter = new StreamWriter(File.Create(TaskEnvironment.GetAbsolutePath(nugetConfigLocation))))
             {
                 swriter.Write(nugetConfigBody);
             }

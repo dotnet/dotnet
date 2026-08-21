@@ -14,6 +14,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// <summary>
     /// Run a command and retry if the exit code is not 0.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class ExecWithRetries : Microsoft.Build.Utilities.Task, ICancelableTask
     {
         [Required]

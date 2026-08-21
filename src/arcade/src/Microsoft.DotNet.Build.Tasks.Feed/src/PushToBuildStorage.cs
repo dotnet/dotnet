@@ -45,6 +45,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
     ///     - FutureArtifactName and FutureArtifactPublishBasePath are not set.
     ///     - Publishing version should be v3.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class PushToBuildStorage : MSBuildTaskBase
     {
         [Required]

@@ -10,8 +10,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk
 {
-    public class GeneratePlatformManifestEntriesFromTemplate : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GeneratePlatformManifestEntriesFromTemplate : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public ITaskItem[] PlatformManifestEntryTemplates { get; set; }
 
@@ -38,8 +42,8 @@ namespace Microsoft.DotNet.SharedFramework.Sdk
                     entries.Add(new PlatformManifestEntry
                     {
                         Name = entryTemplate.ItemSpec,
-                        AssemblyVersion = FileUtilities.GetAssemblyName(existingFile.ItemSpec)?.Version.ToString() ?? string.Empty,
-                        FileVersion = FileUtilities.GetFileVersion(existingFile.ItemSpec)?.ToString() ?? string.Empty
+                        AssemblyVersion = FileUtilities.GetAssemblyName(TaskEnvironment.GetAbsolutePath(existingFile.ItemSpec))?.Version.ToString() ?? string.Empty,
+                        FileVersion = FileUtilities.GetFileVersion(TaskEnvironment.GetAbsolutePath(existingFile.ItemSpec))?.ToString() ?? string.Empty
                     });
                 }
                 else

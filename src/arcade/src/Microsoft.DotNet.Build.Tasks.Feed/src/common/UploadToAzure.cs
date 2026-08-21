@@ -13,10 +13,14 @@ using Microsoft.DotNet.Build.Tasks.Feed;
 
 namespace Microsoft.DotNet.Build.CloudTestTasks
 {
-    public class UploadToAzure : AzureConnectionStringBuildTask, ICancelableTask
+    [MSBuildMultiThreadableTask]
+    public class UploadToAzure : AzureConnectionStringBuildTask, ICancelableTask, IMultiThreadableTask
     {
         private static readonly CancellationTokenSource TokenSource = new CancellationTokenSource();
         private static readonly CancellationToken CancellationToken = TokenSource.Token;
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         /// <summary>
         /// The name of the container to access.  The specified name must be in the correct format, see the
@@ -94,7 +98,7 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
                             throw new Exception(string.Format("Metadata 'RelativeBlobPath' is missing for item '{0}'.", item.ItemSpec));
                         }
 
-                        if (!File.Exists(item.ItemSpec))
+                        if (!File.Exists(TaskEnvironment.GetAbsolutePath(item.ItemSpec)))
                         {
                             throw new Exception(string.Format("The file '{0}' does not exist.", item.ItemSpec));
                         }
@@ -105,7 +109,7 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
                         {
                             if (PassIfExistingItemIdentical)
                             {
-                                if (await blobReference.IsFileIdenticalToBlobAsync(item.ItemSpec))
+                                if (await blobReference.IsFileIdenticalToBlobAsync(TaskEnvironment.GetAbsolutePath(item.ItemSpec)))
                                 {
                                     return;
                                 }
@@ -116,7 +120,7 @@ namespace Microsoft.DotNet.Build.CloudTestTasks
 
                         CancellationTokenSource timeoutTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(UploadTimeoutInMinutes));
 
-                        using (Stream localFileStream = File.OpenRead(item.ItemSpec))
+                        using (Stream localFileStream = File.OpenRead(TaskEnvironment.GetAbsolutePath(item.ItemSpec)))
                         {
                             await blobReference.UploadAsync(localFileStream, timeoutTokenSource.Token);
                         }

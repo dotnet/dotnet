@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.Helix.Sdk
     /// Task that installs a .NET tool in a given folder.
     /// Handles parallel builds that install the same tool.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class InstallDotNetTool : MSBuildTaskBase
     {
         /// <summary>

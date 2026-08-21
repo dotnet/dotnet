@@ -9,8 +9,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.GenFacades
 {
-    public class GenPartialFacadeSource : RoslynBuildTask
+    [MSBuildMultiThreadableTask]
+    public class GenPartialFacadeSource : RoslynBuildTask, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public ITaskItem[] ReferencePaths { get; set; }
 
@@ -40,12 +44,12 @@ namespace Microsoft.DotNet.GenFacades
             try
             {
                 result = GenPartialFacadeSourceGenerator.Execute(
-                    ReferencePaths?.Select(item => item.ItemSpec).ToArray(),
-                    ReferenceAssembly,
-                    CompileFiles?.Select(item => item.ItemSpec).ToArray(),
+                    ReferencePaths?.Select(item => TaskEnvironment.GetAbsolutePath(item.ItemSpec)).ToArray(),
+                    TaskEnvironment.GetAbsolutePath(ReferenceAssembly),
+                    CompileFiles?.Select(item => TaskEnvironment.GetAbsolutePath(item.ItemSpec)).ToArray(),
                     DefineConstants,
                     LangVersion,
-                    OutputSourcePath,
+                    TaskEnvironment.GetAbsolutePath(OutputSourcePath),
                     Log,
                     IgnoreMissingTypes,
                     IgnoreMissingTypesList,

@@ -16,8 +16,12 @@ using Task = Microsoft.Build.Utilities.Task;
 
 namespace Microsoft.DotNet.SwaggerGenerator.MSBuild
 {
-    public class GenerateSwaggerCode : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GenerateSwaggerCode : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string SwaggerDocumentUri { get; set; }
 
@@ -76,7 +80,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.MSBuild
             List<CodeFile> code = codeFactory.GenerateCode(model, options);
 
             Log.LogMessage(MessageImportance.High, $"Generating {SwaggerDocumentUri} -> {OutputDirectory}");
-            var outputDirectory = new DirectoryInfo(OutputDirectory);
+            var outputDirectory = new DirectoryInfo(TaskEnvironment.GetAbsolutePath(OutputDirectory));
             outputDirectory.Create();
 
             var generatedFiles = new List<ITaskItem>();

@@ -10,7 +10,8 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Arcade.Sdk
 {
-    public class LocateDotNet : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class LocateDotNet : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private static readonly string s_cacheKey = "LocateDotNet-FCDFF825-F35B-4601-9CB5-74DCA498B589";
 
@@ -28,6 +29,9 @@ namespace Microsoft.DotNet.Arcade.Sdk
             }
         }
 
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string RepositoryRoot { get; set; }
 
@@ -44,8 +48,8 @@ namespace Microsoft.DotNet.Arcade.Sdk
         {
             var globalJsonPath = Path.Combine(RepositoryRoot, "global.json");
 
-            var lastWrite = File.GetLastWriteTimeUtc(globalJsonPath);
-            var paths = Environment.GetEnvironmentVariable("PATH");
+            var lastWrite = File.GetLastWriteTimeUtc(TaskEnvironment.GetAbsolutePath(globalJsonPath));
+            var paths = TaskEnvironment.GetEnvironmentVariable("PATH");
 
             var cachedResult = (CacheEntry)BuildEngine4.GetRegisteredTaskObject(s_cacheKey, RegisteredTaskObjectLifetime.Build);
             if (cachedResult != null && lastWrite == cachedResult.LastWrite && paths == cachedResult.Paths)
@@ -55,7 +59,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                 return;
             }
 
-            var globalJson = File.ReadAllText(globalJsonPath);
+            var globalJson = File.ReadAllText(TaskEnvironment.GetAbsolutePath(globalJsonPath));
 
             // avoid Newtonsoft.Json dependency
             var match = Regex.Match(globalJson, @"""dotnet""\s*:\s*""([^""]+)""");
@@ -68,15 +72,15 @@ namespace Microsoft.DotNet.Arcade.Sdk
             var sdkVersion = match.Groups[1].Value;
 
             var fileName = (Path.DirectorySeparatorChar == '\\') ? "dotnet.exe" : "dotnet";
-            var dotNetDir = paths.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(p => File.Exists(Path.Combine(p, fileName)));
+            var dotNetDir = paths.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(p => File.Exists(TaskEnvironment.GetAbsolutePath(Path.Combine(p, fileName))));
 
-            if (dotNetDir == null || !Directory.Exists(Path.Combine(dotNetDir, "sdk", sdkVersion)))
+            if (dotNetDir == null || !Directory.Exists(TaskEnvironment.GetAbsolutePath(Path.Combine(dotNetDir, "sdk", sdkVersion))))
             {
                 Log.LogError($"Unable to find dotnet with SDK version '{sdkVersion}'");
                 return;
             }
 
-            DotNetPath = Path.GetFullPath(Path.Combine(dotNetDir, fileName));
+            DotNetPath = TaskEnvironment.GetAbsolutePath(Path.Combine(dotNetDir, fileName));
             BuildEngine4.RegisterTaskObject(s_cacheKey, new CacheEntry(lastWrite, paths, DotNetPath), RegisteredTaskObjectLifetime.Build, allowEarlyCollection: true);
         }
     }

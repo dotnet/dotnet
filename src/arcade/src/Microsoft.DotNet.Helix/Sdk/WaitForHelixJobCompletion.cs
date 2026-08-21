@@ -12,6 +12,7 @@ using Microsoft.DotNet.Helix.Client.Models;
 
 namespace Microsoft.DotNet.Helix.Sdk
 {
+    [MSBuildMultiThreadableTask]
     public class WaitForHelixJobCompletion : HelixTask
     {
         internal const string HelixControllerWorkQueueingWorkItemName = "HelixController Work Queueing";

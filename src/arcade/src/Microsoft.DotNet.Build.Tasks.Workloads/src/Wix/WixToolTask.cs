@@ -13,6 +13,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
     /// <summary>
     /// Tool task for invoking the WiX CLI (version 5 and above). This commands is responsible for compiling and linking.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class WixToolTask : WixToolTaskBase
     {
         private List<string> _sourceFiles = new();

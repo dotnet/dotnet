@@ -17,8 +17,12 @@ namespace Microsoft.DotNet.Tools
     /// <summary>
     /// Replaces content of files in specified package with new content and updates version of the package.
     /// </summary>
-    public sealed class ReplacePackageParts : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public sealed class ReplacePackageParts : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Full path to the package to process.
         /// </summary>
@@ -107,10 +111,14 @@ namespace Microsoft.DotNet.Tools
 
             string packageId = null;
             SemanticVersion packageVersion = null;
+            // MSBuildTask0002: the temp root is only used as the parent of a freshly generated unique
+            // directory/file name, so it is never shared between concurrently running tasks.
+            #pragma warning disable MSBuildTask0002
             string tempPackagePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            #pragma warning restore MSBuildTask0002
             try
             {
-                File.Copy(SourcePackage, tempPackagePath);
+                File.Copy(TaskEnvironment.GetAbsolutePath(SourcePackage), TaskEnvironment.GetAbsolutePath(tempPackagePath));
 
                 using (var package = Package.Open(tempPackagePath, FileMode.Open, FileAccess.ReadWrite))
                 {
@@ -178,7 +186,7 @@ namespace Microsoft.DotNet.Tools
                             Stream replacementStream;
                             try
                             {
-                                replacementStream = File.OpenRead(replacementFilePath);
+                                replacementStream = File.OpenRead(TaskEnvironment.GetAbsolutePath(replacementFilePath));
                             }
                             catch (Exception e)
                             {
@@ -216,19 +224,19 @@ namespace Microsoft.DotNet.Tools
                 }
 
                 // remove signature if present (the signature part is not accessible thru Package API):
-                using (var archive = new ZipArchive(File.Open(tempPackagePath, FileMode.Open, FileAccess.ReadWrite), ZipArchiveMode.Update))
+                using (var archive = new ZipArchive(File.Open(TaskEnvironment.GetAbsolutePath(tempPackagePath), FileMode.Open, FileAccess.ReadWrite), ZipArchiveMode.Update))
                 {
                     archive.Entries.FirstOrDefault(e => e.FullName == NuGetUtils.SignaturePartUri)?.Delete();
                 }
 
                 NewPackage = Path.Combine(DestinationFolder, packageId + "." + packageVersion + ".nupkg");
 
-                Directory.CreateDirectory(DestinationFolder);
-                File.Copy(tempPackagePath, NewPackage, overwrite: true);
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(DestinationFolder));
+                File.Copy(TaskEnvironment.GetAbsolutePath(tempPackagePath), TaskEnvironment.GetAbsolutePath(NewPackage), overwrite: true);
             }
             finally
             {
-                File.Delete(tempPackagePath);
+                File.Delete(TaskEnvironment.GetAbsolutePath(tempPackagePath));
             }
         }
 

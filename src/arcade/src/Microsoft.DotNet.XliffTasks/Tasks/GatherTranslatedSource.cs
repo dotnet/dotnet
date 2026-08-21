@@ -8,6 +8,7 @@ using Microsoft.Build.Utilities;
 
 namespace XliffTasks.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public sealed class GatherTranslatedSource : XlfTask
     {
         [Required]
@@ -103,13 +104,13 @@ namespace XliffTasks.Tasks
             }
         }
 
-        private static void AdjustDependentUpon(ITaskItem xlf, ITaskItem output)
+        private void AdjustDependentUpon(ITaskItem xlf, ITaskItem output)
         {
             string dependentUpon = xlf.GetMetadata(MetadataKey.DependentUpon);
             if (!string.IsNullOrEmpty(dependentUpon))
             {
                 string sourceDirectory = Path.GetDirectoryName(xlf.GetMetadataOrThrow(MetadataKey.XlfSource));
-                dependentUpon = Path.GetFullPath(Path.Combine(sourceDirectory, dependentUpon));
+                dependentUpon = TaskEnvironment.GetAbsolutePath(Path.Combine(sourceDirectory, dependentUpon));
                 output.SetMetadata(MetadataKey.DependentUpon, dependentUpon);
             }
         }

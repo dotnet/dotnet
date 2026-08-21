@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.Helix.Sdk
     /// <summary>
     /// MSBuild custom task to create HelixWorkItems for provided iOS app bundle paths.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class CreateXHarnessAppleWorkItems : XHarnessTaskBase
     {
         public const string iOSTargetName = "ios-device";

@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.PackageTesting
 {
+    [MSBuildMultiThreadableTask]
     public class GetCompatiblePackageTargetFrameworks : Microsoft.Build.Utilities.Task
     {
         private static List<NuGetFramework> allTargetFrameworks = new();

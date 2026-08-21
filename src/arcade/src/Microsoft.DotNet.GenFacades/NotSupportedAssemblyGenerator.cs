@@ -16,8 +16,12 @@ namespace Microsoft.DotNet.GenFacades
     /// <summary>
     /// The class generates an NotSupportedAssembly from the reference sources.
     /// </summary>
-    public class NotSupportedAssemblyGenerator : RoslynBuildTask
+    [MSBuildMultiThreadableTask]
+    public class NotSupportedAssemblyGenerator : RoslynBuildTask, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public ITaskItem[] SourceFiles { get; set; }
 
@@ -44,9 +48,9 @@ namespace Microsoft.DotNet.GenFacades
         private void GenerateNotSupportedAssemblyFiles(IEnumerable<ITaskItem> sourceFiles)
         {
             string[] apiExclusions = null;
-            if (!string.IsNullOrEmpty(ApiExclusionListPath) && File.Exists(ApiExclusionListPath))
+            if (!string.IsNullOrEmpty(ApiExclusionListPath) && File.Exists(TaskEnvironment.GetAbsolutePath(ApiExclusionListPath)))
             {
-                apiExclusions = File.ReadAllLines(ApiExclusionListPath);
+                apiExclusions = File.ReadAllLines(TaskEnvironment.GetAbsolutePath(ApiExclusionListPath));
             }
 
             foreach (ITaskItem item in sourceFiles)
@@ -54,7 +58,7 @@ namespace Microsoft.DotNet.GenFacades
                 string sourceFile = item.ItemSpec;
                 string outputPath = item.GetMetadata("OutputPath");
 
-                if (!File.Exists(sourceFile))
+                if (!File.Exists(TaskEnvironment.GetAbsolutePath(sourceFile)))
                 {
                     Log.LogError($"File {sourceFile} was not found.");
                     continue;
@@ -76,7 +80,7 @@ namespace Microsoft.DotNet.GenFacades
                     Log.LogError($"Invalid LangVersion value '{LangVersion}'");
                     return;
                 }
-                syntaxTree = CSharpSyntaxTree.ParseText(File.ReadAllText(sourceFile), new CSharpParseOptions(languageVersion));
+                syntaxTree = CSharpSyntaxTree.ParseText(File.ReadAllText(TaskEnvironment.GetAbsolutePath(sourceFile)), new CSharpParseOptions(languageVersion));
             }
             catch(Exception ex)
             {
@@ -87,7 +91,7 @@ namespace Microsoft.DotNet.GenFacades
             var rewriter = new NotSupportedAssemblyRewriter(Message, apiExclusions);
             SyntaxNode root = rewriter.Visit(syntaxTree.GetRoot());
             string text = root.GetText().ToString();
-            File.WriteAllText(outputPath, text);
+            File.WriteAllText(TaskEnvironment.GetAbsolutePath(outputPath), text);
         }
     }
 

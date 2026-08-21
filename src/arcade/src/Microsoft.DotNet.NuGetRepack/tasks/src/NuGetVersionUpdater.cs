@@ -54,17 +54,21 @@ namespace Microsoft.DotNet.Tools
         }
 
         public static void Run(
-            IEnumerable<string> packagePaths,
-            string outDirectoryOpt,
+            IEnumerable<Microsoft.Build.Framework.AbsolutePath> packagePaths,
+            Microsoft.Build.Framework.AbsolutePath? outDirectoryOpt,
             VersionTranslation translation,
             bool exactVersions,
             Func<string, string, string, bool> allowPreReleaseDependency = null)
         {
-            string tempDirectoryOpt;
+            Microsoft.Build.Framework.AbsolutePath? tempDirectoryOpt;
             if (outDirectoryOpt != null)
             {
-                tempDirectoryOpt = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-                Directory.CreateDirectory(tempDirectoryOpt);
+                // MSBuildTask0002: the temp root is only used as the parent of a freshly generated unique
+                // directory/file name, so it is never shared between concurrently running tasks.
+                #pragma warning disable MSBuildTask0002
+                tempDirectoryOpt = new Microsoft.Build.Framework.AbsolutePath(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()));
+                #pragma warning restore MSBuildTask0002
+                Directory.CreateDirectory(tempDirectoryOpt.Value);
             }
             else
             {
@@ -79,7 +83,7 @@ namespace Microsoft.DotNet.Tools
 
                 if (outDirectoryOpt != null)
                 {
-                    SavePackages(packages, outDirectoryOpt);
+                    SavePackages(packages, outDirectoryOpt.Value);
                 }
             }
             finally
@@ -92,12 +96,12 @@ namespace Microsoft.DotNet.Tools
 
                 if (tempDirectoryOpt != null)
                 {
-                    Directory.Delete(tempDirectoryOpt, recursive: true);
+                    Directory.Delete(tempDirectoryOpt.Value, recursive: true);
                 }
             }
         }
 
-        private static void LoadPackages(IEnumerable<string> packagePaths, Dictionary<string, PackageInfo> packages, string tempDirectoryOpt, VersionTranslation translation)
+        private static void LoadPackages(IEnumerable<Microsoft.Build.Framework.AbsolutePath> packagePaths, Dictionary<string, PackageInfo> packages, Microsoft.Build.Framework.AbsolutePath? tempDirectoryOpt, VersionTranslation translation)
         {
             bool readOnly = tempDirectoryOpt == null;
 
@@ -113,8 +117,8 @@ namespace Microsoft.DotNet.Tools
                 }
                 else
                 {
-                    tempPathOpt = Path.Combine(tempDirectoryOpt, Guid.NewGuid().ToString());
-                    File.Copy(packagePath, tempPathOpt);
+                    tempPathOpt = Path.Combine(tempDirectoryOpt.Value, Guid.NewGuid().ToString());
+                    File.Copy(packagePath, new Microsoft.Build.Framework.AbsolutePath(tempPathOpt));
                     package = Package.Open(tempPathOpt, FileMode.Open, FileAccess.ReadWrite);
                 }
 
@@ -252,7 +256,7 @@ namespace Microsoft.DotNet.Tools
 
                         if (tempPathOpt != null)
                         {
-                            File.Delete(tempPathOpt);
+                            File.Delete(new Microsoft.Build.Framework.AbsolutePath(tempPathOpt));
                         }
                     }
                 }
@@ -355,7 +359,7 @@ namespace Microsoft.DotNet.Tools
             ThrowExceptions(errors);
         }
 
-        private static void SavePackages(Dictionary<string, PackageInfo> packages, string outDirectory)
+        private static void SavePackages(Dictionary<string, PackageInfo> packages, Microsoft.Build.Framework.AbsolutePath outDirectory)
         {
             Directory.CreateDirectory(outDirectory);
 
@@ -371,7 +375,7 @@ namespace Microsoft.DotNet.Tools
 
                 try
                 {
-                    File.Copy(package.TempPathOpt, finalPath, overwrite: true);
+                    File.Copy(new Microsoft.Build.Framework.AbsolutePath(package.TempPathOpt), new Microsoft.Build.Framework.AbsolutePath(finalPath), overwrite: true);
                 }
                 catch (Exception e)
                 {

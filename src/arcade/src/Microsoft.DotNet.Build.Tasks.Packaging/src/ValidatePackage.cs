@@ -19,6 +19,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     [MSBuildMultiThreadableTask]
     public class ValidatePackage : ValidationTask
     {
+
         [Required]
         public string ContractName
         {

@@ -17,8 +17,12 @@ namespace Microsoft.DotNet.PackageTesting
     /// <summary>
     /// Verifies the closure of a set of DLLs, making sure all files are present and no cycles exist
     /// </summary>
-    public class VerifyClosure : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class VerifyClosure : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         /// <summary>
         /// Sources to scan.  Items can be directories or files.
@@ -92,7 +96,7 @@ namespace Microsoft.DotNet.PackageTesting
 
         private void AddSourceFile(string file)
         {
-            var assemblyInfo = AssemblyInfo.GetAssemblyInfo(file);
+            var assemblyInfo = AssemblyInfo.GetAssemblyInfo(TaskEnvironment.GetAbsolutePath(file));
 
             if (assemblyInfo == null)
             {
@@ -339,7 +343,7 @@ namespace Microsoft.DotNet.PackageTesting
         }
 
         private static XNamespace s_dgmlns = @"http://schemas.microsoft.com/vs/2009/dgml";
-        private static void WriteDependencyGraph(string dependencyGraphFilePath, IEnumerable<AssemblyInfo> assemblies)
+        private void WriteDependencyGraph(string dependencyGraphFilePath, IEnumerable<AssemblyInfo> assemblies)
         {
 
             var doc = new XDocument(new XElement(s_dgmlns + "DirectedGraph"));
@@ -386,7 +390,7 @@ namespace Microsoft.DotNet.PackageTesting
                 new XAttribute("Background", "Green")
                 ));
 
-            using (var file = File.Create(dependencyGraphFilePath))
+            using (var file = File.Create(TaskEnvironment.GetAbsolutePath(dependencyGraphFilePath)))
             {
                 doc.Save(file);
             }
@@ -423,7 +427,7 @@ namespace Microsoft.DotNet.PackageTesting
             public string[] ModuleReferences { get; }
             public CheckState State { get; set; }
 
-            public static AssemblyInfo GetAssemblyInfo(string path)
+            public static AssemblyInfo GetAssemblyInfo(Microsoft.Build.Framework.AbsolutePath path)
             {
                 try
                 {

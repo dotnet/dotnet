@@ -12,8 +12,12 @@ using System.Threading;
 
 namespace Microsoft.DotNet.Arcade.Sdk
 {
-    public class Unsign : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class Unsign : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string FilePath { get; set; }
 
@@ -31,7 +35,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         private void ExecuteImpl()
         {
-            using (var stream = File.Open(FilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+            using (var stream = File.Open(TaskEnvironment.GetAbsolutePath(FilePath), FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
             using (var peReader = new PEReader(stream))
             {
                 var headers = peReader.PEHeaders;

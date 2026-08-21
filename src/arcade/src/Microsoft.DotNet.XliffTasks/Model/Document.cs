@@ -26,7 +26,7 @@ namespace XliffTasks.Model
         /// <summary>
         /// Loads (or reloads) the document content from the given file path.
         /// </summary>
-        public void Load(string path)
+        public void Load(Microsoft.Build.Framework.AbsolutePath path)
         {
             using FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
             Load(stream);
@@ -56,7 +56,7 @@ namespace XliffTasks.Model
         /// <summary>
         /// Saves the document's content to the given file path.
         /// </summary>
-        public void Save(string path)
+        public void Save(Microsoft.Build.Framework.AbsolutePath path)
         {
             //On Windows:
             // Readers will prevent the file from being overwritten due to FileShare.Read.
@@ -67,7 +67,7 @@ namespace XliffTasks.Model
             // reading is happening, each reader will see file before or after overwrite, not in between
 
             EnsureContent();
-            string tempPath = Path.Combine(Path.GetDirectoryName(path), Path.GetRandomFileName());
+            Microsoft.Build.Framework.AbsolutePath tempPath = new(Path.Combine(Path.GetDirectoryName(path), Path.GetRandomFileName()));
 
             using (FileStream stream = File.Open(tempPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
             {

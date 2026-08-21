@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.Helix.Sdk
     /// <summary>
     /// MSBuild custom task to create HelixWorkItems for provided Android application packages.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class CreateXHarnessAndroidWorkItems : XHarnessTaskBase
     {
         public static class MetadataNames

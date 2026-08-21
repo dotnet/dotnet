@@ -10,8 +10,12 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Tools
 {
-    public class UpdatePackageVersionTask : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class UpdatePackageVersionTask : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         public string VersionKind { get; set; }
 
         [Required]
@@ -24,7 +28,12 @@ namespace Microsoft.DotNet.Tools
 
         public bool AllowPreReleaseDependencies { get; set; }
 
+        // MSBuildTask0005: the only remaining unsafe call in this chain is Path.GetTempPath(), which
+        // is used purely as the parent of a freshly generated GUID directory, so it is never shared
+        // between concurrently running tasks.
+        #pragma warning disable MSBuildTask0005
         public override bool Execute()
+        #pragma warning restore MSBuildTask0005
         {
             try
             {
@@ -61,7 +70,7 @@ namespace Microsoft.DotNet.Tools
 
             try
             {
-                NuGetVersionUpdater.Run(Packages, OutputDirectory, translation, ExactVersions, allowPreReleaseDependency: (packageId, dependencyId, dependencyVersion) =>
+                NuGetVersionUpdater.Run(Packages.Select(TaskEnvironment.GetAbsolutePath), string.IsNullOrEmpty(OutputDirectory) ? null : TaskEnvironment.GetAbsolutePath(OutputDirectory), translation, ExactVersions, allowPreReleaseDependency: (packageId, dependencyId, dependencyVersion) =>
                 {
                     if (AllowPreReleaseDependencies)
                     {
@@ -75,7 +84,7 @@ namespace Microsoft.DotNet.Tools
 
                 if (translation == VersionTranslation.Release)
                 {
-                    File.WriteAllLines(Path.Combine(OutputDirectory, "PreReleaseDependencies.txt"), preReleaseDependencies.Distinct());
+                    File.WriteAllLines(TaskEnvironment.GetAbsolutePath(Path.Combine(OutputDirectory, "PreReleaseDependencies.txt")), preReleaseDependencies.Distinct());
                 }
             }
             catch (AggregateException e)

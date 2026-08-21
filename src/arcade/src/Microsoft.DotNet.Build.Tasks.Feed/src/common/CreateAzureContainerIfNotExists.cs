@@ -4,9 +4,11 @@
 using System.Threading.Tasks;
 using Azure.Identity;
 using Microsoft.DotNet.Build.CloudTestTasks;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
+    [MSBuildMultiThreadableTask]
     public class CreateAzureContainerIfNotExists : CreateAzureContainer
     {
         /// <summary>

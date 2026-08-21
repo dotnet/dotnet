@@ -15,6 +15,9 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
     /// Build task for generating workload set MSI installers, including projects for
     /// building the NuGet package wrappers and SWIX projects for inserting into Visual Studio.
     /// </summary>
+    // TODO: https://github.com/dotnet/arcade/issues/17378 - this task is not yet annotated with
+    // [MSBuildMultiThreadableTask] for the same reason as CreateVisualStudioWorkload: it shares the
+    // workload packaging helpers that still resolve paths against the current directory.
     public class CreateVisualStudioWorkloadSet : VisualStudioWorkloadTaskBase
     {
         /// <summary>
@@ -35,7 +38,11 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads
             set;
         }
 
+        // MSBuildTask0005 is suppressed while this task is still routed through the TaskHost.
+        // See the TODO on the class declaration and https://github.com/dotnet/arcade/issues/17378.
+        #pragma warning disable MSBuildTask0005
         protected override bool ExecuteCore()
+        #pragma warning restore MSBuildTask0005
         {
             Version msiVersion = string.IsNullOrWhiteSpace(WorkloadSetMsiVersion) ? null : new Version(WorkloadSetMsiVersion);
             List<WorkloadSetMsi> workloadSetMsisToBuild = new();

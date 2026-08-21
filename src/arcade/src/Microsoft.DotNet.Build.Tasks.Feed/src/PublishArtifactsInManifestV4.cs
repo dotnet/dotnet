@@ -17,6 +17,7 @@ using Microsoft.DotNet.Build.Manifest;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
+    [MSBuildMultiThreadableTask]
     public class PublishArtifactsInManifestV4 : PublishArtifactsInManifestBase
     {
         /// <summary>

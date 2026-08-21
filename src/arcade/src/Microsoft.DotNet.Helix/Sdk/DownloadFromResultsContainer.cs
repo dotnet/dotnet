@@ -12,8 +12,12 @@ using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Helix.Sdk
 {
-    public class DownloadFromResultsContainer : HelixTask, ICancelableTask
+    [MSBuildMultiThreadableTask]
+    public class DownloadFromResultsContainer : HelixTask, ICancelableTask, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public ITaskItem[] WorkItems { get; set; }
 
@@ -49,7 +53,7 @@ namespace Microsoft.DotNet.Helix.Sdk
 
             Log.LogMessage(MessageImportance.High, $"Downloading result files for job {JobId}");
 
-            DirectoryInfo directory = Directory.CreateDirectory(Path.Combine(OutputDirectory, JobId));
+            DirectoryInfo directory = Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.Combine(OutputDirectory, JobId)));
             using (FileStream stream = File.Open(Path.Combine(directory.FullName, MetadataFile), FileMode.Create, FileAccess.Write))
             using (var writer = new StreamWriter(stream))
             {
@@ -74,7 +78,7 @@ namespace Microsoft.DotNet.Helix.Sdk
                 var allAvailableFiles = await HelixApi.WorkItem.ListFilesAsync(workItemName, JobId, true, ct);
                 var resultsUri = await HelixApi.Job.ResultsAsync(JobId, ct);
 
-                DirectoryInfo destinationDir = Directory.CreateDirectory(Path.Combine(directoryPath, workItemName));
+                DirectoryInfo destinationDir = Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.Combine(directoryPath, workItemName)));
                 foreach (string file in filesToDownload)
                 {
                     try

@@ -17,7 +17,7 @@ namespace Microsoft.DotNet.SharedFramework.Sdk
             new[] { ".dll", ".exe" },
             StringComparer.OrdinalIgnoreCase);
 
-        public static Version GetFileVersion(string sourcePath)
+        public static Version GetFileVersion(Microsoft.Build.Framework.AbsolutePath sourcePath)
         {
             var fvi = FileVersionInfo.GetVersionInfo(sourcePath);
 
@@ -29,7 +29,7 @@ namespace Microsoft.DotNet.SharedFramework.Sdk
             return null;
         }
 
-        public static AssemblyName GetAssemblyName(string path)
+        public static AssemblyName GetAssemblyName(Microsoft.Build.Framework.AbsolutePath path)
         {
             if (!s_assemblyExtensions.Contains(Path.GetExtension(path)))
             {

@@ -14,8 +14,12 @@ namespace Microsoft.DotNet.CMake.Sdk
     /// <summary>
     /// Reads CMake File API response to find artifacts for a specific source directory.
     /// </summary>
-    public class GetCMakeArtifactsFromFileApi : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GetCMakeArtifactsFromFileApi : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// The CMake build output directory containing the File API response.
         /// </summary>
@@ -46,14 +50,14 @@ namespace Microsoft.DotNet.CMake.Sdk
             {
                 string replyDir = Path.Combine(CMakeOutputDir, ".cmake", "api", "v1", "reply");
                 
-                if (!Directory.Exists(replyDir))
+                if (!Directory.Exists(TaskEnvironment.GetAbsolutePath(replyDir)))
                 {
                     Log.LogError("CMake File API reply directory does not exist: {0}", replyDir);
                     return false;
                 }
 
                 // Find the latest index file
-                var indexFiles = Directory.GetFiles(replyDir, "index-*.json");
+                var indexFiles = Directory.GetFiles(TaskEnvironment.GetAbsolutePath(replyDir), "index-*.json");
                 if (indexFiles.Length == 0)
                 {
                     Log.LogError("No CMake File API index files found.");
@@ -63,7 +67,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                 string indexFile = indexFiles.OrderByDescending(f => f).First();
                 Log.LogMessage(MessageImportance.Low, "Reading CMake File API index: {0}", indexFile);
 
-                string indexJson = File.ReadAllText(indexFile);
+                string indexJson = File.ReadAllText(TaskEnvironment.GetAbsolutePath(indexFile));
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
@@ -79,7 +83,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                 }
 
                 string codeModelFile = Path.Combine(replyDir, index.Reply.ClientReply.CodemodelV2.JsonFile);
-                if (!File.Exists(codeModelFile))
+                if (!File.Exists(TaskEnvironment.GetAbsolutePath(codeModelFile)))
                 {
                     Log.LogError("Codemodel file not found: {0}", codeModelFile);
                     return false;
@@ -87,7 +91,7 @@ namespace Microsoft.DotNet.CMake.Sdk
 
                 Log.LogMessage(MessageImportance.Low, "Reading codemodel: {0}", codeModelFile);
                 
-                string codeModelJson = File.ReadAllText(codeModelFile);
+                string codeModelJson = File.ReadAllText(TaskEnvironment.GetAbsolutePath(codeModelFile));
                 var codeModel = JsonSerializer.Deserialize<CMakeCodeModel>(codeModelJson, options);
 
                 if (codeModel == null)
@@ -100,7 +104,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                 string sourceRoot = codeModel.Paths?.Source?.Replace('\\', '/').TrimEnd('/') ?? "";
 
                 // Normalize source directory for comparison
-                string normalizedSourceDir = Path.GetFullPath(SourceDirectory).Replace('\\', '/').TrimEnd('/');
+                string normalizedSourceDir = TaskEnvironment.GetAbsolutePath(SourceDirectory).Value.Replace('\\', '/').TrimEnd('/');
 
                 // Find the configuration using LINQ
                 var config = codeModel.Configurations?.FirstOrDefault(c => 
@@ -129,7 +133,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                     if (!Path.IsPathRooted(dirSource))
                     {
                         dirSource = Path.Combine(sourceRoot, dirSource);
-                        dirSource = Path.GetFullPath(dirSource).Replace('\\', '/').TrimEnd('/');
+                        dirSource = TaskEnvironment.GetAbsolutePath(dirSource).Value.Replace('\\', '/').TrimEnd('/');
                     }
                     
                     return string.Equals(dirSource, normalizedSourceDir, StringComparison.OrdinalIgnoreCase);
@@ -162,7 +166,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                         }
 
                         string targetFile = Path.Combine(replyDir, target.JsonFile);
-                        if (!File.Exists(targetFile))
+                        if (!File.Exists(TaskEnvironment.GetAbsolutePath(targetFile)))
                         {
                             continue;
                         }
@@ -170,7 +174,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                         Log.LogMessage(MessageImportance.Low, "Reading target file: {0}", targetFile);
 
                         // Read target details
-                        string targetJson = File.ReadAllText(targetFile);
+                        string targetJson = File.ReadAllText(TaskEnvironment.GetAbsolutePath(targetFile));
                         var targetDetails = JsonSerializer.Deserialize<CMakeTargetDetails>(targetJson, options);
 
                         // Get artifacts
@@ -181,7 +185,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                                 if (!string.IsNullOrEmpty(artifact.Path))
                                 {
                                     string fullPath = Path.Combine(CMakeOutputDir, artifact.Path);
-                                    fullPath = Path.GetFullPath(fullPath);
+                                    fullPath = TaskEnvironment.GetAbsolutePath(fullPath);
                                     
                                     var item = new TaskItem(fullPath);
                                     artifacts.Add(item);

@@ -16,7 +16,8 @@ using Newtonsoft.Json;
 
 namespace Microsoft.DotNet.Helix.Sdk
 {
-    public class SendHelixJob : HelixTask
+    [MSBuildMultiThreadableTask]
+    public class SendHelixJob : HelixTask, IMultiThreadableTask
     {
         public static class MetadataNames
         {
@@ -39,6 +40,9 @@ namespace Microsoft.DotNet.Helix.Sdk
             public const string IncludeDirectoryName = "IncludeDirectoryName";
             public const string AsArchive = "AsArchive";
         }
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         /// <summary>
         ///   The 'type' value reported to Helix
@@ -307,7 +311,7 @@ namespace Microsoft.DotNet.Helix.Sdk
         {
             string envName = FromAzdoVariableNameToEnvironmentVariableName(azdoVariableName);
 
-            var value = Environment.GetEnvironmentVariable(envName);
+            var value = TaskEnvironment.GetEnvironmentVariable(envName);
             if (string.IsNullOrEmpty(value))
             {
                 return def;
@@ -548,7 +552,7 @@ namespace Microsoft.DotNet.Helix.Sdk
                 }
             }
 
-            if (Directory.Exists(path))
+            if (Directory.Exists(TaskEnvironment.GetAbsolutePath(path)))
             {
                 string includeDirectoryNameStr = correlationPayload.GetMetadata(MetadataNames.IncludeDirectoryName);
                 if (!bool.TryParse(includeDirectoryNameStr, out bool includeDirectoryName))
@@ -564,7 +568,7 @@ namespace Microsoft.DotNet.Helix.Sdk
 
             }
 
-            if (File.Exists(path))
+            if (File.Exists(TaskEnvironment.GetAbsolutePath(path)))
             {
                 string asArchiveStr = correlationPayload.GetMetadata(MetadataNames.AsArchive);
                 if (!bool.TryParse(asArchiveStr, out bool asArchive))

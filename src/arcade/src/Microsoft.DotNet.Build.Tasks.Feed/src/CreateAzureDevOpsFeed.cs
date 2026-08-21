@@ -18,6 +18,7 @@ using MSBuild = Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
+    [MSBuildMultiThreadableTask]
     public class CreateAzureDevOpsFeed : MSBuild.Task
     {
         [Output]

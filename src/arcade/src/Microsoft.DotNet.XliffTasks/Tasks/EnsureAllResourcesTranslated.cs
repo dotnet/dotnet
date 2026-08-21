@@ -9,6 +9,7 @@ using XliffTasks.Model;
 
 namespace XliffTasks.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public sealed class EnsureAllResourcesTranslated : XlfTask
     {
         [Required]
@@ -39,7 +40,7 @@ namespace XliffTasks.Tasks
 
                     try
                     {
-                        xlfDocument = XlfTask.LoadXlfDocument(xlfPath);
+                        xlfDocument = XlfTask.LoadXlfDocument(TaskEnvironment.GetAbsolutePath(xlfPath));
                     }
                     catch (FileNotFoundException)
                     {

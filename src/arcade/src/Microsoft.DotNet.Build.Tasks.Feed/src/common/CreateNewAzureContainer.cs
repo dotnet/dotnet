@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Azure.Core;
 using Azure.Identity;
 using Microsoft.DotNet.Build.CloudTestTasks;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
@@ -13,6 +14,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
     /// try creating a container [ContainerName]-1, [ContainerName]-2 and so on until the name is unique.
     /// The final name is saved in ContainerName.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class CreateNewAzureContainer : CreateAzureContainer
     {
         public override async Task<AzureStorageUtils> GetBlobStorageUtilsAsync()

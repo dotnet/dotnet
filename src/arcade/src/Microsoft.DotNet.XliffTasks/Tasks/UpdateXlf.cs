@@ -7,6 +7,7 @@ using XliffTasks.Model;
 
 namespace XliffTasks.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public sealed class UpdateXlf : XlfTask
     {
         [Required]
@@ -31,7 +32,7 @@ namespace XliffTasks.Tasks
                 string sourcePath = item.ItemSpec;
                 string sourceDocumentPath = item.GetMetadataOrDefault(MetadataKey.SourceDocumentPath, item.ItemSpec);
                 string sourceFormat = item.GetMetadataOrThrow(MetadataKey.XlfSourceFormat);
-                TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(sourcePath, sourceFormat);
+                TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(TaskEnvironment.GetAbsolutePath(sourcePath), sourceFormat);
                 string sourceDocumentId = XlfTask.GetSourceDocumentId(sourcePath);
 
                 foreach (string language in Languages)
@@ -41,7 +42,7 @@ namespace XliffTasks.Tasks
 
                     try
                     {
-                        xlfDocument = XlfTask.LoadXlfDocument(xlfPath, language, createIfNonExistent: AllowModification);
+                        xlfDocument = XlfTask.LoadXlfDocument(TaskEnvironment.GetAbsolutePath(xlfPath), language, createIfNonExistent: AllowModification);
                     }
                     catch (FileNotFoundException fileNotFoundEx) when (fileNotFoundEx.FileName == xlfPath)
                     {
@@ -68,8 +69,8 @@ namespace XliffTasks.Tasks
                         throw new BuildErrorException($"'{xlfPath}' is out-of-date with '{sourcePath}'. {HowToUpdate}");
                     }
 
-                    Directory.CreateDirectory(Path.GetDirectoryName(xlfPath));
-                    xlfDocument.Save(xlfPath);
+                    Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(xlfPath)));
+                    xlfDocument.Save(TaskEnvironment.GetAbsolutePath(xlfPath));
                 }
             }
         }

@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.Helix.Sdk
     /// <summary>
     /// MSBuild custom task to create HelixWorkItems given xUnit project publish information
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class CreateXUnitWorkItems : BaseTask
     {
         /// <summary>

@@ -13,8 +13,12 @@ namespace Microsoft.DotNet.Arcade.Sdk
     /// <summary>
     /// Checks that the content of two license files is the same modulo line breaks, leading and trailing whitespace.
     /// </summary>
-    public class ValidateLicense : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class ValidateLicense : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Full path to the file that contains the license text to be validated.
         /// </summary>
@@ -35,8 +39,8 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         private void ExecuteImpl()
         {
-            var actualLines = File.ReadAllLines(LicensePath, Encoding.UTF8);
-            var expectedLines = File.ReadAllLines(ExpectedLicensePath, Encoding.UTF8);
+            var actualLines = File.ReadAllLines(TaskEnvironment.GetAbsolutePath(LicensePath), Encoding.UTF8);
+            var expectedLines = File.ReadAllLines(TaskEnvironment.GetAbsolutePath(ExpectedLicensePath), Encoding.UTF8);
 
             if (!LinesEqual(actualLines, expectedLines))
             {

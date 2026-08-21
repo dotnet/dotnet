@@ -27,8 +27,12 @@ namespace Microsoft.DotNet.Build.Tasks.Templating
     /// </code>
     /// </example>
     /// </summary>
-    public class GenerateFileFromTemplate : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GenerateFileFromTemplate : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// The template file using the variable syntax <c>${VarName}</c>.
         /// If your template file needs to output this format, you can escape the dollar sign with a backtick e.g. <c>`${NotReplaced}</c>.
@@ -66,16 +70,16 @@ namespace Microsoft.DotNet.Build.Tasks.Templating
 
         public override bool Execute()
         {
-            ResolvedOutputPath = Path.GetFullPath(OutputPath.Replace('\\', '/'));
+            ResolvedOutputPath = TaskEnvironment.GetAbsolutePath(OutputPath.Replace('\\', '/'));
 
-            if (!File.Exists(TemplateFile))
+            if (!File.Exists(TaskEnvironment.GetAbsolutePath(TemplateFile)))
             {
                 Log.LogError($"File {TemplateFile} does not exist");
                 return false;
             }
 
             IDictionary<string, string> values = MSBuildListSplitter.GetNamedProperties(Properties, Log);
-            string template = File.ReadAllText(TemplateFile);
+            string template = File.ReadAllText(TaskEnvironment.GetAbsolutePath(TemplateFile));
 
             string result = Replace(template, values);
 
@@ -92,17 +96,17 @@ namespace Microsoft.DotNet.Build.Tasks.Templating
             string directory = Path.GetDirectoryName(ResolvedOutputPath);
             if (!string.IsNullOrEmpty(directory))
             {
-                Directory.CreateDirectory(directory);
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(directory));
             }
 
-            File.WriteAllBytes(ResolvedOutputPath, resultBytes);
+            File.WriteAllBytes(TaskEnvironment.GetAbsolutePath(ResolvedOutputPath), resultBytes);
 
             return !Log.HasLoggedErrors;
         }
 
-        private static bool FileContentsMatch(string path, byte[] expectedBytes)
+        private bool FileContentsMatch(string path, byte[] expectedBytes)
         {
-            var fileInfo = new FileInfo(path);
+            var fileInfo = new FileInfo(TaskEnvironment.GetAbsolutePath(path));
             if (!fileInfo.Exists || fileInfo.Length != expectedBytes.Length)
             {
                 return false;

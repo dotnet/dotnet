@@ -16,9 +16,13 @@ using System.Text.Json;
 
 namespace Microsoft.DotNet.Arcade.Sdk
 {
-    public class InstallDotNetCore : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class InstallDotNetCore : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private static readonly char[] s_keyTrimChars = ['$', '(', ')'];
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         [Required]
         public string DotNetInstallScript { get; set; }
@@ -45,18 +49,18 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         public override bool Execute()
         {
-            if (!File.Exists(GlobalJsonPath))
+            if (!File.Exists(TaskEnvironment.GetAbsolutePath(GlobalJsonPath)))
             {
                 Log.LogWarning($"Unable to find global.json file '{GlobalJsonPath} exiting");
                 return true;
             }
-            if (!File.Exists(DotNetInstallScript))
+            if (!File.Exists(TaskEnvironment.GetAbsolutePath(DotNetInstallScript)))
             {
                 Log.LogError($"Unable to find dotnet install script '{DotNetInstallScript} exiting");
                 return !Log.HasLoggedErrors;
             }
 
-            var jsonContent = File.ReadAllText(GlobalJsonPath);
+            var jsonContent = File.ReadAllText(TaskEnvironment.GetAbsolutePath(GlobalJsonPath));
             var bytes = Encoding.UTF8.GetBytes(jsonContent);
 
             using (JsonDocument jsonDocument = JsonDocument.Parse(bytes))
@@ -84,7 +88,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                             // Only load Versions.props if there's a need to look for a version identifier (ie, there's a value listed that's not a parsable version).
                             if (runtimeItems.SelectMany(r => r.Value).Select(r => r.Key).FirstOrDefault(f => !SemanticVersion.TryParse(f, out SemanticVersion version)) != null)
                             {
-                                if (!File.Exists(VersionsPropsPath))
+                                if (!File.Exists(TaskEnvironment.GetAbsolutePath(VersionsPropsPath)))
                                 {
                                     Log.LogError($"Unable to find translation file {VersionsPropsPath}");
                                     return !Log.HasLoggedErrors;
@@ -146,16 +150,16 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                         }
 
                                         Log.LogMessage(MessageImportance.Low, $"Executing: {DotNetInstallScript} {arguments}");
-                                        var process = Process.Start(new ProcessStartInfo()
-                                        {
-                                            FileName = DotNetInstallScript,
-                                            Arguments = arguments,
-                                            UseShellExecute = false,
-                                            // Redirect to stdout/err. Addressing https://github.com/dotnet/msbuild/issues/7913
-                                            // Without it script execution was failing on Linux when run from
-                                            RedirectStandardOutput = true,
-                                            RedirectStandardError = true,
-                                        });
+                                        var startInfo = TaskEnvironment.GetProcessStartInfo();
+                                        startInfo.FileName = DotNetInstallScript;
+                                        startInfo.Arguments = arguments;
+                                        startInfo.UseShellExecute = false;
+                                        // Redirect to stdout/err. Addressing https://github.com/dotnet/msbuild/issues/7913
+                                        // Without it script execution was failing on Linux when run from
+                                        startInfo.RedirectStandardOutput = true;
+                                        startInfo.RedirectStandardError = true;
+
+                                        using var process = new Process { StartInfo = startInfo };
                                         process.OutputDataReceived += (sender, e) =>
                                         {
                                             if (!String.IsNullOrEmpty(e.Data))
@@ -170,6 +174,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                                 Log.LogMessage(MessageImportance.High, e.Data);
                                             }
                                         };
+                                        process.Start();
                                         process.BeginOutputReadLine();
                                         process.BeginErrorReadLine();
                                         process.WaitForExit();
@@ -292,7 +297,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                 _ => Path.Combine(dotnetRoot, "shared", version)
             };
 
-            if (Directory.Exists(runtimePath))
+            if (Directory.Exists(TaskEnvironment.GetAbsolutePath(runtimePath)))
             {
                 Log.LogMessage(MessageImportance.Normal, $"  Runtime toolset '{runtime}/{architecture} v{version}' already installed in directory '{runtimePath}'.");
                 return true;
