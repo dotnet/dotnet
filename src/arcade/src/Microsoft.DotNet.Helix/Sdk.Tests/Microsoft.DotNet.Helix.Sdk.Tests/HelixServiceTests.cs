@@ -32,8 +32,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             string capturedSource = null;
             int? capturedCount = null;
             api.Job
-                .Setup(j => j.ListAsync(null, It.IsAny<int?>(), null, null, It.IsAny<string>(), null, It.IsAny<CancellationToken>()))
-                .Callback<string, int?, string, string, string, string, CancellationToken>((_, count, _, _, source, _, _) =>
+                .Setup(j => j.ListAsync(null, It.IsAny<int?>(), null, null, It.IsAny<IImmutableDictionary<string, string>>(), It.IsAny<string>(), null, It.IsAny<CancellationToken>()))
+                .Callback<string, int?, string, string, IImmutableDictionary<string, string>, string, string, CancellationToken>((_, count, _, _, _, source, _, _) =>
                 {
                     capturedCount = count;
                     capturedSource = source;
