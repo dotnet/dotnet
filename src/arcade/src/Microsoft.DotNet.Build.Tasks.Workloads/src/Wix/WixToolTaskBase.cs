@@ -39,7 +39,7 @@ namespace Microsoft.DotNet.Build.Tasks.Workloads.Wix
         {
             BuildEngine = engine ?? throw new ArgumentNullException(nameof(engine));
 
-            if (!File.Exists(toolPath))
+            if (!File.Exists(TaskEnvironment.GetAbsolutePath(toolPath)))
             {
                 throw new FileNotFoundException("The specified tool executable was not found.", toolPath);
             }

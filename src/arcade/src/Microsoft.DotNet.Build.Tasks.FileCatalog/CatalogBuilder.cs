@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Formats.Asn1;
 using System.IO;
 using System.Security.Cryptography;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.FileCatalog
 {
@@ -77,7 +78,7 @@ namespace Microsoft.DotNet.Build.Tasks.FileCatalog
         }
 
         /// <summary>Adds a file by path.</summary>
-        public CatalogBuilder AddFile(string filePath, string? name = null)
+        public CatalogBuilder AddFile(AbsolutePath filePath, string? name = null)
             => Add(CatalogEntry.FromFile(filePath, name));
 
         /// <summary>Builds the DER-encoded .cat file bytes.</summary>
@@ -94,7 +95,7 @@ namespace Microsoft.DotNet.Build.Tasks.FileCatalog
         }
 
         /// <summary>Builds and writes the catalog to <paramref name="path"/>.</summary>
-        public void WriteTo(string path)
+        public void WriteTo(AbsolutePath path)
         {
             if (string.IsNullOrEmpty(path))
             {

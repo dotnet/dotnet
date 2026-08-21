@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetPackageFromModule : BuildTask
+    public class GetPackageFromModule : Microsoft.Build.Utilities.Task
     {
         /// <summary>
         /// Modules referenced that need to be mapped to packages

@@ -17,8 +17,11 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
     /// their VSIX files located in the specified directory.
     /// </summary>
     [MSBuildMultiThreadableTask]
-    public sealed class GenerateTrainingInputFiles : Microsoft.Build.Utilities.Task
+    public sealed class GenerateTrainingInputFiles : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Absolute path to the OptProf.json config file.
         /// </summary>
@@ -48,7 +51,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
             OptProfTrainingConfiguration config;
             try
             {
-                config = OptProfTrainingConfiguration.Deserialize(File.ReadAllText(ConfigurationFile, Encoding.UTF8));
+                config = OptProfTrainingConfiguration.Deserialize(File.ReadAllText(TaskEnvironment.GetAbsolutePath(ConfigurationFile), Encoding.UTF8));
             }
             catch (Exception e)
             {
@@ -66,7 +69,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
                 Log.LogError($"Invalid configuration file format: missing 'assemblies' element in '{ConfigurationFile}'.");
             }
 
-            if (!Directory.Exists(InsertionDirectory))
+            if (!Directory.Exists(TaskEnvironment.GetAbsolutePath(InsertionDirectory)))
             {
                 Log.LogError($"Directory specified in InsertionDirectory does not exist: '{InsertionDirectory}'.");
             }
@@ -95,9 +98,9 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
             }
         }
 
-        private static JObject ReadVsixJsonManifest(string vsixPath)
+        private JObject ReadVsixJsonManifest(string vsixPath)
         {
-            using (var archive = new ZipArchive(File.Open(vsixPath, FileMode.Open), ZipArchiveMode.Read))
+            using (var archive = new ZipArchive(File.Open(TaskEnvironment.GetAbsolutePath(vsixPath), FileMode.Open), ZipArchiveMode.Read))
             {
                 var entry = archive.GetEntry("manifest.json");
 
@@ -138,9 +141,9 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
             }
         }
 
-        private static void WriteEntries(IbcEntry[] ibcEntries, string outDir)
+        private void WriteEntries(IbcEntry[] ibcEntries, string outDir)
         {
-            Directory.CreateDirectory(outDir);
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(outDir));
 
             foreach (var entry in ibcEntries)
             {
@@ -153,9 +156,9 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
                     fullPath = basePath + "." + index + ".IBC.json";
                     index++;
                 }
-                while (File.Exists(fullPath));
+                while (File.Exists(TaskEnvironment.GetAbsolutePath(fullPath)));
 
-                using (var writer = new StreamWriter(File.Open(fullPath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                using (var writer = new StreamWriter(File.Open(TaskEnvironment.GetAbsolutePath(fullPath), FileMode.Create, FileAccess.Write, FileShare.Read)))
                 {
                     writer.WriteLine(entry.ToJson().ToString());
                 }

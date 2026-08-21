@@ -23,7 +23,7 @@ namespace Microsoft.DotNet.GenFacades
             string defineConstants,
             string langVersion,
             string outputSourcePath,
-            ILog logger,
+            TaskLoggingHelper logger,
             bool ignoreMissingTypes = false,
             string[] ignoreMissingTypesList = null,
             string[] OmitTypes = null,
@@ -61,7 +61,7 @@ namespace Microsoft.DotNet.GenFacades
             return defineConstants?.Split(';', ',').Where(t => !string.IsNullOrEmpty(t)).ToArray();
         }
 
-        private static Dictionary<string, string> ParseSeedTypePreferences(ITaskItem[] preferences, ILog logger)
+        private static Dictionary<string, string> ParseSeedTypePreferences(ITaskItem[] preferences, TaskLoggingHelper logger)
         {
             var dictionary = new Dictionary<string, string>(StringComparer.Ordinal);
 

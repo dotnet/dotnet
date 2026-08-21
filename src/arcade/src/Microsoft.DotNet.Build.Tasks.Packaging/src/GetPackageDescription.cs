@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetPackageDescription : BuildTask
+    public class GetPackageDescription : Microsoft.Build.Utilities.Task
     {
         // avoid parsing the same document multiple times on a single node.
         private static Dictionary<string, Dictionary<string, string>> s_descriptionCache = new Dictionary<string, Dictionary<string, string>>();

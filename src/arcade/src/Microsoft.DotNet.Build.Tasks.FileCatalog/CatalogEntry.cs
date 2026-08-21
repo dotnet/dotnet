@@ -5,6 +5,7 @@ using System;
 using System.Buffers;
 using System.IO;
 using System.Security.Cryptography;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.FileCatalog
 {
@@ -24,7 +25,7 @@ namespace Microsoft.DotNet.Build.Tasks.FileCatalog
         /// of <paramref name="filePath"/>. The name is not embedded in the catalog (makecat
         /// V2 catalogs do not carry per-member file names); it is retained only for diagnostics.
         /// </param>
-        public static CatalogEntry FromFile(string filePath, string? name = null)
+        public static CatalogEntry FromFile(AbsolutePath filePath, string? name = null)
         {
             if (string.IsNullOrEmpty(filePath))
             {

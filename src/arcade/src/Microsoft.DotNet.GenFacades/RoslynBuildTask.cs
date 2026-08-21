@@ -10,7 +10,7 @@ using System.Runtime.Loader;
 
 namespace Microsoft.DotNet.Build.Tasks
 {
-    public abstract partial class RoslynBuildTask : BuildTask
+    public abstract partial class RoslynBuildTask : Microsoft.Build.Utilities.Task
     {
         [Required]
         public string RoslynAssembliesPath { get; set; }

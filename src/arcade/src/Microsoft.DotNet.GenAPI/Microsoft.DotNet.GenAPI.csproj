@@ -11,10 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Common\Internal\BuildTask.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core" />
 
     <!-- Manually reference Microsoft.Cci.dll via a PackageDownload+Reference item instead of

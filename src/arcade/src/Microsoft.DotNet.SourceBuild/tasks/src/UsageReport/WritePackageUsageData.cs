@@ -18,8 +18,11 @@ using Task = Microsoft.Build.Utilities.Task;
 namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
 {
     [MSBuildMultiThreadableTask]
-    public class WritePackageUsageData : Microsoft.Build.Utilities.Task
+    public class WritePackageUsageData : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         public string[] RestoredPackageFiles { get; set; }
         public string[] TarballPrebuiltPackageFiles { get; set; }
         public string[] ReferencePackageFiles { get; set; }
@@ -139,7 +142,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
             Log.LogMessage(MessageImportance.Low, "Finding project.assets.json files...");
 
             string[] assetFiles = Directory
-                .GetFiles(RootDir, "project.assets.json", SearchOption.AllDirectories)
+                .GetFiles(TaskEnvironment.GetAbsolutePath(RootDir), "project.assets.json", SearchOption.AllDirectories)
                 .Select(GetPathRelativeToRoot)
                 .Except(IgnoredProjectAssetsJsonFiles.NullAsEmpty().Select(GetPathRelativeToRoot))
                 .ToArray();
@@ -148,11 +151,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
             {
                 Log.LogMessage(MessageImportance.Low, "Archiving project.assets.json files...");
 
-                Directory.CreateDirectory(Path.GetDirectoryName(ProjectAssetsJsonArchiveFile));
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(ProjectAssetsJsonArchiveFile)));
 
                 using (var projectAssetArchive = new ZipArchive(
-                    File.Open(
-                        ProjectAssetsJsonArchiveFile,
+File.Open(TaskEnvironment.GetAbsolutePath(
+                        ProjectAssetsJsonArchiveFile),
                         FileMode.Create,
                         FileAccess.ReadWrite),
                     ZipArchiveMode.Create))
@@ -161,7 +164,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
                     // ForEach later.
                     foreach (var relativePath in assetFiles)
                     {
-                        using (var stream = File.OpenRead(Path.Combine(RootDir, relativePath)))
+                        using (var stream = File.OpenRead(TaskEnvironment.GetAbsolutePath(Path.Combine(RootDir, relativePath))))
                         using (Stream entryWriter = projectAssetArchive
                             .CreateEntry(relativePath, CompressionLevel.Optimal)
                             .Open())
@@ -182,7 +185,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
                 {
                     JObject jObj;
 
-                    using (var file = File.OpenRead(Path.Combine(RootDir, assetFile)))
+                    using (var file = File.OpenRead(TaskEnvironment.GetAbsolutePath(Path.Combine(RootDir, assetFile))))
                     using (var reader = new StreamReader(file))
                     using (var jsonReader = new JsonTextReader(reader))
                     {
@@ -252,8 +255,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
                     .ToArray()
             };
 
-            Directory.CreateDirectory(Path.GetDirectoryName(DataFile));
-            File.WriteAllText(DataFile, data.ToXml().ToString());
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(DataFile)));
+            File.WriteAllText(TaskEnvironment.GetAbsolutePath(DataFile), data.ToXml().ToString());
 
             Log.LogMessage(
                 MessageImportance.High,
@@ -272,9 +275,9 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
             throw new ArgumentException($"Path '{path}' is not within RootDir '{RootDir}'");
         }
 
-        private static string[] ReadRidsFromRuntimeJson(string path)
+        private string[] ReadRidsFromRuntimeJson(string path)
         {
-            var root = JObject.Parse(File.ReadAllText(path));
+            var root = JObject.Parse(File.ReadAllText(TaskEnvironment.GetAbsolutePath(path)));
             return root["runtimes"]
                 .Values<JProperty>()
                 .Select(o => o.Name)

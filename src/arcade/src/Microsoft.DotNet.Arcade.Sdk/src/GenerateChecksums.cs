@@ -10,8 +10,11 @@ using System.Security.Cryptography;
 namespace Microsoft.DotNet.Arcade.Sdk
 {
     [MSBuildMultiThreadableTask]
-    public class GenerateChecksums : Microsoft.Build.Utilities.Task
+    public class GenerateChecksums : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// An item collection of files for which to generate checksums.  Each item must have metadata
         /// 'DestinationPath' that specifies the path of the checksum file to create.
@@ -32,7 +35,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                         return !Log.HasLoggedErrors;
                     }
 
-                    if (!File.Exists(item.ItemSpec))
+                    if (!File.Exists(TaskEnvironment.GetAbsolutePath(item.ItemSpec)))
                     {
                         Log.LogError($"The file '{item.ItemSpec}' does not exist.");
                         return !Log.HasLoggedErrors;
@@ -40,13 +43,13 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
                     Log.LogMessage(MessageImportance.High, $"Generating checksum for '{item.ItemSpec}' into '{destinationPath}'...");
 
-                    using (FileStream stream = File.OpenRead(item.ItemSpec))
+                    using (FileStream stream = File.OpenRead(TaskEnvironment.GetAbsolutePath(item.ItemSpec)))
                     {
                         using(HashAlgorithm hashAlgorithm = SHA512.Create())
                         {
                             byte[] hash = hashAlgorithm.ComputeHash(stream);
                             string checksum = BitConverter.ToString(hash).Replace("-", string.Empty);
-                            File.WriteAllText(destinationPath, checksum);
+                            File.WriteAllText(TaskEnvironment.GetAbsolutePath(destinationPath), checksum);
                         }
                     }
                 }

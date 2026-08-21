@@ -14,8 +14,4 @@
     <PackageReference Include="Microsoft.Build.Framework" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Common\Internal\BuildTask.cs" />
-  </ItemGroup>
-
 </Project>

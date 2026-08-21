@@ -14,8 +14,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// for certain files.
     /// </summary>
     [MSBuildMultiThreadableTask]
-    public class StabilizeWixFileId : BuildTask
+    public class StabilizeWixFileId : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// File to read from. This is expected to be an output from heat.exe.
         /// 
@@ -50,7 +53,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         public override bool Execute()
         {
-            XDocument content = XDocument.Load(SourceFile);
+            XDocument content = XDocument.Load(TaskEnvironment.GetAbsolutePath(SourceFile));
 
             XNamespace rootNamespace = content.Root.GetDefaultNamespace();
             XName GetQualifiedName(string name) => rootNamespace.GetName(name);
@@ -98,7 +101,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 nameAttribute.Value = replacement;
             }
 
-            content.Save(OutputFile);
+            content.Save(TaskEnvironment.GetAbsolutePath(OutputFile));
 
             return !Log.HasLoggedErrors;
         }

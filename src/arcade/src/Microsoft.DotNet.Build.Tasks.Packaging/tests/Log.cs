@@ -3,10 +3,12 @@
 
 using AwesomeAssertions;
 using Xunit.Abstractions;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 {
-    internal class Log : ILog
+    public class Log
     {
         private readonly ITestOutputHelper _output;
 
@@ -30,7 +32,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
             _output.WriteLine(message, messageArgs);
         }
 
-        public void LogMessage(LogImportance importance, string message, params object[] messageArgs)
+        public void LogMessage(MessageImportance importance, string message, params object[] messageArgs)
         {
             _output.WriteLine(message, messageArgs);
         }

@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class CreateTrimDependencyGroups : BuildTask
+    public class CreateTrimDependencyGroups : Microsoft.Build.Utilities.Task
     {
         private const string PlaceHolderDependency = "_._";
 

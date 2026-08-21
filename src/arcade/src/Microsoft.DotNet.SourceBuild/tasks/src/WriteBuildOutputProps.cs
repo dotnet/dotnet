@@ -14,11 +14,14 @@ using System.Text.RegularExpressions;
 namespace Microsoft.DotNet.SourceBuild.Tasks
 {
     [MSBuildMultiThreadableTask]
-    public class WriteBuildOutputProps : Microsoft.Build.Utilities.Task
+    public class WriteBuildOutputProps : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private static readonly Regex InvalidElementNameCharRegex = new Regex(@"(^|[^A-Za-z0-9])(?<FirstPartChar>.)");
 
         public const string CreationTimePropertyName = "BuildOutputPropsCreationTime";
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         [Required]
         public ITaskItem[] NuGetPackages { get; set; }
@@ -67,15 +70,15 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
             var additionalAssets = (AdditionalAssetDirs ?? new string[0])
                 .Where(Directory.Exists)
-                .Where(dir => Directory.GetDirectories(dir).Count() > 0)
+                .Where(dir => Directory.GetDirectories(TaskEnvironment.GetAbsolutePath(dir)).Count() > 0)
                 .Select(dir => new {
-                    Name = new DirectoryInfo(dir).Name + "Version",
-                    Version = new DirectoryInfo(Directory.EnumerateDirectories(dir).OrderBy(s => s).Last()).Name
+                    Name = new DirectoryInfo(TaskEnvironment.GetAbsolutePath(dir)).Name + "Version",
+                    Version = new DirectoryInfo(TaskEnvironment.GetAbsolutePath(Directory.EnumerateDirectories(TaskEnvironment.GetAbsolutePath(dir)).OrderBy(s => s).Last())).Name
                 }).ToArray();
 
-            Directory.CreateDirectory(Path.GetDirectoryName(OutputPath));
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(OutputPath)));
 
-            using (var outStream = File.Open(OutputPath, FileMode.Create))
+            using (var outStream = File.Open(TaskEnvironment.GetAbsolutePath(OutputPath), FileMode.Create))
             using (var sw = new StreamWriter(outStream, new UTF8Encoding(false)))
             {
                 sw.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");

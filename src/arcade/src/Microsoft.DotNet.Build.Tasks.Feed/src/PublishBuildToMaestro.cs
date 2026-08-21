@@ -187,7 +187,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                     Log.LogMessage(MessageImportance.High,
                         $"Metadata has been pushed. Build id in the Build Asset Registry is '{recordedBuild.Id}'");
-                    Console.WriteLine($"##vso[build.addbuildtag]BAR ID - {recordedBuild.Id}");
+                    Log.LogMessage(MessageImportance.High, $"##vso[build.addbuildtag]BAR ID - {recordedBuild.Id}");
 
                     // Only 'create' the AzDO (VSO) variables if running in an AzDO build
                     if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILD_BUILDID")))
@@ -201,9 +201,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         Log.LogMessage(MessageImportance.High,
                             $"Determined build will be added to the following channels: {defaultChannelsStr}");
 
-                        Console.WriteLine($"##vso[task.setvariable variable=BARBuildId]{recordedBuild.Id}");
-                        Console.WriteLine($"##vso[task.setvariable variable=DefaultChannels]{defaultChannelsStr}");
-                        Console.WriteLine($"##vso[task.setvariable variable=IsStableBuild]{IsStableBuild}");
+                        Log.LogMessage(MessageImportance.High, $"##vso[task.setvariable variable=BARBuildId]{recordedBuild.Id}");
+                        Log.LogMessage(MessageImportance.High, $"##vso[task.setvariable variable=DefaultChannels]{defaultChannelsStr}");
+                        Log.LogMessage(MessageImportance.High, $"##vso[task.setvariable variable=IsStableBuild]{IsStableBuild}");
                     }
                 }
             }

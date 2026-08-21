@@ -13,7 +13,7 @@ using System.Text;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetApplicableAssetsFromPackages : BuildTask
+    public class GetApplicableAssetsFromPackages : Microsoft.Build.Utilities.Task
     {
         private Dictionary<string, List<PackageItem>> _packageToPackageItems;
         private Dictionary<string, PackageItem> _targetPathToPackageItem;

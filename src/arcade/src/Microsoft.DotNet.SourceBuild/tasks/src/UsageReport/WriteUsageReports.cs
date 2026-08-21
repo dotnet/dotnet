@@ -13,10 +13,13 @@ using System.Xml.Linq;
 namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
 {
     [MSBuildMultiThreadableTask]
-    public class WriteUsageReports : Microsoft.Build.Utilities.Task
+    public class WriteUsageReports : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private const string SnapshotPrefix = "PackageVersions.props.pre.";
         private const string SnapshotSuffix = ".xml";
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         /// <summary>
         /// Source usage data JSON file.
@@ -61,7 +64,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
 
         public override bool Execute()
         {
-            UsageData data = UsageData.Parse(XElement.Parse(File.ReadAllText(DataFile)));
+            UsageData data = UsageData.Parse(XElement.Parse(File.ReadAllText(TaskEnvironment.GetAbsolutePath(DataFile))));
 
             IEnumerable<RepoOutput> sourceBuildRepoOutputs = GetSourceBuildRepoOutputs();
 
@@ -77,9 +80,9 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
                     item.GetMetadata("OriginBuildName"));
             }
 
-            if (File.Exists(ProdConBuildManifestFile))
+            if (File.Exists(TaskEnvironment.GetAbsolutePath(ProdConBuildManifestFile)))
             {
-                var xml = XElement.Parse(File.ReadAllText(ProdConBuildManifestFile));
+                var xml = XElement.Parse(File.ReadAllText(TaskEnvironment.GetAbsolutePath(ProdConBuildManifestFile)));
                 foreach (var x in xml.Descendants("Package"))
                 {
                     AddProdConPackage(
@@ -91,9 +94,9 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
 
             var poisonNupkgFilenames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            if (File.Exists(PoisonedReportFile))
+            if (File.Exists(TaskEnvironment.GetAbsolutePath(PoisonedReportFile)))
             {
-                foreach (string line in File.ReadAllLines(PoisonedReportFile))
+                foreach (string line in File.ReadAllLines(TaskEnvironment.GetAbsolutePath(PoisonedReportFile)))
                 {
                     string[] segments = line.Split('\\');
                     if (segments.Length > 2 &&
@@ -157,10 +160,10 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
 
             report.Add(annotatedUsages.Select(u => u.ToXml()));
 
-            Directory.CreateDirectory(OutputDirectory);
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(OutputDirectory));
 
             File.WriteAllText(
-                Path.Combine(OutputDirectory, "annotated-usage.xml"),
+TaskEnvironment.GetAbsolutePath(Path.Combine(OutputDirectory, "annotated-usage.xml")),
                 report.ToString());
 
             return !Log.HasLoggedErrors;
@@ -171,7 +174,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.UsageReport
             var pvpSnapshotFiles = PackageVersionPropsSnapshots.NullAsEmpty()
                 .Select(item =>
                 {
-                    var content = File.ReadAllText(item.ItemSpec);
+                    var content = File.ReadAllText(TaskEnvironment.GetAbsolutePath(item.ItemSpec));
                     return new
                     {
                         Path = item.ItemSpec,

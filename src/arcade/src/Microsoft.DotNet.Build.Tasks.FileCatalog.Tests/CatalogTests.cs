@@ -12,6 +12,7 @@ using Microsoft.Arcade.Test.Common;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.FileCatalog;
 using Xunit;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.Build.Tasks.FileCatalog.Tests
 {
@@ -156,7 +157,7 @@ namespace Microsoft.DotNet.Build.Tasks.FileCatalog.Tests
             {
                 File.WriteAllBytes(path, s_registerJsContent);
 
-                byte[] fromFile = new CatalogBuilder().AddFile(path, "register.js").Build();
+                byte[] fromFile = new CatalogBuilder().AddFile(TaskEnvironment.Fallback.GetAbsolutePath(path), "register.js").Build();
                 byte[] fromMemory = new CatalogBuilder().Add(new CatalogEntry("register.js", s_registerJsContent)).Build();
 
                 fromFile.Should().Equal(fromMemory);

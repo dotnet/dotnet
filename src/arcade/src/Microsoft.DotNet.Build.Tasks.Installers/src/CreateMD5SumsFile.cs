@@ -16,8 +16,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// Emits a file of the format specified by https://manpages.debian.org/bookworm/dpkg-dev/deb-md5sums.5.en.html
     /// </remarks>
     [MSBuildMultiThreadableTask]
-    public sealed class CreateMD5SumsFile : BuildTask
+    public sealed class CreateMD5SumsFile : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string RootDirectory { get; set; }
         [Required]
@@ -30,13 +33,13 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         public override bool Execute()
         {
-            using FileStream outputFile = File.Create(OutputFile);
+            using FileStream outputFile = File.Create(TaskEnvironment.GetAbsolutePath(OutputFile));
             using StreamWriter writer = new(outputFile, Encoding.ASCII);
             ulong installedSize = 0;
             foreach (ITaskItem file in Files)
             {
                 using MD5 md5 = MD5.Create();
-                using FileStream fileStream = File.OpenRead(file.ItemSpec);
+                using FileStream fileStream = File.OpenRead(TaskEnvironment.GetAbsolutePath(file.ItemSpec));
                 installedSize += (ulong)fileStream.Length;
                 byte[] hash = md5.ComputeHash(fileStream);
                 string relativePath = file.ItemSpec.Substring(RootDirectory.Length).TrimStart(Path.DirectorySeparatorChar).Replace('\\', '/');

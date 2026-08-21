@@ -3,7 +3,6 @@
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Build.Tasks;
 using System;
 using System.IO;
 
@@ -13,8 +12,11 @@ namespace Microsoft.DotNet.CMake.Sdk
     /// Creates a CMake File API query file to request codemodel information.
     /// </summary>
     [MSBuildMultiThreadableTask]
-    public class CreateCMakeFileApiQuery : BuildTask
+    public class CreateCMakeFileApiQuery : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// The CMake build output directory where the query should be created.
         /// </summary>
@@ -27,14 +29,14 @@ namespace Microsoft.DotNet.CMake.Sdk
             {
                 // Create a client stateless query file with client name "Microsoft.DotNet.CMake.Sdk"
                 string queryDir = Path.Combine(CMakeOutputDir, ".cmake", "api", "v1", "query", "client-Microsoft.DotNet.CMake.Sdk");
-                Directory.CreateDirectory(queryDir);
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(queryDir));
 
                 string queryFile = Path.Combine(queryDir, "codemodel-v2");
                 
                 // Create an empty file to request codemodel-v2 information
-                File.WriteAllText(queryFile, string.Empty);
+                File.WriteAllText(TaskEnvironment.GetAbsolutePath(queryFile), string.Empty);
                 
-                Log.LogMessage(LogImportance.Low, "Created CMake File API query at: {0}", queryFile);
+                Log.LogMessage(MessageImportance.Low, "Created CMake File API query at: {0}", queryFile);
                 
                 return true;
             }

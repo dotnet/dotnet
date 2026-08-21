@@ -3,7 +3,6 @@
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Build.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +10,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk
 {
-    public class GeneratePlatformManifestEntriesFromTemplate : BuildTask
+    public class GeneratePlatformManifestEntriesFromTemplate : Microsoft.Build.Utilities.Task
     {
         [Required]
         public ITaskItem[] PlatformManifestEntryTemplates { get; set; }

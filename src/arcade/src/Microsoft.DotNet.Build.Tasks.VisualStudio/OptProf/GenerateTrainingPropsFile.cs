@@ -13,9 +13,12 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
     /// Generates a .props file pointing to a drops URL where IBC optimization inputs will be uploaded.
     /// </summary>
     [MSBuildMultiThreadableTask]
-    public sealed class GenerateTrainingPropsFile : Microsoft.Build.Utilities.Task
+    public sealed class GenerateTrainingPropsFile : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private const string ProductDropNamePrefix = "Products/";
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         /// <summary>
         /// GitHub repository name (e.g. 'dotnet/roslyn'). If unspecified a dummy value is used.
@@ -52,8 +55,8 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
             var outputFileNameNoExt = string.IsNullOrEmpty(RepositoryName) ? "ProfilingInputs" : RepositoryName.Replace('/', '.');
             var outputFilePath = Path.Combine(OutputDirectory, outputFileNameNoExt + ".props");
 
-            Directory.CreateDirectory(OutputDirectory);
-            File.WriteAllText(outputFilePath,
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(OutputDirectory));
+            File.WriteAllText(TaskEnvironment.GetAbsolutePath(outputFilePath),
 $@"<?xml version=""1.0""?>
 <Project>
   <ItemGroup>

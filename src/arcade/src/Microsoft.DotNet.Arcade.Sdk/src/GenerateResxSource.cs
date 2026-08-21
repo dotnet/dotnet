@@ -15,9 +15,12 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.DotNet.Arcade.Sdk
 {
     [MSBuildMultiThreadableTask]
-    public sealed class GenerateResxSource : Microsoft.Build.Utilities.Task
+    public sealed class GenerateResxSource : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         private const int maxDocCommentLength = 256;
+
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
         /// <summary>
         /// Language of source file to generate.  Supported languages: CSharp, VisualBasic
@@ -104,7 +107,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
             string memberIndent = classIndent + "    ";
 
             var strings = new StringBuilder();
-            foreach (var node in XDocument.Load(ResourceFile).Descendants("data"))
+            foreach (var node in XDocument.Load(TaskEnvironment.GetAbsolutePath(ResourceFile)).Descendants("data"))
             {
                 string name = node.Attribute("name")?.Value;
                 if (name == null)
@@ -362,7 +365,7 @@ Imports System.Reflection
                     throw new InvalidOperationException();
             }
 
-            File.WriteAllText(OutputPath, result);
+            File.WriteAllText(TaskEnvironment.GetAbsolutePath(OutputPath), result);
             return true;
         }
 

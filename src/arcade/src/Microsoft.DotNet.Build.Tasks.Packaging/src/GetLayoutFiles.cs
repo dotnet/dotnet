@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetLayoutFiles : BuildTask
+    public class GetLayoutFiles : Microsoft.Build.Utilities.Task
     {
         /// <summary>
         /// Package report files
@@ -78,20 +78,20 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
                         if (!frameworks.TryGetValue(fx, out rids))
                         {
-                            Log.LogMessage(LogImportance.Low, $"Skipping {fx} since it is not in {nameof(Frameworks)}");
+                            Log.LogMessage(MessageImportance.Low, $"Skipping {fx} since it is not in {nameof(Frameworks)}");
                             continue;
                         }
 
                         if (rid != null && rids.Count > 0 && !rids.Contains(rid))
                         {
-                            Log.LogMessage(LogImportance.Low, $"Skipping {fx}/{rid} since it is not in {nameof(Frameworks)}");
+                            Log.LogMessage(MessageImportance.Low, $"Skipping {fx}/{rid} since it is not in {nameof(Frameworks)}");
                             continue;
                         }
                     }
 
                     if (!packageReport.SupportedFrameworks.ContainsKey(fx.ToString()))
                     {
-                        Log.LogMessage(LogImportance.Low, $"Skipping {fx} since it is not supported");
+                        Log.LogMessage(MessageImportance.Low, $"Skipping {fx} since it is not supported");
                         continue;
                     }
 

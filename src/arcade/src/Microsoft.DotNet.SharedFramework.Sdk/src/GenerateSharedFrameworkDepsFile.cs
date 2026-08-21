@@ -3,7 +3,6 @@
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Build.Tasks;
 using Microsoft.Extensions.DependencyModel;
 using NuGet.RuntimeModel;
 using System;
@@ -13,7 +12,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk
 {
-    public class GenerateSharedFrameworkDepsFile : BuildTask
+    public class GenerateSharedFrameworkDepsFile : Microsoft.Build.Utilities.Task
     {
         [Required]
         public string TargetFrameworkMoniker { get; set; }

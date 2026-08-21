@@ -12,8 +12,11 @@ using System.Linq;
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
     [MSBuildMultiThreadableTask]
-    public class GetRuntimeTargets : Microsoft.Build.Utilities.Task
+    public class GetRuntimeTargets : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         // runtime.json file path
         [Required]
         public string JsonFilename { get; set; }
@@ -28,10 +31,10 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         private bool ParseRuntimeJsonFile()
         {
-            if (string.IsNullOrEmpty(JsonFilename) || !File.Exists(JsonFilename))
+            if (string.IsNullOrEmpty(JsonFilename) || !File.Exists(TaskEnvironment.GetAbsolutePath(JsonFilename)))
                 return false;
 
-            JObject jObject = JObject.Parse(File.ReadAllText(JsonFilename));
+            JObject jObject = JObject.Parse(File.ReadAllText(TaskEnvironment.GetAbsolutePath(JsonFilename)));
 
             var targets = from t in jObject["targets"] select t;
 

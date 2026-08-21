@@ -18,8 +18,11 @@ namespace Microsoft.DotNet.Arcade.Sdk
     /// partial NGEN is enabled
     /// </summary>
     [MSBuildMultiThreadableTask]
-    public sealed class ExtractNgenMethodList : Microsoft.Build.Utilities.Task
+    public sealed class ExtractNgenMethodList : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// This is the XML file produced by passing -dxml to ibcmerge. It will be transformed into the set of
         /// methods marked for NGEN in the assembly
@@ -51,7 +54,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         public override bool Execute()
         {
-            var document = XDocument.Load(IbcXmlFilePath);
+            var document = XDocument.Load(TaskEnvironment.GetAbsolutePath(IbcXmlFilePath));
             var items = new List<string>();
             var parentElement = document.Root.Element("MethodProfilingData");
             if (parentElement != null)
@@ -70,7 +73,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
             items.Sort();
 
-            Directory.CreateDirectory(OutputDirectory);
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(OutputDirectory));
 
             // When AssemblyTargetFramework is set then this is an assembly that is being built by the current
             // build. Appending the target framework means we will avoid name clashes. When it's not set then
@@ -82,7 +85,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                 : AssemblyTargetFramework;
             var outputFileName = $"{Path.GetFileNameWithoutExtension(AssemblyFilePath)}-{outputFileNameSuffix}.ngen.txt";
             var outputFilePath = Path.Combine(OutputDirectory, outputFileName);
-            using (var outputFileStream = new StreamWriter(outputFilePath, append: false))
+            using (var outputFileStream = new StreamWriter(TaskEnvironment.GetAbsolutePath(outputFilePath), append: false))
             {
                 foreach (var item in items)
                 {
@@ -95,7 +98,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         private Guid GetAssemblyMvid()
         {
-            using (var stream = File.Open(AssemblyFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var stream = File.Open(TaskEnvironment.GetAbsolutePath(AssemblyFilePath), FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 var peReader = new PEReader(stream);
                 var metadataReader = peReader.GetMetadataReader();

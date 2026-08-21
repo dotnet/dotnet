@@ -14,8 +14,11 @@ using System.Xml.Linq;
 namespace Microsoft.DotNet.SharedFramework.Sdk
 {
     [MSBuildMultiThreadableTask]
-    public class GenerateMacOSDistributionFile : BuildTask
+    public class GenerateMacOSDistributionFile : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string TemplatePath { get; set; }
 
@@ -37,7 +40,7 @@ namespace Microsoft.DotNet.SharedFramework.Sdk
         {
             try
             {
-                XDocument document = XDocument.Load(TemplatePath);
+                XDocument document = XDocument.Load(TaskEnvironment.GetAbsolutePath(TemplatePath));
 
                 var titleElement = new XElement("title", $"{ProductBrandName} ({TargetArchitecture})");
 
@@ -118,7 +121,7 @@ namespace Microsoft.DotNet.SharedFramework.Sdk
                 document.Root.Add(choiceElements);
                 document.Root.Add(pkgRefElements);
                 document.Root.Add(scriptElement);
-                using XmlWriter writer = XmlWriter.Create(File.Create(DestinationFile));
+                using XmlWriter writer = XmlWriter.Create(File.Create(TaskEnvironment.GetAbsolutePath(DestinationFile)));
                 document.WriteTo(writer);
             }
             catch (Exception ex)

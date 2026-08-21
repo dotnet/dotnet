@@ -10,8 +10,11 @@ using Microsoft.Build.Framework;
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
     [MSBuildMultiThreadableTask]
-    public sealed class CreateControlFile : BuildTask
+    public sealed class CreateControlFile : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string PackageName { get; set; }
 
@@ -43,7 +46,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         public override bool Execute()
         {
-            using Stream stream = File.Create(ControlFileOutputPath);
+            using Stream stream = File.Create(TaskEnvironment.GetAbsolutePath(ControlFileOutputPath));
             using StreamWriter writer = new(stream, Encoding.ASCII);
             writer.WriteLine($"Package: {PackageName}");
             writer.WriteLine($"Version: {PackageVersion}");

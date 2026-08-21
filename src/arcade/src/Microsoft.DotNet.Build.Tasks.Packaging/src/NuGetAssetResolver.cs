@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
@@ -115,7 +117,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             }
         }
 
-        public static void ExamineAssets(ILog logger, string assetType, string package, string target, IEnumerable<string> items, out bool hasRealAsset, out bool hasPlaceHolder)
+        public static void ExamineAssets(TaskLoggingHelper logger, string assetType, string package, string target, IEnumerable<string> items, out bool hasRealAsset, out bool hasPlaceHolder)
         {
             hasPlaceHolder = false;
             hasRealAsset = false;
@@ -143,7 +145,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 assetLog.AppendLine();
                 assetLog.Append("  <none>");
             }
-            logger.LogMessage(LogImportance.Low, assetLog.ToString());
+            logger.LogMessage(MessageImportance.Low, assetLog.ToString());
         }
 
         public static bool IsPlaceholder(string path)

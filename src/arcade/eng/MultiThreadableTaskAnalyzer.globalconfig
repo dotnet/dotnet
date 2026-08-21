@@ -1,0 +1,17 @@
+# Configuration for Microsoft.Build.TaskAuthoring.Analyzer (referenced from eng/BuildTask.targets).
+#
+# Arcade's tasks are being migrated to MSBuild's multithreaded execution model incrementally
+# (see https://github.com/dotnet/arcade/issues/17378). Scoping the analyzer to tasks that have
+# already opted in via [MSBuildMultiThreadableTask] keeps it as a regression guard for migrated
+# tasks without drowning the build in diagnostics for the ones still to be migrated.
+is_global = true
+
+msbuild_task_analyzer.scope = multithreadable_only
+
+# API-shape suggestions (typed path parameters, ITaskItem<T>, constructor injection). Useful when
+# authoring a new task, but not worth churning the existing task surface over, and several of them
+# would be binary-breaking for tasks whose parameters are set from targets across the ecosystem.
+dotnet_diagnostic.MSBuildTask0006.severity = none
+dotnet_diagnostic.MSBuildTask0007.severity = none
+dotnet_diagnostic.MSBuildTask0008.severity = none
+dotnet_diagnostic.MSBuildTask0011.severity = none

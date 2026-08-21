@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class HarvestPackage : BuildTask
+    public class HarvestPackage : Microsoft.Build.Utilities.Task
     {
         /// <summary>
         /// Package ID to harvest
@@ -205,7 +205,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
                 if (!isSupported)
                 {
-                    Log.LogMessage(LogImportance.Low, $"Skipping {fx} because it is not supported.");
+                    Log.LogMessage(MessageImportance.Low, $"Skipping {fx} because it is not supported.");
                     continue;
                 }
 
@@ -223,7 +223,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
                     if (!isSupported)
                     {
-                        Log.LogMessage(LogImportance.Low, $"Skipping {fx} because it is not supported on {target}.");
+                        Log.LogMessage(MessageImportance.Low, $"Skipping {fx} because it is not supported on {target}.");
                         break;
                     }
                 }
@@ -254,7 +254,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
                     supportedFramework.SetMetadata("Version", version);
 
-                    Log.LogMessage(LogImportance.Low, $"Validating version {version} for {supportedFramework.ItemSpec} because it was supported by {PackageId}/{PackageVersion}.");
+                    Log.LogMessage(MessageImportance.Low, $"Validating version {version} for {supportedFramework.ItemSpec} because it was supported by {PackageId}/{PackageVersion}.");
 
                     supportedFrameworks.Add(supportedFramework);
                 }
@@ -309,14 +309,14 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                     // exclude if its specifically set for exclusion
                     if (ShouldExclude(harvestPackagePath))
                     {
-                        Log.LogMessage(LogImportance.Low, $"Excluding package path {harvestPackagePath} because it is specifically excluded.");
+                        Log.LogMessage(MessageImportance.Low, $"Excluding package path {harvestPackagePath} because it is specifically excluded.");
                         continue;
                     }
 
                     ITaskItem includeItem = null;
                     if (!IncludeAllPaths && !ShouldInclude(harvestPackagePath, out includeItem))
                     {
-                        Log.LogMessage(LogImportance.Low, $"Excluding package path {harvestPackagePath} because it is not included in {nameof(PathsToInclude)}.");
+                        Log.LogMessage(MessageImportance.Low, $"Excluding package path {harvestPackagePath} because it is not included in {nameof(PathsToInclude)}.");
                         continue;
                     }
 
@@ -355,7 +355,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                             if (extension != s_dll || assemblyVersion == null || liveFile.Version == null)
                             {
                                 // we don't consider this an error even for explicitly included files 
-                                Log.LogMessage(LogImportance.Low, $"Preferring live build of package path {livePackagePath} over the asset from last stable package because the file is not versioned.");
+                                Log.LogMessage(MessageImportance.Low, $"Preferring live build of package path {livePackagePath} over the asset from last stable package because the file is not versioned.");
                                 continue;
                             }
 
@@ -410,7 +410,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                         }
                         else
                         {
-                            Log.LogMessage(LogImportance.Low, $"Including {livePackagePath} from last stable package {PackageId}/{PackageVersion}.");
+                            Log.LogMessage(MessageImportance.Low, $"Including {livePackagePath} from last stable package {PackageId}/{PackageVersion}.");
                         }
 
                         var item = new TaskItem(packageFile);
@@ -494,7 +494,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         {
             if (IncludeAllPaths)
             {
-                Log.LogMessage(LogImportance.Low, $"Preferring live build of package path {packagePath} over the asset from last stable package{reason}.");
+                Log.LogMessage(MessageImportance.Low, $"Preferring live build of package path {packagePath} over the asset from last stable package{reason}.");
             }
             else
             {

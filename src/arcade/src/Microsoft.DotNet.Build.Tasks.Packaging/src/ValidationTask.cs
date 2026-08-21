@@ -16,7 +16,7 @@ using PropertyNames = NuGet.Client.ManagedCodeConventions.PropertyNames;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public abstract class ValidationTask : BuildTask
+    public abstract class ValidationTask : Microsoft.Build.Utilities.Task
     {
         /// <summary>
         /// Suppressions

@@ -7,7 +7,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.Build.Tasks;
 using Microsoft.Cci;
 using Microsoft.Cci.Extensions;
 using Microsoft.Cci.Extensions.CSharp;
@@ -15,10 +14,12 @@ using Microsoft.Cci.Filters;
 using Microsoft.Cci.Writers;
 using Microsoft.Cci.Writers.CSharp;
 using Microsoft.Cci.Writers.Syntax;
+using System.Text;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.GenAPI
 {
-    public class GenAPITask : BuildTask
+    public class GenAPITask : Microsoft.Build.Utilities.Task
     {
         private const string InternalsVisibleTypeName = "System.Runtime.CompilerServices.InternalsVisibleToAttribute";
         private const string DefaultFileHeader =
@@ -279,11 +280,11 @@ namespace Microsoft.DotNet.GenAPI
             return defaultHeader;
         }
 
-        private static TextWriter GetOutput(string outFilePath, string filename = "")
+        private TextWriter GetOutput(string outFilePath, string filename = "")
         {
-            // If this is a null, empty, whitespace, or a directory use console
+            // If this is a null, empty, whitespace, or a directory write to the build log
             if (string.IsNullOrWhiteSpace(outFilePath))
-                return Console.Out;
+                return new LogTextWriter(Log);
 
             if (Directory.Exists(outFilePath) && !string.IsNullOrEmpty(filename))
             {
@@ -291,6 +292,48 @@ namespace Microsoft.DotNet.GenAPI
             }
 
             return File.CreateText(outFilePath);
+        }
+
+        /// <summary>
+        /// Forwards writes to the build log so that generated output is captured by MSBuild's
+        /// loggers rather than written to the process-wide console.
+        /// </summary>
+        private sealed class LogTextWriter : TextWriter
+        {
+            private readonly TaskLoggingHelper _log;
+            private readonly StringBuilder _line = new StringBuilder();
+
+            public LogTextWriter(TaskLoggingHelper log) => _log = log;
+
+            public override Encoding Encoding => Encoding.UTF8;
+
+            public override void Write(char value)
+            {
+                if (value == '\n')
+                {
+                    Flush();
+                }
+                else if (value != '\r')
+                {
+                    _line.Append(value);
+                }
+            }
+
+            public override void Flush()
+            {
+                _log.LogMessage(MessageImportance.High, _line.ToString());
+                _line.Clear();
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing && _line.Length > 0)
+                {
+                    Flush();
+                }
+
+                base.Dispose(disposing);
+            }
         }
 
         private static string GetFilename(IAssembly assembly, WriterType writer, SyntaxWriterType syntax)

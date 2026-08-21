@@ -15,8 +15,11 @@ using Tasks = System.Threading.Tasks;
 namespace Microsoft.DotNet.Arcade.Sdk
 {
     [MSBuildMultiThreadableTask]
-    public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask
+    public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// List of URls to attempt download from. Accepted metadata are:
         ///     - Token: Base64 encoded token to be appended to base URL for accessing private locations.
@@ -60,7 +63,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                 return false;
             }
 
-            if (File.Exists(DestinationPath) && !Overwrite)
+            if (File.Exists(TaskEnvironment.GetAbsolutePath(DestinationPath)) && !Overwrite)
             {
                 return true;
             }
@@ -70,7 +73,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                 return false;
             }
 
-            Directory.CreateDirectory(Path.GetDirectoryName(DestinationPath));
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(DestinationPath)));
 
             if (!string.IsNullOrWhiteSpace(Uri)) {
                 return DownloadFromUriAsync(Uri).Result;
@@ -113,9 +116,9 @@ namespace Microsoft.DotNet.Arcade.Sdk
             {
                 var filePath = uri.Substring(FileUriProtocol.Length);
 
-                if (File.Exists(filePath)) {
+                if (File.Exists(TaskEnvironment.GetAbsolutePath(filePath))) {
                     Log.LogMessage($"Copying '{filePath}' to '{DestinationPath}'");
-                    File.Copy(filePath, DestinationPath, overwrite: true);
+                    File.Copy(TaskEnvironment.GetAbsolutePath(filePath), TaskEnvironment.GetAbsolutePath(DestinationPath), overwrite: true);
                     return true;
                 } else {
                     Log.LogMessage($"'{filePath}' does not exist.");
@@ -192,7 +195,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
                     httpResponse.EnsureSuccessStatusCode();
 
-                    using (var outStream = File.Create(DestinationPath))
+                    using (var outStream = File.Create(TaskEnvironment.GetAbsolutePath(DestinationPath)))
                     {
                         await httpResponse.Content.CopyToAsync(outStream).ConfigureAwait(false);
                     }

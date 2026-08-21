@@ -8,8 +8,11 @@ using System.Text;
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
     [MSBuildMultiThreadableTask]
-    public class CreateLightCommandPackageDrop : CreateWixCommandPackageDropBase
+    public class CreateLightCommandPackageDrop : CreateWixCommandPackageDropBase, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string LightCommandWorkingDir { get; set; }
         /// <summary>
@@ -54,7 +57,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             if (WixProjectFile != null)
             {
                 var destinationPath = Path.Combine(packageDropOutputFolder, Path.GetFileName(WixProjectFile));
-                File.Copy(WixProjectFile, destinationPath, true);
+                File.Copy(TaskEnvironment.GetAbsolutePath(WixProjectFile), TaskEnvironment.GetAbsolutePath(destinationPath), true);
                 commandString.Append($" -wixprojectfile {Path.GetFileName(WixProjectFile)}");
             }
             if (ContentsFile != null)

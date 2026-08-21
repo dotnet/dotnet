@@ -119,21 +119,25 @@
       <Sha>eb583d0664328fb0d370586c4d4e974212687cb0</Sha>
     </Dependency>
     <!-- Dependencies required for source build to lift to the previously-source-built version. -->
-    <Dependency Name="Microsoft.Build" Version="18.4.0">
+    <Dependency Name="Microsoft.Build" Version="18.8.2">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6e61e96acff3f3bd97740401540053cc2d49b189</Sha>
+      <Sha>ce25c01082c9c46cd02ad1ff3ff8f16fe5cc2f44</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Framework" Version="18.4.0">
+    <Dependency Name="Microsoft.Build.Framework" Version="18.8.2">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6e61e96acff3f3bd97740401540053cc2d49b189</Sha>
+      <Sha>ce25c01082c9c46cd02ad1ff3ff8f16fe5cc2f44</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Core" Version="18.4.0">
+    <Dependency Name="Microsoft.Build.Tasks.Core" Version="18.8.2">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6e61e96acff3f3bd97740401540053cc2d49b189</Sha>
+      <Sha>ce25c01082c9c46cd02ad1ff3ff8f16fe5cc2f44</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Utilities.Core" Version="18.4.0">
+    <Dependency Name="Microsoft.Build.Utilities.Core" Version="18.8.2">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>6e61e96acff3f3bd97740401540053cc2d49b189</Sha>
+      <Sha>ce25c01082c9c46cd02ad1ff3ff8f16fe5cc2f44</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Build.TaskAuthoring.Analyzer" Version="18.11.0-1.26420.118">
+      <Uri>https://github.com/dotnet/msbuild</Uri>
+      <Sha>ce25c01082c9c46cd02ad1ff3ff8f16fe5cc2f44</Sha>
     </Dependency>
     <!-- NuGet dependencies required for source build to lift to the previously-source-built version.
          Arcade redistributes these in its MSBuild task packages and needs real executable assemblies,

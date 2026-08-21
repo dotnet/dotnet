@@ -13,8 +13,4 @@
     <PackageReference Include="NuGet.Packaging" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Common\Internal\BuildTask.cs" />
-  </ItemGroup>
-
 </Project>

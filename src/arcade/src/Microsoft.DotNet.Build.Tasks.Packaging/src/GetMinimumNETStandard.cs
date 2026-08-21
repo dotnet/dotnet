@@ -11,7 +11,7 @@ using System.Linq;
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
     [MSBuildMultiThreadableTask]
-    public class GetMinimumNETStandard : BuildTask
+    public class GetMinimumNETStandard : Microsoft.Build.Utilities.Task
     {
         [Required]
         public ITaskItem[] Frameworks
