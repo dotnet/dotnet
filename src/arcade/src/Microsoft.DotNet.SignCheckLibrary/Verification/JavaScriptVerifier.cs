@@ -11,6 +11,7 @@ namespace Microsoft.SignCheck.Verification
 {
     public class JavaScriptVerifier : AuthentiCodeVerifier
     {
+        internal override bool RequiresStaThreadForWinVerifyTrust => true;
 
         public JavaScriptVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options)
             : base(log, exclusions, options, ".js", new JavaScriptSecurityInfoProvider() ) { }
