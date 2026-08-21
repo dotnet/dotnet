@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.20-servicing.26413.15</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>83d50199a618f84d9cb5d442dcc70c46023d1108</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.26407.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>09bf54e912f2c0efa6f10e35fa9dd5c4051fb16b</sdkGitCommitHash>
+    <sdkGitCommitHash>0882d8715f9c3362272661e37019dfaa49c76d31</sdkGitCommitHash>
     <sourcebuildassetsGitCommitHash>9693cbc172a06845f5b8799bdf098c055d728166</sourcebuildassetsGitCommitHash>
     <sourcebuildassetsOutputPackageVersion>9.0.0-alpha.1.26405.2</sourcebuildassetsOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>1c800169e674c7becf88434a0d2817453cf91dd7</sourcebuildexternalsGitCommitHash>
@@ -52,12 +52,12 @@
     <testtemplatesOutputPackageVersion>1.1.0-rtm.25262.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>bc9161306b23641b0364b8f93d546da4d48da1eb</vstestGitCommitHash>
     <vstestOutputPackageVersion>17.12.0-release-24508-01</vstestOutputPackageVersion>
-    <windowsdesktopGitCommitHash>daf3521d2c06f60c6549079094c391732bc59d15</windowsdesktopGitCommitHash>
+    <windowsdesktopGitCommitHash>e1078413a088bdc4c4d5b3cd45faeda03d7d1076</windowsdesktopGitCommitHash>
     <windowsdesktopOutputPackageVersion>9.0.20</windowsdesktopOutputPackageVersion>
     <winformsGitCommitHash>6502cec45fb6ee15a78a39105e6cd9ccf2e6c364</winformsGitCommitHash>
     <winformsOutputPackageVersion>9.0.20-servicing.26414.2</winformsOutputPackageVersion>
-    <wpfGitCommitHash>f32f0c216455878a8eabe2caf23ad5cba55d3d0a</wpfGitCommitHash>
-    <wpfOutputPackageVersion>9.0.20-rtm.26414.3</wpfOutputPackageVersion>
+    <wpfGitCommitHash>b11f25ba2d9d291ca38621d7ba15ad9563e96d30</wpfGitCommitHash>
+    <wpfOutputPackageVersion>9.0.20-rtm.26421.6</wpfOutputPackageVersion>
     <xdtGitCommitHash>63ae81154c50a1cf9287cc47d8351d55b4289e6d</xdtGitCommitHash>
     <xdtOutputPackageVersion>10.0.0-preview.24609.2</xdtOutputPackageVersion>
     <xlifftasksGitCommitHash>73f0850939d96131c28cf6ea6ee5aacb4da0083a</xlifftasksGitCommitHash>
