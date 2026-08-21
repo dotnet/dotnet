@@ -1268,6 +1268,28 @@ namespace NuGet.Tests.Apex
             pmcText.Should().NotContain("FullyQualifiedErrorId", because: pmcText);
         }
 
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public void Console_WhenBackspacingSupplementaryCharacter_PreservesRemainingText()
+        {
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreConsoleApp, Logger);
+
+            var nugetConsole = GetConsole(testContext.Project);
+            nugetConsole.Clear();
+
+            string supplementaryCharacter = char.ConvertFromUtf32(0x20000);
+            string input = "A" + supplementaryCharacter;
+
+            nugetConsole.ExecuteWithInputAndBackspace(
+                "$value = Read-Host; Write-Host \"Result=[$value]\"",
+                input);
+
+            string pmcText = nugetConsole.GetText();
+            pmcText.Should().Contain("Result=[A]", because: pmcText);
+            pmcText.Should().NotContain(supplementaryCharacter[0].ToString(), because: pmcText);
+            pmcText.Should().NotContain("FullyQualifiedErrorId", because: pmcText);
+        }
+
         public static IEnumerable<object[]> GetNetCoreTemplates()
         {
             yield return new object[] { ProjectTemplate.NetCoreConsoleApp };
