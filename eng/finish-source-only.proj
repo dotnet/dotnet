@@ -16,6 +16,10 @@
     <MSBuildWarningsNotAsErrors>$(MSBuildWarningsNotAsErrors);SBA001</MSBuildWarningsNotAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Deterministic Condition="'$(Deterministic)' == ''">true</Deterministic>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" />
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.SourceBuild.Tasks.LeakDetection\Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.csproj" />
@@ -201,6 +205,8 @@
     </ItemGroup>
   </Target>
 
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateCompressedTar" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+
   <!-- After building, repackage symbols into a single tarball. -->
   <Target Name="RepackageSymbols"
           AfterTargets="Build"
@@ -208,8 +214,13 @@
           Inputs="@(IntermediateSymbol)"
           Outputs="$(UnifiedSymbolsTarball)">
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(UnifiedSymbolsTarball)'))" />
-    <Exec Command="tar --numeric-owner -czf $(UnifiedSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSymbolsRootDir)" />
+
+    <CreateCompressedTar SourceDir="$(IntermediateSymbolsRootDir)"
+                         DestinationFile="$(UnifiedSymbolsTarball)"
+                         CompressionType="gz"
+                         Format="gnu"
+                         Deterministic="$(Deterministic)"
+                         DeterministicTimestamp="$(DeterministicTimestamp)" />
 
     <Message Importance="High" Text="Packaged all symbols in '$(UnifiedSymbolsTarball)'" />
   </Target>
@@ -230,8 +241,12 @@
                             SdkSymbolsLayoutPath="$(IntermediateSdkSymbolsLayout)"
                             FailOnMissingPDBs="false" />
 
-    <Exec Command="tar --numeric-owner -czf $(SdkSymbolsTarball) *"
-          WorkingDirectory="$(IntermediateSdkSymbolsLayout)" />
+    <CreateCompressedTar SourceDir="$(IntermediateSdkSymbolsLayout)"
+                         DestinationFile="$(SdkSymbolsTarball)"
+                         CompressionType="gz"
+                         Format="gnu"
+                         Deterministic="$(Deterministic)"
+                         DeterministicTimestamp="$(DeterministicTimestamp)" />
 
     <Message Importance="High" Text="Packaged sdk symbols in '$(SdkSymbolsTarball)'" />
 
@@ -278,7 +293,13 @@
     </PropertyGroup>
 
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(PrebuiltsTarball)'))" />
-    <Exec Command="tar --numeric-owner -zcf $(PrebuiltsTarball) -C $(PrebuiltsTarballWorkingDir) ." />
+
+    <CreateCompressedTar SourceDir="$(PrebuiltsTarballWorkingDir)"
+                         DestinationFile="$(PrebuiltsTarball)"
+                         CompressionType="gz"
+                         Format="gnu"
+                         Deterministic="$(Deterministic)"
+                         DeterministicTimestamp="$(DeterministicTimestamp)" />
 
     <Message Text="Tarball '$(PrebuiltsTarball)' was successfully created from '$(PrebuiltsTarballWorkingDir)'" Importance="High" />
 
