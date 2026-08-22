@@ -6,7 +6,7 @@
   <ToolsetDependencies>
     <Dependency Name="System.CommandLine" Version="2.0.12">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>f3c422da807f2a8698a7b1b95cb1badd4572ac4c</Sha>
+      <Sha>95017c711e6afc1085133d440e42b4bd78155701</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26380.110">
       <Uri>https://github.com/dotnet/dotnet</Uri>
