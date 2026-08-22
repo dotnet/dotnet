@@ -523,9 +523,19 @@ namespace NuGetConsole.Implementation.Console
 
             // Delete last character from input buffer.
             ITextBuffer textBuffer = WpfTextView.TextBuffer;
-            if (textBuffer.CurrentSnapshot.Length > 0)
+            ITextSnapshot snapshot = textBuffer.CurrentSnapshot;
+            int length = snapshot.Length;
+            if (length > 0)
             {
-                textBuffer.Delete(new Span(textBuffer.CurrentSnapshot.Length - 1, 1));
+                int deleteCount = 1;
+                if (length >= 2
+                    && char.IsLowSurrogate(snapshot[length - 1])
+                    && char.IsHighSurrogate(snapshot[length - 2]))
+                {
+                    deleteCount = 2;
+                }
+
+                textBuffer.Delete(new Span(length - deleteCount, deleteCount));
             }
 
             // Ensure caret visible (scroll)
