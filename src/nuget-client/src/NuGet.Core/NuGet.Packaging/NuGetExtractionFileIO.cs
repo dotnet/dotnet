@@ -12,17 +12,6 @@ namespace NuGet.Packaging
 {
     internal static class NuGetExtractionFileIO
     {
-        private const int OpenWriteOnly = 0x1;
-        private const int LinuxOpenCreate = 0x40;
-        private const int LinuxOpenTruncate = 0x200;
-        private const int LinuxOpenCloseOnExec = 0x80000;
-        private const int DarwinOpenCreate = 0x200;
-        private const int DarwinOpenTruncate = 0x400;
-        private const int DarwinOpenCloseOnExec = 0x1000000;
-        private const int FreeBsdOpenCreate = 0x200;
-        private const int FreeBsdOpenTruncate = 0x400;
-        private const int FreeBsdOpenCloseOnExec = 0x100000;
-
         private static int _unixPermissions = Convert.ToInt32("766", 8);
         private static Lazy<Func<string, FileStream>> _createFileMethod =
             new Lazy<Func<string, FileStream>>(CreateFileMethodSelector);
@@ -66,7 +55,7 @@ namespace NuGet.Packaging
             int fd;
             try
             {
-                fd = PosixOpen(path, GetPosixCreateFlags(), _unixPermissions);
+                fd = PosixCreate(path, _unixPermissions);
             }
             catch (Exception exception)
             {
@@ -80,7 +69,7 @@ namespace NuGet.Packaging
                     // File.Create() should have thrown an exception with an appropriate error message
                 }
                 File.Delete(path);
-                throw new InvalidOperationException("libc open failed, but File.Create did not");
+                throw new InvalidOperationException("libc creat failed, but File.Create did not");
             }
 
             var sfh = new SafeFileHandle((IntPtr)fd, ownsHandle: true);
@@ -168,24 +157,9 @@ namespace NuGet.Packaging
             _unixPermissions = _unixPermissions & ~mask;
         }
 
-        private static int GetPosixCreateFlags()
-        {
-            if (RuntimeEnvironmentHelper.IsMacOSX)
-            {
-                return OpenWriteOnly | DarwinOpenCreate | DarwinOpenTruncate | DarwinOpenCloseOnExec;
-            }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD")))
-            {
-                return OpenWriteOnly | FreeBsdOpenCreate | FreeBsdOpenTruncate | FreeBsdOpenCloseOnExec;
-            }
-
-            return OpenWriteOnly | LinuxOpenCreate | LinuxOpenTruncate | LinuxOpenCloseOnExec;
-        }
-
-
-        [DllImport("libc", EntryPoint = "open")]
-        private static extern int PosixOpen([MarshalAs(UnmanagedType.LPStr)] string pathname, int flags, int mode);
+        [DllImport("libc", EntryPoint = "creat")]
+        private static extern int PosixCreate([MarshalAs(UnmanagedType.LPStr)] string pathname, int mode);
 
         [DllImport("libc", EntryPoint = "chmod")]
         private static extern int PosixChmod([MarshalAs(UnmanagedType.LPStr)] string pathname, int mode);
