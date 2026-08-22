@@ -19,7 +19,7 @@ stages:
   jobs:
   - template: ../jobs/vmr-build.yml
     parameters:
-      buildName: Windows_Stage1
+      buildName: Windows
       isBuiltFromVmr: true
       sign: false
       pool: ${{ parameters.pool_Windows }}
@@ -36,4 +36,4 @@ stages:
       targetOS: windows
       targetArchitecture: x64
       brandingType: ${{ variables.brandingType }}
-      bootstrapArtifactsFrom: Windows_Stage1_x64
+      bootstrapArtifactsFrom: Windows_x64
