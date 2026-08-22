@@ -1,0 +1,93 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <PropertyGroup>
+    <BootstrapIntermediateDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'bootstrap', '$(TargetRid)'))</BootstrapIntermediateDir>
+    <BootstrapInputManifest>$(BootstrapIntermediateDir)inputs.txt</BootstrapInputManifest>
+    <BootstrapReadyFile>$([MSBuild]::NormalizePath('$(ArtifactsDir)', 'bootstrap', '$(TargetRid)', '.complete'))</BootstrapReadyFile>
+    <BootstrapLayoutDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bootstrap', '$(TargetRid)'))</BootstrapLayoutDir>
+  </PropertyGroup>
+
+  <Target Name="_CollectBootstrapFiles">
+    <ItemGroup>
+      <AotSdkFile
+        Include="$(CoreCLRAotSdkDir)/*"
+        Condition="'$(UseNativeAotForComponents)' == 'true'" />
+      <AppHostFile
+        Include="$([MSBuild]::NormalizePath('$(DotNetHostBinDir)', 'apphost$(ExeSuffix)'))" />
+      <AppHostFile
+        Include="$([MSBuild]::NormalizePath('$(CoreCLRArtifactsPath)', 'corehost', 'singlefilehost$(ExeSuffix)'))"
+        Condition="'$(UseNativeAotForComponents)' != 'true'" />
+      <RefPackFile Include="$(MicrosoftNetCoreAppRefPackDir)/**/*" />
+      <RuntimePackFile Include="$(MicrosoftNetCoreAppRuntimePackDir)/**/*" />
+      <RidGraphFile Include="$(ArtifactsBinDir)Microsoft.NETCore.Platforms/*.json" />
+
+      <AotSdkFile DestinationPath="$(BootstrapAotSdkDir)/%(Filename)%(Extension)" />
+      <AppHostFile DestinationPath="$(BootstrapHostDir)/%(Filename)%(Extension)" />
+      <RefPackFile DestinationPath="$(BootstrapRefPackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <RuntimePackFile DestinationPath="$(BootstrapRuntimePackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <RidGraphFile DestinationPath="$(BootstrapRidGraphDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+
+      <BootstrapFile Include="@(AotSdkFile);@(AppHostFile);@(RefPackFile);@(RuntimePackFile);@(RidGraphFile)" />
+    </ItemGroup>
+
+    <Error Text="The bootstrap AOT SDK was not produced."
+           Condition="'$(UseNativeAotForComponents)' == 'true' and '@(AotSdkFile)' == ''" />
+    <Error Text="The bootstrap apphost was not produced."
+           Condition="'@(AppHostFile)' == ''" />
+    <Error Text="The bootstrap reference pack was not produced."
+           Condition="'@(RefPackFile)' == ''" />
+    <Error Text="The bootstrap runtime pack was not produced."
+           Condition="'@(RuntimePackFile)' == ''" />
+  </Target>
+
+  <Target Name="_WriteBootstrapInputManifest"
+          DependsOnTargets="_CollectBootstrapFiles">
+    <GetFileHash Files="@(BootstrapFile)" Algorithm="SHA256">
+      <Output TaskParameter="Items" ItemName="BootstrapFileWithHash" />
+    </GetFileHash>
+    <ItemGroup>
+      <BootstrapInputManifestLine Include="@(BootstrapFileWithHash)">
+        <Value>%(FullPath)|%(DestinationPath)|%(FileHash)</Value>
+      </BootstrapInputManifestLine>
+    </ItemGroup>
+    <MakeDir Directories="$(BootstrapIntermediateDir)" />
+    <WriteLinesToFile
+      File="$(BootstrapInputManifest)"
+      Lines="@(BootstrapInputManifestLine->'%(Value)')"
+      Overwrite="true"
+      WriteOnlyWhenDifferent="true" />
+    <ItemGroup>
+      <FileWrites Include="$(BootstrapInputManifest)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_ValidateBootstrapLayout"
+          DependsOnTargets="_WriteBootstrapInputManifest">
+    <ItemGroup>
+      <MissingBootstrapFile Include="@(BootstrapFile)"
+                            Condition="!Exists('%(DestinationPath)')" />
+    </ItemGroup>
+    <Delete Files="$(BootstrapReadyFile)"
+            Condition="'@(MissingBootstrapFile)' != ''" />
+  </Target>
+
+  <Target Name="CreateBootstrapLayout"
+          AfterTargets="Build"
+          DependsOnTargets="_ValidateBootstrapLayout"
+          Inputs="$(BootstrapInputManifest)"
+          Outputs="$(BootstrapReadyFile)">
+    <RemoveDir Directories="$(BootstrapLayoutDir)" />
+    <Copy
+      SourceFiles="@(BootstrapFile)"
+      DestinationFiles="@(BootstrapFile->Metadata('DestinationPath'))" />
+    <WriteLinesToFile
+      File="$(BootstrapReadyFile)"
+      Lines="$(GitCommitHash);$(TargetRid);$(Configuration)"
+      Overwrite="true" />
+    <ItemGroup>
+      <FileWrites Include="@(BootstrapFile->Metadata('DestinationPath'));$(BootstrapReadyFile)" />
+    </ItemGroup>
+    <Message Importance="high" Text="Bootstrap layout created at $(BootstrapLayoutDir)" />
+  </Target>
+
+</Project>

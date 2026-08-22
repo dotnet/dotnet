@@ -91,10 +91,17 @@
     <MonoCrossAOTTargetOS Condition="'$(TargetOS)' == 'osx'">$(MonoCrossAOTTargetOS)+tvos+ios+maccatalyst</MonoCrossAOTTargetOS>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <BootstrapSubsets>host.native+libs.sfx+libs.pretest</BootstrapSubsets>
+    <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' != 'true'">$(BootstrapSubsets)+clr.runtime+clr.corelib</BootstrapSubsets>
+    <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' == 'true'">$(BootstrapSubsets)+clr.nativeaotlibs+clr.nativeaotruntime+libs.native</BootstrapSubsets>
+  </PropertyGroup>
+
   <!-- Init _subset here to allow RuntimeFlavor to be set as early as possible -->
   <PropertyGroup>
     <_subset Condition="'$(Subset)' != ''">+$(Subset.ToLowerInvariant())+</_subset>
     <_subset Condition="'$(Subset)' == ''">+$(DefaultSubsets)+</_subset>
+    <_subset Condition="'$(EnableBootstrap)' == 'true'">$(_subset)+$(BootstrapSubsets)+</_subset>
   </PropertyGroup>
 
 
@@ -159,10 +166,6 @@
     <DefaultPacksSubsets Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(DefaultPacksSubsets)+packs.installers</DefaultPacksSubsets>
     <DefaultPacksSubsets Condition="'$(BuildMonoAOTCrossCompilerOnly)' != 'true' and '$(DotNetBuildSourceOnly)' != 'true'">$(DefaultPacksSubsets)+packs.tests</DefaultPacksSubsets>
     <DefaultPacksSubsets Condition="'$(RuntimeFlavor)' != 'Mono' and '$(ForceBuildMobileManifests)' == 'true'">$(DefaultPacksSubsets)+mono.manifests</DefaultPacksSubsets>
-
-    <BootstrapSubsets>host.native+libs.sfx+libs.pretest</BootstrapSubsets>
-    <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' != 'true'">$(BootstrapSubsets)+clr.runtime+clr.corelib</BootstrapSubsets>
-    <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' == 'true'">$(BootstrapSubsets)+clr.nativeaotlibs+clr.nativeaotruntime+libs.native</BootstrapSubsets>
 
     <SwapNativeForIL Condition="$(_subset.Contains('+bootstrap+')) and '$(RuntimeFlavor)' == 'CoreCLR'">true</SwapNativeForIL>
 
@@ -367,7 +370,20 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(ClrRuntimeBuildSubsets)' != '' or $(_subset.Contains('+clr.nativeprereqs+'))">
-    <ProjectToBuild Include="$(CoreClrProjectRoot)runtime-prereqs.proj" Category="clr" GlobalPropertiesToRemove="$(NativeBuildPartitionPropertiesToRemove)" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)runtime-prereqs.proj"
+                    Category="clr"
+                    GlobalPropertiesToRemove="$(NativeBuildPartitionPropertiesToRemove)" />
+  </ItemGroup>
+
+  <!-- Build tools that runtime producers load before those producers. Rebuilding a loaded task assembly
+       later in the same MSBuild process fails on Windows because the assembly remains locked. -->
+  <ItemGroup Condition="'$(EnableBootstrap)' == 'true' and $(_subset.Contains('+clr.tools+'))">
+    <ProjectToBuild Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj"
+                    Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'"
+                    Category="clr" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj"
+                    Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'"
+                    Category="clr" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(ClrRuntimeBuildSubsets)' != ''">
@@ -497,12 +513,12 @@
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_inbuild.csproj" Category="clr" />
 
     <!-- We may use these targets with the in-build ILCompiler or with the shipping ILCompiler. Produce them whenever we may use them. -->
-    <ProjectToBuild Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj" Category="clr" Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'" />
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj" Category="clr" Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj" Category="clr" Condition="'$(EnableBootstrap)' != 'true' and ('$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true')" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj" Category="clr" Condition="'$(EnableBootstrap)' != 'true' and ('$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true')" />
 
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" />
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" />
-    <ProjectToBuild Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(EnableBootstrap)' != 'true'" Category="clr" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(EnableBootstrap)' != 'true'" Category="clr" />
+    <ProjectToBuild Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(EnableBootstrap)' != 'true'" Category="clr" />
 
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" />
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" />
@@ -532,7 +548,9 @@
   </PropertyGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+tools.cdac+'))">
-    <ProjectToBuild Include="$(SharedNativeRoot)managed\compile-native.proj" Category="tools" />
+    <ProjectToBuild Include="$(SharedNativeRoot)managed\compile-native.proj"
+                    Condition="'$(EnableBootstrap)' != 'true'"
+                    Category="tools" />
 
     <!-- Direct references to cDAC projects for packing -->
     <ProjectToBuild Include="$(SharedNativeRoot)managed\cdac\Microsoft.Diagnostics.DataContractReader\Microsoft.Diagnostics.DataContractReader.csproj;
@@ -659,22 +677,64 @@
   <!-- Host sets -->
   <ItemGroup Condition="$(_subset.Contains('+host.native+'))">
     <CorehostProjectToBuild Include="$(SharedNativeRoot)corehost\corehost.proj" />
-    <ProjectToBuild Include="@(CorehostProjectToBuild)" AdditionalProperties="$(TargetCxxLibraryProperties)" Category="host" />
+    <ProjectToBuild Include="@(CorehostProjectToBuild)"
+                    AdditionalProperties="$(TargetCxxLibraryProperties)"
+                    Category="host" />
   </ItemGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+host.tools+'))">
     <ManagedProjectToBuild Include="$(InstallerProjectRoot)managed\**\*.csproj" />
-    <ProjectToBuild Include="@(ManagedProjectToBuild)" BuildInParallel="true" Category="host" />
+    <ProjectToBuild Include="@(ManagedProjectToBuild)"
+                    BuildInParallel="true"
+                    Condition="'$(EnableBootstrap)' != 'true'"
+                    Category="host" />
   </ItemGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+host.pkg+'))">
     <PkgprojProjectToBuild Include="$(InstallerProjectRoot)pkg\projects\host-packages.proj" />
-    <ProjectToBuild Include="@(PkgprojProjectToBuild)" Category="host" />
+    <ProjectToBuild Include="@(PkgprojProjectToBuild)"
+                    Condition="'$(EnableBootstrap)' != 'true'"
+                    Category="host" />
   </ItemGroup>
 
   <!-- Libraries test sets -->
   <ItemGroup Condition="$(_subset.Contains('+libs.pretest+'))">
-    <ProjectToBuild Include="$(LibrariesProjectRoot)pretest.proj" Category="libs"  />
+    <ProjectToBuild Include="$(LibrariesProjectRoot)pretest.proj" Category="libs" />
+  </ItemGroup>
+
+  <!-- Everything above this point produces the immutable bootstrap layout. Bootstrap consumers must stay below it. -->
+  <ItemGroup Condition="'$(EnableBootstrap)' == 'true' or $(_subset.Contains('+bootstrap+'))">
+    <ProjectToBuild Include="$(RepositoryEngineeringDir)bootstrap.proj"
+                    BuildInParallel="false"
+                    Category="bootstrap" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(EnableBootstrap)' == 'true'">
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj"
+                    AdditionalProperties="UseBootstrap=true"
+                    Condition="'$(SdkToolsSupported)' == 'true'"
+                    Category="clr" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj"
+                    AdditionalProperties="UseBootstrap=true"
+                    Condition="'$(SdkToolsSupported)' == 'true'"
+                    Category="clr" />
+    <ProjectToBuild Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj"
+                    AdditionalProperties="UseBootstrap=true"
+                    Condition="'$(SdkToolsSupported)' == 'true'"
+                    Category="clr" />
+    <ProjectToBuild Include="$(SharedNativeRoot)managed\compile-native.proj"
+                    AdditionalProperties="UseBootstrap=true"
+                    Condition="$(_subset.Contains('+tools.cdac+'))"
+                    Category="tools" />
+    <ProjectToBuild Include="@(ManagedProjectToBuild)"
+                    AdditionalProperties="%(AdditionalProperties);UseBootstrap=true"
+                    BuildInParallel="true"
+                    Condition="$(_subset.Contains('+host.tools+'))"
+                    Category="host" />
+    <ProjectToBuild Include="@(PkgprojProjectToBuild)"
+                    AdditionalProperties="%(AdditionalProperties);UseBootstrap=true"
+                    Condition="$(_subset.Contains('+host.pkg+'))"
+                    Category="host" />
   </ItemGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+libs.tests+'))">
@@ -776,6 +836,12 @@
   <ItemGroup Condition="$(_subset.Contains('+packs.tests+'))">
     <TestProjectToBuild Include="$(InstallerProjectRoot)tests\Microsoft.DotNet.CoreSetup.Packaging.Tests\Microsoft.DotNet.CoreSetup.Packaging.Tests.csproj" />
     <ProjectToBuild Include="@(TestProjectToBuild)" BuildInParallel="true" Test="true" Category="packs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(EnableBootstrap)' == 'true'">
+    <ProjectToBuild Update="@(ProjectToBuild)"
+                    AdditionalProperties="%(AdditionalProperties);UseBootstrap=true"
+                    Condition="$([System.String]::Copy('%(FullPath)').StartsWith('$([MSBuild]::NormalizeDirectory($(InstallerProjectRoot)))'))" />
   </ItemGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+regeneratethirdpartynotices+'))">
