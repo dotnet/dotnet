@@ -20,6 +20,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             _log = log;
         }
 
+        public TaskLoggingHelper Log => _log;
+
         public virtual IAssetPublisher CreateAssetPublisher(TargetFeedConfig feedConfig, PublishArtifactsInManifestBase task)
         {
             switch (feedConfig.Type)
