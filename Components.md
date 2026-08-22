@@ -26,13 +26,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@5ce78f6](https://github.com/dotnet/diagnostics/tree/5ce78f66d89ea529e459abddb129ab36cb5bd936)*
 - `src/emsdk`  
-*[dotnet/emsdk@86f69e1](https://github.com/dotnet/emsdk/tree/86f69e111f0c65545820c13c1008f63c3a673ea1)*
+*[dotnet/emsdk@66c8722](https://github.com/dotnet/emsdk/tree/66c8722e3897f210bd58059c9bdf87697c6e4963)*
 - `src/format`  
 *[dotnet/format@a8be5ff](https://github.com/dotnet/format/tree/a8be5ff9c558f921f565c461dd7688905f84742a)*
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@a6cf776](https://github.com/dotnet/installer/tree/a6cf77607cf443f594a7c0d0cb68a5180bf02e74)*
+*[dotnet/installer@c78d992](https://github.com/dotnet/installer/tree/c78d992469c64bcb784c43af6765af8208767303)*
 - `src/msbuild`  
 *[dotnet/msbuild@7806cbf](https://github.com/dotnet/msbuild/tree/7806cbf7b0fd91ea6ab55c2e42d8ed973114e197)*
 - `src/nuget-client`  
@@ -46,9 +46,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@0963af6](https://github.com/dotnet/roslyn-analyzers/tree/0963af6bfc2a3d5083faa2b7c1c91a4eee29a6f4)*
 - `src/runtime`  
-*[_git/dotnet-runtime@2a19dd1](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC2a19dd15d054021e9cb1d97fe3ceb6df910e4bcc)*
+*[_git/dotnet-runtime@1219a42](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC1219a42122cf5190c7f512850557e38c422430dc)*
 - `src/sdk`  
-*[_git/dotnet-sdk@660c03a](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC660c03af0b4687709b92723eb5790ad7fe2d2976)*
+*[_git/dotnet-sdk@9a0b557](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC9a0b55753eb9c43658289a70209813b6b340af43)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@c91650e](https://github.com/dotnet/source-build-assets/tree/c91650e32f386a2ac2fa3ee0eb17541de52e89d4)*
 - `src/source-build-externals`  

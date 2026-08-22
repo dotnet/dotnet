@@ -43,10 +43,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.30-servicing.26356.2",
+      "packageVersion": "8.0.31-servicing.26418.4",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "86f69e111f0c65545820c13c1008f63c3a673ea1"
+      "commitSha": "66c8722e3897f210bd58059c9bdf87697c6e4963"
     },
     {
       "packageVersion": "8.1.657407",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "a6cf77607cf443f594a7c0d0cb68a5180bf02e74"
+      "commitSha": "c78d992469c64bcb784c43af6765af8208767303"
     },
     {
       "packageVersion": "17.8.49-servicing-25616-08",
@@ -97,16 +97,16 @@
       "commitSha": "0963af6bfc2a3d5083faa2b7c1c91a4eee29a6f4"
     },
     {
-      "packageVersion": "8.0.31-servicing.26413.7",
+      "packageVersion": "8.0.31-servicing.26420.15",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "2a19dd15d054021e9cb1d97fe3ceb6df910e4bcc"
+      "commitSha": "1219a42122cf5190c7f512850557e38c422430dc"
     },
     {
-      "packageVersion": "8.0.131-servicing.26418.24",
+      "packageVersion": "8.0.131-servicing.26421.4",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "660c03af0b4687709b92723eb5790ad7fe2d2976"
+      "commitSha": "9a0b55753eb9c43658289a70209813b6b340af43"
     },
     {
       "packageVersion": "8.0.0-alpha.1.26403.3",
