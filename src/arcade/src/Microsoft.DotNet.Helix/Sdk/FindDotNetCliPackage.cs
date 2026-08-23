@@ -17,10 +17,7 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.DotNet.Helix.Sdk
 {
-    // TODO: Not opted into multithreading. The static _client field below is overwritten by every
-    // execution, so concurrent instances can issue requests through another instance's HttpClient
-    // whose handler is disposed when that instance's DI scope ends.
-    // Tracked by https://github.com/dotnet/arcade/issues/17378.
+    [MSBuildMultiThreadableTask]
     public class FindDotNetCliPackage : MSBuildTaskBase
     {
         // Use lots of retries since an Http Client failure here means failure to send to Helix
@@ -59,7 +56,7 @@ namespace Microsoft.DotNet.Helix.Sdk
         [Output]
         public string PackageUri { get; set; }
 
-        private static HttpClient _client;
+        private HttpClient _client;
         private HttpMessageHandler _httpMessageHandler;
 
         public override void ConfigureServices(IServiceCollection collection)

@@ -19,13 +19,16 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.DotNet.Helix.AzureDevOps
 {
-    public abstract class AzureDevOpsTask : BaseTask
+    public abstract class AzureDevOpsTask : BaseTask, IMultiThreadableTask
     {
-        private bool InAzurePipeline => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILD_BUILDNUMBER"));
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
+        private bool InAzurePipeline => !string.IsNullOrEmpty(TaskEnvironment.GetEnvironmentVariable("BUILD_BUILDNUMBER"));
 
         protected string GetEnvironmentVariable(string name)
         {
-            var result = Environment.GetEnvironmentVariable(name);
+            var result = TaskEnvironment.GetEnvironmentVariable(name);
             if (string.IsNullOrEmpty(result))
             {
                 throw new InvalidOperationException($"Required environment variable {name} not set.");
@@ -194,8 +197,6 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
             return null;
         }
 
-        private static readonly Random s_rand = new Random();
-
         public int RetryCount { get; set; } = 15;
 
         public double RetryBackOffFactor { get; set; } = 1.3;
@@ -205,7 +206,7 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
             var factor = RetryBackOffFactor;
             var min = (int)(Math.Pow(factor, attempt) * 1000);
             var max = (int)(Math.Pow(factor, attempt + 1) * 1000);
-            return s_rand.Next(min, max);
+            return Random.Shared.Next(min, max);
         }
 
         public static bool IsRetryableHttpException(Exception ex)

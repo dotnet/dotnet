@@ -10,9 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.DotNet.Helix.AzureDevOps
 {
-    // TODO: Not opted into multithreading. The AzureDevOpsTask base class reads SYSTEM_ACCESSTOKEN
-    // and other pipeline variables straight from the process environment and shares a static Random
-    // for retry jitter. Tracked by https://github.com/dotnet/arcade/issues/17378.
+    [MSBuildMultiThreadableTask]
     public class StopAzurePipelinesTestRun : AzureDevOpsTask
     {
         [Required]
