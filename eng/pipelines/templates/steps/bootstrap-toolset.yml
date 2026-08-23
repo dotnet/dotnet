@@ -14,7 +14,7 @@ steps:
   displayName: Download Bootstrap Packages
   inputs:
     artifactName: ${{ parameters.artifactName }}
-    itemPattern: packages/**/Microsoft.DotNet.Arcade.Sdk.*.nupkg
+    itemPattern: packages/*/NonShipping/arcade/**
     targetPath: $(Agent.TempDirectory)/bootstrap-packages-download
 
 - pwsh: |
