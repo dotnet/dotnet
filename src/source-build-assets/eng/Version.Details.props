@@ -7,6 +7,7 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftBuildPackageVersion>18.11.0-1.26411.119</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildTaskAuthoringAnalyzerPackageVersion>18.11.0-1.26411.119</MicrosoftBuildTaskAuthoringAnalyzerPackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>18.11.0-1.26411.119</MicrosoftBuildUtilitiesCorePackageVersion>
     <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26411.119</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetGenAPITaskPackageVersion>11.0.100-rc.1.26411.119</MicrosoftDotNetGenAPITaskPackageVersion>
@@ -17,6 +18,7 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftBuildVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildVersion>
+    <MicrosoftBuildTaskAuthoringAnalyzerVersion>$(MicrosoftBuildTaskAuthoringAnalyzerPackageVersion)</MicrosoftBuildTaskAuthoringAnalyzerVersion>
     <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildUtilitiesCorePackageVersion)</MicrosoftBuildUtilitiesCoreVersion>
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetGenAPITaskVersion>$(MicrosoftDotNetGenAPITaskPackageVersion)</MicrosoftDotNetGenAPITaskVersion>

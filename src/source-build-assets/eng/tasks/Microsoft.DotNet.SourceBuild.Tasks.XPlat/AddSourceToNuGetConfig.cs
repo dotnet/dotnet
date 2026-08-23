@@ -15,8 +15,12 @@ namespace Microsoft.DotNet.Build.Tasks
     /// also by default adds a 'clear' element if none exists, to avoid
     /// unintended leaks from the build environment.
     /// </summary>
-    public class AddSourceToNuGetConfig : Task
+    [MSBuildMultiThreadableTask]
+    public class AddSourceToNuGetConfig : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string NuGetConfigFile { get; set; }
 
@@ -30,7 +34,7 @@ namespace Microsoft.DotNet.Build.Tasks
 
         public override bool Execute()
         {
-            XDocument document = XDocument.Load(NuGetConfigFile);
+            XDocument document = XDocument.Load(TaskEnvironment.GetAbsolutePath(NuGetConfigFile));
 
             XName CreateQualifiedName(string plainName)
             {
@@ -71,7 +75,7 @@ namespace Microsoft.DotNet.Build.Tasks
                 packageSourcesElement.AddFirst(new XElement("clear"));
             }
 
-            using (var fs = new FileStream(NuGetConfigFile, FileMode.Create, FileAccess.ReadWrite))
+            using (var fs = new FileStream(TaskEnvironment.GetAbsolutePath(NuGetConfigFile), FileMode.Create, FileAccess.ReadWrite))
             {
                 document.Save(fs);
             }

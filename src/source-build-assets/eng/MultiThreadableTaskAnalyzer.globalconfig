@@ -1,4 +1,4 @@
-# Configuration for Microsoft.Build.TaskAuthoring.Analyzer (referenced from eng/tools/Directory.Build.props).
+# Configuration for Microsoft.Build.TaskAuthoring.Analyzer (referenced from the MSBuild task projects).
 #
 # Scoping the analyzer to tasks that have opted into MSBuild's multithreaded execution model via
 # [MSBuildMultiThreadableTask] keeps it a regression guard for migrated tasks without drowning the

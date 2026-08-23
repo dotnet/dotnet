@@ -17,8 +17,12 @@ using NuGet.Packaging.Core;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks
 {
-    public partial class GetPackageItems : Task
+    [MSBuildMultiThreadableTask]
+    public partial class GetPackageItems : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         private const string PlaceholderFile = "_._";
         private static readonly Dictionary<string, (string, string)> s_strongNameKeyToNameMap = new()
         {
@@ -98,7 +102,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
         public override bool Execute()
         {
-            using PackageArchiveReader packageArchiveReader = new(PackagePath!);
+            using PackageArchiveReader packageArchiveReader = new((string)TaskEnvironment.GetAbsolutePath(PackagePath!));
             TargetFrameworkRegexFilter targetFrameworkRegexFilter = new(IncludeTargetFrameworks,
                 ExcludeTargetFrameworks);
 
@@ -189,7 +193,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     {
                         // Retrieve the strong name key information and add it to the compile item as metadata.
                         string assemblyPath = Path.Combine(Path.GetDirectoryName(PackagePath!)!, compileItem.Path);
-                        AssemblyName assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
+                        AssemblyName assemblyName = AssemblyName.GetAssemblyName(TaskEnvironment.GetAbsolutePath(assemblyPath));
                         if (TryGetStrongNameData(assemblyName, out StrongNameData strongNameData))
                         {
                             compileTaskItem.SetMetadata(SharedMetadata.StrongNameKeyMetadataName, strongNameData.Key);

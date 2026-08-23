@@ -6,6 +6,10 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>7cdb217445905f3342bbb0266a4497b9a014389a</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.Build.TaskAuthoring.Analyzer" Version="18.11.0-1.26411.119">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>7cdb217445905f3342bbb0266a4497b9a014389a</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.Build.Utilities.Core" Version="18.11.0-1.26411.119">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>7cdb217445905f3342bbb0266a4497b9a014389a</Sha>

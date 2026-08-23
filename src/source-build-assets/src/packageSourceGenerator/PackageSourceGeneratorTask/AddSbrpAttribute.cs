@@ -13,8 +13,12 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks
 {
-    public class AddSbrpAttribute : Task
+    [MSBuildMultiThreadableTask]
+    public class AddSbrpAttribute : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public ITaskItem[] ILFileNames { get; set; } = null!;
 
@@ -26,7 +30,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             {
                 bool attributeInserted = false;
                 string assemblyReference = "";
-                var lines = File.ReadAllLines(ilFile.ItemSpec);
+                var lines = File.ReadAllLines(TaskEnvironment.GetAbsolutePath(ilFile.ItemSpec));
                 var outputLines = new List<string>();
 
                 foreach (var line in lines)
@@ -47,7 +51,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     outputLines.Add(line);
                 }
 
-                File.WriteAllLines(ilFile.ItemSpec, outputLines);
+                File.WriteAllLines(TaskEnvironment.GetAbsolutePath(ilFile.ItemSpec), outputLines);
             }
 
             return true;

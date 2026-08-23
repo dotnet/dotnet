@@ -11,8 +11,12 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks;
 
-public class UpdateFrameworkList : Task
+[MSBuildMultiThreadableTask]
+public class UpdateFrameworkList : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     [Required]
     public ITaskItem[] Files { get; set; } = null!;
 
@@ -24,7 +28,7 @@ public class UpdateFrameworkList : Task
 
             try
             {
-                var doc = XDocument.Load(path);
+                var doc = XDocument.Load(TaskEnvironment.GetAbsolutePath(path));
                 var fileElements = doc.Descendants("File")
                     .Where(f => f.Attribute("Type") != null &&
                                 (string?)f.Attribute("Type") == "Analyzer")
@@ -41,7 +45,7 @@ public class UpdateFrameworkList : Task
                     Indent = true
                 };
 
-                using (var writer = XmlWriter.Create(path, settings))
+                using (var writer = XmlWriter.Create(TaskEnvironment.GetAbsolutePath(path), settings))
                 {
                     doc.Save(writer);
                 }

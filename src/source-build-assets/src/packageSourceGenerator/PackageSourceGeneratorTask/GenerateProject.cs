@@ -14,8 +14,12 @@ using NuGet.Packaging.Core;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks
 {
-    public class GenerateProject : Task
+    [MSBuildMultiThreadableTask]
+    public class GenerateProject : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         // Centralized defaults set by src/referencePackages/Directory.Build.props.
         // When a nuspec value matches one of these (after normalization), the
         // corresponding property is omitted from the generated csproj.
@@ -121,7 +125,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         {
             string referenceIncludes = "";
             StrongNameData strongNameData = default;
-            string projectContent = File.ReadAllText(ProjectTemplate);
+            string projectContent = File.ReadAllText(TaskEnvironment.GetAbsolutePath(ProjectTemplate));
+            // Deliberately left relative: it is only paired with the equally relative
+            // dependencyProjectPath in Path.GetRelativePath below, and that result is invariant as
+            // long as both sides share the same base. Resolving only one side would corrupt it.
+            // Disk access through this value is resolved at each use site instead.
             string projectDirectory = Path.GetDirectoryName(TargetPath)!;
 
             // Pick the appropriate MSBuild SDK for the package type:
@@ -183,11 +191,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                         string fileName = $"{packageDependency.ItemSpec}.{dependencyVersion}.csproj";
                         string lowerId = packageDependency.ItemSpec.ToLowerInvariant();
                         string dependencyProjectPath = Path.Combine(ReferencePackagesRoot, lowerId, dependencyVersion, fileName);
-                        if (!File.Exists(dependencyProjectPath) &&
+                        if (!File.Exists(TaskEnvironment.GetAbsolutePath(dependencyProjectPath)) &&
                             !string.IsNullOrEmpty(TextOnlyPackagesRoot))
                         {
                             string textOnlyPath = Path.Combine(TextOnlyPackagesRoot, lowerId, dependencyVersion, fileName);
-                            if (File.Exists(textOnlyPath))
+                            if (File.Exists(TaskEnvironment.GetAbsolutePath(textOnlyPath)))
                                 dependencyProjectPath = textOnlyPath;
                         }
                         // Make sure that the path always uses forward slashes, even on Windows.
@@ -279,8 +287,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             projectContent = NormalizeProjectWhitespace(projectContent);
 
             // Generate the project file
-            Directory.CreateDirectory(projectDirectory);
-            File.WriteAllText(TargetPath, projectContent);
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(projectDirectory));
+            File.WriteAllText(TaskEnvironment.GetAbsolutePath(TargetPath), projectContent);
 
             return true;
         }
@@ -320,18 +328,24 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 return string.Empty;
             }
 
-            string projectDirectory = Path.GetDirectoryName(TargetPath)!;
+            // Resolve TargetPath (required, so non-empty) before taking its directory. Doing it the
+            // other way round would hand GetAbsolutePath an empty string, which throws, where the
+            // original Directory.Exists check simply returned false.
+            // Named distinctly from the relative 'projectDirectory' in Execute(): enumeration and
+            // Path.GetRelativePath below must both operate in absolute space or the relative paths
+            // they produce are silently wrong.
+            string absoluteProjectDirectory = Path.GetDirectoryName((string)TaskEnvironment.GetAbsolutePath(TargetPath))!;
             string nuspecFileName = string.IsNullOrEmpty(PackageNuspecPath) ? string.Empty : Path.GetFileName(PackageNuspecPath);
 
             // Discover all packageable files on disk. The textOnlyPackages on-disk layout already
             // matches the .nupkg layout (e.g. Sdk/Sdk.targets, contentFiles/cs/<tfm>/...), so a simple
             // include-everything-except-{csproj,nuspec} works for all packages.
             List<string> allFiles = new();
-            if (Directory.Exists(projectDirectory))
+            if (Directory.Exists(absoluteProjectDirectory))
             {
-                foreach (string f in Directory.EnumerateFiles(projectDirectory, "*", SearchOption.AllDirectories))
+                foreach (string f in Directory.EnumerateFiles(absoluteProjectDirectory, "*", SearchOption.AllDirectories))
                 {
-                    string rel = Path.GetRelativePath(projectDirectory, f).Replace('\\', '/');
+                    string rel = Path.GetRelativePath(absoluteProjectDirectory, f).Replace('\\', '/');
                     if (rel.StartsWith("obj/", StringComparison.OrdinalIgnoreCase) ||
                         rel.StartsWith("bin/", StringComparison.OrdinalIgnoreCase))
                     {
@@ -380,12 +394,12 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         private Dictionary<string, ContentFileEntry> ReadContentFileEntries()
         {
             Dictionary<string, ContentFileEntry> map = new(StringComparer.OrdinalIgnoreCase);
-            if (string.IsNullOrEmpty(PackageNuspecPath) || !File.Exists(PackageNuspecPath))
+            if (string.IsNullOrEmpty(PackageNuspecPath) || !File.Exists(TaskEnvironment.GetAbsolutePath(PackageNuspecPath)))
                 return map;
 
             try
             {
-                System.Xml.Linq.XDocument doc = System.Xml.Linq.XDocument.Load(PackageNuspecPath);
+                System.Xml.Linq.XDocument doc = System.Xml.Linq.XDocument.Load(TaskEnvironment.GetAbsolutePath(PackageNuspecPath));
                 System.Xml.Linq.XNamespace ns = doc.Root?.GetDefaultNamespace() ?? System.Xml.Linq.XNamespace.None;
                 System.Xml.Linq.XElement? contentFiles = doc.Root?
                     .Element(ns + "metadata")?
@@ -443,10 +457,10 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
 
         private string BuildNuspecMetadata()
         {
-            if (string.IsNullOrEmpty(PackageNuspecPath) || !File.Exists(PackageNuspecPath))
+            if (string.IsNullOrEmpty(PackageNuspecPath) || !File.Exists(TaskEnvironment.GetAbsolutePath(PackageNuspecPath)))
                 return string.Empty;
 
-            NuspecReader nuspecReader = new(PackageNuspecPath);
+            NuspecReader nuspecReader = new((string)TaskEnvironment.GetAbsolutePath(PackageNuspecPath));
             StringBuilder builder = new();
 
             // Authors / Serviceable / Copyright are centralized — only emit overrides when the

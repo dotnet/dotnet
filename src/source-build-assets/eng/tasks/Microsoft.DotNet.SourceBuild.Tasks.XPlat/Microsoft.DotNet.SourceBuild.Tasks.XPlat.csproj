@@ -16,4 +16,11 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="$(MicrosoftBuildVersion)" IncludeAssets="compile" />
   </ItemGroup>
 
+  <!-- Guards the multithreading safety of the tasks in this project. Excluded from source-only
+       builds, where the analyzer package is not available from a source-built feed. -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <PackageReference Include="Microsoft.Build.TaskAuthoring.Analyzer" Version="$(MicrosoftBuildTaskAuthoringAnalyzerVersion)" PrivateAssets="all" IncludeAssets="analyzers" />
+    <GlobalAnalyzerConfigFiles Include="$(MSBuildThisFileDirectory)..\..\MultiThreadableTaskAnalyzer.globalconfig" />
+  </ItemGroup>
+
 </Project>

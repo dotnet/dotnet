@@ -11,8 +11,12 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks
 {
-    public class UpdateJson : Task
+    [MSBuildMultiThreadableTask]
+    public class UpdateJson : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string JsonFilePath { get; set; }
 
@@ -26,7 +30,7 @@ namespace Microsoft.DotNet.Build.Tasks
 
         public override bool Execute()
         {
-            string jsonText = File.ReadAllText(JsonFilePath);
+            string jsonText = File.ReadAllText(TaskEnvironment.GetAbsolutePath(JsonFilePath));
             JsonNode jsonNode = JsonNode.Parse(jsonText);
 
             string[] escapedPathToAttributeParts = PathToAttribute.Replace("\\.", "\x1F").Split('.');
@@ -37,7 +41,7 @@ namespace Microsoft.DotNet.Build.Tasks
 
             UpdateAttribute(jsonNode, escapedPathToAttributeParts, NewAttributeValue);
 
-            File.WriteAllText(JsonFilePath, jsonNode.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
+            File.WriteAllText(TaskEnvironment.GetAbsolutePath(JsonFilePath), jsonNode.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
             return true;
         }
 
