@@ -14,8 +14,12 @@ using System.Xml.Linq;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 {
-    public class WriteAnnotatedUsageReport : Task
+    [MSBuildMultiThreadableTask]
+    public class WriteAnnotatedUsageReport : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         private const string SnapshotPrefix = "PackageVersions.";
         private const string SnapshotSuffix = ".Snapshot.props";
 
@@ -57,14 +61,14 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 
         public override bool Execute()
         {
-            UsageData data = UsageData.Parse(XElement.Parse(File.ReadAllText(DataFile)));
+            UsageData data = UsageData.Parse(XElement.Parse(File.ReadAllText(TaskEnvironment.GetAbsolutePath(DataFile))));
             IEnumerable<RepoOutput> sourceBuildRepoOutputs = GetSourceBuildRepoOutputs();
 
             var poisonNupkgFilenames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            if (File.Exists(PoisonedReportFile))
+            if (!string.IsNullOrEmpty(PoisonedReportFile) && File.Exists(TaskEnvironment.GetAbsolutePath(PoisonedReportFile)))
             {
-                foreach (string line in File.ReadAllLines(PoisonedReportFile))
+                foreach (string line in File.ReadAllLines(TaskEnvironment.GetAbsolutePath(PoisonedReportFile)))
                 {
                     string[] segments = line.Split('\\');
                     if (segments.Length > 2 &&
@@ -134,8 +138,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 
             report.Add(annotatedUsages.Select(u => u.ToXml()));
 
-            Directory.CreateDirectory(Path.GetDirectoryName(PrebuiltAnnotatedUsageReportFile));
-            File.WriteAllText(PrebuiltAnnotatedUsageReportFile, report.ToString());
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(PrebuiltAnnotatedUsageReportFile)));
+            File.WriteAllText(TaskEnvironment.GetAbsolutePath(PrebuiltAnnotatedUsageReportFile), report.ToString());
 
             return !Log.HasLoggedErrors;
         }
@@ -145,7 +149,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
             var pvpSnapshotFiles = PackageVersionPropsSnapshots.NullAsEmpty()
                 .Select(item =>
                 {
-                    var content = File.ReadAllText(item.ItemSpec);
+                    var content = File.ReadAllText(TaskEnvironment.GetAbsolutePath(item.ItemSpec));
                     return new
                     {
                         Path = item.ItemSpec,

@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks
@@ -25,7 +26,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         /// <param name="versionDetailsPath">Path to the Version.Details.xml file.</param>
         /// <param name="log">TaskLoggingHelper for logging errors.</param>
         /// <returns>Hash set of dependency names, or null if an error occurred.</returns>
-        public static HashSet<string> GetDependencies(string versionDetailsPath, TaskLoggingHelper log)
+        public static HashSet<string> GetDependencies(AbsolutePath versionDetailsPath, TaskLoggingHelper log)
         {
             XmlDocument document = new XmlDocument();
 

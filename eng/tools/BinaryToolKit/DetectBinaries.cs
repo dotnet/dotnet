@@ -21,13 +21,18 @@ public static class DetectBinaries
 
     public static IList<string> Execute(
         TaskLoggingHelper log,
+        TaskEnvironment taskEnvironment,
         string targetDirectory,
         string outputReportDirectory,
         string allowedBinariesFile)
     {
         log.LogMessage(MessageImportance.High, $"Detecting binaries in '{targetDirectory}' not listed in '{allowedBinariesFile}'...");
 
-        IEnumerable<string> patterns = ParseAllowedBinariesFile(log, allowedBinariesFile);
+        // Resolve once and use for both enumeration and the relative-path math below, so that a
+        // relative targetDirectory cannot produce a mismatched prefix length.
+        string absoluteTargetDirectory = taskEnvironment.GetAbsolutePath(targetDirectory);
+
+        IEnumerable<string> patterns = ParseAllowedBinariesFile(log, taskEnvironment, allowedBinariesFile);
         var usedPatterns = new ConcurrentBag<string>();
         var newBinaries = new ConcurrentBag<string>();
 
@@ -38,17 +43,17 @@ public static class DetectBinaries
             return (pattern: p, matcher: m);
         }).ToList();
 
-        foreach (var file in Directory.EnumerateFiles(targetDirectory, "*", new EnumerationOptions() { AttributesToSkip = FileAttributes.ReparsePoint, RecurseSubdirectories = true }))
+        foreach (var file in Directory.EnumerateFiles(absoluteTargetDirectory, "*", new EnumerationOptions() { AttributesToSkip = FileAttributes.ReparsePoint, RecurseSubdirectories = true }))
         {
             // This code is meant for finding binaries in source code repositories.
             // Most files will be non-binary. We want to avoid checking each of those against the patternMatchers [O(N*M)], so we first check if the file is binary.
-            if (IsBinary(file))
+            if (IsBinary(taskEnvironment, file))
             {
                 bool matched = false;
 
                 foreach (var (pattern, matcher) in patternMatchers)
                 {
-                    if (matcher.Match(targetDirectory, file).HasMatches)
+                    if (matcher.Match(absoluteTargetDirectory, file).HasMatches)
                     {
                         usedPatterns.Add(pattern);
                         matched = true;
@@ -58,26 +63,26 @@ public static class DetectBinaries
 
                 if (!matched)
                 {
-                    newBinaries.Add(file.Substring(targetDirectory.Length + 1));
+                    newBinaries.Add(file.Substring(absoluteTargetDirectory.Length + 1));
                 }
             }
         }
 
         var unusedPatterns = new HashSet<string>(patterns.Except(usedPatterns));
-        UpdateAllowedBinariesFile(log, allowedBinariesFile, outputReportDirectory, unusedPatterns);
+        UpdateAllowedBinariesFile(log, taskEnvironment, allowedBinariesFile, outputReportDirectory, unusedPatterns);
 
         log.LogMessage(MessageImportance.High, $"Finished binary detection.");
 
         return newBinaries.ToList();
     }
 
-    private static bool IsBinary(string filePath)
+    private static bool IsBinary(TaskEnvironment taskEnvironment, string filePath)
     {
         // Using the GNU diff heuristic to determine if a file is binary or not.
         // For more details, refer to the GNU diff manual: 
         // https://www.gnu.org/software/diffutils/manual/html_node/Binary.html
 
-        using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        using (FileStream fs = new FileStream(taskEnvironment.GetAbsolutePath(filePath), FileMode.Open, FileAccess.Read))
         {
             Span<byte> buffer = stackalloc byte[4096];
             int bytesRead = fs.Read(buffer);
@@ -90,10 +95,10 @@ public static class DetectBinaries
         }
     }
 
-    private static IEnumerable<string> ParseAllowedBinariesFile(TaskLoggingHelper log, string file, List<string>? knownFiles = null)
+    private static IEnumerable<string> ParseAllowedBinariesFile(TaskLoggingHelper log, TaskEnvironment taskEnvironment, string file, List<string>? knownFiles = null)
     {
         knownFiles ??= new List<string>();
-        if (!File.Exists(file))
+        if (string.IsNullOrEmpty(file) || !File.Exists(taskEnvironment.GetAbsolutePath(file)))
         {
             throw new ArgumentException($"AllowedBinariesFile '{file}' does not exist.");
         }
@@ -105,7 +110,7 @@ public static class DetectBinaries
 
         knownFiles.Add(file);
 
-        foreach (string line in File.ReadLines(file))
+        foreach (string line in File.ReadLines(taskEnvironment.GetAbsolutePath(file)))
         {
             string trimmedLine = line.Trim();
             if (string.IsNullOrWhiteSpace(trimmedLine) || trimmedLine.StartsWith("#"))
@@ -115,9 +120,9 @@ public static class DetectBinaries
 
             trimmedLine = RemoveCommentsAndWhitespace(trimmedLine);
 
-            if (TryGetImportFile(trimmedLine, file, out string importFile))
+            if (TryGetImportFile(taskEnvironment, trimmedLine, file, out string importFile))
             {
-                foreach (string importedLine in ParseAllowedBinariesFile(log, importFile, knownFiles))
+                foreach (string importedLine in ParseAllowedBinariesFile(log, taskEnvironment, importFile, knownFiles))
                 {
                     yield return importedLine;
                 }
@@ -129,12 +134,12 @@ public static class DetectBinaries
         }
     }
 
-    private static void UpdateAllowedBinariesFile(TaskLoggingHelper log, string file, string outputReportDirectory, HashSet<string> unusedPatterns)
+    private static void UpdateAllowedBinariesFile(TaskLoggingHelper log, TaskEnvironment taskEnvironment, string file, string outputReportDirectory, HashSet<string> unusedPatterns)
     {
-        if (File.Exists(file) && unusedPatterns.Any())
+        if (!string.IsNullOrEmpty(file) && File.Exists(taskEnvironment.GetAbsolutePath(file)) && unusedPatterns.Any())
         {
             List<string> newLines = new List<string>();
-            foreach (string line in File.ReadLines(file))
+            foreach (string line in File.ReadLines(taskEnvironment.GetAbsolutePath(file)))
             {
                 string trimmedLine = RemoveCommentsAndWhitespace(line);
                 if (unusedPatterns.Contains(trimmedLine))
@@ -142,22 +147,22 @@ public static class DetectBinaries
                     continue;
                 }
 
-                if (TryGetImportFile(trimmedLine, file, out string importFile))
+                if (TryGetImportFile(taskEnvironment, trimmedLine, file, out string importFile))
                 {
-                    UpdateAllowedBinariesFile(log, importFile, outputReportDirectory, unusedPatterns);
+                    UpdateAllowedBinariesFile(log, taskEnvironment, importFile, outputReportDirectory, unusedPatterns);
                 }
                 newLines.Add(line);
             }
 
             string updatedFile = Path.Combine(outputReportDirectory, "Updated" + Path.GetFileName(file));
 
-            File.WriteAllLines(updatedFile, newLines);
+            File.WriteAllLines(taskEnvironment.GetAbsolutePath(updatedFile), newLines);
 
             log.LogMessage(MessageImportance.High, $"    Updated allowed binaries file '{Path.GetFileName(file)}' written to '{updatedFile}'");
         }
     }
 
-    private static bool TryGetImportFile(string line, string currentFile, out string importFile)
+    private static bool TryGetImportFile(TaskEnvironment taskEnvironment, string line, string currentFile, out string importFile)
     {
         importFile = string.Empty;
         if (line.StartsWith("import:"))
@@ -165,7 +170,7 @@ public static class DetectBinaries
             importFile = line.Substring("import:".Length).Trim();
             if (!Path.IsPathFullyQualified(importFile))
             {
-                var currentDirectory = Path.GetDirectoryName(currentFile) ?? Directory.GetCurrentDirectory();
+                var currentDirectory = Path.GetDirectoryName(currentFile) ?? taskEnvironment.ProjectDirectory;
                 importFile = Path.Combine(currentDirectory, importFile);
             }
             return true;

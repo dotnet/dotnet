@@ -21,8 +21,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 /// 1. SBA references
 /// 2. Unreferenced packages
 /// </summary>
-public partial class WriteSbaUsageReport : Task
+[MSBuildMultiThreadableTask]
+public partial class WriteSbaUsageReport : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     private const string SbaRepoName = "source-build-assets";
     private const string ErrorCode = "SBA001";
 
@@ -94,7 +98,7 @@ public partial class WriteSbaUsageReport : Task
 #pragma warning disable CA1869 // Cache and reuse 'JsonSerializerOptions' instances
         string jsonContent = JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true });
 #pragma warning restore CA1869 // Cache and reuse 'JsonSerializerOptions' instances
-        File.WriteAllText(reportFilePath, jsonContent);
+        File.WriteAllText(TaskEnvironment.GetAbsolutePath(reportFilePath), jsonContent);
     }
 
     /// <summary>
@@ -138,7 +142,7 @@ public partial class WriteSbaUsageReport : Task
     {
         try
         {
-            using var fileStream = File.OpenRead(nupkgFilePath);
+            using var fileStream = File.OpenRead(TaskEnvironment.GetAbsolutePath(nupkgFilePath));
             using var archive = new ZipArchive(fileStream, ZipArchiveMode.Read);
             var nuspecEntry = archive.Entries.FirstOrDefault(e => e.Name.EndsWith(".nuspec"));
             
@@ -180,7 +184,7 @@ public partial class WriteSbaUsageReport : Task
     {
         string packageSrcPath = Path.Combine(SbaRepoSrcPath, packageSrcRelativePath);
 
-        foreach (string nupkgFile in Directory.GetFiles(SbaPackagesPath, "*.nupkg", SearchOption.TopDirectoryOnly))
+        foreach (string nupkgFile in Directory.GetFiles(TaskEnvironment.GetAbsolutePath(SbaPackagesPath), "*.nupkg", SearchOption.TopDirectoryOnly))
         {
             var (packageName, version) = GetPackageInfoFromNupkg(nupkgFile);
             
@@ -201,16 +205,16 @@ public partial class WriteSbaUsageReport : Task
     private void ReadSbaPackages(string packageSrcRelativePath, bool trackTfms)
     {
         string packageSrcPath = Path.Combine(SbaRepoSrcPath, packageSrcRelativePath);
-        foreach (string projectPath in Directory.GetFiles(packageSrcPath, "*.csproj", SearchOption.AllDirectories))
+        foreach (string projectPath in Directory.GetFiles(TaskEnvironment.GetAbsolutePath(packageSrcPath), "*.csproj", SearchOption.AllDirectories))
         {
-            DirectoryInfo? directory = Directory.GetParent(projectPath);
+            DirectoryInfo? directory = Directory.GetParent(TaskEnvironment.GetAbsolutePath(projectPath));
             string version = directory!.Name;
             string projectName = Path.GetFileNameWithoutExtension(projectPath);
             HashSet<string>? tfms = null;
 
             if (trackTfms)
             {
-                XDocument xmlDoc = XDocument.Load(projectPath);
+                XDocument xmlDoc = XDocument.Load(TaskEnvironment.GetAbsolutePath(projectPath));
                 // Reference packages are generated using the TargetFrameworks property
                 // so there is no need to handle the TargetFramework property.
                 tfms = xmlDoc.Element("Project")?

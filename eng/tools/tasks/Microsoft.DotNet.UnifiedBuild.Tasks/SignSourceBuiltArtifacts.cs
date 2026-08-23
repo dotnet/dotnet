@@ -10,12 +10,15 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.UnifiedBuild.Tasks.Services;
-using BuildTask = Microsoft.Build.Utilities.Task;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 
-public class SignSourceBuiltArtifacts : BuildTask
+[MSBuildMultiThreadableTask]
+public class SignSourceBuiltArtifacts : Microsoft.Build.Utilities.Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// List of source-built assets to sign
     /// </summary>
@@ -48,7 +51,14 @@ public class SignSourceBuiltArtifacts : BuildTask
     private const string SignBinlogFileName = "sign-source-built-artifacts.binlog";
     private const int SigningTimeout = 60 * 60 * 1000 * 2; // 2 hours
 
+    // MSBuildTask0005 flags the transitive Process.Kill in ProcessService, which tears down the
+    // signing process this task started after a timeout. That tree is owned by this task and cannot
+    // reach the (parent) MSBuild host, and dropping the kill would leak a process holding file
+    // handles. The diagnostic is reported on Execute rather than at the call site, so it has to be
+    // suppressed here. See https://github.com/dotnet/msbuild/issues/14788.
+#pragma warning disable MSBuildTask0005
     public override bool Execute() => ExecuteAsync().GetAwaiter().GetResult();
+#pragma warning restore MSBuildTask0005
 
     private async Task<bool> ExecuteAsync()
     {
@@ -78,21 +88,21 @@ public class SignSourceBuiltArtifacts : BuildTask
 
     private void PrepareForSigning()
     {
-        if (!Directory.Exists(LogsDirectory))
+        if (string.IsNullOrEmpty(LogsDirectory) || !Directory.Exists(TaskEnvironment.GetAbsolutePath(LogsDirectory)))
         {
-            Directory.CreateDirectory(LogsDirectory);
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(LogsDirectory));
         }
 
         // Place the Signing.props file into the repo's eng directory for
         // Arcade's signing infra to find
-        File.Copy(Config.SigningPropsPath, SigningPropsTargetPath, overwrite: true);
+        File.Copy(TaskEnvironment.GetAbsolutePath(Config.SigningPropsPath), TaskEnvironment.GetAbsolutePath(SigningPropsTargetPath), overwrite: true);
     }
 
     private void CleanupSigning()
     {
-        if (File.Exists(SigningPropsTargetPath))
+        if (File.Exists(TaskEnvironment.GetAbsolutePath(SigningPropsTargetPath)))
         {
-            File.Delete(SigningPropsTargetPath);
+            File.Delete(TaskEnvironment.GetAbsolutePath(SigningPropsTargetPath));
         }
     }
 
@@ -104,7 +114,7 @@ public class SignSourceBuiltArtifacts : BuildTask
         (string command, string arguments) = GetSigningCommandAndArguments();
         Log.LogMessage(MessageImportance.High, $"Running signing command: {command} {arguments}");
 
-        var processService = new ProcessService(Log, timeout: SigningTimeout);
+        var processService = new ProcessService(Log, TaskEnvironment, timeout: SigningTimeout);
         ProcessResult result = await processService.RunProcessAsync(
             command,
             arguments,

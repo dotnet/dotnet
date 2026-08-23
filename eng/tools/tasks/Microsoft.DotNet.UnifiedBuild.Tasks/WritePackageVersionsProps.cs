@@ -35,8 +35,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
     /// The former represents the current way that source build works for most repos. The latter represents the desired
     /// methodology (PVP Flow). PVP flow closely matches how the product is built in non-source-build mode.
     /// </summary>
-    public class WritePackageVersionsProps : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class WritePackageVersionsProps : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         private static readonly Regex InvalidElementNameCharRegex = new Regex(@"(^|[^A-Za-z0-9])(?<FirstPartChar>.)");
 
         public const string CreationTimePropertyName = "BuildOutputPropsCreationTime";
@@ -98,7 +102,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         /// <returns>Hash set of dependency names. </returns>
         private HashSet<string> GetDependences()
         {
-            return VersionDetailsHelper.GetDependencies(VersionDetails, Log);
+            return VersionDetailsHelper.GetDependencies(TaskEnvironment.GetAbsolutePath(VersionDetails), Log);
         }
 
         /// <summary>
@@ -121,7 +125,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 return !Log.HasLoggedErrors;
             }
 
-            if (VersionPropsFlowType == DependenciesOnlyVersionPropsFlowType && (string.IsNullOrEmpty(VersionDetails) || !File.Exists(VersionDetails)))
+            if (VersionPropsFlowType == DependenciesOnlyVersionPropsFlowType && (string.IsNullOrEmpty(VersionDetails) || !File.Exists(TaskEnvironment.GetAbsolutePath(VersionDetails))))
             {
                 Log.LogError($"When version flow type is DependenciesOnly, the VersionDetails task parameter must point to a valid path to the Version.Details.xml file for the repo. " +
                     $"Provided file path '{VersionDetails}' does not exist.");
@@ -169,9 +173,9 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 }
             }
 
-            Directory.CreateDirectory(Path.GetDirectoryName(OutputPath));
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(OutputPath)));
 
-            using (var outStream = File.Open(OutputPath, FileMode.Create))
+            using (var outStream = File.Open(TaskEnvironment.GetAbsolutePath(OutputPath), FileMode.Create))
             using (var sw = new StreamWriter(outStream, new UTF8Encoding(false)))
             {
                 sw.WriteLine(@"<Project ToolsVersion=""14.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">");

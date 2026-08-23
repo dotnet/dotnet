@@ -9,4 +9,15 @@
     <RestoreSources Condition="Exists('$(SharedComponentsArtifactsPath)')">$(RestoreSources);$(SharedComponentsArtifactsPath)</RestoreSources>
   </PropertyGroup>
 
+  <!--
+    Analyzer that validates tasks opting into MSBuild's multithreaded execution model via
+    [MSBuildMultiThreadableTask]. Scoped to those tasks only (see the globalconfig), so it acts as a
+    regression guard for already-migrated tasks without flagging the ones still to be migrated.
+    Not available when building from source, where the package feeds aren't reachable.
+  -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <PackageReference Include="Microsoft.Build.TaskAuthoring.Analyzer" PrivateAssets="all" IncludeAssets="analyzers" />
+    <GlobalAnalyzerConfigFiles Include="$(MSBuildThisFileDirectory)..\MultiThreadableTaskAnalyzer.globalconfig" />
+  </ItemGroup>
+
 </Project>

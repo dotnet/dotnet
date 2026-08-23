@@ -17,8 +17,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
      * feeds that begin with http or https.  In the online build mode, it removes only the internal dnceng feeds that
      * source-build does not have access to.
      */
-    public class RemoveInternetSourcesFromNuGetConfig : Task
+    [MSBuildMultiThreadableTask]
+    public class RemoveInternetSourcesFromNuGetConfig : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public required string NuGetConfigFile { get; set; }
 
@@ -45,7 +49,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public override bool Execute()
         {
-            string xml = File.ReadAllText(NuGetConfigFile);
+            string xml = File.ReadAllText(TaskEnvironment.GetAbsolutePath(NuGetConfigFile));
             string newLineChars = FileUtilities.DetectNewLineChars(xml);
             XDocument d = XDocument.Parse(xml);
             XElement? disabledPackageSourcesElement = d.Root?.Descendants().FirstOrDefault(e => e.Name == "disabledPackageSources");
@@ -63,7 +67,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 disabledPackageSourcesElement?.ReplaceNodes(new XElement("clear"));
             }
 
-            using (var w = XmlWriter.Create(NuGetConfigFile, new XmlWriterSettings { NewLineChars = newLineChars, Indent = true }))
+            using (var w = XmlWriter.Create(TaskEnvironment.GetAbsolutePath(NuGetConfigFile), new XmlWriterSettings { NewLineChars = newLineChars, Indent = true }))
             {
                 d.Save(w);
             }

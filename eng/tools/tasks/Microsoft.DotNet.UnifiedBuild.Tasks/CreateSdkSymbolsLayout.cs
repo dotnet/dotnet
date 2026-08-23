@@ -16,8 +16,12 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.DotNet.UnifiedBuild.Tasks
 {
     // Creates a symbols layout that matches the SDK layout
-    public class CreateSdkSymbolsLayout : Task
+    [MSBuildMultiThreadableTask]
+    public class CreateSdkSymbolsLayout : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// Path to SDK layout.
         /// </summary>
@@ -64,31 +68,35 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         {
             List<string> filesWithoutPDBs = new List<string>();
 
-            if (Directory.Exists(SdkSymbolsLayoutPath))
+            if (!string.IsNullOrEmpty(SdkSymbolsLayoutPath) && Directory.Exists(TaskEnvironment.GetAbsolutePath(SdkSymbolsLayoutPath)))
             {
-                Directory.Delete(SdkSymbolsLayoutPath, true);
+                Directory.Delete(TaskEnvironment.GetAbsolutePath(SdkSymbolsLayoutPath), true);
             }
 
-            foreach (string file in Directory.GetFiles(SdkLayoutPath, "*", SearchOption.AllDirectories))
+            // Resolve once and use for both enumeration and the relative-path math below, so that a
+            // relative SdkLayoutPath cannot produce a mismatched prefix length.
+            string absoluteSdkLayoutPath = TaskEnvironment.GetAbsolutePath(SdkLayoutPath);
+
+            foreach (string file in Directory.GetFiles(absoluteSdkLayoutPath, "*", SearchOption.AllDirectories))
             {
-                if (PdbUtilities.FileInSdkLayoutRequiresAPdb(file, out string guid))
+                if (PdbUtilities.FileInSdkLayoutRequiresAPdb(TaskEnvironment.GetAbsolutePath(file), out string guid))
                 {
                     string debugId = GetDebugId(guid, file);
                     if (!allPdbGuids.ContainsKey(debugId))
                     {
-                        filesWithoutPDBs.Add(file.Substring(SdkLayoutPath.Length));
+                        filesWithoutPDBs.Add(file.Substring(absoluteSdkLayoutPath.Length));
                     }
                     else
                     {
                         // Copy matching pdb to symbols path, preserving sdk binary's hierarchy
                         string sourcePath = (string)allPdbGuids[debugId]!;
-                        string fileRelativePath = file.Substring(SdkLayoutPath.Length);
+                        string fileRelativePath = file.Substring(absoluteSdkLayoutPath.Length);
                         string destinationPath =
                             Path.Combine(SdkSymbolsLayoutPath, fileRelativePath)
                                 .Replace(Path.GetFileName(file), Path.GetFileName(sourcePath));
 
-                        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
-                        File.Copy(sourcePath, destinationPath, true);
+                        Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(destinationPath)!));
+                        File.Copy(TaskEnvironment.GetAbsolutePath(sourcePath), TaskEnvironment.GetAbsolutePath(destinationPath), true);
                     }
                 }
             }
@@ -100,9 +108,9 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         {
             Hashtable allPdbGuids = new Hashtable();
 
-            foreach (string file in Directory.GetFiles(AllSymbolsPath, "*.pdb", SearchOption.AllDirectories))
+            foreach (string file in Directory.GetFiles(TaskEnvironment.GetAbsolutePath(AllSymbolsPath), "*.pdb", SearchOption.AllDirectories))
             {
-                using var pdbFileStream = File.OpenRead(file);
+                using var pdbFileStream = File.OpenRead(TaskEnvironment.GetAbsolutePath(file));
                 var metadataProvider = MetadataReaderProvider.FromPortablePdbStream(pdbFileStream);
                 var metadataReader = metadataProvider.GetMetadataReader();
                 if (metadataReader.DebugMetadataHeader == null)

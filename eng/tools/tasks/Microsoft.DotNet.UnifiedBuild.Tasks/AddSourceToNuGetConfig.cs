@@ -18,8 +18,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
      * the path of the source is changed. Otherwise, the source is added as the first source in the list, after any clear
      * elements (if present).
      */
-    public class AddSourceToNuGetConfig : Task
+    [MSBuildMultiThreadableTask]
+    public class AddSourceToNuGetConfig : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string NuGetConfigFile { get; set; }
 
@@ -31,7 +35,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public override bool Execute()
         {
-            string xml = File.ReadAllText(NuGetConfigFile);
+            string xml = File.ReadAllText(TaskEnvironment.GetAbsolutePath(NuGetConfigFile));
             string newLineChars = FileUtilities.DetectNewLineChars(xml);
             XDocument d = XDocument.Parse(xml);
             XElement packageSourcesElement = d.Root.Descendants().First(e => e.Name == "packageSources");
@@ -55,7 +59,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 packageSourcesElement.AddFirst(clearTag);
             }
 
-            using (var w = XmlWriter.Create(NuGetConfigFile, new XmlWriterSettings { NewLineChars = newLineChars, Indent = true }))
+            using (var w = XmlWriter.Create(TaskEnvironment.GetAbsolutePath(NuGetConfigFile), new XmlWriterSettings { NewLineChars = newLineChars, Indent = true }))
             {
                 d.Save(w);
             }

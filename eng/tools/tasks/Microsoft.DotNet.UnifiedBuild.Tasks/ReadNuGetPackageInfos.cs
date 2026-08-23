@@ -12,8 +12,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks
 {
-    public class ReadNuGetPackageInfos : Task
+    [MSBuildMultiThreadableTask]
+    public class ReadNuGetPackageInfos : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string[] PackagePaths { get; set; }
 
@@ -30,7 +34,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             PackageInfoItems = PackagePaths
                 .Select(p =>
                 {
-                    PackageIdentity identity = ReadIdentity(p);
+                    PackageIdentity identity = ReadIdentity(TaskEnvironment.GetAbsolutePath(p));
                     return new TaskItem(
                         p,
                         new Dictionary<string, string>

@@ -15,8 +15,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
     /// Removes blocked entries from the auditSources section of a NuGet.config file.
     /// Audit sources can reach out to the internet at restore time which may not be available in CI builds.
     /// </summary>
-    public class RemoveBlockedAuditSourcesFromNuGetConfig : Task
+    [MSBuildMultiThreadableTask]
+    public class RemoveBlockedAuditSourcesFromNuGetConfig : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         private static readonly string[] BlockedAuditSources = [ "nuget.org" ];
 
         [Required]
@@ -24,7 +28,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public override bool Execute()
         {
-            string xml = File.ReadAllText(NuGetConfigFile);
+            string xml = File.ReadAllText(TaskEnvironment.GetAbsolutePath(NuGetConfigFile));
             string newLineChars = FileUtilities.DetectNewLineChars(xml);
             XDocument d = XDocument.Parse(xml);
 
@@ -41,7 +45,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     ?.Remove();
             }
 
-            using (var w = XmlWriter.Create(NuGetConfigFile, new XmlWriterSettings { NewLineChars = newLineChars, Indent = true }))
+            using (var w = XmlWriter.Create(TaskEnvironment.GetAbsolutePath(NuGetConfigFile), new XmlWriterSettings { NewLineChars = newLineChars, Indent = true }))
             {
                 d.Save(w);
             }

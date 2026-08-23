@@ -14,8 +14,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 /// <summary>
 /// Get a list of MSBuild Items that represent the packages described in the asset manifests.
 /// </summary>
-public sealed class GetKnownArtifactsFromAssetManifests : Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public sealed class GetKnownArtifactsFromAssetManifests : Build.Utilities.Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     // Common metadata
     private const string IdAttributeName = "Id";
     private const string RepoOriginAttributeName = "RepoOrigin";
@@ -57,7 +61,7 @@ public sealed class GetKnownArtifactsFromAssetManifests : Build.Utilities.Task
     public override bool Execute()
     {
         XDocument[] xDocuments = AssetManifests
-            .Select(manifest => XDocument.Load(manifest.ItemSpec))
+            .Select(manifest => XDocument.Load(TaskEnvironment.GetAbsolutePath(manifest.ItemSpec)))
             .ToArray();
 
         KnownPackages = xDocuments

@@ -14,8 +14,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 {
     // Takes a path to a source-manifest.json file and
     // reads the information for a specific repo from it.
-    public class ReadRepoInfoFromSourceManifest : Task
+    [MSBuildMultiThreadableTask]
+    public class ReadRepoInfoFromSourceManifest : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string SourceManifest { get; set; } = "";
 
@@ -30,13 +34,13 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public override bool Execute()
         {
-            if (!File.Exists(SourceManifest))
+            if (string.IsNullOrEmpty(SourceManifest) || !File.Exists(TaskEnvironment.GetAbsolutePath(SourceManifest)))
             {
                 Log.LogError($"Source manifest file not found: {SourceManifest}");
                 return false;
             }
 
-            JsonArray? repositories = JsonNode.Parse(File.OpenRead(SourceManifest))?["repositories"]?.AsArray();
+            JsonArray? repositories = JsonNode.Parse(File.OpenRead(TaskEnvironment.GetAbsolutePath(SourceManifest)))?["repositories"]?.AsArray();
 
             JsonObject? repo = repositories
                 ?.Where(p => p?["path"]?.ToString() == RepositoryName)

@@ -30,8 +30,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
     /// -warnAsError doesn't wrongly promote them to errors.</item>
     /// </list>
     /// </summary>
-    public partial class LogRepoBuildDiagnostics : Task
+    [MSBuildMultiThreadableTask]
+    public partial class LogRepoBuildDiagnostics : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         // Matches the canonical MSBuild diagnostic form: "<origin> : warning ABC123: <message>".
         [GeneratedRegex(@"\bwarning\s+(?<code>[A-Za-z]+\d+)\s*:\s*(?<message>.*)$", RegexOptions.IgnoreCase)]
         private static partial Regex WarningRegex();
@@ -63,7 +67,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public override bool Execute()
         {
-            if (!File.Exists(LogFile))
+            if (string.IsNullOrEmpty(LogFile) || !File.Exists(TaskEnvironment.GetAbsolutePath(LogFile)))
             {
                 throw new FileNotFoundException($"Repo build log file not found: '{LogFile}'.", LogFile);
             }
@@ -74,7 +78,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
             if (PrintAllLines)
             {
-                foreach (string line in File.ReadLines(LogFile))
+                foreach (string line in File.ReadLines(TaskEnvironment.GetAbsolutePath(LogFile)))
                 {
                     PrintLine(line, warningCodes);
                 }
@@ -89,7 +93,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 // Avoid emitting the same warning multiple times when the repo build logs it repeatedly.
                 HashSet<string> emitted = new(StringComparer.Ordinal);
 
-                foreach (string line in File.ReadLines(LogFile))
+                foreach (string line in File.ReadLines(TaskEnvironment.GetAbsolutePath(LogFile)))
                 {
                     TryLogWarning(line, warningCodes, emitted);
                 }

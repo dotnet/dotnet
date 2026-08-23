@@ -19,8 +19,12 @@ using System.Xml.Linq;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
 {
-    public class MarkAndCatalogPackages : Task
+    [MSBuildMultiThreadableTask]
+    public class MarkAndCatalogPackages : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         private const string CatalogElementName = "HashCatalog";
         private const string PoisonMarker = "POISONED by DotNetSourceBuild - Should not ship";
 
@@ -64,9 +68,12 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             var tempDirName = Path.GetRandomFileName();
             if (!string.IsNullOrWhiteSpace(OverrideTempPath))
             {
-                Directory.CreateDirectory(OverrideTempPath);
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(OverrideTempPath));
             }
-            var tempDir = Directory.CreateDirectory(Path.Combine(OverrideTempPath ?? Path.GetTempPath(), tempDirName));
+#pragma warning disable MSBuildTask0002 // Temp directory is process-scoped, not relative to the project directory
+            var tempRoot = OverrideTempPath ?? Path.GetTempPath();
+#pragma warning restore MSBuildTask0002
+            var tempDir = Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.Combine(tempRoot, tempDirName)));
 
             var packageEntries = new List<CatalogPackageEntry>();
 
@@ -77,18 +84,18 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                     var packageEntry = new CatalogPackageEntry();
                     packageEntries.Add(packageEntry);
                     packageEntry.Path = p.ItemSpec;
-                    var packageIdentity = ReadNuGetPackageInfos.ReadIdentity(p.ItemSpec);
+                    var packageIdentity = ReadNuGetPackageInfos.ReadIdentity(TaskEnvironment.GetAbsolutePath(p.ItemSpec));
                     packageEntry.Id = packageIdentity.Id;
                     packageEntry.Version = packageIdentity.Version.OriginalVersion;
                     var packageTempPath = Path.Combine(tempDir.FullName, Path.GetFileName(p.ItemSpec));
-                    ZipFile.ExtractToDirectory(p.ItemSpec, packageTempPath, true);
+                    ZipFile.ExtractToDirectory(TaskEnvironment.GetAbsolutePath(p.ItemSpec), packageTempPath, true);
 
                     foreach (string file in Directory.EnumerateFiles(packageTempPath, "*", SearchOption.AllDirectories))
                     {
                         // remove signatures so we don't later fail validation
                         if (Path.GetFileName(file) == ".signature.p7s")
                         {
-                            File.Delete(file);
+                            File.Delete(TaskEnvironment.GetAbsolutePath(file));
                             continue;
                         }
 
@@ -102,7 +109,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                             packageEntry.Files.Add(catalogFileEntry);
                             catalogFileEntry.Path = Utility.MakeRelativePath(file, packageTempPath);
 
-                            using (var stream = File.OpenRead(file))
+                            using (var stream = File.OpenRead(TaskEnvironment.GetAbsolutePath(file)))
                             {
                                 catalogFileEntry.PoisonedHash = sha.ComputeHash(stream);
                             }
@@ -138,8 +145,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                     {
                         packageEntry.PoisonedHash = sha.ComputeHash(stream);
                     }
-                    File.Delete(p.ItemSpec);
-                    File.Move(poisonedPackagePath, p.ItemSpec);
+                    File.Delete(TaskEnvironment.GetAbsolutePath(p.ItemSpec));
+                    File.Move(poisonedPackagePath, TaskEnvironment.GetAbsolutePath(p.ItemSpec));
                     Directory.Delete(packageTempPath, true);
                 }
             }
@@ -148,11 +155,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             if (!string.IsNullOrWhiteSpace(CatalogOutputFilePath))
             {
                 var outputFileDir = Path.GetDirectoryName(CatalogOutputFilePath);
-                if (!Directory.Exists(outputFileDir))
+                if (string.IsNullOrEmpty(outputFileDir) || !Directory.Exists(TaskEnvironment.GetAbsolutePath(outputFileDir)))
                 {
-                    Directory.CreateDirectory(outputFileDir);
+                    Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(outputFileDir));
                 }
-                File.WriteAllText(CatalogOutputFilePath, (new XElement("HashCatalog",
+                File.WriteAllText(TaskEnvironment.GetAbsolutePath(CatalogOutputFilePath), (new XElement("HashCatalog",
                     packageEntries.Select(p => p.ToXml()))).ToString());
             }
 
@@ -160,6 +167,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             return !Log.HasLoggedErrors;
         }
 
-        private void Poison(string path) => File.AppendAllText(path, PoisonMarker);
+        private void Poison(string path) => File.AppendAllText(TaskEnvironment.GetAbsolutePath(path), PoisonMarker);
     }
 }

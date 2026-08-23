@@ -5,12 +5,15 @@ using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using BuildTask = Microsoft.Build.Utilities.Task;
 
 namespace BinaryToolKit;
 
-public class BinaryToolTask : BuildTask
+[MSBuildMultiThreadableTask]
+public class BinaryToolTask : Microsoft.Build.Utilities.Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     [Required]
     public string Mode
     {
@@ -33,7 +36,7 @@ public class BinaryToolTask : BuildTask
     [Required]
     public string AllowedBinariesFile { get; set; } = string.Empty;
 
-    public string OutputReportDirectory { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "binary-report");
+    public string OutputReportDirectory { get; set; } = string.Empty;
 
     private Modes _mode;
 
@@ -42,7 +45,7 @@ public class BinaryToolTask : BuildTask
         try
         {
             ParseArgs();
-            BinaryTool.Execute(Log, TargetDirectory, OutputReportDirectory, AllowedBinariesFile, _mode);
+            BinaryTool.Execute(Log, TaskEnvironment, TargetDirectory, OutputReportDirectory, AllowedBinariesFile, _mode);
         }
         catch (Exception ex)
         {
@@ -56,7 +59,7 @@ public class BinaryToolTask : BuildTask
     private void ParseArgs()
     {
         // TargetDirectory
-        if (string.IsNullOrWhiteSpace(TargetDirectory) || !Directory.Exists(TargetDirectory))
+        if (string.IsNullOrWhiteSpace(TargetDirectory) || !Directory.Exists(TaskEnvironment.GetAbsolutePath(TargetDirectory)))
         {
             throw new ArgumentException($"TargetDirectory '{TargetDirectory}' is required and must exist.");
         }
@@ -65,7 +68,7 @@ public class BinaryToolTask : BuildTask
         TargetDirectory = TargetDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         // AllowedBinariesFile
-        if (string.IsNullOrWhiteSpace(AllowedBinariesFile) || !File.Exists(AllowedBinariesFile))
+        if (string.IsNullOrWhiteSpace(AllowedBinariesFile) || !File.Exists(TaskEnvironment.GetAbsolutePath(AllowedBinariesFile)))
         {
             throw new ArgumentException($"AllowedBinariesFile '{AllowedBinariesFile}' is required and must exist.");
         }
@@ -73,12 +76,12 @@ public class BinaryToolTask : BuildTask
         // OutputReportDirectory
         if (string.IsNullOrWhiteSpace(OutputReportDirectory))
         {
-            throw new ArgumentException("OutputReportDirectory cannot be null or empty.");
+            OutputReportDirectory = Path.Combine(TaskEnvironment.ProjectDirectory, "binary-report");
         }
 
-        if (!Directory.Exists(OutputReportDirectory))
+        if (!Directory.Exists(TaskEnvironment.GetAbsolutePath(OutputReportDirectory)))
         {
-            Directory.CreateDirectory(OutputReportDirectory);
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(OutputReportDirectory));
         }
     }
 }

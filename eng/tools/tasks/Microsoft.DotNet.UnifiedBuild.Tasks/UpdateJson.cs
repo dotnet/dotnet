@@ -16,8 +16,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
     // Takes a path to a path to a json file and a
     // string that represents a dotted path to an attribute
     // and updates that attribute with the new value provided. 
-    public class UpdateJson : Task
+    [MSBuildMultiThreadableTask]
+    public class UpdateJson : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         // Using a character that isn't allowed in the package id
         private const char Delimiter = ':';
 
@@ -51,7 +55,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public override bool Execute()
         {
-            string json = File.ReadAllText(JsonFilePath);
+            string json = File.ReadAllText(TaskEnvironment.GetAbsolutePath(JsonFilePath));
             string newLineChars = FileUtilities.DetectNewLineChars(json);
             JsonNode jsonNode = JsonNode.Parse(json);
 
@@ -89,7 +93,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             }
 
             var options = new JsonSerializerOptions { WriteIndented = true };
-            File.WriteAllText(JsonFilePath, FileUtilities.NormalizeNewLineChars(jsonNode.ToJsonString(options), newLineChars));
+            File.WriteAllText(TaskEnvironment.GetAbsolutePath(JsonFilePath), FileUtilities.NormalizeNewLineChars(jsonNode.ToJsonString(options), newLineChars));
             return true;
         }
 

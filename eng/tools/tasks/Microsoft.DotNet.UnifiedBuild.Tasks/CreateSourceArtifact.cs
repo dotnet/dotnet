@@ -7,12 +7,15 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.UnifiedBuild.Tasks.Services;
-using BuildTask = Microsoft.Build.Utilities.Task;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 
-public class CreateSourceArtifact : BuildTask
+[MSBuildMultiThreadableTask]
+public class CreateSourceArtifact : Microsoft.Build.Utilities.Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// Commit SHA of the VMR source to download
     /// </summary>
@@ -64,11 +67,18 @@ public class CreateSourceArtifact : BuildTask
     private const string TarExtension = "tar.gz";
     private const string SignatureExtension = "sig";
 
+    // MSBuildTask0005 flags the transitive Process.Kill in ProcessService, which tears down the
+    // git process this task started after a timeout. That tree is owned by this task and cannot
+    // reach the (parent) MSBuild host, and dropping the kill would leak a process holding file
+    // handles. The diagnostic is reported on Execute rather than at the call site, so it has to be
+    // suppressed here. See https://github.com/dotnet/msbuild/issues/14788.
+#pragma warning disable MSBuildTask0005
     public override bool Execute() => ExecuteAsync().GetAwaiter().GetResult();
+#pragma warning restore MSBuildTask0005
 
     private async Task<bool> ExecuteAsync()
     {
-        var processService = new ProcessService(Log, GitArchiveTimeout);
+        var processService = new ProcessService(Log, TaskEnvironment, GitArchiveTimeout);
 
         string artifactFilePath = Path.Combine(OutputDirectory, $"{ArtifactName}-{SdkNonStableVersion}.{TarExtension}");
 
@@ -102,7 +112,7 @@ public class CreateSourceArtifact : BuildTask
 
             try
             {
-                using (FileStream fs = File.Create(signatureFilePath))
+                using (FileStream fs = File.Create(TaskEnvironment.GetAbsolutePath(signatureFilePath)))
                 {
                     // Create an empty file
                 }

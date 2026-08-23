@@ -18,8 +18,12 @@ using Task = Microsoft.Build.Utilities.Task;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 {
-    public class WritePackageUsageData : Task
+    [MSBuildMultiThreadableTask]
+    public class WritePackageUsageData : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         public string[] RestoredPackageFiles { get; set; }
         public string[] TarballPrebuiltPackageFiles { get; set; }
         public string[] ReferencePackageFiles { get; set; }
@@ -89,13 +93,19 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
         [Output]
         public ITaskItem[] PrebuiltPackages { get; set; }
 
+        /// <summary>
+        /// RootDir resolved against the project directory. Used for every prefix comparison so that a
+        /// relative RootDir cannot produce a mismatched prefix length against enumerated absolute paths.
+        /// </summary>
+        private string AbsoluteRootDir => TaskEnvironment.GetAbsolutePath(RootDir);
+
         public override bool Execute()
         {
             DateTime startTime = DateTime.Now;
             Log.LogMessage(MessageImportance.Normal, "Writing package usage data...");
 
             string[] projectDirectoriesOutsideRoot = ProjectDirectories.NullAsEmpty()
-                .Where(dir => !dir.StartsWith(RootDir, StringComparison.Ordinal))
+                .Where(dir => string.IsNullOrEmpty(dir) || !((string)TaskEnvironment.GetAbsolutePath(dir)).StartsWith(AbsoluteRootDir, StringComparison.Ordinal))
                 .ToArray();
 
             if (projectDirectoriesOutsideRoot.Any())
@@ -115,22 +125,22 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
             Log.LogMessage(MessageImportance.Low, "Reading package identities...");
 
             PackageIdentity[] restored = RestoredPackageFiles.NullAsEmpty()
-                .Select(ReadNuGetPackageInfos.ReadIdentity)
+                .Select(f => ReadNuGetPackageInfos.ReadIdentity(TaskEnvironment.GetAbsolutePath(f)))
                 .Distinct()
                 .ToArray();
 
             PackageIdentity[] tarballPrebuilt = TarballPrebuiltPackageFiles.NullAsEmpty()
-                .Select(ReadNuGetPackageInfos.ReadIdentity)
+                .Select(f => ReadNuGetPackageInfos.ReadIdentity(TaskEnvironment.GetAbsolutePath(f)))
                 .Distinct()
                 .ToArray();
 
             PackageIdentity[] referencePackages = ReferencePackageFiles.NullAsEmpty()
-                .Select(ReadNuGetPackageInfos.ReadIdentity)
+                .Select(f => ReadNuGetPackageInfos.ReadIdentity(TaskEnvironment.GetAbsolutePath(f)))
                 .Distinct()
                 .ToArray();
 
             PackageIdentity[] sourceBuilt = SourceBuiltPackageFiles.NullAsEmpty()
-                .Select(ReadNuGetPackageInfos.ReadIdentity)
+                .Select(f => ReadNuGetPackageInfos.ReadIdentity(TaskEnvironment.GetAbsolutePath(f)))
                 .Distinct()
                 .ToArray();
 
@@ -146,7 +156,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
             Log.LogMessage(MessageImportance.Low, "Finding project.assets.json files...");
 
             string[] assetFiles = Directory
-                .GetFiles(RootDir, "project.assets.json", SearchOption.AllDirectories)
+                .GetFiles(TaskEnvironment.GetAbsolutePath(RootDir), "project.assets.json", SearchOption.AllDirectories)
                 .Select(GetPathRelativeToRoot)
                 .Except(IgnoredProjectAssetsJsonFiles.NullAsEmpty().Select(GetPathRelativeToRoot))
                 .ToArray();
@@ -155,11 +165,11 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
             {
                 Log.LogMessage(MessageImportance.Low, "Archiving project.assets.json files...");
 
-                Directory.CreateDirectory(Path.GetDirectoryName(ProjectAssetsJsonArchiveFile));
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(ProjectAssetsJsonArchiveFile)));
 
                 using (var projectAssetArchive = new ZipArchive(
                     File.Open(
-                        ProjectAssetsJsonArchiveFile,
+                        TaskEnvironment.GetAbsolutePath(ProjectAssetsJsonArchiveFile),
                         FileMode.Create,
                         FileAccess.ReadWrite),
                     ZipArchiveMode.Create))
@@ -168,7 +178,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                     // ForEach later.
                     foreach (var relativePath in assetFiles)
                     {
-                        using (var stream = File.OpenRead(Path.Combine(RootDir, relativePath)))
+                        using (var stream = File.OpenRead(TaskEnvironment.GetAbsolutePath(Path.Combine(RootDir, relativePath))))
                         using (Stream entryWriter = projectAssetArchive
                             .CreateEntry(relativePath, CompressionLevel.Optimal)
                             .Open())
@@ -187,7 +197,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                 assetFiles,
                 assetFile =>
                 {
-                    using var jsonDoc = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(RootDir, assetFile)));
+                    using var jsonDoc = JsonDocument.Parse(File.ReadAllBytes(TaskEnvironment.GetAbsolutePath(Path.Combine(RootDir, assetFile))));
                     var root = jsonDoc.RootElement;
 
                     var properties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -282,8 +292,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                     .ToArray()
             };
 
-            Directory.CreateDirectory(Path.GetDirectoryName(DataFile));
-            File.WriteAllText(DataFile, data.ToXml().ToString());
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(DataFile)));
+            File.WriteAllText(TaskEnvironment.GetAbsolutePath(DataFile), data.ToXml().ToString());
 
             PrebuiltPackages = prebuilt
                 .Select(p => new Microsoft.Build.Utilities.TaskItem(
@@ -302,17 +312,20 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 
         private string GetPathRelativeToRoot(string path)
         {
-            if (path.StartsWith(RootDir))
+            string absolutePath = TaskEnvironment.GetAbsolutePath(path);
+            string absoluteRootDir = AbsoluteRootDir;
+
+            if (absolutePath.StartsWith(absoluteRootDir, StringComparison.Ordinal))
             {
-                return path.Substring(RootDir.Length).Replace(Path.DirectorySeparatorChar, '/');
+                return absolutePath.Substring(absoluteRootDir.Length).Replace(Path.DirectorySeparatorChar, '/');
             }
 
             throw new ArgumentException($"Path '{path}' is not within RootDir '{RootDir}'");
         }
 
-        private static string[] ReadRidsFromRuntimeJson(string path)
+        private string[] ReadRidsFromRuntimeJson(string path)
         {
-            using var jsonDoc = JsonDocument.Parse(File.ReadAllText(path));
+            using var jsonDoc = JsonDocument.Parse(File.ReadAllText(TaskEnvironment.GetAbsolutePath(path)));
             if (jsonDoc.RootElement.TryGetProperty("runtimes", out var runtimes))
             {
                 return runtimes.EnumerateObject()

@@ -54,7 +54,8 @@
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.8</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
-    <MicrosoftBuildVersion>18.0.2</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion>18.8.2</MicrosoftBuildVersion>
+    <MicrosoftBuildTaskAuthoringAnalyzerVersion>18.11.0-1.26420.118</MicrosoftBuildTaskAuthoringAnalyzerVersion>
     <!-- nuget dependencies -->
     <NuGetPackagingVersion>7.0.3</NuGetPackagingVersion>
     <NuGetProtocolVersion>7.0.3</NuGetProtocolVersion>

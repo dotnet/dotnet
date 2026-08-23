@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks
 {
@@ -13,24 +14,24 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
     {
         // Checks if a file in Sdk layout requires an external Pdb.
         // Also returns the Pdb GUID, if one was found in PE.
-        public static bool FileInSdkLayoutRequiresAPdb(string file, out string guid)
+        public static bool FileInSdkLayoutRequiresAPdb(AbsolutePath file, out string guid)
         {
             guid = string.Empty;
 
             // Files under packs/ are used for build only, no need for Pdbs
-            return !file.Contains(Path.DirectorySeparatorChar + "packs" + Path.DirectorySeparatorChar) ?
+            return !file.Value.Contains(Path.DirectorySeparatorChar + "packs" + Path.DirectorySeparatorChar) ?
                 FileHasCompanionPdbInfo(file, out guid) :
                 false;
         }
 
         // Checks if a file has debug data indicating an external companion Pdb.
         // Also returns the Pdb GUID, if one was found in PE.
-        private static bool FileHasCompanionPdbInfo(string file, out string guid)
+        private static bool FileHasCompanionPdbInfo(AbsolutePath file, out string guid)
         {
             guid = string.Empty;
 
-            if (file.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) &&
-                !file.EndsWith(".resources.dll", StringComparison.InvariantCultureIgnoreCase))
+            if (file.Value.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) &&
+                !file.Value.EndsWith(".resources.dll", StringComparison.InvariantCultureIgnoreCase))
             {
                 using var pdbStream = File.OpenRead(file);
                 using var peReader = new PEReader(pdbStream);

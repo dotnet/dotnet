@@ -11,6 +11,7 @@ public static class BinaryTool
 {
     public static void Execute(
         TaskLoggingHelper log,
+        TaskEnvironment taskEnvironment,
         string targetDirectory,
         string outputReportDirectory,
         string allowedBinariesFile,
@@ -21,25 +22,25 @@ public static class BinaryTool
         log.LogMessage(MessageImportance.High, $"Starting binary tool at {startTime} in {mode} mode");
 
         // Run the tooling
-        var detectedBinaries = DetectBinaries.Execute(log, targetDirectory, outputReportDirectory, allowedBinariesFile);
+        var detectedBinaries = DetectBinaries.Execute(log, taskEnvironment, targetDirectory, outputReportDirectory, allowedBinariesFile);
 
         if (mode == Modes.Validate)
         {
-            ValidateBinaries(log, detectedBinaries, outputReportDirectory);
+            ValidateBinaries(log, taskEnvironment, detectedBinaries, outputReportDirectory);
         }
 
         else if (mode == Modes.Clean)
         {
-            RemoveBinaries(log, detectedBinaries, targetDirectory);
+            RemoveBinaries(log, taskEnvironment, detectedBinaries, targetDirectory);
         }
 
         log.LogMessage(MessageImportance.High, "Finished all binary tasks. Took " + (DateTime.Now - startTime).TotalSeconds + " seconds.");
     }
 
-    private static void ValidateBinaries(TaskLoggingHelper log, IEnumerable<string> newBinaries, string outputReportDirectory)
+    private static void ValidateBinaries(TaskLoggingHelper log, TaskEnvironment taskEnvironment, IEnumerable<string> newBinaries, string outputReportDirectory)
     {
         string newBinariesFile = Path.Combine(outputReportDirectory, "NewBinaries.txt");
-        File.WriteAllLines(newBinariesFile, newBinaries);
+        File.WriteAllLines(taskEnvironment.GetAbsolutePath(newBinariesFile), newBinaries);
 
         if (newBinaries.Any())
         {
@@ -54,13 +55,13 @@ public static class BinaryTool
         }
     }
 
-    private static void RemoveBinaries(TaskLoggingHelper log, IEnumerable<string> binariesToRemove, string targetDirectory)
+    private static void RemoveBinaries(TaskLoggingHelper log, TaskEnvironment taskEnvironment, IEnumerable<string> binariesToRemove, string targetDirectory)
     {
         log.LogMessage(MessageImportance.High, $"Removing binaries from '{targetDirectory}'...");
         
         foreach (var binary in binariesToRemove)
         {
-            File.Delete(Path.Combine(targetDirectory, binary));
+            File.Delete(taskEnvironment.GetAbsolutePath(Path.Combine(targetDirectory, binary)));
             log.LogMessage(MessageImportance.Low, $"    {binary}");
         }
 

@@ -16,9 +16,10 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.Services;
 public record ProcessEnvironmentVariable(string Name, string Value);
 public record ProcessResult(string Output, string Error, int ExitCode);
 
-public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
+public class ProcessService(TaskLoggingHelper log, TaskEnvironment taskEnvironment, int timeout = 10 * 1000)
 {
     private TaskLoggingHelper Log { get; } = log;
+    private TaskEnvironment TaskEnvironment { get; } = taskEnvironment;
     private TimeSpan Timeout { get; } = TimeSpan.FromMilliseconds(timeout);
 
     public async Task<ProcessResult> RunProcessAsync(
@@ -28,16 +29,17 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
         string workingDirectory = "",
         bool printOutput = false)
     {
-        var processInfo = new ProcessStartInfo
+        ProcessStartInfo processInfo = TaskEnvironment.GetProcessStartInfo();
+        processInfo.FileName = command;
+        processInfo.Arguments = arguments;
+        processInfo.RedirectStandardOutput = true;
+        processInfo.RedirectStandardError = true;
+        processInfo.UseShellExecute = false;
+        processInfo.CreateNoWindow = true;
+        if (!string.IsNullOrEmpty(workingDirectory))
         {
-            FileName = command,
-            Arguments = arguments,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-            WorkingDirectory = workingDirectory
-        };
+            processInfo.WorkingDirectory = TaskEnvironment.GetAbsolutePath(workingDirectory);
+        }
 
         if (environmentVariables != null)
         {
@@ -104,6 +106,10 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
         }
         catch (OperationCanceledException)
         {
+            // The process and its descendants were started by this task, so tearing that tree down
+            // cannot reach the (parent) MSBuild host. Leaking a timed-out process would keep file
+            // handles alive and stall the build, so the kill has to stay. MSBuildTask0005 is
+            // suppressed on the Execute methods of the tasks that reach this code.
             try { process.Kill(entireProcessTree: true); } catch { }
             throw new TimeoutException($"Process timed out after {Timeout.TotalMilliseconds} ms");
         }

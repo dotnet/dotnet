@@ -29,8 +29,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
      * In online build, if NuGet.config didn't originally have any mappings, additionally,
      * add default "*" pattern to all online source mappings.
      */
-    public class UpdateNuGetConfigPackageSourcesMappings : Task
+    [MSBuildMultiThreadableTask]
+    public class UpdateNuGetConfigPackageSourcesMappings : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         [Required]
         public string NuGetConfigFile { get; set; }
 
@@ -81,7 +85,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public override bool Execute()
         {
-            string xml = File.ReadAllText(NuGetConfigFile);
+            string xml = File.ReadAllText(TaskEnvironment.GetAbsolutePath(NuGetConfigFile));
             string newLineChars = FileUtilities.DetectNewLineChars(xml);
             XDocument document = XDocument.Parse(xml);
             XElement pkgSourcesElement = document.Root.Elements().FirstOrDefault(e => e.Name == "packageSources");
@@ -171,7 +175,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 AddMappingsForOnlineSources(pkgSrcMappingElement, pkgSourcesElement, packagePatterns);
             }
 
-            using (var writer = XmlWriter.Create(NuGetConfigFile, new XmlWriterSettings { NewLineChars = newLineChars, Indent = true }))
+            using (var writer = XmlWriter.Create(TaskEnvironment.GetAbsolutePath(NuGetConfigFile), new XmlWriterSettings { NewLineChars = newLineChars, Indent = true }))
             {
                 document.Save(writer);
             }
@@ -334,7 +338,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 }
 
                 string path = sourceElement.Attribute("value").Value;
-                if (!Directory.Exists(path))
+                if (string.IsNullOrEmpty(path) || !Directory.Exists(TaskEnvironment.GetAbsolutePath(path)))
                 {
                     continue;
                 }
@@ -347,7 +351,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     ? SearchOption.TopDirectoryOnly
                     : SearchOption.AllDirectories;
 
-                string[] packages = Directory.GetFiles(path, "*.nupkg", searchOption);
+                string[] packages = Directory.GetFiles(TaskEnvironment.GetAbsolutePath(path), "*.nupkg", searchOption);
                 Array.Sort(packages);
                 foreach (string package in packages)
                 {
@@ -395,18 +399,18 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             // 'source-build-assets-cache' is a dynamic source, populated by SBA build.
             // Discover all SBA packages from checked in nuspec files.
 
-            if (!Directory.Exists(SbaRepoSrcPath))
+            if (string.IsNullOrEmpty(SbaRepoSrcPath) || !Directory.Exists(TaskEnvironment.GetAbsolutePath(SbaRepoSrcPath)))
             {
                 throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture, "SBA repo root does not exist in expected path: {0}", SbaRepoSrcPath));
             }
 
-            string[] nuspecFiles = Directory.GetFiles(SbaRepoSrcPath, "*.nuspec", SearchOption.AllDirectories);
+            string[] nuspecFiles = Directory.GetFiles(TaskEnvironment.GetAbsolutePath(SbaRepoSrcPath), "*.nuspec", SearchOption.AllDirectories);
             Array.Sort(nuspecFiles);
             foreach (string nuspecFile in nuspecFiles)
             {
                 try
                 {
-                    using Stream stream = File.OpenRead(nuspecFile);
+                    using Stream stream = File.OpenRead(TaskEnvironment.GetAbsolutePath(nuspecFile));
                     NupkgInfo info = GetNupkgInfo(stream);
                     string id = info.Id.ToLower();
                     string version = info.Version.ToLower();
@@ -474,7 +478,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         {
             try
             {
-                using Stream stream = File.OpenRead(path);
+                using Stream stream = File.OpenRead(TaskEnvironment.GetAbsolutePath(path));
                 ZipArchive zipArchive = new(stream, ZipArchiveMode.Read);
                 foreach (ZipArchiveEntry entry in zipArchive.Entries)
                 {

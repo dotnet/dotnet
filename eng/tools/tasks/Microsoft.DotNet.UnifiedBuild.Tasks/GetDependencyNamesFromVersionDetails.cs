@@ -15,8 +15,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
     /// <summary>
     /// Reads a Version.Details.xml file and returns the list of non-pinned dependency package names.
     /// </summary>
-    public class GetDependencyNamesFromVersionDetails : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class GetDependencyNamesFromVersionDetails : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         private const string PinnedAttributeName = "Pinned";
         private const string DependencyAttributeName = "Dependency";
         private const string NameAttributeName = "Name";
@@ -36,14 +40,14 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public override bool Execute()
         {
-            if (string.IsNullOrEmpty(VersionDetailsPath) || !File.Exists(VersionDetailsPath))
+            if (string.IsNullOrEmpty(VersionDetailsPath) || !File.Exists(TaskEnvironment.GetAbsolutePath(VersionDetailsPath)))
             {
                 Log.LogError($"The VersionDetailsPath must point to a valid Version.Details.xml file. " +
                     $"Provided file path '{VersionDetailsPath}' does not exist.");
                 return false;
             }
 
-            HashSet<string> dependencies = VersionDetailsHelper.GetDependencies(VersionDetailsPath, Log);
+            HashSet<string> dependencies = VersionDetailsHelper.GetDependencies(TaskEnvironment.GetAbsolutePath(VersionDetailsPath), Log);
 
             if (Log.HasLoggedErrors)
             {

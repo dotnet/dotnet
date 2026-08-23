@@ -23,8 +23,12 @@ using System.Xml.Linq;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
 {
-    public class CheckForPoison : Task
+    [MSBuildMultiThreadableTask]
+    public class CheckForPoison : Task, IMultiThreadableTask
     {
+        /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
         /// <summary>
         /// The files to check for poison and/or hash matches.  Zips and
         /// nupkgs will be extracted and checked recursively.
@@ -101,7 +105,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             // if we should write out the poison report, do that
             if (!string.IsNullOrWhiteSpace(PoisonReportOutputFilePath))
             {
-                File.WriteAllText(PoisonReportOutputFilePath, (new XElement("PrebuiltLeakReport", poisons.OrderBy(p => p.Path).Select(p => p.ToXml()))).ToString());
+                File.WriteAllText(TaskEnvironment.GetAbsolutePath(PoisonReportOutputFilePath), (new XElement("PrebuiltLeakReport", poisons.OrderBy(p => p.Path).Select(p => p.ToXml()))).ToString());
             }
 
             if (FailOnPoisonFound && poisons.Count() > 0)
@@ -135,10 +139,13 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
 
             if (!string.IsNullOrWhiteSpace(OverrideTempPath))
             {
-                Directory.CreateDirectory(OverrideTempPath);
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(OverrideTempPath));
             }
             var tempDirName = Path.GetRandomFileName();
-            var tempDir = Directory.CreateDirectory(Path.Combine(OverrideTempPath ?? Path.GetTempPath(), tempDirName));
+#pragma warning disable MSBuildTask0002 // Temp directory is process-scoped, not relative to the project directory
+            var tempRoot = OverrideTempPath ?? Path.GetTempPath();
+#pragma warning restore MSBuildTask0002
+            var tempDir = Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.Combine(tempRoot, tempDirName)));
 
             while (candidateQueue.Any())
             {
@@ -184,7 +191,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             // There seems to be some weird issues with using file streams both for hashing and assembly loading.
             // Copy everything into a memory stream to avoid these problems.
             var memStream = new MemoryStream();
-            using (var stream = File.OpenRead(fileToCheck))
+            using (var stream = File.OpenRead(TaskEnvironment.GetAbsolutePath(fileToCheck)))
             {
                 stream.CopyTo(memStream);
             }
@@ -214,11 +221,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             try
             {
                 AssemblyName asm = AssemblyName.GetAssemblyName(fileToCheck);
-                if (!candidate.IsSourceBuildReferencePackage && IsAssemblyFromSbrp(fileToCheck))
+                if (!candidate.IsSourceBuildReferencePackage && IsAssemblyFromSbrp(TaskEnvironment.GetAbsolutePath(fileToCheck)))
                 {
                     poisonEntry.Type |= PoisonType.SourceBuildReferenceAssembly;
                 }
-                else if (IsAssemblyPoisoned(fileToCheck))
+                else if (IsAssemblyPoisoned(TaskEnvironment.GetAbsolutePath(fileToCheck)))
                 {
                     poisonEntry.Type |= PoisonType.AssemblyAttribute;
                 }
@@ -231,7 +238,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             return poisonEntry.Type != PoisonType.None ? poisonEntry : null;
         }
 
-        private static bool IsAssemblyPoisoned(string path)
+        private static bool IsAssemblyPoisoned(AbsolutePath path)
         {
             byte[] buffer = File.ReadAllBytes(path);
             byte[] marker = Encoding.UTF8.GetBytes(PoisonMarker);
@@ -252,7 +259,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             return false;
         }
 
-        private static bool IsAssemblyFromSbrp(string assemblyPath)
+        private static bool IsAssemblyFromSbrp(AbsolutePath assemblyPath)
         {
             using var stream = new FileStream(assemblyPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var peReader = new PEReader(stream);
@@ -304,14 +311,14 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             return false;
         }
 
-        private static PoisonedFileEntry ExtractAndCheckZipFileOnly(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate, IEnumerable<ITaskItem> markerFileNames, string tempDir, Queue<CandidateFileEntry> futureFilesToCheck)
+        private PoisonedFileEntry ExtractAndCheckZipFileOnly(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate, IEnumerable<ITaskItem> markerFileNames, string tempDir, Queue<CandidateFileEntry> futureFilesToCheck)
         {
             var poisonEntry = new PoisonedFileEntry();
             var zipToCheck = candidate.ExtractedPath;
             poisonEntry.Path = zipToCheck;
 
             using (var sha = SHA256.Create())
-            using (var stream = File.OpenRead(zipToCheck))
+            using (var stream = File.OpenRead(TaskEnvironment.GetAbsolutePath(zipToCheck)))
             {
                 poisonEntry.Hash = sha.ComputeHash(stream);
             }
@@ -332,19 +339,27 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             // now extract and look for the marker file
             if (ZipFileExtensions.Any(e => zipToCheck.ToLowerInvariant().EndsWith(e)))
             {
-                ZipFile.ExtractToDirectory(zipToCheck, tempDir, true);
+                ZipFile.ExtractToDirectory(TaskEnvironment.GetAbsolutePath(zipToCheck), TaskEnvironment.GetAbsolutePath(tempDir), true);
             }
             else if (TarFileExtensions.Any(e => zipToCheck.ToLowerInvariant().EndsWith(e)))
             {
-                Directory.CreateDirectory(tempDir);
-                var psi = new ProcessStartInfo("tar", $"xf {zipToCheck} -C {tempDir}");
-                Process.Start(psi).WaitForExit();
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(tempDir));
+                var psi = TaskEnvironment.GetProcessStartInfo();
+                psi.FileName = "tar";
+                psi.Arguments = $"xf {zipToCheck} -C {tempDir}";
+                using var process = new Process { StartInfo = psi };
+                process.Start();
+                process.WaitForExit();
             }
             else if (TarGzFileExtensions.Any(e => zipToCheck.ToLowerInvariant().EndsWith(e)))
             {
-                Directory.CreateDirectory(tempDir);
-                var psi = new ProcessStartInfo("tar", $"xzf {zipToCheck} -C {tempDir}");
-                Process.Start(psi).WaitForExit();
+                Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(tempDir));
+                var psi = TaskEnvironment.GetProcessStartInfo();
+                psi.FileName = "tar";
+                psi.Arguments = $"xzf {zipToCheck} -C {tempDir}";
+                using var process = new Process { StartInfo = psi };
+                process.Start();
+                process.WaitForExit();
             }
             else
             {
@@ -356,7 +371,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                 poisonEntry.Type |= PoisonType.NupkgFile;
             }
 
-            foreach (var child in Directory.EnumerateFiles(tempDir, "*", SearchOption.AllDirectories))
+            foreach (var child in Directory.EnumerateFiles(TaskEnvironment.GetAbsolutePath(tempDir), "*", SearchOption.AllDirectories))
             {
                 string displayPath = $"{candidate.DisplayPath}/{child.Replace(tempDir, string.Empty).TrimStart(Path.DirectorySeparatorChar)}";
 
@@ -366,7 +381,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             return poisonEntry.Type != PoisonType.None ? poisonEntry : null;
         }
 
-        private static IEnumerable<CatalogPackageEntry> ReadCatalog(string hashCatalogFilePath)
+        private IEnumerable<CatalogPackageEntry> ReadCatalog(string hashCatalogFilePath)
         {
             // catalog is optional, we can also just check assembly properties or nupkg marker files
             if (string.IsNullOrWhiteSpace(hashCatalogFilePath))
@@ -375,7 +390,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             }
 
             var doc = new XmlDocument();
-            using (var stream = File.OpenRead(hashCatalogFilePath))
+            using (var stream = File.OpenRead(TaskEnvironment.GetAbsolutePath(hashCatalogFilePath)))
             {
                 doc.Load(stream);
             }
@@ -404,7 +419,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             return packages;
         }
 
-        private static bool HasMarkerFile(string nugetPackageDir, string markerFileName)
-            => !string.IsNullOrWhiteSpace(markerFileName) && File.Exists(Path.Combine(nugetPackageDir, markerFileName));
+        private bool HasMarkerFile(string nugetPackageDir, string markerFileName)
+            => !string.IsNullOrWhiteSpace(markerFileName) && File.Exists(TaskEnvironment.GetAbsolutePath(Path.Combine(nugetPackageDir, markerFileName)));
     }
 }
