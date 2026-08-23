@@ -53,8 +53,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 throw new ArgumentException("A non-empty Helix source filter must be provided.", nameof(source));
             }
 
+            var filterProperties = new Dictionary<string, string>()
+            {
+                ["BuildId"] = buildId,
+            }.ToImmutableDictionary();
+
             IImmutableList<JobSummary> jobs = await RetryAsync(
-                async () => await _helixApi.Job.ListAsync(source: source, count: 100_000),
+                async () => await _helixApi.Job.ListAsync(source: source, properties: filterProperties, count: 100_000),
                 cancellationToken);
 
             return
