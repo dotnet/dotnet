@@ -220,7 +220,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
 
             try
             {
-                AssemblyName asm = AssemblyName.GetAssemblyName(fileToCheck);
+                // Must be resolved: this call is only here as a "is this an assembly?" probe, and the
+                // catch below treats any exception as "not an assembly". An unresolved relative path
+                // would throw FileNotFoundException, silently skipping both poison checks below and
+                // turning a leaked binary into a false negative.
+                AssemblyName asm = AssemblyName.GetAssemblyName(TaskEnvironment.GetAbsolutePath(fileToCheck));
                 if (!candidate.IsSourceBuildReferencePackage && IsAssemblyFromSbrp(TaskEnvironment.GetAbsolutePath(fileToCheck)))
                 {
                     poisonEntry.Type |= PoisonType.SourceBuildReferenceAssembly;
