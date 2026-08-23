@@ -126,11 +126,13 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             string referenceIncludes = "";
             StrongNameData strongNameData = default;
             string projectContent = File.ReadAllText(TaskEnvironment.GetAbsolutePath(ProjectTemplate));
-            // Deliberately left relative: it is only paired with the equally relative
-            // dependencyProjectPath in Path.GetRelativePath below, and that result is invariant as
-            // long as both sides share the same base. Resolving only one side would corrupt it.
-            // Disk access through this value is resolved at each use site instead.
-            string projectDirectory = Path.GetDirectoryName(TargetPath)!;
+            // Resolve TargetPath (required, so non-empty) before taking its directory; doing it the
+            // other way round would hand GetAbsolutePath an empty string, which throws.
+            // This must be absolute because TargetPath and ReferencePackagesRoot/TextOnlyPackagesRoot
+            // are independent task inputs that may differ in rootedness. Path.GetRelativePath expands
+            // each operand with Path.GetFullPath, so a relative operand would be resolved against the
+            // process current directory, which is not the project directory under -mt.
+            string absoluteProjectDirectory = Path.GetDirectoryName((string)TaskEnvironment.GetAbsolutePath(TargetPath))!;
 
             // Pick the appropriate MSBuild SDK for the package type:
             //  - reference packages compile generated .cs sources, so they need Microsoft.NET.Sdk.
@@ -199,7 +201,10 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                                 dependencyProjectPath = textOnlyPath;
                         }
                         // Make sure that the path always uses forward slashes, even on Windows.
-                        string dependencyProjectRelativePath = Path.GetRelativePath(projectDirectory, dependencyProjectPath).Replace('\\', '/');
+                        // Both operands must be resolved through TaskEnvironment so they share the
+                        // project directory as their base; see absoluteProjectDirectory above.
+                        string dependencyProjectRelativePath = Path.GetRelativePath(absoluteProjectDirectory,
+                            TaskEnvironment.GetAbsolutePath(dependencyProjectPath)).Replace('\\', '/');
 
                         projectReferences += $"    <ProjectReference Include=\"{dependencyProjectRelativePath}\" />{Environment.NewLine}";
                     }
@@ -287,7 +292,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             projectContent = NormalizeProjectWhitespace(projectContent);
 
             // Generate the project file
-            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(projectDirectory));
+            Directory.CreateDirectory(absoluteProjectDirectory);
             File.WriteAllText(TaskEnvironment.GetAbsolutePath(TargetPath), projectContent);
 
             return true;
@@ -331,9 +336,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             // Resolve TargetPath (required, so non-empty) before taking its directory. Doing it the
             // other way round would hand GetAbsolutePath an empty string, which throws, where the
             // original Directory.Exists check simply returned false.
-            // Named distinctly from the relative 'projectDirectory' in Execute(): enumeration and
-            // Path.GetRelativePath below must both operate in absolute space or the relative paths
-            // they produce are silently wrong.
+            // Enumeration and Path.GetRelativePath below must both operate in absolute space or the
+            // relative paths they produce are silently wrong.
             string absoluteProjectDirectory = Path.GetDirectoryName((string)TaskEnvironment.GetAbsolutePath(TargetPath))!;
             string nuspecFileName = string.IsNullOrEmpty(PackageNuspecPath) ? string.Empty : Path.GetFileName(PackageNuspecPath);
 
