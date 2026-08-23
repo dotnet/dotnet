@@ -46,14 +46,15 @@ namespace Microsoft.DotNet.Arcade.Sdk
                 project.AddItem(ItemName, item.ItemSpec, metadataPairs);
             }
 
-            string path = Path.GetDirectoryName(File);
+            string outputPath = TaskEnvironment.GetAbsolutePath(File);
+            string path = Path.GetDirectoryName(outputPath);
 
             if (!string.IsNullOrEmpty(path))
             {
                 Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(path));
             }
 
-            project.Save(File);
+            project.Save(outputPath);
 
             return !Log.HasLoggedErrors;
         }

@@ -15,7 +15,10 @@ using NuGet.Packaging.Core;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.src
 {
-    [MSBuildMultiThreadableTask]
+    // TODO: Not opted into multithreading. PublishArtifactsInManifestBase resolves Azure credentials
+    // by reading AZURESUBSCRIPTION_*, SYSTEM_ACCESSTOKEN and workload-identity variables straight
+    // from the process environment. The TaskEnvironment below is still used for path resolution.
+    // Tracked by https://github.com/dotnet/arcade/issues/17378.
     public class PublishSignedAssets : PublishArtifactsInManifestBase, IMultiThreadableTask
     {
         private static readonly string AzureDevOpsScope = "499b84ac-1321-427f-aa17-267ca6975798/.default";

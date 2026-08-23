@@ -24,7 +24,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
     ///     The intended use of this task is to push artifacts described in
     ///     a build manifest to package feeds.
     /// </summary>
-    [MSBuildMultiThreadableTask]
+    /// <remarks>
+    /// TODO: Not opted into multithreading. This task delegates to PublishArtifactsInManifestV3/V4,
+    /// whose shared base resolves Azure credentials from the process environment. The TaskEnvironment
+    /// below is still used for path resolution.
+    /// Tracked by https://github.com/dotnet/arcade/issues/17378.
+    /// </remarks>
     public class PublishArtifactsInManifest : MSBuildTaskBase, IMultiThreadableTask
     {
         /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>

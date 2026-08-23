@@ -69,11 +69,13 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 .ToArray();
 
             var additionalAssets = (AdditionalAssetDirs ?? new string[0])
-                .Where(Directory.Exists)
-                .Where(dir => Directory.GetDirectories(TaskEnvironment.GetAbsolutePath(dir)).Count() > 0)
+                .Where(dir => !string.IsNullOrEmpty(dir))
+                .Select(dir => TaskEnvironment.GetAbsolutePath(dir))
+                .Where(dir => Directory.Exists(dir))
+                .Where(dir => Directory.GetDirectories(dir).Count() > 0)
                 .Select(dir => new {
-                    Name = new DirectoryInfo(TaskEnvironment.GetAbsolutePath(dir)).Name + "Version",
-                    Version = new DirectoryInfo(TaskEnvironment.GetAbsolutePath(Directory.EnumerateDirectories(TaskEnvironment.GetAbsolutePath(dir)).OrderBy(s => s).Last())).Name
+                    Name = new DirectoryInfo(dir).Name + "Version",
+                    Version = new DirectoryInfo(TaskEnvironment.GetAbsolutePath(Directory.EnumerateDirectories(dir).OrderBy(s => s).Last())).Name
                 }).ToArray();
 
             Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(Path.GetDirectoryName(OutputPath)));

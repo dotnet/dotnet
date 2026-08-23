@@ -95,7 +95,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                 }
                                 else
                                 {
-                                    var proj = Project.FromFile(VersionsPropsPath, new Build.Definition.ProjectOptions() { ProjectCollection = new ProjectCollection() });
+                                    var proj = Project.FromFile(TaskEnvironment.GetAbsolutePath(VersionsPropsPath), new Build.Definition.ProjectOptions() { ProjectCollection = new ProjectCollection() });
                                     properties = proj.AllEvaluatedProperties.ToLookup(p => p.Name, StringComparer.OrdinalIgnoreCase);
                                 }
                             }
@@ -151,7 +151,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
                                         Log.LogMessage(MessageImportance.Low, $"Executing: {DotNetInstallScript} {arguments}");
                                         var startInfo = TaskEnvironment.GetProcessStartInfo();
-                                        startInfo.FileName = DotNetInstallScript;
+                                        startInfo.FileName = TaskEnvironment.GetAbsolutePath(DotNetInstallScript);
                                         startInfo.Arguments = arguments;
                                         startInfo.UseShellExecute = false;
                                         // Redirect to stdout/err. Addressing https://github.com/dotnet/msbuild/issues/7913

@@ -17,12 +17,14 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         private sealed class CacheEntry
         {
+            public readonly string GlobalJsonPath;
             public readonly DateTime LastWrite;
             public readonly string Paths;
             public readonly string Value;
 
-            public CacheEntry(DateTime lastWrite, string paths, string value)
+            public CacheEntry(string globalJsonPath, DateTime lastWrite, string paths, string value)
             {
+                GlobalJsonPath = globalJsonPath;
                 LastWrite = lastWrite;
                 Paths = paths;
                 Value = value;
@@ -46,20 +48,26 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         private void ExecuteImpl()
         {
-            var globalJsonPath = Path.Combine(RepositoryRoot, "global.json");
+            var globalJsonPath = TaskEnvironment.GetAbsolutePath(Path.Combine(RepositoryRoot, "global.json"));
 
-            var lastWrite = File.GetLastWriteTimeUtc(TaskEnvironment.GetAbsolutePath(globalJsonPath));
+            var lastWrite = File.GetLastWriteTimeUtc(globalJsonPath);
             var paths = TaskEnvironment.GetEnvironmentVariable("PATH");
 
+            // The cache is registered per build, not per project, so the repository identity has to
+            // be part of the entry. Otherwise a second repository with a coincidentally matching
+            // global.json timestamp and PATH would reuse the first repository's dotnet.
             var cachedResult = (CacheEntry)BuildEngine4.GetRegisteredTaskObject(s_cacheKey, RegisteredTaskObjectLifetime.Build);
-            if (cachedResult != null && lastWrite == cachedResult.LastWrite && paths == cachedResult.Paths)
+            if (cachedResult != null &&
+                string.Equals(globalJsonPath.Value, cachedResult.GlobalJsonPath, StringComparison.OrdinalIgnoreCase) &&
+                lastWrite == cachedResult.LastWrite &&
+                paths == cachedResult.Paths)
             {
                 Log.LogMessage(MessageImportance.Low, $"Reused cached value.");
                 DotNetPath = cachedResult.Value;
                 return;
             }
 
-            var globalJson = File.ReadAllText(TaskEnvironment.GetAbsolutePath(globalJsonPath));
+            var globalJson = File.ReadAllText(globalJsonPath);
 
             // avoid Newtonsoft.Json dependency
             var match = Regex.Match(globalJson, @"""dotnet""\s*:\s*""([^""]+)""");
@@ -81,7 +89,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
             }
 
             DotNetPath = TaskEnvironment.GetAbsolutePath(Path.Combine(dotNetDir, fileName));
-            BuildEngine4.RegisterTaskObject(s_cacheKey, new CacheEntry(lastWrite, paths, DotNetPath), RegisteredTaskObjectLifetime.Build, allowEarlyCollection: true);
+            BuildEngine4.RegisterTaskObject(s_cacheKey, new CacheEntry(globalJsonPath.Value, lastWrite, paths, DotNetPath), RegisteredTaskObjectLifetime.Build, allowEarlyCollection: true);
         }
     }
 }

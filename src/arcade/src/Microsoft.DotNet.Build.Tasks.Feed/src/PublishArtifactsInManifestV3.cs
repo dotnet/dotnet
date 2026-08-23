@@ -17,7 +17,9 @@ using Microsoft.DotNet.Build.Manifest;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
-    [MSBuildMultiThreadableTask]
+    // TODO: Not opted into multithreading. PublishArtifactsInManifestBase resolves Azure credentials
+    // by reading AZURESUBSCRIPTION_*, SYSTEM_ACCESSTOKEN and workload-identity variables straight
+    // from the process environment. Tracked by https://github.com/dotnet/arcade/issues/17378.
     public class PublishArtifactsInManifestV3 : PublishArtifactsInManifestBase
     {
         /// <summary>

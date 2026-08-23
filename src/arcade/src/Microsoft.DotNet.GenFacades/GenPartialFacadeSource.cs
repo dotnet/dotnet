@@ -9,7 +9,10 @@ using System.Linq;
 
 namespace Microsoft.DotNet.GenFacades
 {
-    [MSBuildMultiThreadableTask]
+    // TODO: Not opted into multithreading. RoslynBuildTask.Execute subscribes every instance to the
+    // process-wide AssemblyLoadContext.Resolving event, so with differing RoslynAssembliesPath values
+    // one instance can satisfy another instance's resolution. The TaskEnvironment below is still used
+    // for path resolution. Tracked by https://github.com/dotnet/arcade/issues/17378.
     public class GenPartialFacadeSource : RoslynBuildTask, IMultiThreadableTask
     {
         /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>

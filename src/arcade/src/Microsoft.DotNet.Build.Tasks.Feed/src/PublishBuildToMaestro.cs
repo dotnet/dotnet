@@ -32,7 +32,10 @@ using DarcVersionDetailsParser = Microsoft.DotNet.DarcLib.Helpers.VersionDetails
 
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
-    [MSBuildMultiThreadableTask]
+    // TODO: Not opted into multithreading. The Azure DevOps values are still resolved through
+    // _getEnvProxy, whose implementation calls Environment.GetEnvironmentVariable directly (for
+    // example GetAzDevAccount and GetAzDevBuildId). The TaskEnvironment below is still used for
+    // path resolution. Tracked by https://github.com/dotnet/arcade/issues/17378.
     public class PublishBuildToMaestro : MSBuildTaskBase, ICancelableTask, IMultiThreadableTask
     {
         /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>

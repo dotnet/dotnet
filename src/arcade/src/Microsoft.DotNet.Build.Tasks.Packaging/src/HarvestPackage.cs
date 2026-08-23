@@ -304,6 +304,8 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
             foreach (var extension in s_includedExtensions)
             {
+                // pathToPackage is already absolute (see LocatePackageFolder), so the substring
+                // offset below lines up with the absolute paths EnumerateFiles yields.
                 foreach (var packageFile in Directory.EnumerateFiles(TaskEnvironment.GetAbsolutePath(pathToPackage), $"*{extension}", SearchOption.AllDirectories))
                 {
                     string harvestPackagePath = packageFile.Substring(pathToPackage.Length + 1).Replace('\\', '/');
@@ -469,21 +471,23 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             }
         }
 
+        // Returns an absolute path so that callers can both enumerate the folder and compute
+        // package-relative paths from the enumerated (absolute) results consistently.
         private string LocatePackageFolder(string packageId, string packageVersion)
         {
             foreach (var packageFolder in PackagesFolders)
             {
-                var candidateFolder = Path.Combine(packageFolder, packageId, packageVersion);
+                var candidateFolder = TaskEnvironment.GetAbsolutePath(Path.Combine(packageFolder, packageId, packageVersion));
 
-                if (Directory.Exists(TaskEnvironment.GetAbsolutePath(candidateFolder)))
+                if (Directory.Exists(candidateFolder))
                 {
                     return candidateFolder;
                 }
 
                 // handle lower-case restore path
-                candidateFolder = Path.Combine(packageFolder, packageId.ToLowerInvariant(), packageVersion.ToLowerInvariant());
+                candidateFolder = TaskEnvironment.GetAbsolutePath(Path.Combine(packageFolder, packageId.ToLowerInvariant(), packageVersion.ToLowerInvariant()));
 
-                if (Directory.Exists(TaskEnvironment.GetAbsolutePath(candidateFolder)))
+                if (Directory.Exists(candidateFolder))
                 {
                     return candidateFolder;
                 }
@@ -616,6 +620,8 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         private IEnumerable<string> GetPackageItems(string packageFolder)
         {
+            // packageFolder is already absolute (see LocatePackageFolder), so the substring offset
+            // below lines up with the absolute paths EnumerateFiles yields.
             return Directory.EnumerateFiles(TaskEnvironment.GetAbsolutePath(packageFolder), "*", SearchOption.AllDirectories)
                 .Select(f => f.Substring(packageFolder.Length + 1).Replace('\\', '/'))
                 .Where(f => !ShouldSuppress(f));

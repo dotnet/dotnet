@@ -11,7 +11,10 @@ using Microsoft.SignCheck.Logging;
 
 namespace SignCheckTask
 {
-    [MSBuildMultiThreadableTask]
+    // TODO: Not opted into multithreading. SignCheckRunner builds a SignatureVerificationManager whose
+    // static _fileVerifiers dictionary is populated by every constructor via AddFileVerifier, so
+    // concurrent or repeated instances race and can throw on duplicate keys. The TaskEnvironment below
+    // is still used for path resolution. Tracked by https://github.com/dotnet/arcade/issues/17378.
     public class SignCheckTask : Microsoft.Build.Utilities.Task, IMultiThreadableTask
     {
         /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
