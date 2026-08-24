@@ -132,7 +132,7 @@ below runsettings:
 </RunSettings>
 ```
 
-A specific DataCollector can be explicitely enabled using the `/collect:<friendly name>` command line switch.
+A specific DataCollector can be explicitly enabled using the `/collect:<friendly name>` command line switch.
 
 For example, below command line will enable a DataCollector named `MyDataCollector1`
 (and disable other DataCollectors mentioned in .runsettings):
