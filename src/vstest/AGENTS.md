@@ -43,11 +43,28 @@ vstest.console (entry point)
 | Build + Pack | `./build.cmd -pack` | `./build.sh --pack` |
 | Release config | `./build.cmd -c Release -pack` | `./build.sh -c Release --pack` |
 | Unit tests | `./test.cmd` | `./test.sh` |
-| Specific tests | `./test.cmd -projects <pattern>` | `./test.sh -p <pattern>` |
-| Smoke tests | `./test.cmd -projects smoke` | `./test.sh -p smoke` |
-| Single test by name | `./test.cmd -bl -c release /p:TestRunnerAdditionalArguments="'--filter TestName'"` | Similar |
+| Specific tests | `./test.cmd -projects <path-or-glob>` | `./test.sh --projects <path-or-glob>` |
+| Several test projects | `./test.cmd -projects "test\A\A.csproj;test\B\B.csproj"` | `./test.sh --projects "test/A/A.csproj;test/B/B.csproj"` |
+| Smoke tests | `./test.cmd -smokeTest` | `./test.sh --integrationTest` (smoke is a subset) |
+| Single test by name | `./test.cmd -c Release -filter "FullyQualifiedName~TestName"` | `./test.sh --property:'TestRunnerAdditionalArguments=--filter "FullyQualifiedName~TestName"'` |
 
 CI builds use `-c Release`. Always build with Release config before submitting PRs.
+
+`-projects` is resolved with `Resolve-Path`, so it takes a path or a glob. A bare nickname such as `smoke` or `htmllogger` fails with `Cannot find path`. Test categories are switches instead: `-smokeTest`, `-integrationTest`, `-compatibilityTest`, `-performanceTest`.
+
+Filtering by test name is a Windows-only wrapper parameter. `test.cmd` goes through `eng/build.ps1`, which owns `-filter` and the category switches; `test.sh` calls Arcade's `eng/common/build.sh` directly and has neither, so on Linux/macOS the filter is passed as an MSBuild property. Do not pass the filter as `/p:TestRunnerAdditionalArguments="--filter ..."` on Windows — `eng/build.ps1` throws *"Use --filter instead of passing filter as an additional argument to TestRunnerAdditionalArguments."* See [CONTRIBUTING.md](CONTRIBUTING.md#running-a-specific-test) for the Linux/macOS quoting rules.
+
+`test.cmd` does not set `DOTNET_ROOT`, so test executables built against the repo's preview TFM fail with *"You must install or update .NET to run this application."* This hits unit tests too, not only integration and smoke tests. Set it first:
+
+```powershell
+$env:DOTNET_ROOT = "$PWD\.dotnet"
+```
+
+`test.cmd` does not restore either. On a fresh clone, build once (`./build.cmd -c Release`) before running it, or pass `-restore -build`, otherwise it stops with `Toolset version <version> has not been restored.`
+
+The `.cmd` wrappers pass arguments to PowerShell literally. See [Wrapper scripts pass arguments literally](#wrapper-scripts-pass-arguments-literally) before changing one.
+
+[`.github/skills/vstest-build-test/SKILL.md`](.github/skills/vstest-build-test/SKILL.md) is the fuller build and test reference. Keep it and this section in agreement.
 
 ## Test Structure
 
@@ -62,6 +79,27 @@ src/vstest.console/                         → test/vstest.console.UnitTests/
 Test categories: Unit (fast, default), Smoke (P0 e2e), Acceptance (full e2e with `--integrationTest`).
 
 ## Known Gotchas
+
+### Wrapper scripts pass arguments literally
+
+`build.cmd`, `test.cmd`, `restore.cmd`, `open-vs.cmd`, `open-code.cmd`, and `eng/RestoreInternal.cmd` invoke PowerShell with `-File`, so everything after the script path reaches the target script as a literal argument. The first five call `eng/build.ps1`, `eng/RestoreInternal.cmd` calls `eng/common/build.ps1`.
+
+They previously used the form `-command "& """<script>""" %*"`, which spliced `%*` into a string that PowerShell then parsed as source code. That caused two problems, both fixed:
+
+- `;` in an argument became a statement separator. `./test.cmd -projects "test\A\A.csproj;test\B\B.csproj"` ran `Build.ps1 -projects test\A\A.csproj` and then executed `test\B\B.csproj` as its own statement. On Windows `.csproj` is file-associated with Visual Studio, so every entry after the first opened a full IDE. Three agents ran this form at the same time and opened eighteen instances of Visual Studio.
+- Exit codes collapsed to `1`. `eng/build.ps1` ends with `exit $LastExitCode` to forward the real code, but `-command` discarded it, so `8` (filter matched no tests) and every other code arrived as `1`.
+
+Use `-File` in any new `.cmd` wrapper. Do not switch back to `-command`.
+
+Because arguments are no longer re-parsed, one level of quoting is enough instead of two, for wrapper parameters and `/p:` MSBuild properties alike. A single pair of quotes now reaches the target script intact:
+
+```
+./test.cmd -c Release -projects "test\Microsoft.TestPlatform.CrossPlatEngine.UnitTests\Microsoft.TestPlatform.CrossPlatEngine.UnitTests.csproj" -filter "FullyQualifiedName~MtpProxyExecutionManagerTests"
+```
+
+`eng/common/*` comes from Arcade and still uses `-command`. Do not edit those files here; fix them in the Arcade repository.
+
+Independent of the wrappers: never run a `.csproj` or `.sln` path as a command. The path is always an argument, as in `dotnet test <path>.csproj`.
 
 ### Binding Redirects
 

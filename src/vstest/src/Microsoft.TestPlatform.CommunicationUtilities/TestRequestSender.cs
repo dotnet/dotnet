@@ -281,9 +281,29 @@ public class TestRequestSender : ITestRequestSender
 
             _channel.Send(data);
 
-            // Wait for negotiation response
+            // Wait for the negotiation response, or for the test host to exit. If the test host exits
+            // before it answers (for example it crashed while deserializing the version check message)
+            // we must stop waiting immediately instead of blocking for the whole connection timeout, and
+            // surface the error it wrote to its standard error rather than a generic timeout message.
             var timeout = EnvironmentHelper.GetConnectionTimeout();
-            if (!protocolNegotiated.WaitOne(timeout * 1000))
+            var waitResult = WaitHandle.WaitAny([protocolNegotiated, _clientExited.WaitHandle], timeout * 1000);
+
+            // The test host process exited before it negotiated the protocol version.
+            if (waitResult == 1)
+            {
+                // Surface the error the test host wrote to its standard error (captured in
+                // OnClientProcessExit) so the user sees the real cause instead of a timeout.
+                var reason = CommonResources.TestHostProcessCrashed;
+                if (!string.IsNullOrWhiteSpace(_clientExitErrorMessage))
+                {
+                    reason = $"{reason} : {_clientExitErrorMessage}";
+                }
+
+                throw new TestPlatformException(reason);
+            }
+
+            // Neither the negotiation response nor the test host exit happened within the timeout.
+            if (waitResult == WaitHandle.WaitTimeout)
             {
                 throw new TestPlatformException(string.Format(CultureInfo.CurrentCulture, CommonResources.VersionCheckTimedout, timeout, EnvironmentHelper.VstestConnectionTimeout));
             }
@@ -580,8 +600,8 @@ public class TestRequestSender : ITestRequestSender
                 case MessageType.AttachDebugger:
                     var testProcessAttachDebuggerPayload = _dataSerializer.DeserializePayload<TestProcessAttachDebuggerPayload>(message);
                     TPDebug.Assert(testProcessAttachDebuggerPayload is not null, "testProcessAttachDebuggerPayload is null");
-                    AttachDebuggerInfo attachDebugerInfo = MessageConverter.ConvertToAttachDebuggerInfo(testProcessAttachDebuggerPayload, message, _protocolVersion);
-                    bool result = testRunEventsHandler.AttachDebuggerToProcess(attachDebugerInfo);
+                    AttachDebuggerInfo attachDebuggerInfo = MessageConverter.ConvertToAttachDebuggerInfo(testProcessAttachDebuggerPayload);
+                    bool result = testRunEventsHandler.AttachDebuggerToProcess(attachDebuggerInfo);
 
                     var resultMessage = _dataSerializer.SerializePayload(
                         MessageType.AttachDebuggerCallback,
@@ -827,18 +847,12 @@ public class TestRequestSender : ITestRequestSender
 
 internal class MessageConverter
 {
-#pragma warning disable IDE0060 // Remove unused parameter // TODO: Use or remove this parameter and the associated method
-    internal static AttachDebuggerInfo ConvertToAttachDebuggerInfo(TestProcessAttachDebuggerPayload attachDebuggerPayload, Message message, int protocolVersion)
-#pragma warning restore IDE0060 // Remove unused parameter
+    internal static AttachDebuggerInfo ConvertToAttachDebuggerInfo(TestProcessAttachDebuggerPayload attachDebuggerPayload)
     {
-        // There is nothing to do differently based on those versions.
-        //var sourceVersion = GetVersion(message);
-        //var targetVersion = protocolVersion;
-
         return new AttachDebuggerInfo
         {
             ProcessId = attachDebuggerPayload.ProcessID,
-            TargetFramework = attachDebuggerPayload?.TargetFramework,
+            TargetFramework = attachDebuggerPayload.TargetFramework,
         };
     }
 }

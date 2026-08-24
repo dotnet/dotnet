@@ -37,6 +37,7 @@ $startTime = Get-Date
 Write-Host "Start Time:     " $startTime
 Write-Host "PSScriptRoot:   " $PSScriptRoot;
 Write-Host "dotnetexe:      " $dotnetexe;
+Write-Host "TargetNetNext:  " $env:TargetNetNext;
 
 $ErrorActionPreference = "Stop"
 

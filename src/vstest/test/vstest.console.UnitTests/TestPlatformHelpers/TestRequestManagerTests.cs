@@ -1360,6 +1360,49 @@ public class TestRequestManagerTests
     }
 
     [TestMethod]
+    [DataRow(true)]
+    [DataRow(false)]
+    public void DiscoverTestsShouldStampIsTargetPlatformInferredFromRunSettingsHelper(bool isTargetPlatformInferred)
+    {
+        var runsettings = "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETFramework,Version=v4.5</TargetFrameworkVersion></RunConfiguration></RunSettings>";
+        var discoveryPayload = CreateDiscoveryPayload(runsettings);
+        _runSettingsHelper.IsDefaultTargetArchitecture = isTargetPlatformInferred;
+
+        _testRequestManager.DiscoverTests(discoveryPayload, new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
+
+        var marker = $"<IsTargetPlatformInferred>{isTargetPlatformInferred}</IsTargetPlatformInferred>";
+        _mockTestPlatform.Verify(
+            tp => tp.CreateDiscoveryRequest(It.IsAny<IRequestData>(), It.Is<DiscoveryCriteria>(dc => dc.RunSettings!.Contains(marker)), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()));
+    }
+
+    [TestMethod]
+    public void DiscoverTestsShouldStampIsTargetPlatformInferredPerRequestWithoutLeakingAcrossRequests()
+    {
+        // Two requests handled by the same process must each carry their own IsTargetPlatformInferred
+        // marker in their own run settings. Before this fact travelled with the run settings, the test host
+        // manager read it from the process-wide RunSettingsHelper singleton, so a pinned platform in one
+        // request leaked into the next request that did not pin one.
+        var runsettings = "<RunSettings><RunConfiguration><TargetFrameworkVersion>.NETFramework,Version=v4.5</TargetFrameworkVersion></RunConfiguration></RunSettings>";
+        var capturedRunSettings = new List<string?>();
+        _mockTestPlatform
+            .Setup(tp => tp.CreateDiscoveryRequest(It.IsAny<IRequestData>(), It.IsAny<DiscoveryCriteria>(), It.IsAny<TestPlatformOptions>(), It.IsAny<Dictionary<string, SourceDetail>>(), It.IsAny<IWarningLogger>()))
+            .Callback<IRequestData, DiscoveryCriteria, TestPlatformOptions, Dictionary<string, SourceDetail>, IWarningLogger>((_, dc, _, _, _) => capturedRunSettings.Add(dc.RunSettings))
+            .Returns(_mockDiscoveryRequest.Object);
+
+        // First request: the user pinned the target platform.
+        _runSettingsHelper.IsDefaultTargetArchitecture = false;
+        _testRequestManager.DiscoverTests(CreateDiscoveryPayload(runsettings), new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
+
+        // Second request in the same process: nothing pinned the platform, so it is inferred.
+        _runSettingsHelper.IsDefaultTargetArchitecture = true;
+        _testRequestManager.DiscoverTests(CreateDiscoveryPayload(runsettings), new Mock<ITestDiscoveryEventsRegistrar>().Object, _protocolConfig);
+
+        Assert.HasCount(2, capturedRunSettings);
+        Assert.Contains("<IsTargetPlatformInferred>False</IsTargetPlatformInferred>", capturedRunSettings[0]!);
+        Assert.Contains("<IsTargetPlatformInferred>True</IsTargetPlatformInferred>", capturedRunSettings[1]!);
+    }
+
+    [TestMethod]
     public void DiscoverTestsShouldNotUpdateDesignModeIfUserHasSetDesignModeInRunSettings()
     {
         var runsettings = "<RunSettings><RunConfiguration><DesignMode>False</DesignMode><TargetFrameworkVersion>.NETFramework,Version=v4.5</TargetFrameworkVersion></RunConfiguration></RunSettings>";

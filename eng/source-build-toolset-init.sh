@@ -5,6 +5,24 @@
 
 set -euo pipefail
 
+# Rewrites the SDK version entries of a global.json in place. Both the "sdk"/"version" and the
+# "tools"/"dotnet" entries hold the version of the SDK used to build and are read during the build:
+# the MSBuild SDK resolver uses the former, Arcade's tools.sh the latter. Each substitution is scoped
+# to the object that owns the key so that unrelated entries elsewhere in the file are left alone.
+# Written with sed rather than jq because jq isn't guaranteed to be present on the build images, and
+# via a temporary file because the -i flag isn't portable across GNU and BSD sed.
+function update_global_json_sdk_version() {
+  local global_json_file="$1"
+  local sdk_version="$2"
+  local tmp_file="${global_json_file}.tmp"
+
+  sed -E \
+    -e "/\"sdk\"[[:space:]]*:/,/\}/ s|(\"version\"[[:space:]]*:[[:space:]]*\")[^\"]*\"|\1${sdk_version}\"|" \
+    -e "/\"tools\"[[:space:]]*:/,/\}/ s|(\"dotnet\"[[:space:]]*:[[:space:]]*\")[^\"]*\"|\1${sdk_version}\"|" \
+    "$global_json_file" > "$tmp_file"
+  mv "$tmp_file" "$global_json_file"
+}
+
 function source_only_toolset_init() {
   local custom_sdk_dir="$1"
   local custom_packages_dir="$2"
@@ -31,6 +49,12 @@ function source_only_toolset_init() {
     export SDK_VERSION=$("$custom_sdk_dir/dotnet" --version)
     export CLI_ROOT="$custom_sdk_dir"
     echo "Using custom bootstrap SDK from '$CLI_ROOT', version '$SDK_VERSION'"
+
+    # Point the root global.json at the custom SDK. The SDK resolver and Arcade's tooling both resolve the
+    # SDK through this file, so a version that doesn't match the SDK being used fails the build with
+    # "A compatible .NET SDK was not found" before anything gets built. The repositories underneath get the
+    # same treatment from the UpdateGlobalJsonVersions target in repo-projects/Directory.Build.targets.
+    update_global_json_sdk_version "$repo_root/global.json" "$SDK_VERSION"
   else
     sdkLine=$(grep -m 1 'dotnet' "$repo_root/global.json")
     sdkPattern="\"dotnet\" *: *\"(.*)\""
@@ -78,7 +102,7 @@ function source_only_toolset_init() {
   fi
 
   if [ ! -f "$packageVersionsPath" ]; then
-    echo "Cannot find PackagesVersions.props.  Debugging info:"
+    echo "Cannot find PackageVersions.props.  Debugging info:"
     echo "  Attempted custom PVP path: $custom_packages_dir/PackageVersions.props"
     echo "  Attempted previously-source-built path: ${packagesPreviouslySourceBuiltDir}PackageVersions.props"
     echo "  Attempted archive path: $packagesArchiveDir"
@@ -128,6 +152,9 @@ function source_only_toolset_init() {
 
   # toolset prep steps
   source "$repo_root/eng/common/tools.sh"
+  local previous_pipelines_log=$pipelines_log
+  pipelines_log=false
+
   InitializeBuildTool
 
   initSourceOnlyBinaryLog=""
@@ -147,6 +174,7 @@ function source_only_toolset_init() {
 
   # Set _InitializeToolset so that eng/common/tools.sh doesn't attempt to restore the arcade toolset again.
   _InitializeToolset="${bootstrapArcadeDir}/toolset/Build.proj"
+  pipelines_log=$previous_pipelines_log
 
   echo "Source-only toolset initialization complete"
 }

@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore.TestModels.TransportationModel;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-#nullable disable
-
 [ConditionalClass(typeof(SqlServerTestEnvironment), nameof(SqlServerTestEnvironment.IsTemporalTablesCascadeDeleteSupported))]
 public class TemporalTableSqlServerTest(NonSharedFixture fixture) : NonSharedModelTestBase(fixture), IClassFixture<NonSharedFixture>
 {
@@ -238,17 +236,15 @@ ORDER BY [s0].[Id] DESC
     public virtual async Task Temporal_owned_range_operation_negative(bool async)
     {
         var contextFactory = await InitializeNonSharedTest<MyContext26451>();
-        using (var context = contextFactory.CreateDbContext())
-        {
-            var message = async
-                ? (await Assert.ThrowsAsync<InvalidOperationException>(()
-                    => context.MainEntitiesDifferentTable.TemporalAll().ToListAsync())).Message
-                : Assert.Throws<InvalidOperationException>(() => context.MainEntitiesDifferentTable.TemporalAll().ToList()).Message;
+        using var context = contextFactory.CreateDbContext();
+        var message = async
+            ? (await Assert.ThrowsAsync<InvalidOperationException>(()
+                => context.MainEntitiesDifferentTable.TemporalAll().ToListAsync())).Message
+            : Assert.Throws<InvalidOperationException>(() => context.MainEntitiesDifferentTable.TemporalAll().ToList()).Message;
 
-            Assert.Equal(
-                SqlServerStrings.TemporalNavigationExpansionOnlySupportedForAsOf("AsOf"),
-                message);
-        }
+        Assert.Equal(
+            SqlServerStrings.TemporalNavigationExpansionOnlySupportedForAsOf("AsOf"),
+            message);
     }
 
     [Theory, MemberData(nameof(IsAsyncData))]
@@ -323,54 +319,54 @@ ORDER BY [u].[Id], [o].[MainEntityManyId]
     public class MainEntityDifferentTable
     {
         public int Id { get; set; }
-        public string Description { get; set; }
-        public OwnedEntityDifferentTable OwnedEntity { get; set; }
+        public string? Description { get; set; }
+        public OwnedEntityDifferentTable? OwnedEntity { get; set; }
     }
 
     public class OwnedEntityDifferentTable
     {
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 
     public class MainEntitySameTable
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public OwnedEntitySameTable OwnedEntity { get; set; }
+        public OwnedEntitySameTable? OwnedEntity { get; set; }
     }
 
     public class OwnedEntitySameTable
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public int Number { get; set; }
 
-        public OwnedEntitySameTableNested Nested { get; set; }
+        public OwnedEntitySameTableNested? Nested { get; set; }
     }
 
     public class OwnedEntitySameTableNested
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public int Number { get; set; }
     }
 
     public class MainEntityMany
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public List<OwnedEntityMany> OwnedCollection { get; set; }
+        public string? Name { get; set; }
+        public List<OwnedEntityMany> OwnedCollection { get; set; } = null!;
     }
 
     public class OwnedEntityMany
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 
     public class MyContext26451(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<MainEntityDifferentTable> MainEntitiesDifferentTable { get; set; }
-        public DbSet<MainEntitySameTable> MainEntitiesSameTable { get; set; }
-        public DbSet<MainEntityMany> MainEntitiesMany { get; set; }
+        public DbSet<MainEntityDifferentTable> MainEntitiesDifferentTable { get; set; } = null!;
+        public DbSet<MainEntitySameTable> MainEntitiesSameTable { get; set; } = null!;
+        public DbSet<MainEntityMany> MainEntitiesMany { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -384,16 +380,13 @@ ORDER BY [u].[Id], [o].[MainEntityManyId]
             modelBuilder.Entity<MainEntityDifferentTable>().Property(me => me.Id).UseIdentityColumn();
             modelBuilder.Entity<MainEntityDifferentTable>().OwnsOne(me => me.OwnedEntity).WithOwner();
             modelBuilder.Entity<MainEntityDifferentTable>().OwnsOne(
-                me => me.OwnedEntity, oe =>
-                {
-                    oe.ToTable(
-                        "OwnedEntityDifferentTable", tb => tb.IsTemporal(ttb =>
-                        {
-                            ttb.HasPeriodStart("StartTime");
-                            ttb.HasPeriodEnd("EndTime");
-                            ttb.UseHistoryTable("OwnedEntityHistory");
-                        }));
-                });
+                me => me.OwnedEntity, oe => oe.ToTable(
+                    "OwnedEntityDifferentTable", tb => tb.IsTemporal(ttb =>
+                    {
+                        ttb.HasPeriodStart("StartTime");
+                        ttb.HasPeriodEnd("EndTime");
+                        ttb.UseHistoryTable("OwnedEntityHistory");
+                    })));
 
             modelBuilder.Entity<MainEntitySameTable>(eb =>
             {
@@ -500,14 +493,14 @@ ORDER BY [u].[Id], [o].[MainEntityManyId]
     public class TemporalCustomerWithClrPeriods
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public DateTime PeriodStart { get; set; }
         public DateTime PeriodEnd { get; set; }
     }
 
     public class ContextWithClrPeriodProperties(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<TemporalCustomerWithClrPeriods> Customers { get; set; }
+        public DbSet<TemporalCustomerWithClrPeriods> Customers { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -523,7 +516,7 @@ ORDER BY [u].[Id], [o].[MainEntityManyId]
 
     public class ContextWithClrPeriodPropertiesLambda(DbContextOptions options) : DbContext(options)
     {
-        public DbSet<TemporalCustomerWithClrPeriods> Customers { get; set; }
+        public DbSet<TemporalCustomerWithClrPeriods> Customers { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

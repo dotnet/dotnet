@@ -228,7 +228,7 @@ public class IntegrationTestBase
 
             // Insert --diag before the -- separator so it's treated as a vstest.console argument,
             // not as a runsettings parameter.
-            var separatorPos = arguments?.IndexOf(" -- ") ?? -1;
+            var separatorPos = arguments?.IndexOf(" -- ", StringComparison.Ordinal) ?? -1;
             if (separatorPos == -1)
             {
                 arguments = string.Concat(arguments, diagArg);
@@ -286,7 +286,7 @@ public class IntegrationTestBase
         if (arguments.Contains(".csproj"))
         {
             var consolePathParameter = $@" -p:VsTestConsolePath=""{vstestConsolePath}""";
-            var position = arguments.IndexOf(" -- ");
+            var position = arguments.IndexOf(" -- ", StringComparison.Ordinal);
             if (position == -1)
             {
                 // Add at the end.
@@ -311,7 +311,7 @@ public class IntegrationTestBase
             var diagArg = " --diag " + diagPath.AddDoubleQuote();
 
             // Insert --diag before the -- separator so dotnet test forwards it to vstest.console.
-            var separatorPos = arguments.IndexOf(" -- ");
+            var separatorPos = arguments.IndexOf(" -- ", StringComparison.Ordinal);
             if (separatorPos == -1)
             {
                 arguments += diagArg;
@@ -718,12 +718,12 @@ public class IntegrationTestBase
         if (testFramework == UnitTestFramework.MSTest)
         {
             var version = IntegrationTestEnvironment.DependencyVersions["MSTestTestAdapterVersion"];
-            if (version.StartsWith("4"))
+            if (version.StartsWith("4", StringComparison.Ordinal))
             {
                 var tfm = _testEnvironment.IsNetFrameworkTarget ? "net462" : "net9.0";
                 adapterRelativePath = string.Format(CultureInfo.InvariantCulture, _msTestAdapterRelativePath, version, tfm);
             }
-            else if (version.StartsWith("3"))
+            else if (version.StartsWith("3", StringComparison.Ordinal))
             {
                 var tfm = _testEnvironment.IsNetFrameworkTarget ? "net462" : "netcoreapp3.1";
                 adapterRelativePath = string.Format(CultureInfo.InvariantCulture, _msTestAdapterRelativePath, version, tfm);

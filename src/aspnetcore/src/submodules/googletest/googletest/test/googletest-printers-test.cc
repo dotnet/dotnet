@@ -39,6 +39,7 @@
 #include <deque>
 #include <forward_list>
 #include <functional>
+#include <iterator>
 #include <limits>
 #include <list>
 #include <map>
@@ -647,13 +648,8 @@ TEST(PrintU32StringTest, EscapesProperly) {
             Print(p));
 }
 
-// MSVC compiler can be configured to define whar_t as a typedef
-// of unsigned short. Defining an overload for const wchar_t* in that case
-// would cause pointers to unsigned shorts be printed as wide strings,
-// possibly accessing more memory than intended and causing invalid
-// memory accesses. MSVC defines _NATIVE_WCHAR_T_DEFINED symbol when
-// wchar_t is implemented as a native type.
-#if !defined(_MSC_VER) || defined(_NATIVE_WCHAR_T_DEFINED)
+#if GTEST_HAS_NATIVE_WCHAR
+#if GTEST_HAS_STD_WSTRING
 
 // const wchar_t*.
 TEST(PrintWideCStringTest, Const) {
@@ -684,7 +680,8 @@ TEST(PrintWideCStringTest, EscapesProperly) {
                 "\\n\\r\\t\\v\\xD3\\x576\\x8D3\\xC74D a\"",
             Print(static_cast<const wchar_t*>(s)));
 }
-#endif  // native wchar_t
+#endif  // GTEST_HAS_STD_WSTRING
+#endif  // GTEST_HAS_NATIVE_WCHAR
 
 // Tests printing pointers to other char types.
 
@@ -939,7 +936,7 @@ TEST(PrintStringTest, StringInStdNamespace) {
 
 TEST(PrintStringTest, StringViewInStdNamespace) {
   const char s[] = "'\"?\\\a\b\f\n\0\r\t\v\x7F\xFF a";
-  const ::std::string_view str(s, sizeof(s));
+  const std::string_view str(s, sizeof(s));
   EXPECT_EQ("\"'\\\"?\\\\\\a\\b\\f\\n\\0\\r\\t\\v\\x7F\\xFF a\\0\"",
             Print(str));
 }
@@ -1090,8 +1087,6 @@ TEST(PrintTypeWithGenericStreamingTest, TypeImplicitlyConvertible) {
   EXPECT_EQ("AllowsGenericStreamingAndImplicitConversionTemplate", Print(a));
 }
 
-#if GTEST_INTERNAL_HAS_STRING_VIEW
-
 // Tests printing internal::StringView.
 
 TEST(PrintStringViewTest, SimpleStringView) {
@@ -1104,8 +1099,6 @@ TEST(PrintStringViewTest, UnprintableCharacters) {
   const internal::StringView sp(str, sizeof(str) - 1);
   EXPECT_EQ("\"NUL (\\0) and \\r\\t\"", Print(sp));
 }
-
-#endif  // GTEST_INTERNAL_HAS_STRING_VIEW
 
 // Tests printing STL containers.
 
@@ -1784,7 +1777,7 @@ TEST(IsValidUTF8Test, IllFormedUTF8) {
       // too.
       {"\xEE\x80\x80", "\"\\xEE\\x80\\x80\"\n    As Text: \"\""}};
 
-  for (int i = 0; i < int(sizeof(kTestdata) / sizeof(kTestdata[0])); ++i) {
+  for (int i = 0; i < int(std::size(kTestdata)); ++i) {
     EXPECT_PRINT_TO_STRING_(kTestdata[i][0], kTestdata[i][1]);
   }
 }
@@ -1939,7 +1932,7 @@ TEST(UniversalPrintTest, StringViewNonZeroTerminated) {
   // `strlen` instead of `str.size()`, it will include 'X' and cause a visible
   // difference (in addition to ASAN tests detecting a buffer overflow due to
   // the missing 0 at the end).
-  const ::std::string_view str(s, 3);
+  const std::string_view str(s, 3);
   ::std::stringstream ss;
   UniversalPrint(str, &ss);
   EXPECT_EQ("\"\\xEF\\xA3\\xA2\"\n    As Text: \"\xEF\xA3\xA2\"", ss.str());
@@ -2027,6 +2020,27 @@ TEST(PrintOneofTest, Basic) {
       "('testing::gtest_printers_test::NonPrintable(index = 2)' with value "
       "1-byte object <11>)",
       PrintToString(Type(NonPrintable{})));
+}
+
+TEST(PrintVariantTest, Monostate) {
+  EXPECT_EQ("(monostate)", PrintToString(std::monostate()));
+
+#if GTEST_HAS_EXCEPTIONS
+  struct ThrowOnMove {
+    ThrowOnMove() = default;
+    ThrowOnMove(ThrowOnMove&& other) { *this = std::move(other); }
+    ThrowOnMove& operator=(ThrowOnMove&&) {
+      (void)std::vector<bool>().at(0);
+      return *this;
+    }
+  };
+  std::variant<std::monostate, ThrowOnMove> v = std::monostate();
+  std::string res = PrintToString(v);
+  EXPECT_NE(res.find("::monostate(index = 0)' with value (monostate))"),
+            res.npos);
+  EXPECT_THROW(v = ThrowOnMove(), std::out_of_range);
+  EXPECT_EQ("(valueless)", PrintToString(v));
+#endif
 }
 
 #if GTEST_INTERNAL_HAS_COMPARE_LIB

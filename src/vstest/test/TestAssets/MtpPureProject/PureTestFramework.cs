@@ -17,15 +17,31 @@ namespace MtpPureProject;
 /// or Microsoft.TestPlatform.ObjectModel. It publishes test nodes over the MTP protocol directly,
 /// which is exactly what vstest's MTP provider consumes.
 ///
-/// It exposes four tests, mirroring the MSTest asset so results are directly comparable:
-///   - TestAddPasses      : passes  (exercises Calculator.Add)
-///   - TestMultiplyPasses : passes  (exercises Calculator.Multiply)
-///   - TestFails          : fails   (throws)
-///   - TestSkipped        : skipped
-/// Expected: Passed 2, Failed 1, Skipped 1, Total 4.
+/// It exposes five tests, mirroring the MSTest asset so results are directly comparable:
+///   - TestAddPasses          : passes  (exercises Calculator.Add)
+///   - TestMultiplyPasses     : passes  (exercises Calculator.Multiply)
+///   - TestFails              : fails   (throws)
+///   - TestSkipped            : skipped
+///   - TestNonAsciiDisplayName: passes, and carries a multi-byte UTF-8 display name
+/// Expected: Passed 3, Failed 1, Skipped 1, Total 5.
 /// </summary>
 internal sealed class PureTestFramework : ITestFramework, IDataProducer
 {
+    /// <summary>
+    /// A display name whose UTF-8 byte count exceeds its character count: German umlauts (2 bytes
+    /// each), Japanese (3 bytes each) and a Czech caron (2 bytes).
+    ///
+    /// The MTP frame header declares Content-Length in bytes, so a client that consumes that number
+    /// of characters instead under-reads the frame and desynchronizes the connection from the next
+    /// message onward. Test names are user-authored and flow server-to-client on every node update,
+    /// which makes this the realistic trigger.
+    ///
+    /// Note this asset is not currently referenced by any test in the repo - the acceptance coverage
+    /// lives on MtpMSTestProject, which every MTP scenario uses. This name is kept in step with that
+    /// asset so the two stay comparable if this one is ever wired up.
+    /// </summary>
+    internal const string NonAsciiTestName = "TestGrüße日本語Čau";
+
     private static readonly SessionUid SessionUid = new("PureMtpSession");
 
     private static readonly TestDefinition[] Tests =
@@ -47,6 +63,16 @@ internal sealed class PureTestFramework : ITestFramework, IDataProducer
         new("TestFails", "TestFails", static () =>
             throw new InvalidOperationException("This test fails on purpose.")),
         new("TestSkipped", "TestSkipped", Body: null, Skip: true),
+
+        // Deliberately last: a framing desynchronization caused by this node's multi-byte payload
+        // corrupts whatever the server sends next, so the run-complete handshake is the victim.
+        new(NonAsciiTestName, NonAsciiTestName, static () =>
+        {
+            if (Calculator.Add(1, 1) != 2)
+            {
+                throw new InvalidOperationException("Add returned the wrong value.");
+            }
+        }),
     ];
 
     public string Uid => nameof(PureTestFramework);

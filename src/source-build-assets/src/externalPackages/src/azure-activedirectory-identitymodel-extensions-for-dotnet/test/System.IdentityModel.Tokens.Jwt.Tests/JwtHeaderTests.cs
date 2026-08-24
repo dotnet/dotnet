@@ -41,7 +41,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
             Assert.True(jwtHeader.Comparer.GetType() == StringComparer.Ordinal.GetType(), "jwtHeader.Comparer.GetType() != StringComparer.Ordinal.GetType()");
         }
 
-        [Theory, MemberData(nameof(ConstructorTheoryData))]
+        [Theory, MemberData(nameof(ConstructorTheoryData), DisableDiscoveryEnumeration = true)]
         public void Constructors(JwtHeaderTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.Constructors", theoryData);
@@ -242,8 +242,8 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 
     public class JwtHeaderTheoryData : TheoryDataBase
     {
-        public IDictionary<string, string > OutboundAlgorithmMap { get; set; }
+        public IDictionary<string, string> OutboundAlgorithmMap { get; set; }
 
         public SigningCredentials SigningCredentials { get; set; }
-   }
+    }
 }

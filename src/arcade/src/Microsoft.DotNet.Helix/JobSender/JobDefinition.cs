@@ -264,7 +264,7 @@ namespace Microsoft.DotNet.Helix.Client
         private static int s_queueStatsHeaderShown;
         private static int s_firstRespondersHintShown;
 
-        private static void LogQueueStats(Action<string> log, string queueId, Models.QueueStats stats)
+        private static void LogQueueStats(Action<string> log, string queueId, Models.QueueStatsSummary stats)
         {
             if (log == null || stats == null)
             {
@@ -272,14 +272,14 @@ namespace Microsoft.DotNet.Helix.Client
             }
 
             string depth = stats.Depth?.ToString(CultureInfo.InvariantCulture) ?? "unknown";
-            string avgRun = FormatTimeSpan(stats.AverageRunDuration);
-            string estWait = FormatTimeSpan(stats.EstimatedWait);
+            string avgRun = stats.AverageRunDuration;
+            string estWait = stats.EstimatedWait;
             string snapshot = FormatSnapshotTime(stats.GeneratedAt);
 
-            bool overSla = stats.EstimatedWait is TimeSpan wait && wait > QueueWaitSlaThreshold;
+            bool overSla = TimeSpan.TryParse(stats.EstimatedWait, out TimeSpan wait) && wait > QueueWaitSlaThreshold;
             TimeSpan? snapshotAge = stats.GeneratedAt is DateTimeOffset gen
                 ? DateTimeOffset.UtcNow - gen
-                : (TimeSpan?)null;
+                : null;
             bool stale = snapshotAge is TimeSpan age && age > SnapshotStaleThreshold;
 
             string healthTag = overSla ? " [AT CAPACITY]" : string.Empty;

@@ -1,0 +1,490 @@
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.ActiveDirectoryOpenIdConnectEndpoints.Authorize = "oauth2/authorize" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.ActiveDirectoryOpenIdConnectEndpoints.Logout = "oauth2/logout" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.ActiveDirectoryOpenIdConnectEndpoints.Token = "oauth2/token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes.AuthorizationCode = "authorization_code" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes.Ciba = "urn:openid:params:grant-type:ciba" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes.ClientCredentials = "client_credentials" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes.DeviceCode = "urn:ietf:params:oauth:grant-type:device_code" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes.JwtBearer = "urn:ietf:params:oauth:grant-type:jwt-bearer" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes.Password = "password" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes.RefreshToken = "refresh_token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes.Saml2Bearer = "urn:ietf:params:oauth:grant-type:saml2-bearer" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes.TokenExchange = "urn:ietf:params:oauth:grant-type:token-exchange" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.AccessToken = "access_token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.AcrValues = "acr_values" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ClaimsLocales = "claims_locales" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ClientAssertion = "client_assertion" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ClientAssertionType = "client_assertion_type" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ClientId = "client_id" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ClientSecret = "client_secret" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Code = "code" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Display = "display" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.DomainHint = "domain_hint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Error = "error" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ErrorDescription = "error_description" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ErrorUri = "error_uri" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ExpiresIn = "expires_in" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.GrantType = "grant_type" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.IdentityProvider = "identity_provider" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.IdToken = "id_token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.IdTokenHint = "id_token_hint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Iss = "iss" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.LoginHint = "login_hint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.MaxAge = "max_age" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Nonce = "nonce" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Password = "password" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.PostLogoutRedirectUri = "post_logout_redirect_uri" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Prompt = "prompt" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.RedirectUri = "redirect_uri" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.RefreshToken = "refresh_token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.RequestUri = "request_uri" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Resource = "resource" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ResponseMode = "response_mode" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.ResponseType = "response_type" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Scope = "scope" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.SessionState = "session_state" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Sid = "sid" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.SkuTelemetry = "x-client-SKU" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.State = "state" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.TargetLinkUri = "target_link_uri" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.TokenType = "token_type" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.UiLocales = "ui_locales" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.UserId = "user_id" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.Username = "username" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames.VersionTelemetry = "x-client-ver" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectPrompt.Consent = "consent" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectPrompt.Create = "create" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectPrompt.Login = "login" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectPrompt.None = "none" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectPrompt.SelectAccount = "select_account" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseMode.FormPost = "form_post" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseMode.Fragment = "fragment" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseMode.Query = "query" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseType.Code = "code" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseType.CodeIdToken = "code id_token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseType.CodeIdTokenToken = "code id_token token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseType.CodeToken = "code token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseType.IdToken = "id_token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseType.IdTokenToken = "id_token token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseType.None = "none" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseType.Token = "token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectScope.Address = "address" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectScope.Email = "email" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectScope.OfflineAccess = "offline_access" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectScope.OpenId = "openid" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectScope.OpenIdProfile = "openid profile" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectScope.Phone = "phone" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectScope.Profile = "profile" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectScope.UserImpersonation = "user_impersonation" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectSessionProperties.CheckSessionIFrame = ".checkSessionIFrame" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectSessionProperties.RedirectUri = ".redirect_uri" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectSessionProperties.SessionState = ".sessionState" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.AcrValuesSupported = "acr_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.AuthorizationDetailsTypesSupported = "authorization_details_types_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.AuthorizationEncryptionAlgValuesSupported = "authorization_encryption_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.AuthorizationEncryptionEncValuesSupported = "authorization_encryption_enc_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.AuthorizationEndpoint = "authorization_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.AuthorizationResponseIssParameterSupported = "authorization_response_iss_parameter_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.AuthorizationSigningAlgValuesSupported = "authorization_signing_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.BackchannelAuthenticationEndpoint = "backchannel_authentication_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.BackchannelAuthenticationRequestSigningAlgValuesSupported = "backchannel_authentication_request_signing_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.BackchannelTokenDeliveryModesSupported = "backchannel_token_delivery_modes_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.BackchannelUserCodeParameterSupported = "backchannel_user_code_parameter_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.CheckSessionIframe = "check_session_iframe" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.ClaimsLocalesSupported = "claims_locales_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.ClaimsParameterSupported = "claims_parameter_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.ClaimsSupported = "claims_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.ClaimTypesSupported = "claim_types_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.CodeChallengeMethodsSupported = "code_challenge_methods_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.DeviceAuthorizationEndpoint = "device_authorization_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.Discovery = ".well-known/openid-configuration" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.DisplayValuesSupported = "display_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.DPoPSigningAlgValuesSupported = "dpop_signing_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.EndSessionEndpoint = "end_session_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.FrontchannelLogoutSessionSupported = "frontchannel_logout_session_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.FrontchannelLogoutSupported = "frontchannel_logout_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.GrantTypesSupported = "grant_types_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.HttpLogoutSupported = "http_logout_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.IdTokenEncryptionAlgValuesSupported = "id_token_encryption_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.IdTokenEncryptionEncValuesSupported = "id_token_encryption_enc_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.IdTokenSigningAlgValuesSupported = "id_token_signing_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.IntrospectionEndpoint = "introspection_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.IntrospectionEndpointAuthMethodsSupported = "introspection_endpoint_auth_methods_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.IntrospectionEndpointAuthSigningAlgValuesSupported = "introspection_endpoint_auth_signing_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.Issuer = "issuer" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.JwksUri = "jwks_uri" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.LogoutSessionSupported = "logout_session_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.MicrosoftMultiRefreshToken = "microsoft_multi_refresh_token" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.OpPolicyUri = "op_policy_uri" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.OpTosUri = "op_tos_uri" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.PromptValuesSupported = "prompt_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.PushedAuthorizationRequestEndpoint = "pushed_authorization_request_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RegistrationEndpoint = "registration_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RequestObjectEncryptionAlgValuesSupported = "request_object_encryption_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RequestObjectEncryptionEncValuesSupported = "request_object_encryption_enc_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RequestObjectSigningAlgValuesSupported = "request_object_signing_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RequestParameterSupported = "request_parameter_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RequestUriParameterSupported = "request_uri_parameter_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RequirePushedAuthorizationRequests = "require_pushed_authorization_requests" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RequireRequestUriRegistration = "require_request_uri_registration" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.ResponseModesSupported = "response_modes_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.ResponseTypesSupported = "response_types_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RevocationEndpoint = "revocation_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RevocationEndpointAuthMethodsSupported = "revocation_endpoint_auth_methods_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.RevocationEndpointAuthSigningAlgValuesSupported = "revocation_endpoint_auth_signing_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.ScopesSupported = "scopes_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.ServiceDocumentation = "service_documentation" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.SubjectTypesSupported = "subject_types_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.TlsClientCertificateBoundAccessTokens = "tls_client_certificate_bound_access_tokens" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.TokenEndpoint = "token_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.TokenEndpointAuthMethodsSupported = "token_endpoint_auth_methods_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.TokenEndpointAuthSigningAlgValuesSupported = "token_endpoint_auth_signing_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.UILocalesSupported = "ui_locales_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.UserInfoEncryptionAlgValuesSupported = "userinfo_encryption_alg_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.UserInfoEncryptionEncValuesSupported = "userinfo_encryption_enc_values_supported" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.UserInfoEndpoint = "userinfo_endpoint" -> string
+const Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames.UserInfoSigningAlgValuesSupported = "userinfo_signing_alg_values_supported" -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.ActiveDirectoryOpenIdConnectEndpoints
+Microsoft.IdentityModel.Protocols.OpenIdConnect.Configuration.OpenIdConnectConfigurationValidator
+Microsoft.IdentityModel.Protocols.OpenIdConnect.Configuration.OpenIdConnectConfigurationValidator.MinimumNumberOfKeys.get -> int
+Microsoft.IdentityModel.Protocols.OpenIdConnect.Configuration.OpenIdConnectConfigurationValidator.MinimumNumberOfKeys.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.Configuration.OpenIdConnectConfigurationValidator.OpenIdConnectConfigurationValidator() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.Configuration.OpenIdConnectConfigurationValidator.Validate(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration openIdConnectConfiguration) -> Microsoft.IdentityModel.Protocols.ConfigurationValidationResult
+Microsoft.IdentityModel.Protocols.OpenIdConnect.IdTokenValidator
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AcrValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AdditionalData.get -> System.Collections.Generic.IDictionary<string, object>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AuthorizationDetailsTypesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AuthorizationEncryptionAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AuthorizationEncryptionEncValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AuthorizationEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AuthorizationEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AuthorizationResponseIssParameterSupported.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AuthorizationResponseIssParameterSupported.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.AuthorizationSigningAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.BackchannelAuthenticationEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.BackchannelAuthenticationEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.BackchannelAuthenticationRequestSigningAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.BackchannelTokenDeliveryModesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.BackchannelUserCodeParameterSupported.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.BackchannelUserCodeParameterSupported.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.CheckSessionIframe.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.CheckSessionIframe.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ClaimsLocalesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ClaimsParameterSupported.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ClaimsParameterSupported.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ClaimsSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ClaimTypesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.CodeChallengeMethodsSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.DeviceAuthorizationEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.DeviceAuthorizationEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.DisplayValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.DPoPSigningAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.EndSessionEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.EndSessionEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.FrontchannelLogoutSessionSupported.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.FrontchannelLogoutSessionSupported.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.FrontchannelLogoutSupported.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.FrontchannelLogoutSupported.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.GrantTypesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.HttpLogoutSupported.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.HttpLogoutSupported.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.IdTokenEncryptionAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.IdTokenEncryptionEncValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.IdTokenSigningAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.IntrospectionEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.IntrospectionEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.IntrospectionEndpointAuthMethodsSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.IntrospectionEndpointAuthSigningAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.JsonWebKeySet.get -> Microsoft.IdentityModel.Tokens.JsonWebKeySet
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.JsonWebKeySet.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.JwksUri.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.JwksUri.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.LogoutSessionSupported.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.LogoutSessionSupported.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.OpenIdConnectConfiguration() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.OpenIdConnectConfiguration(string json) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.OpPolicyUri.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.OpPolicyUri.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.OpTosUri.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.OpTosUri.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.PromptValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.PushedAuthorizationRequestEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.PushedAuthorizationRequestEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RegistrationEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RegistrationEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequestObjectEncryptionAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequestObjectEncryptionEncValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequestObjectSigningAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequestParameterSupported.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequestParameterSupported.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequestUriParameterSupported.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequestUriParameterSupported.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequirePushedAuthorizationRequests.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequirePushedAuthorizationRequests.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequireRequestUriRegistration.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RequireRequestUriRegistration.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ResponseModesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ResponseTypesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RevocationEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RevocationEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RevocationEndpointAuthMethodsSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.RevocationEndpointAuthSigningAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ScopesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ServiceDocumentation.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ServiceDocumentation.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeAcrValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeAuthorizationDetailsTypesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeAuthorizationEncryptionAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeAuthorizationEncryptionEncValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeAuthorizationSigningAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeBackchannelAuthenticationRequestSigningAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeBackchannelTokenDeliveryModesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeClaimsLocalesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeClaimsSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeClaimTypesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeCodeChallengeMethodsSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeDisplayValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeDPoPSigningAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeGrantTypesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeIdTokenEncryptionAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeIdTokenEncryptionEncValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeIdTokenSigningAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeIntrospectionEndpointAuthMethodsSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeIntrospectionEndpointAuthSigningAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializePromptValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeRequestObjectEncryptionAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeRequestObjectEncryptionEncValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeRequestObjectSigningAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeResponseModesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeResponseTypesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeRevocationEndpointAuthMethodsSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeRevocationEndpointAuthSigningAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeScopesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeSigningKeys() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeSubjectTypesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeTokenEndpointAuthMethodsSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeTokenEndpointAuthSigningAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeUILocalesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeUserInfoEndpointEncryptionAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeUserInfoEndpointEncryptionEncValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ShouldSerializeUserInfoEndpointSigningAlgValuesSupported() -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.SubjectTypesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.TlsClientCertificateBoundAccessTokens.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.TlsClientCertificateBoundAccessTokens.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.TokenEndpointAuthMethodsSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.TokenEndpointAuthSigningAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.UILocalesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.UserInfoEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.UserInfoEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.UserInfoEndpointEncryptionAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.UserInfoEndpointEncryptionEncValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.UserInfoEndpointSigningAlgValuesSupported.get -> System.Collections.Generic.ICollection<string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever.OpenIdConnectConfigurationRetriever() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectGrantTypes
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.AccessToken.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.AccessToken.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.AcrValues.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.AcrValues.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.AuthorizationEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.AuthorizationEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClaimsLocales.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClaimsLocales.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClientAssertion.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClientAssertion.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClientAssertionType.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClientAssertionType.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClientId.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClientId.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClientSecret.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ClientSecret.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Code.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Code.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Display.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Display.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.DomainHint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.DomainHint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.EnableTelemetryParameters.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.EnableTelemetryParameters.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Error.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Error.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ErrorDescription.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ErrorDescription.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ErrorUri.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ErrorUri.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ExpiresIn.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ExpiresIn.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.GrantType.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.GrantType.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.IdentityProvider.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.IdentityProvider.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.IdToken.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.IdToken.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.IdTokenHint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.IdTokenHint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Iss.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Iss.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.LoginHint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.LoginHint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.MaxAge.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.MaxAge.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Nonce.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Nonce.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.OpenIdConnectMessage() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.OpenIdConnectMessage(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage other) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.OpenIdConnectMessage(string json) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.OpenIdConnectMessage(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, string[]>> parameters) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.OpenIdConnectMessage(System.Collections.Specialized.NameValueCollection nameValueCollection) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Password.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Password.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.PostLogoutRedirectUri.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.PostLogoutRedirectUri.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Prompt.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Prompt.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.RedirectUri.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.RedirectUri.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.RefreshToken.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.RefreshToken.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.RequestType.get -> Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.RequestType.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.RequestUri.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.RequestUri.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Resource.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Resource.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ResponseMode.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ResponseMode.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ResponseType.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.ResponseType.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Scope.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Scope.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.SessionState.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.SessionState.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Sid.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Sid.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.SkuTelemetryValue.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.SkuTelemetryValue.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.State.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.State.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.TargetLinkUri.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.TargetLinkUri.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.TokenEndpoint.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.TokenEndpoint.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.TokenType.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.TokenType.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.UiLocales.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.UiLocales.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.UserId.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.UserId.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Username.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Username.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectParameterNames
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectPrompt
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolException
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolException.OpenIdConnectProtocolException() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolException.OpenIdConnectProtocolException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolException.OpenIdConnectProtocolException(string message) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolException.OpenIdConnectProtocolException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidAtHashException
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidAtHashException.OpenIdConnectProtocolInvalidAtHashException() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidAtHashException.OpenIdConnectProtocolInvalidAtHashException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidAtHashException.OpenIdConnectProtocolInvalidAtHashException(string message) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidAtHashException.OpenIdConnectProtocolInvalidAtHashException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidCHashException
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidCHashException.OpenIdConnectProtocolInvalidCHashException() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidCHashException.OpenIdConnectProtocolInvalidCHashException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidCHashException.OpenIdConnectProtocolInvalidCHashException(string message) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidCHashException.OpenIdConnectProtocolInvalidCHashException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidNonceException
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidNonceException.OpenIdConnectProtocolInvalidNonceException() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidNonceException.OpenIdConnectProtocolInvalidNonceException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidNonceException.OpenIdConnectProtocolInvalidNonceException(string message) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidNonceException.OpenIdConnectProtocolInvalidNonceException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidStateException
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidStateException.OpenIdConnectProtocolInvalidStateException() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidStateException.OpenIdConnectProtocolInvalidStateException(string message, System.Exception innerException) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidStateException.OpenIdConnectProtocolInvalidStateException(string message) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolInvalidStateException.OpenIdConnectProtocolInvalidStateException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.ClientId.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.ClientId.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.Nonce.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.Nonce.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.OpenIdConnectProtocolValidationContext() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.ProtocolMessage.get -> Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.ProtocolMessage.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.State.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.State.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.UserInfoEndpointResponse.get -> string
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.UserInfoEndpointResponse.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.ValidatedIdToken.get -> System.IdentityModel.Tokens.Jwt.JwtSecurityToken
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext.ValidatedIdToken.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.CryptoProviderFactory.get -> Microsoft.IdentityModel.Tokens.CryptoProviderFactory
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.CryptoProviderFactory.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.HashAlgorithmMap.get -> System.Collections.Generic.IDictionary<string, string>
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.IdTokenValidator.get -> Microsoft.IdentityModel.Protocols.OpenIdConnect.IdTokenValidator
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.IdTokenValidator.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.NonceLifetime.get -> System.TimeSpan
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.NonceLifetime.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.OpenIdConnectProtocolValidator() -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireAcr.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireAcr.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireAmr.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireAmr.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireAuthTime.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireAuthTime.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireAzp.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireAzp.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireNonce.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireNonce.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireState.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireState.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireStateValidation.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireStateValidation.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireSub.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireSub.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireTimeStampInNonce.get -> bool
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireTimeStampInNonce.set -> void
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType.Authentication = 0 -> Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType.Logout = 1 -> Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType.Token = 2 -> Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseMode
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectResponseType
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectScope
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectSessionProperties
+Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdProviderMetadataNames
+override Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ActiveTokenEndpoint.get -> string
+override Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.ActiveTokenEndpoint.set -> void
+override Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.Issuer.get -> string
+override Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.Issuer.set -> void
+override Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.SigningKeys.get -> System.Collections.Generic.ICollection<Microsoft.IdentityModel.Tokens.SecurityKey>
+override Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.TokenEndpoint.get -> string
+override Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.TokenEndpoint.set -> void
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.Create(string json) -> Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.Write(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration configuration, System.IO.Stream stream) -> void
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration.Write(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration configuration) -> string
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever.GetAsync(string address, Microsoft.IdentityModel.Protocols.IDocumentRetriever retriever, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever.GetAsync(string address, System.Net.Http.HttpClient httpClient, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever.GetAsync(string address, System.Threading.CancellationToken cancel) -> System.Threading.Tasks.Task<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.EnableTelemetryParametersByDefault.get -> bool
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.EnableTelemetryParametersByDefault.set -> void
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireSubByDefault.get -> bool
+static Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.RequireSubByDefault.set -> void
+static readonly Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.DefaultNonceLifetime -> System.TimeSpan
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.IdTokenValidator.Invoke(System.IdentityModel.Tokens.Jwt.JwtSecurityToken idToken, Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext context) -> void
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.Clone() -> Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.CreateAuthenticationRequestUrl() -> string
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage.CreateLogoutRequestUrl() -> string
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.GenerateNonce() -> string
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.GetHashAlgorithm(string algorithm) -> System.Security.Cryptography.HashAlgorithm
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.ValidateAtHash(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext validationContext) -> void
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.ValidateAuthenticationResponse(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext validationContext) -> void
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.ValidateCHash(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext validationContext) -> void
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.ValidateIdToken(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext validationContext) -> void
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.ValidateNonce(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext validationContext) -> void
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.ValidateState(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext validationContext) -> void
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.ValidateTokenResponse(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext validationContext) -> void
+virtual Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidator.ValidateUserInfoResponse(Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectProtocolValidationContext validationContext) -> void

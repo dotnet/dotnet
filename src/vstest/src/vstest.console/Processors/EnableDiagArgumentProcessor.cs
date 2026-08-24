@@ -217,7 +217,7 @@ internal class EnableDiagArgumentExecutor : IArgumentExecutor
         diagFilePathArgument = diagFilePathArgument.Replace("\"", "");
 
         // If we provide a directory we don't need to create the base directory.
-        if (!diagFilePathArgument.EndsWith(@"\") && !diagFilePathArgument.EndsWith("/"))
+        if (!diagFilePathArgument.EndsWith(@"\", StringComparison.Ordinal) && !diagFilePathArgument.EndsWith("/", StringComparison.Ordinal))
         {
             // Create base directory for diag file path (if doesn't exist)
             CreateDirectoryIfNotExists(diagFilePathArgument);

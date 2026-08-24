@@ -10,7 +10,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 
 using Microsoft.TestPlatform.Extensions.TrxLogger.ObjectModel;
@@ -675,18 +674,66 @@ internal class XmlPersistence
 
         // From xml spec (http://www.w3.org/TR/xml/#charsets) valid chars:
         // #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+        //
+        // In .NET a string is a sequence of UTF-16 code units, so characters in the
+        // [#x10000-#x10FFFF] (astral) range are represented by a surrogate pair: a high
+        // surrogate (\uD800-\uDBFF) followed by a low surrogate (\uDC00-\uDFFF). Such a
+        // pair is perfectly valid XML and must be preserved as-is, so we look ahead with
+        // char.IsSurrogatePair and copy both code units through untouched.
+        //
+        // A *lone* surrogate, on the other hand, is not a valid Unicode scalar value and
+        // is not valid XML - XmlWriter would throw on it - so it still has to be escaped.
+        // That is why we cannot simply treat \uD800-\uDFFF as valid: doing so would trade
+        // a mangled-string bug for a "we emit unparseable XML" bug, which is worse because
+        // it breaks every consumer of the trx at read time. Only properly paired
+        // surrogates are allowed through.
+        StringBuilder? builder = null;
+        for (int i = 0; i < str.Length; i++)
+        {
+            // IsSurrogatePair also covers the end-of-string case, so a high surrogate as
+            // the last character correctly falls through to the invalid branch below.
+            if (char.IsSurrogatePair(str, i))
+            {
+                // Copy both code units in a single call, they encode one character.
+                builder?.Append(str, i, 2);
+                i++;
+                continue;
+            }
 
-        // we are handling only #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD]
-        // because C# support unicode character in range \u0000 to \uFFFF
-        MatchEvaluator evaluator = new(ReplaceInvalidCharacterWithUniCodeEscapeSequence);
-        string invalidChar = @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD]";
-        return Regex.Replace(str, invalidChar, evaluator);
+            char c = str[i];
+            if (IsValidXmlChar(c))
+            {
+                builder?.Append(c);
+                continue;
+            }
+
+            // The valid prefix we skipped over is copied as part of construction.
+            builder ??= new StringBuilder(str, 0, i, GetInvalidXmlCharBuilderCapacity(str.Length));
+            builder.Append(@"\u").Append(((ushort)c).ToString("x4", CultureInfo.InvariantCulture));
+        }
+
+        return builder?.ToString() ?? str;
     }
 
-    private static string ReplaceInvalidCharacterWithUniCodeEscapeSequence(Match match)
+    private static bool IsValidXmlChar(char c)
+        => c is '\x09' or '\x0A' or '\x0D' or (>= '\x20' and <= '\uD7FF') or (>= '\uE000' and <= '\uFFFD');
+
+    /// <summary>
+    /// Gets the capacity to give the <see cref="StringBuilder"/> used to escape invalid characters.
+    /// </summary>
+    /// <remarks>
+    /// We only ever allocate the builder because at least one code unit needs escaping, and every
+    /// escaped code unit expands from 1 char to the 6 chars of a \uXXXX sequence, so the original
+    /// length on its own is always too small and would force at least one growth. Reserving 50%
+    /// more covers the realistic case of a handful of invalid characters without over-allocating
+    /// for long strings. The comparison guards against overflowing <see cref="int"/> for very long
+    /// strings. This mirrors TrxReportEngine.GetInvalidXmlCharBuilderCapacity in testfx, which
+    /// solves the identical problem, so the two implementations stay comparable.
+    /// </remarks>
+    private static int GetInvalidXmlCharBuilderCapacity(int length)
     {
-        char x = match.Value[0];
-        return $@"\u{(ushort)x:x4}";
+        int extraCapacity = length / 2;
+        return length <= int.MaxValue - extraCapacity ? length + extraCapacity : length;
     }
 
     private XmlNode? EnsureLocationExists(XmlElement xml, string location, string? nameSpaceUri)

@@ -1,11 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
 namespace Microsoft.EntityFrameworkCore;
-
-#nullable disable
 
 public class BuiltInDataTypesCosmosTest(BuiltInDataTypesCosmosTest.BuiltInDataTypesCosmosFixture fixture)
     : BuiltInDataTypesTestBase<BuiltInDataTypesCosmosTest.BuiltInDataTypesCosmosFixture>(fixture)
@@ -40,6 +36,9 @@ public class BuiltInDataTypesCosmosTest(BuiltInDataTypesCosmosTest.BuiltInDataTy
 
     public override async Task Object_to_string_conversion()
     {
+        // https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/335
+        CosmosTestEnvironment.SkipOnLinuxEmulator();
+
         await base.Object_to_string_conversion();
 
         AssertSql(

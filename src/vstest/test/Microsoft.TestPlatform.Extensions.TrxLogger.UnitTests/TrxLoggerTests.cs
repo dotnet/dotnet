@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -13,6 +14,7 @@ using System.Xml;
 using System.Xml.Linq;
 
 using Microsoft.TestPlatform.Extensions.TrxLogger.Utility;
+using Microsoft.TestPlatform.Extensions.TrxLogger.XML;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -1030,6 +1032,72 @@ public class TrxLoggerTests
         File.Delete(logger.TrxFile);
     }
 
+    [TestMethod]
+    public void TrxFileShouldPreserveAstralCharactersInTestNameAndStdOut()
+    {
+        // XmlPersistenceTests covers the sanitizer in isolation, but the thing users report is
+        // about the bytes that end up in the .trx. This goes through the whole logger - test
+        // result in, real file out, re-parsed from disk - so it would also catch a regression
+        // that lives outside the sanitizer, such as a string reaching the DOM without going
+        // through SaveSimpleData.
+        const string testName = "party \U0001F389 done";
+        const string stdOut = "output \U0001F389 here";
+
+        _parameters[TrxLoggerConstants.LogFileNameKey] = "astral.trx";
+        _testableTrxLogger.Initialize(_events.Object, _parameters);
+
+        var pass = CreatePassTestResultEventArgsMock(testName, new List<TestResultMessage> { new(TestResultMessage.StandardOutCategory, stdOut) });
+        _testableTrxLogger.TestResultHandler(new object(), pass.Object);
+        _testableTrxLogger.TestRunCompleteHandler(new object(), CreateTestRunCompleteEventArgs());
+
+        var trxFile = _testableTrxLogger.TrxFile!;
+
+        // The emoji must be in the file as a real character, not as the literal text \ud83c\udf89.
+        var rawTrxContent = File.ReadAllText(trxFile);
+        Assert.Contains(testName, rawTrxContent, "The astral character in the test name was mangled on the way into the trx.");
+        Assert.DoesNotContain(@"\ud83c", rawTrxContent, "The astral character was escaped into literal text instead of being written as-is.");
+
+        // And the file must still be parseable, with the character surviving the round trip
+        // through both an attribute value and element text.
+        using FileStream file = File.OpenRead(trxFile);
+        using XmlReader reader = XmlReader.Create(file);
+        XDocument document = XDocument.Load(reader);
+        var ns = document.Root!.GetDefaultNamespace();
+
+        var resultNode = document.Descendants(ns + "UnitTestResult").First();
+        Assert.AreEqual(testName, resultNode.Attributes("testName").First().Value);
+        Assert.AreEqual(stdOut, resultNode.Descendants(ns + "StdOut").First().Value);
+    }
+
+    [TestMethod]
+    public void TrxFileShouldRemainParseableWhenTestNameContainsLoneSurrogate()
+    {
+        // The counterpart to the test above, and the reason the fix escapes lone surrogates
+        // instead of simply allowing all of \uD800-\uDFFF through. A lone surrogate is not a
+        // valid Unicode scalar value and XmlWriter throws on one, so escaping it is what keeps
+        // the trx writable and parseable at all. Letting it through would trade a bug that
+        // mangles one string for a bug that breaks every consumer of the file at read time.
+        const string testName = "lone \ud800 surrogate";
+
+        _parameters[TrxLoggerConstants.LogFileNameKey] = "lone-surrogate.trx";
+        _testableTrxLogger.Initialize(_events.Object, _parameters);
+
+        var pass = CreatePassTestResultEventArgsMock(testName);
+        _testableTrxLogger.TestResultHandler(new object(), pass.Object);
+        _testableTrxLogger.TestRunCompleteHandler(new object(), CreateTestRunCompleteEventArgs());
+
+        var trxFile = _testableTrxLogger.TrxFile!;
+        Assert.IsTrue(File.Exists(trxFile), "The trx must still be written when a test name contains a lone surrogate.");
+
+        using FileStream file = File.OpenRead(trxFile);
+        using XmlReader reader = XmlReader.Create(file);
+        XDocument document = XDocument.Load(reader);
+        var ns = document.Root!.GetDefaultNamespace();
+
+        var resultNode = document.Descendants(ns + "UnitTestResult").First();
+        Assert.AreEqual(@"lone \ud800 surrogate", resultNode.Attributes("testName").First().Value);
+    }
+
     private void ValidateTestIdAndNameInTrx()
     {
         TestCase testCase = CreateTestCase("TestCase");
@@ -1108,6 +1176,92 @@ public class TrxLoggerTests
             "Passed test count should be exact under concurrent updates");
         Assert.AreEqual(expectedFailed, _testableTrxLogger.FailedTestCount,
             "Failed test count should be exact under concurrent updates");
+    }
+
+    [TestMethod]
+    public void TestMessageHandlerShouldBeThreadSafeForRunLevelErrorsAndWarnings()
+    {
+        const int threadCount = 10;
+        const int messagesPerThread = 100;
+        var barrier = new Barrier(threadCount);
+
+        var tasks = Enumerable.Range(0, threadCount).Select(t => Task.Run(() =>
+        {
+            barrier.SignalAndWait(TestContext.CancellationToken);
+            for (int i = 0; i < messagesPerThread; i++)
+            {
+                var args = new TestRunMessageEventArgs(TestMessageLevel.Warning, $"warning_{t}_{i}");
+                _testableTrxLogger.TestMessageHandler(new object(), args);
+            }
+        }, TestContext.CancellationToken)).ToArray();
+
+        Task.WaitAll(tasks, TestContext.CancellationToken);
+
+        Assert.HasCount(threadCount * messagesPerThread, _testableTrxLogger.GetRunLevelErrorsAndWarnings(),
+            "No run level warning should be lost under concurrent updates");
+    }
+
+    [TestMethod]
+    public void TestMessageHandlerShouldBeThreadSafeForRunLevelInformationalMessages()
+    {
+        const int threadCount = 10;
+        const int messagesPerThread = 100;
+        var barrier = new Barrier(threadCount);
+
+        var tasks = Enumerable.Range(0, threadCount).Select(t => Task.Run(() =>
+        {
+            barrier.SignalAndWait(TestContext.CancellationToken);
+            for (int i = 0; i < messagesPerThread; i++)
+            {
+                var args = new TestRunMessageEventArgs(TestMessageLevel.Informational, $"info_{t}_{i}");
+                _testableTrxLogger.TestMessageHandler(new object(), args);
+            }
+        }, TestContext.CancellationToken)).ToArray();
+
+        Task.WaitAll(tasks, TestContext.CancellationToken);
+
+        var lines = _testableTrxLogger.GetRunLevelInformationalMessage()
+            .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        Assert.HasCount(threadCount * messagesPerThread, lines,
+            "No run level informational message should be lost or corrupted under concurrent updates");
+    }
+
+    [TestMethod]
+    public void TestResultHandlerShouldCreateExactlyOneTestRunUnderConcurrency()
+    {
+        const int threadCount = 10;
+        const int testsPerThread = 50;
+        var barrier = new Barrier(threadCount);
+        var observedRunIds = new ConcurrentBag<Guid>();
+
+        var tasks = Enumerable.Range(0, threadCount).Select(t => Task.Run(() =>
+        {
+            barrier.SignalAndWait(TestContext.CancellationToken);
+            for (int i = 0; i < testsPerThread; i++)
+            {
+                var testCase = CreateTestCase($"Test_{t}_{i}");
+                var result = new VisualStudio.TestPlatform.ObjectModel.TestResult(testCase) { Outcome = TestOutcome.Passed };
+                _testableTrxLogger.TestResultHandler(new object(), new Mock<TestResultEventArgs>(result).Object);
+                observedRunIds.Add(_testableTrxLogger.LoggerTestRun!.Id);
+            }
+        }, TestContext.CancellationToken)).ToArray();
+
+        Task.WaitAll(tasks, TestContext.CancellationToken);
+
+        Assert.HasCount(1, observedRunIds.Distinct().ToList(),
+            "Only a single test run should be created, even when results arrive concurrently");
+    }
+
+    [TestMethod]
+    public void PopulateTrxFileShouldNotThrowWhenTheFileCannotBeWritten()
+    {
+        var rootElement = new XmlPersistence().CreateRootElement("TestRun");
+
+        // The file does not exist, so opening it with FileMode.Truncate raises a FileNotFoundException,
+        // which is an IOException. It should be reported, not propagated.
+        var missingFile = Path.Combine(DefaultTestRunDirectory, $"missing_{Guid.NewGuid():N}.trx");
+
+        _testableTrxLogger.PopulateTrxFile(missingFile, rootElement);
     }
 
     private static TestCase CreateTestCase(string testCaseName)

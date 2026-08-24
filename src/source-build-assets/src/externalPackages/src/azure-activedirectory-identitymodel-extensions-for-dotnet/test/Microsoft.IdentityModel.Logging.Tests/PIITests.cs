@@ -182,7 +182,7 @@ namespace Microsoft.IdentityModel.Logging.Tests
             Assert.Contains("Algorithm not supported exception 2: Null", listener.TraceBuffer);
         }
 
-        
+
         [Fact]
         public void LogExceptionAsArgument()
         {

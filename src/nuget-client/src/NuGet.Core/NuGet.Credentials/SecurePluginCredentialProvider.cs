@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using System.Linq;
@@ -15,9 +13,10 @@ using NuGet.Protocol.Plugins;
 
 namespace NuGet.Credentials
 {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+    /// <summary>
+    /// Acquires credentials from a plugin that supports the secure NuGet plugin protocol.
+    /// </summary>
     public sealed class SecurePluginCredentialProvider : ICredentialProvider
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         private const string _basicAuthenticationType = "Basic";
 
@@ -45,12 +44,15 @@ namespace NuGet.Credentials
         private bool _isAnAuthenticationPlugin = true;
 
         /// <summary>
-        /// Create a credential provider based on provided plugin
+        /// Initializes a credential provider for a discovered secure plugin.
         /// </summary>
-        /// <param name="pluginManager"></param>
-        /// <param name="pluginDiscoveryResult"></param>
-        /// <param name="canShowDialog"></param>
-        /// <param name="logger"></param>
+        /// <param name="pluginManager">The plugin manager used to create and communicate with the plugin.</param>
+        /// <param name="pluginDiscoveryResult">The discovered plugin used to acquire credentials.</param>
+        /// <param name="canShowDialog">
+        /// <see langword="true"/> if the plugin may display an authentication dialog;
+        /// otherwise, <see langword="false"/>.
+        /// </param>
+        /// <param name="logger">The logger used for plugin diagnostics.</param>
         /// <exception cref="ArgumentNullException">if <paramref name="pluginDiscoveryResult"/> is null</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="logger"/> is null</exception>
         /// <exception cref="ArgumentNullException">if <paramref name="pluginManager"/> is null</exception>
@@ -65,7 +67,7 @@ namespace NuGet.Credentials
         }
 
         /// <summary>
-        /// Unique identifier of this credential provider
+        /// Gets the unique identifier of this credential provider.
         /// </summary>
         public string Id { get; }
 
@@ -82,54 +84,91 @@ namespace NuGet.Credentials
         /// <param name="nonInteractive">If true, the plugin must not prompt for credentials.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
         /// <returns>A credential object.</returns>
-        public async Task<CredentialResponse> GetAsync(Uri uri, IWebProxy proxy, CredentialRequestType type, string message, bool isRetry, bool nonInteractive, CancellationToken cancellationToken)
+        public async Task<CredentialResponse> GetAsync(
+            Uri uri,
+            IWebProxy? proxy,
+            CredentialRequestType type,
+            string? message,
+            bool isRetry,
+            bool nonInteractive,
+            CancellationToken cancellationToken)
         {
-            CredentialResponse taskResponse = null;
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            CredentialResponse? taskResponse = null;
             if (type == CredentialRequestType.Proxy || !_isAnAuthenticationPlugin)
             {
                 taskResponse = new CredentialResponse(CredentialStatus.ProviderNotApplicable);
                 return taskResponse;
             }
 
-            Tuple<bool, PluginCreationResult> result = await _pluginManager.TryGetSourceAgnosticPluginAsync(_discoveredPlugin, OperationClaim.Authentication, cancellationToken);
+            Tuple<bool, PluginCreationResult?> result = await _pluginManager.TryGetSourceAgnosticPluginAsync(
+                _discoveredPlugin,
+                OperationClaim.Authentication,
+                cancellationToken);
 
-            bool wasSomethingCreated = result.Item1;
-
-            if (wasSomethingCreated)
+            if (result.Item2 is PluginCreationResult creationResult)
             {
-                PluginCreationResult creationResult = result.Item2;
-
-                if (!string.IsNullOrEmpty(creationResult.Message))
+                if (creationResult.Message is string creationMessage)
                 {
                     // There is a potential here for double logging as the CredentialService itself catches the exceptions and tries to log it.
                     // In reality the logger in the Credential Service will be null because the first request always comes from a resource provider (ServiceIndex provider).
-                    _logger.LogError(creationResult.Message);
+                    _logger.LogError(creationMessage);
 
                     if (creationResult.Exception != null)
                     {
                         _logger.LogDebug(creationResult.Exception.ToString());
                     }
                     _isAnAuthenticationPlugin = false;
-                    throw new PluginException(creationResult.Message, creationResult.Exception); // Throwing here will block authentication and ensure that the complete operation fails.
+                    throw new PluginException(creationMessage, creationResult.Exception); // Throwing here will block authentication and ensure that the complete operation fails.
                 }
 
-                _isAnAuthenticationPlugin = creationResult.Claims.Contains(OperationClaim.Authentication);
+                // The successful PluginCreationResult constructor initializes all three values.
+                var claims = creationResult.Claims!;
+                var plugin = creationResult.Plugin!;
+                var pluginMulticlientUtilities = creationResult.PluginMulticlientUtilities!;
+
+                _isAnAuthenticationPlugin = claims.Contains(OperationClaim.Authentication);
 
                 if (_isAnAuthenticationPlugin)
                 {
-                    AddOrUpdateLogger(creationResult.Plugin);
-                    await SetPluginLogLevelAsync(creationResult, _logger, cancellationToken);
+                    AddOrUpdateLogger(plugin);
+                    await SetPluginLogLevelAsync(
+                        plugin,
+                        pluginMulticlientUtilities,
+                        _logger,
+                        cancellationToken);
 
                     if (proxy != null)
                     {
-                        await SetProxyCredentialsToPlugin(uri, proxy, creationResult, cancellationToken);
+                        await SetProxyCredentialsToPlugin(
+                            uri,
+                            proxy,
+                            plugin,
+                            pluginMulticlientUtilities,
+                            cancellationToken);
                     }
 
                     var request = new GetAuthenticationCredentialsRequest(uri, isRetry, nonInteractive, _canShowDialog);
-                    var credentialResponse = await creationResult.Plugin.Connection.SendRequestAndReceiveResponseAsync<GetAuthenticationCredentialsRequest, GetAuthenticationCredentialsResponse>(
+                    GetAuthenticationCredentialsResponse? credentialResponse = await plugin.Connection.SendRequestAndReceiveResponseAsync<GetAuthenticationCredentialsRequest, GetAuthenticationCredentialsResponse>(
                         MessageMethod.GetAuthenticationCredentials,
                         request,
                         cancellationToken);
+
+                    if (credentialResponse == null)
+                    {
+                        // The connection returns no response once it is closing or closed - for example because the
+                        // plugin process was torn down while this request was in flight.
+                        throw new PluginException(
+                            string.Format(
+                                CultureInfo.CurrentCulture,
+                                Resources.SecurePluginException_ConnectionClosed,
+                                _discoveredPlugin.PluginFile.Path));
+                    }
+
                     if (credentialResponse.ResponseCode == MessageResponseCode.NotFound && nonInteractive)
                     {
                         _logger.LogWarning(
@@ -149,13 +188,17 @@ namespace NuGet.Credentials
             return taskResponse ?? new CredentialResponse(CredentialStatus.ProviderNotApplicable);
         }
 
-        private async Task SetPluginLogLevelAsync(PluginCreationResult plugin, ILogger logger, CancellationToken cancellationToken)
+        private static async Task SetPluginLogLevelAsync(
+            IPlugin plugin,
+            IPluginMulticlientUtilities pluginMulticlientUtilities,
+            ILogger logger,
+            CancellationToken cancellationToken)
         {
             var logLevel = LogRequestHandler.GetLogLevel(logger);
 
-            await plugin.PluginMulticlientUtilities.DoOncePerPluginLifetimeAsync(
+            await pluginMulticlientUtilities.DoOncePerPluginLifetimeAsync(
                 MessageMethod.SetLogLevel.ToString(),
-                () => plugin.Plugin.Connection.SendRequestAndReceiveResponseAsync<SetLogLevelRequest, SetLogLevelResponse>(
+                () => plugin.Connection.SendRequestAndReceiveResponseAsync<SetLogLevelRequest, SetLogLevelResponse>(
                     MessageMethod.SetLogLevel,
                     new SetLogLevelRequest(logLevel),
                     cancellationToken),
@@ -175,9 +218,14 @@ namespace NuGet.Credentials
                 });
         }
 
-        private async Task SetProxyCredentialsToPlugin(Uri uri, IWebProxy proxy, PluginCreationResult plugin, CancellationToken cancellationToken)
+        private async Task SetProxyCredentialsToPlugin(
+            Uri uri,
+            IWebProxy proxy,
+            IPlugin plugin,
+            IPluginMulticlientUtilities pluginMulticlientUtilities,
+            CancellationToken cancellationToken)
         {
-            var proxyCredential = proxy.Credentials.GetCredential(uri, _basicAuthenticationType);
+            NetworkCredential? proxyCredential = proxy.Credentials?.GetCredential(uri, _basicAuthenticationType);
 
             var key = $"{MessageMethod.SetCredentials}.{Id}";
 
@@ -188,10 +236,10 @@ namespace NuGet.Credentials
                 username: null,
                 password: null);
 
-            await plugin.PluginMulticlientUtilities.DoOncePerPluginLifetimeAsync(
+            await pluginMulticlientUtilities.DoOncePerPluginLifetimeAsync(
                  key,
                  () =>
-                     plugin.Plugin.Connection.SendRequestAndReceiveResponseAsync<SetCredentialsRequest, SetCredentialsResponse>(
+                     plugin.Connection.SendRequestAndReceiveResponseAsync<SetCredentialsRequest, SetCredentialsResponse>(
                      MessageMethod.SetCredentials,
                      proxyCredRequest,
                      cancellationToken),

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -31,7 +33,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// <summary>
         /// Default value for the flag that determines whether or not the InboundClaimTypeMap is used.
         /// </summary>
-        public static bool DefaultMapInboundClaims = false;
+        public static bool DefaultMapInboundClaims;
 
         /// <summary>
         /// Gets the Base64Url encoded string representation of the following JWT header:
@@ -320,6 +322,54 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         /// </summary>
         /// <param name="jwtToken">The JWE that contains the cypher text.</param>
         /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> that can be used to request cancellation of the asynchronous operation.</param>
+        /// <returns>The decoded (clear text) contents of the JWE.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="jwtToken"/> is null.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="validationParameters"/> is null.</exception>
+        /// <exception cref="SecurityTokenException">Thrown if <see cref="JsonWebToken.Enc"/> is null or empty.</exception>
+        /// <exception cref="SecurityTokenDecompressionFailedException">Thrown if the decompression failed.</exception>
+        /// <exception cref="SecurityTokenEncryptionKeyNotFoundException">Thrown if <see cref="JsonWebToken.Kid"/> is not null AND the decryption fails.</exception>
+        /// <exception cref="SecurityTokenDecryptionFailedException">Thrown if the JWE was not able to be decrypted.</exception>
+        public async Task<string> DecryptTokenWithConfigurationAsync(
+            JsonWebToken jwtToken,
+            TokenValidationParameters validationParameters,
+            CancellationToken cancellationToken)
+        {
+            if (jwtToken == null)
+                throw LogHelper.LogArgumentNullException(nameof(jwtToken));
+
+            if (validationParameters == null)
+                throw LogHelper.LogArgumentNullException(nameof(validationParameters));
+
+            if (string.IsNullOrEmpty(jwtToken.Enc))
+                throw LogHelper.LogExceptionMessage(new SecurityTokenException(LogHelper.FormatInvariant(TokenLogMessages.IDX10612)));
+
+            BaseConfiguration currentConfiguration = null;
+            if (validationParameters.ConfigurationManager != null)
+            {
+                try
+                {
+                    currentConfiguration = await validationParameters.ConfigurationManager.GetBaseConfigurationAsync(cancellationToken).ConfigureAwait(false);
+                }
+#pragma warning disable CA1031 // Do not catch general exception types
+                catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
+                {
+                    // The exception is not re-thrown as the decryption key may be set
+                    // on TokenValidationParameters, allowing the library to continue with token decryption.
+                    if (LogHelper.IsEnabled(EventLogLevel.Warning))
+                        LogHelper.LogWarning(LogHelper.FormatInvariant(TokenLogMessages.IDX10278, validationParameters.ConfigurationManager.MetadataAddress, ex.ToString()));
+                }
+            }
+
+            return DecryptToken(jwtToken, validationParameters, currentConfiguration);
+        }
+
+        /// <summary>
+        /// Decrypts a JWE and returns the clear text.
+        /// </summary>
+        /// <param name="jwtToken">The JWE that contains the cypher text.</param>
+        /// <param name="validationParameters">The <see cref="TokenValidationParameters"/> to be used for validating the token.</param>
         /// <returns>The decoded / cleartext contents of the JWE.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="jwtToken"/> is null.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="validationParameters"/> is null.</exception>
@@ -344,15 +394,28 @@ namespace Microsoft.IdentityModel.JsonWebTokens
                 throw LogHelper.LogExceptionMessage(new SecurityTokenException(LogHelper.FormatInvariant(TokenLogMessages.IDX10612)));
 
             var keys = GetContentEncryptionKeys(jwtToken, validationParameters, configuration);
-            return JwtTokenUtilities.DecryptJwtToken(
-                jwtToken,
-                validationParameters,
-                new JwtTokenDecryptionParameters
-                {
-                    DecompressionFunction = JwtTokenUtilities.DecompressToken,
-                    Keys = keys,
-                    MaximumDeflateSize = MaximumTokenSizeInBytes
-                });
+
+            var decryptionParameters = CreateJwtTokenDecryptionParameters(jwtToken, keys);
+
+            return JwtTokenUtilities.DecryptJwtToken(jwtToken, validationParameters, decryptionParameters);
+        }
+
+        private JwtTokenDecryptionParameters CreateJwtTokenDecryptionParameters(JsonWebToken jwtToken, IEnumerable<SecurityKey> keys)
+        {
+            return new JwtTokenDecryptionParameters
+            {
+                Alg = jwtToken.Alg,
+                AuthenticationTagBytes = jwtToken.AuthenticationTagBytes,
+                CipherTextBytes = jwtToken.CipherTextBytes,
+                DecompressionFunction = JwtTokenUtilities.DecompressToken,
+                Enc = jwtToken.Enc,
+                EncodedToken = jwtToken.EncodedToken,
+                HeaderAsciiBytes = jwtToken.HeaderAsciiBytes,
+                InitializationVectorBytes = jwtToken.InitializationVectorBytes,
+                MaximumDeflateSize = MaximumTokenSizeInBytes,
+                Keys = keys,
+                Zip = jwtToken.Zip,
+            };
         }
 
         private static SecurityKey ResolveTokenDecryptionKeyFromConfig(JsonWebToken jwtToken, BaseConfiguration configuration)
@@ -474,6 +537,31 @@ namespace Microsoft.IdentityModel.JsonWebTokens
         }
 
         /// <summary>
+        /// Converts a ReadOnlyMemory span of characters into an instance of <see cref="JsonWebToken"/>.
+        /// </summary>
+        /// <param name="token">A ReadOnlyMemory span containing a JSON Web Token (JWT) in JWS or JWE Compact Serialization format.</param>
+        /// <returns>A <see cref="JsonWebToken"/>.</returns>
+        /// <exception cref="ArgumentException">Thrown if the length of <paramref name="token"/> is greater than <see cref="TokenHandler.MaximumTokenSizeInBytes"/>.</exception>
+        /// <remarks>
+        /// <para>If the <paramref name="token"/> is in JWE Compact Serialization format, only the protected header will be deserialized.</para>
+        /// This method is unable to decrypt the payload. Use <see cref="ValidateToken(string, TokenValidationParameters)"/>to obtain the payload.
+        /// <para>
+        /// The token is NOT validated and no security decisions should be made about the contents.
+        /// Use <see cref="ValidateToken(string, TokenValidationParameters)"/> or <see cref="ValidateTokenAsync(string, TokenValidationParameters)"/> to ensure the token is acceptable.
+        /// </para>
+        /// </remarks>
+        public virtual JsonWebToken ReadJsonWebToken(ReadOnlyMemory<char> token)
+        {
+            if (token.IsEmpty)
+                throw LogHelper.LogArgumentNullException(nameof(token));
+
+            if (token.Span.Length > MaximumTokenSizeInBytes)
+                throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(TokenLogMessages.IDX10209, LogHelper.MarkAsNonPII(token.Length), LogHelper.MarkAsNonPII(MaximumTokenSizeInBytes))));
+
+            return new JsonWebToken(token);
+        }
+
+        /// <summary>
         /// Converts a string into an instance of <see cref="JsonWebToken"/>.
         /// </summary>
         /// <param name="token">A JSON Web Token (JWT) in JWS or JWE Compact Serialization format.</param>
@@ -514,7 +602,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens
 #pragma warning disable CA1031 // Do not catch general exception types
                 try
                 {
-                    jsonWebToken = new JsonWebToken(token);
+                    jsonWebToken = new JsonWebToken(token, validationParameters.TryReadJwtClaim);
                 }
                 catch (Exception ex)
                 {

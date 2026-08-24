@@ -550,6 +550,7 @@ NuGet.Packaging.PackageBuilder.Copyright.set -> void
 NuGet.Packaging.PackageBuilder.DependencyGroups.get -> System.Collections.ObjectModel.Collection<NuGet.Packaging.PackageDependencyGroup!>!
 NuGet.Packaging.PackageBuilder.Description.get -> string?
 NuGet.Packaging.PackageBuilder.Description.set -> void
+NuGet.Packaging.PackageBuilder.DeterministicTimestamp.init -> void
 NuGet.Packaging.PackageBuilder.DevelopmentDependency.get -> bool
 NuGet.Packaging.PackageBuilder.DevelopmentDependency.set -> void
 NuGet.Packaging.PackageBuilder.EmitRequireLicenseAcceptance.get -> bool
@@ -1561,6 +1562,7 @@ static NuGet.Packaging.PackageHelper.IsNuspec(string! path) -> bool
 static NuGet.Packaging.PackageHelper.IsPackageFile(string! packageFileName, NuGet.Packaging.PackageSaveMode packageSaveMode) -> bool
 static NuGet.Packaging.PackageHelper.IsRoot(string! path) -> bool
 static NuGet.Packaging.PackageIdValidator.IsValidPackageId(string! packageId) -> bool
+static NuGet.Packaging.PackageIdValidator.IsValidPackageId(string! packageId, bool useRestrictedCharacterSet) -> bool
 static NuGet.Packaging.PackageIdValidator.ValidatePackageId(string! packageId) -> void
 static NuGet.Packaging.PackagePathHelper.GetInstalledPackageFilePath(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.PackagePathResolver! packagePathResolver) -> string?
 static NuGet.Packaging.PackagePathHelper.GetPackageLookupPaths(NuGet.Packaging.Core.PackageIdentity! packageIdentity, NuGet.Packaging.PackagePathResolver! packagePathResolver) -> System.Collections.Generic.IEnumerable<string!>!

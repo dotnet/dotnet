@@ -24,7 +24,9 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="SanityCheckUnixFilePermissionsFile" AfterTargets="Deploy" Condition="!$([MSBuild]::IsOSPlatform('windows'))">
+  <!-- Only packages that carry a tools payload have executables needing Unix permissions, and those are
+       exactly the ones that set ArtifactsDirToPackage and pull in GenerateUnixPermissionsFile. -->
+  <Target Name="SanityCheckUnixFilePermissionsFile" AfterTargets="Deploy" Condition="!$([MSBuild]::IsOSPlatform('windows')) and '$(ArtifactsDirToPackage)' != ''">
     <!-- $(PackageOutputPath)$(Id).$(PackageVersion).nupkg -->
     <PropertyGroup>
       <_UnpackedNuGetPath>$(ArtifactsObjDir)unpacked.$(Id)\</_UnpackedNuGetPath>

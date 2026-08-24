@@ -442,7 +442,9 @@ static NuGet.Configuration.SettingsUtility.GetDecryptedValueForAddItem(NuGet.Con
 static NuGet.Configuration.SettingsUtility.GetDefaultPushSource(NuGet.Configuration.ISettings! settings) -> string?
 static NuGet.Configuration.SettingsUtility.GetEnabledSources(NuGet.Configuration.ISettings! settings) -> System.Collections.Generic.IEnumerable<NuGet.Configuration.PackageSource!>!
 static NuGet.Configuration.SettingsUtility.GetFallbackPackageFolders(NuGet.Configuration.ISettings! settings) -> System.Collections.Generic.IReadOnlyList<string!>!
+static NuGet.Configuration.SettingsUtility.GetFallbackPackageFolders(NuGet.Configuration.ISettings! settings, NuGet.Common.IEnvironmentVariableReader! environmentVariableReader) -> System.Collections.Generic.IReadOnlyList<string!>!
 static NuGet.Configuration.SettingsUtility.GetGlobalPackagesFolder(NuGet.Configuration.ISettings! settings) -> string!
+static NuGet.Configuration.SettingsUtility.GetGlobalPackagesFolder(NuGet.Configuration.ISettings! settings, NuGet.Common.IEnvironmentVariableReader! environmentVariableReader) -> string!
 static NuGet.Configuration.SettingsUtility.GetHttpCacheFolder() -> string!
 static NuGet.Configuration.SettingsUtility.GetMaxHttpRequest(NuGet.Configuration.ISettings! settings) -> int
 static NuGet.Configuration.SettingsUtility.GetPluginsCacheFolder() -> string!

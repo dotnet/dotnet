@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -284,6 +285,24 @@ public class TestRequestSenderTests
         var message = Assert.ThrowsExactly<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost()).Message;
 
         Assert.AreEqual(message, TimoutErrorMessage);
+    }
+
+    [TestMethod]
+    public void CheckVersionWithTestHostShouldThrowWithTestHostErrorIfTestHostExitsDuringNegotiation()
+    {
+        // The test host connected but then exited during protocol negotiation, for example it crashed while
+        // deserializing the version check message when reflection-based serialization is disabled (issue #16274).
+        // OnClientProcessExit records the standard error and signals the exit. CheckVersionWithTestHost must stop
+        // waiting immediately and surface that error, instead of blocking for the whole connection timeout and
+        // reporting a generic timeout message.
+        SetupFakeCommunicationChannel();
+        _testRequestSender.OnClientProcessExit("System.InvalidOperationException: Reflection-based serialization has been disabled for this application.");
+
+        var message = Assert.ThrowsExactly<TestPlatformException>(() => _testRequestSender.CheckVersionWithTestHost()).Message;
+
+        Assert.Contains("Test host process crashed", message);
+        Assert.Contains("Reflection-based serialization has been disabled", message);
+        Assert.AreNotEqual(TimoutErrorMessage, message);
     }
 
     #endregion
@@ -684,6 +703,33 @@ public class TestRequestSenderTests
 
         RaiseMessageReceivedEvent();
         _mockDataSerializer.Verify(ds => ds.SerializePayload(MessageType.LaunchAdapterProcessWithDebuggerAttachedCallback, It.IsAny<int>(), Dummynegotiatedprotocolversion), Times.Once);
+    }
+
+    [TestMethod]
+    public void StartTestRunShouldAttachDebuggerAndSendCallbackWithNegotiatedVersion()
+    {
+        var attachDebuggerPayload = new TestProcessAttachDebuggerPayload(123)
+        {
+            TargetFramework = ".NETCoreApp,Version=v8.0"
+        };
+        _mockExecutionEventsHandler
+            .Setup(eh => eh.AttachDebuggerToProcess(It.IsAny<AttachDebuggerInfo>()))
+            .Returns(true);
+        SetupFakeChannelWithVersionNegotiation();
+        SetupDeserializeMessage(MessageType.AttachDebugger, attachDebuggerPayload);
+
+        _testRequestSender.StartTestRun(_testRunCriteriaWithSources, _mockExecutionEventsHandler.Object);
+
+        RaiseMessageReceivedEvent();
+        _mockExecutionEventsHandler.Verify(
+            eh => eh.AttachDebuggerToProcess(
+                It.Is<AttachDebuggerInfo>(
+                    info => info.ProcessId == attachDebuggerPayload.ProcessID
+                        && info.TargetFramework == attachDebuggerPayload.TargetFramework)),
+            Times.Once);
+        _mockDataSerializer.Verify(
+            ds => ds.SerializePayload(MessageType.AttachDebuggerCallback, true, Dummynegotiatedprotocolversion),
+            Times.Once);
     }
 
     [TestMethod]

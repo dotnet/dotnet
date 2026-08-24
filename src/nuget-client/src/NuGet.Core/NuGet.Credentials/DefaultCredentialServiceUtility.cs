@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using NuGet.Common;
@@ -14,13 +13,18 @@ using NuGet.Protocol.Plugins;
 
 namespace NuGet.Credentials
 {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+    /// <summary>
+    /// Provides helpers for configuring the process-wide default credential service.
+    /// Use in CLI or self-hosted scenarios. See NuGet.PackageManagement.VisualStudio.DefaultVSCredentialServiceProvider for Visual Studio scenarios.
+    /// </summary>
     public static class DefaultCredentialServiceUtility
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         static DefaultCredentialServiceUtility()
         {
-            StaticState.StartMSBuildRestoreTasks += ResetCredentialService;
+            // The credential service caches acquired credentials and owns plugin-backed ICredentialProvider instances,
+            // so it must not outlive either the build whose credentials it holds or the plugin processes those
+            // providers talk to. Both are discarded on the same event.
+            StaticState.BuildEnded += ResetCredentialService;
         }
 
         /// <summary>
@@ -35,12 +39,15 @@ namespace NuGet.Credentials
         }
 
         /// <summary>
-        /// Sets-up the CredentialService and all of its providers.
-        /// It always updates the logger the CredentialService and its children own,
+        /// Sets up the credential service and all of its providers.
+        /// It always updates the logger that the credential service and its children own,
         /// because the lifetime of the logging infrastructure is not guaranteed. 
         /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="nonInteractive"></param>
+        /// <param name="logger">The logger used by the credential service and its providers.</param>
+        /// <param name="nonInteractive">
+        /// <see langword="true"/> to prevent credential providers from prompting the user;
+        /// otherwise, <see langword="false"/>.
+        /// </param>
         public static void SetupDefaultCredentialService(ILogger logger, bool nonInteractive)
         {
             // Always update the delegating logger.
@@ -58,9 +65,10 @@ namespace NuGet.Credentials
         }
 
         /// <summary>
-        /// Update the delegating logger for the credential service.
+        /// Updates the delegating logger used by the credential service.
         /// </summary>
-        /// <param name="log"></param>
+        /// <param name="log">The logger to which credential service messages are delegated.</param>
+        [MemberNotNull(nameof(DelegatingLogger))]
         public static void UpdateCredentialServiceDelegatingLogger(ILogger log)
         {
             if (DelegatingLogger == null)
@@ -73,7 +81,7 @@ namespace NuGet.Credentials
             }
         }
 
-        private static DelegatingLogger DelegatingLogger;
+        private static DelegatingLogger? DelegatingLogger;
 
         // Add only the secure plugin. This will be done when there's nothing set
         // By default the plugins cannot prompt. Currently this is only used to setup from MSBuild/dotnet.exe code paths

@@ -82,6 +82,33 @@ function Get-DllTargetFramework {
     return "none"
 }
 
+# Detects a satellite (localized resources) assembly that has been misnamed as a
+# plain '<name>.dll' instead of '<name>.resources.dll'.  The CLR satellite loader
+# only probes '<culture>\<name>.resources.dll', so a misnamed satellite is never
+# found and its localized strings silently fall back to the neutral language.
+# This guards against reintroducing the packaging bug where a hand-written
+# PackagePath dropped the '.resources' segment from the file name.
+#
+# Returns the culture name (e.g. 'cs') when the DLL is a misnamed satellite,
+# otherwise $null.
+function Get-MisnamedSatelliteCulture {
+    param([string]$DllPath)
+
+    try {
+        $an = [System.Reflection.AssemblyName]::GetAssemblyName($DllPath)
+    }
+    catch {
+        # Native or unreadable — target-framework detection handles those.
+        return $null
+    }
+
+    if (-not [string]::IsNullOrEmpty($an.CultureName) -or $an.Name -like '*.resources') {
+        return $an.CultureName
+    }
+
+    return $null
+}
+
 function Verify-DllFrameworks {
     param(
         [Parameter(Mandatory)]
@@ -123,6 +150,7 @@ function Verify-DllFrameworks {
         [System.StringComparer]::OrdinalIgnoreCase
     )
     $errors = @()
+    $misnamedSatellites = @()
 
     foreach ($pkgDir in $PackageDirs) {
         $pkgItem = Get-Item $pkgDir
@@ -148,6 +176,17 @@ function Verify-DllFrameworks {
                 continue
             }
 
+            # Guard: a satellite misnamed as '<name>.dll' (dropping '.resources')
+            # is invisible to the CLR satellite loader, so its localized resources
+            # silently never load.  Catch it before the TFM scan, where it would
+            # otherwise masquerade as a neutral assembly with no TargetFramework.
+            $misnamedCulture = Get-MisnamedSatelliteCulture -DllPath $dll.FullName
+            if ($null -ne $misnamedCulture) {
+                $expectedName = "$([System.IO.Path]::GetFileNameWithoutExtension($dllName)).resources.dll"
+                $misnamedSatellites += "[$packageKey] '$relativePath' is a '$misnamedCulture' satellite but is named '$dllName' instead of '$expectedName'."
+                continue
+            }
+
             $tfm = Get-DllTargetFramework -DllPath $dll.FullName
 
             if ($null -eq $tfm) {
@@ -164,6 +203,18 @@ function Verify-DllFrameworks {
         if ($pkgMap.Count -gt 0) {
             $actualFrameworks[$packageKey] = $pkgMap
         }
+    }
+
+    # --- Guard: misnamed satellites fail immediately -----------------------
+    # This is a structural packaging error (localized resources won't load),
+    # not data drift the auto-fixer should silently absorb into the baseline,
+    # so fail fast in both CI and local runs.
+    if ($misnamedSatellites.Count -gt 0) {
+        $satMsg = "Misnamed satellite assemblies detected - localized resources will not load:`n"
+        $satMsg += ($misnamedSatellites -join "`n")
+        $satMsg += "`n`nA satellite assembly must ship as '<name>.resources.dll' inside its '<culture>' folder. "
+        $satMsg += "Fix the Pack/PackagePath metadata for the file(s) above so the '.resources' suffix is preserved."
+        Write-Error $satMsg
     }
 
     # --- Compare -----------------------------------------------------------

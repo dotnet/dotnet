@@ -7,31 +7,6 @@
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
     <UseBootstrapArcade Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</UseBootstrapArcade>
 
-    <!-- MSBuild -mt mode configuration.
-         UseMSBuildMT controls whether this repository builds with -mt flag when DotNetBuildMT=true.
-         
-         Default exclusions are defined here so local builds match CI behavior.
-         Override via MSBuild property /p:MSBuildMTExcludedReposOverride=... or
-         MSBUILD_MT_EXCLUDED_REPOS environment variable (colon-separated for bash compatibility).
-         
-         Priority (highest to lowest):
-         1. Per-repo .proj file setting <UseMSBuildMT>false</UseMSBuildMT>
-         2. MSBuildMTExcludedReposOverride MSBuild property
-         3. MSBUILD_MT_EXCLUDED_REPOS environment variable override
-         4. Default exclusion list below
-         5. Default: enabled for all repos
-    -->
-    <_MSBuildMTExcludedRepos>arcade;runtime;roslyn;aspnetcore;sdk;efcore;winforms;wpf;razor;source-build-reference-packages</_MSBuildMTExcludedRepos>
-    <!-- Allow override via MSBuild property (e.g. /p:MSBuildMTExcludedReposOverride=...) or environment variable -->
-    <_MSBuildMTExcludedRepos Condition="'$(MSBuildMTExcludedReposOverride)' != ''">$(MSBuildMTExcludedReposOverride)</_MSBuildMTExcludedRepos>
-    <_MSBuildMTExcludedReposOverride>$([System.Environment]::GetEnvironmentVariable('MSBUILD_MT_EXCLUDED_REPOS'))</_MSBuildMTExcludedReposOverride>
-    <_MSBuildMTExcludedRepos Condition="'$(_MSBuildMTExcludedReposOverride)' != ''">$(_MSBuildMTExcludedReposOverride.Replace(':',';'))</_MSBuildMTExcludedRepos>
-    <!-- Use same pattern as UseBootstrapArcade check above -->
-    <UseMSBuildMT Condition="'$(UseMSBuildMT)' == '' and $([System.String]::new(';$(_MSBuildMTExcludedRepos);').Contains(';$(RepositoryName);'))">false</UseMSBuildMT>
-    <UseMSBuildMT Condition="'$(UseMSBuildMT)' == ''">true</UseMSBuildMT>
-
-    <RepoSharedCompilationId Condition="'$(RepoSharedCompilationId)' == ''">dotnet-vmr-$(RepositoryName)-$([System.Guid]::NewGuid().ToString('N'))</RepoSharedCompilationId>
-
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
     <!-- If this is a dev build with parallelism enabled, ensure that RunEachTargetSeparately is true so that StopOnFirstFailure will be honored.
@@ -96,16 +71,21 @@
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows'">
     <FlagParameterPrefix>-</FlagParameterPrefix>
-    <ArcadeFalseBoolBuildArg>0</ArcadeFalseBoolBuildArg>
   </PropertyGroup>
   <PropertyGroup Condition="'$(BuildOS)' != 'windows'">
     <FlagParameterPrefix>--</FlagParameterPrefix>
-    <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
   </PropertyGroup>
 
   <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds. -->
   <PropertyGroup Condition="'$(OfficialBuildId)' != ''">
     <OfficialBuildId>$(OfficialBuildId.Split('.')[0]).$([MSBuild]::Add($(OfficialBuildId.Split('.')[1]), 100))</OfficialBuildId>
+  </PropertyGroup>
+
+  <!-- Warning codes surfaced from each repo's build log into the orchestrator build so they're
+       visible in the CI/build summary (see the LogRepoBuildWarnings task in Directory.Build.targets).
+       The below downgrades NuGet Audit warnings.-->
+  <PropertyGroup>
+    <RepoBuildWarningCodesToSurface>NU1901;NU1902;NU1903;NU1904</RepoBuildWarningCodesToSurface>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -129,9 +109,28 @@
 
     <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)ci</CommonArgs>
 
+    <!-- MSBuild's multi-threaded mode is opt-in for now, so it's off unless it's explicitly requested.
+         Set DotNetBuildMT to explicitly opt in or out for all repo builds. -->
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
+
+    <!-- MSBuild node reuse is on by default for local builds and isn't used on CI.
+         Set DotNetBuildNodeReuse to explicitly opt in or out for all repo builds. -->
+    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 1</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 0</CommonArgs>
+
     <!-- Pass down configuration properties -->
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</CommonArgs>
+
+    <!-- Prevent NuGet audit warnings from being promoted to errors in the repo build.
+         On Windows the list passes through PowerShell's Invoke-Expression (see runtime's build.ps1),
+         so each ';' is backtick-escaped to survive as a single argument. On other platforms the
+         quoted value is handed straight to the shell, where ';' is already literal, so it's used as-is. -->
+    <CommonArgs Condition="'$(RepoBuildWarningCodesToSurface)' != '' and '$(BuildOS)' == 'windows'">$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "$(RepoBuildWarningCodesToSurface.Replace(';','`;'))"</CommonArgs>
+    <CommonArgs Condition="'$(RepoBuildWarningCodesToSurface)' != '' and '$(BuildOS)' != 'windows'">$(CommonArgs) $(FlagParameterPrefix)warnnotaserror "$(RepoBuildWarningCodesToSurface)"</CommonArgs>
+    <CommonArgs>$(CommonArgs) /clp:NoSummary</CommonArgs>
+
     <CommonArgs>$(CommonArgs) /p:TargetRid=$(TargetRid)</CommonArgs>
 
     <!-- Pass through DotNetBuildPass for join point vertical support. -->
@@ -156,8 +155,6 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
-    <!-- Temporarily disable deterministic timestamps https://github.com/dotnet/dotnet/issues/7331 -->
-    <CommonArgs>$(CommonArgs) /p:DeterministicTimestamp=false</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
     <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
@@ -219,20 +216,6 @@
 
     <!-- If MSBuild exits early, make sure debug output like 'MSBuild_*.failure.txt' ends up in a place we can see it. -->
     <EnvironmentVariables Include="MSBUILDDEBUGPATH=$(ArtifactsLogRepoDir)" />
-  </ItemGroup>
-
-  <!-- Enable MSBuild -mt mode when DotNetBuildMT is set and the repository hasn't opted out -->
-  <ItemGroup Condition="'$(DotNetBuildMT)' == 'true' and '$(UseMSBuildMT)' != 'false'">
-    <EnvironmentVariables Include="MSBUILD_MT_ENABLED=1" />
-  </ItemGroup>
-
-  <!-- NOTE: This is for internal testing only; real CI should not have node reuse.
-       Follow-up to replace this env var with a proper switch: https://github.com/dotnet/arcade/issues/17013
-       Enable MSBuild node reuse when DotNetBuildNodeReuse is set and the repository hasn't opted out.
-       By default CI builds force nodeReuse=false; opting in keeps the worker MSBuild nodes alive
-       between invocations. A repository can opt out by setting <UseNodeReuse>false</UseNodeReuse>. -->
-  <ItemGroup Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(UseNodeReuse)' != 'false'">
-    <EnvironmentVariables Include="MSBUILD_NODEREUSE_ENABLED=1" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">

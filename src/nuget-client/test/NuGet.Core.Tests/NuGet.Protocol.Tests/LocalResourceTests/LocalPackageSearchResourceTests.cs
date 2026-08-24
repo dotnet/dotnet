@@ -597,7 +597,7 @@ namespace NuGet.Protocol.Tests
 
                 // Act & Assert
                 await Assert.ThrowsAsync<TaskCanceledException>(
-                    async () => await resource.SearchAsync("", null, 0, 1, NullLogger.Instance, new CancellationToken(canceled: true)));
+                    async () => await resource.SearchAsync("", null!, 0, 1, NullLogger.Instance, new CancellationToken(canceled: true)));
             }
         }
 
@@ -613,7 +613,7 @@ namespace NuGet.Protocol.Tests
             // Act
             Task delayTask = Task.Delay(TimeSpan.FromMilliseconds(200), cts.Token);
             LocalPackageSearchResource slowResource = new LocalPackageSearchResource(slowLocalRepository);
-            Task searchTask = slowResource.SearchAsync(searchTerm: "", filters: null, skip: 0, take: 1, log: NullLogger.Instance, token: cts.Token);
+            Task searchTask = slowResource.SearchAsync(searchTerm: "", filters: null!, skip: 0, take: 1, log: NullLogger.Instance, token: cts.Token);
 
             // Assert
             // To simulate real world scenario I added delayed cancellation logic check in DelayedFindLocalPackagesResourceV2 localRepository.

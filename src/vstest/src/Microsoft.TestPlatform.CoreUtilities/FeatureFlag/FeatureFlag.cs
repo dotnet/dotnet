@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Microsoft.VisualStudio.TestPlatform.Utilities;
 
@@ -23,14 +24,19 @@ namespace Microsoft.VisualStudio.TestPlatform.Utilities;
 // !!! SDK USED FEATURE NAMES MUST BE KEPT IN SYNC IN https://github.com/dotnet/sdk/blob/main/src/Cli/dotnet/commands/dotnet-test/VSTestFeatureFlag.cs !!!
 internal partial class FeatureFlag : IFeatureFlag
 {
+    private static readonly IReadOnlyDictionary<string, bool> DefaultValues = new Dictionary<string, bool>
+    {
+        [VSTEST_DISABLE_MTP_TESTHOST] = true,
+    };
+
     private readonly ConcurrentDictionary<string, bool> _cache = new();
 
     public static IFeatureFlag Instance { get; private set; } = new FeatureFlag();
 
     private FeatureFlag() { }
 
-    // Only check the env variable once, when it is not set or is set to 0, consider it unset. When it is anything else, consider it set.
-    public bool IsSet(string featureFlag) => _cache.GetOrAdd(featureFlag, f => (Environment.GetEnvironmentVariable(f)?.Trim() ?? "0") != "0");
+    // Only check the env variable once. The environment value takes precedence over the default value.
+    public bool IsSet(string featureFlag) => _cache.GetOrAdd(featureFlag, GetValue);
 
     // Added for artifact post-processing, it enable/disable the post processing.
     // Added in 17.2-preview 7.0-preview
@@ -78,7 +84,20 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable turning dynamic code coverage for native code to OFF by default. Setting this to 1 will skip adding the setting.
     public const string VSTEST_DISABLE_DYNAMICNATIVE_CODECOVERAGE_DEFAULT_SETTING = nameof(VSTEST_DISABLE_DYNAMICNATIVE_CODECOVERAGE_DEFAULT_SETTING);
 
+    // Disable running Microsoft.Testing.Platform applications under vstest while the integration is experimental.
+    // This defaults to true. Set it to 0 to opt in to the feature.
+    public const string VSTEST_DISABLE_MTP_TESTHOST = nameof(VSTEST_DISABLE_MTP_TESTHOST);
 
+    private static bool GetValue(string featureFlag)
+    {
+        var environmentValue = Environment.GetEnvironmentVariable(featureFlag)?.Trim();
+        if (environmentValue is not null)
+        {
+            return environmentValue != "0";
+        }
+
+        return DefaultValues.TryGetValue(featureFlag, out var defaultValue) && defaultValue;
+    }
 
     [Obsolete("Only use this in tests.")]
     internal static void Reset()

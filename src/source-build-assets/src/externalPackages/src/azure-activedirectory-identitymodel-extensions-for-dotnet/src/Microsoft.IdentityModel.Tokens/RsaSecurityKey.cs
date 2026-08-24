@@ -14,7 +14,7 @@ namespace Microsoft.IdentityModel.Tokens
     {
         private bool? _hasPrivateKey;
 
-        private bool _foundPrivateKeyDetermined = false;
+        private bool _foundPrivateKeyDetermined;
 
         private PrivateKeyStatus _foundPrivateKey;
 
@@ -23,7 +23,7 @@ namespace Microsoft.IdentityModel.Tokens
         internal RsaSecurityKey(JsonWebKey webKey)
             : base(webKey)
         {
-            IntializeWithRsaParameters(webKey.CreateRsaParameters());
+            InitializeWithRsaParameters(webKey.CreateRsaParameters());
             webKey.ConvertedSecurityKey = this;
         }
 
@@ -33,10 +33,10 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="rsaParameters"><see cref="RSAParameters"/></param>
         public RsaSecurityKey(RSAParameters rsaParameters)
         {
-            IntializeWithRsaParameters(rsaParameters);
+            InitializeWithRsaParameters(rsaParameters);
         }
 
-        internal void IntializeWithRsaParameters(RSAParameters rsaParameters)
+        internal void InitializeWithRsaParameters(RSAParameters rsaParameters)
         {
             // must have modulus and exponent otherwise the crypto operations fail later
             if (rsaParameters.Modulus == null)
@@ -76,7 +76,7 @@ namespace Microsoft.IdentityModel.Tokens
                     {
                         // imitate signing
                         byte[] hash = new byte[20];
-                        Rsa.SignData(hash, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                        Rsa.SignData(hash, HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
                         _hasPrivateKey = true;
                     }
                     catch (CryptographicException)
@@ -128,7 +128,7 @@ namespace Microsoft.IdentityModel.Tokens
                 }
 
                 return _foundPrivateKey;
-            }           
+            }
         }
 
         /// <summary>

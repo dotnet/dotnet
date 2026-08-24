@@ -50,7 +50,7 @@ int CheckRuntime(LPCWSTR frameworkName, LPCWSTR frameworkVersion, LPCWSTR rollFo
     WCHAR runtimeConfigPath[MAX_PATH];
     if (NULL != existingRuntimeConfigPath)
     {
-        wcscpy(runtimeConfigPath, existingRuntimeConfigPath);
+        wcscpy_s(runtimeConfigPath, existingRuntimeConfigPath);
         g_log->Log(TEXT("Using existing runtimeconfig file '%s'"), runtimeConfigPath);
     }
     else
@@ -104,8 +104,16 @@ void* GetExport(HMODULE h, const char* name)
         const size_t size = strlen(name) + 1;
         std::vector<WCHAR> wName;
         wName.resize(size);
-        mbstowcs(wName.data(), name, size);
-        g_log->Log(TEXT("Failed to load library '%s', error = '%d'"), wName.data(), err);
+        size_t convertedChars = 0;
+        errno_t convErr = mbstowcs_s(&convertedChars, wName.data(), size, name, size - 1);
+        if (0 != convErr)
+        {
+            g_log->Log(TEXT("mbstowcs_s failed to convert export name, error = '%d'"), convErr);
+        }
+        else
+        {
+            g_log->Log(TEXT("Failed to get export '%s', error = '%d'"), wName.data(), err);
+        }
     }
     
     return address;

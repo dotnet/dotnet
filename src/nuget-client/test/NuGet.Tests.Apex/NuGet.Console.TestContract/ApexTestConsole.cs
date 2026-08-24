@@ -7,6 +7,8 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using NuGet.VisualStudio;
@@ -107,6 +109,31 @@ namespace NuGet.Console.TestContract
             WaitForActionComplete(() => RunCommandWithoutWait(command), timeout);
         }
 
+        public void RunCommandWithInputAndBackspace(string command, string input, TimeSpan timeout)
+        {
+            WaitForActionComplete(
+                () =>
+                {
+                    RunCommandWithoutWait(command);
+                    WaitForReadKey(timeout);
+
+                    IOleCommandTarget commandTarget = null;
+                    UIInvoke(() => commandTarget = (IOleCommandTarget)_wpfConsole.VsTextView);
+                    foreach (char character in input)
+                    {
+                        ExecuteReadKeyCommand(
+                            commandTarget,
+                            VSConstants.VSStd2KCmdID.TYPECHAR,
+                            timeout,
+                            character);
+                    }
+
+                    ExecuteReadKeyCommand(commandTarget, VSConstants.VSStd2KCmdID.BACKSPACE, timeout);
+                    UIInvoke(() => commandTarget.Execute(VSConstants.VSStd2KCmdID.RETURN));
+                },
+                timeout);
+        }
+
         public void RunCommandWithoutWait(string command)
         {
             if (!string.IsNullOrEmpty(command))
@@ -157,6 +184,47 @@ namespace NuGet.Console.TestContract
                     asynchost.ExecuteEnd -= eventHandler;
                     dispatcher.SetExecutingCommand(false);
                 }
+            }
+        }
+
+        private void WaitForReadKey(TimeSpan timeout)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            while (!_wpfConsole.Dispatcher.IsExecutingReadKey && stopwatch.Elapsed < timeout)
+            {
+                Thread.Sleep(100);
+            }
+
+            if (!_wpfConsole.Dispatcher.IsExecutingReadKey)
+            {
+                throw new TimeoutException("The Package Manager Console did not begin waiting for input.");
+            }
+        }
+
+        private void ExecuteReadKeyCommand(
+            IOleCommandTarget commandTarget,
+            VSConstants.VSStd2KCmdID command,
+            TimeSpan timeout,
+            object argument = null)
+        {
+            using var semaphore = new ManualResetEventSlim();
+            EventHandler eventHandler = (sender, args) => semaphore.Set();
+            _wpfConsole.Dispatcher.StartWaitingKey += eventHandler;
+
+            try
+            {
+                UIInvoke(() => commandTarget.Execute(command, argument));
+
+                if (!semaphore.Wait(timeout))
+                {
+                    throw new TimeoutException("The Package Manager Console did not request the next input key.");
+                }
+
+                WaitForReadKey(timeout);
+            }
+            finally
+            {
+                _wpfConsole.Dispatcher.StartWaitingKey -= eventHandler;
             }
         }
 

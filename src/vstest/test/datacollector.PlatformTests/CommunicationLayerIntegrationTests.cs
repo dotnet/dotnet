@@ -4,9 +4,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Net;
+using System.Threading;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
@@ -19,9 +23,10 @@ using Moq;
 namespace Microsoft.VisualStudio.TestPlatform.DataCollector.PlatformTests;
 
 [TestClass]
-[Ignore]    // Tests are flaky
 public class CommunicationLayerIntegrationTests
 {
+    private const int ProcessExitTimeoutMilliseconds = 10_000;
+
     private readonly string _defaultRunSettings = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<RunSettings>\r\n  <DataCollectionRunSettings>\r\n    <DataCollectors >{0}</DataCollectors>\r\n  </DataCollectionRunSettings>\r\n</RunSettings>";
     private readonly Mock<ITestMessageEventHandler> _mockTestMessageEventHandler;
     private readonly string _dataCollectorSettings, _runSettings;
@@ -37,9 +42,10 @@ public class CommunicationLayerIntegrationTests
         _mockRequestData = new Mock<IRequestData>();
         _mockMetricsCollection = new Mock<IMetricsCollection>();
         _mockRequestData.Setup(rd => rd.MetricsCollection).Returns(_mockMetricsCollection.Object);
-        _dataCollectorSettings = string.Format(CultureInfo.InvariantCulture, "<DataCollector friendlyName=\"CustomDataCollector\" uri=\"my://custom/datacollector\" assemblyQualifiedName=\"{0}\" codebase=\"{1}\" />", typeof(CustomDataCollector).AssemblyQualifiedName, typeof(CustomDataCollector).Assembly.Location);
+        var customDataCollectorPath = Path.Combine(Path.GetDirectoryName(typeof(CommunicationLayerIntegrationTests).Assembly.Location)!, "OutOfProcDataCollector.dll");
+        _dataCollectorSettings = string.Format(CultureInfo.InvariantCulture, "<DataCollector friendlyName=\"SampleDataCollector\" uri=\"my://sample/datacollector\" assemblyQualifiedName=\"OutOfProcDataCollector.SampleDataCollector, OutOfProcDataCollector, Version=15.0.0.0, Culture=neutral, PublicKeyToken=null\" codebase=\"{0}\" />", customDataCollectorPath);
         _runSettings = string.Format(CultureInfo.InvariantCulture, _defaultRunSettings, _dataCollectorSettings);
-        _testSources = new List<string>() { "testsource1.dll" };
+        _testSources = [customDataCollectorPath];
         _processHelper = new ProcessHelper();
         _dataCollectionLauncher = DataCollectionLauncherFactory.GetDataCollectorLauncher(_processHelper, _runSettings);
     }
@@ -65,12 +71,13 @@ public class CommunicationLayerIntegrationTests
         using var proxyDataCollectionManager = new ProxyDataCollectionManager(_mockRequestData.Object, _runSettings, _testSources, dataCollectionRequestSender, _processHelper, _dataCollectionLauncher);
         proxyDataCollectionManager.Initialize();
 
-        proxyDataCollectionManager.BeforeTestRunStart(true, true, _mockTestMessageEventHandler.Object);
+        var dataCollectionParameters = proxyDataCollectionManager.BeforeTestRunStart(true, true, _mockTestMessageEventHandler.Object);
+        NotifyTestSessionEnded(dataCollectionParameters.DataCollectionEventsPort);
 
         var dataCollectionResult = proxyDataCollectionManager.AfterTestRunEnd(false, _mockTestMessageEventHandler.Object);
 
-        Assert.AreEqual("CustomDataCollector", dataCollectionResult.Attachments![0].DisplayName);
-        Assert.AreEqual("my://custom/datacollector", dataCollectionResult.Attachments[0].Uri.ToString());
+        Assert.AreEqual("SampleDataCollector", dataCollectionResult.Attachments![0].DisplayName);
+        Assert.AreEqual("my://sample/datacollector", dataCollectionResult.Attachments[0].Uri.ToString());
         Assert.Contains("filename.txt", dataCollectionResult.Attachments[0].Attachments[0].Uri.ToString());
     }
 
@@ -83,18 +90,39 @@ public class CommunicationLayerIntegrationTests
 
         using var proxyDataCollectionManager = new ProxyDataCollectionManager(_mockRequestData.Object, _runSettings, _testSources, dataCollectionRequestSender, _processHelper, dataCollectionLauncher);
         proxyDataCollectionManager.Initialize();
-        proxyDataCollectionManager.BeforeTestRunStart(true, true, _mockTestMessageEventHandler.Object);
+        var dataCollectionParameters = proxyDataCollectionManager.BeforeTestRunStart(true, true, _mockTestMessageEventHandler.Object);
+        NotifyTestSessionEnded(dataCollectionParameters.DataCollectionEventsPort);
 
         var result = Process.GetProcessById(dataCollectionLauncher.DataCollectorProcessId);
         Assert.IsNotNull(result);
 
         socketCommManager.StopClient();
 
-        var attachments = proxyDataCollectionManager.AfterTestRunEnd(false, _mockTestMessageEventHandler.Object);
+        var dataCollectionResult = proxyDataCollectionManager.AfterTestRunEnd(false, _mockTestMessageEventHandler.Object);
 
-        Assert.IsNull(attachments);
+        Assert.IsNull(dataCollectionResult.Attachments);
+        Assert.IsNull(dataCollectionResult.InvokedDataCollectors);
 
-        // Give time to datacollector process to exit.
-        Assert.IsTrue(result.WaitForExit(500));
+        Assert.IsTrue(result.WaitForExit(ProcessExitTimeoutMilliseconds));
+    }
+
+    private static void NotifyTestSessionEnded(int port)
+    {
+        Assert.IsGreaterThan(0, port);
+
+        var communicationManager = new SocketCommunicationManager();
+        try
+        {
+            communicationManager.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port));
+            Assert.IsTrue(communicationManager.WaitForServerConnection(ProcessExitTimeoutMilliseconds));
+            communicationManager.SendMessage(MessageType.SessionEnd);
+            using var cancellationTokenSource = new CancellationTokenSource(ProcessExitTimeoutMilliseconds);
+            Assert.IsNull(communicationManager.ReceiveMessageAsync(cancellationTokenSource.Token).GetAwaiter().GetResult());
+            Assert.IsFalse(cancellationTokenSource.IsCancellationRequested);
+        }
+        finally
+        {
+            communicationManager.StopClient();
+        }
     }
 }

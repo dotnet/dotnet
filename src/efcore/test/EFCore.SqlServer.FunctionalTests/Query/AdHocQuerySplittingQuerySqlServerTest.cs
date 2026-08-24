@@ -5,15 +5,13 @@ using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-#nullable disable
-
 public class AdHocQuerySplittingQuerySqlServerTest(NonSharedFixture fixture) : AdHocQuerySplittingQueryTestBase(fixture)
 {
     protected override ITestStoreFactory NonSharedTestStoreFactory
         => SqlServerTestStoreFactory.Instance;
 
     private static readonly FieldInfo _querySplittingBehaviorFieldInfo =
-        typeof(RelationalOptionsExtension).GetField("_querySplittingBehavior", BindingFlags.NonPublic | BindingFlags.Instance);
+        typeof(RelationalOptionsExtension).GetField("_querySplittingBehavior", BindingFlags.NonPublic | BindingFlags.Instance)!;
 
     protected override DbContextOptionsBuilder SetQuerySplittingBehavior(
         DbContextOptionsBuilder optionsBuilder,
@@ -448,6 +446,15 @@ ORDER BY [p0].[Id]
 
     private void AssertContainsSql(params string[] expected)
         => TestSqlLoggerFactory.AssertBaseline(expected, assertOrder: false);
+
+    // The two split-include concurrency regression tests interleave concurrent writes (on a separate context that shares this
+    // fixture's SQL logger) with the split query, so the captured SQL is not deterministic. They assert behavior in the base
+    // class and are overridden here without a SQL baseline.
+    public override Task Split_include_collection_throws_for_orphan_child_rows_after_concurrent_insert(bool async)
+        => base.Split_include_collection_throws_for_orphan_child_rows_after_concurrent_insert(async);
+
+    public override Task Split_include_collection_not_dropped_when_other_parent_made_childless_concurrently(bool async)
+        => base.Split_include_collection_not_dropped_when_other_parent_made_childless_concurrently(async);
 
     [Fact]
     public virtual void Check_all_tests_overridden()

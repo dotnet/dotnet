@@ -9,7 +9,7 @@ namespace Microsoft.IdentityModel.Xml
     /// </summary>
     public static class WsTrustConstants
     {
-        #pragma warning disable 1591
+#pragma warning disable 1591
 
         /// <summary>
         /// Elements that can be in a WsTrust message
@@ -38,7 +38,7 @@ namespace Microsoft.IdentityModel.Xml
             public const string WsTrust1_4 = "http://docs.oasis-open.org/ws-sx/ws-trust/200802";
         }
 
-        #pragma warning restore 1591
+#pragma warning restore 1591
     }
 }
- 
+

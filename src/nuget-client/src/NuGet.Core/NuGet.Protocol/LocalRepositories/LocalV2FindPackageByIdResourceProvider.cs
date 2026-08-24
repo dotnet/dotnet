@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
 
 using System;
 using System.Threading;
@@ -22,9 +21,9 @@ namespace NuGet.Protocol
         {
         }
 
-        public override async Task<Tuple<bool, INuGetResource>> TryCreate(SourceRepository source, CancellationToken token)
+        public override async Task<Tuple<bool, INuGetResource?>> TryCreate(SourceRepository source, CancellationToken token)
         {
-            INuGetResource resource = null;
+            INuGetResource? resource = null;
 
             var feedType = await source.GetFeedType(token);
             if (feedType == FeedType.FileSystemV2 || feedType == FeedType.FileSystemUnzipped)
@@ -32,7 +31,7 @@ namespace NuGet.Protocol
                 resource = new LocalV2FindPackageByIdResource(source.PackageSource);
             }
 
-            return Tuple.Create(resource != null, resource);
+            return new Tuple<bool, INuGetResource?>(resource != null, resource);
         }
     }
 }

@@ -308,7 +308,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 );
 
                 // Check that all tasks returned true
-                if (results.All(t => t))
+                if (results.All(t => t) && !Log.HasLoggedErrors)
                 {
                     // Once all assets have been published, promotes the build to the target channels informed. 
                     // Since we can have multiple manifests (perhaps using different versions), things
@@ -340,7 +340,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
         }
 
-        public PublishArtifactsInManifestBase WhichPublishingTask(string manifestFullPath)
+        public virtual PublishArtifactsInManifestBase WhichPublishingTask(string manifestFullPath)
         {
             Log.LogMessage(MessageImportance.High, $"Creating a task to publish assets from {manifestFullPath}");
 
@@ -375,7 +375,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         internal PublishArtifactsInManifestBase ConstructPublishingV3Task(BuildModel buildModel)
         {
-            return new PublishArtifactsInManifestV3(new AssetPublisherFactory(Log))
+            return new PublishArtifactsInManifestV3()
             {
                 BuildEngine = this.BuildEngine,
                 TargetChannels = this.TargetChannels,
@@ -421,7 +421,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         internal PublishArtifactsInManifestBase ConstructPublishingV4Task(BuildModel buildModel)
         {
-            return new PublishArtifactsInManifestV4(new AssetPublisherFactory(Log))
+            return new PublishArtifactsInManifestV4()
             {
                 BuildEngine = this.BuildEngine,
                 TargetChannels = this.TargetChannels,

@@ -56,6 +56,7 @@
 
     <!-- xUnit v3 tests are self-hosting MTP executables and use MTPProject instead -->
     <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+    <XUnitProject Remove="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssembly.Tests.csproj"/>
 
     <!-- Arcade SDK validation tests spawn full build.ps1/build.sh sub-builds against the newly
          produced SDK and must run on a build agent with a local package feed; they are intended to
@@ -65,6 +66,17 @@
 
   <ItemGroup>
     <MTPProject Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.Tests.csproj"/>
+    
+    <!--
+      The assembly-level [ConditionalAssembly] in this project always evaluates to false,
+      tagging every test with the 'category=failing' trait. Filter that trait out so the
+      deliberately failing test is skipped on Helix; ignore the MTP "zero tests ran" exit
+      code (8) since no tests run after the filter. This validates that the attribute is
+      actually applied to all tests in the assembly.
+    -->
+    <MTPProject Include="..\src\Microsoft.DotNet.XUnitV3Extensions\tests\Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssembly.Tests.csproj">
+      <Arguments>--filter-not-trait "category=failing" --ignore-exit-code 8</Arguments>
+    </MTPProject>
   </ItemGroup>
 
   <ItemGroup>
@@ -79,11 +91,11 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(HelixAccessToken)' != '' ">
-    <HelixTargetQueue Include="(AlmaLinux.9.Amd64)Ubuntu.2204.Amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
+    <HelixTargetQueue Include="(AlmaLinux.9.Amd64)azurelinux.3.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)AlmaLinux.9.Amd64</TestRunName>
     </HelixTargetQueue>
     <HelixTargetQueue Include="Windows.11.Amd64.Client"/>
-    <HelixTargetQueue Include="(Debian.13.Amd64)ubuntu.2204.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
+    <HelixTargetQueue Include="(Debian.13.Amd64)azurelinux.3.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)Debian.13.Amd64</TestRunName>
     </HelixTargetQueue>
     <HelixTargetQueue Include="OSX.26.Arm64"/>
@@ -96,11 +108,11 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(HelixAccessToken)' == '' ">
-    <HelixTargetQueue Include="(AlmaLinux.9.Amd64.Open)Ubuntu.2204.Amd64.Open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
+    <HelixTargetQueue Include="(AlmaLinux.9.Amd64.Open)azurelinux.3.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)AlmaLinux.9.Amd64.Open</TestRunName>
     </HelixTargetQueue>
     <HelixTargetQueue Include="Windows.11.Amd64.Client.Open"/>
-    <HelixTargetQueue Include="(Debian.13.Amd64.Open)ubuntu.2204.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
+    <HelixTargetQueue Include="(Debian.13.Amd64.Open)azurelinux.3.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64">
       <TestRunName>$(TestRunNamePrefix)Debian.13.Amd64.Open</TestRunName>
     </HelixTargetQueue>
     <HelixTargetQueue Include="OSX.26.Arm64.Open"/>

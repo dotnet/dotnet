@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Tokens.Json.Tests;
 using Xunit;
@@ -23,6 +24,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect.Tests
                 OpenIdConnectConfiguration configuration = new OpenIdConnectConfiguration(theoryData.Json);
                 OpenIdConnectConfiguration configurationUpperCase = new OpenIdConnectConfiguration(JsonUtilities.SetPropertiesToUpperCase(theoryData.Json));
                 theoryData.ExpectedException.ProcessNoException(context);
+                context.PropertiesToIgnoreWhenComparing.Add(typeof(OpenIdConnectConfiguration), new List<string> { "JsonWebKeySet" });
 
                 IdentityComparer.AreEqual(configuration, theoryData.CompareTo, context);
                 IdentityComparer.AreEqual(configurationUpperCase, theoryData.CompareTo, context);

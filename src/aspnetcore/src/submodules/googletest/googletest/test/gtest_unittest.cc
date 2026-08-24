@@ -33,6 +33,8 @@
 
 #include "gtest/gtest.h"
 
+#include <iterator>
+
 // Verifies that the command line flag variables can be accessed in
 // code once "gtest.h" has been #included.
 // Do not move it after other gtest #includes.
@@ -87,6 +89,20 @@ void operator<<(ConvertibleGlobalType&, int);
 static_assert(sizeof(decltype(std::declval<ConvertibleGlobalType&>()
                               << 1)(*)()) > 0,
               "error in operator<< overload resolution");
+
+namespace {
+
+template <bool MutableResult, bool ConstResult>
+struct ConvertibleToBool {
+  explicit operator bool() { return MutableResult; }
+  explicit operator bool() const { return ConstResult; }
+};
+
+struct Bitfield {
+  bool bit : 1;
+};
+
+}  // namespace
 
 namespace testing {
 namespace internal {
@@ -442,11 +458,11 @@ class FormatEpochTimeInMillisAsIso8601Test : public Test {
   void SetUp() override {
     saved_tz_.reset();
 
-    GTEST_DISABLE_MSC_DEPRECATED_PUSH_(/* getenv: deprecated */)
+    GTEST_DISABLE_DEPRECATED_PUSH_(/* getenv: deprecated */)
     if (const char* tz = getenv("TZ")) {
       saved_tz_ = std::make_unique<std::string>(tz);
     }
-    GTEST_DISABLE_MSC_DEPRECATED_POP_()
+    GTEST_DISABLE_DEPRECATED_POP_()
 
     // Set the local time zone for FormatEpochTimeInMillisAsIso8601 to be
     // a fixed time zone for reproducibility purposes.
@@ -2548,6 +2564,7 @@ TEST(StringAssertionTest, ASSERT_STRCASENE) {
   EXPECT_FATAL_FAILURE(ASSERT_STRCASENE("Hi", "hi"), "(ignoring case)");
 }
 
+#if GTEST_HAS_STD_WSTRING
 // Tests *_STREQ on wide strings.
 TEST(StringAssertionTest, STREQ_Wide) {
   // NULL strings.
@@ -2603,6 +2620,7 @@ TEST(StringAssertionTest, STRNE_Wide) {
   // The streaming variation.
   ASSERT_STRNE(L"abc\x8119", L"abc\x8120") << "This shouldn't happen";
 }
+#endif  // GTEST_HAS_STD_WSTRING
 
 // Tests for ::testing::IsSubstring().
 
@@ -2615,18 +2633,6 @@ TEST(IsSubstringTest, ReturnsCorrectResultForCString) {
 
   EXPECT_TRUE(IsSubstring("", "", static_cast<const char*>(nullptr), nullptr));
   EXPECT_TRUE(IsSubstring("", "", "needle", "two needles"));
-}
-
-// Tests that IsSubstring() returns the correct result when the input
-// argument type is const wchar_t*.
-TEST(IsSubstringTest, ReturnsCorrectResultForWideCString) {
-  EXPECT_FALSE(IsSubstring("", "", kNull, L"a"));
-  EXPECT_FALSE(IsSubstring("", "", L"b", kNull));
-  EXPECT_FALSE(IsSubstring("", "", L"needle", L"haystack"));
-
-  EXPECT_TRUE(
-      IsSubstring("", "", static_cast<const wchar_t*>(nullptr), nullptr));
-  EXPECT_TRUE(IsSubstring("", "", L"needle", L"two needles"));
 }
 
 // Tests that IsSubstring() generates the correct message when the input
@@ -2649,6 +2655,18 @@ TEST(IsSubstringTest, ReturnsCorrectResultsForStdString) {
 }
 
 #if GTEST_HAS_STD_WSTRING
+// Tests that IsSubstring() returns the correct result when the input
+// argument type is const wchar_t*.
+TEST(IsSubstringTest, ReturnsCorrectResultForWideCString) {
+  EXPECT_FALSE(IsSubstring("", "", kNull, L"a"));
+  EXPECT_FALSE(IsSubstring("", "", L"b", kNull));
+  EXPECT_FALSE(IsSubstring("", "", L"needle", L"haystack"));
+
+  EXPECT_TRUE(
+      IsSubstring("", "", static_cast<const wchar_t*>(nullptr), nullptr));
+  EXPECT_TRUE(IsSubstring("", "", L"needle", L"two needles"));
+}
+
 // Tests that IsSubstring returns the correct result when the input
 // argument type is ::std::wstring.
 TEST(IsSubstringTest, ReturnsCorrectResultForStdWstring) {
@@ -2680,25 +2698,6 @@ TEST(IsNotSubstringTest, ReturnsCorrectResultForCString) {
   EXPECT_FALSE(IsNotSubstring("", "", "needle", "two needles"));
 }
 
-// Tests that IsNotSubstring() returns the correct result when the input
-// argument type is const wchar_t*.
-TEST(IsNotSubstringTest, ReturnsCorrectResultForWideCString) {
-  EXPECT_TRUE(IsNotSubstring("", "", L"needle", L"haystack"));
-  EXPECT_FALSE(IsNotSubstring("", "", L"needle", L"two needles"));
-}
-
-// Tests that IsNotSubstring() generates the correct message when the input
-// argument type is const wchar_t*.
-TEST(IsNotSubstringTest, GeneratesCorrectMessageForWideCString) {
-  EXPECT_STREQ(
-      "Value of: needle_expr\n"
-      "  Actual: L\"needle\"\n"
-      "Expected: not a substring of haystack_expr\n"
-      "Which is: L\"two needles\"",
-      IsNotSubstring("needle_expr", "haystack_expr", L"needle", L"two needles")
-          .failure_message());
-}
-
 // Tests that IsNotSubstring returns the correct result when the input
 // argument type is ::std::string.
 TEST(IsNotSubstringTest, ReturnsCorrectResultsForStdString) {
@@ -2719,6 +2718,25 @@ TEST(IsNotSubstringTest, GeneratesCorrectMessageForStdString) {
 }
 
 #if GTEST_HAS_STD_WSTRING
+
+// Tests that IsNotSubstring() returns the correct result when the input
+// argument type is const wchar_t*.
+TEST(IsNotSubstringTest, ReturnsCorrectResultForWideCString) {
+  EXPECT_TRUE(IsNotSubstring("", "", L"needle", L"haystack"));
+  EXPECT_FALSE(IsNotSubstring("", "", L"needle", L"two needles"));
+}
+
+// Tests that IsNotSubstring() generates the correct message when the input
+// argument type is const wchar_t*.
+TEST(IsNotSubstringTest, GeneratesCorrectMessageForWideCString) {
+  EXPECT_STREQ(
+      "Value of: needle_expr\n"
+      "  Actual: L\"needle\"\n"
+      "Expected: not a substring of haystack_expr\n"
+      "Which is: L\"two needles\"",
+      IsNotSubstring("needle_expr", "haystack_expr", L"needle", L"two needles")
+          .failure_message());
+}
 
 // Tests that IsNotSubstring returns the correct result when the input
 // argument type is ::std::wstring.
@@ -3699,6 +3717,15 @@ TEST(AssertionTest, AppendUserMessage) {
 TEST(AssertionTest, ASSERT_TRUE) {
   ASSERT_TRUE(2 > 1);  // NOLINT
   EXPECT_FATAL_FAILURE(ASSERT_TRUE(2 < 1), "2 < 1");
+
+  ASSERT_TRUE((ConvertibleToBool<true, false>()));
+  ASSERT_TRUE((std::add_const_t<ConvertibleToBool<false, true>>()));
+
+  Bitfield bf = {true};
+  ASSERT_TRUE(bf.bit);                                             // &
+  ASSERT_TRUE(Bitfield{true}.bit);                                 // &&
+  ASSERT_TRUE(static_cast<const Bitfield&>(Bitfield{true}).bit);   // const&
+  ASSERT_TRUE(static_cast<const Bitfield&&>(Bitfield{true}).bit);  // const&&
 }
 
 // Tests ASSERT_TRUE(predicate) for predicates returning AssertionResult.
@@ -3725,6 +3752,15 @@ TEST(AssertionTest, ASSERT_FALSE) {
                        "Value of: 2 > 1\n"
                        "  Actual: true\n"
                        "Expected: false");
+
+  ASSERT_FALSE((ConvertibleToBool<false, true>()));
+  ASSERT_FALSE((std::add_const_t<ConvertibleToBool<true, false>>()));
+
+  Bitfield bf = {false};
+  ASSERT_FALSE(bf.bit);                                              // &
+  ASSERT_FALSE(Bitfield{false}.bit);                                 // &&
+  ASSERT_FALSE(static_cast<const Bitfield&>(Bitfield{false}).bit);   // const&
+  ASSERT_FALSE(static_cast<const Bitfield&&>(Bitfield{false}).bit);  // const&&
 }
 
 // Tests ASSERT_FALSE(predicate) for predicates returning AssertionResult.
@@ -4426,6 +4462,15 @@ TEST(ExpectTest, EXPECT_TRUE) {
                           "  Actual: false\n"
                           "Expected: true");
   EXPECT_NONFATAL_FAILURE(EXPECT_TRUE(2 > 3), "2 > 3");
+
+  EXPECT_TRUE((ConvertibleToBool<true, false>()));
+  EXPECT_TRUE((std::add_const_t<ConvertibleToBool<false, true>>()));
+
+  Bitfield bf = {true};
+  EXPECT_TRUE(bf.bit);                                             // &
+  EXPECT_TRUE(Bitfield{true}.bit);                                 // &&
+  EXPECT_TRUE(static_cast<const Bitfield&>(Bitfield{true}).bit);   // const&
+  EXPECT_TRUE(static_cast<const Bitfield&&>(Bitfield{true}).bit);  // const&&
 }
 
 // Tests EXPECT_TRUE(predicate) for predicates returning AssertionResult.
@@ -4455,6 +4500,15 @@ TEST(ExpectTest, EXPECT_FALSE) {
                           "  Actual: true\n"
                           "Expected: false");
   EXPECT_NONFATAL_FAILURE(EXPECT_FALSE(2 < 3), "2 < 3");
+
+  EXPECT_FALSE((ConvertibleToBool<false, true>()));
+  EXPECT_FALSE((std::add_const_t<ConvertibleToBool<true, false>>()));
+
+  Bitfield bf = {false};
+  EXPECT_FALSE(bf.bit);                                              // &
+  EXPECT_FALSE(Bitfield{false}.bit);                                 // &&
+  EXPECT_FALSE(static_cast<const Bitfield&>(Bitfield{false}).bit);   // const&
+  EXPECT_FALSE(static_cast<const Bitfield&&>(Bitfield{false}).bit);  // const&&
 }
 
 // Tests EXPECT_FALSE(predicate) for predicates returning AssertionResult.
@@ -5803,9 +5857,8 @@ class ParseFlagsTest : public Test {
   // to specify the array sizes.
 
 #define GTEST_TEST_PARSING_FLAGS_(argv1, argv2, expected, should_print_help) \
-  TestParsingFlags(sizeof(argv1) / sizeof(*argv1) - 1, argv1,                \
-                   sizeof(argv2) / sizeof(*argv2) - 1, argv2, expected,      \
-                   should_print_help)
+  TestParsingFlags(std::size(argv1) - 1, argv1, std::size(argv2) - 1, argv2, \
+                   expected, should_print_help)
 };
 
 // Tests parsing an empty command line.

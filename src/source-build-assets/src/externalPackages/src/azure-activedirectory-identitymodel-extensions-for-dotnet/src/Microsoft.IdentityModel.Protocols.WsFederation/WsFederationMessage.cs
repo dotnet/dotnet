@@ -41,14 +41,14 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
             var wsFederationMessage = new WsFederationMessage();
             if (!string.IsNullOrWhiteSpace(queryString))
             {
-                foreach(var keyValuePair in QueryHelper.ParseQuery(queryString))
+                foreach (var keyValuePair in QueryHelper.ParseQuery(queryString))
                 {
-                    foreach(var value in keyValuePair.Value)
+                    foreach (var value in keyValuePair.Value)
                     {
                         wsFederationMessage.SetParameter(keyValuePair.Key, value);
                     }
                 }
-            } 
+            }
 
             return wsFederationMessage;
         }
@@ -71,7 +71,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
 
             return new WsFederationMessage();
         }
-       
+
         /// <summary>
         /// Initializes a new instance of the <see cref="WsFederationMessage"/> class.
         /// </summary>
@@ -312,7 +312,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         {
             get => Wa == WsFederationConstants.WsFederationActions.SignIn;
         }
-        
+
         /// <summary>
         /// Gets a boolean representing if the <see cref="WsFederationMessage"/> is a 'sign-out-message'.
         /// </summary>
@@ -326,8 +326,8 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
         /// </summary>
         [property: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Wa")]
         [property: SuppressMessage("Microsoft.Naming", "CA1704")]
-        public string? Wa 
-        { 
+        public string? Wa
+        {
             get { return GetParameter(WsFederationConstants.WsFederationParameterNames.Wa); }
             set { SetParameter(WsFederationConstants.WsFederationParameterNames.Wa, value); }
         }

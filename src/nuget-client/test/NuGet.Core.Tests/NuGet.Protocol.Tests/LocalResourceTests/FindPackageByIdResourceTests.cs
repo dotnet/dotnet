@@ -118,8 +118,8 @@ namespace NuGet.Protocol.Tests
                     Assert.Equal(0, emptyV3.Count);
                     Assert.True(v2Stream.Length > 0);
                     Assert.True(v3Stream.Length > 0);
-                    Assert.Equal(0, depV2.DependencyGroups.Count);
-                    Assert.Equal(0, depV3.DependencyGroups.Count);
+                    Assert.Equal(0, depV2!.DependencyGroups.Count);
+                    Assert.Equal(0, depV3!.DependencyGroups.Count);
                     Assert.Null(depEmptyV2);
                     Assert.Null(depEmptyV3);
                 }

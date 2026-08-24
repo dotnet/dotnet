@@ -217,4 +217,7 @@ Error Details: {1}:{2}</value>
   <data name="Common_CannotGetNextTimestampFileName" xml:space="preserve">
     <value>Cannot get find an available filename for {0} using timestamp format '{2}' at {1}.</value>
   </data>
+  <data name="TrxLoggerWriteFailed" xml:space="preserve">
+    <value>Failed to write the results file '{0}'. {1}</value>
+  </data>
 </root>

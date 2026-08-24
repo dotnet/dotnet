@@ -21,7 +21,7 @@ namespace NuGet.ProjectModel
     {
         static DependencyGraphSpec()
         {
-            StaticState.StartMSBuildRestoreTasks += ResetCache;
+            StaticState.BuildEnded += ResetCache;
         }
 
         /// <summary>

@@ -16,7 +16,7 @@ void FileLogger::Initialize(LPCWSTR filePath)
     if (filePath)
     {
         // If log path was passed in as a parameter, use it
-        wcscpy(logFilePath, filePath);
+        wcscpy_s(logFilePath, filePath);
     }
     else
     {

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 namespace NuGet.Credentials
 {
     /// <summary>
@@ -13,7 +11,7 @@ namespace NuGet.Credentials
         /// <summary>
         /// Gets or sets the package source URI for the credential request.
         /// </summary>
-        public string Uri { get; set; }
+        public string? Uri { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the request is non-interactive.
@@ -28,6 +26,6 @@ namespace NuGet.Credentials
         /// <summary>
         /// Gets or sets the verbosity level for the request.
         /// </summary>
-        public string Verbosity { get; set; }
+        public string? Verbosity { get; set; }
     }
 }

@@ -42,6 +42,12 @@ namespace XliffTasks.Tasks
                 // and process other languages like normal
                 foreach (string language in Languages)
                 {
+                    // The neutral .xlf file carries no translations.
+                    if (XlfTask.IsNeutralLanguage(language))
+                    {
+                        continue;
+                    }
+
                     ITaskItem item = TransformTemplate(template, language, resourceMap);
                     transformedTemplates.Add(item);
                 }

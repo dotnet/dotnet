@@ -191,7 +191,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
 
                 if (responseType is TypeReference.ArrayTypeReference &&
                     type == HttpMethod.Get &&
-                    operation.Extensions.ContainsKey("x-ms-paginated"))
+                    (operation?.Extensions?.ContainsKey("x-ms-paginated") ?? false))
                 {
                     paginated = operation.Extensions["x-ms-paginated"] as PaginatedOpenApiExtension;
                 }
@@ -202,7 +202,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
 
         private TypeReference ResolveTypeForResponse(IOpenApiResponse response, string name)
         {
-            var schema = response.Content.Values.Select(t => t.Schema).FirstOrDefault(s => s != null);
+            var schema = response?.Content?.Values?.Select(t => t.Schema).FirstOrDefault(s => s != null);
 
             if (schema != null)
             {
@@ -285,7 +285,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Modeler
                         }
 
                         string enumName = GetReferenceId(schema);
-                        if (extensions.TryGetValue("x-ms-enum", out IOpenApiExtension ext) && ext is EnumOpenApiExtension enumExtension)
+                        if ((extensions?.TryGetValue("x-ms-enum", out IOpenApiExtension ext) ?? false) && ext is EnumOpenApiExtension enumExtension)
                         {
                             enumName = enumExtension.Name;
                         }

@@ -43,39 +43,34 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         ///   <c>BuildCompletion</c>, <c>ResourceTrigger</c>.</param>
         /// <param name="teamProject">Value of <c>System.TeamProject</c> (<c>SYSTEM_TEAMPROJECT</c>).
         ///   Typically <c>public</c> or <c>internal</c>.</param>
-        /// <param name="repository">Value of <c>Build.Repository.Name</c> (<c>BUILD_REPOSITORY_NAME</c>).
-        ///   For GitHub-backed AzDO repos this is <c>owner/repo</c>; for AzDO Git repos it is just
-        ///   the repository name.</param>
+        /// <param name="repoOwner">Value of <c>Build.Repository.Owner</c> (<c>BUILD_REPOSITORY_OWNER</c>).
+        ///   For GitHub-backed AzDO repos this is the owner (e.g. dotnet or microsoft)</param>
+        /// <param name="repoName">Value of repo from `owner/repo` or `owner-repo`.</param>
+        /// <returns>The Helix source string. Never null when <paramref name="teamProject"/> and
+        ///   <paramref name="repoName"/> are non-empty.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="teamProject"/> or
+        ///   <paramref name="repoName"/> or <paramref name="sourceBranch"/> is null or empty.</exception>
         /// <param name="sourceBranch">Value of <c>Build.SourceBranch</c> (<c>BUILD_SOURCEBRANCH</c>).
         ///   For PR builds this is <c>refs/pull/{N}/merge</c>; for CI builds it is the actual ref
         ///   (e.g. <c>refs/heads/main</c>).</param>
-        /// <returns>The Helix source string. Never null when <paramref name="teamProject"/> and
-        ///   <paramref name="repository"/> are non-empty.</returns>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="teamProject"/> or
-        ///   <paramref name="repository"/> or <paramref name="sourceBranch"/> is null or empty.</exception>
         public static string Compute(
             string buildReason,
             string teamProject,
-            string repository,
+            string repoOwner,
+            string repoName,
             string sourceBranch)
         {
-            if (string.IsNullOrWhiteSpace(teamProject))
-            {
-                throw new ArgumentException("Team project must be provided.", nameof(teamProject));
-            }
+            ArgumentException.ThrowIfNullOrWhiteSpace(teamProject);
+            ArgumentException.ThrowIfNullOrWhiteSpace(repoOwner);
+            ArgumentException.ThrowIfNullOrWhiteSpace(repoName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(sourceBranch);
 
-            if (string.IsNullOrWhiteSpace(repository))
-            {
-                throw new ArgumentException("Repository must be provided.", nameof(repository));
-            }
-
-            if (string.IsNullOrWhiteSpace(sourceBranch))
-            {
-                throw new ArgumentException("Source branch must be provided.", nameof(sourceBranch));
-            }
+            var repoIdentifier = string.Equals(teamProject, "internal", StringComparison.OrdinalIgnoreCase)
+                ? $"{repoOwner}-{repoName}"
+                : $"{repoOwner}/{repoName}";
 
             string prefix = GetSourcePrefix(buildReason, teamProject);
-            return $"{prefix}/{teamProject}/{repository}/{sourceBranch}";
+            return $"{prefix}/{teamProject}/{repoIdentifier}/{sourceBranch}";
         }
 
         /// <summary>

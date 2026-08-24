@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.DotNet.SignCheckLibrary\Microsoft.DotNet.SignCheckLibrary.csproj" />
+    <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\**" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+</Project>

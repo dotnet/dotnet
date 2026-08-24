@@ -31,9 +31,35 @@ Arcade defaults to using the signing task via script invocation for signing vali
   - **Results XML File**: `/p:SignCheckResultsXmlFile`
     Output signing results to the specified XML log file.  
 
+#### Exclusions file
+
+Each non-empty line in the exclusions file has the following format:
+
+```text
+FILE_PATTERNS;PARENT_FILES;COMMENT
+```
+
+Multiple file or parent patterns can be separated with `|`. File patterns support `*` and `?`
+wildcards. Prefix a file pattern with `!` to make it an exception to the positive patterns in
+the same entry. An entry matches when at least one positive file pattern matches and none of
+its exceptions match. Exceptions take precedence regardless of their position in the list,
+and an entry containing exceptions must contain at least one positive file pattern.
+
+For example, this marks all JavaScript files except `signed.js` as files that must not be signed:
+
+```text
+*.js|!signed.js;;DO-NOT-SIGN
+```
+
+The parent field can scope both the positive patterns and their exceptions to a container:
+
+```text
+*.js|!signed.js;SomePackage.nupkg;DO-NOT-SIGN
+```
+
 #### Signing CLI Tool
 
-The CLI tool is maintained for legacy purposes and is only recommended for repositories that already use it. Refrane from using this; new repositories should use the Signing Task instead.
+The CLI tool is maintained for legacy purposes and is only recommended for repositories that already use it. Refrain from using this; new repositories should use the Signing Task instead.
 
 - **Invocation**:
   - `dnx Microsoft.DotNet.SignCheck`

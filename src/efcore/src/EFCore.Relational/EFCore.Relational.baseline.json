@@ -2296,6 +2296,24 @@
       ]
     },
     {
+      "Type": "class Microsoft.EntityFrameworkCore.DbQueryConcurrencyException : System.Exception",
+      "Methods": [
+        {
+          "Member": "DbQueryConcurrencyException();"
+        },
+        {
+          "Member": "DbQueryConcurrencyException(string message);"
+        },
+        {
+          "Member": "DbQueryConcurrencyException(string message, System.Exception? innerException);"
+        },
+        {
+          "Member": "DbQueryConcurrencyException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);",
+          "Stage": "Obsolete"
+        }
+      ]
+    },
+    {
       "Type": "abstract class Microsoft.EntityFrameworkCore.Diagnostics.DbTransactionInterceptor : Microsoft.EntityFrameworkCore.Diagnostics.IDbTransactionInterceptor, Microsoft.EntityFrameworkCore.Diagnostics.IInterceptor",
       "Methods": [
         {
@@ -14398,6 +14416,14 @@
       ]
     },
     {
+      "Type": "class Microsoft.EntityFrameworkCore.Query.RelationalNavigationExpansionExtensibilityHelper : Microsoft.EntityFrameworkCore.Query.NavigationExpansionExtensibilityHelper, Microsoft.EntityFrameworkCore.Query.INavigationExpansionExtensibilityHelper",
+      "Methods": [
+        {
+          "Member": "RelationalNavigationExpansionExtensibilityHelper(Microsoft.EntityFrameworkCore.Query.NavigationExpansionExtensibilityHelperDependencies dependencies);"
+        }
+      ]
+    },
+    {
       "Type": "class Microsoft.EntityFrameworkCore.Metadata.Conventions.RelationalNavigationJsonPropertyNameAttributeConvention : Microsoft.EntityFrameworkCore.Metadata.Conventions.NavigationAttributeConventionBase<System.Text.Json.Serialization.JsonPropertyNameAttribute>, Microsoft.EntityFrameworkCore.Metadata.Conventions.INavigationAddedConvention, Microsoft.EntityFrameworkCore.Metadata.Conventions.IConvention",
       "Methods": [
         {
@@ -17191,6 +17217,9 @@
         },
         {
           "Member": "static string SetOperationsNotAllowedAfterClientEvaluation { get; }"
+        },
+        {
+          "Member": "static string SplitQueryConcurrentModification { get; }"
         },
         {
           "Member": "static string SplitQueryString { get; }"

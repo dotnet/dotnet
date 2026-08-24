@@ -49,6 +49,11 @@ jobs:
               pull_number: prNumber
             });
 
+            if (!pullRequest.merged) {
+              core.setFailed(`PR #${prNumber} is not merged.`);
+              return;
+            }
+
             let baseSha = pullRequest.base.sha;
             const targetSha = pullRequest.merge_commit_sha ?? pullRequest.head.sha;
 
@@ -93,10 +98,6 @@ jobs:
             core.setOutput('has_baselines', String(baselineFiles.length > 0));
             core.setOutput('files_json', JSON.stringify(baselineFiles));
 
-            if (!pullRequest.merged) {
-              console.log(`PR #${prNumber} is not merged; using head SHA ${pullRequest.head.sha}.`);
-            }
-
             if (baselineFiles.length === 0) {
               console.log(`No changed baseline files detected on PR #${prNumber}.`);
               return;
@@ -113,10 +114,11 @@ jobs:
 
       - name: Check out selected commit
         if: steps.detect.outputs.has_baselines == 'true'
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ steps.detect.outputs.target_sha }}
           fetch-depth: 1
+          allow-unsafe-pr-checkout: true
 
       - name: Restore repo-local .NET SDK
         if: steps.detect.outputs.has_baselines == 'true'

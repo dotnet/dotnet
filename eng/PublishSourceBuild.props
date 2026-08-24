@@ -171,9 +171,11 @@
           DestinationFolder="$(ArtifactsAssetsDir)"
           SkipUnchangedFiles="true" />
 
+    <!-- Run a second publish pass. This target also runs during that pass, so the recursion must be
+         guarded by IsPublishPass2 to avoid re-entering the same project configuration (MSB4006). -->
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="Execute"
-             Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true'"
+             Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true' and '$(IsPublishPass2)' != 'true'"
              Properties="@(_PublishProps);IsPublishPass2=true;AssetManifestFileName=$(SYSTEM_PHASENAME).xml" />
   </Target>
 

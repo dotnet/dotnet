@@ -11,7 +11,7 @@ namespace System.IdentityModel.Tokens.Jwt.Tests
 {
     public class JwtSecurityTokenHandlerExtensibilityTests
     {
-        [Theory, MemberData(nameof(DecryptTokenTheoryData))]
+        [Theory, MemberData(nameof(DecryptTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public void DecryptToken(TheoryParams theoryParams)
         {
             try

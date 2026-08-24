@@ -42,11 +42,11 @@ namespace Microsoft.IdentityModel.Tokens.Saml2
 
         public static class AccessDecision
         {
-            public static string Deny {  get { return "Deny"; } }
+            public static string Deny { get { return "Deny"; } }
 
-            public static string Indeterminate {  get { return "Indeterminate"; } }
+            public static string Indeterminate { get { return "Indeterminate"; } }
 
-            public static string Permit {  get { return "Permit"; } }
+            public static string Permit { get { return "Permit"; } }
         }
 
         public static class Attributes

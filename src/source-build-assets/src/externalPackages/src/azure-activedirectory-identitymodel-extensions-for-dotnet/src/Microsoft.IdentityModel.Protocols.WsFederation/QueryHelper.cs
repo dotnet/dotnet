@@ -105,7 +105,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
     {
         public IDictionary<string, IList<string>> Result { get; } = new Dictionary<string, IList<string>>();
 
-        public bool HasValues { get; set; } = false;
+        public bool HasValues { get; set; }
 
         public void Append(string key, string value)
         {

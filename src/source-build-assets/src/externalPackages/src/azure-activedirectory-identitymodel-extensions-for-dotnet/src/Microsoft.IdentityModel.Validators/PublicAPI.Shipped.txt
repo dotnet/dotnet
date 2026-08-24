@@ -1,0 +1,12 @@
+Microsoft.IdentityModel.Validators.AadIssuerValidator
+Microsoft.IdentityModel.Validators.AadIssuerValidator.Validate(string issuer, Microsoft.IdentityModel.Tokens.SecurityToken securityToken, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters) -> string
+Microsoft.IdentityModel.Validators.AadTokenValidationParametersExtension
+Microsoft.IdentityModel.Validators.ProtocolVersion
+Microsoft.IdentityModel.Validators.ProtocolVersion.V1 = 0 -> Microsoft.IdentityModel.Validators.ProtocolVersion
+Microsoft.IdentityModel.Validators.ProtocolVersion.V11 = 1 -> Microsoft.IdentityModel.Validators.ProtocolVersion
+Microsoft.IdentityModel.Validators.ProtocolVersion.V2 = 2 -> Microsoft.IdentityModel.Validators.ProtocolVersion
+static Microsoft.IdentityModel.Validators.AadIssuerValidator.GetAadIssuerValidator(string aadAuthority, System.Net.Http.HttpClient httpClient, System.Func<string, Microsoft.IdentityModel.Tokens.BaseConfigurationManager> configurationManagerProvider) -> Microsoft.IdentityModel.Validators.AadIssuerValidator
+static Microsoft.IdentityModel.Validators.AadIssuerValidator.GetAadIssuerValidator(string aadAuthority, System.Net.Http.HttpClient httpClient) -> Microsoft.IdentityModel.Validators.AadIssuerValidator
+static Microsoft.IdentityModel.Validators.AadIssuerValidator.GetAadIssuerValidator(string aadAuthority) -> Microsoft.IdentityModel.Validators.AadIssuerValidator
+static Microsoft.IdentityModel.Validators.AadTokenValidationParametersExtension.EnableAadSigningKeyIssuerValidation(this Microsoft.IdentityModel.Tokens.TokenValidationParameters tokenValidationParameters) -> void
+static Microsoft.IdentityModel.Validators.AadTokenValidationParametersExtension.EnableEntraIdSigningKeyCloudInstanceValidation(this Microsoft.IdentityModel.Tokens.TokenValidationParameters tokenValidationParameters) -> void

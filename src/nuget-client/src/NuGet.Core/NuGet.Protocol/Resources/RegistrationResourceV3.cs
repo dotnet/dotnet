@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -102,7 +100,7 @@ namespace NuGet.Protocol
         /// Returns the registration blob for the id and version
         /// </summary>
         /// <remarks>The inlined entries are potentially going away soon</remarks>
-        public virtual async Task<JObject> GetPackageMetadata(PackageIdentity identity, SourceCacheContext cacheContext, Common.ILogger log, CancellationToken token)
+        public virtual async Task<JObject?> GetPackageMetadata(PackageIdentity identity, SourceCacheContext cacheContext, Common.ILogger log, CancellationToken token)
         {
             return (await GetPackageMetadata(identity.Id, new VersionRange(identity.Version, true, identity.Version, true), true, true, cacheContext, log, token)).SingleOrDefault();
         }
@@ -142,10 +140,10 @@ namespace NuGet.Protocol
                     throw new InvalidDataException(registrationUri.AbsoluteUri);
                 }
 
-                foreach (JObject packageObj in rangeObj["items"])
+                foreach (JObject packageObj in rangeObj["items"]!)
                 {
-                    var catalogEntry = (JObject)packageObj["catalogEntry"];
-                    var version = NuGetVersion.Parse(catalogEntry["version"].ToString());
+                    var catalogEntry = (JObject)packageObj["catalogEntry"]!;
+                    var version = NuGetVersion.Parse(catalogEntry["version"]!.ToString());
                     var listed = catalogEntry.GetBoolean("listed") ?? true;
 
                     if (range.Satisfies(version)
@@ -193,10 +191,13 @@ namespace NuGet.Protocol
 
             Uri registrationUri = GetUri(packageId);
 
-            IReadOnlyList<RegistrationPage> ranges = await RegistrationUtility.LoadRangesAsItemsAsync(_client, registrationUri, packageId, range, cacheContext, log, token);
+            IReadOnlyList<RegistrationPage?> ranges = await RegistrationUtility.LoadRangesAsItemsAsync(_client, registrationUri, packageId, range, cacheContext, log, token);
 
-            foreach (RegistrationPage page in ranges.NoAllocEnumerate())
+            // NoAllocEnumerate can't be used on nullable types, so avoid allocating an enumerator by using a for loop.
+            for (int i = 0; i < ranges.Count; i++)
             {
+                RegistrationPage? page = ranges[i];
+
                 if (page is null || page.Items is null)
                 {
                     throw new InvalidDataException(registrationUri.AbsoluteUri);
@@ -225,7 +226,7 @@ namespace NuGet.Protocol
             return results;
         }
 
-        internal virtual async Task<RegistrationLeafItem> GetPackageMetadataItemAsync(PackageIdentity identity, SourceCacheContext cacheContext, Common.ILogger log, CancellationToken token)
+        internal virtual async Task<RegistrationLeafItem?> GetPackageMetadataItemAsync(PackageIdentity identity, SourceCacheContext cacheContext, Common.ILogger log, CancellationToken token)
         {
             return (await GetPackageMetadataItemsAsync(identity.Id, new VersionRange(identity.Version, true, identity.Version, true), true, true, cacheContext, log, token)).SingleOrDefault();
         }

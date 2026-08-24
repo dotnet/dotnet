@@ -18,7 +18,7 @@ namespace Microsoft.IdentityModel.Tokens.Saml.Tests
     public class RoundTripSamlTokenTests
     {
 
-        [Theory, MemberData(nameof(RoundTripTokenTheoryData))]
+        [Theory, MemberData(nameof(RoundTripTokenTheoryData), DisableDiscoveryEnumeration = true)]
         public void RoundTripTokens(SamlRoundTripTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.RoundTripTokens", theoryData);

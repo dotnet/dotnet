@@ -529,4 +529,178 @@ public class EnableLoggersArgumentProcessorTests
 
         Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
     }
+
+    [TestMethod]
+    public void ExecutorInitializeShouldPreserveExistingConfigurationWhenNoNewParametersAreProvided()
+    {
+        // When the MSBuild task adds "--logger:Console" (no verbosity) because a settings file
+        // is in use, the existing Configuration from the .runsettings LoggerRunSettings should
+        // be preserved, not silently discarded.
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                  <LoggerRunSettings>
+                    <Loggers>
+                      <Logger friendlyName=""console"" enabled=""True"">
+                        <Configuration>
+                          <Verbosity>normal</Verbosity>
+                        </Configuration>
+                      </Logger>
+                    </Loggers>
+                  </LoggerRunSettings>
+                </RunSettings>";
+
+        var runSettings = new RunSettings();
+        runSettings.LoadSettingsXml(settingsXml);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
+
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
+        executor.Initialize("console");
+
+        string expectedSettingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-16""?>
+<RunSettings>
+  <LoggerRunSettings>
+    <Loggers>
+      <Logger friendlyName=""console"" enabled=""True"">
+        <Configuration>
+          <Verbosity>normal</Verbosity>
+        </Configuration>
+      </Logger>
+    </Loggers>
+  </LoggerRunSettings>
+</RunSettings>";
+
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
+    }
+
+    [TestMethod]
+    public void ExecutorInitializeShouldOverrideExistingConfigurationWhenNewParametersAreProvided()
+    {
+        // When the user explicitly passes "--logger:console;verbosity=quiet", the explicit
+        // CLI verbosity should override whatever is in the .runsettings file.
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                  <LoggerRunSettings>
+                    <Loggers>
+                      <Logger friendlyName=""console"" enabled=""True"">
+                        <Configuration>
+                          <Verbosity>normal</Verbosity>
+                        </Configuration>
+                      </Logger>
+                    </Loggers>
+                  </LoggerRunSettings>
+                </RunSettings>";
+
+        var runSettings = new RunSettings();
+        runSettings.LoadSettingsXml(settingsXml);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
+
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
+        executor.Initialize("console;verbosity=quiet");
+
+        string expectedSettingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-16""?>
+<RunSettings>
+  <LoggerRunSettings>
+    <Loggers>
+      <Logger friendlyName=""console"" enabled=""True"">
+        <Configuration>
+          <verbosity>quiet</verbosity>
+        </Configuration>
+      </Logger>
+    </Loggers>
+  </LoggerRunSettings>
+</RunSettings>";
+
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
+    }
+
+    [TestMethod]
+    public void ExecutorInitializeShouldPreserveExistingLoggerAttributesAndEnableTheLogger()
+    {
+        // Naming a logger on the command line enables it, but must not drop the attributes that
+        // only the settings file knows about.
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                  <LoggerRunSettings>
+                    <Loggers>
+                      <Logger friendlyName=""console"" codeBase=""c:\temp\custom.dll"" enabled=""False"">
+                        <Configuration>
+                          <Verbosity>normal</Verbosity>
+                        </Configuration>
+                      </Logger>
+                    </Loggers>
+                  </LoggerRunSettings>
+                </RunSettings>";
+
+        var runSettings = new RunSettings();
+        runSettings.LoadSettingsXml(settingsXml);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
+
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
+        executor.Initialize("console");
+
+        string expectedSettingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-16""?>
+<RunSettings>
+  <LoggerRunSettings>
+    <Loggers>
+      <Logger friendlyName=""console"" codeBase=""c:\temp\custom.dll"" enabled=""True"">
+        <Configuration>
+          <Verbosity>normal</Verbosity>
+        </Configuration>
+      </Logger>
+    </Loggers>
+  </LoggerRunSettings>
+</RunSettings>";
+
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
+    }
+
+    [TestMethod]
+    public void ExecutorInitializeShouldPreserveExistingConfigurationWhenLoggerIsIdentifiedByUri()
+    {
+        // A settings file may identify the console logger by uri instead of friendlyName. The
+        // existing entry has to be reused in that form too, so the Configuration survives and we
+        // do not end up with a second console logger entry.
+        string settingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <RunSettings>
+                  <LoggerRunSettings>
+                    <Loggers>
+                      <Logger uri=""logger://Microsoft/TestPlatform/ConsoleLogger/v1"" enabled=""True"">
+                        <Configuration>
+                          <Verbosity>normal</Verbosity>
+                        </Configuration>
+                      </Logger>
+                    </Loggers>
+                  </LoggerRunSettings>
+                </RunSettings>";
+
+        var runSettings = new RunSettings();
+        runSettings.LoadSettingsXml(settingsXml);
+        _runSettingsManager.SetActiveRunSettings(runSettings);
+
+        var executor = new EnableLoggerArgumentExecutor(_runSettingsManager);
+        executor.Initialize("logger://Microsoft/TestPlatform/ConsoleLogger/v1");
+
+        string expectedSettingsXml =
+            @"<?xml version=""1.0"" encoding=""utf-16""?>
+<RunSettings>
+  <LoggerRunSettings>
+    <Loggers>
+      <Logger uri=""logger://microsoft/TestPlatform/ConsoleLogger/v1"" enabled=""True"">
+        <Configuration>
+          <Verbosity>normal</Verbosity>
+        </Configuration>
+      </Logger>
+    </Loggers>
+  </LoggerRunSettings>
+</RunSettings>";
+
+        Assert.AreEqual(expectedSettingsXml, _runSettingsManager.ActiveRunSettings?.SettingsXml);
+    }
 }

@@ -12,10 +12,11 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using Moq;
+
 namespace Microsoft.TestPlatform.CommunicationUtilities.PlatformTests;
 
 [TestClass]
-[Ignore("Flaky tests")]
 public class SocketClientTests : SocketTestsBase, IDisposable
 {
     private readonly TcpListener _tcpListener;
@@ -23,8 +24,6 @@ public class SocketClientTests : SocketTestsBase, IDisposable
     private readonly ICommunicationEndPoint _socketClient;
 
     private TcpClient? _tcpClient;
-
-    public TestContext TestContext { get; set; }
 
     public SocketClientTests()
     {
@@ -39,6 +38,7 @@ public class SocketClientTests : SocketTestsBase, IDisposable
     public void Dispose()
     {
         _socketClient.Stop();
+        _tcpListener.Stop();
         // tcpClient.Close() calls tcpClient.Dispose().
         _tcpClient?.Close();
         GC.SuppressFinalize(this);
@@ -55,7 +55,8 @@ public class SocketClientTests : SocketTestsBase, IDisposable
         var acceptClientTask = _tcpListener.AcceptTcpClientAsync();
         Assert.IsTrue(acceptClientTask.Wait(Timeout));
 #pragma warning restore MSTEST0049
-        Assert.IsTrue(acceptClientTask.Result.Connected);
+        using var client = acceptClientTask.Result;
+        Assert.IsTrue(client.Connected);
     }
 
     [TestMethod]
@@ -87,55 +88,70 @@ public class SocketClientTests : SocketTestsBase, IDisposable
     [TestMethod]
     public void SocketClientStopShouldRaiseClientDisconnectedEventOnClientDisconnection()
     {
-        var waitEvent = SetupClientDisconnect(out ICommunicationChannel? _);
+        using var waitEvent = SetupClientDisconnect(out ICommunicationChannel? _);
 
         // Close the communication from client side
         _socketClient.Stop();
 
-        Assert.IsTrue(waitEvent.WaitOne(Timeout));
+        Assert.IsTrue(waitEvent.Wait(Timeout, TestContext.CancellationToken));
     }
 
     [TestMethod]
     public void SocketClientShouldRaiseClientDisconnectedEventIfConnectionIsBroken()
     {
-        var waitEvent = SetupClientDisconnect(out ICommunicationChannel? _);
+        using var waitEvent = SetupClientDisconnect(out ICommunicationChannel? _);
 
         // Close the communication from server side
         _tcpClient?.GetStream().Dispose();
         // tcpClient.Close() calls tcpClient.Dispose().
         _tcpClient?.Close();
-        Assert.IsTrue(waitEvent.WaitOne(Timeout));
+        Assert.IsTrue(waitEvent.Wait(Timeout, TestContext.CancellationToken));
     }
 
     [TestMethod]
     public void SocketClientStopShouldStopCommunication()
     {
-        var waitEvent = SetupClientDisconnect(out ICommunicationChannel? _);
+        using var waitEvent = SetupClientDisconnect(out ICommunicationChannel? _);
 
         // Close the communication from socket client side
         _socketClient.Stop();
 
-        // Validate that write on server side fails
-        waitEvent.WaitOne(Timeout);
-        Assert.ThrowsExactly<IOException>(() => WriteData(Client!));
+        // Validate that the server side observes the closed connection.
+        Assert.IsTrue(waitEvent.Wait(Timeout, TestContext.CancellationToken));
+        Assert.IsTrue(Client!.Client.Poll(Timeout * 1000, SelectMode.SelectRead));
+        Assert.AreEqual(0, Client.Client.Available);
     }
 
     [TestMethod]
     public void SocketClientStopShouldCloseChannel()
     {
-        var waitEvent = SetupClientDisconnect(out ICommunicationChannel? channel);
+        var channel = new Mock<ICommunicationChannel>();
+        var socketClient = new TestSocketClient(_ => channel.Object);
+        using ManualResetEventSlim waitEvent = new(false);
+        socketClient.Connected += (sender, eventArgs) => waitEvent.Set();
+        var connectionInfo = StartLocalServer();
+        socketClient.Start(connectionInfo);
 
-        _socketClient.Stop();
+#pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken' - AcceptTcpClientAsync/Wait overloads unavailable on .NET Framework
+        var acceptClientTask = _tcpListener.AcceptTcpClientAsync();
+        Assert.IsTrue(acceptClientTask.Wait(Timeout, TestContext.CancellationToken));
+#pragma warning restore MSTEST0049
+        _tcpClient = acceptClientTask.Result;
+        Assert.IsTrue(waitEvent.Wait(Timeout, TestContext.CancellationToken));
+        waitEvent.Reset();
+        socketClient.Disconnected += (sender, eventArgs) => waitEvent.Set();
 
-        waitEvent.WaitOne(Timeout);
-        Assert.ThrowsExactly<CommunicationException>(() => channel!.Send(Dummydata));
+        socketClient.Stop();
+
+        Assert.IsTrue(waitEvent.Wait(Timeout, TestContext.CancellationToken));
+        channel.Verify(communicationChannel => communicationChannel.Dispose(), Times.Once);
     }
 
     protected override ICommunicationChannel? SetupChannel(out ConnectedEventArgs? connectedEvent)
     {
         ICommunicationChannel? channel = null;
         ConnectedEventArgs? serverConnectedEvent = null;
-        ManualResetEvent waitEvent = new(false);
+        using ManualResetEventSlim waitEvent = new(false);
         _socketClient.Connected += (sender, eventArgs) =>
         {
             serverConnectedEvent = eventArgs;
@@ -148,20 +164,18 @@ public class SocketClientTests : SocketTestsBase, IDisposable
 
 #pragma warning disable MSTEST0049 // Use 'TestContext.CancellationToken' - AcceptTcpClientAsync/Wait overloads unavailable on .NET Framework
         var acceptClientTask = _tcpListener.AcceptTcpClientAsync();
-        if (acceptClientTask.Wait(TimeSpan.FromMilliseconds(1000)))
+        Assert.IsTrue(acceptClientTask.Wait(Timeout, TestContext.CancellationToken));
 #pragma warning restore MSTEST0049
-        {
-            _tcpClient = acceptClientTask.Result;
-            waitEvent.WaitOne(1000);
-        }
+        _tcpClient = acceptClientTask.Result;
+        Assert.IsTrue(waitEvent.Wait(Timeout, TestContext.CancellationToken));
 
         connectedEvent = serverConnectedEvent;
         return channel;
     }
 
-    private ManualResetEvent SetupClientDisconnect(out ICommunicationChannel? channel)
+    private ManualResetEventSlim SetupClientDisconnect(out ICommunicationChannel? channel)
     {
-        var waitEvent = new ManualResetEvent(false);
+        var waitEvent = new ManualResetEventSlim(false);
         _socketClient.Disconnected += (s, e) => waitEvent.Set();
         channel = SetupChannel(out ConnectedEventArgs? _);
         channel!.MessageReceived.Subscribe((sender, args) =>
@@ -176,4 +190,6 @@ public class SocketClientTests : SocketTestsBase, IDisposable
 
         return ((IPEndPoint)_tcpListener.LocalEndpoint).ToString();
     }
+
+    private sealed class TestSocketClient(Func<Stream, ICommunicationChannel> channelFactory) : SocketClient(channelFactory);
 }

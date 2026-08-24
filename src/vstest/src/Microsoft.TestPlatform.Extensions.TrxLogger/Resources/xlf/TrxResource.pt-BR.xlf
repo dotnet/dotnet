@@ -308,6 +308,11 @@ Fehlerdetails: {1}: {2}</target>
         <target state="translated">Não é possível localizar um nome de arquivo disponível para {0} usando o formato de carimbo de data/hora '{2}' em {1}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="TrxLoggerWriteFailed">
+        <source>Failed to write the results file '{0}'. {1}</source>
+        <target state="new">Failed to write the results file '{0}'. {1}</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

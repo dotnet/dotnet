@@ -122,7 +122,7 @@ build_native()
         else
             # Generate the dummy version.c and runtime_version.h, but only if they didn't exist to make sure we don't trigger unnecessary rebuild
             __versionSourceContent=$(cat <<'EOF'
-#if defined(__GNUC__) && !defined(__clang__) && defined(TARGET_SUNOS) && defined(TARGET_AMD64)
+#if defined(__GNUC__) && !defined(__clang__) && defined(__sun) && defined(__x86_64__)
 char sccsid[] __attribute__((used, weak)) = "@(#)No version information produced";
 __asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");
 #else
