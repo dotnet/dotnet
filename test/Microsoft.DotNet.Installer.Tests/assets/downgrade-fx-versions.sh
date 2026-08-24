@@ -39,7 +39,8 @@ find_dotnet_versions() {
 # Function to find latest framework version for a major.minor
 find_latest_version() {
     local major_minor=$1
-    grep -oP "LatestRuntimeFrameworkVersion=\"\\K${major_minor}\\.\\d+(?=\")" "$PROPS_FILE" |
+    local major_minor_pattern="${major_minor//./\\.}"
+    grep -oP "LatestRuntimeFrameworkVersion=\"\\K${major_minor_pattern}\\.\\d+(?=\")" "$PROPS_FILE" |
         sort -V |
         tail -n1
 }
@@ -113,7 +114,8 @@ done
 echo -e "\n${YELLOW}Verification:${NC}"
 for version in "${dotnet_versions[@]}"; do
     echo "${version} versions in file:"
-    grep -oP "${version}\.\d+" "$PROPS_FILE" | sort -u
+    version_pattern="${version//./\\.}"
+    grep -oP "${version_pattern}\.\d+" "$PROPS_FILE" | sort -u
     echo ""
 done
 
