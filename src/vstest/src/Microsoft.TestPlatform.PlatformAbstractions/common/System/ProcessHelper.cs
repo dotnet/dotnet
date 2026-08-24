@@ -41,13 +41,6 @@ public partial class ProcessHelper : IProcessHelper
 #endif
     }
 
-    /// <summary>
-    /// Gets or sets the set of environment variables to be used when spawning a new process.
-    /// Should this set of environment variables be null, the environment variables inherited from
-    /// the parent process will be used.
-    /// </summary>
-    internal static IDictionary<string, string?>? ExternalEnvironmentVariables { get; set; }
-
     /// <inheritdoc/>
     public object LaunchProcess(string processPath, string? arguments, string? workingDirectory, IDictionary<string, string?>? envVariables, Action<object?, string?>? errorCallback, Action<object?>? exitCallBack, Action<object?, string?>? outputCallBack)
         => LaunchProcess(processPath, arguments, workingDirectory, envVariables, errorCallback, exitCallBack, outputCallBack, createNoNewWindow: true);
@@ -87,30 +80,6 @@ public partial class ProcessHelper : IProcessHelper
             process.StartInfo.RedirectStandardError = true;
 
             process.EnableRaisingEvents = true;
-
-            // When vstest.console is started in its own process in VisualStudio it is TestWindowStoreHost that starts it.
-            // TestWindowStoreHost inherits environment variables from ServiceHost and DevEnv. Those env variables,
-            // contain multiple "internal" environment variables, and they also contain DOTNET_ROOT pointing to the 
-            // .NET that is shipped with VisualStudio. So to work around this, vstest.console is given a set of environment
-            // variables that has only variables that DevEnv was started with. So it gets a "clean" set of env variables.
-            //
-            // When we run vstest.console in process, we cannot start ourselves with the same clean set of env variables,
-            // and the best we can do is to start our child processes (testhost / datacollector) with this environment.
-            // To do that we pass that set of "clean" env variables down to the ProcessHelper, and use those instead
-            // of all the variables that are set in the current process.
-            if (ExternalEnvironmentVariables is not null)
-            {
-                process.StartInfo.EnvironmentVariables.Clear();
-                foreach (var kvp in ExternalEnvironmentVariables)
-                {
-                    if (kvp.Value is null)
-                    {
-                        continue;
-                    }
-
-                    process.StartInfo.AddEnvironmentVariable(kvp.Key, kvp.Value);
-                }
-            }
 
             // Set additional environment variables.
             if (envVariables != null)

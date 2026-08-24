@@ -6,12 +6,10 @@ module internal FSharp.Compiler.Features
 /// LanguageFeature enumeration
 [<RequireQualifiedAccess>]
 type LanguageFeature =
-    | RelaxWhitespace2
     | NameOf
     | DotlessFloat32Literal
     | PackageManagement
     | FromEndSlicing
-    | FixedIndexSlice3d4d
     | ResumableStateMachines
     | NullableOptionalInterop
     | DefaultInterfaceMemberConsumption
@@ -36,19 +34,15 @@ type LanguageFeature =
     | LowercaseDUWhenRequireQualifiedAccess
     | InterfacesWithAbstractStaticMembers
     | SelfTypeConstraints
-    | AccessorFunctionShorthand
     | MatchNotAllowedForUnionCaseWithNoData
     | CSharpExtensionAttributeNotRequired
     | ErrorForNonVirtualMembersOverrides
-    | WarningWhenInliningMethodImplNoInlineMarkedFunction
     | EscapeDotnetFormattableStrings
     | ArithmeticInLiterals
     | ErrorReportingOnStaticClasses
-    | TryWithInSeqExpression
     | WarningWhenCopyAndUpdateRecordChangesAllFields
     | StaticMembersInInterfaces
     | NonInlineLiteralsAsPrintfFormat
-    | NestedCopyAndUpdate
     | ExtendedStringInterpolation
     | WarningWhenMultipleRecdTypeChoice
     | ImprovedImpliedArgumentNames
@@ -56,7 +50,6 @@ type LanguageFeature =
     | StaticLetInRecordsDusEmptyTypes
     | WarningWhenTailRecAttributeButNonTailRecUsage
     | UnmanagedConstraintCsharpInterop
-    | WhileBang
     | ReuseSameFieldsInStructUnions
     | ExtendedFixedBindings
     | PreferStringGetPinnableReference
