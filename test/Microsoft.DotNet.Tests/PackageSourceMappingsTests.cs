@@ -67,8 +67,50 @@ namespace Microsoft.DotNet.Tests
         [InlineData("sb-sba-offline.config", false)]
         public void SourceBuildSbaRepoTests(string nugetConfigFilename, bool useOnlineFeeds)
         {
-            string[] sources = [PrebuiltSourceName, PreviouslySourceBuiltSourceName, SharedComponentsSourceName, ReferencePackagesSourceName];
+            string[] sources = [PrebuiltSourceName, PreviouslySourceBuiltSourceName, ReferencePackagesSourceName];
             RunTest(nugetConfigFilename, useOnlineFeeds, sources, sourceBuild: true);
+        }
+
+        [Fact]
+        public void SourceBuildSbaDoesNotMapSharedComponents()
+        {
+            string psmAssetsDir = Path.Combine(Directory.GetCurrentDirectory(), "assets", nameof(PackageSourceMappingsTests));
+            string originalNugetConfig = Path.Combine(psmAssetsDir, "original", "sb-sba-offline.config");
+            string modifiedNugetConfig = Path.Combine(PackageSourceMappingsSetup.PackageSourceMappingsRoot, "sb-sba-with-shared-source.config");
+            Directory.CreateDirectory(Path.GetDirectoryName(modifiedNugetConfig)!);
+            File.Copy(originalNugetConfig, modifiedNugetConfig, true);
+
+            var document = XDocument.Load(modifiedNugetConfig);
+            document.Root!.Element("packageSources")!.Add(
+                new XElement("add",
+                    new XAttribute("key", SharedComponentsSourceName),
+                    new XAttribute("value", "%shared-components%")));
+            document.Save(modifiedNugetConfig);
+            UpdateNugetConfigTokens(modifiedNugetConfig);
+
+            var task = new UpdateNuGetConfigPackageSourcesMappings()
+            {
+                SbaCacheSourceName = "source-build-assets-cache",
+                SbaRepoSrcPath = TestSetup.SourceBuildAssetsRepo,
+                SourceBuiltSourceNamePrefix = "source-built-",
+                PreviousBuildPassSourceNamePrefix = "previous-build-pass-",
+                NuGetConfigFile = modifiedNugetConfig,
+                SourceBuildSources = [PrebuiltSourceName, PreviouslySourceBuiltSourceName, ReferencePackagesSourceName],
+                ReferencePackagesSourceName = ReferencePackagesSourceName,
+                PreviouslySourceBuiltSourceName = PreviouslySourceBuiltSourceName,
+                PrebuiltSourceName = PrebuiltSourceName,
+                SharedComponentsSourceName = SharedComponentsSourceName
+            };
+
+            Assert.True(task.Execute());
+
+            document = XDocument.Load(modifiedNugetConfig);
+            Assert.Contains(
+                document.Root!.Element("packageSources")!.Elements("add"),
+                element => element.Attribute("key")!.Value == SharedComponentsSourceName);
+            Assert.DoesNotContain(
+                document.Root.Element("packageSourceMapping")!.Elements("packageSource"),
+                element => element.Attribute("key")!.Value == SharedComponentsSourceName);
         }
 
         // Source build tests with shared components - test precedence behavior
