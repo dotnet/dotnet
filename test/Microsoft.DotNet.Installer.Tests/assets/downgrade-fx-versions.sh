@@ -29,10 +29,19 @@ fi
 echo "Creating backup: ${PROPS_FILE}${BACKUP_SUFFIX}"
 cp "$PROPS_FILE" "${PROPS_FILE}${BACKUP_SUFFIX}"
 
-# Function to find latest version for a major.minor
+# Function to find .NET versions with servicing releases
+find_dotnet_versions() {
+    grep -oP 'LatestRuntimeFrameworkVersion="\K\d+\.\d+\.\d+(?=")' "$PROPS_FILE" |
+        awk -F. '$3 >= 2 { print $1 "." $2 }' |
+        sort -Vru
+}
+
+# Function to find latest framework version for a major.minor
 find_latest_version() {
     local major_minor=$1
-    grep -oP "${major_minor}\.\d+" "$PROPS_FILE" | sort -V | tail -n1
+    grep -oP "LatestRuntimeFrameworkVersion=\"\\K${major_minor}\\.\\d+(?=\")" "$PROPS_FILE" |
+        sort -V |
+        tail -n1
 }
 
 # Function to decrement patch version by 2
@@ -90,16 +99,23 @@ process_dotnet_version() {
 }
 
 # Process .NET versions
-process_dotnet_version "9.0"
-process_dotnet_version "8.0"
+mapfile -t dotnet_versions < <(find_dotnet_versions)
+if [ "${#dotnet_versions[@]}" -eq 0 ]; then
+    echo -e "${RED}Error: No serviced .NET framework versions found${NC}"
+    exit 1
+fi
+
+for version in "${dotnet_versions[@]}"; do
+    process_dotnet_version "$version"
+done
 
 # Verify changes
 echo -e "\n${YELLOW}Verification:${NC}"
-echo "9.0 versions in file:"
-grep -oP "9\.0\.\d+" "$PROPS_FILE" | sort -u
-echo ""
-echo "8.0 versions in file:"
-grep -oP "8\.0\.\d+" "$PROPS_FILE" | sort -u
+for version in "${dotnet_versions[@]}"; do
+    echo "${version} versions in file:"
+    grep -oP "${version}\.\d+" "$PROPS_FILE" | sort -u
+    echo ""
+done
 
 echo -e "\n${GREEN}Done! Backup saved at: ${PROPS_FILE}${BACKUP_SUFFIX}${NC}"
 echo -e "${YELLOW}To restore: cp ${PROPS_FILE}${BACKUP_SUFFIX} ${PROPS_FILE}${NC}"
