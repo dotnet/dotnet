@@ -105,7 +105,7 @@ function Initialize-MsftToolset([string]$repoRoot, [string]$customSdkDir, [strin
 
     Write-Host "Using bootstrap Arcade SDK version '$arcadeVersion'"
     Update-GlobalJsonMSBuildSdkVersion (Join-Path $repoRoot 'global.json') 'Microsoft.DotNet.Arcade.Sdk' $arcadeVersion
-    $extraProperties += "/p:ExtraRestoreSourcePath=$customPackagesDir"
+    $extraProperties += "/p:CustomPreviouslySourceBuiltPackagesPath=$customPackagesDir"
     $extraProperties += "/p:RestoreAdditionalProjectSources=$customPackagesDir"
   }
 
