@@ -467,6 +467,11 @@ jobs:
             // branch), each potentially milestoning the same child PR differently.
             // Rule: oldest milestone wins. Returns { action: 'skip'|'apply', reason, warn? }.
             function decideMilestoneAction(pr, milestoneName, milestoneNumber) {
+              // associatedPullRequests can include an open PR when a commit in the
+              // flowed range is that PR's base commit rather than a commit it introduced.
+              if (!pr.merged_at) {
+                return { action: 'skip', reason: 'PR has not been merged' };
+              }
               if (pr.milestone?.number === milestoneNumber) {
                 return { action: 'skip', reason: 'already has correct milestone' };
               }
