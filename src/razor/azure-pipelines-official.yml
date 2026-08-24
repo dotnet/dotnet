@@ -14,7 +14,6 @@ variables:
   value: 'All'
 - name: RunIntegrationTests
   value: false
-- group: DotNet-DevDiv-Insertion-Workflow-Variables
 - name: _DevDivDropAccessToken
   value: ''
 - name: Razor.GitHubEmail
