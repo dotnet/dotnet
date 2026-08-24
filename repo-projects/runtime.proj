@@ -47,6 +47,8 @@
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
     <!-- Pass through the C++ standard library to use (e.g., libc++ or (the default) libstdc++). -->
     <BuildArgs Condition="'$(TargetCxxStandardLibrary)' != ''">$(BuildArgs) /p:TargetCxxStandardLibrary=$(TargetCxxStandardLibrary)</BuildArgs>
+    <BuildArgs Condition="'$(TargetCxxStandardLibraryStatic)' != ''">$(BuildArgs) /p:TargetCxxStandardLibraryStatic=$(TargetCxxStandardLibraryStatic)</BuildArgs>
+    <BuildArgs Condition="'$(TargetCxxAbiLibrary)' != ''">$(BuildArgs) /p:TargetCxxAbiLibrary=$(TargetCxxAbiLibrary)</BuildArgs>
     <BuildArgs Condition="'$(CppCompilerAndLinker)' != ''">$(BuildArgs) /p:CppCompilerAndLinker=$(CppCompilerAndLinker)</BuildArgs>
 
     <!-- Handle system libraries -->

@@ -465,6 +465,7 @@ stages:
           crossRootFs: '/crossrootfs/x64'
           targetOS: linux
           targetArchitecture: x64
+          extraProperties: /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
           brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
@@ -514,6 +515,7 @@ stages:
           crossRootFs: '/crossrootfs/arm'
           targetOS: linux
           targetArchitecture: arm
+          extraProperties: /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
           brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
@@ -529,6 +531,7 @@ stages:
           crossRootFs: '/crossrootfs/arm64'
           targetOS: linux
           targetArchitecture: arm64
+          extraProperties: /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
           brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
