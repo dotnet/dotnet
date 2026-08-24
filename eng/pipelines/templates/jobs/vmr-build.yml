@@ -444,6 +444,9 @@ jobs:
     fetchDepth: 1
     retryCountOnTaskFailure: 5
 
+  - ${{ if in(parameters.targetOS, 'osx', 'maccatalyst', 'ios', 'iossimulator', 'tvos', 'tvossimulator') }}:
+    - template: ../steps/select-xcode.yml
+
   - ${{ parameters.initSteps }}
 
   - ${{ if eq(parameters.setSourceDateEpoch, true) }}:
