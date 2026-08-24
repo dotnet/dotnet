@@ -6,8 +6,8 @@
   <PropertyGroup>
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
     <UseBootstrapArcade Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</UseBootstrapArcade>
-    <!-- SBA must bootstrap from PSB rather than current 1xx shared components. -->
-    <_UseSharedComponentsInputs Condition="'$(RepositoryName)' != 'source-build-assets'">true</_UseSharedComponentsInputs>
+    <!-- Bootstrap Arcade repos must bootstrap from PSB rather than current 1xx shared components. -->
+    <_UseSharedComponentsInputs Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</_UseSharedComponentsInputs>
 
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>

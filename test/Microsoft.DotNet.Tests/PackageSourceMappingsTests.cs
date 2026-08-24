@@ -72,7 +72,7 @@ namespace Microsoft.DotNet.Tests
         }
 
         [Fact]
-        public void SourceBuildSbaDoesNotMapSharedComponents()
+        public void SourceBuildBootstrapRepoDoesNotMapSharedComponents()
         {
             string psmAssetsDir = Path.Combine(Directory.GetCurrentDirectory(), "assets", nameof(PackageSourceMappingsTests));
             string originalNugetConfig = Path.Combine(psmAssetsDir, "original", "sb-sba-offline.config");
