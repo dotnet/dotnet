@@ -19,15 +19,22 @@
         Condition="'$(UseNativeAotForComponents)' != 'true'" />
       <RefPackFile Include="$(MicrosoftNetCoreAppRefPackDir)/**/*" />
       <RuntimePackFile Include="$(MicrosoftNetCoreAppRuntimePackDir)/**/*" />
+      <PortableRuntimePackFile
+        Include="$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)/**/*"
+        Condition="'$(PortableTargetRid)' != '' and
+                   '$(PortableTargetRid)' != '$(TargetRid)' and
+                   !Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)') and
+                   Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)')" />
       <RidGraphFile Include="$(ArtifactsBinDir)Microsoft.NETCore.Platforms/*.json" />
 
       <AotSdkFile DestinationPath="$(BootstrapAotSdkDir)/%(Filename)%(Extension)" />
       <AppHostFile DestinationPath="$(BootstrapHostDir)/%(Filename)%(Extension)" />
       <RefPackFile DestinationPath="$(BootstrapRefPackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
       <RuntimePackFile DestinationPath="$(BootstrapRuntimePackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <PortableRuntimePackFile DestinationPath="$(BootstrapRuntimePackDir)/runtimes/$(PortableTargetRid)/%(RecursiveDir)%(Filename)%(Extension)" />
       <RidGraphFile DestinationPath="$(BootstrapRidGraphDir)/%(RecursiveDir)%(Filename)%(Extension)" />
 
-      <BootstrapFile Include="@(AotSdkFile);@(AppHostFile);@(RefPackFile);@(RuntimePackFile);@(RidGraphFile)" />
+      <BootstrapFile Include="@(AotSdkFile);@(AppHostFile);@(RefPackFile);@(RuntimePackFile);@(PortableRuntimePackFile);@(RidGraphFile)" />
     </ItemGroup>
 
     <Error Text="The bootstrap AOT SDK was not produced."
