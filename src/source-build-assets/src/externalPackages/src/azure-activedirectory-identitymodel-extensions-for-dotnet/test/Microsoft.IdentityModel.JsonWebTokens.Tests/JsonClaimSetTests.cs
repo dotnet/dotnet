@@ -8,9 +8,11 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.IdentityModel.TestUtils;
-using Microsoft.IdentityModel.Tokens.Json.Tests;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Json.Tests;
 using Xunit;
 
 namespace Microsoft.IdentityModel.JsonWebTokens.Tests
@@ -34,7 +36,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             new Claim("dateTimeIso8061", _dateTime.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture), ClaimValueTypes.DateTime, "LOCAL AUTHORITY", "LOCAL AUTHORITY"),
         };
 
-        [Theory, MemberData(nameof(DirectClaimSetTestCases))]
+        [Theory, MemberData(nameof(DirectClaimSetTestCases), DisableDiscoveryEnumeration = true)]
         public void DirectClaimSetTests(JsonClaimSetTheoryData theoryData)
         {
             CompareContext context = TestUtilities.WriteHeader($"{this}.ClaimSetTests", theoryData);
@@ -78,7 +80,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             return theoryData;
         }
 
-        [Theory, MemberData(nameof(GetClaimAsTypeTheoryData))]
+        [Theory, MemberData(nameof(GetClaimAsTypeTheoryData), DisableDiscoveryEnumeration = true)]
         public void GetClaimAsType(JsonClaimSetTheoryData theoryData)
         {
             CompareContext context = TestUtilities.WriteHeader($"{this}.GetClaimAsType", theoryData);
@@ -98,6 +100,44 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
             }
 
             TestUtilities.AssertFailIfErrors(context);
+        }
+
+        // Tests a JsonClaimSet, to ensure the same List object is returned for concurrent calls to the Claims member.
+        [Fact]
+        public async Task ValidJsonClaimSet_ConcurrencyTest()
+        {
+            // Arrange
+            var numThreads = 10;
+            var barrier = new Barrier(numThreads);
+            var jsonClaims = new Dictionary<string, object>
+            {
+                { "claim1", "value1" },
+                { "claim2", "value2" }
+            };
+            var jsonClaimSet = new JsonClaimSet(jsonClaims);
+            List<Claim>[] allClaims = new List<Claim>[numThreads];
+            Task[] tasks = new Task[numThreads];
+
+            for (var i = 0; i < numThreads; i++)
+            {
+                var index = i;
+                tasks[i] = (Task.Run(() =>
+                {
+                    barrier.SignalAndWait();
+                    allClaims[index] = jsonClaimSet.Claims("claim1");
+                }));
+            }
+
+            // Act
+            await Task.WhenAll(tasks);
+
+            // Assert
+            Assert.All(allClaims, claims => Assert.NotNull(claims));
+            var firstClaims = allClaims[0];
+            for (var i = 1; i < numThreads; i++)
+            {
+                Assert.Same(firstClaims, allClaims[i]);
+            }
         }
 
         public static TheoryData<JsonClaimSetTheoryData> GetClaimAsTypeTheoryData()
@@ -122,7 +162,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     Json = header + "." + payload + ".",
                     PropertyName = "b",
                     PropertyType = typeof(Dictionary<string, string[]>),
-                    PropertyValue = new Dictionary<string, string[]> {{"prop1", new string[]{"value1","value2"}}}
+                    PropertyValue = new Dictionary<string, string[]> { { "prop1", new string[] { "value1", "value2" } } }
                 });
 
             theoryData.Add(
@@ -131,7 +171,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
                     Json = header + "." + payload + ".",
                     PropertyName = "a",
                     PropertyType = typeof(Dictionary<string, string>),
-                    PropertyValue = new Dictionary<string, string> {{"prop1","value1"}}
+                    PropertyValue = new Dictionary<string, string> { { "prop1", "value1" } }
                 });
 
             theoryData.Add(
@@ -167,7 +207,7 @@ namespace Microsoft.IdentityModel.JsonWebTokens.Tests
 
             public Type PropertyOut { get; set; }
 
-             public Type PropertyType { get; set; }
+            public Type PropertyType { get; set; }
 
             public object PropertyValue { get; set; }
 

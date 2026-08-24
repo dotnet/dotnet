@@ -48,49 +48,58 @@ namespace Microsoft.IdentityModel.Protocols.Tests
 
     public class ExtensibilityTests
     {
-        [Theory, MemberData(nameof(GetMetadataTheoryData))]
-        public void GetMetadataTest(DocumentRetrieverTheoryData theoryData)
+        [Theory, MemberData(nameof(GetMetadataTheoryData), DisableDiscoveryEnumeration = true)]
+        public async Task GetMetadataTest(DocumentRetrieverTheoryData theoryData)
         {
             TestUtilities.WriteHeader($"{this}.GetMetadataTest", theoryData);
             try
             {
-                string doc = theoryData.DocumentRetriever.GetDocumentAsync(theoryData.Address, CancellationToken.None).Result;
+                string doc = await theoryData.DocumentRetriever.GetDocumentAsync(theoryData.Address, CancellationToken.None);
                 Assert.NotNull(doc);
                 theoryData.ExpectedException.ProcessNoException();
             }
-            catch (AggregateException aex)
+            catch (Exception ex)
             {
-                aex.Handle((x) =>
-                {
-                    theoryData.ExpectedException.ProcessException(x);
-                    return true;
-                });
+                theoryData.ExpectedException.ProcessException(ex);
             }
         }
 
         [Fact]
-        public void ConfigurationManagerUsingCustomClass()
+        public async Task ConfigurationManagerUsingCustomClass()
         {
             var docRetriever = new FileDocumentRetriever();
             var configManager = new ConfigurationManager<IssuerMetadata>("IssuerMetadata.json", new IssuerConfigurationRetriever(), docRetriever);
-            var context = new CompareContext($"{this}.GetConfiguration");
+            var context = new CompareContext($"{this}.ConfigurationManagerUsingCustomClass");
 
-            var configuration = configManager.GetConfigurationAsync().Result;
+            var configuration = await configManager.GetConfigurationAsync();
             configManager.MetadataAddress = "IssuerMetadata.json";
-            var configuration2 = configManager.GetConfigurationAsync().Result;
-            if (!IdentityComparer.AreEqual(configuration.Issuer, configuration2.Issuer))
+            var configuration2 = await configManager.GetConfigurationAsync();
+            if (!IdentityComparer.AreEqual(configuration.Issuer, configuration2.Issuer, context))
                 context.Diffs.Add("!IdentityComparer.AreEqual(configuration, configuration2)");
 
             // AutomaticRefreshInterval should pick up new bits.
             configManager = new ConfigurationManager<IssuerMetadata>("IssuerMetadata.json", new IssuerConfigurationRetriever(), docRetriever);
             configManager.RequestRefresh();
-            configuration = configManager.GetConfigurationAsync().Result;
-            TestUtilities.SetField(configManager, "_lastRefresh", DateTimeOffset.UtcNow - TimeSpan.FromHours(1));
+            configuration = await configManager.GetConfigurationAsync();
+            TestUtilities.SetField(configManager, "_lastRequestRefresh", DateTimeOffset.UtcNow - TimeSpan.FromHours(1));
             configManager.MetadataAddress = "IssuerMetadata2.json";
-            configManager.RequestRefresh();
-            configuration2 = configManager.GetConfigurationAsync().Result;
+
+            // Wait for the refresh to complete.
+            await Task.Delay(500);
+
+            for (int i = 0; i < 5; i++)
+            {
+                configManager.RequestRefresh();
+                configuration2 = await configManager.GetConfigurationAsync();
+
+                if (IdentityComparer.AreEqual(configuration.Issuer, configuration2.Issuer))
+                    await Task.Delay(1000);
+                else
+                    break;
+            }
+
             if (IdentityComparer.AreEqual(configuration.Issuer, configuration2.Issuer))
-                context.Diffs.Add("IdentityComparer.AreEqual(configuration, configuration2)");
+                context.Diffs.Add($"Expected: {configuration.Issuer}, to be different from: {configuration2.Issuer}");
 
             TestUtilities.AssertFailIfErrors(context);
         }

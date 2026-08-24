@@ -30,6 +30,7 @@
     <Project Path="src/Microsoft.DotNet.PackageTesting.Tests/Microsoft.DotNet.PackageTesting.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.RemoteExecutor/tests/Microsoft.DotNet.RemoteExecutor.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.SetupNugetSources.Tests/Microsoft.DotNet.SetupNugetSources.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.SignCheckLibrary.Tests/Microsoft.DotNet.SignCheckLibrary.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.SignTool.Tests/Microsoft.DotNet.SignTool.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.SourceBuild/tests/Microsoft.DotNet.SourceBuild.Tasks.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.XliffTasks.Tests/Microsoft.DotNet.XliffTasks.Tests.csproj" />
@@ -82,6 +83,8 @@
   <Project Path="src/SignCheck/Microsoft.SignCheck/Microsoft.DotNet.SignCheckLibrary.csproj" />
   <Project Path="src/SignCheck/SignCheck/Microsoft.DotNet.SignCheck.csproj" />
   <Project Path="src/SignCheck/SignCheckTask/Microsoft.DotNet.SignCheckTask.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.FileCatalog/Microsoft.DotNet.Build.Tasks.FileCatalog.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.FileCatalog.Tests/Microsoft.DotNet.Build.Tasks.FileCatalog.Tests.csproj" />
   <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli/Microsoft.DotNet.VersionTools.Cli.csproj" />
   <Project Path="src/WinShimmer/WinShimmer.csproj" />
 </Solution>

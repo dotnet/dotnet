@@ -1,42 +1,54 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Diagnostics;
 using Microsoft.IdentityModel.TestUtils;
 using Microsoft.IdentityModel.Logging;
 using Xunit;
+using System;
+using Microsoft.IdentityModel.Tokens.Experimental;
 
 namespace Microsoft.IdentityModel.Tokens.Validation.Tests
 {
-    public class AlgorithmValidationResultTests
+    public class AlgorithmValidationTests
     {
-        [Theory, MemberData(nameof(AlgorithmValidationTestCases), DisableDiscoveryEnumeration = true)]
-        public void ValidateAlgorithm(AlgorithmTheoryData theoryData)
+        [Theory, MemberData(nameof(InvalidTestCases), DisableDiscoveryEnumeration = true)]
+        public void InvalidAlgorithms(AlgorithmTheoryData theoryData)
         {
-            CompareContext context = TestUtilities.WriteHeader($"{this}.AlgorithmValidationResultTests", theoryData);
+            CompareContext context = TestUtilities.WriteHeader($"{this}.InvalidAlgorithms", theoryData);
 
-            AlgorithmValidationResult algorithmValidationResult = Validators.ValidateAlgorithm(
-                theoryData.Algorithm,
-                theoryData.SecurityKey,
-                theoryData.SecurityToken,
-                theoryData.ValidationParameters,
-                new CallContext());
+            try
+            {
+                ValidationResult<string, ValidationError> validationResult =
+                    Validators.ValidateAlgorithm(
+                        theoryData.Algorithm,
+                        theoryData.SecurityToken,
+                        theoryData.ValidationParameters,
+                        theoryData.CallContext);
 
-            if (algorithmValidationResult.Exception != null)
-                theoryData.ExpectedException.ProcessException(algorithmValidationResult.Exception);
-            else
-                theoryData.ExpectedException.ProcessNoException();
+                if (validationResult.Succeeded)
+                {
+                    context.AddDiff($"Expected validationResult to succeed, but it failed with: {validationResult.Error}.");
+                }
+                else
+                {
+                    ValidationError validationError = validationResult.Error;
+                    IdentityComparer.AreStringsEqual(
+                        validationError.FailureType.Name,
+                        theoryData.OperationResult.Error.FailureType.Name,
+                        context);
 
-            IdentityComparer.AreAlgorithmValidationResultsEqual(
-                algorithmValidationResult,
-                theoryData.AlgorithmValidationResult,
-                context);
+                    theoryData.ExpectedException.ProcessException(validationError.GetException(), context);
+                }
+            }
+            catch (Exception ex)
+            {
+                context.AddDiff($"Did not expect an exception: {ex}.");
+            }
 
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        public static TheoryData<AlgorithmTheoryData> AlgorithmValidationTestCases
+        public static TheoryData<AlgorithmTheoryData> InvalidTestCases
         {
             get
             {
@@ -44,76 +56,110 @@ namespace Microsoft.IdentityModel.Tokens.Validation.Tests
 
                 return new TheoryData<AlgorithmTheoryData>
                 {
-                    new AlgorithmTheoryData
+                    new AlgorithmTheoryData("ValidationParametersNull")
                     {
-                        TestId = "Invalid_ValidationParametersAreNull",
-                        ExpectedException = ExpectedException.ArgumentNullException("IDX10000:"),
                         Algorithm = null,
+                        ExpectedException = ExpectedException.ArgumentNullException("IDX10000:"),
                         SecurityKey = null,
                         SecurityToken = null,
                         ValidationParameters = null,
-                        AlgorithmValidationResult = new AlgorithmValidationResult(
-                            null,
+                        OperationResult = new AlgorithmValidationError(
+                            new MessageDetail(
+                                LogMessages.IDX10000,
+                                LogHelper.MarkAsNonPII("validationParameters")),
                             ValidationFailureType.NullArgument,
-                            new ExceptionDetail(
-                                new MessageDetail(
-                                    LogMessages.IDX10000,
-                                    LogHelper.MarkAsNonPII("validationParameters")),
-                                typeof(ArgumentNullException),
-                                new StackFrame(true)))
+                            null, // StackFrame
+                            null,
+                            null) // InvalidAlgorithm
                     },
-                    new AlgorithmTheoryData
+                    new AlgorithmTheoryData("InvalidAlgorithm")
                     {
-                        TestId = "Invalid_ValidateAlgorithmNotAValidAlgorithm",
+                        Algorithm = SecurityAlgorithms.Sha256,
                         ExpectedException = ExpectedException.SecurityTokenInvalidAlgorithmException("IDX10696:"),
-                        Algorithm = SecurityAlgorithms.Sha256,
                         SecurityKey = securityKey,
                         SecurityToken = null,
-                        ValidationParameters = new ValidationParameters
-                        {
-                            ValidAlgorithms = new[] { SecurityAlgorithms.HmacSha256 }
-                        },
-                        AlgorithmValidationResult = new AlgorithmValidationResult(
+                        ValidationParameters = ValidationUtils.CreateValidationParameters(
+                            algorithms: [SecurityAlgorithms.HmacSha256]),
+                        OperationResult = new AlgorithmValidationError(
+                            new MessageDetail(
+                                LogMessages.IDX10696,
+                                LogHelper.MarkAsNonPII(SecurityAlgorithms.Sha256)),
+                            AlgorithmValidationFailure.ValidationFailed,
+                            null, // StackFrame
                             SecurityAlgorithms.Sha256,
-                            ValidationFailureType.AlgorithmValidationFailed,
-                            new ExceptionDetail(
-                                new MessageDetail(
-                                    LogMessages.IDX10696,
-                                    LogHelper.MarkAsNonPII(SecurityAlgorithms.Sha256),
-                                    securityKey),
-                                typeof(SecurityTokenInvalidAlgorithmException),
-                                new StackFrame(true)))
+                            null) // InvalidAlgorithm
                     },
-                    new AlgorithmTheoryData
-                    {
-                        TestId = "Valid_ValidateAlgorithmWhenValidAlgorithmsIsNull",
-                        Algorithm = SecurityAlgorithms.Sha256,
-                        SecurityKey = securityKey,
-                        SecurityToken = null,
-                        ValidationParameters = new ValidationParameters
-                        {
-                            ValidAlgorithms = null
-                        },
-                        AlgorithmValidationResult = new AlgorithmValidationResult(SecurityAlgorithms.Sha256)
-                    },
-                    new AlgorithmTheoryData
-                    {
-                        TestId = "Valid_ValidateAlgorithmDefaultAlgorithmValidation",
-                        Algorithm = SecurityAlgorithms.Sha256,
-                        SecurityKey = securityKey,
-                        SecurityToken = null,
-                        ValidationParameters = new ValidationParameters
-                        {
-                            ValidAlgorithms = new[] { SecurityAlgorithms.HmacSha256, SecurityAlgorithms.Sha256 }
-                        },
-                        AlgorithmValidationResult = new AlgorithmValidationResult(SecurityAlgorithms.Sha256)
-                    }
                 };
             }
         }
 
+        [Theory, MemberData(nameof(ValidTestCases), DisableDiscoveryEnumeration = true)]
+        public void ValidAlgorithms(AlgorithmTheoryData theoryData)
+        {
+            CompareContext context = TestUtilities.WriteHeader($"{this}.ValidAlgorithms", theoryData);
+
+            try
+            {
+                ValidationResult<string, ValidationError> validationResult =
+                    Validators.ValidateAlgorithm(
+                        theoryData.Algorithm,
+                        theoryData.SecurityToken,
+                        theoryData.ValidationParameters,
+                        theoryData.CallContext);
+
+                if (validationResult.Succeeded)
+                {
+                    IdentityComparer.AreStringsEqual(
+                        validationResult.Result,
+                        theoryData.OperationResult.Result,
+                        context);
+                }
+                else
+                {
+                    context.AddDiff($"Expected validationResult to succeed, but it failed with: {validationResult.Error}.");
+                }
+            }
+            catch (Exception ex)
+            {
+                context.AddDiff($"Did not expect an exception: {ex}");
+            }
+
+            TestUtilities.AssertFailIfErrors(context);
+        }
+
+        public static TheoryData<AlgorithmTheoryData> ValidTestCases
+        {
+            get
+            {
+                SecurityKey securityKey = new SymmetricSecurityKey(new byte[256]);
+
+                return new TheoryData<AlgorithmTheoryData>
+                {
+                    new AlgorithmTheoryData("ValidateAlgorithmWhenValidAlgorithmsIsEmpty")
+                    {
+                        Algorithm = SecurityAlgorithms.Sha256,
+                        SecurityKey = securityKey,
+                        SecurityToken = null,
+                        ValidationParameters = ValidationUtils.CreateValidationParameters(
+                            algorithms: []),
+                        OperationResult = SecurityAlgorithms.Sha256
+                    },
+                    new AlgorithmTheoryData("ValidateAlgorithmDefaultAlgorithmValidation")
+                    {
+                        Algorithm = SecurityAlgorithms.Sha256,
+                        SecurityKey = securityKey,
+                        SecurityToken = null,
+                        ValidationParameters = ValidationUtils.CreateValidationParameters(
+                            algorithms: [SecurityAlgorithms.HmacSha256, SecurityAlgorithms.Sha256]),
+                        OperationResult = SecurityAlgorithms.Sha256
+                    }
+                };
+            }
+        }
         public class AlgorithmTheoryData : TheoryDataBase
         {
+            public AlgorithmTheoryData(string testId) : base(testId) { }
+
             public string Algorithm { get; set; }
 
             public SecurityKey SecurityKey { get; set; }
@@ -122,7 +168,7 @@ namespace Microsoft.IdentityModel.Tokens.Validation.Tests
 
             internal ValidationParameters ValidationParameters { get; set; }
 
-            internal AlgorithmValidationResult AlgorithmValidationResult { get; set; }
+            internal ValidationResult<string, AlgorithmValidationError> OperationResult { get; set; }
         }
     }
 }

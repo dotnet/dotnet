@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Security.Claims;
 using Microsoft.IdentityModel.TestUtils;
 using Xunit;
 

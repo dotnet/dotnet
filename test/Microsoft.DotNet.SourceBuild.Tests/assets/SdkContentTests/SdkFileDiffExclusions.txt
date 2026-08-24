@@ -44,9 +44,6 @@
 ./sdk/x.y.z/Extensions/Microsoft.TestPlatform.Extensions.EventLogCollector.dll|msft
 ./sdk/x.y.z/Extensions/*/Microsoft.TestPlatform.Extensions.EventLogCollector.resources.dll|msft
 
-# nuget has multiple copies and inconsistencies between MSFT and SB - https://github.com/dotnet/sdk/issues/50218
-./sdk/x.y.z/Sdks/NuGet.Build.Tasks.Pack/
-
 # linux runtimes are included in source-build for self-contained apps - https://github.com/dotnet/source-build/issues/3507
 ./packs/Microsoft.AspNetCore.App.Runtime.*/|sb
 ./packs/Microsoft.NETCore.App.Runtime.*/|sb
@@ -60,6 +57,9 @@
 # Exclude format and watch tools due to too much noise
 ./sdk/x.y.z/DotnetTools/dotnet-format/
 ./sdk/x.y.z/DotnetTools/dotnet-watch/
+
+# SB rebuilds IdentityModel from older source lacking the transitive Microsoft.Bcl.Cryptography dependency
+./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Bcl.Cryptography.dll|msft
 
 # Exclude bincore directory due to too much noise - https://github.com/dotnet/source-build/issues/4534
 ./sdk/x.y.z/Roslyn/bincore/

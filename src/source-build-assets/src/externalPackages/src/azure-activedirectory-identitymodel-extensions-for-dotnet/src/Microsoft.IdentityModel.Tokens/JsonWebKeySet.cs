@@ -20,6 +20,7 @@ namespace Microsoft.IdentityModel.Tokens
     {
         internal const string ClassName = "Microsoft.IdentityModel.Tokens.JsonWebKeySet";
         private Dictionary<string, object> _additionalData;
+        private string _jsonData = string.Empty;
 
         /// <summary>
         /// Returns a new instance of <see cref="JsonWebKeySet"/>.
@@ -53,6 +54,8 @@ namespace Microsoft.IdentityModel.Tokens
         {
             if (string.IsNullOrEmpty(json))
                 throw LogHelper.LogArgumentNullException(nameof(json));
+
+            _jsonData = json;
 
             try
             {
@@ -98,6 +101,22 @@ namespace Microsoft.IdentityModel.Tokens
         public bool SkipUnresolvedJsonWebKeys { get; set; } = DefaultSkipUnresolvedJsonWebKeys;
 
         /// <summary>
+        /// The original string used to create this instance if a string was provided.
+        /// </summary>
+        [JsonIgnore]
+        public string JsonData
+        {
+            get
+            {
+                return _jsonData;
+            }
+            set
+            {
+                _jsonData = value;
+            }
+        }
+
+        /// <summary>
         /// Returns the JsonWebKeys as a <see cref="IList{SecurityKey}"/>.
         /// </summary>
         /// <remarks>
@@ -112,7 +131,7 @@ namespace Microsoft.IdentityModel.Tokens
                 // https://datatracker.ietf.org/doc/html/rfc7517#section-4-2
                 if (!string.IsNullOrEmpty(webKey.Use) && !webKey.Use.Equals(JsonWebKeyUseNames.Sig))
                 {
-                    string convertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10808, webKey, webKey.Use);
+                    string convertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10808, LogHelper.MarkAsNonPII(webKey.KeyId), webKey.Use);
                     webKey.ConvertKeyInfo = convertKeyInfo;
                     LogHelper.LogInformation(convertKeyInfo);
                     if (!SkipUnresolvedJsonWebKeys)
@@ -129,7 +148,7 @@ namespace Microsoft.IdentityModel.Tokens
                     if ((webKey.X5c == null || webKey.X5c.Count == 0) && (string.IsNullOrEmpty(webKey.E) && string.IsNullOrEmpty(webKey.N)))
                     {
                         var missingComponent = new List<string> { JsonWebKeyParameterNames.X5c, JsonWebKeyParameterNames.E, JsonWebKeyParameterNames.N };
-                        string convertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10814, LogHelper.MarkAsNonPII(typeof(RsaSecurityKey)), webKey, LogHelper.MarkAsNonPII(string.Join(", ", missingComponent)));
+                        string convertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10814, LogHelper.MarkAsNonPII(typeof(RsaSecurityKey)), LogHelper.MarkAsNonPII(webKey.KeyId), LogHelper.MarkAsNonPII(string.Join(", ", missingComponent)));
                         webKey.ConvertKeyInfo = convertKeyInfo;
                         LogHelper.LogInformation(convertKeyInfo);
                         rsaKeyResolved = false;
@@ -163,7 +182,7 @@ namespace Microsoft.IdentityModel.Tokens
                 }
                 else
                 {
-                    string convertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10810, webKey);
+                    string convertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10810, LogHelper.MarkAsNonPII(webKey.KeyId));
                     webKey.ConvertKeyInfo = convertKeyInfo;
                     LogHelper.LogInformation(convertKeyInfo);
 
@@ -179,7 +198,7 @@ namespace Microsoft.IdentityModel.Tokens
         {
             if (webKey.X5c == null || webKey.X5c.Count == 0)
             {
-                webKey.ConvertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10814, LogHelper.MarkAsNonPII(typeof(X509SecurityKey)), webKey, LogHelper.MarkAsNonPII(JsonWebKeyParameterNames.X5c));
+                webKey.ConvertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10814, LogHelper.MarkAsNonPII(typeof(X509SecurityKey)), LogHelper.MarkAsNonPII(webKey.KeyId), LogHelper.MarkAsNonPII(JsonWebKeyParameterNames.X5c));
                 return false;
             }
 
@@ -197,7 +216,7 @@ namespace Microsoft.IdentityModel.Tokens
 
             if (missingComponent.Count > 0)
             {
-                string convertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10814, LogHelper.MarkAsNonPII(typeof(RsaSecurityKey)), webKey, LogHelper.MarkAsNonPII(string.Join(", ", missingComponent)));
+                string convertKeyInfo = LogHelper.FormatInvariant(LogMessages.IDX10814, LogHelper.MarkAsNonPII(typeof(RsaSecurityKey)), LogHelper.MarkAsNonPII(webKey.KeyId), LogHelper.MarkAsNonPII(string.Join(", ", missingComponent)));
                 if (string.IsNullOrEmpty(webKey.ConvertKeyInfo))
                     webKey.ConvertKeyInfo = convertKeyInfo;
                 else

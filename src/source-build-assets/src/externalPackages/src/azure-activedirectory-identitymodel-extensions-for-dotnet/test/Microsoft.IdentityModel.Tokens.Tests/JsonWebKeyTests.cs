@@ -10,7 +10,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
 {
     public class JsonWebKeyTests
     {
-        [Theory, MemberData(nameof(ConstructorDataSet))]
+        [Theory, MemberData(nameof(ConstructorDataSet), DisableDiscoveryEnumeration = true)]
         public void Constructors(JsonWebKeyTheoryData theoryData)
         {
             var context = new CompareContext();
@@ -21,8 +21,6 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                 if (theoryData.JsonWebKey != null)
                 {
                     IdentityComparer.AreEqual(jsonWebKey, theoryData.JsonWebKey, context);
-                    JsonWebKey6x jsonWebKey6x = new JsonWebKey6x(theoryData.Json);
-                    IdentityComparer.AreEqual(jsonWebKey6x, jsonWebKey, context);
                 }
             }
             catch (Exception ex)
@@ -200,7 +198,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(ComputeJwkThumbprintTheoryData))]
+        [Theory, MemberData(nameof(ComputeJwkThumbprintTheoryData), DisableDiscoveryEnumeration = true)]
         public void ComputeJwkThumbprint(JwkThumbprintTheoryData theoryData)
         {
             Logging.IdentityModelEventSource.ShowPII = true;
@@ -219,7 +217,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
             TestUtilities.AssertFailIfErrors(context);
         }
 
-        [Theory, MemberData(nameof(ComputeJwkThumbprintTheoryData))]
+        [Theory, MemberData(nameof(ComputeJwkThumbprintTheoryData), DisableDiscoveryEnumeration = true)]
         public void CanComputeJwkThumbprint(JwkThumbprintTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.CanComputeJwkThumbprint", theoryData);
@@ -340,7 +338,7 @@ namespace Microsoft.IdentityModel.Tokens.Json.Tests
                         TestId = "ValidRsa"
                     },
                     new JwkThumbprintTheoryData
-                    { 
+                    {
                         JWK = new JsonWebKey()
                         {
                             Kty = JsonWebAlgorithmsKeyTypes.EllipticCurve,

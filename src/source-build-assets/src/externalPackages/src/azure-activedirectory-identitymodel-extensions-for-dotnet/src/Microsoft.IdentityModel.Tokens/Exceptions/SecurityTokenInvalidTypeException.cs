@@ -3,6 +3,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using Microsoft.IdentityModel.Tokens.Experimental;
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -13,7 +14,7 @@ namespace Microsoft.IdentityModel.Tokens
     public class SecurityTokenInvalidTypeException : SecurityTokenValidationException
     {
         [NonSerialized]
-        const string _Prefix = "Microsoft.IdentityModel." + nameof(SecurityTokenInvalidTypeException) +".";
+        const string _Prefix = "Microsoft.IdentityModel." + nameof(SecurityTokenInvalidTypeException) + ".";
 
         [NonSerialized]
         const string _InvalidTypeKey = _Prefix + nameof(InvalidType);
@@ -85,5 +86,28 @@ namespace Microsoft.IdentityModel.Tokens
             if (!string.IsNullOrEmpty(InvalidType))
                 info.AddValue(_InvalidTypeKey, InvalidType);
         }
+
+        #region Experimental
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecurityTokenInvalidTypeException"/> class.
+        /// </summary>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
+        /// <param name="validationError">The <see cref="ValidationError"/> that is associated with the exception.</param>
+        internal SecurityTokenInvalidTypeException(string message, ValidationError validationError)
+            : base(message, validationError)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecurityTokenInvalidTypeException"/> class.
+        /// </summary>
+        /// <param name="message">Additional information to be included in the exception and displayed to user.</param>
+        /// <param name="validationError">The <see cref="ValidationError"/> that is associated with the exception.</param>
+        /// <param name="innerException">An <see cref="Exception"/> that represents the root cause of the exception.</param>
+        internal SecurityTokenInvalidTypeException(string message, ValidationError validationError, Exception innerException)
+            : base(message, validationError, innerException)
+        {
+        }
+        #endregion
     }
 }

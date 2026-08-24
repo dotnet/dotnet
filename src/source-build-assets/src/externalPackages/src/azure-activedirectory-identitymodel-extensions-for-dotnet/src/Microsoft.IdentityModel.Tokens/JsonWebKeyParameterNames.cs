@@ -26,6 +26,8 @@ namespace Microsoft.IdentityModel.Tokens
         public const string N = "n";
         public const string Oth = "oth";
         public const string P = "p";
+        public const string Priv = "priv";
+        public const string Pub = "pub";
         public const string Q = "q";
         public const string QI = "qi";
         public const string Use = "use";
@@ -58,6 +60,8 @@ namespace Microsoft.IdentityModel.Tokens
         public static ReadOnlySpan<byte> N => "n"u8;
         public static ReadOnlySpan<byte> Oth => "oth"u8;
         public static ReadOnlySpan<byte> P => "p"u8;
+        public static ReadOnlySpan<byte> Priv => "priv"u8;
+        public static ReadOnlySpan<byte> Pub => "pub"u8;
         public static ReadOnlySpan<byte> Q => "q"u8;
         public static ReadOnlySpan<byte> QI => "qi"u8;
         public static ReadOnlySpan<byte> Use => "use"u8;

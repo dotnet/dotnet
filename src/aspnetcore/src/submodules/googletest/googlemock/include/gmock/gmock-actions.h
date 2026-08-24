@@ -427,21 +427,20 @@ class [[nodiscard]] OnceAction<Result(Args...)> final {
   // via StdFunctionAdaptor.
   template <typename Callable>
   using IsDirectlyCompatible = internal::conjunction<
-      // It must be possible to capture the callable in StdFunctionAdaptor.
-      std::is_constructible<typename std::decay<Callable>::type, Callable>,
       // The callable must be compatible with our signature.
-      internal::is_callable_r<Result, typename std::decay<Callable>::type,
-                              Args...>>;
+      internal::is_callable_r<Result, std::decay_t<Callable>, Args...>,
+      // It must be possible to capture the callable in StdFunctionAdaptor.
+      std::is_constructible<std::decay_t<Callable>, Callable>>;
 
   // True iff we can use the given callable type via StdFunctionAdaptor once we
   // ignore incoming arguments.
   template <typename Callable>
   using IsCompatibleAfterIgnoringArguments = internal::conjunction<
-      // It must be possible to capture the callable in a lambda.
-      std::is_constructible<typename std::decay<Callable>::type, Callable>,
       // The callable must be invocable with zero arguments, returning something
       // convertible to Result.
-      internal::is_callable_r<Result, typename std::decay<Callable>::type>>;
+      internal::is_callable_r<Result, std::decay_t<Callable>>,
+      // It must be possible to capture the callable in a lambda.
+      std::is_constructible<std::decay_t<Callable>, Callable>>;
 
  public:
   // Construct from a callable that is directly compatible with our mocked
@@ -941,7 +940,7 @@ class [[nodiscard]] ReturnAction final {
                 std::is_convertible<R, U>,        //
                 std::is_move_constructible<U>>::value>::type>
   operator OnceAction<U(Args...)>() && {  // NOLINT
-    return Impl<U>(std::move(value_));
+    return OnceImpl<U>(std::move(value_));
   }
 
   template <typename U, typename... Args,
@@ -960,13 +959,6 @@ class [[nodiscard]] ReturnAction final {
   template <typename U>
   class Impl final {
    public:
-    // The constructor used when the return value is allowed to move from the
-    // input value (i.e. we are converting to OnceAction).
-    explicit Impl(R&& input_value)
-        : state_(new State(std::move(input_value))) {}
-
-    // The constructor used when the return value is not allowed to move from
-    // the input value (i.e. we are converting to Action).
     explicit Impl(const R& input_value) : state_(new State(input_value)) {}
 
     U operator()() && { return std::move(state_->value); }
@@ -996,18 +988,6 @@ class [[nodiscard]] ReturnAction final {
             // U, and uses that path for the conversion, even U Result has an
             // explicit constructor from R.
             value(ImplicitCast_<U>(internal::as_const(input_value))) {}
-
-      // As above, but for the case where we're moving from the ReturnAction
-      // object because it's being used as a OnceAction.
-      explicit State(R&& input_value_in)
-          : input_value(std::move(input_value_in)),
-            // For the same reason as above we make an implicit conversion to U
-            // before initializing the value.
-            //
-            // Unlike above we provide the input value as an rvalue to the
-            // implicit conversion because this is a OnceAction: it's fine if it
-            // wants to consume the input value.
-            value(ImplicitCast_<U>(std::move(input_value))) {}
 
       // A copy of the value originally provided by the user. We retain this in
       // addition to the value of the mock function's result type below in case
@@ -1084,6 +1064,23 @@ class [[nodiscard]] ReturnAction final {
     };
 
     const std::shared_ptr<State> state_;
+  };
+
+  // Implements the Return(x) action for a mock function that returns type U,
+  // but is only executed at most once. This allows us to store the original
+  // value and move construct the return value type on the first (and only)
+  // call.
+  template <typename U>
+  class OnceImpl final {
+   public:
+    explicit OnceImpl(R&& input_value)
+        : input_value_(new R(std::move(input_value))) {}
+
+    U operator()() && { return std::move(*input_value_); }
+
+   private:
+    // Move the input value to the heap and make it copyable.
+    const std::shared_ptr<R> input_value_;
   };
 
   R value_;
@@ -1328,22 +1325,6 @@ struct InvokeMethodAction {
   auto operator()(Args&&... args) const
       -> decltype((obj_ptr->*method_ptr)(std::forward<Args>(args)...)) {
     return (obj_ptr->*method_ptr)(std::forward<Args>(args)...);
-  }
-};
-
-// Implements the InvokeWithoutArgs(f) action.  The template argument
-// FunctionImpl is the implementation type of f, which can be either a
-// function pointer or a functor.  InvokeWithoutArgs(f) can be used as an
-// Action<F> as long as f's type is compatible with F.
-template <typename FunctionImpl>
-struct InvokeWithoutArgsAction {
-  FunctionImpl function_impl;
-
-  // Allows InvokeWithoutArgs(f) to be used as any action whose type is
-  // compatible with f.
-  template <typename... Args>
-  auto operator()(const Args&...) -> decltype(function_impl()) {
-    return function_impl();
   }
 };
 
@@ -2070,9 +2051,11 @@ internal::InvokeMethodAction<Class, MethodPtr> Invoke(Class* obj_ptr,
 
 // Creates an action that invokes 'function_impl' with no argument.
 template <typename FunctionImpl>
-internal::InvokeWithoutArgsAction<typename std::decay<FunctionImpl>::type>
-InvokeWithoutArgs(FunctionImpl function_impl) {
-  return {std::move(function_impl)};
+GTEST_INTERNAL_DEPRECATE_AND_INLINE(
+    "Actions can now be implicitly constructed from zero-argument callables. "
+    "No need to create wrapper objects using InvokeWithoutArgs().")
+std::decay_t<FunctionImpl> InvokeWithoutArgs(FunctionImpl&& function_impl) {
+  return std::forward<FunctionImpl>(function_impl);
 }
 
 // Creates an action that invokes the given method on the given object

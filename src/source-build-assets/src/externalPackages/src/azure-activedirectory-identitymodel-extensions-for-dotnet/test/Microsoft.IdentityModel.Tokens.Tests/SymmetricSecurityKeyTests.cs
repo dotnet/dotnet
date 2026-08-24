@@ -16,7 +16,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
     public class SymmetricSecurityKeyTests
     {
 
-        [Theory, MemberData(nameof(ConstructorDataSet))]
+        [Theory, MemberData(nameof(ConstructorDataSet), DisableDiscoveryEnumeration = true)]
         public void Constructor(byte[] key, EE ee)
         {
             try

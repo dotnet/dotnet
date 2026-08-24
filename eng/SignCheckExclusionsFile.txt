@@ -6,7 +6,8 @@
 *singlefilehost.exe;;Template, DO-NOT-SIGN, https://github.com/dotnet/core-setup/pull/7549
 *comhost.dll;;Template, DO-NOT-SIGN, https://github.com/dotnet/core-setup/pull/7549
 *apphosttemplateapphostexe.exe;;Template, DO-NOT-SIGN, https://github.com/dotnet/core-setup/pull/7549
-*.js;; DO-NOT-SIGN, Arcade's SignTool no longer signs .js files by default https://github.com/dotnet/arcade/pull/15760
+*.js|!Microsoft.DotNet.HotReload.WebAssembly.Browser.lib.module.js;; DO-NOT-SIGN, Arcade's SignTool no longer signs .js files by default https://github.com/dotnet/arcade/pull/15760
+*.js;dotnet-sdk-*-centos.*-x64.tar.gz|Private.SourceBuilt.Artifacts.*.tar.gz;DO-NOT-SIGN, all .js inside of source-build artifacts are intentionally unsigned
 
 ;; ## PGO ##
 ;dotnet-sdk-pgo-*.tar.gz; PGO builds are unsigned

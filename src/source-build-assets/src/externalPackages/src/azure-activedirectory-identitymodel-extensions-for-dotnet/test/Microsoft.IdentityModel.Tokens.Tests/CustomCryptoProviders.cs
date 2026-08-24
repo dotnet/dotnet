@@ -8,11 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 
-
-/// <summary>
-/// Derived types to simplify testing.
-/// Helpful when throwing
-/// </summary>
+// Derived types to simplify testing.
+// Helpful when throwing
 namespace Microsoft.IdentityModel.TestUtils
 {
     public class CustomCryptoProvider : ICryptoProvider
@@ -33,23 +30,23 @@ namespace Microsoft.IdentityModel.TestUtils
         public IList<string> AdditionalHashAlgorithms { get; private set; } = new List<string>();
 
         public HashAlgorithm HashAlgorithm { get; set; }
-        
+
         public KeyWrapProvider KeyWrapProvider { get; set; }
 
         public RsaKeyWrapProvider RsaKeyWrapProvider { get; set; }
 
-        public bool IsSupportedResult { get; set; } = false;
+        public bool IsSupportedResult { get; set; }
 
-        public bool CreateCalled { get; set; } = false;
+        public bool CreateCalled { get; set; }
 
-        public bool IsSupportedAlgorithmCalled { get; set; } = false;
+        public bool IsSupportedAlgorithmCalled { get; set; }
 
-        public bool ReleaseCalled { get; set; } = false;
+        public bool ReleaseCalled { get; set; }
 
         public object Create(string algorithm, params object[] args)
         {
             CreateCalled = true;
-            
+
             if (IsHashAlgorithm(algorithm))
                 return HashAlgorithm;
             else
@@ -127,7 +124,7 @@ namespace Microsoft.IdentityModel.TestUtils
             return SigningSignatureProvider;
         }
 
-        public bool CreateForSigningCalled { get; set; } = false;
+        public bool CreateForSigningCalled { get; set; }
 
         public override SignatureProvider CreateForVerifying(SecurityKey key, string algorithm)
         {
@@ -141,7 +138,7 @@ namespace Microsoft.IdentityModel.TestUtils
             return VerifyingSignatureProvider;
         }
 
-        public bool CreateForVerifyingCalled { get; set; } = false;
+        public bool CreateForVerifyingCalled { get; set; }
 
         public override HashAlgorithm CreateHashAlgorithm(string algorithm)
         {
@@ -161,7 +158,7 @@ namespace Microsoft.IdentityModel.TestUtils
             return base.CreateKeyedHashAlgorithm(keyBytes, algorithm);
         }
 
-        public bool CreateKeyedHashAlgorithmCalled { get; set; } = false;
+        public bool CreateKeyedHashAlgorithmCalled { get; set; }
 
         public HashAlgorithm HashAlgorithm { get; set; }
 
@@ -188,7 +185,7 @@ namespace Microsoft.IdentityModel.TestUtils
             return false;
         }
 
-        public bool IsSupportedAlgorithmCalled { get; set; } = false;
+        public bool IsSupportedAlgorithmCalled { get; set; }
 
         public override void ReleaseHashAlgorithm(HashAlgorithm hashAlgorithm)
         {
@@ -199,7 +196,7 @@ namespace Microsoft.IdentityModel.TestUtils
                 hashAlgorithm.Dispose();
         }
 
-        public bool ReleaseHashAlgorithmCalled { get; set; } = false;
+        public bool ReleaseHashAlgorithmCalled { get; set; }
 
         public override void ReleaseSignatureProvider(SignatureProvider signatureProvider)
         {
@@ -210,7 +207,7 @@ namespace Microsoft.IdentityModel.TestUtils
                 signatureProvider.Dispose();
         }
 
-        public bool ReleaseSignatureProviderCalled { get; set; } = false;
+        public bool ReleaseSignatureProviderCalled { get; set; }
 
         public SignatureProvider SigningSignatureProvider { get; set; }
 
@@ -221,7 +218,7 @@ namespace Microsoft.IdentityModel.TestUtils
 
     public class CustomHashAlgorithm : SHA256, ICustomObject
     {
-        public bool DisposeCalled { get; set; } = false;
+        public bool DisposeCalled { get; set; }
 
         public override void Initialize()
         {
@@ -334,8 +331,8 @@ namespace Microsoft.IdentityModel.TestUtils
 
     public class CustomSymmetricSignatureProvider : SymmetricSignatureProvider
     {
-        public CustomSymmetricSignatureProvider(SecurityKey key, string algorithm, bool willCreateSignatures )
-            :base(key, algorithm, willCreateSignatures)
+        public CustomSymmetricSignatureProvider(SecurityKey key, string algorithm, bool willCreateSignatures)
+            : base(key, algorithm, willCreateSignatures)
         { }
 
         protected override void Dispose(bool disposing)
@@ -396,15 +393,15 @@ namespace Microsoft.IdentityModel.TestUtils
             WillCreateSignatures = willCreateSignatures;
         }
 
-        public bool DisposeCalled { get; set; } = false;
+        public bool DisposeCalled { get; set; }
 
-        public bool SignCalled { get; set; } = false;
+        public bool SignCalled { get; set; }
 
         public Exception ThrowOnVerify { get; set; }
 
         public Exception ThrowOnSign { get; set; }
 
-        public bool VerifyCalled { get; set; } = false;
+        public bool VerifyCalled { get; set; }
 
         public override byte[] Sign(byte[] input)
         {

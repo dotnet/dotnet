@@ -123,7 +123,7 @@ stages:
     steps:
 
     - script: >
-        dotnet test
+        ./eng/common/dotnet.sh test
         $(Build.SourcesDirectory)/test/Microsoft.DotNet.SourceBuild.Tests/Microsoft.DotNet.SourceBuild.Tests.csproj
         --filter "FullyQualifiedName=Microsoft.DotNet.SourceBuild.Tests.LicenseScanTests.ScanForLicenses"
         --logger:'trx;LogFileName=$(Agent.JobName)_LicenseScan.trx'

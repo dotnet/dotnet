@@ -14,7 +14,7 @@ namespace Microsoft.IdentityModel.Tokens.Tests
 {
     public class AsymmetricAdapterTests
     {
-        [Theory, MemberData(nameof(AsymmetricAdapterUsageTestCases))]
+        [Theory, MemberData(nameof(AsymmetricAdapterUsageTestCases), DisableDiscoveryEnumeration = true)]
         public void AsymmetricAdapterUsageTests(AsymmetricAdapterTheoryData theoryData)
         {
             var context = TestUtilities.WriteHeader($"{this}.AsymmetricAdapterUsageTests", theoryData);

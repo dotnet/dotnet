@@ -5,7 +5,7 @@
   <PropertyGroup>
     <MajorVersion>10</MajorVersion>
     <MinorVersion>0</MinorVersion>
-    <PatchVersion>10</PatchVersion>
+    <PatchVersion>12</PatchVersion>
     <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
     <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
@@ -24,7 +24,7 @@
     <SystemReflectionEmitILGenerationVersion>4.7.0</SystemReflectionEmitILGenerationVersion>
     <SystemReflectionEmitLightweightVersion>4.7.0</SystemReflectionEmitLightweightVersion>
     <!-- nuget -->
-    <NuGetPackagingVersion>6.12.1</NuGetPackagingVersion>
+    <NuGetPackagingVersion>6.12.5</NuGetPackagingVersion>
     <!-- runtime -->
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
     <SystemIOFileSystemAccessControlVersion>5.0.0</SystemIOFileSystemAccessControlVersion>
@@ -34,8 +34,8 @@
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
     <!-- wcf -->
     <SystemServiceModelVersion>8.1.2</SystemServiceModelVersion>
-  <!-- WiX -->
-  <MicrosoftWixToolsetSdkVersion>5.0.2-dotnet.3009129</MicrosoftWixToolsetSdkVersion>
+    <!-- WiX -->
+    <MicrosoftWixToolsetSdkVersion>6.0.3-dotnet.6</MicrosoftWixToolsetSdkVersion>
     
     <!-- Transport package version for VS insertion packages is defined in Version.Details.props -->
   </PropertyGroup>

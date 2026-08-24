@@ -3,11 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Abstractions;
 using Microsoft.IdentityModel.Logging;
+
+#if NET6_0_OR_GREATER
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+#endif
 
 namespace Microsoft.IdentityModel.Tokens
 {
@@ -70,13 +73,29 @@ namespace Microsoft.IdentityModel.Tokens
             : base(key, algorithm)
         {
             if (!key.CryptoProviderFactory.IsSupportedAlgorithm(algorithm, key))
-                throw LogHelper.LogExceptionMessage(new NotSupportedException(LogHelper.FormatInvariant(LogMessages.IDX10634, LogHelper.MarkAsNonPII((algorithm)), key)));
+                throw LogHelper.LogExceptionMessage(
+                    new NotSupportedException(
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX10634,
+                            LogHelper.MarkAsNonPII((algorithm)), LogHelper.MarkAsNonPII(key.KeyId))));
 
             if (key.KeySize < MinimumSymmetricKeySizeInBits)
-                throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(key), LogHelper.FormatInvariant(LogMessages.IDX10653, LogHelper.MarkAsNonPII((algorithm)), LogHelper.MarkAsNonPII(MinimumSymmetricKeySizeInBits), key, LogHelper.MarkAsNonPII(key.KeySize))));
+                throw LogHelper.LogExceptionMessage(
+                    new ArgumentOutOfRangeException(
+                        nameof(key),
+                        LogHelper.FormatInvariant(
+                            LogMessages.IDX10653,
+                            LogHelper.MarkAsNonPII(
+                                (algorithm)),
+                            LogHelper.MarkAsNonPII(
+                                MinimumSymmetricKeySizeInBits),
+                            LogHelper.MarkAsNonPII(key.KeyId),
+                            LogHelper.MarkAsNonPII(key.KeySize))));
 
             WillCreateSignatures = willCreateSignatures;
-            _keyedHashObjectPool = new DisposableObjectPool<KeyedHashAlgorithm>(CreateKeyedHashAlgorithm, key.CryptoProviderFactory.SignatureProviderObjectPoolCacheSize);
+            _keyedHashObjectPool = new DisposableObjectPool<KeyedHashAlgorithm>(
+                CreateKeyedHashAlgorithm,
+                key.CryptoProviderFactory.SignatureProviderObjectPoolCacheSize);
         }
 
         /// <summary>
@@ -92,7 +111,12 @@ namespace Microsoft.IdentityModel.Tokens
             set
             {
                 if (value < DefaultMinimumSymmetricKeySizeInBits)
-                    throw LogHelper.LogExceptionMessage(new ArgumentOutOfRangeException(nameof(value), LogHelper.FormatInvariant(LogMessages.IDX10628, LogHelper.MarkAsNonPII(DefaultMinimumSymmetricKeySizeInBits))));
+                    throw LogHelper.LogExceptionMessage(
+                        new ArgumentOutOfRangeException(
+                            nameof(value),
+                            LogHelper.FormatInvariant(
+                                LogMessages.IDX10628,
+                                LogHelper.MarkAsNonPII(DefaultMinimumSymmetricKeySizeInBits))));
 
                 _minimumSymmetricKeySizeInBits = value;
             }
@@ -120,14 +144,14 @@ namespace Microsoft.IdentityModel.Tokens
             if (key is JsonWebKey jsonWebKey && jsonWebKey.K != null && jsonWebKey.Kty == JsonWebAlgorithmsKeyTypes.Octet)
                 return Base64UrlEncoder.DecodeBytes(jsonWebKey.K);
 
-            throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10667, key)));
+            throw LogHelper.LogExceptionMessage(new ArgumentException(LogHelper.FormatInvariant(LogMessages.IDX10667, LogHelper.MarkAsNonPII(key.KeyId))));
         }
 
         /// <summary>
         /// Returns a <see cref="KeyedHashAlgorithm"/>.
         /// This method is called just before a cryptographic operation.
         /// This provides the opportunity to obtain the <see cref="KeyedHashAlgorithm"/> from an object pool.
-        /// If this method is overridden, it is importont to override <see cref="ReleaseKeyedHashAlgorithm(KeyedHashAlgorithm)"/>
+        /// If this method is overridden, it is important to override <see cref="ReleaseKeyedHashAlgorithm(KeyedHashAlgorithm)"/>
         /// if custom releasing of the <see cref="KeyedHashAlgorithm"/> is desired.
         /// </summary>
         /// <param name="algorithm">The hash algorithm to use to create the hash value.</param>
@@ -161,14 +185,16 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Produces a signature over the 'input' using the <see cref="SymmetricSecurityKey"/> and 'algorithm' passed to <see cref="SymmetricSignatureProvider( SecurityKey, string )"/>.
+        /// Produces a signature over the 'input' using the <see cref="SymmetricSecurityKey"/> and 'algorithm'
+        /// passed to <see cref="SymmetricSignatureProvider( SecurityKey, string )"/>.
         /// </summary>
         /// <param name="input">The bytes to sign.</param>
         /// <returns>Signed bytes</returns>
         /// <exception cref="ArgumentNullException">'input' is null. </exception>
         /// <exception cref="ArgumentException">'input.Length' == 0. </exception>
         /// <exception cref="ObjectDisposedException"><see cref="Dispose(bool)"/> has been called.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="KeyedHashAlgorithm"/> is null. This can occur if a derived type deletes it or does not create it.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="KeyedHashAlgorithm"/> is null.
+        /// This can occur if a derived type deletes it or does not create it.</exception>
         /// <remarks>Sign is thread safe.</remarks>
         public override byte[] Sign(byte[] input)
         {
@@ -265,7 +291,8 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Verifies that a signature created over the 'input' matches the signature. Using <see cref="SymmetricSecurityKey"/> and 'algorithm' passed to <see cref="SymmetricSignatureProvider( SecurityKey, string )"/>.
+        /// Verifies that a signature created over the 'input' matches the signature. Using <see cref="SymmetricSecurityKey"/> and 'algorithm'
+        /// passed to <see cref="SymmetricSignatureProvider( SecurityKey, string )"/>.
         /// </summary>
         /// <param name="input">The bytes to verify.</param>
         /// <param name="signature">signature to compare against.</param>
@@ -275,7 +302,8 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentException">'input.Length' == 0.</exception>
         /// <exception cref="ArgumentException">'signature.Length' == 0. </exception>
         /// <exception cref="ObjectDisposedException"><see cref="Dispose(bool)"/> has been called.</exception>
-        /// <exception cref="InvalidOperationException">If the internal <see cref="KeyedHashAlgorithm"/> is null. This can occur if a derived type deletes it or does not create it.</exception>
+        /// <exception cref="InvalidOperationException">If the internal <see cref="KeyedHashAlgorithm"/> is null.
+        /// This can occur if a derived type deletes it or does not create it.</exception>
         /// <remarks>Verify is thread safe.</remarks>
         public override bool Verify(byte[] input, byte[] signature)
         {
@@ -312,7 +340,8 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// Verifies that a signature created over the 'input' matches the signature. Using <see cref="SymmetricSecurityKey"/> and 'algorithm' passed to <see cref="SymmetricSignatureProvider( SecurityKey, string )"/>.
+        /// Verifies that a signature created over the 'input' matches the signature. Using <see cref="SymmetricSecurityKey"/> and 'algorithm'
+        /// passed to <see cref="SymmetricSignatureProvider( SecurityKey, string )"/>.
         /// </summary>
         /// <param name="input">The bytes to verify.</param>
         /// <param name="signature">signature to compare against.</param>
@@ -324,7 +353,8 @@ namespace Microsoft.IdentityModel.Tokens
         /// <exception cref="ArgumentException">'signature.Length' == 0. </exception>
         /// <exception cref="ArgumentException">'length &lt; 1'</exception>
         /// <exception cref="ObjectDisposedException"><see cref="Dispose(bool)"/> has been called.</exception>
-        /// <exception cref="InvalidOperationException">If the internal <see cref="KeyedHashAlgorithm"/> is null. This can occur if a derived type deletes it or does not create it.</exception>
+        /// <exception cref="InvalidOperationException">If the internal <see cref="KeyedHashAlgorithm"/> is null.
+        /// This can occur if a derived type deletes it or does not create it.</exception>
         public bool Verify(byte[] input, byte[] signature, int length)
         {
             if (input == null)
@@ -340,22 +370,31 @@ namespace Microsoft.IdentityModel.Tokens
         }
 
         /// <summary>
-        /// This internal method is called from the AuthenticatedEncryptionProvider which passes in the algorithm that defines the size expected for the signature.
+        /// This internal method is called from the AuthenticatedEncryptionProvider which passes in the algorithm that defines
+        /// the size expected for the signature.
         /// The reason is the way the AuthenticationTag is validated.
-        /// For example when "A128CBC-HS256" is specified, SHA256 will used to create the HMAC and 32 bytes will be generated, but only the first 16 will be validated.
+        /// For example when "A128CBC-HS256" is specified, SHA256 will used to create the HMAC and 32 bytes will be generated,
+        /// but only the first 16 will be validated.
         /// </summary>
         /// <param name="input">The bytes to verify.</param>
-        /// <param name="inputOffset">offset in to input bytes to caculate hash.</param>
+        /// <param name="inputOffset">offset into the input bytes to calculate the hash.</param>
         /// <param name="inputLength">number of bytes of signature to use.</param>
         /// <param name="signature">signature to compare against.</param>
         /// <param name="signatureOffset">offset into signature array.</param>
-        /// <param name="signatureLength">how many bytes to verfiy.</param>
+        /// <param name="signatureLength">how many bytes to verify.</param>
         /// <param name="algorithm">algorithm passed by AuthenticatedEncryptionProvider.</param>
         /// <returns>true if computed signature matches the signature parameter, false otherwise.</returns>
 #if NET6_0_OR_GREATER
         [SkipLocalsInit]
 #endif
-        internal bool Verify(byte[] input, int inputOffset, int inputLength, byte[] signature, int signatureOffset, int signatureLength, string algorithm)
+        internal bool Verify(
+            byte[] input,
+            int inputOffset,
+            int inputLength,
+            byte[] signature,
+            int signatureOffset,
+            int signatureLength,
+            string algorithm)
         {
             if (input == null || input.Length == 0)
                 throw LogHelper.LogArgumentNullException(nameof(input));
@@ -445,7 +484,8 @@ namespace Microsoft.IdentityModel.Tokens
 
                 scoped Span<byte> hash;
 #if NET6_0_OR_GREATER
-                hash = stackalloc byte[keyedHashAlgorithm.HashSize / 8]; // only known algorithms are used, all of which have a small enough hash size to stackalloc
+                // only known algorithms are used, all of which have a small enough hash size to stackalloc
+                hash = stackalloc byte[keyedHashAlgorithm.HashSize / 8];
                 keyedHashAlgorithm.TryComputeHash(input.AsSpan(inputOffset, inputLength), hash, out int bytesWritten);
                 Debug.Assert(bytesWritten == hash.Length);
 #else

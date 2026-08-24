@@ -9,10 +9,10 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
     /// </summary>
     public static class WsFederationConstants
     {
-        #pragma warning disable 1591
+#pragma warning disable 1591
 
         public const string MetadataNamespace = "urn:oasis:names:tc:SAML:2.0:metadata";
-        public const string Namespace =  "http://docs.oasis-open.org/wsfed/federation/200706";
+        public const string Namespace = "http://docs.oasis-open.org/wsfed/federation/200706";
         public const string PreferredPrefix = "fed";
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Microsoft.IdentityModel.Protocols.WsFederation
             public const string Md = "md";
         }
 
-        #pragma warning restore 1591
+#pragma warning restore 1591
     }
 }
- 
+

@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
@@ -15,7 +14,7 @@ namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
         /// <summary>
         /// Creates an instance of <see cref="OpenIdConnectProtocolValidationContext"/>
         /// </summary>
-        public OpenIdConnectProtocolValidationContext() {}
+        public OpenIdConnectProtocolValidationContext() { }
 
         /// <summary>
         /// Gets or sets the 'client_id'.

@@ -9,6 +9,8 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Xml;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Saml;
+using Microsoft.IdentityModel.Tokens.Saml2;
 
 namespace Microsoft.IdentityModel.TestUtils
 {
@@ -28,7 +30,7 @@ namespace Microsoft.IdentityModel.TestUtils
                 PropertiesExpected = propertiesExpected;
         }
 
-        public static bool DefaultVerbose { get; set; } = false;
+        public static bool DefaultVerbose { get; set; }
 
         public static ExpectedException ArgumentException(string substringExpected = null, Type inner = null)
         {
@@ -41,7 +43,7 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public static ExpectedException ArgumentNullException(string substringExpected = null, Type inner = null)
         {
-            return new ExpectedException(typeof(ArgumentNullException), substringExpected, inner); 
+            return new ExpectedException(typeof(ArgumentNullException), substringExpected, inner);
         }
 
         public static ExpectedException CryptographicException(string substringExpected = null, Type inner = null, bool ignoreInnerException = false)
@@ -74,8 +76,18 @@ namespace Microsoft.IdentityModel.TestUtils
             return new ExpectedException(typeof(XmlException), substringExpected, inner);
         }
 
-        public static ExpectedException NoExceptionExpected 
-        { 
+        public static ExpectedException SamlSecurityTokenReadException(string substringExpected = null, Type inner = null, string contains = null)
+        {
+            return new ExpectedException(typeof(SamlSecurityTokenReadException), substringExpected, inner);
+        }
+
+        public static ExpectedException Saml2SecurityTokenReadException(string substringExpected = null, Type inner = null, string contains = null)
+        {
+            return new ExpectedException(typeof(Saml2SecurityTokenReadException), substringExpected, inner);
+        }
+
+        public static ExpectedException NoExceptionExpected
+        {
             get { return new ExpectedException(); }
         }
 
@@ -84,36 +96,36 @@ namespace Microsoft.IdentityModel.TestUtils
             return new ExpectedException(typeof(NotSupportedException), substringExpected, inner);
         }
 
-        public static ExpectedException ObjectDisposedException 
-        { 
-            get 
-            {
-                return new ExpectedException(typeof(ObjectDisposedException)); 
-            } 
-        }
-
-        public void ProcessException(Exception exception, CompareContext context)
+        public static ExpectedException ObjectDisposedException
         {
-            ProcessException(exception, context.Diffs);
+            get
+            {
+                return new ExpectedException(typeof(ObjectDisposedException));
+            }
         }
 
-        public void ProcessException(Exception exception, List<string> errors = null)
+        public void ProcessException(Exception exception, CompareContext context, string description = null)
+        {
+            ProcessException(exception, context.Diffs, description);
+        }
+
+        public void ProcessException(Exception exception, List<string> errors = null, string description = null)
         {
             if (TypeExpected == null && InnerTypeExpected != null)
             {
-                HandleError("(TypeExpected == null && InnerTypeExpected != null. TypeExpected == null && InnerTypeExpected != null.", errors);
+                HandleError("(TypeExpected == null && InnerTypeExpected != null. TypeExpected == null && InnerTypeExpected != null.", errors, description);
                 return;
             }
 
             if (TypeExpected == null)
             {
-                HandleError("exception != null, expectedException.TypeExpected == null.\nexception: " + exception, errors);
+                HandleError("exception != null, expectedException.TypeExpected == null.\nexception: " + exception, errors, description);
                 return;
             }
 
             if (exception == null)
             {
-                HandleError("exception == null, expectedException.TypeExpected != null.\nexpectedException.TypeExpected: " + TypeExpected, errors);
+                HandleError("exception == null, expectedException.TypeExpected != null.\nexpectedException.TypeExpected: " + TypeExpected, errors, description);
                 return;
             }
 
@@ -121,49 +133,49 @@ namespace Microsoft.IdentityModel.TestUtils
             {
                 if (exception.GetType() != TypeExpected)
                 {
-                    HandleError("exception.GetType() != expectedException.TypeExpected:\nexception.GetType(): " + exception.GetType() + "\nexpectedException.TypeExpected: " + TypeExpected, errors);
+                    HandleError("exception.GetType() != expectedException.TypeExpected:\nexception.GetType(): " + exception.GetType() + "\nexpectedException.TypeExpected: " + TypeExpected, errors, description);
                     return;
                 }
 
                 if (!string.IsNullOrWhiteSpace(SubstringExpected) && !exception.Message.Contains(SubstringExpected))
                 {
-                    HandleError($"!exception.Message.Contains('{SubstringExpected}').\nexception.Message: {exception.Message} \nexpectedException.SubstringExpected: {SubstringExpected}", errors);
+                    HandleError($"!exception.Message.Contains('{SubstringExpected}').\nexception.Message: {exception.Message} \nexpectedException.SubstringExpected: {SubstringExpected}", errors, description);
                     return;
                 }
 
                 if (exception.InnerException != null && InnerTypeExpected == null && !IgnoreInnerException)
                 {
-                    HandleError("exception.InnerException != null && expectedException.InnerTypeExpected == null && !IgnoreInnerException.\nexception.InnerException: " + exception.InnerException, errors);
+                    HandleError("exception.InnerException != null && expectedException.InnerTypeExpected == null && !IgnoreInnerException.\nexception.InnerException: " + exception.InnerException, errors, description);
                     return;
                 }
 
                 if (exception.InnerException == null && InnerTypeExpected != null && !IgnoreInnerException)
                 {
-                    HandleError("exception.InnerException == null && expectedException.InnerTypeExpected != null && !IgnoreInnerException.\nexpectedException.InnerTypeExpected: " + InnerTypeExpected, errors);
+                    HandleError("exception.InnerException == null && expectedException.InnerTypeExpected != null && !IgnoreInnerException.\nexpectedException.InnerTypeExpected: " + InnerTypeExpected, errors, description);
                     return;
                 }
 
                 if ((InnerTypeExpected != null) && (exception.InnerException.GetType() != InnerTypeExpected) && !IgnoreInnerException)
                 {
-                    HandleError("exception.InnerException != expectedException.InnerTypeExpected." + "\nexception.InnerException: '" + exception.InnerException + "\nInnerTypeExpected: " + InnerTypeExpected, errors);
+                    HandleError("exception.InnerException != expectedException.InnerTypeExpected." + "\nexception.InnerException: '" + exception.InnerException + "\nInnerTypeExpected: " + InnerTypeExpected, errors, description);
                 }
 
                 if (!string.IsNullOrWhiteSpace(InnerSubstringExpected) && !exception.InnerException.Message.Contains(InnerSubstringExpected))
                 {
-                    HandleError($"!InnerException.Message.Contains('{InnerSubstringExpected}').\nInnerException.Message: {exception.InnerException.Message} \nexpectedException.InnerSubstringExpected: {InnerSubstringExpected}", errors);
+                    HandleError($"!InnerException.Message.Contains('{InnerSubstringExpected}').\nInnerException.Message: {exception.InnerException.Message} \nexpectedException.InnerSubstringExpected: {InnerSubstringExpected}", errors, description);
                     return;
                 }
 
             }
 
             if (PropertiesExpected != null && PropertiesExpected.Count > 0)
-            { 
+            {
                 foreach (KeyValuePair<string, object> property in PropertiesExpected)
                 {
                     PropertyInfo propertyInfo = TypeExpected.GetProperty(property.Key);
                     if (propertyInfo == null)
                     {
-                        HandleError("exception type " + TypeExpected + " does not have expected property " + property.Key, errors);
+                        HandleError("exception type " + TypeExpected + " does not have expected property " + property.Key, errors, description);
                     }
                     object runtimeValue = propertyInfo.GetValue(exception);
 
@@ -172,14 +184,14 @@ namespace Microsoft.IdentityModel.TestUtils
 
                     if (runtimeValue != null && runtimeValue.GetType() != expectedTypeNonNullable && !expectedTypeNonNullable.IsAssignableFrom(runtimeValue.GetType()))
                     {
-                        HandleError("exception type " + TypeExpected + " does not match the expected property " + property.Key + " type.\nexpected type: " + expectedTypeNonNullable + ", actual type: " + runtimeValue.GetType(), errors);
+                        HandleError("exception type " + TypeExpected + " does not match the expected property " + property.Key + " type.\nexpected type: " + expectedTypeNonNullable + ", actual type: " + runtimeValue.GetType(), errors, description);
                     }
 
-                    if (runtimeValue != property.Value && 
+                    if (runtimeValue != property.Value &&
                         ((runtimeValue != null && !runtimeValue.Equals(property.Value)) ||
                          (property.Value != null && !property.Value.Equals(runtimeValue))))
                     {
-                        HandleError("exception type " + TypeExpected + " doesn't have the expected property value " + property.Key + " value.\nexpected value: " + property.Value + ", actual value: " + runtimeValue, errors);
+                        HandleError("exception type " + TypeExpected + " doesn't have the expected property value " + property.Key + " value.\nexpected value: " + property.Value + ", actual value: " + runtimeValue, errors, description);
                     }
                 }
             }
@@ -205,10 +217,15 @@ namespace Microsoft.IdentityModel.TestUtils
                 context.Diffs.Add("expectedException.TypeExpected != null: " + TypeExpected);
         }
 
-        private static void HandleError(string error, List<string> errors )
+        private static void HandleError(string error, List<string> errors, string description = null)
         {
             if (errors != null)
-                errors.Add(error);
+            {
+                if (!string.IsNullOrWhiteSpace(description))
+                    error = $"{description}: {error}";
+
+                errors.Add(error + Environment.NewLine);
+            }
             else
                 throw new TestException($"List<string> errors == null, error in test: {error}.");
         }
@@ -250,6 +267,11 @@ namespace Microsoft.IdentityModel.TestUtils
             return new ExpectedException(typeof(SecurityTokenInvalidIssuerException), substringExpected, innerTypeExpected, propertiesExpected: propertiesExpected);
         }
 
+        public static ExpectedException SecurityTokenInvalidCloudInstanceException(string substringExpected = null, Type innerTypeExpected = null, Dictionary<string, object> propertiesExpected = null)
+        {
+            return new ExpectedException(typeof(SecurityTokenInvalidCloudInstanceException), substringExpected, innerTypeExpected, propertiesExpected: propertiesExpected);
+        }
+
         public static ExpectedException SecurityTokenKeyWrapException(string substringExpected = null, Type innerTypeExpected = null, Dictionary<string, object> propertiesExpected = null)
         {
             return new ExpectedException(typeof(SecurityTokenKeyWrapException), substringExpected, innerTypeExpected, propertiesExpected: propertiesExpected);
@@ -278,7 +300,7 @@ namespace Microsoft.IdentityModel.TestUtils
         public static ExpectedException SecurityTokenNoExpirationException(string substringExpected = null, Type innerTypeExpected = null)
         {
             return new ExpectedException(typeof(SecurityTokenNoExpirationException), substringExpected, innerTypeExpected);
-        }                
+        }
 
         public static ExpectedException SecurityTokenNotYetValidException(string substringExpected = null, Type innerTypeExpected = null, Dictionary<string, object> propertiesExpected = null)
         {
@@ -293,7 +315,7 @@ namespace Microsoft.IdentityModel.TestUtils
         public static ExpectedException SecurityTokenReplayDetected(string substringExpected = null, Type innerTypeExpected = null)
         {
             return new ExpectedException(typeof(SecurityTokenReplayDetectedException), substringExpected, innerTypeExpected);
-        }                
+        }
 
         public static ExpectedException SecurityTokenSignatureKeyNotFoundException(string substringExpected = null, Type innerTypeExpected = null)
         {
@@ -320,7 +342,27 @@ namespace Microsoft.IdentityModel.TestUtils
             return new ExpectedException(typeof(JsonException), substringExpected, innerTypeExpected);
         }
 
-        public bool IgnoreExceptionType { get; set; } = false;
+        public static ExpectedException SecurityTokenDecompressionFailedException(string substringExpected = null, Type innerTypeExpected = null)
+        {
+            return new ExpectedException(typeof(SecurityTokenDecompressionFailedException), substringExpected, innerTypeExpected);
+        }
+
+        public static ExpectedException SecurityTokenMalformedException(string substringExpected = null, Type innerTypeExpected = null)
+        {
+            return new ExpectedException(typeof(SecurityTokenMalformedException), substringExpected, innerTypeExpected);
+        }
+
+        public static ExpectedException SecurityTokenReplayDetectedException(string substringExpected = null, Type innerTypeExpected = null)
+        {
+            return new ExpectedException(typeof(SecurityTokenReplayDetectedException), substringExpected, innerTypeExpected);
+        }
+
+        public static ExpectedException SecurityTokenReplayAddFailedException(string substringExpected = null, Type innerTypeExpected = null)
+        {
+            return new ExpectedException(typeof(SecurityTokenReplayAddFailedException), substringExpected, innerTypeExpected);
+        }
+
+        public bool IgnoreExceptionType { get; set; }
 
         public bool IgnoreInnerException { get; set; }
 
@@ -342,6 +384,6 @@ namespace Microsoft.IdentityModel.TestUtils
 
         public Type TypeExpected { get; set; }
 
-        public bool Verbose { get; set; } = false;
+        public bool Verbose { get; set; }
     }
 }

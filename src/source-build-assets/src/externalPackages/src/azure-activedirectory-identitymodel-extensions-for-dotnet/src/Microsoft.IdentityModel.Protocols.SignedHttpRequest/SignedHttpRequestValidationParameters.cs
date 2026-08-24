@@ -103,7 +103,7 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// If you set this property to true, you must set values in <see cref="AllowedDomainsForJkuRetrieval"/>.
         /// </summary>
         /// <remarks>https://datatracker.ietf.org/doc/html/rfc7800#section-3.5</remarks>
-        public bool AllowResolvingPopKeyFromJku { get; set; } = false;
+        public bool AllowResolvingPopKeyFromJku { get; set; }
 
         /// <summary>
         /// Gets or sets a list of allowed domains for 'jku' claim retrieval.
@@ -245,19 +245,19 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// Gets or sets a value indicating whether the <see cref="SignedHttpRequestClaimTypes.Q"/> claim should be validated or not.
         /// </summary>
         /// <remarks>https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-3</remarks>  
-        public bool ValidateQ { get; set; } = false;
+        public bool ValidateQ { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="SignedHttpRequestClaimTypes.H"/> claim should be validated or not.
         /// </summary>
         /// <remarks>https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-3</remarks>  
-        public bool ValidateH { get; set; } = false;
+        public bool ValidateH { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="SignedHttpRequestClaimTypes.B"/> claim should be validated or not.
         /// </summary>
         /// <remarks>https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#section-3</remarks>  
-        public bool ValidateB { get; set; } = false;
+        public bool ValidateB { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether claims in <see cref="ClaimsToValidateWhenPresent"/> should be validated if present.
@@ -265,6 +265,6 @@ namespace Microsoft.IdentityModel.Protocols.SignedHttpRequest
         /// <remarks>
         /// Allows for validation of a claim if present, even if the validation option for the claim is set to <c>false</c>.
         /// </remarks>
-        public bool ValidatePresentClaims { get; set; } = false;
+        public bool ValidatePresentClaims { get; set; }
     }
 }
