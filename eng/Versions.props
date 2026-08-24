@@ -50,7 +50,7 @@
     <!-- runtime dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.10</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>10.0.10</MicrosoftExtensionsLoggingConsoleVersion>
-    <MicrosoftExtensionsLoggingVersion>10.0.7</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsLoggingVersion>10.0.10</MicrosoftExtensionsLoggingVersion>
     <MicrosoftExtensionsHostingVersion>10.0.7</MicrosoftExtensionsHostingVersion>
     <SystemSecurityCryptographyXmlVersion>10.0.10</SystemSecurityCryptographyXmlVersion>
     <!-- external dependencies -->
