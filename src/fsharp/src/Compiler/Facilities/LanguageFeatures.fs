@@ -16,7 +16,6 @@ module internal FSharp.Compiler.Features
 
 [<RequireQualifiedAccess>]
 type LanguageFeature =
-    | RelaxWhitespace
     | RelaxWhitespace2
     | NameOf
     | DotlessFloat32Literal
@@ -101,6 +100,7 @@ type LanguageFeature =
     | MethodOverloadsCache
     | ImplicitDIMCoverage
     | PreprocessorElif
+    | ExtensionConstraintSolutions
     | ExceptionFieldSerializationSupport
     | ErrorOnMissingSignatureAttribute
     | RecordConstructorSyntax
@@ -147,9 +147,6 @@ type LanguageVersion(versionText, ?disabledFeaturesArray: LanguageFeature array)
     static let features =
         dict
             [
-                // F# 4.7
-                LanguageFeature.RelaxWhitespace, languageVersion47
-
                 // F# 5.0
                 LanguageFeature.FixedIndexSlice3d4d, languageVersion50
                 LanguageFeature.DotlessFloat32Literal, languageVersion50
@@ -263,6 +260,7 @@ type LanguageVersion(versionText, ?disabledFeaturesArray: LanguageFeature array)
 
                 // Unfinished features that still need work before they can be assigned a release language version.
                 LanguageFeature.FromEndSlicing, previewVersion // Unfinished features --- needs work
+                LanguageFeature.ExtensionConstraintSolutions, previewVersion
             ]
 
     static let defaultLanguageVersion = LanguageVersion("default")
@@ -357,7 +355,6 @@ type LanguageVersion(versionText, ?disabledFeaturesArray: LanguageFeature array)
     /// Get a string name for the given feature.
     static member GetFeatureString feature =
         match feature with
-        | LanguageFeature.RelaxWhitespace -> FSComp.SR.featureRelaxWhitespace ()
         | LanguageFeature.RelaxWhitespace2 -> FSComp.SR.featureRelaxWhitespace2 ()
         | LanguageFeature.NameOf -> FSComp.SR.featureNameOf ()
         | LanguageFeature.DotlessFloat32Literal -> FSComp.SR.featureDotlessFloat32Literal ()
@@ -450,6 +447,7 @@ type LanguageVersion(versionText, ?disabledFeaturesArray: LanguageFeature array)
         | LanguageFeature.MethodOverloadsCache -> FSComp.SR.featureMethodOverloadsCache ()
         | LanguageFeature.ImplicitDIMCoverage -> FSComp.SR.featureImplicitDIMCoverage ()
         | LanguageFeature.PreprocessorElif -> FSComp.SR.featurePreprocessorElif ()
+        | LanguageFeature.ExtensionConstraintSolutions -> FSComp.SR.featureExtensionConstraintSolutions ()
         | LanguageFeature.ExceptionFieldSerializationSupport -> FSComp.SR.featureExceptionFieldSerializationSupport ()
         | LanguageFeature.ErrorOnMissingSignatureAttribute -> FSComp.SR.featureErrorOnMissingSignatureAttribute ()
         | LanguageFeature.RecordConstructorSyntax -> FSComp.SR.featureRecordConstructorSyntax ()

@@ -3,8 +3,8 @@
 
 // Minimal consumer of the TranslationLayer API surface to exercise code paths
 // that must be AoT-safe. This app is published with PublishAot=true by the
-// NativeAotCompatibilityTests integration test — any IL2026/IL3050 linker
-// warnings will fail the publish and surface as test failures.
+// NativeAotCompatibilityTests integration test, which reads the IL warnings the
+// publish reports and asserts that none of them come from the serialization code.
 //
 // The app doesn't need to actually run against a vstest.console instance; it
 // just needs to reference enough API surface for the linker to analyze the
@@ -13,6 +13,8 @@
 using System;
 
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
@@ -44,4 +46,28 @@ Console.WriteLine($"DiscoveryRequestPayload sources: {string.Join(",", discovery
 var testRunPayload = new TestRunRequestPayload { Sources = ["test.dll"], RunSettings = "<RunSettings/>" };
 Console.WriteLine($"TestRunRequestPayload sources: {string.Join(",", testRunPayload.Sources!)}");
 
-Console.WriteLine("Done — if this published without IL2026/IL3050 warnings, AoT compatibility is verified.");
+var testSessionInfo = new TestSessionInfo();
+var discoveryCriteria = new DiscoveryCriteria(
+    ["test.dll"],
+    frequencyOfDiscoveredTestsEvent: 10,
+    discoveredTestEventTimeout: TimeSpan.FromSeconds(30),
+    runSettings: "<RunSettings/>",
+    testSessionInfo);
+
+// Round trip through the public serializer entry point, the same one vstest.console and testhost
+// use on the wire. It reaches TestPlatformJsonContext and the internal converters underneath, so
+// the linker still analyzes them, and this consumer needs no access to internals.
+var serialized = JsonDataSerializer.Instance.SerializePayload(MessageType.StartDiscovery, discoveryCriteria);
+var message = JsonDataSerializer.Instance.DeserializeMessage(serialized);
+var deserializedCriteria = JsonDataSerializer.Instance.DeserializePayload<DiscoveryCriteria>(message)
+    ?? throw new InvalidOperationException("DiscoveryCriteria deserialization returned null.");
+
+if (deserializedCriteria.TestSessionInfo?.Id != testSessionInfo.Id
+    || deserializedCriteria.FrequencyOfDiscoveredTestsEvent != discoveryCriteria.FrequencyOfDiscoveredTestsEvent
+    || deserializedCriteria.DiscoveredTestEventTimeout != discoveryCriteria.DiscoveredTestEventTimeout
+    || deserializedCriteria.RunSettings != discoveryCriteria.RunSettings)
+{
+    throw new InvalidOperationException("DiscoveryCriteria NativeAOT round trip did not preserve its values.");
+}
+
+Console.WriteLine("NativeAOT serialization round trip succeeded.");

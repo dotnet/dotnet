@@ -5,10 +5,12 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
+using System.Threading;
 using Microsoft.SignCheck.Interop;
 using Microsoft.SignCheck.Logging;
 using System.Reflection.PortableExecutable;
@@ -26,6 +28,9 @@ namespace Microsoft.SignCheck.Verification
             get;
             set;
         } = true;
+
+        // The legacy Windows Script Host SIP uses COM and cannot locate embedded signatures from an MTA thread.
+        internal virtual bool RequiresStaThreadForWinVerifyTrust => false;
 
         public AuthentiCodeVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension, ISecurityInfoProvider securityInfoProvider = null)
             : base(log, exclusions, options, fileExtension)
@@ -96,14 +101,57 @@ namespace Microsoft.SignCheck.Verification
             return svr;
         }
 
+        [SupportedOSPlatform("windows")]
+        private bool VerifyFileIntegrity(string path, SignatureVerificationResult svr)
+        {
+            uint result = RequiresStaThreadForWinVerifyTrust &&
+                Thread.CurrentThread.GetApartmentState() != ApartmentState.STA
+                    ? VerifyFileIntegrityOnStaThread(path)
+                    : VerifyFileIntegrityCore(path);
+
+            if (result != 0)
+            {
+                svr.AddDetail(DetailKeys.Error, "WinVerifyTrust failed: 0x{0:X8}. The file may have been modified after signing.", result);
+                return false;
+            }
+
+            return true;
+        }
+
+        [SupportedOSPlatform("windows")]
+        private static uint VerifyFileIntegrityOnStaThread(string path)
+        {
+            uint result = 0;
+            ExceptionDispatchInfo exception = null;
+
+            Thread thread = new Thread(() =>
+            {
+                try
+                {
+                    result = VerifyFileIntegrityCore(path);
+                }
+                catch (Exception ex)
+                {
+                    exception = ExceptionDispatchInfo.Capture(ex);
+                }
+            });
+
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+
+            exception?.Throw();
+            return result;
+        }
+
         /// <summary>
         /// Uses WinVerifyTrust to verify the file's Authenticode signature integrity,
         /// ensuring the file content has not been modified after signing.
-        /// Uses WTD_HASH_ONLY_FLAG so only the file digest is verified, not trust policy
-        /// (untrusted roots, expired certs, etc. are handled separately by CMS validation).
+        /// Uses WTD_HASH_ONLY_FLAG so only the file digest is verified. SignCheck validates
+        /// the CMS signature itself separately, but does not evaluate certificate trust policy.
         /// </summary>
         [SupportedOSPlatform("windows")]
-        private bool VerifyFileIntegrity(string path, SignatureVerificationResult svr)
+        private static uint VerifyFileIntegrityCore(string path)
         {
             var fileInfo = new WinTrustFileInfo
             {
@@ -144,14 +192,7 @@ namespace Microsoft.SignCheck.Verification
                     Marshal.StructureToPtr(actionId, pGuid, false);
 
                     uint result = WinTrust.WinVerifyTrust(IntPtr.Zero, pGuid, pTrustData);
-
-                    if (result != 0)
-                    {
-                        svr.AddDetail(DetailKeys.Error, "WinVerifyTrust failed: 0x{0:X8}. The file may have been modified after signing.", result);
-                        return false;
-                    }
-
-                    return true;
+                    return result;
                 }
                 finally
                 {

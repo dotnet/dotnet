@@ -6,7 +6,6 @@ module internal FSharp.Compiler.Features
 /// LanguageFeature enumeration
 [<RequireQualifiedAccess>]
 type LanguageFeature =
-    | RelaxWhitespace
     | RelaxWhitespace2
     | NameOf
     | DotlessFloat32Literal
@@ -92,6 +91,7 @@ type LanguageFeature =
     | MethodOverloadsCache
     | ImplicitDIMCoverage
     | PreprocessorElif
+    | ExtensionConstraintSolutions
     | ExceptionFieldSerializationSupport
     | ErrorOnMissingSignatureAttribute
     | RecordConstructorSyntax

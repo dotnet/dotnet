@@ -332,6 +332,15 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Cannot run test &apos;{0}&apos; because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection..
+        /// </summary>
+        internal static string MtpTestCaseMissingNodeUid {
+            get {
+                return ResourceManager.GetString("MtpTestCaseMissingNodeUid", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Skipping source:.
         /// </summary>
         internal static string SkippingSource {

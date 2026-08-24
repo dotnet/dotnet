@@ -1285,8 +1285,8 @@ and p_ILBasicCallConv x st =
          | ILArgConvention.VarArg -> 5)
         st
 
-and p_ILCallConv (Callconv(x, y)) st =
-    p_tup2 p_ILHasThis p_ILBasicCallConv (x, y) st
+and p_ILCallConv (x: ILCallingConv) st =
+    p_tup2 p_ILHasThis p_ILBasicCallConv (x.ThisConv, x.BasicConv) st
 
 and p_ILCallSig x st =
     p_tup3 p_ILCallConv p_ILTypes p_ILType (x.CallingConv, x.ArgTypes, x.ReturnType) st
@@ -1316,7 +1316,7 @@ let u_ILHasThis st =
 
 let u_ILCallConv st =
     let a, b = u_tup2 u_ILHasThis u_ILBasicCallConv st
-    Callconv(a, b)
+    ILCallingConv.Create(a, b)
 
 let u_ILTypeRef st =
     let a, b, c = u_tup3 u_ILScopeRef u_strings u_string st
@@ -2130,7 +2130,7 @@ let p_trait_sln sln st =
         p_byte 7 st
         p_tup4 p_ty (p_vref "trait") p_tys p_ty (a, b, c, d) st
 
-let p_trait (TTrait(a, b, c, d, e, _, f)) st =
+let p_trait (TTrait(a, b, c, d, e, _, f, _)) st =
     p_tup6 p_tys p_string p_MemberFlags p_tys (p_option p_ty) (p_option p_trait_sln) (a, b, c, d, e, f.Value) st
 
 let u_anonInfo_data st =
@@ -2171,7 +2171,7 @@ let u_trait st =
     let a, b, c, d, e, f =
         u_tup6 u_tys u_string u_MemberFlags u_tys (u_option u_ty) (u_option u_trait_sln) st
 
-    TTrait(a, b, c, d, e, ref None, ref f)
+    TTrait(a, b, c, d, e, ref None, ref f, None)
 
 let p_rational q st =
     p_int32 (GetNumerator q) st
@@ -2839,8 +2839,7 @@ and p_tcaug p st =
          p.tcaug_hash_and_equals_withc
          |> Option.map (fun (v1, v2, v3, _) -> (v1, v2, v3)),
          p.tcaug_equals,
-         (p.tcaug_adhoc_list
-          |> ResizeArray.toList
+         (p.AdhocMembers
           // Explicit impls of interfaces only get kept in the adhoc list
           // in order to get check the well-formedness of an interface.
           // Keeping them across assembly boundaries is not valid, because relinking their ValRefs
@@ -3201,7 +3200,10 @@ and u_tcaug st =
         tcaug_equals = b2
         // only used for code generation and checking - hence don't care about the values when reading back in
         tcaug_hasObjectGetHashCode = false
-        tcaug_adhoc_list = ResizeArray<_>(c |> List.map (fun (_, vref) -> (false, vref)))
+        tcaug_adhoc_list =
+            match c with
+            | [] -> null
+            | _ -> ResizeArray<_>(c |> List.map (fun (_, vref) -> (false, vref)))
         tcaug_adhoc = NameMultiMap.ofList c
         tcaug_interfaces = d
         tcaug_super = e
@@ -3301,7 +3303,7 @@ and u_ValData st =
              | Some(a, _) -> a)
         val_type = x2
         val_stamp = newStamp ()
-        val_flags = ValFlags x4
+        val_flags = ValFlags.OfPickledBits x4
         val_opt_data =
             match x1z, x1a, x10, x14, x13, x15, x8, x13b, x12, x9 with
             | None, None, None, None, TAccess [], None, None, ParentNone, "", [] -> None

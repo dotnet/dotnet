@@ -2,17 +2,17 @@
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26381.103">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>e2c1e00b3d0f96afb892fb261d5921565b400246</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="11.0.0-beta.26381.103">
+    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="11.0.0-beta.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>e2c1e00b3d0f96afb892fb261d5921565b400246</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="11.0.0-beta.26381.103">
+    <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="11.0.0-beta.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>e2c1e00b3d0f96afb892fb261d5921565b400246</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.26413.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
