@@ -35,9 +35,9 @@ jobs:
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
   steps:
   - script: |
-      # Pre-install the Azure DevOps extension using the dnceng PyPI feed for dependency resolution under network isolation
-      az extension add --name azure-devops \
-        --pip-extra-index-urls https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public-pypi/pypi/simple/
+      # Pre-install the Azure DevOps extension using the dnceng PyPI feed under network isolation
+      export PIP_INDEX_URL=https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public-pypi/pypi/simple/
+      az extension add --name azure-devops
 
       dotnet_dotnet_build='${{ replace(parameters.dotnetDotnetRunId, ' ', '') }}'
       dotnet_dotnet_sha=''
