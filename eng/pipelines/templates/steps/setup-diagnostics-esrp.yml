@@ -12,7 +12,7 @@ steps:
       command: 'custom'
       arguments: 'install microsoft.esrpclient
                 -Source https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
-                -DependencyVersion Highest -OutputDirectory $(Build.StagingDirectory)'
+                -DependencyVersion Highest -OutputDirectory $(Agent.TempDirectory)'
 
   # This is deliberately an azcli task to map in the service connection.
   - task: AzureCLI@2
@@ -22,10 +22,10 @@ steps:
       scriptType: 'ps'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        $esrpclient = Get-ChildItem -Path '$(Build.StagingDirectory)\microsoft.esrpclient*' -Filter esrpclient.exe -Recurse | Select-Object -First 1 | select -ExpandProperty FullName
+        $esrpclient = Get-ChildItem -Path '$(Agent.TempDirectory)\microsoft.esrpclient*' -Filter esrpclient.exe -Recurse | Select-Object -First 1 | select -ExpandProperty FullName
 
         if ($esrpclient -eq $null) {
-          throw "Failed to find esrpclient.exe in $(Build.StagingDirectory)"
+          throw "Failed to find esrpclient.exe in $(Agent.TempDirectory)"
         }
 
         $federatedData = @{
