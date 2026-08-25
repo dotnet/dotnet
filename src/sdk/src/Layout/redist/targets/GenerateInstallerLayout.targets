@@ -60,7 +60,7 @@
 
   <Target Name="LayoutWorkloadUserLocalMarker"
           Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <WriteLinesToFile File="$(RedistInstallerLayoutPath)metadata/workloads/$(CliProductBandVersion)00/userlocal"
+    <WriteLinesToFile File="$(RedistInstallerLayoutPath)metadata/workloads/$(SdkMinorVersion)/userlocal"
                       Overwrite="true" />
   </Target>
 

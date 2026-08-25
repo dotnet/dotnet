@@ -174,11 +174,11 @@
 
       <!-- MSI packages for ManifestPackagesToDownload -->
       <!-- Manifest packages are not RID-specific, add MSI packages for all three architectures -->
-      <PackageDownload Include="%(ManifestPackagesToDownload.Identity)-$(BuiltInWorkloadFeatureBand).Msi.x86" 
+      <PackageDownload Include="%(ManifestPackagesToDownload.Identity)-$(BuiltinWorkloadMinorVersion).Msi.x86"
                        Version="[$(DotNet1xxWorkloadManifestVersion)]" />
-      <PackageDownload Include="%(ManifestPackagesToDownload.Identity)-$(BuiltInWorkloadFeatureBand).Msi.x64" 
+      <PackageDownload Include="%(ManifestPackagesToDownload.Identity)-$(BuiltinWorkloadMinorVersion).Msi.x64"
                        Version="[$(DotNet1xxWorkloadManifestVersion)]" />
-      <PackageDownload Include="%(ManifestPackagesToDownload.Identity)-$(BuiltInWorkloadFeatureBand).Msi.arm64" 
+      <PackageDownload Include="%(ManifestPackagesToDownload.Identity)-$(BuiltinWorkloadMinorVersion).Msi.arm64"
                        Version="[$(DotNet1xxWorkloadManifestVersion)]" />
     </ItemGroup>
   </Target>
@@ -214,7 +214,7 @@
       <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(RuntimeWorkloadPacksToDownload.Identity).Msi.*\$(DotNet1xxRuntimeVersion)\*.nupkg" 
                               Condition="'%(RuntimeWorkloadPacksToDownload.ExcludeAsMsi)' != 'true'" />
       <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(EmsdkWorkloadPacksToDownload.Identity).Msi.*\$(DotNet1xxRuntimeVersion)\*.nupkg" />
-      <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(ManifestPackagesToDownload.Identity)-$(BuiltInWorkloadFeatureBand).Msi.*\$(DotNet1xxWorkloadManifestVersion)\*.nupkg" />
+      <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(ManifestPackagesToDownload.Identity)-$(BuiltinWorkloadMinorVersion).Msi.*\$(DotNet1xxWorkloadManifestVersion)\*.nupkg" />
     </ItemGroup>
 
     <!-- Copy to shipping packages directory so they appear as build outputs -->
@@ -473,11 +473,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <RuntimeManifestPackages Include="$(ManifestsPackageSource)Microsoft.NET.Workload.Mono.ToolChain.*Manifest-$(BuiltinWorkloadFeatureBand)*.*.nupkg"
+      <RuntimeManifestPackages Include="$(ManifestsPackageSource)Microsoft.NET.Workload.Mono.ToolChain.*Manifest-$(BuiltinWorkloadMinorVersion)*.*.nupkg"
                                MsiVersion="$(MsiVersion)"
                                SupportsMachineArch="true" />
 
-      <EmsdkManifestPackages Include="$(ManifestsPackageSource)Microsoft.NET.Workload.Emscripten*.Manifest-$(BuiltinWorkloadFeatureBand)*.*.nupkg"
+      <EmsdkManifestPackages Include="$(ManifestsPackageSource)Microsoft.NET.Workload.Emscripten*.Manifest-$(BuiltinWorkloadMinorVersion)*.*.nupkg"
                              MsiVersion="$(MsiVersion)"
                              SupportsMachineArch="true" />
     </ItemGroup>

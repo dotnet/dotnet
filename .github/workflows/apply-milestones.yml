@@ -173,7 +173,8 @@ jobs:
                 const versionsProps = fs.readFileSync('eng/Versions.props', 'utf8');
 
                 // Skip if servicing (patch > 0)
-                const patchMatch = versionsProps.match(/<VersionSDKMinorPatch>(\d+)<\/VersionSDKMinorPatch>/);
+                const patchMatch = versionsProps.match(/<VersionPatch>(\d+)<\/VersionPatch>/)
+                  ?? versionsProps.match(/<VersionSDKMinorPatch>(\d+)<\/VersionSDKMinorPatch>/);
                 const patch = patchMatch ? parseInt(patchMatch[1]) : -1;
                 if (patch !== 0) {
                   core.info(`Bare release branch ${branch} has patch version ${patch} (servicing), skipping`);

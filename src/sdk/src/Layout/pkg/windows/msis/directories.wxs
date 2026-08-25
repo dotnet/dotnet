@@ -8,7 +8,7 @@
       <Directory Id="DOTNETHOME" Name="dotnet">
         <Directory Id="MetadataDir" Name="metadata">
           <Directory Id="WorkloadsDir" Name="workloads">
-            <Directory Id="FeatureBandDir" Name="$(SdkFeatureBandVersion)">
+            <Directory Id="MinorVersionDir" Name="$(SdkMinorVersion)">
               <!-- Directory for storing the sentinel file used by dotnet workload commands to determine if workloads should use MSI packages. -->
               <Directory Id="InstallerTypeDir" Name="installertype" />
             </Directory>
