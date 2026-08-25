@@ -7,10 +7,10 @@
       "commitSha": "8a334d584dc2889549156514953a56dd106b842a"
     },
     {
-      "barId": 328489,
+      "barId": 328573,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "1d715ca2c5b8a256d3556a35ec846738058c1c4c"
+      "commitSha": "b7597c90b51045d3a2c6de026bb6370b6ae52483"
     },
     {
       "barId": 326855,
@@ -55,10 +55,10 @@
       "commitSha": "c251d06dc38db89fa6df30b0b17a233e0ffe403d"
     },
     {
-      "barId": 328486,
+      "barId": 328574,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "f8839a065388248b5403b846f224dbcc5f54d999"
+      "commitSha": "1168e26754112f9a2913baca57603b9843d074e4"
     },
     {
       "barId": 328469,
