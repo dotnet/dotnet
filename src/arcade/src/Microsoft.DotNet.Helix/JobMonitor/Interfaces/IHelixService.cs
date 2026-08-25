@@ -16,10 +16,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
     {
         /// <summary>
         /// Returns Helix jobs associated with the current build/stage.
-        /// Implementations should query Helix using the given <paramref name="source"/>
-        /// filter (which scopes the query to the repo/branch/PR the build is for, mirroring
-        /// what the Helix job submitter records on each submission) and then narrow the
-        /// result to jobs stamped with <paramref name="buildId"/>.
+        /// Implementations should query Helix using both the given <paramref name="source"/>
+        /// and the job property <c>BuildId=<paramref name="buildId"/></c>. The build property
+        /// must be filtered by the service rather than by retrieving every job for a long-lived
+        /// branch source and narrowing the result locally.
         /// </summary>
         Task<IReadOnlyList<HelixJobInfo>> GetJobsForBuildAsync(
             string source,
@@ -32,9 +32,9 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// Work items without recognizable test result files may be omitted from the result.
         /// Individual file download failures should not prevent other result files from being downloaded.
         /// </summary>
-        Task<IReadOnlyList<WorkItemTestResults>> DownloadTestResultsAsync(
+        Task<WorkItemTestResults> DownloadTestResultsAsync(
             string jobName,
-            IReadOnlyCollection<string> workItemNames,
+            string workItemName,
             string workingDirectory, CancellationToken cancellationToken);
 
         /// <summary>
@@ -58,14 +58,15 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// possible (e.g. the original queue no longer exists).
         /// The new job must preserve BuildId and StageName properties so it is discoverable by
         /// GetJobsForBuildAsync, and must be stamped with <paramref name="targetStageAttempt"/>
-        /// (the resubmitting monitor's own stage attempt) rather than the original job's attempt,
-        /// so the monitor gates on its own resubmission. When <paramref name="targetStageAttempt"/>
-        /// is null/empty the original job's attempt is preserved (build + stage back-compat).
+        /// (the resubmitting monitor's own stage attempt) so the monitor gates on its own
+        /// resubmission. It preserves the original submitter's System.JobAttempt and records
+        /// <paramref name="monitorJobAttempt"/> separately for diagnostics.
         /// </summary>
         Task<HelixJobInfo> ResubmitWorkItemsAsync(
             HelixJobInfo originalJob,
             IReadOnlyCollection<WorkItemSummary> failedWorkItems,
             string targetStageAttempt,
+            string monitorJobAttempt,
             CancellationToken cancellationToken);
     }
 }

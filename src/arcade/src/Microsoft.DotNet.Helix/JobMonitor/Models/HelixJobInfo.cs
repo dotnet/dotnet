@@ -16,14 +16,17 @@ namespace Microsoft.DotNet.Helix.JobMonitor.Models
     public sealed class HelixJobInfo
     {
         public const string PreviousHelixJobNamePropertyName = "PreviousHelixJobName";
+        public const string LogicalJobNamePropertyName = "jobName";
 
         /// <summary>
         /// Helix job property that records the Azure DevOps stage attempt during which the job
         /// was submitted. This is the exact AzDO predefined-variable name that the Helix submitter
         /// (<c>SendHelixJob</c>) copies onto every job, so the monitor reads and re-stamps the
-        /// same property when resubmitting (see JobMonitorRunner.Design.md §2.3).
+        /// same property when resubmitting (see Design/SemanticBehavior.md §2.3).
         /// </summary>
         public const string StageAttemptPropertyName = "System.StageAttempt";
+        public const string JobAttemptPropertyName = "System.JobAttempt";
+        public const string ResubmittedByJobAttemptPropertyName = "JobMonitor.JobAttempt";
 
         public HelixJobInfo(JobSummary helixJob)
         {
@@ -32,6 +35,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor.Models
             TestRunName = GetTestRunNameFromJob(helixJob);
             StageName = GetStringPropertyFromJob(helixJob, "System.StageName");
             StageAttempt = GetStringPropertyFromJob(helixJob, StageAttemptPropertyName);
+            JobAttempt = GetStringPropertyFromJob(helixJob, JobAttemptPropertyName);
             QueueId = helixJob.QueueId;
             InitialWorkItemCount = helixJob.InitialWorkItemCount;
             Properties = helixJob.Properties;
@@ -47,16 +51,29 @@ namespace Microsoft.DotNet.Helix.JobMonitor.Models
             string queueId = null,
             string previousHelixJobName = null,
             int? initialWorkItemCount = null,
-            string stageAttempt = null)
+            string stageAttempt = null,
+            string jobAttempt = null,
+            string logicalJobName = null,
+            string submitterPhaseName = null)
         {
             JobName = jobName ?? throw new ArgumentNullException(nameof(jobName));
             Status = status ?? throw new ArgumentNullException(nameof(status));
             TestRunName = testRunName;
             StageName = stageName;
             StageAttempt = stageAttempt;
+            JobAttempt = jobAttempt;
             QueueId = queueId;
             InitialWorkItemCount = initialWorkItemCount;
-            Properties = CreateProperties(testRunName, stageName, submitterJobName, submitterJobDisplayName, previousHelixJobName, stageAttempt);
+            Properties = CreateProperties(
+                testRunName,
+                stageName,
+                submitterJobName,
+                submitterJobDisplayName,
+                previousHelixJobName,
+                stageAttempt,
+                jobAttempt,
+                logicalJobName,
+                submitterPhaseName);
         }
 
         public string JobName { get; }
@@ -86,12 +103,33 @@ namespace Microsoft.DotNet.Helix.JobMonitor.Models
         public string StageAttempt { get; }
 
         /// <summary>
+        /// Attempt of the Azure DevOps submitter job that created this logical Helix work.
+        /// Monitor-created resubmissions preserve this value so it can be compared with the
+        /// current timeline record for the submitter.
+        /// </summary>
+        public string JobAttempt { get; }
+
+        /// <summary>
         /// Helix target queue this job ran on (e.g. "Ubuntu.2204.Amd64.Open"). Comes from the
         /// Helix <c>JobSummary.QueueId</c>. May be null on synthetic jobs.
         /// </summary>
         public string QueueId { get; }
 
         public string SubmitterJobName => GetStringProperty(Properties, "System.JobName");
+
+        /// <summary>
+        /// Stable Azure DevOps phase/job reference name copied by the Helix SDK submitter.
+        /// Runtime pipelines can report <c>System.JobName</c> as <c>__default</c> for many
+        /// independent matrix jobs, while <c>System.PhaseName</c> remains unique and stable.
+        /// </summary>
+        public string SubmitterPhaseName => GetStringProperty(Properties, "System.PhaseName");
+
+        /// <summary>
+        /// Stable logical name assigned by the Helix SDK submitter. A single Azure DevOps job
+        /// can submit multiple Helix jobs to the same queue, so this value distinguishes those
+        /// independent streams while remaining stable across stage reruns and resubmissions.
+        /// </summary>
+        public string LogicalJobName => GetStringProperty(Properties, LogicalJobNamePropertyName);
 
         /// <summary>
         /// Matrix-expanded Azure DevOps job display name (e.g. "Windows_NT Build_Release"),
@@ -200,7 +238,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor.Models
             string submitterJobName,
             string submitterJobDisplayName,
             string previousHelixJobName,
-            string stageAttempt)
+            string stageAttempt,
+            string jobAttempt,
+            string logicalJobName,
+            string submitterPhaseName)
         {
             var properties = new JObject();
 
@@ -218,6 +259,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor.Models
             {
                 properties[StageAttemptPropertyName] = stageAttempt;
             }
+            if (!string.IsNullOrEmpty(jobAttempt))
+            {
+                properties[JobAttemptPropertyName] = jobAttempt;
+            }
 
             if (!string.IsNullOrEmpty(submitterJobName))
             {
@@ -232,6 +277,16 @@ namespace Microsoft.DotNet.Helix.JobMonitor.Models
             if (!string.IsNullOrEmpty(previousHelixJobName))
             {
                 properties[PreviousHelixJobNamePropertyName] = previousHelixJobName;
+            }
+
+            if (!string.IsNullOrEmpty(logicalJobName))
+            {
+                properties[LogicalJobNamePropertyName] = logicalJobName;
+            }
+
+            if (!string.IsNullOrEmpty(submitterPhaseName))
+            {
+                properties["System.PhaseName"] = submitterPhaseName;
             }
 
             return properties;

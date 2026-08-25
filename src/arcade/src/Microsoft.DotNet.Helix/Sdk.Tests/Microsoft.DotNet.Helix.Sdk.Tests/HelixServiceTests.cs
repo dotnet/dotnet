@@ -26,16 +26,18 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
     public class HelixServiceTests
     {
         [Fact]
-        public async Task GetJobsForBuildAsync_PassesSourceThroughAndFiltersByBuildId()
+        public async Task GetJobsForBuildAsync_PassesSourceAndBuildIdFilters()
         {
             var api = CreateApi();
             string capturedSource = null;
+            IImmutableDictionary<string, string> capturedProperties = null;
             int? capturedCount = null;
             api.Job
                 .Setup(j => j.ListAsync(null, It.IsAny<int?>(), null, null, It.IsAny<IImmutableDictionary<string, string>>(), It.IsAny<string>(), null, It.IsAny<CancellationToken>()))
-                .Callback<string, int?, string, string, IImmutableDictionary<string, string>, string, string, CancellationToken>((_, count, _, _, _, source, _, _) =>
+                .Callback<string, int?, string, string, IImmutableDictionary<string, string>, string, string, CancellationToken>((_, count, _, _, properties, source, _, _) =>
                 {
                     capturedCount = count;
+                    capturedProperties = properties;
                     capturedSource = source;
                 })
                 .ReturnsAsync(ImmutableList.Create(
@@ -64,7 +66,14 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 CancellationToken.None);
 
             Assert.Equal("pr/public/dotnet/runtime/refs/pull/42/merge", capturedSource);
-            Assert.Equal(100_000, capturedCount);
+            Assert.Collection(
+                capturedProperties,
+                property =>
+                {
+                    Assert.Equal("BuildId", property.Key);
+                    Assert.Equal("123", property.Value);
+                });
+            Assert.Equal(1_000, capturedCount);
             Assert.Equal(2, jobs.Count);
             Assert.Equal("running-job", jobs[0].JobName);
             Assert.Equal("running", jobs[0].Status);
@@ -86,6 +95,39 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         [Fact]
+        public async Task GetJobsForBuildAsync_RequiresNonEmptyBuildId()
+        {
+            HelixService service = CreateService(CreateApi().Api.Object);
+
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                service.GetJobsForBuildAsync(source: "ci/public/dotnet/runtime/refs/heads/main", buildId: "", CancellationToken.None));
+        }
+
+        [Fact]
+        public async Task GetJobsForBuildAsync_RejectsPotentiallyTruncatedResponse()
+        {
+            var api = CreateApi();
+            api.Job
+                .Setup(j => j.ListAsync(null, 1_000, null, null, It.IsAny<IImmutableDictionary<string, string>>(), It.IsAny<string>(), null, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ImmutableList.CreateRange(
+                    Enumerable.Range(0, 1_000)
+                        .Select(index => Job(
+                            $"job-{index}",
+                            finished: null,
+                            new JObject { ["BuildId"] = "123" }))));
+
+            HelixService service = CreateService(api.Api.Object);
+
+            InvalidOperationException exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                service.GetJobsForBuildAsync(
+                    source: "ci/public/dotnet/runtime/refs/heads/main",
+                    buildId: "123",
+                    CancellationToken.None));
+
+            Assert.Contains("potentially truncated result set", exception.Message);
+        }
+
+        [Fact]
         public async Task DownloadTestResultsAsync_FiltersFilesUsesFileSystemAndContinuesAfterDownloadFailure()
         {
             var api = CreateApi();
@@ -96,7 +138,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 .Setup(w => w.ListFilesAsync("work:item", "job:name", false, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ImmutableList.Create(
                     new UploadedFile("logs/console.txt", "https://storage/logs/console.txt"),
-                    new UploadedFile("nested/testResults.xml", "https://storage/nested/testResults.xml"),
+                    new UploadedFile("nested/testResults.xml.txt", "https://storage/nested/testResults.xml.txt"),
                     new UploadedFile("failed.trx", "https://storage/failed.trx")));
             api.WorkItem
                 .Setup(w => w.ListFilesAsync("no-results", "job:name", false, It.IsAny<CancellationToken>()))
@@ -106,21 +148,19 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             blobClientFactory.FailDownloadsFor.Add("https://storage/failed.trx");
             var fileSystem = new MockFileSystem(directorySeparator: Path.DirectorySeparatorChar.ToString());
 
-            IReadOnlyList<WorkItemTestResults> results = await CreateService(api.Api.Object, blobClientFactory, fileSystem)
-                .DownloadTestResultsAsync("job:name", ["work:item", "no-results"], "work", CancellationToken.None);
-
-            WorkItemTestResults result = Assert.Single(results);
+            WorkItemTestResults result = await CreateService(api.Api.Object, blobClientFactory, fileSystem)
+                .DownloadTestResultsAsync("job:name", "work:item", "work", CancellationToken.None);
             Assert.Equal("job:name", result.JobName);
             Assert.Equal("work:item", result.WorkItemName);
             string jobDirectory = fileSystem.PathCombine("work", SanitizeForCurrentPlatform("job:name"));
             string workItemDirectory = fileSystem.PathCombine(jobDirectory, SanitizeForCurrentPlatform("work:item"));
-            string expectedResultFile = fileSystem.PathCombine(workItemDirectory, NormalizeForCurrentPlatform("nested/testResults.xml"));
+            string expectedResultFile = fileSystem.PathCombine(workItemDirectory, NormalizeForCurrentPlatform("nested/testResults.xml.txt"));
             Assert.Equal([expectedResultFile], result.TestResultFiles);
             Assert.Contains(jobDirectory, fileSystem.Directories);
             Assert.Contains(workItemDirectory, fileSystem.Directories);
             Assert.Contains(fileSystem.GetDirectoryName(expectedResultFile), fileSystem.Directories);
             Assert.Equal(
-                [new DownloadCall("https://storage/nested/testResults.xml", "?resultSas", expectedResultFile),
+                [new DownloadCall("https://storage/nested/testResults.xml.txt", "?resultSas", expectedResultFile),
                  new DownloadCall("https://storage/failed.trx", "?resultSas", fileSystem.PathCombine(workItemDirectory, "failed.trx"))],
                 blobClientFactory.Downloads);
         }
@@ -143,7 +183,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 new HttpRequestException("Injected transient failure.", null, HttpStatusCode.ServiceUnavailable);
 
             Func<Task> action = () => CreateService(api.Api.Object, blobClientFactory, new MockFileSystem())
-                .DownloadTestResultsAsync("job", ["work-item"], "work", CancellationToken.None);
+                .DownloadTestResultsAsync("job", "work-item", "work", CancellationToken.None);
 
             await Assert.ThrowsAsync<IOException>(action);
             Assert.Equal(2, blobClientFactory.Downloads.Count);
@@ -176,7 +216,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 });
 
             HelixJobInfo result = await CreateService(api.Api.Object)
-                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("missing")], targetStageAttempt: null, CancellationToken.None);
+                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("missing")], targetStageAttempt: null, monitorJobAttempt: null, CancellationToken.None);
 
             Assert.Null(result);
             api.Storage.Verify(s => s.NewAsync(It.IsAny<ContainerCreationRequest>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -195,7 +235,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             };
 
             HelixJobInfo result = await CreateService(api.Api.Object, blobClientFactory)
-                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("work-a")], targetStageAttempt: null, CancellationToken.None);
+                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("work-a")], targetStageAttempt: null, monitorJobAttempt: null, CancellationToken.None);
 
             Assert.Null(result);
             api.Storage.Verify(s => s.NewAsync(It.IsAny<ContainerCreationRequest>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -247,13 +287,20 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             };
 
             HelixJobInfo result = await CreateService(api.Api.Object, blobClientFactory)
-                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("WORK-A"), WorkItem("work-b")], targetStageAttempt: null, CancellationToken.None);
+                .ResubmitWorkItemsAsync(
+                    new HelixJobInfo("original-job", "finished"),
+                    [WorkItem("WORK-A"), WorkItem("work-b")],
+                    targetStageAttempt: "2",
+                    monitorJobAttempt: "2",
+                    CancellationToken.None);
 
             Assert.Equal("new-job", result.JobName);
             Assert.Equal("running", result.Status);
             Assert.Equal("custom run", result.TestRunName);
             Assert.Equal("test stage", result.StageName);
             Assert.Equal("original-job", result.PreviousHelixJobName);
+            Assert.Equal("2", result.StageAttempt);
+            Assert.Equal("1", result.JobAttempt);
 
             Assert.Equal("https://storage/job-list.json", blobClientFactory.DownloadedTextUri);
             UploadCall upload = Assert.Single(blobClientFactory.Uploads);
@@ -276,6 +323,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             Assert.Equal("123", capturedRequest.Properties["BuildId"]);
             Assert.Equal("custom run", capturedRequest.Properties["TestRunName"]);
             Assert.Equal("test stage", capturedRequest.Properties["System.StageName"]);
+            Assert.Equal("2", capturedRequest.Properties[HelixJobInfo.StageAttemptPropertyName]);
+            Assert.Equal("1", capturedRequest.Properties[HelixJobInfo.JobAttemptPropertyName]);
+            Assert.Equal("2", capturedRequest.Properties[HelixJobInfo.ResubmittedByJobAttemptPropertyName]);
             Assert.Equal("original-job", capturedRequest.Properties[HelixJobInfo.PreviousHelixJobNamePropertyName]);
             Assert.Equal("""{"nested":true}""", capturedRequest.Properties["ObjectProperty"]);
 
@@ -322,6 +372,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 ["BuildId"] = "123",
                 ["TestRunName"] = "custom run",
                 ["System.StageName"] = "test stage",
+                [HelixJobInfo.StageAttemptPropertyName] = "1",
+                [HelixJobInfo.JobAttemptPropertyName] = "1",
             };
 
             api.Job
@@ -366,7 +418,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             };
 
             await CreateService(api.Api.Object, blobClientFactory)
-                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("work-a")], targetStageAttempt: null, CancellationToken.None);
+                .ResubmitWorkItemsAsync(new HelixJobInfo("original-job", "finished"), [WorkItem("work-a")], targetStageAttempt: null, monitorJobAttempt: null, CancellationToken.None);
 
             Assert.NotNull(capturedRequest);
             return capturedRequest;
@@ -408,6 +460,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                     ["BuildId"] = "123",
                     ["TestRunName"] = "custom run",
                     ["System.StageName"] = "test stage",
+                    [HelixJobInfo.StageAttemptPropertyName] = "1",
+                    [HelixJobInfo.JobAttemptPropertyName] = "1",
                     ["ObjectProperty"] = new JObject
                     {
                         ["nested"] = true,
