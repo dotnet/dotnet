@@ -1,10 +1,10 @@
 ---
 name: apex-migration
 description: >-
-  Migrate NuGet PowerShell E2E tests to C# Apex tests or unit tests. 
-Use this skill whenever the user asks to migrate, convert, or port a PowerShell end-to-end test from test/EndToEnd/tests/ to an Apex test in test/NuGet.Tests.Apex/ or to a unit test in test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/. 
-Also trigger when the user mentions "Apex test", "migrate PS test", "E2E test migration", "PMC test", "cmdlet unit test", "PowerShell unit test", or references any PowerShell test function like Install-PackageTest or Update-PackageTest and wants it rewritten in C#. Even if the user just says "migrate this test" while looking at a PS E2E file, use this skill.
-Also trigger whenever the user wants to write a new Apex test or a new PMC cmdlet unit test.
+  Migrate NuGet PowerShell E2E tests to C# Apex tests or unit tests.
+  Use this skill whenever the user asks to migrate, convert, or port a PowerShell end-to-end test from test/EndToEnd/tests/ to an Apex test in test/NuGet.Tests.Apex/ or to a unit test in test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/.
+  Also trigger when the user mentions "Apex test", "migrate PS test", "E2E test migration", "PMC test", "cmdlet unit test", "PowerShell unit test", or references any PowerShell test function like Install-PackageTest or Update-PackageTest and wants it rewritten in C#. Even if the user just says "migrate this test" while looking at a PS E2E file, use this skill.
+  Also trigger whenever the user wants to write a new Apex test or a new PMC cmdlet unit test.
 ---
 
 # Migrating PowerShell E2E Tests to Apex Tests

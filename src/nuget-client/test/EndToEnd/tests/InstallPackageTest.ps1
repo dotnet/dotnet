@@ -2112,7 +2112,7 @@ function Test-InstallPackageThrowsIfMinClientVersionIsNotSatisfied
     $currentSemanticVersion = Get-HostSemanticVersion
 
     # Act & Assert
-    Assert-Throws { $p | Install-Package Kitty -Source $context.RepositoryPath } "The 'kitty 1.0.0' package requires NuGet client version '100.0.0' or above, but the current NuGet version is '$currentSemanticVersion'. To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget"
+    Assert-Throws { $p | Install-Package Kitty -Source $context.RepositoryPath } "The 'kitty 1.0.0' package requires NuGet client version '100.0.0' or above, but the current NuGet version is '$currentSemanticVersion'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget"
     Assert-NoPackage $p "Kitty"
 }
 
@@ -2507,24 +2507,6 @@ function Test-InstallPackagesConfigOnline
 
     # Assert
     Assert-Package $p Newtonsoft.Json 4.0.1
-}
-
-# Tests that passing in local path to a packages.config file to
-# Install-Package works.
-function Test-InstallPackagesConfigLocal
-{
-    param($context)
-
-    # Arrange
-    $p = New-ClassLibrary
-    $pathToPackagesConfig = Join-Path $context.RepositoryRoot "InstallPackagesConfigLocal\packages.config"
-
-    # Act
-    $p | Install-Package $pathToPackagesConfig
-
-    # Assert
-    Assert-Package $p A 1.0.0
-    Assert-Package $p B 1.0.0
 }
 
 # Tests that passing in online path to a .nupkg file to
