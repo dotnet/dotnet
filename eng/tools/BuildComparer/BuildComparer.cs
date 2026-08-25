@@ -148,16 +148,20 @@ public abstract class BuildComparer
     /// </remarks>
     protected void GenerateAssetMappings()
     {
-        List<XDocument> vmrManifests = [];
+        string vmrMergedManifestPath = Path.Combine(
+            _vmrBuildAssetBasePath,
+            "AssetManifests",
+            "MergedManifest.xml");
 
-        foreach (var verticalArtifactsDir in Directory.EnumerateDirectories(_vmrBuildAssetBasePath, "*_Artifacts"))
+        if (!File.Exists(vmrMergedManifestPath))
         {
-            foreach (var manifest in Directory.EnumerateFiles(Path.Combine(verticalArtifactsDir, "manifests"), "*.xml"))
-            {
-                Console.WriteLine($"Loading VMR manifest from {manifest}");
-                vmrManifests.Add(XDocument.Load(manifest));
-            }
+            throw new FileNotFoundException(
+                $"VMR merged manifest not found at '{vmrMergedManifestPath}'.",
+                vmrMergedManifestPath);
         }
+
+        Console.WriteLine($"Loading VMR manifest from {vmrMergedManifestPath}");
+        List<XDocument> vmrManifests = [XDocument.Load(vmrMergedManifestPath)];
 
         // Walk the top-level directories of the asset base path, and find the MergedManifest under each
         // one. The MergedManifest.xml contains the list of outputs produced by the repo.

@@ -297,7 +297,6 @@ public class AssetComparer : BuildComparer
     {
         var outputStream = new MemoryStream();
         await stream.CopyToAsync(outputStream, CancellationToken.None);
-        await stream.FlushAsync(CancellationToken.None);
         outputStream.Position = 0;
         return outputStream;
     }
@@ -624,7 +623,7 @@ public class AssetComparer : BuildComparer
             {
                 IssueType = IssueType.AssemblyVersionMismatch,
                 Description = $"Assembly '{fileName}' in {mapping.AssetType.ToString().ToLowerInvariant()} '{mapping.Id}'. " +
-                    $"VMR version: {baselineAssemblyName}, base build version: {testAssemblyName}"
+                    $"VMR version: {testAssemblyName}, base build version: {baselineAssemblyName}"
             });
         }
     }
