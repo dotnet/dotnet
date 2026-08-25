@@ -366,7 +366,7 @@ function Test-InstallPackageAPIInvalidSource
     $p = New-ClassLibrary
 
     # Act&Assert
-    Assert-Throws { [API.Test.InternalAPITestHook]::InstallPackageApi("invalid", "owin", "1.0.0", $false) } "Exception calling `"InstallPackageApi`" with `"4`" argument(s): `"The specified source 'invalid' is invalid. Please provide a valid source.`r`nParameter name: source`""
+    Assert-Throws { [API.Test.InternalAPITestHook]::InstallPackageApi("invalid", "owin", "1.0.0", $false) } "Exception calling `"InstallPackageApi`" with `"4`" argument(s): `"The specified source 'invalid' is invalid. Provide a valid source.`r`nParameter name: source`""
     Assert-NoPackage $p "owin"
 }
 
