@@ -97,12 +97,12 @@
       <_NETCorePlatformsPackageVersion>$(MicrosoftNETCorePlatformsPackageVersion)</_NETCorePlatformsPackageVersion>
 
       <!-- TODO: Once .NET 11.0.X has released, update these version numbers to 11.0.$(VersionFeature110) -->
-      <_NET110RuntimePackVersion>11.0.0-preview.7.26381.103</_NET110RuntimePackVersion>
-      <_NET110TargetingPackVersion>11.0.0-preview.7.26381.103</_NET110TargetingPackVersion>
-      <_WindowsDesktop110RuntimePackVersion>11.0.0-preview.7.26381.103</_WindowsDesktop110RuntimePackVersion>
-      <_WindowsDesktop110TargetingPackVersion>11.0.0-preview.7.26381.103</_WindowsDesktop110TargetingPackVersion>
-      <_AspNet110RuntimePackVersion>11.0.0-preview.7.26381.103</_AspNet110RuntimePackVersion>
-      <_AspNet110TargetingPackVersion>11.0.0-preview.7.26381.103</_AspNet110TargetingPackVersion>
+      <_NET110RuntimePackVersion Condition="'$(_NET110RuntimePackVersion)' == ''">11.0.0-preview.7.26381.103</_NET110RuntimePackVersion>
+      <_NET110TargetingPackVersion Condition="'$(_NET110TargetingPackVersion)' == ''">11.0.0-preview.7.26381.103</_NET110TargetingPackVersion>
+      <_WindowsDesktop110RuntimePackVersion Condition="'$(_WindowsDesktop110RuntimePackVersion)' == ''">11.0.0-preview.7.26381.103</_WindowsDesktop110RuntimePackVersion>
+      <_WindowsDesktop110TargetingPackVersion Condition="'$(_WindowsDesktop110TargetingPackVersion)' == ''">11.0.0-preview.7.26381.103</_WindowsDesktop110TargetingPackVersion>
+      <_AspNet110RuntimePackVersion Condition="'$(_AspNet110RuntimePackVersion)' == ''">11.0.0-preview.7.26381.103</_AspNet110RuntimePackVersion>
+      <_AspNet110TargetingPackVersion Condition="'$(_AspNet110TargetingPackVersion)' == ''">11.0.0-preview.7.26381.103</_AspNet110TargetingPackVersion>
 
       <_NET100RuntimePackVersion>10.0.$(VersionFeature100)</_NET100RuntimePackVersion>
       <_NET100TargetingPackVersion>10.0.$(VersionFeature100)</_NET100TargetingPackVersion>
@@ -302,6 +302,16 @@
         browser-wasm;
         " />
 
+      <!-- Source-build distributes packs for its non-portable build RID. Add it to net11
+           before net12 inherits the lists so both live framework generations resolve it. -->
+      <Net110AppHostRids
+        Condition="'$(DotNetBuildSourceOnly)' == 'true'"
+        Include="$(ProductMonikerRid)" />
+
+      <Net110RuntimePackRids
+        Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(BundleRuntimePacks)' == 'true'"
+        Include="$(ProductMonikerRid)" />
+
       <Net120AppHostRids Include="@(Net110AppHostRids)" />
 
       <Net120RuntimePackRids Include="@(Net110RuntimePackRids)" />
@@ -309,26 +319,6 @@
       <NetCoreAppHostRids Include="@(Net120AppHostRids)" />
 
       <NetCoreRuntimePackRids Include="@(Net120RuntimePackRids)" />
-
-      <!--
-        In source-only builds, we build the current RID from source, which may be
-        non-portable and/or not an official RID.
-        These packs for the non-portable RID are distributed with the SDK:
-        - NETCore.App.Host
-        - NETCore.App.Runtime    (when BundleRuntimePacks)
-        - AspNetCore.App.Runtime (when BundleRuntimePacks)
-      -->
-      <NetCoreAppHostRids
-        Condition="'$(DotNetBuildSourceOnly)' == 'true'"
-        Include="$(ProductMonikerRid)" />
-
-      <NetCoreRuntimePackRids
-        Condition="'$(BundleRuntimePacks)' == 'true'"
-        Include="$(ProductMonikerRid)" />
-
-      <AspNetCoreRuntimePackRids
-        Condition="'$(BundleRuntimePacks)' == 'true'"
-        Include="$(ProductMonikerRid)" />
 
       <Net60MonoRuntimePackRids Include="
         @(Net60RuntimePackRids);
@@ -586,6 +576,9 @@
       <AspNetCore90RuntimePackRids Include="@(AspNetCore80RuntimePackRids);linux-riscv64;linux-musl-riscv64;linux-loongarch64;linux-musl-loongarch64;" />
       <AspNetCore100RuntimePackRids Include="@(AspNetCore90RuntimePackRids)" />
       <AspNetCore110RuntimePackRids Include="@(AspNetCore100RuntimePackRids)" />
+      <AspNetCore110RuntimePackRids
+        Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(BundleRuntimePacks)' == 'true'"
+        Include="$(ProductMonikerRid)" />
       <AspNetCore120RuntimePackRids Include="@(AspNetCore110RuntimePackRids)" />
       <AspNetCoreRuntimePackRids Include="@(AspNetCore120RuntimePackRids)" />
 
