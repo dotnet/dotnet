@@ -28,6 +28,12 @@ builder.Services.AddScoped<IChatClient>(sp =>
 builder.Services.AddKeyedScoped<IChatClient>(
     DojoScenarios.BackendToolRenderingEndpoint,
     (sp, _) => CreateChatClient(sp, DojoScenarios.BackendToolRenderingEndpoint));
+builder.Services.AddKeyedScoped<IChatClient>(
+    DojoScenarios.HumanInTheLoopEndpoint,
+    (sp, _) => CreateChatClient(sp, DojoScenarios.HumanInTheLoopEndpoint));
+builder.Services.AddKeyedScoped<IChatClient>(
+    DojoScenarios.ToolBasedGenerativeUIEndpoint,
+    (sp, _) => CreateChatClient(sp, DojoScenarios.ToolBasedGenerativeUIEndpoint));
 
 var app = builder.Build();
 

@@ -18,6 +18,24 @@ namespace AGUIDojoApi;
 // recorded client through a service override.
 internal static class ChatClientAgentFactory
 {
+    internal const string HumanInTheLoopSystemPrompt = """
+        You are a planning assistant.
+        When asked to create a plan, call generate_task_steps so the user can review the steps.
+        A request for a simple plan must contain exactly 5 sensible steps.
+        A request for a complex plan must contain exactly 10 sensible steps.
+        Keep all supported plans between 5 and 10 steps and set every initial status to "enabled".
+        After the tool returns, mention exactly the selected steps and do not mention disabled steps as selected.
+        If the user rejected every step, acknowledge that no steps will be performed.
+        """;
+
+    internal const string ToolBasedGenerativeUISystemPrompt = """
+        You are a Japanese haiku assistant.
+        For every haiku request, call generate_haiku with exactly three Japanese lines, exactly
+        three English translation lines, image_name set to ancient-pond.svg, and a two-color CSS
+        linear-gradient written as linear-gradient(<angle>deg, <hex color>, <hex color>).
+        Do not print the haiku as ordinary chat text before calling the tool.
+        """;
+
     internal static IChatClient CreateAgenticChat(IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
