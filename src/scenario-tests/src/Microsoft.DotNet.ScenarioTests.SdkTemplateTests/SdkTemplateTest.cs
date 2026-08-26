@@ -39,7 +39,18 @@ public class SdkTemplateTest
         if (PreMadeSolution == null)
         {
             Directory.CreateDirectory(projectDirectory);
-            dotNetHelper.ExecuteNew(Template.GetName(), projectName, projectDirectory, Language.ToCliName(), customArgs: customNewArgs);
+            bool restoreSeparately = Template == DotNetSdkTemplate.WebApi;
+            dotNetHelper.ExecuteNew(
+                Template.GetName(),
+                projectName,
+                projectDirectory,
+                Language.ToCliName(),
+                customArgs: customNewArgs,
+                noRestore: restoreSeparately);
+            if (restoreSeparately)
+            {
+                dotNetHelper.ExecuteRestore(projectDirectory);
+            }
         }
         else
         {
