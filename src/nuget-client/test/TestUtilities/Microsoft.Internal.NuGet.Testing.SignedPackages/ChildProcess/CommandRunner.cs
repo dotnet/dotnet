@@ -6,8 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 using Xunit.Abstractions;
 
 namespace Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess
@@ -71,6 +73,11 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess
                     process.StartInfo.Environment["DOTNET_SKIP_FIRST_TIME_EXPERIENCE"] = bool.TrueString;
                     process.StartInfo.Environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = bool.TrueString;
                     process.StartInfo.Environment["SuppressNETCoreSdkPreviewMessage"] = bool.TrueString;
+
+                    // inherit culture for output messages
+                    var culture = (CultureInfo.CurrentCulture ?? Thread.CurrentThread.CurrentCulture).IetfLanguageTag;
+                    process.StartInfo.Environment["DOTNET_CLI_UI_LANGUAGE"] = culture;
+                    process.StartInfo.Environment["NUGET_CLI_LANGUAGE"] = culture;
 
                     if (environmentVariables != null)
                     {

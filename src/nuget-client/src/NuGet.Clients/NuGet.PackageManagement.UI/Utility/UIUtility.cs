@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using Microsoft.VisualStudio.Shell;
 using ContractsItemFilter = NuGet.VisualStudio.Internal.Contracts.ItemFilter;
 
@@ -10,6 +11,21 @@ namespace NuGet.PackageManagement.UI
 {
     public static class UIUtility
     {
+        /// <summary>
+        /// Builds the "You have N vulnerable package versions installed." warning text with the correct
+        /// singular/plural form. Shared by the Installed tab warning tooltip and the vulnerabilities InfoBar
+        /// so both stay consistent.
+        /// </summary>
+        internal static string GetInstalledVulnerablePackagesWarningText(int vulnerablePackagesCount)
+        {
+            if (vulnerablePackagesCount == 1)
+            {
+                return Resources.Label_Installed_VulnerableWarning_Single;
+            }
+
+            return string.Format(CultureInfo.CurrentCulture, Resources.Label_Installed_VulnerableWarning, vulnerablePackagesCount);
+        }
+
         public static void LaunchExternalLink(Uri url)
         {
             if (url == null

@@ -259,15 +259,6 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Consider migrating this project&apos;s NuGet package management format from &apos;packages.config&apos; to &apos;PackageReference&apos;..
-        /// </summary>
-        public static string AskForPRMigrator {
-            get {
-                return ResourceManager.GetString("AskForPRMigrator", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Some NuGet packages are missing from this solution. Click to restore from your online package sources..
         /// </summary>
         public static string AskForRestoreMessage {
@@ -889,6 +880,15 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix with GitHub Copilot.
+        /// </summary>
+        public static string InfoBar_FixVulnerabilitiesWithCopilot {
+            get {
+                return ResourceManager.GetString("InfoBar_FixVulnerabilitiesWithCopilot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Action:.
         /// </summary>
         public static string Label_Action {
@@ -1083,6 +1083,15 @@ namespace NuGet.PackageManagement.UI {
         public static string Label_Installed_VulnerableWarning {
             get {
                 return ResourceManager.GetString("Label_Installed_VulnerableWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have 1 vulnerable package version installed..
+        /// </summary>
+        public static string Label_Installed_VulnerableWarning_Single {
+            get {
+                return ResourceManager.GetString("Label_Installed_VulnerableWarning_Single", resourceCulture);
             }
         }
         
@@ -1402,15 +1411,6 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t show again.
-        /// </summary>
-        public static string Link_DoNotShowAgain {
-            get {
-                return ResourceManager.GetString("Link_DoNotShowAgain", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Learn about Install Options.
         /// </summary>
         public static string Link_LearnAboutInstallOptions {
@@ -1425,24 +1425,6 @@ namespace NuGet.PackageManagement.UI {
         public static string Link_LearnAboutUninstallOptions {
             get {
                 return ResourceManager.GetString("Link_LearnAboutUninstallOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Why should I migrate?.
-        /// </summary>
-        public static string Link_MigratorHelp {
-            get {
-                return ResourceManager.GetString("Link_MigratorHelp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Migrate Now.
-        /// </summary>
-        public static string Link_UpgradeOption {
-            get {
-                return ResourceManager.GetString("Link_UpgradeOption", resourceCulture);
             }
         }
         
