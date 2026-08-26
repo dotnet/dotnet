@@ -77,6 +77,8 @@ namespace NuGet.PackageManagement.UI
         private IPackageVulnerabilityService _packageVulnerabilityService;
         private INuGetPackageFileService _nugetPackageFileService;
         private bool _isReadmeTabEnabled;
+        private PackageManagerInfoBarService _infoBarService;
+        private PackageManagerVulnerabilitiesInfoBar _vulnerabilitiesInfoBar;
 
         private SearchControl SearchControl
         {
@@ -850,6 +852,29 @@ namespace NuGet.PackageManagement.UI
             _missingPackageStatus = e.PackagesMissing;
         }
 
+        /// <summary>
+        /// Initializes the InfoBar service for this PM UI instance using the hosting window frame.
+        /// Must be called on the UI thread after the window frame is created.
+        /// </summary>
+        public async Task SetWindowFrameAsync(IVsWindowFrame windowFrame)
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            var infoBarFactory = await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SVsInfoBarUIFactory, IVsInfoBarUIFactory>(throwOnFailure: false);
+            _infoBarService = PackageManagerInfoBarService.TryCreate(windowFrame, infoBarFactory);
+
+            if (_infoBarService != null)
+            {
+                var fixVulnerabilitiesService = await ServiceLocator.GetComponentModelServiceAsync<IFixVulnerabilitiesService>();
+                if (fixVulnerabilitiesService != null)
+                {
+                    _vulnerabilitiesInfoBar = new PackageManagerVulnerabilitiesInfoBar(
+                        _infoBarService,
+                        fixVulnerabilitiesService.LaunchFixVulnerabilitiesAsync);
+                }
+            }
+        }
+
         private async Task SetTitleAsync(IProjectMetadataContextInfo projectMetadata = null)
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -1074,6 +1099,12 @@ namespace NuGet.PackageManagement.UI
             // Update installed tab warning icon
             (int vulnerablePackages, int deprecatedPackages) = await GetInstalledVulnerableAndDeprecatedPackagesCountAsync(loadContext, SelectedSource.PackageSources, _packageVulnerabilityService, refreshCts.Token);
             _topPanel.UpdateWarningStatusOnInstalledTab(vulnerablePackages, deprecatedPackages);
+
+            // Show/hide the vulnerabilities InfoBar based on the installed vulnerable package count.
+            if (_vulnerabilitiesInfoBar != null)
+            {
+                await _vulnerabilitiesInfoBar.UpdateAsync(vulnerablePackages);
+            }
 
             // Update updates tab count
             Model.CachedUpdates = new PackageSearchMetadataCache
@@ -1935,6 +1966,7 @@ namespace NuGet.PackageManagement.UI
 
             if (disposing)
             {
+                _infoBarService?.Dispose();
                 _nugetPackageFileService.Dispose();
                 CleanUp();
             }

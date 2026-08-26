@@ -141,10 +141,7 @@ namespace NuGet.PackageManagement.UI
             }
             else if (hasInstalledVulnerablePackages)
             {
-                warningTooltip = string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resx.Label_Installed_VulnerableWarning,
-                    installedVulnerablePackagesCount);
+                warningTooltip = UIUtility.GetInstalledVulnerablePackagesWarningText(installedVulnerablePackagesCount);
             }
             else if (hasInstalledDeprecatedPackages)
             {
