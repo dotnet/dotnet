@@ -20,7 +20,6 @@
     <!-- Needed to calculate the stable FileVersion for the sdk bundle version. -->
     <IsShippingPackage>true</IsShippingPackage>
     <NoWarn>$(NoWarn);NU1505</NoWarn>
-    <EnableKnownPackVersionUpdatesForCurrentTargetFramework>true</EnableKnownPackVersionUpdatesForCurrentTargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
