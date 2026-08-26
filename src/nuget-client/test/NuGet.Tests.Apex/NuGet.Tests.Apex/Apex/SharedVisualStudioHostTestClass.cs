@@ -19,7 +19,13 @@ namespace NuGet.Tests.Apex
         private NuGetConsoleTestExtension _console;
         private string _packageManagerOutputWindowText;
 
+#if APEX_BLAME_HANG_DUMP_COLLECTOR
+        // Blame includes AssemblyInitialize, so its timeout must cover host initialization plus test execution,
+        // while this per-test timeout must remain longer so Blame can collect a dump first.
+        public const int DefaultTimeout = 10 * 60 * 1000; // 10 minutes
+#else
         public const int DefaultTimeout = 5 * 60 * 1000; // 5 minutes
+#endif
 
         protected SharedVisualStudioHostTestClass()
         {

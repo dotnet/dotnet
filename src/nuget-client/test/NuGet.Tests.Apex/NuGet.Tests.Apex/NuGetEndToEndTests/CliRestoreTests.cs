@@ -26,7 +26,6 @@ namespace NuGet.Tests.Apex
     [TestClass]
     public class CliRestoreTests
     {
-        private const int DefaultTimeout = 5 * 60 * 1000; // 5 minutes
         private const string LoadMSBuildAssembliesMarkerFileName = "LoadMSBuildAssemblies.ran";
 
         public TestContext TestContext { get; set; } = null!;
@@ -39,7 +38,7 @@ namespace NuGet.Tests.Apex
         /// Microsoft.Extensions.FileSystemGlobbing.
         /// </remarks>
         [TestMethod]
-        [Timeout(DefaultTimeout)]
+        [Timeout(SharedVisualStudioHostTestClass.DefaultTimeout)]
         public async Task RestoreRunsWhenMSBuildDependenciesAreLoaded()
         {
             // Arrange
@@ -124,7 +123,7 @@ namespace NuGet.Tests.Apex
                 filename: msbuildPath,
                 workingDirectory: solutionRoot,
                 arguments: $"-t:restore \"{projectPath}\"",
-                timeOutInMilliseconds: DefaultTimeout);
+                timeOutInMilliseconds: SharedVisualStudioHostTestClass.DefaultTimeout);
         }
 
         private static void AssertLoadMSBuildAssembliesRan(string solutionRoot, string output)
