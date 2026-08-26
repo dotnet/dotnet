@@ -101,8 +101,7 @@
           AfterTargets="CreateBootstrapLayout"
           Condition="'$(EnableBootstrap)' == 'true'">
     <PropertyGroup>
-      <BootstrapConsumerTargets>Build</BootstrapConsumerTargets>
-      <BootstrapConsumerTargets Condition="'$(Restore)' == 'true'">Restore;Build</BootstrapConsumerTargets>
+      <BootstrapConsumerTargets>Restore;Build</BootstrapConsumerTargets>
     </PropertyGroup>
     <ItemGroup>
       <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj"
