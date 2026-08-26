@@ -133,10 +133,10 @@
       "commitSha": "8c74082a732dc882db037766332cf28b8726f840"
     },
     {
-      "barId": 326568,
+      "barId": 328783,
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "2414cbd4d70dee77b185cb3369d2fe5751036637"
+      "commitSha": "6735b7889c8388ff68dc3d80319aecf98a4b9fac"
     }
   ],
   "submodules": [
