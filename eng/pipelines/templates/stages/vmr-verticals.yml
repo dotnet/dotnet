@@ -150,6 +150,7 @@ stages:
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
+          tagPipelineBuildWithSdkVersion: ${{ parameters.isOfficialBuild }}
           brandingType: ${{ variables.brandingType }}
           sourceIndexName: dotnet-dotnet-windows
           sourceIndexIncludeRepos: 'winforms wpf windowsdesktop aspnetcore'
