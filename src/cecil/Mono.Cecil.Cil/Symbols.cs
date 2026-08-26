@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -1031,51 +1032,17 @@ namespace Mono.Cecil.Cil {
 
 	static class SymbolProvider {
 
-		static SR.AssemblyName GetSymbolAssemblyName (SymbolKind kind)
+		[return: DynamicallyAccessedMembers (DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+		static Type GetSymbolType (SymbolKind kind)
 		{
-			if (kind == SymbolKind.PortablePdb)
+			switch (kind) {
+			case SymbolKind.NativePdb:
+				return Type.GetType ("Mono.Cecil.Pdb.NativePdbReaderProvider, Mono.Cecil.Pdb", false);
+			case SymbolKind.Mdb:
+				return Type.GetType ("Mono.Cecil.Mdb.MdbReaderProvider, Mono.Cecil.Mdb", false);
+			default:
 				throw new ArgumentException ();
-
-			var suffix = GetSymbolNamespace (kind);
-
-			var cecil_name = typeof (SymbolProvider).Assembly.GetName ();
-
-			var name = new SR.AssemblyName {
-				Name = cecil_name.Name + "." + suffix,
-				Version = cecil_name.Version,
-#if NET_CORE
-				CultureName = cecil_name.CultureName,
-#else
-				CultureInfo = cecil_name.CultureInfo,
-#endif
-			};
-
-			name.SetPublicKeyToken (cecil_name.GetPublicKeyToken ());
-
-			return name;
-		}
-
-		static Type GetSymbolType (SymbolKind kind, string fullname)
-		{
-			var type = Type.GetType (fullname);
-			if (type != null)
-				return type;
-
-			var assembly_name = GetSymbolAssemblyName (kind);
-
-			type = Type.GetType (fullname + ", " + assembly_name.FullName);
-			if (type != null)
-				return type;
-
-			try {
-				var assembly = SR.Assembly.Load (assembly_name);
-				if (assembly != null)
-					return assembly.GetType (fullname);
-			} catch (FileNotFoundException) {
-			} catch (FileLoadException) {
 			}
-
-			return null;
 		}
 
 		public static ISymbolReaderProvider GetReaderProvider (SymbolKind kind)
@@ -1086,7 +1053,7 @@ namespace Mono.Cecil.Cil {
 				return new EmbeddedPortablePdbReaderProvider ();
 
 			var provider_name = GetSymbolTypeName (kind, "ReaderProvider");
-			var type = GetSymbolType (kind, provider_name);
+			var type = GetSymbolType (kind);
 			if (type == null)
 				throw new TypeLoadException ("Could not find symbol provider type " + provider_name);
 

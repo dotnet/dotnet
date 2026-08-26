@@ -12,7 +12,9 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
+#if !NET
 using System.Runtime.Serialization;
+#endif
 
 using Mono.Security.Cryptography;
 
@@ -26,7 +28,7 @@ namespace Mono.Cecil {
 
 	static class CryptoService {
 
-		static SHA1 CreateSHA1 () => new SHA1CryptoServiceProvider ();
+		static SHA1 CreateSHA1 () => SHA1.Create ();
 
 		public static byte [] GetPublicKey (WriterParameters parameters)
 		{
@@ -173,7 +175,9 @@ namespace Mono.Cecil {
 
 		public static RSA CreateRSA (this WriterParameters writer_parameters)
 		{
+#if !NET
 			byte [] key;
+#endif
 			string key_container;
 
 			if (writer_parameters.StrongNameKeyBlob != null)
@@ -181,8 +185,16 @@ namespace Mono.Cecil {
 
 			if (writer_parameters.StrongNameKeyContainer != null)
 				key_container = writer_parameters.StrongNameKeyContainer;
+#if NET
+			else
+				throw new InvalidOperationException ();
+
+			if (!OperatingSystem.IsWindows ())
+				throw new PlatformNotSupportedException ();
+#else
 			else if (!TryGetKeyContainer (writer_parameters.StrongNameKeyPair, out key, out key_container))
 				return CryptoConvert.FromCapiKeyBlob (key);
+#endif
 
 			var parameters = new CspParameters {
 				Flags = CspProviderFlags.UseMachineKeyStore,
@@ -193,6 +205,8 @@ namespace Mono.Cecil {
 			return new RSACryptoServiceProvider (parameters);
 		}
 
+#if !NET
+		// StrongNameKeyPair and BinaryFormatter are not support in .NET Core
 		static bool TryGetKeyContainer (ISerializable key_pair, out byte [] key, out string key_container)
 		{
 			var info = new SerializationInfo (typeof (StrongNameKeyPair), new FormatterConverter ());
@@ -202,5 +216,6 @@ namespace Mono.Cecil {
 			key_container = info.GetString ("_keyPairContainer");
 			return key_container != null;
 		}
+#endif
 	}
 }
