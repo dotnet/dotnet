@@ -117,13 +117,6 @@ steps:
         /property:EnableApexBlameHangDumpCollector=${{parameters.enableApexBlameHangDumpCollector}}
         /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog
 
-  - task: MSBuild@1
-    displayName: "Pack VSIX"
-    inputs:
-      solution: "build\\build.proj"
-      configuration: "$(BuildConfiguration)"
-      msbuildArguments: "/restore:false /target:BuildVSIX /property:ExcludeTestProjects=false /property:IsCIBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\07.PackVSIX.binlog"
-
   - task: PowerShell@1
     displayName: "Prepare for SBOM generation"
     inputs:
