@@ -49,10 +49,10 @@
       "commitSha": "0fd32103daa52aeb9be393d08ea2fb1c7e5e0e33"
     },
     {
-      "barId": 328767,
+      "barId": 328779,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "a04f7d66f6dff99e8a4ecc019a292c1449e68801"
+      "commitSha": "3402e3cbf9274ae779358dafb4bde2361e1489a6"
     },
     {
       "barId": 327307,
