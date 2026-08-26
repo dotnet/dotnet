@@ -18,7 +18,8 @@
         <MSBuild
             Projects="template.runsettingsproj"
             Properties="RunName=NuGet.Tests.Apex;
-            FileName=NuGet.Tests.Apex.dll;" />
+            FileName=NuGet.Tests.Apex.dll;
+            BlameHangDumpCollector=$(EnableApexBlameHangDumpCollector);" />
 
         <!-- NuGet.Tests.Apex.StagingGate.runsettings (VS staging test gate - runs only [TestCategory("StagingGate")] tests) -->
         <MSBuild

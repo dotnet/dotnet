@@ -10,6 +10,7 @@
     <TestAdaptersPaths>C:\Test;C:\NuGet</TestAdaptersPaths>
     <ResultsDirectory>C:\Test\Results</ResultsDirectory>
     <ProcDumpCollector Condition=" '$(ProcDumpCollector)' == '' ">enabled</ProcDumpCollector>
+    <BlameHangDumpCollector Condition=" '$(BlameHangDumpCollector)' == '' ">disabled</BlameHangDumpCollector>
     <LingeringProcessCollector Condition=" '$(LingeringProcessCollector)' == '' ">enabled</LingeringProcessCollector>
     <OptProfCollector Condition=" '$(OptProfCollector)' == '' ">disabled</OptProfCollector>
     <ScreenshotCollector Condition=" '$(ScreenshotCollector)' == '' ">enabled</ScreenshotCollector>
@@ -54,6 +55,12 @@
   </ItemGroup>
 
   <ItemGroup Label="Data Collectors">
+    <DataCollector Condition="'$(BlameHangDumpCollector)' == 'enabled' Or '$(BlameHangDumpCollector)' == 'true'" Include="datacollector://Microsoft/TestPlatform/Blame/1.0">
+      <FriendlyName>blame</FriendlyName>
+      <Configuration>
+        <CollectDumpOnTestSessionHang TestTimeout="9min" HangDumpType="Full" />
+      </Configuration>
+    </DataCollector>
     <DataCollector Condition="'$(RPSDataCollector)' == 'enabled' And '$(TestIterations)' != ''" Include="datacollector://Microsoft/DevDiv/TestExtensions/PerformanceDataCollector/v1">
       <FriendlyName>RPS Data Collector</FriendlyName>
       <Configuration>

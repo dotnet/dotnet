@@ -1,3 +1,8 @@
+parameters:
+  - name: enableApexBlameHangDumpCollector
+    type: boolean
+    default: false
+
 steps:
   - task: MicroBuildLocalizationPlugin@4
     displayName: "Install Localization Plugin"
@@ -104,7 +109,13 @@ steps:
     inputs:
       solution: "NuGet.sln"
       configuration: "$(BuildConfiguration)"
-      msbuildArguments: "/restore:false /target:Build /property:GitRepositoryRemoteName=github /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog /property:MicroBuild_SigningEnabled=false"
+      msbuildArguments: >-
+        /restore:false
+        /target:Build
+        /property:GitRepositoryRemoteName=github
+        /property:MicroBuild_SigningEnabled=false
+        /property:EnableApexBlameHangDumpCollector=${{parameters.enableApexBlameHangDumpCollector}}
+        /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog
 
   - task: MSBuild@1
     displayName: "Pack VSIX"
@@ -247,7 +258,12 @@ steps:
     displayName: "Generate .runsettings files"
     inputs:
       solution: 'build\runsettings.proj'
-      msbuildArguments: '/restore:false /property:OutputPath="$(Build.StagingDirectory)\RunSettings" /property:TestDrop="$(RunSettingsDrop)" /binarylogger:$(Build.StagingDirectory)\\binlog\\13.GenerateRunSettings.binlog'
+      msbuildArguments: >-
+        /restore:false
+        /property:OutputPath="$(Build.StagingDirectory)\RunSettings"
+        /property:TestDrop="$(RunSettingsDrop)"
+        /property:EnableApexBlameHangDumpCollector=${{parameters.enableApexBlameHangDumpCollector}}
+        /binarylogger:$(Build.StagingDirectory)\\binlog\\13.GenerateRunSettings.binlog
 
   - task: PowerShell@1
     displayName: "Copy VS integration test binaries"
