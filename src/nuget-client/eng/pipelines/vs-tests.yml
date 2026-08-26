@@ -16,6 +16,10 @@ parameters:
   displayName: Run end-to-end tests
   type: boolean
   default: true
+- name: EnableApexBlameHangDumpCollector
+  displayName: Collect Apex hang dumps (aborts the test run on timeout)
+  type: boolean
+  default: false
 
 # Dartlab options
 - name: DartLabEnvironment
@@ -81,6 +85,8 @@ stages:
       name: VSEng-MicroBuildVSStable
     steps:
     - template: vs-test/build.yml
+      parameters:
+        enableApexBlameHangDumpCollector: ${{parameters.EnableApexBlameHangDumpCollector}}
 
 # Dartlab's template defines this in its own stage
 - template: vs-test/end_to_end.yml
@@ -137,6 +143,6 @@ stages:
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.VsBootstrapperBranch']]
     bootstrapperUrl: $(bootstrapperUrl)
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
-    testExecutionJobTimeoutInMinutes: 380 # cloud test minimum
+    testExecutionJobTimeoutInMinutes: 412 # cloud test minimum
     testDeploymentCleanupMode: ${{parameters.ApexAgentCleanup}}
     VsBootstrapperBranch: $(VsBootstrapperBranch)

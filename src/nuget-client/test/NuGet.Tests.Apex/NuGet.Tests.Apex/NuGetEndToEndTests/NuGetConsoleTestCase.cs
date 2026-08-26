@@ -119,6 +119,38 @@ namespace NuGet.Tests.Apex
             }
         }
 
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackagesFromPMCUsingPackagesConfigAsync()
+        {
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger);
+
+            var packageName1 = "TestPackage1";
+            var packageName2 = "TestPackage2";
+            var packageVersion = "1.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName1, packageVersion);
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName2, packageVersion);
+
+            var inputDirectory = Path.Combine(testContext.SolutionRoot, "Input");
+            Directory.CreateDirectory(inputDirectory);
+            var packagesConfigPath = Path.Combine(inputDirectory, "packages.config");
+            File.WriteAllText(
+                packagesConfigPath,
+                $@"<?xml version=""1.0"" encoding=""utf-8""?>
+<packages>
+  <package id=""{packageName1}"" version=""{packageVersion}"" targetFramework=""net48"" userInstalled=""true"" />
+  <package id=""{packageName2}"" version=""{packageVersion}"" targetFramework=""net48"" userInstalled=""true"" />
+</packages>");
+
+            var nugetConsole = GetConsole(testContext.Project);
+            var escapedPackagesConfigPath = packagesConfigPath.Replace("'", "''");
+
+            nugetConsole.Execute($"Install-Package '{escapedPackagesConfigPath}'");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName1, packageVersion, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName2, packageVersion, Logger);
+        }
+
         [DataTestMethod]
         [DynamicData(nameof(GetPackagesConfigTemplates), DynamicDataSourceType.Method)]
         [Timeout(DefaultTimeout)]
