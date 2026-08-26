@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
-    <SkipShared>true</SkipShared>
     <Description>Unit and integration tests for NuGet.VisualStudio.Implementation.</Description>
   </PropertyGroup>
 
