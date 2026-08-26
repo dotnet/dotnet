@@ -100,9 +100,6 @@
   <Target Name="BuildBootstrapConsumers"
           AfterTargets="CreateBootstrapLayout"
           Condition="'$(EnableBootstrap)' == 'true'">
-    <PropertyGroup>
-      <BootstrapConsumerTargets>Restore;Build</BootstrapConsumerTargets>
-    </PropertyGroup>
     <ItemGroup>
       <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj"
                          Condition="'$(SdkToolsSupported)' == 'true'" />
@@ -112,10 +109,27 @@
                          Condition="'$(SdkToolsSupported)' == 'true'" />
       <BootstrapConsumer Include="$(SharedNativeRoot)managed\compile-native.proj"
                          Condition="$(_subset.Contains('+tools.cdac+'))" />
+      <BootstrapPostConsumer Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj"
+                             Condition="'$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" />
+      <BootstrapPostConsumer Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj"
+                             Condition="'$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" />
     </ItemGroup>
     <MSBuild Projects="@(BootstrapConsumer)"
-             Targets="$(BootstrapConsumerTargets)"
+             Targets="Restore"
              Properties="UseBootstrap=true"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapConsumer)"
+             Properties="UseBootstrap=true;ExcludeRestorePackageImports=false"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapPostConsumer)"
+             Targets="Restore"
+             Properties="UseBootstrap=true"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapPostConsumer)"
+             Properties="UseBootstrap=true;ExcludeRestorePackageImports=false"
              BuildInParallel="false"
              StopOnFirstFailure="true" />
   </Target>
