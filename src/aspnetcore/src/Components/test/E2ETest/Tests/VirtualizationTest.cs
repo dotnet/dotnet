@@ -2426,6 +2426,7 @@ public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixtur
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/68775")]
     public void QuickGrid_AnchorMode_End_AppendAfterLeavingBottom_DoesNotReengage(bool useItemsProvider)
     {
         MountQuickGridAnchorModeComponent("2", useItemsProvider);
@@ -4824,7 +4825,6 @@ public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixtur
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(true, true)]
-    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/68732")]
     public void AnchorMode_WindowScroll_End_PrependAtTop_ViewportStaysStable(bool variableHeight, bool useItemsProvider)
     {
         MountWindowScrollAnchorModeComponent("2", variableHeight, useItemsProvider, delay: useItemsProvider);
@@ -6110,6 +6110,7 @@ public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixtur
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/68772")]
     public void InitialIndex_RetainsTargetWhenPreviousItemExpandsThenHomeEndTakeOver(bool useProvider)
     {
         const int initialIndex = 500;
@@ -6305,6 +6306,7 @@ public class VirtualizationTest : ServerTestBase<ToggleExecutionModeServerFixtur
     }
 
     [Fact]
+    [QuarantinedTest("https://github.com/dotnet/aspnetcore/issues/68777")]
     public void ScrollToItem_UserScrollDuringProviderFetch_UserScrollWins()
     {
         // While the provider is fetching for ScrollToItemAsync, a real user scroll must win.
