@@ -73,7 +73,7 @@
       </trans-unit>
       <trans-unit id="Error_InvalidMinPublishAgeExceptionPattern">
         <source>Minimum publish age exception pattern '{0}' is invalid.</source>
-        <target state="new">Minimum publish age exception pattern '{0}' is invalid.</target>
+        <target state="translated">En düşük yayımlama yaşı '{0}' özel durum deseni geçersiz.</target>
         <note>0 - invalid package ID pattern</note>
       </trans-unit>
       <trans-unit id="Error_ItemNeedsAtLeastOnePackagePattern">
@@ -185,12 +185,12 @@
       </trans-unit>
       <trans-unit id="PackageSource_MinPublishAgeCannotBeNegative">
         <source>The minimum publish age cannot be negative. Value: '{0}'.</source>
-        <target state="new">The minimum publish age cannot be negative. Value: '{0}'.</target>
+        <target state="translated">En düşük yayımlama yaşı negatif olamaz. Değer: '{0}'.</target>
         <note>0 - minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageSource_MinPublishAgeMustBeWholeHours">
         <source>The minimum publish age must be specified in whole hours. Value: '{0}'.</source>
-        <target state="new">The minimum publish age must be specified in whole hours. Value: '{0}'.</target>
+        <target state="translated">En düşük yayımlama yaşı tam saat olarak belirtilmelidir. Değer: '{0}'.</target>
         <note>0 - minimum publish age</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNullOrEmpty">

@@ -613,6 +613,7 @@ namespace NuGetVSExtension
                 {
                     WindowFrameHelper.AddF1HelpKeyword(windowFrame, keywordValue: F1KeywordValuePmUI);
                     WindowFrameHelper.DisableWindowAutoReopen(windowFrame);
+                    await control.SetWindowFrameAsync(windowFrame);
                 }
             }
             finally
@@ -1007,6 +1008,7 @@ namespace NuGetVSExtension
                 {
                     WindowFrameHelper.AddF1HelpKeyword(windowFrame, keywordValue: F1KeywordValuePmUI);
                     WindowFrameHelper.DisableWindowAutoReopen(windowFrame);
+                    await control.SetWindowFrameAsync(windowFrame);
                 }
             }
             finally
