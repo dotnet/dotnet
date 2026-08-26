@@ -91,6 +91,15 @@
       <_NETCoreAppTargetFrameworkVersion>%(NETCoreAppTargetFrameworkVersionFrameworkList.Identity)</_NETCoreAppTargetFrameworkVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(EnableKnownPackVersionUpdatesForCurrentTargetFramework)' == 'true'
+                              and '$(TargetingPackCurrentTargetFramework)' == 'net11.0'
+                              and '$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)' != ''">
+      <_NET110RuntimePackVersion>$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion)</_NET110RuntimePackVersion>
+      <_NET110TargetingPackVersion>$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)</_NET110TargetingPackVersion>
+      <_AspNet110RuntimePackVersion>$(MicrosoftAspNetCoreAppRuntimePackageVersion)</_AspNet110RuntimePackVersion>
+      <_AspNet110TargetingPackVersion>$(MicrosoftAspNetCoreAppRefPackageVersion)</_AspNet110TargetingPackVersion>
+    </PropertyGroup>
+
     <PropertyGroup>
       <_NETCoreAppPackageVersion>$(MicrosoftNETCoreAppRuntimePackageVersion)</_NETCoreAppPackageVersion>
       <_NETStandardLibraryPackageVersion>$(NETStandardLibraryRefPackageVersion)</_NETStandardLibraryPackageVersion>

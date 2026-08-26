@@ -568,22 +568,13 @@
           DependsOnTargets="PrepareRepositoryReferences;SetRepoOriginalSourceRevisionId;GetProducedPackagesFromTransitiveReferences">
     <!-- Make everything that depends on live runtime repo uses the live targeting pack to avoid a mismatch between the API/version packages expect to be in framework and what the actual targeting pack provides. -->
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' == 'true'">
-      <NETCoreTargetingPackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref')->Metadata('Version'))</NETCoreTargetingPackVersion>
-      <NETCoreRuntimePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Runtime.$(TargetRid)')->Metadata('Version'))</NETCoreRuntimePackVersion>
-      <AspNetCoreTargetingPackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App.Ref')->Metadata('Version'))</AspNetCoreTargetingPackVersion>
-      <AspNetCoreRuntimePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App.Runtime.$(TargetRid)')->Metadata('Version'))</AspNetCoreRuntimePackVersion>
-
-      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion=$(NETCoreTargetingPackVersion)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion=$(NETCoreRuntimePackVersion)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(NETCoreRuntimePackVersion)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion=$(NETCoreRuntimePackVersion)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(NETCoreRuntimePackVersion)</BuildArgs>
-
-      <!-- net11 metadata is frozen in the SDK, but source-build must use the live packs produced by this build. -->
-      <BuildArgs>$(BuildArgs) /p:_NET110RuntimePackVersion=$(NETCoreRuntimePackVersion)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /p:_NET110TargetingPackVersion=$(NETCoreTargetingPackVersion)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /p:_AspNet110RuntimePackVersion=$(AspNetCoreRuntimePackVersion)</BuildArgs>
-      <BuildArgs>$(BuildArgs) /p:_AspNet110TargetingPackVersion=$(AspNetCoreTargetingPackVersion)</BuildArgs>
+      <!-- Use the targeting pack version as a shortcut for other pack versions since they all version consistently -->
+      <RuntimePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref')->Metadata('Version'))</RuntimePackVersion>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
     </PropertyGroup>
 
     <PropertyGroup>
