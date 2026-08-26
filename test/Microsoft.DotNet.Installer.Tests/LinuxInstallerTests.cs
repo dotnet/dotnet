@@ -279,7 +279,7 @@ public partial class LinuxInstallerTests : IDisposable
             InsertLocalPackagesPathToNuGetConfig(newNuGetConfig, "/packages");
 
             // Copy downgrade-fx-versions.sh script
-            // This script is used to update the latest known 8.0 and 9.0 framework versions in SDK's
+            // This script is used to update the latest known serviced framework versions in SDK's
             // Microsoft.NETCoreSdk.BundledVersions.props file to the versions 2 releases prior.
             // This is needed as the SDK automatically picks up servicing versions not yet released, which
             // is either one or two versions higher than publicly available versions, depending on
@@ -636,7 +636,7 @@ public partial class LinuxInstallerTests : IDisposable
         sb.AppendLine("");
 
         sb.AppendLine("");
-        sb.AppendLine("# Run the script to downgrade 8.0 and 9.0 framework versions");
+        sb.AppendLine("# Run the script to downgrade serviced framework versions");
         sb.AppendLine("RUN \\");
         sb.AppendLine($"    chmod +x {DowngradeFxVersionsScript} && \\");
         sb.AppendLine($"    ./{DowngradeFxVersionsScript}");
