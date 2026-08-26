@@ -97,4 +97,28 @@
     <Message Importance="high" Text="Bootstrap layout created at $(BootstrapLayoutDir)" />
   </Target>
 
+  <Target Name="BuildBootstrapConsumers"
+          AfterTargets="CreateBootstrapLayout"
+          Condition="'$(EnableBootstrap)' == 'true'">
+    <PropertyGroup>
+      <BootstrapConsumerTargets>Build</BootstrapConsumerTargets>
+      <BootstrapConsumerTargets Condition="'$(Restore)' == 'true'">Restore;Build</BootstrapConsumerTargets>
+    </PropertyGroup>
+    <ItemGroup>
+      <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj"
+                         Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj"
+                         Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapConsumer Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj"
+                         Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapConsumer Include="$(SharedNativeRoot)managed\compile-native.proj"
+                         Condition="$(_subset.Contains('+tools.cdac+'))" />
+    </ItemGroup>
+    <MSBuild Projects="@(BootstrapConsumer)"
+             Targets="$(BootstrapConsumerTargets)"
+             Properties="UseBootstrap=true"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+  </Target>
+
 </Project>

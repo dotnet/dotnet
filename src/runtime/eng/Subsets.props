@@ -686,7 +686,6 @@
     <ManagedProjectToBuild Include="$(InstallerProjectRoot)managed\**\*.csproj" />
     <ProjectToBuild Include="@(ManagedProjectToBuild)"
                     BuildInParallel="true"
-                    Condition="'$(EnableBootstrap)' != 'true'"
                     Category="host" />
   </ItemGroup>
 
@@ -710,27 +709,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableBootstrap)' == 'true'">
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj"
-                    AdditionalProperties="UseBootstrap=true"
-                    Condition="'$(SdkToolsSupported)' == 'true'"
-                    Category="clr" />
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj"
-                    AdditionalProperties="UseBootstrap=true"
-                    Condition="'$(SdkToolsSupported)' == 'true'"
-                    Category="clr" />
-    <ProjectToBuild Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj"
-                    AdditionalProperties="UseBootstrap=true"
-                    Condition="'$(SdkToolsSupported)' == 'true'"
-                    Category="clr" />
-    <ProjectToBuild Include="$(SharedNativeRoot)managed\compile-native.proj"
-                    AdditionalProperties="UseBootstrap=true"
-                    Condition="$(_subset.Contains('+tools.cdac+'))"
-                    Category="tools" />
-    <ProjectToBuild Include="@(ManagedProjectToBuild)"
-                    AdditionalProperties="%(AdditionalProperties);UseBootstrap=true"
-                    BuildInParallel="true"
-                    Condition="$(_subset.Contains('+host.tools+'))"
-                    Category="host" />
     <ProjectToBuild Include="@(PkgprojProjectToBuild)"
                     AdditionalProperties="%(AdditionalProperties);UseBootstrap=true"
                     Condition="$(_subset.Contains('+host.pkg+'))"
