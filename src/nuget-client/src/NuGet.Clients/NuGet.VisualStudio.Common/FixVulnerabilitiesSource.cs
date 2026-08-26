@@ -25,6 +25,11 @@ namespace NuGet.VisualStudio
             NavigationOrigin.ErrorList_FixVulnerabilitiesWithCopilot,
             CopilotClientIdPrefix + "ErrorList");
 
+        /// <summary>The Package Manager UI vulnerabilities info bar.</summary>
+        public static readonly FixVulnerabilitiesSource PackageManagerInfoBar = new(
+            NavigationOrigin.PMUI_FixVulnerabilitiesWithCopilot,
+            CopilotClientIdPrefix + "PackageManagerInfoBar");
+
         private FixVulnerabilitiesSource(NavigationOrigin navigationOrigin, string copilotClientId)
         {
             NavigationOrigin = navigationOrigin;
