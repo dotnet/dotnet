@@ -109,6 +109,11 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
 빌드 시 NuGet이 패키지를 복원하지 않도록 하려면 [Visual Studio 옵션] 대화 상자를 열고 [NuGet 프로젝트 관리자] 노드를 클릭한 후 [NuGet이 누락된 패키지를 빌드 시 다운로드하도록 허용]을 선택 취소합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Prompt_ResolveSupplyChainSecurityNUCode">
+        <source>Resolve {0} by reviewing my NuGet supply chain security configuration.</source>
+        <target state="new">Resolve {0} by reviewing my NuGet supply chain security configuration.</target>
+        <note>Do not translate NuGet</note>
+      </trans-unit>
       <trans-unit id="PropertyDoesNotHaveSingleValue">
         <source>The property {0} was expected to have a single value across all target frameworks, but instead had the following values: {1}</source>
         <target state="translated">속성 {0}은(는) 모든 대상 프레임워크에서 단일 값을 가질 것으로 예상되었지만 대신 {1} 값을 가졌습니다.</target>
@@ -133,6 +138,11 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
         <target state="translated">솔루션이 저장되지 않았습니다. NuGet 패키지를 관리하려면 먼저 솔루션을 저장하세요.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Title_AskCopilotForFix">
+        <source>Ask Copilot for a fix</source>
+        <target state="new">Ask Copilot for a fix</target>
+        <note>Do not translate Copilot</note>
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>

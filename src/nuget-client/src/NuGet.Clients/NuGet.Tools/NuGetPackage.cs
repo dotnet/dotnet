@@ -146,7 +146,7 @@ namespace NuGetVSExtension
         private Lazy<IServiceBrokerProvider> ServiceBrokerProvider { get; set; }
 
         [Import]
-        private Lazy<IPackageSourceMappingService> PackageSourceMappingService { get; set; }
+        private Lazy<IResolveSupplyChainSecurityService> ResolveSupplyChainSecurityService { get; set; }
 
         [Import]
         private Lazy<INuGetExperimentationService> NuGetExperimentationService { get; set; }
@@ -229,7 +229,7 @@ namespace NuGetVSExtension
             ClearNuGetLocalResourcesCommand clearNuGetLocalResourcesCommand = new(oleMenuCommandService: _mcs, OutputConsoleLogger);
             clearNuGetLocalResourcesCommand.Initialize();
 
-            PackageSourceMapperCommand packageSourceMapperCommand = new(_mcs, PackageSourceMappingService, SolutionManager);
+            PackageSourceMapperCommand packageSourceMapperCommand = new(_mcs, ResolveSupplyChainSecurityService, SolutionManager);
             packageSourceMapperCommand.Initialize();
         }
 

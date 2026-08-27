@@ -15,9 +15,9 @@ using NuGet.VisualStudio;
 
 namespace NuGetVSExtension
 {
-    [Export(typeof(IPackageSourceMappingService))]
+    [Export(typeof(IResolveSupplyChainSecurityService))]
     [PartCreationPolicy(CreationPolicy.Shared)]
-    internal class PackageSourceMappingService : IPackageSourceMappingService
+    internal class ResolveSupplyChainSecurityService : IResolveSupplyChainSecurityService
     {
         private const string AgentModeResponderServiceMoniker = "Microsoft.VisualStudio.Copilot.AgentModeResponder";
         private const string ServiceName = "Microsoft.VisualStudio.Copilot.SolutionContextProvider";
@@ -37,11 +37,24 @@ namespace NuGetVSExtension
         [Import(typeof(VisualStudioActivityLogger), AllowDefault = true)]
         public ILogger? ActivityLogger { get; set; }
 
-        public async Task LaunchReviewPackageSourceMappingAsync(CancellationToken cancellationToken)
+        public async Task LaunchResolveAsync(
+            ResolveSupplyChainSecuritySource source,
+            string prompt,
+            CancellationToken cancellationToken)
         {
-            CopilotClientId clientId = new("Microsoft.VisualStudio.NuGet.PackageSourceMapper");
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
 
-            CopilotRequest request = new(Resources.Prompt_ReviewPackageSourceMapping)
+            if (string.IsNullOrEmpty(prompt))
+            {
+                throw new ArgumentException("The prompt cannot be null or empty.", nameof(prompt));
+            }
+
+            CopilotClientId clientId = new(source.CopilotClientId);
+
+            CopilotRequest request = new(prompt)
             {
                 Guidance = "Use absolute paths when invoking MCP Tools.",
                 DirectedResponders = [new(AgentModeResponderServiceMoniker, new(CopilotDescriptors.CurrentResponderVersion))]
@@ -60,9 +73,9 @@ namespace NuGetVSExtension
             {
                 CopilotToolInvocationService.HandleSessionError(
                     result.Error,
-                    Resources.Error_PackageSourceMappingToolNotAvailable,
-                    Resources.Title_PackageSourceMappingWithCopilot,
-                    NavigatedTelemetryEvent.CreateWithReviewPackageSourceMappingCommand(result.Error));
+                    Resources.Error_SupplyChainSecurityToolNotAvailable,
+                    Resources.Title_ResolveSupplyChainSecurityWithCopilot,
+                    NavigatedTelemetryEvent.CreateWithResolveSupplyChainSecurity(source.NavigationOrigin, result.Error));
                 return;
             }
 
@@ -76,14 +89,16 @@ namespace NuGetVSExtension
             {
                 _ = await session.Thread.Session.SendRequestAsync(requestWithFunctionsAndContext, cancellationToken);
                 TelemetryActivity.EmitTelemetryEvent(
-                    NavigatedTelemetryEvent.CreateWithReviewPackageSourceMappingCommand(CopilotToolSessionError.None));
+                    NavigatedTelemetryEvent.CreateWithResolveSupplyChainSecurity(source.NavigationOrigin, CopilotToolSessionError.None));
             }
             catch (UnauthorizedAccessException ex)
             {
                 TelemetryActivity.EmitTelemetryEvent(
-                    NavigatedTelemetryEvent.CreateWithReviewPackageSourceMappingCommand(CopilotToolSessionError.CopilotAccessDenied));
+                    NavigatedTelemetryEvent.CreateWithResolveSupplyChainSecurity(
+                        source.NavigationOrigin,
+                        CopilotToolSessionError.CopilotAccessDenied));
                 ActivityLogger?.LogError(ex.Message);
-                MessageHelper.ShowWarningMessage(Resources.Error_CopilotAccessDenied, Resources.Title_PackageSourceMappingWithCopilot);
+                MessageHelper.ShowWarningMessage(Resources.Error_CopilotAccessDenied, Resources.Title_ResolveSupplyChainSecurityWithCopilot);
             }
         }
 
