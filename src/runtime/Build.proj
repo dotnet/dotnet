@@ -6,6 +6,9 @@
     <ProjectReference Include="@(ProjectToBuild)" />
   </ItemGroup>
 
+  <Target Name="GetProjectsToBuild"
+          Returns="@(ProjectToBuild)" />
+
   <Import Project="$(RepositoryEngineeringDir)SubsetValidation.targets" />
   <Import Project="$(RepositoryEngineeringDir)restore\optimizationData.targets" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
 
