@@ -23,10 +23,9 @@ public static class ExecuteHelper
         ITestOutputHelper outputHelper,
         bool logOutput = false,
         Action<Process>? configure = null,
-        int millisecondTimeout = -1)
+        int millisecondTimeout = -1,
+        Func<string, string>? outputSanitizer = null)
     {
-        outputHelper.WriteLine($"Executing: {fileName} {args}");
-
         Process process = new()
         {
             EnableRaisingEvents = true,
@@ -40,6 +39,13 @@ public static class ExecuteHelper
         };
 
         configure?.Invoke(process);
+
+        DateTimeOffset startedAt = DateTimeOffset.UtcNow;
+        string command = $"{fileName} {args}";
+        outputHelper.WriteLine(
+            $"[{startedAt:O}] Starting command: {command}{Environment.NewLine}" +
+            $"Working directory: {process.StartInfo.WorkingDirectory}{Environment.NewLine}" +
+            $"Timeout: {(millisecondTimeout < 0 ? "infinite" : $"{millisecondTimeout} ms")}");
 
         StringBuilder stdOutput = new();
         process.OutputDataReceived += new DataReceivedEventHandler(
@@ -62,47 +68,69 @@ public static class ExecuteHelper
             });
 
         process.Start();
+        int processId = process.Id;
+        outputHelper.WriteLine($"[{DateTimeOffset.UtcNow:O}] Started PID {processId}: {command}");
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
         process.WaitForExit(millisecondTimeout);
 
         if (!process.HasExited)
         {
-            outputHelper.WriteLine($"Killing: {fileName} {args}");
+            outputHelper.WriteLine(
+                $"[{DateTimeOffset.UtcNow:O}] Command timed out; killing process tree rooted at PID {processId}: {command}");
             process.Kill(true);
-            if (!process.WaitForExit(KillGraceMilliseconds))
+            bool exitedAfterKill = process.WaitForExit(KillGraceMilliseconds);
+            if (!exitedAfterKill)
             {
                 outputHelper.WriteLine("Process tree did not fully exit within the kill grace period; " +
                     "abandoning wait to avoid hanging on inherited stdout/stderr handles.");
             }
-            ProcessStartInfo startInfo = process.StartInfo;
-            string msg = $" {startInfo.FileName} {startInfo.Arguments} timed out after " +
-                $"{millisecondTimeout} milliseconds" +
-                $"{Environment.NewLine}Exit code: {process.ExitCode}";
+
+            string timedOutOutput = GetOutput(stdOutput);
+            string timedOutError = GetOutput(stdError);
+            LogOutput(timedOutOutput, timedOutError);
+
+            string msg = $"{command} (PID {processId}) timed out after {millisecondTimeout} milliseconds" +
+                $"{Environment.NewLine}Working directory: {process.StartInfo.WorkingDirectory}" +
+                $"{Environment.NewLine}Process tree exited after kill: {exitedAfterKill}" +
+                $"{Environment.NewLine}Standard output:{Environment.NewLine}{Sanitize(timedOutOutput)}" +
+                $"{Environment.NewLine}Standard error:{Environment.NewLine}{Sanitize(timedOutError)}";
             throw new InvalidOperationException(msg);
         }
 
-        string output;
-        lock (stdOutput)
+        DateTimeOffset endedAt = DateTimeOffset.UtcNow;
+        outputHelper.WriteLine(
+            $"[{endedAt:O}] Finished PID {processId} with exit code {process.ExitCode} " +
+            $"after {(endedAt - startedAt).TotalSeconds:F1} seconds: {command}");
+
+        string output = GetOutput(stdOutput);
+        string error = GetOutput(stdError);
+        LogOutput(output, error);
+
+        return (process, Sanitize(output), Sanitize(error));
+
+        string GetOutput(StringBuilder builder)
         {
-            output = stdOutput.ToString().Trim();
-        }
-        if (logOutput && !string.IsNullOrWhiteSpace(output))
-        {
-            outputHelper.WriteLine(output);
+            lock (builder)
+            {
+                return builder.ToString().Trim();
+            }
         }
 
-        string error;
-        lock (stdError)
-        {
-            error = stdError.ToString().Trim();
-        }
-        if (logOutput && !string.IsNullOrWhiteSpace(error))
-        {
-            outputHelper.WriteLine(error);
-        }
+        string Sanitize(string value) => outputSanitizer?.Invoke(value) ?? value;
 
-        return (process, output, error);
+        void LogOutput(string output, string error)
+        {
+            if (logOutput && !string.IsNullOrWhiteSpace(output))
+            {
+                outputHelper.WriteLine(Sanitize(output));
+            }
+
+            if (logOutput && !string.IsNullOrWhiteSpace(error))
+            {
+                outputHelper.WriteLine(Sanitize(error));
+            }
+        }
     }
 
     public static string ExecuteProcessValidateExitCode(string fileName, string args, ITestOutputHelper outputHelper)

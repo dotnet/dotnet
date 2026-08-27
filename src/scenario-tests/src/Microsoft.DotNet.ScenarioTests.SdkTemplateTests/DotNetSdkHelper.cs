@@ -5,6 +5,7 @@
 using Microsoft.DotNet.ScenarioTests.Common;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Xml.XPath;
 using System.Xml;
 using Xunit.Abstractions;
@@ -13,6 +14,8 @@ namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
 
 internal class DotNetSdkHelper
 {
+    internal const int DefaultCommandTimeoutMilliseconds = 10 * 60 * 1000;
+
     private readonly string? _binlogDir;
     private readonly ITestOutputHelper _outputHelper;
 
@@ -31,26 +34,50 @@ internal class DotNetSdkHelper
         _binlogDir = binlogDir;
     }
 
-    private void ExecuteCmd(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1)
+    private (Process Process, string StdOut, string StdErr) ExecuteCmd(
+        string args,
+        string workingDirectory,
+        Action<Process>? additionalProcessConfigCallback = null,
+        int expectedExitCode = 0,
+        int millisecondTimeout = DefaultCommandTimeoutMilliseconds,
+        bool logOutput = false,
+        Func<string, string>? outputSanitizer = null)
     {
         if (!string.IsNullOrEmpty(SdkVersion) && !File.Exists(Path.Combine(workingDirectory, "global.json")))
         {
             ExecuteCmdImpl($"new globaljson --sdk-version {SdkVersion}", workingDirectory);
         }
 
-        ExecuteCmdImpl(args, workingDirectory, additionalProcessConfigCallback, expectedExitCode, millisecondTimeout);
+        return ExecuteCmdImpl(
+            args,
+            workingDirectory,
+            additionalProcessConfigCallback,
+            expectedExitCode,
+            millisecondTimeout,
+            logOutput,
+            outputSanitizer);
     }
 
-    private void ExecuteCmdImpl(string args, string workingDirectory, Action<Process>? additionalProcessConfigCallback = null, int expectedExitCode = 0, int millisecondTimeout = -1)
+    private (Process Process, string StdOut, string StdErr) ExecuteCmdImpl(
+        string args,
+        string workingDirectory,
+        Action<Process>? additionalProcessConfigCallback = null,
+        int expectedExitCode = 0,
+        int millisecondTimeout = DefaultCommandTimeoutMilliseconds,
+        bool logOutput = false,
+        Func<string, string>? outputSanitizer = null)
     {
         (Process Process, string StdOut, string StdErr) executeResult = ExecuteHelper.ExecuteProcess(
             DotNetExecutablePath,
             args,
             _outputHelper,
+            logOutput: logOutput,
             configure: (process) => configureProcess(process, workingDirectory),
-            millisecondTimeout: millisecondTimeout);
+            millisecondTimeout: millisecondTimeout,
+            outputSanitizer: outputSanitizer);
 
         ExecuteHelper.ValidateExitCode(executeResult, expectedExitCode);
+        return executeResult;
 
         void configureProcess(Process process, string workingDirectory)
         {
@@ -98,7 +125,26 @@ internal class DotNetSdkHelper
     /// <summary>
     /// Create a new .NET project and return the path to the created project folder.
     /// </summary>
-    public string ExecuteNew(string projectType, string projectName, string projectDirectory, string? language = null, string? customArgs = null)
+    public string ExecuteNew(
+        string projectType,
+        string projectName,
+        string projectDirectory,
+        string? language = null,
+        string? customArgs = null,
+        bool noRestore = false)
+    {
+        ExecuteCmd(GetNewArguments(projectType, projectName, projectDirectory, language, customArgs, noRestore), projectDirectory);
+
+        return projectDirectory;
+    }
+
+    internal static string GetNewArguments(
+        string projectType,
+        string projectName,
+        string projectDirectory,
+        string? language = null,
+        string? customArgs = null,
+        bool noRestore = false)
     {
         string options = $"--name {projectName} --output {projectDirectory}";
         if (language != null)
@@ -109,11 +155,52 @@ internal class DotNetSdkHelper
         {
             options += $" {customArgs}";
         }
+        if (noRestore)
+        {
+            options += " --no-restore";
+        }
 
-        ExecuteCmd($"new {projectType} {options}", projectDirectory);
-
-        return projectDirectory;
+        return $"new {projectType} {options}";
     }
+
+    public void ExecuteRestore(string projectDirectory)
+    {
+        string? restoreConfigFile = Environment.GetEnvironmentVariable("RestoreConfigFile");
+        _outputHelper.WriteLine("Effective NuGet sources (source URLs are sanitized):");
+        ExecuteCmd(
+            GetNuGetListSourceArguments(restoreConfigFile),
+            projectDirectory,
+            logOutput: true,
+            outputSanitizer: SanitizeNuGetSourceOutput);
+        ExecuteCmd(
+            GetRestoreArguments(GetBinLogOption(projectDirectory, "restore"), restoreConfigFile),
+            projectDirectory,
+            logOutput: true,
+            outputSanitizer: SanitizeNuGetSourceOutput);
+    }
+
+    internal static string GetNuGetListSourceArguments(string? restoreConfigFile) =>
+        $"nuget list source{GetConfigFileOption(restoreConfigFile)}";
+
+    internal static string GetRestoreArguments(string binLogOption, string? restoreConfigFile) =>
+        $"restore --verbosity diagnostic {binLogOption}{GetConfigFileOption(restoreConfigFile)}";
+
+    private static string GetConfigFileOption(string? restoreConfigFile) =>
+        string.IsNullOrWhiteSpace(restoreConfigFile) ? string.Empty : $" --configfile \"{restoreConfigFile}\"";
+
+    internal static string SanitizeNuGetSourceOutput(string output) =>
+        Regex.Replace(
+            output,
+            @"https?://\S+",
+            match =>
+            {
+                string value = match.Value.TrimEnd(')', ']', '}', ',', ';');
+                string suffix = match.Value[value.Length..];
+                return Uri.TryCreate(value, UriKind.Absolute, out Uri? uri)
+                    ? $"{uri.Scheme}://{uri.Host}{(uri.IsDefaultPort ? string.Empty : $":{uri.Port}")}/<redacted-path>{suffix}"
+                    : $"<redacted-source-url>{suffix}";
+            },
+            RegexOptions.IgnoreCase);
 
     public void ExecutePublish(string projectDirectory, string? rid = null, bool? selfContained = null, bool trimmed = false, bool readyToRun = false, bool? aot = false, string[]? frameworks = null)
     {
@@ -269,6 +356,7 @@ internal class DotNetSdkHelper
         string binlogDir = _binlogDir is null ?
             projectDirectory :
             Path.Combine(_binlogDir, Path.GetFileName(projectDirectory)!);
+        Directory.CreateDirectory(binlogDir);
 
         string fileName = $"{command}";
         if (!string.IsNullOrEmpty(differentiator))
