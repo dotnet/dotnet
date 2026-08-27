@@ -25,6 +25,12 @@
                    '$(PortableTargetRid)' != '$(TargetRid)' and
                    !Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)') and
                    Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)')" />
+      <TargetRuntimePackAliasFile
+        Include="$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)/**/*"
+        Condition="'$(PortableTargetRid)' != '' and
+                   '$(PortableTargetRid)' != '$(TargetRid)' and
+                   !Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)') and
+                   Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)')" />
       <RidGraphFile Include="$(ArtifactsBinDir)Microsoft.NETCore.Platforms/*.json" />
 
       <AotSdkFile DestinationPath="$(BootstrapAotSdkDir)/%(Filename)%(Extension)" />
@@ -32,9 +38,10 @@
       <RefPackFile DestinationPath="$(BootstrapRefPackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
       <RuntimePackFile DestinationPath="$(BootstrapRuntimePackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
       <PortableRuntimePackFile DestinationPath="$(BootstrapRuntimePackDir)/runtimes/$(PortableTargetRid)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <TargetRuntimePackAliasFile DestinationPath="$(BootstrapRuntimePackDir)/runtimes/$(TargetRid)/%(RecursiveDir)%(Filename)%(Extension)" />
       <RidGraphFile DestinationPath="$(BootstrapRidGraphDir)/%(RecursiveDir)%(Filename)%(Extension)" />
 
-      <BootstrapFile Include="@(AotSdkFile);@(AppHostFile);@(RefPackFile);@(RuntimePackFile);@(PortableRuntimePackFile);@(RidGraphFile)" />
+      <BootstrapFile Include="@(AotSdkFile);@(AppHostFile);@(RefPackFile);@(RuntimePackFile);@(PortableRuntimePackFile);@(TargetRuntimePackAliasFile);@(RidGraphFile)" />
     </ItemGroup>
 
     <Error Text="The bootstrap AOT SDK was not produced."
@@ -59,6 +66,8 @@
                             Condition="'$(SdkToolsSupported)' == 'true'" />
       <BootstrapCoreLib Include="$(CoreClrProjectRoot)System.Private.CoreLib\System.Private.CoreLib.csproj"
                         Condition="'$(SdkToolsSupported)' == 'true' and '$(UseNativeAotForComponents)' == 'true'" />
+      <BootstrapHostJitProducer Include="$(CoreClrProjectRoot)runtime.proj"
+                                Condition="'$(SdkToolsSupported)' == 'true' and '$(BuildArchitecture)' != '$(TargetArchitecture)'" />
     </ItemGroup>
     <MSBuild Projects="$(RepoRoot)Build.proj"
              Targets="Restore"
@@ -82,6 +91,10 @@
              StopOnFirstFailure="true" />
     <MSBuild Projects="$(RepoRoot)Build.proj"
              Properties="Subset=$(BootstrapSubsets);EnableBootstrap=false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapHostJitProducer)"
+             Properties="TargetArchitecture=$(BuildArchitecture);ClrAllJitsSubset=true"
+             BuildInParallel="true"
              StopOnFirstFailure="true" />
     <MSBuild Projects="@(BootstrapInBuildTool)"
              BuildInParallel="true"
@@ -153,12 +166,6 @@
                          Condition="'$(SdkToolsSupported)' == 'true'" />
       <BootstrapConsumer Include="$(SharedNativeRoot)managed\compile-native.proj"
                          Condition="$(_subset.Contains('+tools.cdac+'))" />
-      <BootstrapPostConsumer Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj"
-                             Condition="'$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" />
-      <BootstrapPostConsumer Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj"
-                             Condition="'$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" />
-      <BootstrapPostConsumer Include="$(InstallerProjectRoot)pkg\projects\nativeaot-packages.proj"
-                             Condition="'$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" />
     </ItemGroup>
     <MSBuild Projects="@(BootstrapConsumer)"
              Targets="Restore"
@@ -166,15 +173,6 @@
              BuildInParallel="false"
              StopOnFirstFailure="true" />
     <MSBuild Projects="@(BootstrapConsumer)"
-             Properties="UseBootstrap=true;ExcludeRestorePackageImports=false"
-             BuildInParallel="false"
-             StopOnFirstFailure="true" />
-    <MSBuild Projects="@(BootstrapPostConsumer)"
-             Targets="Restore"
-             Properties="UseBootstrap=true"
-             BuildInParallel="false"
-             StopOnFirstFailure="true" />
-    <MSBuild Projects="@(BootstrapPostConsumer)"
              Properties="UseBootstrap=true;ExcludeRestorePackageImports=false"
              BuildInParallel="false"
              StopOnFirstFailure="true" />

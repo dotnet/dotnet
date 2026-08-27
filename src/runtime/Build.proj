@@ -3,8 +3,14 @@
   <PropertyGroup>
     <_OrchestrateBootstrap Condition="'$(EnableBootstrap)' == 'true' and '$(BootstrapBuildLane)' != 'true'">true</_OrchestrateBootstrap>
     <BootstrapBuildArtifactsDir Condition="'$(BootstrapBuildArtifactsDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bootstrap-build', '$(TargetRid)'))</BootstrapBuildArtifactsDir>
-    <BootstrapBuildPackagesDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'packages'))</BootstrapBuildPackagesDir>
     <BootstrapCoreCLRArtifactsPath>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'bin', 'coreclr', '$(TargetOS).$(TargetArchitecture).$(CoreCLRConfiguration)'))</BootstrapCoreCLRArtifactsPath>
+    <BootstrapBuildLayoutDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'bootstrap', '$(TargetRid)'))</BootstrapBuildLayoutDir>
+    <BootstrapBuildRefPackDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'microsoft.netcore.app', 'ref'))</BootstrapBuildRefPackDir>
+    <BootstrapBuildRuntimePackDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'microsoft.netcore.app', 'lib'))</BootstrapBuildRuntimePackDir>
+    <BootstrapBuildAotSdkDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'aotsdk'))</BootstrapBuildAotSdkDir>
+    <BootstrapBuildHostDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'host'))</BootstrapBuildHostDir>
+    <BootstrapBuildRidGraphDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'ridgraph'))</BootstrapBuildRidGraphDir>
+    <_BootstrapPackageProperties>UseBootstrap=true;CoreCLROverridePath=$(BootstrapCoreCLRArtifactsPath);BootstrapRefPackDir=$(BootstrapBuildRefPackDir);BootstrapRuntimePackDir=$(BootstrapBuildRuntimePackDir);BootstrapAotSdkDir=$(BootstrapBuildAotSdkDir);BootstrapHostDir=$(BootstrapBuildHostDir);BootstrapRidGraphDir=$(BootstrapBuildRidGraphDir)</_BootstrapPackageProperties>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(_OrchestrateBootstrap)' != 'true'">
@@ -24,26 +30,33 @@
                       Publish="false" />
   </ItemGroup>
 
-  <Target Name="BuildBootstrapCdacPackage"
+  <Target Name="BuildBootstrapPackages"
           AfterTargets="Build"
-          Condition="'$(_OrchestrateBootstrap)' == 'true' and '$(_BuildCdacPack)' == 'true'">
-    <MSBuild Projects="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj"
-             Targets="Restore"
-             Properties="CdacReaderArtifactsPath=$(BootstrapCoreCLRArtifactsPath)" />
-    <MSBuild Projects="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj"
-             Properties="CdacReaderArtifactsPath=$(BootstrapCoreCLRArtifactsPath);ExcludeRestorePackageImports=false" />
-  </Target>
-
-  <Target Name="PromoteBootstrapPackages"
-          AfterTargets="Build"
-          DependsOnTargets="BuildBootstrapCdacPackage"
           Condition="'$(_OrchestrateBootstrap)' == 'true'">
     <ItemGroup>
-      <BootstrapPackage Include="$(BootstrapBuildPackagesDir)**/*" />
+      <BootstrapPackageProject Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj"
+                               Condition="'$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" />
+      <BootstrapPackageProject Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj"
+                               Condition="'$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" />
+      <BootstrapPackageProject Include="$(InstallerProjectRoot)pkg\projects\nativeaot-packages.proj"
+                               Condition="'$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" />
     </ItemGroup>
-    <Copy SourceFiles="@(BootstrapPackage)"
-          DestinationFiles="@(BootstrapPackage->'$(ArtifactsPackagesDir)%(RecursiveDir)%(Filename)%(Extension)')"
-          SkipUnchangedFiles="true" />
+    <MSBuild Projects="@(BootstrapPackageProject)"
+             Targets="Restore"
+             Properties="$(_BootstrapPackageProperties)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapPackageProject)"
+             Properties="$(_BootstrapPackageProperties);ExcludeRestorePackageImports=false"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj"
+             Targets="Restore"
+             Properties="CdacReaderArtifactsPath=$(BootstrapCoreCLRArtifactsPath)"
+             Condition="'$(_BuildCdacPack)' == 'true'" />
+    <MSBuild Projects="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj"
+             Properties="CdacReaderArtifactsPath=$(BootstrapCoreCLRArtifactsPath);ExcludeRestorePackageImports=false"
+             Condition="'$(_BuildCdacPack)' == 'true'" />
   </Target>
 
   <Import Project="$(RepositoryEngineeringDir)SubsetValidation.targets" />

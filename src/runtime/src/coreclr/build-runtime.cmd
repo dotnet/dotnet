@@ -298,10 +298,12 @@ set __IntermediatesIncDir=%__IntermediatesDir%\src\inc
 set __IntermediatesEventingDir=%__ArtifactsIntermediatesDir%\Eventing\%__TargetArch%\%__BuildType%
 
 REM Find python and set it to the variable PYTHON
+set "__PythonLocationFile=%TEMP%\pythonlocation-%RANDOM%-%RANDOM%.txt"
 set _C=-c "import sys; sys.stdout.write(sys.executable)"
-(py -3 %_C% || py -2 %_C% || python3 %_C% || python2 %_C% || python %_C%) > "%TEMP%\pythonlocation.txt" 2> NUL
+(py -3 %_C% || py -2 %_C% || python3 %_C% || python2 %_C% || python %_C%) > "%__PythonLocationFile%" 2> NUL
 set _C=
-set /p PYTHON=<"%TEMP%\pythonlocation.txt"
+set /p PYTHON=<"%__PythonLocationFile%"
+del "%__PythonLocationFile%" > NUL 2> NUL
 
 if NOT DEFINED PYTHON (
     echo %__ErrMsgPrefix%%__MsgPrefix%Error: Could not find a Python installation.
