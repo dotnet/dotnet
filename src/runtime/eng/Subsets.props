@@ -386,6 +386,13 @@
                     Category="clr" />
   </ItemGroup>
 
+  <!-- Queue the bootstrap lane immediately after the task assemblies that its producers may load. -->
+  <ItemGroup Condition="'$(EnableBootstrap)' == 'true' or $(_subset.Contains('+bootstrap+'))">
+    <ProjectToBuild Include="$(RepositoryEngineeringDir)bootstrap.proj"
+                    BuildInParallel="true"
+                    Category="bootstrap" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(ClrRuntimeBuildSubsets)' != ''">
     <ProjectToBuild
       Include="$(CoreClrProjectRoot)runtime.proj"
@@ -698,13 +705,6 @@
   <!-- Libraries test sets -->
   <ItemGroup Condition="$(_subset.Contains('+libs.pretest+'))">
     <ProjectToBuild Include="$(LibrariesProjectRoot)pretest.proj" Category="libs" />
-  </ItemGroup>
-
-  <!-- The bootstrap orchestrator builds its producer subset in parallel with the remaining outer traversal. -->
-  <ItemGroup Condition="'$(EnableBootstrap)' == 'true' or $(_subset.Contains('+bootstrap+'))">
-    <ProjectToBuild Include="$(RepositoryEngineeringDir)bootstrap.proj"
-                    BuildInParallel="true"
-                    Category="bootstrap" />
   </ItemGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+libs.tests+'))">
