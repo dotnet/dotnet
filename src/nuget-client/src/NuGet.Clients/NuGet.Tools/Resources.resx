@@ -311,12 +311,12 @@
   <data name="Prompt_ReviewPackageSourceMapping" xml:space="preserve">
     <value>Review this repository's package source mappings.</value>
   </data>
-  <data name="Error_PackageSourceMappingToolNotAvailable" xml:space="preserve">
-    <value>The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</value>
+  <data name="Error_SupplyChainSecurityToolNotAvailable" xml:space="preserve">
+    <value>The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</value>
     <comment>Do not translate GitHub or Copilot</comment>
   </data>
-  <data name="Title_PackageSourceMappingWithCopilot" xml:space="preserve">
-    <value>Package Source Mapping with GitHub Copilot</value>
+  <data name="Title_ResolveSupplyChainSecurityWithCopilot" xml:space="preserve">
+    <value>Resolve Supply Chain Security with GitHub Copilot</value>
     <comment>Do not translate "GitHub Copilot"</comment>
   </data>
 </root>
