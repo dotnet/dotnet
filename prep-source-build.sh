@@ -12,13 +12,13 @@
 ###   --no-artifacts              Exclude the download of the previously source-built artifacts archive
 ###   --no-bootstrap              Don't replace portable packages in the download source-built artifacts
 ###   --no-prebuilts              Exclude the download of the prebuilts archive
-###   --no-sdk                    Skip SDK acquisition. On initial-minor branches this skips the Microsoft
-###                               .NET SDK install. On later-minor branches this skips
-###                               downloading the initial-minor source-built SDK published by Microsoft. In both
+###   --no-sdk                    Skip SDK acquisition. On 1xx branches this skips the Microsoft
+###                               .NET SDK install. On non-1xx (feature band) branches this skips
+###                               downloading the 1xx source-built SDK published by Microsoft. In both
 ###                               cases, use --with-sdk to supply your own SDK.
-###   --no-shared-components      Exclude the download of the initial-minor shared components archive.
-###                               Only applies on later-minor branches, where the shared
-###                               components archive is downloaded by default. On initial-minor branches this
+###   --no-shared-components      Exclude the download of the 1xx shared components archive.
+###                               Only applies on non-1xx (feature band) branches, where the shared
+###                               components archive is downloaded by default. On 1xx branches this
 ###                               flag has no effect because shared components are built from source.
 ###   --artifacts-rid             The RID of the previously source-built artifacts archive to download
 ###                               Default is centos.9-x64
@@ -85,28 +85,28 @@ sharedComponentsBaseFileName="Private.SourceBuilt.SharedComponents"
 
 sourceBuiltSdkBaseFileName="dotnet-sdk"
 
-# Detect whether the current branch is for a later monthly minor.
-# On later-minor branches, the runtime/aspnetcore/etc. shared components are not built
-# from source and must instead be sourced from the initial-minor VMR build's output. The bootstrap
-# toolchain (SDK + arcade packages) also comes from that initial-minor build rather than from
-# a Microsoft-installed SDK plus local bootstrap, because the initial-minor source-built SDK
+# Detect whether the current branch is a non-1xx (feature band) branch.
+# On feature band branches, the runtime/aspnetcore/etc. shared components are not built
+# from source and must instead be sourced from a 1xx VMR build's output. The bootstrap
+# toolchain (SDK + arcade packages) also comes from that 1xx build rather than from
+# a Microsoft-installed SDK plus local bootstrap, because the 1xx source-built SDK
 # already contains those bootstrap packages. To make this seamless for developers and
-# avoid requiring them to know about the initial vs later minor split, prep on a later-minor
-# branch by default:
-#   1. Downloads the initial-minor source-built SDK and extracts it to .dotnet (replacing the
-#      Microsoft SDK install + bootstrap that initial-minor branches use).
-#   2. Downloads the initial-minor shared components archive into prereqs/packages/archive/
+# avoid requiring them to know about the 1xx vs feature band split, prep on a feature
+# band branch by default:
+#   1. Downloads the 1xx source-built SDK and extracts it to .dotnet (replacing the
+#      Microsoft SDK install + bootstrap that 1xx branches use).
+#   2. Downloads the 1xx shared components archive into prereqs/packages/archive/
 #      where init-source-only.proj auto-discovers it.
 # The matching --no-sdk and --no-shared-components flags opt out of each
 # step independently (e.g. for distro maintainers who supply their own assets via
 # --with-sdk and build.sh --with-shared-components).
-versionMinor=$(GetXmlPropertyValue "VersionMinor" "$REPO_ROOT/eng/Versions.props")
-isLaterMinor=false
-if [[ -n "$versionMinor" && "$versionMinor" != "0" ]]; then
-  isLaterMinor=true
+versionSDKMinor=$(GetXmlPropertyValue "VersionSDKMinor" "$REPO_ROOT/eng/Versions.props")
+isFeatureBand=false
+if [[ -n "$versionSDKMinor" && "$versionSDKMinor" != "1" ]]; then
+  isFeatureBand=true
 fi
-downloadSharedComponents=$isLaterMinor
-downloadSourceBuiltSdk=$isLaterMinor
+downloadSharedComponents=$isFeatureBand
+downloadSourceBuiltSdk=$isFeatureBand
 
 positional_args=()
 while :; do
@@ -180,12 +180,12 @@ done
 
 source "$REPO_ROOT/eng/common/tools.sh"
 
-# Apply later-minor overrides now that arg parsing is complete. On later-minor branches
+# Apply feature band overrides now that arg parsing is complete. On feature band branches
 # the SDK comes from either the downloaded source-built SDK (default, controlled by
 # --no-sdk) or from a user-supplied --with-sdk path. In both cases, the local Microsoft
 # SDK install + bootstrap steps are unnecessary because the supplied SDK already contains
 # everything BootstrapArtifacts would otherwise restore from Private.SourceBuilt.Artifacts.
-if [[ "$isLaterMinor" == "true" && -n "$customSdkDir" ]]; then
+if [[ "$isFeatureBand" == "true" && -n "$customSdkDir" ]]; then
   downloadSourceBuiltSdk=false
   installDotnet=false
   buildBootstrap=false
@@ -259,7 +259,7 @@ packagesArchiveDir="$packagesDir/archive/"
 # These properties may not be defined on every branch:
 #  - PrivateSourceBuiltSdkVersion is read from eng/Versions.props.
 #  - MicrosoftNETSdkPackageVersion is populated by Maestro dependency flow into
-#    eng/Version.Details.props on later-minor branches; on the initial minor it is
+#    eng/Version.Details.props on non-1xx (feature band) branches; on 1xx it is
 #    absent, but the shared components download is never invoked there either.
 expectedSdkVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
 expectedSharedComponentsVersion=$(GetXmlPropertyValue "MicrosoftNETSdkPackageVersion" "$REPO_ROOT/eng/Version.Details.props")
@@ -296,7 +296,7 @@ fi
 # Check if the source-built SDK tarball exists for the expected version + RID. The
 # tarball (rather than the extracted .dotnet/sdk/<version> directory) is used as the
 # cache marker because a same-versioned SDK could otherwise be present in .dotnet from
-# a prior Microsoft SDK install on an initial-minor branch, which would not be a source-built SDK
+# a prior Microsoft SDK install on a 1xx branch, which would not be a source-built SDK
 # even though the version matches.
 downloadSourceBuiltSdkArchive=$downloadSourceBuiltSdk
 if [ "$downloadSourceBuiltSdk" == true ] && [[ -n "$expectedSourceBuiltSdkFile" ]] && [ -f "$expectedSourceBuiltSdkFile" ]; then
@@ -321,7 +321,7 @@ if [ "$installDotnet" == true ]; then
 fi
 
 if [ "$downloadSourceBuiltSdk" == true ]; then
-  echo "  Detected later-minor branch; using initial-minor source-built .NET SDK $expectedSdkVersion."
+  echo "  Detected non-1xx feature band branch; using 1xx source-built .NET SDK $expectedSdkVersion."
   echo "  Pass --no-sdk to skip this (and use --with-sdk to supply your own SDK)."
 
   if [ "$downloadSourceBuiltSdkArchive" == true ]; then
@@ -355,7 +355,7 @@ if [ "$downloadPrebuilts" == true ]; then
 fi
 
 if [ "$downloadSharedComponents" == true ]; then
-  echo "  Detected later-minor branch; downloading initial-minor shared components."
+  echo "  Detected non-1xx feature band branch; downloading 1xx shared components."
   echo "  Pass --no-shared-components to skip this download (e.g. when supplying shared components via build.sh --with-shared-components)."
 
   mkdir -p "$packagesArchiveDir"

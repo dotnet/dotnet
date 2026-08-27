@@ -142,7 +142,7 @@
     <Exec Command="tar -xzf @(_SourceBuiltSymbolsAllTarball->'$(BaseIntermediateOutputPath)%(Filename)%(Extension)')"
           WorkingDirectory="$(_SharedComponentsSymbolsDir)" />
     <!-- Remove all directories except those from shared components. We also want to keep those from the Arcade bootstrap
-         repos, specifically SBRP, because SBRP is built in each monthly minor branch and so there may be differences between
+         repos, specifically SBRP, because SBRP is built in each feature band branch and so there may be differences between 
          the packages between those branches. Each SBRP assembly would have its own PDB so these are kept separated. -->
     <ItemGroup>
       <_AllSymbolDirs Include="$([System.IO.Directory]::GetDirectories($(_SharedComponentsSymbolsDir)))" />
@@ -158,14 +158,14 @@
   </Target>
 
   <!--
-    Prepares the source built artifacts produced from the initial monthly minor so that they can be used in the current build.
+    Prepares the source built artifacts produced from the 1xx feature band so that they can be used in the current build.
     There are two possible sources for these artifacts:
     1. The directory to the extracted artifacts is specified by the user via the with-shared-components option in the build script.
        This is what distro maintainers would typically use. This maps to the CustomSharedComponentsArtifactsPath
        property. This source takes precedence.
     2. The archive is contained in the prereqs/packages/archive-shared-components directory.
        This is what the prep script does by default. This provides a seamless experience for devs working in
-       the VMR, not requiring them to pass extra parameters by default when working in a later-minor branch.
+       the VMR, not requiring them to pass extra parameters by default when working in a non-1xx branch.
        This scenario maps to the SharedComponentsPrereqsArchivePath item.
   -->
   <Target Name="PrepareSharedComponents"

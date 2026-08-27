@@ -5,20 +5,22 @@
   <PropertyGroup Label="Repo version information">
     <VersionMajor>12</VersionMajor>
     <VersionMinor>0</VersionMinor>
-    <VersionPatch>0</VersionPatch>
-    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)</VersionPrefix>
+    <VersionSDKMinor>1</VersionSDKMinor>
+    <VersionSDKMinorPatch>00</VersionSDKMinorPatch>
+    <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
     <!-- Allowed values: '', 'prerelease', 'release'. Set to 'release' when stabilizing. -->
     <DotNetFinalVersionKind></DotNetFinalVersionKind>
 
     <!-- This property powers the SdkAnalysisLevel property in end-user MSBuild code.
-         It should identify the current monthly SDK minor release without any
-         prerelease version components. E.g. 12.0.0, 12.1.0, etc. -->
-    <SdkMinorVersion>$(VersionMajor).$(VersionMinor).0</SdkMinorVersion>
-    <BuiltinWorkloadMinorVersion>$(SdkMinorVersion)</BuiltinWorkloadMinorVersion>
+         It should always be the hundreds-value of the current SDK version, never any
+         preview version components or anything else. E.g. 8.0.100, 9.0.300, etc. -->
+    <SdkFeatureBand>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)00</SdkFeatureBand>
+    <BuiltinWorkloadFeatureBand>$(VersionMajor).$(VersionMinor).100</BuiltinWorkloadFeatureBand>
     <MajorMinorVersion>$(VersionMajor).$(VersionMinor)</MajorMinorVersion>
-    <CliProductMinorVersion>$(MajorMinorVersion)</CliProductMinorVersion>
+    <CliProductBandVersion>$(MajorMinorVersion).$(VersionSDKMinor)</CliProductBandVersion>
     <!-- In source-buildthe version of the compiler must be same or newer than the version of the
          compiler API targeted by analyzer assemblies. This is mostly an issue on source-build as
          in that build mode analyzer assemblies always target the live compiler API. -->

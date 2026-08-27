@@ -5,8 +5,10 @@
   <PropertyGroup>
     <VersionMajor>12</VersionMajor>
     <VersionMinor>0</VersionMinor>
-    <VersionPatch>0</VersionPatch>
-    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionPatch)</VersionPrefix>
+    <VersionSDKMinor>1</VersionSDKMinor>
+    <VersionSDKMinorPatch>00</VersionSDKMinorPatch>
+    <VersionFeature>$([System.String]::Copy('$(VersionSDKMinorPatch)').PadLeft(2, '0'))</VersionFeature>
+    <VersionPrefix>$(VersionMajor).$(VersionMinor).$(VersionSDKMinor)$(VersionFeature)</VersionPrefix>
     <PreReleaseVersionLabel>alpha</PreReleaseVersionLabel>
     <PreReleaseVersionIteration>1</PreReleaseVersionIteration>
 

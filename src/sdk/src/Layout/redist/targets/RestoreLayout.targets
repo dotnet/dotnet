@@ -292,12 +292,12 @@
     </ItemGroup>
 
     <!--
-      Only access external URIs if building the repo outside the context of the VMR or if building a later monthly minor.
-      For VMR builds in the initial minor release, use the locally built artifacts produced by repos built earlier in the build.
-      In later minor releases, download the artifacts because the current build did not produce them. They were produced
-      by builds of the initial minor release and are shared with later minor releases through this download workflow.
+      Only access external URIs if building the repo outside the context of the VMR or if building a non-1xx feature band.
+      For VMR builds in the 1xx feature band, we want to use the locally built artifacts produced by repos built earlier in the build.
+      But in later feature bands, we need to download the artifacts since the current build did not produce them. They were only produced
+      by builds of the 1xx feature band and are being shared with other feature bands through this download workflow.
     -->
-    <ItemGroup Condition="'$(DotNetBuildFromVMR)' != 'true' or '$(VersionMinor)' != '0'">
+    <ItemGroup Condition="'$(DotNetBuildFromVMR)' != 'true' or '$(VersionSDKMinor)' != '1'">
       <UrisToDownload Include="$([System.String]::Copy('%(ComponentToDownload.BaseUrl)').Replace($(PublicBaseURL), 'https://ci.dot.net/public/'))/%(ComponentToDownload.DownloadFileName)"
                       Condition="'%(ComponentToDownload.ShouldDownload)' == 'true'">
         <ShouldDownload>%(ComponentToDownload.ShouldDownload)</ShouldDownload>

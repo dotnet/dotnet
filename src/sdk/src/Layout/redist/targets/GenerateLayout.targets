@@ -36,7 +36,7 @@
                       WriteOnlyWhenDifferent="true" />
 
     <WriteLinesToFile File="$(OutputPath).version"
-                      Lines="$(SourceRevisionId);$(Version);$(TargetRid);$(FullNugetVersion);$(SdkMinorVersion)"
+                      Lines="$(SourceRevisionId);$(Version);$(TargetRid);$(FullNugetVersion);$(SdkFeatureBand)"
                       Overwrite="true"
                       WriteOnlyWhenDifferent="true" />
   </Target>

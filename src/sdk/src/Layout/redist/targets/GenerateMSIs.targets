@@ -46,9 +46,9 @@
   <PropertyGroup>
     <SdkBundleFile>$(ArtifactsShippingPackagesDir)$(ArtifactNameWithVersionCombinedHostHostFxrFrameworkSdk)$(BundleExtension)</SdkBundleFile>
 
-    <!-- Warning: Changing the value "SdkBundleInstallerOutputGuidString" can only occur on a monthly minor boundary [CliProductMinorVersion].
-                  Changing "SdkBundleInstallerOutputGuidString" within a monthly minor will break the upgradability of the SDK bundle installer. -->
-    <SdkBundleInstallerOutputGuidString>Dotnet SDK Bundle Installer $(CliProductMinorVersion) $(ProductMonikerRid)</SdkBundleInstallerOutputGuidString>
+    <!-- Warning: Changing the value "SdkBundleInstallerOutputGuidString" can only occur on a product-band boundary [CliProductBandVersion],
+                  Changing "SdkBundleInstallerOutputGuidString" mid-product-band will break the upgradability of the SDK bundle installer. -->
+    <SdkBundleInstallerOutputGuidString>Dotnet SDK Bundle Installer $(CliProductBandVersion) $(ProductMonikerRid)</SdkBundleInstallerOutputGuidString>
   </PropertyGroup>
 
   <!-- This target relies on tasks from the Microsoft.DotNet.Build.Tasks.Installers package. -->
@@ -67,7 +67,7 @@
     <GenerateMsiVersion BuildNumber="$(CombinedBuildNumberAndRevision)"
                         Major="$(VersionMajor)"
                         Minor="$(VersionMinor)"
-                        Patch="$(VersionPatch)">
+                        Patch="$(VersionFeature)">
       <Output TaskParameter="MsiVersion" PropertyName="ProductVersion" />
     </GenerateMsiVersion>
   </Target>
@@ -234,9 +234,9 @@
       <UpgradePoliciesSrcPath>$(PkgMicrosoft_DotNet_Build_Tasks_Installers)\build\wix\bundle\upgradePolicies.wxs</UpgradePoliciesSrcPath>
     </PropertyGroup>
 
-    <!-- Warning: Upgrade codes for the SDK bundle need to be stable across patch levels for a monthly minor and platform.
-         For example, 12.1.0-preview.2 and 12.1.1 must yield the same value, but 12.1.1 and 12.2.0 must be different to support SxS installs. -->
-    <GenerateGuidFromName Name="Dotnet SDK Bundle Installer $(CliProductMinorVersion) $(ProductMonikerRid)">
+    <!-- Warning: Upgrade codes for the SDK bundle need to be stable across patch levels for a feature band and platform within a major.minor version.
+         For example, 10.0.100-preview.2 and 10.0.107 must yield the same value, but 10.0.103 and 10.0.204 must be different to support SxS installs. -->
+    <GenerateGuidFromName Name="Dotnet SDK Bundle Installer $(CliProductBandVersion) $(ProductMonikerRid)">
       <Output TaskParameter="GeneratedGuid" PropertyName="UpgradeCode" />
     </GenerateGuidFromName>
 
