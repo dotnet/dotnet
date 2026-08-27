@@ -25,16 +25,16 @@ namespace NuGet.Tools.Commands
         public static readonly Guid CommandSet = GuidList.guidReviewPackageSourceMappingCmdSet;
 
         private readonly OleMenuCommandService _oleMenuCommandService;
-        private readonly Lazy<IPackageSourceMappingService> _packageSourceMappingService;
+        private readonly Lazy<IResolveSupplyChainSecurityService> _resolveSupplyChainSecurityService;
         private readonly Lazy<IVsSolutionManager> _solutionManager;
 
         public PackageSourceMapperCommand(
             OleMenuCommandService oleMenuCommandService,
-            Lazy<IPackageSourceMappingService> packageSourceMappingService,
+            Lazy<IResolveSupplyChainSecurityService> resolveSupplyChainSecurityService,
             Lazy<IVsSolutionManager> solutionManager)
         {
             _oleMenuCommandService = oleMenuCommandService ?? throw new ArgumentNullException(nameof(oleMenuCommandService));
-            _packageSourceMappingService = packageSourceMappingService ?? throw new ArgumentNullException(nameof(packageSourceMappingService));
+            _resolveSupplyChainSecurityService = resolveSupplyChainSecurityService ?? throw new ArgumentNullException(nameof(resolveSupplyChainSecurityService));
             _solutionManager = solutionManager ?? throw new ArgumentNullException(nameof(solutionManager));
         }
 
@@ -58,7 +58,10 @@ namespace NuGet.Tools.Commands
         private void ExecutePackageSourceMapperCommand(object sender, EventArgs e)
         {
             NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(() =>
-                _packageSourceMappingService.Value.LaunchReviewPackageSourceMappingAsync(CancellationToken.None))
+                _resolveSupplyChainSecurityService.Value.LaunchResolveAsync(
+                    source: ResolveSupplyChainSecuritySource.PackageSourceMappingOptions,
+                    prompt: Resources.Prompt_ReviewPackageSourceMapping,
+                    cancellationToken: CancellationToken.None))
                 .PostOnFailure(nameof(NuGetPackage), nameof(ExecutePackageSourceMapperCommand));
         }
     }

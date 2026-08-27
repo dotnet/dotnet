@@ -13,5 +13,6 @@ namespace NuGet.SolutionRestoreManager.ErrorListFixers
         /// </summary>
         internal const string CopilotFixerName = "Copilot ErrorList Fixer";
         internal const string AuditFixerName = "NuGet Audit ErrorList Fixer";
+        internal const string CPMFixerName = "NuGet CPM ErrorList Fixer";
     }
 }
