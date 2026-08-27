@@ -20,6 +20,7 @@ namespace Microsoft.DotNet.Arcade.Sdk.Tests
     {
         private readonly ConcurrentQueue<IDisposable> _disposables = new ConcurrentQueue<IDisposable>();
         private readonly string _logOutputDir;
+        private readonly string _tempRoot;
         private readonly string _testAssets;
         private readonly string _boilerPlateDir;
 
@@ -31,7 +32,12 @@ namespace Microsoft.DotNet.Arcade.Sdk.Tests
         public TestProjectFixture()
         {
             ClearPackages();
-            _logOutputDir = GetType().Assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Single(m => m.Key == "LogOutputDir").Value;
+            var helixWorkItemRoot = Environment.GetEnvironmentVariable("HELIX_WORKITEM_ROOT");
+            helixWorkItemRoot = string.IsNullOrWhiteSpace(helixWorkItemRoot) ? null : helixWorkItemRoot;
+            _logOutputDir = helixWorkItemRoot == null
+                ? GetType().Assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Single(m => m.Key == "LogOutputDir").Value
+                : Path.Combine(helixWorkItemRoot, "test-logs");
+            _tempRoot = helixWorkItemRoot ?? Path.GetTempPath();
             _testAssets = Path.Combine(AppContext.BaseDirectory, "testassets");
             _boilerPlateDir = Path.Combine(_testAssets, "boilerplate");
         }
@@ -40,7 +46,7 @@ namespace Microsoft.DotNet.Arcade.Sdk.Tests
         {
             var testAppFiles = Path.Combine(_testAssets, name);
             var instanceName = Path.GetRandomFileName();
-            var tempDir = Path.Combine(Path.GetTempPath(), "arcade", instanceName);
+            var tempDir = Path.Combine(_tempRoot, "arcade", instanceName);
             var app = new TestApp(tempDir, _logOutputDir, new[] { testAppFiles, _boilerPlateDir });
             _disposables.Enqueue(app);
             return app;

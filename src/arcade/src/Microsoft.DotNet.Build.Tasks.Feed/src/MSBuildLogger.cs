@@ -54,6 +54,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         }
     }
 
+    public class MSBuildLogger<T> : MSBuildLogger, ILogger<T>
+    {
+        public MSBuildLogger(TaskLoggingHelper log)
+            : base(log)
+        {
+        }
+    }
+
     /// <summary>
     /// An empty scope without any logic
     /// </summary>
