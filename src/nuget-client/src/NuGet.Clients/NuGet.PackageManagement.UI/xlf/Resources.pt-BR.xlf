@@ -584,7 +584,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning">
         <source>You have {0} vulnerable package versions installed.</source>
-        <target state="needs-review-translation">Você tem {0} versões de pacote vulneráveis instaladas.</target>
+        <target state="translated">Você tem {0} versões de pacote vulneráveis instaladas.</target>
         <note>{0} is the number of installed package versions (always more than 1)</note>
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">

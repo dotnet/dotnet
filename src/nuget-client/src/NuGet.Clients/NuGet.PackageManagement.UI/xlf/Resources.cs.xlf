@@ -584,7 +584,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning">
         <source>You have {0} vulnerable package versions installed.</source>
-        <target state="needs-review-translation">Máte nainstalovaný tento počet zranitelných verzí balíčků: {0}</target>
+        <target state="translated">Máte nainstalovaný tento počet zranitelných verzí balíčků: {0}</target>
         <note>{0} is the number of installed package versions (always more than 1)</note>
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
