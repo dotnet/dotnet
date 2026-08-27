@@ -145,8 +145,8 @@ namespace Microsoft.DotNet.Arcade.Sdk.Tests
                 .Single();
             Assert.DoesNotContain("TestArchitectures", initializationDependencies.Attribute("Condition")?.Value);
 
-            XElement testTarget = GetTarget(targets, "Test");
-            Assert.Contains("_ValidateTestArchitectures", testTarget.Attribute("DependsOnTargets")?.Value);
+            XElement innerRunTestsTarget = GetTarget(targets, "_InnerRunTests");
+            Assert.Contains("_ValidateTestArchitectures", innerRunTestsTarget.Attribute("DependsOnTargets")?.Value);
         }
 
         [Fact]
