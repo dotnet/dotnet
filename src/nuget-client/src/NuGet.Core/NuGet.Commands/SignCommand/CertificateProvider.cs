@@ -61,6 +61,14 @@ namespace NuGet.Commands
 
                     resultCollection = new X509Certificate2Collection(cert);
                 }
+                catch (CryptographicException ex) when (ex.InnerException is FileNotFoundException)
+                {
+                    throw new SignCommandException(
+                        LogMessage.CreateError(NuGetLogCode.NU3001,
+                            string.Format(CultureInfo.CurrentCulture,
+                                Strings.SignCommandCertificateFileNotFound,
+                                options.CertificatePath)));
+                }
                 catch (CryptographicException ex)
                 {
                     switch (ex.HResult)
