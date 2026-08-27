@@ -92,7 +92,7 @@ __PgoOptDataPath=""
 __PgoOptimize=0
 __PortableBuild=1
 __ProjectDir="$__ProjectRoot"
-__RootBinDir="$__RepoRootDir/artifacts"
+__RootBinDir="${__RootBinDir:-"$__RepoRootDir/artifacts"}"
 __SignTypeArg=""
 __SkipConfigure=0
 __SkipRestore=""
@@ -116,7 +116,7 @@ if [[ "$__TargetOS" == "linux-bionic" ]]; then
     __ConfigTriplet="linux.$__TargetArch.$__BuildType"
 fi
 __BinDir="$__RootBinDir/bin/coreclr/$__ConfigTriplet"
-__ArtifactsObjDir="$__RepoRootDir/artifacts/obj"
+__ArtifactsObjDir="$__RootBinDir/obj"
 __ArtifactsIntermediatesDir="$__ArtifactsObjDir/coreclr"
 __IntermediatesDir="$__ArtifactsIntermediatesDir/$__ConfigTriplet"
 

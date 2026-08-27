@@ -94,14 +94,13 @@
   <PropertyGroup>
     <BootstrapSubsets>host.native+libs.sfx+libs.pretest</BootstrapSubsets>
     <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' != 'true'">$(BootstrapSubsets)+clr.runtime+clr.corelib</BootstrapSubsets>
-    <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' == 'true'">$(BootstrapSubsets)+clr.nativeaotlibs+clr.nativeaotruntime+libs.native</BootstrapSubsets>
+    <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' == 'true'">$(BootstrapSubsets)+clr.alljits+clr.nativeaotlibs+clr.nativeaotruntime+libs.native</BootstrapSubsets>
   </PropertyGroup>
 
   <!-- Init _subset here to allow RuntimeFlavor to be set as early as possible -->
   <PropertyGroup>
     <_subset Condition="'$(Subset)' != ''">+$(Subset.ToLowerInvariant())+</_subset>
     <_subset Condition="'$(Subset)' == ''">+$(DefaultSubsets)+</_subset>
-    <_subset Condition="'$(EnableBootstrap)' == 'true'">$(_subset)+$(BootstrapSubsets)+</_subset>
   </PropertyGroup>
 
 
@@ -360,7 +359,6 @@
   <PropertyGroup Condition="$(_subset.Contains('+tools.cdac+'))">
     <ClrRuntimeBuildSubsets>$(ClrRuntimeBuildSubsets);ClrCdacSubset=true</ClrRuntimeBuildSubsets>
   </PropertyGroup>
-
   <PropertyGroup Condition="$(_subset.Contains('+clr.nativeaotruntime+')) and '$(NativeAotSupported)' == 'true'">
     <ClrRuntimeBuildSubsets>$(ClrRuntimeBuildSubsets);ClrNativeAotSubset=true</ClrRuntimeBuildSubsets>
   </PropertyGroup>
@@ -373,24 +371,6 @@
     <ProjectToBuild Include="$(CoreClrProjectRoot)runtime-prereqs.proj"
                     Category="clr"
                     GlobalPropertiesToRemove="$(NativeBuildPartitionPropertiesToRemove)" />
-  </ItemGroup>
-
-  <!-- Build tools that runtime producers load before those producers. Rebuilding a loaded task assembly
-       later in the same MSBuild process fails on Windows because the assembly remains locked. -->
-  <ItemGroup Condition="'$(EnableBootstrap)' == 'true' and $(_subset.Contains('+clr.tools+'))">
-    <ProjectToBuild Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj"
-                    Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'"
-                    Category="clr" />
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj"
-                    Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'"
-                    Category="clr" />
-  </ItemGroup>
-
-  <!-- Queue the bootstrap lane immediately after the task assemblies that its producers may load. -->
-  <ItemGroup Condition="'$(EnableBootstrap)' == 'true' or $(_subset.Contains('+bootstrap+'))">
-    <ProjectToBuild Include="$(RepositoryEngineeringDir)bootstrap.proj"
-                    BuildInParallel="true"
-                    Category="bootstrap" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(ClrRuntimeBuildSubsets)' != ''">
@@ -523,9 +503,9 @@
     <ProjectToBuild Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj" Category="clr" Condition="'$(EnableBootstrap)' != 'true' and ('$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true')" />
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj" Category="clr" Condition="'$(EnableBootstrap)' != 'true' and ('$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true')" />
 
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(EnableBootstrap)' != 'true'" Category="clr" />
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(EnableBootstrap)' != 'true'" Category="clr" />
-    <ProjectToBuild Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(EnableBootstrap)' != 'true'" Category="clr" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(BootstrapMainBuild)' != 'true'" Category="clr" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(BootstrapMainBuild)' != 'true'" Category="clr" />
+    <ProjectToBuild Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(BootstrapMainBuild)' != 'true'" Category="clr" />
 
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" />
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" />
@@ -556,7 +536,7 @@
 
   <ItemGroup Condition="$(_subset.Contains('+tools.cdac+'))">
     <ProjectToBuild Include="$(SharedNativeRoot)managed\compile-native.proj"
-                    Condition="'$(EnableBootstrap)' != 'true'"
+                    Condition="'$(BootstrapMainBuild)' != 'true'"
                     Category="tools" />
 
     <!-- Direct references to cDAC projects for packing -->
@@ -765,22 +745,22 @@
             <SharedFrameworkProjectToBuild Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Ref.sfxproj" />
           </ItemGroup>
           <ItemGroup>
-            <SharedFrameworkProjectToBuild Condition="'$(EnableBootstrap)' != 'true' and '$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true')" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj" />
+            <SharedFrameworkProjectToBuild Condition="'$(BootstrapMainBuild)' != 'true' and '$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true')" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-host.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-hostfxr.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-runtime-deps\*.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(MonoCrossAOTTargetOS)' != '' and '$(DotNetBuildSourceOnly)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\monocrossaot.proj" />
           </ItemGroup>
           <ItemGroup>
-            <ProjectToBuild Condition="'$(EnableBootstrap)' != 'true' and '$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" Include="$(InstallerProjectRoot)\pkg\projects\nativeaot-packages.proj" Category="packs" />
-            <ProjectToBuild Condition="'$(EnableBootstrap)' != 'true' and '$(_BuildCdacPack)' == 'true'" Include="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj" Category="packs" />
+            <ProjectToBuild Condition="'$(BootstrapMainBuild)' != 'true' and '$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" Include="$(InstallerProjectRoot)\pkg\projects\nativeaot-packages.proj" Category="packs" />
+            <ProjectToBuild Condition="'$(BootstrapMainBuild)' != 'true' and '$(_BuildCdacPack)' == 'true'" Include="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj" Category="packs" />
           </ItemGroup>
           <ItemGroup>
             <!--
               When we're building in the VMR, we need to provide a crossgen2 that runs on the host machine for downstream repos to use to R2R their code.
               In non-VMR builds, downstream repos can use the crossgen2 built for the target host SDK from another build leg, but in the VMR we need to provide one to use.
             -->
-            <ProjectToBuild Condition="'$(EnableBootstrap)' != 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" />
+            <ProjectToBuild Condition="'$(BootstrapMainBuild)' != 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" />
           </ItemGroup>
           <ItemGroup>
             <SharedFrameworkProjectToBuild Condition="'$(_BuildHostPack)' == 'true'" Include="$(InstallerProjectRoot)pkg\archives\dotnet-nethost.proj" />

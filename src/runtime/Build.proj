@@ -1,13 +1,50 @@
 <Project Sdk="Microsoft.Build.Traversal">
 
-  <ItemGroup>
+  <PropertyGroup>
+    <_OrchestrateBootstrap Condition="'$(EnableBootstrap)' == 'true' and '$(BootstrapBuildLane)' != 'true'">true</_OrchestrateBootstrap>
+    <BootstrapBuildArtifactsDir Condition="'$(BootstrapBuildArtifactsDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bootstrap-build', '$(TargetRid)'))</BootstrapBuildArtifactsDir>
+    <BootstrapBuildPackagesDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'packages'))</BootstrapBuildPackagesDir>
+    <BootstrapCoreCLRArtifactsPath>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'bin', 'coreclr', '$(TargetOS).$(TargetArchitecture).$(CoreCLRConfiguration)'))</BootstrapCoreCLRArtifactsPath>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(_OrchestrateBootstrap)' != 'true'">
     <ProjectReference Include="$(RepoTasksDir)tasks.proj" BuildInParallel="false" />
     <!-- Subsets.props which defines @(ProjectToBuild) is already imported in Directory.Build.props. -->
     <ProjectReference Include="@(ProjectToBuild)" />
   </ItemGroup>
 
-  <Target Name="GetProjectsToBuild"
-          Returns="@(ProjectToBuild)" />
+  <ItemGroup Condition="'$(_OrchestrateBootstrap)' == 'true'">
+    <ProjectReference Include="$(RepositoryEngineeringDir)main-build.proj"
+                      AdditionalProperties="EnableBootstrap=false;BootstrapMainBuild=true"
+                      BuildInParallel="true" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)bootstrap.proj"
+                      AdditionalProperties="BootstrapBuildLane=true;ArtifactsDir=$(BootstrapBuildArtifactsDir);CoreCLROverridePath=$(BootstrapBuildArtifactsDir)bin/coreclr/$(TargetOS).$(TargetArchitecture).$(CoreCLRConfiguration);LibrariesOverridePath=$(BootstrapBuildArtifactsDir);LibrariesAllConfigurationsOverridePath=$(BootstrapBuildArtifactsDir);HostArtifactsPath=$(BootstrapBuildArtifactsDir)bin/$(TargetOS)-$(TargetArchitecture).$(HostConfiguration)"
+                      BuildInParallel="true"
+                      Pack="false"
+                      Publish="false" />
+  </ItemGroup>
+
+  <Target Name="BuildBootstrapCdacPackage"
+          AfterTargets="Build"
+          Condition="'$(_OrchestrateBootstrap)' == 'true' and '$(_BuildCdacPack)' == 'true'">
+    <MSBuild Projects="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj"
+             Targets="Restore"
+             Properties="CdacReaderArtifactsPath=$(BootstrapCoreCLRArtifactsPath)" />
+    <MSBuild Projects="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj"
+             Properties="CdacReaderArtifactsPath=$(BootstrapCoreCLRArtifactsPath);ExcludeRestorePackageImports=false" />
+  </Target>
+
+  <Target Name="PromoteBootstrapPackages"
+          AfterTargets="Build"
+          DependsOnTargets="BuildBootstrapCdacPackage"
+          Condition="'$(_OrchestrateBootstrap)' == 'true'">
+    <ItemGroup>
+      <BootstrapPackage Include="$(BootstrapBuildPackagesDir)**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BootstrapPackage)"
+          DestinationFiles="@(BootstrapPackage->'$(ArtifactsPackagesDir)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
 
   <Import Project="$(RepositoryEngineeringDir)SubsetValidation.targets" />
   <Import Project="$(RepositoryEngineeringDir)restore\optimizationData.targets" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />

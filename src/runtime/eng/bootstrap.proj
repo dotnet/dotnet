@@ -47,18 +47,47 @@
            Condition="'@(RuntimePackFile)' == ''" />
   </Target>
 
-  <Target Name="_CollectBootstrapProducerProjects">
+  <Target Name="RestoreBootstrapProducers">
+    <ItemGroup>
+      <BootstrapEarlyProducerTool Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj"
+                                  Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'" />
+      <BootstrapEarlyProducerTool Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj"
+                                  Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'" />
+      <BootstrapInBuildTool Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_inbuild.csproj"
+                            Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapInBuildTool Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_inbuild.csproj"
+                            Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapCoreLib Include="$(CoreClrProjectRoot)System.Private.CoreLib\System.Private.CoreLib.csproj"
+                        Condition="'$(SdkToolsSupported)' == 'true' and '$(UseNativeAotForComponents)' == 'true'" />
+    </ItemGroup>
     <MSBuild Projects="$(RepoRoot)Build.proj"
-             Targets="GetProjectsToBuild"
-             Properties="Subset=$(BootstrapSubsets);EnableBootstrap=false">
-      <Output TaskParameter="TargetOutputs" ItemName="BootstrapProducer" />
-    </MSBuild>
+             Targets="Restore"
+             Properties="Subset=$(BootstrapSubsets);EnableBootstrap=false;RestoreForce=true" />
+    <MSBuild Projects="$(LibrariesProjectRoot)externals.csproj"
+             Targets="Restore"
+             Properties="RestoreForce=true" />
+    <MSBuild Projects="@(BootstrapEarlyProducerTool);@(BootstrapInBuildTool)"
+             Targets="Restore"
+             Properties="RestoreForce=true"
+             BuildInParallel="true" />
+    <MSBuild Projects="@(BootstrapCoreLib)"
+             Targets="Restore"
+             Properties="RestoreForce=true;UseNativeAotCoreLib=false" />
   </Target>
 
   <Target Name="BuildBootstrapProducers"
-          DependsOnTargets="_CollectBootstrapProducerProjects">
-    <MSBuild Projects="@(BootstrapProducer)"
+          DependsOnTargets="RestoreBootstrapProducers">
+    <MSBuild Projects="@(BootstrapEarlyProducerTool)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="$(RepoRoot)Build.proj"
+             Properties="Subset=$(BootstrapSubsets);EnableBootstrap=false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapInBuildTool)"
              BuildInParallel="true"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapCoreLib)"
+             Properties="UseNativeAotCoreLib=false"
              StopOnFirstFailure="true" />
   </Target>
 
@@ -130,8 +159,6 @@
                              Condition="'$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" />
       <BootstrapPostConsumer Include="$(InstallerProjectRoot)pkg\projects\nativeaot-packages.proj"
                              Condition="'$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" />
-      <BootstrapPostConsumer Include="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj"
-                             Condition="'$(_BuildCdacPack)' == 'true'" />
     </ItemGroup>
     <MSBuild Projects="@(BootstrapConsumer)"
              Targets="Restore"
