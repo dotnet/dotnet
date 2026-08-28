@@ -339,6 +339,15 @@ Skip PS tests that:
 - **Daily vs regular Apex cadence matters** — a test in `NuGet.Tests.Apex.Daily` does NOT count as
   coverage for removing an E2E test that runs on every PR. Only regular Apex tests
   (`NuGet.Tests.Apex`) provide equivalent gating.
+- **Ambiguous startup project names require the unique name** — Apex
+  `SolutionService.SetStartupProject(ProjectTestExtension)` selects by the short project name, so
+  it cannot distinguish projects with the same name. For these scenarios, set
+  `DTE.Solution.SolutionBuild.StartupProjects` from a host-side Apex service using the project's
+  `UniqueName`.
+- **Create duplicate project names through host-side DTE APIs** — Apex
+  `SolutionService.AddProject` can fail when a project with the same short name already exists in a
+  solution folder. Use `SolutionFolder.AddFromTemplate` and `Solution2.AddFromTemplate` with
+  distinct destination directories from a host-side Apex service.
 
 ## Learnings (continuously updated)
 
