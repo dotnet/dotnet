@@ -55,7 +55,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// </summary>
         public string StageAttempt { get; set; }
 
-        public int TestResultUploadParallelism { get; set; } = 4;
+        /// <summary>
+        /// Attempt number of the Azure DevOps monitor job. Retry reconciliation only runs when
+        /// this is greater than one. Defaults to the SYSTEM_JOBATTEMPT environment variable.
+        /// </summary>
+        public string JobAttempt { get; set; }
+
+        public int TestResultUploadParallelism { get; set; } = 48;
 
         public TestResultAttachmentMode TestResultAttachmentMode { get; set; } = TestResultAttachmentMode.Failed;
 
@@ -163,10 +169,15 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 Description = "Attempt number of the Azure DevOps pipeline stage the monitor is running in. Used to scope monitoring to Helix jobs submitted by the current stage attempt so retries do not re-discover a previous attempt's work. Defaults to the SYSTEM_STAGEATTEMPT environment variable."
             };
 
+            Option<string> jobAttemptOption = new("--job-attempt")
+            {
+                Description = "Attempt number of the Azure DevOps monitor job. Retry reconciliation only runs after the initial job attempt. Defaults to the SYSTEM_JOBATTEMPT environment variable."
+            };
+
             Option<int> testResultUploadParallelismOption = new("--test-result-upload-parallelism")
             {
                 Description = "Maximum number of work items whose test results can be uploaded to Azure DevOps in parallel.",
-                DefaultValueFactory = _ => 4
+                DefaultValueFactory = _ => 48
             };
 
             Option<TestResultAttachmentMode> testResultAttachmentModeOption = new("--test-result-attachment-mode")
@@ -216,6 +227,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             rootCommand.Options.Add(workingDirectoryOption);
             rootCommand.Options.Add(stageNameOption);
             rootCommand.Options.Add(stageAttemptOption);
+            rootCommand.Options.Add(jobAttemptOption);
             rootCommand.Options.Add(testResultUploadParallelismOption);
             rootCommand.Options.Add(testResultAttachmentModeOption);
             rootCommand.Options.Add(failWorkItemsWithFailedTestsOption);
@@ -241,6 +253,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     WorkingDirectory = parseResult.GetValue(workingDirectoryOption),
                     StageName = parseResult.GetValue(stageNameOption),
                     StageAttempt = parseResult.GetValue(stageAttemptOption),
+                    JobAttempt = parseResult.GetValue(jobAttemptOption),
                     TestResultUploadParallelism = parseResult.GetValue(testResultUploadParallelismOption),
                     TestResultAttachmentMode = parseResult.GetValue(testResultAttachmentModeOption),
                     FailWorkItemsWithFailedTests = parseResult.GetValue(failWorkItemsWithFailedTestsOption),
@@ -283,6 +296,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             SourceBranch ??= Environment.GetEnvironmentVariable("BUILD_SOURCEBRANCH");
             StageName ??= Environment.GetEnvironmentVariable("SYSTEM_STAGENAME");
             StageAttempt ??= Environment.GetEnvironmentVariable("SYSTEM_STAGEATTEMPT");
+            JobAttempt ??= Environment.GetEnvironmentVariable("SYSTEM_JOBATTEMPT");
         }
 
         private void Validate()

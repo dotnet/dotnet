@@ -59,12 +59,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             CancellationToken cancellationToken);
 
         /// <summary>
-        /// Uploads test results for the specified work items into an existing test run.
-        /// Returns a dictionary mapping each work item and job name to its upload summary.
+        /// Uploads one work item's test results into an existing test run.
         /// </summary>
-        Task<IReadOnlyDictionary<(string JobName, string WorkItemName), TestResultUploadSummary>> UploadTestResultsAsync(
+        Task<TestResultUploadSummary> UploadTestResultsAsync(
             int testRunId,
-            IReadOnlyList<WorkItemTestResults> results,
+            WorkItemTestResults results,
             CancellationToken cancellationToken);
     }
 }
