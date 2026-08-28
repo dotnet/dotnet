@@ -798,45 +798,6 @@ function Test-CreateVsPathContextWithoutConfiguration {
 	Assert-NotNull $context.UserPackageFolder
 }
 
-function Test-CreateVsPathContextUsesAssetsFileIfAvailable {
-    param($context)
-
-	# Arrange
-	$p = New-BuildIntegratedProj UAPApp
-
-    Install-Package NuGet.Versioning -ProjectName $p.Name -version 1.0.7
-
-	$solutionFile = Get-SolutionFullName
-	$solutionDir = Split-Path $solutionFile -Parent
-
-	$userPackageFolder = Join-Path $solutionDir "userPackageFolder"
-
-	$settingFile = Join-Path $solutionDir "nuget.config"
-	$settingFileContent =@"
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <config>
-    <add key="globalPackagesFolder" value="{0}" />
-  </config>
-</configuration>
-"@
-
-	$settingFileContent -f $userPackageFolder | Out-File -Encoding "UTF8" $settingFile
-
-	SaveAs-Solution($solutionFile)
-	Close-Solution
-	Open-Solution $solutionFile
-
-	$p = Get-Project
-
-	# Act
-	$context = [API.Test.InternalAPITestHook]::GetVsPathContext($p.FullName)
-
-	# Assert
-	Assert-NotNull $context.UserPackageFolder
-	Assert-NotEqual $userPackageFolder $context.UserPackageFolder
-}
-
 function Test-InstallPackageAPIToLatestVersion
 {
     param($context)

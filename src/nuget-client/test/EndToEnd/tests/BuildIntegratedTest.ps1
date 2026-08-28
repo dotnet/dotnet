@@ -384,28 +384,6 @@ function Test-BuildIntegratedRestoreAfterUninstall {
     #Assert
     Assert-True ($uninstallTimeStamp -eq $restoreTimeStamp)
 }
-function Test-BuildIntegratedProjectGetPackageTransitive {
-    param($Context, $TestCase)
-
-    $projectR = New-Project $TestCase.ProjectTemplate
-    $projectT = New-Project BuildIntegratedClassLibrary
-
-    $projectT | Add-ProjectReference -ProjectTo $projectR
-    $projectR | Install-Package NuGet.Versioning -Version 1.0.7
-    Clean-Solution
-
-    $projectT = $projectT | Select-Object UniqueName, ProjectName, FullName
-
-    # Act (Restore)
-    Build-Solution
-
-    Assert-NetCorePackageInLockFile $projectT NuGet.Versioning 1.0.7
-}
-
-function TestCases-BuildIntegratedProjectGetPackageTransitive{
-    BuildProjectTemplateTestCases 'PackageReferenceClassLibrary', 'BuildIntegratedClassLibrary'
-}
-
 function Test-PackageReferenceProjectGetPackageTransitive {
     param($Context, $TestCase)
 

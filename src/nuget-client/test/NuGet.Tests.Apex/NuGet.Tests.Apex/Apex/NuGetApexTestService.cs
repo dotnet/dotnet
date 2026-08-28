@@ -6,10 +6,12 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EnvDTE;
+using EnvDTE80;
 using Microsoft.Test.Apex;
 using Microsoft.Test.Apex.VisualStudio;
 using Microsoft.Test.Apex.VisualStudio.Solution;
@@ -266,6 +268,51 @@ namespace NuGet.Tests.Apex
         {
             PathContextProvider2.TryCreateNoSolutionContext(out var pathContext);
             return pathContext.UserPackageFolder;
+        }
+
+        public string GetUserPackagesFolderFromProjectContext(string projectPath)
+        {
+            PathContextProvider2.TryCreateContext(projectPath, out var pathContext);
+            return pathContext.UserPackageFolder;
+        }
+
+        public void SetStartupProject(string projectUniqueName)
+        {
+            ThreadHelper.JoinableTaskFactory.Run(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                Dte.Solution.SolutionBuild.StartupProjects = projectUniqueName;
+            });
+        }
+
+        public string CreateProjectsWithAmbiguousNames(string solutionFolderName, string projectName)
+        {
+            return ThreadHelper.JoinableTaskFactory.Run(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                var solution = (Solution2)Dte.Solution;
+                var solutionDirectory = Path.GetDirectoryName(solution.FullName);
+                var projectTemplate = solution.GetProjectTemplate("ClassLibrary.zip", "CSharp");
+                var solutionFolderProject = solution.AddSolutionFolder(solutionFolderName);
+                var solutionFolder = (SolutionFolder)solutionFolderProject.Object;
+                solutionFolder.AddFromTemplate(
+                    projectTemplate,
+                    Path.Combine(solutionDirectory, solutionFolderName, projectName),
+                    projectName);
+                var nestedProject = solutionFolderProject.ProjectItems
+                    .Cast<ProjectItem>()
+                    .Single(item => item.Name.Equals(projectName, StringComparison.OrdinalIgnoreCase))
+                    .SubProject;
+
+                solution.AddFromTemplate(
+                    projectTemplate,
+                    Path.Combine(solutionDirectory, projectName),
+                    projectName,
+                    Exclusive: false);
+
+                return nestedProject.UniqueName;
+            });
         }
     }
 }

@@ -1424,24 +1424,6 @@ function Test-FinishFailedUpdateOnSolutionOpen
     Assert-True [NuGet.ProjectManagement.FileSystemUtility]::DirectoryExists($packageFolderPath, "TestUpdatePackage.2.0.0.0")
 }
 
-function Test-UpdatePackageThrowsIfMinClientVersionIsNotSatisfied
-{
-    param ($context)
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    $p | Install-Package kitty -version 1.0.0 -Source $context.RepositoryPath
-
-    $currentVersion = Get-HostSemanticVersion
-
-    # Act & Assert
-    Assert-Throws { $p | Update-Package Kitty -Source $context.RepositoryPath } "The 'kitty 2.0.0' package requires NuGet client version '100.0.0.1' or above, but the current NuGet version is '$currentVersion'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget"
-
-    Assert-NoPackage $p "Kitty" -Version 2.0.0
-    Assert-Package $p "Kitty" -Version 1.0.0
-}
-
 #function Test-UpdatePackageWhenAnUnusedVersionOfPackageIsPresentInPackagesFolder
 function UpdatePackageWhenAnUnusedVersionOfPackageIsPresentInPackagesFolder
 {

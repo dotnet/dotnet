@@ -1772,6 +1772,71 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
+        public void UpdatePackageSource_WithUpdateEnabled_EnablesDisabledSource()
+        {
+            using var directory = TestDirectory.Create();
+
+            // Arrange
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <packageSources>
+                        <add key="source" value="https://source.test" />
+                    </packageSources>
+                    <disabledPackageSources>
+                        <add key="source" value="true" />
+                    </disabledPackageSources>
+                </configuration>
+                """;
+
+            File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var source = packageSourceProvider.GetPackageSourceByName("source")!;
+
+            // Act
+            source.IsEnabled = true;
+            packageSourceProvider.UpdatePackageSource(source, updateCredentials: false, updateEnabled: true);
+
+            // Assert
+            settings = new Settings(directory);
+            source = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance).GetPackageSourceByName("source")!;
+            source.IsEnabled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void UpdatePackageSource_WithUpdateEnabled_DisablesEnabledSource()
+        {
+            using var directory = TestDirectory.Create();
+
+            // Arrange
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <packageSources>
+                        <add key="source" value="https://source.test" />
+                    </packageSources>
+                </configuration>
+                """;
+
+            File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var source = packageSourceProvider.GetPackageSourceByName("source")!;
+
+            // Act
+            source.IsEnabled = false;
+            packageSourceProvider.UpdatePackageSource(source, updateCredentials: false, updateEnabled: true);
+
+            // Assert
+            settings = new Settings(directory);
+            source = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance).GetPackageSourceByName("source")!;
+            source.IsEnabled.Should().BeFalse();
+        }
+
+        [Fact]
         public void UpdatePackageSource_ShouldUpdateAllowInsecureConnections()
         {
             using var directory = TestDirectory.Create();

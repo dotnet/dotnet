@@ -1,8 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
+using Microsoft.Test.Apex.VisualStudio.Shell;
 using Microsoft.Test.Apex.VisualStudio.Solution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NuGet.Common;
+using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 
 namespace NuGet.Tests.Apex
@@ -210,6 +216,100 @@ namespace NuGet.Tests.Apex
             // Assert
             VisualStudio.AssertNuGetOutputDoesNotHaveErrors();
             CommonUtility.AssertPackageReferenceExists(testContext.Project, packageName, packageVersion2, Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task RestoreWpfProjectWithUnversionedPackageReference_ReportsNU1604Async()
+        {
+            // Arrange
+            string? msbuildPath = VisualStudioMSBuildLocator.GetMSBuildPath();
+            if (msbuildPath is null)
+            {
+                Assert.Inconclusive(
+                    "Could not locate MSBuild from the Visual Studio installation under test using vswhere. " +
+                    "Ensure a Visual Studio instance with MSBuild is installed.");
+                return;
+            }
+
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            const string PackageName = "TestUpdatePackage";
+            const string PackageVersion = "1.0.0";
+            const string ExpectedWarning =
+                "Project dependency TestUpdatePackage does not contain an inclusive lower bound. " +
+                "Include a lower bound in the dependency version to ensure consistent restore results.";
+
+            await CommonUtility.CreateNetFrameworkPackageInSourceAsync(
+                simpleTestPathContext.PackageSource,
+                PackageName,
+                PackageVersion);
+
+            var directoryBuildPropsPath = Path.Combine(simpleTestPathContext.SolutionRoot, "Directory.Build.props");
+            File.WriteAllText(
+                directoryBuildPropsPath,
+                $"""
+                <Project>
+                  <PropertyGroup>
+                    <SdkAnalysisLevel>9.0.100</SdkAnalysisLevel>
+                  </PropertyGroup>
+                  <ItemGroup>
+                    <PackageReference Include="{PackageName}" />
+                  </ItemGroup>
+                </Project>
+                """);
+
+            using var testContext = new ApexTestContext(
+                VisualStudio,
+                ProjectTemplate.WPFApplication,
+                Logger,
+                simpleTestPathContext: simpleTestPathContext);
+
+            var errorListService = VisualStudio.Get<ErrorListService>();
+            errorListService.ShowWarnings();
+
+            // Act
+            var assetsFilePath = CommonUtility.GetAssetsFilePath(testContext.Project.FullPath);
+            File.Delete(assetsFilePath);
+            CommonUtility.RestoreNuGetPackages(VisualStudio, Logger);
+            testContext.NuGetApexTestService.WaitForAutoRestore();
+
+            // Assert
+            Omni.Common.WaitFor.IsTrue(
+                () => VisualStudio.ObjectModel.Shell.ToolWindows.ErrorList.AllItems
+                    .Any(item => item.Description == ExpectedWarning),
+                TimeSpan.FromMinutes(1),
+                TimeSpan.FromMilliseconds(500),
+                $"Expected the Error List to contain '{ExpectedWarning}'.");
+
+            AssertAssetsFileContainsWarning(assetsFilePath, NuGetLogCode.NU1604, "Visual Studio restore");
+
+            File.Delete(assetsFilePath);
+            CommandRunnerResult result = CommandRunner.Run(
+                filename: msbuildPath,
+                workingDirectory: simpleTestPathContext.SolutionRoot,
+                arguments: $"-t:restore \"{testContext.Project.FullPath}\"",
+                timeOutInMilliseconds: DefaultTimeout);
+            Assert.AreEqual(0, result.ExitCode, result.AllOutput);
+            Assert.AreEqual(0, result.ExitCode, result.AllOutput);
+            AssertAssetsFileContainsWarning(assetsFilePath, NuGetLogCode.NU1604, result.AllOutput);
+        }
+
+        private static void AssertAssetsFileContainsWarning(
+            string assetsFilePath,
+            NuGetLogCode warningCode,
+            string diagnosticOutput)
+        {
+            CommonUtility.WaitForFileExists(new FileInfo(assetsFilePath));
+
+            TestLogger logger = new();
+            LockFile? assetsFile = new LockFileFormat().Read(assetsFilePath, logger);
+            Assert.AreEqual(0, logger.Messages.Count, string.Join(Environment.NewLine, logger.Messages));
+            Assert.IsNotNull(
+                assetsFile,
+                $"Expected restore to generate a valid assets file at '{assetsFilePath}'.{Environment.NewLine}{diagnosticOutput}");
+            Assert.IsTrue(
+                assetsFile.LogMessages.Any(message => message.Code == warningCode),
+                $"Expected assets file '{assetsFilePath}' to contain {warningCode}.{Environment.NewLine}{diagnosticOutput}");
         }
 
         // There  is a bug with VS or Apex where NetCoreConsoleApp and NetCoreClassLib create netcore 2.1 projects that are not supported by the sdk
