@@ -91,27 +91,18 @@
       <_NETCoreAppTargetFrameworkVersion>%(NETCoreAppTargetFrameworkVersionFrameworkList.Identity)</_NETCoreAppTargetFrameworkVersion>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(EnableKnownPackVersionUpdatesForCurrentTargetFramework)' == 'true'
-                              and '$(TargetingPackCurrentTargetFramework)' == 'net11.0'
-                              and '$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)' != ''">
-      <_NET110RuntimePackVersion>$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion)</_NET110RuntimePackVersion>
-      <_NET110TargetingPackVersion>$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)</_NET110TargetingPackVersion>
-      <_AspNet110RuntimePackVersion>$(MicrosoftAspNetCoreAppRuntimePackageVersion)</_AspNet110RuntimePackVersion>
-      <_AspNet110TargetingPackVersion>$(MicrosoftAspNetCoreAppRefPackageVersion)</_AspNet110TargetingPackVersion>
-    </PropertyGroup>
-
     <PropertyGroup>
       <_NETCoreAppPackageVersion>$(MicrosoftNETCoreAppRuntimePackageVersion)</_NETCoreAppPackageVersion>
       <_NETStandardLibraryPackageVersion>$(NETStandardLibraryRefPackageVersion)</_NETStandardLibraryPackageVersion>
       <_NETCorePlatformsPackageVersion>$(MicrosoftNETCorePlatformsPackageVersion)</_NETCorePlatformsPackageVersion>
 
       <!-- TODO: Once .NET 11.0.X has released, update these version numbers to 11.0.$(VersionFeature110) -->
-      <_NET110RuntimePackVersion Condition="'$(_NET110RuntimePackVersion)' == ''">11.0.0-preview.7.26381.103</_NET110RuntimePackVersion>
-      <_NET110TargetingPackVersion Condition="'$(_NET110TargetingPackVersion)' == ''">11.0.0-preview.7.26381.103</_NET110TargetingPackVersion>
-      <_WindowsDesktop110RuntimePackVersion Condition="'$(_WindowsDesktop110RuntimePackVersion)' == ''">11.0.0-preview.7.26381.103</_WindowsDesktop110RuntimePackVersion>
-      <_WindowsDesktop110TargetingPackVersion Condition="'$(_WindowsDesktop110TargetingPackVersion)' == ''">11.0.0-preview.7.26381.103</_WindowsDesktop110TargetingPackVersion>
-      <_AspNet110RuntimePackVersion Condition="'$(_AspNet110RuntimePackVersion)' == ''">11.0.0-preview.7.26381.103</_AspNet110RuntimePackVersion>
-      <_AspNet110TargetingPackVersion Condition="'$(_AspNet110TargetingPackVersion)' == ''">11.0.0-preview.7.26381.103</_AspNet110TargetingPackVersion>
+      <_NET110RuntimePackVersion>11.0.0-preview.7.26381.103</_NET110RuntimePackVersion>
+      <_NET110TargetingPackVersion>11.0.0-preview.7.26381.103</_NET110TargetingPackVersion>
+      <_WindowsDesktop110RuntimePackVersion>11.0.0-preview.7.26381.103</_WindowsDesktop110RuntimePackVersion>
+      <_WindowsDesktop110TargetingPackVersion>11.0.0-preview.7.26381.103</_WindowsDesktop110TargetingPackVersion>
+      <_AspNet110RuntimePackVersion>11.0.0-preview.7.26381.103</_AspNet110RuntimePackVersion>
+      <_AspNet110TargetingPackVersion>11.0.0-preview.7.26381.103</_AspNet110TargetingPackVersion>
 
       <_NET100RuntimePackVersion>10.0.$(VersionFeature100)</_NET100RuntimePackVersion>
       <_NET100TargetingPackVersion>10.0.$(VersionFeature100)</_NET100TargetingPackVersion>
@@ -178,6 +169,14 @@
 
       <_NETCoreSdkBeingBuiltIsPreview Condition=" '$(DotNetFinalVersionKind)' != 'release' ">true</_NETCoreSdkBeingBuiltIsPreview>
       <_NETCoreSdkBeingBuiltIsPreview Condition=" '$(DotNetFinalVersionKind)' == 'release' ">false</_NETCoreSdkBeingBuiltIsPreview>
+    </PropertyGroup>
+
+    <!-- TODO: Remove these source-build overrides once stable .NET 11 targeting packs are available in SBRP. -->
+    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+      <_NET110RuntimePackVersion>$(MicrosoftNETCoreAppRuntimePackageVersion)</_NET110RuntimePackVersion>
+      <_NET110TargetingPackVersion>$(MicrosoftNETCoreAppRefPackageVersion)</_NET110TargetingPackVersion>
+      <_AspNet110RuntimePackVersion>$(MicrosoftAspNetCoreAppRuntimePackageVersion)</_AspNet110RuntimePackVersion>
+      <_AspNet110TargetingPackVersion>$(MicrosoftAspNetCoreAppRefPackageVersion)</_AspNet110TargetingPackVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -311,14 +310,13 @@
         browser-wasm;
         " />
 
-      <!-- Source-build distributes packs for its non-portable build RID. Add it to net11
-           before net12 inherits the lists so both live framework generations resolve it. -->
+      <!-- TODO: Remove these .NET 11 RID additions once source-build can consume stable .NET 11 targeting packs from SBRP. -->
       <Net110AppHostRids
         Condition="'$(DotNetBuildSourceOnly)' == 'true'"
         Include="$(ProductMonikerRid)" />
 
       <Net110RuntimePackRids
-        Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(BundleRuntimePacks)' == 'true'"
+        Condition="'$(BundleRuntimePacks)' == 'true'"
         Include="$(ProductMonikerRid)" />
 
       <Net120AppHostRids Include="@(Net110AppHostRids)" />
@@ -440,21 +438,21 @@
         openbsd-arm64;
         " />
 
+      <Net110Crossgen2SupportedPortableRids Include="@(Net110Crossgen2SupportedRids)" />
+
+      <Net110Crossgen2SupportedRids
+        Condition="'$(BundleCrossgen2)' == 'true'"
+        Include="$(ProductMonikerRid)" />
+
       <Net120Crossgen2SupportedRids Include="@(Net110Crossgen2SupportedRids)" />
 
       <Crossgen2SupportedRids Include="@(Net120Crossgen2SupportedRids);" />
 
       <Net100Crossgen2SupportedPortableRids Include="@(Net100Crossgen2SupportedRids)" />
 
-      <Net110Crossgen2SupportedPortableRids Include="@(Net110Crossgen2SupportedRids)" />
-
-      <Net120Crossgen2SupportedPortableRids Include="@(Net120Crossgen2SupportedRids)" />
+      <Net120Crossgen2SupportedPortableRids Include="@(Net110Crossgen2SupportedPortableRids)" />
 
       <Crossgen2SupportedPortableRids Include="@(Net120Crossgen2SupportedPortableRids)" />
-
-      <Crossgen2SupportedRids
-        Condition="'$(BundleCrossgen2)' == 'true'"
-        Include="$(ProductMonikerRid)" />
 
       <Net70ILCompilerSupportedRids Include="
         linux-arm64;
@@ -497,6 +495,12 @@
         openbsd-arm64;
         " />
 
+      <Net110ILCompilerSupportedPortableRids Include="@(Net110ILCompilerSupportedRids)" />
+
+      <Net110ILCompilerSupportedRids
+        Condition="'$(BundleNativeAotCompiler)' == 'true'"
+        Include="$(ProductMonikerRid)" />
+
       <Net120ILCompilerSupportedRids Include="@(Net110ILCompilerSupportedRids)" />
 
       <!-- ILCompiler target RIDs that are officially supported, plus the architecture we are building the product for (TargetRid). See:
@@ -507,15 +511,9 @@
 
       <Net100ILCompilerSupportedPortableRids Include="@(Net100ILCompilerSupportedRids)" />
 
-      <Net110ILCompilerSupportedPortableRids Include="@(Net110ILCompilerSupportedRids)" />
-
-      <Net120ILCompilerSupportedPortableRids Include="@(Net120ILCompilerSupportedRids)" />
+      <Net120ILCompilerSupportedPortableRids Include="@(Net110ILCompilerSupportedPortableRids)" />
 
       <ILCompilerSupportedPortableRids Include="@(Net120ILCompilerSupportedPortableRids)" />
-
-      <ILCompilerSupportedRids
-        Condition="'$(BundleNativeAotCompiler)' == 'true'"
-        Include="$(ProductMonikerRid)" />
 
       <Net80NativeAOTRuntimePackRids Include="
         ios-arm64;
@@ -586,7 +584,7 @@
       <AspNetCore100RuntimePackRids Include="@(AspNetCore90RuntimePackRids)" />
       <AspNetCore110RuntimePackRids Include="@(AspNetCore100RuntimePackRids)" />
       <AspNetCore110RuntimePackRids
-        Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(BundleRuntimePacks)' == 'true'"
+        Condition="'$(BundleRuntimePacks)' == 'true'"
         Include="$(ProductMonikerRid)" />
       <AspNetCore120RuntimePackRids Include="@(AspNetCore110RuntimePackRids)" />
       <AspNetCoreRuntimePackRids Include="@(AspNetCore120RuntimePackRids)" />
