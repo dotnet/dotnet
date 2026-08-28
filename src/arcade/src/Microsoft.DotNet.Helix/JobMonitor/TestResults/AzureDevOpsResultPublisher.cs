@@ -39,7 +39,11 @@ internal sealed class AzureDevOpsResultPublisher
         _metrics = metrics ?? new JobMonitorMetrics();
     }
 
-    public async Task<TestResultUploadSummary> UploadTestResultsWithSummaryAsync(List<string> testResultFiles, object resultMetadata, CancellationToken cancellationToken = default)
+    public async Task<TestResultUploadSummary> UploadTestResultsWithSummaryAsync(
+        List<string> testResultFiles,
+        string workItemName,
+        string jobId,
+        CancellationToken cancellationToken = default)
     {
         long parseStartedAt = JobMonitorMetrics.StartOperation();
         bool parseRecorded = false;
@@ -74,7 +78,8 @@ internal sealed class AzureDevOpsResultPublisher
             {
                 uploadedCount = await UploadTestResultsWithCountAsync(
                     aggregatedResults,
-                    resultMetadata,
+                    workItemName,
+                    jobId,
                     cancellationToken);
             }
             finally
@@ -103,12 +108,16 @@ internal sealed class AzureDevOpsResultPublisher
     internal static bool ComputeAllPassed(IReadOnlyList<AggregatedResult> results)
         => results.All(result => result.Result != "Failed" && result.Result != "None");
 
-    public async Task<long> UploadTestResultsWithCountAsync(IEnumerable<AggregatedResult> results, object resultMetadata, CancellationToken cancellationToken = default)
+    public async Task<long> UploadTestResultsWithCountAsync(
+        IEnumerable<AggregatedResult> results,
+        string workItemName,
+        string jobId,
+        CancellationToken cancellationToken = default)
     {
         try
         {
             long publishedTestCount = 0;
-            foreach (List<ConvertedResult> requestBatch in CreateResultRequestBatches(ConvertResults(results, resultMetadata)))
+            foreach (List<ConvertedResult> requestBatch in CreateResultRequestBatches(ConvertResults(results, workItemName, jobId)))
             {
                 IReadOnlyList<PublishedTestCase> publishedTests = await PublishResultsAsync(requestBatch, cancellationToken);
                 publishedTestCount += publishedTests.Count;
@@ -209,7 +218,10 @@ internal sealed class AzureDevOpsResultPublisher
             cancellationToken);
     }
 
-    private IEnumerable<ConvertedResult> ConvertResults(IEnumerable<AggregatedResult> results, object resultMetadata)
+    private IEnumerable<ConvertedResult> ConvertResults(
+        IEnumerable<AggregatedResult> results,
+        string workItemName,
+        string jobId)
     {
         static string GetResultGroupType(AggregationType aggregationType)
         {
@@ -222,15 +234,19 @@ internal sealed class AzureDevOpsResultPublisher
             };
         }
 
-        string comment = JsonSerializer.Serialize(resultMetadata) ?? string.Empty;
+        string comment = JsonSerializer.Serialize(new
+        {
+            HelixJobId = jobId,
+            HelixWorkItemName = workItemName,
+        });
         bool useFullyQualifiedName = _useFullyQualifiedTestName;
 
-        string DisplayNameFor(AggregatedResult result)
+        string DisplayNameFor(AggregatedResult result, bool isDataDrivenSubResult)
             => useFullyQualifiedName
-                ? TestNameFormatter.FormatDisplayName(result.FullyQualifiedName, result.Name)
+                ? TestNameFormatter.FormatDisplayName(result.FullyQualifiedName, result.Name, isDataDrivenSubResult)
                 : result.Name;
 
-        PublishedSubResult ConvertToSubTest(AggregatedResult result)
+        PublishedSubResult ConvertToSubTest(AggregatedResult result, bool isDataDrivenSubResult)
         {
             var customFields = new List<CustomField>();
             if (result.IsFlaky)
@@ -247,12 +263,16 @@ internal sealed class AzureDevOpsResultPublisher
             {
                 Comment = comment,
                 CustomFields = customFields,
-                DisplayName = DisplayNameFor(result),
+                DisplayName = DisplayNameFor(result, isDataDrivenSubResult),
                 Outcome = result.Result,
                 DurationInMs = result.DurationSeconds * 1000.0,
                 StackTrace = result.StackTrace,
                 ErrorMessage = result.FailureMessage,
-                SubResults = result.SubResults.Count == 0 ? null : [.. result.SubResults.Select(ConvertToSubTest)],
+                SubResults = result.SubResults.Count == 0
+                    ? null
+                    : [.. result.SubResults.Select(subResult => ConvertToSubTest(
+                        subResult,
+                        result.AggregationType == AggregationType.DataDriven))],
                 ResultGroupType = GetResultGroupType(result.AggregationType),
             };
         }
@@ -270,7 +290,7 @@ internal sealed class AzureDevOpsResultPublisher
                 customFields.Add(new CustomField("AttemptId", result.SubResults.Count - 1));
             }
 
-            string displayName = DisplayNameFor(result);
+            string displayName = DisplayNameFor(result, isDataDrivenSubResult: false);
 
             return new ConvertedResult(
                 new PublishedTestCase
@@ -278,7 +298,9 @@ internal sealed class AzureDevOpsResultPublisher
                     TestCaseTitle = displayName,
                     AutomatedTestName = useFullyQualifiedName ? result.FullyQualifiedName : result.Name,
                     AutomatedTestType = "helix",
-                    AutomatedTestStorage = comment, // TODO: This was workitem ID
+                    // Azure DevOps uses this as part of the test definition identity. The work item
+                    // name must remain stable across builds so existing test references are reused.
+                    AutomatedTestStorage = workItemName,
                     Priority = 1,
                     DurationInMs = result.DurationSeconds * 1000.0,
                     Outcome = result.Result,
@@ -286,7 +308,11 @@ internal sealed class AzureDevOpsResultPublisher
                     Comment = comment,
                     StackTrace = result.StackTrace,
                     ErrorMessage = result.FailureMessage,
-                    SubResults = result.SubResults.Count == 0 ? null : [.. result.SubResults.Select(ConvertToSubTest)],
+                    SubResults = result.SubResults.Count == 0
+                        ? null
+                        : [.. result.SubResults.Select(subResult => ConvertToSubTest(
+                            subResult,
+                            result.AggregationType == AggregationType.DataDriven))],
                     ResultGroupType = GetResultGroupType(result.AggregationType),
                     CustomFields = customFields,
                 },
