@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference
       Include="$(CrossgenPublishProject)"
+      AdditionalProperties="UseBootstrap=$(UseBootstrap);ArtifactsDir=$(CrossgenPublishArtifactsDir);CoreCLROverridePath=$(CrossgenPublishCoreCLROverridePath);BootstrapRefPackDir=$(BootstrapRefPackDir);BootstrapRuntimePackDir=$(BootstrapRuntimePackDir);BootstrapAotSdkDir=$(BootstrapAotSdkDir);BootstrapHostDir=$(BootstrapHostDir);BootstrapRidGraphDir=$(BootstrapRidGraphDir)"
       OutputItemType="_RawCrossgenPublishFiles"
       ReferenceOutputAssembly="false" />
   </ItemGroup>

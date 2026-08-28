@@ -10,7 +10,9 @@
     <BootstrapBuildAotSdkDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'aotsdk'))</BootstrapBuildAotSdkDir>
     <BootstrapBuildHostDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'host'))</BootstrapBuildHostDir>
     <BootstrapBuildRidGraphDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'ridgraph'))</BootstrapBuildRidGraphDir>
+    <MainCoreCLRArtifactsPath>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bin', 'coreclr', '$(TargetOS).$(TargetArchitecture).$(CoreCLRConfiguration)'))</MainCoreCLRArtifactsPath>
     <_BootstrapPackageProperties>UseBootstrap=true;CoreCLROverridePath=$(BootstrapCoreCLRArtifactsPath);BootstrapRefPackDir=$(BootstrapBuildRefPackDir);BootstrapRuntimePackDir=$(BootstrapBuildRuntimePackDir);BootstrapAotSdkDir=$(BootstrapBuildAotSdkDir);BootstrapHostDir=$(BootstrapBuildHostDir);BootstrapRidGraphDir=$(BootstrapBuildRidGraphDir)</_BootstrapPackageProperties>
+    <_BootstrapPackageProperties>$(_BootstrapPackageProperties);CrossgenSmokeTestCoreLibPath=$(MainCoreCLRArtifactsPath)IL/System.Private.CoreLib.dll;CrossgenPublishArtifactsDir=$(BootstrapBuildArtifactsDir);CrossgenPublishCoreCLROverridePath=$(BootstrapCoreCLRArtifactsPath)</_BootstrapPackageProperties>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(_OrchestrateBootstrap)' != 'true'">
@@ -24,11 +26,21 @@
                       AdditionalProperties="EnableBootstrap=false;BootstrapMainBuild=true"
                       BuildInParallel="true" />
     <ProjectReference Include="$(RepositoryEngineeringDir)bootstrap.proj"
-                      AdditionalProperties="BootstrapBuildLane=true;ArtifactsDir=$(BootstrapBuildArtifactsDir);CoreCLROverridePath=$(BootstrapBuildArtifactsDir)bin/coreclr/$(TargetOS).$(TargetArchitecture).$(CoreCLRConfiguration);LibrariesOverridePath=$(BootstrapBuildArtifactsDir);LibrariesAllConfigurationsOverridePath=$(BootstrapBuildArtifactsDir);HostArtifactsPath=$(BootstrapBuildArtifactsDir)bin/$(TargetOS)-$(TargetArchitecture).$(HostConfiguration)"
+                      AdditionalProperties="BootstrapBuildLane=true;BootstrapBuildArtifactsDir=$(BootstrapBuildArtifactsDir)"
                       BuildInParallel="true"
                       Pack="false"
                       Publish="false" />
   </ItemGroup>
+
+  <Target Name="GetBootstrapProducerProjects"
+          Returns="@(BootstrapProducer)">
+    <ItemGroup>
+      <BootstrapProducer Include="@(ProjectToBuild)"
+                         Condition="'%(ProjectToBuild.Category)' == 'clr' or
+                                    '%(ProjectToBuild.Category)' == 'libs' or
+                                    '%(ProjectToBuild.Category)' == 'host'" />
+    </ItemGroup>
+  </Target>
 
   <Target Name="BuildBootstrapPackages"
           AfterTargets="Build"
