@@ -5,7 +5,6 @@
     <BootstrapInputManifest>$(BootstrapIntermediateDir)inputs.txt</BootstrapInputManifest>
     <BootstrapReadyFile>$([MSBuild]::NormalizePath('$(ArtifactsDir)', 'bootstrap', '$(TargetRid)', '.complete'))</BootstrapReadyFile>
     <BootstrapLayoutDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bootstrap', '$(TargetRid)'))</BootstrapLayoutDir>
-    <BootstrapHostCoreCLRArtifactsPath>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bin', 'coreclr', '$(TargetOS).$(BuildArchitecture).$(CoreCLRConfiguration)'))</BootstrapHostCoreCLRArtifactsPath>
   </PropertyGroup>
 
   <Target Name="_CollectBootstrapFiles">
@@ -85,7 +84,7 @@
              Properties="RestoreForce=true;UseNativeAotCoreLib=false" />
     <MSBuild Projects="@(BootstrapHostJitProducer)"
              Targets="Restore"
-             Properties="RestoreForce=true;TargetArchitecture=$(BuildArchitecture);TargetRid=$(NETCoreSdkRuntimeIdentifier);CoreCLROverridePath=$(BootstrapHostCoreCLRArtifactsPath)" />
+             Properties="RestoreForce=true;HostArchitecture=$(BuildArchitecture);HostCrossOS=$(HostOS);CrossBuild=false;BuildSubdirectory=$(BuildArchitecture)" />
   </Target>
 
   <Target Name="BuildBootstrapProducers"
@@ -97,7 +96,7 @@
              Properties="Subset=$(BootstrapSubsets);EnableBootstrap=false"
              StopOnFirstFailure="true" />
     <MSBuild Projects="@(BootstrapHostJitProducer)"
-             Properties="TargetArchitecture=$(BuildArchitecture);TargetRid=$(NETCoreSdkRuntimeIdentifier);CoreCLROverridePath=$(BootstrapHostCoreCLRArtifactsPath);ClrAllJitsSubset=true"
+             Properties="HostArchitecture=$(BuildArchitecture);HostCrossOS=$(HostOS);PgoInstrument=false;NoPgoOptimize=true;CrossBuild=false;BuildSubdirectory=$(BuildArchitecture);CMakeArgs=$(CMakeArgs) -DCLR_CROSS_COMPONENTS_BUILD=1;ClrJitSubset=true"
              BuildInParallel="true"
              StopOnFirstFailure="true" />
     <MSBuild Projects="@(BootstrapInBuildTool)"
