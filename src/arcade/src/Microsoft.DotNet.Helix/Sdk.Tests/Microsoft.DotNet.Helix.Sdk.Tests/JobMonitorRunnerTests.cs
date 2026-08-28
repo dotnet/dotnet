@@ -3087,7 +3087,16 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         {
             var azdo = new FakeAzureDevOpsService();
             var helix = new FakeHelixService();
-            var logger = new RecordingLogger();
+            var resultsProcessed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var logger = new RecordingLogger(message =>
+            {
+                if (message?.Contains(
+                    "Test result processing completed for job 'helix-good'",
+                    StringComparison.Ordinal) == true)
+                {
+                    resultsProcessed.TrySetResult();
+                }
+            });
 
             azdo.AddTimelineResponse(
                 MonitorJob(),
@@ -3119,11 +3128,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                     pollCount++;
                     if (pollCount >= 2)
                     {
-                        // Wait until helix-good's results have actually been uploaded before
-                        // cancelling, so the monitor has had a chance to record its terminal
-                        // state.
-                        Task completed = await Task.WhenAny(azdo.TestRunCompleted.Task, Task.Delay(TimeSpan.FromSeconds(5)));
-                        completed.Should().BeSameAs(azdo.TestRunCompleted.Task);
+                        // Wait until helix-good is durably marked as processed. Test-run completion
+                        // alone occurs before the monitor state is updated and races cancellation.
+                        await resultsProcessed.Task.WaitAsync(TimeSpan.FromSeconds(5));
                         cts.Cancel();
                     }
                 });
@@ -5151,6 +5158,13 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
         private sealed class RecordingLogger : ILogger
         {
+            private readonly Action<string> _onLog;
+
+            public RecordingLogger(Action<string> onLog = null)
+            {
+                _onLog = onLog;
+            }
+
             public ConcurrentQueue<string> Messages { get; } = [];
 
             public IDisposable BeginScope<TState>(TState state) => NullScope.Instance;
@@ -5164,7 +5178,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                 Exception exception,
                 Func<TState, Exception, string> formatter)
             {
-                Messages.Enqueue(formatter(state, exception));
+                string message = formatter(state, exception) ?? string.Empty;
+                Messages.Enqueue(message);
+                _onLog?.Invoke(message);
             }
 
             private sealed class NullScope : IDisposable

@@ -160,14 +160,14 @@ namespace Microsoft.DotNet.Arcade.Sdk
                                         {
                                             if (!String.IsNullOrEmpty(e.Data))
                                             {
-                                                Console.WriteLine(e.Data);
+                                                Log.LogMessage(MessageImportance.High, e.Data);
                                             }
                                         };
                                         process.ErrorDataReceived += (sender, e) =>
                                         {
                                             if (!String.IsNullOrEmpty(e.Data))
                                             {
-                                                Console.Error.WriteLine(e.Data);
+                                                Log.LogMessage(MessageImportance.High, e.Data);
                                             }
                                         };
                                         process.BeginOutputReadLine();
@@ -264,7 +264,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
             return items.ToArray();
         }
 
-        private static bool CheckRuntimeDotnetInstalled(
+        private bool CheckRuntimeDotnetInstalled(
             string dotnetRoot,
             string version,
             string architecture,
@@ -294,7 +294,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
             if (Directory.Exists(runtimePath))
             {
-                Console.WriteLine($"  Runtime toolset '{runtime}/{architecture} v{version}' already installed in directory '{runtimePath}'.");
+                Log.LogMessage(MessageImportance.Normal, $"  Runtime toolset '{runtime}/{architecture} v{version}' already installed in directory '{runtimePath}'.");
                 return true;
             }
 

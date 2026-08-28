@@ -1830,6 +1830,30 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 symbolTargetType: SymbolPublishVisibility.Internal,
                 flatten: false),
 
+            // .NET Internal Tooling Release,
+            new TargetChannelConfig(
+                id: 10923,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsInternalFeeds,
+                symbolTargetType: SymbolPublishVisibility.Internal,
+                flatten: false),
+
+            // .NET Internal Tooling Hotfix,
+            new TargetChannelConfig(
+                id: 10924,
+                isInternal: true,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetToolsInternalFeeds,
+                symbolTargetType: SymbolPublishVisibility.Internal,
+                flatten: false),
+
             // .NET Libraries,
             new TargetChannelConfig(
                 id: 1648,

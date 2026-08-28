@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using AwesomeAssertions;
@@ -24,6 +25,27 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
     {
         private const string HelixJobGuid = "f79561f8-6c13-4e86-9c6f-0527cd707a54";
         private const string HelixJobTag = "helixjobf79561f86c134e869c6f0527cd707a54";
+
+        [Fact]
+        public async Task ResultUploadsIncludeVersionedUserAgent()
+        {
+            var handler = new RecordingHttpMessageHandler(_ =>
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent("{}")
+                });
+            using var service = new AzureDevOpsService(CreateOptions(), NullLogger.Instance, new HttpClient(handler));
+
+            await service.CreateResultTransport(123).PublishResultsAsync(
+                Array.Empty<object>(),
+                CancellationToken.None);
+
+            string productVersion = typeof(AzureDevOpsService).Assembly
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                .InformationalVersion;
+            handler.Requests.Should().ContainSingle().Which.Headers.UserAgent.ToString()
+                .Should().Be($"dotnet-helix-job-monitor/{productVersion}");
+        }
 
         [Fact]
         public async Task CreateTestRunAsync_UsesPlainNameAndDoesNotTag()
