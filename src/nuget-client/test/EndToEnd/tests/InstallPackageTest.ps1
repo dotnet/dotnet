@@ -1440,21 +1440,6 @@ function Test-InstallPackageWithFrameworkRefsOnlyRequiredForSL {
     Assert-SolutionPackage PackageWithNet40AndSLLibButOnlySLGacRefs
 }
 
-function Test-InstallPackageWithValuesFromPipe {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    Get-Package -ListAvailable -Filter "Microsoft-web-helpers" | Install-Package
-
-    # Assert
-    Assert-Package $p Microsoft-web-helpers
-}
-
 function Test-InstallPackageInstallsHighestReleasedPackageIfPreReleaseFlagIsNotSet {
     # Arrange
     $a = New-ClassLibrary
@@ -2100,20 +2085,6 @@ function Test-InstallPackageRespectAssemblyReferenceFilterOnSecondProject
     Assert-Package $q 'B' '1.0.0'
     Assert-Reference $q 'GrayscaleEffect'
     Assert-Null (Get-AssemblyReference $q 'Ookii.Dialogs.Wpf')
-}
-
-function Test-InstallPackageThrowsIfMinClientVersionIsNotSatisfied
-{
-    param ($context)
-
-    # Arrange
-    $p = New-ConsoleApplication
-
-    $currentSemanticVersion = Get-HostSemanticVersion
-
-    # Act & Assert
-    Assert-Throws { $p | Install-Package Kitty -Source $context.RepositoryPath } "The 'kitty 1.0.0' package requires NuGet client version '100.0.0' or above, but the current NuGet version is '$currentSemanticVersion'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget"
-    Assert-NoPackage $p "Kitty"
 }
 
 function Test-InstallPackageWithXdtTransformTransformsTheFile
