@@ -35,7 +35,7 @@
       <bal:WixStandardBootstrapperApplication LicenseFile="dummyeula.rtf"
                                               LocalizationFile="theme\1033\thm.wxl"
                                               ShowVersion="yes"
-                                              SuppressDowngradeFailure="$(SuppressDowngradeFailure)"
+                                              SuppressDowngradeFailure="yes"
                                               SuppressOptionsUI="yes"
                                               Theme="rtfLicense"
                                               ThemeFile="bundle.thm" />
