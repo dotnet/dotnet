@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Mono.Collections.Generic;
 using SR = System.Reflection;
 
@@ -122,6 +123,7 @@ namespace Mono.Cecil {
 		}
 	}
 
+	[RequiresUnreferencedCode ("The default reflection importer uses reflection to import references.")]
 	public class DefaultReflectionImporter : IReflectionImporter {
 
 		readonly protected ModuleDefinition module;
@@ -325,9 +327,11 @@ namespace Mono.Cecil {
 			{
 				PublicKeyToken = name.GetPublicKeyToken (),
 				Culture = name.CultureInfo.Name,
-				HashAlgorithm = (AssemblyHashAlgorithm) name.HashAlgorithm,
 			};
 
+#if !NET
+			reference.HashAlgorithm = (AssemblyHashAlgorithm) name.HashAlgorithm;
+#endif
 			module.AssemblyReferences.Add (reference);
 
 			return reference;

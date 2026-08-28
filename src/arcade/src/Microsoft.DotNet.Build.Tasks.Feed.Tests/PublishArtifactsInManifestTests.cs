@@ -268,6 +268,37 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         }
 
         [Fact]
+        public async Task ConfigureServicesInjectsMSBuildLoggerIntoValidator()
+        {
+            var buildEngine = new MockBuildEngine();
+            var task = new PublishArtifactsInManifest
+            {
+                BuildEngine = buildEngine
+            };
+            var collection = new ServiceCollection();
+            task.ConfigureServices(collection);
+            using var provider = collection.BuildServiceProvider();
+            var validator = provider.GetRequiredService<ITargetChannelValidator>();
+            var productionChannel = new TargetChannelConfig(
+                id: 1,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: null,
+                akaMSCreateLinkPatterns: null,
+                akaMSDoNotCreateLinkPatterns: null,
+                targetFeeds: new TargetFeedSpecification[0],
+                symbolTargetType: SymbolPublishVisibility.None,
+                flatten: true,
+                isProduction: true);
+
+            await validator.ValidateAsync(CreateTestBuild(), productionChannel);
+
+            buildEngine.BuildMessageEvents.Should().Contain(message =>
+                message.Importance == Microsoft.Build.Framework.MessageImportance.High &&
+                message.Message == "Validating build 12345 for production channel 1");
+        }
+
+        [Fact]
         public async Task ExecuteAsyncReturnsFalseAndDoesNotPromoteWhenOuterLoggerHasErrors()
         {
             var buildEngine = new MockBuildEngine();

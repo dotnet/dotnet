@@ -148,6 +148,10 @@ namespace Mono.Security.Cryptography {
 				rsa.ImportParameters (rsap);
 			}
 			catch (CryptographicException) {
+#if NET
+				if (!OperatingSystem.IsWindows ())
+					throw;
+#endif
 				// this may cause problem when this code is run under
 				// the SYSTEM identity on Windows (e.g. ASP.NET). See
 				// http://bugzilla.ximian.com/show_bug.cgi?id=77559
@@ -206,6 +210,10 @@ namespace Mono.Security.Cryptography {
 					rsa.ImportParameters (rsap);
 				}
 				catch (CryptographicException) {
+#if NET
+					if (!OperatingSystem.IsWindows ())
+						throw;
+#endif
 					// this may cause problem when this code is run under
 					// the SYSTEM identity on Windows (e.g. ASP.NET). See
 					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
