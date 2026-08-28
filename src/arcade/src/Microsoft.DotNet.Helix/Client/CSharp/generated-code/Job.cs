@@ -29,6 +29,7 @@ namespace Microsoft.DotNet.Helix.Client
             int? count = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -188,6 +189,7 @@ namespace Microsoft.DotNet.Helix.Client
             int? count = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -222,6 +224,10 @@ namespace Microsoft.DotNet.Helix.Client
             if (!string.IsNullOrEmpty(name))
             {
                 _url.AppendQuery("Name", Client.Serialize(name));
+            }
+            if (properties != default(IImmutableDictionary<string, string>))
+            {
+                _url.AppendQuery("Properties", properties);
             }
             if (count != default(int?))
             {

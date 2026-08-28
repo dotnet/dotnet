@@ -5,8 +5,8 @@ namespace Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 
 /// <summary>
 /// Builds the human-visible test title (AzDO <c>testCaseTitle</c>) shown when a job opts in to
-/// fully qualified test names. The goal is to always surface the fully qualified name while keeping
-/// any information the display name adds on top of it.
+/// fully qualified test names. The goal is to surface the fully qualified name for the test while
+/// keeping any information the display name adds on top of it.
 /// </summary>
 /// <remarks>
 /// Rules (given a stable <c>FQN</c> = <c>Namespace.Type.Method</c> and a framework display name):
@@ -14,13 +14,23 @@ namespace Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 /// <item>Display name is the method (the FQN's last segment) — e.g. MSTest/xUnit defaults — emit just <c>FQN</c>.</item>
 /// <item>Parameterized row whose base is the method — e.g. <c>Method ("net10.0")</c> — emit <c>FQN ("net10.0")</c>
 /// so the class prefix isn't duplicated but the argument list is preserved.</item>
+/// <item>Rows published as children of a data-driven test keep their framework display name because
+/// the parent already supplies the fully qualified context.</item>
 /// <item>Display name carries something else — e.g. a custom xUnit <c>DisplayName</c> — emit <c>FQN (display name)</c>.</item>
 /// </list>
 /// </remarks>
 internal static class TestNameFormatter
 {
-    public static string FormatDisplayName(string? fullyQualifiedName, string? displayName)
+    public static string FormatDisplayName(
+        string? fullyQualifiedName,
+        string? displayName,
+        bool isDataDrivenSubResult = false)
     {
+        if (isDataDrivenSubResult)
+        {
+            return displayName ?? string.Empty;
+        }
+
         if (string.IsNullOrEmpty(fullyQualifiedName))
         {
             return displayName ?? string.Empty;

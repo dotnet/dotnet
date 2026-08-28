@@ -15,6 +15,27 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 {
     public class LocalTestResultsReaderTests
     {
+        [Theory]
+        [InlineData("results.trx")]
+        [InlineData("results.trx.txt")]
+        [InlineData("testResults.xml")]
+        [InlineData("testResults.xml.txt")]
+        [InlineData("junit-results.xml")]
+        [InlineData("junit-results.xml.txt")]
+        public void LooksLikeTestResultFile_RecognizesHelixTextSuffix(string fileName)
+        {
+            Assert.True(LocalTestResultsReader.LooksLikeTestResultFile(fileName));
+        }
+
+        [Theory]
+        [InlineData("results.xml")]
+        [InlineData("results.txt")]
+        [InlineData("testResults.xml.log")]
+        public void LooksLikeTestResultFile_RejectsUnknownNames(string fileName)
+        {
+            Assert.False(LocalTestResultsReader.LooksLikeTestResultFile(fileName));
+        }
+
         public static IEnumerable<object[]> AttachmentModeCases()
         {
             foreach (string format in new[] { "xunit", "junit", "trx" })
@@ -96,7 +117,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
             try
             {
                 File.WriteAllText(
-                    Path.Combine(workItemDirectory, "testResults.xml"),
+                    Path.Combine(workItemDirectory, "testResults.xml.txt"),
                     """
                     <assemblies>
                       <assembly name="Sample.Tests.dll" total="1" passed="1" failed="0" skipped="0">
@@ -108,7 +129,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                     """);
 
                 var reader = new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>());
-                string filePath = Path.Combine(workItemDirectory, "testResults.xml");
+                string filePath = Path.Combine(workItemDirectory, "testResults.xml.txt");
                 IReadOnlyList<TestResult> resultSets = await reader.ReadResultFileAsync(filePath);
                 IReadOnlyList<AggregatedResult> aggregate = new ResultAggregator().Aggregate([resultSets]);
                 AggregatedResult result = Assert.Single(aggregate);

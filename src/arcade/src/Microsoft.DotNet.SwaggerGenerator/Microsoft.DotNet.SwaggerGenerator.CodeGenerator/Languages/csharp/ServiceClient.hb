@@ -300,6 +300,7 @@ namespace {{pascalCaseNs Namespace}}
             Response = new ResponseWrapper(response, responseContent);
         }
 
+        [Obsolete("Formatter-based serialization is obsolete and should not be used.")]
         protected RestApiException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -309,6 +310,7 @@ namespace {{pascalCaseNs Namespace}}
             Response = JsonConvert.DeserializeObject<ResponseWrapper>(responseString, SerializerSettings);
         }
 
+        [Obsolete("Formatter-based serialization is obsolete and should not be used.")]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -336,12 +338,14 @@ namespace {{pascalCaseNs Namespace}}
             Body = body;
         }
 
+        [Obsolete("Formatter-based serialization is obsolete and should not be used.")]
         protected RestApiException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             Body = JsonConvert.DeserializeObject<T>(info.GetString("Body"));
         }
 
+        [Obsolete("Formatter-based serialization is obsolete and should not be used.")]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -394,7 +398,6 @@ namespace {{pascalCaseNs Namespace}}
         }
     }
 
-    
     public class ResponseStream : Stream
     {
         private readonly Stream _inner;

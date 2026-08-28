@@ -25,12 +25,15 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         private readonly Queue<Exception> _createFailures = [];
         private readonly Queue<Exception> _uploadFailures = [];
         private readonly Queue<Exception> _completeFailures = [];
+        private readonly Queue<Exception> _timelineFailures = [];
         private readonly HashSet<(string JobName, string WorkItemName)> _recordedFailedTests
             = new(FailedTestWorkItemComparer.Instance);
         private readonly HashSet<(string JobName, string WorkItemName)> _uploadFailedTests
             = new(FailedTestWorkItemComparer.Instance);
         private int _timelineCallCount;
         private int _nextTestRunId;
+        private int _activeUploads;
+        private int _maximumConcurrentUploads;
 
         // Observable state for test assertions
         public List<string> CreatedTestRuns { get; } = [];
@@ -40,8 +43,10 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         public int CreateTestRunCallCount { get; private set; }
         public int UploadTestResultsCallCount { get; private set; }
         public int CompleteTestRunCallCount { get; private set; }
+        public int MaximumConcurrentUploads => Volatile.Read(ref _maximumConcurrentUploads);
         public TaskCompletionSource UploadStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         public TaskCompletionSource UploadCompleted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public TaskCompletionSource TestRunCompleted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         public Task UploadBlocker { get; set; } = Task.CompletedTask;
 
         /// <summary>
@@ -76,6 +81,16 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
             {
                 _previouslyProcessedJobs.Add(jobName);
             }
+            return this;
+        }
+
+        public FakeAzureDevOpsService FailNextTimeline(Exception exception)
+        {
+            lock (_sync)
+            {
+                _timelineFailures.Enqueue(exception);
+            }
+
             return this;
         }
 
@@ -142,6 +157,14 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         // IAzureDevOpsService implementation
         public Task<IReadOnlyList<AzureDevOpsTimelineRecord>> GetTimelineRecordsAsync(CancellationToken cancellationToken)
         {
+            lock (_sync)
+            {
+                if (_timelineFailures.TryDequeue(out Exception failure))
+                {
+                    return Task.FromException<IReadOnlyList<AzureDevOpsTimelineRecord>>(failure);
+                }
+            }
+
             if (_timelineResponses.Count == 0)
             {
                 _timelineCallCount++;
@@ -213,58 +236,67 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
                         _recordedFailedTests.Add((helixJobName, workItemName));
                     }
                 }
+                TestRunCompleted.TrySetResult();
                 return Task.CompletedTask;
             }
         }
 
-        public async Task<IReadOnlyDictionary<(string JobName, string WorkItemName), TestResultUploadSummary>> UploadTestResultsAsync(
+        public async Task<TestResultUploadSummary> UploadTestResultsAsync(
             int testRunId,
-            IReadOnlyList<WorkItemTestResults> results,
+            WorkItemTestResults results,
             CancellationToken cancellationToken)
         {
             UploadStarted.TrySetResult();
-            if (UploadBlockerIgnoresCancellation)
+            int active = Interlocked.Increment(ref _activeUploads);
+            int observedMaximum;
+            while (active > (observedMaximum = Volatile.Read(ref _maximumConcurrentUploads)))
             {
-                await UploadBlocker;
-            }
-            else
-            {
-                await UploadBlocker.WaitAsync(cancellationToken);
-            }
-
-            var summaries = new Dictionary<(string JobName, string WorkItemName), TestResultUploadSummary>();
-
-            lock (_sync)
-            {
-                UploadTestResultsCallCount++;
-                if (_uploadFailures.Count > 0)
+                if (Interlocked.CompareExchange(ref _maximumConcurrentUploads, active, observedMaximum) == observedMaximum)
                 {
-                    throw _uploadFailures.Dequeue();
-                }
-
-                if (!UploadedResultsByRunId.TryGetValue(testRunId, out List<WorkItemTestResults> existing))
-                {
-                    existing = [];
-                    UploadedResultsByRunId[testRunId] = existing;
-                }
-
-                existing.AddRange(results);
-
-                foreach (string jobName in results.Select(r => r.JobName).Distinct(StringComparer.OrdinalIgnoreCase))
-                {
-                    UploadedJobNames.Add(jobName);
-                }
-
-                foreach (WorkItemTestResults result in results)
-                {
-                    bool allPassed = !_uploadFailedTests.Contains((result.JobName, result.WorkItemName));
-                    summaries[(result.JobName, result.WorkItemName)] =
-                        new TestResultUploadSummary(allPassed, result.TestResultFiles.Count);
+                    break;
                 }
             }
 
-            UploadCompleted.TrySetResult();
-            return summaries;
+            try
+            {
+                if (UploadBlockerIgnoresCancellation)
+                {
+                    await UploadBlocker;
+                }
+                else
+                {
+                    await UploadBlocker.WaitAsync(cancellationToken);
+                }
+
+                lock (_sync)
+                {
+                    UploadTestResultsCallCount++;
+                    if (_uploadFailures.Count > 0)
+                    {
+                        throw _uploadFailures.Dequeue();
+                    }
+
+                    if (!UploadedResultsByRunId.TryGetValue(testRunId, out List<WorkItemTestResults> existing))
+                    {
+                        existing = [];
+                        UploadedResultsByRunId[testRunId] = existing;
+                    }
+
+                    existing.Add(results);
+                    if (!UploadedJobNames.Contains(results.JobName, StringComparer.OrdinalIgnoreCase))
+                    {
+                        UploadedJobNames.Add(results.JobName);
+                    }
+
+                    bool allPassed = !_uploadFailedTests.Contains((results.JobName, results.WorkItemName));
+                    return new TestResultUploadSummary(allPassed, results.TestResultFiles.Count);
+                }
+            }
+            finally
+            {
+                Interlocked.Decrement(ref _activeUploads);
+                UploadCompleted.TrySetResult();
+            }
         }
 
         private static HttpRequestException CreateTransientFailure(string message)

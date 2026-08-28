@@ -5,7 +5,6 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Microsoft.DotNet.Helix/">
-    <Project Path="src/Microsoft.DotNet.Helix/AzureDevOpsTestPublisher/Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/Client/CSharp/Microsoft.DotNet.Helix.Client.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/JobMonitor/Microsoft.DotNet.Helix.JobMonitor.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/JobSender/Microsoft.DotNet.Helix.JobSender.csproj" />
