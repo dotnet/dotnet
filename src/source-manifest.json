@@ -31,10 +31,10 @@
       "commitSha": "f095cabf6af32bfe43ab89dc81031c633311b3e9"
     },
     {
-      "barId": 328842,
+      "barId": 329047,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "213ee92c5b44fd8babafde5484f85d1ba6c2cfef"
+      "commitSha": "eeada433ff351b35361c0fc57778baa7be8c5d88"
     },
     {
       "barId": 328353,
@@ -49,22 +49,22 @@
       "commitSha": "6ffbeab884c5ee9f53732902643758f66b17bd8f"
     },
     {
-      "barId": 328921,
+      "barId": 329071,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "57375f68ee74696200c1da5e8063f89c2ee7a561"
+      "commitSha": "e631ed7f4f210cb3dade65b1d6341bb7106e51bb"
     },
     {
-      "barId": 328945,
+      "barId": 328952,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "118b078bef517cfbe15ecd52b5ba63c4686c5d1c"
+      "commitSha": "1eecb3d3833b5db76c03e1407fa057d497206821"
     },
     {
-      "barId": 328790,
+      "barId": 329110,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "b2c37dfcb1b34bd980c5b83219097d3533c11158"
+      "commitSha": "35cbc7777b26e449074c551c0eab88b203f9e2fc"
     },
     {
       "barId": 328827,
@@ -73,10 +73,10 @@
       "commitSha": "6cef7b13b2961435d1a7e9efced15d84257c5454"
     },
     {
-      "barId": 328939,
+      "barId": 329111,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "5a7d4ee92da5ce32f86eb312b7df4c52eb8ef4ef"
+      "commitSha": "1d6b8543f5146202cbf189dc1082d673d04694c8"
     },
     {
       "barId": 326016,
@@ -85,10 +85,10 @@
       "commitSha": "8464a981481551b4bd4c22e9e170fddfc613bcba"
     },
     {
-      "barId": 328908,
+      "barId": 328973,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "eac411622dd2f16c6078f977a3885b8ebded4f7f"
+      "commitSha": "aa26bf8301981c1cccc965959581ac5afaecffdf"
     },
     {
       "barId": 327067,
@@ -127,10 +127,10 @@
       "commitSha": "e91c7c4189b07a5364b35ba5511b5b61ebf3f237"
     },
     {
-      "barId": 326815,
+      "barId": 329085,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "8218c1c1856f91ffe2b7a1b8a8137ec375a875d6"
+      "commitSha": "a128dad492682bd5d6feef53af0aaaa532bf0326"
     },
     {
       "barId": 328782,

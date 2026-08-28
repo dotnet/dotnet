@@ -67,11 +67,6 @@
         <target state="translated">Mindestens eine Quelle muss ausgewählt werden.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Error_PackageSourceMappingToolNotAvailable">
-        <source>The Package Source Mapping tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="translated">Das Tool zur Paketquellzuordnung ist nicht verfügbar. Aktivieren Sie den NuGet MCP-Server im GitHub Copilot-Chatfenster, und versuchen Sie es erneut.</target>
-        <note>Do not translate GitHub or Copilot</note>
-      </trans-unit>
       <trans-unit id="Error_PackageSourceName_Missing">
         <source>A name must be provided.</source>
         <target state="translated">Name muss angegeben werden.</target>
@@ -91,6 +86,11 @@
         <source>Service Broker is not available. Ensure Visual Studio is running correctly.</source>
         <target state="translated">Service Broker ist nicht verfügbar. Stellen Sie sicher, dass Visual Studio ordnungsgemäß ausgeführt wird.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_SupplyChainSecurityToolNotAvailable">
+        <source>The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
+        <target state="new">The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="NoProjectSelected">
         <source>No project is selected for this operation.</source>
@@ -282,9 +282,9 @@
         <target state="translated">Sicherheitsrisiken mit GitHub Copilot beheben</target>
         <note />
       </trans-unit>
-      <trans-unit id="Title_PackageSourceMappingWithCopilot">
-        <source>Package Source Mapping with GitHub Copilot</source>
-        <target state="translated">Paketquellzuordnung mit GitHub Copilot</target>
+      <trans-unit id="Title_ResolveSupplyChainSecurityWithCopilot">
+        <source>Resolve Supply Chain Security with GitHub Copilot</source>
+        <target state="new">Resolve Supply Chain Security with GitHub Copilot</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="VSOptions_Button_PackageSourceMappingReview">
