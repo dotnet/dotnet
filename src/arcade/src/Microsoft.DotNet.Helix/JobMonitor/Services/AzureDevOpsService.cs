@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +27,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         private const int ControlRequestAttemptCount = 5;
         private const int ResultRequestAttemptCount = 10;
         private static readonly TimeSpan s_maximumRetryDelay = TimeSpan.FromSeconds(30);
+        private static readonly string s_productVersion =
+            typeof(AzureDevOpsService).Assembly
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()!
+                .InformationalVersion;
         private static readonly System.Text.Json.JsonSerializerOptions s_serializerOptions =
             new(System.Text.Json.JsonSerializerDefaults.Web);
 
@@ -95,7 +100,9 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string encodedToken = Convert.ToBase64String(Encoding.UTF8.GetBytes("unused:" + _options.SystemAccessToken));
             _azdoClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", encodedToken);
             _azdoClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _azdoClient.DefaultRequestHeaders.UserAgent.ParseAdd("dotnet-helix-job-monitor");
+            _azdoClient.DefaultRequestHeaders.UserAgent.Add(
+                new ProductInfoHeaderValue(
+                    new ProductHeaderValue("dotnet-helix-job-monitor", s_productVersion)));
             _azdoClient.Timeout = TimeSpan.FromMinutes(5);
         }
 
@@ -437,11 +444,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
             return await publisher.UploadTestResultsWithSummaryAsync(
                 results.TestResultFiles,
-                new
-                {
-                    HelixJobId = results.JobName,
-                    HelixWorkItemName = results.WorkItemName
-                },
+                results.WorkItemName,
+                results.JobName,
                 cancellationToken);
         }
 
