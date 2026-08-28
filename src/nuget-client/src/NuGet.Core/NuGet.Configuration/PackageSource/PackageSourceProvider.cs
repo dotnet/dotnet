@@ -733,7 +733,7 @@ namespace NuGet.Configuration
                 {
                     // get list of disabled packages
                     var disabledSourcesSection = Settings.GetSection(ConfigurationConstants.DisabledPackageSources);
-                    disabledSourceItem = disabledSourcesSection?.GetFirstItemWithAttribute<AddItem>(ConfigurationConstants.KeyAttribute, sourceToUpdate.ElementName);
+                    disabledSourceItem = disabledSourcesSection?.GetFirstItemWithAttribute<AddItem>(ConfigurationConstants.KeyAttribute, sourceToUpdate.Key);
                 }
 
                 if (updateCredentials)
