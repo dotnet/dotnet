@@ -480,7 +480,7 @@ stages:
           crossRootFs: '/crossrootfs/x64'
           targetOS: linux
           targetArchitecture: x64
-          extraProperties: /p:PgoInstrument=true
+          extraProperties: /p:PgoInstrument=true /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
           brandingType: ${{ variables.brandingType }}
 
       - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
@@ -546,7 +546,7 @@ stages:
           crossRootFs: '/crossrootfs/arm64'
           targetOS: linux
           targetArchitecture: arm64
-          extraProperties: /p:PgoInstrument=true
+          extraProperties: /p:PgoInstrument=true /p:TargetCxxStandardLibrary=libc++ /p:TargetCxxStandardLibraryStatic=true /p:TargetCxxAbiLibrary=libstdc++
           brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
