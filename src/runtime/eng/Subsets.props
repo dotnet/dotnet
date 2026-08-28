@@ -317,7 +317,9 @@
 
   <!-- CoreClr sets -->
   <ItemGroup Condition="$(_subset.Contains('+clr.corelib+'))">
-    <ProjectToBuild Include="$(CoreClrProjectRoot)System.Private.CoreLib\System.Private.CoreLib.csproj" Category="clr" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)System.Private.CoreLib\System.Private.CoreLib.csproj"
+                    Category="clr"
+                    BootstrapProducer="true" />
   </ItemGroup>
 
   <PropertyGroup Condition="$(_subset.Contains('+clr.hosts+'))">
@@ -370,6 +372,7 @@
   <ItemGroup Condition="'$(ClrRuntimeBuildSubsets)' != '' or $(_subset.Contains('+clr.nativeprereqs+'))">
     <ProjectToBuild Include="$(CoreClrProjectRoot)runtime-prereqs.proj"
                     Category="clr"
+                    BootstrapProducer="true"
                     GlobalPropertiesToRemove="$(NativeBuildPartitionPropertiesToRemove)" />
   </ItemGroup>
 
@@ -377,6 +380,7 @@
     <ProjectToBuild
       Include="$(CoreClrProjectRoot)runtime.proj"
       AdditionalProperties="%(AdditionalProperties);$(ClrRuntimeBuildSubsets);$(TargetCxxLibraryProperties)"
+      BootstrapProducer="true"
       Category="clr" />
   </ItemGroup>
 
@@ -421,6 +425,7 @@
                             BuildSubdirectory=$(BuildArchitecture);
                             CMakeArgs=$(CMakeArgs) -DCLR_CROSS_COMPONENTS_BUILD=1"
       UndefineProperties="EnableNativeSanitizers"
+      BootstrapProducer="true"
       Category="clr" />
   </ItemGroup>
 
@@ -599,7 +604,9 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+clr.nativeaotlibs+')) and '$(NativeAotSupported)' == 'true'">
-    <ProjectToBuild Include="$(CoreClrProjectRoot)nativeaot\**\src\*.csproj" Category="clr" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)nativeaot\**\src\*.csproj"
+                    Category="clr"
+                    BootstrapProducer="true" />
   </ItemGroup>
 
   <!-- Mono sets -->
@@ -637,12 +644,15 @@
 
   <!-- Libraries sets -->
   <ItemGroup Condition="$(_subset.Contains('+libs.native+'))">
-    <ProjectToBuild Include="$(SharedNativeRoot)libs\build-native.proj" Category="libs" />
+    <ProjectToBuild Include="$(SharedNativeRoot)libs\build-native.proj"
+                    Category="libs"
+                    BootstrapProducer="true" />
   </ItemGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+libs.sfx+'))">
     <ProjectToBuild Include="$(LibrariesProjectRoot)sfx.proj"
                     Category="libs"
+                    BootstrapProducer="true"
                     Condition="'$(BuildTargetFramework)' == '$(NetCoreAppCurrent)' or
                                '$(BuildTargetFramework)' == '' or
                                '$(BuildAllConfigurations)' == 'true'" />
@@ -666,6 +676,7 @@
     <CorehostProjectToBuild Include="$(SharedNativeRoot)corehost\corehost.proj" />
     <ProjectToBuild Include="@(CorehostProjectToBuild)"
                     AdditionalProperties="$(TargetCxxLibraryProperties)"
+                    BootstrapProducer="true"
                     Category="host" />
   </ItemGroup>
 
@@ -684,7 +695,9 @@
 
   <!-- Libraries test sets -->
   <ItemGroup Condition="$(_subset.Contains('+libs.pretest+'))">
-    <ProjectToBuild Include="$(LibrariesProjectRoot)pretest.proj" Category="libs" />
+    <ProjectToBuild Include="$(LibrariesProjectRoot)pretest.proj"
+                    Category="libs"
+                    BootstrapProducer="true" />
   </ItemGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+libs.tests+'))">

@@ -13,9 +13,24 @@
     <BootstrapAotSdkDir>$([MSBuild]::NormalizeDirectory('$(BootstrapLayoutDir)', 'aotsdk'))</BootstrapAotSdkDir>
     <BootstrapHostDir>$([MSBuild]::NormalizeDirectory('$(BootstrapLayoutDir)', 'host'))</BootstrapHostDir>
     <BootstrapRidGraphDir>$([MSBuild]::NormalizeDirectory('$(BootstrapLayoutDir)', 'ridgraph'))</BootstrapRidGraphDir>
-    <_BootstrapSharedProducerProperties>EnableBootstrap=false;BootstrapMainBuild=true</_BootstrapSharedProducerProperties>
-    <_BootstrapConsumerProperties>UseBootstrap=true;ArtifactsDir=$(BootstrapBuildArtifactsDir);CoreCLROverridePath=$(BootstrapConsumerCoreCLRArtifactsPath);LibrariesOverridePath=$(BootstrapBuildArtifactsDir);LibrariesAllConfigurationsOverridePath=$(BootstrapBuildArtifactsDir);HostArtifactsPath=$(BootstrapConsumerHostArtifactsPath);BootstrapRefPackDir=$(BootstrapRefPackDir);BootstrapRuntimePackDir=$(BootstrapRuntimePackDir);BootstrapAotSdkDir=$(BootstrapAotSdkDir);BootstrapHostDir=$(BootstrapHostDir);BootstrapRidGraphDir=$(BootstrapRidGraphDir)</_BootstrapConsumerProperties>
+    <_BootstrapConsumerProperties>UseBootstrap=true;ArtifactsDir=$(BootstrapBuildArtifactsDir);CoreCLROverridePath=$(BootstrapConsumerCoreCLRArtifactsPath);LibrariesOverridePath=$(BootstrapBuildArtifactsDir);LibrariesAllConfigurationsOverridePath=$(BootstrapBuildArtifactsDir);HostArtifactsPath=$(BootstrapConsumerHostArtifactsPath);BootstrapRefPackDir=$(BootstrapRefPackDir);BootstrapRuntimePackDir=$(BootstrapRuntimePackDir);BootstrapAotSdkDir=$(BootstrapAotSdkDir);BootstrapHostDir=$(BootstrapHostDir);BootstrapRidGraphDir=$(BootstrapRidGraphDir);CreateHardLinksForCopyFilesToOutputDirectory=false;CreateHardLinksForCopyLocalIfPossible=false;CreateHardLinksForPublishFilesIfPossible=false</_BootstrapConsumerProperties>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepositoryEngineeringDir)bootstrap-producers.proj"
+                      AdditionalProperties="EnableBootstrap=false;BootstrapMainBuild=true"
+                      GlobalPropertiesToRemove="BootstrapBuildLane;BootstrapBuildArtifactsDir"
+                      BuildInParallel="false" />
+  </ItemGroup>
+
+  <Target Name="_BuildBootstrapProducersBeforeBootstrap"
+          BeforeTargets="Build">
+    <MSBuild Projects="$(RepositoryEngineeringDir)bootstrap-producers.proj"
+             Properties="EnableBootstrap=false;BootstrapMainBuild=true"
+             RemoveProperties="BootstrapBuildLane;BootstrapBuildArtifactsDir"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+  </Target>
 
   <Target Name="_CollectBootstrapFiles">
     <ItemGroup>
@@ -64,34 +79,7 @@
            Condition="'@(RuntimePackFile)' == ''" />
   </Target>
 
-  <Target Name="_CollectBootstrapProducerProjects">
-    <ItemGroup>
-      <BootstrapEarlyProducerTool Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj"
-                                  Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'" />
-      <BootstrapEarlyProducerTool Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj"
-                                  Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'" />
-    </ItemGroup>
-    <MSBuild Projects="$(RepoRoot)Build.proj"
-             Targets="GetBootstrapProducerProjects"
-             Properties="$(_BootstrapSharedProducerProperties)"
-             RemoveProperties="BootstrapBuildLane">
-      <Output TaskParameter="TargetOutputs" ItemName="BootstrapProducer" />
-    </MSBuild>
-  </Target>
-
-  <Target Name="BuildBootstrapProducers"
-          DependsOnTargets="_CollectBootstrapProducerProjects">
-    <MSBuild Projects="@(BootstrapEarlyProducerTool)"
-             Properties="$(_BootstrapSharedProducerProperties)"
-             RemoveProperties="BootstrapBuildLane"
-             BuildInParallel="false"
-             StopOnFirstFailure="true" />
-    <MSBuild Projects="@(BootstrapProducer)"
-             Properties="$(_BootstrapSharedProducerProperties)"
-             RemoveProperties="BootstrapBuildLane"
-             BuildInParallel="true"
-             StopOnFirstFailure="true" />
-  </Target>
+  <Target Name="BuildBootstrapProducers" />
 
   <Target Name="_WriteBootstrapInputManifest"
           DependsOnTargets="_CollectBootstrapFiles">
@@ -147,6 +135,8 @@
           AfterTargets="CreateBootstrapLayout"
           Condition="'$(EnableBootstrap)' == 'true'">
     <ItemGroup>
+      <BootstrapConsumerPrerequisite Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj"
+                                     Condition="'$(SdkToolsSupported)' == 'true'" />
       <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj"
                          Condition="'$(SdkToolsSupported)' == 'true'" />
       <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj"
@@ -156,6 +146,15 @@
       <BootstrapConsumer Include="$(SharedNativeRoot)managed\compile-native.proj"
                          Condition="$(_subset.Contains('+tools.cdac+'))" />
     </ItemGroup>
+    <MSBuild Projects="@(BootstrapConsumerPrerequisite)"
+             Targets="Restore"
+             Properties="$(_BootstrapConsumerProperties)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapConsumerPrerequisite)"
+             Properties="$(_BootstrapConsumerProperties);ExcludeRestorePackageImports=false"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
     <MSBuild Projects="@(BootstrapConsumer)"
              Targets="Restore"
              Properties="$(_BootstrapConsumerProperties)"

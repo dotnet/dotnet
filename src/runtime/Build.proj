@@ -32,16 +32,6 @@
                       Publish="false" />
   </ItemGroup>
 
-  <Target Name="GetBootstrapProducerProjects"
-          Returns="@(BootstrapProducer)">
-    <ItemGroup>
-      <BootstrapProducer Include="@(ProjectToBuild)"
-                         Condition="'%(ProjectToBuild.Category)' == 'clr' or
-                                    '%(ProjectToBuild.Category)' == 'libs' or
-                                    '%(ProjectToBuild.Category)' == 'host'" />
-    </ItemGroup>
-  </Target>
-
   <Target Name="BuildBootstrapPackages"
           AfterTargets="Build"
           Condition="'$(_OrchestrateBootstrap)' == 'true'">
