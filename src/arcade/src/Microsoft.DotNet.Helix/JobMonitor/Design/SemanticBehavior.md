@@ -1,9 +1,10 @@
-# JobMonitorRunner — Technical Specification
+# Semantic behavior
 
-This document is a behavioral specification of the Helix job monitor runner.
-It describes *what* the runner must do, not *how* it currently does it.
+This document specifies the externally observable behavior and restart
+invariants of the Helix Job Monitor. It describes *what* the monitor must do,
+not *how* it currently does it.
 
-The current source lives at [JobMonitorRunner.cs](JobMonitorRunner.cs); use
+The current source lives at [JobMonitorRunner.cs](../JobMonitorRunner.cs); use
 it only as the reference implementation, not as the specification.
 
 ---
@@ -18,7 +19,8 @@ Azure DevOps pipeline stage. Its job is to:
 - Resubmit failed Helix work items once per invocation.
 - Upload Helix work-item test results to Azure DevOps.
 - Return an exit code that reflects whether the monitored pipeline jobs and
-  the latest completed Helix work items all succeeded.
+  the latest completed Helix work items and their processed test results all
+  succeeded.
 
 ## 2. Operating model
 
@@ -32,12 +34,11 @@ principle has two halves that must both hold:
    never reach a terminal state (for example, work items stranded in `Waiting`
    after their queue was purged), and a superseded attempt's monitor is already
    gone, so nothing else will ever drive it. Waiting on it means waiting forever.
-2. **All pipeline-submitted work must still complete.** The monitor cannot simply
-   discard a previous attempt's work either: that work represents tests the
-   pipeline asked to run. Any previous-attempt work that is not already
-   terminally passed (i.e. it failed or is still unfinished) and that the current
-   attempt has *not* already re-submitted must be **resubmitted into the current
-   attempt** so it is actually carried to completion (§2.3).
+2. **Only work whose submitter did not rerun may be replayed.** Previous-stage
+   work still represents the current execution only when the matching AzDO
+   submitter job remains at the same `System.JobAttempt`. If the timeline shows
+   a newer submitter attempt, the old Helix work is superseded and must not be
+   resubmitted, even before the replacement Helix job is visible.
 
 Concretely, all decisions (retry, completion gating, upload, pass/fail) consider:
 
@@ -52,30 +53,31 @@ Concretely, all decisions (retry, completion gating, upload, pass/fail) consider
 Jobs and work items from other stages must not be retried, uploaded, or used to
 fail this invocation.
 
-**Why per-attempt, and why not just ignore previous attempts.** Azure DevOps
-offers two distinct re-run gestures, and the monitor cannot tell them apart from
-the timeline alone:
+**Why both attempt axes are required.** Both Azure DevOps retry gestures advance
+`System.StageAttempt`; the difference is which timeline jobs advance their
+individual `System.JobAttempt`:
 
 - **Rerun the entire stage** — every job re-runs, including the Helix submitter
   jobs, so the current attempt already contains a fresh incarnation of every
   logical work stream. Previous-attempt incarnations are superseded and need no
   resubmission.
-- **Retry failed jobs in the stage** — only failed jobs re-run. If the Helix
+- **Retry failed jobs in the stage** — only selected failed jobs advance their
+  job attempt. If the Helix
   submitter jobs passed and only the monitor failed (e.g. it timed out), the
-  submitters do **not** re-run, so the current attempt contains **no** Helix work
-  at all. Naively scoping to the current attempt would make the monitor exit
+  monitor advances but the submitters remain at their original job attempts, so
+  the current stage attempt contains **no** fresh Helix work. Naively scoping to
+  the current stage attempt would make the monitor exit
   immediately as a success, silently discarding every result and failure from the
   previous attempt.
 
 Because of the second gesture, "current-attempt scope" is not the same as
 "ignore previous attempts." The monitor scopes *gating* to the current attempt
 but reconciles previous-attempt work into it by resubmission (§2.3), deciding
-per logical work stream (not per attempt) whether a resubmission is needed.
+per logical work stream by comparing the Helix job's submitter `System.JobAttempt`
+with the matching current timeline record.
 
-The monitor's own stage attempt is provided as an input (see §3) and defaults to
-the `SYSTEM_STAGEATTEMPT` pipeline variable. When it is unknown the monitor
-cannot distinguish attempts and falls back to build + stage scope, gating on
-every attempt's work (historical behavior).
+The monitor's stage and job attempts are provided as inputs (see §3), defaulting
+to `SYSTEM_STAGEATTEMPT` and `SYSTEM_JOBATTEMPT`.
 
 ### 2.2 Durable state
 
@@ -104,39 +106,48 @@ be the source of truth for cross-invocation correctness.
 
 Retry is the mechanism that reconciles previous-attempt work into the current
 attempt (§2.1). It operates on *logical work streams*, not on attempts: a work
-stream is identified by the root Helix job in its `PreviousHelixJobName` lineage
-(§5.7), which is stable across monitor resubmissions.
+stream is identified by the submitter chain key (§5.7). The key combines the
+stage identity, stable AzDO phase identity, Helix queue, and logical Helix job identity; the
+AzDO job name and queue alone are not unique because one AzDO job may submit
+multiple independent Helix jobs to the same queue. The combined identity is
+stable across both stage attempts and monitor resubmissions.
 
-1. Retry runs exactly once per invocation, on entry, before polling begins.
+1. Retry runs exactly once on entry to a **retried monitor job**
+   (`System.JobAttempt > 1`). The initial monitor invocation reports failures
+   but never creates additional Helix work.
 2. The set of work to resubmit is decided from a single Helix snapshot taken on
    entry. Work that fails after the monitor has started is not resubmitted during
    the current invocation; a later invocation may pick it up.
 3. Retry decisions are made per work stream from its **latest incarnation across
-   all attempts** (the leaf of its lineage chain, breaking ties toward the higher
-   stage attempt). Let *L* be that incarnation:
-   - *L* is **still in flight** (running/waiting) and belongs to the **current
-     attempt** — leave it; the current attempt is actively driving it and
-     completion gating waits on it. This is the rerun-entire-stage case and also
-     prevents duplicate submissions when a previous-attempt incarnation of the
-     same stream is still running.
-   - *L* is **still in flight** and belongs to a **previous attempt** — the
-     previous attempt has abandoned it (its monitor is gone and nothing else will
-     drive it); resubmit the not-yet-passed items into the current attempt.
+   all attempts**, ordered by stage attempt, submitter job attempt, explicit
+   lineage depth, and finally Helix job ID. Let *L* be that incarnation:
+   - *L* belongs to the **current stage attempt** — leave it, whether running or
+     already failed. It belongs to the execution currently being monitored.
+   - The current timeline shows the matching submitter at a **higher job
+     attempt** than *L* — leave *L*. The submitter reran and superseded it; wait
+     for the newer submitter execution rather than duplicating it. Until the
+     replacement Helix job becomes visible, *L* is also excluded from current
+     status and pass/fail reconciliation so stale failures do not leak through
+     the visibility gap.
+   - The current timeline submitter attempt **equals** *L*'s
+     `System.JobAttempt` — the submitter did not rerun. Failed or unfinished
+     work in *L* may be resubmitted into the current stage attempt.
    - *L* is **completed and fully passed** — nothing to resubmit; its results are
      uploaded (if not already, §2.4) and its outcome counted. It is terminal, so
      it does not block completion.
-   - *L* is **completed with failures** — resubmit the failed items, regardless of
-     attempt. (For a current-attempt incarnation this is the pre-existing
-     per-invocation retry; for a previous-attempt one it carries the failure into
-     the current attempt.)
+   - Missing or incompatible submitter identity / `System.JobAttempt` metadata
+     makes retry classification ambiguous. Do not guess; record an actionable
+     failure rather than risk duplicating a rerun.
    - A needed resubmission is **not possible** (e.g. the queue was removed, so the
      work can never run again) — for previous-attempt in-flight work, whose
      failure is not otherwise recorded, surface it as an actionable hard failure
      so the invocation fails fast rather than waiting forever. (Completed-with-
      failures work that cannot be resubmitted already fails the build via outcome
      reconciliation, §2.5.)
-4. Every resubmission is stamped with the **monitor's current stage attempt**
-   (not the original job's attempt) and linked back via `PreviousHelixJobName`.
+4. Every resubmission is stamped with the **monitor's current stage attempt**,
+   preserves the original submitter's `System.JobAttempt`, records the
+   resubmitting monitor attempt as `JobMonitor.JobAttempt`, and links back via
+   `PreviousHelixJobName`.
    This is what brings the resubmitted work into current-attempt scope so the
    monitor gates on it; copying the original attempt would leave the monitor
    unable to see its own resubmission.
@@ -155,8 +166,9 @@ These are the scenarios that a naive "scope strictly to the current attempt and
 ignore all previous-attempt jobs" design gets wrong, and how the model above
 addresses each:
 
-1. **Retry-failed-jobs where only the monitor re-ran.** The submitters passed and
-   were not re-run, so the current attempt contains no Helix work. Naive scoping
+1. **Retry-failed-jobs where only the monitor re-ran.** The stage and monitor
+   attempts advance, but the submitters retain their original job attempts, so
+   the current stage attempt contains no fresh Helix work. Naive scoping
    exits `0` immediately, discarding every previous-attempt result and failure.
    → The retry pass reconciles previous-attempt streams: passed work is uploaded
    and counted, failed/unfinished work is resubmitted into the current attempt
@@ -171,14 +183,28 @@ addresses each:
    current incarnation) and resubmit them. → Decisions are re-derived from the
    Helix snapshot each invocation (latest incarnation + attempt + status per
    stream), not from in-memory state, so partial progress is self-correcting.
-4. **Independent jobs with identical submission metadata.** One AzDO job can
-   submit multiple original Helix jobs to the same queue, so submitter and queue
-   cannot safely identify a stream. → Only an explicit `PreviousHelixJobName`
-   lineage collapses jobs; unlinked jobs remain independent (§5.7).
-5. **Un-resubmittable work (e.g. purged queue).** Previous-attempt work that can
+4. **Visibility race during a full-stage rerun.** The timeline already shows the
+   submitter at a newer job attempt, but its new Helix job is not visible yet.
+   Blindly replaying the old job duplicates the rerun. → Timeline job attempt,
+   not Helix visibility, suppresses replay.
+5. **Rerun duplicates that are not lineage-linked.** A stage rerun's fresh Helix
+   job has no `PreviousHelixJobName` link to its previous-attempt counterpart;
+   they collapse only by chain key. → Outcome ordering breaks ties toward the
+   higher stage/job incarnation so the current attempt wins (§5.7).
+6. **Un-resubmittable work (e.g. purged queue).** Previous-attempt work that can
    never run again would loop forever under any "just wait" or "just resubmit and
    wait" scheme. → Resubmission-not-possible is treated as an actionable hard
    failure so the invocation fails fast instead of hanging (§2.3.3).
+7. **One AzDO job submits multiple Helix jobs to the same queue.** Grouping only
+   by AzDO job name and queue incorrectly merges independent streams. A failure
+   in one job can be overwritten by a same-named passing work item in another,
+   and retry can select only one of the jobs. → The stream key also includes the
+   submitter-assigned logical Helix `jobName` (falling back to `TestRunName`).
+   Resubmissions preserve that property, so incarnations of one logical job
+   still chain while sibling Helix jobs remain independent.
+8. **Identical phase/queue/logical-job names in different stages.** → The stage
+   identity is part of the stream key, so outcomes and retry decisions cannot
+   cross stage boundaries.
 
 ### 2.4 Upload invariants
 
@@ -255,6 +281,7 @@ inputs are:
 | AzDO collection URI + project | Construct the test-results URL used in failure reports. |
 | Stage name | Stage scope (see §2.1). |
 | Stage attempt | Per-attempt scope (see §2.1). Defaults to `SYSTEM_STAGEATTEMPT`; when unknown the monitor tracks jobs from every attempt of the stage. |
+| Job attempt | Attempt of the monitor's own AzDO job. Retry reconciliation runs only after attempt 1. Defaults to `SYSTEM_JOBATTEMPT`. |
 | Polling interval | Delay between poll iterations; a minimum floor applies. |
 | Maximum wait | Reported in the timeout message; the timeout itself is enforced by the caller through cancellation. |
 | Job monitor name | Identifier of the monitor's own AzDO timeline record; used to exclude it from pass/fail. |
@@ -271,14 +298,19 @@ behaviorally; method names are illustrative.
 - **List jobs for a build** — given the source filter and build ID, return
   all Helix jobs that the submitter recorded for the build. The source
   filter must be derivable from build metadata in lockstep with the
-  submitter (see §5.1). The returned set spans every attempt of the build; the
+  submitter (see §5.1). Discovery sends both the source and
+  `Properties[BuildId]` filters to Helix. Filtering `BuildId` only after
+  retrieving the source's jobs is prohibited: non-PR sources such as
+  `refs/heads/main` are long-lived and can contain thousands of historical
+  jobs. The returned set spans every attempt of the build; the
   runner keeps the whole stage's jobs (all attempts) so the retry pass can
   reconcile previous-attempt work (§2.3), and classifies each job as
-  current- or previous-attempt via `System.StageName` / `System.StageAttempt`
-  for gating (§2.1).
+  current- or previous-stage-attempt via `System.StageName` /
+  `System.StageAttempt`, and compares `System.JobAttempt` with the matching
+  timeline submitter for retry eligibility (§2.1).
 - **List work items for a job** — return all work-item summaries.
-- **Download test results** — given a job and a set of work-item names,
-  download recognized result files into a working directory. Individual
+- **Download test results** — given one job/work-item pair, download recognized
+  result files into a working directory. Individual
   per-file failures must not prevent the remaining files from being attempted.
   After the batch, transient failures cause the read-only download phase to be
   retried; permanent failures are logged and omitted.
@@ -286,9 +318,10 @@ behaviorally; method names are illustrative.
 - **Resubmit failed work items** — given the original job and a set of
   failed (or unfinished) work items, submit a new Helix job that contains only
   those items. The new job must inherit the original's submitter identity (stage,
-  job name, display name, test-run name, queue) but be stamped with the
-  **resubmitting monitor's current stage attempt** (§2.3.4), and link back via
-  `PreviousHelixJobName`. May return "not possible" (e.g. queue gone), which the
+  job name, display name, test-run name, queue, and submitter job attempt), be
+  stamped with the **resubmitting monitor's current stage attempt** and
+  `JobMonitor.JobAttempt` (§2.3.4), and link back via `PreviousHelixJobName`.
+  May return "not possible" (e.g. queue gone), which the
   runner treats as an actionable hard failure for that work rather than silently
   skipping it (§2.3.3).
 
@@ -326,16 +359,22 @@ or the runner will silently fail to see its own jobs.
 
 ### 5.3 Retry pass
 
-1. Take a Helix snapshot of the whole stage (all attempts).
+1. Take one current AzDO timeline snapshot and one Helix snapshot of the whole
+   stage (all attempts).
 2. Reduce it to the latest incarnation of each logical work stream (§2.3.3):
-   the leaf of each lineage chain, keyed by its root Helix job.
+   the leaf of each lineage chain, keyed by logical stream key, ordered by stage
+   attempt, submitter job attempt, lineage depth, then Helix job ID.
 3. For each latest incarnation, apply §2.3.3:
-   - Current-attempt incarnation — leave it; it is already being driven.
+   - Initial monitor job attempt — do not retry anything.
+   - Current-stage-attempt incarnation — leave it; it belongs to this execution.
+   - Timeline submitter attempt is newer than the Helix submitter attempt —
+     leave it; the submitter reran and superseded the old Helix work.
    - Previous-attempt, completed and fully passed — leave it (terminal); it will
      still be uploaded / reconciled by the poll loop.
    - Previous-attempt, completed with failures, or unfinished — ask the Helix
      service to resubmit the failed / not-yet-passed items, stamped with the
-     current stage attempt (§2.3.4). If resubmission is not possible, record it
+     current stage attempt while preserving the submitter job attempt (§2.3.4).
+     If resubmission is not possible, record it
      as a hard failure (§2.3.3).
 4. Remember the AzDO submitter-job identifiers of successfully retried work;
    these are the jobs to exclude from the AzDO failure check while this
@@ -357,8 +396,8 @@ Each iteration:
    (so completion/failure transitions are not missed).
 4. Compute the set of completed Helix jobs (§5.5).
 5. **First pass — upload**: for each completed Helix job not already
-   uploaded (per §2.2), upload its test results and remember it as
-   processed. This pass is the only one that triggers uploads.
+   uploaded (per §2.2), queue its completion-time work-item snapshot into the
+   bounded upload pipeline. This pass is the only one that triggers uploads.
 6. **Second pass — outcome reconciliation**: for every completed Helix
    job in scope, ensure its per-work-item outcomes are reflected in the
    running outcome map (§5.7), processing lineage from oldest to newest so
@@ -408,20 +447,128 @@ incarnations of the same item collapse onto a single entry.
 
 The chain key must be deterministic and uniqueness-preserving:
 
-- Every original Helix job must produce a distinct key, including jobs submitted
-  by the same AzDO job to the same Helix queue.
+- A single AzDO matrix leg that fans out to multiple Helix queues must
+  produce distinct keys (one per queue) so per-queue failures are
+  preserved.
+- A single AzDO job that submits multiple independent Helix jobs to the same
+  queue must produce distinct keys (one per logical Helix job). The AzDO
+  phase/job name and queue are therefore necessary but not sufficient.
 - An original Helix job and its resubmission(s) on the same queue must
   produce the same key so the latest incarnation overwrites the older one.
-- Jobs not linked by `PreviousHelixJobName` remain distinct. In particular,
-  submitter name and queue are insufficient to correlate jobs across stage
-  attempts because one AzDO job may submit multiple jobs to the same queue.
-- If lineage cannot be resolved (the predecessor link points outside the
-  jobs the runner has observed), the referenced predecessor name is used as
-  the root so later incarnations still resolve consistently.
+- The preferred key components are:
+  1. `System.StageName`;
+  2. `System.PhaseName`, falling back to `System.JobName`;
+  3. the Helix queue;
+  4. the submitter-assigned Helix `jobName`, falling back to `TestRunName`.
+  If no stable logical-job discriminator is available, the key is bound to the
+  root Helix job in the `PreviousHelixJobName` lineage rather than risk merging
+  unrelated jobs.
+- Because these key components are stable across stage attempts, a
+  rerun-stage incarnation of the same logical job on the same queue collapses
+  onto the same key as its previous-attempt counterpart, even though the two
+  Helix jobs are **not** linked by
+  `PreviousHelixJobName` (only monitor resubmissions set that link). The map
+  must therefore let the later incarnation win when two incarnations share a
+  key: outcomes are applied in order of lineage depth, stage attempt, submitter
+  job attempt, then Helix job ID, rather than by Helix job-name sort alone, or a stale previous-attempt outcome
+  could nondeterministically overwrite the current one. `System.JobName` is
+  used only when `System.PhaseName` is unavailable because some pipelines stamp
+  every matrix job with `System.JobName=__default`.
+- If lineage cannot be resolved (the predecessor link points outside the jobs
+  the runner has observed), the root predecessor name provides the
+  Helix-job-bound fallback.
+- The submitter must assign different `jobName` values (or, when absent,
+  different `TestRunName` values) to independent Helix jobs submitted by the
+  same AzDO phase to the same queue. Without a stable distinguishing property,
+  no monitor can reliably correlate an unlinked stage-rerun job with its prior
+  incarnation while also distinguishing it from a sibling submission.
 
 The same key drives a parallel map of "failed work item console info" used
 to build the final failure report. When a later incarnation of a work item
 passes, its entry in that map is cleared.
+
+#### 5.7.1 Stream and attempt examples
+
+The following examples use one logical stream:
+
+```text
+StreamKey K1 =
+(
+  StageName: Build,
+  PhaseName: build_windows_x64_Checked_NativeAOT,
+  QueueId: windows.10.amd64.open.rt,
+  LogicalJobName: runtime-tests
+)
+
+Original Helix job H1:
+  System.StageAttempt = 1
+  System.JobAttempt = 1
+
+Monitor replay R2:
+  System.StageAttempt = 2
+  System.JobAttempt = 1
+  JobMonitor.JobAttempt = 2
+  PreviousHelixJobName = H1
+
+Fresh submitter rerun H2:
+  System.StageAttempt = 2
+  System.JobAttempt = 2
+  PreviousHelixJobName is absent
+```
+
+`System.JobAttempt` on a Helix job always identifies the AzDO job that
+originally submitted that logical work. It is compared with the current
+timeline attempt of that same submitter. It is **not** compared with the
+monitor's own job attempt. `JobMonitor.JobAttempt` records which monitor
+invocation created a replay and is diagnostic metadata only.
+
+`System.PhaseName` maps to the `refName` of the AzDO **Phase** timeline
+record. When phase identity is unavailable, `System.JobName` maps to the
+`refName` of the nested **Job** record. In matrix pipelines that nested job
+name is frequently `__default`, which is why phase identity is preferred.
+
+#### 5.7.2 Retry and rerun permutation matrix
+
+| Scenario and observation time | Monitor | Current submitter timeline | Visible Helix work | Required behavior |
+| --- | --- | --- | --- | --- |
+| Initial execution; H1 fails | S1/M1 | J1 | H1 S1/J1 failed | Report the failure; attempt 1 never creates replay work. |
+| Selective retry of only the monitor | S2/M2 | J1 completed | H1 S1/J1 failed | `J1 == J1`; replay H1 as R2. |
+| Selective retry also selected the submitter, before H2 is visible | S2/M2 | J2 pending/running | Only H1 S1/J1 | `J2 > J1`; suppress H1 replay, status, and outcome using timeline state, without waiting for H2 visibility. |
+| Selective retry after H2 is visible | S2/M2 | J2 | H1 S1/J1 and H2 S2/J2 | H2 supersedes H1; observe H2. |
+| Full-stage rerun immediately after timeline creation | S2/M2 | J2 pending | Only H1 S1/J1 | Suppress H1 replay, status, and outcome because the submitter is part of the rerun. |
+| Full-stage rerun after H2 submission | S2/M2 | J2 running/completed | H1 S1/J1 and H2 S2/J2 | H2 is authoritative; do not create a monitor replay. |
+| Submitter reruns but intentionally submits no new Helix work | S2/M2 | J2 completed | Only H1 S1/J1 | Suppress H1; the newer submitter execution is authoritative. |
+| Submitter did not rerun and H1 passed | S2/M2 | J1 | H1 S1/J1 passed | Upload/count H1; no replay. |
+| Submitter did not rerun and H1 is failed or unfinished | S2/M2 | J1 | H1 S1/J1 failed/waiting | Replay the failed or unfinished items as R2. |
+| R2 fails and the monitor is retried again | S3/M3 | J1 | H1 S1/J1 and R2 S2/J1 failed | R2 is the latest lineage leaf and still matches J1; replay its remaining failures as R3. |
+| R2 remains unfinished when the monitor is retried | S3/M3 | J1 | R2 S2/J1 running/waiting | Treat the previous-stage leaf as abandoned and replay its unfinished items as R3. |
+| R2 passed before the next monitor invocation | S3/M3 | J1 | R2 S2/J1 passed | Latest incarnation passed; no further replay. |
+| Current-stage H2 is running when the monitor starts | S2/M2 | J2 | H2 S2/J2 running | Observe and gate on H2; never replay current-stage work on entry. |
+| H2 fails after the monitor has started | S2/M2 | J2 | H2 changes running to failed | Report failure. Retry is entry-only; do not create replay work mid-invocation. |
+| Monitor is retried after H2 failed | S3/M3 | J2 | H2 S2/J2 failed | `J2 == J2`; replay H2 into S3. |
+| Submitter identity or attempt is missing | S2/M2 | Unknown | H1 S1/J1 failed | Fail safely; do not speculate and risk duplicate work. |
+| Timeline attempt is lower than Helix metadata | S2/M2 | J1 | H1 claims S1/J2 | Treat metadata as inconsistent; do not replay. |
+| Fresh H2 is visible but is not lineage-linked to H1 | S2/M2 | J2 | H1 S1/J1 and H2 S2/J2 | Collapse by `StreamKey`; the higher stage/job incarnation wins. |
+| Monitor replay R2 is linked to H1 | S2/M2 | J1 | H1 and R2 with `Previous=H1` | Collapse explicit lineage to the leaf R2. |
+
+The central retry decision is therefore:
+
+```text
+current submitter attempt > Helix System.JobAttempt
+    => the submitter reran; suppress monitor replay
+
+current submitter attempt == Helix System.JobAttempt
+    => the submitter did not rerun; failed/unfinished work may be replayed
+```
+
+#### 5.7.3 Identity-isolation matrix
+
+| Helix submissions | Example stream keys | Required behavior |
+| --- | --- | --- |
+| One AzDO job submits two logical jobs to the same queue | `(Build, phaseA, queue1, runtime-tests)` and `(Build, phaseA, queue1, nativeaot-smoke)` | Separate streams because logical job names differ. |
+| One AzDO job submits to two queues | `(Build, phaseA, queue1, tests)` and `(Build, phaseA, queue2, tests)` | Separate streams because queues differ. |
+| Two AzDO phases use the same queue and logical name | `(Build, phaseA, queue1, tests)` and `(Build, phaseB, queue1, tests)` | Separate streams because phase identities differ. |
+| Two stages use identical phase, queue, and logical names | `(Build, phaseA, queue1, tests)` and `(Test, phaseA, queue1, tests)` | Separate streams because stage identities differ. |
 
 ### 5.8 Failure reporting
 
@@ -439,44 +586,31 @@ Warnings use AzDO `task.logissue type=warning` formatting; the final
 aggregated error uses `task.logissue type=error`. Informational status
 lines are plain logger output.
 
-### 5.9 Test-result upload pipeline
+### 5.9 Test-result durability
 
-Uploads are asynchronous tasks tracked for normal completion. Their in-memory
-lifecycle distinguishes queued, in-progress, durably completed, and failed
-uploads; only a completed, tagged test run is considered durable.
+- Terminal work items may publish results before their containing Helix job
+  completes.
+- A Helix job is durably processed only after all admitted results are
+  published and its Azure DevOps test run is completed and tagged with the
+  Helix job name.
+- A monitor that stops before that durable boundary leaves the job eligible
+  for replay by a later invocation.
+- Failed processed test results contribute to the monitor exit code even when
+  the Helix work-item exit code is successful.
+- Result publication may retry transient failures and therefore accepts the
+  documented duplicate-result risk rather than losing an entire result set.
 
-- Each upload is queued asynchronously and tracked. Multiple uploads may
-  proceed concurrently.
-- Test results are downloaded before the AzDO test run is created. Transient
-  download failures are safe to retry and use a bounded retry budget.
-- Test-run creation and completion/tagging are each attempted once. These
-  lifecycle writes determine the durable upload boundary, so replaying an
-  ambiguous response could create an extra run or incorrectly mark an
-  incompletely uploaded run as processed.
-- Publishing test results and their attachments uses bounded retries for
-  throttling, server errors, and transient transport failures. These Azure
-  DevOps POST APIs do not expose an idempotency key or document deduplication.
-  A timeout or connection failure can occur after the service commits the
-  request but before the response reaches the client, so retrying may create
-  duplicate results or attachments. The design accepts that risk to avoid
-  losing an entire job's test results after a transient failure.
-- Permanent failures and exhausted retries are logged as warnings and stop the
-  upload task without affecting pass/fail.
-- The normal-termination path waits for queued uploads to drain before exiting.
-- The cancellation path does not wait for pending or in-flight uploads. If an
-  upload has not completed and applied its Helix-job tag, it remains untagged;
-  durable-state discovery causes a later invocation to upload it again.
-
-The upload sequence per job is: create (or reuse) a test run with the plain
-`{TestRunName}`, download results, upload them, complete the test run and tag
-it with the Helix job name (`helixjob<guid>`).
+Channel structure, concurrency, retry budgets, and the concrete upload
+sequence are implementation details documented in
+[Upload pipeline](Components/UploadPipeline.md) and
+[Test-result processing](Components/TestResults.md).
 
 ### 5.10 Status logging
 
 When a status log is due, the runner emits a one-line summary of work
-counts (processed / completed / running / waiting jobs and work items). In
-verbose mode it additionally emits a tree-style breakdown per job and work
-item. The verbose tree is informational only.
+counts (processed / completed / running / waiting jobs and work items).
+Verbose mode adds bounded pipeline diagnostics (queued/active work and uploaded
+result totals) but never emits a per-work-item tree.
 
 A Helix job is classified for status purposes as `Processed` (already
 uploaded), `Completed` (terminal but not yet uploaded), `Running` (has at

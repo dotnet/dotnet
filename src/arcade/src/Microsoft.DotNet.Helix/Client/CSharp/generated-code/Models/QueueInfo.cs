@@ -66,5 +66,17 @@ namespace Microsoft.DotNet.Helix.Client.Models
 
         [JsonProperty("EstimatedRemovalDate")]
         public string EstimatedRemovalDate { get; set; }
+
+        [JsonProperty("ProtectedMode")]
+        public string ProtectedMode { get; set; }
+
+        [JsonProperty("ProtectedModeWaitThresholdInMinutes")]
+        public int? ProtectedModeWaitThresholdInMinutes { get; set; }
+
+        [JsonProperty("IsInProtectedMode")]
+        public bool? IsInProtectedMode { get; set; }
+
+        [JsonProperty("ProtectedSinceUtc")]
+        public string ProtectedSinceUtc { get; set; }
     }
 }
