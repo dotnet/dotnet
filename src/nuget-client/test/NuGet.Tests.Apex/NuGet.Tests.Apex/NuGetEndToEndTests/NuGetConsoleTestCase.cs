@@ -1388,6 +1388,75 @@ namespace NuGet.Tests.Apex
             CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project2, packageName, packageVersion, Logger);
         }
 
+        [DataTestMethod]
+        [DataRow("HighestPatch", "", "1.0.1")]
+        [DataRow("HighestMinor", "", "1.2.1")]
+        [DataRow("Highest", "", "2.0.1")]
+        [DataRow("Lowest", "", "1.0.0")]
+        [DataRow("", "", "1.0.0")]
+        [DataRow("", "HighestPatch", "1.0.1")]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackageFromPMCWithDependencyVersion_SelectsExpectedDependencyAsync(
+            string dependencyVersion,
+            string configuredDependencyVersion,
+            string expectedDependencyVersion)
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            if (!string.IsNullOrEmpty(configuredDependencyVersion))
+            {
+                simpleTestPathContext.Settings.SetDependencyVersion(configuredDependencyVersion);
+            }
+
+            using var testContext = new ApexTestContext(
+                VisualStudio,
+                ProjectTemplate.ClassLibrary,
+                Logger,
+                simpleTestPathContext: simpleTestPathContext);
+
+            var packageName = "DependencyVersion.A";
+            var packageVersion = "1.0.0";
+            var dependencyName = "DependencyVersion.B";
+            var package = CommonUtility.CreatePackage(packageName, packageVersion);
+            package.Dependencies.Add(CommonUtility.CreatePackage(dependencyName, "[1.0.0,)"));
+
+            await SimpleTestPackageUtility.CreatePackagesWithoutDependenciesAsync(testContext.PackageSource, package);
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                testContext.PackageSource,
+                CommonUtility.CreatePackage(dependencyName, "1.0.0"),
+                CommonUtility.CreatePackage(dependencyName, "1.0.1"),
+                CommonUtility.CreatePackage(dependencyName, "1.2.0"),
+                CommonUtility.CreatePackage(dependencyName, "1.2.1"),
+                CommonUtility.CreatePackage(dependencyName, "2.0.0"),
+                CommonUtility.CreatePackage(dependencyName, "2.0.1"));
+
+            var nugetConsole = GetConsole(testContext.Project);
+            var escapedSource = testContext.PackageSource.Replace("'", "''");
+            var dependencyVersionArgument = string.IsNullOrEmpty(dependencyVersion)
+                ? string.Empty
+                : $" -DependencyVersion {dependencyVersion}";
+
+            nugetConsole.Execute(
+                $"Install-Package {packageName} -Source '{escapedSource}'{dependencyVersionArgument}");
+
+            var consoleText = nugetConsole.GetText();
+            consoleText.Should().NotContain("FullyQualifiedErrorId", because: consoleText);
+            CommonUtility.AssertPackageInPackagesConfig(
+                VisualStudio,
+                testContext.Project,
+                packageName,
+                packageVersion,
+                Logger);
+
+            testContext.NuGetApexTestService
+                .IsPackageInstalledIncludingTransitive(
+                    testContext.Project.UniqueName,
+                    dependencyName,
+                    expectedDependencyVersion)
+                .Should()
+                .BeTrue(because: consoleText);
+        }
+
         [TestMethod]
         [Timeout(DefaultTimeout)]
         public void GetProject_CanAccessProjectName()
