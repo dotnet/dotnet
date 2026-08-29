@@ -1,6 +1,6 @@
 id: 
 name: GitOps.PullRequestIssueManagement.BreakingChanges
-description: Breaking change label and documentation requirements
+description: Pull Requests with the breaking change label and documentation requirements
 owner: 
 resource: repository
 disabled: false
@@ -8,7 +8,8 @@ where:
 configuration:
   resourceManagementConfiguration:
     eventResponderTasks:
-    - if:
+    - description: '[11-10] Add breaking change instructions to PR.'
+      if:
       - payloadType: Pull_Request
       - labelAdded:
           label: breaking-change
@@ -29,4 +30,4 @@ configuration:
 
 
             You can refer to the [.NET SDK breaking change guidelines](https://github.com/dotnet/sdk/blob/main/documentation/project-docs/breaking-change-guidelines.md)
-      description: Add breaking change instructions to PR.
+      
