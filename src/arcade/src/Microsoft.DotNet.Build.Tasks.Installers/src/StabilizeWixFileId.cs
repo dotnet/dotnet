@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using System;
 using System.Linq;
 using System.Xml.Linq;
@@ -13,7 +14,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// it. This allows external tooling such as signature validators to rely on a stable identifier
     /// for certain files.
     /// </summary>
-    public class StabilizeWixFileId : BuildTask
+    public class StabilizeWixFileId : Task
     {
         /// <summary>
         /// File to read from. This is expected to be an output from heat.exe.

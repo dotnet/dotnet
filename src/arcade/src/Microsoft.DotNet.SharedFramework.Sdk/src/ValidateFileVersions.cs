@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.Build.Tasks;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk
 {
-    public class ValidateFileVersions : BuildTask
+    public class ValidateFileVersions : Task
     {
         private static readonly Version ZeroVersion = new Version(0, 0, 0, 0);
 

@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class SplitReferences : BuildTask
+    public class SplitReferences : Task
     {
         [Required]
         public ITaskItem[] References

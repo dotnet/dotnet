@@ -6,10 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    public sealed class CreateControlFile : BuildTask
+    public sealed class CreateControlFile : Task
     {
         [Required]
         public string PackageName { get; set; }

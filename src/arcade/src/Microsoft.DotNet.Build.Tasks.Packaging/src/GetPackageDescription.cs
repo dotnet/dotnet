@@ -4,16 +4,17 @@
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetPackageDescription : BuildTask
+    public class GetPackageDescription : Task
     {
         // avoid parsing the same document multiple times on a single node.
-        private static Dictionary<string, Dictionary<string, string>> s_descriptionCache = new Dictionary<string, Dictionary<string, string>>();
+        private static readonly ConcurrentDictionary<string, Dictionary<string, string>> s_descriptionCache = new();
 
         [Required]
         public ITaskItem DescriptionFile
@@ -58,14 +59,19 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 return false;
             }
 
-            Dictionary<string, string> descriptionTable = null;
-
-            if (!s_descriptionCache.TryGetValue(descriptionPath, out descriptionTable))
+            if (!s_descriptionCache.TryGetValue(descriptionPath, out Dictionary<string, string> descriptionTable))
             {
                 // no cache, load it now.
                 descriptionTable = LoadDescriptions(descriptionPath);
 
-                s_descriptionCache[descriptionPath] = descriptionTable;
+                // Only cache successful loads. LoadDescriptions returns null after logging an
+                // IOException or UnauthorizedAccessException, and caching that would memoize a
+                // transient failure for every later invocation on this node, including subsequent
+                // builds that reuse it.
+                if (descriptionTable != null)
+                {
+                    s_descriptionCache.TryAdd(descriptionPath, descriptionTable);
+                }
             }
 
             string description = null;

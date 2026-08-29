@@ -1,8 +1,8 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.Build.Tasks;
+using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +15,7 @@ namespace Microsoft.DotNet.PackageTesting
     /// <summary>
     /// Verifies no type overlap in a set of DLLs
     /// </summary>
-    public class VerifyTypes : BuildTask
+    public class VerifyTypes : Task
     {
         /// <summary>
         /// Sources to scan.  Items can be directories or files.

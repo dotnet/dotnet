@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
@@ -17,7 +18,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// <remarks>
     /// Implements the format specified in https://manpages.debian.org/bookworm/dpkg-dev/deb.5.en.html
     /// </remarks>
-    public sealed class CreateRpmPackage : BuildTask
+    public sealed class CreateRpmPackage : Task
     {
         private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 

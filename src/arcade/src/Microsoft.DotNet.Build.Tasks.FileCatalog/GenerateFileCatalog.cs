@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 using Microsoft.Build.Framework;
-using BuildTask = Microsoft.Build.Utilities.Task;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.FileCatalog
 {
@@ -13,7 +13,7 @@ namespace Microsoft.DotNet.Build.Tasks.FileCatalog
     /// (no <c>makecat.exe</c> / Windows SDK required). The catalog is unsigned and ready to be
     /// Authenticode-signed by the Arcade signing infrastructure (via <c>FileExtensionSignInfo</c>).
     /// </summary>
-    public class GenerateFileCatalog : BuildTask
+    public class GenerateFileCatalog : Task
     {
         /// <summary>The files to include in the catalog.</summary>
         [Required]

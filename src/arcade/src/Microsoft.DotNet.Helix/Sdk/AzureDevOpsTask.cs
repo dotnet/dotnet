@@ -194,8 +194,6 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
             return null;
         }
 
-        private static readonly Random s_rand = new Random();
-
         public int RetryCount { get; set; } = 15;
 
         public double RetryBackOffFactor { get; set; } = 1.3;
@@ -205,7 +203,7 @@ namespace Microsoft.DotNet.Helix.AzureDevOps
             var factor = RetryBackOffFactor;
             var min = (int)(Math.Pow(factor, attempt) * 1000);
             var max = (int)(Math.Pow(factor, attempt + 1) * 1000);
-            return s_rand.Next(min, max);
+            return Random.Shared.Next(min, max);
         }
 
         public static bool IsRetryableHttpException(Exception ex)

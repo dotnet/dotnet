@@ -5,6 +5,7 @@ using NuGet.Client;
 using NuGet.ContentModel;
 using NuGet.Frameworks;
 using NuGet.RuntimeModel;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,7 +17,7 @@ namespace Microsoft.DotNet.Build.Tasks.TargetFramework
     /// </summary>
     internal class TargetFrameworkResolver
     {
-        private static readonly Dictionary<string, TargetFrameworkResolver> s_targetFrameworkResolverCache = new();
+        private static readonly ConcurrentDictionary<string, TargetFrameworkResolver> s_targetFrameworkResolverCache = new();
         private readonly ManagedCodeConventions _conventions;
         private readonly PatternSet _configStringPattern;
 
@@ -40,13 +41,7 @@ namespace Microsoft.DotNet.Build.Tasks.TargetFramework
 
         public static TargetFrameworkResolver CreateOrGet(string runtimeGraph)
         {
-            if (!s_targetFrameworkResolverCache.TryGetValue(runtimeGraph, out TargetFrameworkResolver? targetFrameworkResolver))
-            {
-                targetFrameworkResolver = new TargetFrameworkResolver(runtimeGraph);
-                s_targetFrameworkResolverCache.Add(runtimeGraph, targetFrameworkResolver);
-            }
-
-            return targetFrameworkResolver!;
+            return s_targetFrameworkResolverCache.GetOrAdd(runtimeGraph, static graph => new TargetFrameworkResolver(graph));
         }
 
         public string? GetNearest(IEnumerable<string> frameworks, NuGetFramework framework)

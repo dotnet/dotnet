@@ -13,7 +13,7 @@ using NuGet.Frameworks;
 
 namespace Microsoft.DotNet.Build.Tasks.TargetFramework
 {
-    public class ChooseBestP2PTargetFrameworkTask : BuildTask
+    public class ChooseBestP2PTargetFrameworkTask : Task
     {
         private const string NEAREST_TARGET_FRAMEWORK = "NearestTargetFramework";
         private const string TARGET_FRAMEWORKS = "TargetFrameworks";
@@ -108,7 +108,7 @@ namespace Microsoft.DotNet.Build.Tasks.TargetFramework
             return itemWithProperties;
         }
 
-        private static bool TryParseFramework(string targetFrameworkMoniker, string? targetPlatformMoniker, string errorMessage, Log logger, out NuGetFramework nugetFramework)
+        private static bool TryParseFramework(string targetFrameworkMoniker, string? targetPlatformMoniker, string errorMessage, TaskLoggingHelper logger, out NuGetFramework nugetFramework)
         {
             // Check if we have a long name.
             nugetFramework = targetFrameworkMoniker.Contains(',', System.StringComparison.Ordinal)

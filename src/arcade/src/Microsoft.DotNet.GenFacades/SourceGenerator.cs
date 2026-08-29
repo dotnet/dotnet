@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Build.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace Microsoft.DotNet.GenFacades
         private readonly IReadOnlyDictionary<string, IList<string>> _seedTypes;
         private readonly string _outputSourcePath;
         private readonly HashSet<string> _ignoreMissingTypesList = new HashSet<string>();
-        private readonly ILog _logger;
+        private readonly TaskLoggingHelper _logger;
 
         public SourceGenerator(
             IEnumerable<string> referenceTypes,
@@ -25,7 +24,7 @@ namespace Microsoft.DotNet.GenFacades
             IReadOnlyDictionary<string, string> seedTypePreferences,
             string outputSourcePath,
             string[] ignoreMissingTypesList,
-            ILog logger
+            TaskLoggingHelper logger
             )
         {
             _referenceTypes = referenceTypes;

@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\Common\Internal\BuildTask.cs" Link="src\BuildTask.cs" />
     <Compile Include="..\Microsoft.DotNet.PackageTesting\VerifyClosure.cs" Link="src/Packaging/VerifyClosure.cs" />
     <Compile Include="..\Microsoft.DotNet.PackageTesting\VerifyTypes.cs" Link="src/Packaging/VerifyTypes.cs" />
   </ItemGroup>

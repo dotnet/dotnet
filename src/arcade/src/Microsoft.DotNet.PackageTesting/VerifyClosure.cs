@@ -1,8 +1,8 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.Build.Tasks;
+using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +18,7 @@ namespace Microsoft.DotNet.PackageTesting
     /// <summary>
     /// Verifies the closure of a set of DLLs, making sure all files are present and no cycles exist
     /// </summary>
-    public class VerifyClosure : BuildTask
+    public class VerifyClosure : Task
     {
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace Microsoft.DotNet.PackageTesting
 
             if (assm.State == CheckState.Unchecked)
             {
-                Log.LogMessage(LogImportance.Low, $"Checked {assm.Path}");
+                Log.LogMessage(MessageImportance.Low, $"Checked {assm.Path}");
                 assm.State = CheckState.Checked;
             }
 

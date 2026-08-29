@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.Build.Tasks;
 using Microsoft.Cci;
 using Microsoft.Cci.Extensions;
 using Microsoft.Cci.Extensions.CSharp;
@@ -16,10 +15,11 @@ using Microsoft.Cci.Filters;
 using Microsoft.Cci.Writers;
 using Microsoft.Cci.Writers.CSharp;
 using Microsoft.Cci.Writers.Syntax;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.GenAPI
 {
-    public class GenAPITask : BuildTask
+    public class GenAPITask : Task
     {
         private const string InternalsVisibleTypeName = "System.Runtime.CompilerServices.InternalsVisibleToAttribute";
         private const string DefaultFileHeader =
@@ -300,10 +300,10 @@ namespace Microsoft.DotNet.GenAPI
         /// </summary>
         private sealed class LogTextWriter : TextWriter
         {
-            private readonly ILog _log;
+            private readonly TaskLoggingHelper _log;
             private readonly StringBuilder _line = new StringBuilder();
 
-            public LogTextWriter(ILog log) => _log = log;
+            public LogTextWriter(TaskLoggingHelper log) => _log = log;
 
             public override Encoding Encoding => Encoding.UTF8;
 
@@ -333,7 +333,7 @@ namespace Microsoft.DotNet.GenAPI
             // Generated C# is full of braces and would otherwise be treated as a composite format string.
             private void LogPendingLine()
             {
-                _log.LogMessage(LogImportance.High, _line.ToString());
+                _log.LogMessage(MessageImportance.High, _line.ToString());
                 _line.Clear();
             }
         }

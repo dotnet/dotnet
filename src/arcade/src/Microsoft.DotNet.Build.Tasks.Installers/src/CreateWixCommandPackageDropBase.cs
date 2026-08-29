@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -13,7 +14,7 @@ using System.Xml.XPath;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    public abstract class CreateWixCommandPackageDropBase : BuildTask
+    public abstract class CreateWixCommandPackageDropBase : Task
     {
         private const int _fieldsArtifactId = 0;
         private const int _fieldsArtifactPath1 = 6;
@@ -187,7 +188,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         /// <param name="nsmgr">xml namespace manager</param>
         private void ProcessWixObj(string wixObjFilePath, string packageDropOutputFolder, XmlNamespaceManager nsmgr)
         {
-            Log.LogMessage(LogImportance.Normal, $"Creating modified wixobj file '{wixObjFilePath}'...");
+            Log.LogMessage(MessageImportance.Normal, $"Creating modified wixobj file '{wixObjFilePath}'...");
 
             XDocument doc = XDocument.Load(wixObjFilePath);
             if (doc == null)
