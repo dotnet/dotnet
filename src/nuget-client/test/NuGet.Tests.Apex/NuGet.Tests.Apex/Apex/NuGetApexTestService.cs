@@ -163,7 +163,27 @@ namespace NuGet.Tests.Apex
             });
         }
 
-        public async Task<NuGetInstalledPackage> GetInstalledPackageAsync(string projectName, string packageName)
+        public bool IsPackageInstalledIncludingTransitive(string projectName, string packageName, string packageVersion)
+        {
+            return ThreadHelper.JoinableTaskFactory.Run(async () =>
+            {
+                var package = await GetInstalledPackageAsync(projectName, packageName, directDependencyOnly: false);
+                if (package == null)
+                {
+                    return false;
+                }
+
+                var expectedVersion = NuGetVersion.Parse(packageVersion);
+                var actualVersion = NuGetVersion.Parse(package.Version);
+
+                return expectedVersion == actualVersion;
+            });
+        }
+
+        public async Task<NuGetInstalledPackage> GetInstalledPackageAsync(
+            string projectName,
+            string packageName,
+            bool directDependencyOnly = true)
         {
             var solution = VisualStudioObjectProviders.GetService<SVsSolution, IVsSolution>();
             int result = solution.GetProjectOfUniqueName(projectName, out IVsHierarchy project);
@@ -190,9 +210,9 @@ namespace NuGet.Tests.Apex
                     throw new Exception("Unexpected result from GetInstalledPackagesAsync: " + packagesResult.Status);
                 }
 
-                return packagesResult.Packages
-                    .Where(p => p.DirectDependency)
-                    .FirstOrDefault(p => StringComparer.OrdinalIgnoreCase.Equals(p.Id, packageName));
+                return packagesResult.Packages.FirstOrDefault(p =>
+                    (!directDependencyOnly || p.DirectDependency)
+                    && StringComparer.OrdinalIgnoreCase.Equals(p.Id, packageName));
             }
         }
 
