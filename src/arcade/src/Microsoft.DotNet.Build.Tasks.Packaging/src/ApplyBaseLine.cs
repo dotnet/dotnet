@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     /// Dependencies with a version will be raised to the lowest baseline version that satisfies
     /// the requested version.
     /// </summary>
-    public class ApplyBaseLine : BuildTask
+    public class ApplyBaseLine : Task
     {
         /// <summary>
         /// Original dependencies

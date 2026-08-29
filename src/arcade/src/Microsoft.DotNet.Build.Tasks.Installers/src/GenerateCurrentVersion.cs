@@ -2,13 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    public sealed class GenerateCurrentVersion : BuildTask
+    public sealed class GenerateCurrentVersion : Task
     {
         /// <summary>
         /// The passed in date that will be used to generate a version. (yyyy-MM-dd format)

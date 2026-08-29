@@ -3,7 +3,6 @@
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Build.Tasks;
 using System;
 using System.IO;
 using System.Reflection.Metadata;
@@ -15,7 +14,7 @@ namespace Microsoft.DotNet.GenFacades
     /// <summary>
     /// Rewrites an Assembly's references to be version 0.0.0.0.
     /// </summary>
-    public class ClearAssemblyReferenceVersions : BuildTask
+    public class ClearAssemblyReferenceVersions : Task
     {
         /// <summary>
         /// Assembly to rewrite.

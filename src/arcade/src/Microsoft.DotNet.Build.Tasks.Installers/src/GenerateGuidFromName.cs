@@ -2,12 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using System;
 using System.Security.Cryptography;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    public class GenerateGuidFromName : BuildTask
+    public class GenerateGuidFromName : Task
     {
         [Required]
         public string Name { get; set; }

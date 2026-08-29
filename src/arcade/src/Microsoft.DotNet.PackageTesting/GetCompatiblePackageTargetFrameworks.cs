@@ -3,7 +3,6 @@
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Build.Tasks;
 using NuGet.Frameworks;
 using System;
 using System.Collections.Generic;
@@ -11,10 +10,10 @@ using System.Linq;
 
 namespace Microsoft.DotNet.PackageTesting
 {
-    public class GetCompatiblePackageTargetFrameworks : BuildTask
+    public class GetCompatiblePackageTargetFrameworks : Task
     {
-        private static List<NuGetFramework> allTargetFrameworks = new();
-        private static Dictionary<NuGetFramework, HashSet<NuGetFramework>> packageTfmMapping = new();
+        private readonly List<NuGetFramework> allTargetFrameworks = new();
+        private readonly Dictionary<NuGetFramework, HashSet<NuGetFramework>> packageTfmMapping = new();
 
         [Required]
         public string[] PackagePaths { get; set; }
@@ -56,7 +55,7 @@ namespace Microsoft.DotNet.PackageTesting
             return !Log.HasLoggedErrors;
         }
 
-        public static IEnumerable<NuGetFramework> GetTestFrameworks(Package package, string minDotnetTargetFramework)
+        public IEnumerable<NuGetFramework> GetTestFrameworks(Package package, string minDotnetTargetFramework)
         {
             List<NuGetFramework> frameworksToTest= new();
             IEnumerable<NuGetFramework> packageTargetFrameworks = package.FrameworksInPackage;
@@ -81,7 +80,7 @@ namespace Microsoft.DotNet.PackageTesting
             return frameworksToTest.Where(tfm => allTargetFrameworks.Contains(tfm)).Distinct();
         }
 
-        public static void Initialize(string targetFrameworks)
+        public void Initialize(string targetFrameworks)
         {
             // Defining the set of known frameworks that we care to test
             foreach (var tfm in targetFrameworks.Split(';'))

@@ -3,7 +3,6 @@
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Build.Tasks;
 using Microsoft.Extensions.DependencyModel;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk
 {
-    public class GeneratePlatformManifestEntriesFromFileList : BuildTask
+    public class GeneratePlatformManifestEntriesFromFileList : Task
     {
         [Required]
         public ITaskItem[] Files { get; set; }

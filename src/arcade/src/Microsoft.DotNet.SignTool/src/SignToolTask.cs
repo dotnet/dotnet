@@ -2,17 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
-using BuildTask = Microsoft.Build.Utilities.Task;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Runtime.InteropServices;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.SignTool
 {
-    public class SignToolTask : BuildTask
+    public class SignToolTask : Task
     {
         /// <summary>
         /// Perform validation but do not actually send signing request to the server.

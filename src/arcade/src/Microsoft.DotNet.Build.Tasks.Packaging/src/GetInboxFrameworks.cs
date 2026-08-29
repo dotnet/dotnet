@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetInboxFrameworks : BuildTask
+    public class GetInboxFrameworks : Task
     {
         [Required]
         public ITaskItem[] PackageIndexes
@@ -52,7 +52,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 return false;
             }
 
-            Log.LogMessage(LogImportance.Low, "Determining inbox frameworks for {0}, {1}", AssemblyName, AssemblyVersion);
+            Log.LogMessage(MessageImportance.Low, "Determining inbox frameworks for {0}, {1}", AssemblyName, AssemblyVersion);
             
             var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
 

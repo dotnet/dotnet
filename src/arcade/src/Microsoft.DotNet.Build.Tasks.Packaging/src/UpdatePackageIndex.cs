@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class UpdatePackageIndex : BuildTask
+    public class UpdatePackageIndex : Microsoft.Build.Utilities.Task
     {
         private HashSet<string> _packageIdsToInclude;
 

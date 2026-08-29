@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Newtonsoft.Json;
 using NuGet.RuntimeModel;
 using NuGet.Versioning;
@@ -12,7 +13,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GenerateRuntimeDependencies : BuildTask
+    public class GenerateRuntimeDependencies : Task
     {
         private const string c_emptyDependency = "none";
 
@@ -82,7 +83,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                     continue;
                 }
 
-                Log.LogMessage(LogImportance.Low, "Aliasing {0} -> {1}", alias, dependency.ItemSpec);
+                Log.LogMessage(MessageImportance.Low, "Aliasing {0} -> {1}", alias, dependency.ItemSpec);
                 packageAliases[alias] = dependency.ItemSpec;
             }
 
@@ -95,7 +96,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
                 if (String.IsNullOrEmpty(targetRuntimeId))
                 {
-                    Log.LogMessage(LogImportance.Low, "Skipping dependencies {0} since they don't have a TargetRuntime.", String.Join(", ", runtimeGroup.Select(d => d.ItemSpec)));
+                    Log.LogMessage(MessageImportance.Low, "Skipping dependencies {0} since they don't have a TargetRuntime.", String.Join(", ", runtimeGroup.Select(d => d.ItemSpec)));
                     continue;
                 }
 
@@ -157,12 +158,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             }
             else
             {
-                Log.LogMessage(LogImportance.Low, "Using {0} for TargetPackageAlias {1}", targetPackageId, targetPackageAlias);
+                Log.LogMessage(MessageImportance.Low, "Using {0} for TargetPackageAlias {1}", targetPackageId, targetPackageAlias);
             }
 
             if (String.IsNullOrEmpty(targetPackageId))
             {
-                Log.LogMessage(LogImportance.Low, "Dependency {0} has no parent so will assume {1}.", dependency.ItemSpec, PackageId);
+                Log.LogMessage(MessageImportance.Low, "Dependency {0} has no parent so will assume {1}.", dependency.ItemSpec, PackageId);
                 targetPackageId = PackageId;
             }
 

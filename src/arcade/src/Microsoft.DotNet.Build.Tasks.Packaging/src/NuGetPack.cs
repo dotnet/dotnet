@@ -11,10 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using NuGet.Common;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class NuGetPack : BuildTask
+    public class NuGetPack : Task
     {
         /// <summary>
         /// Target file paths to exclude when building the lib package for symbol server scenario
@@ -289,12 +290,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
                     if (!pathHasMatches.Values.Any(i => i))
                     {
-                        Log.LogMessage(LogImportance.Low, $"Nuspec {nuspecPath} does not contain symbol or source files. Not creating symbol package.");
+                        Log.LogMessage(MessageImportance.Low, $"Nuspec {nuspecPath} does not contain symbol or source files. Not creating symbol package.");
                         return;
                     }
                     foreach (var pathPair in pathHasMatches.Where(pathMatchPair => !pathMatchPair.Value))
                     {
-                        Log.LogMessage(LogImportance.Low, $"Nuspec {nuspecPath} does not contain any files matching {pathPair.Key}. Not creating symbol package.");
+                        Log.LogMessage(MessageImportance.Low, $"Nuspec {nuspecPath} does not contain any files matching {pathPair.Key}. Not creating symbol package.");
                         return;
                     }
                 }
@@ -346,7 +347,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             var propertyInfo = type.GetProperty(deterministicTimestampPropertyName, BindingFlags.Public | BindingFlags.Instance);
             if (propertyInfo == null)
             {
-                Log.LogMessage(LogImportance.Low, $"{type.FullName} does not contain property {deterministicTimestampPropertyName}. Not setting {nameof(deterministicTimestamp)}.");
+                Log.LogMessage(MessageImportance.Low, $"{type.FullName} does not contain property {deterministicTimestampPropertyName}. Not setting {nameof(deterministicTimestamp)}.");
                 return;
             }
 

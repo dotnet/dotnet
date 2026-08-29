@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NuGet.Frameworks;
@@ -49,7 +48,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 var testAsset = testAssetByName.Value;
 
                 var logMissingInbox = permittedInbox.Contains(name) ? 
-                    new Action<string>(s => Log.LogMessage(LogImportance.Low, $"Suppressed: {s}")) :
+                    new Action<string>(s => Log.LogMessage(MessageImportance.Low, $"Suppressed: {s}")) :
                     new Action<string>(s => Log.LogError(s));
 
                 PackageInfo packageInfo;
@@ -73,7 +72,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             foreach(var missingInboxAssembly in missingInboxAssemblies)
             {
                 var logMissingPackage = permittedMissingInbox.Contains(missingInboxAssembly.Key) ?
-                    new Action<string>(s => Log.LogMessage(LogImportance.Low, $"Suppressed: {s}")) :
+                    new Action<string>(s => Log.LogMessage(MessageImportance.Low, $"Suppressed: {s}")) :
                     new Action<string>(s => Log.LogError(s));
 
                 logMissingPackage($"File {missingInboxAssembly.Key}.dll is marked as inbox for framework {Framework} but was missing from framework package {_report.Id}/{_report.Version}.  Either add the file or update {nameof(PackageInfo.InboxOn)} entry in {string.Join(";", _index.IndexSources)}.   This may be suppressed with {nameof(Suppression.PermitMissingInbox)} suppression");

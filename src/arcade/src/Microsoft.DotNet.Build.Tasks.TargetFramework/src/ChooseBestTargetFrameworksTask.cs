@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.TargetFramework
 {
-    public class ChooseBestTargetFrameworksTask : BuildTask
+    public class ChooseBestTargetFrameworksTask : Task
     {
         [Required]
         public ITaskItem[]? BuildTargetFrameworks { get; set; }
