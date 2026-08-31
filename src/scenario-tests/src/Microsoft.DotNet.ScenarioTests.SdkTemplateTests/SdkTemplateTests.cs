@@ -22,7 +22,6 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     
     [Theory]
     [MemberData(nameof(GetLanguages))]
-    [Trait("SkipIfBuild", "SourceOnly")] // Disabled for source build until SDK templates are updated to .NET 11.0 - https://github.com/dotnet/source-build/issues/5422
     public void VerifyConsoleTemplateComplex(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -232,7 +231,6 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Fact]
     [Trait("SkipIfBuild", "Portable")] // Portable builds don't bundle an AOT compiler.
     [Trait("SkipIfBuild", "Mono")]     // Mono builds don't bundle an AOT compiler.
-    [Trait("SkipIfBuild", "SourceOnly")] // Disabled for source build until SDK templates are updated to .NET 11.0 - https://github.com/dotnet/source-build/issues/5422
     public void VerifyWebTemplatePublishBundledAot()
     {
         var newTest = new SdkTemplateTest(
@@ -318,7 +316,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
         newTest.Execute(_sdkHelper, _scenarioTestInput.TestRoot, GetDupeArray);
     }*/
 
-    private static string[] GetFrameworks = { "net11.0", "net10.0", "net9.0", "net8.0", "net7.0", "net6.0" };
+    private static string[] GetFrameworks = { "net11.0", "net10.0", "net9.0", "net8.0" };
     
     private static IEnumerable<object[]> GetLanguages() => Enum.GetValues<DotNetLanguage>().Select(lang => new object[] { lang });
 
