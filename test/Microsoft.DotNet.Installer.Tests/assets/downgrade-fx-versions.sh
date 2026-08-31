@@ -32,7 +32,12 @@ cp "$PROPS_FILE" "${PROPS_FILE}${BACKUP_SUFFIX}"
 # Function to find .NET versions with servicing releases
 find_dotnet_versions() {
     grep -oP 'LatestRuntimeFrameworkVersion="\K\d+\.\d+\.\d+(?=")' "$PROPS_FILE" |
-        awk -F. '$3 >= 2 { print $1 "." $2 }' |
+        while IFS=. read -r major minor patch; do
+            # Only supported versions with at least two servicing releases can be downgraded.
+            if [ "$major" -ge 8 ] && [ "$patch" -ge 2 ]; then
+                echo "${major}.${minor}"
+            fi
+        done |
         sort -Vru
 }
 
