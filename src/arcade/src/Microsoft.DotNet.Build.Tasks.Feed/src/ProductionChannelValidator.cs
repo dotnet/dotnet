@@ -7,10 +7,12 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Azure.Core;
+using Microsoft.DotNet.ArcadeAzureIntegration;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using Microsoft.Extensions.Logging;
 
@@ -369,23 +371,30 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
     // Implementation classes
     public class AzureDevOpsService : IProductionChannelValidatorBuildInfoService
     {
+        private static readonly TokenRequestContext s_azureDevOpsTokenRequestContext =
+            new TokenRequestContext(new[] { "499b84ac-1321-427f-aa17-267ca6975798/.default" });
+
         private readonly HttpClient _httpClient;
         private readonly ILogger<AzureDevOpsService> _logger;
         private readonly string _token;
+        private readonly TokenCredential _credential;
 
-        public AzureDevOpsService(HttpClient httpClient, ILogger<AzureDevOpsService> logger, string token = null)
+        public AzureDevOpsService(
+            HttpClient httpClient,
+            ILogger<AzureDevOpsService> logger,
+            string token = null,
+            string managedIdentityClientId = null)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _token = token;
-            
-            // Configure authentication for Azure DevOps API using Basic authentication
-            if (!string.IsNullOrEmpty(_token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                    "Basic",
-                    Convert.ToBase64String(Encoding.ASCII.GetBytes($":{_token}")));
-            }
+            _credential = string.IsNullOrEmpty(_token)
+                ? new DefaultIdentityTokenCredential(
+                    new DefaultIdentityTokenCredentialOptions
+                    {
+                        ManagedIdentityClientId = managedIdentityClientId
+                    })
+                : null;
         }
 
         public async Task<AzureDevOpsBuildInfo> GetBuildInfoAsync(string account, string project, int buildId)
@@ -395,7 +404,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 var url = $"https://dev.azure.com/{account}/{project}/_apis/build/builds/{buildId}?api-version=6.0";
                 _logger.LogDebug($"Fetching build info from: {url}");
 
-                var response = await _httpClient.GetAsync(url);
+                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Headers.Authorization = await GetAuthorizationHeaderAsync();
+
+                var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
@@ -418,6 +430,19 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
         }
 
+        private async Task<AuthenticationHeaderValue> GetAuthorizationHeaderAsync()
+        {
+            if (!string.IsNullOrEmpty(_token))
+            {
+                return GeneralUtils.CreateAzdoAuthHeader(_token);
+            }
+
+            AccessToken accessToken = await _credential.GetTokenAsync(
+                s_azureDevOpsTokenRequestContext,
+                CancellationToken.None);
+            return new AuthenticationHeaderValue("Bearer", accessToken.Token);
+        }
+
         private class AzureDevOpsBuildInfoResponse
         {
             public AzureDevOpsProject Project { get; set; }
@@ -436,7 +461,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _token = token;
+            _token = string.IsNullOrEmpty(token)
+                ? Environment.GetEnvironmentVariable("SYSTEM_ACCESSTOKEN")
+                : token;
         }
 
         public async Task<BranchClassificationResponse> GetBranchClassificationsAsync(string organizationName, string projectId, string repositoryId)
