@@ -1,4 +1,4 @@
-### Steps to process multiple per-repo Build.binlog files into SLN format and upload
+### Steps to process multiple per-repo Build.binlog files into CompLog format and upload
 ### as source index stage 1 data for https://github.com/dotnet/source-indexer.
 ###
 ### Unlike eng/common/core-templates/steps/source-index-stage1-publish.yml which
@@ -22,8 +22,9 @@ parameters:
   includeRepos: ''
 
   sourceIndexUploadPackageVersion: 2.0.0-20260521.2
-  sourceIndexProcessBinlogPackageVersion: 1.0.1-20260521.2
+  sourceIndexComplogPackageVersion: '*'
   sourceIndexPackageSource: https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+  sourceIndexPublicPackageSource: https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json
   sourceIndexBaseDir: $(Agent.TempDirectory)/.source-index
 
 steps:
@@ -41,7 +42,7 @@ steps:
     $dotnet = Join-Path $baseDir 'dotnet' 'dotnet'
     if ($IsWindows) { $dotnet += '.exe' }
     $toolPath = Join-Path $baseDir 'tools'
-    & $dotnet tool install BinLogToSln --version ${{ parameters.sourceIndexProcessBinlogPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
+    & $dotnet tool install complog --version "${{ parameters.sourceIndexComplogPackageVersion }}" --source ${{ parameters.sourceIndexPublicPackageSource }} --tool-path $toolPath
     & $dotnet tool install UploadIndexStage1 --version ${{ parameters.sourceIndexUploadPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
   displayName: "Source Index: Install Tools"
   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
@@ -60,8 +61,14 @@ steps:
 
     New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
-    $binLogToSln = Join-Path $toolPath 'BinLogToSln'
-    if ($IsWindows) { $binLogToSln += '.exe' }
+    $complog = Join-Path $toolPath 'complog'
+    if ($IsWindows) { $complog += '.exe' }
+
+    $commitHash = & git -C $sourcesPath rev-parse HEAD
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to determine the source commit hash (exit code $LASTEXITCODE)."
+    }
+    Set-Content -Path (Join-Path $outputDir 'hash') -Value $commitHash
 
     # Only look for Build.binlog in immediate subdirectories (per-repo logs).
     # This avoids picking up the VMR orchestrator log at artifacts/log/Release/Build.binlog.
@@ -84,27 +91,28 @@ steps:
 
       Write-Host "Processing binlog for repo: $repoName"
       try {
-        & $binLogToSln -i $binlog.FullName -r $sourcesPath -n $repoName -o $outputDir
+        $complogPath = Join-Path $outputDir "$repoName.complog"
+        & $complog create $binlog.FullName -o $complogPath
         if ($LASTEXITCODE -ne 0) {
-          Write-Host "##vso[task.logissue type=warning]BinLogToSln failed for $repoName (exit code $LASTEXITCODE), continuing..."
+          Write-Host "##vso[task.logissue type=warning]complog failed for $repoName (exit code $LASTEXITCODE), continuing..."
           $global:LASTEXITCODE = 0
         }
       } catch {
-        Write-Host "##vso[task.logissue type=warning]BinLogToSln threw an exception for ${repoName}: $_"
+        Write-Host "##vso[task.logissue type=warning]complog threw an exception for ${repoName}: $_"
       }
     }
 
     # Verify output
     if (Test-Path $outputDir) {
-      $files = Get-ChildItem -Path $outputDir -Recurse -File
-      if ($files.Count -gt 0) {
-        Write-Host "Source index stage 1 output produced successfully. $($files.Count) files."
-        $files | Select-Object -First 20 | ForEach-Object { Write-Host $_.FullName }
+      $complogs = @(Get-ChildItem -Path $outputDir -Recurse -Filter '*.complog' -File)
+      if ($complogs.Count -gt 0) {
+        Write-Host "Source index stage 1 output produced successfully. $($complogs.Count) complogs."
+        $complogs | Select-Object -First 20 | ForEach-Object { Write-Host $_.FullName }
       } else {
         Write-Host "##vso[task.logissue type=warning]No source index stage 1 output was produced."
       }
     }
-  displayName: "Source Index: Process Binlogs into indexable SLN files"
+  displayName: "Source Index: Process Binlogs into Complogs"
   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
 
 - task: AzureCLI@2
@@ -122,7 +130,7 @@ steps:
       $uploadTool = Join-Path $toolPath 'UploadIndexStage1'
       if ($IsWindows) { $uploadTool += '.exe' }
 
-      if ((Test-Path $outputDir) -and (Get-ChildItem -Path $outputDir -Recurse -File).Count -gt 0) {
+      if ((Test-Path $outputDir) -and @(Get-ChildItem -Path $outputDir -Recurse -Filter '*.complog' -File).Count -gt 0) {
         & $uploadTool -i $outputDir -n "${{ parameters.sourceIndexName }}" -s netsourceindexstage1 -b stage1
       } else {
         Write-Host "No source index output to upload."
