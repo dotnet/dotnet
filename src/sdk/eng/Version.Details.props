@@ -36,7 +36,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftBuildPackageVersion>18.9.6</MicrosoftBuildPackageVersion>
     <MicrosoftBuildLocalizationPackageVersion>18.9.6-servicing-26379-103</MicrosoftBuildLocalizationPackageVersion>
     <MicrosoftBuildNuGetSdkResolverPackageVersion>7.9.0-rc.38003</MicrosoftBuildNuGetSdkResolverPackageVersion>
-    <MicrosoftBuildTasksGitPackageVersion>10.0.111</MicrosoftBuildTasksGitPackageVersion>
+    <MicrosoftBuildTasksGitPackageVersion>10.0.400</MicrosoftBuildTasksGitPackageVersion>
     <MicrosoftCodeAnalysisPackageVersion>5.9.0-1.26379.103</MicrosoftCodeAnalysisPackageVersion>
     <MicrosoftCodeAnalysisBuildClientPackageVersion>5.9.0-1.26379.103</MicrosoftCodeAnalysisBuildClientPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>5.9.0-1.26379.103</MicrosoftCodeAnalysisCSharpPackageVersion>
