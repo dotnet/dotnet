@@ -61,7 +61,7 @@ namespace Microsoft.DotNet.MacOsPkg.Core
                 // so we repack the component packages to a temporary file and then rename the file with the .pkg extension.
                 // Repacking is needed so that the signtool can properly identify and sign the nested component packages.
                 string packageName = Path.Combine(dstPath, package.Value.Substring(1));
-                string tempDest = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+                string tempDest = Path.Combine(dstPath, Path.GetRandomFileName());
                 FlattenComponentPackage(packageName, tempDest);
 
                 Directory.Delete(packageName, true);
@@ -180,7 +180,8 @@ namespace Microsoft.DotNet.MacOsPkg.Core
         {
             string payloadFilePath = GetPayloadPath(dstPath, isDirectory: false);
 
-            string tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            // Payloads can contain executable app bundles; keep extraction within the caller's workspace.
+            string tempDir = Path.Combine(dstPath, Path.GetRandomFileName());
             Directory.CreateDirectory(tempDir);
 
             ExecuteHelper.Run("cat", $"{payloadFilePath} | gzip -d | cpio -id", tempDir);
