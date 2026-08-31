@@ -256,7 +256,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             {
                 var httpClient = provider.GetRequiredService<HttpClient>();
                 var logger = new MSBuildLogger<AzureDevOpsService>(provider.GetRequiredService<TaskLoggingHelper>());
-                return new AzureDevOpsService(httpClient, logger, AzdoApiToken);
+                return new AzureDevOpsService(httpClient, logger, AzdoApiToken, ManagedIdentityClientId);
             });
             
             // Register BranchClassificationService with proper authentication
