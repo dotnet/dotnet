@@ -5,6 +5,7 @@
     <IncludeInVSIX>true</IncludeInVSIX>
     <RootNamespace>NuGetVSExtension</RootNamespace>
     <VSSDKBuildToolsAutoSetup>true</VSSDKBuildToolsAutoSetup>
+    <UseCodebase>false</UseCodebase>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <CreateVsixContainer>false</CreateVsixContainer>
