@@ -67,6 +67,26 @@
         Crossgen2PackVersion="$(MicrosoftNETCoreAppRuntimePackageVersion)" />
   </ItemGroup>
 
+  <!--
+    During .NET major version branding, tool projects still target the previous NetCurrent (e.g. net11.0)
+    while the runtime pack has already been branded to the new major (e.g. 12.0.0-ci). In that state the
+    version-gated ItemGroup above is skipped (MicrosoftNETCoreAppRefPackageVersion no longer starts with
+    the project's target framework version), so the source-build distro RID is never added to the
+    NETCore.App runtime pack. That breaks NativeAOT publish (e.g. dotnet-aot) with NETSDK1083 because the
+    distro RID is neither an exact pack RID match nor present in the portable RID graph. Add it here for
+    the skew case so an exact RID match remains possible. -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'
+                          and '$(DotNetBuildSourceOnly)' == 'true'
+                          and '$(TargetRid)' != ''
+                          and !$(MicrosoftNETCoreAppRefPackageVersion.StartsWith('$(_TargetFrameworkVersionWithoutV)'))">
+    <KnownFrameworkReference Update="Microsoft.NETCore.App">
+      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
+    </KnownFrameworkReference>
+    <KnownILCompilerPack Update="Microsoft.DotNet.ILCompiler">
+      <ILCompilerRuntimeIdentifiers>%(ILCompilerRuntimeIdentifiers);$(TargetRid)</ILCompilerRuntimeIdentifiers>
+    </KnownILCompilerPack>
+  </ItemGroup>
+
   <ItemGroup Condition="$(MicrosoftAspNetCoreAppRefPackageVersion.StartsWith('$(_TargetFrameworkVersionWithoutV)'))">
     <KnownFrameworkReference Update="Microsoft.AspNetCore.App">
       <LatestRuntimeFrameworkVersion>$(MicrosoftAspNetCoreAppRefPackageVersion)</LatestRuntimeFrameworkVersion>
