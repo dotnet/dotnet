@@ -25,8 +25,17 @@ Environment:
 Outputs (in OUT_DIR):
   link-check-results.md   Full human-readable report of every link tested.
   broken-links.md         Only the broken links, one per line, with the source file.
+  broken-links.txt        The broken set as sorted, unique "source_file|url" lines.
   all-links.txt           Raw "source_file|url" pairs (intermediate).
   unique-links.txt        Sorted/deduped "source_file|url" pairs (intermediate).
+
+broken-links.txt is the machine-readable fingerprint consumed by the
+`md-link-check-probe` workflow, which compares it against the accepted set in
+eng/agentic-workflows/known-broken-md-links.txt. It deliberately carries only the
+source file and the link as written — no resolved paths, counts, or wording — so the
+same broken link produces the same line on every platform and across report changes.
+It is always written, including on the early-exit paths, so the probe never has to
+guess whether a missing file means "clean" or "the scan did not run".
 
 Exit code is always 0 (a broken link is a reported result, not a script failure).
 Read broken_count / working_count from the printed summary or count broken-links.md.
@@ -68,6 +77,23 @@ def write_github_output(broken_count, working_count):
         with open(github_output, "a", encoding="utf-8") as fh:
             fh.write("broken_count={}\n".format(broken_count))
             fh.write("working_count={}\n".format(working_count))
+
+
+def write_broken_set(path, entries):
+    """Write the machine-readable broken set: sorted, unique `source_file|url` lines.
+
+    Source paths are emitted with forward slashes so a Windows run and the Linux
+    runner produce the same fingerprint; only the path side is normalized, since the
+    url is reported exactly as it was written in the markdown. newline="\\n" keeps the
+    bytes identical too, so the checked-in fingerprint never differs only by line ending.
+    """
+    normalized = set()
+    for entry in entries:
+        source_file, sep, url = entry.partition("|")
+        normalized.add(source_file.replace("\\", "/") + sep + url)
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        for entry in sorted(normalized):
+            fh.write("{}\n".format(entry))
 
 
 def read_lines(path):
@@ -160,6 +186,7 @@ def main(argv):
 
     results_path = os.path.join(out_dir, "link-check-results.md")
     broken_path = os.path.join(out_dir, "broken-links.md")
+    broken_set_path = os.path.join(out_dir, "broken-links.txt")
     all_links_path = os.path.join(out_dir, "all-links.txt")
     unique_links_path = os.path.join(out_dir, "unique-links.txt")
 
@@ -173,6 +200,7 @@ def main(argv):
 
     results = ["# Link Check Results", ""]
     broken = ["# Broken Links", ""]
+    broken_entries = []
 
     print("Finding all markdown files...")
 
@@ -188,6 +216,7 @@ def main(argv):
             fh.write("\n".join(results) + "\n")
         with open(broken_path, "w", encoding="utf-8") as fh:
             fh.write("\n".join(broken) + "\n")
+        write_broken_set(broken_set_path, broken_entries)
         write_github_output(0, 0)
         return 0
 
@@ -214,6 +243,7 @@ def main(argv):
             fh.write("\n".join(results) + "\n")
         with open(broken_path, "w", encoding="utf-8") as fh:
             fh.write("\n".join(broken) + "\n")
+        write_broken_set(broken_set_path, broken_entries)
         write_github_output(0, 0)
         return 0
 
@@ -235,6 +265,7 @@ def main(argv):
                 msg = "\u274c {} (anchor not found in {})".format(url, source_file)
                 results.append(msg)
                 broken.append(msg)
+                broken_entries.append(entry)
         elif _SCHEME_RE.match(url):
             # Skip absolute URLs (http, https, mailto, etc.).
             continue
@@ -258,6 +289,7 @@ def main(argv):
                 msg = "\u274c {} (file not found: {}) in {}".format(url, target_path, source_file)
                 results.append(msg)
                 broken.append(msg)
+                broken_entries.append(entry)
             elif anchor != "" and rel_path.lower().endswith(".md"):
                 if check_anchor(target_path, anchor):
                     working_count += 1
@@ -269,6 +301,7 @@ def main(argv):
                     )
                     results.append(msg)
                     broken.append(msg)
+                    broken_entries.append(entry)
             else:
                 working_count += 1
                 results.append("\u2705 {} (file exists: {})".format(url, target_path))
@@ -282,6 +315,7 @@ def main(argv):
         fh.write("\n".join(results) + "\n")
     with open(broken_path, "w", encoding="utf-8") as fh:
         fh.write("\n".join(broken) + "\n")
+    write_broken_set(broken_set_path, broken_entries)
 
     write_github_output(broken_count, working_count)
 

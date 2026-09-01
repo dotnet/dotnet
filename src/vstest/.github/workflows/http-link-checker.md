@@ -3,7 +3,7 @@ description: Automated link checker that finds and fixes broken links in documen
 on:
   # Dispatched by .github/workflows/http-link-check-probe.yml, which runs the same curl
   # loop weekly and only wakes this workflow when the set of broken links differs from
-  # .github/workflows/scripts/known-broken-links.txt.
+  # eng/agentic-workflows/known-broken-links.txt.
   workflow_dispatch:
 permissions:
   actions: read
@@ -145,7 +145,7 @@ After processing the links, run the checker again and update the accepted finger
 
 ```bash
 .github/workflows/scripts/check-http-links.sh
-cp /tmp/gh-aw/agent/broken-links.txt .github/workflows/scripts/known-broken-links.txt
+cp /tmp/gh-aw/agent/broken-links.txt eng/agentic-workflows/known-broken-links.txt
 ```
 
 This fingerprint update records both fixed links and reviewed unfixable links, so the weekly probe does not dispatch the same work again.
@@ -192,4 +192,4 @@ This fingerprint update records both fixed links and reviewed unfixable links, s
 - Dispatched by the `http-link-check-probe` workflow when the set of broken links changes
 - Link test results are available at `/tmp/gh-aw/agent/link-check-results.md`
 - The broken links alone, sorted and one per line, are at `/tmp/gh-aw/agent/broken-links.txt`
-- The set accepted at the last review is checked in at `.github/workflows/scripts/known-broken-links.txt`
+- The set accepted at the last review is checked in at `eng/agentic-workflows/known-broken-links.txt`
