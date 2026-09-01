@@ -8,7 +8,7 @@
       - A special case is when the SDK is non-portable and RuntimeIdentifier matches its non-portable NETCoreSdkRuntimeIdentifier.
         Then we use the host package for that non-portable rid, and determine the target OS based on NETCoreSdkPortableRuntimeIdentifier.
       - When .NET itself gets built, the RuntimeIdentifier may be a non-portable rid that does not match the SDKs non-portable rid.
-        In that case, the ILHostRuntimeIdentifier and ILTargetOS may be used to override the above logic.
+        In that case, the IlcHostRuntimeIdentifier and IlcTargetOS may be used to override the above logic.
     -->
 
     <!-- Define the name of the runtime specific compiler package to import -->
@@ -31,11 +31,11 @@
 
     <_hostPackageName>runtime.$(_hostOS)-$(_hostArchitecture).Microsoft.DotNet.ILCompiler</_hostPackageName>
     <_hostPackageName Condition="'$(_targetsNonPortableSdkRid)' == 'true'">runtime.$(RuntimeIdentifier).Microsoft.DotNet.ILCompiler</_hostPackageName>
-    <_hostPackageName Condition="'$(ILHostRuntimeIdentifier)' != ''">runtime.$(ILHostRuntimeIdentifier).Microsoft.DotNet.ILCompiler</_hostPackageName>
+    <_hostPackageName Condition="'$(IlcHostRuntimeIdentifier)' != ''">runtime.$(IlcHostRuntimeIdentifier).Microsoft.DotNet.ILCompiler</_hostPackageName>
 
     <!-- Treat linux-musl and linux-bionic etc. as linux -->
     <_targetOS>$(_originalTargetOS)</_targetOS>
-    <_targetOS Condition="'$(ILTargetOS)' != ''">$(ILTargetOS)</_targetOS>
+    <_targetOS Condition="'$(IlcTargetOS)' != ''">$(IlcTargetOS)</_targetOS>
     <_linuxToken>linux-</_linuxToken>
     <_linuxLibcFlavor Condition="$(_targetOS.StartsWith($(_linuxToken)))">$(_targetOS.SubString($(_linuxToken.Length)))</_linuxLibcFlavor>
     <_linuxLibcFlavor Condition="'$(_targetOS)' == 'android'">bionic</_linuxLibcFlavor>

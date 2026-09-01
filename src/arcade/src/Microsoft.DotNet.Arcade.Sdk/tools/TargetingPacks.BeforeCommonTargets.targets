@@ -109,12 +109,12 @@
     one for the target RID ($(TargetRid)), and one for the host SDK RID ($(NETCoreSdkRuntimeIdentifier)).
     Both need to be known for pack resolution to succeed.
 
-    ILHostRuntimeIdentifier/ILTargetOS are set to $(NETCoreSdkRuntimeIdentifier)/$(TargetOS).
+    IlcHostRuntimeIdentifier/IlcTargetOS are set to $(NETCoreSdkRuntimeIdentifier)/$(TargetOS).
     This is needed because the logic in SingleEntry.targets does not work when using a non-portable SDK to build an SDK with a different non-portable RID.
   -->
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <ILHostRuntimeIdentifier Condition="'$(ILHostRuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</ILHostRuntimeIdentifier>
-    <ILTargetOS Condition="'$(ILTargetOS)' == ''">$(TargetOS)</ILTargetOS>
+    <IlcHostRuntimeIdentifier Condition="'$(IlcHostRuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</IlcHostRuntimeIdentifier>
+    <IlcTargetOS Condition="'$(IlcTargetOS)' == ''">$(TargetOS)</IlcTargetOS>
   </PropertyGroup>
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <KnownRuntimePack Update="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
