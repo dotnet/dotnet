@@ -6,7 +6,7 @@
 #   - the `http-link-checker` agentic workflow (.github/workflows/http-link-checker.md).
 #
 # The probe workflow runs it on a schedule and only wakes the agent when the set of broken
-# links differs from .github/workflows/scripts/known-broken-links.txt. Keeping one copy of
+# links differs from eng/agentic-workflows/known-broken-links.txt. Keeping one copy of
 # the loop is what stops the gate and the agent disagreeing about what "broken" means.
 #
 # Links are probed with GET (`curl -L -s -o /dev/null`), never HEAD. Several hosts we link

@@ -1,7 +1,10 @@
 ---
-description: Weekly automated link checker that finds and fixes broken links in documentation files
+description: Automated link checker that finds and fixes broken relative links in documentation files
 on:
-  schedule: weekly on Friday
+  # Dispatched by .github/workflows/md-link-check-probe.yml, which runs the same script
+  # weekly and only wakes this workflow when the set of broken links differs from
+  # eng/agentic-workflows/known-broken-md-links.txt.
+  workflow_dispatch:
 permissions:
   actions: read
   attestations: read
@@ -32,6 +35,8 @@ steps:
 
   - name: Check and test all documentation links
     id: link-check
+    env:
+      OUT_DIR: /tmp/gh-aw/agent
     run: python3 .github/workflows/scripts/check-md-links.py
     shell: bash
 
@@ -44,22 +49,24 @@ tools:
 
 safe-outputs:
   create-pull-request:
-    title-prefix: "[link-checker] "
+    title-prefix: "[md-link-checker] "
     labels: ["Area: Documentation", "agentic-workflows"]
     draft: false
     protected-files: fallback-to-issue
     if-no-changes: "warn"
   create-issue:
     max: 1
-    title-prefix: "[link-checker] "
+    title-prefix: "[md-link-checker] "
     labels: ["Area: Documentation", "agentic-workflows"]
   noop:
     report-as-issue: false
 ---
 
-# Weekly Relative Link Checker & Fixer
+# Relative Link Checker & Fixer
 
 You are an automated link checker and fixer agent. Your job is to fix broken links between documentation files in this repository. Link extraction and testing are done by the shared script `.github/workflows/scripts/check-md-links.py`, which already ran in the previous step and wrote the results. The rules for *fixing* a broken link — scope, anchor matching, and how to repair it — live once in the `@md-link-checker` agent (`.github/agents/md-link-checker.md`), which this workflow delegates to rather than restating them. In short: only links to other `.md` files and in-file/cross-file heading anchors are in scope, and absolute URLs (http/https/mailto/etc.) are intentionally ignored.
+
+You only run when the deterministic probe has already established that the set of broken links changed since the last accepted state, so there is something new to look at.
 
 ## Your Mission
 
@@ -123,27 +130,44 @@ After processing all broken links:
 
 ## Step 5: Create Pull Request or Noop
 
+After processing all broken links, rerun the checker and update the accepted fingerprint:
+
+```bash
+OUT_DIR=/tmp/gh-aw/agent python3 .github/workflows/scripts/check-md-links.py
+KNOWN=eng/agentic-workflows/known-broken-md-links.txt
+{ grep '^#' "$KNOWN"; cat /tmp/gh-aw/agent/broken-links.txt; } > "$KNOWN.new"
+mv "$KNOWN.new" "$KNOWN"
+```
+
+The `grep '^#'` keeps the explanatory header at the top of the file; everything below it is
+regenerated from the fresh scan. Never hand-edit the entries — a hand-written line that does
+not match the script's output byte for byte would make the probe dispatch you again every week.
+
+This fingerprint update records both the links you fixed and the ones you reviewed and found
+unfixable, so the weekly probe does not dispatch the same work again.
+
 Based on your work:
 
 **If you fixed any links:**
-- Use the `create-pull-request` safe output to create a PR with your fixes
+- Use the `create-pull-request` safe output to create a PR with your fixes and the updated fingerprint
 - In the PR body, include:
   - A summary of how many links were fixed
   - A list of the broken links and their replacements
-  - Any links that were added to the unfixable list
+  - Any links that were added to the unfixable list, and why they could not be fixed
 - Title format: "Fix broken documentation links"
 
 **If you could not fix anchors**
+- Still commit the fingerprint update, so the reviewed-and-unfixable links stop waking you weekly
 - Use the `create-issue` safe output to create an issue with broken links
 - In the issue description, include:
    - A summary of how many links could not be fixed
    - A list of the broken anchors
 - Title format: "Invalid markdown links"
 
-**If no links needed fixing:**
+**If nothing changed, including the fingerprint:**
 - Use the `noop` safe output with a clear message like:
   - "All documentation links are working correctly" (if no broken links found)
-  - "All broken links are in the unfixable list, no new fixes available" (if broken links exist but can't be fixed)
+  - "The broken-link fingerprint is already current" (if the broken set matches what was already accepted)
 
 ## Important Guidelines
 
@@ -174,5 +198,7 @@ discipline on top:
 ## Context
 
 - Repository: `${{ github.repository }}`
-- Run weekly on Fridays to catch broken links early
+- Dispatched by the `md-link-check-probe` workflow when the set of broken links changes
 - Link test results are available at `/tmp/gh-aw/agent/link-check-results.md`
+- The broken links alone, sorted `source_file|link` and one per line, are at `/tmp/gh-aw/agent/broken-links.txt`
+- The set accepted at the last review is checked in at `eng/agentic-workflows/known-broken-md-links.txt`
