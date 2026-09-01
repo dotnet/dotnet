@@ -24,6 +24,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -48,6 +49,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -58,6 +60,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -78,6 +81,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -95,6 +99,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -137,6 +142,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -186,6 +192,10 @@ namespace Microsoft.DotNet.Helix.Client
             if (!string.IsNullOrEmpty(name))
             {
                 _url.AppendQuery("Name", Client.Serialize(name));
+            }
+            if (properties != default(IImmutableDictionary<string, string>))
+            {
+                _url.AppendQuery("Properties", properties);
             }
             if (!string.IsNullOrEmpty(workitem))
             {
@@ -466,6 +476,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -505,6 +516,10 @@ namespace Microsoft.DotNet.Helix.Client
             if (!string.IsNullOrEmpty(name))
             {
                 _url.AppendQuery("Name", Client.Serialize(name));
+            }
+            if (properties != default(IImmutableDictionary<string, string>))
+            {
+                _url.AppendQuery("Properties", Client.Serialize(properties));
             }
             if (groupBy != default(IImmutableList<string>))
             {
@@ -577,6 +592,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -616,6 +632,10 @@ namespace Microsoft.DotNet.Helix.Client
             if (!string.IsNullOrEmpty(name))
             {
                 _url.AppendQuery("Name", Client.Serialize(name));
+            }
+            if (properties != default(IImmutableDictionary<string, string>))
+            {
+                _url.AppendQuery("Properties", Client.Serialize(properties));
             }
             if (groupBy != default(IImmutableList<string>))
             {
@@ -825,6 +845,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -859,6 +880,10 @@ namespace Microsoft.DotNet.Helix.Client
             if (!string.IsNullOrEmpty(name))
             {
                 _url.AppendQuery("Name", Client.Serialize(name));
+            }
+            if (properties != default(IImmutableDictionary<string, string>))
+            {
+                _url.AppendQuery("Properties", Client.Serialize(properties));
             }
             _url.AppendQuery("api-version", Client.Serialize(apiVersion));
 
@@ -997,6 +1022,7 @@ namespace Microsoft.DotNet.Helix.Client
             string build = default,
             string creator = default,
             string name = default,
+            IImmutableDictionary<string, string> properties = default,
             string source = default,
             string type = default,
             CancellationToken cancellationToken = default
@@ -1036,6 +1062,10 @@ namespace Microsoft.DotNet.Helix.Client
             if (!string.IsNullOrEmpty(name))
             {
                 _url.AppendQuery("Name", Client.Serialize(name));
+            }
+            if (properties != default(IImmutableDictionary<string, string>))
+            {
+                _url.AppendQuery("Properties", Client.Serialize(properties));
             }
             if (groupBy != default(IImmutableList<string>))
             {

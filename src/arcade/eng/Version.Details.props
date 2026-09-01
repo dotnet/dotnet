@@ -35,6 +35,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <MicrosoftExtensionsHttpPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsHttpPackageVersion>
+    <MicrosoftExtensionsLoggingAbstractionsPackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
     <MicrosoftExtensionsLoggingConsolePackageVersion>9.0.0-rc.2.24473.5</MicrosoftExtensionsLoggingConsolePackageVersion>
     <SystemCollectionsImmutablePackageVersion>9.0.0-rc.2.24473.5</SystemCollectionsImmutablePackageVersion>
     <SystemFormatsAsn1PackageVersion>9.0.0-rc.2.24473.5</SystemFormatsAsn1PackageVersion>
@@ -93,6 +94,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftExtensionsFileProvidersAbstractionsVersion>$(MicrosoftExtensionsFileProvidersAbstractionsPackageVersion)</MicrosoftExtensionsFileProvidersAbstractionsVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>$(MicrosoftExtensionsFileSystemGlobbingPackageVersion)</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftExtensionsHttpVersion>$(MicrosoftExtensionsHttpPackageVersion)</MicrosoftExtensionsHttpVersion>
+    <MicrosoftExtensionsLoggingAbstractionsVersion>$(MicrosoftExtensionsLoggingAbstractionsPackageVersion)</MicrosoftExtensionsLoggingAbstractionsVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>$(MicrosoftExtensionsLoggingConsolePackageVersion)</MicrosoftExtensionsLoggingConsoleVersion>
     <SystemCollectionsImmutableVersion>$(SystemCollectionsImmutablePackageVersion)</SystemCollectionsImmutableVersion>
     <SystemFormatsAsn1Version>$(SystemFormatsAsn1PackageVersion)</SystemFormatsAsn1Version>
