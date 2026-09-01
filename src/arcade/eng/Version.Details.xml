@@ -173,5 +173,9 @@
       <Uri>https://github.com/JamesNK/Newtonsoft.Json</Uri>
       <Sha>0a2e291c0d9c0c7675d445703e51750363a549ef</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0-rc.2.24473.5">
+      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
+      <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
+    </Dependency>
   </ToolsetDependencies>
 </Dependencies>
