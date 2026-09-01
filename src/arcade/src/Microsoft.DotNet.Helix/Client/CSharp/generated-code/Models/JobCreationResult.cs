@@ -32,6 +32,9 @@ namespace Microsoft.DotNet.Helix.Client.Models
         [JsonProperty("CancellationToken")]
         public string CancellationToken { get; set; }
 
+        [JsonProperty("QueueStats")]
+        public Models.QueueStatsSummary QueueStats { get; set; }
+
         [JsonIgnore]
         public bool IsValid
         {
@@ -46,6 +49,10 @@ namespace Microsoft.DotNet.Helix.Client.Models
                     return false;
                 }
                 if (string.IsNullOrEmpty(ResultsUri))
+                {
+                    return false;
+                }
+                if (string.IsNullOrEmpty(ResultsUriRSAS))
                 {
                     return false;
                 }

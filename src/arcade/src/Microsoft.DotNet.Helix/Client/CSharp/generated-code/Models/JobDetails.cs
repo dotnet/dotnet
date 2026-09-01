@@ -26,6 +26,12 @@ namespace Microsoft.DotNet.Helix.Client.Models
         [JsonProperty("QueueId")]
         public string QueueId { get; set; }
 
+        [JsonProperty("QueueAlias")]
+        public string QueueAlias { get; set; }
+
+        [JsonProperty("DockerTag")]
+        public string DockerTag { get; set; }
+
         [JsonProperty("JobList")]
         public string JobList { get; set; }
 

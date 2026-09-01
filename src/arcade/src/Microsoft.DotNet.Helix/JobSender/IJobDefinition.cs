@@ -185,5 +185,6 @@ namespace Microsoft.DotNet.Helix.Client
         /// </summary>
         /// <returns>Job accepted by Helix.</returns>
         Task<ISentJob> SendAsync(Action<string> log = null, CancellationToken cancellationToken = default);
+
     }
 }
