@@ -12,7 +12,7 @@
     <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="17.10.46" />
 
     <!-- Runtime dependencies -->
-    <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.0" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.4" />
     <PackageVersion Include="System.Text.Json" Version="8.0.5" />
     <PackageVersion Include="System.Formats.Asn1" Version="8.0.1" /> <!-- Pin transitive dependency to avoid vulnerable 8.0.0 version. -->
 
