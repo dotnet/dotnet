@@ -128,7 +128,6 @@ stages:
         --filter-method "Microsoft.DotNet.SourceBuild.Tests.LicenseScanTests.ScanForLicenses"
         -c Release
         -bl:$(Build.SourcesDirectory)/artifacts/log/Debug/BuildTests_$(date +"%m%d%H%M%S").binlog
-        -flp:LogFile=$(Build.SourcesDirectory)/artifacts/logs/BuildTests_$(date +"%m%d%H%M%S").log
         -clp:v=m
         /p:SourceBuildTestsLicenseScanPath=$(repoPath)
         "/p:SourceBuildTestsLicenseScanIgnorePatterns=$(scanIgnorePatterns)"
