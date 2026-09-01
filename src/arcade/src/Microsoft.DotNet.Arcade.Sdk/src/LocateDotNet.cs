@@ -68,7 +68,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
             var sdkVersion = match.Groups[1].Value;
 
             var fileName = (Path.DirectorySeparatorChar == '\\') ? "dotnet.exe" : "dotnet";
-            var dotNetDir = paths.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(p => File.Exists(Path.Combine(p, fileName)));
+            var dotNetDir = paths.Split(new[] { Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(p => File.Exists(Path.Combine(p, fileName)));
 
             if (dotNetDir == null || !Directory.Exists(Path.Combine(dotNetDir, "sdk", sdkVersion)))
             {
