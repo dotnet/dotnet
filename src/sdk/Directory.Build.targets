@@ -87,6 +87,22 @@
     </KnownILCompilerPack>
   </ItemGroup>
 
+  <!--
+    Same branding version-skew handling for Microsoft.AspNetCore.App. When a tool project targets the
+    previous NetCurrent (e.g. net11.0) but the shared framework ref package has been branded to the new
+    major (MicrosoftAspNetCoreAppRefPackageVersion = 12.0.0-ci), the version-gated AspNetCore ItemGroup
+    below is skipped, so the source-build distro RID is never added to the selected (bootstrap net11.0)
+    AspNetCore.App runtime pack. That fails RID resolution with NETSDK1083 during restore. Add the distro
+    RID to the AspNetCore.App runtime pack RID list for the skew case so an exact RID match remains possible. -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'
+                          and '$(DotNetBuildSourceOnly)' == 'true'
+                          and '$(TargetRid)' != ''
+                          and !$(MicrosoftAspNetCoreAppRefPackageVersion.StartsWith('$(_TargetFrameworkVersionWithoutV)'))">
+    <KnownFrameworkReference Update="Microsoft.AspNetCore.App">
+      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
+    </KnownFrameworkReference>
+  </ItemGroup>
+
   <ItemGroup Condition="$(MicrosoftAspNetCoreAppRefPackageVersion.StartsWith('$(_TargetFrameworkVersionWithoutV)'))">
     <KnownFrameworkReference Update="Microsoft.AspNetCore.App">
       <LatestRuntimeFrameworkVersion>$(MicrosoftAspNetCoreAppRefPackageVersion)</LatestRuntimeFrameworkVersion>
