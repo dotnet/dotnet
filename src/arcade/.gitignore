@@ -38,6 +38,8 @@ msbuild.wrn
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
+!src/Microsoft.DotNet.Helix/JobMonitor/TestResults/
+!src/Microsoft.DotNet.Helix/JobMonitor/TestResults/**
 [Bb]uild[Ll]og.*
 
 #NUNIT

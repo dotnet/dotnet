@@ -27,10 +27,42 @@
 
   <Import Project="$(_HelixMonoQueueTargets)" Condition="'$(_HelixMonoQueueTargets)' != ''"/>
 
+  <!--
+    When the standalone Helix Job Monitor is enabled, ensure any test result files produced inside
+    the work item working directory end up in $HELIX_WORKITEM_UPLOAD_ROOT so the monitor (running
+    as a separate Azure Pipelines job) can download and publish them. We don't force users to
+    redirect their test runner output - instead we sweep the working directory after the test
+    command runs.
+  -->
+  <PropertyGroup Condition="'$(EnableHelixJobMonitor)' == 'true' and $(IsPosixShell)">
+    <HelixPostCommands>
+      $(HelixPostCommands);
+      find . -maxdepth 5 '(' -iname '*.trx' -o -iname 'testResults.xml' -o -iname 'test-results.xml' -o -iname 'test_results.xml' -o -iname 'junit-results.xml' -o -iname 'junitresults.xml' ')' -print0 | xargs -0 -I {} sh -c 'mkdir -p "$HELIX_WORKITEM_UPLOAD_ROOT/$$(dirname "{}")" &amp;&amp; cp -f "{}" "$HELIX_WORKITEM_UPLOAD_ROOT/{}"' || true
+    </HelixPostCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableHelixJobMonitor)' == 'true' and !$(IsPosixShell)">
+    <HelixPostCommands>
+      $(HelixPostCommands);
+      powershell -NoProfile -NonInteractive -Command "Get-ChildItem -Path . -Recurse -File -Depth 5 -Include *.trx,testResults.xml,test-results.xml,test_results.xml,junit-results.xml,junitresults.xml -ErrorAction SilentlyContinue | ForEach-Object { $destDir = Join-Path $env:HELIX_WORKITEM_UPLOAD_ROOT (Split-Path $_.FullName -NoQualifier | Resolve-Path -Relative)%3B New-Item -ItemType Directory -Path (Split-Path $destDir) -Force -ErrorAction SilentlyContinue | Out-Null%3B Copy-Item -Path $_.FullName -Destination $destDir -Force -ErrorAction SilentlyContinue }"
+    </HelixPostCommands>
+  </PropertyGroup>
+
   <ItemGroup>
     <HelixProperties Condition="'$(HelixConfiguration)' != ''" Include="configuration" Value="$(HelixConfiguration)" />
     <HelixProperties Condition="'$(HelixArchitecture)' != ''" Include="architecture" Value="$(HelixArchitecture)" />
     <HelixProperties Include="operatingSystem" Value="$(HelixTargetQueue)" />
+  </ItemGroup>
+
+  <!--
+    When the standalone Helix Job Monitor is enabled, stamp the desired Azure DevOps test run name
+    onto the Helix job as a property. The monitor reads this property to name the test run it
+    creates after the job completes (mirroring what StartAzurePipelinesTestRun would have used).
+  -->
+  <PropertyGroup Condition="'$(EnableHelixJobMonitor)' == 'true'">
+    <_HelixJobMonitorTestRunName>$(TestRunNamePrefix)$(HelixTargetQueue)$(TestRunNameSuffix)</_HelixJobMonitorTestRunName>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(EnableHelixJobMonitor)' == 'true' and '$(_HelixJobMonitorTestRunName)' != ''">
+    <HelixProperties Include="TestRunName" Value="$(_HelixJobMonitorTestRunName)" />
   </ItemGroup>
   
   <ItemGroup Condition="Exists('$(HelixTestConfigurationFilePath)')">
@@ -52,6 +84,7 @@
                   BaseUri="$(HelixBaseUri)"
                   AccessToken="$(HelixAccessToken)"
                   MaxRetryCount="$(MaxRetryCount)"
+                  EnableShowHelixQueueStats="$(EnableShowHelixQueueStats)"
                   PreCommands="$(HelixPreCommands)"
                   PostCommands="$(HelixPostCommands)"
                   CorrelationPayloads="@(HelixCorrelationPayload)"

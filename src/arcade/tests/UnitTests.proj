@@ -15,6 +15,13 @@
 
     <TestRunNamePrefix>$(AGENT_JOBNAME)</TestRunNamePrefix>
     <XUnitWorkitemTimeout>300</XUnitWorkitemTimeout>
+
+    <!-- Use the standalone Helix Job Monitor pipeline job to publish test results,
+         instead of the in-build Python reporter. The corresponding monitor job is
+         configured in the Arcade pipeline YAML. -->
+    <EnableHelixJobMonitor>true</EnableHelixJobMonitor>
+
+    <EnableShowHelixQueueStats>true</EnableShowHelixQueueStats>
   </PropertyGroup>
 
   <ItemGroup>
