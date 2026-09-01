@@ -4,6 +4,7 @@
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <Description>NuGet's Visual Studio Solution Restore Manager.</Description>
     <VSSDKBuildToolsAutoSetup>true</VSSDKBuildToolsAutoSetup>
+    <UseCodebase>false</UseCodebase>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <CreateVsixContainer>false</CreateVsixContainer>
     <DeployExtension>false</DeployExtension>
