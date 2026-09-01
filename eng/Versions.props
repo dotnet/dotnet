@@ -48,11 +48,11 @@
     <NuGetProtocolVersion>7.0.3</NuGetProtocolVersion>
     <NuGetProjectModelVersion>7.0.3</NuGetProjectModelVersion>
     <!-- runtime dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.10</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>10.0.10</MicrosoftExtensionsLoggingConsoleVersion>
-    <MicrosoftExtensionsLoggingVersion>10.0.10</MicrosoftExtensionsLoggingVersion>
-    <MicrosoftExtensionsHostingVersion>10.0.7</MicrosoftExtensionsHostingVersion>
-    <SystemSecurityCryptographyXmlVersion>10.0.10</SystemSecurityCryptographyXmlVersion>
+    <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.11</MicrosoftExtensionsFileSystemGlobbingVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>10.0.11</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingVersion>10.0.11</MicrosoftExtensionsLoggingVersion>
+    <MicrosoftExtensionsHostingVersion>10.0.11</MicrosoftExtensionsHostingVersion>
+    <SystemSecurityCryptographyXmlVersion>10.0.11</SystemSecurityCryptographyXmlVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
     <OctokitVersion>14.0.0</OctokitVersion>
