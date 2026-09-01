@@ -1,0 +1,379 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System;
+using System.CommandLine;
+#if DEBUG
+using Azure.Identity;
+#endif
+using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
+
+namespace Microsoft.DotNet.Helix.JobMonitor
+{
+    public sealed class JobMonitorOptions
+    {
+        // Helix API access token
+        public string HelixAccessToken { get; set; }
+
+        /// <summary>
+        /// Azure DevOps build token
+        /// </summary>
+        public string SystemAccessToken { get; set; }
+
+        public bool ShowHelp { get; private set; }
+
+        public string Organization { get; set; }
+
+        public string RepositoryName { get; set; }
+
+        public string BuildReason { get; set; }
+
+        public string SourceBranch { get; set; }
+
+        public string BuildId { get; set; }
+
+        public string CollectionUri { get; set; }
+
+        public string TeamProject { get; set; }
+
+        public string HelixBaseUri { get; set; } = "https://helix.dot.net/";
+
+        public int PollingIntervalSeconds { get; set; } = 30;
+
+        public int MaximumWaitMinutes { get; set; } = 360;
+
+        public string JobMonitorName { get; set; } = "HelixJobMonitor";
+
+        public string WorkingDirectory { get; set; }
+
+        public string StageName { get; set; }
+
+        /// <summary>
+        /// Attempt number of the Azure DevOps pipeline stage the monitor is running in. Used to
+        /// scope monitoring to Helix jobs submitted by the current stage attempt (matched against
+        /// each job's <c>System.StageAttempt</c> property). When empty the monitor falls back to
+        /// build + stage scope and tracks jobs from every attempt. Defaults to the
+        /// SYSTEM_STAGEATTEMPT environment variable.
+        /// </summary>
+        public string StageAttempt { get; set; }
+
+        /// <summary>
+        /// Attempt number of the Azure DevOps monitor job. Retry reconciliation only runs when
+        /// this is greater than one. Defaults to the SYSTEM_JOBATTEMPT environment variable.
+        /// </summary>
+        public string JobAttempt { get; set; }
+
+        public int TestResultUploadParallelism { get; set; } = 48;
+
+        public TestResultAttachmentMode TestResultAttachmentMode { get; set; } = TestResultAttachmentMode.Failed;
+
+        /// <summary>
+        /// When true (the default), a Helix work item that exited 0 but whose uploaded test
+        /// results contained failures is treated as failed: the monitor marks it failed in
+        /// the outcome map (exiting 1) and the retry pass on a subsequent monitor invocation
+        /// resubmits it. When false, work-item outcome is driven solely by the Helix exit
+        /// code and AzDO test failures do not influence retries or the final exit code.
+        /// </summary>
+        public bool FailWorkItemsWithFailedTests { get; set; } = true;
+
+        /// <summary>
+        /// When true, the monitor may succeed when the stage completes without producing any
+        /// Helix jobs in any attempt. Defaults to false so missing submissions fail the monitor.
+        /// </summary>
+        public bool AllowNoHelixJobs { get; set; }
+
+        public bool Verbose { get; set; }
+
+        /// <summary>
+        /// When <see langword="true"/>, test results are reported to Azure DevOps using the fully
+        /// qualified test name (<c>Namespace.Type.Method</c>) as the stable <c>automatedTestName</c>
+        /// and the visible title is qualified as well. Opt-in because it changes AzDO test identity
+        /// and display; primarily useful for frameworks like MSTest whose display name is only the
+        /// method name. Defaults to the HELIX_USE_FULLY_QUALIFIED_TEST_NAME environment variable.
+        /// </summary>
+        public bool UseFullyQualifiedTestName { get; set; }
+
+        public static JobMonitorOptions Parse(string[] args)
+        {
+            JobMonitorOptions parsed = null;
+
+            Option<string> organizationOption = new("--organization")
+            {
+                Description = "Organization name (e.g. 'dotnet' for 'dotnet/runtime')."
+            };
+
+            Option<string> repositoryOption = new("--repository")
+            {
+                Description = "Repository name (e.g. 'runtime' for 'dotnet/runtime')."
+            };
+
+            Option<string> buildReasonOption = new("--build-reason")
+            {
+                Description = "Azure DevOps Build.Reason value (PullRequest, Manual, Schedule, IndividualCI, BatchedCI, ...). Used to derive the Helix source prefix the same way the Helix SDK submitter does (PR -> 'pr', internal team project -> 'official', otherwise -> 'ci'). Defaults to the BUILD_REASON environment variable."
+            };
+
+            Option<string> sourceBranchOption = new("--source-branch")
+            {
+                Description = "Azure DevOps Build.SourceBranch value (e.g. 'refs/heads/main' or 'refs/pull/N/merge'). Used as the branch component of the Helix source filter. Defaults to the BUILD_SOURCEBRANCH environment variable."
+            };
+
+            Option<string> buildIdOption = new("--build-id")
+            {
+                Description = "Azure DevOps build ID."
+            };
+
+            Option<string> collectionUriOption = new("--collection-uri")
+            {
+                Description = "Azure DevOps collection URI."
+            };
+
+            Option<string> teamProjectOption = new("--team-project")
+            {
+                Description = "Azure DevOps team project name."
+            };
+
+            Option<string> helixBaseUriOption = new("--helix-base-uri")
+            {
+                Description = "Base URI for the Helix service.",
+                DefaultValueFactory = _ => "https://helix.dot.net/"
+            };
+
+            Option<int> pollingIntervalSecondsOption = new("--polling-interval-seconds")
+            {
+                Description = "Polling interval in seconds.",
+                DefaultValueFactory = _ => 30
+            };
+
+            Option<int> maximumWaitMinutesOption = new("--max-wait-minutes")
+            {
+                Description = "Maximum run time in minutes.",
+                DefaultValueFactory = _ => 360
+            };
+
+            Option<string> jobMonitorNameOption = new("--job-monitor-name")
+            {
+                Description = "Name of the Helix Job Monitor job in Azure DevOps.",
+                DefaultValueFactory = _ => "HelixJobMonitor"
+            };
+
+            Option<string> workingDirectoryOption = new("--working-directory")
+            {
+                Description = "Directory used to stage downloaded test results."
+            };
+
+            Option<string> stageNameOption = new("--stage-name")
+            {
+                Description = "Name of the Azure DevOps pipeline stage the monitor is running in. Used to scope monitoring to that stage. Defaults to the SYSTEM_STAGENAME environment variable."
+            };
+
+            Option<string> stageAttemptOption = new("--stage-attempt")
+            {
+                Description = "Attempt number of the Azure DevOps pipeline stage the monitor is running in. Used to scope monitoring to Helix jobs submitted by the current stage attempt so retries do not re-discover a previous attempt's work. Defaults to the SYSTEM_STAGEATTEMPT environment variable."
+            };
+
+            Option<string> jobAttemptOption = new("--job-attempt")
+            {
+                Description = "Attempt number of the Azure DevOps monitor job. Retry reconciliation only runs after the initial job attempt. Defaults to the SYSTEM_JOBATTEMPT environment variable."
+            };
+
+            Option<int> testResultUploadParallelismOption = new("--test-result-upload-parallelism")
+            {
+                Description = "Maximum number of work items whose test results can be uploaded to Azure DevOps in parallel.",
+                DefaultValueFactory = _ => 48
+            };
+
+            Option<TestResultAttachmentMode> testResultAttachmentModeOption = new("--test-result-attachment-mode")
+            {
+                Description = "Controls per-test output attachments: Failed (default) uploads output only for failed tests, All uploads output for every test, and None suppresses per-test output attachments.",
+                DefaultValueFactory = _ => TestResultAttachmentMode.Failed
+            };
+
+            Option<bool> failWorkItemsWithFailedTestsOption = new("--fail-on-failed-tests")
+            {
+                Description = "When true (default), Helix work items that exit 0 but have failed AzDO test results are treated as failed (counted toward the monitor's exit code and resubmitted by a later invocation's retry pass). Pass --fail-on-failed-tests false to fall back to exit-code-only outcomes.",
+                DefaultValueFactory = _ => true
+            };
+
+            Option<bool> allowNoHelixJobsOption = new("--allow-no-helix-jobs")
+            {
+                Description = "Allow the monitor to succeed when the stage completes without producing any Helix jobs in any attempt."
+            };
+
+            Option<bool> verboseOption = new("--verbose")
+            {
+                Description = "Enable verbose job monitor logging."
+            };
+
+            Option<bool> useFullyQualifiedTestNameOption = new("--use-fully-qualified-test-name")
+            {
+                Description = "Report test results to Azure DevOps using the fully qualified test name (Namespace.Type.Method) as the stable automatedTestName and qualify the visible title. Opt-in; primarily for frameworks like MSTest whose display name is only the method name. Defaults to the HELIX_USE_FULLY_QUALIFIED_TEST_NAME environment variable.",
+                DefaultValueFactory = _ => ParseBoolean(Environment.GetEnvironmentVariable("HELIX_USE_FULLY_QUALIFIED_TEST_NAME"))
+            };
+
+            RootCommand rootCommand = new("Standalone Helix Job Monitor tool for Azure DevOps pipelines")
+            {
+                TreatUnmatchedTokensAsErrors = true
+            };
+
+            rootCommand.Options.Add(organizationOption);
+            rootCommand.Options.Add(repositoryOption);
+            rootCommand.Options.Add(buildReasonOption);
+            rootCommand.Options.Add(sourceBranchOption);
+            rootCommand.Options.Add(buildIdOption);
+            rootCommand.Options.Add(collectionUriOption);
+            rootCommand.Options.Add(teamProjectOption);
+            rootCommand.Options.Add(helixBaseUriOption);
+            rootCommand.Options.Add(pollingIntervalSecondsOption);
+            rootCommand.Options.Add(maximumWaitMinutesOption);
+            rootCommand.Options.Add(jobMonitorNameOption);
+            rootCommand.Options.Add(workingDirectoryOption);
+            rootCommand.Options.Add(stageNameOption);
+            rootCommand.Options.Add(stageAttemptOption);
+            rootCommand.Options.Add(jobAttemptOption);
+            rootCommand.Options.Add(testResultUploadParallelismOption);
+            rootCommand.Options.Add(testResultAttachmentModeOption);
+            rootCommand.Options.Add(failWorkItemsWithFailedTestsOption);
+            rootCommand.Options.Add(allowNoHelixJobsOption);
+            rootCommand.Options.Add(verboseOption);
+            rootCommand.Options.Add(useFullyQualifiedTestNameOption);
+
+            rootCommand.SetAction(parseResult =>
+            {
+                parsed = new JobMonitorOptions
+                {
+                    Organization = parseResult.GetValue(organizationOption),
+                    RepositoryName = parseResult.GetValue(repositoryOption),
+                    BuildReason = parseResult.GetValue(buildReasonOption),
+                    SourceBranch = parseResult.GetValue(sourceBranchOption),
+                    BuildId = parseResult.GetValue(buildIdOption),
+                    CollectionUri = parseResult.GetValue(collectionUriOption),
+                    TeamProject = parseResult.GetValue(teamProjectOption),
+                    HelixBaseUri = parseResult.GetValue(helixBaseUriOption),
+                    PollingIntervalSeconds = parseResult.GetValue(pollingIntervalSecondsOption),
+                    MaximumWaitMinutes = parseResult.GetValue(maximumWaitMinutesOption),
+                    JobMonitorName = parseResult.GetValue(jobMonitorNameOption),
+                    WorkingDirectory = parseResult.GetValue(workingDirectoryOption),
+                    StageName = parseResult.GetValue(stageNameOption),
+                    StageAttempt = parseResult.GetValue(stageAttemptOption),
+                    JobAttempt = parseResult.GetValue(jobAttemptOption),
+                    TestResultUploadParallelism = parseResult.GetValue(testResultUploadParallelismOption),
+                    TestResultAttachmentMode = parseResult.GetValue(testResultAttachmentModeOption),
+                    FailWorkItemsWithFailedTests = parseResult.GetValue(failWorkItemsWithFailedTestsOption),
+                    AllowNoHelixJobs = parseResult.GetValue(allowNoHelixJobsOption),
+                    Verbose = parseResult.GetValue(verboseOption),
+                    UseFullyQualifiedTestName = parseResult.GetValue(useFullyQualifiedTestNameOption),
+                };
+            });
+
+            int exitCode = rootCommand.Parse(args).Invoke();
+
+            if (exitCode != 0 || parsed == null)
+            {
+                return new JobMonitorOptions { ShowHelp = true };
+            }
+
+            parsed.ApplyEnvironmentDefaults();
+            parsed.Validate();
+            return parsed;
+        }
+
+        private void ApplyEnvironmentDefaults()
+        {
+            HelixAccessToken ??= Environment.GetEnvironmentVariable("HELIX_ACCESSTOKEN");
+#if DEBUG
+            SystemAccessToken ??= new ChainedTokenCredential(
+                    new AzureCliCredential(),
+                    new VisualStudioCredential(),
+#pragma warning disable CS0618 // Retain VS Code authentication support on the release branch.
+                    new VisualStudioCodeCredential())
+#pragma warning restore CS0618
+                .GetToken(new Azure.Core.TokenRequestContext(["499b84ac-1321-427f-aa17-267ca6975798/.default"]))
+                .Token;
+#endif
+            CollectionUri ??= Environment.GetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI");
+            TeamProject ??= Environment.GetEnvironmentVariable("SYSTEM_TEAMPROJECT");
+            BuildId ??= Environment.GetEnvironmentVariable("BUILD_BUILDID");
+            SystemAccessToken ??= Environment.GetEnvironmentVariable("SYSTEM_ACCESSTOKEN");
+            RepositoryName ??= Environment.GetEnvironmentVariable("BUILD_REPOSITORY_NAME");
+            WorkingDirectory ??= System.IO.Path.Combine(System.IO.Path.GetTempPath(), "helix-job-monitor", BuildId ?? "unknown");
+            BuildReason ??= Environment.GetEnvironmentVariable("BUILD_REASON");
+            SourceBranch ??= Environment.GetEnvironmentVariable("BUILD_SOURCEBRANCH");
+            StageName ??= Environment.GetEnvironmentVariable("SYSTEM_STAGENAME");
+            StageAttempt ??= Environment.GetEnvironmentVariable("SYSTEM_STAGEATTEMPT");
+            JobAttempt ??= Environment.GetEnvironmentVariable("SYSTEM_JOBATTEMPT");
+        }
+
+        private void Validate()
+        {
+            CollectionUri = EnsureTrailingSlash(RequireValue(CollectionUri, "collection-uri", "SYSTEM_TEAMFOUNDATIONCOLLECTIONURI"));
+            TeamProject = RequireValue(TeamProject, "team-project", "SYSTEM_TEAMPROJECT");
+            BuildId = RequireValue(BuildId, "build-id", "BUILD_BUILDID");
+            SystemAccessToken = RequireValue(SystemAccessToken, "access-token", "SYSTEM_ACCESSTOKEN");
+
+            if (string.IsNullOrWhiteSpace(RepositoryName))
+            {
+                throw new InvalidOperationException("A repository identifier must be provided either by argument or pipeline environment.");
+            }
+
+            if (string.IsNullOrWhiteSpace(Organization))
+            {
+                throw new InvalidOperationException("Organization must be provided either by argument or pipeline environment.");
+            }
+
+            if (string.IsNullOrWhiteSpace(SourceBranch))
+            {
+                throw new InvalidOperationException("--source-branch (or the BUILD_SOURCEBRANCH environment variable) must be set.");
+            }
+
+            // BuildReason is allowed to be empty: when it is missing we still need a deterministic
+            // prefix and HelixJobSource.GetSourcePrefix falls back to 'official' for internal team
+            // projects and 'ci' otherwise, which matches the JobSender behavior when BUILD_REASON
+            // is not 'PullRequest'.
+
+            if (string.IsNullOrWhiteSpace(StageName))
+            {
+                throw new InvalidOperationException("--stage-name (or the SYSTEM_STAGENAME environment variable) must be set.");
+            }
+
+            if (TestResultUploadParallelism <= 0)
+            {
+                throw new InvalidOperationException("--test-result-upload-parallelism must be greater than zero.");
+            }
+        }
+
+        private static string RequireValue(string value, string argumentName, string environmentName)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException($"Missing required option --{argumentName} or environment variable {environmentName}.");
+            }
+
+            return value;
+        }
+
+        private static string EnsureTrailingSlash(string uri)
+            => uri.EndsWith('/') ? uri : uri + '/';
+
+        private static bool ParseBoolean(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            if (bool.TryParse(value, out bool parsed))
+            {
+                return parsed;
+            }
+
+            // Accept common truthy tokens used in pipeline variables (e.g. "1", "yes", "on").
+            return value.Trim() switch
+            {
+                "1" => true,
+                var v when string.Equals(v, "yes", StringComparison.OrdinalIgnoreCase) => true,
+                var v when string.Equals(v, "on", StringComparison.OrdinalIgnoreCase) => true,
+                _ => false,
+            };
+        }
+    }
+}

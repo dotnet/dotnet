@@ -27,14 +27,23 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests.TestDoubles
         public Task<bool> RunAsync(Func<int, Task<bool>> actionSuccessfulAsync)
             => RunAsync(actionSuccessfulAsync, CancellationToken.None);
 
-        public async Task<bool> RunAsync(Func<int, Task<bool>> actionSuccessfulAsync, CancellationToken cancellationToken)
+        public Task<bool> RunAsync(Func<int, Task<bool>> actionSuccessfulAsync, CancellationToken cancellationToken)
+            => RunAsync(
+                async attempt => (RetryResult)await actionSuccessfulAsync(attempt),
+                cancellationToken);
+
+        public Task<bool> RunAsync(Func<int, Task<RetryResult>> actionAsync)
+            => RunAsync(actionAsync, CancellationToken.None);
+
+        public async Task<bool> RunAsync(Func<int, Task<RetryResult>> actionAsync, CancellationToken cancellationToken)
         {
             for (var attempt = 0; attempt < _maxAttempts; attempt++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 ActualAttempts++;
 
-                var succeeded = await actionSuccessfulAsync(attempt);
-                if (succeeded)
+                RetryResult result = await actionAsync(attempt);
+                if (result.Succeeded)
                 {
                     return true;
                 }

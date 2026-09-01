@@ -1,0 +1,248 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.DotNet.Helix.Client.Models;
+using Microsoft.DotNet.Helix.JobMonitor;
+using Microsoft.DotNet.Helix.JobMonitor.Models;
+
+namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
+{
+    internal sealed class FakeHelixService : IHelixService
+    {
+        private readonly List<HelixSnapshot> _responses = [];
+        private readonly HashSet<string> _downloadFailureJobs = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Queue<Exception>> _downloadFailures = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, IReadOnlyCollection<WorkItemSummary>> _customWorkItems = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, int> _listWorkItemsCallCounts =
+            new(StringComparer.OrdinalIgnoreCase);
+        private int _getJobsCallCount;
+
+        /// <summary>
+        /// Adds a Helix response. Each call to <see cref="GetJobsForBuildAsync"/> returns the next
+        /// response in order. Once all responses are consumed, the last one is repeated.
+        /// <see cref="ListWorkItemsAsync"/> and <see cref="DownloadTestResultsAsync"/> use
+        /// the same current response for pass/fail and result data.
+        /// </summary>
+        public FakeHelixService AddResponse(
+            HelixJobInfo[] jobs,
+            Dictionary<string, HelixJobPassFail> passFailByJob = null,
+            Dictionary<string, List<WorkItemTestResults>> testResultsByJob = null)
+        {
+            _responses.Add(new HelixSnapshot(
+                jobs,
+                passFailByJob ?? new Dictionary<string, HelixJobPassFail>(StringComparer.OrdinalIgnoreCase),
+                testResultsByJob ?? new Dictionary<string, List<WorkItemTestResults>>(StringComparer.OrdinalIgnoreCase)));
+            return this;
+        }
+
+        public FakeHelixService FailDownloadForJob(string jobName) { _downloadFailureJobs.Add(jobName); return this; }
+        public void ClearDownloadFailures() { _downloadFailureJobs.Clear(); }
+
+        public FakeHelixService FailNextDownloadForJob(string jobName, Exception exception = null)
+        {
+            if (!_downloadFailures.TryGetValue(jobName, out Queue<Exception> failures))
+            {
+                failures = [];
+                _downloadFailures[jobName] = failures;
+            }
+
+            failures.Enqueue(exception ?? new HttpRequestException(
+                "Injected transient download failure.",
+                null,
+                HttpStatusCode.ServiceUnavailable));
+            return this;
+        }
+
+        public FakeHelixService WithWorkItems(string jobName, IReadOnlyCollection<WorkItemSummary> workItems)
+        {
+            _customWorkItems[jobName] = workItems;
+            return this;
+        }
+
+        /// <summary>Number of times <see cref="GetJobsForBuildAsync"/> has been called.</summary>
+        public int GetJobsCallCount => _getJobsCallCount;
+
+        public int GetListWorkItemsCallCount(string jobName)
+            => _listWorkItemsCallCounts.TryGetValue(jobName, out int count) ? count : 0;
+
+        public ConcurrentBag<string> CanceledJobs { get; } = [];
+
+        private HelixSnapshot CurrentSnapshot
+        {
+            get
+            {
+                int index = Math.Min(Math.Max(_getJobsCallCount - 1, 0), _responses.Count - 1);
+                return _responses[index];
+            }
+        }
+
+        public Task<IReadOnlyList<HelixJobInfo>> GetJobsForBuildAsync(string source, string buildId, CancellationToken cancellationToken)
+        {
+            if (_responses.Count == 0)
+            {
+                _getJobsCallCount++;
+                return Task.FromResult<IReadOnlyList<HelixJobInfo>>([]);
+            }
+
+            int index = Math.Min(_getJobsCallCount, _responses.Count - 1);
+            _getJobsCallCount++;
+            return Task.FromResult<IReadOnlyList<HelixJobInfo>>(_responses[index].Jobs);
+        }
+
+        public Task<WorkItemTestResults> DownloadTestResultsAsync(
+            string jobName, string workItemName, string workingDirectory, CancellationToken cancellationToken)
+        {
+            if (_downloadFailureJobs.Contains(jobName))
+            {
+                throw new InvalidOperationException($"Injected download failure for Helix job '{jobName}'.");
+            }
+
+            if (_downloadFailures.TryGetValue(jobName, out Queue<Exception> failures)
+                && failures.Count > 0)
+            {
+                throw failures.Dequeue();
+            }
+
+            if (CurrentSnapshot.TestResultsByJob.TryGetValue(jobName, out List<WorkItemTestResults> explicitResults))
+            {
+                WorkItemTestResults result = explicitResults.FirstOrDefault(
+                    result => string.Equals(result.WorkItemName, workItemName, StringComparison.OrdinalIgnoreCase))
+                    ?? new WorkItemTestResults(jobName, workItemName, []);
+                return Task.FromResult(result);
+            }
+
+            return Task.FromResult(new WorkItemTestResults(jobName, workItemName, []));
+        }
+
+        public Task<IReadOnlyCollection<WorkItemSummary>> ListWorkItemsAsync(
+            string jobName,
+            CancellationToken _)
+        {
+            _listWorkItemsCallCounts.AddOrUpdate(jobName, 1, static (_, count) => count + 1);
+
+            if (_customWorkItems.TryGetValue(jobName, out IReadOnlyCollection<WorkItemSummary> customWorkItems))
+            {
+                return Task.FromResult(customWorkItems);
+            }
+
+            var items = new List<WorkItemSummary>();
+            if (!CurrentSnapshot.PassFailByJob.TryGetValue(jobName, out HelixJobPassFail passFail))
+            {
+                return Task.FromResult<IReadOnlyCollection<WorkItemSummary>>(items);
+            }
+
+            foreach (string w in passFail.PassedWorkItems)
+            {
+                var wi = new WorkItemSummary($"{jobName}/{w}", jobName, w, "Finished") { ExitCode = 0 };
+                items.Add(wi);
+            }
+
+            foreach (string w in passFail.FailedWorkItems)
+            {
+                var wi = new WorkItemSummary($"{jobName}/{w}", jobName, w, "Finished") { ExitCode = 1 };
+                items.Add(wi);
+            }
+
+            return Task.FromResult<IReadOnlyCollection<WorkItemSummary>>(items);
+        }
+
+        public Task CancelJobAsync(string jobName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            CanceledJobs.Add(jobName);
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Tracks resubmission calls for test assertions.
+        /// Each entry is (originalJobName, failedWorkItemNames, newJobName, targetStageAttempt,
+        /// monitorJobAttempt).
+        /// </summary>
+        public List<(string OriginalJob, IReadOnlyCollection<string> FailedItems, string NewJob, string TargetStageAttempt, string MonitorJobAttempt)> Resubmissions { get; } = [];
+
+        /// <summary>The <see cref="HelixJobInfo"/> objects returned from successful resubmissions.</summary>
+        public List<HelixJobInfo> ResubmittedJobInfos { get; } = [];
+
+        /// <summary>
+        /// Configures the result of a resubmission. When <see cref="ResubmitWorkItemsAsync"/>
+        /// is called for <paramref name="originalJobName"/>, a new <see cref="HelixJobInfo"/> with
+        /// <paramref name="newJobName"/> is returned. The new job will appear in subsequent
+        /// <see cref="GetJobsForBuildAsync"/> calls via the responses already configured.
+        /// </summary>
+        private readonly Dictionary<string, string> _resubmissionNewJobNames = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _nullResubmissions = new(StringComparer.OrdinalIgnoreCase);
+
+        public FakeHelixService ConfigureResubmission(string originalJobName, string newJobName)
+        {
+            _resubmissionNewJobNames[originalJobName] = newJobName;
+            return this;
+        }
+
+        public FakeHelixService ConfigureNullResubmission(string originalJobName)
+        {
+            _nullResubmissions.Add(originalJobName);
+            return this;
+        }
+
+        public Task<HelixJobInfo> ResubmitWorkItemsAsync(
+            HelixJobInfo originalJob,
+            IReadOnlyCollection<WorkItemSummary> failedWorkItems,
+            string targetStageAttempt,
+            string monitorJobAttempt,
+            CancellationToken cancellationToken)
+        {
+            string originalJobName = originalJob.JobName;
+            HelixJobInfo originalSnapshotJob = CurrentSnapshot.Jobs.FirstOrDefault(j =>
+                string.Equals(j.JobName, originalJobName, StringComparison.OrdinalIgnoreCase))
+                ?? originalJob;
+
+            if (!_resubmissionNewJobNames.TryGetValue(originalJobName, out string newJobName))
+            {
+                newJobName = $"{originalJobName}-resubmit";
+            }
+
+            IReadOnlyCollection<string> failedItemNames = [..failedWorkItems.Select(wi => wi.Name)];
+            if (_nullResubmissions.Contains(originalJobName))
+            {
+                Resubmissions.Add((originalJobName, failedItemNames, null, targetStageAttempt, monitorJobAttempt));
+                return Task.FromResult<HelixJobInfo>(null);
+            }
+
+            // Mirror the real service: stamp the resubmission with the resubmitting monitor's
+            // stage attempt when known, else preserve the original job's attempt.
+            string resubmittedStageAttempt = !string.IsNullOrEmpty(targetStageAttempt)
+                ? targetStageAttempt
+                : (originalSnapshotJob?.StageAttempt ?? originalJob.StageAttempt);
+
+            Resubmissions.Add((originalJobName, failedItemNames, newJobName, targetStageAttempt, monitorJobAttempt));
+            var newJobInfo = new HelixJobInfo(
+                newJobName,
+                "running",
+                originalSnapshotJob?.TestRunName,
+                originalSnapshotJob?.StageName,
+                originalSnapshotJob?.SubmitterJobName ?? originalJob.SubmitterJobName,
+                originalSnapshotJob?.SubmitterJobDisplayName ?? originalJob.SubmitterJobDisplayName,
+                originalSnapshotJob?.QueueId ?? originalJob.QueueId,
+                originalJobName,
+                stageAttempt: resubmittedStageAttempt,
+                jobAttempt: originalSnapshotJob?.JobAttempt ?? originalJob.JobAttempt,
+                logicalJobName: originalSnapshotJob?.LogicalJobName ?? originalJob.LogicalJobName,
+                submitterPhaseName: originalSnapshotJob?.SubmitterPhaseName ?? originalJob.SubmitterPhaseName);
+            ResubmittedJobInfos.Add(newJobInfo);
+            return Task.FromResult(newJobInfo);
+        }
+
+        private sealed record HelixSnapshot(
+            HelixJobInfo[] Jobs,
+            Dictionary<string, HelixJobPassFail> PassFailByJob,
+            Dictionary<string, List<WorkItemTestResults>> TestResultsByJob);
+    }
+}
