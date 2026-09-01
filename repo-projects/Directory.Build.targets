@@ -221,7 +221,7 @@
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
                             SourcePath="$(SharedComponentsArtifactsPath)"
-                            Condition="'$(AddPrebuiltFeeds)' == 'true' and Exists('$(SharedComponentsArtifactsPath)')" />
+                            Condition="'$(AddPrebuiltFeeds)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true' and Exists('$(SharedComponentsArtifactsPath)')" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(ReferencePackagesNuGetSourceName)"
@@ -250,9 +250,11 @@
 
     <ItemGroup>
       <_BuildSources Include="$(PrebuiltNuGetSourceName);
-                              $(PreviouslySourceBuiltNuGetSourceName);
-                              $(PreviouslySourceBuiltSharedComponentsNuGetSourceName);
-                              $(ReferencePackagesNuGetSourceName)"
+                              $(PreviouslySourceBuiltNuGetSourceName)"
+                     Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
+      <_BuildSources Include="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
+                     Condition="'$(AddPrebuiltFeeds)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'" />
+      <_BuildSources Include="$(ReferencePackagesNuGetSourceName)"
                      Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
       <_BuildSources Include="@(_CommonBuildSources)" />
     </ItemGroup>
@@ -346,8 +348,7 @@
           SkipUnchangedFiles="true" />
   </Target>
 
-  <!-- Before a repository builds, set up the version property files that override the repo's defaults.
-       There are 3 files generated -->
+  <!-- Before a repository builds, set up the version property files that override the repo's defaults. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreateBuildInputProps"
@@ -370,7 +371,8 @@
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetFilteredSharedComponentPackages"
-             Properties="SharedComponentFilterMode=$(_SharedComponentFilterMode)">
+             Properties="SharedComponentFilterMode=$(_SharedComponentFilterMode)"
+             Condition="'$(_UseSharedComponentsInputs)' == 'true'">
       <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
     </MSBuild>
 
@@ -421,7 +423,7 @@
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)"
                                PropertySuffixes="@(PreviousPackageVersionPropertySuffixes)"
-                               Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'" />
+                               Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'" />
 
     <!-- Write a full package version props (unfiltered) that will be used to track which repo creates a package.
          Because not all repos implement the repo API (e.g. some are external), it's difficult to consistently gather
@@ -439,12 +441,20 @@
 
     <!-- Write a single file that contains imports for both the current and previously built packages -->
     <PropertyGroup>
-      <PackageVersionsPropsContents Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'">
+      <PackageVersionsPropsContents Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'">
         <![CDATA[
 <Project>
   <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
   <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
   <Import Project="$(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)" />
+</Project>
+]]>
+      </PackageVersionsPropsContents>
+      <PackageVersionsPropsContents Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' != 'true'">
+        <![CDATA[
+<Project>
+  <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
+  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
 </Project>
 ]]>
       </PackageVersionsPropsContents>
@@ -461,7 +471,9 @@
                       Overwrite="true" />
 
     <Message Text="$(RepositoryName) using package version properties saved at $(CurrentSourceBuiltPackageVersionPropsPath), $(PreviouslySourceBuiltPackageVersionPropsPath), and $(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)"
-             Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'" />
+             Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'" />
+    <Message Text="$(RepositoryName) using package version properties saved at $(CurrentSourceBuiltPackageVersionPropsPath) and $(PreviouslySourceBuiltPackageVersionPropsPath)"
+             Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' != 'true'" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)CreateBuildInputProps.complete" AlwaysCreate="true">

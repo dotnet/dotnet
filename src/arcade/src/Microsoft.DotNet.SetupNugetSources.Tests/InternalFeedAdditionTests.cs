@@ -41,6 +41,7 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
         [InlineData("dotnet8")]
         [InlineData("dotnet9")]
         [InlineData("dotnet10")]
+        [InlineData("dotnet11")]
         public async Task ConfigWithSpecificDotNetVersion_AddsCorrespondingInternalFeeds(string dotnetVersion)
         {
             // Arrange
@@ -82,6 +83,7 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
     <add key=""dotnet8"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8/nuget/v3/index.json"" />
     <add key=""dotnet9"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json"" />
     <add key=""dotnet10"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json"" />
+    <add key=""dotnet11"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11/nuget/v3/index.json"" />
   </packageSources>
 </configuration>";
             var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
@@ -94,7 +96,7 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
             var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
 
             // Should add internal feeds for all versions
-            var versions = new[] { "dotnet5", "dotnet6", "dotnet7", "dotnet8", "dotnet9", "dotnet10" };
+            var versions = new[] { "dotnet5", "dotnet6", "dotnet7", "dotnet8", "dotnet9", "dotnet10", "dotnet11" };
             foreach (var version in versions)
             {
                 modifiedConfig.ShouldContainPackageSource($"{version}-internal",
@@ -105,8 +107,8 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
                     $"should add {version}-internal-transport feed");
             }
 
-            // Original count (7 sources) + 12 internal sources = 19 total
-            modifiedConfig.GetPackageSourceCount().Should().Be(19, "should have all original sources plus internal feeds");
+            // Original count (8 sources) + 14 internal sources = 22 total
+            modifiedConfig.GetPackageSourceCount().Should().Be(22, "should have all original sources plus internal feeds");
         }
 
         [Fact]

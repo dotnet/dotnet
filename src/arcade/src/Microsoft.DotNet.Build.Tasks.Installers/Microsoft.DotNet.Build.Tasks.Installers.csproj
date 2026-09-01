@@ -40,8 +40,5 @@
           Pack="true" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Common\Internal\BuildTask.cs" />
-  </ItemGroup>
 
 </Project>

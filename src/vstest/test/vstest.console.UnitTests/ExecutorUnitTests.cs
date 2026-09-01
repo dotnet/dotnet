@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -59,7 +60,7 @@ public class ExecutorUnitTests
         Assert.Contains(CommandLineResources.MicrosoftCommandLineTitle.Split(['{'], 2)[0],
             mockOutput.Messages.First().Message!);
 
-        var suffixIndex = assemblyVersion.IndexOf("-");
+        var suffixIndex = assemblyVersion.IndexOf("-", StringComparison.Ordinal);
         var version = suffixIndex == -1 ? assemblyVersion : assemblyVersion.Substring(0, suffixIndex);
         Assert.Contains(version,
             mockOutput.Messages.First().Message!);

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetLastStablePackage : BuildTask
+    public class GetLastStablePackage : Microsoft.Build.Utilities.Task
     {
         /// <summary>
         /// List of packages to look up.

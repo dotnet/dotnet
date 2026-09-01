@@ -23,9 +23,15 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 {
     private const string MtpTestHostDisableFeatureFlag = "VSTEST_DISABLE_MTP_TESTHOST";
 
-    // MtpMSTestProject is an MSTest project built as an MTP application (EnableMSTestRunner): three tests
+    // MtpMSTestProject is an MSTest project built as an MTP application (EnableMSTestRunner): four tests
     // pass, one fails, one is skipped.
     private const string MtpApp = "MtpMSTestProject.dll";
+
+    // The display name of MtpMSTestProject's deliberately non-ASCII test. Its UTF-8 byte count exceeds
+    // its character count (German umlauts 2 bytes, Japanese 3 bytes, Czech caron 2 bytes), which is
+    // what exercises the MTP frame's byte-denominated Content-Length. Must match the DisplayName on
+    // MtpMSTestProject.UnitTests.TestNonAsciiDisplayName.
+    private const string NonAsciiTestName = "TestGrüße日本語Čau";
 
     // MSTestProject1 is a classic vstest MSTest project driven by the vstest testhost: one passes, one
     // fails, one is skipped.
@@ -74,7 +80,49 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 
         InvokeVsTestWithMtpTestHostEnabled(arguments);
 
-        ValidateSummaryStatus(3, 1, 1);
+        ValidateSummaryStatus(4, 1, 1);
+    }
+
+    [TestMethod]
+    // MTP frames declare Content-Length in UTF-8 bytes. A client that consumes that number of
+    // characters instead under-reads any frame carrying multi-byte content and desynchronizes the
+    // connection from the next message onward. Test names are user-authored and travel
+    // server-to-client on every node update, which makes them the realistic trigger.
+    //
+    // This is a name-integrity guard rather than a full reproduction of that framing bug: the .NET
+    // MTP server serializes with System.Text.Json, whose default encoder escapes non-ASCII to
+    // \uXXXX, so the bytes on the wire are ASCII and byte count coincidentally equals character
+    // count. The framing bug itself is proved at the unit level in testfx against the transport
+    // directly. What this guards is that a multi-byte name survives escaping, transport and decoding
+    // unchanged - which is what regressed in every historical variant of this bug.
+    [TestMatrix(testHost: Target.Net)]
+    public void RunMtpApplicationPreservesNonAsciiTestNames(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+
+        var trxFileName = "nonascii.trx";
+        var arguments = PrepareArguments(
+            GetAssetFullPath(MtpApp),
+            testAdapterPath: null,
+            runSettings: string.Empty,
+            FrameworkArgValue,
+            runnerInfo.InIsolationValue,
+            resultsDirectory: TempDirectory.Path);
+        arguments = string.Concat(arguments, $" /logger:trx;LogFileName={trxFileName}");
+
+        InvokeVsTestWithMtpTestHostEnabled(arguments);
+
+        // The run completing at all is the primary assertion: a desynchronized frame corrupts the
+        // messages that follow, so the counts would not add up.
+        ValidateSummaryStatus(4, 1, 1);
+
+        var trxPath = Path.Combine(TempDirectory.Path, trxFileName);
+        Assert.IsTrue(File.Exists(trxPath), "Expected a TRX at '{0}'.", trxPath);
+        var trx = File.ReadAllText(trxPath);
+        Assert.Contains(
+            NonAsciiTestName,
+            trx,
+            "Expected the multi-byte UTF-8 test name to survive the MTP transport intact.");
     }
 
     [TestMethod]
@@ -97,7 +145,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
         InvokeVsTestWithMtpTestHostEnabled(arguments);
 
         // Classic 1/1/1 + MTP 3/1/1 aggregated into one run summary.
-        ValidateSummaryStatus(4, 2, 2);
+        ValidateSummaryStatus(5, 2, 2);
     }
 
     [TestMethod]
@@ -120,7 +168,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 
         InvokeVsTestWithMtpTestHostEnabled(arguments);
 
-        ValidateSummaryStatus(4, 2, 2);
+        ValidateSummaryStatus(5, 2, 2);
 
         var trxPath = Path.Combine(TempDirectory.Path, trxFileName);
         Assert.IsTrue(File.Exists(trxPath), "Expected a single TRX to be written for the mixed run at '{0}'.", trxPath);
@@ -149,7 +197,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 
         InvokeVsTestWithMtpTestHostEnabled(arguments);
 
-        ValidateSummaryStatus(3, 1, 1);
+        ValidateSummaryStatus(4, 1, 1);
     }
 
     [TestMethod]
@@ -190,7 +238,7 @@ public class MtpUnderVstestTests : AcceptanceTestBase
         InvokeVsTestWithMtpTestHostEnabled(arguments, env);
 
         // The guarded test passes only if MTP_FROM_RUNSETTINGS reached the host with the runsettings value.
-        ValidateSummaryStatus(3, 1, 1);
+        ValidateSummaryStatus(4, 1, 1);
     }
 
     [TestMethod]
@@ -215,8 +263,8 @@ public class MtpUnderVstestTests : AcceptanceTestBase
 
         InvokeVsTestWithMtpTestHostEnabled(arguments);
 
-        // MtpMSTestProject has five test cases: three pass, one fails, one is skipped.
-        ValidateSummaryStatus(3, 1, 1);
+        // MtpMSTestProject has six test cases: four pass, one fails, one is skipped.
+        ValidateSummaryStatus(4, 1, 1);
 
         var trxPath = Path.Combine(TempDirectory.Path, trxFileName);
         Assert.IsTrue(File.Exists(trxPath), "Expected a TRX at '{0}'.", trxPath);
@@ -263,8 +311,8 @@ public class MtpUnderVstestTests : AcceptanceTestBase
         InvokeVsTestWithMtpTestHostEnabled(arguments, env);
 
         // The run must complete with the usual summary rather than hang at shutdown. MtpMSTestProject has
-        // five test cases: three pass, one fails, one is skipped.
-        ValidateSummaryStatus(3, 1, 1);
+        // six test cases: four pass, one fails, one is skipped.
+        ValidateSummaryStatus(4, 1, 1);
 
         // The datacollector lifecycle must be driven end to end even though there is no testhost: the
         // session events, the launched-process notification and the forwarded per-test-case events all
@@ -277,15 +325,15 @@ public class MtpUnderVstestTests : AcceptanceTestBase
         StdOutputContains("Data collector 'SampleDataCollector' message: TestCaseEnded");
 
         // The collector emits one attachment per started test case through the forwarded TestCaseStart
-        // events. All five MtpMSTestProject test cases surface a start on this path (the skipped one still
-        // reports a TestCaseStart), so five attachments must land in the results directory. Exclude the
+        // events. All six MtpMSTestProject test cases surface a start on this path (the skipped one still
+        // reports a TestCaseStart), so six attachments must land in the results directory. Exclude the
         // collector's own source directory so only the moved attachments are counted.
         var collectorSourceDirectoryPrefix = collectorSourceDirectory + Path.DirectorySeparatorChar;
         var testCaseAttachments = Directory
             .GetFiles(TempDirectory.Path, "testcasefilename*.txt", SearchOption.AllDirectories)
             .Where(file => !file.StartsWith(collectorSourceDirectoryPrefix, StringComparison.OrdinalIgnoreCase))
             .ToList();
-        Assert.HasCount(5, testCaseAttachments, "Expected one per-test-case attachment for each started MtpMSTestProject test case forwarded on the MTP path.");
+        Assert.HasCount(6, testCaseAttachments, "Expected one per-test-case attachment for each started MtpMSTestProject test case forwarded on the MTP path.");
     }
 
     private void InvokeVsTestWithMtpTestHostEnabled(string arguments, Dictionary<string, string?>? environmentVariables = null)

@@ -1,2 +1,2 @@
 @echo off
-powershell -ExecutionPolicy ByPass -NoProfile -command "& """%~dp0eng\build.ps1""" -vscode %*"
+powershell -ExecutionPolicy ByPass -NoProfile -File "%~dp0eng\build.ps1" -vscode %*

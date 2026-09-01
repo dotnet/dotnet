@@ -1,0 +1,58 @@
+<Project>
+  <UsingTask TaskName="WaitForFiles"
+             TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <TimeoutSeconds ParameterType="System.Int32" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Threading" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        var deadline = DateTime.UtcNow.AddSeconds(TimeoutSeconds);
+        while (Files.Any(file => !File.Exists(file.ItemSpec.Replace('\\', Path.DirectorySeparatorChar))))
+        {
+            if (DateTime.UtcNow >= deadline)
+            {
+                Log.LogError("Timed out waiting for all target frameworks to start.");
+                break;
+            }
+
+            Thread.Sleep(100);
+        }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="ComputeRunArguments" />
+
+  <PropertyGroup>
+    <!-- The set of target frameworks the barrier waits for. Overridable so single target framework runs don't deadlock. -->
+    <ExpectedStartedTfms Condition="'$(ExpectedStartedTfms)' == ''">$(TargetFrameworks)</ExpectedStartedTfms>
+  </PropertyGroup>
+
+  <Target Name="RunTests"
+          Outputs="%(TestToRun.ResultsStdOutPath)"
+          Condition="'@(TestToRun)' != ''">
+    <PropertyGroup>
+      <_StartedFile>$(ArtifactsTmpDir)$(TargetFramework).started</_StartedFile>
+    </PropertyGroup>
+    <ItemGroup>
+      <_ExpectedStartedTfm Include="$(ExpectedStartedTfms)" />
+      <_ExpectedStartedFile Include="@(_ExpectedStartedTfm->'$(ArtifactsTmpDir)%(Identity).started')" />
+    </ItemGroup>
+    <MakeDir Directories="$(ArtifactsTmpDir);$(ArtifactsLogDir)" />
+    <WriteLinesToFile File="$(_StartedFile)" Lines="$(TargetFramework)" Overwrite="true" />
+    <WaitForFiles Files="@(_ExpectedStartedFile)" TimeoutSeconds="10" />
+    <WriteLinesToFile File="%(TestToRun.ResultsStdOutPath)" Lines="$(TargetFramework)" Overwrite="true" />
+    <ItemGroup>
+      <FileWrites Include="$(_StartedFile)" />
+      <FileWrites Include="%(TestToRun.ResultsStdOutPath)" />
+    </ItemGroup>
+  </Target>
+</Project>

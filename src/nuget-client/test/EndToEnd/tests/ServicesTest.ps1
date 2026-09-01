@@ -366,7 +366,7 @@ function Test-InstallPackageAPIInvalidSource
     $p = New-ClassLibrary
 
     # Act&Assert
-    Assert-Throws { [API.Test.InternalAPITestHook]::InstallPackageApi("invalid", "owin", "1.0.0", $false) } "Exception calling `"InstallPackageApi`" with `"4`" argument(s): `"The specified source 'invalid' is invalid. Please provide a valid source.`r`nParameter name: source`""
+    Assert-Throws { [API.Test.InternalAPITestHook]::InstallPackageApi("invalid", "owin", "1.0.0", $false) } "Exception calling `"InstallPackageApi`" with `"4`" argument(s): `"The specified source 'invalid' is invalid. Provide a valid source.`r`nParameter name: source`""
     Assert-NoPackage $p "owin"
 }
 
@@ -796,45 +796,6 @@ function Test-CreateVsPathContextWithoutConfiguration {
 
 	# Assert
 	Assert-NotNull $context.UserPackageFolder
-}
-
-function Test-CreateVsPathContextUsesAssetsFileIfAvailable {
-    param($context)
-
-	# Arrange
-	$p = New-BuildIntegratedProj UAPApp
-
-    Install-Package NuGet.Versioning -ProjectName $p.Name -version 1.0.7
-
-	$solutionFile = Get-SolutionFullName
-	$solutionDir = Split-Path $solutionFile -Parent
-
-	$userPackageFolder = Join-Path $solutionDir "userPackageFolder"
-
-	$settingFile = Join-Path $solutionDir "nuget.config"
-	$settingFileContent =@"
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <config>
-    <add key="globalPackagesFolder" value="{0}" />
-  </config>
-</configuration>
-"@
-
-	$settingFileContent -f $userPackageFolder | Out-File -Encoding "UTF8" $settingFile
-
-	SaveAs-Solution($solutionFile)
-	Close-Solution
-	Open-Solution $solutionFile
-
-	$p = Get-Project
-
-	# Act
-	$context = [API.Test.InternalAPITestHook]::GetVsPathContext($p.FullName)
-
-	# Assert
-	Assert-NotNull $context.UserPackageFolder
-	Assert-NotEqual $userPackageFolder $context.UserPackageFolder
 }
 
 function Test-InstallPackageAPIToLatestVersion

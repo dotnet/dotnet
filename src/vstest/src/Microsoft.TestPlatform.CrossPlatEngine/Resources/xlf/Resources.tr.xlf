@@ -182,6 +182,11 @@
         <target state="translated">Uygun bir test çalışma zamanı sağlayıcısı bulunamadı:</target>
         <note />
       </trans-unit>
+      <trans-unit id="MtpTestCaseMissingNodeUid">
+        <source>Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</source>
+        <target state="new">Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SkippingSource">
         <source>Skipping source:</source>
         <target state="translated">Kaynak atlanıyor:</target>

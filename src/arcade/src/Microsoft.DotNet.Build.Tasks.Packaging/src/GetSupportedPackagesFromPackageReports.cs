@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetSupportedPackagesFromPackageReports : BuildTask
+    public class GetSupportedPackagesFromPackageReports : Task
     {
         [Required]
         public string[] PackageReports { get; set; }

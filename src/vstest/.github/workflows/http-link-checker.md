@@ -1,7 +1,10 @@
 ---
-description: Weekly automated link checker that finds and fixes broken links in documentation files
+description: Automated link checker that finds and fixes broken links in documentation files
 on:
-  schedule: weekly on Friday
+  # Dispatched by .github/workflows/http-link-check-probe.yml, which runs the same curl
+  # loop weekly and only wakes this workflow when the set of broken links differs from
+  # eng/agentic-workflows/known-broken-links.txt.
+  workflow_dispatch:
 permissions:
   actions: read
   attestations: read
@@ -34,102 +37,11 @@ steps:
 
   - name: Check and test all documentation links
     id: link-check
+    env:
+      OUT_DIR: /tmp/gh-aw/agent
     run: |
-      mkdir -p /tmp/gh-aw/agent
-      echo "# Link Check Results" > /tmp/gh-aw/agent/link-check-results.md
-      echo "" >> /tmp/gh-aw/agent/link-check-results.md
-      
-      # Find all markdown files in docs directory and README
-      echo "Finding all markdown files..."
-      MARKDOWN_FILES=$(find docs README.md -type f -name "*.md" 2>/dev/null || echo "")
-
-      if [ -z "$MARKDOWN_FILES" ]; then
-        echo "No markdown files found"
-        echo "no_files=true" >> $GITHUB_OUTPUT
-        exit 0
-      fi
-
-      # Extract all links from markdown files
-      echo "## Links Found" >> /tmp/gh-aw/agent/link-check-results.md
-      echo "" >> /tmp/gh-aw/agent/link-check-results.md
-      
-      # Use grep to find markdown links and HTTP(S) URLs
-      # Format for relative links: "source_file|url" to allow path resolution
-      for file in $MARKDOWN_FILES; do
-        echo "Checking $file..."
-        # Extract markdown links [text](url)
-        grep -oP '\[([^\]]+)\]\(([^\)]+)\)' "$file" | grep -oP '\(([^\)]+)\)' | tr -d '()' >> /tmp/gh-aw/agent/all-links.txt 2>/dev/null || true
-        # Extract plain HTTP(S) URLs from non-markdown-link text to avoid duplicates/trailing ')'
-        sed -E 's/\[[^]]+\]\(([^)]+)\)/ /g' "$file" | grep -oP 'https?://[^\s<>"]+' | awk '{ if (index($0,"(") == 0) sub(/\)$/, "", $0); print }' >> /tmp/gh-aw/agent/all-links.txt 2>/dev/null || true
-      done
-
-      # Remove duplicates and sort
-      if [ -f /tmp/gh-aw/agent/all-links.txt ]; then
-        sort -u /tmp/gh-aw/agent/all-links.txt > /tmp/gh-aw/agent/unique-links.txt
-        LINK_COUNT=$(wc -l < /tmp/gh-aw/agent/unique-links.txt)
-        echo "Found $LINK_COUNT unique links" >> /tmp/gh-aw/agent/link-check-results.md
-        echo "" >> /tmp/gh-aw/agent/link-check-results.md
-      else
-        echo "No links found" >> /tmp/gh-aw/agent/link-check-results.md
-        echo "no_links=true" >> $GITHUB_OUTPUT
-        exit 0
-      fi
-
-      # Helper: check if an explicit HTML anchor or markdown heading anchor exists in a file
-      check_anchor() {
-        local file="$1"
-        local anchor="$2"
-        local html_anchor heading generated
-
-        while IFS= read -r html_anchor; do
-          if [[ "$html_anchor" == "$anchor" ]]; then
-            return 0
-          fi
-        done < <(grep -oiP "<a\\b[^>]*\\b(?:name|id)\\s*=\\s*['\"]\\K[^'\"]+(?=['\"])" "$file" 2>/dev/null)
-
-        while IFS= read -r heading; do
-          generated=$(printf '%s' "$heading" | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//' | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | sed 's/[^a-z0-9_-]//g')
-          if [[ "$generated" == "$anchor" ]]; then
-            return 0
-          fi
-        done < <(grep -oP '^#{1,6}\s+\K.*' "$file" 2>/dev/null)
-
-        return 1
-      }
-      # Test each link
-      echo "## Link Test Results" >> /tmp/gh-aw/agent/link-check-results.md
-      echo "" >> /tmp/gh-aw/agent/link-check-results.md
-      echo "Testing links..." >> /tmp/gh-aw/agent/link-check-results.md
-      
-      BROKEN_COUNT=0
-      WORKING_COUNT=0
-      
-      while IFS= read -r url; do
-        # Skip relative links and anchors
-        if [[ "$url" == "#"* ]] || [[ "$url" != "http"* ]]; then
-          continue
-        fi
-        
-        # Test the link with curl
-        HTTP_CODE=$(curl -L -s -o /dev/null -w "%{http_code}" --max-time 10 "$url" 2>/dev/null || echo "000")
-        
-        if [[ "$HTTP_CODE" =~ ^2 ]] || [[ "$HTTP_CODE" =~ ^3 ]]; then
-          WORKING_COUNT=$((WORKING_COUNT + 1))
-          echo "✅ $url (HTTP $HTTP_CODE)" >> /tmp/gh-aw/agent/link-check-results.md
-        else
-          BROKEN_COUNT=$((BROKEN_COUNT + 1))
-          echo "❌ $url (HTTP $HTTP_CODE)" >> /tmp/gh-aw/agent/link-check-results.md
-        fi
-      done < /tmp/gh-aw/agent/unique-links.txt
-      
-      echo "" >> /tmp/gh-aw/agent/link-check-results.md
-      echo "**Summary:** $WORKING_COUNT working, $BROKEN_COUNT broken" >> /tmp/gh-aw/agent/link-check-results.md
-      
-      # Output results
-      echo "broken_count=$BROKEN_COUNT" >> $GITHUB_OUTPUT
-      echo "working_count=$WORKING_COUNT" >> $GITHUB_OUTPUT
-      
-      cat /tmp/gh-aw/agent/link-check-results.md
+      chmod +x .github/workflows/scripts/check-http-links.sh
+      .github/workflows/scripts/check-http-links.sh
     shell: bash
 
 tools:
@@ -150,9 +62,11 @@ safe-outputs:
   noop:
 ---
 
-# Weekly HTTP Link Checker & Fixer
+# HTTP Link Checker & Fixer
 
 You are an automated link checker and fixer agent. Your job is to find and fix broken links in the documentation files of this repository.
+
+You only run when the deterministic probe has already established that the set of broken links changed since the last accepted state, so there is something new to look at.
 
 ## Your Mission
 
@@ -227,20 +141,26 @@ After processing all broken links:
 
 ## Step 5: Create Pull Request or Noop
 
-Based on your work:
+After processing the links, run the checker again and update the accepted fingerprint:
 
-**If you fixed any links:**
-- Use the `create-pull-request` safe output to create a PR with your fixes
+```bash
+.github/workflows/scripts/check-http-links.sh
+cp /tmp/gh-aw/agent/broken-links.txt eng/agentic-workflows/known-broken-links.txt
+```
+
+This fingerprint update records both fixed links and reviewed unfixable links, so the weekly probe does not dispatch the same work again.
+
+**If the working tree changed:**
+- Use the `create-pull-request` safe output to create a PR with the fixes and updated fingerprint
 - In the PR body, include:
   - A summary of how many links were fixed
   - A list of the broken links and their replacements
-  - Any links that were added to the unfixable list
+  - Any links that remain broken and why they could not be fixed
 - Title format: "Fix broken documentation links"
 
-**If no links needed fixing:**
+**If the working tree did not change:**
 - Use the `noop` safe output with a clear message like:
-  - "All documentation links are working correctly" (if no broken links found)
-  - "All broken links are in the unfixable list, no new fixes available" (if broken links exist but can't be fixed)
+  - "The broken-link fingerprint is already current"
 
 ## Important Guidelines
 
@@ -249,7 +169,7 @@ Based on your work:
 - **Document everything:** Keep the cache memory up to date with unfixable links
 - **Be selective:** Only add links to the unfixable list if you've genuinely tried to find alternatives
 - **Use web-fetch wisely:** Try to fetch the broken URL and check for redirects or alternatives
-- **Relative links:** The link checker validates relative file links and anchors too. For broken relative links, check if the target file was renamed or moved and update the path accordingly. For broken anchors, check if the heading was renamed and update the anchor to match.
+- **Scope:** This workflow checks absolute HTTP(S) links. The `md-link-checker` workflow checks relative file links and anchors.
 
 ## Example Cache Memory Update
 
@@ -269,5 +189,7 @@ Based on your work:
 ## Context
 
 - Repository: `${{ github.repository }}`
-- Run weekly to catch broken links early
+- Dispatched by the `http-link-check-probe` workflow when the set of broken links changes
 - Link test results are available at `/tmp/gh-aw/agent/link-check-results.md`
+- The broken links alone, sorted and one per line, are at `/tmp/gh-aw/agent/broken-links.txt`
+- The set accepted at the last review is checked in at `eng/agentic-workflows/known-broken-links.txt`

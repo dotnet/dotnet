@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
@@ -15,7 +16,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// <remarks>
     /// The format is specified at https://manpages.debian.org/bookworm/dpkg-dev/deb-changelog.5.en.html
     /// </remarks>
-    public sealed class CreateChangelogFile : BuildTask
+    public sealed class CreateChangelogFile : Task
     {
         [Required]
         public string ChangelogOutputPath { get; set; }

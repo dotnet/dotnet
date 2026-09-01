@@ -109,21 +109,62 @@ public class IntegrationTestBase
             return;
         }
 
-        // Attach files that are of interest.
-        foreach (var attachment in _attachments)
+        AttachFilesOfInterest();
+    }
+
+    /// <summary>
+    /// Attaches the diagnostic logs of a failed test to the test result. <c>AddResultFile</c> only records the path it
+    /// is given, and the logs are written under the temp directory, which CI does not publish and which is deleted when
+    /// the build agent is recycled. Copy them into the test results directory first and attach the copies, so the paths
+    /// in the trx still point at files that exist.
+    /// </summary>
+    private void AttachFilesOfInterest()
+    {
+        var destination = TryCreateAttachmentDirectory();
+        if (destination is null)
         {
-            if (Directory.Exists(attachment))
+            // We don't know where to copy them, attach the originals, they are still on disk for a local run.
+            foreach (var attachment in AttachmentUtils.EnumerateAttachments(_attachments, Console.WriteLine))
             {
-                foreach (var file in Directory.EnumerateFiles(attachment, "*.*", SearchOption.AllDirectories))
-                {
-                    TestContext.AddResultFile(file);
-                }
+                TestContext.AddResultFile(attachment.Path);
             }
 
-            if (File.Exists(attachment))
+            return;
+        }
+
+        foreach (var copy in AttachmentUtils.CopyAttachments(_attachments, destination, Console.WriteLine))
+        {
+            TestContext.AddResultFile(copy);
+        }
+    }
+
+    /// <summary>
+    /// Creates a directory for the files attached by the current test, under the directory where the test results are
+    /// written. Returns null when that directory is not known, or cannot be created.
+    /// </summary>
+    private string? TryCreateAttachmentDirectory()
+    {
+        try
+        {
+            var resultsDirectory = TestContext.TestRunResultsDirectory ?? TestContext.TestResultsDirectory ?? TestContext.TestRunDirectory;
+            if (StringUtils.IsNullOrWhiteSpace(resultsDirectory))
             {
-                TestContext.AddResultFile(attachment);
+                Console.WriteLine("Not copying the attached files, TestContext does not say where the test results are written.");
+                return null;
             }
+
+            // Acceptance tests run in parallel and every one of them writes a file called log.txt, so each test needs
+            // a directory of its own.
+            var name = $"{AttachmentUtils.SanitizePathSegment(TestContext.TestName)}_{RandomId.Next()}";
+            var directory = Path.Combine(resultsDirectory, "attachments", name);
+            Directory.CreateDirectory(directory);
+            Console.WriteLine($"Copying the attached files to: {directory}");
+            return directory;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Could not create the directory for the attached files: {ex}");
+            return null;
         }
     }
 
@@ -228,7 +269,7 @@ public class IntegrationTestBase
 
             // Insert --diag before the -- separator so it's treated as a vstest.console argument,
             // not as a runsettings parameter.
-            var separatorPos = arguments?.IndexOf(" -- ") ?? -1;
+            var separatorPos = arguments?.IndexOf(" -- ", StringComparison.Ordinal) ?? -1;
             if (separatorPos == -1)
             {
                 arguments = string.Concat(arguments, diagArg);
@@ -286,7 +327,7 @@ public class IntegrationTestBase
         if (arguments.Contains(".csproj"))
         {
             var consolePathParameter = $@" -p:VsTestConsolePath=""{vstestConsolePath}""";
-            var position = arguments.IndexOf(" -- ");
+            var position = arguments.IndexOf(" -- ", StringComparison.Ordinal);
             if (position == -1)
             {
                 // Add at the end.
@@ -311,7 +352,7 @@ public class IntegrationTestBase
             var diagArg = " --diag " + diagPath.AddDoubleQuote();
 
             // Insert --diag before the -- separator so dotnet test forwards it to vstest.console.
-            var separatorPos = arguments.IndexOf(" -- ");
+            var separatorPos = arguments.IndexOf(" -- ", StringComparison.Ordinal);
             if (separatorPos == -1)
             {
                 arguments += diagArg;
@@ -718,12 +759,12 @@ public class IntegrationTestBase
         if (testFramework == UnitTestFramework.MSTest)
         {
             var version = IntegrationTestEnvironment.DependencyVersions["MSTestTestAdapterVersion"];
-            if (version.StartsWith("4"))
+            if (version.StartsWith("4", StringComparison.Ordinal))
             {
                 var tfm = _testEnvironment.IsNetFrameworkTarget ? "net462" : "net9.0";
                 adapterRelativePath = string.Format(CultureInfo.InvariantCulture, _msTestAdapterRelativePath, version, tfm);
             }
-            else if (version.StartsWith("3"))
+            else if (version.StartsWith("3", StringComparison.Ordinal))
             {
                 var tfm = _testEnvironment.IsNetFrameworkTarget ? "net462" : "netcoreapp3.1";
                 adapterRelativePath = string.Format(CultureInfo.InvariantCulture, _msTestAdapterRelativePath, version, tfm);

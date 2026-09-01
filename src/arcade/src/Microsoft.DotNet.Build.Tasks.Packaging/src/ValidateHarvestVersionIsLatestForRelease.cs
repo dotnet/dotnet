@@ -15,7 +15,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     /// MSBuild Task that validates if a package is harvesting
     /// the latest package version for a specific package release.
     /// </summary>
-    public class ValidateHarvestVersionIsLatestForRelease : BuildTask
+    public class ValidateHarvestVersionIsLatestForRelease : Microsoft.Build.Utilities.Task
     {
         /// <summary>
         /// Item containing all package reports where the item spec is the path to the report.
@@ -50,12 +50,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
                 }
                 else
                 {
-                    Log.LogMessage(LogImportance.Normal, $"Validation Succeeded: {packageReport.Id} is harvesting assets from package version {harvestVersion} which is the latest for that package erreleasea.");
+                    Log.LogMessage(MessageImportance.Normal, $"Validation Succeeded: {packageReport.Id} is harvesting assets from package version {harvestVersion} which is the latest for that package release.");
                 }
             }
             else
             {
-                Log.LogMessage(LogImportance.Normal, $"Validation Succeeded: {packageReport.Id} is not harvesting any assets.");
+                Log.LogMessage(MessageImportance.Normal, $"Validation Succeeded: {packageReport.Id} is not harvesting any assets.");
             }
         }
 

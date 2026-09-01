@@ -8,7 +8,7 @@
     "default": {
       "name": "default",
       "createdDate": "2026-08-12 03:04:30Z",
-      "lastUpdatedDate": "2026-08-12 03:04:30Z"
+      "lastUpdatedDate": "2026-08-25 15:06:56Z"
     }
   },
   "results": {
@@ -139,6 +139,22 @@
       "tool": "binskim",
       "ruleId": "BA2007",
       "createdDate": "2026-08-12 03:04:30Z"
+    },
+    "caaa773b92e3696eaa49d2a748dac47cb757162be07e7f45fac24a35815ccfbe": {
+      "signature": "caaa773b92e3696eaa49d2a748dac47cb757162be07e7f45fac24a35815ccfbe",
+      "alternativeSignatures": [
+        "cb1f636444cc28a949156cd31b542b5a3cd4985c7e7954d6be4239b68bcb36d3",
+        "407dc4e6dace802d3f9009c3077e9446b96647a1e12c21c44cdbbf24e4c7eea9",
+        "53dd4f8cd3af28b246988434301fcb1f1a326236c24ff3d082ef1f72521b7be0"
+      ],
+      "target": "runtimes/win-arm64/lib/net11.0/DirectWriteForwarder.dll",
+      "uriBaseId": "file:///D:/a/_work/_temp/1espt_iba/a_archives_0/artifacts/assets/Release/assets/symbols/dotnet-dotnet/20260825.4/Microsoft_WindowsDesktop_App_Runtime_win-arm64_11_0_0-rc_1_26425_104_symbols_nupkg/",
+      "memberOf": [
+        "default"
+      ],
+      "tool": "binskim",
+      "ruleId": "BA2007",
+      "createdDate": "2026-08-25 15:06:56Z"
     }
   }
 }

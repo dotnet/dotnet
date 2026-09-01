@@ -16,5 +16,7 @@ namespace NuGet.PackageManagement.Telemetry
         VulnerabilityInfoBar_ManagePackages,
         VulnerabilityInfoBar_FixVulnerabilitiesWithCopilot,
         ErrorList_FixVulnerabilitiesWithCopilot,
+        PMUI_FixVulnerabilitiesWithCopilot,
+        ErrorList_ResolveSupplyChainSecurity,
     }
 }

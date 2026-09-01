@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.Build.Framework;
-using Microsoft.DotNet.Build.Tasks;
 using Microsoft.Cci;
 using Microsoft.Cci.Extensions;
 using Microsoft.Cci.Extensions.CSharp;
@@ -15,10 +15,11 @@ using Microsoft.Cci.Filters;
 using Microsoft.Cci.Writers;
 using Microsoft.Cci.Writers.CSharp;
 using Microsoft.Cci.Writers.Syntax;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.GenAPI
 {
-    public class GenAPITask : BuildTask
+    public class GenAPITask : Task
     {
         private const string InternalsVisibleTypeName = "System.Runtime.CompilerServices.InternalsVisibleToAttribute";
         private const string DefaultFileHeader =
@@ -53,7 +54,7 @@ namespace Microsoft.DotNet.GenAPI
         public string ApiList { get; set; }
 
         /// <summary>
-        /// Output path. Default is the console. Can specify an existing directory as well and
+        /// Output path. Default is the build log. Can specify an existing directory as well and
         /// then a file will be created for each assembly with the matching name of the assembly.
         /// </summary>
         public string OutputPath { get; set; }
@@ -279,11 +280,11 @@ namespace Microsoft.DotNet.GenAPI
             return defaultHeader;
         }
 
-        private static TextWriter GetOutput(string outFilePath, string filename = "")
+        private TextWriter GetOutput(string outFilePath, string filename = "")
         {
-            // If this is a null, empty, whitespace, or a directory use console
+            // If this is a null, empty, whitespace, or a directory write to the build log
             if (string.IsNullOrWhiteSpace(outFilePath))
-                return Console.Out;
+                return new LogTextWriter(Log);
 
             if (Directory.Exists(outFilePath) && !string.IsNullOrEmpty(filename))
             {
@@ -291,6 +292,50 @@ namespace Microsoft.DotNet.GenAPI
             }
 
             return File.CreateText(outFilePath);
+        }
+
+        /// <summary>
+        /// Forwards writes to the build log a line at a time, so that generated output is captured by
+        /// MSBuild's loggers instead of being written to the process-wide console.
+        /// </summary>
+        private sealed class LogTextWriter : TextWriter
+        {
+            private readonly TaskLoggingHelper _log;
+            private readonly StringBuilder _line = new StringBuilder();
+
+            public LogTextWriter(TaskLoggingHelper log) => _log = log;
+
+            public override Encoding Encoding => Encoding.UTF8;
+
+            public override void Write(char value)
+            {
+                if (value == '\n')
+                {
+                    LogPendingLine();
+                }
+                else if (value != '\r')
+                {
+                    _line.Append(value);
+                }
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing && _line.Length > 0)
+                {
+                    LogPendingLine();
+                }
+
+                base.Dispose(disposing);
+            }
+
+            // The pending line is passed with no format arguments so that MSBuild leaves it unchanged.
+            // Generated C# is full of braces and would otherwise be treated as a composite format string.
+            private void LogPendingLine()
+            {
+                _log.LogMessage(MessageImportance.High, _line.ToString());
+                _line.Clear();
+            }
         }
 
         private static string GetFilename(IAssembly assembly, WriterType writer, SyntaxWriterType syntax)

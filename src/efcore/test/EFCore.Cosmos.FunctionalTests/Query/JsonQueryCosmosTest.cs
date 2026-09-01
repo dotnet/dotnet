@@ -141,9 +141,9 @@ WHERE (c["$type"] = "Basic")
                         {
                             x.Id,
                             Root1 = x.OwnedReferenceRoot,
-                            Leaf1 = x.OwnedReferenceRoot.OwnedReferenceBranch.OwnedReferenceLeaf,
+                            Leaf1 = x.OwnedReferenceRoot!.OwnedReferenceBranch!.OwnedReferenceLeaf,
                             Root2 = x.OwnedReferenceRoot,
-                            Leaf2 = x.OwnedReferenceRoot.OwnedReferenceBranch.OwnedReferenceLeaf,
+                            Leaf2 = x.OwnedReferenceRoot!.OwnedReferenceBranch!.OwnedReferenceLeaf,
                         }).AsNoTrackingWithIdentityResolution(),
                     assertOrder: true,
                     elementAsserter: (e, a) =>
@@ -2287,8 +2287,6 @@ WHERE (c["$type"] = "SingleOwned")
 
     #region Non-shared test resources
 
-#nullable disable
-
     #region 21006
 
     public override Task Project_root_with_missing_scalars(bool async)
@@ -2366,7 +2364,9 @@ WHERE (c["Id"] = 4)
 
         // Same as in 10.0
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => context.Set<Context21006.Entity>().Where(x => x.Id == 4).Select(x => x.RequiredReference.Number).ToListAsync());
-        Assert.Equal("Nullable object must have a value.", ex.Message);
+        Assert.Equal(
+            "Cannot read the Value property of a Nullable object that has no value. Check HasValue before reading Value.",
+            ex.Message);
     }
 
     public override Task Project_root_entity_with_missing_required_navigation(bool async)
@@ -6366,8 +6366,6 @@ WHERE (c["Id"] = 4)
     }
 
     #endregion
-
-#nullable restore
 
     #endregion
 

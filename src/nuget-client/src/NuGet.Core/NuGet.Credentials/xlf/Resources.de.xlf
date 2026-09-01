@@ -57,6 +57,11 @@
         <target state="translated">Anmeldeinformationsanbieter hat eine ungültige Antwort gesendet.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SecurePluginException_ConnectionClosed">
+        <source>The connection to credential plugin '{0}' was closed before it answered the credential request. The plugin process may have exited or been shut down while the request was in flight.</source>
+        <target state="translated">Die Verbindung zum Anmeldeinformations-Plugin „{0}“ wurde geschlossen, bevor es auf die Anforderung für Anmeldeinformationen geantwortet hat. Der Prozess des Plug-ins wurde möglicherweise beendet oder heruntergefahren, während die Anforderung ausgeführt wurde.</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
       <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
         <source>Using {0} as a credential provider plugin.</source>
         <target state="translated">"{0}" wird als Anbieter-Plug-In für Anmeldeinformationen verwendet.</target>

@@ -1,8 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
+using System.IO;
+using System.Linq;
 using FluentAssertions;
 using NuGet.Common;
+using NuGet.Test.Utility;
 using Xunit;
 
 namespace NuGet.Configuration.Test
@@ -56,6 +60,72 @@ namespace NuGet.Configuration.Test
             var expectedItem = new SourceItem("SourceName", "Source", "43", "True", "True");
 
             SettingsTestUtils.DeepEquals(result, expectedItem).Should().BeTrue();
+        }
+
+        [Fact]
+        public void MinPublishAge_IsReadAsTimeSpanAndWrittenAsHours()
+        {
+            var source = new PackageSource("Source", "SourceName")
+            {
+                MinPublishAge = TimeSpan.FromHours(72)
+            };
+
+            var result = source.AsSourceItem();
+
+            result.MinPublishAgeHours.Should().Be("72");
+            source.Clone().MinPublishAge.Should().Be(TimeSpan.FromHours(72));
+        }
+
+        [Fact]
+        public void MinPublishAge_WhenSetToNegativeTimeSpan_ThrowsArgumentOutOfRangeException()
+        {
+            var source = new PackageSource("Source", "SourceName");
+
+            Action action = () => source.MinPublishAge = TimeSpan.FromHours(-1);
+
+            action.Should().Throw<ArgumentOutOfRangeException>()
+                .Which.ParamName.Should().Be("value");
+        }
+
+        [Fact]
+        public void MinPublishAge_WhenSetToFractionalHour_ThrowsArgumentOutOfRangeException()
+        {
+            var source = new PackageSource("Source", "SourceName");
+
+            Action action = () => source.MinPublishAge = TimeSpan.FromMinutes(30);
+
+            action.Should().Throw<ArgumentOutOfRangeException>()
+                .Which.ParamName.Should().Be("value");
+        }
+
+        [Theory]
+        [InlineData("-1")]
+        [InlineData("not-a-number")]
+        public void ReadPackageSource_InvalidMinPublishAge_ThrowsWithSourceValueAndPath(string value)
+        {
+            using var directory = TestDirectory.Create();
+            string fileName = Settings.DefaultSettingsFileName;
+            SettingsTestUtils.CreateConfigurationFile(
+                fileName,
+                directory,
+                $"""
+                <configuration>
+                    <packageSources>
+                        <add key="test-source" value="https://test.test/v3/index.json" minPublishAgeHours="{value}" />
+                    </packageSources>
+                </configuration>
+                """);
+
+            var settingsFile = new SettingsFile(directory);
+            var sourceItem = settingsFile.GetSection(ConfigurationConstants.PackageSources)!.Items.Cast<SourceItem>().Single();
+
+            var exception = Record.Exception(() =>
+                PackageSourceProvider.ReadPackageSource(sourceItem, isEnabled: true, NullSettings.Instance, EnvironmentVariableWrapper.Instance));
+
+            exception.Should().BeOfType<NuGetConfigurationException>();
+            exception.Message.Should().Contain("test-source");
+            exception.Message.Should().Contain(value);
+            exception.Message.Should().Contain(Path.Combine(directory, fileName));
         }
 
         [Fact]

@@ -9,13 +9,13 @@ namespace NuGet.Common
     {
         static ExceptionLogger()
         {
-            StaticState.StartMSBuildRestoreTasks += ResetInstance;
+            StaticState.BuildEnded += ResetInstance;
         }
 
         public ExceptionLogger(IEnvironmentVariableReader reader)
         {
-            // We can cache this value since environment variables should be fixed during a restore. In a host that
-            // reuses the process across builds, ResetInstance re-reads it at the start of the next restore.
+            // We can cache this value since environment variables should be fixed during a build. In a host that
+            // reuses the process across builds, ResetInstance discards this instance so the next build rebuilds it.
             ShowStack = ShouldShowStack(reader);
         }
 
@@ -42,12 +42,19 @@ namespace NuGet.Common
             return string.Equals(rawShowStack.Trim(), "true", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static ExceptionLogger Instance { get; private set; } = new ExceptionLogger(EnvironmentVariableWrapper.Instance);
+        private static ExceptionLogger? s_instance;
+
+        public static ExceptionLogger Instance
+        {
+            // Created on first use rather than in the reset, so a process reused across builds reads NUGET_SHOW_STACK
+            // from the environment of the build that uses it.
+            get => s_instance ??= new ExceptionLogger(EnvironmentVariableWrapper.Instance);
+            private set => s_instance = value;
+        }
 
         /// <summary>
-        /// Recreates <see cref="Instance" /> from the current environment so a reused process observes the
-        /// current <c>NUGET_SHOW_STACK</c> value on the next restore.
+        /// Discards <see cref="Instance" /> so a reused process rebuilds it from the next build's environment.
         /// </summary>
-        internal static void ResetInstance() => Instance = new ExceptionLogger(EnvironmentVariableWrapper.Instance);
+        internal static void ResetInstance() => s_instance = null;
     }
 }

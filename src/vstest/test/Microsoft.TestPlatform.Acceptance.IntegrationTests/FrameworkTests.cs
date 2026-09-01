@@ -88,7 +88,7 @@ public class FrameworkTests : AcceptanceTestBase
         //
         // This test is Windows-Review only, so it does not run on Linux or Mac in CI. If it is run there manually,
         // forcing .NET Framework now fails fast, because the .NET Framework test host is no longer launched through Mono.
-        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win");
+        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal);
         if (!isWindows)
         {
             StdErrorContains("Running .NET Framework tests is supported on Windows only");
@@ -118,7 +118,7 @@ public class FrameworkTests : AcceptanceTestBase
 
         InvokeVsTest(arguments);
 
-        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win");
+        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal);
         if (isWindows)
         {
             // On Windows the .NET Framework test host is available, so the "Windows only" error must not appear.

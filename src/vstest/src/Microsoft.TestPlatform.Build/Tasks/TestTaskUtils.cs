@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
+using System.Xml.Linq;
 
 using Microsoft.Build.Utilities;
 
@@ -32,6 +34,7 @@ internal static class TestTaskUtils
         var isLoggerSpecifiedByUser = false;
         var isCollectCodeCoverageEnabled = false;
         var isRunSettingsEnabled = false;
+        var hasConsoleLoggerVerbosityInRunSettings = false;
 
         var builder = new CommandLineBuilder();
         builder.AppendSwitch("exec");
@@ -48,6 +51,8 @@ internal static class TestTaskUtils
         if (!task.VSTestSetting.IsNullOrEmpty())
         {
             isRunSettingsEnabled = true;
+            hasConsoleLoggerVerbosityInRunSettings =
+                task is VSTestTask && HasConsoleLoggerVerbosity(task.VSTestSetting);
             builder.AppendSwitchIfNotNull("--settings:", task.VSTestSetting);
         }
 
@@ -105,24 +110,36 @@ internal static class TestTaskUtils
         // add the logger and verbosity, so we know what to use in vstest.console.
         if (!isLoggerSpecifiedByUser)
         {
-            string vsTestVerbosity = "minimal";
-            if (!task.VSTestVerbosity.IsNullOrWhiteSpace())
+            // For VSTestTask (Console logger): when the settings file configures the console logger
+            // verbosity, don't inject Verbosity here so that the settings file takes precedence.
+            // For VSTestTask2 (MSBuildLogger): always inject the MSBuild-derived verbosity. The
+            // MSBuildLogger verbosity is driven by MSBuild, not by user settings, so it must always
+            // reflect the MSBuild-derived value regardless of whether a settings file is present.
+            if (hasConsoleLoggerVerbosityInRunSettings)
             {
-                var normalTestLogging = new List<string>() { "n", "normal", "d", "detailed", "diag", "diagnostic" };
-                var quietTestLogging = new List<string>() { "q", "quiet" };
-
-                string taskVsTestVerbosity = task.VSTestVerbosity.ToLowerInvariant();
-                if (normalTestLogging.Contains(taskVsTestVerbosity))
-                {
-                    vsTestVerbosity = "normal";
-                }
-                else if (quietTestLogging.Contains(taskVsTestVerbosity))
-                {
-                    vsTestVerbosity = "quiet";
-                }
+                builder.AppendSwitchUnquotedIfNotNull("--logger:", loggerToUse);
             }
+            else
+            {
+                string vsTestVerbosity = "minimal";
+                if (!task.VSTestVerbosity.IsNullOrWhiteSpace())
+                {
+                    var normalTestLogging = new List<string>() { "n", "normal", "d", "detailed", "diag", "diagnostic" };
+                    var quietTestLogging = new List<string>() { "q", "quiet" };
 
-            builder.AppendSwitchUnquotedIfNotNull("--logger:", $"{loggerToUse};Verbosity={vsTestVerbosity}");
+                    string taskVsTestVerbosity = task.VSTestVerbosity.ToLowerInvariant();
+                    if (normalTestLogging.Contains(taskVsTestVerbosity))
+                    {
+                        vsTestVerbosity = "normal";
+                    }
+                    else if (quietTestLogging.Contains(taskVsTestVerbosity))
+                    {
+                        vsTestVerbosity = "quiet";
+                    }
+                }
+
+                builder.AppendSwitchUnquotedIfNotNull("--logger:", $"{loggerToUse};Verbosity={vsTestVerbosity}");
+            }
         }
 
         if (task.VSTestBlame || task.VSTestBlameCrash || task.VSTestBlameHang)
@@ -227,16 +244,151 @@ internal static class TestTaskUtils
         builder.AppendSwitchIfNotNull("--testSessionCorrelationId:", task.VSTestSessionCorrelationId);
 
         // VSTestCLIRunSettings should be last argument as vstest.console ignore options after "--" (CLIRunSettings option).
-        if (task.VSTestCLIRunSettings != null)
+        // The type is string (not string[]) so that MSBuild does not bind it as ITaskItem[], which normalizes
+        // backslashes to forward slashes on Unix and corrupts values such as "NUnit.Where=namespace =~ /Abc\.Space1/".
+        // Multiple settings are separated by newlines or semicolons.
+        var cliRunSettings = SplitCLIRunSettings(task.VSTestCLIRunSettings);
+        if (cliRunSettings.Count > 0)
         {
             builder.AppendSwitch("--");
-            foreach (var arg in task.VSTestCLIRunSettings)
+            foreach (var arg in cliRunSettings)
             {
                 builder.AppendSwitchIfNotNull(string.Empty, arg);
             }
         }
 
         return builder.ToString();
+    }
+
+    private static bool HasConsoleLoggerVerbosity(string settingsFile)
+    {
+        // XDocument.Load resolves the path as a URI, so a malformed path throws UriFormatException
+        // (and ArgumentException on .NET Framework), neither of which derive from the exceptions
+        // caught below. File.Exists never throws, so it keeps a bad path from failing the build.
+        if (!File.Exists(settingsFile))
+        {
+            return false;
+        }
+
+        const string consoleLoggerUri = "logger://Microsoft/TestPlatform/ConsoleLogger/v1";
+        XDocument document;
+        try
+        {
+            document = XDocument.Load(settingsFile);
+        }
+        catch (XmlException)
+        {
+            return false;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
+
+        if (document.Root is null)
+        {
+            return false;
+        }
+
+        foreach (var loggerRunSettings in document.Root.Elements())
+        {
+            if (!loggerRunSettings.Name.LocalName.Equals("LoggerRunSettings", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            foreach (var loggers in loggerRunSettings.Elements())
+            {
+                if (!loggers.Name.LocalName.Equals("Loggers", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                foreach (var logger in loggers.Elements())
+                {
+                    if (!logger.Name.LocalName.Equals("Logger", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    string? friendlyName = null;
+                    string? uri = null;
+                    foreach (var attribute in logger.Attributes())
+                    {
+                        if (attribute.Name.LocalName.Equals("friendlyName", StringComparison.OrdinalIgnoreCase))
+                        {
+                            friendlyName = attribute.Value;
+                        }
+                        else if (attribute.Name.LocalName.Equals("uri", StringComparison.OrdinalIgnoreCase))
+                        {
+                            uri = attribute.Value;
+                        }
+                    }
+
+                    if (!string.Equals(friendlyName, "console", StringComparison.OrdinalIgnoreCase)
+                        && !string.Equals(uri, consoleLoggerUri, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    // Verbosity only counts as configured when it sits directly under Configuration,
+                    // which is where the console logger reads it from. Searching the whole subtree
+                    // would also match a Verbosity element belonging to some other logger's schema.
+                    foreach (var configuration in logger.Elements())
+                    {
+                        if (!configuration.Name.LocalName.Equals("Configuration", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        foreach (var element in configuration.Elements())
+                        {
+                            if (element.Name.LocalName.Equals("Verbosity", StringComparison.OrdinalIgnoreCase))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Splits the value of VSTestCLIRunSettings into the individual settings to forward to vstest.console.
+    /// </summary>
+    /// <remarks>
+    /// Entries are separated by newlines or semicolons. Empty and whitespace-only entries are dropped so that
+    /// an unset or blank value does not append a lone "--" to the command line.
+    /// A single setting cannot contain a semicolon of its own. MSBuild unescapes the property before it
+    /// reaches this scalar string parameter, so %3B arrives as a plain semicolon and is split here, while
+    /// the former string[] parameter kept it as one entry. That escape route is gone on purpose, the array
+    /// form rewrote backslashes to forward slashes on Unix, which broke every setting holding a regex.
+    /// </remarks>
+    internal static List<string> SplitCLIRunSettings(string? value)
+    {
+        var settings = new List<string>();
+        if (StringUtils.IsNullOrWhiteSpace(value))
+        {
+            return settings;
+        }
+
+        foreach (var entry in value.Split(['\r', '\n', ';'], StringSplitOptions.RemoveEmptyEntries))
+        {
+            var trimmed = entry.Trim();
+            if (!StringUtils.IsNullOrEmpty(trimmed))
+            {
+                settings.Add(trimmed);
+            }
+        }
+
+        return settings;
     }
 
     /// <summary>

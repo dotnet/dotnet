@@ -33,14 +33,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         private readonly ILogger _logger;
         private readonly JobMonitorOptions _options;
-        private readonly IHelixService _helix;
         private readonly MonitorState _state;
 
-        public StatusReporter(ILogger logger, JobMonitorOptions options, IHelixService helix, MonitorState state)
+        public StatusReporter(ILogger logger, JobMonitorOptions options, MonitorState state)
         {
             _logger = logger;
             _options = options;
-            _helix = helix;
             _state = state;
         }
 
@@ -142,22 +140,21 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// and work items). Also emits per-failure console-link warnings for any failed
         /// work items observed in this poll that haven't been reported yet.
         /// </summary>
-        public async Task LogPollStatusAsync(
+        public void LogPollStatus(
             IReadOnlyList<HelixJobInfo> jobs,
+            IReadOnlyDictionary<string, IReadOnlyCollection<WorkItemSummary>> workItemsByJob,
             IReadOnlySet<string> completedJobNames,
-            CancellationToken cancellationToken)
+            UploadPipelineSnapshot uploads)
         {
             List<HelixJobInfo> orderedJobs =
             [
                 ..jobs.OrderBy(j => j.JobName, StringComparer.OrdinalIgnoreCase)
             ];
 
-            var workItemsByJob = new Dictionary<string, IReadOnlyCollection<WorkItemSummary>>(StringComparer.OrdinalIgnoreCase);
             foreach (HelixJobInfo job in orderedJobs)
             {
-                IReadOnlyCollection<WorkItemSummary> workItems = await _helix.ListWorkItemsAsync(job.JobName, cancellationToken);
+                IReadOnlyCollection<WorkItemSummary> workItems = workItemsByJob[job.JobName];
                 LogFailedWorkItemConsoleLinks(job, workItems.Where(wi => wi.IsFailedAndTerminal));
-                workItemsByJob[job.JobName] = workItems;
             }
 
             JobWorkItemStatusCounts counts = ComputeCounts(orderedJobs, workItemsByJob, completedJobNames);
@@ -177,7 +174,17 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
             if (_options.Verbose)
             {
-                LogVerboseTree(orderedJobs, workItemsByJob, completedJobNames);
+                _logger.LogDebug(
+                    "Upload pipeline: jobs {JobQueued} queued/{JobActive} active, work items "
+                    + "{WorkItemQueued} queued/{WorkItemActive} active, finalizers "
+                    + "{FinalizerQueued} queued/{FinalizerActive} active, {UploadedResults} results uploaded.",
+                    uploads.Jobs.Queued,
+                    uploads.Jobs.Active,
+                    uploads.WorkItems.Queued,
+                    uploads.WorkItems.Active,
+                    uploads.Finalizers.Queued,
+                    uploads.Finalizers.Active,
+                    uploads.UploadedResults);
             }
         }
 
@@ -199,6 +206,87 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             _logger.LogInformation(
                 "📖 Read more about what this monitor job does: {DocsUri}",
                 DocumentationUri);
+        }
+
+        public void LogPerformanceMetrics(
+            JobMonitorMetricsSnapshot metrics,
+            UploadPipelineSnapshot uploads,
+            bool isPartial = false)
+        {
+            double pipelineSeconds = Math.Max(metrics.PipelineElapsed.TotalSeconds, 0.001);
+            double resultThroughput = uploads.UploadedResults / pipelineSeconds;
+            double workItemThroughput = uploads.WorkItems.Completed / pipelineSeconds;
+            double payloadMiB = metrics.AzureDevOpsPayloadBytes / (1024d * 1024d);
+            string heading = isPartial
+                ? "⏱️ Partial performance metrics captured during cancellation"
+                : "⏱️ Performance metrics";
+            string throughputLabel = isPartial
+                ? "Completed before cancellation"
+                : "Upload throughput";
+            string throughputSummary = isPartial
+                ? $"{uploads.UploadedResults} test result(s); "
+                    + $"{uploads.WorkItems.Completed} work item(s); rates unavailable for a partial snapshot"
+                : $"{uploads.UploadedResults} test result(s), {resultThroughput:0.##} result(s)/s; "
+                    + $"{uploads.WorkItems.Completed} work item(s), {workItemThroughput:0.##} work item(s)/s";
+
+            _logger.LogInformation(
+                "{Heading} ({Elapsed} monitor elapsed, {PipelineElapsed} observed upload pipeline activity):{nl}"
+              + "   {ThroughputLabel}: {ThroughputSummary}{nl}"
+              + "   Azure DevOps HTTP: {AzdoRequests} request attempt(s) "
+              + "({ControlRequests} control, {ResultRequests} result batch, {AttachmentRequests} attachment), "
+              + "{AzdoRetries} retry attempt(s), {AzdoFailedAttempts} failed attempt(s), "
+              + "{PayloadMiB:0.##} MiB request payload; aggregate request time {AzdoRequestTime}, "
+              + "max {MaximumAzdoRequestTime}{nl}"
+              + "   Helix/storage: {HelixRequests} retry-wrapped remote request attempt(s), "
+              + "{HelixRetries} retry attempt(s), {HelixFailedAttempts} failed attempt(s); "
+              + "{BlobDownloads} result blob download attempt(s), {BlobFailures} failed{nl}"
+              + "   Rate limiting: {RateLimitDeferrals} server-directed deferral(s), "
+              + "{RateLimitDeferredTime} cumulative guidance, max {MaximumRateLimitDeferral}; "
+              + "{RateLimitWaits} shared-gate worker wait(s), aggregate {RateLimitWaitTime}, "
+              + "max {MaximumRateLimitWaitTime}{nl}"
+              + "   Pipeline aggregate worker time (max single operation): download {DownloadTime} ({MaxDownloadTime}), "
+              + "parse/aggregate {ParseTime} ({MaxParseTime}), publish {PublishTime} ({MaxPublishTime}), "
+              + "create run {CreateTime} ({MaxCreateTime}), complete run {CompleteTime} ({MaxCompleteTime}).",
+                heading,
+                metrics.Elapsed,
+                metrics.PipelineElapsed,
+                Environment.NewLine,
+                throughputLabel,
+                throughputSummary,
+                Environment.NewLine,
+                metrics.AzureDevOpsRequests,
+                metrics.AzureDevOpsControlRequests,
+                metrics.AzureDevOpsResultRequests,
+                metrics.AzureDevOpsAttachmentRequests,
+                metrics.AzureDevOpsRetries,
+                metrics.AzureDevOpsFailedAttempts,
+                payloadMiB,
+                metrics.AzureDevOpsRequestTime,
+                metrics.MaximumAzureDevOpsRequestTime,
+                Environment.NewLine,
+                metrics.HelixRequests,
+                metrics.HelixRetries,
+                metrics.HelixFailedAttempts,
+                metrics.ResultBlobDownloads,
+                metrics.ResultBlobDownloadFailures,
+                Environment.NewLine,
+                metrics.RateLimitDeferrals,
+                metrics.RateLimitDeferredTime,
+                metrics.MaximumRateLimitDeferral,
+                metrics.RateLimitWaits,
+                metrics.RateLimitWaitTime,
+                metrics.MaximumRateLimitWaitTime,
+                Environment.NewLine,
+                metrics.WorkItemDownloadTime,
+                metrics.MaximumWorkItemDownloadTime,
+                metrics.ParseTime,
+                metrics.MaximumParseTime,
+                metrics.WorkItemPublishTime,
+                metrics.MaximumWorkItemPublishTime,
+                metrics.TestRunCreateTime,
+                metrics.MaximumTestRunCreateTime,
+                metrics.TestRunCompleteTime,
+                metrics.MaximumTestRunCompleteTime);
         }
 
         public void LogNonMonitorPipelineFailure()
@@ -294,86 +382,6 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         private void LogError(string message)
             => _logger.LogError("{Prefix}{Message}", AzdoErrorPrefix, message);
-
-        private void LogVerboseTree(
-            IReadOnlyList<HelixJobInfo> jobs,
-            IReadOnlyDictionary<string, IReadOnlyCollection<WorkItemSummary>> workItemsByJob,
-            IReadOnlySet<string> completedJobNames)
-        {
-            if (jobs.Count == 0)
-            {
-                _logger.LogInformation("⏳ Helix job details:{nl}└─ no Helix jobs discovered yet", Environment.NewLine);
-                return;
-            }
-
-            var lines = new List<string>();
-            for (int jobIndex = 0; jobIndex < jobs.Count; jobIndex++)
-            {
-                HelixJobInfo job = jobs[jobIndex];
-                IReadOnlyCollection<WorkItemSummary> workItems = workItemsByJob[job.JobName];
-                AddVerboseJobLines(
-                    lines,
-                    job,
-                    workItems,
-                    GetJobStatus(job, workItems, completedJobNames),
-                    isLastJob: jobIndex == jobs.Count - 1);
-            }
-
-            _logger.LogInformation("⏳ Helix job details:{nl}{JobDetails}",
-                Environment.NewLine,
-                string.Join(Environment.NewLine, lines));
-        }
-
-        private static void AddVerboseJobLines(
-            List<string> lines,
-            HelixJobInfo job,
-            IReadOnlyCollection<WorkItemSummary> workItems,
-            string jobStatus,
-            bool isLastJob)
-        {
-            string jobConnector = isLastJob ? "└─" : "├─";
-            string childPrefix = isLastJob ? "   " : "│  ";
-            lines.Add($"{jobConnector} 🧪 Helix job {job.DisplayName} [{jobStatus}]");
-
-            List<WorkItemSummary> orderedWorkItems =
-            [
-                ..workItems.OrderBy(wi => wi.Name, StringComparer.OrdinalIgnoreCase)
-            ];
-
-            if (orderedWorkItems.Count == 0)
-            {
-                lines.Add($"{childPrefix}└─ no work items reported yet");
-                return;
-            }
-
-            for (int i = 0; i < orderedWorkItems.Count; i++)
-            {
-                WorkItemSummary workItem = orderedWorkItems[i];
-                string connector = i == orderedWorkItems.Count - 1 ? "└─" : "├─";
-                string console = workItem.IsFailedAndTerminal
-                    ? $" | Console: {MonitorState.GetConsoleOutputText(workItem.ConsoleOutputUri)}"
-                    : string.Empty;
-                lines.Add($"{childPrefix}{connector} {workItem.Name} ({workItem.FormattedState}){console}");
-            }
-        }
-
-        private string GetJobStatus(
-            HelixJobInfo job,
-            IReadOnlyCollection<WorkItemSummary> workItems,
-            IReadOnlySet<string> completedJobNames)
-        {
-            if (_state.IsHelixJobProcessed(job.JobName))
-            {
-                return "Processed";
-            }
-
-            if (completedJobNames.Contains(job.JobName))
-            {
-                return "Completed";
-            }
-
-            return workItems.Count > 0 ? "Running" : "Waiting";
-        }
 
         private JobWorkItemStatusCounts ComputeCounts(
             IReadOnlyList<HelixJobInfo> jobs,

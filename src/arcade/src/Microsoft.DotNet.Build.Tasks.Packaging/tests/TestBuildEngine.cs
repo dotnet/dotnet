@@ -9,9 +9,9 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 {
     public class TestBuildEngine : IBuildEngine
     {
-        private ILog _log;
+        private Log _log;
 
-        public TestBuildEngine(ILog log)
+        public TestBuildEngine(Log log)
         {
             ColumnNumberOfTaskNode = 0;
             ContinueOnError = true;
@@ -45,7 +45,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
 
         public void LogMessageEvent(BuildMessageEventArgs e)
         {
-            _log.LogMessage((LogImportance)e.Importance, e.Message);
+            _log.LogMessage((MessageImportance)e.Importance, e.Message);
         }
 
         public void LogWarningEvent(BuildWarningEventArgs e)

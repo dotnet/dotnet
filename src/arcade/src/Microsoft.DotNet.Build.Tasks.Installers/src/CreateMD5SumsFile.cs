@@ -6,6 +6,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
@@ -15,7 +16,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// <remarks>
     /// Emits a file of the format specified by https://manpages.debian.org/bookworm/dpkg-dev/deb-md5sums.5.en.html
     /// </remarks>
-    public sealed class CreateMD5SumsFile : BuildTask
+    public sealed class CreateMD5SumsFile : Task
     {
         [Required]
         public string RootDirectory { get; set; }

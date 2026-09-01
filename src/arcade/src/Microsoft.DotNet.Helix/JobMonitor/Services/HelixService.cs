@@ -21,13 +21,19 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 {
     internal sealed class HelixService : IHelixService
     {
+        private const int MaximumJobsPerBuildQuery = 1_000;
+
         private readonly ILogger _logger;
         private readonly IHelixApi _helixApi;
         private readonly IBlobClientFactory _blobClientFactory;
         private readonly IFileSystem _fileSystem;
+        private readonly JobMonitorMetrics _metrics;
 
-        public HelixService(IHelixApi helixApi, ILogger logger)
-            : this(helixApi, logger, new AzureBlobClientFactory(), new FileSystem())
+        public HelixService(
+            IHelixApi helixApi,
+            ILogger logger,
+            JobMonitorMetrics metrics = null)
+            : this(helixApi, logger, new AzureBlobClientFactory(), new FileSystem(), metrics)
         {
         }
 
@@ -35,12 +41,14 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             IHelixApi helixApi,
             ILogger logger,
             IBlobClientFactory blobClientFactory,
-            IFileSystem fileSystem)
+            IFileSystem fileSystem,
+            JobMonitorMetrics metrics = null)
         {
             _helixApi = helixApi ?? throw new ArgumentNullException(nameof(helixApi));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _blobClientFactory = blobClientFactory ?? throw new ArgumentNullException(nameof(blobClientFactory));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            _metrics = metrics ?? new JobMonitorMetrics();
         }
 
         public async Task<IReadOnlyList<HelixJobInfo>> GetJobsForBuildAsync(
@@ -53,10 +61,31 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 throw new ArgumentException("A non-empty Helix source filter must be provided.", nameof(source));
             }
 
+            if (string.IsNullOrWhiteSpace(buildId))
+            {
+                throw new ArgumentException("A non-empty build ID filter must be provided.", nameof(buildId));
+            }
+            IImmutableDictionary<string, string> filterProperties = new Dictionary<string, string>()
+            {
+                ["BuildId"] = buildId,
+            }.ToImmutableDictionary();
+
             IImmutableList<JobSummary> jobs = await RetryAsync(
-                async () => await _helixApi.Job.ListAsync(source: source, count: 100_000),
+                async () => await _helixApi.Job.ListAsync(
+                    source: source,
+                    properties: filterProperties,
+                    count: MaximumJobsPerBuildQuery),
                 cancellationToken);
 
+            if (jobs.Count >= MaximumJobsPerBuildQuery)
+            {
+                throw new InvalidOperationException(
+                    $"Helix returned {jobs.Count} jobs for build '{buildId}', reaching the query limit of " +
+                    $"{MaximumJobsPerBuildQuery}. Refusing to monitor a potentially truncated result set.");
+            }
+
+            // Keep the local check as a defensive contract boundary in case Helix returns a
+            // malformed or unexpectedly broad response.
             return
             [
                 ..jobs
@@ -64,87 +93,71 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                         && properties.TryGetValue("BuildId", out JToken id)
                         && buildId == id.Value<string>())
                     .Select(j => new HelixJobInfo(j))
-             ];
+            ];
         }
 
-        public async Task<IReadOnlyList<WorkItemTestResults>> DownloadTestResultsAsync(
+        public async Task<WorkItemTestResults> DownloadTestResultsAsync(
             string jobName,
-            IReadOnlyCollection<string> workItemNames,
+            string workItemName,
             string workingDirectory,
             CancellationToken cancellationToken)
         {
-            List<WorkItemTestResults> downloadedFiles = [];
             List<Exception> transientFailures = [];
             string outputDirectory = _fileSystem.PathCombine(workingDirectory, SanitizeDirName(jobName));
             _fileSystem.CreateDirectory(outputDirectory);
 
             JobResultsUri resultsUri = await RetryAsync(() => _helixApi.Job.ResultsAsync(jobName), cancellationToken);
+            IImmutableList<UploadedFile> availableFiles = await RetryAsync(
+                () => _helixApi.WorkItem.ListFilesAsync(workItemName, jobName, false),
+                cancellationToken);
 
-            foreach (string workItemName in workItemNames)
+            availableFiles = [.. availableFiles.Where(f => LooksLikeTestResultFile(f.Name))];
+            if (availableFiles.Count == 0)
             {
-                IImmutableList<UploadedFile> availableFiles = await RetryAsync(
-                    () => _helixApi.WorkItem.ListFilesAsync(workItemName, jobName, false),
-                    cancellationToken);
+                return new WorkItemTestResults(jobName, workItemName, []);
+            }
 
-                availableFiles = [.. availableFiles.Where(f => LooksLikeTestResultFile(f.Name))];
-                if (availableFiles.Count == 0)
+            string workItemDirectory = _fileSystem.PathCombine(outputDirectory, SanitizeDirName(workItemName));
+            _fileSystem.CreateDirectory(workItemDirectory);
+
+            List<string> workItemFiles = [];
+            foreach (UploadedFile file in availableFiles)
+            {
+                string relativePath = NormalizeUploadedFilePath(file.Name);
+                string destinationFile = _fileSystem.PathCombine(workItemDirectory, relativePath);
+                string directory = _fileSystem.GetDirectoryName(destinationFile);
+                if (!string.IsNullOrEmpty(directory))
                 {
-                    continue;
+                    _fileSystem.CreateDirectory(directory);
                 }
 
-                string workItemDirectory = _fileSystem.PathCombine(outputDirectory, SanitizeDirName(workItemName));
-                _fileSystem.CreateDirectory(workItemDirectory);
-
-                List<string> workItemFiles = [];
-                foreach (UploadedFile file in availableFiles)
+                try
                 {
-                    string relativePath = NormalizeUploadedFilePath(file.Name);
-                    string destinationFile = _fileSystem.PathCombine(workItemDirectory, relativePath);
-                    string directory = _fileSystem.GetDirectoryName(destinationFile);
-                    if (!string.IsNullOrEmpty(directory))
-                    {
-                        _fileSystem.CreateDirectory(directory);
-                    }
-
-                    try
-                    {
-                        DateTimeOffset downloadStartedAt = DateTimeOffset.UtcNow;
-                        _logger.LogDebug(
-                            "Downloading test result file '{FileName}' for '{JobName}/{WorkItemName}'.",
-                            file.Name,
-                            jobName,
-                            workItemName);
-                        IBlobClient blobClient = _blobClientFactory.CreateBlobClient(file.Link, resultsUri.ResultsUriRSAS);
-                        await blobClient.DownloadToAsync(destinationFile, cancellationToken);
-                        _logger.LogDebug(
-                            "Downloaded test result file '{FileName}' for '{JobName}/{WorkItemName}' in {Elapsed}.",
-                            file.Name,
-                            jobName,
-                            workItemName,
-                            DateTimeOffset.UtcNow - downloadStartedAt);
-                        workItemFiles.Add(destinationFile);
-                    }
-                    catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-                    {
-                        throw;
-                    }
-                    catch (Exception ex) when (TransientFailureDetector.IsTransient(ex))
-                    {
-                        transientFailures.Add(ex);
-                        _logger.LogWarning(ex,
-                            "Transient failure downloading '{FileName}' for '{JobName}/{WorkItemName}'. "
-                            + "The remaining files will still be attempted before the download is retried.",
-                            file.Name,
-                            jobName,
-                            workItemName);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "Failed to download '{FileName}' for '{JobName}/{WorkItemName}'.", file.Name, jobName, workItemName);
-                    }
+                    IBlobClient blobClient = _blobClientFactory.CreateBlobClient(file.Link, resultsUri.ResultsUriRSAS);
+                    await blobClient.DownloadToAsync(destinationFile, cancellationToken);
+                    workItemFiles.Add(destinationFile);
+                    _metrics.RecordResultBlobDownload(failed: false);
                 }
-
-                downloadedFiles.Add(new WorkItemTestResults(jobName, workItemName, workItemFiles));
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (Exception ex) when (TransientFailureDetector.IsTransient(ex))
+                {
+                    _metrics.RecordResultBlobDownload(failed: true);
+                    transientFailures.Add(ex);
+                    _logger.LogWarning(ex,
+                        "Transient failure downloading '{FileName}' for '{JobName}/{WorkItemName}'. "
+                        + "The remaining files will still be attempted before the work item is retried.",
+                        file.Name,
+                        jobName,
+                        workItemName);
+                }
+                catch (Exception ex)
+                {
+                    _metrics.RecordResultBlobDownload(failed: true);
+                    _logger.LogWarning(ex, "Failed to download '{FileName}' for '{JobName}/{WorkItemName}'.", file.Name, jobName, workItemName);
+                }
             }
 
             if (transientFailures.Count > 0)
@@ -154,7 +167,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     new AggregateException(transientFailures));
             }
 
-            return downloadedFiles;
+            return new WorkItemTestResults(jobName, workItemName, workItemFiles);
         }
 
         private static bool LooksLikeTestResultFile(string path)
@@ -203,6 +216,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             HelixJobInfo originalJob,
             IReadOnlyCollection<WorkItemSummary> failedWorkItems,
             string targetStageAttempt,
+            string monitorJobAttempt,
             CancellationToken cancellationToken)
         {
             string originalJobName = originalJob.JobName;
@@ -323,6 +337,12 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             {
                 resubmittedProperties = resubmittedProperties.SetItem(HelixJobInfo.StageAttemptPropertyName, resubmittedStageAttempt);
             }
+            if (!string.IsNullOrEmpty(monitorJobAttempt))
+            {
+                resubmittedProperties = resubmittedProperties.SetItem(
+                    HelixJobInfo.ResubmittedByJobAttemptPropertyName,
+                    monitorJobAttempt);
+            }
 
             // 5. Build the new job creation request, copying over Source / Properties / Creator
             //    so the resubmitted job remains discoverable (BuildId, System.StageName, TestRunName, etc.).
@@ -347,6 +367,9 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             string stageName = GetStringPropertyFromProperties(details.Properties, "System.StageName");
             string submitterJobName = GetStringPropertyFromProperties(details.Properties, "System.JobName");
             string submitterJobDisplayName = GetStringPropertyFromProperties(details.Properties, "System.JobDisplayName");
+            string logicalJobName = GetStringPropertyFromProperties(details.Properties, HelixJobInfo.LogicalJobNamePropertyName);
+            string submitterPhaseName = GetStringPropertyFromProperties(details.Properties, "System.PhaseName");
+            string submitterJobAttempt = GetStringPropertyFromProperties(details.Properties, HelixJobInfo.JobAttemptPropertyName);
 
             var newJobInfo = new HelixJobInfo(
                 newJob.Name,
@@ -357,7 +380,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 submitterJobDisplayName,
                 details.QueueId,
                 originalJobName,
-                stageAttempt: resubmittedStageAttempt);
+                stageAttempt: resubmittedStageAttempt,
+                jobAttempt: submitterJobAttempt,
+                logicalJobName: logicalJobName,
+                submitterPhaseName: submitterPhaseName);
 
             _logger.LogInformation("Resubmitted {Count} failed work item(s) from '{OriginalJobName}' as new job '{NewJobName}'{nl}{JobUri}",
                 filteredEntries.Count,
@@ -396,6 +422,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         {
             Exception last = null;
             T result = default;
+            int attempt = 0;
             var retryHandler = new ExponentialRetry
             {
                 MaxAttempts = 5,
@@ -415,13 +442,16 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             bool succeeded = await retryHandler.RunAsync(
                 async _ =>
                 {
+                    int currentAttempt = attempt++;
                     try
                     {
                         result = await action();
+                        _metrics.RecordHelixRequest(isRetry: currentAttempt > 0, failed: false);
                         return RetryResult.Success;
                     }
                     catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
                     {
+                        _metrics.RecordHelixRequest(isRetry: currentAttempt > 0, failed: true);
                         last = ex;
                         return RetryResult.Retry();
                     }

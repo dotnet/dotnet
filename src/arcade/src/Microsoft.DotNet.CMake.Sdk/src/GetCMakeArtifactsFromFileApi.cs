@@ -3,7 +3,6 @@
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Microsoft.DotNet.Build.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +14,7 @@ namespace Microsoft.DotNet.CMake.Sdk
     /// <summary>
     /// Reads CMake File API response to find artifacts for a specific source directory.
     /// </summary>
-    public class GetCMakeArtifactsFromFileApi : BuildTask
+    public class GetCMakeArtifactsFromFileApi : Task
     {
         /// <summary>
         /// The CMake build output directory containing the File API response.
@@ -62,7 +61,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                 }
 
                 string indexFile = indexFiles.OrderByDescending(f => f).First();
-                Log.LogMessage(LogImportance.Low, "Reading CMake File API index: {0}", indexFile);
+                Log.LogMessage(MessageImportance.Low, "Reading CMake File API index: {0}", indexFile);
 
                 string indexJson = File.ReadAllText(indexFile);
                 var options = new JsonSerializerOptions
@@ -86,7 +85,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                     return false;
                 }
 
-                Log.LogMessage(LogImportance.Low, "Reading codemodel: {0}", codeModelFile);
+                Log.LogMessage(MessageImportance.Low, "Reading codemodel: {0}", codeModelFile);
                 
                 string codeModelJson = File.ReadAllText(codeModelFile);
                 var codeModel = JsonSerializer.Deserialize<CMakeCodeModel>(codeModelJson, options);
@@ -113,7 +112,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                     return false;
                 }
 
-                Log.LogMessage(LogImportance.Low, "Found configuration: {0}", Configuration);
+                Log.LogMessage(MessageImportance.Low, "Found configuration: {0}", Configuration);
 
                 if (config.Directories == null || config.Targets == null)
                 {
@@ -142,7 +141,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                     return false;
                 }
 
-                Log.LogMessage(LogImportance.Low, "Found matching directory: {0}", SourceDirectory);
+                Log.LogMessage(MessageImportance.Low, "Found matching directory: {0}", SourceDirectory);
 
                 // Get artifacts
                 var artifacts = new List<ITaskItem>();
@@ -168,7 +167,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                             continue;
                         }
 
-                        Log.LogMessage(LogImportance.Low, "Reading target file: {0}", targetFile);
+                        Log.LogMessage(MessageImportance.Low, "Reading target file: {0}", targetFile);
 
                         // Read target details
                         string targetJson = File.ReadAllText(targetFile);
@@ -187,7 +186,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                                     var item = new TaskItem(fullPath);
                                     artifacts.Add(item);
                                     
-                                    Log.LogMessage(LogImportance.Low, "Found artifact: {0}", fullPath);
+                                    Log.LogMessage(MessageImportance.Low, "Found artifact: {0}", fullPath);
                                 }
                             }
                         }
@@ -200,7 +199,7 @@ namespace Microsoft.DotNet.CMake.Sdk
                 }
 
                 Artifacts = artifacts.ToArray();
-                Log.LogMessage(LogImportance.Normal, "Found {0} artifact(s) for source directory '{1}' in configuration '{2}'", Artifacts.Length, SourceDirectory, Configuration);
+                Log.LogMessage(MessageImportance.Normal, "Found {0} artifact(s) for source directory '{1}' in configuration '{2}'", Artifacts.Length, SourceDirectory, Configuration);
                 
                 return true;
             }

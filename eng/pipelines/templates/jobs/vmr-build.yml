@@ -152,6 +152,11 @@ parameters:
   type: boolean
   default: false
 
+# Add the SDK version produced by this build to the Azure Pipelines build tags.
+- name: tagPipelineBuildWithSdkVersion
+  type: boolean
+  default: false
+
 #### repo parameters ####
 
 - name: isBuiltFromVmr
@@ -439,6 +444,9 @@ jobs:
     fetchDepth: 1
     retryCountOnTaskFailure: 5
 
+  - ${{ if in(parameters.targetOS, 'osx', 'maccatalyst', 'ios', 'iossimulator', 'tvos', 'tvossimulator') }}:
+    - template: ../steps/select-xcode.yml
+
   - ${{ parameters.initSteps }}
 
   - ${{ if eq(parameters.setSourceDateEpoch, true) }}:
@@ -660,6 +668,22 @@ jobs:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
             ${{ if eq(parameters.signDac, 'true') }}:
               ESRP_TOKEN: $(System.AccessToken)
+
+    - ${{ if eq(parameters.tagPipelineBuildWithSdkVersion, true) }}:
+      - pwsh: |
+          $versionFile = Join-Path "$(sourcesPath)" "src/sdk/artifacts/packages/${{ parameters.configuration }}/Shipping/sdk-productVersion.txt"
+          if (-not (Test-Path $versionFile)) {
+            throw "SDK version file was not produced at '$versionFile'."
+          }
+
+          $sdkVersion = (Get-Content $versionFile -Raw).Trim()
+          if ([string]::IsNullOrWhiteSpace($sdkVersion)) {
+            throw "SDK version file '$versionFile' is empty."
+          }
+
+          Write-Host "Tagging build with SDK version '$sdkVersion'."
+          Write-Host "##vso[build.addbuildtag]SDK $sdkVersion"
+        displayName: Tag build with SDK version
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: build.cmd

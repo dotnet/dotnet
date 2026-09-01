@@ -14,7 +14,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     /// <summary>
     /// Run a command and retry if the exit code is not 0.
     /// </summary>
-    public class ExecWithRetries : BuildTask, ICancelableTask
+    public class ExecWithRetries : Microsoft.Build.Utilities.Task, ICancelableTask
     {
         [Required]
         public string Command { get; set; }
@@ -98,7 +98,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 TimeSpan delay = TimeSpan.FromSeconds(
                     Math.Pow(RetryDelayBase, i) + RetryDelayConstant);
 
-                Log.LogMessage(LogImportance.High, $"{message} -- Retrying after {delay}...");
+                Log.LogMessage(MessageImportance.High, $"{message} -- Retrying after {delay}...");
 
                 try
                 {

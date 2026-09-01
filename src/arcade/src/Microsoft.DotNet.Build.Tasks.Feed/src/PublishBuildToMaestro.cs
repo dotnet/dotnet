@@ -187,7 +187,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
                     Log.LogMessage(MessageImportance.High,
                         $"Metadata has been pushed. Build id in the Build Asset Registry is '{recordedBuild.Id}'");
-                    Console.WriteLine($"##vso[build.addbuildtag]BAR ID - {recordedBuild.Id}");
+                    Log.LogMessage(MessageImportance.High, $"##vso[build.addbuildtag]BAR ID - {recordedBuild.Id}");
 
                     // Only 'create' the AzDO (VSO) variables if running in an AzDO build
                     if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILD_BUILDID")))
@@ -201,9 +201,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         Log.LogMessage(MessageImportance.High,
                             $"Determined build will be added to the following channels: {defaultChannelsStr}");
 
-                        Console.WriteLine($"##vso[task.setvariable variable=BARBuildId]{recordedBuild.Id}");
-                        Console.WriteLine($"##vso[task.setvariable variable=DefaultChannels]{defaultChannelsStr}");
-                        Console.WriteLine($"##vso[task.setvariable variable=IsStableBuild]{IsStableBuild}");
+                        Log.LogMessage(MessageImportance.High, $"##vso[task.setvariable variable=BARBuildId]{recordedBuild.Id}");
+                        Log.LogMessage(MessageImportance.High, $"##vso[task.setvariable variable=DefaultChannels]{defaultChannelsStr}");
+                        Log.LogMessage(MessageImportance.High, $"##vso[task.setvariable variable=IsStableBuild]{IsStableBuild}");
                     }
                 }
             }
@@ -359,7 +359,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             {
                 if (!buildCache.TryGetValue(asset.BuildId, out ProductConstructionService.Client.Models.Build producingBuild))
                 {
-                    producingBuild = await client.Builds.GetBuildAsync(asset.BuildId, cancellationToken);
+                    producingBuild = await client.Builds.GetBuildAsync(asset.BuildId, includeAssetLocation: false, cancellationToken);
                     buildCache.Add(asset.BuildId, producingBuild);
                 }
 
@@ -377,7 +377,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
             // Commonly, if a repository has a dependency on an asset from a build, more dependencies will be to that same build
             // lets fetch all assets from that build to save time later.
-            var build = await client.Builds.GetBuildAsync(buildId.Value, cancellationToken);
+            var build = await client.Builds.GetBuildAsync(buildId.Value, includeAssetLocation: false, cancellationToken);
             foreach (var asset in build.Assets)
             {
                 if (!assetCache.ContainsKey((asset.Name, asset.Version, build.Commit)))

@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
-    public class GetPackageVersion : BuildTask
+    public class GetPackageVersion : Task
     {
         [Required]
         public ITaskItem[] Files

@@ -1,10 +1,10 @@
 ---
 name: apex-migration
 description: >-
-  Migrate NuGet PowerShell E2E tests to C# Apex tests or unit tests. 
-Use this skill whenever the user asks to migrate, convert, or port a PowerShell end-to-end test from test/EndToEnd/tests/ to an Apex test in test/NuGet.Tests.Apex/ or to a unit test in test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/. 
-Also trigger when the user mentions "Apex test", "migrate PS test", "E2E test migration", "PMC test", "cmdlet unit test", "PowerShell unit test", or references any PowerShell test function like Install-PackageTest or Update-PackageTest and wants it rewritten in C#. Even if the user just says "migrate this test" while looking at a PS E2E file, use this skill.
-Also trigger whenever the user wants to write a new Apex test or a new PMC cmdlet unit test.
+  Migrate NuGet PowerShell E2E tests to C# Apex tests or unit tests.
+  Use this skill whenever the user asks to migrate, convert, or port a PowerShell end-to-end test from test/EndToEnd/tests/ to an Apex test in test/NuGet.Tests.Apex/ or to a unit test in test/NuGet.Clients.Tests/NuGetConsole.Host.PowerShell.Test/.
+  Also trigger when the user mentions "Apex test", "migrate PS test", "E2E test migration", "PMC test", "cmdlet unit test", "PowerShell unit test", or references any PowerShell test function like Install-PackageTest or Update-PackageTest and wants it rewritten in C#. Even if the user just says "migrate this test" while looking at a PS E2E file, use this skill.
+  Also trigger whenever the user wants to write a new Apex test or a new PMC cmdlet unit test.
 ---
 
 # Migrating PowerShell E2E Tests to Apex Tests
@@ -339,6 +339,15 @@ Skip PS tests that:
 - **Daily vs regular Apex cadence matters** — a test in `NuGet.Tests.Apex.Daily` does NOT count as
   coverage for removing an E2E test that runs on every PR. Only regular Apex tests
   (`NuGet.Tests.Apex`) provide equivalent gating.
+- **Ambiguous startup project names require the unique name** — Apex
+  `SolutionService.SetStartupProject(ProjectTestExtension)` selects by the short project name, so
+  it cannot distinguish projects with the same name. For these scenarios, set
+  `DTE.Solution.SolutionBuild.StartupProjects` from a host-side Apex service using the project's
+  `UniqueName`.
+- **Create duplicate project names through host-side DTE APIs** — Apex
+  `SolutionService.AddProject` can fail when a project with the same short name already exists in a
+  solution folder. Use `SolutionFolder.AddFromTemplate` and `Solution2.AddFromTemplate` with
+  distinct destination directories from a host-side Apex service.
 
 ## Learnings (continuously updated)
 
@@ -355,6 +364,27 @@ This section captures lessons learned from actual migration runs that don't fit 
 - **`vs-tests.yml` `part:` list is NOT maintained per-migration** — e.g. `SyncPackageTest.ps1` remains listed after deletion in #7270. Follow precedent: when fully migrating a PS test file, delete the file and remove it from `NuGet.sln` solution items, but leave the `vs-tests.yml` part list untouched.
 - **`-Source` by *name* and `-Updates` source filtering are UNIT-testable, not Apex-only.** `GetMatchingSource` resolves `-Source` against `ISourceRepositoryProvider.PackageSourceProvider.LoadPackageSources()`, and `-Updates` queries `PrimarySourceRepositories` (= just the matched `-Source` when one is given). The unit harness's `TestSourceRepositoryUtility.CreateSourceRepositoryProvider(IEnumerable<PackageSource>)` builds a real provider — pass `new PackageSource(path, "FriendlyName")` to test name resolution, and register a second empty source to verify `-Updates -Source EmptySource` returns 0. Don't reach for Apex just because a scenario mentions `-Source`.
 - **`-Source 'All'` is a host-level concept, NOT a cmdlet `-Source` value.** The aggregate "All" is handled by `PowerShellHost.SetPrivateDataOnHost` (the PMC source dropdown), which maps it to an empty active source. Passing `-Source 'All'` literally to a cmdlet hits `GetMatchingSource('All')` → null → `CheckSourceValidity` → throws "Unknown source 'All'". The old `GetPackageAcceptsAllAsSourceName` PS function had no `Test-` prefix (never ran) and relied on this non-existent behavior — do not migrate it.
+
+### 2026-08-28: DependencyVersion data-driven migration
+
+- Related E2E scenarios that differ only by a PMC enum argument and expected package version can
+  share a `[DataTestMethod]` with one `[DataRow]` per migrated function. Each row remains an
+  independently reported Apex test while avoiding repeated Visual Studio test code.
+- To test dependency selection across several available versions, add the minimum dependency range
+  to the root package's `Dependencies`, create the root without recursively creating dependencies,
+  and create each concrete dependency version separately.
+- Use an explicit open-ended dependency range such as `[1.0.0,)` when the original package means
+  `>= 1.0.0`. Create that root with `CreatePackagesWithoutDependenciesAsync`, then create every
+  concrete dependency version separately; otherwise the range placeholder is recursively created
+  as a package and contaminates the test source.
+- `NuGetApexTestService.IsPackageInstalled` only returns direct dependencies. Use
+  `IsPackageInstalledIncludingTransitive` when verifying a transitive package version.
+- Explicitly call `simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig()` for migrated
+  packages.config scenarios. Otherwise the Visual Studio profile's persisted package-management
+  default can create a legacy project as PackageReference and change PMC behavior.
+- Config-driven dependency behavior can share the same data-driven test as explicit
+  `-DependencyVersion` arguments. Use `SimpleTestSettingsContext.SetDependencyVersion` before
+  creating `ApexTestContext`, and leave the command-line argument empty for that row.
 
 ---
 

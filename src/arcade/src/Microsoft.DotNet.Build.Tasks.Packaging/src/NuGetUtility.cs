@@ -14,12 +14,13 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using TaskLoggingHelper = Microsoft.Build.Utilities.TaskLoggingHelper;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
     public static class NuGetUtility
     {
-        internal static IEnumerable<Version> GetAllVersionsForPackageId(string packageId, bool includePrerelease, bool includeUnlisted, Log log, CancellationToken cancellationToken)
+        internal static IEnumerable<Version> GetAllVersionsForPackageId(string packageId, bool includePrerelease, bool includeUnlisted, TaskLoggingHelper log, CancellationToken cancellationToken)
         {
             List<Version> result = new List<Version>();
             ISettings settings = Settings.LoadDefaultSettings(Directory.GetCurrentDirectory());
@@ -108,9 +109,9 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
 
         internal class NuGetLogger : ILogger
         {
-            private readonly Log _log;
+            private readonly TaskLoggingHelper _log;
 
-            public NuGetLogger(Log log)
+            public NuGetLogger(TaskLoggingHelper log)
             {
                 _log = log;
             }

@@ -1440,21 +1440,6 @@ function Test-InstallPackageWithFrameworkRefsOnlyRequiredForSL {
     Assert-SolutionPackage PackageWithNet40AndSLLibButOnlySLGacRefs
 }
 
-function Test-InstallPackageWithValuesFromPipe {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    Get-Package -ListAvailable -Filter "Microsoft-web-helpers" | Install-Package
-
-    # Assert
-    Assert-Package $p Microsoft-web-helpers
-}
-
 function Test-InstallPackageInstallsHighestReleasedPackageIfPreReleaseFlagIsNotSet {
     # Arrange
     $a = New-ClassLibrary
@@ -2102,20 +2087,6 @@ function Test-InstallPackageRespectAssemblyReferenceFilterOnSecondProject
     Assert-Null (Get-AssemblyReference $q 'Ookii.Dialogs.Wpf')
 }
 
-function Test-InstallPackageThrowsIfMinClientVersionIsNotSatisfied
-{
-    param ($context)
-
-    # Arrange
-    $p = New-ConsoleApplication
-
-    $currentSemanticVersion = Get-HostSemanticVersion
-
-    # Act & Assert
-    Assert-Throws { $p | Install-Package Kitty -Source $context.RepositoryPath } "The 'kitty 1.0.0' package requires NuGet client version '100.0.0' or above, but the current NuGet version is '$currentSemanticVersion'. To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget"
-    Assert-NoPackage $p "Kitty"
-}
-
 function Test-InstallPackageWithXdtTransformTransformsTheFile
 {
     # Arrange
@@ -2362,135 +2333,6 @@ function Test-InstallPackageAddMoreEntriesToProjectConfigFile
     Assert-Null (Get-ProjectItem $p 'packages.config')
 }
 
-# Tests that when -DependencyVersion HighestPatch is specified, the dependency with
-# the largest patch number is installed
-function Test-InstallPackageWithDependencyVersionHighestPatch
-{
-    param($context)
-
-    # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath -DependencyVersion HighestPatch
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 1.0.1
-}
-
-# Tests that when -DependencyVersion HighestPatch is specified, the dependency with
-# the lowest major, highest minor, highest patch is installed
-function Test-InstallPackageWithDependencyVersionHighestMinor
-{
-    param($context)
-
-    # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath -DependencyVersion HighestMinor
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 1.2.1
-}
-
-# Tests that when -DependencyVersion Highest is specified, the dependency with
-# the highest version installed
-function Test-InstallPackageWithDependencyVersionHighest
-{
-    param($context)
-
-    # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath -DependencyVersion Highest
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 2.0.1
-}
-
-# Tests that when -DependencyVersion is lowest, the dependency with
-# the smallest patch number is installed
-function Test-InstallPackageWithDependencyVersionLowest
-{
-    param($context)
-
-    # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath -DependencyVersion Lowest
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 1.0.0
-}
-
-# Tests the case when DependencyVersion is specified in nuget.config
-function Test-InstallPackageWithDependencyVersionHighestInNuGetConfig
-{
-    param($context)
-
-    # Arrange
-    Check-NuGetConfig
-
-    $componentModel = Get-VSComponentModel
-    $setting = $componentModel.GetService([NuGet.Configuration.ISettings])
-
-    try {
-        # Arrange
-        $p = New-ClassLibrary
-
-        $setting.AddOrUpdate('config', [NuGet.Configuration.AddItem]::new('dependencyversion', 'HighestPatch'))
-
-        # Act
-        $p | Install-Package jquery.validation -version 1.10
-
-        # Assert
-        Assert-Package $p jquery.validation 1.10
-        Assert-Package $p jquery 1.4.4
-    }
-    finally {
-        $setting.AddOrUpdate('config', [NuGet.Configuration.AddItem]::new('dependencyversion', $null))
-    }
-}
-
-# Tests that when -DependencyVersion is not specified, the dependency with
-# the smallest patch number is installed
-function Test-InstallPackageWithoutDependencyVersion
-{
-    param($context)
-
-   # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 1.0.0
-}
-
 # Tests that passing in online path to a packages.config file to
 # Install-Package works.
 function Test-InstallPackagesConfigOnline
@@ -2507,24 +2349,6 @@ function Test-InstallPackagesConfigOnline
 
     # Assert
     Assert-Package $p Newtonsoft.Json 4.0.1
-}
-
-# Tests that passing in local path to a packages.config file to
-# Install-Package works.
-function Test-InstallPackagesConfigLocal
-{
-    param($context)
-
-    # Arrange
-    $p = New-ClassLibrary
-    $pathToPackagesConfig = Join-Path $context.RepositoryRoot "InstallPackagesConfigLocal\packages.config"
-
-    # Act
-    $p | Install-Package $pathToPackagesConfig
-
-    # Assert
-    Assert-Package $p A 1.0.0
-    Assert-Package $p B 1.0.0
 }
 
 # Tests that passing in online path to a .nupkg file to

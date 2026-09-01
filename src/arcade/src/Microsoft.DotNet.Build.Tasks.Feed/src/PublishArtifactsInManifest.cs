@@ -3,12 +3,12 @@
 
 using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using Microsoft.DotNet.Build.Manifest;
 using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -243,8 +243,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             {
                 var buildInfoService = provider.GetRequiredService<IProductionChannelValidatorBuildInfoService>();
                 var branchClassificationService = provider.GetRequiredService<IBranchClassificationService>();
-                var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
-                var logger = loggerFactory.CreateLogger<ProductionChannelValidator>();
+                var logger = new MSBuildLogger<ProductionChannelValidator>(provider.GetRequiredService<TaskLoggingHelper>());
                 
                 // Convert EnforceProduction boolean to ValidationMode enum
                 var validationMode = EnforceProduction ? ValidationMode.Enforce : ValidationMode.Audit;
@@ -252,24 +251,19 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 return new ProductionChannelValidator(buildInfoService, branchClassificationService, logger, validationMode);
             });
             
-            // Add logging services
-            collection.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug));
-            
             // Register AzureDevOpsService with proper authentication
             collection.TryAddSingleton<IProductionChannelValidatorBuildInfoService>(provider =>
             {
                 var httpClient = provider.GetRequiredService<HttpClient>();
-                var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
-                var logger = loggerFactory.CreateLogger<AzureDevOpsService>();
-                return new AzureDevOpsService(httpClient, logger, AzdoApiToken);
+                var logger = new MSBuildLogger<AzureDevOpsService>(provider.GetRequiredService<TaskLoggingHelper>());
+                return new AzureDevOpsService(httpClient, logger, AzdoApiToken, ManagedIdentityClientId);
             });
             
             // Register BranchClassificationService with proper authentication
             collection.TryAddSingleton<IBranchClassificationService>(provider =>
             {
                 var httpClient = provider.GetRequiredService<HttpClient>();
-                var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
-                var logger = loggerFactory.CreateLogger<BranchClassificationService>();
+                var logger = new MSBuildLogger<BranchClassificationService>(provider.GetRequiredService<TaskLoggingHelper>());
                 return new BranchClassificationService(httpClient, logger, AzdoApiToken);
             });
             
@@ -308,7 +302,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 );
 
                 // Check that all tasks returned true
-                if (results.All(t => t))
+                if (results.All(t => t) && !Log.HasLoggedErrors)
                 {
                     // Once all assets have been published, promotes the build to the target channels informed. 
                     // Since we can have multiple manifests (perhaps using different versions), things
@@ -340,7 +334,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
         }
 
-        public PublishArtifactsInManifestBase WhichPublishingTask(string manifestFullPath)
+        public virtual PublishArtifactsInManifestBase WhichPublishingTask(string manifestFullPath)
         {
             Log.LogMessage(MessageImportance.High, $"Creating a task to publish assets from {manifestFullPath}");
 
@@ -375,7 +369,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         internal PublishArtifactsInManifestBase ConstructPublishingV3Task(BuildModel buildModel)
         {
-            return new PublishArtifactsInManifestV3(new AssetPublisherFactory(Log))
+            return new PublishArtifactsInManifestV3()
             {
                 BuildEngine = this.BuildEngine,
                 TargetChannels = this.TargetChannels,
@@ -421,7 +415,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         internal PublishArtifactsInManifestBase ConstructPublishingV4Task(BuildModel buildModel)
         {
-            return new PublishArtifactsInManifestV4(new AssetPublisherFactory(Log))
+            return new PublishArtifactsInManifestV4()
             {
                 BuildEngine = this.BuildEngine,
                 TargetChannels = this.TargetChannels,

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
@@ -168,7 +169,7 @@ internal class ParallelDiscoveryEventsHandler : ITestDiscoveryEventsHandler2
 
         // Do not send CancellationRequested message to Output window in IDE, as it is not useful for user
         if (string.Equals(message.MessageType, MessageType.TestMessage)
-            && rawMessage.IndexOf(CommonResources.CancellationRequested) >= 0)
+            && rawMessage.IndexOf(CommonResources.CancellationRequested, StringComparison.Ordinal) >= 0)
         {
             return;
         }

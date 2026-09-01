@@ -109,6 +109,11 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
 若要阻止 NuGet 在生成期间还原程序包，请打开 Visual Studio 的“选项”对话框，单击“NuGet 程序包管理器”节点，然后取消选中“允许 NuGet 在生成期间下载缺少的程序包”。</target>
         <note />
       </trans-unit>
+      <trans-unit id="Prompt_ResolveSupplyChainSecurityNUCode">
+        <source>Resolve {0} by reviewing my NuGet supply chain security configuration.</source>
+        <target state="new">Resolve {0} by reviewing my NuGet supply chain security configuration.</target>
+        <note>Do not translate NuGet</note>
+      </trans-unit>
       <trans-unit id="PropertyDoesNotHaveSingleValue">
         <source>The property {0} was expected to have a single value across all target frameworks, but instead had the following values: {1}</source>
         <target state="translated">属性 {0} 应在所有目标框架中具有单个值，但却具有以下值: {1}</target>
@@ -133,6 +138,11 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
         <target state="translated">解决方案未保存。请先保存你的解决方案，然后再管理 NuGet 包。</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Title_AskCopilotForFix">
+        <source>Ask Copilot for a fix</source>
+        <target state="new">Ask Copilot for a fix</target>
+        <note>Do not translate Copilot</note>
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
         <source>Ask Copilot to fix NuGet package vulnerabilities</source>

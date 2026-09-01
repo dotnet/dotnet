@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
@@ -25,7 +26,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
     //   CLI patch  -> 4 bits
     //   BuildNumber major -> 14 bits
     //   BuildNumber minor -> 4 bits
-    public class GenerateMsiVersion : BuildTask
+    public class GenerateMsiVersion : Task
     {
         [Required]
         public string Major { get; set; }

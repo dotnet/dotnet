@@ -57,6 +57,11 @@
         <target state="translated">자격 증명 공급자가 잘못된 응답을 제공하였습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SecurePluginException_ConnectionClosed">
+        <source>The connection to credential plugin '{0}' was closed before it answered the credential request. The plugin process may have exited or been shut down while the request was in flight.</source>
+        <target state="translated">자격 증명 플러그 인 '{0}'에 대한 연결이 자격 증명 요청에 응답하기 전에 닫혔습니다. 요청을 처리하는 동안 플러그 인 프로세스가 끝났거나 종료되었을 수 있습니다.</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
       <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
         <source>Using {0} as a credential provider plugin.</source>
         <target state="translated">자격 증명 공급자 플러그 인으로 {0}을(를) 사용하는 중입니다.</target>

@@ -261,7 +261,8 @@ namespace Microsoft.DotNet.SignTool.Tests
 
         public SignToolTests(ITestOutputHelper output)
         {
-            _tmpDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            // Keep executable signing fixtures in the build output rather than staging them in the system temp directory.
+            _tmpDir = Path.Combine(AppContext.BaseDirectory, "test-artifacts", Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(_tmpDir);
             _output = output;
         }

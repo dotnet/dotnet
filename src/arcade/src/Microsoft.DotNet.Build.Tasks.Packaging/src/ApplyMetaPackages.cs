@@ -12,7 +12,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     /// <summary>
     /// Replaces package dependencies with meta-package dependencies where appropriate.
     /// </summary>
-    public class ApplyMetaPackages : BuildTask
+    public class ApplyMetaPackages : Task
     {
         /// <summary>
         /// Need the package id to ensure we don't add a meta-package reference for a package that depends on itself.

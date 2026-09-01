@@ -71,6 +71,11 @@
         <note>0 - attribute name
 1 - attribute value</note>
       </trans-unit>
+      <trans-unit id="Error_InvalidMinPublishAgeExceptionPattern">
+        <source>Minimum publish age exception pattern '{0}' is invalid.</source>
+        <target state="translated">最小公開期間の例外パターン '{0}' は無効です。</target>
+        <note>0 - invalid package ID pattern</note>
+      </trans-unit>
       <trans-unit id="Error_ItemNeedsAtLeastOnePackagePattern">
         <source>Package source '{0}' must have at least one package pattern.</source>
         <target state="translated">パッケージ ソース '{0}' には、少なくとも 1 つのパッケージ パターンが必要です。</target>
@@ -177,6 +182,16 @@
         <source>Owners item must only have text content and cannot be empty.</source>
         <target state="translated">所有者項目に使用できるのはテキスト コンテンツのみであり、空にすることはできません。</target>
         <note />
+      </trans-unit>
+      <trans-unit id="PackageSource_MinPublishAgeCannotBeNegative">
+        <source>The minimum publish age cannot be negative. Value: '{0}'.</source>
+        <target state="translated">最小公開期間を負の値にすることはできません。値: '{0}'。</target>
+        <note>0 - minimum publish age</note>
+      </trans-unit>
+      <trans-unit id="PackageSource_MinPublishAgeMustBeWholeHours">
+        <source>The minimum publish age must be specified in whole hours. Value: '{0}'.</source>
+        <target state="translated">最小公開期間は、整数の時間で指定する必要があります。値: '{0}'。</target>
+        <note>0 - minimum publish age</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNullOrEmpty">
         <source>{0} cannot be null or empty.</source>

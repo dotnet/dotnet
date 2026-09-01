@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.Build.Framework;
@@ -16,7 +16,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     /// reference differ so in order to ensure the correct dependencies are applied we have to promote dependencies
     /// from a less specific ref to the more specific lib, and from a less specific lib to a more specific ref.
     /// </summary>
-    public class PromoteDependencies : BuildTask
+    public class PromoteDependencies : Task
     {
         private const string TargetFrameworkMetadataName = "TargetFramework";
 
@@ -44,12 +44,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             var refSets = dependencies.Where(d => d.Id != "_._").Where(d => d.IsReference).GroupBy(d => NuGetFramework.Parse(d.TargetFramework)).ToDictionary(g => g.Key, g => g.ToArray());
             var refFxs = refSets.Keys.ToArray();
 
-            Log.LogMessage(LogImportance.Low, $"Ref frameworks {string.Join(";", refFxs.Select(f => f.ToString()))}");
+            Log.LogMessage(MessageImportance.Low, $"Ref frameworks {string.Join(";", refFxs.Select(f => f.ToString()))}");
 
             var libSets = dependencies.Where(d => !d.IsReference).GroupBy(d => NuGetFramework.Parse(d.TargetFramework)).ToDictionary(g => g.Key, g => g.ToArray());
             var libFxs = libSets.Keys.ToArray();
 
-            Log.LogMessage(LogImportance.Low, $"Lib frameworks {string.Join(";", libFxs.Select(f => f.ToString()))}");
+            Log.LogMessage(MessageImportance.Low, $"Lib frameworks {string.Join(";", libFxs.Select(f => f.ToString()))}");
 
             if (libFxs.Length > 0)
             {
