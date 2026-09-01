@@ -93,11 +93,6 @@
       <DefineConstants>$(DefineConstants);NativeMachine_x64=x64</DefineConstants>
       <DefineConstants>$(DefineConstants);NativeMachine_arm64=arm64</DefineConstants>
 
-      <!-- Allow downgrade only for preview/RC builds to handle version stamp issues. Disable for GA to prevent servicing downgrades. -->
-      <SuppressDowngradeFailure Condition="'$(_IsPreReleaseBuild)' == 'true'">yes</SuppressDowngradeFailure>
-      <SuppressDowngradeFailure Condition="'$(_IsPreReleaseBuild)' != 'true'">no</SuppressDowngradeFailure>
-      <DefineConstants>$(DefineConstants);SuppressDowngradeFailure=$(SuppressDowngradeFailure)</DefineConstants>
-
       <DefineConstants>$(DefineConstants);MajorVersion=$(MajorVersion)</DefineConstants>
       <DefineConstants>$(DefineConstants);MinorVersion=$(MinorVersion)</DefineConstants>
       <DefineConstants>$(DefineConstants);DotNetRuntimeVersion=$(MicrosoftNETCoreAppRefVersion)</DefineConstants>
