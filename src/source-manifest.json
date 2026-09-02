@@ -91,10 +91,10 @@
       "commitSha": "0d05e32dce068bcc938728c0feba39ee41fd282e"
     },
     {
-      "barId": 329800,
+      "barId": 330079,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "e5e2666d632611ec2fd8620c0f89bbe6bde43a60"
+      "commitSha": "75e3ed37e6e684c7f3d1ead56b6a2546ca1675e6"
     },
     {
       "barId": 330033,
@@ -133,10 +133,10 @@
       "commitSha": "5dd791119db4fe734f0cb0c160be80824f321181"
     },
     {
-      "barId": 329822,
+      "barId": 330061,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "1ba92117a5ebcc6ff50ffd849c07712d58738590"
+      "commitSha": "9b469cde2584d58abef665b49a0ed13b17b98880"
     },
     {
       "barId": 329933,
