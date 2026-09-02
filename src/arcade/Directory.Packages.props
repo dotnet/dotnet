@@ -64,7 +64,7 @@
 
   <!-- external -->
   <ItemGroup>
-    <PackageVersion Include="Azure.Core" Version="1.61.0" />
+    <PackageVersion Include="Azure.Core" Version="1.62.0" />
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.1" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />

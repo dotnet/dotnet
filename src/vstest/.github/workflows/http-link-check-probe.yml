@@ -5,7 +5,7 @@ name: "HTTP Link Check Probe"
 # The curl loop in .github/workflows/scripts/check-http-links.sh is cheap and is the part
 # that would actually catch new breakage. The agent is expensive, so it only runs when the
 # set of broken links differs from the checked-in fingerprint at
-# .github/workflows/scripts/known-broken-links.txt. Most of the broken set is links that can
+# eng/agentic-workflows/known-broken-links.txt. Most of the broken set is links that can
 # never resolve from a public runner (an internal Microsoft drop share, a package host that
 # shut down, a localhost placeholder), so the set is stable for months at a time and there is
 # nothing for an agent to decide.
@@ -58,7 +58,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          KNOWN=".github/workflows/scripts/known-broken-links.txt"
+          KNOWN="eng/agentic-workflows/known-broken-links.txt"
           CURRENT="$OUT_DIR/broken-links.txt"
           KNOWN_MISSING=false
 
@@ -121,7 +121,7 @@ jobs:
               echo '```'
               echo ""
             fi
-            echo "To accept the new set, replace \`.github/workflows/scripts/known-broken-links.txt\`"
+            echo "To accept the new set, replace \`eng/agentic-workflows/known-broken-links.txt\`"
             echo "with the \`broken-links.txt\` file from this run's \`http-link-check-probe\` artifact."
           } >> "$GITHUB_STEP_SUMMARY"
         shell: bash
@@ -143,12 +143,40 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REF_NAME: ${{ github.ref_name }}
         run: |
+          # The search is only a coarse server-side filter. GitHub discards the brackets and
+          # matches the remaining words as a phrase anywhere in the title, so this query also
+          # returns PRs that merely mention the link checker rather than ones the checker
+          # opened. Trusting its count lets an unrelated open PR suppress dispatch for as long
+          # as it stays open, and it fails silently: the probe still scans, still sees the
+          # changed links, and just declines to act. jq re-checks the real prefix so only a
+          # PR the checker actually opened counts.
+          #
+          # The limit has to leave room for the whole coarse result set: this is a correctness
+          # guard, and a prefixed PR truncated out of the window would look like "none open"
+          # and dispatch a duplicate. gh pages through the API, so the value is a ceiling on
+          # how many PRs we are willing to inspect, not a per-request cap.
           OPEN_PR_COUNT=$(gh pr list --state open --search '"[link-checker]" in:title' \
-            --limit 1 --json number --jq 'length')
+            --limit 500 --json title \
+            --jq '[.[] | select(.title | startswith("[link-checker] "))] | length')
 
           if [ "$OPEN_PR_COUNT" -gt 0 ]; then
             echo "An HTTP link checker pull request is already open; skipping dispatch."
             echo "An HTTP link checker pull request is already open, so no new agent run was dispatched." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # An agent run that has started but not yet opened its PR is invisible to the check
+          # above, so look for one directly before adding a second. Scope it to the ref we
+          # would dispatch on: a manual run on another branch is unrelated work, and letting
+          # it count here would silently hold up the scheduled dispatch. The limit is generous
+          # for the same reason as above — a burst of completed runs must not push the one
+          # in-flight run out of the window and make it look idle.
+          IN_FLIGHT=$(gh run list --workflow http-link-checker.lock.yml --branch "$REF_NAME" \
+            --limit 200 --json status --jq '[.[] | select(.status != "completed")] | length')
+
+          if [ "$IN_FLIGHT" -gt 0 ]; then
+            echo "An agentic HTTP link checker run is already in flight; skipping dispatch."
+            echo "An agentic HTTP link checker run is already in flight, so no new agent run was dispatched." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
 

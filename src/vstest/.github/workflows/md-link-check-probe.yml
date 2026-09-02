@@ -1,0 +1,197 @@
+name: "Markdown Link Check Probe"
+
+# Deterministic gate in front of the md-link-checker agentic workflow.
+#
+# .github/workflows/scripts/check-md-links.py is pure filesystem work — no network, a few
+# seconds of CPU — and it is the part that actually catches new breakage. The agent is the
+# expensive part, so it only runs when the set of broken relative links and anchors differs
+# from the checked-in fingerprint at eng/agentic-workflows/known-broken-md-links.txt.
+#
+# Gating on "broken_count > 0" would not be enough: the workflow deliberately supports links
+# that cannot be fixed (a target that is simply gone, with no replacement), and those would
+# wake the agent again every Friday forever. Comparing whole sets means an accepted broken
+# link stays quiet, while anything genuinely new or newly repaired still gets a look.
+#
+# When the set does change, this workflow dispatches the agentic checker and prints the added
+# and removed entries in the job summary. Accepting a new permanently broken link is a
+# one-line edit to known-broken-md-links.txt, reviewed like any other change.
+
+on:
+  schedule:
+    # Same slot the agentic checker used to run in: weekly on Friday.
+    - cron: "11 16 * * 5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Two probes must never race to dispatch the agent: the loser would see neither an open PR
+  # nor an in-flight run and would dispatch a duplicate.
+  group: "md-link-check-probe"
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: Probe relative documentation links
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Needed to dispatch the agentic checker, and to see whether one is already running.
+      actions: write
+      pull-requests: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Check relative documentation links
+        id: link-check
+        env:
+          OUT_DIR: ${{ runner.temp }}/link-check
+        run: python3 .github/workflows/scripts/check-md-links.py
+        shell: bash
+
+      - name: Compare against known broken links
+        id: compare
+        env:
+          OUT_DIR: ${{ runner.temp }}/link-check
+        run: |
+          set -euo pipefail
+
+          KNOWN="eng/agentic-workflows/known-broken-md-links.txt"
+          CURRENT="$OUT_DIR/broken-links.txt"
+          KNOWN_MISSING=false
+
+          if [ ! -f "$KNOWN" ]; then
+            echo "::warning::$KNOWN is missing; treating the broken set as changed."
+            KNOWN_MISSING=true
+            : > "$OUT_DIR/known.sorted"
+          else
+            # Drop blank lines and '#' comments so the file stays forgiving to edit by hand.
+            # A real entry is "source_file|url", and a source path never starts with '#'.
+            # grep exits 1 when the file is nothing but comments, which is the normal state
+            # while the accepted set is empty, so its status must not fail the step.
+            { grep -v '^[[:space:]]*#' "$KNOWN" || true; } | awk 'NF' | sort -u > "$OUT_DIR/known.sorted"
+          fi
+
+          # Sort both sides with the same command so comm never sees mismatched collation.
+          sort -u "$CURRENT" > "$OUT_DIR/current.sorted"
+
+          ADDED=$(comm -13 "$OUT_DIR/known.sorted" "$OUT_DIR/current.sorted" || true)
+          REMOVED=$(comm -23 "$OUT_DIR/known.sorted" "$OUT_DIR/current.sorted" || true)
+
+          CURRENT_COUNT=$(wc -l < "$OUT_DIR/current.sorted")
+          KNOWN_COUNT=$(wc -l < "$OUT_DIR/known.sorted")
+
+          {
+            echo "## Markdown link check probe"
+            echo ""
+            echo "| | Count |"
+            echo "|---|---|"
+            echo "| Broken now | $CURRENT_COUNT |"
+            echo "| Known broken (fingerprint) | $KNOWN_COUNT |"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$KNOWN_MISSING" = false ] && [ -z "$ADDED" ] && [ -z "$REMOVED" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Broken link set is unchanged; the agentic checker will not be dispatched."
+            {
+              echo "The broken link set matches the fingerprint, so the agentic checker was not dispatched."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "Broken link set changed; agentic review is required."
+
+          {
+            echo "The broken link set changed, so agentic review is required."
+            echo ""
+            if [ -n "$ADDED" ]; then
+              echo "### Newly broken"
+              echo ""
+              echo '```'
+              echo "$ADDED"
+              echo '```'
+              echo ""
+            fi
+            if [ -n "$REMOVED" ]; then
+              echo "### No longer broken"
+              echo ""
+              echo '```'
+              echo "$REMOVED"
+              echo '```'
+              echo ""
+            fi
+            echo "Each entry is \`source_file|link\`, the link exactly as written in the markdown."
+            echo ""
+            echo "To accept the new set, take the \`broken-links.txt\` file from this run's"
+            echo "\`md-link-check-probe\` artifact and put its lines under the comment header in"
+            echo "\`eng/agentic-workflows/known-broken-md-links.txt\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
+
+      - name: Upload link check report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: md-link-check-probe
+          path: |
+            ${{ runner.temp }}/link-check/link-check-results.md
+            ${{ runner.temp }}/link-check/broken-links.md
+            ${{ runner.temp }}/link-check/broken-links.txt
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Dispatch the agentic link checker
+        if: steps.compare.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          # The prefix is checker-specific on purpose. The HTTP checker uses a different one,
+          # so neither checker can suppress the other's dispatch.
+          #
+          # The search is only a coarse server-side filter: GitHub discards the brackets and
+          # matches the remaining words as a phrase anywhere in the title, so this query also
+          # returns PRs that merely mention the checker rather than ones it opened. Left at
+          # that, an unrelated PR could silently stop the checker from ever being dispatched.
+          # jq re-checks the real prefix so only a PR the checker opened counts.
+          #
+          # The limit has to leave room for the whole coarse result set: this is a correctness
+          # guard, and a prefixed PR truncated out of the window would look like "none open"
+          # and dispatch a duplicate. gh pages through the API, so the value is a ceiling on
+          # how many PRs we are willing to inspect, not a per-request cap.
+          OPEN_PR_COUNT=$(gh pr list --state open --search '"[md-link-checker]" in:title' \
+            --limit 500 --json title \
+            --jq '[.[] | select(.title | startswith("[md-link-checker] "))] | length')
+
+          if [ "$OPEN_PR_COUNT" -gt 0 ]; then
+            echo "A markdown link checker pull request is already open; skipping dispatch."
+            echo "A markdown link checker pull request is already open, so no new agent run was dispatched." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # An agent run that has started but not yet opened its PR is invisible to the check
+          # above, so look for one directly before adding a second. Scope it to the ref we
+          # would dispatch on: a manual run on some other branch is unrelated work, and
+          # letting it count here would silently hold up the scheduled main-branch dispatch.
+          # The limit is generous for the same reason as above — a burst of completed runs
+          # must not push the one in-flight run out of the window and make it look idle.
+          IN_FLIGHT=$(gh run list --workflow md-link-checker.lock.yml --branch "$REF_NAME" \
+            --limit 200 --json status --jq '[.[] | select(.status != "completed")] | length')
+
+          if [ "$IN_FLIGHT" -gt 0 ]; then
+            echo "An agentic markdown link checker run is already in flight; skipping dispatch."
+            echo "An agentic markdown link checker run is already in flight, so no new agent run was dispatched." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          gh workflow run md-link-checker.lock.yml --ref "$REF_NAME"
+          echo "Dispatched the agentic markdown link checker." >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
