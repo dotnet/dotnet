@@ -30,16 +30,12 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
 
         public override bool Execute()
         {
-            ExecuteImpl();
-            return !Log.HasLoggedErrors;
-        }
-
-        private void ExecuteImpl()
-        {
             using (var package = Package.Open(VsixFilePath))
             {
                 UpdatePartHashInManifestJson(package, VsixManifestPartName, UpdateExtensionVsixManifest(package));
             }
+
+            return !Log.HasLoggedErrors;
         }
 
         private byte[] UpdateExtensionVsixManifest(Package package)

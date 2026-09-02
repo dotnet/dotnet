@@ -29,12 +29,6 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         public override bool Execute()
         {
-            ExecuteImpl();
-            return !Log.HasLoggedErrors;
-        }
-
-        private void ExecuteImpl()
-        {
             const string fileName = "license";
 
             var options = new EnumerationOptions
@@ -66,6 +60,8 @@ namespace Microsoft.DotNet.Arcade.Sdk
             {
                 Path = matches[0];
             }
+
+            return !Log.HasLoggedErrors;
         }
     }
 }

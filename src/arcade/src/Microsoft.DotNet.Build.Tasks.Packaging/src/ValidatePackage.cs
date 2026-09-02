@@ -19,25 +19,13 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
     public class ValidatePackage : ValidationTask
     {
         [Required]
-        public string ContractName
-        {
-            get;
-            set;
-        }
+        public string ContractName { get; set; }
 
         [Required]
-        public string PackageId
-        {
-            get;
-            set;
-        }
+        public string PackageId { get; set; }
 
         [Required]
-        public string PackageVersion
-        {
-            get;
-            set;
-        }
+        public string PackageVersion { get; set; }
 
         /// <summary>
         /// Frameworks supported by this package
@@ -46,11 +34,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         ///   Version: version of API supported
         /// </summary>
         [Required]
-        public ITaskItem[] SupportedFrameworks
-        {
-            get;
-            set;
-        }
+        public ITaskItem[] SupportedFrameworks { get; set; }
 
         /// <summary>
         /// Frameworks to evaluate.
@@ -58,38 +42,18 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         ///   RuntimeIDs: Semi-colon separated list of runtime IDs
         /// </summary>
         [Required]
-        public ITaskItem[] Frameworks
-        {
-            get;
-            set;
-        }
+        public ITaskItem[] Frameworks { get; set; }
 
         /// <summary>
         /// Path to runtime.json that contains the runtime graph.
         /// </summary>
         [Required]
-        public string RuntimeFile
-        {
-            get;
-            set;
-        }
+        public string RuntimeFile { get; set; }
 
-        public bool SkipGenerationCheck
-        {
-            get;
-            set;
-        }
-        public bool SkipIndexCheck
-        {
-            get;
-            set;
-        }
+        public bool SkipGenerationCheck { get; set; }
+        public bool SkipIndexCheck { get; set; }
 
-        public bool SkipSupportCheck
-        {
-            get;
-            set;
-        }
+        public bool SkipSupportCheck { get; set; }
 
         public bool UseNetPlatform
         {
@@ -106,11 +70,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
         ///   ValidatedRIDs: all RIDs that were scanned
         /// </summary>
         [Output]
-        public ITaskItem[] AllSupportedFrameworks
-        {
-            get;
-            set;
-        }
+        public ITaskItem[] AllSupportedFrameworks { get; set; }
         
         private Dictionary<NuGetFramework, ValidationFramework> _frameworks;
         private string _generationIdentifier = FrameworkConstants.FrameworkIdentifiers.NetStandard;

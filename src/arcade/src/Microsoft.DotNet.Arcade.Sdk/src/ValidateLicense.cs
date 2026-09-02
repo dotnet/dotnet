@@ -29,12 +29,6 @@ namespace Microsoft.DotNet.Arcade.Sdk
 
         public override bool Execute()
         {
-            ExecuteImpl();
-            return !Log.HasLoggedErrors;
-        }
-
-        private void ExecuteImpl()
-        {
             var actualLines = File.ReadAllLines(LicensePath, Encoding.UTF8);
             var expectedLines = File.ReadAllLines(ExpectedLicensePath, Encoding.UTF8);
 
@@ -42,6 +36,8 @@ namespace Microsoft.DotNet.Arcade.Sdk
             {
                 Log.LogError($"License file content '{LicensePath}' doesn't match the expected license '{ExpectedLicensePath}'.");
             }
+
+            return !Log.HasLoggedErrors;
         }
 
         internal static bool LinesEqual(IEnumerable<string> actual, IEnumerable<string> expected)
