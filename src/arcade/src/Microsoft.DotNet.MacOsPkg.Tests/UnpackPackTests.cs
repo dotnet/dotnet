@@ -12,9 +12,10 @@ using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.MacOsPkg.Tests
 {
-    public class UnpackPackTests
+    public class UnpackPackTests : IDisposable
     {
         private readonly ITestOutputHelper output;
+        private readonly string testRoot;
         private static readonly string simplePkg = GetResourceFilePath("Simple.pkg");
         private static readonly string withAppPkg = GetResourceFilePath("WithApp.pkg");
         private static readonly string simpleInstallerPkg = GetResourceFilePath("SimpleInstaller.pkg");
@@ -70,12 +71,33 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
             ("WithApp.pkg", nonExecutableFileMode),
         ];
 
-        public UnpackPackTests(ITestOutputHelper output) => this.output = output;
+        public UnpackPackTests(ITestOutputHelper output)
+        {
+            this.output = output;
+            // These tests repeatedly archive executable app bundles, so keep their workspace with the build artifacts.
+            testRoot = Path.Combine(AppContext.BaseDirectory, "test-artifacts", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(testRoot);
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                if (Directory.Exists(testRoot))
+                {
+                    Directory.Delete(testRoot, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                output.WriteLine($"Failed to delete test workspace '{testRoot}': {ex}");
+            }
+        }
 
         [MacOSOnlyFact]
         public void UnpackPackSimplePkg()
         {
-            string unpackPath = Path.GetTempFileName();
+            string unpackPath = GetTestPath();
             string packPath = GetTempPkgPath();
 
             ExecuteWithCleanup(() =>
@@ -88,7 +110,7 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
         [MacOSOnlyFact]
         public void UnpackPackWithAppPkg()
         {
-            string unpackPath = Path.GetTempFileName();
+            string unpackPath = GetTestPath();
             string packPath = GetTempPkgPath();
 
             ExecuteWithCleanup(() =>
@@ -101,8 +123,8 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
         [MacOSOnlyFact]
         public void UnpackPackAppBundle()
         {
-            string unpackPkgPath = Path.GetTempFileName();
-            string unpackAppPath = Path.GetTempFileName();
+            string unpackPkgPath = GetTestPath();
+            string unpackAppPath = GetTestPath();
             string packAppPath = GetTempAppPath();
 
             ExecuteWithCleanup(() =>
@@ -116,7 +138,7 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
         [MacOSOnlyFact]
         public void UnpackPackSimpleInstallerPkg()
         {
-            string unpackPath = Path.GetTempFileName();
+            string unpackPath = GetTestPath();
             string packPath = GetTempPkgPath();
 
             ExecuteWithCleanup(() =>
@@ -129,8 +151,8 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
         [MacOSOnlyFact]
         public void UnpackPackSimplePkgInSimpleInstallerPkg()
         {
-            string unpackInstallerPath = Path.GetTempFileName();
-            string unpackComponentPath = Path.GetTempFileName();
+            string unpackInstallerPath = GetTestPath();
+            string unpackComponentPath = GetTestPath();
             string packInstallerPath = GetTempPkgPath();
 
             string componentPkgPath = Path.Combine(unpackInstallerPath, "Simple.pkg");
@@ -147,9 +169,9 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
         [MacOSOnlyFact]
         public void UnpackPackAppBundleAndWithAppPkgInWithAppInstallerPkg()
         {
-            string unpackInstallerPath = Path.GetTempFileName();
-            string unpackComponentPath = Path.GetTempFileName();
-            string unpackAppPath = Path.GetTempFileName();
+            string unpackInstallerPath = GetTestPath();
+            string unpackComponentPath = GetTestPath();
+            string unpackAppPath = GetTestPath();
             string packInstallerPath = GetTempPkgPath();
             
             string componentPkgPath = Path.Combine(unpackInstallerPath, "WithApp.pkg");
@@ -204,7 +226,7 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
             File.Exists(dstPath).Should().BeTrue();
 
             // Unpack the packed pkg and verify the content
-            string unpackPath = Path.GetTempFileName();
+            string unpackPath = GetTestPath();
             ExecuteWithCleanup(() =>
             {
                 Unpack(dstPath, unpackPath, expectedFiles);
@@ -238,9 +260,12 @@ namespace Microsoft.DotNet.MacOsPkg.Tests
                 resourceName);
         }
 
-        private static string GetTempPkgPath() => $"{Path.GetTempFileName()}.pkg";
+        private string GetTestPath(string extension = "") =>
+            Path.Combine(testRoot, $"{Path.GetRandomFileName()}{extension}");
 
-        private static string GetTempAppPath() => $"{Path.GetTempFileName()}.app";
+        private string GetTempPkgPath() => GetTestPath(".pkg");
+
+        private string GetTempAppPath() => GetTestPath(".app");
 
 #pragma warning disable CA1416
         private static void CompareContent(string basePath, (string file, UnixFileMode mode)[] expectedFiles)
