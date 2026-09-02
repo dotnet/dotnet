@@ -30,10 +30,25 @@ Each worker:
 
 1. downloads recognized result files for one work item, retrying only
    transient read failures;
-2. obtains the session's single test-run ID;
-3. parses, aggregates, batches, and publishes results;
-4. records the upload summary and test-only failure outcome;
-5. signals session completion.
+2. asks `ITestResultProcessor` to parse and aggregate the local files into
+   prepared results;
+3. records the test-only failure outcome from the prepared results;
+4. obtains the session's single test-run ID, whose creation uses bounded
+   transient retries through `IAzureDevOpsService`;
+5. asks `IAzureDevOpsResultPublisher` to convert and publish the prepared
+   results to the session's test run in bounded batches;
+6. signals session completion.
+
+`IAzureDevOpsService` owns authenticated Azure DevOps REST operations and the
+test-run lifecycle. It does not read local result files. The result publisher
+uses run-specific transports supplied by the service, keeping conversion and
+batching separate from HTTP retry and authentication.
+
+Test outcomes are observed before test-run creation or result publication, so
+an Azure DevOps failure cannot hide a failing test. If test-run creation still
+fails, no publication is attempted. The shared creation failure is reported
+once for the Helix job, and the session remains untagged for a later monitor
+invocation to replay.
 
 Work-item concurrency is global. A build with many jobs therefore cannot create
 an unbounded task graph or multiply the configured Azure DevOps pressure.
@@ -52,10 +67,13 @@ untagged. Otherwise finalization uploads the
 failed-work-item attachment, marks the run completed, applies the Helix-job
 tag, and only then marks the job durably processed.
 
-Test-run creation and attachment publication are not replayed after ambiguous
-failures because they are non-idempotent POST operations. The final completion
-PATCH is idempotent and uses bounded transient retries; repeating it applies
-the same completed state and Helix-job tag to the same run without creating
-duplicate results. Result publication also uses bounded transient retries
-because losing an entire job's results is worse than the accepted duplicate
-risk.
+Test-run creation uses bounded transient retries. A retry can leave an empty
+orphaned run if Azure DevOps created the first run but its response was lost,
+but results are uploaded only after a run ID is returned, so retrying creation
+cannot duplicate results. Attachment publication is not replayed after an
+ambiguous failure because it is a non-idempotent POST operation. The final
+completion PATCH is idempotent and uses bounded transient retries; repeating it
+applies the same completed state and Helix-job tag to the same run without
+creating duplicate results. Result publication also uses bounded transient
+retries because losing an entire job's results is worse than the accepted
+duplicate risk.
