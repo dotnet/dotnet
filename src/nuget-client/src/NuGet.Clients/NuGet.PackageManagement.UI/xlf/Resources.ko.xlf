@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
         <source>Fix with GitHub Copilot</source>
-        <target state="new">Fix with GitHub Copilot</target>
+        <target state="translated">GitHub Copilot으로 수정</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Label_Action">
@@ -589,7 +589,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
         <source>You have 1 vulnerable package version installed.</source>
-        <target state="new">You have 1 vulnerable package version installed.</target>
+        <target state="translated">취약한 패키지 버전 1개가 설치되어 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_License">

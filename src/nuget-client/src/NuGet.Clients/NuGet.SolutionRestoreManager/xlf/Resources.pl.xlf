@@ -111,7 +111,7 @@ Aby uniemożliwić narzędziu NuGet przywracanie pakietów podczas kompilacji, o
       </trans-unit>
       <trans-unit id="Prompt_ResolveSupplyChainSecurityNUCode">
         <source>Resolve {0} by reviewing my NuGet supply chain security configuration.</source>
-        <target state="new">Resolve {0} by reviewing my NuGet supply chain security configuration.</target>
+        <target state="translated">Rozwiąż problem {0}, przeglądając konfigurację zabezpieczeń łańcucha dostaw NuGet.</target>
         <note>Do not translate NuGet</note>
       </trans-unit>
       <trans-unit id="PropertyDoesNotHaveSingleValue">
@@ -141,7 +141,7 @@ Aby uniemożliwić narzędziu NuGet przywracanie pakietów podczas kompilacji, o
       </trans-unit>
       <trans-unit id="Title_AskCopilotForFix">
         <source>Ask Copilot for a fix</source>
-        <target state="new">Ask Copilot for a fix</target>
+        <target state="translated">Poproś funkcję Copilot o poprawkę</target>
         <note>Do not translate Copilot</note>
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">

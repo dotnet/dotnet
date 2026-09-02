@@ -111,7 +111,7 @@ Pour empêcher NuGet de restaurer les packages lors de la génération, ouvrez l
       </trans-unit>
       <trans-unit id="Prompt_ResolveSupplyChainSecurityNUCode">
         <source>Resolve {0} by reviewing my NuGet supply chain security configuration.</source>
-        <target state="new">Resolve {0} by reviewing my NuGet supply chain security configuration.</target>
+        <target state="translated">Résolvez {0} en examinant la configuration de sécurité de ma chaîne logistique NuGet.</target>
         <note>Do not translate NuGet</note>
       </trans-unit>
       <trans-unit id="PropertyDoesNotHaveSingleValue">
@@ -141,7 +141,7 @@ Pour empêcher NuGet de restaurer les packages lors de la génération, ouvrez l
       </trans-unit>
       <trans-unit id="Title_AskCopilotForFix">
         <source>Ask Copilot for a fix</source>
-        <target state="new">Ask Copilot for a fix</target>
+        <target state="translated">Demander à Copilot un correctif</target>
         <note>Do not translate Copilot</note>
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">

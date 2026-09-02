@@ -323,13 +323,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         /// test results.
         /// </summary>
         public void ObserveTestResults(
-            IReadOnlyDictionary<(string JobName, string WorkItemName), TestResultUploadSummary> testResults)
+            IReadOnlyDictionary<(string JobName, string WorkItemName), bool> testResults)
         {
             lock (_sync)
             {
-                foreach (KeyValuePair<(string JobName, string WorkItemName), TestResultUploadSummary> entry in testResults)
+                foreach (KeyValuePair<(string JobName, string WorkItemName), bool> entry in testResults)
                 {
-                    if (entry.Value.AllPassed)
+                    if (entry.Value)
                     {
                         continue;
                     }
@@ -373,11 +373,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         public void ObserveTestResult(
             string jobName,
             string workItemName,
-            TestResultUploadSummary summary)
+            bool allPassed)
             => ObserveTestResults(
-                new Dictionary<(string JobName, string WorkItemName), TestResultUploadSummary>
+                new Dictionary<(string JobName, string WorkItemName), bool>
                 {
-                    [(jobName, workItemName)] = summary,
+                    [(jobName, workItemName)] = allPassed,
                 });
 
         /// <summary>

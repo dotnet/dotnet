@@ -111,7 +111,7 @@ Wenn Sie verhindern möchten, dass NuGet Pakete während des Builds wiederherste
       </trans-unit>
       <trans-unit id="Prompt_ResolveSupplyChainSecurityNUCode">
         <source>Resolve {0} by reviewing my NuGet supply chain security configuration.</source>
-        <target state="new">Resolve {0} by reviewing my NuGet supply chain security configuration.</target>
+        <target state="translated">Lösen Sie {0} auf, indem Sie meine NuGet-Konfiguration für die Sicherheit der Lieferkette überprüfen.</target>
         <note>Do not translate NuGet</note>
       </trans-unit>
       <trans-unit id="PropertyDoesNotHaveSingleValue">
@@ -141,7 +141,7 @@ Wenn Sie verhindern möchten, dass NuGet Pakete während des Builds wiederherste
       </trans-unit>
       <trans-unit id="Title_AskCopilotForFix">
         <source>Ask Copilot for a fix</source>
-        <target state="new">Ask Copilot for a fix</target>
+        <target state="translated">Copilot nach einer Lösung fragen</target>
         <note>Do not translate Copilot</note>
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">
