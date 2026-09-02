@@ -13,19 +13,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
 {
     public class CheckRequiredDotNetVersion : Microsoft.Build.Utilities.Task
     {
-        private static readonly string s_cacheKey = "CheckRequiredDotNetVersion-6ED0A075-A4B3-46B1-97D4-448558D515D3";
-
-        private sealed class CacheEntry
-        {
-            public readonly DateTime LastWrite;
-            public readonly bool Success;
-
-            public CacheEntry(DateTime lastWrite, bool success)
-            {
-                LastWrite = lastWrite;
-                Success = success;
-            }
-        }
+        private readonly record struct CacheKey(string GlobalJsonPath, string SdkVersion, DateTime LastWrite);
 
         [Required]
         public string RepositoryRoot { get; set; }
@@ -53,16 +41,16 @@ namespace Microsoft.DotNet.Arcade.Sdk
                 return false;
             }
 
-            var cachedResult = (CacheEntry)BuildEngine4.GetRegisteredTaskObject(s_cacheKey, RegisteredTaskObjectLifetime.Build);
-            if (cachedResult != null && lastWrite == cachedResult.LastWrite)
+            var cacheKey = new CacheKey(globalJsonPath, SdkVersion, lastWrite);
+            if (BuildEngine4.GetRegisteredTaskObject(cacheKey, RegisteredTaskObjectLifetime.Build) is bool cachedSuccess)
             {
                 // Error has already been reported if the current SDK version is not sufficient.
-                if (!cachedResult.Success)
+                if (!cachedSuccess)
                 {
                     Log.LogMessage(MessageImportance.Low, $"Previous .NET Core SDK version check failed.");
                 }
 
-                return cachedResult.Success;
+                return cachedSuccess;
             }
 
             bool execute()
@@ -103,7 +91,7 @@ namespace Microsoft.DotNet.Arcade.Sdk
             }
 
             bool success = execute();
-            BuildEngine4.RegisterTaskObject(s_cacheKey, new CacheEntry(lastWrite, success), RegisteredTaskObjectLifetime.Build, allowEarlyCollection: true);
+            BuildEngine4.RegisterTaskObject(cacheKey, success, RegisteredTaskObjectLifetime.Build, allowEarlyCollection: true);
             return success;
         }
     }
