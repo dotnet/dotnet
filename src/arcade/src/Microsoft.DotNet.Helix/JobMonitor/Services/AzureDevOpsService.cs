@@ -22,7 +22,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.DotNet.Helix.JobMonitor
 {
-    internal sealed class AzureDevOpsService : IAzureDevOpsService, IDisposable
+    internal sealed class AzureDevOpsService : IAzureDevOpsService, IAzureDevOpsResultTransport, IDisposable
     {
         private const int ControlRequestAttemptCount = 5;
         private const int ResultRequestAttemptCount = 10;
@@ -346,7 +346,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     ["name"] = name,
                     ["state"] = "InProgress",
                 },
-                retryTransientFailures: false,
+                retryTransientFailures: true,
                 cancellationToken: cancellationToken);
             return result?["id"]?.ToObject<int>() ?? 0;
         }
@@ -425,32 +425,45 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 cancellationToken: cancellationToken);
         }
 
-        public async Task<TestResultUploadSummary> UploadTestResultsAsync(
+        public Task<string> PublishResultsAsync(
             int testRunId,
-            WorkItemTestResults results,
+            object results,
+            CancellationToken cancellationToken)
+            => SendForStringAsync(
+                HttpMethod.Post,
+                $"{_options.CollectionUri}{_options.TeamProject}/_apis/test/runs/{testRunId}/results?api-version=7.1-preview.6",
+                System.Text.Json.JsonSerializer.Serialize(results, s_serializerOptions),
+                AzureDevOpsRequestKind.ResultBatch,
+                retryTransientFailures: true,
+                attemptCount: ResultRequestAttemptCount,
+                cancellationToken: cancellationToken);
+
+        public Task UploadAttachmentAsync(
+            int testRunId,
+            long testResultId,
+            long? testSubResultId,
+            string fileName,
+            string stream,
             CancellationToken cancellationToken)
         {
-            if (results.TestResultFiles.Count == 0)
+            string query = testSubResultId is long subResultId
+                ? $"?testSubResultId={subResultId}&api-version=7.1-preview.1"
+                : "?api-version=7.1-preview.1";
+            var body = new JObject
             {
-                return new TestResultUploadSummary(true, 0);
-            }
+                ["fileName"] = fileName,
+                ["stream"] = stream,
+            };
 
-            var publisher = new AzureDevOpsResultPublisher(
-                _options.TestResultAttachmentMode,
-                _options.UseFullyQualifiedTestName,
-                _logger,
-                CreateResultTransport(testRunId),
-                _metrics);
-
-            return await publisher.UploadTestResultsWithSummaryAsync(
-                results.TestResultFiles,
-                results.WorkItemName,
-                results.JobName,
+            return SendForStringAsync(
+                HttpMethod.Post,
+                $"{_options.CollectionUri}{_options.TeamProject}/_apis/test/runs/{testRunId}/results/{testResultId}/attachments{query}",
+                body.ToString(Formatting.None),
+                AzureDevOpsRequestKind.Attachment,
+                retryTransientFailures: true,
+                ResultRequestAttemptCount,
                 cancellationToken);
         }
-
-        internal IAzureDevOpsResultTransport CreateResultTransport(int testRunId)
-            => new AzureDevOpsResultTransport(this, testRunId);
 
         private async Task<JObject> SendAsync(
             HttpMethod method,
@@ -657,47 +670,6 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             }
 
             throw new AzureDevOpsReportingError(message);
-        }
-
-        private sealed class AzureDevOpsResultTransport(
-            AzureDevOpsService service,
-            int testRunId) : IAzureDevOpsResultTransport
-        {
-            public Task<string> PublishResultsAsync(object results, CancellationToken cancellationToken)
-                => service.SendForStringAsync(
-                    HttpMethod.Post,
-                    $"{service._options.CollectionUri}{service._options.TeamProject}/_apis/test/runs/{testRunId}/results?api-version=7.1-preview.6",
-                    System.Text.Json.JsonSerializer.Serialize(results, s_serializerOptions),
-                    AzureDevOpsRequestKind.ResultBatch,
-                    retryTransientFailures: true,
-                    ResultRequestAttemptCount,
-                    cancellationToken);
-
-            public Task UploadAttachmentAsync(
-                long testResultId,
-                long? testSubResultId,
-                string fileName,
-                string stream,
-                CancellationToken cancellationToken)
-            {
-                string query = testSubResultId is long subResultId
-                    ? $"?testSubResultId={subResultId}&api-version=7.1-preview.1"
-                    : "?api-version=7.1-preview.1";
-                var body = new JObject
-                {
-                    ["fileName"] = fileName,
-                    ["stream"] = stream,
-                };
-
-                return service.SendForStringAsync(
-                    HttpMethod.Post,
-                    $"{service._options.CollectionUri}{service._options.TeamProject}/_apis/test/runs/{testRunId}/results/{testResultId}/attachments{query}",
-                    body.ToString(Formatting.None),
-                    AzureDevOpsRequestKind.Attachment,
-                    retryTransientFailures: true,
-                    ResultRequestAttemptCount,
-                    cancellationToken);
-            }
         }
 
         private sealed class TransientAzureDevOpsRequestException(
