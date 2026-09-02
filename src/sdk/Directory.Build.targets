@@ -82,7 +82,13 @@
     <KnownFrameworkReference Update="Microsoft.NETCore.App">
       <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
     </KnownFrameworkReference>
+    <!-- Force the ILCompiler (and, transitively, the NativeAOT runtime pack) to the branded runtime
+         version. Otherwise the ILCompiler stays at the bootstrap version (e.g. 11.0.0-rc) and pulls a
+         matching-version NativeAOT runtime pack whose System.Private.CoreLib conflicts with the branded
+         (12.0.0-ci) NETCore.App runtime pack, failing AOT publish with an "Overriding System.Private.CoreLib
+         with a newer version is not supported" error. -->
     <KnownILCompilerPack Update="Microsoft.DotNet.ILCompiler">
+      <ILCompilerPackVersion>$(MicrosoftNETCoreAppRuntimePackageVersion)</ILCompilerPackVersion>
       <ILCompilerRuntimeIdentifiers>%(ILCompilerRuntimeIdentifiers);$(TargetRid)</ILCompilerRuntimeIdentifiers>
     </KnownILCompilerPack>
   </ItemGroup>
@@ -93,12 +99,18 @@
     major (MicrosoftAspNetCoreAppRefPackageVersion = 12.0.0-ci), the version-gated AspNetCore ItemGroup
     below is skipped, so the source-build distro RID is never added to the selected (bootstrap net11.0)
     AspNetCore.App runtime pack. That fails RID resolution with NETSDK1083 during restore. Add the distro
-    RID to the AspNetCore.App runtime pack RID list for the skew case so an exact RID match remains possible. -->
+    RID to the AspNetCore.App runtime pack RID list for the skew case so an exact RID match remains possible.
+    The runtime/targeting pack versions are also pinned to the branded ref package version because only that
+    version exists in the source-build feed (the bootstrap 11.0.0-rc AspNetCore runtime packs are not
+    produced), otherwise restore fails with NU1102. -->
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'
                           and '$(DotNetBuildSourceOnly)' == 'true'
                           and '$(TargetRid)' != ''
                           and !$(MicrosoftAspNetCoreAppRefPackageVersion.StartsWith('$(_TargetFrameworkVersionWithoutV)'))">
     <KnownFrameworkReference Update="Microsoft.AspNetCore.App">
+      <LatestRuntimeFrameworkVersion>$(MicrosoftAspNetCoreAppRefPackageVersion)</LatestRuntimeFrameworkVersion>
+      <DefaultRuntimeFrameworkVersion>$(MicrosoftAspNetCoreAppRefPackageVersion)</DefaultRuntimeFrameworkVersion>
+      <TargetingPackVersion>$(MicrosoftAspNetCoreAppRefPackageVersion)</TargetingPackVersion>
       <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
     </KnownFrameworkReference>
   </ItemGroup>
