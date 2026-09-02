@@ -6,12 +6,10 @@ module internal FSharp.Compiler.Features
 /// LanguageFeature enumeration
 [<RequireQualifiedAccess>]
 type LanguageFeature =
-    | NameOf
     | DotlessFloat32Literal
     | PackageManagement
     | FromEndSlicing
     | ResumableStateMachines
-    | NullableOptionalInterop
     | DefaultInterfaceMemberConsumption
     | WitnessPassing
     | AdditionalTypeDirectedConversions
