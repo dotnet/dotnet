@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 
-internal sealed class AzureDevOpsResultPublisher
+internal sealed class AzureDevOpsResultPublisher : IAzureDevOpsResultPublisher
 {
     // Azure DevOps rejects requests containing more than 1,000 top-level TestCaseResult objects.
     // Nested sub-results do not count toward this limit.
@@ -19,107 +19,77 @@ internal sealed class AzureDevOpsResultPublisher
     // from the top-level per-request limit.
     private const int MaximumNodesPerResultHierarchy = 950;
 
-    private readonly TestResultAttachmentMode _attachmentMode;
-    private readonly bool _useFullyQualifiedTestName;
     private readonly ILogger _logger;
+    private readonly bool _useFullyQualifiedTestName;
     private readonly JobMonitorMetrics _metrics;
     private readonly IAzureDevOpsResultTransport _transport;
 
     internal AzureDevOpsResultPublisher(
-        TestResultAttachmentMode attachmentMode,
-        bool useFullyQualifiedTestName,
         ILogger logger,
+        bool useFullyQualifiedTestName,
         IAzureDevOpsResultTransport transport,
         JobMonitorMetrics? metrics = null)
     {
-        _attachmentMode = attachmentMode;
-        _useFullyQualifiedTestName = useFullyQualifiedTestName;
         _logger = logger;
+        _useFullyQualifiedTestName = useFullyQualifiedTestName;
         _transport = transport;
         _metrics = metrics ?? new JobMonitorMetrics();
     }
 
-    public async Task<TestResultUploadSummary> UploadTestResultsWithSummaryAsync(
-        List<string> testResultFiles,
+    public Task<long> PublishAsync(
+        int testRunId,
+        WorkItemTestResults results,
+        PreparedTestResults prepared,
+        CancellationToken cancellationToken)
+        => PublishTestResultsAsync(
+            prepared,
+            results.WorkItemName,
+            results.JobName,
+            testRunId,
+            cancellationToken);
+
+    private async Task<long> PublishTestResultsAsync(
+        PreparedTestResults prepared,
         string workItemName,
         string jobId,
-        CancellationToken cancellationToken = default)
+        int testRunId,
+        CancellationToken cancellationToken)
     {
-        long parseStartedAt = JobMonitorMetrics.StartOperation();
-        bool parseRecorded = false;
+        if (prepared.Results.Count == 0)
+        {
+            return 0;
+        }
+
+        long publishStartedAt = JobMonitorMetrics.StartOperation();
         try
         {
-            var testResultReader = new LocalTestResultsReader(_logger, _attachmentMode);
-
-            var parsedResults = new List<IReadOnlyList<TestResult>>(testResultFiles.Count);
-            foreach (string file in testResultFiles)
-            {
-                parsedResults.Add(await testResultReader.ReadResultFileAsync(file, cancellationToken));
-            }
-
-            if (parsedResults.Count == 0)
-            {
-                _logger.LogWarning("No test result files were provided for upload");
-                return new TestResultUploadSummary(true, 0);
-            }
-
-            IReadOnlyList<AggregatedResult> aggregatedResults = new ResultAggregator().Aggregate(parsedResults, _useFullyQualifiedTestName);
-            _metrics.RecordPipelineOperation(PipelineOperation.ResultParseAndAggregate, parseStartedAt);
-            parseRecorded = true;
-            if (aggregatedResults.Count == 0)
-            {
-                _logger.LogDebug("Test results were discovered but none could be aggregated");
-                return new TestResultUploadSummary(true, 0);
-            }
-
-            long publishStartedAt = JobMonitorMetrics.StartOperation();
-            long uploadedCount;
-            try
-            {
-                uploadedCount = await UploadTestResultsWithCountAsync(
-                    aggregatedResults,
-                    workItemName,
-                    jobId,
-                    cancellationToken);
-            }
-            finally
-            {
-                _metrics.RecordPipelineOperation(PipelineOperation.WorkItemPublish, publishStartedAt);
-            }
-            return new TestResultUploadSummary(
-                AllPassed: ComputeAllPassed(aggregatedResults),
-                UploadedCount: uploadedCount);
+            return await UploadTestResultsWithCountAsync(
+                prepared.Results,
+                workItemName,
+                jobId,
+                testRunId,
+                cancellationToken);
         }
         finally
         {
-            if (!parseRecorded)
-            {
-                _metrics.RecordPipelineOperation(PipelineOperation.ResultParseAndAggregate, parseStartedAt);
-            }
+            _metrics.RecordPipelineOperation(PipelineOperation.WorkItemPublish, publishStartedAt);
         }
     }
 
-    /// <summary>
-    /// A work item's uploaded results are only considered a failure when a test actually failed
-    /// or could not be parsed into a known outcome ("None"). "Inconclusive" is a legitimate,
-    /// non-failing outcome produced by the aggregator for data-driven tests that mix passing and
-    /// skipped data rows (see <see cref="ResultAggregator"/>), so it must not fail the work item.
-    /// </summary>
-    internal static bool ComputeAllPassed(IReadOnlyList<AggregatedResult> results)
-        => results.All(result => result.Result != "Failed" && result.Result != "None");
-
-    public async Task<long> UploadTestResultsWithCountAsync(
+    private async Task<long> UploadTestResultsWithCountAsync(
         IEnumerable<AggregatedResult> results,
         string workItemName,
         string jobId,
-        CancellationToken cancellationToken = default)
+        int testRunId,
+        CancellationToken cancellationToken)
     {
         try
         {
             long publishedTestCount = 0;
             foreach (List<ConvertedResult> requestBatch in CreateResultRequestBatches(ConvertResults(results, workItemName, jobId)))
             {
-                IReadOnlyList<PublishedTestCase> publishedTests = await PublishResultsAsync(requestBatch, cancellationToken);
+                IReadOnlyList<PublishedTestCase> publishedTests =
+                    await PublishResultsAsync(requestBatch, testRunId, cancellationToken);
                 publishedTestCount += publishedTests.Count;
             }
 
@@ -136,12 +106,13 @@ internal sealed class AzureDevOpsResultPublisher
 
     private async Task<IReadOnlyList<PublishedTestCase>> PublishResultsAsync(
         IReadOnlyList<ConvertedResult> converted,
+        int testRunId,
         CancellationToken cancellationToken)
     {
         var testCaseResults = converted.Select(static c => c.Converted).ToList();
         var originalList = converted.Select(static c => c.Aggregated).ToList();
 
-        string response = await _transport.PublishResultsAsync(testCaseResults, cancellationToken);
+        string response = await _transport.PublishResultsAsync(testRunId, testCaseResults, cancellationToken);
         IReadOnlyList<PublishedTestCaseResultReference> publishedResults = ReadPublishedResults(response);
         if (publishedResults.Count == 0)
         {
@@ -184,7 +155,12 @@ internal sealed class AzureDevOpsResultPublisher
                 {
                     foreach (TestResultAttachment attachment in subTriplet.originalSubResult.Attachments)
                     {
-                        await SendAttachmentAsync(attachment, testId, subTriplet.publishedSubResult.Id, cancellationToken);
+                        await SendAttachmentAsync(
+                            attachment,
+                            testRunId,
+                            testId,
+                            subTriplet.publishedSubResult.Id,
+                            cancellationToken);
                     }
 
                     await IterateSubResultsAsync(subTriplet.publishedSubResult.SubResults, subTriplet.originalSubResult.SubResults, testId);
@@ -193,7 +169,12 @@ internal sealed class AzureDevOpsResultPublisher
 
             foreach (TestResultAttachment attachment in original.Attachments)
             {
-                await SendAttachmentAsync(attachment, published.Id, null, cancellationToken);
+                await SendAttachmentAsync(
+                    attachment,
+                    testRunId,
+                    published.Id,
+                    null,
+                    cancellationToken);
             }
 
             await IterateSubResultsAsync(published.SubResults, original.SubResults, published.Id);
@@ -206,11 +187,13 @@ internal sealed class AzureDevOpsResultPublisher
 
     private async Task SendAttachmentAsync(
         TestResultAttachment attachment,
+        int testRunId,
         long testId,
         long? subResultId,
         CancellationToken cancellationToken)
     {
         await _transport.UploadAttachmentAsync(
+            testRunId,
             testId,
             subResultId,
             attachment.Name,

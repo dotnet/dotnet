@@ -3,4 +3,6 @@
 
 namespace Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 
-public sealed record TestResultUploadSummary(bool AllPassed, long UploadedCount);
+public sealed record PreparedTestResults(
+    IReadOnlyList<AggregatedResult> Results,
+    bool AllPassed);
