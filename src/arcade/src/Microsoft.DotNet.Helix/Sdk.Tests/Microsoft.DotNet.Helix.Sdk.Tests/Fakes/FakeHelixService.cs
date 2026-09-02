@@ -24,6 +24,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         private readonly ConcurrentDictionary<string, int> _listWorkItemsCallCounts =
             new(StringComparer.OrdinalIgnoreCase);
         private int _getJobsCallCount;
+        private int _downloadTestResultsCallCount;
 
         /// <summary>
         /// Adds a Helix response. Each call to <see cref="GetJobsForBuildAsync"/> returns the next
@@ -73,6 +74,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         public int GetListWorkItemsCallCount(string jobName)
             => _listWorkItemsCallCounts.TryGetValue(jobName, out int count) ? count : 0;
 
+        public int DownloadTestResultsCallCount => Volatile.Read(ref _downloadTestResultsCallCount);
+
         public ConcurrentBag<string> CanceledJobs { get; } = [];
 
         private HelixSnapshot CurrentSnapshot
@@ -100,6 +103,8 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         public Task<WorkItemTestResults> DownloadTestResultsAsync(
             string jobName, string workItemName, string workingDirectory, CancellationToken cancellationToken)
         {
+            Interlocked.Increment(ref _downloadTestResultsCallCount);
+
             if (_downloadFailureJobs.Contains(jobName))
             {
                 throw new InvalidOperationException($"Injected download failure for Helix job '{jobName}'.");

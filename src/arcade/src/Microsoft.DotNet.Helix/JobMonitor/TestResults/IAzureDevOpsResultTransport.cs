@@ -5,9 +5,13 @@ namespace Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 
 internal interface IAzureDevOpsResultTransport
 {
-    Task<string> PublishResultsAsync(object results, CancellationToken cancellationToken);
+    Task<string> PublishResultsAsync(
+        int testRunId,
+        object results,
+        CancellationToken cancellationToken);
 
     Task UploadAttachmentAsync(
+        int testRunId,
         long testResultId,
         long? testSubResultId,
         string fileName,
