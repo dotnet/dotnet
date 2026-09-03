@@ -257,7 +257,7 @@ namespace NuGet.MSSigning.Extensions.FuncTest.Commands
 
                 result.Success.Should().BeFalse(because: result.AllOutput);
                 result.AllOutput.Should().Contain(_noTimestamperWarningCode);
-                result.Errors.Should().Contain("NU3001: The package already contains a signature. Please remove the existing signature before adding a new signature.");
+                result.Errors.Should().Contain("NU3001: The package already contains a signature. Remove the existing signature before adding a new signature.");
             }
         }
 

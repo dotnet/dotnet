@@ -4,10 +4,9 @@
 #nullable disable
 
 using System;
+using System.CommandLine;
 using System.Globalization;
-using Microsoft.Extensions.CommandLineUtils;
 using NuGet.Commands;
-using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
 
@@ -15,83 +14,92 @@ namespace NuGet.CommandLine.XPlat
 {
     internal static class DeleteCommand
     {
-        public static void Register(CommandLineApplication app, Func<ILogger> getLogger)
+        internal static void Register(Command parent, Func<ILoggerWithColor> getLogger)
         {
-            app.Command("delete", delete =>
+            var deleteCmd = new Command("delete", Strings.Delete_Description);
+
+            var sourceOption = new Option<string>("--source", "-s")
             {
-                delete.Description = Strings.Delete_Description;
-                delete.HelpOption(XPlatUtility.HelpOption);
+                Arity = ArgumentArity.ZeroOrOne,
+                Description = Strings.Source_Description,
+            };
 
-                delete.Option(
-                    CommandConstants.ForceEnglishOutputOption,
-                    Strings.ForceEnglishOutput_Description,
-                    CommandOptionType.NoValue);
+            var nonInteractiveOption = new Option<bool>("--non-interactive")
+            {
+                Arity = ArgumentArity.Zero,
+                Description = Strings.NonInteractive_Description,
+            };
 
-                var source = delete.Option(
-                    "-s|--source <source>",
-                    Strings.Source_Description,
-                    CommandOptionType.SingleValue);
+            var apiKeyOption = new Option<string>("--api-key", "-k")
+            {
+                Arity = ArgumentArity.ZeroOrOne,
+                Description = Strings.ApiKey_Description,
+            };
 
-                var nonInteractive = delete.Option(
-                    "--non-interactive",
-                    Strings.NonInteractive_Description,
-                    CommandOptionType.NoValue);
+            var noServiceEndpointOption = new Option<bool>("--no-service-endpoint")
+            {
+                Arity = ArgumentArity.Zero,
+                Description = Strings.NoServiceEndpoint_Description,
+            };
 
-                var apikey = delete.Option(
-                    "-k|--api-key <apiKey>",
-                    Strings.ApiKey_Description,
-                    CommandOptionType.SingleValue);
+            var interactiveOption = new Option<bool>("--interactive")
+            {
+                Arity = ArgumentArity.Zero,
+                Description = Strings.NuGetXplatCommand_Interactive,
+            };
 
-                var arguments = delete.Argument(
-                    "[root]",
-                    Strings.Delete_PackageIdAndVersion_Description,
-                    multipleValues: true);
+            var packageIdArgument = new Argument<string>("PackageId")
+            {
+                Arity = ArgumentArity.ExactlyOne,
+                Description = Strings.Delete_PackageIdAndVersion_Description,
+            };
 
-                var noServiceEndpointDescription = delete.Option(
-                    "--no-service-endpoint",
-                    Strings.NoServiceEndpoint_Description,
-                    CommandOptionType.NoValue);
+            var packageVersionArgument = new Argument<string>("PackageVersion")
+            {
+                Arity = ArgumentArity.ExactlyOne,
+                Description = Strings.Delete_PackageIdAndVersion_Description,
+            };
 
-                var interactive = delete.Option(
-                    "--interactive",
-                    Strings.NuGetXplatCommand_Interactive,
-                    CommandOptionType.NoValue);
+            deleteCmd.Options.Add(sourceOption);
+            deleteCmd.Options.Add(nonInteractiveOption);
+            deleteCmd.Options.Add(apiKeyOption);
+            deleteCmd.Options.Add(noServiceEndpointOption);
+            deleteCmd.Options.Add(interactiveOption);
+            deleteCmd.Arguments.Add(packageIdArgument);
+            deleteCmd.Arguments.Add(packageVersionArgument);
 
-                delete.OnExecute(async () =>
-                {
-                    if (arguments.Values.Count < 2)
-                    {
-                        throw new ArgumentException(Strings.Delete_MissingArguments);
-                    }
+            deleteCmd.SetAction(async (parseResult, cancellationToken) =>
+            {
+                string packageId = parseResult.GetValue(packageIdArgument);
+                string packageVersion = parseResult.GetValue(packageVersionArgument);
+                string sourcePath = parseResult.GetValue(sourceOption);
+                string apiKeyValue = parseResult.GetValue(apiKeyOption);
+                bool nonInteractiveValue = parseResult.GetValue(nonInteractiveOption);
+                bool noServiceEndpoint = parseResult.GetValue(noServiceEndpointOption);
+                bool interactiveValue = parseResult.GetValue(interactiveOption);
 
-                    string packageId = arguments.Values[0];
-                    string packageVersion = arguments.Values[1];
-                    string sourcePath = source.Value();
-                    string apiKeyValue = apikey.Value();
-                    bool nonInteractiveValue = nonInteractive.HasValue();
-                    bool noServiceEndpoint = noServiceEndpointDescription.HasValue();
-
-                    DefaultCredentialServiceUtility.SetupDefaultCredentialService(getLogger(), !interactive.HasValue());
+                DefaultCredentialServiceUtility.SetupDefaultCredentialService(getLogger(), !interactiveValue);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-                    PackageSourceProvider sourceProvider = new PackageSourceProvider(XPlatUtility.GetSettingsForCurrentWorkingDirectory(), enablePackageSourcesChangedEvent: false);
+                PackageSourceProvider sourceProvider = new PackageSourceProvider(XPlatUtility.GetSettingsForCurrentWorkingDirectory(), enablePackageSourcesChangedEvent: false);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-                    await DeleteRunner.Run(
-                        sourceProvider.Settings,
-                        sourceProvider,
-                        packageId,
-                        packageVersion,
-                        sourcePath,
-                        apiKeyValue,
-                        nonInteractiveValue,
-                        noServiceEndpoint,
-                        Confirm,
-                        getLogger());
+                await DeleteRunner.Run(
+                    sourceProvider.Settings,
+                    sourceProvider,
+                    packageId,
+                    packageVersion,
+                    sourcePath,
+                    apiKeyValue,
+                    nonInteractiveValue,
+                    noServiceEndpoint,
+                    Confirm,
+                    getLogger());
 
-                    return 0;
-                });
+                return 0;
             });
+
+            parent.Subcommands.Add(deleteCmd);
         }
 
         private static bool Confirm(string description)
@@ -103,7 +111,7 @@ namespace NuGet.CommandLine.XPlat
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(string.Format(CultureInfo.CurrentCulture, Strings.ConsoleConfirmMessage, description));
                 var result = Console.ReadLine();
-                return result.StartsWith(Strings.ConsoleConfirmMessageAccept, StringComparison.OrdinalIgnoreCase);
+                return result != null && result.StartsWith(Strings.ConsoleConfirmMessageAccept, StringComparison.OrdinalIgnoreCase);
             }
             finally
             {

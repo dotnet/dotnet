@@ -44,6 +44,97 @@ env:
   SYSTEM_ACCESSTOKEN: $(System.AccessToken) # We need to set this env var to publish helix results to Azure DevOps
 ```
 
+### Helix Job Monitor for Azure DevOps
+
+If you want to decouple Helix test execution from the build agents that submit the work, use the Helix Job Monitor.
+
+The job monitor is a lightweight dedicated pipeline job that:
+
+- polls Azure DevOps for pipeline state,
+- polls Helix for jobs associated with the current build,
+- downloads test result artifacts from completed Helix jobs,
+- publishes results to Azure DevOps incrementally,
+- returns a final green or red status once all non-monitor jobs and Helix jobs have completed.
+
+This allows the original build jobs to stop waiting on Helix execution while still preserving test visibility and pass/fail behavior in the pipeline.
+
+The job is added with the template at [/eng/common/core-templates/job/helix-job-monitor.yml](/eng/common/core-templates/job/helix-job-monitor.yml).
+
+Example:
+
+```yaml
+jobs:
+- template: /eng/common/core-templates/job/helix-job-monitor.yml@self
+  parameters:
+    pollingIntervalSeconds: 30
+    timeoutInMinutes: 360
+```
+
+Useful parameters:
+
+- `helixBaseUri`: base URI for the Helix service. Defaults to `https://helix.dot.net/`.
+- `helixAccessToken`: optional token for authenticated Helix access on internal builds.
+- `pollingIntervalSeconds`: how often the job monitor checks for new completed jobs.
+- `timeoutInMinutes`: overall timeout for the job monitor.
+
+Behavior notes:
+
+- The reporter uses its own `SYSTEM_ACCESSTOKEN`, so it does not depend on the shorter-lived token from the job that originally submitted the Helix work.
+- If parseable xUnit, JUnit, or TRX result files are available, those are uploaded.
+- If no result files are found for a work item, no test results are uploaded for that work item; Helix work-item failures still affect the monitor job's final pass/fail status.
+- The reporter is safe to rerun because it checks for already-completed test runs and only processes new results.
+
+#### Adding the `microsoft.dotnet.helix.jobmonitor` package
+
+The Helix Job Monitor ships as a .NET tool in the `microsoft.dotnet.helix.jobmonitor` package, which
+must be added as a dependency to the repo and registered as a local tool.
+
+1. Look up the latest version of the package on the `.NET Eng - Latest` channel:
+
+    ```sh
+    darc get-asset --name microsoft.dotnet.helix.jobmonitor --channel '.NET Eng - Latest' --latest
+    ```
+
+2. Use the version, commit, and repo URI returned above to add the dependency via `darc`:
+
+    ```sh
+    darc add-dependency \
+      --name microsoft.dotnet.helix.jobmonitor \
+      --type toolset \
+      --version <version-from-get-asset> \
+      --commit <commit-from-get-asset> \
+      --repo <repo-uri-from-get-asset>
+    ```
+
+3. Add a matching entry under `tools` in `.config/dotnet-tools.json` so the tool is restored locally:
+
+    ```json
+    "microsoft.dotnet.helix.jobmonitor": {
+      "version": "11.0.0-beta.26255.6",
+      "commands": [
+        "dotnet-helix-job-monitor"
+      ]
+    }
+    ```
+
+    Use the same version that was added via `darc add-dependency`.
+
+#### Opting in from a Helix project
+
+Pair the monitor job with the `EnableHelixJobMonitor` MSBuild property in the Helix `.proj` that
+calls `SendHelixJob`:
+
+```xml
+<PropertyGroup>
+  <EnableHelixJobMonitor>true</EnableHelixJobMonitor>
+</PropertyGroup>
+```
+
+When set, the Helix SDK will submit Helix jobs and exit immediately without waiting for completion.
+The Helix Job Monitor will be responsible for tracking the jobs to completion and publishing results to Azure DevOps, so no other changes are needed to the Helix project file itself.
+You must however add the `helix-job-monitor.yml` template to your pipeline (see the example above) so the
+results are still published to Azure DevOps.
+
 Furthermore, when you need to make changes to Helix SDK, there's a way to run it locally with ease to test your changes in a tighter dev loop than having to have to wait for the full PR build.
 
 The repository contains E2E tests that utilize the Helix SDK to send test Helix jobs.

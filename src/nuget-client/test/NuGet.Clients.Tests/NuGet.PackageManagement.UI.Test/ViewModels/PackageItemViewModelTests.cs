@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Collections.Immutable;
 using System.IO;
 using System.Reflection;
@@ -19,6 +20,7 @@ using NuGet.PackageManagement.UI.Test.Models.Package;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging;
+using NuGet.Protocol;
 using NuGet.Packaging.Core;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
@@ -630,6 +632,61 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 VerifyImageResult(result);
                 Assert.Equal(IconBitmapStatus.FetchedIcon, packageItemViewModel.BitmapStatus);
             }
+        }
+
+        [Fact]
+        public void UpdateInstalledPackagesVulnerabilities_WithDifferentVersion_AddsQueriedVersionToVulnerableVersions()
+        {
+            // Arrange
+            var modelVersion = new NuGetVersion("12.0.1");
+            var queriedVersion = new NuGetVersion("12.0.2");
+            var modelIdentity = new PackageIdentity("Newtonsoft.Json", modelVersion);
+            var queriedIdentity = new PackageIdentity("Newtonsoft.Json", queriedVersion);
+
+            var vulnerabilityInfo = new List<PackageVulnerabilityMetadataContextInfo>
+            {
+                new PackageVulnerabilityMetadataContextInfo(
+                    new Uri("https://github.com/advisories/GHSA-1234"),
+                    (int)PackageVulnerabilitySeverity.High)
+            };
+
+            var mockVulnService = new Mock<IPackageVulnerabilityService>();
+            mockVulnService
+                .Setup(s => s.GetVulnerabilityInfoAsync(
+                    It.IsAny<PackageIdentity>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(vulnerabilityInfo);
+
+            PackageModel packageModel = PackageModelCreationTestHelper.CreateRemotePackageModel(
+                modelIdentity,
+                vulnerableCapability: Mock.Of<IVulnerableCapable>(),
+                deprecationCapability: Mock.Of<IDeprecationCapable>(),
+                embeddedResourcesCapability: Mock.Of<IEmbeddedResourcesCapable>());
+
+            var viewModel = new PackageItemViewModel(
+                _searchService.Object,
+                packageModel,
+                mockVulnService.Object);
+
+            var statusChangedEvent = new ManualResetEventSlim(false);
+            viewModel.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
+            {
+                if (e.PropertyName == nameof(PackageItemViewModel.Status))
+                {
+                    statusChangedEvent.Set();
+                }
+            };
+
+            // Act - simulate what PackageItemLoader.GetCurrent() does for duplicate entries
+            viewModel.UpdateInstalledPackagesVulnerabilities(queriedIdentity);
+
+            // Wait for the fire-and-forget async operation to complete
+            statusChangedEvent.Wait(TimeSpan.FromSeconds(10));
+
+            // Assert - the queried version (12.0.2) should be in VulnerableVersions
+            viewModel.VulnerableVersions.Should().ContainKey(queriedVersion,
+                because: $"vulnerability data was queried for version {queriedVersion}, " +
+                         $"but VulnerableVersions only contains: [{string.Join(", ", viewModel.VulnerableVersions.Keys)}]");
         }
     }
 }

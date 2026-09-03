@@ -48,6 +48,10 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
     private readonly IFileHelper _fileHelper;
     private readonly IRequestData _requestData;
 
+    // The protocol version negotiated with the vstest.console sender.
+    // Set when BeforeTestRunStart is received; used for all responses on this channel.
+    private int _protocolVersion = 1;
+
     private Task? _testCaseEventMonitorTask;
 
     /// <summary>
@@ -212,7 +216,7 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
     /// </param>
     public void SendDataCollectionMessage(DataCollectionMessageEventArgs args)
     {
-        _communicationManager.SendMessage(MessageType.DataCollectionMessage, args);
+        _communicationManager.SendMessage(MessageType.DataCollectionMessage, args, _protocolVersion);
     }
 
     /// <summary>
@@ -296,6 +300,14 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
 
     private void HandleBeforeTestRunStart(Message message)
     {
+        // Negotiate the protocol version: adopt the highest version that both sides support.
+        // The sender transmits its highest supported version; we respond with the minimum of
+        // that and our own highest supported version so all subsequent messages use a mutually
+        // understood serialization format.
+        _protocolVersion = message.Version > 0
+            ? Math.Min(message.Version, ProtocolVersioning.HighestSupportedVersion)
+            : 1;
+
         // Initialize datacollectors and get environment variables.
         var payload = _dataSerializer.DeserializePayload<BeforeTestRunStartPayload>(message);
         TPDebug.Assert(payload is not null, "payload is null");
@@ -355,7 +367,8 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
 
         _communicationManager.SendMessage(
             MessageType.BeforeTestRunStartResult,
-            new BeforeTestRunStartResult(envVariables, testCaseEventsPort));
+            new BeforeTestRunStartResult(envVariables, testCaseEventsPort),
+            _protocolVersion);
 
         EqtTrace.Info("DataCollectionRequestHandler.ProcessRequests : DataCollection started.");
     }
@@ -395,7 +408,7 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
         // As datacollector process exits itself on parent process(vstest.console) exits.
         _dataCollectionManager?.Dispose();
 
-        _communicationManager.SendMessage(MessageType.AfterTestRunEndResult, afterTestRunEndResult);
+        _communicationManager.SendMessage(MessageType.AfterTestRunEndResult, afterTestRunEndResult, _protocolVersion);
         EqtTrace.Info("DataCollectionRequestHandler.ProcessRequests : Session End message received from server. Closing the connection.");
 
         Close();

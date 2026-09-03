@@ -216,16 +216,23 @@ namespace NuGet.PackageManagement.VisualStudio
             // Transitive packages will have only one version the first time they are loaded, when the package is selected we update the cache with all the versions
             if (backgroundDataCache != null)
             {
+                // Await the cached versions once. This is a background task that may still be in flight.
+                IReadOnlyCollection<VersionInfoContextInfo> cachedVersions = await backgroundDataCache.AllVersionsContextInfo;
+
                 // If the item was cached with search API, PackageSearchMetadata could be null. If so, update it with registration api information
                 if (isTransitive
-                    && !(backgroundDataCache.AllVersionsContextInfo.Result?.Count > 1)
-                    || backgroundDataCache.AllVersionsContextInfo.Result?.FirstOrDefault()?.PackageSearchMetadata == null)
+                    && !(cachedVersions?.Count > 1)
+                    || cachedVersions?.FirstOrDefault()?.PackageSearchMetadata == null)
                 {
                     IPackageMetadataProvider newPackageMetadataProvider = await GetPackageMetadataProviderAsync(packageSources, projects?.ToList().AsReadOnly(), cancellationToken);
                     IPackageSearchMetadata newPackageMetadata = await newPackageMetadataProvider.GetPackageMetadataAsync(identity, includePrerelease, cancellationToken);
                     backgroundDataCache.UpdateSearchMetadata(newPackageMetadata);
+
+                    // UpdateSearchMetadata replaces AllVersionsContextInfo with a fresh task. Return the refreshed versions.
+                    return await backgroundDataCache.AllVersionsContextInfo;
                 }
-                return await backgroundDataCache.AllVersionsContextInfo;
+
+                return cachedVersions;
             }
 
             IPackageMetadataProvider packageMetadataProvider = await GetPackageMetadataProviderAsync(packageSources, projects?.ToList().AsReadOnly(), cancellationToken);

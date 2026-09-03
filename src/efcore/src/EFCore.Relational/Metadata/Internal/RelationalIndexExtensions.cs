@@ -17,6 +17,29 @@ public static class RelationalIndexExtensions
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
+    public static bool IsJsonIndex(this IReadOnlyIndex index)
+    {
+        foreach (var property in index.Properties)
+        {
+            switch (property)
+            {
+                case IReadOnlyProperty { DeclaringType: IReadOnlyComplexType complexType } when complexType.IsMappedToJson():
+                case IReadOnlyComplexProperty { ComplexType: var ct } when ct.IsMappedToJson():
+                    continue;
+                default:
+                    return false;
+            }
+        }
+
+        return index.Properties.Count > 0;
+    }
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public static bool AreCompatible(
         this IReadOnlyIndex index,
         IReadOnlyIndex duplicateIndex,
@@ -151,6 +174,24 @@ public static class RelationalIndexExtensions
             switch (property)
             {
                 case IReadOnlyProperty scalar:
+                    if (scalar.DeclaringType is IReadOnlyComplexType complexType && complexType.IsMappedToJson())
+                    {
+                        // Index over a scalar inside a JSON-mapped complex type: maps to the JSON container column.
+                        var jsonContainerName = complexType.GetContainerColumnName();
+                        if (string.IsNullOrEmpty(jsonContainerName))
+                        {
+                            return null;
+                        }
+
+                        // Multiple index properties may map to the same JSON container column; deduplicate.
+                        if (!names.Contains(jsonContainerName))
+                        {
+                            names.Add(jsonContainerName);
+                        }
+
+                        break;
+                    }
+
                     var columnName = storeObject is { } so ? scalar.GetColumnName(so) : scalar.GetColumnName();
                     if (columnName == null)
                     {
@@ -160,14 +201,18 @@ public static class RelationalIndexExtensions
                     names.Add(columnName);
                     break;
 
-                case IReadOnlyComplexProperty { IsCollection: false } complexProperty:
-                    var containerColumnName = complexProperty.ComplexType.GetContainerColumnName();
+                case IReadOnlyComplexProperty { ComplexType: var ct } when ct.IsMappedToJson():
+                    var containerColumnName = ct.GetContainerColumnName();
                     if (string.IsNullOrEmpty(containerColumnName))
                     {
                         return null;
                     }
 
-                    names.Add(containerColumnName);
+                    if (!names.Contains(containerColumnName))
+                    {
+                        names.Add(containerColumnName);
+                    }
+
                     break;
 
                 default:

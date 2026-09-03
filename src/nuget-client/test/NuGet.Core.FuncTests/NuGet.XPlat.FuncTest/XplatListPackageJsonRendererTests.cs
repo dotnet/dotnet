@@ -1156,7 +1156,7 @@ namespace NuGet.XPlat.FuncTest
                         (
                             projectBPath,
                             null,
-                            new List<ReportProblem>() { new ReportProblem(ProblemType.Error, projectBPath, $"No assets file was found for `{projectBPath}`. Please run restore before running this command.") }
+                            new List<ReportProblem>() { new ReportProblem(ProblemType.Error, projectBPath, $"No assets file was found for `{projectBPath}`. Run restore before running this command.") }
                         )
                     );
 
@@ -1174,7 +1174,7 @@ namespace NuGet.XPlat.FuncTest
                         {{
                           'project': '{projectBPath}',
                           'level': 'error',
-                          'text': 'No assets file was found for `{projectBPath}`. Please run restore before running this command.'
+                          'text': 'No assets file was found for `{projectBPath}`. Run restore before running this command.'
                         }}
                       ],
                       'projects': [

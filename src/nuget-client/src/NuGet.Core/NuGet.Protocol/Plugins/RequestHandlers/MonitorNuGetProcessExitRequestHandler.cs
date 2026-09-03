@@ -1,11 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -69,6 +70,10 @@ namespace NuGet.Protocol.Plugins
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="request" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="responseHandler" />
         /// is <see langword="null" />.</exception>
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "PayloadObject is always a typed object (not JObject) in these scenarios; the reflection code path is not reached.")]
+#endif
         public async Task HandleResponseAsync(
             IConnection connection,
             Message request,
@@ -92,9 +97,10 @@ namespace NuGet.Protocol.Plugins
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var monitorRequest = MessageUtilities.DeserializePayload<MonitorNuGetProcessExitRequest>(request);
+            // Deserialized payload is non-null for well-formed handler requests.
+            var monitorRequest = MessageUtilities.DeserializePayload<MonitorNuGetProcessExitRequest>(request)!;
 
-            Process process = null;
+            Process? process = null;
 
             try
             {
@@ -124,7 +130,7 @@ namespace NuGet.Protocol.Plugins
             await responseHandler.SendResponseAsync(request, response, cancellationToken);
         }
 
-        private void OnProcessExited(object sender, EventArgs e)
+        private void OnProcessExited(object? sender, EventArgs e)
         {
             _plugin.Close();
         }

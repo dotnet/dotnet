@@ -31,11 +31,11 @@ namespace System.Reflection.Emit
         public CustomAttributeBuilder(ConstructorInfo con, object?[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues) { }
         public CustomAttributeBuilder(ConstructorInfo con, object?[] constructorArgs) { }
     }
+
     public partial class ILGenerator
     {
         internal ILGenerator() { }
         public virtual int ILOffset { get { throw null; } }
-
         public virtual void BeginCatchBlock(Type exceptionType) { }
         public virtual void BeginExceptFilterBlock() { }
         public virtual Label BeginExceptionBlock() { throw null; }
@@ -74,6 +74,7 @@ namespace System.Reflection.Emit
         public virtual void ThrowException(Type excType) { }
         public virtual void UsingNamespace(string usingNamespace) { }
     }
+
     public readonly partial struct Label
     {
         private readonly int _dummyPrimitive;
@@ -101,11 +102,11 @@ namespace System.Reflection.Emit
         public bool IsOut { get { throw null; } }
         public virtual string? Name { get { throw null; } }
         public virtual int Position { get { throw null; } }
-
         public virtual void SetConstant(object? defaultValue) { }
         public void SetCustomAttribute(ConstructorInfo con, byte[] binaryAttribute) { }
         public void SetCustomAttribute(CustomAttributeBuilder customBuilder) { }
     }
+
     public sealed partial class SignatureHelper
     {
         internal SignatureHelper() { }

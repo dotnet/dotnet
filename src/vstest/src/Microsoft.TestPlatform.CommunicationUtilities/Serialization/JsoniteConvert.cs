@@ -246,10 +246,10 @@ internal static class JsoniteConvert
     {
         if (value is not IDictionary<string, object> dict) return null;
         var tc = new TestCase();
-        bool flat = dict.ContainsKey("FullyQualifiedName");
+        bool flat = dict.TryGetValue("FullyQualifiedName", out var fqnFlat);
         if (flat)
         {
-            if (dict.TryGetValue("FullyQualifiedName", out var fqn) && fqn != null) tc.FullyQualifiedName = fqn.ToString()!;
+            if (fqnFlat != null) tc.FullyQualifiedName = fqnFlat.ToString()!;
             if (dict.TryGetValue("ExecutorUri", out var uri) && uri != null) tc.ExecutorUri = new Uri(uri.ToString()!);
             if (dict.TryGetValue("Source", out var src) && src != null) tc.Source = src.ToString()!;
             if (dict.TryGetValue("Id", out var id) && id != null) tc.Id = Guid.Parse(id.ToString()!);
@@ -288,10 +288,10 @@ internal static class JsoniteConvert
         var tr = new TestResult(tc);
         if (dict.TryGetValue("Attachments", out var ao) && ao is IList al) foreach (var i in al) if (i != null && DeserializeAttachmentSet(i) is AttachmentSet a) tr.Attachments.Add(a);
         if (dict.TryGetValue("Messages", out var mo) && mo is IList ml) foreach (var i in ml) if (i != null && ConvertTo(i, typeof(TestResultMessage)) is TestResultMessage m) tr.Messages.Add(m);
-        bool flat = dict.ContainsKey("Outcome");
+        bool flat = dict.TryGetValue("Outcome", out var ocFlat);
         if (flat)
         {
-            if (dict.TryGetValue("Outcome", out var oc)) tr.Outcome = (TestOutcome)Convert.ToInt32(oc, CultureInfo.InvariantCulture);
+            tr.Outcome = (TestOutcome)Convert.ToInt32(ocFlat, CultureInfo.InvariantCulture);
             if (dict.TryGetValue("ErrorMessage", out var em) && em != null) tr.ErrorMessage = em.ToString();
             if (dict.TryGetValue("ErrorStackTrace", out var es) && es != null) tr.ErrorStackTrace = es.ToString();
             if (dict.TryGetValue("DisplayName", out var dn) && dn != null) tr.DisplayName = dn.ToString();
@@ -327,6 +327,12 @@ internal static class JsoniteConvert
     private static object? DeserializeTestObject(object? value, Type targetType)
     {
         if (value is not IDictionary<string, object> dict) return null;
+
+        // TestObject is abstract — use TestCase as a concrete property-bag carrier,
+        // matching the approach used in the STJ TestObjectBaseConverter.
+        if (targetType.IsAbstract)
+            targetType = typeof(TestCase);
+
         var ctor = targetType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null);
         var inst = ctor is not null ? (TestObject)ctor.Invoke(Array.Empty<object>()) : (TestObject)FormatterServices.GetUninitializedObject(targetType);
         if (dict.TryGetValue("Properties", out var po) && po is IList pl)
@@ -492,7 +498,7 @@ internal static class JsoniteConvert
         if (targetType == typeof(TestExecutionContext)) return DeserializeTestExecutionContext(value);
         if (targetType == typeof(TestProcessAttachDebuggerPayload)) return DeserializeTestProcessAttachDebuggerPayload(value);
         if (targetType == typeof(AfterTestRunEndResult)) return DeserializeAfterTestRunEndResult(value);
-        if (typeof(TestObject).IsAssignableFrom(targetType) && targetType != typeof(TestObject)) return DeserializeTestObject(value, targetType);
+        if (typeof(TestObject).IsAssignableFrom(targetType)) return DeserializeTestObject(value, targetType);
 
         if (targetType == typeof(string)) return Convert.ToString(value, CultureInfo.InvariantCulture);
         if (targetType == typeof(bool)) { if (value is bool bv) return bv; if (value is string bs) return bool.Parse(bs); return Convert.ToBoolean(value, CultureInfo.InvariantCulture); }

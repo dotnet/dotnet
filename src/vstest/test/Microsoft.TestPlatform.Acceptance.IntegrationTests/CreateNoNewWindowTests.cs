@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.IO;
-using System.Linq;
 
 using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,6 +12,8 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class CreateNoNewWindowTests : AcceptanceTestBase
 {
     [TestMethod]
+    // CreateNoNewWindow maps to the Windows-only process CreateNoWindow flag and only runs on the .NET Framework testhost.
+    [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: false)]
     public void WhenCreateNoNewWindowIsFalse_DiagShowsCreateNoWindowFalse(RunnerInfo runnerInfo)
     {
@@ -23,10 +24,9 @@ public class CreateNoNewWindowTests : AcceptanceTestBase
             + "<CreateNoNewWindow>false</CreateNoNewWindow>"
             + "</RunConfiguration></RunSettings>";
         var runsettingsPath = GetRunsettingsFilePath(runsettingsXml);
-        var diagLogPath = Path.Combine(TempDirectory.Path, "logs", "log.txt");
 
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, string.Empty, runnerInfo.InIsolationValue);
-        arguments += $" /settings:{runsettingsPath} /Diag:{diagLogPath}";
+        arguments += $" /settings:{runsettingsPath}";
 
         InvokeVsTest(arguments);
 
@@ -36,6 +36,8 @@ public class CreateNoNewWindowTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // CreateNoNewWindow maps to the Windows-only process CreateNoWindow flag and only runs on the .NET Framework testhost.
+    [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: false)]
     public void WhenCreateNoNewWindowIsTrue_DiagShowsCreateNoWindowTrue(RunnerInfo runnerInfo)
     {
@@ -46,10 +48,9 @@ public class CreateNoNewWindowTests : AcceptanceTestBase
             + "<CreateNoNewWindow>true</CreateNoNewWindow>"
             + "</RunConfiguration></RunSettings>";
         var runsettingsPath = GetRunsettingsFilePath(runsettingsXml);
-        var diagLogPath = Path.Combine(TempDirectory.Path, "logs", "log.txt");
 
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, string.Empty, runnerInfo.InIsolationValue);
-        arguments += $" /settings:{runsettingsPath} /Diag:{diagLogPath}";
+        arguments += $" /settings:{runsettingsPath}";
 
         InvokeVsTest(arguments);
 
@@ -59,15 +60,15 @@ public class CreateNoNewWindowTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    // CreateNoNewWindow maps to the Windows-only process CreateNoWindow flag and only runs on the .NET Framework testhost.
+    [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: false)]
     public void WhenCreateNoNewWindowIsNotSet_DefaultIsTrue(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
         var assemblyPaths = GetAssetFullPath("SimpleTestProject.dll");
-        var diagLogPath = Path.Combine(TempDirectory.Path, "logs", "log.txt");
 
         var arguments = PrepareArguments(assemblyPaths, GetTestAdapterPath(), string.Empty, string.Empty, runnerInfo.InIsolationValue);
-        arguments += $" /Diag:{diagLogPath}";
 
         InvokeVsTest(arguments);
 
@@ -81,18 +82,5 @@ public class CreateNoNewWindowTests : AcceptanceTestBase
         var runsettingsPath = Path.Combine(TempDirectory.Path, "test.runsettings");
         File.WriteAllText(runsettingsPath, runsettingsXml);
         return runsettingsPath;
-    }
-
-    private string GetDiagLogContents()
-    {
-        var logsDir = Path.Combine(TempDirectory.Path, "logs");
-        if (!Directory.Exists(logsDir))
-        {
-            return string.Empty;
-        }
-
-        var logFiles = Directory.GetFiles(logsDir, "*.txt");
-
-        return string.Join("\n", logFiles.Select(File.ReadAllText));
     }
 }

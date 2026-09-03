@@ -1,19 +1,49 @@
 {
   "entries": {
+    "actions/checkout@v4": {
+      "repo": "actions/checkout",
+      "version": "v4",
+      "sha": "34e114876b0b11c390a56381ad16ebd13914f8d5"
+    },
+    "actions/download-artifact@v4": {
+      "repo": "actions/download-artifact",
+      "version": "v4",
+      "sha": "d3f86a106a0bac45b974a628896c90dbdf5c8093"
+    },
     "actions/github-script@v9.0.0": {
       "repo": "actions/github-script",
       "version": "v9.0.0",
       "sha": "3a2844b7e9c422d3c10d287c895573f7108da1b3"
     },
-    "github/gh-aw-actions/setup-cli@v0.72.1": {
-      "repo": "github/gh-aw-actions/setup-cli",
-      "version": "v0.72.1",
-      "sha": "bc56a0cad2f450c562810785ef38649c04db812a"
+    "actions/setup-dotnet@v4": {
+      "repo": "actions/setup-dotnet",
+      "version": "v4",
+      "sha": "67a3573c9a986a3f9c594539f4ab511d57bb3ce9"
     },
-    "github/gh-aw-actions/setup@v0.72.1": {
+    "actions/upload-artifact@v4": {
+      "repo": "actions/upload-artifact",
+      "version": "v4",
+      "sha": "ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    "github/gh-aw-actions/setup-cli@v0.79.8": {
+      "repo": "github/gh-aw-actions/setup-cli",
+      "version": "v0.79.8",
+      "sha": "c0338fef4749d08c21f8f975fb0e37efa17dda47"
+    },
+    "github/gh-aw-actions/setup@v0.79.8": {
       "repo": "github/gh-aw-actions/setup",
-      "version": "v0.72.1",
-      "sha": "bc56a0cad2f450c562810785ef38649c04db812a"
+      "version": "v0.79.8",
+      "sha": "c0338fef4749d08c21f8f975fb0e37efa17dda47"
+    },
+    "github/gh-aw/actions/setup-cli@v0.79.8": {
+      "repo": "github/gh-aw/actions/setup-cli",
+      "version": "v0.79.8",
+      "sha": "8b02ab336d100a5746e9f53b8bc2b22878278a6f"
+    },
+    "super-linter/super-linter@v8.6.0": {
+      "repo": "super-linter/super-linter",
+      "version": "v8.6.0",
+      "sha": "9e863354e3ff62e0727d37183162c4a88873df41"
     }
   }
 }

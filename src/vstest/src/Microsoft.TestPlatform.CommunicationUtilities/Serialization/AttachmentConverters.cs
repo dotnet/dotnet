@@ -32,7 +32,7 @@ internal class AttachmentSetConverter : JsonConverter<AttachmentSet>
             {
                 if (attachment.ValueKind != JsonValueKind.Null)
                 {
-                    attachmentSet.Attachments.Add(JsonSerializer.Deserialize<UriDataAttachment>(attachment.GetRawText(), options)!);
+                    attachmentSet.Attachments.Add(StjSafe.Deserialize<UriDataAttachment>(attachment.GetRawText(), options)!);
                 }
             }
         }
@@ -46,7 +46,7 @@ internal class AttachmentSetConverter : JsonConverter<AttachmentSet>
         writer.WriteString("Uri", value.Uri.OriginalString);
         writer.WriteString("DisplayName", value.DisplayName);
         writer.WritePropertyName("Attachments");
-        JsonSerializer.Serialize(writer, value.Attachments, options);
+        StjSafe.Serialize(writer, value.Attachments, options);
         writer.WriteEndObject();
     }
 }

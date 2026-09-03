@@ -49,7 +49,6 @@ namespace System.Formats.Asn1
         public bool IsConstructed { get { throw null; } }
         public TagClass TagClass { get { throw null; } }
         public int TagValue { get { throw null; } }
-
         public readonly Asn1Tag AsConstructed() { throw null; }
         public readonly Asn1Tag AsPrimitive() { throw null; }
         public readonly int CalculateEncodedSize() { throw null; }
@@ -110,6 +109,7 @@ namespace System.Formats.Asn1
         [CLSCompliant(false)]
         public static bool TryReadUInt64(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out ulong value, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
     }
+
     public enum AsnEncodingRules
     {
         BER = 0,
@@ -122,7 +122,6 @@ namespace System.Formats.Asn1
         public AsnReader(ReadOnlyMemory<byte> data, AsnEncodingRules ruleSet, AsnReaderOptions options = default) { }
         public bool HasData { get { throw null; } }
         public AsnEncodingRules RuleSet { get { throw null; } }
-
         public AsnReader Clone() { throw null; }
         public ReadOnlyMemory<byte> PeekContentBytes() { throw null; }
         public ReadOnlyMemory<byte> PeekEncodedValue() { throw null; }
@@ -163,6 +162,7 @@ namespace System.Formats.Asn1
         [CLSCompliant(false)]
         public bool TryReadUInt64(out ulong value, Asn1Tag? expectedTag = null) { throw null; }
     }
+
     public partial struct AsnReaderOptions
     {
         private int _dummyPrimitive;
@@ -175,7 +175,6 @@ namespace System.Formats.Asn1
         public AsnWriter(AsnEncodingRules ruleSet, int initialCapacity) { }
         public AsnWriter(AsnEncodingRules ruleSet) { }
         public AsnEncodingRules RuleSet { get { throw null; } }
-
         public void CopyTo(AsnWriter destination) { }
         public byte[] Encode() { throw null; }
         public int Encode(Span<byte> destination) { throw null; }
@@ -220,6 +219,7 @@ namespace System.Formats.Asn1
             public readonly void Dispose() { }
         }
     }
+
     public enum TagClass
     {
         Universal = 0,

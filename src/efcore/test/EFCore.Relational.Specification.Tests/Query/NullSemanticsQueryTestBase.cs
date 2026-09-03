@@ -711,7 +711,7 @@ public abstract class NullSemanticsQueryTestBase<TFixture>(TFixture fixture) : Q
             async,
             ss => ss.Set<NullSemanticsEntity1>().Where(e => (e.NullableStringA == e.NullableStringB
                     ? e.NullableStringA
-                    : e.NullableStringB)
+                    : e.NullableStringC)
                 == e.NullableStringC).Select(e => e.Id));
 
     [Theory, MemberData(nameof(IsAsyncData))]
@@ -721,7 +721,7 @@ public abstract class NullSemanticsQueryTestBase<TFixture>(TFixture fixture) : Q
             ss => ss.Set<NullSemanticsEntity1>().Where(e => e.NullableStringC
                 != (e.NullableStringA == e.NullableStringB
                     ? e.NullableStringA
-                    : e.NullableStringB)).Select(e => e.Id));
+                    : e.NullableStringC)).Select(e => e.Id));
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task Where_equal_with_conditional_non_nullable(bool async)
@@ -2181,6 +2181,47 @@ public abstract class NullSemanticsQueryTestBase<TFixture>(TFixture fixture) : Q
                 : (x.NullableBoolC == null
                     ? x.NullableBoolA != x.NullableBoolC
                     : x.NullableBoolC != x.NullableBoolA)));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Is_not_null_optimizes_unary_op(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<NullSemanticsEntity1>().Select(
+                x => x.NullableIntA != null ? ~x.NullableIntA : null));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Is_not_null_optimizes_binary_op(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<NullSemanticsEntity1>().Select(
+                x => x.NullableIntA != null && x.NullableIntB != null
+                    ? x.NullableIntA + x.NullableIntB
+                    : null));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Is_not_null_optimizes_binary_op_with_partial_checks(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<NullSemanticsEntity1>().Select(
+                x => x.NullableStringA != null && x.NullableStringB != null
+                    ? x.NullableStringA + x.NullableStringB + x.NullableStringC
+                    : null));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Is_not_null_optimizes_binary_op_with_nested_checks(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<NullSemanticsEntity1>().Select(
+                x => x.NullableStringA != null
+                    ? x.NullableStringB != null ? x.NullableStringA + x.NullableStringB : null
+                    : null));
+
+    [Theory, MemberData(nameof(IsAsyncData))]
+    public virtual Task Is_not_null_optimizes_binary_op_with_mixed_checks(bool async)
+        => AssertQuery(
+            async,
+            ss => ss.Set<NullSemanticsEntity1>().Select(
+                x => x.NullableStringA != null && x.BoolA ? x.NullableStringA + x.NullableStringB : null));
 
     [Theory, MemberData(nameof(IsAsyncData))]
     public virtual Task Sum_function_is_always_considered_non_nullable(bool async)

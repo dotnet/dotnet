@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Runtime.Serialization;
 
@@ -18,7 +16,7 @@ namespace NuGet.Protocol.Plugins
         /// Instantiates a new <see cref="ProtocolException" /> class.
         /// </summary>
         /// <param name="message">The exception message.</param>
-        public ProtocolException(string message)
+        public ProtocolException(string? message)
             : base(message)
         {
         }
@@ -28,7 +26,7 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         /// <param name="message">The exception message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public ProtocolException(string message, Exception innerException)
+        public ProtocolException(string? message, Exception? innerException)
             : base(message, innerException)
         {
         }

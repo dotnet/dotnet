@@ -150,7 +150,7 @@
 4 - hex byte string, representing content hash</comment>
   </data>
   <data name="FailToLoadPackagesConfig" xml:space="preserve">
-    <value>Fail to load packages.config as XML file. Please check it. </value>
+    <value>Failed to load packages.config as XML file. Check that it is valid.</value>
   </data>
   <data name="MinClientVersionAlreadyExist" xml:space="preserve">
     <value>MinClientVersion already exists in packages.config</value>
@@ -196,7 +196,7 @@
     <value>Unsupported targetFramework value '{0}'.</value>
   </data>
   <data name="PackageMinVersionNotSatisfied" xml:space="preserve">
-    <value>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget</value>
+    <value>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, go to https://docs.nuget.org/consume/installing-nuget</value>
   </data>
   <data name="UnableToParseClientVersion" xml:space="preserve">
     <value>Unable to parse the current NuGet client version.</value>
@@ -249,10 +249,10 @@
     <comment>0 - Signature friendly name</comment>
   </data>
   <data name="SignedPackageUnableToAccessSignature" xml:space="preserve">
-    <value>The package was not opened correctly to perform signature operations. Please use a Stream-based constructor to have access to signature attributes of the package.</value>
+    <value>The package was not opened correctly to perform signature operations. Use a Stream-based constructor to have access to signature attributes of the package.</value>
   </data>
   <data name="SignedPackageAlreadySigned" xml:space="preserve">
-    <value>The package already contains a signature. Please remove the existing signature before adding a new signature.</value>
+    <value>The package already contains a signature. Remove the existing signature before adding a new signature.</value>
   </data>
   <data name="SignedPackageNotSignedOnRemove" xml:space="preserve">
     <value>The package is not signed. Unable to remove signature from an unsigned package.</value>
@@ -571,7 +571,7 @@ Valid from:</comment>
     <value>The stream must be seekable.</value>
   </data>
   <data name="SignedPackagePackageAlreadyCountersigned" xml:space="preserve">
-    <value>The package already contains a repository countersignature. Please remove the existing signature before adding a new repository countersignature.</value>
+    <value>The package already contains a repository countersignature. Remove the existing signature before adding a new repository countersignature.</value>
   </data>
   <data name="RepositoryCountersignatureHasNoCertificate" xml:space="preserve">
     <value>The repository countersignature does not have a signing certificate.</value>

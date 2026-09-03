@@ -22,6 +22,15 @@
     -->
     <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)usemonoruntime</BuildArgs>
 
+    <!--
+      In the Mono runtime leg, PrimaryRuntimeFlavor=Mono causes the multi-targeted libraries' mobile target
+      frameworks (e.g. net11.0-android/ios/tvos/maccatalyst) to be restored with UseMonoRuntime=true. As of
+      .NET 11, the SDK raises NETSDK1242 when a mobile project targets the Mono runtime. These mobile target
+      frameworks are only restored (never actually built) in this host-only leg, so disable the check to avoid
+      the false-positive failure. See https://github.com/dotnet/source-build/issues/5603.
+    -->
+    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">$(BuildArgs) /p:_DisableCheckForUnsupportedMonoMobileRuntime=true</BuildArgs>
+
     <!-- Mobile builds and windows host (for Android-on-windows etc.) are never "cross" builds as they don't have a rootfs-based filesystem build. -->
     <TargetsMobile Condition="'$(TargetOS)' == 'ios' or '$(TargetOS)' == 'iossimulator' or '$(TargetOS)' == 'maccatalyst' or '$(TargetOS)' == 'tvos' or '$(TargetOS)' == 'tvossimulator' or '$(TargetOS)' == 'android' or '$(TargetOS)' == 'browser' or '$(TargetOS)' == 'wasi'">true</TargetsMobile>
     <BuildArgs Condition="'$(CrossBuild)' == 'true' or ('$(TargetOS)-$(TargetArchitecture)' != '$(BuildOS)-$(BuildArchitecture)' and '$(TargetsMobile)' != 'true' and '$(TargetOS)' != 'windows' and '$(TargetOS)' != 'linux-bionic')">$(BuildArgs) $(FlagParameterPrefix)cross</BuildArgs>

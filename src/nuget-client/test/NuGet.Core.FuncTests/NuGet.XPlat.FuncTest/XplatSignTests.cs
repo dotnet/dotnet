@@ -5,15 +5,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Microsoft.Extensions.CommandLineUtils;
+using System.CommandLine;
 using Moq;
 using NuGet.CommandLine.XPlat;
 using NuGet.Commands;
 using NuGet.Common;
-using NuGet.Packaging.Signing;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,7 +20,6 @@ namespace NuGet.XPlat.FuncTest
     [Collection(XPlatCollection.Name)]
     public class XplatSignTests
     {
-        private const string _invalidArgException = "Invalid value provided for '{0}'. The accepted values are {1}.";
         private readonly ITestOutputHelper _testOutputHelper;
         private const string Sha256Hash = "A591A6D40BF420404A011733CFB7B190D62C65BF0BCDA32B56C92B409B0F9DCA";
 
@@ -32,7 +29,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void SignCommandArgsParsing_MissingPackagePath_Throws()
+        public void SignCommandArgsParsing_MissingPackagePath_ReturnsNonZero()
         {
             SignCommandArgs(
                 (mockCommandRunner, testApp, getLogLevel, getParsedArg, _) =>
@@ -41,11 +38,10 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign" };
 
                     // Act
-                    var ex = Assert.Throws<AggregateException>(() => testApp.Execute(argList.ToArray()));
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
-                    Assert.IsType<ArgumentException>(ex.InnerException);
-                    Assert.Equal("Unable to sign package. Argument '<package-paths>' not provided.", ex.InnerException.Message);
+                    Assert.NotEqual(0, result);
                 });
         }
 
@@ -54,7 +50,7 @@ namespace NuGet.XPlat.FuncTest
         [InlineData("\\path\file.cert", "", "test_cert_fingerprint")]
         [InlineData("\\path\file.cert", "test_cert_subject", "test_cert_fingerprint")]
         [InlineData("", "test_cert_subject", "test_cert_fingerprint")]
-        public void SignCommandArgParsing_MultipleCertificateOptions_Throws(
+        public void SignCommandArgParsing_MultipleCertificateOptions_ReturnsNonZero(
             string certificatePath,
             string certificateSubjectName,
             string certificateFingerprint)
@@ -69,11 +65,10 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-path", certificatePath, "--certificate-subject-name", certificateSubjectName, "--certificate-fingerprint", certificateFingerprint, timestamper };
 
                     // Act
-                    var ex = Assert.Throws<AggregateException>(() => testApp.Execute(argList.ToArray()));
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
-                    Assert.IsType<ArgumentException>(ex.InnerException);
-                    Assert.Equal(Strings.SignCommandMultipleCertificateException, ex.InnerException.Message);
+                    Assert.NotEqual(0, result);
                 });
         }
 
@@ -103,7 +98,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-store-name", storeName, "--certificate-fingerprint", certificateFingerprint, "--timestamper", timestamper };
 
                     // Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
                     Assert.True(parsable);
@@ -113,7 +108,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void SignCommandArgParsing_InvalidCertificateStoreName_Throws()
+        public void SignCommandArgParsing_InvalidCertificateStoreName_ReturnsNonZero()
         {
             // Arrange
             var packagePath = @"\\path\package.nupkg";
@@ -128,12 +123,10 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-store-name", storeName, "--certificate-fingerprint", certificateFingerprint, "--timestamper", timestamper };
 
                     // Act
-                    var ex = Assert.Throws<AggregateException>(() => testApp.Execute(argList.ToArray()));
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
-                    Assert.IsType<ArgumentException>(ex.InnerException);
-                    string acceptedStoreNameList = string.Join(",", Enum.GetValues(typeof(StoreName)).Cast<StoreName>().ToList());
-                    Assert.Equal(string.Format(_invalidArgException, "certificate-store-name", acceptedStoreNameList), ex.InnerException.Message);
+                    Assert.NotEqual(0, result);
                 });
         }
 
@@ -159,7 +152,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-fingerprint", certificateFingerprint, "--certificate-store-location", storeLocation, "--timestamper", timestamper };
 
                     //Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     //Assert
                     Assert.True(parsable);
@@ -169,7 +162,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void SignCommandArgParsing_InvalidCertificateStoreLocation_Throws()
+        public void SignCommandArgParsing_InvalidCertificateStoreLocation_ReturnsNonZero()
         {
             // Arrange
             var packagePath = @"\\path\package.nupkg";
@@ -185,12 +178,10 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-fingerprint", certificateFingerprint, "--certificate-store-location", storeLocation, "--timestamper", timestamper };
 
                     // Act
-                    var ex = Assert.Throws<AggregateException>(() => testApp.Execute(argList.ToArray()));
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
-                    Assert.IsType<ArgumentException>(ex.InnerException);
-                    string acceptedStoreLocationList = string.Join(",", Enum.GetValues(typeof(StoreLocation)).Cast<StoreLocation>().ToList());
-                    Assert.Equal(string.Format(_invalidArgException, "certificate-store-location", acceptedStoreLocationList), ex.InnerException.Message);
+                    Assert.NotEqual(0, result);
                 });
         }
 
@@ -218,7 +209,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-path", certificatePath, "--hash-algorithm", hashAlgorithm, "--timestamper", timestamper };
 
                     // Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
                     Assert.True(parsable);
@@ -228,7 +219,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void SignCommandArgParsing_InvalidHashAlgorithm_Throws()
+        public void SignCommandArgParsing_InvalidHashAlgorithm_ReturnsNonZero()
         {
             // Arrange
             var packagePath = @"\\path\package.nupkg";
@@ -243,11 +234,11 @@ namespace NuGet.XPlat.FuncTest
                     //Arrange
                     var argList = new List<string>() { "sign", packagePath, "--certificate-path", certificatePath, "--hash-algorithm", hashAlgorithm, "--timestamper", timestamper };
 
-                    //Act & Assert
-                    var ex = Assert.Throws<AggregateException>(() => testApp.Execute(argList.ToArray()));
-                    Assert.IsType<ArgumentException>(ex.InnerException);
-                    var allowedHashAlgorithms = string.Join(",", SigningSpecifications.V1.AllowedHashAlgorithms);
-                    Assert.Equal(string.Format(_invalidArgException, "hash-algorithm", allowedHashAlgorithms), ex.InnerException.Message);
+                    //Act
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
+
+                    //Assert
+                    Assert.NotEqual(0, result);
                 });
         }
 
@@ -275,7 +266,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-path", certificatePath, "--timestamper", timestamper, "--timestamp-hash-algorithm", timestampHashAlgorithm };
 
                     // Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
                     Assert.True(parsable);
@@ -286,7 +277,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void SignCommandArgParsing_InvalidTimestampHashAlgorithm_Throws()
+        public void SignCommandArgParsing_InvalidTimestampHashAlgorithm_ReturnsNonZero()
         {
             // Arrange
             var packagePath = @"\\path\package.nupkg";
@@ -300,11 +291,11 @@ namespace NuGet.XPlat.FuncTest
                     //Arrange
                     var argList = new List<string>() { "sign", packagePath, "--certificate-path", certificatePath, "--timestamper", timestamper, "--timestamp-hash-algorithm", timestampHashAlgorithm };
 
-                    //Act & Assert
-                    var ex = Assert.Throws<AggregateException>(() => testApp.Execute(argList.ToArray()));
-                    Assert.IsType<ArgumentException>(ex.InnerException);
-                    var allowedHashAlgorithms = string.Join(",", SigningSpecifications.V1.AllowedHashAlgorithms);
-                    Assert.Equal(string.Format(_invalidArgException, "timestamp-hash-algorithm", allowedHashAlgorithms), ex.InnerException.Message);
+                    //Act
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
+
+                    //Assert
+                    Assert.NotEqual(0, result);
                 });
         }
 
@@ -335,7 +326,7 @@ namespace NuGet.XPlat.FuncTest
                         "--timestamper", timestamper, "--timestamp-hash-algorithm", timestampHashAlgorithm, "--output", outputDir, "--overwrite" };
 
                     //Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     //Assert
                     Assert.Null(getParsedArg().CertificatePath);
@@ -378,7 +369,7 @@ namespace NuGet.XPlat.FuncTest
                         "--timestamper", timestamper, "--timestamp-hash-algorithm", timestampHashAlgorithm, "--output", outputDir, "--overwrite" };
 
                     //Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     //Assert
                     Assert.Null(getParsedArg().CertificatePath);
@@ -420,7 +411,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-path", certificatePath, "--hash-algorithm", hashAlgorithm, "--timestamper", timestamper, "--timestamp-hash-algorithm", timestampHashAlgorithm, "--output", outputDir, "--overwrite" };
 
                     //Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     //Assert
                     Assert.Equal(certificatePath, getParsedArg().CertificatePath, StringComparer.Ordinal);
@@ -440,7 +431,7 @@ namespace NuGet.XPlat.FuncTest
         [InlineData("89967D1DD995010B6C66AE24FF8E66885E6E03A8")] // 40 characters long SHA-1 hash
         [InlineData("89967D1DD995010B6C66AE24FF8E66885E6E03")] // 39 characters long not SHA-1 hash
         [InlineData("invalid-certificate-fingerprint")]
-        public void SignCommandArgParsing_ThrowsAnExceptionForInvalidCertificateFingerprint(string certificateFingerprint)
+        public void SignCommandArgParsing_InvalidCertificateFingerprint_ReturnsNonZero(string certificateFingerprint)
         {
             var packagePath = @"\\path\package.nupkg";
             var timestamper = "https://timestamper.test";
@@ -453,10 +444,11 @@ namespace NuGet.XPlat.FuncTest
                     //Arrange
                     var argList = new List<string>() { "sign", packagePath, "--certificate-fingerprint", certificateFingerprint, "--certificate-password", "password", "--timestamper", timestamper, "--timestamp-hash-algorithm", timestampHashAlgorithm };
 
-                    //Act & Assert
-                    var ex = Assert.Throws<AggregateException>(() => testApp.Execute(argList.ToArray()));
-                    Assert.IsType<ArgumentException>(ex.InnerException);
-                    Assert.True(ex.InnerException.Message.Contains(NuGetLogCode.NU3043.ToString()));
+                    //Act
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
+
+                    //Assert
+                    Assert.NotEqual(0, result);
                 });
         }
 
@@ -478,7 +470,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-fingerprint", fingerprint, "--certificate-password", "password", "--timestamper", timestamper, "--timestamp-hash-algorithm", timestampHashAlgorithm };
 
                     //Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     //Assert
                     Assert.Equal(expected: 0, actual: logger.Warnings);
@@ -498,7 +490,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-fingerprint", certificateFingerprint, "--allow-untrusted-root" };
 
                     //Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     //Assert
                     Assert.True(getParsedArg().AllowUntrustedRoot);
@@ -518,19 +510,19 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string>() { "sign", packagePath, "--certificate-fingerprint", certificateFingerprint };
 
                     //Act
-                    testApp.Execute(argList.ToArray());
+                    testApp.Parse(argList.ToArray()).Invoke();
 
                     //Assert
                     Assert.False(getParsedArg().AllowUntrustedRoot);
                 });
         }
 
-        private void SignCommandArgs(Action<Mock<ISignCommandRunner>, CommandLineApplication, Func<LogLevel>, Func<SignArgs>, TestCommandOutputLogger> verify)
+        private void SignCommandArgs(Action<Mock<ISignCommandRunner>, RootCommand, Func<LogLevel>, Func<SignArgs>, TestCommandOutputLogger> verify)
         {
             // Arrange
             var logLevel = LogLevel.Information;
             var logger = new TestCommandOutputLogger(_testOutputHelper);
-            var testApp = new CommandLineApplication();
+            var testApp = new RootCommand();
             var mockCommandRunner = new Mock<ISignCommandRunner>();
 
             SignArgs parsedArgs = null;
@@ -539,7 +531,6 @@ namespace NuGet.XPlat.FuncTest
                 .Callback<SignArgs>(x => parsedArgs = x)
                 .Returns(Task.FromResult(0));
 
-            testApp.Name = "dotnet nuget_test";
             SignCommand.Register(testApp,
                 () => logger,
                 ll => logLevel = ll,

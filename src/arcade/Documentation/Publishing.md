@@ -13,7 +13,7 @@ V2 is a legacy publishing infrastructure that is no longer utilized. It's essent
 ### What is V3 publishing?
 
 In V3, a single job or stage 'Publish Using Darc' handles all publishing for all available channels. Even if the repo branch is associated to more than one default channel(s) there will be only one stage. V3 uses [`darc add-build-to-channel`](https://github.com/dotnet/arcade/blob/ec191f3d706d740bc7a87fbb98d94d916f81f0cb/Documentation/Darc.md#add-build-to-channel) to promote builds based on the current configured default channels for the branch just built.
-The [maestro promotion pipeline](https://dnceng.visualstudio.com/internal/_build?definitionId=750) is a pipeline used to publish the packages to the target channel(s).
+The [maestro promotion pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=750) is a pipeline used to publish the packages to the target channel(s).
 `Add-build-to-channel` queues a new build of this pipeline and waits for it to publish assets to the appropriate locations. The publishing job is run against Arcade's main branch by default, meaning that repositories do not need to take an Arcade update to be able to publish to newly created channels or get most publishing fixes.
 
 Example from arcade-validation:
@@ -162,7 +162,7 @@ Since the post-build stages will only trigger during builds that run in the inte
     ```
 
 1. Queue a build for your test branch
-1. Once the Build and Validate Build Assets stages complete, the *Publish Using Darc* stage should execute and publish the packages to the feed during the `Publish Using Darc` job. [Maestro Promotion Pipeline](https://dnceng.visualstudio.com/internal/_build?definitionId=750) is a pipeline used to publish the packages to the target channel. The job informs that a new build has been triggered in the promotion pipeline, and once it succeeds the build will be in the channel. The `Publish Using Darc` job calls [`darc add-build-to-channel`](https://github.com/dotnet/arcade/blob/ec191f3d706d740bc7a87fbb98d94d916f81f0cb/Documentation/Darc.md#add-build-to-channel) which waits until a build of the promotion pipeline publishes the assets.
+1. Once the Build and Validate Build Assets stages complete, the *Publish Using Darc* stage should execute and publish the packages to the feed during the `Publish Using Darc` job. [Maestro Promotion Pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=750) is a pipeline used to publish the packages to the target channel. The job informs that a new build has been triggered in the promotion pipeline, and once it succeeds the build will be in the channel. The `Publish Using Darc` job calls [`darc add-build-to-channel`](https://github.com/dotnet/arcade/blob/ec191f3d706d740bc7a87fbb98d94d916f81f0cb/Documentation/Darc.md#add-build-to-channel) which waits until a build of the promotion pipeline publishes the assets.
 
 :warning: It is possible that even if you add a default channel, and the build artifacts will get published to the Build Asset Registry, the artifacts won't get published to the NuGet feed. 
 
@@ -318,7 +318,7 @@ The publishing logs are stored inside an Azure DevOps artifacts container named 
 
 ### Where can I see publishing logs in V3?
 
-Under the `Publish Using Darc` job get the link to the newly queued build in the [Maestro promotion pipeline](https://dnceng.visualstudio.com/internal/_build?definitionId=750). The publishing logs are stored inside an Azure DevOps artifacts container named `PostBuildLogs`. 
+Under the `Publish Using Darc` job get the link to the newly queued build in the [Maestro promotion pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=750). The publishing logs are stored inside an Azure DevOps artifacts container named `PostBuildLogs`. 
 
 ### How to add a new channel to use V3 publishing?
 

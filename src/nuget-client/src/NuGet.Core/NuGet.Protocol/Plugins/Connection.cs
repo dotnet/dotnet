@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,12 +28,12 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Occurs when an unrecoverable fault has been caught.
         /// </summary>
-        public event EventHandler<ProtocolErrorEventArgs> Faulted;
+        public event EventHandler<ProtocolErrorEventArgs>? Faulted;
 
         /// <summary>
         /// Occurs when a message has been received.
         /// </summary>
-        public event EventHandler<MessageEventArgs> MessageReceived;
+        public event EventHandler<MessageEventArgs>? MessageReceived;
 
         /// <summary>
         /// Gets the message dispatcher.
@@ -50,7 +48,7 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Gets the negotiated protocol version, or <see langword="null" /> if not yet connected.
         /// </summary>
-        public SemanticVersion ProtocolVersion { get; private set; }
+        public SemanticVersion? ProtocolVersion { get; private set; }
 
         /// <summary>
         /// Instantiates a new instance of the <see cref="Connection" /> class.
@@ -271,7 +269,7 @@ namespace NuGet.Protocol.Plugins
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
         /// <exception cref="InvalidOperationException">Thrown if not connected.</exception>
-        public Task<TInbound> SendRequestAndReceiveResponseAsync<TOutbound, TInbound>(
+        public Task<TInbound?> SendRequestAndReceiveResponseAsync<TOutbound, TInbound>(
             MessageMethod method,
             TOutbound payload,
             CancellationToken cancellationToken)
@@ -294,7 +292,7 @@ namespace NuGet.Protocol.Plugins
             return MessageDispatcher.DispatchRequestAsync<TOutbound, TInbound>(method, payload, cancellationToken);
         }
 
-        private void OnMessageReceived(object sender, MessageEventArgs e)
+        private void OnMessageReceived(object? sender, MessageEventArgs e)
         {
             if (_logger.IsEnabled)
             {
@@ -304,7 +302,7 @@ namespace NuGet.Protocol.Plugins
             MessageReceived?.Invoke(this, e);
         }
 
-        private void OnFaulted(object sender, ProtocolErrorEventArgs e)
+        private void OnFaulted(object? sender, ProtocolErrorEventArgs e)
         {
             Faulted?.Invoke(this, e);
         }

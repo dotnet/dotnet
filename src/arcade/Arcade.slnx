@@ -5,7 +5,9 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Microsoft.DotNet.Helix/">
+    <Project Path="src/Microsoft.DotNet.Helix/AzureDevOpsTestPublisher/Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/Client/CSharp/Microsoft.DotNet.Helix.Client.csproj" />
+    <Project Path="src/Microsoft.DotNet.Helix/JobMonitor/Microsoft.DotNet.Helix.JobMonitor.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/JobSender/Microsoft.DotNet.Helix.JobSender.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/Sdk/Microsoft.DotNet.Helix.Sdk.csproj" />
   </Folder>
@@ -75,9 +77,9 @@
   <Project Path="src/Microsoft.DotNet.XUnitExtensions.Shared/Microsoft.DotNet.XUnitExtensions.Shared.shproj" />
   <Project Path="src/Microsoft.DotNet.XUnitExtensions/src/Microsoft.DotNet.XUnitExtensions.csproj" />
   <Project Path="src/Microsoft.DotNet.XUnitV3Extensions/src/Microsoft.DotNet.XUnitV3Extensions.csproj" />
-  <Project Path="src/SignCheck/Microsoft.SignCheck/Microsoft.DotNet.SignCheckLibrary.csproj" />
-  <Project Path="src/SignCheck/SignCheck/Microsoft.DotNet.SignCheck.csproj" />
-  <Project Path="src/SignCheck/SignCheckTask/Microsoft.DotNet.SignCheckTask.csproj" />
+  <Project Path="src/Microsoft.DotNet.SignCheckLibrary/Microsoft.DotNet.SignCheckLibrary.csproj" />
+  <Project Path="src/Microsoft.DotNet.SignCheck/Microsoft.DotNet.SignCheck.csproj" />
+  <Project Path="src/Microsoft.DotNet.SignCheckTask/Microsoft.DotNet.SignCheckTask.csproj" />
   <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli/Microsoft.DotNet.VersionTools.Cli.csproj" />
   <Project Path="src/WinShimmer/WinShimmer.csproj" />
 </Solution>

@@ -88,27 +88,13 @@ public partial class MyEntityEntityType
             shadowIndex: -1,
             relationshipIndex: 0,
             storeGenerationIndex: 0);
-        id.TypeMapping = InMemoryTypeMapping.Default.Clone(
-            comparer: new ValueComparer<int>(
-                bool (int v1, int v2) => v1 == v2,
-                int (int v) => v,
-                int (int v) => v),
-            keyComparer: new ValueComparer<int>(
-                bool (int v1, int v2) => v1 == v2,
-                int (int v) => v,
-                int (int v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            converter: new ValueConverter<int, string>(
-                string (int i) => JsonSerializer.Serialize(i, (JsonSerializerOptions)(null)),
-                int (string i) => JsonSerializer.Deserialize<int>(i, (JsonSerializerOptions)(null))),
+        id.TypeMapping = InMemoryTypeMapping<string>.Default.Clone(
+            comparer: DefaultValueComparer<int>.Default,
+            providerValueComparer: DefaultValueComparer<string>.Default,
+            converter: new ValueConverter<int, string>(string (int i) => JsonSerializer.Serialize(i, (JsonSerializerOptions)(null)), int (string i) => JsonSerializer.Deserialize<int>(i, (JsonSerializerOptions)(null))),
             jsonValueReaderWriter: new JsonConvertedValueReaderWriter<int, string>(
                 JsonStringReaderWriter.Instance,
-                new ValueConverter<int, string>(
-                    string (int i) => JsonSerializer.Serialize(i, (JsonSerializerOptions)(null)),
-                    int (string i) => JsonSerializer.Deserialize<int>(i, (JsonSerializerOptions)(null)))));
+                new ValueConverter<int, string>(string (int i) => JsonSerializer.Serialize(i, (JsonSerializerOptions)(null)), int (string i) => JsonSerializer.Deserialize<int>(i, (JsonSerializerOptions)(null)))));
         id.SetCurrentValueComparer(new EntryCurrentValueComparer<int>(id));
 
         var key = runtimeEntityType.AddKey(

@@ -2561,7 +2561,7 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
 </package>";
 
             // Act & Assert
-            ExceptionAssert.Throws<InvalidOperationException>(() => new PackageBuilder(spec.AsStream(), null), "The schema version of 'Artem.XmlProviders' is incompatible with version " + typeof(Manifest).Assembly.GetName().Version + " of NuGet. Please upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.");
+            ExceptionAssert.Throws<InvalidOperationException>(() => new PackageBuilder(spec.AsStream(), null), "The schema version of 'Artem.XmlProviders' is incompatible with version " + typeof(Manifest).Assembly.GetName().Version + " of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.");
         }
 
         [Fact]
@@ -2579,7 +2579,7 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
 </package>";
 
             // Act & Assert
-            ExceptionAssert.Throws<InvalidOperationException>(() => new PackageBuilder(spec.AsStream(), null), "The schema version of '' is incompatible with version " + typeof(Manifest).Assembly.GetName().Version + " of NuGet. Please upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.");
+            ExceptionAssert.Throws<InvalidOperationException>(() => new PackageBuilder(spec.AsStream(), null), "The schema version of '' is incompatible with version " + typeof(Manifest).Assembly.GetName().Version + " of NuGet. Upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.");
         }
 #endif
 
@@ -3358,11 +3358,11 @@ Enabling license acceptance requires a license or a licenseUrl to be specified. 
             return testDir;
         }
 
-        private static IPackageFile CreatePackageFile(string name)
+        private static IPackageFile CreatePackageFile(string name, byte[] buffer = null)
         {
             var file = new Mock<IPackageFile>();
             file.SetupGet(f => f.Path).Returns(name);
-            file.Setup(f => f.GetStream()).Returns(new MemoryStream());
+            file.Setup(f => f.GetStream()).Returns(() => buffer == null ? new MemoryStream() : new MemoryStream(buffer));
             file.Setup(f => f.LastWriteTime).Returns(DateTimeOffset.UtcNow);
 
             string effectivePath;

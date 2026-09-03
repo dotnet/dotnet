@@ -26,6 +26,79 @@
 [assembly: System.Reflection.AssemblyVersionAttribute("8.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+}
+
 namespace System.Threading.Tasks.Dataflow
 {
     public sealed partial class ActionBlock<TInput> : ITargetBlock<TInput>, IDataflowBlock
@@ -36,7 +109,6 @@ namespace System.Threading.Tasks.Dataflow
         public ActionBlock(Func<TInput, Task> action) { }
         public Task Completion { get { throw null; } }
         public int InputCount { get { throw null; } }
-
         public void Complete() { }
         public bool Post(TInput item) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -51,7 +123,6 @@ namespace System.Threading.Tasks.Dataflow
         public int BatchSize { get { throw null; } }
         public Task Completion { get { throw null; } }
         public int OutputCount { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<T[]> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -74,7 +145,6 @@ namespace System.Threading.Tasks.Dataflow
         public int OutputCount { get { throw null; } }
         public ITargetBlock<T1> Target1 { get { throw null; } }
         public ITargetBlock<T2> Target2 { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>>> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -96,7 +166,6 @@ namespace System.Threading.Tasks.Dataflow
         public ITargetBlock<T1> Target1 { get { throw null; } }
         public ITargetBlock<T2> Target2 { get { throw null; } }
         public ITargetBlock<T3> Target3 { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<Tuple<Collections.Generic.IList<T1>, Collections.Generic.IList<T2>, Collections.Generic.IList<T3>>> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -113,7 +182,6 @@ namespace System.Threading.Tasks.Dataflow
         public BroadcastBlock(Func<T, T>? cloningFunction, DataflowBlockOptions dataflowBlockOptions) { }
         public BroadcastBlock(Func<T, T>? cloningFunction) { }
         public Task Completion { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<T> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -132,7 +200,6 @@ namespace System.Threading.Tasks.Dataflow
         public BufferBlock(DataflowBlockOptions dataflowBlockOptions) { }
         public Task Completion { get { throw null; } }
         public int Count { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<T> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -173,6 +240,7 @@ namespace System.Threading.Tasks.Dataflow
         public static Task<bool> SendAsync<TInput>(this ITargetBlock<TInput> target, TInput item) { throw null; }
         public static bool TryReceive<TOutput>(this IReceivableSourceBlock<TOutput> source, out TOutput item) { throw null; }
     }
+
     public partial class DataflowBlockOptions
     {
         public const int Unbounded = -1;
@@ -183,19 +251,20 @@ namespace System.Threading.Tasks.Dataflow
         public string NameFormat { get { throw null; } set { } }
         public TaskScheduler TaskScheduler { get { throw null; } set { } }
     }
+
     public partial class DataflowLinkOptions
     {
         public bool Append { get { throw null; } set { } }
         public int MaxMessages { get { throw null; } set { } }
         public bool PropagateCompletion { get { throw null; } set { } }
     }
+
     public readonly partial struct DataflowMessageHeader : IEquatable<DataflowMessageHeader>
     {
         private readonly int _dummyPrimitive;
         public DataflowMessageHeader(long id) { }
         public long Id { get { throw null; } }
         public bool IsValid { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(DataflowMessageHeader other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -227,7 +296,6 @@ namespace System.Threading.Tasks.Dataflow
     public partial interface IDataflowBlock
     {
         Task Completion { get; }
-
         void Complete();
         void Fault(Exception exception);
     }
@@ -263,7 +331,6 @@ namespace System.Threading.Tasks.Dataflow
         public int OutputCount { get { throw null; } }
         public ITargetBlock<T1> Target1 { get { throw null; } }
         public ITargetBlock<T2> Target2 { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<Tuple<T1, T2>> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -284,7 +351,6 @@ namespace System.Threading.Tasks.Dataflow
         public ITargetBlock<T1> Target1 { get { throw null; } }
         public ITargetBlock<T2> Target2 { get { throw null; } }
         public ITargetBlock<T3> Target3 { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<Tuple<T1, T2, T3>> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -305,7 +371,6 @@ namespace System.Threading.Tasks.Dataflow
         public Task Completion { get { throw null; } }
         public int InputCount { get { throw null; } }
         public int OutputCount { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -327,7 +392,6 @@ namespace System.Threading.Tasks.Dataflow
         public Task Completion { get { throw null; } }
         public int InputCount { get { throw null; } }
         public int OutputCount { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }
@@ -345,7 +409,6 @@ namespace System.Threading.Tasks.Dataflow
         public WriteOnceBlock(Func<T, T>? cloningFunction, DataflowBlockOptions dataflowBlockOptions) { }
         public WriteOnceBlock(Func<T, T>? cloningFunction) { }
         public Task Completion { get { throw null; } }
-
         public void Complete() { }
         public IDisposable LinkTo(ITargetBlock<T> target, DataflowLinkOptions linkOptions) { throw null; }
         void IDataflowBlock.Fault(Exception exception) { }

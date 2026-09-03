@@ -136,7 +136,7 @@ function source_only_toolset_init() {
   fi
 
   "$_InitializeBuildTool" build-server shutdown --msbuild
-  MSBuild-Core "$repo_root/eng/init-source-only.proj" $initSourceOnlyBinaryLog "${properties[@]}"
+  MSBuild "$repo_root/eng/init-source-only.proj" $initSourceOnlyBinaryLog "${properties[@]}"
   # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
   "$_InitializeBuildTool" build-server shutdown --msbuild
 

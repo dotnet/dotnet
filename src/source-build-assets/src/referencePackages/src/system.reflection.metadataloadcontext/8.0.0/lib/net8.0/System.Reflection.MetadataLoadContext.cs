@@ -32,11 +32,11 @@ namespace System.Reflection
     {
         public abstract Assembly? Resolve(MetadataLoadContext context, AssemblyName assemblyName);
     }
+
     public sealed partial class MetadataLoadContext : IDisposable
     {
         public MetadataLoadContext(MetadataAssemblyResolver resolver, string? coreAssemblyName = null) { }
         public Assembly? CoreAssembly { get { throw null; } }
-
         public void Dispose() { }
         public Collections.Generic.IEnumerable<Assembly> GetAssemblies() { throw null; }
         public Assembly LoadFromAssemblyName(AssemblyName assemblyName) { throw null; }

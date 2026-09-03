@@ -4,7 +4,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -27,10 +27,12 @@ namespace NuGet.Protocol.Plugins
 
         public override string ToString()
         {
-            var message = new JObject(
-                new JProperty("process ID", _processId),
-                new JProperty("process name", _processName),
-                new JProperty("process start time", _processStartTime.ToString("O", CultureInfo.CurrentCulture)));
+            var message = new JsonObject
+            {
+                ["process ID"] = _processId,
+                ["process name"] = _processName,
+                ["process start time"] = _processStartTime.ToString("O", CultureInfo.CurrentCulture),
+            };
 
             return ToString("process", message);
         }

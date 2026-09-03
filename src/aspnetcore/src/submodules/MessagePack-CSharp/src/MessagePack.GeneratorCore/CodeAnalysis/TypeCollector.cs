@@ -1,6 +1,7 @@
 ﻿// Copyright (c) All contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#pragma warning disable SA1402 // File may only contain a single type
 #pragma warning disable SA1649 // File name should match first type name
 
 using System;
@@ -252,12 +253,15 @@ namespace MessagePackCompiler.CodeAnalysis
         private readonly List<GenericSerializationInfo> collectedGenericInfo = new();
         private readonly List<UnionSerializationInfo> collectedUnionInfo = new();
 
+        private readonly Compilation compilation;
+
         public TypeCollector(Compilation compilation, bool disallowInternal, bool isForceUseMap, string[]? ignoreTypeNames, Action<string> logger)
         {
             this.typeReferences = new ReferenceSymbols(compilation, logger);
             this.disallowInternal = disallowInternal;
             this.isForceUseMap = isForceUseMap;
             this.externalIgnoreTypeNames = new HashSet<string>(ignoreTypeNames ?? Array.Empty<string>());
+            this.compilation = compilation;
 
             targetTypes = compilation.GetNamedTypeSymbols()
                 .Where(x =>
@@ -316,7 +320,7 @@ namespace MessagePackCompiler.CodeAnalysis
                 return;
             }
 
-            var typeSymbolString = typeSymbol.ToString() ?? throw new InvalidOperationException();
+            var typeSymbolString = typeSymbol.WithNullableAnnotation(NullableAnnotation.NotAnnotated).ToString() ?? throw new InvalidOperationException();
             if (this.embeddedTypes.Contains(typeSymbolString))
             {
                 return;
@@ -329,7 +333,7 @@ namespace MessagePackCompiler.CodeAnalysis
 
             if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol)
             {
-                this.CollectArray(arrayTypeSymbol);
+                this.CollectArray((IArrayTypeSymbol)ToTupleUnderlyingType(arrayTypeSymbol));
                 return;
             }
 
@@ -357,13 +361,7 @@ namespace MessagePackCompiler.CodeAnalysis
 
             if (type.IsGenericType)
             {
-                this.CollectGeneric(type);
-                return;
-            }
-
-            if (type.TupleUnderlyingType != null)
-            {
-                CollectGeneric(type.TupleUnderlyingType);
+                this.CollectGeneric((INamedTypeSymbol)ToTupleUnderlyingType(type));
                 return;
             }
 
@@ -459,12 +457,34 @@ namespace MessagePackCompiler.CodeAnalysis
             this.collectedGenericInfo.Add(info);
         }
 
+        private ITypeSymbol ToTupleUnderlyingType(ITypeSymbol typeSymbol)
+        {
+            if (typeSymbol is IArrayTypeSymbol array)
+            {
+                return compilation.CreateArrayTypeSymbol(ToTupleUnderlyingType(array.ElementType), array.Rank);
+            }
+
+            if (typeSymbol is not INamedTypeSymbol namedType || !namedType.IsGenericType)
+            {
+                return typeSymbol;
+            }
+
+            namedType = namedType.TupleUnderlyingType ?? namedType;
+            var newTypeArguments = namedType.TypeArguments.Select(ToTupleUnderlyingType).ToArray();
+            if (!namedType.TypeArguments.SequenceEqual(newTypeArguments))
+            {
+                return namedType.ConstructedFrom.Construct(newTypeArguments);
+            }
+
+            return namedType;
+        }
+
         private void CollectGeneric(INamedTypeSymbol type)
         {
             INamedTypeSymbol genericType = type.ConstructUnboundGenericType();
             var genericTypeString = genericType.ToDisplayString();
             var fullName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            var isOpenGenericType = type.TypeArguments.Any(x => x is ITypeParameterSymbol);
+            var isOpenGenericType = IsOpenGenericTypeRecursively(type);
 
             // special case
             if (fullName == "global::System.ArraySegment<byte>" || fullName == "global::System.ArraySegment<byte>?")
@@ -615,7 +635,14 @@ namespace MessagePackCompiler.CodeAnalysis
                     }
 
                     var customFormatterAttr = item.GetAttributes().FirstOrDefault(x => x.AttributeClass.ApproximatelyEqual(this.typeReferences.MessagePackFormatterAttribute))?.ConstructorArguments[0].Value as INamedTypeSymbol;
-                    var member = new MemberSerializationInfo(true, isWritable, isReadable, hiddenIntKey++, item.Name, item.Name, item.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), item.Type.ToDisplayString(BinaryWriteFormat), customFormatterAttr?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+                    var keyAttribute = item.GetAttributes()
+                        .FirstOrDefault(x => x.AttributeClass.ApproximatelyEqual(this.typeReferences.KeyAttribute));
+
+                    var stringKey = keyAttribute?.ConstructorArguments.Length > 0
+                        ? keyAttribute.ConstructorArguments[0].Value as string ?? item.Name
+                        : item.Name;
+
+                    var member = new MemberSerializationInfo(true, isWritable, isReadable, hiddenIntKey++, stringKey, item.Name, item.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), item.Type.ToDisplayString(BinaryWriteFormat), customFormatterAttr?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
                     stringMembers.Add(member.StringKey, member);
 
                     this.CollectCore(item.Type); // recursive collect
@@ -641,7 +668,14 @@ namespace MessagePackCompiler.CodeAnalysis
                     }
 
                     var customFormatterAttr = item.GetAttributes().FirstOrDefault(x => x.AttributeClass.ApproximatelyEqual(this.typeReferences.MessagePackFormatterAttribute))?.ConstructorArguments[0].Value as INamedTypeSymbol;
-                    var member = new MemberSerializationInfo(false, isWritable, isReadable, hiddenIntKey++, item.Name, item.Name, item.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), item.Type.ToDisplayString(BinaryWriteFormat), customFormatterAttr?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+                    var keyAttribute = item.GetAttributes()
+                        .FirstOrDefault(x => x.AttributeClass.ApproximatelyEqual(this.typeReferences.KeyAttribute));
+
+                    var stringKey = keyAttribute?.ConstructorArguments.Length > 0
+                        ? keyAttribute.ConstructorArguments[0].Value as string ?? item.Name
+                        : item.Name;
+
+                    var member = new MemberSerializationInfo(false, isWritable, isReadable, hiddenIntKey++, stringKey, item.Name, item.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), item.Type.ToDisplayString(BinaryWriteFormat), customFormatterAttr?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
                     stringMembers.Add(member.StringKey, member);
                     this.CollectCore(item.Type); // recursive collect
                 }
@@ -843,7 +877,7 @@ namespace MessagePackCompiler.CodeAnalysis
                                     }
                                     else
                                     {
-                                        throw new MessagePackGeneratorResolveFailedException("can't find matched constructor parameter, parameterType mismatch. type:" + type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + " parameterIndex:" + ctorParamIndex + " paramterType:" + item.Type.Name);
+                                        throw new MessagePackGeneratorResolveFailedException("can't find matched constructor parameter, parameterType mismatch. type:" + type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + " parameterIndex:" + ctorParamIndex + " parameterType:" + item.Type.Name);
                                     }
                                 }
                             }
@@ -864,6 +898,7 @@ namespace MessagePackCompiler.CodeAnalysis
                         {
                             IEnumerable<KeyValuePair<string, MemberSerializationInfo>> hasKey = constructorLookupDictionary[item.Name];
                             using var enumerator = hasKey.GetEnumerator();
+
                             // hasKey.Count() == 0
                             if (!enumerator.MoveNext())
                             {
@@ -877,12 +912,13 @@ namespace MessagePackCompiler.CodeAnalysis
                             }
 
                             var first = enumerator.Current.Value;
+
                             // hasKey.Count() != 1
                             if (enumerator.MoveNext())
                             {
                                 if (ctorEnumerator == null)
                                 {
-                                    throw new MessagePackGeneratorResolveFailedException("duplicate matched constructor parameter name:" + type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + " parameterName:" + item.Name + " paramterType:" + item.Type.Name);
+                                    throw new MessagePackGeneratorResolveFailedException("duplicate matched constructor parameter name:" + type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + " parameterName:" + item.Name + " parameterType:" + item.Type.Name);
                                 }
 
                                 ctor = null;
@@ -898,7 +934,7 @@ namespace MessagePackCompiler.CodeAnalysis
                             {
                                 if (ctorEnumerator == null)
                                 {
-                                    throw new MessagePackGeneratorResolveFailedException("can't find matched constructor parameter, parameterType mismatch. type:" + type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + " parameterName:" + item.Name + " paramterType:" + item.Type.Name);
+                                    throw new MessagePackGeneratorResolveFailedException("can't find matched constructor parameter, parameterType mismatch. type:" + type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + " parameterName:" + item.Name + " parameterType:" + item.Type.Name);
                                 }
 
                                 ctor = null;
@@ -1025,6 +1061,11 @@ namespace MessagePackCompiler.CodeAnalysis
             while (symbol != null);
 
             return true;
+        }
+
+        private bool IsOpenGenericTypeRecursively(INamedTypeSymbol type)
+        {
+            return type.IsGenericType && type.TypeArguments.Any(x => x is ITypeParameterSymbol || (x is INamedTypeSymbol symbol && IsOpenGenericTypeRecursively(symbol)));
         }
     }
 }

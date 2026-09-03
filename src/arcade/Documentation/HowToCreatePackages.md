@@ -26,9 +26,13 @@ One of the goals of Arcade is to be a vehicle to provide code sharing. One of th
 
 - If your package produces binaries that need to be signed, make sure to mark it as <IsPackable>true</IsPackable> or check the SignTool [documentation](../src/Microsoft.DotNet.SignTool/README.md) to see how to sign specific files.
 
-- If the package needs to target a version of .NET Framework we recommend you to use the Arcade defined version, which is stored in the `$(NetMinimum)` or `$(NetFrameworkMinimum)` properties. For instance:
+- If the package needs to target .NET, use the `$(NetMinimum)` or `$(NetCurrent)` properties. For instance:
 
-  `<TargetFrameworks>$(NetMinimum);netcoreapp2.0</TargetFrameworks>`
+  `<TargetFrameworks>$(NetMinimum)</TargetFrameworks>`
+
+- If the package needs to target .NET Framework, use the `$(NetFrameworkMinimum)` property. For instance:
+
+  `<TargetFrameworks>$(NetFrameworkMinimum)</TargetFrameworks>`
 
 ## Further References
 

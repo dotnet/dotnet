@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-helix-job-monitor</ToolCommandName>
+    <Description>Standalone Helix Job Monitor tool for Azure DevOps pipelines</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.DotNet.Helix.Sdk.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="Azure.Storage.Blobs" />
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
+    <ProjectReference Include="..\AzureDevOpsTestPublisher\Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.csproj" />
+    <ProjectReference Include="..\Client\CSharp\Microsoft.DotNet.Helix.Client.csproj" />
+  </ItemGroup>
+
+</Project>

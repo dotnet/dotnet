@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Text;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -26,15 +25,19 @@ public class StructuredJsonPath
     /// <param name="segments">The path segments.</param>
     /// <param name="indices">
     ///     The index values for array index placeholders. Must have one entry for each segment
-    ///     where <see cref="StructuredJsonPathSegment.IsArray" /> is <see langword="true" />.
+    ///     where <see cref="StructuredJsonPathSegment.IsArray" /> is <see langword="true" />. A
+    ///     <see langword="null" /> entry means the indexer is unspecified (all elements) and is
+    ///     rendered as <c>[*]</c> by default, or as <c>[]</c>.
     /// </param>
-    public StructuredJsonPath(IReadOnlyList<StructuredJsonPathSegment> segments, int[] indices)
+    public StructuredJsonPath(IReadOnlyList<StructuredJsonPathSegment> segments, IReadOnlyList<int?>? indices)
     {
         var arraySegmentCount = segments.Count(s => s.IsArray);
-        if (indices.Length != arraySegmentCount)
+        if (indices is null
+            ? arraySegmentCount != 0
+            : indices.Count != arraySegmentCount)
         {
             throw new ArgumentException(
-                CoreStrings.InvalidStructuredJsonPathIndexCount(indices.Length, arraySegmentCount),
+                CoreStrings.InvalidStructuredJsonPathIndexCount(indices?.Count ?? 0, arraySegmentCount),
                 nameof(indices));
         }
 
@@ -50,8 +53,9 @@ public class StructuredJsonPath
     /// <summary>
     ///     Gets the index values for array index placeholders. The indices are applied in order
     ///     to the segments where <see cref="StructuredJsonPathSegment.IsArray" /> is <see langword="true" />.
+    ///     A <see langword="null" /> entry means the indexer is unspecified (all elements).
     /// </summary>
-    public virtual int[] Indices { get; }
+    public virtual IReadOnlyList<int?>? Indices { get; }
 
     /// <summary>
     ///     Gets a value indicating whether this path represents the root of a JSON document (<c>$</c>).
@@ -63,8 +67,13 @@ public class StructuredJsonPath
     ///     Appends the JSON path string representation to the given <see cref="StringBuilder" />.
     /// </summary>
     /// <param name="builder">The string builder.</param>
+    /// <param name="wildcardForNullIndex">
+    ///     The wildcard character used for unspecified array indices. Use <see langword="null" /> (the default)
+    ///     to render as <c>[]</c>; use <c>'*'</c> to render as <c>[*]</c>; or provide any other character to
+    ///     render as, for example, <c>[?]</c>.
+    /// </param>
     /// <returns>The same <see cref="StringBuilder" /> for chaining.</returns>
-    public virtual StringBuilder AppendTo(StringBuilder builder)
+    public virtual StringBuilder AppendTo(StringBuilder builder, char? wildcardForNullIndex = null)
     {
         builder.Append('$');
 
@@ -73,9 +82,22 @@ public class StructuredJsonPath
         {
             if (segment.IsArray)
             {
-                builder.Append('[');
-                builder.Append(Indices[indexPosition++]);
-                builder.Append(']');
+                Check.DebugAssert(Indices is not null, "Indices must be non-null when a segment is an array (enforced by the constructor).");
+
+                if (Indices[indexPosition] is { } index)
+                {
+                    builder.Append('[').Append(index).Append(']');
+                }
+                else if (wildcardForNullIndex is { } wildcard)
+                {
+                    builder.Append('[').Append(wildcard).Append(']');
+                }
+                else
+                {
+                    builder.Append("[]");
+                }
+
+                indexPosition++;
             }
             else
             {
@@ -86,6 +108,14 @@ public class StructuredJsonPath
 
         return builder;
     }
+
+    /// <summary>
+    ///     Returns the JSON path string representation.
+    /// </summary>
+    /// <param name="wildcardForNullIndex">The wildcard character used for unspecified array indices.</param>
+    /// <returns>The JSON path string representation.</returns>
+    public virtual string ToString(char? wildcardForNullIndex = null)
+        => AppendTo(new StringBuilder(), wildcardForNullIndex).ToString();
 
     /// <inheritdoc />
     public override string ToString()

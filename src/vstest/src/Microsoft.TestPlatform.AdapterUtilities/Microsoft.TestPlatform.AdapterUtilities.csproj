@@ -14,13 +14,12 @@
 
   <PropertyGroup>
     <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
-    <NuspecFile>Microsoft.TestPlatform.AdapterUtilities.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.AdapterUtilities</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
     <PackageDescription>
       Includes helpers for the Test Platform's modern functionality such as standardized fully qualified names and hierarchical test case names.
     </PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
@@ -47,6 +46,10 @@
 
   <ItemGroup>
     <Compile Include="..\..\shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>

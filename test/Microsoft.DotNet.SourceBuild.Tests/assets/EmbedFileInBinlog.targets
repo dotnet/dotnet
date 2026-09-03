@@ -1,0 +1,7 @@
+<Project>
+
+  <ItemGroup Condition="'$(EmbedFileInBinlogPath)' != ''">
+    <EmbedInBinlog Include="$(EmbedFileInBinlogPath)" />
+  </ItemGroup>
+
+</Project>

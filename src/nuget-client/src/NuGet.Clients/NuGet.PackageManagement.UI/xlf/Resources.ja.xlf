@@ -112,11 +112,6 @@
         <target state="translated">引数を null または空にすることはできません。</target>
         <note />
       </trans-unit>
-      <trans-unit id="AskForPRMigrator">
-        <source>Consider migrating this project's NuGet package management format from 'packages.config' to 'PackageReference'.</source>
-        <target state="translated">このプロジェクトの NuGet パッケージ管理形式を 'packages.config' から 'PackageReference' に移行することをご検討ください。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="AskForRestoreMessage">
         <source>Some NuGet packages are missing from this solution. Click to restore from your online package sources.</source>
         <target state="translated">このソリューションに一部の NuGet パッケージが見つかりません。クリックするとオンライン パッケージ ソースから復元します。</target>
@@ -752,11 +747,6 @@
         <target state="translated">{0} 個のライセンス</target>
         <note>{0} = license name. Examples: MIT, Apache</note>
       </trans-unit>
-      <trans-unit id="Link_DoNotShowAgain">
-        <source>Don't show again</source>
-        <target state="translated">今後は表示しない</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Link_LearnAboutInstallOptions">
         <source>Learn about Install Options</source>
         <target state="translated">インストール オプションの詳細</target>
@@ -765,16 +755,6 @@
       <trans-unit id="Link_LearnAboutUninstallOptions">
         <source>Learn about Uninstall Options</source>
         <target state="translated">アンインストール オプションの詳細</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_MigratorHelp">
-        <source>Why should I migrate?</source>
-        <target state="translated">移行するべき理由は?</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Link_UpgradeOption">
-        <source>Migrate Now</source>
-        <target state="translated">今すぐ移行する</target>
         <note />
       </trans-unit>
       <trans-unit id="Link_configuration">
@@ -932,13 +912,13 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueName">
-        <source>The name specified has already been added to the list of available package sources. Please provide a unique name.</source>
-        <target state="translated">指定された名前は利用可能なパッケージ ソースの一覧に既に追加されています。一意な名前を指定してください。</target>
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
+        <target state="new">The name specified has already been added to the list of available package sources. Provide a unique name.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowWarning_UniqueSource">
-        <source>The source specified has already been added to the list of available package sources. Please provide a unique source.</source>
-        <target state="translated">指定されたソースは利用可能なパッケージ ソースの一覧に既に追加されています。一意なソースを指定してください。</target>
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
+        <target state="new">The source specified has already been added to the list of available package sources. Provide a unique source.</target>
         <note />
       </trans-unit>
       <trans-unit id="Status_Canceled">
@@ -1047,8 +1027,8 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="Text_NoReadme">
-        <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">選択したパッケージ バージョンに使用できる README がありません。詳細については、[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme) を参照してください。</target>
+        <source>There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
+        <target state="new">There is no README available for the selected package version. For more information visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1282,8 +1262,8 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_RevertSteps">
-        <source>Please follow simple instructions from {0} to go back to previous state.</source>
-        <target state="translated">{0} の簡単な手順に従い、以前の状態に戻してください。</target>
+        <source>Follow the instructions at {0} to return to the previous state.</source>
+        <target state="new">Follow the instructions at {0} to return to the previous state.</target>
         <note />
       </trans-unit>
       <trans-unit id="Upgrade_UninstallFailed">

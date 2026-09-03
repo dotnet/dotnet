@@ -37,7 +37,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => _utilities.DoOncePerPluginLifetimeAsync(
                     key: "a",
-                    taskFunc: null,
+                    taskFunc: null!,
                     cancellationToken: CancellationToken.None));
 
             Assert.Equal("taskFunc", exception.ParamName);

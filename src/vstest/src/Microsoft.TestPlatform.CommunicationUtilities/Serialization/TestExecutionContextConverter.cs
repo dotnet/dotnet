@@ -40,7 +40,7 @@ internal class TestExecutionContextConverter : JsonConverter<TestExecutionContex
         if (data.TryGetProperty("TestCaseFilter", out var filter) && filter.ValueKind != JsonValueKind.Null)
             context.TestCaseFilter = filter.GetString();
         if (data.TryGetProperty("FilterOptions", out var filterOptions) && filterOptions.ValueKind != JsonValueKind.Null)
-            context.FilterOptions = JsonSerializer.Deserialize<FilterOptions>(filterOptions.GetRawText(), options);
+            context.FilterOptions = StjSafe.Deserialize<FilterOptions>(filterOptions.GetRawText(), options);
 
         return context;
     }
@@ -62,7 +62,7 @@ internal class TestExecutionContextConverter : JsonConverter<TestExecutionContex
         else
         {
             writer.WritePropertyName("FilterOptions");
-            JsonSerializer.Serialize(writer, value.FilterOptions, options);
+            StjSafe.Serialize(writer, value.FilterOptions, options);
         }
         writer.WriteEndObject();
     }

@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -39,6 +37,6 @@ namespace NuGet.Protocol.Plugins
         /// <param name="pluginDiscoveryResult"></param>
         /// <param name="cancellationToken"></param>
         /// <returns>A PluginCreationResult</returns>
-        Task<Tuple<bool, PluginCreationResult>> TryGetSourceAgnosticPluginAsync(PluginDiscoveryResult pluginDiscoveryResult, OperationClaim requestedOperationClaim, CancellationToken cancellationToken);
+        Task<Tuple<bool, PluginCreationResult?>> TryGetSourceAgnosticPluginAsync(PluginDiscoveryResult pluginDiscoveryResult, OperationClaim requestedOperationClaim, CancellationToken cancellationToken);
     }
 }

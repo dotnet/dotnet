@@ -840,7 +840,7 @@ namespace NuGet.PackageManagement.VisualStudio
                 // Refresh the adapter in the cache after migration.
                 if (projectJsonNuGetProject.TryGetMetadata(NuGetProjectMetadataKeys.UniqueName, out projectJsonUniqueName))
                 {
-                    RemoveVsProjectAdapterFromCache(projectJsonUniqueName);
+                    // AddVsProjectAdapterToCacheAsync replaces the project when it already exists, so no need to remove.
                     IVsProjectAdapter vsProjectAdapterMigrated = await _vsProjectAdapterProvider.CreateAdapterForFullyLoadedProjectAsync(hierarchy);
                     await AddVsProjectAdapterToCacheAsync(vsProjectAdapterMigrated);
                 }
@@ -1127,12 +1127,11 @@ namespace NuGet.PackageManagement.VisualStudio
 
             _projectSystemCache.TryGetProjectNames(projectName, out var projectNames);
 
-            RemoveVsProjectAdapterFromCache(projectName);
-
+            // AddProject replaces the project when it already exists, so no need to remove.
             var nuGetProject = await _projectSystemFactory.CreateNuGetProjectAsync<LegacyPackageReferenceProject>(
                 vsProjectAdapter, optionalContext: null);
 
-            var added = _projectSystemCache.AddProject(projectNames, vsProjectAdapter, nuGetProject);
+            _projectSystemCache.AddProject(projectNames, vsProjectAdapter, nuGetProject);
 
             if (DefaultNuGetProjectName == null)
             {

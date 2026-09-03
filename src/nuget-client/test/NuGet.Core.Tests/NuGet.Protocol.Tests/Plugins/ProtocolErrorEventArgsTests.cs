@@ -11,7 +11,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public void Constructor_ThrowsForNullException()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new ProtocolErrorEventArgs(exception: null));
+            var exception = Assert.Throws<ArgumentNullException>(() => new ProtocolErrorEventArgs(exception: null!));
 
             Assert.Equal("exception", exception.ParamName);
         }

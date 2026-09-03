@@ -79,7 +79,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This Command/Parameter combination has been deprecated and will be removed in the next release. Please consider using the new command that replaces it: &apos;{0}&apos;..
+        ///   Looks up a localized string similar to This Command/Parameter combination has been deprecated and will be removed in the next release. Consider using the new command that replaces it: &apos;{0}&apos;..
         /// </summary>
         internal static string Cmdlet_CommandObsolete {
             get {
@@ -457,7 +457,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Please install the PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio..
+        ///   Looks up a localized string similar to Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Install PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio..
         /// </summary>
         internal static string Host_PSNotInstalled {
             get {
@@ -484,7 +484,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Source &apos;{0}&apos; not found. Please provide an HTTP or local source..
+        ///   Looks up a localized string similar to Source &apos;{0}&apos; not found. Provide an HTTP or local source..
         /// </summary>
         internal static string UnknownSource {
             get {
@@ -493,7 +493,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unsupported type of source &apos;{0}&apos;. Please provide an HTTP or local source..
+        ///   Looks up a localized string similar to Unsupported type of source &apos;{0}&apos;. Provide an HTTP or local source..
         /// </summary>
         internal static string UnknownSourceType {
             get {

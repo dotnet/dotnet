@@ -30,7 +30,7 @@ This document is to provide value guidance when creating Arcade documentation. T
 
 - Examples should be simple but not trivial.
 
-- Documentation starts with a single landing page (like current StartHere.md). All other documentation may be found within a few clicks of here.
+- Documentation starts with a single landing page (like current [README.md](README.md)). All other documentation may be found within a few clicks of here.
 
 - Documentation is organized by category, then by product. Categories borrow from 1ES and mirror development flow. This provides natural boundaries and flow for both customers and developers, improving understanding. Existing documentation maps well to this space. The categories are: Code, Build, Test, Deploy.
 

@@ -110,7 +110,7 @@ internal static class TcpClientExtensions
 
         EqtTrace.Verbose("TcpClientExtensions.MessageLoopAsync: exiting MessageLoopAsync remoteEndPoint: {0} localEndPoint: {1}", remoteEndPoint, localEndPoint);
 
-        return Task.FromResult(0);
+        return Task.CompletedTask;
     }
 
     /// <summary>

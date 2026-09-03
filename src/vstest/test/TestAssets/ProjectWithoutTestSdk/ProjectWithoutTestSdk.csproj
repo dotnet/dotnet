@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>$(NetCoreAppMinimum)</TargetFrameworks>
+    <!--
+      Deliberately NO Microsoft.NET.Test.Sdk reference. This repros a managed test project that forgot the
+      Microsoft.NET.Test.Sdk package: it brings no testhost of its own, so without the fix vstest silently falls back
+      to the built-in (C++ runner) testhost next to the runner and discovers nothing.
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" />
+    <PackageReference Include="MSTest.TestAdapter" Version="$(MSTestTestAdapterVersion)" />
+  </ItemGroup>
+
+</Project>

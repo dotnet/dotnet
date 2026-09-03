@@ -1964,28 +1964,54 @@ WHERE [c].[CustomerID] LIKE N'A%' AND EXISTS (
     {
         await base.Where_Join_Exists(async);
 
-        AssertSql();
+        AssertSql(
+            """
+SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
+FROM [Customers] AS [c]
+WHERE [c].[CustomerID] = N'ALFKI' AND EXISTS (
+    SELECT 1
+    FROM [Orders] AS [o]
+    WHERE [c].[CustomerID] = [o].[CustomerID] AND [o].[OrderDate] = '2008-10-24T00:00:00.000')
+""");
     }
 
     public override async Task Where_Join_Exists_Inequality(bool async)
     {
         await base.Where_Join_Exists_Inequality(async);
 
-        AssertSql();
+        AssertSql(
+            """
+SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
+FROM [Customers] AS [c]
+WHERE [c].[CustomerID] = N'ALFKI' AND EXISTS (
+    SELECT 1
+    FROM [Orders] AS [o]
+    WHERE [c].[CustomerID] = [o].[CustomerID] AND ([o].[OrderDate] <> '2008-10-24T00:00:00.000' OR [o].[OrderDate] IS NULL))
+""");
     }
 
     public override async Task Where_Join_Exists_Constant(bool async)
     {
         await base.Where_Join_Exists_Constant(async);
 
-        AssertSql();
+        AssertSql(
+            """
+SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
+FROM [Customers] AS [c]
+WHERE 0 = 1
+""");
     }
 
     public override async Task Where_Join_Not_Exists(bool async)
     {
         await base.Where_Join_Not_Exists(async);
 
-        AssertSql();
+        AssertSql(
+            """
+SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
+FROM [Customers] AS [c]
+WHERE [c].[CustomerID] = N'ALFKI'
+""");
     }
 
     public override async Task Join_OrderBy_Count(bool async)
@@ -2898,6 +2924,7 @@ END, [c].[CustomerID]
             """
 SELECT ISNULL(ISNULL(CAST([e].[ReportsTo] AS bigint) + CAST(1 AS bigint), CAST([e].[ReportsTo] AS bigint) + CAST(2 AS bigint)), CAST([e].[ReportsTo] AS bigint) + CAST(3 AS bigint))
 FROM [Employees] AS [e]
+WHERE [e].[ReportsTo] IS NOT NULL
 ORDER BY [e].[EmployeeID]
 """);
     }
@@ -4426,7 +4453,7 @@ FROM (
             """
 @p='10'
 
-SELECT COALESCE(SUM([o0].[OrderID]), 0)
+SELECT ISNULL(SUM([o0].[OrderID]), 0)
 FROM (
     SELECT TOP(@p) [o].[OrderID]
     FROM [Orders] AS [o]
@@ -4569,7 +4596,7 @@ FROM (
             """
 @p='10'
 
-SELECT COALESCE(SUM([o0].[OrderID]), 0)
+SELECT ISNULL(SUM([o0].[OrderID]), 0)
 FROM (
     SELECT [o].[OrderID]
     FROM [Orders] AS [o]
@@ -4649,7 +4676,7 @@ FROM [Orders] AS [o]
 
         AssertSql(
             """
-SELECT COALESCE(SUM([o0].[OrderID]), 0)
+SELECT ISNULL(SUM([o0].[OrderID]), 0)
 FROM (
     SELECT DISTINCT [o].[OrderID]
     FROM [Orders] AS [o]
@@ -5714,7 +5741,7 @@ END, [c0].[City]
         AssertSql(
             """
 SELECT [c].[CustomerID], (
-    SELECT COALESCE(SUM(COALESCE([o0].[OrderID], 0)), 0)
+    SELECT ISNULL(SUM(ISNULL([o0].[OrderID], 0)), 0)
     FROM (
         SELECT 1 AS empty
     ) AS [e]
@@ -6421,7 +6448,7 @@ LEFT JOIN (
 
         AssertSql(
             """
-SELECT COALESCE([o0].[OrderID], 0)
+SELECT ISNULL([o0].[OrderID], 0)
 FROM [Customers] AS [c]
 OUTER APPLY (
     SELECT TOP(2) [o].[OrderID]

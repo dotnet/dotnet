@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using NuGet.Packaging;
+using Microsoft.Build.Evaluation;
 using SbrpUtilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -16,6 +16,18 @@ namespace SbrpTests;
 
 public class ExternalPackageTests
 {
+    private static readonly string RepoRoot =
+        PathUtilities.GetRepoRoot().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+    private static readonly string ProjectsDir =
+        Path.Combine(RepoRoot, "src", "externalPackages", "projects");
+
+    private static readonly string DefaultsPropsPath =
+        Path.Combine(ProjectsDir, "validation.props");
+
+    private static readonly string VersionsPropsPath =
+        Path.Combine(RepoRoot, "eng", "Versions.props");
+
     public ITestOutputHelper Output { get; set; }
 
     public ExternalPackageTests(ITestOutputHelper output)
@@ -32,17 +44,12 @@ public class ExternalPackageTests
     [Fact]
     public void SourceRevisionIdMatchesSubmoduleCommit()
     {
-        string repoRoot = PathUtilities.GetRepoRoot().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-        string projectsDir = Path.Combine(repoRoot, "src", "externalPackages", "projects");
-        string submodulesDir = Path.Combine(repoRoot, "src", "externalPackages", "src");
-
-        string[] projFiles = Directory.GetFiles(projectsDir, "*.proj");
-        Assert.True(projFiles.Length > 0, $"No .proj files found in {projectsDir}");
+        string submodulesDir = Path.Combine(RepoRoot, "src", "externalPackages", "src");
 
         List<string> errors = new();
         int checkedCount = 0;
 
-        foreach (string projFile in projFiles)
+        foreach (string projFile in Directory.GetFiles(ProjectsDir, "*.proj"))
         {
             string packageName = Path.GetFileNameWithoutExtension(projFile);
             string submoduleDir = Path.Combine(submodulesDir, packageName);
@@ -64,9 +71,10 @@ public class ExternalPackageTests
 
             string submoduleHash = result.StdOut.Trim();
 
-            // Parse SourceRevisionId from the .proj file
-            XDocument doc = XDocument.Load(projFile);
-            string? sourceRevisionId = doc.Descendants("SourceRevisionId").FirstOrDefault()?.Value;
+            // SourceRevisionId is a literal value declared in each .proj's <PropertyGroup>;
+            // read it directly via XDocument so this test doesn't depend on MSBuild evaluation
+            // (which would need SDK resolution / MSBuildLocator and can't run inside dotnet test).
+            string? sourceRevisionId = ReadSourceRevisionIdFromProj(projFile);
 
             if (string.IsNullOrEmpty(sourceRevisionId))
             {
@@ -81,171 +89,294 @@ public class ExternalPackageTests
         }
 
         Assert.True(checkedCount > 0, "No external packages with initialized submodules were found to validate.");
-        Assert.True(errors.Count == 0,
-            $"SourceRevisionId validation failed:{Environment.NewLine}{string.Join(Environment.NewLine, errors)}");
+        AssertNoErrors(errors, "SourceRevisionId");
+    }
+
+    private static string? ReadSourceRevisionIdFromProj(string projFile)
+    {
+        XDocument doc = XDocument.Load(projFile);
+        return doc.Root?
+            .Elements("PropertyGroup")
+            .Elements("SourceRevisionId")
+            .LastOrDefault()
+            ?.Value;
     }
 
     /// <summary>
-    /// Validates that the FileVersionRevision property in external package .proj files
-    /// matches the actual FileVersion revision from the Microsoft-shipped NuGet package.
-    /// The test discovers the package ID from the component's build output directory
-    /// (artifacts/obj/{component}/), downloads the same package from NuGet, extracts a DLL,
-    /// reads its FileVersion, and compares the revision component.
+    /// Validates that the property named by each &lt;FileVersionValidationPackage&gt; item's
+    /// <c>FileVersionRevisionProperty</c> metadata matches the actual FileVersion revision
+    /// from the Microsoft-shipped NuGet package named by the item's Include attribute.
+    /// Items that have no binding for this aspect do not participate in this check.
     /// See https://github.com/dotnet/source-build/issues/5509
     /// </summary>
     [SkippableFact]
     public async Task FileVersionRevisionMatchesPublishedPackage()
     {
-        string repoRoot = PathUtilities.GetRepoRoot().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-        string projectsDir = Path.Combine(repoRoot, "src", "externalPackages", "projects");
-        string versionsPropsPath = Path.Combine(repoRoot, "eng", "Versions.props");
-        string artifactsObjDir = Path.Combine(repoRoot, "artifacts", "obj");
-
-        string[] projFiles = Directory.GetFiles(projectsDir, "*.proj");
-        Assert.True(projFiles.Length > 0, $"No .proj files found in {projectsDir}");
-
-        List<string> errors = new();
-        int checkedCount = 0;
-
-        foreach (string projFile in projFiles)
-        {
-            string componentName = Path.GetFileNameWithoutExtension(projFile);
-            XDocument doc = XDocument.Load(projFile);
-            string? fileVersionRevision = doc.Descendants("FileVersionRevision").FirstOrDefault()?.Value;
-
-            if (fileVersionRevision is null)
-            {
-                continue;
-            }
-
-            // Find matching release version in eng/Versions.props
-            string? releaseVersion = CommonUtilities.FindReleaseVersion(versionsPropsPath, componentName);
-
-            if (string.IsNullOrEmpty(releaseVersion))
-            {
-                errors.Add($"{componentName}.proj: No matching release version property found in eng/Versions.props.");
-                checkedCount++;
-                continue;
-            }
-
-            // Find a .nupkg produced by this specific component
-            string componentObjDir = Path.Combine(artifactsObjDir, componentName);
-            if (!Directory.Exists(componentObjDir))
-            {
-                Output.WriteLine($"Skipping {componentName}: build output directory not found ({componentObjDir}).");
-                continue;
-            }
-
-            string[] componentNupkgs = Directory.GetFiles(componentObjDir, "*.nupkg", SearchOption.AllDirectories);
-
-            // Find the first package that contains a DLL so we can read its FileVersion
-            string? packageId = null;
-            foreach (string nupkg in componentNupkgs)
-            {
-                using PackageArchiveReader reader = new(nupkg);
-                bool hasDll = reader.GetLibItems()
-                    .SelectMany(group => group.Items)
-                    .Any(item => item.EndsWith(".dll", StringComparison.OrdinalIgnoreCase));
-                if (hasDll)
-                {
-                    packageId = reader.NuspecReader.GetId();
-                    break;
-                }
-            }
-
-            if (packageId is null)
-            {
-                Output.WriteLine($"Skipping {componentName}: no .nupkg with a DLL found in build output.");
-                continue;
-            }
-
-            // Download the published package and read the FileVersion revision
-            var (revision, fileVersion) = await CommonUtilities.GetFileVersionRevisionAsync(
-                repoRoot, packageId, releaseVersion);
-
-            if (revision is null)
-            {
-                errors.Add($"{componentName}.proj: Unable to download {packageId} {releaseVersion} to validate FileVersionRevision.");
-                checkedCount++;
-                continue;
-            }
-
-            if (!int.TryParse(fileVersionRevision, out int expectedRevision) || expectedRevision != revision.Value)
-            {
-                errors.Add($"{componentName}.proj: FileVersionRevision '{fileVersionRevision}' does not match " +
-                    $"actual revision '{revision}' from {packageId} {releaseVersion} " +
-                    $"(FileVersion: {fileVersion}).");
-            }
-
-            checkedCount++;
-        }
-
-        Skip.If(checkedCount == 0, "No components with FileVersionRevision had build output to validate.");
-        Assert.True(errors.Count == 0,
-            $"FileVersionRevision validation failed:{Environment.NewLine}{string.Join(Environment.NewLine, errors)}");
+        await ValidateVersionOverrideAsync(
+            "FileVersionRevision",
+            item => item.FileVersionRevision,
+            metadata => metadata.Revision?.ToString());
     }
 
     /// <summary>
-    /// Validates that the release version configured in eng/Versions.props for each external
-    /// component matches the version of at least one NuGet package produced by that component.
-    /// The test scans each component's build output directory (artifacts/obj/{component}/) for
-    /// .nupkg files and verifies at least one has the expected version.
+    /// Validates that the property named by each &lt;FileVersionValidationPackage&gt; item's
+    /// <c>AssemblyVersionOverrideProperty</c> metadata matches the actual AssemblyVersion
+    /// from the Microsoft-shipped NuGet package. Items that have no binding for this aspect
+    /// do not participate in this check.
+    /// </summary>
+    [SkippableFact]
+    public async Task AssemblyVersionOverrideMatchesPublishedPackage()
+    {
+        await ValidateVersionOverrideAsync(
+            "AssemblyVersionOverride",
+            item => item.AssemblyVersionOverride,
+            metadata => metadata.AssemblyVersion);
+    }
+
+    /// <summary>
+    /// Validates that the property named by each &lt;FileVersionValidationPackage&gt; item's
+    /// <c>InformationalVersionOverrideProperty</c> metadata matches the actual InformationalVersion
+    /// (ProductVersion) from the Microsoft-shipped NuGet package. Items that have no binding
+    /// for this aspect do not participate in this check.
+    /// </summary>
+    [SkippableFact]
+    public async Task InformationalVersionOverrideMatchesPublishedPackage()
+    {
+        await ValidateVersionOverrideAsync(
+            "InformationalVersionOverride",
+            item => item.InformationalVersionOverride,
+            metadata => metadata.InformationalVersion);
+    }
+
+    /// <summary>
+    /// Validates that each release version configured in eng/Versions.props produces a matching
+    /// .nupkg in the component's build output directory. For projects with one or more
+    /// &lt;FileVersionValidationPackage&gt; items, expects a .nupkg whose file name is
+    /// <c>{PackageId}.{releaseVersion}.nupkg</c>. For projects without validation items, falls
+    /// back to scanning for any .nupkg ending in <c>.{releaseVersion}.nupkg</c> using the
+    /// auto-derived release version.
     /// This catches cases where a submodule is updated but the release version is not.
     /// </summary>
     [SkippableFact]
     public void ReleaseVersionMatchesPackageOutput()
     {
-        string repoRoot = PathUtilities.GetRepoRoot().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-        string projectsDir = Path.Combine(repoRoot, "src", "externalPackages", "projects");
-        string versionsPropsPath = Path.Combine(repoRoot, "eng", "Versions.props");
-        string artifactsObjDir = Path.Combine(repoRoot, "artifacts", "obj");
-
-        string[] projFiles = Directory.GetFiles(projectsDir, "*.proj");
-        Assert.True(projFiles.Length > 0, $"No .proj files found in {projectsDir}");
+        string artifactsObjDir = Path.Combine(RepoRoot, "artifacts", "obj");
+        using ProjectCollection versionsCollection = new();
+        Project versionsProject = versionsCollection.LoadProject(VersionsPropsPath);
 
         List<string> errors = new();
         int checkedCount = 0;
 
-        foreach (string projFile in projFiles)
+        foreach ((_, string packageName, Project project) in LoadProjectFiles())
         {
-            string componentName = Path.GetFileNameWithoutExtension(projFile);
-            string? releaseVersion = CommonUtilities.FindReleaseVersion(versionsPropsPath, componentName);
-
-            if (string.IsNullOrEmpty(releaseVersion))
-            {
-                continue;
-            }
-
-            // Scan the component's own build output directory for .nupkg files
-            string componentObjDir = Path.Combine(artifactsObjDir, componentName);
+            string componentObjDir = Path.Combine(artifactsObjDir, packageName);
             if (!Directory.Exists(componentObjDir))
             {
-                Output.WriteLine($"Skipping {componentName}: build output directory not found ({componentObjDir}).");
+                Output.WriteLine($"Skipping {packageName}: build output directory not found ({componentObjDir}).");
                 continue;
             }
 
             string[] componentNupkgs = Directory.GetFiles(componentObjDir, "*.nupkg", SearchOption.AllDirectories);
             if (componentNupkgs.Length == 0)
             {
-                Output.WriteLine($"Skipping {componentName}: no .nupkg files found in build output.");
+                Output.WriteLine($"Skipping {packageName}: no .nupkg files found in build output.");
                 continue;
             }
 
-            string versionSuffix = $".{releaseVersion}.nupkg";
-            bool foundMatch = componentNupkgs.Any(f =>
-                Path.GetFileName(f).EndsWith(versionSuffix, StringComparison.OrdinalIgnoreCase));
+            IReadOnlyList<ValidationPackageItem> items = CommonUtilities.ParseValidationPackageItems(project);
 
-            if (!foundMatch)
+            if (items.Count == 0)
             {
-                string foundPackages = string.Join(", ", componentNupkgs.Select(Path.GetFileName));
-                errors.Add($"{componentName}: Expected package version {releaseVersion} but found: {foundPackages}");
+                string? releaseVersion = CommonUtilities.FindReleaseVersion(versionsProject, packageName);
+                if (string.IsNullOrEmpty(releaseVersion))
+                {
+                    continue;
+                }
+
+                string versionSuffix = $".{releaseVersion}.nupkg";
+                bool foundMatch = componentNupkgs.Any(f =>
+                    Path.GetFileName(f).EndsWith(versionSuffix, StringComparison.OrdinalIgnoreCase));
+
+                if (!foundMatch)
+                {
+                    string foundPackages = string.Join(", ", componentNupkgs.Select(Path.GetFileName));
+                    errors.Add($"{packageName}: Expected package version {releaseVersion} but found: {foundPackages}");
+                }
+
+                checkedCount++;
+                continue;
             }
 
-            checkedCount++;
+            foreach (ValidationPackageItem item in items)
+            {
+                string? releaseVersion = ResolveReleaseVersion(versionsProject, item, packageName);
+                if (string.IsNullOrEmpty(releaseVersion))
+                {
+                    errors.Add($"{packageName}.props: Could not resolve release version for validation package '{item.PackageId}' " +
+                        $"({(item.ReleaseVersionPropertyName is null ? "auto-derived" : $"explicit ReleaseVersionProperty='{item.ReleaseVersionPropertyName}'")}).");
+                    checkedCount++;
+                    continue;
+                }
+
+                string expectedFileName = $"{item.PackageId}.{releaseVersion}.nupkg";
+                bool found = componentNupkgs.Any(f =>
+                    Path.GetFileName(f).Equals(expectedFileName, StringComparison.OrdinalIgnoreCase));
+
+                if (!found)
+                {
+                    string foundPackages = string.Join(", ", componentNupkgs.Select(Path.GetFileName));
+                    errors.Add($"{packageName}: Expected built package '{expectedFileName}' but found: {foundPackages}");
+                }
+
+                checkedCount++;
+            }
         }
 
         Skip.If(checkedCount == 0, "No components with release versions had build output to validate.");
+        AssertNoErrors(errors, "Release version");
+    }
+
+    /// <summary>
+    /// Loads validation metadata for each external package component. Discovers components by
+    /// listing the sibling .proj files (one per component) and then loading that component's
+    /// <c>&lt;component&gt;.props</c> file when present. Components without a sibling .props
+    /// have no validation overrides; the shared defaults file is loaded as a stand-in so the
+    /// returned <see cref="Project"/> is non-null and yields zero
+    /// <c>FileVersionValidationPackage</c> items via <see cref="CommonUtilities.ParseValidationPackageItems"/>.
+    /// </summary>
+    private static IEnumerable<(string ProjFile, string PackageName, Project Project)> LoadProjectFiles()
+    {
+        string[] projFiles = Directory.GetFiles(ProjectsDir, "*.proj");
+        Assert.True(projFiles.Length > 0, $"No .proj files found in {ProjectsDir}");
+
+        foreach (string projFile in projFiles)
+        {
+            string packageName = Path.GetFileNameWithoutExtension(projFile);
+            string componentPropsFile = Path.Combine(ProjectsDir, $"{packageName}.props");
+            string toLoad = File.Exists(componentPropsFile) ? componentPropsFile : DefaultsPropsPath;
+            // 'using' inside the iterator: the ProjectCollection is disposed when the consumer
+            // advances past this yield (or abandons the enumerator). Callers must not retain
+            // the yielded Project beyond their iteration body.
+            using ProjectCollection collection = new();
+            Project project = collection.LoadProject(toLoad);
+            yield return (projFile, packageName, project);
+        }
+    }
+
+    /// <summary>
+    /// Resolves the release version for a validation item: by explicit
+    /// <c>ReleaseVersionProperty</c> metadata when set, or by auto-derive from the .proj
+    /// file name otherwise.
+    /// </summary>
+    private static string? ResolveReleaseVersion(Project versionsProject, ValidationPackageItem item, string componentName)
+    {
+        if (item.ReleaseVersionPropertyName is not null)
+        {
+            return CommonUtilities.FindReleaseVersionByPropertyName(versionsProject, item.ReleaseVersionPropertyName);
+        }
+
+        return CommonUtilities.FindReleaseVersion(versionsProject, componentName);
+    }
+
+    /// <summary>
+    /// Validates one aspect of version overrides across every <c>&lt;FileVersionValidationPackage&gt;</c>
+    /// item in every external package .proj. The selectors pick which aspect binding to check and
+    /// which downloaded-package field to compare against.
+    /// </summary>
+    /// <param name="overrideAspectName">Friendly name for error/skip messages
+    /// (e.g. <c>FileVersionRevision</c>).</param>
+    /// <param name="bindingSelector">Picks the AspectBinding for the aspect being validated;
+    /// null means the item has no binding for this aspect and is silently skipped.</param>
+    /// <param name="actualValueSelector">Picks the corresponding field from the downloaded
+    /// package's metadata.</param>
+    private async Task ValidateVersionOverrideAsync(
+        string overrideAspectName,
+        Func<ValidationPackageItem, AspectBinding?> bindingSelector,
+        Func<PackageVersionMetadata, string?> actualValueSelector)
+    {
+        using ProjectCollection versionsCollection = new();
+        Project versionsProject = versionsCollection.LoadProject(VersionsPropsPath);
+        List<string> errors = new();
+        int checkedCount = 0;
+
+        // Cache per (packageId, version) so multiple aspects/items don't re-download.
+        Dictionary<string, PackageVersionMetadata> metadataCache = new();
+
+        foreach ((_, string packageName, Project project) in LoadProjectFiles())
+        {
+            IReadOnlyList<ValidationPackageItem> items = CommonUtilities.ParseValidationPackageItems(project);
+
+            foreach (ValidationPackageItem item in items)
+            {
+                AspectBinding? binding = bindingSelector(item);
+                if (binding is null)
+                {
+                    continue;
+                }
+
+                string? expectedValue = CommonUtilities.ReadPropertyValue(project, binding.PropertyName);
+                if (expectedValue is null)
+                {
+                    // Explicit binding to a non-existent property is always an error: the author
+                    // expressed intent to validate this aspect, so a missing target property is a
+                    // configuration bug. Defaulted bindings are "validate if present" — silently
+                    // skip when the target property is not defined, since the item didn't ask
+                    // for this aspect specifically.
+                    if (binding.IsExplicit)
+                    {
+                        errors.Add($"{packageName}.props: {overrideAspectName} item for package '{item.PackageId}' " +
+                            $"names property '{binding.PropertyName}' but no such property is defined.");
+                        checkedCount++;
+                    }
+                    continue;
+                }
+
+                string? releaseVersion = ResolveReleaseVersion(versionsProject, item, packageName);
+                if (string.IsNullOrEmpty(releaseVersion))
+                {
+                    errors.Add($"{packageName}.props: {overrideAspectName} item for package '{item.PackageId}': " +
+                        $"could not resolve release version " +
+                        $"({(item.ReleaseVersionPropertyName is null ? "auto-derive failed" : $"property '{item.ReleaseVersionPropertyName}' not in eng/Versions.props")}).");
+                    checkedCount++;
+                    continue;
+                }
+
+                string cacheKey = $"{item.PackageId}|{releaseVersion}";
+                if (!metadataCache.TryGetValue(cacheKey, out PackageVersionMetadata? versionMetadata))
+                {
+                    versionMetadata = await CommonUtilities.GetPackageVersionMetadataAsync(
+                        RepoRoot, item.PackageId, releaseVersion);
+                    metadataCache[cacheKey] = versionMetadata;
+                }
+
+                string? actualValue = actualValueSelector(versionMetadata);
+                if (string.IsNullOrEmpty(actualValue))
+                {
+                    errors.Add($"{packageName}.props: {overrideAspectName} item for package '{item.PackageId}': " +
+                        $"package {item.PackageId} {releaseVersion} was downloaded but did not expose a " +
+                        $"{overrideAspectName} field. Either the package no longer ships this metadata, or the " +
+                        $"download/extraction is broken — verify the published package contents.");
+                    checkedCount++;
+                    continue;
+                }
+
+                if (expectedValue != actualValue)
+                {
+                    errors.Add($"{packageName}.props: {binding.PropertyName} '{expectedValue}' does not match " +
+                        $"actual '{actualValue}' from {item.PackageId} {releaseVersion}.");
+                }
+
+                checkedCount++;
+            }
+        }
+
+        Skip.If(checkedCount == 0, $"No components with {overrideAspectName} were found to validate.");
+        AssertNoErrors(errors, overrideAspectName);
+    }
+
+    private static void AssertNoErrors(List<string> errors, string validationName)
+    {
         Assert.True(errors.Count == 0,
-            $"Release version validation failed:{Environment.NewLine}{string.Join(Environment.NewLine, errors)}");
+            $"{validationName} validation failed:{Environment.NewLine}{string.Join(Environment.NewLine, errors)}");
     }
 }

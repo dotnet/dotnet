@@ -529,6 +529,8 @@ public class IntegrationTestBuild : IntegrationTestBase
 
         // Extract locally built packages that have our tools (like vstest.console.exe) into tmp directory,
         // so we can use them to run tests.
+        // Some packages (Microsoft.TestPlatform, Microsoft.TestPlatform.Portable) are only produced on Windows;
+        // on Linux/macOS they may not exist and are skipped gracefully.
         var packagesToExtract = new[]
 {
             $"Microsoft.TestPlatform.{netTestSdkVersion}.nupkg",
@@ -543,6 +545,13 @@ public class IntegrationTestBuild : IntegrationTestBase
         {
             var packagePath = Path.Combine(IntegrationTestEnvironment.LocalPackageSource, packageName);
             var unzipPath = Path.Combine(IntegrationTestEnvironment.PublishDirectory, packageName);
+
+            if (!File.Exists(packagePath))
+            {
+                // Package was not produced in this build (e.g. Windows-only packages on Linux/macOS). Skip it.
+                Debug.WriteLine($"Package not found, skipping extraction: {packagePath}");
+                continue;
+            }
 
             var cacheMarkerPath = Path.Combine(unzipPath, packageName + ".cache");
             if (File.Exists(cacheMarkerPath))

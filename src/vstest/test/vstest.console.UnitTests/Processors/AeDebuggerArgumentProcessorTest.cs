@@ -18,6 +18,7 @@ using Moq;
 namespace vstest.console.UnitTests.Processors;
 
 [TestClass]
+// AeDebug (post-mortem debugger) is a Windows-only feature and these tests rely on Windows path semantics.
 [TestCategory("Windows-Review")]
 public class AeDebuggerArgumentProcessorTest
 {

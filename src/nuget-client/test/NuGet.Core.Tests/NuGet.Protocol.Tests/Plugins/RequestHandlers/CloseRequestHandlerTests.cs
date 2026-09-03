@@ -15,7 +15,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullPlugin()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new CloseRequestHandler(plugin: null));
+                () => new CloseRequestHandler(plugin: null!));
 
             Assert.Equal("plugin", exception.ParamName);
         }
@@ -53,7 +53,7 @@ namespace NuGet.Protocol.Plugins.Tests
             {
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Handler.HandleResponseAsync(
-                        connection: null,
+                        connection: null!,
                         request: MessageUtilities.Create(
                             requestId: "a",
                             type: MessageType.Request,
@@ -73,7 +73,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                     () => test.Handler.HandleResponseAsync(
                         Mock.Of<IConnection>(),
-                        request: null,
+                        request: null!,
                         responseHandler: Mock.Of<IResponseHandler>(),
                         cancellationToken: CancellationToken.None));
 
@@ -93,7 +93,7 @@ namespace NuGet.Protocol.Plugins.Tests
                             requestId: "a",
                             type: MessageType.Request,
                             method: MessageMethod.Close),
-                        responseHandler: null,
+                        responseHandler: null!,
                         cancellationToken: CancellationToken.None));
 
                 Assert.Equal("responseHandler", exception.ParamName);

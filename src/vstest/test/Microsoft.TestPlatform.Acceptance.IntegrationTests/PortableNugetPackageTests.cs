@@ -24,7 +24,6 @@ public class PortableNugetPackageTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
     [NetCoreTargetFrameworkDataSource]
     public void RunMultipleTestAssemblies(RunnerInfo runnerInfo)
     {
@@ -39,7 +38,6 @@ public class PortableNugetPackageTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
     [NetCoreTargetFrameworkDataSource]
     public void DiscoverAllTests(RunnerInfo runnerInfo)
     {

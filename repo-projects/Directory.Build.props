@@ -153,6 +153,8 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
+    <!-- Temporarily disable deterministic timestamps https://github.com/dotnet/dotnet/issues/7331 -->
+    <CommonArgs>$(CommonArgs) /p:DeterministicTimestamp=false</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
     <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
@@ -219,6 +221,15 @@
   <!-- Enable MSBuild -mt mode when DotNetBuildMT is set and the repository hasn't opted out -->
   <ItemGroup Condition="'$(DotNetBuildMT)' == 'true' and '$(UseMSBuildMT)' != 'false'">
     <EnvironmentVariables Include="MSBUILD_MT_ENABLED=1" />
+  </ItemGroup>
+
+  <!-- NOTE: This is for internal testing only; real CI should not have node reuse.
+       Follow-up to replace this env var with a proper switch: https://github.com/dotnet/arcade/issues/17013
+       Enable MSBuild node reuse when DotNetBuildNodeReuse is set and the repository hasn't opted out.
+       By default CI builds force nodeReuse=false; opting in keeps the worker MSBuild nodes alive
+       between invocations. A repository can opt out by setting <UseNodeReuse>false</UseNodeReuse>. -->
+  <ItemGroup Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(UseNodeReuse)' != 'false'">
+    <EnvironmentVariables Include="MSBUILD_NODEREUSE_ENABLED=1" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">

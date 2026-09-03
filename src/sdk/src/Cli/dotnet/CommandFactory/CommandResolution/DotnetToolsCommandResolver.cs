@@ -1,27 +1,50 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Diagnostics;
 using Microsoft.DotNet.Cli.Commands.Tool;
+using Microsoft.DotNet.Cli.Utils;
 
 namespace Microsoft.DotNet.Cli.CommandFactory.CommandResolution;
 
 public class DotnetToolsCommandResolver : ICommandResolver
 {
+    private static readonly IReadOnlyDictionary<string, string> AggregateToolPackages = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["dotnet-dev-certs"] = "aspnetcoretools",
+        ["dotnet-user-jwts"] = "aspnetcoretools",
+        ["dotnet-user-secrets"] = "aspnetcoretools",
+    };
+    
+    public static DotnetToolsCommandResolver ForSdkRoot(string sdkRoot)
+    {
+        return new DotnetToolsCommandResolver(Path.Combine(sdkRoot, "DotnetTools"));
+    }
+
     private readonly string _dotnetToolPath;
 
     public DotnetToolsCommandResolver(string? dotnetToolPath = null)
     {
+        // AppContext.BaseDirectory for the NAOT app will be the 'dotnet' root, not the per-SDK version path.
         _dotnetToolPath = dotnetToolPath ?? Path.Combine(AppContext.BaseDirectory, "DotnetTools");
     }
 
     public CommandSpec? Resolve(CommandResolverArguments arguments)
     {
+        Activity.Current?.AddTag("lookup.root_path", _dotnetToolPath);
+
         if (string.IsNullOrEmpty(arguments.CommandName))
         {
             return null;
         }
 
         var packageId = new DirectoryInfo(Path.Combine(_dotnetToolPath, arguments.CommandName));
+        if (!packageId.Exists &&
+            AggregateToolPackages.TryGetValue(arguments.CommandName, out var aggregatePackageId))
+        {
+            packageId = new DirectoryInfo(Path.Combine(_dotnetToolPath, aggregatePackageId));
+        }
+
         if (!packageId.Exists)
         {
             return null;

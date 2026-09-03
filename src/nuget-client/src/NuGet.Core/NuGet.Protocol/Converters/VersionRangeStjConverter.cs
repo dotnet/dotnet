@@ -13,16 +13,15 @@ namespace NuGet.Protocol.Converters
     /// </summary>
     internal class VersionRangeStjConverter : JsonConverter<VersionRange>
     {
-        public override VersionRange Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override VersionRange? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var stringValue = reader.GetString();
-            if (stringValue == null)
+            if (string.IsNullOrEmpty(stringValue))
             {
-                // This is actually impossible to get to, because JsonSerializer won't call into the converter when the JSON is null
-                throw new InvalidOperationException("Value for version range cannot be null");
+                return null;
             }
 
-            return VersionRange.Parse(stringValue);
+            return VersionRange.Parse(stringValue!);
         }
 
         public override void Write(Utf8JsonWriter writer, VersionRange value, JsonSerializerOptions options)

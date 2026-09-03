@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using NuGet.Protocol.Core.Types;
 
@@ -15,7 +13,7 @@ namespace NuGet.Protocol
 
         public ODataServiceDocumentResourceV2(string baseAddress, DateTime requestTime)
         {
-            _baseAddress = baseAddress.Trim('/');
+            _baseAddress = (baseAddress ?? throw new ArgumentNullException(nameof(baseAddress))).Trim('/');
             _requestTime = requestTime;
         }
 

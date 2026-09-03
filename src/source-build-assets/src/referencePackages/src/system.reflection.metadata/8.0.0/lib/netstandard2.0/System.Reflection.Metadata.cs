@@ -26,6 +26,79 @@
 [assembly: System.Reflection.AssemblyVersionAttribute("8.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+}
+
 namespace System.Reflection
 {
     [Flags]
@@ -129,7 +202,6 @@ namespace System.Reflection.Metadata
         public StringHandle Name { get { throw null; } }
         public BlobHandle PublicKey { get { throw null; } }
         public Version Version { get { throw null; } }
-
         public readonly AssemblyName GetAssemblyName() { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
         public readonly DeclarativeSecurityAttributeHandleCollection GetDeclarativeSecurityAttributes() { throw null; }
@@ -139,7 +211,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(AssemblyDefinitionHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -158,7 +229,6 @@ namespace System.Reflection.Metadata
         public bool ContainsMetadata { get { throw null; } }
         public BlobHandle HashValue { get { throw null; } }
         public StringHandle Name { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
 
@@ -166,7 +236,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(AssemblyFileHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -182,7 +251,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<AssemblyFileHandle> Collections.Generic.IEnumerable<AssemblyFileHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -190,9 +258,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public AssemblyFileHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -209,7 +275,6 @@ namespace System.Reflection.Metadata
         public StringHandle Name { get { throw null; } }
         public BlobHandle PublicKeyOrToken { get { throw null; } }
         public Version Version { get { throw null; } }
-
         public readonly AssemblyName GetAssemblyName() { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
@@ -218,7 +283,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(AssemblyReferenceHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -235,7 +299,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<AssemblyReferenceHandle> Collections.Generic.IEnumerable<AssemblyReferenceHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -244,9 +307,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public AssemblyReferenceHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -259,7 +320,6 @@ namespace System.Reflection.Metadata
         private readonly int _dummyPrimitive;
         public bool IsDefault { get { throw null; } }
         public int Length { get { throw null; } }
-
         public readonly ArraySegment<byte> GetBytes() { throw null; }
     }
 
@@ -269,7 +329,6 @@ namespace System.Reflection.Metadata
         protected internal int ChunkCapacity { get { throw null; } }
         public int Count { get { throw null; } }
         protected int FreeBytes { get { throw null; } }
-
         public void Align(int alignment) { }
         protected virtual BlobBuilder AllocateChunk(int minimalSize) { throw null; }
         public void Clear() { }
@@ -325,9 +384,7 @@ namespace System.Reflection.Metadata
         public partial struct Blobs : Collections.Generic.IEnumerable<Blob>, Collections.IEnumerable, Collections.Generic.IEnumerator<Blob>, Collections.IEnumerator, IDisposable
         {
             public Blob Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public Blobs GetEnumerator() { throw null; }
             public bool MoveNext() { throw null; }
             public void Reset() { }
@@ -336,6 +393,7 @@ namespace System.Reflection.Metadata
             void IDisposable.Dispose() { }
         }
     }
+
     public readonly partial struct BlobContentId : IEquatable<BlobContentId>
     {
         private readonly int _dummyPrimitive;
@@ -345,7 +403,6 @@ namespace System.Reflection.Metadata
         public Guid Guid { get { throw null; } }
         public bool IsDefault { get { throw null; } }
         public uint Stamp { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(BlobContentId other) { throw null; }
         public static BlobContentId FromHash(byte[] hashCode) { throw null; }
@@ -360,7 +417,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(BlobHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -380,7 +436,6 @@ namespace System.Reflection.Metadata
         public int Offset { get { throw null; } set { } }
         public int RemainingBytes { get { throw null; } }
         public unsafe byte* StartPointer { get { throw null; } }
-
         public void Align(byte alignment) { }
         public int IndexOf(byte value) { throw null; }
         public BlobHandle ReadBlobHandle() { throw null; }
@@ -428,7 +483,6 @@ namespace System.Reflection.Metadata
         public int Length { get { throw null; } }
         public int Offset { get { throw null; } set { } }
         public int RemainingBytes { get { throw null; } }
-
         public void Align(int alignment) { }
         public void Clear() { }
         public bool ContentEquals(BlobWriter other) { throw null; }
@@ -487,7 +541,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(ConstantHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -525,7 +578,6 @@ namespace System.Reflection.Metadata
         public EntityHandle Constructor { get { throw null; } }
         public EntityHandle Parent { get { throw null; } }
         public BlobHandle Value { get { throw null; } }
-
         public readonly CustomAttributeValue<TType> DecodeValue<TType>(ICustomAttributeTypeProvider<TType> provider) { throw null; }
     }
 
@@ -533,7 +585,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(CustomAttributeHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -550,7 +601,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<CustomAttributeHandle> Collections.Generic.IEnumerable<CustomAttributeHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -559,9 +609,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public CustomAttributeHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -620,7 +668,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(CustomDebugInformationHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -637,7 +684,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<CustomDebugInformationHandle> Collections.Generic.IEnumerable<CustomDebugInformationHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -646,9 +692,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public CustomDebugInformationHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -662,6 +706,7 @@ namespace System.Reflection.Metadata
         public Collections.Immutable.ImmutableArray<byte> Id { get { throw null; } }
         public int IdStartOffset { get { throw null; } }
     }
+
     public readonly partial struct DeclarativeSecurityAttribute
     {
         private readonly object _dummy;
@@ -675,7 +720,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(DeclarativeSecurityAttributeHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -692,7 +736,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<DeclarativeSecurityAttributeHandle> Collections.Generic.IEnumerable<DeclarativeSecurityAttributeHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -701,9 +744,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public DeclarativeSecurityAttributeHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -724,7 +765,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(DocumentHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -741,7 +781,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<DocumentHandle> Collections.Generic.IEnumerable<DocumentHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -750,9 +789,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public DocumentHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -763,7 +800,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(DocumentNameBlobHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -780,7 +816,6 @@ namespace System.Reflection.Metadata
         public static readonly ModuleDefinitionHandle ModuleDefinition;
         public bool IsNil { get { throw null; } }
         public HandleKind Kind { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(EntityHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -807,7 +842,6 @@ namespace System.Reflection.Metadata
         public EventAttributes Attributes { get { throw null; } }
         public StringHandle Name { get { throw null; } }
         public EntityHandle Type { get { throw null; } }
-
         public readonly EventAccessors GetAccessors() { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
@@ -816,7 +850,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(EventDefinitionHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -833,7 +866,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<EventDefinitionHandle> Collections.Generic.IEnumerable<EventDefinitionHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -842,9 +874,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public EventDefinitionHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -881,7 +911,6 @@ namespace System.Reflection.Metadata
         public StringHandle Name { get { throw null; } }
         public StringHandle Namespace { get { throw null; } }
         public NamespaceDefinitionHandle NamespaceDefinition { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
 
@@ -889,7 +918,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(ExportedTypeHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -905,7 +933,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<ExportedTypeHandle> Collections.Generic.IEnumerable<ExportedTypeHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -913,9 +940,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public ExportedTypeHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -929,7 +954,6 @@ namespace System.Reflection.Metadata
         public FieldAttributes Attributes { get { throw null; } }
         public StringHandle Name { get { throw null; } }
         public BlobHandle Signature { get { throw null; } }
-
         public readonly TType DecodeSignature<TType, TGenericContext>(ISignatureTypeProvider<TType, TGenericContext> provider, TGenericContext genericContext) { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
         public readonly TypeDefinitionHandle GetDeclaringType() { throw null; }
@@ -943,7 +967,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(FieldDefinitionHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -960,7 +983,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<FieldDefinitionHandle> Collections.Generic.IEnumerable<FieldDefinitionHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -969,9 +991,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public FieldDefinitionHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -986,7 +1006,6 @@ namespace System.Reflection.Metadata
         public int Index { get { throw null; } }
         public StringHandle Name { get { throw null; } }
         public EntityHandle Parent { get { throw null; } }
-
         public readonly GenericParameterConstraintHandleCollection GetConstraints() { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
@@ -997,7 +1016,6 @@ namespace System.Reflection.Metadata
         private readonly int _dummyPrimitive;
         public GenericParameterHandle Parameter { get { throw null; } }
         public EntityHandle Type { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
 
@@ -1005,7 +1023,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(GenericParameterConstraintHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1021,9 +1038,7 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public GenericParameterConstraintHandle this[int index] { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<GenericParameterConstraintHandle> Collections.Generic.IEnumerable<GenericParameterConstraintHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -1031,9 +1046,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public GenericParameterConstraintHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1044,7 +1057,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(GenericParameterHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1060,9 +1072,7 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public GenericParameterHandle this[int index] { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<GenericParameterHandle> Collections.Generic.IEnumerable<GenericParameterHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -1070,9 +1080,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public GenericParameterHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1083,7 +1091,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(GuidHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1100,7 +1107,6 @@ namespace System.Reflection.Metadata
         public static readonly ModuleDefinitionHandle ModuleDefinition;
         public bool IsNil { get { throw null; } }
         public HandleKind Kind { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(Handle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1112,7 +1118,6 @@ namespace System.Reflection.Metadata
     {
         internal HandleComparer() { }
         public static HandleComparer Default { get { throw null; } }
-
         public int Compare(EntityHandle x, EntityHandle y) { throw null; }
         public int Compare(Handle x, Handle y) { throw null; }
         public bool Equals(EntityHandle x, EntityHandle y) { throw null; }
@@ -1407,6 +1412,7 @@ namespace System.Reflection.Metadata
         public static ILOpCode GetShortBranch(this ILOpCode opCode) { throw null; }
         public static bool IsBranch(this ILOpCode opCode) { throw null; }
     }
+
     public partial class ImageFormatLimitationException : Exception
     {
         public ImageFormatLimitationException() { }
@@ -1436,9 +1442,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public ImportDefinition Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             public void Reset() { }
             void IDisposable.Dispose() { }
@@ -1464,7 +1468,6 @@ namespace System.Reflection.Metadata
         private readonly int _dummyPrimitive;
         public BlobHandle ImportsBlob { get { throw null; } }
         public ImportScopeHandle Parent { get { throw null; } }
-
         public readonly ImportDefinitionCollection GetImports() { throw null; }
     }
 
@@ -1473,7 +1476,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<ImportScopeHandle> Collections.Generic.IEnumerable<ImportScopeHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -1482,9 +1484,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public ImportScopeHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1495,7 +1495,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(ImportScopeHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1512,7 +1511,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public EntityHandle Interface { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
 
@@ -1520,7 +1518,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(InterfaceImplementationHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1537,7 +1534,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<InterfaceImplementationHandle> Collections.Generic.IEnumerable<InterfaceImplementationHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -1546,9 +1542,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public InterfaceImplementationHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1589,7 +1583,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(LocalConstantHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1606,7 +1599,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<LocalConstantHandle> Collections.Generic.IEnumerable<LocalConstantHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -1615,9 +1607,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public LocalConstantHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1633,7 +1623,6 @@ namespace System.Reflection.Metadata
         public int Length { get { throw null; } }
         public MethodDefinitionHandle Method { get { throw null; } }
         public int StartOffset { get { throw null; } }
-
         public readonly LocalScopeHandleCollection.ChildrenEnumerator GetChildren() { throw null; }
         public readonly LocalConstantHandleCollection GetLocalConstants() { throw null; }
         public readonly LocalVariableHandleCollection GetLocalVariables() { throw null; }
@@ -1643,7 +1632,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(LocalScopeHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1660,7 +1648,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<LocalScopeHandle> Collections.Generic.IEnumerable<LocalScopeHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -1669,9 +1656,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public LocalScopeHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1682,9 +1667,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public LocalScopeHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1711,7 +1694,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(LocalVariableHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1728,7 +1710,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<LocalVariableHandle> Collections.Generic.IEnumerable<LocalVariableHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -1737,9 +1718,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public LocalVariableHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1754,7 +1733,6 @@ namespace System.Reflection.Metadata
         public EntityHandle Implementation { get { throw null; } }
         public StringHandle Name { get { throw null; } }
         public long Offset { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
 
@@ -1762,7 +1740,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(ManifestResourceHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1778,7 +1755,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<ManifestResourceHandle> Collections.Generic.IEnumerable<ManifestResourceHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -1786,9 +1762,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public ManifestResourceHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1802,7 +1776,6 @@ namespace System.Reflection.Metadata
         public StringHandle Name { get { throw null; } }
         public EntityHandle Parent { get { throw null; } }
         public BlobHandle Signature { get { throw null; } }
-
         public readonly TType DecodeFieldSignature<TType, TGenericContext>(ISignatureTypeProvider<TType, TGenericContext> provider, TGenericContext genericContext) { throw null; }
         public readonly MethodSignature<TType> DecodeMethodSignature<TType, TGenericContext>(ISignatureTypeProvider<TType, TGenericContext> provider, TGenericContext genericContext) { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
@@ -1813,7 +1786,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(MemberReferenceHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -1829,7 +1801,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<MemberReferenceHandle> Collections.Generic.IEnumerable<MemberReferenceHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -1837,9 +1808,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public MemberReferenceHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -1893,7 +1862,6 @@ namespace System.Reflection.Metadata
         public TypeDefinitionHandleCollection TypeDefinitions { get { throw null; } }
         public TypeReferenceHandleCollection TypeReferences { get { throw null; } }
         public MetadataStringDecoder UTF8Decoder { get { throw null; } }
-
         public AssemblyDefinition GetAssemblyDefinition() { throw null; }
         public AssemblyFile GetAssemblyFile(AssemblyFileHandle handle) { throw null; }
         public static AssemblyName GetAssemblyName(string assemblyFile) { throw null; }
@@ -1944,6 +1912,7 @@ namespace System.Reflection.Metadata
         public TypeSpecification GetTypeSpecification(TypeSpecificationHandle handle) { throw null; }
         public string GetUserString(UserStringHandle handle) { throw null; }
     }
+
     [Flags]
     public enum MetadataReaderOptions
     {
@@ -1992,9 +1961,9 @@ namespace System.Reflection.Metadata
         public MetadataStringDecoder(Text.Encoding encoding) { }
         public static MetadataStringDecoder DefaultUTF8 { get { throw null; } }
         public Text.Encoding Encoding { get { throw null; } }
-
         public virtual unsafe string GetString(byte* bytes, int byteCount) { throw null; }
     }
+
     public sealed partial class MethodBodyBlock
     {
         internal MethodBodyBlock() { }
@@ -2003,12 +1972,12 @@ namespace System.Reflection.Metadata
         public bool LocalVariablesInitialized { get { throw null; } }
         public int MaxStack { get { throw null; } }
         public int Size { get { throw null; } }
-
         public static MethodBodyBlock Create(BlobReader reader) { throw null; }
         public byte[]? GetILBytes() { throw null; }
         public Collections.Immutable.ImmutableArray<byte> GetILContent() { throw null; }
         public BlobReader GetILReader() { throw null; }
     }
+
     public readonly partial struct MethodDebugInformation
     {
         private readonly object _dummy;
@@ -2016,7 +1985,6 @@ namespace System.Reflection.Metadata
         public DocumentHandle Document { get { throw null; } }
         public StandaloneSignatureHandle LocalSignature { get { throw null; } }
         public BlobHandle SequencePointsBlob { get { throw null; } }
-
         public readonly SequencePointCollection GetSequencePoints() { throw null; }
         public readonly MethodDefinitionHandle GetStateMachineKickoffMethod() { throw null; }
     }
@@ -2025,7 +1993,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(MethodDebugInformationHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2043,7 +2010,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<MethodDebugInformationHandle> Collections.Generic.IEnumerable<MethodDebugInformationHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -2052,9 +2018,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public MethodDebugInformationHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -2070,7 +2034,6 @@ namespace System.Reflection.Metadata
         public StringHandle Name { get { throw null; } }
         public int RelativeVirtualAddress { get { throw null; } }
         public BlobHandle Signature { get { throw null; } }
-
         public readonly MethodSignature<TType> DecodeSignature<TType, TGenericContext>(ISignatureTypeProvider<TType, TGenericContext> provider, TGenericContext genericContext) { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
         public readonly DeclarativeSecurityAttributeHandleCollection GetDeclarativeSecurityAttributes() { throw null; }
@@ -2084,7 +2047,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(MethodDefinitionHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2102,7 +2064,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<MethodDefinitionHandle> Collections.Generic.IEnumerable<MethodDefinitionHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -2111,9 +2072,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public MethodDefinitionHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -2127,7 +2086,6 @@ namespace System.Reflection.Metadata
         public EntityHandle MethodBody { get { throw null; } }
         public EntityHandle MethodDeclaration { get { throw null; } }
         public TypeDefinitionHandle Type { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
 
@@ -2135,7 +2093,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(MethodImplementationHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2151,7 +2108,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<MethodImplementationHandle> Collections.Generic.IEnumerable<MethodImplementationHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -2159,9 +2115,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public MethodImplementationHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -2196,7 +2150,6 @@ namespace System.Reflection.Metadata
         private readonly int _dummyPrimitive;
         public EntityHandle Method { get { throw null; } }
         public BlobHandle Signature { get { throw null; } }
-
         public readonly Collections.Immutable.ImmutableArray<TType> DecodeSignature<TType, TGenericContext>(ISignatureTypeProvider<TType, TGenericContext> provider, TGenericContext genericContext) { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
@@ -2205,7 +2158,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(MethodSpecificationHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2226,7 +2178,6 @@ namespace System.Reflection.Metadata
         public GuidHandle GenerationId { get { throw null; } }
         public GuidHandle Mvid { get { throw null; } }
         public StringHandle Name { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
 
@@ -2234,7 +2185,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(ModuleDefinitionHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2251,7 +2201,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public StringHandle Name { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
 
@@ -2259,7 +2208,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(ModuleReferenceHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2286,7 +2234,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(NamespaceDefinitionHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2303,7 +2250,6 @@ namespace System.Reflection.Metadata
         public ParameterAttributes Attributes { get { throw null; } }
         public StringHandle Name { get { throw null; } }
         public int SequenceNumber { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
         public readonly ConstantHandle GetDefaultValue() { throw null; }
         public readonly BlobHandle GetMarshallingDescriptor() { throw null; }
@@ -2313,7 +2259,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(ParameterHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2330,7 +2275,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<ParameterHandle> Collections.Generic.IEnumerable<ParameterHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -2339,9 +2283,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public ParameterHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -2355,6 +2297,7 @@ namespace System.Reflection.Metadata
         public static MetadataReader GetMetadataReader(this PortableExecutable.PEReader peReader) { throw null; }
         public static MethodBodyBlock GetMethodBody(this PortableExecutable.PEReader peReader, int relativeVirtualAddress) { throw null; }
     }
+
     public enum PrimitiveSerializationTypeCode : byte
     {
         Boolean = 2,
@@ -2410,7 +2353,6 @@ namespace System.Reflection.Metadata
         public PropertyAttributes Attributes { get { throw null; } }
         public StringHandle Name { get { throw null; } }
         public BlobHandle Signature { get { throw null; } }
-
         public readonly MethodSignature<TType> DecodeSignature<TType, TGenericContext>(ISignatureTypeProvider<TType, TGenericContext> provider, TGenericContext genericContext) { throw null; }
         public readonly PropertyAccessors GetAccessors() { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
@@ -2421,7 +2363,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(PropertyDefinitionHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2438,7 +2379,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<PropertyDefinitionHandle> Collections.Generic.IEnumerable<PropertyDefinitionHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -2447,9 +2387,7 @@ namespace System.Reflection.Metadata
             private object _dummy;
             private int _dummyPrimitive;
             public PropertyDefinitionHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -2462,7 +2400,6 @@ namespace System.Reflection.Metadata
         private readonly THandle _Handle_k__BackingField;
         public Blob Content { get { throw null; } }
         public THandle Handle { get { throw null; } }
-
         public readonly BlobWriter CreateWriter() { throw null; }
     }
 
@@ -2477,7 +2414,6 @@ namespace System.Reflection.Metadata
         public int Offset { get { throw null; } }
         public int StartColumn { get { throw null; } }
         public int StartLine { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(SequencePoint other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2494,9 +2430,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public SequencePoint Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             public void Reset() { }
             void IDisposable.Dispose() { }
@@ -2558,7 +2492,6 @@ namespace System.Reflection.Metadata
         public bool IsInstance { get { throw null; } }
         public SignatureKind Kind { get { throw null; } }
         public byte RawValue { get { throw null; } }
-
         public override bool Equals(object? obj) { throw null; }
         public bool Equals(SignatureHeader other) { throw null; }
         public override int GetHashCode() { throw null; }
@@ -2624,7 +2557,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public BlobHandle Signature { get { throw null; } }
-
         public readonly Collections.Immutable.ImmutableArray<TType> DecodeLocalSignature<TType, TGenericContext>(ISignatureTypeProvider<TType, TGenericContext> provider, TGenericContext genericContext) { throw null; }
         public readonly MethodSignature<TType> DecodeMethodSignature<TType, TGenericContext>(ISignatureTypeProvider<TType, TGenericContext> provider, TGenericContext genericContext) { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
@@ -2635,7 +2567,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(StandaloneSignatureHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2657,7 +2588,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(StringHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2677,7 +2607,6 @@ namespace System.Reflection.Metadata
         public StringHandle Name { get { throw null; } }
         public StringHandle Namespace { get { throw null; } }
         public NamespaceDefinitionHandle NamespaceDefinition { get { throw null; } }
-
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
         public readonly DeclarativeSecurityAttributeHandleCollection GetDeclarativeSecurityAttributes() { throw null; }
         public readonly TypeDefinitionHandle GetDeclaringType() { throw null; }
@@ -2696,7 +2625,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(TypeDefinitionHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2712,7 +2640,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<TypeDefinitionHandle> Collections.Generic.IEnumerable<TypeDefinitionHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -2720,9 +2647,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public TypeDefinitionHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -2751,7 +2676,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(TypeReferenceHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2767,7 +2691,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public int Count { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         readonly Collections.Generic.IEnumerator<TypeReferenceHandle> Collections.Generic.IEnumerable<TypeReferenceHandle>.GetEnumerator() { throw null; }
         readonly Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }
@@ -2775,9 +2698,7 @@ namespace System.Reflection.Metadata
         {
             private int _dummyPrimitive;
             public TypeReferenceHandle Current { get { throw null; } }
-
             object Collections.IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void Collections.IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -2789,7 +2710,6 @@ namespace System.Reflection.Metadata
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public BlobHandle Signature { get { throw null; } }
-
         public readonly TType DecodeSignature<TType, TGenericContext>(ISignatureTypeProvider<TType, TGenericContext> provider, TGenericContext genericContext) { throw null; }
         public readonly CustomAttributeHandleCollection GetCustomAttributes() { throw null; }
     }
@@ -2798,7 +2718,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(TypeSpecificationHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2814,7 +2733,6 @@ namespace System.Reflection.Metadata
     {
         private readonly int _dummyPrimitive;
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(UserStringHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2833,7 +2751,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public ArrayShapeEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly void Shape(int rank, Collections.Immutable.ImmutableArray<int> sizes, Collections.Immutable.ImmutableArray<int> lowerBounds) { }
     }
 
@@ -2843,7 +2760,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public BlobEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly void CustomAttributeSignature(Action<FixedArgumentsEncoder> fixedArguments, Action<CustomAttributeNamedArgumentsEncoder> namedArguments) { }
         public readonly void CustomAttributeSignature(out FixedArgumentsEncoder fixedArguments, out CustomAttributeNamedArgumentsEncoder namedArguments) { throw null; }
         public readonly FieldTypeEncoder Field() { throw null; }
@@ -2875,6 +2791,7 @@ namespace System.Reflection.Metadata.Ecma335
         public static int TypeDefOrRefOrSpec(EntityHandle handle) { throw null; }
         public static int TypeOrMethodDef(EntityHandle handle) { throw null; }
     }
+
     public sealed partial class ControlFlowBuilder
     {
         public void AddCatchRegion(LabelHandle tryStart, LabelHandle tryEnd, LabelHandle handlerStart, LabelHandle handlerEnd, EntityHandle catchType) { }
@@ -2883,13 +2800,13 @@ namespace System.Reflection.Metadata.Ecma335
         public void AddFinallyRegion(LabelHandle tryStart, LabelHandle tryEnd, LabelHandle handlerStart, LabelHandle handlerEnd) { }
         public void Clear() { }
     }
+
     public readonly partial struct CustomAttributeArrayTypeEncoder
     {
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public CustomAttributeArrayTypeEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly CustomAttributeElementTypeEncoder ElementType() { throw null; }
         public readonly void ObjectArray() { }
     }
@@ -2900,7 +2817,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public CustomAttributeElementTypeEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly void Boolean() { }
         public readonly void Byte() { }
         public readonly void Char() { }
@@ -2925,7 +2841,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public CustomAttributeNamedArgumentsEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly NamedArgumentsEncoder Count(int count) { throw null; }
     }
 
@@ -2935,7 +2850,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public CustomModifiersEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly CustomModifiersEncoder AddModifier(EntityHandle type, bool isOptional) { throw null; }
     }
 
@@ -2945,7 +2859,6 @@ namespace System.Reflection.Metadata.Ecma335
         public EditAndContinueLogEntry(EntityHandle handle, EditAndContinueOperation operation) { }
         public EntityHandle Handle { get { throw null; } }
         public EditAndContinueOperation Operation { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(EditAndContinueLogEntry other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -2967,7 +2880,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public BlobBuilder Builder { get { throw null; } }
         public bool HasSmallFormat { get { throw null; } }
-
         public readonly ExceptionRegionEncoder Add(ExceptionRegionKind kind, int tryOffset, int tryLength, int handlerOffset, int handlerLength, EntityHandle catchType = default, int filterOffset = 0) { throw null; }
         public readonly ExceptionRegionEncoder AddCatch(int tryOffset, int tryLength, int handlerOffset, int handlerLength, EntityHandle catchType) { throw null; }
         public readonly ExceptionRegionEncoder AddFault(int tryOffset, int tryLength, int handlerOffset, int handlerLength) { throw null; }
@@ -2981,13 +2893,13 @@ namespace System.Reflection.Metadata.Ecma335
     {
         public static int GetTypeDefinitionId(this ExportedType exportedType) { throw null; }
     }
+
     public readonly partial struct FieldTypeEncoder
     {
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public FieldTypeEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly CustomModifiersEncoder CustomModifiers() { throw null; }
         public readonly SignatureTypeEncoder Type(bool isByRef = false) { throw null; }
         public readonly void TypedReference() { }
@@ -2999,7 +2911,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public FixedArgumentsEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly LiteralEncoder AddArgument() { throw null; }
     }
 
@@ -3016,7 +2927,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public GenericTypeArgumentsEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly SignatureTypeEncoder AddArgument() { throw null; }
     }
 
@@ -3036,7 +2946,6 @@ namespace System.Reflection.Metadata.Ecma335
         public BlobBuilder CodeBuilder { get { throw null; } }
         public ControlFlowBuilder? ControlFlowBuilder { get { throw null; } }
         public int Offset { get { throw null; } }
-
         public readonly void Branch(ILOpCode code, LabelHandle label) { }
         public readonly void Call(EntityHandle methodHandle) { }
         public readonly void Call(MemberReferenceHandle methodHandle) { }
@@ -3067,7 +2976,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public int Id { get { throw null; } }
         public bool IsNil { get { throw null; } }
-
         public override readonly bool Equals(object? obj) { throw null; }
         public readonly bool Equals(LabelHandle other) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -3081,7 +2989,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public LiteralEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly ScalarEncoder Scalar() { throw null; }
         public readonly void TaggedScalar(Action<CustomAttributeElementTypeEncoder> type, Action<ScalarEncoder> scalar) { }
         public readonly void TaggedScalar(out CustomAttributeElementTypeEncoder type, out ScalarEncoder scalar) { throw null; }
@@ -3096,7 +3003,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public LiteralsEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly LiteralEncoder AddLiteral() { throw null; }
     }
 
@@ -3106,7 +3012,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public LocalVariablesEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly LocalVariableTypeEncoder AddVariable() { throw null; }
     }
 
@@ -3116,7 +3021,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public LocalVariableTypeEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly CustomModifiersEncoder CustomModifiers() { throw null; }
         public readonly SignatureTypeEncoder Type(bool isByRef = false, bool isPinned = false) { throw null; }
         public readonly void TypedReference() { }
@@ -3128,6 +3032,7 @@ namespace System.Reflection.Metadata.Ecma335
         public MetadataAggregator(MetadataReader baseReader, Collections.Generic.IReadOnlyList<MetadataReader> deltaReaders) { }
         public Handle GetGenerationHandle(Handle handle, out int generation) { throw null; }
     }
+
     public sealed partial class MetadataBuilder
     {
         public MetadataBuilder(int userStringHeapStartOffset = 0, int stringHeapStartOffset = 0, int blobHeapStartOffset = 0, int guidHeapStartOffset = 0) { }
@@ -3192,6 +3097,7 @@ namespace System.Reflection.Metadata.Ecma335
         public void SetCapacity(HeapIndex heap, int byteCount) { }
         public void SetCapacity(TableIndex table, int rowCount) { }
     }
+
     public static partial class MetadataReaderExtensions
     {
         public static Collections.Generic.IEnumerable<EditAndContinueLogEntry> GetEditAndContinueLogEntries(this MetadataReader reader) { throw null; }
@@ -3208,24 +3114,25 @@ namespace System.Reflection.Metadata.Ecma335
         public static Collections.Generic.IEnumerable<TypeDefinitionHandle> GetTypesWithProperties(this MetadataReader reader) { throw null; }
         public static SignatureTypeKind ResolveSignatureTypeKind(this MetadataReader reader, EntityHandle typeHandle, byte rawTypeKind) { throw null; }
     }
+
     public sealed partial class MetadataRootBuilder
     {
         public MetadataRootBuilder(MetadataBuilder tablesAndHeaps, string? metadataVersion = null, bool suppressValidation = false) { }
         public string MetadataVersion { get { throw null; } }
         public MetadataSizes Sizes { get { throw null; } }
         public bool SuppressValidation { get { throw null; } }
-
         public void Serialize(BlobBuilder builder, int methodBodyStreamRva, int mappedFieldDataStreamRva) { }
     }
+
     public sealed partial class MetadataSizes
     {
         internal MetadataSizes() { }
         public Collections.Immutable.ImmutableArray<int> ExternalRowCounts { get { throw null; } }
         public Collections.Immutable.ImmutableArray<int> HeapSizes { get { throw null; } }
         public Collections.Immutable.ImmutableArray<int> RowCounts { get { throw null; } }
-
         public int GetAlignedHeapSize(HeapIndex index) { throw null; }
     }
+
     public static partial class MetadataTokens
     {
         public static readonly int HeapCount;
@@ -3284,6 +3191,7 @@ namespace System.Reflection.Metadata.Ecma335
         public static TypeSpecificationHandle TypeSpecificationHandle(int rowNumber) { throw null; }
         public static UserStringHandle UserStringHandle(int offset) { throw null; }
     }
+
     [Flags]
     public enum MethodBodyAttributes
     {
@@ -3297,7 +3205,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public MethodBodyStreamEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly MethodBody AddMethodBody(int codeSize, int maxStack = 8, int exceptionRegionCount = 0, bool hasSmallExceptionRegions = true, StandaloneSignatureHandle localVariablesSignature = default, MethodBodyAttributes attributes = MethodBodyAttributes.InitLocals, bool hasDynamicStackAllocation = false) { throw null; }
         public readonly MethodBody AddMethodBody(int codeSize, int maxStack, int exceptionRegionCount, bool hasSmallExceptionRegions, StandaloneSignatureHandle localVariablesSignature, MethodBodyAttributes attributes) { throw null; }
         public readonly int AddMethodBody(InstructionEncoder instructionEncoder, int maxStack = 8, StandaloneSignatureHandle localVariablesSignature = default, MethodBodyAttributes attributes = MethodBodyAttributes.InitLocals, bool hasDynamicStackAllocation = false) { throw null; }
@@ -3318,7 +3225,6 @@ namespace System.Reflection.Metadata.Ecma335
         public MethodSignatureEncoder(BlobBuilder builder, bool hasVarArgs) { }
         public BlobBuilder Builder { get { throw null; } }
         public bool HasVarArgs { get { throw null; } }
-
         public readonly void Parameters(int parameterCount, Action<ReturnTypeEncoder> returnType, Action<ParametersEncoder> parameters) { }
         public readonly void Parameters(int parameterCount, out ReturnTypeEncoder returnType, out ParametersEncoder parameters) { throw null; }
     }
@@ -3329,7 +3235,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public NamedArgumentsEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly void AddArgument(bool isField, Action<NamedArgumentTypeEncoder> type, Action<NameEncoder> name, Action<LiteralEncoder> literal) { }
         public readonly void AddArgument(bool isField, out NamedArgumentTypeEncoder type, out NameEncoder name, out LiteralEncoder literal) { throw null; }
     }
@@ -3340,7 +3245,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public NamedArgumentTypeEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly void Object() { }
         public readonly CustomAttributeElementTypeEncoder ScalarType() { throw null; }
         public readonly CustomAttributeArrayTypeEncoder SZArray() { throw null; }
@@ -3352,7 +3256,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public NameEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly void Name(string name) { }
     }
 
@@ -3363,7 +3266,6 @@ namespace System.Reflection.Metadata.Ecma335
         public ParametersEncoder(BlobBuilder builder, bool hasVarArgs = false) { }
         public BlobBuilder Builder { get { throw null; } }
         public bool HasVarArgs { get { throw null; } }
-
         public readonly ParameterTypeEncoder AddParameter() { throw null; }
         public readonly ParametersEncoder StartVarArgs() { throw null; }
     }
@@ -3374,7 +3276,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public ParameterTypeEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly CustomModifiersEncoder CustomModifiers() { throw null; }
         public readonly SignatureTypeEncoder Type(bool isByRef = false) { throw null; }
         public readonly void TypedReference() { }
@@ -3386,7 +3287,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public PermissionSetEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly PermissionSetEncoder AddPermission(string typeName, Collections.Immutable.ImmutableArray<byte> encodedArguments) { throw null; }
         public readonly PermissionSetEncoder AddPermission(string typeName, BlobBuilder encodedArguments) { throw null; }
     }
@@ -3397,16 +3297,15 @@ namespace System.Reflection.Metadata.Ecma335
         public ushort FormatVersion { get { throw null; } }
         public Func<Collections.Generic.IEnumerable<Blob>, BlobContentId> IdProvider { get { throw null; } }
         public string MetadataVersion { get { throw null; } }
-
         public BlobContentId Serialize(BlobBuilder builder) { throw null; }
     }
+
     public readonly partial struct ReturnTypeEncoder
     {
         private readonly object _dummy;
         private readonly int _dummyPrimitive;
         public ReturnTypeEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly CustomModifiersEncoder CustomModifiers() { throw null; }
         public readonly SignatureTypeEncoder Type(bool isByRef = false) { throw null; }
         public readonly void TypedReference() { }
@@ -3419,7 +3318,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public ScalarEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly void Constant(object? value) { }
         public readonly void NullArray() { }
         public readonly void SystemType(string? serializedTypeName) { }
@@ -3445,7 +3343,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public SignatureTypeEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly void Array(Action<SignatureTypeEncoder> elementType, Action<ArrayShapeEncoder> arrayShape) { }
         public readonly void Array(out SignatureTypeEncoder elementType, out ArrayShapeEncoder arrayShape) { throw null; }
         public readonly void Boolean() { }
@@ -3546,7 +3443,6 @@ namespace System.Reflection.Metadata.Ecma335
         private readonly int _dummyPrimitive;
         public VectorEncoder(BlobBuilder builder) { }
         public BlobBuilder Builder { get { throw null; } }
-
         public readonly LiteralsEncoder Count(int count) { throw null; }
     }
 }
@@ -3593,6 +3489,7 @@ namespace System.Reflection.PortableExecutable
         public short SizeOfOptionalHeader { get { throw null; } }
         public int TimeDateStamp { get { throw null; } }
     }
+
     [Flags]
     public enum CorFlags
     {
@@ -3620,6 +3517,7 @@ namespace System.Reflection.PortableExecutable
         public DirectoryEntry StrongNameSignatureDirectory { get { throw null; } }
         public DirectoryEntry VtableFixupsDirectory { get { throw null; } }
     }
+
     public sealed partial class DebugDirectoryBuilder
     {
         public void AddCodeViewEntry(string pdbPath, Metadata.BlobContentId pdbContentId, ushort portablePdbVersion, int age) { }
@@ -3630,6 +3528,7 @@ namespace System.Reflection.PortableExecutable
         public void AddPdbChecksumEntry(string algorithmName, Collections.Immutable.ImmutableArray<byte> checksum) { }
         public void AddReproducibleEntry() { }
     }
+
     public readonly partial struct DebugDirectoryEntry
     {
         private readonly int _dummyPrimitive;
@@ -3737,7 +3636,6 @@ namespace System.Reflection.PortableExecutable
         public PEHeaderBuilder Header { get { throw null; } }
         public Func<Collections.Generic.IEnumerable<Metadata.Blob>, Metadata.BlobContentId> IdProvider { get { throw null; } }
         public bool IsDeterministic { get { throw null; } }
-
         protected abstract Collections.Immutable.ImmutableArray<Section> CreateSections();
         protected internal abstract PEDirectoriesBuilder GetDirectories();
         protected Collections.Immutable.ImmutableArray<Section> GetSections() { throw null; }
@@ -3750,6 +3648,7 @@ namespace System.Reflection.PortableExecutable
             public Section(string name, SectionCharacteristics characteristics) { }
         }
     }
+
     public sealed partial class PEDirectoriesBuilder
     {
         public int AddressOfEntryPoint { get { throw null; } set { } }
@@ -3768,6 +3667,7 @@ namespace System.Reflection.PortableExecutable
         public DirectoryEntry ResourceTable { get { throw null; } set { } }
         public DirectoryEntry ThreadLocalStorageTable { get { throw null; } set { } }
     }
+
     public sealed partial class PEHeader
     {
         internal PEHeader() { }
@@ -3815,6 +3715,7 @@ namespace System.Reflection.PortableExecutable
         public Subsystem Subsystem { get { throw null; } }
         public DirectoryEntry ThreadLocalStorageTableDirectory { get { throw null; } }
     }
+
     public sealed partial class PEHeaderBuilder
     {
         public PEHeaderBuilder(Machine machine = Machine.Unknown, int sectionAlignment = 8192, int fileAlignment = 512, ulong imageBase = 4194304, byte majorLinkerVersion = 48, byte minorLinkerVersion = 0, ushort majorOperatingSystemVersion = 4, ushort minorOperatingSystemVersion = 0, ushort majorImageVersion = 0, ushort minorImageVersion = 0, ushort majorSubsystemVersion = 4, ushort minorSubsystemVersion = 0, Subsystem subsystem = Subsystem.WindowsCui, DllCharacteristics dllCharacteristics = DllCharacteristics.DynamicBase | DllCharacteristics.NxCompatible | DllCharacteristics.NoSeh | DllCharacteristics.TerminalServerAware, Characteristics imageCharacteristics = Characteristics.Dll, ulong sizeOfStackReserve = 1048576, ulong sizeOfStackCommit = 4096, ulong sizeOfHeapReserve = 1048576, ulong sizeOfHeapCommit = 4096) { }
@@ -3837,10 +3738,10 @@ namespace System.Reflection.PortableExecutable
         public ulong SizeOfStackCommit { get { throw null; } }
         public ulong SizeOfStackReserve { get { throw null; } }
         public Subsystem Subsystem { get { throw null; } }
-
         public static PEHeaderBuilder CreateExecutableHeader() { throw null; }
         public static PEHeaderBuilder CreateLibraryHeader() { throw null; }
     }
+
     public sealed partial class PEHeaders
     {
         public PEHeaders(IO.Stream peStream, int size, bool isLoadedImage) { }
@@ -3859,10 +3760,10 @@ namespace System.Reflection.PortableExecutable
         public PEHeader? PEHeader { get { throw null; } }
         public int PEHeaderStartOffset { get { throw null; } }
         public Collections.Immutable.ImmutableArray<SectionHeader> SectionHeaders { get { throw null; } }
-
         public int GetContainingSectionIndex(int relativeVirtualAddress) { throw null; }
         public bool TryGetDirectoryOffset(DirectoryEntry directory, out int offset) { throw null; }
     }
+
     public enum PEMagic : ushort
     {
         PE32 = 267,
@@ -3875,7 +3776,6 @@ namespace System.Reflection.PortableExecutable
         private readonly int _dummyPrimitive;
         public int Length { get { throw null; } }
         public unsafe byte* Pointer { get { throw null; } }
-
         public readonly Collections.Immutable.ImmutableArray<byte> GetContent() { throw null; }
         public readonly Collections.Immutable.ImmutableArray<byte> GetContent(int start, int length) { throw null; }
         public readonly Metadata.BlobReader GetReader() { throw null; }
@@ -3894,7 +3794,6 @@ namespace System.Reflection.PortableExecutable
         public bool IsEntireImageAvailable { get { throw null; } }
         public bool IsLoadedImage { get { throw null; } }
         public PEHeaders PEHeaders { get { throw null; } }
-
         public void Dispose() { }
         public PEMemoryBlock GetEntireImage() { throw null; }
         public PEMemoryBlock GetMetadata() { throw null; }
@@ -3921,6 +3820,7 @@ namespace System.Reflection.PortableExecutable
     {
         protected internal abstract void Serialize(Metadata.BlobBuilder builder, SectionLocation location);
     }
+
     [Flags]
     public enum SectionCharacteristics : uint
     {

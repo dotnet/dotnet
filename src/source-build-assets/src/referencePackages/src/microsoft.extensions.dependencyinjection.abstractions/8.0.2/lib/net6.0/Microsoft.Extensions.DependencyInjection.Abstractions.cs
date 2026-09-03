@@ -38,6 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static object GetServiceOrCreateInstance(System.IServiceProvider provider, System.Type type) { throw null; }
         public static T GetServiceOrCreateInstance<T>(System.IServiceProvider provider) { throw null; }
     }
+
     [System.AttributeUsage(System.AttributeTargets.All)]
     public partial class ActivatorUtilitiesConstructorAttribute : System.Attribute
     {
@@ -49,7 +50,6 @@ namespace Microsoft.Extensions.DependencyInjection
         private readonly int _dummyPrimitive;
         public AsyncServiceScope(IServiceScope serviceScope) { }
         public System.IServiceProvider ServiceProvider { get { throw null; } }
-
         public readonly void Dispose() { }
         public readonly System.Threading.Tasks.ValueTask DisposeAsync() { throw null; }
     }
@@ -72,6 +72,7 @@ namespace Microsoft.Extensions.DependencyInjection
     }
 
     public partial interface IServiceProviderFactory<TContainerBuilder>
+        where TContainerBuilder : notnull
     {
         TContainerBuilder CreateBuilder(IServiceCollection services);
         System.IServiceProvider CreateServiceProvider(TContainerBuilder containerBuilder);
@@ -106,15 +107,16 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static object AnyKey { get { throw null; } }
     }
+
     public delegate object ObjectFactory(System.IServiceProvider serviceProvider, object?[]? arguments);
+
     public delegate T ObjectFactory<T>(System.IServiceProvider serviceProvider, object?[]? arguments);
+
     public partial class ServiceCollection : IServiceCollection, System.Collections.Generic.IList<ServiceDescriptor>, System.Collections.Generic.ICollection<ServiceDescriptor>, System.Collections.Generic.IEnumerable<ServiceDescriptor>, System.Collections.IEnumerable
     {
         public int Count { get { throw null; } }
         public bool IsReadOnly { get { throw null; } }
-
         public ServiceDescriptor this[int index] { get { throw null; } set { } }
-
         public void Clear() { }
         public bool Contains(ServiceDescriptor item) { throw null; }
         public void CopyTo(ServiceDescriptor[] array, int arrayIndex) { }
@@ -177,6 +179,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddTransient<TService, TImplementation>(this IServiceCollection services, System.Func<System.IServiceProvider, TImplementation> implementationFactory) where TService : class where TImplementation : class, TService { throw null; }
         public static IServiceCollection AddTransient<TService, TImplementation>(this IServiceCollection services) where TService : class where TImplementation : class, TService { throw null; }
     }
+
     public partial class ServiceDescriptor
     {
         public ServiceDescriptor(System.Type serviceType, System.Func<System.IServiceProvider, object> factory, ServiceLifetime lifetime) { }
@@ -187,19 +190,16 @@ namespace Microsoft.Extensions.DependencyInjection
         public ServiceDescriptor(System.Type serviceType, System.Type implementationType, ServiceLifetime lifetime) { }
         public System.Func<System.IServiceProvider, object>? ImplementationFactory { get { throw null; } }
         public object? ImplementationInstance { get { throw null; } }
-
         [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicConstructors)]
         public System.Type? ImplementationType { get { throw null; } }
         public bool IsKeyedService { get { throw null; } }
         public System.Func<System.IServiceProvider, object?, object>? KeyedImplementationFactory { get { throw null; } }
         public object? KeyedImplementationInstance { get { throw null; } }
-
         [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicConstructors)]
         public System.Type? KeyedImplementationType { get { throw null; } }
         public ServiceLifetime Lifetime { get { throw null; } }
         public object? ServiceKey { get { throw null; } }
         public System.Type ServiceType { get { throw null; } }
-
         public static ServiceDescriptor Describe(System.Type serviceType, System.Func<System.IServiceProvider, object> implementationFactory, ServiceLifetime lifetime) { throw null; }
         public static ServiceDescriptor Describe(System.Type serviceType, System.Type implementationType, ServiceLifetime lifetime) { throw null; }
         public static ServiceDescriptor DescribeKeyed(System.Type serviceType, object? serviceKey, System.Func<System.IServiceProvider, object?, object> implementationFactory, ServiceLifetime lifetime) { throw null; }
@@ -240,6 +240,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ServiceDescriptor Transient<TService, TImplementation>() where TService : class where TImplementation : class, TService { throw null; }
         public static ServiceDescriptor Transient<TService, TImplementation>(System.Func<System.IServiceProvider, TImplementation> implementationFactory) where TService : class where TImplementation : class, TService { throw null; }
     }
+
     [System.AttributeUsage(System.AttributeTargets.Parameter)]
     public partial class ServiceKeyAttribute : System.Attribute
     {
@@ -258,15 +259,16 @@ namespace Microsoft.Extensions.DependencyInjection
         public static System.Collections.Generic.IEnumerable<object?> GetKeyedServices(this System.IServiceProvider provider, System.Type serviceType, object? serviceKey) { throw null; }
         public static System.Collections.Generic.IEnumerable<T> GetKeyedServices<T>(this System.IServiceProvider provider, object? serviceKey) { throw null; }
         public static object GetRequiredKeyedService(this System.IServiceProvider provider, System.Type serviceType, object? serviceKey) { throw null; }
-        public static T GetRequiredKeyedService<T>(this System.IServiceProvider provider, object? serviceKey) { throw null; }
+        public static T GetRequiredKeyedService<T>(this System.IServiceProvider provider, object? serviceKey) where T : notnull { throw null; }
     }
+
     public static partial class ServiceProviderServiceExtensions
     {
         public static AsyncServiceScope CreateAsyncScope(this IServiceScopeFactory serviceScopeFactory) { throw null; }
         public static AsyncServiceScope CreateAsyncScope(this System.IServiceProvider provider) { throw null; }
         public static IServiceScope CreateScope(this System.IServiceProvider provider) { throw null; }
         public static object GetRequiredService(this System.IServiceProvider provider, System.Type serviceType) { throw null; }
-        public static T GetRequiredService<T>(this System.IServiceProvider provider) { throw null; }
+        public static T GetRequiredService<T>(this System.IServiceProvider provider) where T : notnull { throw null; }
         public static T? GetService<T>(this System.IServiceProvider provider) { throw null; }
         public static System.Collections.Generic.IEnumerable<object?> GetServices(this System.IServiceProvider provider, System.Type serviceType) { throw null; }
         public static System.Collections.Generic.IEnumerable<T> GetServices<T>(this System.IServiceProvider provider) { throw null; }

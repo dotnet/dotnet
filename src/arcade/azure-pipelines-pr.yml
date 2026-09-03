@@ -138,7 +138,6 @@ stages:
         clean: all
       jobs:
       - job: Windows_NT
-        timeoutInMinutes: 90
         pool:
           name: $(DncEngPublicBuildPool)
           demands: ImageOverride -equals windows.vs2026.amd64.open
@@ -169,13 +168,12 @@ stages:
             -projects $(System.DefaultWorkingDirectory)\tests\UnitTests.proj
             /bl:$(System.DefaultWorkingDirectory)\artifacts\log\$(_BuildConfig)\Helix.binlog
             /p:RestoreUsingNuGetTargets=false
-          displayName: Run Helix Tests
+          displayName: Submit Helix Tests
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
             HelixAccessToken: ''
 
       - job: Linux
-        timeoutInMinutes: 90
         container: LinuxContainer
         pool:
           name: $(DncEngPublicBuildPool)
@@ -206,10 +204,19 @@ stages:
             --projects $(System.DefaultWorkingDirectory)/tests/UnitTests.proj
             /bl:$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)/Helix.binlog
             /p:RestoreUsingNuGetTargets=false
-          displayName: Run Helix Tests
+          displayName: Submit Helix Tests
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
             HelixAccessToken: ''
+
+  # Helix Job Monitor runs as a job within the Test stage so it can monitor
+  # Helix work items submitted by the other jobs in this stage.
+  - template: /eng/common/core-templates/job/helix-job-monitor.yml
+    parameters:
+      timeoutInMinutes: 90
+      # Install from the nupkg produced by the Build stage's Windows_NT Release job.
+      toolNupkgArtifactName: Artifacts_Windows_NT_Release
+      toolNupkgArtifactSubPath: packages/Release/NonShipping
 
 - stage: Test_XHarness
   displayName: Test XHarness SDK
@@ -227,7 +234,7 @@ stages:
         clean: all
       jobs:
       - job: Apple_Simulators
-        timeoutInMinutes: 90
+        timeoutInMinutes: 30
         container: LinuxContainer
         pool:
           name: $(DncEngPublicBuildPool)
@@ -258,7 +265,7 @@ stages:
             HelixAccessToken: ''
 
       - job: Apple_Devices
-        timeoutInMinutes: 90
+        timeoutInMinutes: 30
         container: LinuxContainer
         pool:
           name: $(DncEngPublicBuildPool)
@@ -289,7 +296,7 @@ stages:
             HelixAccessToken: ''
 
       - job: Android_Simulators
-        timeoutInMinutes: 90
+        timeoutInMinutes: 30
         container: LinuxContainer
         pool:
           name: $(DncEngPublicBuildPool)
@@ -320,7 +327,7 @@ stages:
             HelixAccessToken: ''
 
       - job: Android_Devices
-        timeoutInMinutes: 90
+        timeoutInMinutes: 30
         pool:
           name: $(DncEngPublicBuildPool)
           demands: ImageOverride -equals windows.vs2026.amd64.open
@@ -348,3 +355,11 @@ stages:
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
             HelixAccessToken: ''
+
+  # Helix Job Monitor runs as a job within the XHarness test stage too
+  - template: /eng/common/core-templates/job/helix-job-monitor.yml
+    parameters:
+      timeoutInMinutes: 90
+      # Install from the nupkg produced by the Build stage's Windows_NT Release job.
+      toolNupkgArtifactName: Artifacts_Windows_NT_Release
+      toolNupkgArtifactSubPath: packages/Release/NonShipping

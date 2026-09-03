@@ -9,6 +9,8 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Moq;
+using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -21,24 +23,38 @@ namespace NuGet.Protocol.Tests
     [Collection(nameof(NotThreadSafeResourceCollection))]
     public class PackageMetadataResourceV3Tests
     {
-        [Fact]
-        public async Task PackageMetadataResourceV3_GetMetadataAsync()
+        private static IEnumerable<Lazy<INuGetResourceProvider>> CreateProvidersWithEnvReader(string useStj)
+        {
+            var envReader = new Mock<IEnvironmentVariableReader>();
+            envReader.Setup(e => e.GetEnvironmentVariable(NuGet.Shared.NuGetFeatureFlags.UseSystemTextJsonDeserializationEnvVar)).Returns(useStj);
+
+            return Repository.Provider.GetCoreV3()
+                .Where(p => p.Value is not PackageMetadataResourceV3Provider)
+                .Append(new Lazy<INuGetResourceProvider>(() => new PackageMetadataResourceV3Provider(envReader.Object)));
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task PackageMetadataResourceV3_GetMetadataAsync(string useStj)
         {
             // Arrange
             var responses = new Dictionary<string, string>();
             responses.Add("http://testsource.com/v3/index.json", JsonData.IndexWithoutFlatContainer);
             responses.Add("https://api.nuget.org/v3/registration0/deepequal/index.json", JsonData.DeepEqualRegistationIndex);
 
-            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
+            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", CreateProvidersWithEnvReader(useStj), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("deepequal", NuGetVersion.Parse("0.9.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = (PackageSearchMetadataRegistration)await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = (PackageSearchMetadataRegistration)(await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata."));
 
                 // Assert
                 Assert.Equal("deepequal", result.Identity.Id, StringComparer.OrdinalIgnoreCase);
@@ -56,48 +72,60 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal(string.Join(", ", "deepequal", "deep", "equal"), result.Tags);
                 Assert.Equal("DeepEqual", result.Title);
                 Assert.True(result.IsListed);
+
+                var vulnerability = Assert.Single(result.Vulnerabilities);
+                Assert.Equal(2, vulnerability.Severity);
+                Assert.Equal("https://contoso.test/advisory/1", vulnerability.AdvisoryUrl.OriginalString);
             }
         }
 
-        [Fact]
-        public async Task PackageMetadataResourceV3_GetMetadataAsync_Unlisted()
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task PackageMetadataResourceV3_GetMetadataAsync_Unlisted(string useStj)
         {
             var responses = new Dictionary<string, string>();
             responses.Add("http://testsource.com/v3/index.json", JsonData.IndexWithoutFlatContainer);
             responses.Add("https://api.nuget.org/v3/registration0/unlistedpackagea/index.json", JsonData.UnlistedPackageARegistration);
 
-            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
+            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", CreateProvidersWithEnvReader(useStj), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("unlistedpackagea", NuGetVersion.Parse("1.0.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = (PackageSearchMetadataRegistration)await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = (PackageSearchMetadataRegistration)(await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata."));
 
                 // Assert
                 Assert.False(result.IsListed);
             }
         }
 
-        [Fact]
-        public async Task PackageMetadataResourceV3_UsesReferenceCache()
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task PackageMetadataResourceV3_UsesReferenceCache(string useStj)
         {
             // Arrange
             var responses = new Dictionary<string, string>();
             responses.Add("http://testsource.com/v3/index.json", JsonData.IndexWithoutFlatContainer);
             responses.Add("https://api.nuget.org/v3/registration0/afine/index.json", JsonData.DuplicatePackageBesidesVersionRegistrationIndex);
 
-            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
+            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", CreateProvidersWithEnvReader(useStj), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = (IEnumerable<PackageSearchMetadataRegistration>)await resource.GetMetadataAsync("afine", true, true, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = (IEnumerable<PackageSearchMetadataRegistration>)(await resource.GetMetadataAsync("afine", true, true, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata list."));
 
                 var first = result.ElementAt(0);
                 var second = result.ElementAt(1);
@@ -107,17 +135,20 @@ namespace NuGet.Protocol.Tests
             }
         }
 
-        [Fact]
-        public async Task PackageMetadataResourceV3_GetMetadataAsync_NotFound()
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task PackageMetadataResourceV3_GetMetadataAsync_NotFound(string useStj)
         {
             // Arrange
             var responses = new Dictionary<string, string>();
             responses.Add("http://testsource.com/v3/index.json", JsonData.IndexWithoutFlatContainer);
             responses.Add("https://api.nuget.org/v3/registration0/deepequal/index.json", JsonData.DeepEqualRegistationIndex);
 
-            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
+            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", CreateProvidersWithEnvReader(useStj), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("deepequal", NuGetVersion.Parse("0.0.0"));
 
@@ -132,13 +163,19 @@ namespace NuGet.Protocol.Tests
         }
 
         [Theory]
-        [InlineData("MIT OR Apache-2.0", "1.0")]
-        [InlineData("Apache-2.0", null)]
-        [InlineData("MIT OR Apache-2.0", "bad version")]
-        [InlineData("MIT", "0.0")]
-        [InlineData("( MIT )", "0.0")]
-        [InlineData("         MIT           ", "0.0")]
-        public async Task PackageMetadataResourceV3_GetMetadataAsync_ParsesLicenseExpression(string expression, string version)
+        [InlineData("MIT OR Apache-2.0", "1.0", "true")]
+        [InlineData("MIT OR Apache-2.0", "1.0", "false")]
+        [InlineData("Apache-2.0", null, "true")]
+        [InlineData("Apache-2.0", null, "false")]
+        [InlineData("MIT OR Apache-2.0", "bad version", "true")]
+        [InlineData("MIT OR Apache-2.0", "bad version", "false")]
+        [InlineData("MIT", "0.0", "true")]
+        [InlineData("MIT", "0.0", "false")]
+        [InlineData("( MIT )", "0.0", "true")]
+        [InlineData("( MIT )", "0.0", "false")]
+        [InlineData("         MIT           ", "0.0", "true")]
+        [InlineData("         MIT           ", "0.0", "false")]
+        public async Task PackageMetadataResourceV3_GetMetadataAsync_ParsesLicenseExpression(string expression, string version, string useStj)
         {
 
             var licenseData = $@"""{JsonProperties.LicenseExpression}"": ""{expression}""," +
@@ -151,16 +188,18 @@ namespace NuGet.Protocol.Tests
             responses.Add(sourceName, JsonData.IndexWithoutFlatContainer);
             responses.Add("https://api.nuget.org/v3/registration0/packagea/index.json", string.Format(JsonData.PackageARegistration, licenseData));
 
-            var repo = StaticHttpHandler.CreateSource(sourceName, Repository.Provider.GetCoreV3(), responses);
+            var repo = StaticHttpHandler.CreateSource(sourceName, CreateProvidersWithEnvReader(useStj), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("PackageA", NuGetVersion.Parse("1.0.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata.");
 
                 // Assert
                 Assert.NotNull(result);
@@ -184,10 +223,13 @@ namespace NuGet.Protocol.Tests
         }
 
         [Theory]
-        [InlineData("MIT OR Apache-2.0 BLA", null, 1, "Invalid element 'BLA'.")]
-        [InlineData("MIT OR Apache-2.0", "15.0", 1, "The license version string '15.0' is higher than the one supported by this toolset")]
-        [InlineData("CoolLicense OR CoolerLicense", null, 1, "The license identifier(s) CoolLicense, CoolerLicense is(are) not recognized by the current toolset.")]
-        public async Task PackageMetadataResourceV3_GetMetadataAsync_ParsesLicenseExpressionWithWarnings(string expression, string version, int errorCount, string errorMessage)
+        [InlineData("MIT OR Apache-2.0 BLA", null, 1, "Invalid element 'BLA'.", "true")]
+        [InlineData("MIT OR Apache-2.0 BLA", null, 1, "Invalid element 'BLA'.", "false")]
+        [InlineData("MIT OR Apache-2.0", "15.0", 1, "The license version string '15.0' is higher than the one supported by this toolset", "true")]
+        [InlineData("MIT OR Apache-2.0", "15.0", 1, "The license version string '15.0' is higher than the one supported by this toolset", "false")]
+        [InlineData("CoolLicense OR CoolerLicense", null, 1, "The license identifier(s) CoolLicense, CoolerLicense is(are) not recognized by the current toolset.", "true")]
+        [InlineData("CoolLicense OR CoolerLicense", null, 1, "The license identifier(s) CoolLicense, CoolerLicense is(are) not recognized by the current toolset.", "false")]
+        public async Task PackageMetadataResourceV3_GetMetadataAsync_ParsesLicenseExpressionWithWarnings(string expression, string version, int errorCount, string errorMessage, string useStj)
         {
 
             var licenseData = $@"""{JsonProperties.LicenseExpression}"": ""{expression}""," +
@@ -200,16 +242,18 @@ namespace NuGet.Protocol.Tests
             responses.Add(sourceName, JsonData.IndexWithoutFlatContainer);
             responses.Add("https://api.nuget.org/v3/registration0/packagea/index.json", string.Format(JsonData.PackageARegistration, licenseData));
 
-            var repo = StaticHttpHandler.CreateSource(sourceName, Repository.Provider.GetCoreV3(), responses);
+            var repo = StaticHttpHandler.CreateSource(sourceName, CreateProvidersWithEnvReader(useStj), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("PackageA", NuGetVersion.Parse("1.0.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata.");
 
                 // Assert
                 Assert.NotNull(result);
@@ -232,8 +276,10 @@ namespace NuGet.Protocol.Tests
             }
         }
 
-        [Fact]
-        public async Task PackageMetadataResourceV3_GetMetadataAsync_NotFoundHandleNullStream()
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task PackageMetadataResourceV3_GetMetadataAsync_NotFoundHandleNullStream(string useStj)
         {
             // Arrange
             var notExistPackage = "NotExistPackage";
@@ -255,8 +301,9 @@ namespace NuGet.Protocol.Tests
                 }
             };
 
-            var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var repo = StaticHttpHandler.CreateSource(source, CreateProvidersWithEnvReader(useStj), responses);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             //Act
             using (var sourceCacheContext = new SourceCacheContext())
@@ -268,8 +315,10 @@ namespace NuGet.Protocol.Tests
             }
         }
 
-        [Fact]
-        public async Task PackageMetadataResourceV3_GetMetadataAsync_NoContentHandleNullStream()
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task PackageMetadataResourceV3_GetMetadataAsync_NoContentHandleNullStream(string useStj)
         {
             // Arrange
             var noContentPackage = "NoContentPackage";
@@ -291,8 +340,9 @@ namespace NuGet.Protocol.Tests
                 }
             };
 
-            var repo = StaticHttpHandler.CreateSource(source, Repository.Provider.GetCoreV3(), responses);
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var repo = StaticHttpHandler.CreateSource(source, CreateProvidersWithEnvReader(useStj), responses);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             //Act
             using (var sourceCacheContext = new SourceCacheContext())
@@ -304,24 +354,28 @@ namespace NuGet.Protocol.Tests
             }
         }
 
-        [Fact]
-        public async Task PackageMetadataResourceV3_GetMetadataAsync_DependencyRangeNull()
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task PackageMetadataResourceV3_GetMetadataAsync_DependencyRangeNull(string useStj)
         {
             // Arrange
             var responses = new Dictionary<string, string>();
             responses.Add("http://testsource.com/v3/index.json", JsonData.IndexWithoutFlatContainer);
             responses.Add("https://api.nuget.org/v3/registration0/dependencyedgecases/index.json", JsonData.PackageDependencyWithNullAndEmptyRange);
 
-            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", Repository.Provider.GetCoreV3(), responses);
+            var repo = StaticHttpHandler.CreateSource("http://testsource.com/v3/index.json", CreateProvidersWithEnvReader(useStj), responses);
 
-            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None);
+            var resource = await repo.GetResourceAsync<PackageMetadataResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected PackageMetadataResource.");
 
             var package = new PackageIdentity("dependencyedgecases", NuGetVersion.Parse("0.1.0"));
 
             // Act
             using (var sourceCacheContext = new SourceCacheContext())
             {
-                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None);
+                var result = await resource.GetMetadataAsync(package, sourceCacheContext, Common.NullLogger.Instance, CancellationToken.None)
+                    ?? throw new Xunit.Sdk.XunitException("Expected package metadata.");
 
                 // Assert
                 result.Should().NotBeNull();

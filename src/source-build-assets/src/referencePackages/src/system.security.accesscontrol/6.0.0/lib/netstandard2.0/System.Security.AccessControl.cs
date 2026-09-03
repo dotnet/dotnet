@@ -28,6 +28,79 @@
 [assembly: System.Reflection.AssemblyVersionAttribute("6.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+}
+
 namespace System.Security.AccessControl
 {
     [Flags]
@@ -84,9 +157,7 @@ namespace System.Security.AccessControl
     {
         internal AceEnumerator() { }
         public GenericAce Current { get { throw null; } }
-
         object Collections.IEnumerator.Current { get { throw null; } }
-
         public bool MoveNext() { throw null; }
         public void Reset() { }
     }
@@ -168,10 +239,10 @@ namespace System.Security.AccessControl
         public bool IsInherited { get { throw null; } }
         public PropagationFlags PropagationFlags { get { throw null; } }
     }
+
     public sealed partial class AuthorizationRuleCollection : Collections.ReadOnlyCollectionBase
     {
         public AuthorizationRule? this[int index] { get { throw null; } }
-
         public void AddRule(AuthorizationRule? rule) { }
         public void CopyTo(AuthorizationRule[] rules, int index) { }
     }
@@ -180,7 +251,6 @@ namespace System.Security.AccessControl
     {
         public CommonAce(AceFlags flags, AceQualifier qualifier, int accessMask, Principal.SecurityIdentifier sid, bool isCallback, byte[]? opaque) { }
         public override int BinaryLength { get { throw null; } }
-
         public override void GetBinaryForm(byte[] binaryForm, int offset) { }
         public static int MaxOpaqueLength(bool isCallback) { throw null; }
     }
@@ -193,11 +263,8 @@ namespace System.Security.AccessControl
         public bool IsCanonical { get { throw null; } }
         public bool IsContainer { get { throw null; } }
         public bool IsDS { get { throw null; } }
-
         public sealed override GenericAce this[int index] { get { throw null; } set { } }
-
         public sealed override byte Revision { get { throw null; } }
-
         public sealed override void GetBinaryForm(byte[] binaryForm, int offset) { }
         public void Purge(Principal.SecurityIdentifier sid) { }
         public void RemoveInheritedAces() { }
@@ -238,7 +305,6 @@ namespace System.Security.AccessControl
         public bool IsSystemAclCanonical { get { throw null; } }
         public override Principal.SecurityIdentifier? Owner { get { throw null; } set { } }
         public SystemAcl? SystemAcl { get { throw null; } set { } }
-
         public void AddDiscretionaryAcl(byte revision, int trusted) { }
         public void AddSystemAcl(byte revision, int trusted) { }
         public void PurgeAccessControl(Principal.SecurityIdentifier sid) { }
@@ -252,7 +318,6 @@ namespace System.Security.AccessControl
         public CompoundAce(AceFlags flags, int accessMask, CompoundAceType compoundAceType, Principal.SecurityIdentifier sid) { }
         public override int BinaryLength { get { throw null; } }
         public CompoundAceType CompoundAceType { get { throw null; } set { } }
-
         public override void GetBinaryForm(byte[] binaryForm, int offset) { }
     }
 
@@ -289,7 +354,6 @@ namespace System.Security.AccessControl
         public CustomAce(AceType type, AceFlags flags, byte[]? opaque) { }
         public override int BinaryLength { get { throw null; } }
         public int OpaqueLength { get { throw null; } }
-
         public override void GetBinaryForm(byte[] binaryForm, int offset) { }
         public byte[]? GetOpaque() { throw null; }
         public void SetOpaque(byte[]? opaque) { }
@@ -324,7 +388,6 @@ namespace System.Security.AccessControl
         public InheritanceFlags InheritanceFlags { get { throw null; } }
         public bool IsInherited { get { throw null; } }
         public PropagationFlags PropagationFlags { get { throw null; } }
-
         public GenericAce Copy() { throw null; }
         public static GenericAce CreateFromBinaryForm(byte[] binaryForm, int offset) { throw null; }
         public sealed override bool Equals(object? o) { throw null; }
@@ -333,6 +396,7 @@ namespace System.Security.AccessControl
         public static bool operator ==(GenericAce? left, GenericAce? right) { throw null; }
         public static bool operator !=(GenericAce? left, GenericAce? right) { throw null; }
     }
+
     public abstract partial class GenericAcl : Collections.ICollection, Collections.IEnumerable
     {
         public static readonly byte AclRevision;
@@ -341,12 +405,9 @@ namespace System.Security.AccessControl
         public abstract int BinaryLength { get; }
         public abstract int Count { get; }
         public bool IsSynchronized { get { throw null; } }
-
         public abstract GenericAce this[int index] { get; set; }
-
         public abstract byte Revision { get; }
         public virtual object SyncRoot { get { throw null; } }
-
         public void CopyTo(GenericAce[] array, int index) { }
         public abstract void GetBinaryForm(byte[] binaryForm, int offset);
         public AceEnumerator GetEnumerator() { throw null; }
@@ -362,11 +423,11 @@ namespace System.Security.AccessControl
         public abstract Principal.SecurityIdentifier? Group { get; set; }
         public abstract Principal.SecurityIdentifier? Owner { get; set; }
         public static byte Revision { get { throw null; } }
-
         public void GetBinaryForm(byte[] binaryForm, int offset) { }
         public string GetSddlForm(AccessControlSections includeSections) { throw null; }
         public static bool IsSddlConversionSupported() { throw null; }
     }
+
     [Flags]
     public enum InheritanceFlags
     {
@@ -412,7 +473,6 @@ namespace System.Security.AccessControl
         public Guid InheritedObjectAceType { get { throw null; } set { } }
         public ObjectAceFlags ObjectAceFlags { get { throw null; } set { } }
         public Guid ObjectAceType { get { throw null; } set { } }
-
         public override void GetBinaryForm(byte[] binaryForm, int offset) { }
         public static int MaxOpaqueLength(bool isCallback) { throw null; }
     }
@@ -452,7 +512,6 @@ namespace System.Security.AccessControl
         protected bool IsDS { get { throw null; } }
         protected bool OwnerModified { get { throw null; } set { } }
         protected CommonSecurityDescriptor SecurityDescriptor { get { throw null; } }
-
         public abstract AccessRule AccessRuleFactory(Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type);
         public abstract AuditRule AuditRuleFactory(Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags);
         public Principal.IdentityReference? GetGroup(Type targetType) { throw null; }
@@ -482,6 +541,7 @@ namespace System.Security.AccessControl
         protected void WriteLock() { }
         protected void WriteUnlock() { }
     }
+
     public abstract partial class ObjectSecurity<T> : NativeObjectSecurity where T : struct
     {
         protected ObjectSecurity(bool isContainer, ResourceType resourceType, Runtime.InteropServices.SafeHandle? safeHandle, AccessControlSections includeSections, ExceptionFromErrorCode? exceptionFromErrorCode, object? exceptionContext) : base(default, default) { }
@@ -492,7 +552,6 @@ namespace System.Security.AccessControl
         public override Type AccessRightType { get { throw null; } }
         public override Type AccessRuleType { get { throw null; } }
         public override Type AuditRuleType { get { throw null; } }
-
         public override AccessRule AccessRuleFactory(Principal.IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type) { throw null; }
         public virtual void AddAccessRule(AccessRule<T> rule) { }
         public virtual void AddAuditRule(AuditRule<T> rule) { }
@@ -516,7 +575,6 @@ namespace System.Security.AccessControl
         public PrivilegeNotHeldException(string? privilege, Exception? inner) { }
         public PrivilegeNotHeldException(string? privilege) { }
         public string? PrivilegeName { get { throw null; } }
-
         public override void GetObjectData(Runtime.Serialization.SerializationInfo info, Runtime.Serialization.StreamingContext context) { }
     }
 
@@ -534,7 +592,6 @@ namespace System.Security.AccessControl
         public AceQualifier AceQualifier { get { throw null; } }
         public bool IsCallback { get { throw null; } }
         public int OpaqueLength { get { throw null; } }
-
         public byte[]? GetOpaque() { throw null; }
         public void SetOpaque(byte[]? opaque) { }
     }
@@ -545,11 +602,8 @@ namespace System.Security.AccessControl
         public RawAcl(byte[] binaryForm, int offset) { }
         public override int BinaryLength { get { throw null; } }
         public override int Count { get { throw null; } }
-
         public override GenericAce this[int index] { get { throw null; } set { } }
-
         public override byte Revision { get { throw null; } }
-
         public override void GetBinaryForm(byte[] binaryForm, int offset) { }
         public void InsertAce(int index, GenericAce ace) { }
         public void RemoveAce(int index) { }
@@ -566,7 +620,6 @@ namespace System.Security.AccessControl
         public override Principal.SecurityIdentifier? Owner { get { throw null; } set { } }
         public byte ResourceManagerControl { get { throw null; } set { } }
         public RawAcl? SystemAcl { get { throw null; } set { } }
-
         public void SetFlags(ControlFlags flags) { }
     }
 
@@ -631,7 +684,6 @@ namespace System.Security.Policy
         public bool IsSynchronized { get { throw null; } }
         public bool Locked { get { throw null; } set { } }
         public object SyncRoot { get { throw null; } }
-
         [Obsolete("This method is obsolete. Please use AddAssemblyEvidence instead.")]
         public void AddAssembly(object id) { }
         public void AddAssemblyEvidence<T>(T evidence) where T : EvidenceBase { }

@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -27,13 +27,15 @@ namespace NuGet.Protocol.Plugins
 
         public override string ToString()
         {
-            var message = new JObject(
-                new JProperty("plugin ID", _pluginId),
-                new JProperty("state", _state));
+            var message = new JsonObject
+            {
+                ["plugin ID"] = _pluginId,
+                ["state"] = _state.ToString(),
+            };
 
             if (_processId.HasValue)
             {
-                message.Add("process ID", _processId.Value);
+                message["process ID"] = _processId.Value;
             }
 
             return ToString("plugin instance", message);

@@ -1,0 +1,96 @@
+{
+  "@context": {
+    "@vocab": "http://schema.nuget.org/schema#",
+    "@base": "https://pkgs.contoso.test/v3/registration/"
+  },
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://pkgs.contoso.test/v3/registration/contoso.logging/index.json",
+      "@type": "Package",
+      "registration": "https://pkgs.contoso.test/v3/registration/contoso.logging/index.json",
+      "id": "Contoso.Logging",
+      "version": "2.0.0",
+      "description": "A test package with all metadata fields.",
+      "summary": "",
+      "title": "Contoso.Logging",
+      "iconUrl": "https://pkgs.contoso.test/v3/flatcontainer/contoso.logging/2.0.0/icon",
+      "licenseUrl": "https://pkgs.contoso.test/packages/Contoso.Logging/2.0.0/license",
+      "projectUrl": "https://contoso.test/projects/logging",
+      "tags": [
+        "Test",
+        "Package"
+      ],
+      "authors": [
+        "TestAuthor"
+      ],
+      "owners": [
+        "TestOwner"
+      ],
+      "totalDownloads": 100000,
+      "verified": true,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 50000,
+          "@id": "https://pkgs.contoso.test/v3/registration/contoso.logging/1.0.0.json"
+        },
+        {
+          "version": "2.0.0",
+          "downloads": 50000,
+          "@id": "https://pkgs.contoso.test/v3/registration/contoso.logging/2.0.0.json"
+        }
+      ],
+      "dependencyGroups": [
+        {
+          "targetFramework": ".NETStandard2.0",
+          "dependencies": [
+            {
+              "id": "Contoso.Serialization",
+              "range": "[13.0.1, )"
+            },
+            {
+              "id": "Contoso.Buffers",
+              "range": "[4.5.4, )"
+            }
+          ]
+        },
+        {
+          "targetFramework": "net6.0",
+          "dependencies": [
+            {
+              "id": "Contoso.Json",
+              "range": "[6.0.0, )"
+            }
+          ]
+        }
+      ],
+      "deprecation": {
+        "message": "This package is deprecated. Use Contoso.Logging.Modern instead.",
+        "reasons": [
+          "Legacy",
+          "Other"
+        ],
+        "alternatePackage": {
+          "id": "Contoso.Logging.Modern",
+          "range": "[1.0.0, )"
+        }
+      },
+      "vulnerabilities": [
+        {
+          "advisoryUrl": "https://contoso.test/advisories/CTSO-2024-1234",
+          "severity": 2
+        },
+        {
+          "advisoryUrl": "https://contoso.test/advisories/CTSO-2024-5678",
+          "severity": 3
+        }
+      ]
+    }
+  ]
+}

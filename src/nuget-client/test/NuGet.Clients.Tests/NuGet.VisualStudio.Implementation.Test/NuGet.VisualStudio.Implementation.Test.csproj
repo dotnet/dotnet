@@ -13,5 +13,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" />
     <PackageReference Include="Microsoft.Build.Framework" NoWarn="NU1605" />
+    <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
   </ItemGroup>
 </Project>

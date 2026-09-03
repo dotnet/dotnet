@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>System.Configuration.ConfigurationManager</PackageId>
+    <TargetFrameworks>net10.0;net8.0;net9.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>10.0.3</PackageVersion>
+    <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+    <StrongNameKeyId>Open</StrongNameKeyId>
+    <Description>Provides types that support using XML configuration files (app.config). This package exists only to support migrating existing .NET Framework code that already uses System.Configuration. When writing new code, use another configuration system instead, such as Microsoft.Extensions.Configuration.</Description>
+    <PackageProjectUrl>https://dot.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <ProjectReference Include="../../system.diagnostics.eventlog/10.0.3/System.Diagnostics.EventLog.10.0.3.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/10.0.3/System.Security.Cryptography.ProtectedData.10.0.3.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="../../system.diagnostics.eventlog/10.0.3/System.Diagnostics.EventLog.10.0.3.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/10.0.3/System.Security.Cryptography.ProtectedData.10.0.3.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <ProjectReference Include="../../system.diagnostics.eventlog/10.0.3/System.Diagnostics.EventLog.10.0.3.csproj" />
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/10.0.3/System.Security.Cryptography.ProtectedData.10.0.3.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../system.security.cryptography.protecteddata/10.0.3/System.Security.Cryptography.ProtectedData.10.0.3.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -124,11 +124,6 @@ namespace NuGet.PackageManagement.UI
             GC.SuppressFinalize(this);
         }
 
-        public async Task<bool> IsNuGetProjectUpgradeableAsync(IProjectContextInfo project, CancellationToken cancellationToken)
-        {
-            return await project.IsUpgradeableAsync(ServiceBroker, cancellationToken);
-        }
-
         public async Task<IModalProgressDialogSession> StartModalProgressDialogAsync(string caption, ProgressDialogData initialData, INuGetUI uiService)
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();

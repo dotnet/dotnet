@@ -153,8 +153,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ExceptionWhenTryingToAddSource">
-        <source>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</source>
-        <target state="translated">嘗試加入來源 '{1}' 時擲回例外狀況 '{0}'。請確認您的所有線上封裝來源均可使用。</target>
+        <source>Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</source>
+        <target state="new">Exception '{0}' thrown when trying to add source '{1}'. Verify all your online package sources are available.</target>
         <note />
       </trans-unit>
       <trans-unit id="FileConflictMessage">
@@ -273,8 +273,8 @@
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundInPrimarySources">
-        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</source>
-        <target state="translated">在下列主要來源中找不到封裝 '{0}': '{1}'。請確認您所有線上封裝來源均可使用，(或) 確認指定的封裝識別碼、版本是否正確。</target>
+        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</source>
+        <target state="new">Package '{0}' is not found in the following primary source(s): '{1}'. Verify all your online package sources are available (OR) package id, version are specified correctly.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFoundOnSource">
@@ -400,8 +400,8 @@
         <note>0 - new line separated list of errors</note>
       </trans-unit>
       <trans-unit id="SolutionDirectoryNotAvailable">
-        <source>Solution is not opened or not saved. Please ensure you have an open and saved solution.</source>
-        <target state="translated">未開啟或儲存方案。請確定您有已開啟和已儲存的方案。</target>
+        <source>Solution is not opened or not saved. Ensure you have an open and saved solution.</source>
+        <target state="new">Solution is not opened or not saved. Ensure you have an open and saved solution.</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionManagerNotAvailableForUninstall">
@@ -443,8 +443,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UnableToGatherPackageFromSource">
-        <source>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </source>
-        <target state="translated">無法從來源 '{1}' 收集封裝 '{0}'。請確認您的所有線上封裝來源均可使用。 </target>
+        <source>Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</source>
+        <target state="new">Unable to gather package '{0}' from source '{1}'. Verify all your online package sources are available.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToResolveDependencyInfo">

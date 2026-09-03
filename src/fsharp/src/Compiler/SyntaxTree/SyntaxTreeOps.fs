@@ -299,6 +299,22 @@ let (|SynExprParen|_|) (e: SynExpr) =
     | SynExpr.Paren(SynExprErrorSkip e, a, b, c) -> ValueSome(e, a, b, c)
     | _ -> ValueNone
 
+/// Collects the ordered sub-expressions of nested `SynExpr.Sequential`, avoiding deep recursion (empty if not a Sequential).
+let flattenSequentials expr =
+    let rec collect expr acc =
+        match expr with
+        | SynExpr.Sequential(expr1 = e1; expr2 = SynExpr.Sequential _ as e2) -> collect e2 (e1 :: acc)
+        | SynExpr.Sequential(expr1 = e1; expr2 = e2) -> e2 :: e1 :: acc
+        | _ -> acc
+
+    List.rev (collect expr [])
+
+/// A pattern that collects all sequential expressions to avoid StackOverflowException
+let (|Sequentials|_|) expr =
+    match flattenSequentials expr with
+    | [] -> None
+    | exprs -> Some exprs
+
 let (|SynPatErrorSkip|) (p: SynPat) =
     match p with
     | SynPat.FromParseError(p, _) -> p
@@ -1149,6 +1165,21 @@ let rec desugarGetSetMembers (memberDefns: SynMemberDefns) =
                                          GetKeyword = Some mGet
                                          SetKeyword = Some mSet
                                      }) ->
+            // Each accessor's xmlDoc must validate against the union of both accessors'
+            // parameter names; otherwise documenting the full property triggers spurious
+            // 'unknown parameter' / 'no documentation for parameter' warnings on the
+            // accessor that does not own that name. See issue #13684.
+            let argNamesOf (SynBinding(valData = SynValData(valInfo = info))) = info.ArgNames
+            let getArgs = argNamesOf getBinding
+            let setArgs = argNamesOf setBinding
+
+            let rewrap extra (SynBinding(a, k, isInline, isMutable, attrs, xmlDoc, vd, hp, ri, e, mB, sp, t)) =
+                let xmlDoc' = PreXmlDoc.WithExtraParamsForCheck(xmlDoc, extra)
+                SynBinding(a, k, isInline, isMutable, attrs, xmlDoc', vd, hp, ri, e, mB, sp, t)
+
+            let getBinding = rewrap setArgs getBinding
+            let setBinding = rewrap getArgs setBinding
+
             if Position.posLt mGet.Start mSet.Start then
                 [ SynMemberDefn.Member(getBinding, m); SynMemberDefn.Member(setBinding, m) ]
             else

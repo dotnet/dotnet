@@ -1,12 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Common;
+using NuGet.Shared;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -21,7 +21,8 @@ namespace NuGet.Protocol.Plugins
     {
         private readonly TextReader _reader;
         private readonly CancellationTokenSource _receiveCancellationTokenSource;
-        private Task _receiveThread;
+        private Task? _receiveThread;
+        private readonly IEnvironmentVariableReader? _environmentVariableReader;
 
         /// <summary>
         /// Instantiates a new <see cref="StandardInputReceiver" /> class.
@@ -29,6 +30,11 @@ namespace NuGet.Protocol.Plugins
         /// <param name="reader">A text reader.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="reader" /> is <see langword="null" />.</exception>
         public StandardInputReceiver(TextReader reader)
+            : this(reader, environmentVariableReader: null)
+        {
+        }
+
+        internal StandardInputReceiver(TextReader reader, IEnvironmentVariableReader? environmentVariableReader)
         {
             if (reader == null)
             {
@@ -37,6 +43,7 @@ namespace NuGet.Protocol.Plugins
 
             _reader = reader;
             _receiveCancellationTokenSource = new CancellationTokenSource();
+            _environmentVariableReader = environmentVariableReader;
         }
 
         protected override void Dispose(bool disposing)
@@ -100,15 +107,15 @@ namespace NuGet.Protocol.Plugins
                 TaskScheduler.Default);
         }
 
-        private void Receive(object state)
+        private void Receive(object? state)
         {
-            Message message = null;
+            Message? message = null;
 
             try
             {
-                var cancellationToken = (CancellationToken)state;
+                var cancellationToken = (CancellationToken)state!;
 
-                string line;
+                string? line;
 
                 // Reading from the standard input stream is a blocking call; while we're
                 // in a read call we can't respond to cancellation requests.
@@ -118,7 +125,20 @@ namespace NuGet.Protocol.Plugins
 
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    message = JsonSerializationUtilities.Deserialize<Message>(line);
+                    if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+                    {
+                        message = System.Text.Json.JsonSerializer.Deserialize(line, PluginJsonContext.Default.Message);
+                    }
+                    else if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(_environmentVariableReader))
+                    {
+                        message = System.Text.Json.JsonSerializer.Deserialize(line, PluginJsonContext.Default.Message);
+                    }
+                    else
+                    {
+#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
+                        message = JsonSerializationUtilities.Deserialize<Message>(line);
+#pragma warning restore IL2026, IL3050
+                    }
 
                     if (message != null)
                     {

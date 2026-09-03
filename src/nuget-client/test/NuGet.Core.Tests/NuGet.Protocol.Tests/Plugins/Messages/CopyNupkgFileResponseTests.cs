@@ -40,7 +40,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObject()
         {
             var json = "{\"ResponseCode\":\"Success\"}";
-            var response = JsonSerializationUtilities.Deserialize<CopyNupkgFileResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<CopyNupkgFileResponse>(json)!;
 
             Assert.Equal(MessageResponseCode.Success, response.ResponseCode);
         }

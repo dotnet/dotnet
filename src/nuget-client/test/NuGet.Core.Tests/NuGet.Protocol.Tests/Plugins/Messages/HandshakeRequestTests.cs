@@ -17,7 +17,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullProtocolVersion()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new HandshakeRequest(protocolVersion: null, minimumProtocolVersion: _version1_0_0));
+                () => new HandshakeRequest(protocolVersion: null!, minimumProtocolVersion: _version1_0_0));
 
             Assert.Equal("protocolVersion", exception.ParamName);
         }
@@ -26,7 +26,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullMinimumProtocolVersion()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new HandshakeRequest(_version1_0_0, minimumProtocolVersion: null));
+                () => new HandshakeRequest(_version1_0_0, minimumProtocolVersion: null!));
 
             Assert.Equal("minimumProtocolVersion", exception.ParamName);
         }
@@ -65,7 +65,7 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             var json = "{\"ProtocolVersion\":\"2.0.0\",\"MinimumProtocolVersion\":\"1.0.0\"}";
 
-            var request = JsonSerializationUtilities.Deserialize<HandshakeRequest>(json);
+            var request = JsonSerializationUtilities.Deserialize<HandshakeRequest>(json)!;
 
             Assert.Equal(_version2_0_0, request.ProtocolVersion);
             Assert.Equal(_version1_0_0, request.MinimumProtocolVersion);

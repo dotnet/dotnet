@@ -1,6 +1,10 @@
 #nullable enable
 ~NuGet.Commands.PackArgs.DeterministicTimestamp.get -> string
 ~NuGet.Commands.PackArgs.DeterministicTimestamp.set -> void
+~NuGet.Commands.PackArgs.SdkAnalysisLevel.get -> NuGet.Versioning.NuGetVersion
+~NuGet.Commands.PackArgs.SdkAnalysisLevel.set -> void
+NuGet.Commands.PackArgs.UsingMicrosoftNETSdk.get -> bool
+NuGet.Commands.PackArgs.UsingMicrosoftNETSdk.set -> void
 const NuGet.Commands.Restore.Utility.PackageSpecFactory.EnvironmentVariableName = "NUGET_USE_NEW_PACKAGESPEC_FACTORY" -> string!
 NuGet.Commands.Restore.IProject.GetGlobalProperty(string! propertyName) -> string?
 ~static NuGet.Commands.MSBuildRestoreUtility.GetDependencySpec(System.Collections.Generic.IEnumerable<NuGet.Commands.IMSBuildItem> items, bool readOnly, bool collectAdditionalMessages) -> (NuGet.ProjectModel.DependencyGraphSpec, System.Collections.Generic.IReadOnlyList<NuGet.ProjectModel.IAssetsLogMessage>)

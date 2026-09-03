@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceHub.Framework;
 using NuGet.Configuration;
@@ -39,8 +38,6 @@ namespace NuGet.PackageManagement.UI
         IUserSettingsManager UserSettingsManager { get; }
 
         PackageSourceMapping PackageSourceMapping { get; }
-
-        Task<bool> IsNuGetProjectUpgradeableAsync(IProjectContextInfo project, CancellationToken cancellationToken);
 
         Task<IModalProgressDialogSession> StartModalProgressDialogAsync(string caption, ProgressDialogData initialData, INuGetUI uiService);
 

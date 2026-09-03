@@ -159,6 +159,7 @@ try {
     if (-not $excludeCIBinarylog) {
       $binaryLog = $true
     }
+    $nodeReuse = $false
   }
 
   if ($nativeToolsOnMachine) {

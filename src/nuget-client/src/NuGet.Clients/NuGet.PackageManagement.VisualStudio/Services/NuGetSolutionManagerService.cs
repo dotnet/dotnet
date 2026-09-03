@@ -22,7 +22,7 @@ namespace NuGet.PackageManagement.VisualStudio
         private readonly AuthorizationServiceClient _authorizationServiceClient;
 
         [Import]
-        private IVsSolutionManager? SolutionManager { get; set; }
+        private IVsSolutionManager SolutionManager { get; set; } = null!;
 
         public event EventHandler<string>? AfterNuGetCacheUpdated;
         public event EventHandler<IProjectContextInfo>? AfterProjectRenamed;

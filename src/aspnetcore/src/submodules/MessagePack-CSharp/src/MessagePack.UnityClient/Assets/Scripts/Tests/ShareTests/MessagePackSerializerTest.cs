@@ -1,6 +1,10 @@
 ﻿// Copyright (c) All contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#if !(MESSAGEPACK_FORCE_AOT || ENABLE_IL2CPP)
+#define DYNAMIC_GENERATION
+#endif
+
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -42,7 +46,7 @@ namespace MessagePack.Tests
             ms.Position = 0;
             var data4 = MessagePackSerializer.Deserialize(t, ms, MessagePackSerializer.DefaultOptions) as FirstSimpleData;
 
-#if ENABLE_IL2CPP
+#if DYNAMIC_GENERATION
             var data5 = data4;
 #else
             MessagePackSerializer.Serialize(t, ref writer, data, MessagePackSerializer.DefaultOptions);
@@ -205,6 +209,18 @@ namespace MessagePack.Tests
             Assert.Equal(3, await MessagePackSerializer.DeserializeAsync<int>(stream));
         }
 
+        [Fact]
+        [Trait("CWE", "674")]
+        public void StackDepthCheck_ConvertToJsonTypelessExtension()
+        {
+            const int maxDepth = 3;
+            byte[] msgpack = BuildNestedTypelessExtension(maxDepth + 1);
+            var options = MessagePackSerializerOptions.Standard
+                .WithSecurity(MessagePackSecurity.UntrustedData.WithMaximumObjectGraphDepth(maxDepth));
+
+            AssertConvertToJsonRecursionCheckThrows(new ReadOnlySequence<byte>(msgpack), options);
+        }
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -241,7 +257,7 @@ namespace MessagePack.Tests
             }
         }
 
-#if !ENABLE_IL2CPP
+#if DYNAMIC_GENERATION
 
         [Fact]
         public void StackDepthCheck_DynamicObjectResolver()
@@ -268,6 +284,18 @@ namespace MessagePack.Tests
 
             options = MessagePackSerializerOptions.Standard.WithSecurity(MessagePackSecurity.UntrustedData.WithMaximumObjectGraphDepth(2));
             var ex = Assert.Throws<MessagePackSerializationException>(() => MessagePackSerializer.Deserialize<RecursiveObjectGraph>(msgpack, options));
+            Assert.IsType<InsufficientExecutionStackException>(ex.InnerException);
+        }
+
+        [Fact]
+        [Trait("CWE", "674")]
+        public void StackDepthCheck_DynamicUnionResolver()
+        {
+            byte[] msgpack = MessagePackSerializer.Serialize<IDepthCheckedUnionNode>(new DepthCheckedUnionBranch());
+            var options = MessagePackSerializerOptions.Standard
+                .WithSecurity(MessagePackSecurity.UntrustedData.WithMaximumObjectGraphDepth(1));
+
+            var ex = Assert.Throws<MessagePackSerializationException>(() => MessagePackSerializer.Deserialize<IDepthCheckedUnionNode>(msgpack, options));
             Assert.IsType<InsufficientExecutionStackException>(ex.InnerException);
         }
 
@@ -312,6 +340,28 @@ namespace MessagePack.Tests
                 MessagePackSerializer.ConvertToJson(ref reader, new StringWriter(), options);
             });
             Assert.IsType<InsufficientExecutionStackException>(ex.InnerException);
+        }
+
+        private static byte[] BuildNestedTypelessExtension(int levels)
+        {
+            byte[] msgpack = new byte[(levels * 6) + 2];
+            int offset = msgpack.Length;
+            msgpack[--offset] = (byte)'x';
+            msgpack[--offset] = 0xa1;
+            int innerLength = 2;
+
+            for (int level = 0; level < levels; level++)
+            {
+                msgpack[--offset] = unchecked((byte)ThisLibraryExtensionTypeCodes.TypelessFormatter);
+                msgpack[--offset] = (byte)innerLength;
+                msgpack[--offset] = (byte)(innerLength >> 8);
+                msgpack[--offset] = (byte)(innerLength >> 16);
+                msgpack[--offset] = (byte)(innerLength >> 24);
+                msgpack[--offset] = 0xc9;
+                innerLength += 6;
+            }
+
+            return msgpack;
         }
 
         [DataContract]
@@ -399,5 +449,41 @@ namespace MessagePack.Tests
         {
             this.stream.Write(buffer, offset, count);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.stream.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+    }
+
+    [MessagePackObject(keyAsPropertyName: true)]
+    public class SkipUnknownMemberTarget
+    {
+        public int Known { get; set; }
+    }
+
+    [Union(0, typeof(DepthCheckedUnionLeaf))]
+    [Union(999, typeof(DepthCheckedUnionBranch))]
+    public interface IDepthCheckedUnionNode
+    {
+    }
+
+    [MessagePackObject]
+    public class DepthCheckedUnionLeaf : IDepthCheckedUnionNode
+    {
+        [Key(0)]
+        public int Value { get; set; }
+    }
+
+    [MessagePackObject]
+    public class DepthCheckedUnionBranch : IDepthCheckedUnionNode
+    {
+        [Key(0)]
+        public IDepthCheckedUnionNode Child { get; set; }
     }
 }

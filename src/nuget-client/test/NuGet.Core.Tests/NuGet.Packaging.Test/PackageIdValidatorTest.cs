@@ -201,5 +201,64 @@ namespace NuGet.Packaging.Test
                 () => PackageIdValidator.ValidatePackageId(packageId),
                 "Id must not exceed 100 characters.");
         }
+
+        [Theory]
+        [InlineData("Contoso.Utilities")]
+        [InlineData("My.Package-1.0")]
+        [InlineData("A")]
+        [InlineData("_internal")]
+        [InlineData("1.2.3")]
+        [InlineData("NuGet.Core")]
+        [InlineData("Microsoft.Extensions.Logging")]
+        public void IsValidPackageId_Restricted_ValidIds_ReturnsTrue(string packageId)
+        {
+            // Act
+            bool result = PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: true);
+
+            // Assert
+            Assert.True(result, $"Expected '{packageId}' to be a valid restricted package ID.");
+        }
+
+        [Theory]
+        [InlineData("Contöso.Utilities")]          // non-ASCII ö
+        [InlineData("Contoso.Ütil")]               // non-ASCII Ü
+        [InlineData("\u0421ontoso.Utilities")]      // Cyrillic С homoglyph
+        [InlineData("Paquet.Français")]             // non-ASCII ç
+        [InlineData("Paquete.Español")]             // non-ASCII ñ
+        [InlineData("パッケージ")]                   // Japanese characters
+        public void IsValidPackageId_Restricted_NonAsciiIds_ReturnsFalse(string packageId)
+        {
+            // Act
+            bool result = PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: true);
+
+            // Assert
+            Assert.False(result, $"Expected '{packageId}' to be an invalid restricted package ID.");
+        }
+
+        [Fact]
+        public void IsValidPackageId_Restricted_ExceedsMaxLength_ReturnsFalse()
+        {
+            // Arrange
+            string packageId = new string('A', 101);
+
+            // Act
+            bool result = PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: true);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void IsValidPackageId_Restricted_ExactMaxLength_ReturnsTrue()
+        {
+            // Arrange
+            string packageId = "A" + new string('b', 99);
+
+            // Act
+            bool result = PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: true);
+
+            // Assert
+            Assert.True(result);
+        }
     }
 }

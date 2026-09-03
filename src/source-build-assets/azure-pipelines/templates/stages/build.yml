@@ -14,6 +14,10 @@ stages:
       enableTelemetry: true
       isAssetlessBuild: true
       publishAssetsImmediately: true
+      # Assetless builds don't consume artifacts from the build jobs, so don't make the
+      # publish-build-assets job wait on Linux/Windows. An empty list overrides the default
+      # in eng/common/core-templates/jobs/jobs.yml, which would otherwise depend on every job.
+      publishBuildAssetsDependsOn: []
 
       jobs:
       - job: linux

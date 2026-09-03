@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 314973,
+      "barId": 318142,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "e4b369ad59dad41fa93b546b3d0cd81686cf45d4"
+      "commitSha": "0a80b038bcc0d76b2f26c7f22062942de75779e6"
     },
     {
-      "barId": 315677,
+      "barId": 321241,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "251854361046ac6c92f68d43f8b55cf777e760be"
+      "commitSha": "4316d23b3c2d5b0982c8d6b73a6c35de37b15907"
     },
     {
       "barId": 312703,
@@ -19,64 +19,64 @@
       "commitSha": "bfbfbc086f655fbf86b64d54934744d1c705a330"
     },
     {
-      "barId": 313821,
+      "barId": 319320,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "45d252d1056414e6fcf3c2c79351d853090f96da"
+      "commitSha": "a0a3894db4aba12e535e7eaaffd921345365d05d"
     },
     {
-      "barId": 311604,
+      "barId": 316255,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "87b9cb458b22091afbb55e246d7851eb623e516a"
+      "commitSha": "f8c30e60063b6e4bc74f4ca40519456eb3a88be8"
     },
     {
-      "barId": 314894,
+      "barId": 319497,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "8e5b9c338fe218d8f5638becb2a3887eae372639"
+      "commitSha": "2ed38e6a008d4610cf0884217ae5ffeb0f9cecba"
     },
     {
-      "barId": 315675,
+      "barId": 319934,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "ec063d100f6461f2a8418ba1435be24dab009b94"
+      "commitSha": "2e6136a9d4baeab42d04e7b0b327fd4a66c7f919"
     },
     {
-      "barId": 312971,
+      "barId": 320199,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "92398bdc55d3b500a085f29ef658a5c1fd6d4cd0"
+      "commitSha": "c9ecee1ea52986b31ec1035e6b42abb2cd29be29"
     },
     {
-      "barId": 315490,
+      "barId": 322024,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "bdb847abccc2c0ac59daf5c8d14025249ac07ef7"
+      "commitSha": "7192705edeb685a7594d5f6114c63f2596fadf1c"
     },
     {
-      "barId": 315758,
+      "barId": 319885,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "4ea8215937724cd480a29c30187195b5cbda7486"
+      "commitSha": "a47a64a9382828e968c3564d11f4e0afe99dc526"
     },
     {
-      "barId": 315427,
+      "barId": 321298,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "4b686816fbefeca949704f6c633c2d79d01b8151"
+      "commitSha": "047adf22011622304555036b2261d705f124594e"
     },
     {
-      "barId": 315709,
+      "barId": 320204,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "560c1cca10d974ff096cb051d45c1330420e8e6a"
+      "commitSha": "cb96af31028870b9647fab2883e8604e910be0b0"
     },
     {
-      "barId": 315772,
+      "barId": 321027,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "5409a36c7e150f380e8d9e77c1c4073d06ce1a85"
+      "commitSha": "b492b5e130450d177772b3f5388d6abecc9d3608"
     },
     {
       "barId": 313279,
@@ -85,22 +85,22 @@
       "commitSha": "69ea163b4d04fec951117d883ba353e058b95c24"
     },
     {
-      "barId": 315272,
+      "barId": 319930,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "0ce3d137f0f6f735ae2bf4952571423fbef1034b"
+      "commitSha": "447460efbdfb45fdf082fb053955a197c43f42b3"
     },
     {
-      "barId": 315042,
+      "barId": 320957,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "29839072c88397ce6e72875ef816539482765522"
+      "commitSha": "26a7a9d326ae72803df4056c4ae5381db43585b3"
     },
     {
-      "barId": 315069,
+      "barId": 319269,
       "path": "sourcelink",
       "remoteUri": "https://github.com/dotnet/sourcelink",
-      "commitSha": "e7ac2f261e3e6ef625e093883f431af7b95b2306"
+      "commitSha": "3658fb07dc9970388dd6c91c70487272c66f484a"
     },
     {
       "barId": 314825,
@@ -109,10 +109,10 @@
       "commitSha": "f4059b7987c5ff3e4699805ca9e15e69f173e4da"
     },
     {
-      "barId": 314803,
+      "barId": 320725,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "d5a7e3b67a2ccb6dc5b3b81255f3e6571c318b78"
+      "commitSha": "e683cdc0fa08b191c99cb8ab264295db837f2b6d"
     },
     {
       "barId": 313700,
@@ -121,16 +121,16 @@
       "commitSha": "6741e2e1a9386b8a2dce6a3e831a077098903ac8"
     },
     {
-      "barId": 315282,
+      "barId": 319770,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "984a3c366fba1592074326b6b6d03caa12501431"
+      "commitSha": "293bda1b964b9a56763d2e7a3deb4170c3611b82"
     },
     {
-      "barId": 314732,
+      "barId": 318441,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "4425f57bdd5513d42b20e54dcc0e3a6071797922"
+      "commitSha": "56d0b07b9211931cb02eebdc328f621b5eebdaa4"
     },
     {
       "barId": 302133,
@@ -143,12 +143,12 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "add971c7cb497d40985b48641891bf9b51423730"
+      "commitSha": "0b1e895ba4226c2fda5ee0178c9b5b1195a741aa"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
       "remoteUri": "https://github.com/aspnet/MessagePack-CSharp.git",
-      "commitSha": "9aeb12b9bdb024512ffe2e4bddfa2785dca6e39e"
+      "commitSha": "365965f0d8c13c40ff8fde25882066b90f569c7a"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",

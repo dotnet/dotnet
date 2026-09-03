@@ -63,8 +63,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ConsolePasswordProvider_DisplayFile">
-        <source>Please provide password for: {0}</source>
-        <target state="translated">Zadejte prosím heslo pro: {0}</target>
+        <source>Provide password for: {0}</source>
+        <target state="new">Provide password for: {0}</target>
         <note>0 - file that requires password</note>
       </trans-unit>
       <trans-unit id="ConsolePasswordProvider_PromptForPassword">
@@ -73,8 +73,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Credentials_ForbiddenCredentials">
-        <source>The remote server indicated that the previous request was forbidden. Please provide credentials for: {0}</source>
-        <target state="translated">Vzdálený server uvedl, že předchozí požadavek byl zakázán. Zadejte prosím přihlašovací údaje pro: {0}</target>
+        <source>The remote server indicated that the previous request was forbidden. Provide credentials for: {0}</source>
+        <target state="new">The remote server indicated that the previous request was forbidden. Provide credentials for: {0}</target>
         <note>{0} will be replaced with the URL that needs credentials.</note>
       </trans-unit>
       <trans-unit id="Credentials_Password">
@@ -83,13 +83,13 @@
         <note />
       </trans-unit>
       <trans-unit id="Credentials_ProxyCredentials">
-        <source>Please provide proxy credentials:</source>
-        <target state="translated">Zadejte prosím přihlašovací údaje proxy serveru:</target>
+        <source>Provide proxy credentials:</source>
+        <target state="new">Provide proxy credentials:</target>
         <note />
       </trans-unit>
       <trans-unit id="Credentials_RequestCredentials">
-        <source>Please provide credentials for: {0}</source>
-        <target state="translated">Zadejte prosím přihlašovací údaje pro: {0}</target>
+        <source>Provide credentials for: {0}</source>
+        <target state="new">Provide credentials for: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Credentials_UserName">
@@ -255,11 +255,11 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_ProjectJson_Deprecated_And_Removed">
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
-Please consider migrating '{0}' to `PackageReference` and using the pack targets.
+Consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">Balík project.json je v aktuální verzi NuGet zakázaný a v budoucí verzi se trvale odebere.
-Zvažte prosím migraci „{0}“ na PackageReference a použití cílů balíku.
-Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se tato funkce mohla dočasně znovu povolit.</target>
+        <target state="new">`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
+Consider migrating '{0}' to `PackageReference` and using the pack targets.
+You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -323,13 +323,13 @@ Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se
         <note>Please don't localize "DependencyVersion".</note>
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSlnx">
-        <source>This version of MSBuild not support the slnx format: '{0}'. Please use a MSBuild version greater or equal to 17.13 to use this feature.</source>
-        <target state="translated">Tato verze MSBuildu nepodporuje formát slnx: „{0}“. Pokud chcete použít tuto funkci, použijte prosím verzi MSBuildu 17.13 nebo vyšší.</target>
+        <source>This version of MSBuild not support the slnx format: '{0}'. Use a MSBuild version greater than or equal to 17.13 to use this feature.</source>
+        <target state="new">This version of MSBuild not support the slnx format: '{0}'. Use a MSBuild version greater than or equal to 17.13 to use this feature.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsBuildForSolutionFilter">
-        <source>This version of MSBuild not support Solution filter: '{0}'. Please use a MSBuild version greater or equal to 16.7 to use this feature.</source>
-        <target state="translated">Tato verze nástroje MSBuild nepodporuje filtr řešení: '{0}'. Pokud chcete použít tuto funkci, použijte prosím verzi MSBuildu větší nebo rovnu 16.7.</target>
+        <source>This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</source>
+        <target state="new">This version of MSBuild not support Solution filter: '{0}'. Use a MSBuild version greater than or equal to 16.7 to use this feature.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_UnsupportedMsbuild">
@@ -348,8 +348,8 @@ Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se
         <note />
       </trans-unit>
       <trans-unit id="FailedToLoadExtension">
-        <source>Failed to load {0}, if this extension was downloaded from the internet please make sure it got unblocked (right click, properties, unblock).</source>
-        <target state="translated">Nepovedlo se načíst {0}%1. Pokud se toto rozšíření stáhlo z internetu, ujistěte se prosím, že se odblokovalo (klikněte pravým tlačítkem, vlastnosti, odblokujte).</target>
+        <source>Failed to load {0}, if this extension was downloaded from the internet make sure it got unblocked (right click, properties, unblock).</source>
+        <target state="new">Failed to load {0}, if this extension was downloaded from the internet make sure it got unblocked (right click, properties, unblock).</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToLoadExtensionDuringMefComposition">
@@ -453,8 +453,8 @@ Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se
         <note />
       </trans-unit>
       <trans-unit id="InvalidSource">
-        <source>The specified source '{0}' is invalid. Please provide a valid source.</source>
-        <target state="translated">Zadaný zdroj {0} není platný. Zadejte prosím platný zdroj.</target>
+        <source>The specified source '{0}' is invalid. Provide a valid source.</source>
+        <target state="new">The specified source '{0}' is invalid. Provide a valid source.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListCommandNoPackages">
@@ -508,8 +508,8 @@ Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_InvalidLocalResourceName">
-        <source>An invalid local resource name was provided. Please provide one of the following values: http-cache, packages-cache, global-packages, all.</source>
-        <target state="translated">Byl zadán neplatný název místního prostředku. Zadejte jednu z následujících hodnot: http-cache, packages-cache, global-packages, all.</target>
+        <source>An invalid local resource name was provided. Provide one of the following values: http-cache, packages-cache, global-packages, all.</source>
+        <target state="new">An invalid local resource name was provided. Provide one of the following values: http-cache, packages-cache, global-packages, all.</target>
         <note />
       </trans-unit>
       <trans-unit id="LocalsCommand_LocalResourcePathNotSet">
@@ -668,8 +668,8 @@ Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se
         <note />
       </trans-unit>
       <trans-unit id="PackageCommandSpecifyInputFileError">
-        <source>Please specify a nuspec or project file to use.</source>
-        <target state="translated">Zadejte prosím soubor nuspec nebo projektu, který se má použít.</target>
+        <source>Specify a nuspec or project file to use.</source>
+        <target state="new">Specify a nuspec or project file to use.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageCommandSuccess">
@@ -703,8 +703,8 @@ Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se
         <note />
       </trans-unit>
       <trans-unit id="ProjectJsonPack_Deprecated">
-        <source>`project.json` pack is deprecated. Please consider migrating '{0}' to `PackageReference` and using the pack targets.</source>
-        <target state="translated">Balík „project.json“ je zastaralý. Zvažte prosím migraci „{0}“ na „PackageReference“ a použití cílů balíku.</target>
+        <source>`project.json` pack is deprecated. Consider migrating '{0}' to `PackageReference` and using the pack targets.</source>
+        <target state="new">`project.json` pack is deprecated. Consider migrating '{0}' to `PackageReference` and using the pack targets.</target>
         <note>Do not localize project.json and `PackageReference` 
 0 - project path (project.json file path)</note>
       </trans-unit>
@@ -714,8 +714,8 @@ Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se
         <note />
       </trans-unit>
       <trans-unit id="PushCommandNoSourceError">
-        <source>There is no default source, please specify a source.</source>
-        <target state="translated">Neexistuje žádný výchozí zdroj, zadejte ho, prosím.</target>
+        <source>There is no default source, specify a source.</source>
+        <target state="new">There is no default source, specify a source.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandTimeoutError">
@@ -734,13 +734,13 @@ Můžete nastavit proměnnou prostředí „{1}“ na hodnotu „true“, aby se
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDetermineGlobalPackagesFolder">
-        <source>'globalPackagesFolder' setting is a relative path. To determine full path, please specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</source>
-        <target state="translated">Nastavení „globalPackagesFolder“ je relativní cesta. Chcete-li určit úplnou cestu, zadejte jako parametr buď parametr -SolutionDirectory, nebo soubor řešení. Pokud chcete ignorovat nastavení „globalPackagesFolder“, zadejte -PackagesDirectory.</target>
+        <source>'globalPackagesFolder' setting is a relative path. To determine full path, specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</source>
+        <target state="new">'globalPackagesFolder' setting is a relative path. To determine full path, specify either -SolutionDirectory or a solution file as a parameter. To ignore 'globalPackagesFolder' setting, specify -PackagesDirectory.</target>
         <note>Please do not localize 'globalPackagesFolder', -SolutionDirectory or -PackagesDirectory</note>
       </trans-unit>
       <trans-unit id="RestoreCommandCannotDeterminePackagesFolder">
-        <source>Cannot determine the packages folder to restore NuGet packages. Please specify either -PackagesDirectory or -SolutionDirectory.</source>
-        <target state="translated">Nelze určit složku balíčků pro obnovení balíčků NuGet. Zadejte buď -PackagesDirectory, nebo -SolutionDirectory.</target>
+        <source>Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory.</source>
+        <target state="new">Cannot determine the packages folder to restore NuGet packages. Specify either -PackagesDirectory or -SolutionDirectory.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandFileNotFound">
@@ -963,18 +963,18 @@ Pokud chcete NuGetu ve stahování balíčků během sestavování zabránit, ot
         <note />
       </trans-unit>
       <trans-unit id="Warning_LongPath_DisabledPolicy">
-        <source>Please enbale long file path support in local group policy. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
-        <target state="translated">Povolte prosím v místních zásadách skupiny podporu dlouhých cest k souborům. Další podrobnosti najdete v https://aka.ms/nuget-long-path.</target>
+        <source>Enable long file path support in local group policy. Fore more details, refer to https://aka.ms/nuget-long-path.</source>
+        <target state="new">Enable long file path support in local group policy. Fore more details, refer to https://aka.ms/nuget-long-path.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_LongPath_UnsupportedNetFramework">
-        <source>Please install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
-        <target state="translated">Nainstalujte .NET Framework 4.6.2 nebo novější, který podporuje dlouhé cesty k souborům. Další podrobnosti najdete v https://aka.ms/nuget-long-path.</target>
+        <source>Install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, refer to https://aka.ms/nuget-long-path.</source>
+        <target state="new">Install .NET Framework 4.6.2 or above that supports long file paths. Fore more details, refer to https://aka.ms/nuget-long-path.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_LongPath_UnsupportedOS">
-        <source>Long file path is currently only supported on Windows 10. Fore more details, please refer to https://aka.ms/nuget-long-path.</source>
-        <target state="translated">Dlouhá cesta k souboru je aktuálně podporována pouze u Windows 10. Další podrobnosti najdete v https://aka.ms/nuget-long-path.</target>
+        <source>Long file path is currently only supported on Windows 10. Fore more details, refer to https://aka.ms/nuget-long-path.</source>
+        <target state="new">Long file path is currently only supported on Windows 10. Fore more details, refer to https://aka.ms/nuget-long-path.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_MsbuildPath">

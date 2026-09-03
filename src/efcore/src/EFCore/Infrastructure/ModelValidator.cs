@@ -90,6 +90,12 @@ public class ModelValidator(ModelValidatorDependencies dependencies) : IModelVal
         IEntityType entityType,
         IDiagnosticsLogger<DbLoggerCategory.Model.Validation> logger)
     {
+        if (entityType.ClrType.IsUnion())
+        {
+            throw new InvalidOperationException(
+                CoreStrings.UnionTypeNotSupported(entityType.DisplayName()));
+        }
+
         ValidateEntityClrType(entityType, logger);
         ValidateChangeTrackingStrategy(entityType, logger);
         ValidateIgnoredMembers(entityType, logger);
@@ -280,12 +286,7 @@ public class ModelValidator(ModelValidatorDependencies dependencies) : IModelVal
                 continue;
             }
 
-            ValidateComplexPropertyChainForKeyOrIndex(
-                property,
-                static (props, type, propName) => CoreStrings.IndexOnComplexCollection(props, type, propName),
-                nullableErrorFactory: null,
-                index.Properties.Format(),
-                index.DeclaringEntityType.DisplayName());
+            ValidateIndexProperty(index, property, logger);
         }
 
         if (complexProperties != null)
@@ -293,6 +294,21 @@ public class ModelValidator(ModelValidatorDependencies dependencies) : IModelVal
             ValidateIndexOnComplexProperty(index, complexProperties, logger);
         }
     }
+
+    /// <summary>
+    ///     Validates a property contained in an index.
+    /// </summary>
+    /// <param name="index">The index to validate.</param>
+    /// <param name="property">The property contained in the index.</param>
+    /// <param name="logger">The logger to use.</param>
+    protected virtual void ValidateIndexProperty(
+        IIndex index,
+        IPropertyBase property,
+        IDiagnosticsLogger<DbLoggerCategory.Model.Validation> logger)
+        => ValidateComplexPropertyChainForKeyOrIndex(
+                property,
+                propName => CoreStrings.IndexOnComplexCollection(index.Properties.Format(), index.DeclaringEntityType.DisplayName(), propName),
+                nullableErrorFactory: null);
 
     /// <summary>
     ///     Validates an index that contains a complex property.
@@ -331,19 +347,15 @@ public class ModelValidator(ModelValidatorDependencies dependencies) : IModelVal
 
             ValidateComplexPropertyChainForKeyOrIndex(
                 property,
-                static (props, type, propName) => CoreStrings.KeyOnComplexCollection(props, type, propName),
-                static (props, type, propName) => CoreStrings.KeyOnNullableComplexProperty(props, type, propName),
-                key.Properties.Format(),
-                key.DeclaringEntityType.DisplayName());
+                propName => CoreStrings.KeyOnComplexCollection(key.Properties.Format(), key.DeclaringEntityType.DisplayName(), propName),
+                propName => CoreStrings.KeyOnNullableComplexProperty(key.Properties.Format(), key.DeclaringEntityType.DisplayName(), propName));
         }
     }
 
     private static void ValidateComplexPropertyChainForKeyOrIndex(
         IPropertyBase property,
-        Func<string, string, string, string> collectionErrorFactory,
-        Func<string, string, string, string>? nullableErrorFactory,
-        string propertyListFormatted,
-        string entityTypeName)
+        Func<string, string> collectionErrorFactory,
+        Func<string, string>? nullableErrorFactory)
     {
         var typeBase = property.DeclaringType;
         while (typeBase is IComplexType complexType)
@@ -353,14 +365,14 @@ public class ModelValidator(ModelValidatorDependencies dependencies) : IModelVal
             if (complexProperty.IsCollection)
             {
                 throw new InvalidOperationException(
-                    collectionErrorFactory(propertyListFormatted, entityTypeName, complexProperty.Name));
+                    collectionErrorFactory(complexProperty.Name));
             }
 
             if (nullableErrorFactory != null
                 && complexProperty.IsNullable)
             {
                 throw new InvalidOperationException(
-                    nullableErrorFactory(propertyListFormatted, entityTypeName, complexProperty.Name));
+                    nullableErrorFactory(complexProperty.Name));
             }
 
             typeBase = complexProperty.DeclaringType;
@@ -534,8 +546,11 @@ public class ModelValidator(ModelValidatorDependencies dependencies) : IModelVal
                 continue;
             }
 
-            var targetType = Dependencies.MemberClassifier.FindCandidateNavigationPropertyType(
-                clrProperty, conventionModel, useAttributes: true, out var targetOwned);
+            // elementType is the collection element type for collection navigations and null for reference navigations.
+            var targetType = Dependencies.MemberClassifier.IsCandidateNavigationProperty(
+                    clrProperty, conventionModel, useAttributes: true, out var elementType, out var targetOwned, out _)
+                ? elementType ?? propertyType
+                : null;
             if (targetType == null
                 && clrProperty.FindSetterProperty() == null)
             {
@@ -628,6 +643,12 @@ public class ModelValidator(ModelValidatorDependencies dependencies) : IModelVal
     {
         var structuralType = complexProperty.DeclaringType;
         var targetType = complexProperty.ComplexType;
+
+        if (targetType.ClrType.IsUnion())
+        {
+            throw new InvalidOperationException(
+                CoreStrings.UnionTypeNotSupported(targetType.DisplayName()));
+        }
 
         // Issue #31243: Shadow complex properties are not supported
         if (complexProperty.IsShadowProperty())
@@ -1059,6 +1080,24 @@ public class ModelValidator(ModelValidatorDependencies dependencies) : IModelVal
             if (entityType.BaseType != null)
             {
                 throw new InvalidOperationException(CoreStrings.OwnedDerivedType(entityType.DisplayName()));
+            }
+
+            if (ownership.DeleteBehavior != DeleteBehavior.Cascade)
+            {
+                throw new InvalidOperationException(
+                    CoreStrings.OwnershipNotCascadeDelete(
+                        ownership.PrincipalEntityType.DisplayName(),
+                        ownership.DeclaringEntityType.DisplayName(),
+                        ownership.DeleteBehavior,
+                        DeleteBehavior.Cascade));
+            }
+
+            if (!ownership.IsRequired)
+            {
+                throw new InvalidOperationException(
+                    CoreStrings.OwnershipNotRequired(
+                        ownership.PrincipalEntityType.DisplayName(),
+                        ownership.DeclaringEntityType.DisplayName()));
             }
 
             foreach (var referencingFk in entityType.GetReferencingForeignKeys().Where(fk => !fk.IsOwnership

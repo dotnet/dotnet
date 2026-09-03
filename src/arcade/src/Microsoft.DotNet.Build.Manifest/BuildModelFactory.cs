@@ -211,11 +211,10 @@ namespace Microsoft.DotNet.Build.Manifest
         }
 
         /// <summary>
-        // If repoUri includes the user in the account we remove it from URIs like
-        // https://dnceng@dev.azure.com/dnceng/internal/_git/repo
-        // If the URL host is of the form "dnceng.visualstudio.com" like
-        // https://dnceng.visualstudio.com/internal/_git/repo we replace it to "dev.azure.com/dnceng"
-        // for consistency
+        /// If repoUri includes the user in the account we remove it from URIs like
+        /// https://dnceng@dev.azure.com/dnceng/internal/_git/repo.
+        /// If the URL uses the legacy "{account}.visualstudio.com" host, we replace it with
+        /// "dev.azure.com/{account}" for consistency.
         /// </summary>
         /// <param name="repoUri">The original url</param>
         /// <returns>Transformed url</returns>

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,28 +25,28 @@ namespace NuGet.Protocol
             _nuspec = package.Nuspec;
         }
 
-        public string Authors => _nuspec.GetAuthors();
+        public string? Authors => _nuspec.GetAuthors();
 
         public IEnumerable<PackageDependencyGroup> DependencySets => _nuspec.GetDependencyGroups().ToArray();
 
-        public string Description => _nuspec.GetDescription();
+        public string? Description => _nuspec.GetDescription();
 
         /// <remarks>
         /// Local package sources never provide a download count.
         /// </remarks>
         public long? DownloadCount => null;
 
-        public Uri IconUrl => GetIconUri();
+        public Uri? IconUrl => GetIconUri();
 
-        public string ReadmeFileUrl => GetReadmeUri();
+        public string? ReadmeFileUrl => GetReadmeUri();
 
         public PackageIdentity Identity => _nuspec.GetIdentity();
 
-        public Uri LicenseUrl => Convert(_nuspec.GetLicenseUrl());
+        public Uri? LicenseUrl => Convert(_nuspec.GetLicenseUrl());
 
-        private IReadOnlyList<string> _ownersList;
+        private IReadOnlyList<string>? _ownersList;
 
-        public IReadOnlyList<string> OwnersList
+        public IReadOnlyList<string>? OwnersList
         {
             get
             {
@@ -61,27 +59,27 @@ namespace NuGet.Protocol
             }
         }
 
-        public string Owners => _nuspec.GetOwners();
+        public string? Owners => _nuspec.GetOwners();
 
-        public Uri ProjectUrl => Convert(_nuspec.GetProjectUrl());
+        public Uri? ProjectUrl => Convert(_nuspec.GetProjectUrl());
 
         public DateTimeOffset? Published => _package.LastWriteTimeUtc;
 
         /// <remarks>
         /// There is no readme url for local packages. Later releases may display the readme file in a VS window.
         /// </remarks>
-        public Uri ReadmeUrl => null;
+        public Uri? ReadmeUrl => null;
 
         /// <remarks>
         /// There is no report abuse url for local packages.
         /// </remarks>
-        public Uri ReportAbuseUrl => null;
+        public Uri? ReportAbuseUrl => null;
 
-        public Uri PackageDetailsUrl => null;
+        public Uri? PackageDetailsUrl => null;
 
         public bool RequireLicenseAcceptance => _nuspec.GetRequireLicenseAcceptance();
 
-        public string Summary => !string.IsNullOrEmpty(_nuspec.GetSummary()) ? _nuspec.GetSummary() : Description;
+        public string? Summary => !string.IsNullOrEmpty(_nuspec.GetSummary()) ? _nuspec.GetSummary() : Description;
 
         public string Tags
         {
@@ -92,7 +90,7 @@ namespace NuGet.Protocol
             }
         }
 
-        public string Title => !string.IsNullOrEmpty(_nuspec.GetTitle()) ? _nuspec.GetTitle() : _nuspec.GetId();
+        public string Title => !string.IsNullOrEmpty(_nuspec.GetTitle()) ? _nuspec.GetTitle()! : _nuspec.GetId();
 
         /// <summary>
         /// Gets a function that provides <c>PackageReaderBase</c>-like objects, for reading package content
@@ -114,9 +112,9 @@ namespace NuGet.Protocol
         /// <summary>
         /// Convert a string to a URI safely. This will return null if there are errors.
         /// </summary>
-        private static Uri Convert(string uri)
+        private static Uri? Convert(string? uri)
         {
-            Uri fullUri = null;
+            Uri? fullUri = null;
 
             if (!string.IsNullOrEmpty(uri))
             {
@@ -133,13 +131,13 @@ namespace NuGet.Protocol
         /// </remarks>
         public bool PrefixReserved => false;
 
-        public LicenseMetadata LicenseMetadata => _nuspec.GetLicenseMetadata();
+        public LicenseMetadata? LicenseMetadata => _nuspec.GetLicenseMetadata();
 
         /// <inheritdoc cref="IPackageSearchMetadata.GetDeprecationMetadataAsync" />
-        public Task<PackageDeprecationMetadata> GetDeprecationMetadataAsync() => TaskResult.Null<PackageDeprecationMetadata>();
+        public Task<PackageDeprecationMetadata?> GetDeprecationMetadataAsync() => TaskResult.Null<PackageDeprecationMetadata>();
 
         /// <inheritdoc cref="IPackageSearchMetadata.Vulnerabilities" />
-        public IEnumerable<PackageVulnerabilityMetadata> Vulnerabilities => null;
+        public IEnumerable<PackageVulnerabilityMetadata>? Vulnerabilities => null;
 
         public string PackagePath => _package.Path;
 
@@ -147,7 +145,7 @@ namespace NuGet.Protocol
 
         public string LoadFileAsText(string path)
         {
-            string fileContent = null;
+            string? fileContent = null;
             try
             {
                 if (_package.GetReader() is PackageArchiveReader reader) // This will never be anything else in reality. The search resource always uses a PAR
@@ -191,16 +189,16 @@ namespace NuGet.Protocol
         /// <summary>
         /// Points to an Icon, either Embedded Icon or IconUrl
         /// </summary>
-        private Uri GetIconUri()
+        private Uri? GetIconUri()
         {
-            string embeddedIcon = _nuspec.GetIcon();
+            string? embeddedIcon = _nuspec.GetIcon();
 
             if (embeddedIcon == null)
             {
                 return Convert(_nuspec.GetIconUrl());
             }
 
-            var baseUri = Convert(_package.Path);
+            var baseUri = Convert(_package.Path)!;
 
             UriBuilder builder = new UriBuilder(baseUri)
             {
@@ -211,15 +209,15 @@ namespace NuGet.Protocol
             return builder.Uri;
         }
 
-        private string GetReadmeUri()
+        private string? GetReadmeUri()
         {
-            string embeddedReadme = _nuspec.GetReadme();
+            string? embeddedReadme = _nuspec.GetReadme();
             if (embeddedReadme == null)
             {
                 return null;
             }
 
-            var baseUri = Convert(_package.Path);
+            var baseUri = Convert(_package.Path)!;
             UriBuilder builder = new UriBuilder(baseUri)
             {
                 Fragment = embeddedReadme

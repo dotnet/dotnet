@@ -34,13 +34,13 @@ namespace Microsoft.NET.StringTools
         public static long ComputeHash64(string text) { throw null; }
         public static long ComputeHash64Fast(string text) { throw null; }
     }
+
     public partial class SpanBasedStringBuilder : System.IDisposable
     {
         public SpanBasedStringBuilder(int capacity = 4) { }
         public SpanBasedStringBuilder(string str) { }
         public int Capacity { get { throw null; } }
         public int Length { get { throw null; } }
-
         public void Append(System.ReadOnlyMemory<char> span) { }
         public void Append(string value, int startIndex, int count) { }
         public void Append(string? value) { }
@@ -56,7 +56,6 @@ namespace Microsoft.NET.StringTools
             private object _dummy;
             private int _dummyPrimitive;
             public char Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
         }
     }

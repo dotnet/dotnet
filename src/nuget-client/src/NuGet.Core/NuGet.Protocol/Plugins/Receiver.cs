@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 
 namespace NuGet.Protocol.Plugins
@@ -25,12 +23,12 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Occurs when an unrecoverable fault has been caught.
         /// </summary>
-        public event EventHandler<ProtocolErrorEventArgs> Faulted;
+        public event EventHandler<ProtocolErrorEventArgs>? Faulted;
 
         /// <summary>
         /// Occurs when a message has been received.
         /// </summary>
-        public event EventHandler<MessageEventArgs> MessageReceived;
+        public event EventHandler<MessageEventArgs>? MessageReceived;
 
         /// <summary>
         /// Closes the connection.
@@ -60,7 +58,7 @@ namespace NuGet.Protocol.Plugins
 
         protected abstract void Dispose(bool disposing);
 
-        protected void FireFaultEvent(Exception exception, Message message)
+        protected void FireFaultEvent(Exception exception, Message? message)
         {
             var ex = new ProtocolException(Strings.Plugin_ProtocolException, exception);
             var eventArgs = message == null

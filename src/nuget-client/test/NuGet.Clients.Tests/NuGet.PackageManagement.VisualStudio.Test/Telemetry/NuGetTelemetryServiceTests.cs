@@ -93,6 +93,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData(RefreshOperationSource.ProjectsChanged, RefreshOperationStatus.Failed)]
         [InlineData(RefreshOperationSource.RestartSearchCommand, RefreshOperationStatus.Success)]
         [InlineData(RefreshOperationSource.SourceSelectionChanged, RefreshOperationStatus.Success)]
+        [InlineData(RefreshOperationSource.WindowActivated, RefreshOperationStatus.Success)]
+        [InlineData(RefreshOperationSource.WindowActivated, RefreshOperationStatus.NoOp)]
         public void NuGetTelemetryService_EmitsPMUIRefreshEvent(RefreshOperationSource expectedRefreshSource, RefreshOperationStatus expectedRefreshStatus, bool expectedUiFiltering = false)
         {
             // Arrange

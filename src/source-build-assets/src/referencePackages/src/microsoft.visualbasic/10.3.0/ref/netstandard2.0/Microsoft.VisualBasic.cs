@@ -49,6 +49,7 @@ namespace Microsoft.VisualBasic
         public const string vbTab = "\t";
         public const string vbVerticalTab = "\v";
     }
+
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed partial class HideModuleNameAttribute : System.Attribute
     {
@@ -126,6 +127,7 @@ namespace Microsoft.VisualBasic.CompilerServices
         [System.CLSCompliant(false)]
         public static ushort ToUShort(string Value) { throw null; }
     }
+
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed partial class DesignerGeneratedAttribute : System.Attribute
     {
@@ -147,6 +149,7 @@ namespace Microsoft.VisualBasic.CompilerServices
         public static void LateSet(object Instance, System.Type Type, string MemberName, object[] Arguments, string[] ArgumentNames, System.Type[] TypeArguments) { }
         public static void LateSetComplex(object Instance, System.Type Type, string MemberName, object[] Arguments, string[] ArgumentNames, System.Type[] TypeArguments, bool OptimisticSet, bool RValueBase) { }
     }
+
     public sealed partial class ObjectFlowControl
     {
         internal ObjectFlowControl() { }
@@ -161,6 +164,7 @@ namespace Microsoft.VisualBasic.CompilerServices
             public static bool ForNextCheckR8(double count, double limit, double StepValue) { throw null; }
         }
     }
+
     public sealed partial class Operators
     {
         internal Operators() { }
@@ -194,6 +198,7 @@ namespace Microsoft.VisualBasic.CompilerServices
         public static object SubtractObject(object Left, object Right) { throw null; }
         public static object XorObject(object Left, object Right) { throw null; }
     }
+
     [System.AttributeUsage(System.AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
     public sealed partial class OptionCompareAttribute : System.Attribute
     {
@@ -211,6 +216,7 @@ namespace Microsoft.VisualBasic.CompilerServices
         public static void SetProjectError(System.Exception ex, int lErl) { }
         public static void SetProjectError(System.Exception ex) { }
     }
+
     [System.AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     public sealed partial class StandardModuleAttribute : System.Attribute
     {
@@ -220,6 +226,7 @@ namespace Microsoft.VisualBasic.CompilerServices
     {
         public short State;
     }
+
     public sealed partial class Utils
     {
         internal Utils() { }

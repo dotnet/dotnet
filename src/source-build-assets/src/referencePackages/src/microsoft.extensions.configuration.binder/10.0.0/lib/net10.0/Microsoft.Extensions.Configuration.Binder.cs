@@ -34,6 +34,7 @@ namespace Microsoft.Extensions.Configuration
         public bool BindNonPublicProperties { get { throw null; } set { } }
         public bool ErrorOnUnknownConfiguration { get { throw null; } set { } }
     }
+
     public static partial class ConfigurationBinder
     {
         [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Binding strongly typed objects to configuration values requires generating dynamic code at runtime, for example instantiating generic types.")]

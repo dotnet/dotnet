@@ -331,7 +331,7 @@ namespace NuGet.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is no NuGet.Config that could be used for writing settings. Please create one at the desired location and restart the client..
+        ///   Looks up a localized string similar to There is no NuGet.Config that could be used for writing settings. Create one at the desired location and restart the client..
         /// </summary>
         internal static string NoWritteableConfig {
             get {

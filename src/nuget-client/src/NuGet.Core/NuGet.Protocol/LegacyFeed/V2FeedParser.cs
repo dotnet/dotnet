@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -107,7 +105,7 @@ namespace NuGet.Protocol
         /// <summary>
         /// Get an exact package
         /// </summary>
-        public async Task<V2FeedPackageInfo> GetPackage(
+        public async Task<V2FeedPackageInfo?> GetPackage(
             PackageIdentity package,
             SourceCacheContext sourceCacheContext,
             ILogger log,
@@ -301,7 +299,7 @@ namespace NuGet.Protocol
             return await GetDownloadResultUtility.GetDownloadResultAsync(
                 _httpSource,
                 package,
-                new Uri(packageInfo.DownloadUrl),
+                new Uri(packageInfo.DownloadUrl!),
                 downloadContext,
                 globalPackagesFolder,
                 log,
@@ -311,9 +309,9 @@ namespace NuGet.Protocol
         /// <summary>
         /// Finds all entries on the page and parses them
         /// </summary>
-        private IEnumerable<V2FeedPackageInfo> ParsePage(XDocument doc, string id, MetadataReferenceCache metadataCache)
+        private IEnumerable<V2FeedPackageInfo> ParsePage(XDocument doc, string? id, MetadataReferenceCache metadataCache)
         {
-            if (doc.Root.Name == _xnameEntry)
+            if (doc.Root!.Name == _xnameEntry)
             {
                 return new List<V2FeedPackageInfo> { ParsePackage(id, doc.Root, metadataCache) };
             }
@@ -327,19 +325,19 @@ namespace NuGet.Protocol
         /// <summary>
         /// Parse an entry into a V2FeedPackageInfo
         /// </summary>
-        private V2FeedPackageInfo ParsePackage(string id, XElement element, MetadataReferenceCache metadataCache)
+        private V2FeedPackageInfo ParsePackage(string? id, XElement element, MetadataReferenceCache metadataCache)
         {
-            var properties = element.Element(_xnameProperties);
+            var properties = element.Element(_xnameProperties)!;
             var idElement = properties.Element(_xnameId);
             var titleElement = element.Element(_xnameTitle);
 
             // If 'Id' element exist, use its value as accurate package Id
             // Otherwise, use the value of 'title' if it exist
             // Use the given Id as final fallback if all elements above don't exist
-            var identityId = metadataCache.GetString(idElement?.Value ?? titleElement?.Value ?? id);
-            var versionString = properties.Element(_xnameVersion).Value;
-            var version = metadataCache.GetVersion(metadataCache.GetString(versionString));
-            var downloadUrl = metadataCache.GetString(element.Element(_xnameContent).Attribute("src").Value);
+            var identityId = metadataCache.GetString(idElement?.Value ?? titleElement?.Value ?? id)!;
+            var versionString = properties.Element(_xnameVersion)!.Value;
+            var version = metadataCache.GetVersion(metadataCache.GetString(versionString)!);
+            var downloadUrl = metadataCache.GetString(element.Element(_xnameContent)!.Attribute("src")!.Value);
 
             var title = metadataCache.GetString(titleElement?.Value);
             var summary = metadataCache.GetString(GetString(element, _xnameSummary));
@@ -358,14 +356,14 @@ namespace NuGet.Protocol
             var packageHash = metadataCache.GetString(GetString(properties, _xnamePackageHash));
             var packageHashAlgorithm = metadataCache.GetString(GetString(properties, _xnamePackageHashAlgorithm));
 
-            NuGetVersion minClientVersion = null;
+            NuGetVersion? minClientVersion = null;
 
             var minClientVersionString = GetString(properties, _xnameMinClientVersion);
             if (!string.IsNullOrEmpty(minClientVersionString))
             {
                 if (NuGetVersion.TryParse(minClientVersionString, out minClientVersion))
                 {
-                    minClientVersion = metadataCache.GetVersion(minClientVersionString);
+                    minClientVersion = metadataCache.GetVersion(minClientVersionString!);
                 }
             }
 
@@ -373,13 +371,13 @@ namespace NuGet.Protocol
             var lastEdited = GetDate(properties, _xnameLastEdited);
             var published = GetDate(properties, _xnamePublished);
 
-            IEnumerable<string> owners = null;
-            IEnumerable<string> authors = null;
+            IEnumerable<string>? owners = null;
+            IEnumerable<string>? authors = null;
 
             var authorNode = element.Element(_xnameAuthor);
             if (authorNode != null)
             {
-                authors = authorNode.Elements(_xnameName).Select(e => metadataCache.GetString(e.Value));
+                authors = authorNode.Elements(_xnameName).Select(e => metadataCache.GetString(e.Value)!);
             }
 
             return new V2FeedPackageInfo(new PackageIdentity(identityId, version), title, summary, description, authors,
@@ -391,9 +389,9 @@ namespace NuGet.Protocol
         /// <summary>
         /// Retrieve an XML <see cref="string"/> value safely
         /// </summary>
-        private static string GetString(XElement parent, XName childName)
+        private static string? GetString(XElement? parent, XName childName)
         {
-            string value = null;
+            string? value = null;
 
             if (parent != null)
             {
@@ -426,10 +424,10 @@ namespace NuGet.Protocol
 
         public async Task<V2FeedPage> QueryV2FeedAsync(
             string relativeUri,
-            string id,
+            string? id,
             int max,
             bool ignoreNotFounds,
-            SourceCacheContext sourceCacheContext,
+            SourceCacheContext? sourceCacheContext,
             ILogger log,
             CancellationToken token)
         {
@@ -447,10 +445,10 @@ namespace NuGet.Protocol
             var cacheKey = GetCacheKey(relativeUri, page);
 
             // first request
-            Task<XDocument> docRequest = LoadXmlAsync(uri, cacheKey, ignoreNotFounds, sourceCacheContext, log, token);
+            Task<XDocument?>? docRequest = LoadXmlAsync(uri, cacheKey, ignoreNotFounds, sourceCacheContext, log, token);
 
             // TODO: re-implement caching at a higher level for both v2 and v3
-            string nextUri = null;
+            string? nextUri = null;
             while (!token.IsCancellationRequested && docRequest != null)
             {
                 // TODO: Pages for a package Id are cached separately.
@@ -479,7 +477,7 @@ namespace NuGet.Protocol
                         // keep track of all uri and error out for any duplicate uri which means
                         // potential bug at server side.
 
-                        if (!uris.Add(nextUri))
+                        if (!uris.Add(nextUri!))
                         {
                             throw new FatalProtocolException(string.Format(
                                 CultureInfo.CurrentCulture,
@@ -488,7 +486,7 @@ namespace NuGet.Protocol
                         }
                         page++;
                         cacheKey = GetCacheKey(relativeUri, page);
-                        docRequest = LoadXmlAsync(nextUri, cacheKey, ignoreNotFounds, sourceCacheContext, log, token);
+                        docRequest = LoadXmlAsync(nextUri!, cacheKey, ignoreNotFounds, sourceCacheContext, log, token);
                     }
                 }
             }
@@ -517,11 +515,11 @@ namespace NuGet.Protocol
             return $"list_{relativeUri}_page{page}";
         }
 
-        internal async Task<XDocument> LoadXmlAsync(
+        internal async Task<XDocument?> LoadXmlAsync(
             string uri,
             string cacheKey,
             bool ignoreNotFounds,
-            SourceCacheContext sourceCacheContext,
+            SourceCacheContext? sourceCacheContext,
             ILogger log,
             CancellationToken token)
         {
@@ -560,7 +558,7 @@ namespace NuGet.Protocol
                             }
                             else
                             {
-                                return await LoadXmlAsync(response.Stream, token);
+                                return await LoadXmlAsync(response.Stream!, token);
                             }
                         },
                         log,
@@ -625,11 +623,11 @@ namespace NuGet.Protocol
             }
         }
 
-        internal static string GetNextUrl(XDocument doc)
+        internal static string? GetNextUrl(XDocument doc)
         {
             // Example of what this looks like in the odata feed:
             // <link rel="next" href="{nextLink}" />
-            return (from e in doc.Root.Elements(_xnameLink)
+            return (from e in doc.Root!.Elements(_xnameLink)
                     let attr = e.Attribute("rel")
                     where attr != null && string.Equals(attr.Value, "next", StringComparison.OrdinalIgnoreCase)
                     select e.Attribute("href") into nextLink
@@ -639,7 +637,7 @@ namespace NuGet.Protocol
 
         internal static async Task<XDocument> LoadXmlAsync(Stream stream, CancellationToken token)
         {
-            using var memStream = await stream.AsSeekableStreamAsync(token);
+            using var memStream = (await stream.AsSeekableStreamAsync(token))!;
             using var xmlReader = XmlReader.Create(memStream, new XmlReaderSettings()
             {
                 CloseInput = true,

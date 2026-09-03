@@ -274,6 +274,8 @@ For example the following are correct:
    string name = item.Name; // NullReferenceException if selectedItem was not ListItem
    ```
 
+1. All new files added to the project must be nullable enabled. `#nullable disable` is not allowed in new files.
+
 Many of the guidelines, wherever possible, and potentially some not listed here, are enforced by an [EditorConfig](https://editorconfig.org "EditorConfig homepage") file (`.editorconfig`) at the root of the repository.
 
 ## Prefer Immutability and Non-Null Types

@@ -211,6 +211,7 @@ fi
 
 if [[ "$ci" == true ]]; then
   pipelines_log=true
+  node_reuse=false
   if [[ "$exclude_ci_binary_log" == false ]]; then
     binary_log=true
   fi

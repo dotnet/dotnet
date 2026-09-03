@@ -26,6 +26,26 @@
 [assembly: System.Reflection.AssemblyVersionAttribute("8.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+}
+
 namespace System.Threading.Channels
 {
     public enum BoundedChannelFullMode
@@ -51,6 +71,7 @@ namespace System.Threading.Channels
         public static Channel<T> CreateUnbounded<T>() { throw null; }
         public static Channel<T> CreateUnbounded<T>(UnboundedChannelOptions options) { throw null; }
     }
+
     public partial class ChannelClosedException : InvalidOperationException
     {
         public ChannelClosedException() { }
@@ -66,19 +87,20 @@ namespace System.Threading.Channels
         public bool SingleReader { get { throw null; } set { } }
         public bool SingleWriter { get { throw null; } set { } }
     }
+
     public abstract partial class ChannelReader<T>
     {
         public virtual bool CanCount { get { throw null; } }
         public virtual bool CanPeek { get { throw null; } }
         public virtual Tasks.Task Completion { get { throw null; } }
         public virtual int Count { get { throw null; } }
-
         public virtual Collections.Generic.IAsyncEnumerable<T> ReadAllAsync(CancellationToken cancellationToken = default) { throw null; }
         public virtual Tasks.ValueTask<T> ReadAsync(CancellationToken cancellationToken = default) { throw null; }
         public virtual bool TryPeek(out T item) { throw null; }
         public abstract bool TryRead(out T item);
         public abstract Tasks.ValueTask<bool> WaitToReadAsync(CancellationToken cancellationToken = default);
     }
+
     public abstract partial class ChannelWriter<T>
     {
         public void Complete(Exception? error = null) { }
@@ -87,6 +109,7 @@ namespace System.Threading.Channels
         public abstract Tasks.ValueTask<bool> WaitToWriteAsync(CancellationToken cancellationToken = default);
         public virtual Tasks.ValueTask WriteAsync(T item, CancellationToken cancellationToken = default) { throw null; }
     }
+
     public abstract partial class Channel<T> : Channel<T, T>
     {
     }
@@ -95,10 +118,10 @@ namespace System.Threading.Channels
     {
         public ChannelReader<TRead> Reader { get { throw null; } protected set { } }
         public ChannelWriter<TWrite> Writer { get { throw null; } protected set { } }
-
         public static implicit operator ChannelReader<TRead>(Channel<TWrite, TRead> channel) { throw null; }
         public static implicit operator ChannelWriter<TWrite>(Channel<TWrite, TRead> channel) { throw null; }
     }
+
     public sealed partial class UnboundedChannelOptions : ChannelOptions
     {
     }

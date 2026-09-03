@@ -175,6 +175,76 @@ public class VSTestTask2RegressionTests
         task.TestLogEventsFromTextOutput("||||output-info||||", MessageImportance.High);
     }
 
+    [TestMethod]
+    public void LogEventsFromTextOutput_TestFailed_TildeCharsInMessage_ShouldNotBeCorrupted()
+    {
+        var task = CreateVSTestTask2();
+        var engine = (RecordingBuildEngine)task.BuildEngine;
+
+        // 5 tilde chars — the old encoding replaced ~~~~ (4 tildes) with ____
+        var tildeString = new string('~', 5);
+        task.TestLogEventsFromTextOutput($"||||test-failed||||{tildeString}||||TestFile.cs||||42", MessageImportance.High);
+
+        Assert.HasCount(1, engine.Errors);
+        Assert.Contains(tildeString, engine.Errors[0].Message ?? string.Empty);
+    }
+
+    [TestMethod]
+    public void LogEventsFromTextOutput_TestFailed_ExclamationCharsInMessage_ShouldNotBeCorrupted()
+    {
+        var task = CreateVSTestTask2();
+        var engine = (RecordingBuildEngine)task.BuildEngine;
+
+        // 4 exclamation marks — the old encoding replaced !!!! (4 bangs) with ____
+        var bangString = new string('!', 4);
+        task.TestLogEventsFromTextOutput($"||||test-failed||||{bangString}||||TestFile.cs||||42", MessageImportance.High);
+
+        Assert.HasCount(1, engine.Errors);
+        Assert.Contains(bangString, engine.Errors[0].Message ?? string.Empty);
+    }
+
+    [TestMethod]
+    public void LogEventsFromTextOutput_TestFailed_NewlinesEncodedWithPercentEscapes_ShouldBeRestored()
+    {
+        var task = CreateVSTestTask2();
+        var engine = (RecordingBuildEngine)task.BuildEngine;
+
+        // Simulate what MSBuildLogger.Escape produces: \r → %r, \n → %n
+        var messageWithNewlines = "Assert failed%r%n  at MyTest()";
+        task.TestLogEventsFromTextOutput($"||||test-failed||||{messageWithNewlines}||||TestFile.cs||||42", MessageImportance.High);
+
+        Assert.HasCount(1, engine.Errors);
+        Assert.Contains("Assert failed\r\n  at MyTest()", engine.Errors[0].Message ?? string.Empty);
+    }
+
+    [TestMethod]
+    public void LogEventsFromTextOutput_TestFailed_PipesInMessage_ShouldNotBreakParsing()
+    {
+        var task = CreateVSTestTask2();
+        var engine = (RecordingBuildEngine)task.BuildEngine;
+
+        // Pipes are escaped as %p by MSBuildLogger.Escape, so they can't break the |||| delimiter.
+        var messageWithPipes = "expected: a]%p%p%p%p[b";
+        task.TestLogEventsFromTextOutput($"||||test-failed||||{messageWithPipes}||||TestFile.cs||||42", MessageImportance.High);
+
+        Assert.HasCount(1, engine.Errors);
+        Assert.Contains("expected: a]||||[b", engine.Errors[0].Message ?? string.Empty);
+    }
+
+    [TestMethod]
+    public void LogEventsFromTextOutput_TestFailed_PercentInMessage_ShouldNotBeCorrupted()
+    {
+        var task = CreateVSTestTask2();
+        var engine = (RecordingBuildEngine)task.BuildEngine;
+
+        // %% is the escape for literal %, and %%n must decode to %n not to %+newline.
+        var messageWithPercent = "100%%%% done %%n not a newline";
+        task.TestLogEventsFromTextOutput($"||||test-failed||||{messageWithPercent}||||TestFile.cs||||42", MessageImportance.High);
+
+        Assert.HasCount(1, engine.Errors);
+        Assert.Contains("100%% done %n not a newline", engine.Errors[0].Message ?? string.Empty);
+    }
+
     private static TestableVSTestTask2 CreateVSTestTask2()
     {
         var engine = new RecordingBuildEngine();

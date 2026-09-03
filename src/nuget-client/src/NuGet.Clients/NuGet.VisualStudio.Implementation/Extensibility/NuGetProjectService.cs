@@ -155,7 +155,13 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
 
             var packageSpec = packageSpecs.Single(s => s.RestoreMetadata.ProjectStyle == ProjectModel.ProjectStyle.PackageReference || s.RestoreMetadata.ProjectStyle == ProjectModel.ProjectStyle.ProjectJson);
             var packagesPath = VSRestoreSettingsUtilities.GetPackagesPath(_settings, packageSpec);
-            FallbackPackagePathResolver pathResolver = new FallbackPackagePathResolver(packagesPath, VSRestoreSettingsUtilities.GetFallbackFolders(_settings, packageSpec));
+
+            // Resolving installed package paths tolerates a missing fallback folder, unlike restore.
+            // Filter out folders that don't exist on disk; the resolver would otherwise throw.
+            var fallbackFolders = VSRestoreSettingsUtilities.GetFallbackFolders(_settings, packageSpec)
+                .Where(Directory.Exists)
+                .ToList();
+            FallbackPackagePathResolver pathResolver = new FallbackPackagePathResolver(packagesPath, fallbackFolders);
 
             IReadOnlyCollection<PackageReference> directPackages;
             IReadOnlyCollection<PackageReference> transitivePackages;

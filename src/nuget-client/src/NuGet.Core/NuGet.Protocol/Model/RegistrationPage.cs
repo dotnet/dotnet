@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 namespace NuGet.Protocol.Model
 {
@@ -15,8 +14,11 @@ namespace NuGet.Protocol.Model
     /// </summary>
     internal class RegistrationPage
     {
+        // NULL_INC: Annotated as non-null per protocol spec (link above). JSON deserialization may leave these
+        // as null if the server sends malformed data, but existing code assumes non-null without checks.
         [JsonProperty("@id")]
-        public string Url { get; set; }
+        [JsonPropertyName("@id")]
+        public string Url { get; set; } = null!;
 
         /// <summary>
         /// This property can be null when this model is used as an item in <see cref="RegistrationIndex.Items"/> when
@@ -24,12 +26,19 @@ namespace NuGet.Protocol.Model
         /// fetch another <see cref="RegistrationPage"/> instance with the <see cref="Items"/> property filled in.
         /// </summary>
         [JsonProperty("items")]
-        public List<RegistrationLeafItem> Items { get; set; }
+        [JsonPropertyName("items")]
+        public List<RegistrationLeafItem>? Items { get; set; }
 
+        // NULL_INC: Annotated as non-null per protocol spec (link above). JSON deserialization may leave these
+        // as null if the server sends malformed data, but existing code assumes non-null without checks.
         [JsonProperty("lower")]
-        public string Lower { get; set; }
+        [JsonPropertyName("lower")]
+        public string Lower { get; set; } = null!;
 
+        // NULL_INC: Annotated as non-null per protocol spec (link above). JSON deserialization may leave these
+        // as null if the server sends malformed data, but existing code assumes non-null without checks.
         [JsonProperty("upper")]
-        public string Upper { get; set; }
+        [JsonPropertyName("upper")]
+        public string Upper { get; set; } = null!;
     }
 }

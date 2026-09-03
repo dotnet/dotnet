@@ -35,6 +35,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static Options.OptionsBuilder<TOptions> ValidateOnStart<TOptions>(this Options.OptionsBuilder<TOptions> optionsBuilder) where TOptions : class { throw null; }
     }
+
     public static partial class OptionsServiceCollectionExtensions
     {
         public static IServiceCollection AddOptions(this IServiceCollection services) { throw null; }
@@ -61,7 +62,6 @@ namespace Microsoft.Extensions.Options
         public ConfigureNamedOptions(string? name, System.Action<TOptions>? action) { }
         public System.Action<TOptions>? Action { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void Configure(TOptions options) { }
         public virtual void Configure(string? name, TOptions options) { }
     }
@@ -72,7 +72,6 @@ namespace Microsoft.Extensions.Options
         public System.Action<TOptions, TDep>? Action { get { throw null; } }
         public TDep Dependency { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void Configure(TOptions options) { }
         public virtual void Configure(string? name, TOptions options) { }
     }
@@ -84,7 +83,6 @@ namespace Microsoft.Extensions.Options
         public TDep1 Dependency1 { get { throw null; } }
         public TDep2 Dependency2 { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void Configure(TOptions options) { }
         public virtual void Configure(string? name, TOptions options) { }
     }
@@ -97,7 +95,6 @@ namespace Microsoft.Extensions.Options
         public TDep2 Dependency2 { get { throw null; } }
         public TDep3 Dependency3 { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void Configure(TOptions options) { }
         public virtual void Configure(string? name, TOptions options) { }
     }
@@ -111,7 +108,6 @@ namespace Microsoft.Extensions.Options
         public TDep3 Dependency3 { get { throw null; } }
         public TDep4 Dependency4 { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void Configure(TOptions options) { }
         public virtual void Configure(string? name, TOptions options) { }
     }
@@ -126,7 +122,6 @@ namespace Microsoft.Extensions.Options
         public TDep4 Dependency4 { get { throw null; } }
         public TDep5 Dependency5 { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void Configure(TOptions options) { }
         public virtual void Configure(string? name, TOptions options) { }
     }
@@ -135,7 +130,6 @@ namespace Microsoft.Extensions.Options
     {
         public ConfigureOptions(System.Action<TOptions>? action) { }
         public System.Action<TOptions>? Action { get { throw null; } }
-
         public virtual void Configure(TOptions options) { }
     }
 
@@ -153,7 +147,6 @@ namespace Microsoft.Extensions.Options
     public partial interface IOptionsChangeTokenSource<out TOptions>
     {
         string? Name { get; }
-
         Primitives.IChangeToken GetChangeToken();
     }
 
@@ -175,7 +168,6 @@ namespace Microsoft.Extensions.Options
     public partial interface IOptionsMonitor<out TOptions>
     {
         TOptions CurrentValue { get; }
-
         TOptions Get(string? name);
         System.IDisposable? OnChange(System.Action<TOptions, string?> listener);
     }
@@ -213,12 +205,12 @@ namespace Microsoft.Extensions.Options
         public static readonly string DefaultName;
         public static IOptions<TOptions> Create<TOptions>(TOptions options) where TOptions : class { throw null; }
     }
+
     public partial class OptionsBuilder<TOptions> where TOptions : class
     {
         public OptionsBuilder(DependencyInjection.IServiceCollection services, string? name) { }
         public string Name { get { throw null; } }
         public DependencyInjection.IServiceCollection Services { get { throw null; } }
-
         public virtual OptionsBuilder<TOptions> Configure(System.Action<TOptions> configureOptions) { throw null; }
         public virtual OptionsBuilder<TOptions> Configure<TDep>(System.Action<TOptions, TDep> configureOptions) where TDep : class { throw null; }
         public virtual OptionsBuilder<TOptions> Configure<TDep1, TDep2>(System.Action<TOptions, TDep1, TDep2> configureOptions) where TDep1 : class where TDep2 : class { throw null; }
@@ -233,17 +225,18 @@ namespace Microsoft.Extensions.Options
         public virtual OptionsBuilder<TOptions> PostConfigure<TDep1, TDep2, TDep3, TDep4, TDep5>(System.Action<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5> configureOptions) where TDep1 : class where TDep2 : class where TDep3 : class where TDep4 : class where TDep5 : class { throw null; }
         public virtual OptionsBuilder<TOptions> Validate(System.Func<TOptions, bool> validation, string failureMessage) { throw null; }
         public virtual OptionsBuilder<TOptions> Validate(System.Func<TOptions, bool> validation) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep>(System.Func<TOptions, TDep, bool> validation, string failureMessage) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep>(System.Func<TOptions, TDep, bool> validation) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2>(System.Func<TOptions, TDep1, TDep2, bool> validation, string failureMessage) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2>(System.Func<TOptions, TDep1, TDep2, bool> validation) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3>(System.Func<TOptions, TDep1, TDep2, TDep3, bool> validation, string failureMessage) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3>(System.Func<TOptions, TDep1, TDep2, TDep3, bool> validation) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3, TDep4>(System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, bool> validation, string failureMessage) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3, TDep4>(System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, bool> validation) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3, TDep4, TDep5>(System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5, bool> validation, string failureMessage) { throw null; }
-        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3, TDep4, TDep5>(System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5, bool> validation) { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep>(System.Func<TOptions, TDep, bool> validation, string failureMessage) where TDep : notnull { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep>(System.Func<TOptions, TDep, bool> validation) where TDep : notnull { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2>(System.Func<TOptions, TDep1, TDep2, bool> validation, string failureMessage) where TDep1 : notnull where TDep2 : notnull { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2>(System.Func<TOptions, TDep1, TDep2, bool> validation) where TDep1 : notnull where TDep2 : notnull { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3>(System.Func<TOptions, TDep1, TDep2, TDep3, bool> validation, string failureMessage) where TDep1 : notnull where TDep2 : notnull where TDep3 : notnull { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3>(System.Func<TOptions, TDep1, TDep2, TDep3, bool> validation) where TDep1 : notnull where TDep2 : notnull where TDep3 : notnull { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3, TDep4>(System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, bool> validation, string failureMessage) where TDep1 : notnull where TDep2 : notnull where TDep3 : notnull where TDep4 : notnull { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3, TDep4>(System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, bool> validation) where TDep1 : notnull where TDep2 : notnull where TDep3 : notnull where TDep4 : notnull { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3, TDep4, TDep5>(System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5, bool> validation, string failureMessage) where TDep1 : notnull where TDep2 : notnull where TDep3 : notnull where TDep4 : notnull where TDep5 : notnull { throw null; }
+        public virtual OptionsBuilder<TOptions> Validate<TDep1, TDep2, TDep3, TDep4, TDep5>(System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5, bool> validation) where TDep1 : notnull where TDep2 : notnull where TDep3 : notnull where TDep4 : notnull where TDep5 : notnull { throw null; }
     }
+
     public partial class OptionsCache<TOptions> : IOptionsMonitorCache<TOptions> where TOptions : class
     {
         public void Clear() { }
@@ -264,7 +257,6 @@ namespace Microsoft.Extensions.Options
     {
         public OptionsManager(IOptionsFactory<TOptions> factory) { }
         public TOptions Value { get { throw null; } }
-
         public virtual TOptions Get(string? name) { throw null; }
     }
 
@@ -272,11 +264,11 @@ namespace Microsoft.Extensions.Options
     {
         public static System.IDisposable? OnChange<TOptions>(this IOptionsMonitor<TOptions> monitor, System.Action<TOptions> listener) { throw null; }
     }
+
     public partial class OptionsMonitor<TOptions> : IOptionsMonitor<TOptions>, System.IDisposable where TOptions : class
     {
         public OptionsMonitor(IOptionsFactory<TOptions> factory, System.Collections.Generic.IEnumerable<IOptionsChangeTokenSource<TOptions>> sources, IOptionsMonitorCache<TOptions> cache) { }
         public TOptions CurrentValue { get { throw null; } }
-
         public void Dispose() { }
         public virtual TOptions Get(string? name) { throw null; }
         public System.IDisposable OnChange(System.Action<TOptions, string> listener) { throw null; }
@@ -307,7 +299,6 @@ namespace Microsoft.Extensions.Options
         public PostConfigureOptions(string? name, System.Action<TOptions>? action) { }
         public System.Action<TOptions>? Action { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public virtual void PostConfigure(string? name, TOptions options) { }
     }
 
@@ -317,7 +308,6 @@ namespace Microsoft.Extensions.Options
         public System.Action<TOptions, TDep>? Action { get { throw null; } }
         public TDep Dependency { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void PostConfigure(TOptions options) { }
         public virtual void PostConfigure(string? name, TOptions options) { }
     }
@@ -329,7 +319,6 @@ namespace Microsoft.Extensions.Options
         public TDep1 Dependency1 { get { throw null; } }
         public TDep2 Dependency2 { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void PostConfigure(TOptions options) { }
         public virtual void PostConfigure(string? name, TOptions options) { }
     }
@@ -342,7 +331,6 @@ namespace Microsoft.Extensions.Options
         public TDep2 Dependency2 { get { throw null; } }
         public TDep3 Dependency3 { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void PostConfigure(TOptions options) { }
         public virtual void PostConfigure(string? name, TOptions options) { }
     }
@@ -356,7 +344,6 @@ namespace Microsoft.Extensions.Options
         public TDep3 Dependency3 { get { throw null; } }
         public TDep4 Dependency4 { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void PostConfigure(TOptions options) { }
         public virtual void PostConfigure(string? name, TOptions options) { }
     }
@@ -371,7 +358,6 @@ namespace Microsoft.Extensions.Options
         public TDep4 Dependency4 { get { throw null; } }
         public TDep5 Dependency5 { get { throw null; } }
         public string? Name { get { throw null; } }
-
         public void PostConfigure(TOptions options) { }
         public virtual void PostConfigure(string? name, TOptions options) { }
     }
@@ -403,10 +389,10 @@ namespace Microsoft.Extensions.Options
         public System.Collections.Generic.IEnumerable<string>? Failures { get { throw null; } protected set { } }
         public bool Skipped { get { throw null; } protected set { } }
         public bool Succeeded { get { throw null; } protected set { } }
-
         public static ValidateOptionsResult Fail(System.Collections.Generic.IEnumerable<string> failures) { throw null; }
         public static ValidateOptionsResult Fail(string failureMessage) { throw null; }
     }
+
     public partial class ValidateOptionsResultBuilder
     {
         public void AddError(string error, string? propertyName = null) { }
@@ -416,13 +402,13 @@ namespace Microsoft.Extensions.Options
         public ValidateOptionsResult Build() { throw null; }
         public void Clear() { }
     }
+
     public partial class ValidateOptions<TOptions> : IValidateOptions<TOptions> where TOptions : class
     {
         public ValidateOptions(string? name, System.Func<TOptions, bool> validation, string failureMessage) { }
         public string FailureMessage { get { throw null; } }
         public string? Name { get { throw null; } }
         public System.Func<TOptions, bool> Validation { get { throw null; } }
-
         public ValidateOptionsResult Validate(string? name, TOptions options) { throw null; }
     }
 
@@ -433,7 +419,6 @@ namespace Microsoft.Extensions.Options
         public string FailureMessage { get { throw null; } }
         public string? Name { get { throw null; } }
         public System.Func<TOptions, TDep, bool> Validation { get { throw null; } }
-
         public ValidateOptionsResult Validate(string? name, TOptions options) { throw null; }
     }
 
@@ -445,7 +430,6 @@ namespace Microsoft.Extensions.Options
         public string FailureMessage { get { throw null; } }
         public string? Name { get { throw null; } }
         public System.Func<TOptions, TDep1, TDep2, bool> Validation { get { throw null; } }
-
         public ValidateOptionsResult Validate(string? name, TOptions options) { throw null; }
     }
 
@@ -458,7 +442,6 @@ namespace Microsoft.Extensions.Options
         public string FailureMessage { get { throw null; } }
         public string? Name { get { throw null; } }
         public System.Func<TOptions, TDep1, TDep2, TDep3, bool> Validation { get { throw null; } }
-
         public ValidateOptionsResult Validate(string? name, TOptions options) { throw null; }
     }
 
@@ -472,7 +455,6 @@ namespace Microsoft.Extensions.Options
         public string FailureMessage { get { throw null; } }
         public string? Name { get { throw null; } }
         public System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, bool> Validation { get { throw null; } }
-
         public ValidateOptionsResult Validate(string? name, TOptions options) { throw null; }
     }
 
@@ -487,7 +469,6 @@ namespace Microsoft.Extensions.Options
         public string FailureMessage { get { throw null; } }
         public string? Name { get { throw null; } }
         public System.Func<TOptions, TDep1, TDep2, TDep3, TDep4, TDep5, bool> Validation { get { throw null; } }
-
         public ValidateOptionsResult Validate(string? name, TOptions options) { throw null; }
     }
 }

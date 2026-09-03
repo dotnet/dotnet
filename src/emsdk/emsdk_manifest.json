@@ -42,6 +42,7 @@
     "id": "node",
     "version": "dotnet",
     "activated_path": "%installation_dir%/bin",
+    "activated_path_skip": "node",
     "activated_cfg": "NODE_JS='%installation_dir%/bin/node%.exe%'",
     "activated_env": "EMSDK_NODE=%installation_dir%/bin/node%.exe%",
     "custom_is_installed_script": "lie_and_say_yes"
@@ -50,9 +51,10 @@
     "id": "python",
     "version": "dotnet",
     "activated_cfg": "PYTHON='%installation_dir%/bin/python3%.exe%'",
-    "activated_env": "EMSDK_PYTHON=%installation_dir%/bin/python3;SSL_CERT_FILE=%installation_dir%/lib/python3.11/site-packages/certifi/cacert.pem",
+    "activated_env": "EMSDK_PYTHON=%installation_dir%/bin/python3;SSL_CERT_FILE=%installation_dir%/lib/python3.13/site-packages/certifi/cacert.pem",
     "custom_is_installed_script": "lie_and_say_yes"
   },
+
   {
     "id": "emscripten",
     "version": "dotnet",

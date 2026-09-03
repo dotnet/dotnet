@@ -24,7 +24,7 @@ internal class TestResultConverter : JsonConverter<TestResult>
         var data = doc.RootElement;
 
         var testCaseElement = data.GetProperty("TestCase");
-        var testCase = JsonSerializer.Deserialize<TestCase>(testCaseElement, options)!;
+        var testCase = StjSafe.Deserialize<TestCase>(testCaseElement, options)!;
         var testResult = new TestResult(testCase);
 
         // Add attachments for the result
@@ -34,7 +34,7 @@ internal class TestResultConverter : JsonConverter<TestResult>
             {
                 if (attachment.ValueKind != JsonValueKind.Null)
                 {
-                    testResult.Attachments.Add(JsonSerializer.Deserialize<AttachmentSet>(attachment, options)!);
+                    testResult.Attachments.Add(StjSafe.Deserialize<AttachmentSet>(attachment, options)!);
                 }
             }
         }
@@ -46,7 +46,7 @@ internal class TestResultConverter : JsonConverter<TestResult>
             {
                 if (message.ValueKind != JsonValueKind.Null)
                 {
-                    testResult.Messages.Add(JsonSerializer.Deserialize<TestResultMessage>(message, options)!);
+                    testResult.Messages.Add(StjSafe.Deserialize<TestResultMessage>(message, options)!);
                 }
             }
         }
@@ -60,7 +60,7 @@ internal class TestResultConverter : JsonConverter<TestResult>
         // key value pairs.
         foreach (var property in properties.EnumerateArray())
         {
-            var testProperty = JsonSerializer.Deserialize<TestProperty>(property.GetProperty("Key"), options)!;
+            var testProperty = StjSafe.Deserialize<TestProperty>(property.GetProperty("Key"), options)!;
 
             // Let the null values be passed in as null data
             var token = property.GetProperty("Value");
@@ -115,11 +115,11 @@ internal class TestResultConverter : JsonConverter<TestResult>
         // P2 to P1
         writer.WriteStartObject();
         writer.WritePropertyName("TestCase");
-        JsonSerializer.Serialize(writer, value.TestCase, options);
+        StjSafe.Serialize(writer, value.TestCase, options);
         writer.WritePropertyName("Attachments");
-        JsonSerializer.Serialize(writer, value.Attachments, options);
+        StjSafe.Serialize(writer, value.Attachments, options);
         writer.WritePropertyName("Messages");
-        JsonSerializer.Serialize(writer, value.Messages, options);
+        StjSafe.Serialize(writer, value.Messages, options);
 
         writer.WritePropertyName("Properties");
         writer.WriteStartArray();
@@ -178,7 +178,7 @@ internal class TestResultConverter : JsonConverter<TestResult>
 
         foreach (var property in value.GetProperties())
         {
-            JsonSerializer.Serialize(writer, property, options);
+            StjSafe.Serialize(writer, property, options);
         }
 
         writer.WriteEndArray();
@@ -188,7 +188,7 @@ internal class TestResultConverter : JsonConverter<TestResult>
     private static void WriteProperty(Utf8JsonWriter writer, TestProperty property, JsonSerializerOptions options)
     {
         writer.WritePropertyName("Key");
-        JsonSerializer.Serialize(writer, property, options);
+        StjSafe.Serialize(writer, property, options);
         writer.WritePropertyName("Value");
     }
 }

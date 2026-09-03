@@ -41,7 +41,8 @@ namespace Microsoft.DotNet.SwaggerGenerator.Languages
             var file = new FileInfo(path);
             using (StreamReader reader = file.OpenText())
             {
-                    return hb.Compile(reader);
+                var compiled = hb.Compile(reader);
+                return (writer, context) => compiled(writer, context);
             }
         }
     }

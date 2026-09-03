@@ -45,7 +45,6 @@ namespace System.ComponentModel.DataAnnotations
         public string OtherProperty { get { throw null; } }
         public string OtherPropertyDisplayName { get { throw null; } }
         public override bool RequiresValidationContext { get { throw null; } }
-
         public override string FormatErrorMessage(string name) { throw null; }
         protected override ValidationResult IsValid(object value, ValidationContext validationContext) { throw null; }
     }
@@ -68,7 +67,6 @@ namespace System.ComponentModel.DataAnnotations
         public CustomValidationAttribute(Type validatorType, string method) { }
         public string Method { get { throw null; } }
         public Type ValidatorType { get { throw null; } }
-
         public override string FormatErrorMessage(string name) { throw null; }
         protected override ValidationResult IsValid(object value, ValidationContext validationContext) { throw null; }
     }
@@ -102,7 +100,6 @@ namespace System.ComponentModel.DataAnnotations
         public string CustomDataType { get { throw null; } }
         public DataType DataType { get { throw null; } }
         public DisplayFormatAttribute DisplayFormat { get { throw null; } protected set { } }
-
         public virtual string GetDataTypeName() { throw null; }
         public override bool IsValid(object value) { throw null; }
     }
@@ -119,7 +116,6 @@ namespace System.ComponentModel.DataAnnotations
         public string Prompt { get { throw null; } set { } }
         public Type ResourceType { get { throw null; } set { } }
         public string ShortName { get { throw null; } set { } }
-
         public bool? GetAutoGenerateField() { throw null; }
         public bool? GetAutoGenerateFilter() { throw null; }
         public string GetDescription() { throw null; }
@@ -150,7 +146,6 @@ namespace System.ComponentModel.DataAnnotations
         public bool HtmlEncode { get { throw null; } set { } }
         public string NullDisplayText { get { throw null; } set { } }
         public Type NullDisplayTextResourceType { get { throw null; } set { } }
-
         public string GetNullDisplayText() { throw null; }
     }
 
@@ -174,7 +169,6 @@ namespace System.ComponentModel.DataAnnotations
     {
         public EnumDataTypeAttribute(Type enumType) : base(default(DataType)) { }
         public Type EnumType { get { throw null; } }
-
         public override bool IsValid(object value) { throw null; }
     }
 
@@ -183,7 +177,6 @@ namespace System.ComponentModel.DataAnnotations
     {
         public FileExtensionsAttribute() : base(default(DataType)) { }
         public string Extensions { get { throw null; } set { } }
-
         public override string FormatErrorMessage(string name) { throw null; }
         public override bool IsValid(object value) { throw null; }
     }
@@ -198,7 +191,6 @@ namespace System.ComponentModel.DataAnnotations
         public Collections.Generic.IDictionary<string, object> ControlParameters { get { throw null; } }
         public string FilterUIHint { get { throw null; } }
         public string PresentationLayer { get { throw null; } }
-
         public override bool Equals(object obj) { throw null; }
         public override int GetHashCode() { throw null; }
     }
@@ -219,7 +211,6 @@ namespace System.ComponentModel.DataAnnotations
         public MaxLengthAttribute() { }
         public MaxLengthAttribute(int length) { }
         public int Length { get { throw null; } }
-
         public override string FormatErrorMessage(string name) { throw null; }
         public override bool IsValid(object value) { throw null; }
     }
@@ -229,7 +220,6 @@ namespace System.ComponentModel.DataAnnotations
     {
         public MinLengthAttribute(int length) { }
         public int Length { get { throw null; } }
-
         public override string FormatErrorMessage(string name) { throw null; }
         public override bool IsValid(object value) { throw null; }
     }
@@ -252,7 +242,6 @@ namespace System.ComponentModel.DataAnnotations
         public object Minimum { get { throw null; } }
         public Type OperandType { get { throw null; } }
         public bool ParseLimitsInInvariantCulture { get { throw null; } set { } }
-
         public override string FormatErrorMessage(string name) { throw null; }
         public override bool IsValid(object value) { throw null; }
     }
@@ -263,7 +252,6 @@ namespace System.ComponentModel.DataAnnotations
         public RegularExpressionAttribute(string pattern) { }
         public int MatchTimeoutInMilliseconds { get { throw null; } set { } }
         public string Pattern { get { throw null; } }
-
         public override string FormatErrorMessage(string name) { throw null; }
         public override bool IsValid(object value) { throw null; }
     }
@@ -272,7 +260,6 @@ namespace System.ComponentModel.DataAnnotations
     public partial class RequiredAttribute : ValidationAttribute
     {
         public bool AllowEmptyStrings { get { throw null; } set { } }
-
         public override bool IsValid(object value) { throw null; }
     }
 
@@ -289,7 +276,6 @@ namespace System.ComponentModel.DataAnnotations
         public StringLengthAttribute(int maximumLength) { }
         public int MaximumLength { get { throw null; } }
         public int MinimumLength { get { throw null; } set { } }
-
         public override string FormatErrorMessage(string name) { throw null; }
         public override bool IsValid(object value) { throw null; }
     }
@@ -308,7 +294,6 @@ namespace System.ComponentModel.DataAnnotations
         public Collections.Generic.IDictionary<string, object> ControlParameters { get { throw null; } }
         public string PresentationLayer { get { throw null; } }
         public string UIHint { get { throw null; } }
-
         public override bool Equals(object obj) { throw null; }
         public override int GetHashCode() { throw null; }
     }
@@ -330,7 +315,6 @@ namespace System.ComponentModel.DataAnnotations
         public Type ErrorMessageResourceType { get { throw null; } set { } }
         protected string ErrorMessageString { get { throw null; } }
         public virtual bool RequiresValidationContext { get { throw null; } }
-
         public virtual string FormatErrorMessage(string name) { throw null; }
         public ValidationResult GetValidationResult(object value, ValidationContext validationContext) { throw null; }
         protected virtual ValidationResult IsValid(object value, ValidationContext validationContext) { throw null; }
@@ -349,7 +333,6 @@ namespace System.ComponentModel.DataAnnotations
         public string MemberName { get { throw null; } set { } }
         public object ObjectInstance { get { throw null; } }
         public Type ObjectType { get { throw null; } }
-
         public object GetService(Type serviceType) { throw null; }
         public void InitializeServiceProvider(Func<Type, object> serviceProvider) { }
     }
@@ -375,9 +358,9 @@ namespace System.ComponentModel.DataAnnotations
         public ValidationResult(string errorMessage) { }
         public string ErrorMessage { get { throw null; } set { } }
         public Collections.Generic.IEnumerable<string> MemberNames { get { throw null; } }
-
         public override string ToString() { throw null; }
     }
+
     public static partial class Validator
     {
         public static bool TryValidateObject(object instance, ValidationContext validationContext, Collections.Generic.ICollection<ValidationResult> validationResults, bool validateAllProperties) { throw null; }

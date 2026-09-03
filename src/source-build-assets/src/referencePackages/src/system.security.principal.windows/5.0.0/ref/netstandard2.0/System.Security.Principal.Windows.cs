@@ -31,8 +31,80 @@ namespace Microsoft.Win32.SafeHandles
         public SafeAccessTokenHandle(System.IntPtr handle) : base(default, default) { }
         public static SafeAccessTokenHandle InvalidHandle { get { throw null; } }
         public override bool IsInvalid { get { throw null; } }
-
         protected override bool ReleaseHandle() { throw null; }
+    }
+}
+
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
     }
 }
 
@@ -44,7 +116,6 @@ namespace System.Security.Principal
         public IdentityNotMappedException(string? message, Exception? inner) { }
         public IdentityNotMappedException(string? message) { }
         public IdentityReferenceCollection UnmappedIdentities { get { throw null; } }
-
         public override void GetObjectData(Runtime.Serialization.SerializationInfo serializationInfo, Runtime.Serialization.StreamingContext streamingContext) { }
     }
 
@@ -52,7 +123,6 @@ namespace System.Security.Principal
     {
         internal IdentityReference() { }
         public abstract string Value { get; }
-
         public abstract override bool Equals(object? o);
         public abstract override int GetHashCode();
         public abstract bool IsValidTargetType(Type targetType);
@@ -61,16 +131,14 @@ namespace System.Security.Principal
         public abstract override string ToString();
         public abstract IdentityReference Translate(Type targetType);
     }
+
     public partial class IdentityReferenceCollection : Collections.Generic.ICollection<IdentityReference>, Collections.Generic.IEnumerable<IdentityReference>, Collections.IEnumerable
     {
         public IdentityReferenceCollection() { }
         public IdentityReferenceCollection(int capacity) { }
         public int Count { get { throw null; } }
-
         public IdentityReference this[int index] { get { throw null; } set { } }
-
         bool Collections.Generic.ICollection<IdentityReference>.IsReadOnly { get { throw null; } }
-
         public void Add(IdentityReference identity) { }
         public void Clear() { }
         public bool Contains(IdentityReference identity) { throw null; }
@@ -87,7 +155,6 @@ namespace System.Security.Principal
         public NTAccount(string domainName, string accountName) { }
         public NTAccount(string name) { }
         public override string Value { get { throw null; } }
-
         public override bool Equals(object? o) { throw null; }
         public override int GetHashCode() { throw null; }
         public override bool IsValidTargetType(Type targetType) { throw null; }
@@ -108,7 +175,6 @@ namespace System.Security.Principal
         public SecurityIdentifier? AccountDomainSid { get { throw null; } }
         public int BinaryLength { get { throw null; } }
         public override string Value { get { throw null; } }
-
         public int CompareTo(SecurityIdentifier? sid) { throw null; }
         public override bool Equals(object? o) { throw null; }
         public bool Equals(SecurityIdentifier sid) { throw null; }
@@ -288,7 +354,6 @@ namespace System.Security.Principal
         public virtual IntPtr Token { get { throw null; } }
         public SecurityIdentifier? User { get { throw null; } }
         public virtual Collections.Generic.IEnumerable<Claims.Claim> UserClaims { get { throw null; } }
-
         public override Claims.ClaimsIdentity Clone() { throw null; }
         public void Dispose() { }
         protected virtual void Dispose(bool disposing) { }
@@ -310,7 +375,6 @@ namespace System.Security.Principal
         public virtual Collections.Generic.IEnumerable<Claims.Claim> DeviceClaims { get { throw null; } }
         public override IIdentity Identity { get { throw null; } }
         public virtual Collections.Generic.IEnumerable<Claims.Claim> UserClaims { get { throw null; } }
-
         public virtual bool IsInRole(int rid) { throw null; }
         public virtual bool IsInRole(SecurityIdentifier sid) { throw null; }
         public virtual bool IsInRole(WindowsBuiltInRole role) { throw null; }

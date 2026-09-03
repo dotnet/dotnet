@@ -23,6 +23,10 @@ parameters:
   displayName: Optional verbosity to use when running tests.
   type: string
   default: 'minimal'
+- name: useDotNetBuild
+  displayName: Use dotnet build instead of MSBuild on Windows.
+  type: boolean
+  default: false
 
 jobs:
 - job:
@@ -70,7 +74,7 @@ jobs:
     - script: env | sort -f
       displayName: Log Environment Variables
 
-  - ${{ if eq(parameters.osName, 'Windows') }}:
+  - ${{ if and(eq(parameters.osName, 'Windows'), not(parameters.useDotNetBuild)) }}:
     - task: MSBuild@1
       displayName: Restore and Build $(TestType) Test Projects
       inputs:

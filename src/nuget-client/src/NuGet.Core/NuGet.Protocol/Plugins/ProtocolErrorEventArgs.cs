@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 
 namespace NuGet.Protocol.Plugins
@@ -20,7 +18,7 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Gets the message.
         /// </summary>
-        public Message Message { get; }
+        public Message? Message { get; }
 
         /// <summary>
         /// Instantiates a new <see cref="ProtocolErrorEventArgs" /> class.

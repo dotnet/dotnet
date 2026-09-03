@@ -23,6 +23,7 @@
   <ItemGroup>
     <FrameworkListFileClass Condition="'$(PlatformTarget)' != 'ARM64'" Include="D3DCompiler_47_cor3.dll" Profile="WPF" />
     <FrameworkListFileClass Include="DirectWriteForwarder.dll" Profile="WPF" />
+    <FrameworkListFileClass Include="ijwhost.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PenImc_cor3.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationCore.resources.dll" Profile="WPF" />
     <FrameworkListFileClass Include="PresentationFramework.Fluent.dll" Profile="WPF" />

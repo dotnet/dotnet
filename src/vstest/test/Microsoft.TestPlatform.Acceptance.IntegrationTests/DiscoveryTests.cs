@@ -18,7 +18,6 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class DiscoveryTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
     [NetCoreTargetFrameworkDataSource]
     public void DiscoverAllTests(RunnerInfo runnerInfo)
     {
@@ -32,7 +31,6 @@ public class DiscoveryTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true, useVsixRunner: true)]
     [NetCoreTargetFrameworkDataSource]
     [TestCategory("Smoke")]
     public void MultipleSourcesDiscoverAllTests(RunnerInfo runnerInfo)
@@ -55,8 +53,7 @@ public class DiscoveryTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
+    [NetCoreTargetFrameworkDataSource]
     public void DiscoverFullyQualifiedTests(RunnerInfo runnerInfo)
     {
         var dummyFilePath = Path.Combine(TempDirectory.Path, $"{Guid.NewGuid()}.txt");
@@ -74,7 +71,6 @@ public class DiscoveryTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void DiscoverTestsShouldShowProperWarningIfNoTestsOnTestCaseFilter(RunnerInfo runnerInfo)
     {
@@ -119,8 +115,7 @@ public class DiscoveryTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Windows-Review")]
-    [NetFullTargetFrameworkDataSource(inIsolation: true, inProcess: true)]
+    [NetCoreTargetFrameworkDataSource]
     public void DiscoverTestsShouldSucceedWhenAtLeastOneDllFindsRuntimeProvider(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);

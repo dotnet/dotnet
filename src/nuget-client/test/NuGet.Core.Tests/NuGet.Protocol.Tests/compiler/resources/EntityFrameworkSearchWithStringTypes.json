@@ -3,7 +3,7 @@
         "@vocab": "http://schema.nuget.org/schema#",
         "@base": "https://api.nuget.org/v3/registration5-gz-semver2/"
     },
-    "totalHits": 5385,
+    "totalHits": "5385",
     "data": [
         {
             "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/index.json",
@@ -20,8 +20,9 @@
             "tags": "Microsoft, EntityFramework, EF, Database, Data, O/RM, ADO.NET",
             "authors": "Microsoft",
             "owners": "aspnet, EntityFramework, Microsoft",
-            "totalDownloads": 248620082,
-            "verified": true,
+            "totalDownloads": "248620082",
+            "verified": "true",
+            "listed": "true",
             "packageTypes": [
                 {
                     "name": "Dependency"
@@ -30,7 +31,7 @@
             "versions": [
                 {
                     "version": "4.1.10331",
-                    "downloads": 1267747,
+                    "downloads": "1267747",
                     "@id": "https://api.nuget.org/v3/registration5-gz-semver2/entityframework/4.1.10331.json"
                 },
                 {

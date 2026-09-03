@@ -427,8 +427,8 @@ BOOL CordbStackWalk::UnwindStackFrame()
     IfFailThrow(pDAC->UnwindStackWalkFrame(m_pSFIHandle, &retVal));
 
     // Now that we have unwound, make sure we update the CONTEXT buffer to reflect the current stack frame.
-    // This call is safe regardless of whether the unwind is successful or not.
-    IfFailThrow(pDAC->GetStackWalkCurrentContext(m_pSFIHandle, &m_context));
+    if (retVal)
+        IfFailThrow(pDAC->GetStackWalkCurrentContext(m_pSFIHandle, &m_context));
 
     return retVal;
 } // CordbStackWalk::UnwindStackWalkFrame
@@ -916,7 +916,7 @@ HRESULT CordbAsyncStackWalk::PopulateFrame()
             &state));
 
         // Skip continuations with null DiagnosticIP. These are infrastructure
-        // continuations (e.g. ValueTaskContinuation) that have no user code
+        // continuations (e.g. RuntimeAsyncTaskContinuation) that have no user code
         // associated with them and cannot be represented as a debug frame.
         if (diagnosticIP == 0)
         {

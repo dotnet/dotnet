@@ -15,11 +15,11 @@ This design will be detailed through the following sections:
 	3. Choosing appropriate TestHost
 
 ### RunTime Provider Contract
-A Test RunTime provider will implement [ITestRunTimeProvider](./src/Microsoft.TestPlatform.ObjectModel/Host/ITestRunTimeProvider.cs#L18)
+A Test RunTime provider will implement [ITestRunTimeProvider](../../src/Microsoft.TestPlatform.ObjectModel/Host/ITestRunTimeProvider.cs#L18)
 
 ITestRunTimeProvider provides set of API's needed for any Test RunTime provider to be able to deploy, & launch the Test RunTime.
 
-Interface [ITestHostLauncher](./src/Microsoft.TestPlatform.ObjectModel/Client/Interfaces/ITestHostLauncher.cs) provides an Extension point for IDE's to start TestHost process themselves. For example, in case of debugging/profiling test, the VS IDE would need to launch the TestHost itself.
+Interface [ITestHostLauncher](../../src/Microsoft.TestPlatform.ObjectModel/Client/Interfaces/ITestHostLauncher.cs) provides an Extension point for IDE's to start TestHost process themselves. For example, in case of debugging/profiling test, the VS IDE would need to launch the TestHost itself.
 The interfaces would be part of Object Model.
 
 ### Discovering TestHost

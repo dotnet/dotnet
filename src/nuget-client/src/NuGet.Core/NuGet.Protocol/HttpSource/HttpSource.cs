@@ -450,7 +450,9 @@ namespace NuGet.Protocol
                 throw new ArgumentNullException(nameof(throttle));
             }
 
-            Func<Task<HttpHandlerResource>> factory = () => source.GetResourceAsync<HttpHandlerResource>(CancellationToken.None);
+            Func<Task<HttpHandlerResource>> factory = async () =>
+                await source.GetResourceAsync<HttpHandlerResource>(CancellationToken.None)
+                ?? throw new InvalidOperationException($"The source '{source.PackageSource.Source}' does not provide {nameof(HttpHandlerResource)}.");
 
             return new HttpSource(source.PackageSource, factory, throttle);
         }

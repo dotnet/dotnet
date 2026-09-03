@@ -29,6 +29,9 @@ safe-outputs:
     side: "RIGHT"
   submit-pull-request-review:
     max: 1
+    # Bots must never approve PRs in this repo — only human maintainers can.
+    # The agent may still leave a COMMENT review or REQUEST_CHANGES, but APPROVE is disallowed.
+    allowed-events: [COMMENT, REQUEST_CHANGES]
   messages:
     footer: "> 🧠 *Reviewed by [{workflow_name}]({run_url})*"
     run-started: "🔎 [{workflow_name}]({run_url}) is analyzing this PR for correctness, performance, and safety issues..."
@@ -180,10 +183,12 @@ After the review, update:
 
 ## Decision Framework
 
-The `@expert-reviewer` agent determines the review verdict (APPROVE / COMMENT / REQUEST_CHANGES) based on its dimension analysis. This workflow defers to the agent's decision framework for all code findings.
+The `@expert-reviewer` agent determines the review verdict (COMMENT / REQUEST_CHANGES) based on its dimension analysis. This workflow defers to the agent's decision framework for all code findings.
+
+**APPROVE is not available to this workflow.** Only human maintainers approve PRs in this repo. When the agent would otherwise have approved (no issues found), submit a `COMMENT`-state review summarizing what was checked and what looked clean — leave the approval decision to the maintainer. The safe-output layer enforces this via `allowed-events: [COMMENT, REQUEST_CHANGES]`, so emitting `APPROVE` will be rejected.
 
 This workflow adds one workflow-level override:
-- If the PR description is materially misleading about the change's scope or intent, escalate from APPROVE to COMMENT regardless of code findings.
+- If the PR description is materially misleading about the change's scope or intent, that description issue by itself must result in a `COMMENT`, not `REQUEST_CHANGES`. However, if `@expert-reviewer` identifies code findings that independently warrant `REQUEST_CHANGES`, the review should still be `REQUEST_CHANGES`, and the misleading PR description should be mentioned in the review body.
 
 ## Edge Cases
 

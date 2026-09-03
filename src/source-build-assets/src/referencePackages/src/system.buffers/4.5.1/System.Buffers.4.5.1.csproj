@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>System.Buffers</PackageId>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netstandard2.0</TargetFrameworks>
     <PackageVersion>4.5.1</PackageVersion>
     <AssemblyName>System.Buffers</AssemblyName>
     <BuildOutputTargetFolder>ref</BuildOutputTargetFolder>
@@ -19,6 +19,7 @@ When using NuGet 3.x this package requires at least version 3.4.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
     <MinClientVersion>2.12</MinClientVersion>
+    <PlaceholderTargetFrameworks>netcoreapp2.0</PlaceholderTargetFrameworks>
   </PropertyGroup>
 
 </Project>

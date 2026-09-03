@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Configuration;
@@ -30,6 +28,16 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         public SourceRepositoryProvider(IPackageSourceProvider packageSourceProvider, IEnumerable<Lazy<INuGetResourceProvider>> resourceProviders)
         {
+            if (packageSourceProvider == null)
+            {
+                throw new ArgumentNullException(nameof(packageSourceProvider));
+            }
+
+            if (resourceProviders == null)
+            {
+                throw new ArgumentNullException(nameof(resourceProviders));
+            }
+
             _packageSourceProvider = packageSourceProvider;
             _resourceProviders = resourceProviders;
             _repositories = new List<SourceRepository>();

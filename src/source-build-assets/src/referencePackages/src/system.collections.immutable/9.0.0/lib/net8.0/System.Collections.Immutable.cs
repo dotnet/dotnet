@@ -31,50 +31,34 @@ namespace System.Collections.Frozen
 {
     public static partial class FrozenDictionary
     {
-        public static FrozenDictionary<TKey, TSource> ToFrozenDictionary<TSource, TKey>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Generic.IEqualityComparer<TKey>? comparer = null) { throw null; }
-        public static FrozenDictionary<TKey, TValue> ToFrozenDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IEqualityComparer<TKey>? comparer = null) { throw null; }
-        public static FrozenDictionary<TKey, TElement> ToFrozenDictionary<TSource, TKey, TElement>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Generic.IEqualityComparer<TKey>? comparer = null) { throw null; }
+        public static FrozenDictionary<TKey, TSource> ToFrozenDictionary<TSource, TKey>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Generic.IEqualityComparer<TKey>? comparer = null) where TKey : notnull { throw null; }
+        public static FrozenDictionary<TKey, TValue> ToFrozenDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IEqualityComparer<TKey>? comparer = null) where TKey : notnull { throw null; }
+        public static FrozenDictionary<TKey, TElement> ToFrozenDictionary<TSource, TKey, TElement>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Generic.IEqualityComparer<TKey>? comparer = null) where TKey : notnull { throw null; }
     }
-    public abstract partial class FrozenDictionary<TKey, TValue> : Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection
+
+    public abstract partial class FrozenDictionary<TKey, TValue> : Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection where TKey : notnull
     {
         internal FrozenDictionary() { }
         public Generic.IEqualityComparer<TKey> Comparer { get { throw null; } }
         public int Count { get { throw null; } }
         public static FrozenDictionary<TKey, TValue> Empty { get { throw null; } }
-
         public ref readonly TValue this[TKey key] { get { throw null; } }
-
         public Immutable.ImmutableArray<TKey> Keys { get { throw null; } }
-
         bool Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.IsReadOnly { get { throw null; } }
-
         TValue Generic.IDictionary<TKey, TValue>.this[TKey key] { get { throw null; } set { } }
-
         Generic.ICollection<TKey> Generic.IDictionary<TKey, TValue>.Keys { get { throw null; } }
-
         Generic.ICollection<TValue> Generic.IDictionary<TKey, TValue>.Values { get { throw null; } }
-
         TValue Generic.IReadOnlyDictionary<TKey, TValue>.this[TKey key] { get { throw null; } }
-
         Generic.IEnumerable<TKey> Generic.IReadOnlyDictionary<TKey, TValue>.Keys { get { throw null; } }
-
         Generic.IEnumerable<TValue> Generic.IReadOnlyDictionary<TKey, TValue>.Values { get { throw null; } }
-
         bool ICollection.IsSynchronized { get { throw null; } }
-
         object ICollection.SyncRoot { get { throw null; } }
-
         bool IDictionary.IsFixedSize { get { throw null; } }
-
         bool IDictionary.IsReadOnly { get { throw null; } }
-
         object? IDictionary.this[object key] { get { throw null; } set { } }
-
         ICollection IDictionary.Keys { get { throw null; } }
-
         ICollection IDictionary.Values { get { throw null; } }
         public Immutable.ImmutableArray<TValue> Values { get { throw null; } }
-
         public bool ContainsKey(TKey key) { throw null; }
         public void CopyTo(Generic.KeyValuePair<TKey, TValue>[] destination, int destinationIndex) { }
         public void CopyTo(Span<Generic.KeyValuePair<TKey, TValue>> destination) { }
@@ -100,9 +84,7 @@ namespace System.Collections.Frozen
             private object _dummy;
             private int _dummyPrimitive;
             public Generic.KeyValuePair<TKey, TValue> Current { get { throw null; } }
-
             object IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -115,6 +97,7 @@ namespace System.Collections.Frozen
         public static FrozenSet<T> Create<T>(params scoped ReadOnlySpan<T> source) { throw null; }
         public static FrozenSet<T> ToFrozenSet<T>(this Generic.IEnumerable<T> source, Generic.IEqualityComparer<T>? comparer = null) { throw null; }
     }
+
     [Runtime.CompilerServices.CollectionBuilder(typeof(FrozenSet), "Create")]
     public abstract partial class FrozenSet<T> : Generic.ISet<T>, Generic.ICollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlySet<T>, Generic.IReadOnlyCollection<T>, ICollection
     {
@@ -123,13 +106,9 @@ namespace System.Collections.Frozen
         public int Count { get { throw null; } }
         public static FrozenSet<T> Empty { get { throw null; } }
         public Immutable.ImmutableArray<T> Items { get { throw null; } }
-
         bool Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-
         bool ICollection.IsSynchronized { get { throw null; } }
-
         object ICollection.SyncRoot { get { throw null; } }
-
         public bool Contains(T item) { throw null; }
         public void CopyTo(T[] destination, int destinationIndex) { }
         public void CopyTo(Span<T> destination) { }
@@ -157,9 +136,7 @@ namespace System.Collections.Frozen
             private object _dummy;
             private int _dummyPrimitive;
             public T Current { get { throw null; } }
-
             object IEnumerator.Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
             void IEnumerator.Reset() { }
             void IDisposable.Dispose() { }
@@ -205,7 +182,6 @@ namespace System.Collections.Immutable
     public partial interface IImmutableQueue<T> : Generic.IEnumerable<T>, IEnumerable
     {
         bool IsEmpty { get; }
-
         IImmutableQueue<T> Clear();
         IImmutableQueue<T> Dequeue();
         IImmutableQueue<T> Enqueue(T value);
@@ -236,7 +212,6 @@ namespace System.Collections.Immutable
     public partial interface IImmutableStack<T> : Generic.IEnumerable<T>, IEnumerable
     {
         bool IsEmpty { get; }
-
         IImmutableStack<T> Clear();
         T Peek();
         IImmutableStack<T> Pop();
@@ -271,6 +246,7 @@ namespace System.Collections.Immutable
         public static ImmutableArray<T> ToImmutableArray<T>(this ReadOnlySpan<T> items) { throw null; }
         public static ImmutableArray<T> ToImmutableArray<T>(this Span<T> items) { throw null; }
     }
+
     [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableArray), "Create")]
     public readonly partial struct ImmutableArray<T> : Generic.IReadOnlyList<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlyCollection<T>, Generic.IList<T>, Generic.ICollection<T>, IEquatable<ImmutableArray<T>>, IList, ICollection, IStructuralComparable, IStructuralEquatable, IImmutableList<T>
     {
@@ -280,33 +256,19 @@ namespace System.Collections.Immutable
         public bool IsDefault { get { throw null; } }
         public bool IsDefaultOrEmpty { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
-
         public T this[int index] { get { throw null; } }
-
         public int Length { get { throw null; } }
-
         int Generic.ICollection<T>.Count { get { throw null; } }
-
         bool Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-
         T Generic.IList<T>.this[int index] { get { throw null; } set { } }
-
         int Generic.IReadOnlyCollection<T>.Count { get { throw null; } }
-
         T Generic.IReadOnlyList<T>.this[int index] { get { throw null; } }
-
         int ICollection.Count { get { throw null; } }
-
         bool ICollection.IsSynchronized { get { throw null; } }
-
         object ICollection.SyncRoot { get { throw null; } }
-
         bool IList.IsFixedSize { get { throw null; } }
-
         bool IList.IsReadOnly { get { throw null; } }
-
         object? IList.this[int index] { get { throw null; } set { } }
-
         public readonly ImmutableArray<T> Add(T item) { throw null; }
         public readonly ImmutableArray<T> AddRange(T[] items, int length) { throw null; }
         public readonly ImmutableArray<T> AddRange(params T[] items) { throw null; }
@@ -409,11 +371,8 @@ namespace System.Collections.Immutable
             internal Builder() { }
             public int Capacity { get { throw null; } set { } }
             public int Count { get { throw null; } set { } }
-
             public T this[int index] { get { throw null; } set { } }
-
             bool Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-
             public void Add(T item) { }
             public void AddRange(T[] items, int length) { }
             public void AddRange(params T[] items) { }
@@ -473,71 +432,57 @@ namespace System.Collections.Immutable
             private object _dummy;
             private int _dummyPrimitive;
             public T Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
         }
     }
 
     public static partial class ImmutableDictionary
     {
-        public static bool Contains<TKey, TValue>(this IImmutableDictionary<TKey, TValue> map, TKey key, TValue value) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> Create<TKey, TValue>() { throw null; }
-        public static ImmutableDictionary<TKey, TValue> Create<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> Create<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer) { throw null; }
-        public static ImmutableDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>() { throw null; }
-        public static ImmutableDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) { throw null; }
-        public static ImmutableDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { throw null; }
-        public static TValue GetValueOrDefault<TKey, TValue>(this IImmutableDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue) { throw null; }
-        public static TValue? GetValueOrDefault<TKey, TValue>(this IImmutableDictionary<TKey, TValue> dictionary, TKey key) { throw null; }
-        public static ImmutableDictionary<TKey, TSource> ToImmutableDictionary<TSource, TKey>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Generic.IEqualityComparer<TKey>? keyComparer) { throw null; }
-        public static ImmutableDictionary<TKey, TSource> ToImmutableDictionary<TSource, TKey>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IEqualityComparer<TKey>? keyComparer) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TKey, TValue>(this ImmutableDictionary<TKey, TValue>.Builder builder) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector, Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector, Generic.IEqualityComparer<TKey>? keyComparer) { throw null; }
-        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector) { throw null; }
+        public static bool Contains<TKey, TValue>(this IImmutableDictionary<TKey, TValue> map, TKey key, TValue value) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> Create<TKey, TValue>() where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> Create<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> Create<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>() where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) where TKey : notnull { throw null; }
+        public static TValue GetValueOrDefault<TKey, TValue>(this IImmutableDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue) where TKey : notnull { throw null; }
+        public static TValue? GetValueOrDefault<TKey, TValue>(this IImmutableDictionary<TKey, TValue> dictionary, TKey key) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TSource> ToImmutableDictionary<TSource, TKey>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Generic.IEqualityComparer<TKey>? keyComparer) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TSource> ToImmutableDictionary<TSource, TKey>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IEqualityComparer<TKey>? keyComparer) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TKey, TValue>(this ImmutableDictionary<TKey, TValue>.Builder builder) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector, Generic.IEqualityComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector, Generic.IEqualityComparer<TKey>? keyComparer) where TKey : notnull { throw null; }
+        public static ImmutableDictionary<TKey, TValue> ToImmutableDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector) where TKey : notnull { throw null; }
     }
-    public sealed partial class ImmutableDictionary<TKey, TValue> : IImmutableDictionary<TKey, TValue>, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection
+
+    public sealed partial class ImmutableDictionary<TKey, TValue> : IImmutableDictionary<TKey, TValue>, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection where TKey : notnull
     {
         internal ImmutableDictionary() { }
         public static readonly ImmutableDictionary<TKey, TValue> Empty;
         public int Count { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
-
         public TValue this[TKey key] { get { throw null; } }
-
         public Generic.IEqualityComparer<TKey> KeyComparer { get { throw null; } }
         public Generic.IEnumerable<TKey> Keys { get { throw null; } }
-
         bool Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.IsReadOnly { get { throw null; } }
-
         TValue Generic.IDictionary<TKey, TValue>.this[TKey key] { get { throw null; } set { } }
-
         Generic.ICollection<TKey> Generic.IDictionary<TKey, TValue>.Keys { get { throw null; } }
-
         Generic.ICollection<TValue> Generic.IDictionary<TKey, TValue>.Values { get { throw null; } }
-
         bool ICollection.IsSynchronized { get { throw null; } }
-
         object ICollection.SyncRoot { get { throw null; } }
-
         bool IDictionary.IsFixedSize { get { throw null; } }
-
         bool IDictionary.IsReadOnly { get { throw null; } }
-
         object? IDictionary.this[object key] { get { throw null; } set { } }
-
         ICollection IDictionary.Keys { get { throw null; } }
-
         ICollection IDictionary.Values { get { throw null; } }
         public Generic.IEqualityComparer<TValue> ValueComparer { get { throw null; } }
         public Generic.IEnumerable<TValue> Values { get { throw null; } }
-
         public ImmutableDictionary<TKey, TValue> Add(TKey key, TValue value) { throw null; }
         public ImmutableDictionary<TKey, TValue> AddRange(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> pairs) { throw null; }
         public ImmutableDictionary<TKey, TValue> Clear() { throw null; }
@@ -579,34 +524,21 @@ namespace System.Collections.Immutable
         {
             internal Builder() { }
             public int Count { get { throw null; } }
-
             public TValue this[TKey key] { get { throw null; } set { } }
-
             public Generic.IEqualityComparer<TKey> KeyComparer { get { throw null; } set { } }
             public Generic.IEnumerable<TKey> Keys { get { throw null; } }
-
             bool Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.IsReadOnly { get { throw null; } }
-
             Generic.ICollection<TKey> Generic.IDictionary<TKey, TValue>.Keys { get { throw null; } }
-
             Generic.ICollection<TValue> Generic.IDictionary<TKey, TValue>.Values { get { throw null; } }
-
             bool ICollection.IsSynchronized { get { throw null; } }
-
             object ICollection.SyncRoot { get { throw null; } }
-
             bool IDictionary.IsFixedSize { get { throw null; } }
-
             bool IDictionary.IsReadOnly { get { throw null; } }
-
             object? IDictionary.this[object key] { get { throw null; } set { } }
-
             ICollection IDictionary.Keys { get { throw null; } }
-
             ICollection IDictionary.Values { get { throw null; } }
             public Generic.IEqualityComparer<TValue> ValueComparer { get { throw null; } set { } }
             public Generic.IEnumerable<TValue> Values { get { throw null; } }
-
             public void Add(TKey key, TValue value) { }
             public void Add(Generic.KeyValuePair<TKey, TValue> item) { }
             public void AddRange(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { }
@@ -638,9 +570,7 @@ namespace System.Collections.Immutable
             private object _dummy;
             private int _dummyPrimitive;
             public Generic.KeyValuePair<TKey, TValue> Current { get { throw null; } }
-
             object IEnumerator.Current { get { throw null; } }
-
             public void Dispose() { }
             public bool MoveNext() { throw null; }
             public void Reset() { }
@@ -665,6 +595,7 @@ namespace System.Collections.Immutable
         public static ImmutableHashSet<TSource> ToImmutableHashSet<TSource>(this Generic.IEnumerable<TSource> source) { throw null; }
         public static ImmutableHashSet<TSource> ToImmutableHashSet<TSource>(this ImmutableHashSet<TSource>.Builder builder) { throw null; }
     }
+
     [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableHashSet), "Create")]
     public sealed partial class ImmutableHashSet<T> : IImmutableSet<T>, Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.ICollection<T>, Generic.ISet<T>, ICollection, Generic.IReadOnlySet<T>
     {
@@ -673,13 +604,9 @@ namespace System.Collections.Immutable
         public int Count { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
         public Generic.IEqualityComparer<T> KeyComparer { get { throw null; } }
-
         bool Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-
         bool ICollection.IsSynchronized { get { throw null; } }
-
         object ICollection.SyncRoot { get { throw null; } }
-
         public ImmutableHashSet<T> Add(T item) { throw null; }
         public ImmutableHashSet<T> Clear() { throw null; }
         public bool Contains(T item) { throw null; }
@@ -722,9 +649,7 @@ namespace System.Collections.Immutable
             internal Builder() { }
             public int Count { get { throw null; } }
             public Generic.IEqualityComparer<T> KeyComparer { get { throw null; } set { } }
-
             bool Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-
             public bool Add(T item) { throw null; }
             public void Clear() { }
             public bool Contains(T item) { throw null; }
@@ -753,9 +678,7 @@ namespace System.Collections.Immutable
             private object _dummy;
             private int _dummyPrimitive;
             public T Current { get { throw null; } }
-
             object? IEnumerator.Current { get { throw null; } }
-
             public void Dispose() { }
             public bool MoveNext() { throw null; }
             public void Reset() { }
@@ -764,26 +687,27 @@ namespace System.Collections.Immutable
 
     public static partial class ImmutableInterlocked
     {
-        public static TValue AddOrUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory) { throw null; }
-        public static TValue AddOrUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory) { throw null; }
+        public static TValue AddOrUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory) where TKey : notnull { throw null; }
+        public static TValue AddOrUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory) where TKey : notnull { throw null; }
         public static void Enqueue<T>(ref ImmutableQueue<T> location, T value) { }
-        public static TValue GetOrAdd<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, TValue value) { throw null; }
-        public static TValue GetOrAdd<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, Func<TKey, TValue> valueFactory) { throw null; }
-        public static TValue GetOrAdd<TKey, TValue, TArg>(ref ImmutableDictionary<TKey, TValue> location, TKey key, Func<TKey, TArg, TValue> valueFactory, TArg factoryArgument) { throw null; }
+        public static TValue GetOrAdd<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, TValue value) where TKey : notnull { throw null; }
+        public static TValue GetOrAdd<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, Func<TKey, TValue> valueFactory) where TKey : notnull { throw null; }
+        public static TValue GetOrAdd<TKey, TValue, TArg>(ref ImmutableDictionary<TKey, TValue> location, TKey key, Func<TKey, TArg, TValue> valueFactory, TArg factoryArgument) where TKey : notnull { throw null; }
         public static ImmutableArray<T> InterlockedCompareExchange<T>(ref ImmutableArray<T> location, ImmutableArray<T> value, ImmutableArray<T> comparand) { throw null; }
         public static ImmutableArray<T> InterlockedExchange<T>(ref ImmutableArray<T> location, ImmutableArray<T> value) { throw null; }
         public static bool InterlockedInitialize<T>(ref ImmutableArray<T> location, ImmutableArray<T> value) { throw null; }
         public static void Push<T>(ref ImmutableStack<T> location, T value) { }
-        public static bool TryAdd<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, TValue value) { throw null; }
+        public static bool TryAdd<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, TValue value) where TKey : notnull { throw null; }
         public static bool TryDequeue<T>(ref ImmutableQueue<T> location, out T value) { throw null; }
         public static bool TryPop<T>(ref ImmutableStack<T> location, out T value) { throw null; }
-        public static bool TryRemove<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, out TValue value) { throw null; }
-        public static bool TryUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, TValue newValue, TValue comparisonValue) { throw null; }
+        public static bool TryRemove<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, out TValue value) where TKey : notnull { throw null; }
+        public static bool TryUpdate<TKey, TValue>(ref ImmutableDictionary<TKey, TValue> location, TKey key, TValue newValue, TValue comparisonValue) where TKey : notnull { throw null; }
         public static bool Update<T>(ref T location, Func<T, T> transformer) where T : class { throw null; }
         public static bool Update<T>(ref ImmutableArray<T> location, Func<ImmutableArray<T>, ImmutableArray<T>> transformer) { throw null; }
         public static bool Update<T, TArg>(ref T location, Func<T, TArg, T> transformer, TArg transformerArgument) where T : class { throw null; }
         public static bool Update<T, TArg>(ref ImmutableArray<T> location, Func<ImmutableArray<T>, TArg, ImmutableArray<T>> transformer, TArg transformerArgument) { throw null; }
     }
+
     public static partial class ImmutableList
     {
         public static ImmutableList<T> Create<T>() { throw null; }
@@ -806,6 +730,7 @@ namespace System.Collections.Immutable
         public static ImmutableList<TSource> ToImmutableList<TSource>(this Generic.IEnumerable<TSource> source) { throw null; }
         public static ImmutableList<TSource> ToImmutableList<TSource>(this ImmutableList<TSource>.Builder builder) { throw null; }
     }
+
     [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableList), "Create")]
     public sealed partial class ImmutableList<T> : IImmutableList<T>, Generic.IReadOnlyList<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlyCollection<T>, Generic.IList<T>, Generic.ICollection<T>, IList, ICollection
     {
@@ -813,23 +738,14 @@ namespace System.Collections.Immutable
         public static readonly ImmutableList<T> Empty;
         public int Count { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
-
         public T this[int index] { get { throw null; } }
-
         bool Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-
         T Generic.IList<T>.this[int index] { get { throw null; } set { } }
-
         bool ICollection.IsSynchronized { get { throw null; } }
-
         object ICollection.SyncRoot { get { throw null; } }
-
         bool IList.IsFixedSize { get { throw null; } }
-
         bool IList.IsReadOnly { get { throw null; } }
-
         object? IList.this[int index] { get { throw null; } set { } }
-
         public ImmutableList<T> Add(T value) { throw null; }
         public ImmutableList<T> AddRange(Generic.IEnumerable<T> items) { throw null; }
         public int BinarySearch(T item, Generic.IComparer<T>? comparer) { throw null; }
@@ -909,21 +825,13 @@ namespace System.Collections.Immutable
         {
             internal Builder() { }
             public int Count { get { throw null; } }
-
             public T this[int index] { get { throw null; } set { } }
-
             bool Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-
             bool ICollection.IsSynchronized { get { throw null; } }
-
             object ICollection.SyncRoot { get { throw null; } }
-
             bool IList.IsFixedSize { get { throw null; } }
-
             bool IList.IsReadOnly { get { throw null; } }
-
             object? IList.this[int index] { get { throw null; } set { } }
-
             public void Add(T item) { }
             public void AddRange(Generic.IEnumerable<T> items) { }
             public int BinarySearch(T item, Generic.IComparer<T>? comparer) { throw null; }
@@ -992,9 +900,7 @@ namespace System.Collections.Immutable
             private object _dummy;
             private int _dummyPrimitive;
             public T Current { get { throw null; } }
-
             object? IEnumerator.Current { get { throw null; } }
-
             public void Dispose() { }
             public bool MoveNext() { throw null; }
             public void Reset() { }
@@ -1010,13 +916,13 @@ namespace System.Collections.Immutable
         public static ImmutableQueue<T> CreateRange<T>(Generic.IEnumerable<T> items) { throw null; }
         public static IImmutableQueue<T> Dequeue<T>(this IImmutableQueue<T> queue, out T value) { throw null; }
     }
+
     [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableQueue), "Create")]
     public sealed partial class ImmutableQueue<T> : IImmutableQueue<T>, Generic.IEnumerable<T>, IEnumerable
     {
         internal ImmutableQueue() { }
         public static ImmutableQueue<T> Empty { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
-
         public ImmutableQueue<T> Clear() { throw null; }
         public ImmutableQueue<T> Dequeue() { throw null; }
         public ImmutableQueue<T> Dequeue(out T value) { throw null; }
@@ -1037,66 +943,52 @@ namespace System.Collections.Immutable
             private object _dummy;
             private int _dummyPrimitive;
             public T Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
         }
     }
 
     public static partial class ImmutableSortedDictionary
     {
-        public static ImmutableSortedDictionary<TKey, TValue> Create<TKey, TValue>() { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> Create<TKey, TValue>(Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> Create<TKey, TValue>(Generic.IComparer<TKey>? keyComparer) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>() { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>(Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>(Generic.IComparer<TKey>? keyComparer) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IComparer<TKey>? keyComparer, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IComparer<TKey>? keyComparer) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TKey, TValue>(this ImmutableSortedDictionary<TKey, TValue>.Builder builder) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector, Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector, Generic.IComparer<TKey>? keyComparer) { throw null; }
-        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector) { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> Create<TKey, TValue>() where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> Create<TKey, TValue>(Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> Create<TKey, TValue>(Generic.IComparer<TKey>? keyComparer) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>() where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>(Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue>.Builder CreateBuilder<TKey, TValue>(Generic.IComparer<TKey>? keyComparer) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IComparer<TKey>? keyComparer, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> CreateRange<TKey, TValue>(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source, Generic.IComparer<TKey>? keyComparer) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TKey, TValue>(this Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> source) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TKey, TValue>(this ImmutableSortedDictionary<TKey, TValue>.Builder builder) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector, Generic.IComparer<TKey>? keyComparer, Generic.IEqualityComparer<TValue>? valueComparer) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector, Generic.IComparer<TKey>? keyComparer) where TKey : notnull { throw null; }
+        public static ImmutableSortedDictionary<TKey, TValue> ToImmutableSortedDictionary<TSource, TKey, TValue>(this Generic.IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> elementSelector) where TKey : notnull { throw null; }
     }
-    public sealed partial class ImmutableSortedDictionary<TKey, TValue> : IImmutableDictionary<TKey, TValue>, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection
+
+    public sealed partial class ImmutableSortedDictionary<TKey, TValue> : IImmutableDictionary<TKey, TValue>, Generic.IReadOnlyDictionary<TKey, TValue>, Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>>, IEnumerable, Generic.IReadOnlyCollection<Generic.KeyValuePair<TKey, TValue>>, Generic.IDictionary<TKey, TValue>, Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>, IDictionary, ICollection where TKey : notnull
     {
         internal ImmutableSortedDictionary() { }
         public static readonly ImmutableSortedDictionary<TKey, TValue> Empty;
         public int Count { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
-
         public TValue this[TKey key] { get { throw null; } }
-
         public Generic.IComparer<TKey> KeyComparer { get { throw null; } }
         public Generic.IEnumerable<TKey> Keys { get { throw null; } }
-
         bool Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.IsReadOnly { get { throw null; } }
-
         TValue Generic.IDictionary<TKey, TValue>.this[TKey key] { get { throw null; } set { } }
-
         Generic.ICollection<TKey> Generic.IDictionary<TKey, TValue>.Keys { get { throw null; } }
-
         Generic.ICollection<TValue> Generic.IDictionary<TKey, TValue>.Values { get { throw null; } }
-
         bool ICollection.IsSynchronized { get { throw null; } }
-
         object ICollection.SyncRoot { get { throw null; } }
-
         bool IDictionary.IsFixedSize { get { throw null; } }
-
         bool IDictionary.IsReadOnly { get { throw null; } }
-
         object? IDictionary.this[object key] { get { throw null; } set { } }
-
         ICollection IDictionary.Keys { get { throw null; } }
-
         ICollection IDictionary.Values { get { throw null; } }
         public Generic.IEqualityComparer<TValue> ValueComparer { get { throw null; } }
         public Generic.IEnumerable<TValue> Values { get { throw null; } }
-
         public ImmutableSortedDictionary<TKey, TValue> Add(TKey key, TValue value) { throw null; }
         public ImmutableSortedDictionary<TKey, TValue> AddRange(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { throw null; }
         public ImmutableSortedDictionary<TKey, TValue> Clear() { throw null; }
@@ -1139,34 +1031,21 @@ namespace System.Collections.Immutable
         {
             internal Builder() { }
             public int Count { get { throw null; } }
-
             public TValue this[TKey key] { get { throw null; } set { } }
-
             public Generic.IComparer<TKey> KeyComparer { get { throw null; } set { } }
             public Generic.IEnumerable<TKey> Keys { get { throw null; } }
-
             bool Generic.ICollection<Generic.KeyValuePair<TKey, TValue>>.IsReadOnly { get { throw null; } }
-
             Generic.ICollection<TKey> Generic.IDictionary<TKey, TValue>.Keys { get { throw null; } }
-
             Generic.ICollection<TValue> Generic.IDictionary<TKey, TValue>.Values { get { throw null; } }
-
             bool ICollection.IsSynchronized { get { throw null; } }
-
             object ICollection.SyncRoot { get { throw null; } }
-
             bool IDictionary.IsFixedSize { get { throw null; } }
-
             bool IDictionary.IsReadOnly { get { throw null; } }
-
             object? IDictionary.this[object key] { get { throw null; } set { } }
-
             ICollection IDictionary.Keys { get { throw null; } }
-
             ICollection IDictionary.Values { get { throw null; } }
             public Generic.IEqualityComparer<TValue> ValueComparer { get { throw null; } set { } }
             public Generic.IEnumerable<TValue> Values { get { throw null; } }
-
             public void Add(TKey key, TValue value) { }
             public void Add(Generic.KeyValuePair<TKey, TValue> item) { }
             public void AddRange(Generic.IEnumerable<Generic.KeyValuePair<TKey, TValue>> items) { }
@@ -1199,9 +1078,7 @@ namespace System.Collections.Immutable
             private object _dummy;
             private int _dummyPrimitive;
             public Generic.KeyValuePair<TKey, TValue> Current { get { throw null; } }
-
             object IEnumerator.Current { get { throw null; } }
-
             public void Dispose() { }
             public bool MoveNext() { throw null; }
             public void Reset() { }
@@ -1226,6 +1103,7 @@ namespace System.Collections.Immutable
         public static ImmutableSortedSet<TSource> ToImmutableSortedSet<TSource>(this Generic.IEnumerable<TSource> source) { throw null; }
         public static ImmutableSortedSet<TSource> ToImmutableSortedSet<TSource>(this ImmutableSortedSet<TSource>.Builder builder) { throw null; }
     }
+
     [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableSortedSet), "Create")]
     public sealed partial class ImmutableSortedSet<T> : IImmutableSet<T>, Generic.IReadOnlyCollection<T>, Generic.IEnumerable<T>, IEnumerable, Generic.IReadOnlySet<T>, Generic.IReadOnlyList<T>, Generic.IList<T>, Generic.ICollection<T>, Generic.ISet<T>, IList, ICollection
     {
@@ -1233,27 +1111,17 @@ namespace System.Collections.Immutable
         public static readonly ImmutableSortedSet<T> Empty;
         public int Count { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
-
         public T this[int index] { get { throw null; } }
-
         public Generic.IComparer<T> KeyComparer { get { throw null; } }
         public T? Max { get { throw null; } }
         public T? Min { get { throw null; } }
-
         bool Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-
         T Generic.IList<T>.this[int index] { get { throw null; } set { } }
-
         bool ICollection.IsSynchronized { get { throw null; } }
-
         object ICollection.SyncRoot { get { throw null; } }
-
         bool IList.IsFixedSize { get { throw null; } }
-
         bool IList.IsReadOnly { get { throw null; } }
-
         object? IList.this[int index] { get { throw null; } set { } }
-
         public ImmutableSortedSet<T> Add(T value) { throw null; }
         public ImmutableSortedSet<T> Clear() { throw null; }
         public bool Contains(T value) { throw null; }
@@ -1307,19 +1175,13 @@ namespace System.Collections.Immutable
         {
             internal Builder() { }
             public int Count { get { throw null; } }
-
             public T this[int index] { get { throw null; } }
-
             public Generic.IComparer<T> KeyComparer { get { throw null; } set { } }
             public T? Max { get { throw null; } }
             public T? Min { get { throw null; } }
-
             bool Generic.ICollection<T>.IsReadOnly { get { throw null; } }
-
             bool ICollection.IsSynchronized { get { throw null; } }
-
             object ICollection.SyncRoot { get { throw null; } }
-
             public bool Add(T item) { throw null; }
             public void Clear() { }
             public bool Contains(T item) { throw null; }
@@ -1352,9 +1214,7 @@ namespace System.Collections.Immutable
             private object _dummy;
             private int _dummyPrimitive;
             public T Current { get { throw null; } }
-
             object? IEnumerator.Current { get { throw null; } }
-
             public void Dispose() { }
             public bool MoveNext() { throw null; }
             public void Reset() { }
@@ -1370,13 +1230,13 @@ namespace System.Collections.Immutable
         public static ImmutableStack<T> CreateRange<T>(Generic.IEnumerable<T> items) { throw null; }
         public static IImmutableStack<T> Pop<T>(this IImmutableStack<T> stack, out T value) { throw null; }
     }
+
     [Runtime.CompilerServices.CollectionBuilder(typeof(ImmutableStack), "Create")]
     public sealed partial class ImmutableStack<T> : IImmutableStack<T>, Generic.IEnumerable<T>, IEnumerable
     {
         internal ImmutableStack() { }
         public static ImmutableStack<T> Empty { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
-
         public ImmutableStack<T> Clear() { throw null; }
         public Enumerator GetEnumerator() { throw null; }
         public T Peek() { throw null; }
@@ -1396,7 +1256,6 @@ namespace System.Collections.Immutable
             private object _dummy;
             private int _dummyPrimitive;
             public T Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
         }
     }
@@ -1437,10 +1296,10 @@ namespace System.Linq
         public static T? SingleOrDefault<T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, bool> predicate) { throw null; }
         public static T? SingleOrDefault<T>(this Collections.Immutable.ImmutableArray<T> immutableArray) { throw null; }
         public static T[] ToArray<T>(this Collections.Immutable.ImmutableArray<T> immutableArray) { throw null; }
-        public static Collections.Generic.Dictionary<TKey, T> ToDictionary<TKey, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector, Collections.Generic.IEqualityComparer<TKey>? comparer) { throw null; }
-        public static Collections.Generic.Dictionary<TKey, T> ToDictionary<TKey, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector) { throw null; }
-        public static Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TKey, TElement, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector, Func<T, TElement> elementSelector, Collections.Generic.IEqualityComparer<TKey>? comparer) { throw null; }
-        public static Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TKey, TElement, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector, Func<T, TElement> elementSelector) { throw null; }
+        public static Collections.Generic.Dictionary<TKey, T> ToDictionary<TKey, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector, Collections.Generic.IEqualityComparer<TKey>? comparer) where TKey : notnull { throw null; }
+        public static Collections.Generic.Dictionary<TKey, T> ToDictionary<TKey, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector) where TKey : notnull { throw null; }
+        public static Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TKey, TElement, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector, Func<T, TElement> elementSelector, Collections.Generic.IEqualityComparer<TKey>? comparer) where TKey : notnull { throw null; }
+        public static Collections.Generic.Dictionary<TKey, TElement> ToDictionary<TKey, TElement, T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, TKey> keySelector, Func<T, TElement> elementSelector) where TKey : notnull { throw null; }
         public static Collections.Generic.IEnumerable<T> Where<T>(this Collections.Immutable.ImmutableArray<T> immutableArray, Func<T, bool> predicate) { throw null; }
     }
 }

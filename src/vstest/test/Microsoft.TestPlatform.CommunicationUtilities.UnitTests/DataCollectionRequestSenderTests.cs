@@ -124,7 +124,7 @@ public class DataCollectionRequestSenderTests
         _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage)).Returns(new Message() { MessageType = MessageType.BeforeTestRunStartResult });
         _requestSender.SendBeforeTestRunStartAndGetResult(string.Empty, testSources, true, null);
 
-        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.BeforeTestRunStart, It.Is<BeforeTestRunStartPayload>(p => p.SettingsXml == string.Empty && p.IsTelemetryOptedIn)));
+        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.BeforeTestRunStart, It.Is<BeforeTestRunStartPayload>(p => p.SettingsXml == string.Empty && p.IsTelemetryOptedIn), ProtocolVersioning.HighestSupportedVersion));
     }
 
     [TestMethod]
@@ -140,7 +140,7 @@ public class DataCollectionRequestSenderTests
         _requestSender.SendBeforeTestRunStartAndGetResult(string.Empty, testSources, true, handlerMock.Object);
 
         handlerMock.Verify(x => x.HandleRawMessage(rawMessage1));
-        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.BeforeTestRunStart, It.Is<BeforeTestRunStartPayload>(p => p.SettingsXml == string.Empty && p.IsTelemetryOptedIn)));
+        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.BeforeTestRunStart, It.Is<BeforeTestRunStartPayload>(p => p.SettingsXml == string.Empty && p.IsTelemetryOptedIn), ProtocolVersioning.HighestSupportedVersion));
     }
 
     [TestMethod]
@@ -154,6 +154,6 @@ public class DataCollectionRequestSenderTests
         _mockDataSerializer.Setup(x => x.DeserializeMessage(rawMessage2)).Returns(new Message() { MessageType = MessageType.BeforeTestRunStartResult });
         _requestSender.SendBeforeTestRunStartAndGetResult(string.Empty, testSources, true, null);
 
-        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.BeforeTestRunStart, It.Is<BeforeTestRunStartPayload>(p => p.SettingsXml == string.Empty && p.IsTelemetryOptedIn)));
+        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.BeforeTestRunStart, It.Is<BeforeTestRunStartPayload>(p => p.SettingsXml == string.Empty && p.IsTelemetryOptedIn), ProtocolVersioning.HighestSupportedVersion));
     }
 }

@@ -148,6 +148,12 @@ namespace Microsoft.DotNet.Helix.Sdk
         /// </summary>
         public int MaxRetryCount { get; set; }
 
+        /// <summary>
+        /// When true, the preview Helix queue health summary (estimated wait, depth, snapshot
+        /// time) is logged after job submission. Off by default.
+        /// </summary>
+        public bool EnableShowHelixQueueStats { get; set; }
+
         private CommandPayload _commandPayload;
 
         protected override async Task ExecuteCore(CancellationToken cancellationToken)
@@ -176,6 +182,10 @@ namespace Microsoft.DotNet.Helix.Sdk
                     .WithType(Type)
                     .WithTargetQueue(TargetQueue)
                     .WithMaxRetryCount(MaxRetryCount);
+                if (EnableShowHelixQueueStats)
+                {
+                    def = def.WithQueueStats();
+                }
                 Log.LogMessage($"Initialized job definition with type '{Type}', and target queue '{TargetQueue}'");
 
                 if (!string.IsNullOrEmpty(Creator))
@@ -234,11 +244,14 @@ namespace Microsoft.DotNet.Helix.Sdk
                 {
                     "System.JobId",
                     "System.JobName",
+                    "System.JobDisplayName",
                     "System.JobAttempt",
                     "System.PhaseName",
+                    "System.PhaseDisplayName",
                     "System.PhaseAttempt",
                     "System.PullRequest.TargetBranch",
                     "System.StageName",
+                    "System.StageDisplayName",
                     "System.StageAttempt",
                 };
                 foreach (var name in variablesToCopy)

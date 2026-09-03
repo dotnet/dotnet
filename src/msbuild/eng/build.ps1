@@ -101,6 +101,7 @@ function Process-Arguments() {
 
   if ($ci) {
     $script:binaryLog = $true
+    $script:nodeReuse = $false
   }
 }
 

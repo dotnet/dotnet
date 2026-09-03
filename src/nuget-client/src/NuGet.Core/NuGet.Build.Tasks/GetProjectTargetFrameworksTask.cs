@@ -13,6 +13,7 @@ namespace NuGet.Build.Tasks
     /// Determine the project's targetframework(s) based
     /// on the available properties.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class GetProjectTargetFrameworksTask : Microsoft.Build.Utilities.Task
     {
         /// <summary>

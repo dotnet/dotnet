@@ -154,7 +154,7 @@
     <comment>Do not localize `dependencies`</comment>
   </data>
   <data name="FilePathTooLongWarning" xml:space="preserve">
-    <value>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Please shorten the file path or file name.</value>
+    <value>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Shorten the file path or file name.</value>
   </data>
   <data name="IconUrlDeprecationWarning" xml:space="preserve">
     <value>The 'PackageIconUrl'/'iconUrl' element is deprecated. Consider using the 'PackageIcon'/'icon' element instead. Learn more at https://aka.ms/deprecateIconUrl</value>
@@ -163,7 +163,7 @@
     <value>The folder '{0}' under 'lib' is not recognized as a valid framework name or a supported culture identifier. Rename it to a valid framework name or culture identifier.</value>
   </data>
   <data name="InvalidPlaceholderFileWarning" xml:space="preserve">
-    <value>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Please remove this file from directories that contain other files.</value>
+    <value>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Remove this file from directories that contain other files.</value>
     <comment>0 - file path ending in _._</comment>
   </data>
   <data name="InvalidPrereleaseDependencyWarning" xml:space="preserve">
@@ -186,7 +186,7 @@
     <comment>0 - comma-separated list of target frameworks</comment>
   </data>
   <data name="InvalidUndottedFrameworkWarning" xml:space="preserve">
-    <value>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Please rename them to include dots as needed (e.g. 'net50' to 'net5.0').</value>
+    <value>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Rename them to include dots as needed (e.g. 'net50' to 'net5.0').</value>
   </data>
   <data name="LegacyVersionWarning" xml:space="preserve">
     <value>The package version '{0}' uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients. Change the package version to a SemVer 1.0.0 string. If the version contains a release label it must start with a letter. This message can be ignored if the package is not intended for older clients.</value>

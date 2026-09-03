@@ -265,77 +265,94 @@ extends:
                           $appConfigResponse.Content
                         }
 
-                        # Read revision.txt from the VS target branch and bump the revision number.
-                        # revision.txt has two lines: an integer revision number and a GUID.
-                        $revisionFilePath = "/src/SetupPackages/TestTools/TestPlatform/V1/CLI/core/Shared/revision.txt"
-                        $targetBranch = $pr.targetRefName
-                        Write-Host "PR target branch: $targetBranch"
-
-                        $targetBranchName = ($targetBranch -replace '^refs/heads/', '')
-                        $encodedRevPath = [Uri]::EscapeDataString($revisionFilePath)
-                        $revisionUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/items?path=$encodedRevPath&versionDescriptor.version=$targetBranchName&versionDescriptor.versionType=branch&api-version=7.1"
-                        $revResponse = Invoke-WebRequest -Uri $revisionUrl -Headers $headers -Method Get -UseBasicParsing
-                        $revisionContent = if ($revResponse.Content -is [byte[]]) {
-                          [System.Text.Encoding]::UTF8.GetString($revResponse.Content)
+                        # Compare with the current App.config in the insertion branch. If there is
+                        # no App.config change, do not create a revision-only commit.
+                        $sourceBranchName = ($sourceBranch -replace '^refs/heads/', '')
+                        $encodedSourceBranchName = [Uri]::EscapeDataString($sourceBranchName)
+                        $encodedTargetPath = [Uri]::EscapeDataString($targetFilePath)
+                        $currentAppConfigUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/items?path=$encodedTargetPath&versionDescriptor.version=$encodedSourceBranchName&versionDescriptor.versionType=branch&api-version=7.1"
+                        $currentAppConfigResponse = Invoke-WebRequest -Uri $currentAppConfigUrl -Headers $headers -Method Get -UseBasicParsing
+                        $currentAppConfigContent = if ($currentAppConfigResponse.Content -is [byte[]]) {
+                          [System.Text.Encoding]::UTF8.GetString($currentAppConfigResponse.Content)
                         } else {
-                          $revResponse.Content
+                          $currentAppConfigResponse.Content
                         }
-                        $revisionLines = $revisionContent -split "`n"
-                        $currentRevision = [int]($revisionLines[0].Trim())
-                        $newRevision = $currentRevision + 1
-                        $revisionLines[0] = $newRevision.ToString()
-                        $newRevisionContent = $revisionLines -join "`n"
-                        Write-Host "Bumping revision.txt: $currentRevision -> $newRevision"
 
-                        # Push app.config and revision.txt to the insertion branch in a single commit.
-                        $pushUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/pushes?api-version=7.1"
-                        $pushBody = @{
-                          refUpdates = @(
-                            @{
-                              name = $sourceBranch
-                              oldObjectId = $latestCommitId
-                            }
-                          )
-                          commits = @(
-                            @{
-                              comment = "Update RocksteadyCLI App.config and bump revision.txt"
-                              changes = @(
-                                @{
-                                  changeType = "edit"
-                                  item = @{
-                                    path = $targetFilePath
-                                  }
-                                  newContent = @{
-                                    content = $appConfigContent
-                                    contentType = "rawtext"
-                                  }
-                                },
-                                @{
-                                  changeType = "edit"
-                                  item = @{
-                                    path = $revisionFilePath
-                                  }
-                                  newContent = @{
-                                    content = $newRevisionContent
-                                    contentType = "rawtext"
-                                  }
-                                }
-                              )
-                            }
-                          )
-                        } | ConvertTo-Json -Depth 10
+                        if ($currentAppConfigContent -eq $appConfigContent) {
+                          Write-Host "App.config is unchanged on the insertion branch; skipping revision.txt bump."
+                        }
+                        else {
+                          # Read revision.txt from the VS target branch and bump the revision number.
+                          # revision.txt has two lines: an integer revision number and a GUID.
+                          $revisionFilePath = "/src/SetupPackages/TestTools/TestPlatform/V1/CLI/core/Shared/revision.txt"
+                          $targetBranch = $pr.targetRefName
+                          Write-Host "PR target branch: $targetBranch"
 
-                        # Debug: show content types to diagnose serialization issues
-                        Write-Host "appConfigContent type: $($appConfigContent.GetType().FullName), length: $($appConfigContent.Length)"
-                        Write-Host "newRevisionContent type: $($newRevisionContent.GetType().FullName), length: $($newRevisionContent.Length)"
-                        Write-Host "pushBody length: $($pushBody.Length)"
+                          $targetBranchName = ($targetBranch -replace '^refs/heads/', '')
+                          $encodedRevPath = [Uri]::EscapeDataString($revisionFilePath)
+                          $revisionUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/items?path=$encodedRevPath&versionDescriptor.version=$targetBranchName&versionDescriptor.versionType=branch&api-version=7.1"
+                          $revResponse = Invoke-WebRequest -Uri $revisionUrl -Headers $headers -Method Get -UseBasicParsing
+                          $revisionContent = if ($revResponse.Content -is [byte[]]) {
+                            [System.Text.Encoding]::UTF8.GetString($revResponse.Content)
+                          } else {
+                            $revResponse.Content
+                          }
+                          $revisionLines = $revisionContent -split "`n"
+                          $currentRevision = [int]($revisionLines[0].Trim())
+                          $newRevision = $currentRevision + 1
+                          $revisionLines[0] = $newRevision.ToString()
+                          $newRevisionContent = $revisionLines -join "`n"
+                          Write-Host "Bumping revision.txt: $currentRevision -> $newRevision"
 
-                        $pushResponse = Invoke-RestMethod -Uri $pushUrl -Headers $headers -Method Post -Body ([System.Text.Encoding]::UTF8.GetBytes($pushBody)) -ContentType 'application/json; charset=utf-8'
-                        Write-Host "Pushed App.config and revision.txt to insertion branch. Commit: $($pushResponse.commits[0].commitId)"
+                          # Push app.config and revision.txt to the insertion branch in a single commit.
+                          $pushUrl = "$devdivOrg/$project/_apis/git/repositories/$vsRepoId/pushes?api-version=7.1"
+                          $pushBody = @{
+                            refUpdates = @(
+                              @{
+                                name = $sourceBranch
+                                oldObjectId = $latestCommitId
+                              }
+                            )
+                            commits = @(
+                              @{
+                                comment = "Update RocksteadyCLI App.config and bump revision.txt"
+                                changes = @(
+                                  @{
+                                    changeType = "edit"
+                                    item = @{
+                                      path = $targetFilePath
+                                    }
+                                    newContent = @{
+                                      content = $appConfigContent
+                                      contentType = "rawtext"
+                                    }
+                                  },
+                                  @{
+                                    changeType = "edit"
+                                    item = @{
+                                      path = $revisionFilePath
+                                    }
+                                    newContent = @{
+                                      content = $newRevisionContent
+                                      contentType = "rawtext"
+                                    }
+                                  }
+                                )
+                              }
+                            )
+                          } | ConvertTo-Json -Depth 10
+
+                          # Debug: show content types to diagnose serialization issues
+                          Write-Host "appConfigContent type: $($appConfigContent.GetType().FullName), length: $($appConfigContent.Length)"
+                          Write-Host "newRevisionContent type: $($newRevisionContent.GetType().FullName), length: $($newRevisionContent.Length)"
+                          Write-Host "pushBody length: $($pushBody.Length)"
+
+                          $pushResponse = Invoke-RestMethod -Uri $pushUrl -Headers $headers -Method Post -Body ([System.Text.Encoding]::UTF8.GetBytes($pushBody)) -ContentType 'application/json; charset=utf-8'
+                          Write-Host "Pushed App.config and revision.txt to insertion branch. Commit: $($pushResponse.commits[0].commitId)"
+                        }
                       }
                       catch {
                         Write-Error "Failed to push App.config and revision.txt to insertion branch: $_"
                         exit 1
                       }
                     }
-

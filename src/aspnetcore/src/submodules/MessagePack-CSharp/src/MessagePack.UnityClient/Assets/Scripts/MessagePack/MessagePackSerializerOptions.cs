@@ -24,8 +24,25 @@ namespace MessagePack
         /// </summary>
         private static readonly HashSet<string> DisallowedTypes = new HashSet<string>
         {
+            "Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties",
+            "System.CodeDom.Compiler.CompilerResults",
             "System.CodeDom.Compiler.TempFileCollection",
+            "System.Configuration.SettingsPropertyValue",
+            "System.Data.DataSet",
+            "System.Data.DataTable",
+            "System.Diagnostics.Process",
+            "System.Diagnostics.ProcessStartInfo",
+            "System.Drawing.Design.ToolboxItemContainer",
+            "System.IdentityModel.Tokens.SessionSecurityToken",
             "System.Management.IWbemClassObjectFreeThreaded",
+            "System.Security.Claims.ClaimsIdentity",
+            "System.Security.Claims.ClaimsPrincipal",
+            "System.Security.Principal.WindowsIdentity",
+            "System.Security.Principal.WindowsPrincipal",
+            "System.Web.Security.RolePrincipal",
+            "System.Windows.Data.ObjectDataProvider",
+            "System.Windows.ResourceDictionary",
+            "System.Workflow.ComponentModel.Serialization.ActivitySurrogateSelector",
         };
 
 #if !DYNAMICCODEDUMPER
@@ -69,8 +86,8 @@ namespace MessagePack
         /// <summary>
         /// Gets the resolver to use for complex types.
         /// </summary>
-        /// <value>An instance of <see cref="IFormatterResolver"/>. Never <c>null</c>.</value>
-        /// <exception cref="ArgumentNullException">Thrown if an attempt is made to set this property to <c>null</c>.</exception>
+        /// <value>An instance of <see cref="IFormatterResolver"/>. Never <see langword="null"/>.</value>
+        /// <exception cref="ArgumentNullException">Thrown if an attempt is made to set this property to <see langword="null"/>.</exception>
         public IFormatterResolver Resolver { get; private set; }
 
         /// <summary>
@@ -120,13 +137,13 @@ namespace MessagePack
         /// <summary>
         /// Gets a value indicating whether serialization should omit assembly version, culture and public key token metadata when using the typeless formatter.
         /// </summary>
-        /// <value>The default value is <c>false</c>.</value>
+        /// <value>The default value is <see langword="false"/>.</value>
         public bool OmitAssemblyVersion { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether deserialization may instantiate types from an assembly with a different version if a matching version cannot be found.
         /// </summary>
-        /// <value>The default value is <c>false</c>.</value>
+        /// <value>The default value is <see langword="false"/>.</value>
         public bool AllowAssemblyVersionMismatch { get; private set; }
 
         /// <summary>
@@ -147,10 +164,10 @@ namespace MessagePack
         /// Gets a type given a string representation of the type.
         /// </summary>
         /// <param name="typeName">The name of the type to load. This is typically the <see cref="Type.AssemblyQualifiedName"/> but may use the assembly's simple name.</param>
-        /// <returns>The loaded type or <c>null</c> if no matching type could be found.</returns>
-        public virtual Type LoadType(string typeName)
+        /// <returns>The loaded type or <see langword="null"/> if no matching type could be found.</returns>
+        public virtual Type? LoadType(string typeName)
         {
-            Type result = Type.GetType(typeName, false);
+            Type? result = Type.GetType(typeName, false);
             if (result == null && this.AllowAssemblyVersionMismatch)
             {
                 string shortenedName = AssemblyNameVersionSelectorRegex.Replace(typeName, string.Empty);
@@ -169,16 +186,32 @@ namespace MessagePack
         /// <param name="type">The type to be instantiated.</param>
         /// <exception cref="TypeAccessException">Thrown if the <paramref name="type"/> is not allowed to be deserialized.</exception>
         /// <remarks>
+        /// <para>
         /// This method provides a means for an important security mitigation when using the Typeless formatter to prevent untrusted messagepack from
         /// deserializing objects that may be harmful if instantiated, disposed or finalized.
-        /// The default implementation throws for only a few known dangerous types.
+        /// The default implementation throws for only a few known dangerous types, or types that nest those dangerous types as generic type arguments or array element types.
         /// Applications that deserialize from untrusted sources should override this method and throw if the type is not among the expected set.
+        /// </para>
+        /// <para>
+        /// This method is <see langword="virtual" /> for backward compatibility reasons.
+        /// For better security, the preferred method to override is <see cref="ThrowIfDeserializingTypeIsDisallowedCore(Type)"/>.
+        /// </para>
         /// </remarks>
         public virtual void ThrowIfDeserializingTypeIsDisallowed(Type type)
         {
-            if (DisallowedTypes.Contains(type.FullName))
+            this.ThrowIfDeserializingTypeIsDisallowedCore(type);
+
+            if (type.HasElementType && type.GetElementType() is Type elementType)
             {
-                throw new MessagePackSerializationException("Deserialization attempted to create the type " + type.FullName + " which is not allowed.");
+                this.ThrowIfDeserializingTypeIsDisallowed(elementType);
+            }
+
+            if (type.IsConstructedGenericType)
+            {
+                foreach (Type genericTypeArgument in type.GenericTypeArguments)
+                {
+                    this.ThrowIfDeserializingTypeIsDisallowed(genericTypeArgument);
+                }
             }
         }
 
@@ -353,6 +386,31 @@ namespace MessagePack
             var result = this.Clone();
             result.SequencePool = pool;
             return result;
+        }
+
+        /// <summary>
+        /// Checks whether a specific given type may be deserialized, disregarding generic type arguments or array element types.
+        /// </summary>
+        /// <param name="type">The type to be instantiated.</param>
+        /// <exception cref="TypeAccessException">Thrown if the <paramref name="type"/> is not allowed to be deserialized.</exception>
+        /// <remarks>
+        /// <para>
+        /// This method provides a means for an important security mitigation when using the Typeless formatter to prevent untrusted messagepack from
+        /// deserializing objects that may be harmful if instantiated, disposed or finalized.
+        /// The default implementation throws for only a few known dangerous types.
+        /// Applications that deserialize from untrusted sources should override this method and throw if the type is not among the expected set.
+        /// </para>
+        /// <para>
+        /// This method is called from the default implementation of <see cref="ThrowIfDeserializingTypeIsDisallowed(Type)"/>
+        /// for the top-level type and again for each generic type argument or array element type.
+        /// </para>
+        /// </remarks>
+        protected virtual void ThrowIfDeserializingTypeIsDisallowedCore(Type type)
+        {
+            if (type.FullName is string fullName && DisallowedTypes.Contains(fullName))
+            {
+                throw new MessagePackSerializationException($"Deserialization attempted to create the type {fullName} which is not allowed.");
+            }
         }
 
         /// <summary>

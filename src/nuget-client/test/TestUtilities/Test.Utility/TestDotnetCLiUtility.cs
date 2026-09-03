@@ -18,26 +18,20 @@ namespace NuGet.Test.Utility
 {
     public static class TestDotnetCLiUtility
     {
-#if NET9_0 // This override allows us to test the next version of the CLI without making all the projects target that version.
-        private static NuGetFramework FrameworkOverride = new NuGetFramework("net10.0");
-#elif !IS_DESKTOP
-        private static NuGetFramework FrameworkOverride = null;
-#endif
-
         internal static string SdkVersion { get; private set; }
         internal static NuGetFramework SdkTfm { get; private set; }
         internal static string CliDirSource { get; private set; }
         internal static string SdkDirSource { get; private set; }
 
 #if !IS_DESKTOP
-        // For non fullframework code path, we could dynamically determine which SDK version to copy by checking the TFM of test project assembly and the dotnet.dll.
-        public static TestDirectory CopyAndPatchLatestDotnetCli(string testAssemblyPath)
+        // Prefer a specific SDK major so the same net10.0 test assembly can validate both the 10.0.4xx SDK and the 11.0 daily SDK.
+        public static TestDirectory CopyAndPatchLatestDotnetCli(int preferredMajorVersion)
         {
             CliDirSource = Path.GetDirectoryName(TestFileSystemUtility.GetDotnetCli());
             SdkDirSource = Path.Combine(CliDirSource, "sdk" + Path.DirectorySeparatorChar);
 
             // Dynamically determine which SDK version to copy
-            SdkVersion = GetSdkToTestByAssemblyPath(testAssemblyPath);
+            SdkVersion = GetSdkToTestByAssemblyPath(preferredMajorVersion);
 
             // Dynamically determine the TFM of the dotnet.dll
             SdkTfm = AssemblyReader.GetTargetFramework(Path.Combine(SdkDirSource, SdkVersion, "dotnet.dll"));
@@ -107,34 +101,45 @@ namespace NuGet.Test.Utility
         }
 
 #if !IS_DESKTOP
-        // Dynamically determine which SDK version to copy by checking the TFM of test project assembly and the dotnet.dll.
-        private static string GetSdkToTestByAssemblyPath(string testAssemblyPath)
+        // Dynamically determine which SDK version to copy.
+        private static string GetSdkToTestByAssemblyPath(int preferredMajorVersion)
         {
-            // The TFM we're testing
-            var testTfm = FrameworkOverride ?? AssemblyReader.GetTargetFramework(testAssemblyPath);
+            var installedSdkDirectories = Directory.EnumerateDirectories(SdkDirSource)
+                .Where(path => !string.Equals(Path.GetFileName(path), "NuGetFallbackFolder", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            var installedSdkVersions = installedSdkDirectories
+                .Select(Path.GetFileName)
+                .ToArray();
+            string selectedVersion = null;
 
-            var selectedVersion =
-                Directory.EnumerateDirectories(SdkDirSource) // get all directories in sdk folder
-                .Where(path =>
-                { // SDK is for TFM to test
-                    if (string.Equals(Path.GetFileName(path), "NuGetFallbackFolder", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
+            if (preferredMajorVersion > 0)
+            {
+                selectedVersion = installedSdkDirectories
+                    .Where(path => IsPreferredMajorVersion(path, preferredMajorVersion))
+                    .Select(Path.GetFileName)
+                    .OrderByDescending(path => NuGetVersion.Parse(path))
+                    .FirstOrDefault();
 
-                    var dotnetPath = Path.Combine(path, "dotnet.dll");
-                    var sdkTfm = AssemblyReader.GetTargetFramework(dotnetPath);
+                if (selectedVersion == null)
+                {
+                    var message = $@"Could not find suitable SDK to test in {SdkDirSource}
+preferredMajorVersion specified: {preferredMajorVersion}
+SDKs found: {string.Join(", ", installedSdkVersions)}";
 
-                    return testTfm == sdkTfm;
-                })
-                .Select(Path.GetFileName) // just the folder name (version string)
-                .OrderByDescending(path => NuGetVersion.Parse(Path.GetFileName(path))) // in case there are multiple matching SDKs, selected the highest version
+                    throw new Exception(message);
+                }
+
+                return selectedVersion;
+            }
+
+            selectedVersion = installedSdkDirectories
+                .Select(Path.GetFileName)
+                .OrderByDescending(path => NuGetVersion.Parse(path))
                 .FirstOrDefault();
 
             if (selectedVersion == null)
             {
-                selectedVersion = Directory.EnumerateDirectories(SdkDirSource)
-                    .Select(Path.GetFileName)
+                selectedVersion = installedSdkVersions
                     .OrderByDescending(directoryName => NuGetVersion.Parse(directoryName))
                     .FirstOrDefault();
             }
@@ -142,13 +147,19 @@ namespace NuGet.Test.Utility
             if (selectedVersion == null)
             {
                 var message = $@"Could not find suitable SDK to test in {SdkDirSource}
-TFM being tested: {testTfm.DotNetFrameworkName}
-SDKs found: {string.Join(", ", Directory.EnumerateDirectories(SdkDirSource).Select(Path.GetFileName).Where(d => !string.Equals(d, "NuGetFallbackFolder", StringComparison.OrdinalIgnoreCase)))}";
+SDKs found: {string.Join(", ", installedSdkVersions)}";
 
                 throw new Exception(message);
             }
 
             return selectedVersion;
+        }
+
+        private static bool IsPreferredMajorVersion(string sdkDirectory, int preferredMajorVersion)
+        {
+            var sdkVersion = Path.GetFileName(sdkDirectory);
+
+            return NuGetVersion.Parse(sdkVersion).Version.Major == preferredMajorVersion;
         }
 #else
         // Use specified sdkVersion(could be just a major version) to determine which SDK version to copy.

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.ObjectModel;
 using System.Net;
 
@@ -17,6 +18,10 @@ public class DataCollectionTestCaseEventSender : IDataCollectionTestCaseEventSen
 
     private readonly ICommunicationManager _communicationManager;
     private readonly IDataSerializer _dataSerializer;
+
+    // Protocol version negotiated with the datacollector test case event handler.
+    // Updated from the DataCollectionTestStartAck echo after the first SendTestCaseStart.
+    private int _protocolVersion = ProtocolVersioning.HighestSupportedVersion;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataCollectionTestCaseEventSender"/> class.
@@ -82,12 +87,19 @@ public class DataCollectionTestCaseEventSender : IDataCollectionTestCaseEventSen
     /// <inheritdoc />
     public void SendTestCaseStart(TestCaseStartEventArgs e)
     {
-        _communicationManager.SendMessage(MessageType.DataCollectionTestStart, e);
+        _communicationManager.SendMessage(MessageType.DataCollectionTestStart, e, _protocolVersion);
 
         var message = _communicationManager.ReceiveMessage();
         if (message != null && message.MessageType != MessageType.DataCollectionTestStartAck)
         {
             EqtTrace.Error("DataCollectionTestCaseEventSender.SendTestCaseStart : MessageType.DataCollectionTestStartAck not received.");
+        }
+
+        // Adopt the version echoed by the handler as the negotiated protocol version for all
+        // subsequent sends on this sub-channel.
+        if (message?.Version > 0)
+        {
+            _protocolVersion = Math.Min(message.Version, ProtocolVersioning.HighestSupportedVersion);
         }
     }
 
@@ -95,7 +107,7 @@ public class DataCollectionTestCaseEventSender : IDataCollectionTestCaseEventSen
     public Collection<AttachmentSet>? SendTestCaseEnd(TestCaseEndEventArgs e)
     {
         var attachmentSets = new Collection<AttachmentSet>();
-        _communicationManager.SendMessage(MessageType.DataCollectionTestEnd, e);
+        _communicationManager.SendMessage(MessageType.DataCollectionTestEnd, e, _protocolVersion);
 
         var message = _communicationManager.ReceiveMessage();
         if (message != null && message.MessageType == MessageType.DataCollectionTestEndResult)
@@ -109,6 +121,6 @@ public class DataCollectionTestCaseEventSender : IDataCollectionTestCaseEventSen
     /// <inheritdoc />
     public void SendTestSessionEnd(SessionEndEventArgs e)
     {
-        _communicationManager.SendMessage(MessageType.SessionEnd, e);
+        _communicationManager.SendMessage(MessageType.SessionEnd, e, _protocolVersion);
     }
 }

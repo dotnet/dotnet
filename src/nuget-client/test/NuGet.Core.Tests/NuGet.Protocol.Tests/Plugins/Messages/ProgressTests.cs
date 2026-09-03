@@ -53,7 +53,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [InlineData("{\"Percentage\":1}", 1D)]
         public void JsonDeserialization_ReturnsCorrectObject(string json, double? percentage)
         {
-            var progress = JsonSerializationUtilities.Deserialize<Progress>(json);
+            var progress = JsonSerializationUtilities.Deserialize<Progress>(json)!;
 
             Assert.Equal(percentage, progress.Percentage);
         }

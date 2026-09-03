@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -25,12 +23,12 @@ namespace NuGet.Protocol.Plugins
     /// </summary>
     public sealed class PluginPackageReader : PackageReaderBase
     {
-        private readonly ConcurrentDictionary<string, Lazy<Task<FileStreamCreator>>> _fileStreams;
-        private IEnumerable<string> _files;
+        private readonly ConcurrentDictionary<string, Lazy<Task<FileStreamCreator?>>> _fileStreams;
+        private IEnumerable<string>? _files;
         private readonly SemaphoreSlim _getFilesSemaphore;
         private readonly SemaphoreSlim _getNuspecReaderSemaphore;
         private bool _isDisposed;
-        private NuspecReader _nuspecReader;
+        private NuspecReader? _nuspecReader;
         private readonly PackageIdentity _packageIdentity;
         private readonly string _packageSourceRepository;
         private readonly IPlugin _plugin;
@@ -70,7 +68,7 @@ namespace NuGet.Protocol.Plugins
             _packageSourceRepository = packageSourceRepository;
             _getFilesSemaphore = new SemaphoreSlim(initialCount: 1, maxCount: 1);
             _getNuspecReaderSemaphore = new SemaphoreSlim(initialCount: 1, maxCount: 1);
-            _fileStreams = new ConcurrentDictionary<string, Lazy<Task<FileStreamCreator>>>(StringComparer.OrdinalIgnoreCase);
+            _fileStreams = new ConcurrentDictionary<string, Lazy<Task<FileStreamCreator?>>>(StringComparer.OrdinalIgnoreCase);
             _tempDirectoryPath = new Lazy<string>(GetTemporaryDirectoryPath);
         }
 
@@ -107,14 +105,14 @@ namespace NuGet.Protocol.Plugins
 
             var lazyCreator = _fileStreams.GetOrAdd(
                 path,
-                p => new Lazy<Task<FileStreamCreator>>(
+                p => new Lazy<Task<FileStreamCreator?>>(
                     () => GetStreamInternalAsync(p)));
 
             await lazyCreator.Value;
 
             if (lazyCreator.Value.Result == null)
             {
-                return null;
+                return null!;
             }
 
             return lazyCreator.Value.Result.Create();
@@ -293,7 +291,7 @@ namespace NuGet.Protocol.Plugins
                 switch (response.ResponseCode)
                 {
                     case MessageResponseCode.Success:
-                        return response.CopiedFiles;
+                        return response.CopiedFiles!;
 
                     case MessageResponseCode.Error:
                         throw new PluginException(
@@ -364,7 +362,7 @@ namespace NuGet.Protocol.Plugins
         /// <see cref="NuGetVersion" />.</returns>
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="cancellationToken" />
         /// is cancelled.</exception>
-        public override async Task<NuGetVersion> GetMinClientVersionAsync(CancellationToken cancellationToken)
+        public override async Task<NuGetVersion?> GetMinClientVersionAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -952,7 +950,7 @@ namespace NuGet.Protocol.Plugins
                 }
             }
 
-            return null;
+            return null!;
         }
 
         protected override void Dispose(bool disposing)
@@ -1002,7 +1000,7 @@ namespace NuGet.Protocol.Plugins
                 // Use the known framework or if the folder did not parse, use the Any framework and consider it a sub folder
                 var framework = GetFrameworkFromPath(path, allowSubFolders);
 
-                List<string> items = null;
+                List<string>? items = null;
                 if (!groups.TryGetValue(framework, out items))
                 {
                     items = new List<string>();
@@ -1017,7 +1015,7 @@ namespace NuGet.Protocol.Plugins
                 .Select(framework => new FrameworkSpecificGroup(framework, groups[framework].OrderBy(e => e, StringComparer.OrdinalIgnoreCase)));
         }
 
-        private async Task<FileStreamCreator> GetStreamInternalAsync(
+        private async Task<FileStreamCreator?> GetStreamInternalAsync(
             string pathInPackage)
         {
             var packageId = _packageIdentity.Id;
@@ -1040,7 +1038,7 @@ namespace NuGet.Protocol.Plugins
                 switch (response.ResponseCode)
                 {
                     case MessageResponseCode.Success:
-                        return new FileStreamCreator(response.CopiedFiles.Single());
+                        return new FileStreamCreator(response.CopiedFiles!.Single());
 
                     case MessageResponseCode.Error:
                         throw new PluginException(
@@ -1079,7 +1077,7 @@ namespace NuGet.Protocol.Plugins
                 switch (response.ResponseCode)
                 {
                     case MessageResponseCode.Success:
-                        return response.Files;
+                        return response.Files!;
 
                     case MessageResponseCode.Error:
                         throw new PluginException(
@@ -1105,7 +1103,7 @@ namespace NuGet.Protocol.Plugins
 
         private void CreatePackageDownloadMarkerFile(string nupkgFilePath)
         {
-            var directory = Path.GetDirectoryName(nupkgFilePath);
+            var directory = Path.GetDirectoryName(nupkgFilePath)!;
             var resolver = new VersionFolderPathResolver(directory);
             var fileName = resolver.GetPackageDownloadMarkerFileName(_packageIdentity.Id);
             var filePath = Path.Combine(directory, fileName);
@@ -1122,7 +1120,7 @@ namespace NuGet.Protocol.Plugins
             return tempDirectoryPath;
         }
 
-        public override Task<PrimarySignature> GetPrimarySignatureAsync(CancellationToken token)
+        public override Task<PrimarySignature?> GetPrimarySignatureAsync(CancellationToken token)
         {
             return TaskResult.Null<PrimarySignature>();
         }
@@ -1151,10 +1149,10 @@ namespace NuGet.Protocol.Plugins
             return false;
         }
 
-        public override string GetContentHash(CancellationToken token, Func<string> GetUnsignedPackageHash = null)
+        public override string GetContentHash(CancellationToken token, Func<string>? GetUnsignedPackageHash = null)
         {
             // Plugin Download doesn't support signed packages so simply return null... and even then they aren't always packages.
-            return null;
+            return null!;
         }
 
         private sealed class FileStreamCreator : IDisposable

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>System.Memory</PackageId>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;netstandard2.0</TargetFrameworks>
     <PackageVersion>4.5.5</PackageVersion>
     <AssemblyName>System.Memory</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
@@ -25,6 +25,7 @@ When using NuGet 3.x this package requires at least version 3.4.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
     <MinClientVersion>2.12</MinClientVersion>
+    <PlaceholderTargetFrameworks>netcoreapp2.1</PlaceholderTargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

@@ -1,56 +1,3 @@
-# basic install into a build integrated project
-function Test-BuildIntegratedInstallPackage {
-    # Arrange
-    $project = New-BuildIntegratedProj UAPApp
-
-    # Act
-    Install-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.7
-
-    # Assert
-    Assert-PackageReferenceExists $project NuGet.Versioning 1.0.7
-    Assert-NetCorePackageInLockFile $project NuGet.Versioning 1.0.7
-    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/portable-net40+win/NuGet.Versioning.dll
-}
-
-# install multiple packages into a project
-function Test-BuildIntegratedInstallMultiplePackages {
-    # Arrange
-    $project = New-BuildIntegratedProj UAPApp
-
-    # Act
-    Install-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.7
-    Install-Package DotNetRDF -version 1.0.8.3533
-
-    # Assert
-    Assert-PackageReferenceExists $project NuGet.Versioning 1.0.7
-    Assert-PackageReferenceExists $project DotNetRDF 1.0.8.3533
-    Assert-NetCorePackageInLockFile $project NuGet.Versioning 1.0.7
-    Assert-NetCorePackageInLockFile $project DotNetRDF 1.0.8.3533
-    Assert-NetCorePackageInLockFile $project Newtonsoft.Json 6.0.8
-    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/portable-net40+win/NuGet.Versioning.dll
-    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/net45/Newtonsoft.Json.dll
-    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/net40/dotNetRDF.dll
-}
-
-# install and then uninstall multiple packages
-function Test-BuildIntegratedInstallAndUninstallAll {
-    # Arrange
-    $project = New-BuildIntegratedProj UAPApp
-
-    # Act
-    Install-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.7
-    Install-Package DotNetRDF  -ProjectName $project.Name -version 1.0.8.3533
-    Uninstall-Package NuGet.Versioning -ProjectName $project.Name
-    Uninstall-Package DotNetRDF -ProjectName $project.Name
-
-    # Assert
-    Assert-NetCoreNoPackageReference $project NuGet.Versioning
-    Assert-NetCoreNoPackageReference $project DotNetRDF
-    Assert-NetCorePackageNotInLockFile $project NuGet.Versioning
-    Assert-NetCorePackageNotInLockFile $project DotNetRDF
-    Assert-NetCorePackageNotInLockFile $project Newtonsoft.Json
-}
-
 # install a package with dependencies
 function Test-BuildIntegratedInstallAndVerifyLockFileContainsChildDependency {
     # Arrange
@@ -63,51 +10,6 @@ function Test-BuildIntegratedInstallAndVerifyLockFileContainsChildDependency {
     Assert-NetCorePackageInLockFile $project WindowsAzure.MobileServices 1.0.2
     Assert-NetCoreNoPackageReference $project WindowsAzure.MobileServices
 } 
-
-# basic uninstall
-function Test-BuildIntegratedUninstallPackage {
-    # Arrange
-    $project = New-BuildIntegratedProj UAPApp
-    Install-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.7
-
-    # Act
-    Uninstall-Package NuGet.Versioning -ProjectName $project.Name
-
-    # Assert
-    Assert-NetCoreNoPackageReference $project NuGet.Versioning
-    Assert-NetCorePackageNotInLockFile $project NuGet.Versioning
-}
-
-# basic update package
-function Test-BuildIntegratedUpdatePackage {
-    # Arrange
-    $project = New-BuildIntegratedProj UAPApp
-    Install-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.5
-
-    # Act
-    Update-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.6
-
-    # Assert
-    Assert-PackageReferenceExists $project NuGet.Versioning 1.0.6
-    Assert-NetCorePackageInLockFile $project NuGet.Versioning 1.0.6
-    Assert-PackageReferenceAssetsFileRuntimeAssembly $project lib/portable-net40+win/NuGet.Versioning.dll
-}
-
-function Test-BuildIntegratedUpdateNonExistantPackage {
-    # Arrange
-    $project = New-BuildIntegratedProj UAPApp
-
-    # Act and Assert
-    Assert-Throws { Update-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.6 } "'NuGet.Versioning' was not installed in any project. Update failed."
-}
-
-function Test-BuildIntegratedUninstallNonExistantPackage {
-    # Arrange
-    $project = New-BuildIntegratedProj UAPApp
-
-    # Act and Assert
-    Assert-Throws { Uninstall-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.6 } "Package 'NuGet.Versioning' to be uninstalled could not be found in project 'UAPApp'"
-}
 
 function Test-BuildIntegratedLockFileIsCreatedOnBuild {
     # Arrange
@@ -403,21 +305,6 @@ function Test-BuildIntegratedParentProjectIsRestoredAfterInstallWithClassLibInTr
     Assert-NetCorePackageInLockFile $project1 NuGet.Versioning 1.0.7
 }
 
-function Test-BuildIntegratedCleanDeleteCacheFile {
-    # Arrange
-    $project = New-BuildIntegratedProj UAPApp
-
-    Install-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.7
-    Build-Solution
-    
-    Assert-ProjectCacheFileExists $project
-
-    #Act
-    Clean-Solution
-
-    #Assert
-    Assert-ProjectCacheFileNotExists $project
-}
 function Test-InconsistencyBetweenAssetsAndProjectFile{
     param()
 
@@ -460,58 +347,6 @@ function Remove-PackageReference {
     $node.ParentNode.RemoveChild($node)
 
     $doc.Save($projectPath)
-}
-
-function Test-BuildIntegratedLegacyCleanDeleteCacheFile {
-    # Arrange
-    $project = New-Project PackageReferenceClassLibrary
-    $project | Install-Package Newtonsoft.Json -Version 13.0.1
-    Build-Solution
-    Assert-ProjectCacheFileExists $project
-
-    #Act
-    Clean-Solution
-
-    #Assert
-    Assert-ProjectCacheFileNotExists $project
-}
-
-function Test-BuildIntegratedRebuildDoesNotDeleteCacheFile {
-    # Arrange
-    $project = New-BuildIntegratedProj UAPApp
-    Install-Package NuGet.Versioning -ProjectName $project.Name -version 1.0.7
-    Build-Solution
-    Assert-ProjectCacheFileExists $project
-
-    AdviseSolutionEvents
-
-    #Act
-    Rebuild-Solution
-
-    WaitUntilRebuildCompleted
-    UnadviseSolutionEvents
-
-    #Assert
-    Assert-ProjectCacheFileExists $project
-}
-
-function Test-BuildIntegratedLegacyRebuildDoesNotDeleteCacheFile {
-    # Arrange
-    $project = New-Project PackageReferenceClassLibrary
-    $project | Install-Package Newtonsoft.Json -Version 13.0.1
-    Build-Solution
-    Assert-ProjectCacheFileExists $project
-
-    AdviseSolutionEvents
-
-    #Act
-    Rebuild-Solution
-
-    WaitUntilRebuildCompleted
-    UnadviseSolutionEvents
-
-    #Assert
-    Assert-ProjectCacheFileExists $project
 }
 
 function Test-BuildIntegratedRestoreAfterInstall {

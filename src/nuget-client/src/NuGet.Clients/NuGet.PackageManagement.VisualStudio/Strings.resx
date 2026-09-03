@@ -178,7 +178,7 @@
     <value>Failed to resolve all items referenced by '{0}'. This message can typically be ignored. The issue may be resolved by fully restoring and building the solution. If the unresolved item is a project reference this can lead to an incomplete NuGet restore result and missing package references. To ensure that restore is able to find all projects verify that all projects are referenced correctly and exist on disk.</value>
   </data>
   <data name="SolutionIsNotSaved" xml:space="preserve">
-    <value>Solution is not saved. Please save your solution before managing NuGet packages.</value>
+    <value>Solution is not saved. Save your solution before managing NuGet packages.</value>
   </data>
   <data name="Error_WhileLoadingConfigForBindingRedirects" xml:space="preserve">
     <value>Failed to load '{0}', while updating binding redirects. {1}</value>
@@ -245,7 +245,7 @@
     <comment>This test goes immediately after the document link.</comment>
   </data>
   <data name="Text_DeprecatedFramework_DocumentLink_Before" xml:space="preserve">
-    <value>The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, please refer to the</value>
+    <value>The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, refer to the</value>
     <comment>This text goes immediately before the document link.
 {0} is the full name of the deprecated framework (e.g. ".NETFramework,Version=v4.5").
 {1} is the short folder representation of the framework (e.g. "net45").</comment>

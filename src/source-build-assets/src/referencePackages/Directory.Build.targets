@@ -1,8 +1,27 @@
 <Project>
 
   <Import Project="..\..\Directory.Build.targets" />
+  <Import Project="$(RepositoryEngineeringDir)PackageValidation.targets" />
 
-  <!-- netstandard2.0's targeting pack uses the old package reference model which doesn't support using a local layout.
+  <!-- ==========================================================================
+       API Compatibility suppressions for reference packages
+       ========================================================================== -->
+  <PropertyGroup>
+    <!-- CP0003: Assembly version mismatch between baseline and current.
+         Source-generated reference packages use simplified version metadata that doesn't match upstream. -->
+    <!-- PKV006: "TFM is no longer supported in the latest version."
+         Missing TFMs are expected here because of TFM filtering. Source-build itself
+         validates that the required frameworks are present. -->
+    <NoWarn>$(NoWarn);CP0003;PKV006</NoWarn>
+  </PropertyGroup>
+
+  <!-- Ignore baseline TFMs that source-build doesn't support/include. Uses the same exclusion list as the
+       package source generator. -->
+  <ItemGroup>
+    <PackageValidationBaselineFrameworkToIgnore Include="@(ExcludedTargetFramework)" />
+  </ItemGroup>
+
+  <!-- netstandard2.0's targeting packuses the old package reference model which doesn't support using a local layout.
        Therefore disable the package reference download via DisableImplicitFrameworkReferences and manually import the
        packages' targets file to receive the references. -->
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

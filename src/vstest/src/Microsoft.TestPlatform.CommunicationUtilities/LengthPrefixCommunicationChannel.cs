@@ -67,7 +67,7 @@ public class LengthPrefixCommunicationChannel : ICommunicationChannel
             throw new CommunicationException("Unable to send data over channel.", ex);
         }
 
-        return Task.FromResult(0);
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
@@ -101,7 +101,7 @@ public class LengthPrefixCommunicationChannel : ICommunicationChannel
             EqtTrace.Verbose("LengthPrefixCommunicationChannel.Send: BaseStream was disposed. {0}", ex);
         }
 
-        return Task.FromResult(0);
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />

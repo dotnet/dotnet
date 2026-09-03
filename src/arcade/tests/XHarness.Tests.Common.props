@@ -18,6 +18,7 @@
     <IncludeXHarnessCli>true</IncludeXHarnessCli>
     <EnableAzurePipelinesReporter>true</EnableAzurePipelinesReporter>
     <HelixBaseUri>https://helix.dot.net</HelixBaseUri>
+    <EnableHelixJobMonitor>true</EnableHelixJobMonitor>
   </PropertyGroup>
 
   <!-- For non-ci local runs -->

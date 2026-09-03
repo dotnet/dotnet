@@ -355,7 +355,7 @@
                     <Setter Property="Visibility" Value="Hidden" />
                   </DataTrigger.Setters>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding IsSolution, RelativeSource={RelativeSource AncestorType={x:Type nuget:InfiniteScrollList}}}"
+                <DataTrigger Binding="{Binding ViewModel.IsSolution, RelativeSource={RelativeSource AncestorType={x:Type nuget:InfiniteScrollList}}}"
                       Value="true">
                   <DataTrigger.Setters>
                     <Setter Property="Visibility" Value="Hidden" />
@@ -403,7 +403,7 @@
                     <Setter Property="Visibility" Value="Hidden" />
                   </DataTrigger.Setters>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding IsSolution, RelativeSource={RelativeSource AncestorType={x:Type nuget:InfiniteScrollList}}}" Value="true">
+                <DataTrigger Binding="{Binding ViewModel.IsSolution, RelativeSource={RelativeSource AncestorType={x:Type nuget:InfiniteScrollList}}}" Value="true">
                   <DataTrigger.Setters>
                     <Setter Property="Visibility" Value="Hidden" />
                   </DataTrigger.Setters>
@@ -475,7 +475,7 @@
                     <Setter Property="Visibility" Value="Hidden" />
                   </DataTrigger.Setters>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding IsSolution, RelativeSource={RelativeSource AncestorType={x:Type nuget:InfiniteScrollList}}}" Value="true">
+                <DataTrigger Binding="{Binding ViewModel.IsSolution, RelativeSource={RelativeSource AncestorType={x:Type nuget:InfiniteScrollList}}}" Value="true">
                   <DataTrigger.Setters>
                     <Setter Property="Visibility" Value="Hidden" />
                   </DataTrigger.Setters>

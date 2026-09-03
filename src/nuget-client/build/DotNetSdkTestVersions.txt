@@ -2,4 +2,5 @@
 # To make sure that the right version of dotnet.exe (and maybe other files) is used, always install from lowest version to highest version
 -Channel 8.0 -Runtime dotnet
 -Channel 9.0 -Runtime dotnet
--Version 10.0.301-servicing.26227.122
+-Channel 10.0.4xx -Quality daily
+-Channel 11.0.1xx -Quality daily

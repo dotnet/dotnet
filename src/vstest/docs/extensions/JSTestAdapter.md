@@ -128,7 +128,7 @@ To run these tests with distribution across multiple agents:
 
    ![Imgur](https://i.imgur.com/Uv1IBRC.png)
 
-*Since multi-configuration and multi-agent job options are not exported to YAML. They can be configured by following this guide, https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml.*
+*Since multi-configuration and multi-agent job options are not exported to YAML. They can be configured by following this guide, https://learn.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml.*
 
 #### Limitations
 

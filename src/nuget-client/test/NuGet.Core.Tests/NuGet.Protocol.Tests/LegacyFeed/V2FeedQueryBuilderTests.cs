@@ -236,7 +236,7 @@ namespace NuGet.Protocol.Tests
             var target = new V2FeedQueryBuilder();
 
             // Act & Assert
-            var actual = Assert.Throws<ArgumentNullException>(() => target.BuildGetPackageUri(package: null));
+            var actual = Assert.Throws<ArgumentNullException>(() => target.BuildGetPackageUri(package: null!));
             Assert.Equal("package", actual.ParamName);
         }
 

@@ -1,7 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
 
 using System.Text.Json;
 
@@ -11,6 +10,13 @@ namespace Microsoft.EntityFrameworkCore.Query;
 
 public abstract class AdHocJsonQueryRelationalTestBase(NonSharedFixture fixture) : AdHocJsonQueryTestBase(fixture)
 {
+    protected override void ConfigureWarnings(WarningsConfigurationBuilder builder)
+    {
+        base.ConfigureWarnings(builder);
+
+        builder.Ignore(RelationalEventId.OwnedEntityMappedToJsonCollectionWarning);
+    }
+
     #region 21006
 
     public override async Task Project_missing_required_navigation(bool async)
@@ -757,6 +763,74 @@ public abstract class AdHocJsonQueryRelationalTestBase(NonSharedFixture fixture)
         }
 
         public override bool ConvertsNulls => true;
+    }
+
+    #endregion
+
+    #region 38315
+
+    [Fact]
+    public virtual async Task Filter_on_complex_json_collection_on_entity_mapped_to_view()
+    {
+        var contextFactory = await InitializeNonSharedTest<Context38315>(
+            onConfiguring: b => b.ConfigureWarnings(ConfigureWarnings),
+            onModelCreating: m =>
+            {
+                m.Entity<Context38315.Person>(e =>
+                {
+                    e.ToTable("Persons");
+                    e.ComplexCollection(p => p.OrderIds, b => b.ToJson());
+                });
+                m.Entity<Context38315.PersonOrdersView>(e =>
+                {
+                    e.ToView("PersonOrdersView");
+                    e.ComplexCollection(p => p.OrderIds, b => b.ToJson());
+                });
+            },
+            seed: async context =>
+            {
+                var sqlGenerationHelper = context.GetService<ISqlGenerationHelper>();
+                await context.Database.ExecuteSqlRawAsync(
+                    $"CREATE VIEW {Q("PersonOrdersView")} AS SELECT {Q("Id")}, {Q("OrderIds")} FROM {Q("Persons")}");
+
+                context.Set<Context38315.Person>().Add(
+                    new Context38315.Person { OrderIds = [new Context38315.ValueJson { Value = 3 }] });
+                await context.SaveChangesAsync();
+
+                string Q(string name) => sqlGenerationHelper.DelimitIdentifier(name);
+            });
+
+        await using var context = contextFactory.CreateDbContext();
+
+        var r = 3;
+        var result = await context.Set<Context38315.PersonOrdersView>()
+            .Where(po => po.OrderIds.Any(oId => oId.Value == r))
+            .ToListAsync();
+
+        Assert.Single(result);
+    }
+
+    protected class Context38315(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<Person> Persons { get; set; }
+        public DbSet<PersonOrdersView> PersonOrdersViews { get; set; }
+
+        public class Person
+        {
+            public int Id { get; set; }
+            public List<ValueJson> OrderIds { get; set; } = [];
+        }
+
+        public class PersonOrdersView
+        {
+            public int Id { get; set; }
+            public List<ValueJson> OrderIds { get; set; } = [];
+        }
+
+        public class ValueJson
+        {
+            public int Value { get; set; }
+        }
     }
 
     #endregion

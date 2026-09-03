@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+
+    <!-- Enable trimming/AoT analysis during publish to surface IL2026/IL3050 warnings. -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishAot>true</PublishAot>
+    <!-- Report per-warning details, not just assembly-level roll-ups. -->
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <!-- Treat trimming/AoT warnings as errors so they fail the publish. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Suppress pre-existing warnings from ObjectModel that are not in our scope. -->
+    <NoWarn>$(NoWarn);NU1603;NETSDK1057</NoWarn>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2057;IL2067</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)src/Microsoft.TestPlatform.VsTestConsole.TranslationLayer/Microsoft.TestPlatform.VsTestConsole.TranslationLayer.csproj" />
+  </ItemGroup>
+
+</Project>

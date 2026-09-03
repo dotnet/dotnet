@@ -337,6 +337,11 @@ namespace NuGet.Common
         NU1511 = 1511,
 
         /// <summary>
+        /// RestoreLockedMode and RestoreForceEvaluate are both set to true; RestoreForceEvaluate takes precedence and locked mode is ignored.
+        /// </summary>
+        NU1512 = 1512,
+
+        /// <summary>
         /// Dependency bumped up
         /// </summary>
         NU1601 = 1601,
@@ -902,6 +907,11 @@ namespace NuGet.Common
         /// Attempted to write files from multiple sources into the same location
         /// </summary>
         NU5051 = 5051,
+
+        /// <summary>
+        /// Package ID does not adhere to the restricted set of characters
+        /// </summary>
+        NU5052 = 5052,
 
         /// <summary>
         /// AssemblyOutsideLibWarning

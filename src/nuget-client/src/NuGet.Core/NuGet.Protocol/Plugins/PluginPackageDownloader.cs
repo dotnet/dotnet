@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -152,7 +150,7 @@ namespace NuGet.Protocol.Plugins
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            string filePath = null;
+            string? filePath = null;
 
             try
             {
@@ -206,10 +204,10 @@ namespace NuGet.Protocol.Plugins
 
             if (response != null && response.ResponseCode == MessageResponseCode.Success)
             {
-                return response.Hash;
+                return response.Hash!;
             }
 
-            return null;
+            return null!; // This is a fallback in case the plugin fails to provide a hash. This should never happen in practice. It is not worth the risk to annotate this method as null.
         }
 
         /// <summary>
@@ -236,7 +234,7 @@ namespace NuGet.Protocol.Plugins
         /// Sets a throttle for package downloads.
         /// </summary>
         /// <param name="throttle">A throttle.  Can be <see langword="null" />.</param>
-        public void SetThrottle(SemaphoreSlim throttle)
+        public void SetThrottle(SemaphoreSlim? throttle)
         {
             // Do nothing.  Plugins are not implemented on macOS.
         }

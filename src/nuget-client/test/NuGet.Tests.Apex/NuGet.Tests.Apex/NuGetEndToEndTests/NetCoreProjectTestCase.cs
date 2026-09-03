@@ -179,9 +179,11 @@ namespace NuGet.Tests.Apex
         [TestMethod]
         [Timeout(DefaultTimeout)]
         [TestCategory("StagingGate")]
+        [TestCategory("CanaryGate")]
         public async Task InstallAndUpdatePackageFromUI_NetCoreProject_Succeeds()
         {
             // Arrange
+            using var suppressNuGetUI = NuGetUISuppression.Suppress();
             using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreConsoleApp, Logger);
             var packageName = "NetCoreUpdateTestPackage";
             var packageVersion1 = "1.0.0";

@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Moq;
 using NuGet.CommandLine.XPlat;
@@ -53,7 +53,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string> { "list", "--interactive", projectPath };
 
                     // Act
-                    var result = testApp.Execute(argList.ToArray());
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
                     mockCommandRunner.Verify();
@@ -63,16 +63,20 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
-        public void BasicListPackageParsing_InteractiveTakesNoArguments_ThrowsException()
+        public void BasicListPackageParsing_InteractiveTakesNoArguments_ReturnsNonZero()
         {
             VerifyCommand(
                 (projectPath, mockCommandRunner, testApp, getLogLevel) =>
                 {
                     // Arrange
+                    // In System.CommandLine, passing extra unrecognized tokens results in a non-zero exit code
                     var argList = new List<string>() { "list", "--interactive", "no", projectPath };
 
-                    // Act & Assert
-                    Assert.Throws<CommandParsingException>(() => testApp.Execute(argList.ToArray()));
+                    // Act
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
+
+                    // Assert
+                    Assert.NotEqual(0, result);
                 });
         }
 
@@ -97,7 +101,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string> { "list", projectPath, "--verbosity", verbosity };
 
                     // Act
-                    var result = testApp.Execute(argList.ToArray());
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
                     Assert.Equal(logLevel, getLogLevel());
@@ -114,7 +118,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string> { "list", projectPath };
 
                     // Act
-                    var result = testApp.Execute(argList.ToArray());
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
                     Assert.Equal(LogLevel.Minimal, getLogLevel());
@@ -144,7 +148,7 @@ namespace NuGet.XPlat.FuncTest
                     argList.Add(projectPath);
 
                     // Act
-                    var result = testApp.Execute(argList.ToArray());
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
                     mockCommandRunner.Verify();
@@ -175,7 +179,8 @@ namespace NuGet.XPlat.FuncTest
                     argList.Add(projectPath);
 
                     // Act & Assert
-                    Assert.Throws<AggregateException>(() => testApp.Execute(argList.ToArray()));
+                    var result = testApp.Parse(argList.ToArray()).Invoke();
+                    Assert.NotEqual(0, result);
                 });
         }
 
@@ -549,7 +554,7 @@ namespace NuGet.XPlat.FuncTest
         }
 
 
-        private void VerifyCommand(Action<string, Mock<IListPackageCommandRunner>, CommandLineApplication, Func<LogLevel>> verify)
+        private void VerifyCommand(Action<string, Mock<IListPackageCommandRunner>, RootCommand, Func<LogLevel>> verify)
         {
             // Arrange
             using (var testDirectory = TestDirectory.Create())
@@ -559,13 +564,12 @@ namespace NuGet.XPlat.FuncTest
 
                 var logLevel = LogLevel.Information;
                 var logger = new TestCommandOutputLogger(_testOutputHelper);
-                var testApp = new CommandLineApplication();
+                var testApp = new RootCommand();
                 var mockCommandRunner = new Mock<IListPackageCommandRunner>();
                 mockCommandRunner
                     .Setup(m => m.ExecuteCommandAsync(It.IsAny<ListPackageArgs>()))
                     .Returns(Task.FromResult(0));
 
-                testApp.Name = "dotnet nuget_test";
                 ListPackageCommand.Register(testApp,
                     () => logger,
                     ll => logLevel = ll,

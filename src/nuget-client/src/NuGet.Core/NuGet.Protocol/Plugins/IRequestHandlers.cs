@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -42,7 +41,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="method">A message method.</param>
         /// <param name="handler">A request handler.</param>
         /// <returns><see langword="true" /> if the request handler exists; otherwise, <see langword="false" />.</returns>
-        bool TryGet(MessageMethod method, out IRequestHandler handler);
+        bool TryGet(MessageMethod method, [NotNullWhen(true)] out IRequestHandler? handler);
 
         /// <summary>
         /// Attempts to remove a request handler for the specified message method.

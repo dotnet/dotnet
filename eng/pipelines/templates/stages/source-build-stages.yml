@@ -128,7 +128,7 @@ stages:
             disableSigning: true               # ✅
             createSourceArtifact: false        # 🚫
             sourceIndexName: dotnet-dotnet
-            sourceIndexExcludeRepos: 'winforms wpf windowsdesktop source-build-assets'
+            sourceIndexExcludeRepos: 'winforms wpf windowsdesktop aspnetcore source-build-assets'
             ${{ if in(parameters.scope, 'lite') }}:
               extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 

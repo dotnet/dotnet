@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -28,6 +26,11 @@ namespace NuGet.Protocol
 
         public CachingSourceProvider(IPackageSourceProvider packageSourceProvider)
         {
+            if (packageSourceProvider == null)
+            {
+                throw new ArgumentNullException(nameof(packageSourceProvider));
+            }
+
             _packageSourceProvider = packageSourceProvider;
 
             _resourceProviders.AddRange(Repository.Provider.GetCoreV3());
@@ -64,7 +67,12 @@ namespace NuGet.Protocol
 
         public SourceRepository CreateRepository(PackageSource source, FeedType type)
         {
-            if (_cachedSources.TryGetValue(source.Source, out SourceRepository cached))
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (_cachedSources.TryGetValue(source.Source, out SourceRepository? cached))
             {
                 return cached;
             }
@@ -74,6 +82,11 @@ namespace NuGet.Protocol
 
         public void AddSourceRepository(SourceRepository source)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             _cachedSources.TryAdd(source.PackageSource.Source, source);
         }
 

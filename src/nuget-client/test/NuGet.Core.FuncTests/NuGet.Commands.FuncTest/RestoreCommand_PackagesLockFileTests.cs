@@ -71,6 +71,100 @@ namespace NuGet.Commands.FuncTest
         }
 
         [Fact]
+        public async Task RestoreCommand_PackagesLockFile_InLockedMode_WithForceEvaluate_WarnsWithNU1512_AndForceEvaluateWins()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+
+                var packageA = new SimpleTestPackageContext("a", "1.0.0");
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    packageA);
+
+                var projectName = "TestProject";
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+                var packageSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
+                    .WithTargetFrameworks(new string[] { "net46" })
+                    .WithPackagesLockFile()
+                    .Build();
+                PackageSpecOperations.AddOrUpdateDependency(packageSpec, packageA.Identity, packageSpec.TargetFrameworks.Select(e => e.FrameworkName));
+
+                // Preconditions. Generate the lock file.
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                await result.CommitAsync(logger, CancellationToken.None);
+                result.Success.Should().BeTrue();
+
+                // Enable locked mode and request force-evaluate (contradictory inputs).
+                packageSpec.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(
+                    restorePackagesWithLockFile: "true",
+                    packageSpec.RestoreMetadata.RestoreLockProperties.NuGetLockFilePath,
+                    restoreLockedMode: true);
+                logger.Clear();
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                request.RestoreForceEvaluate = true;
+
+                // Act.
+                result = await new RestoreCommand(request).ExecuteAsync();
+
+                // Assert. Force-evaluate wins (restore succeeds) but the user is warned that locked mode is being ignored.
+                result.Success.Should().BeTrue();
+                logger.WarningMessages.Should().ContainSingle(e =>
+                    e.Contains("NU1512") && e.Contains("RestoreLockedMode") && e.Contains("RestoreForceEvaluate"));
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_PackagesLockFile_InLockedMode_WithForceEvaluate_WhenSdkAnalysisLevelBelowMinimum_DoesNotWarn()
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                var logger = new TestLogger();
+
+                var packageA = new SimpleTestPackageContext("a", "1.0.0");
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    packageA);
+
+                var projectName = "TestProject";
+                var projectDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+                var packageSpec = PackageReferenceSpecBuilder.Create(projectName, projectDirectory)
+                    .WithTargetFrameworks(new string[] { "net46" })
+                    .WithPackagesLockFile()
+                    .Build();
+                PackageSpecOperations.AddOrUpdateDependency(packageSpec, packageA.Identity, packageSpec.TargetFrameworks.Select(e => e.FrameworkName));
+
+                // Preconditions. Generate the lock file.
+                var result = await new RestoreCommand(ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec)).ExecuteAsync();
+                await result.CommitAsync(logger, CancellationToken.None);
+                result.Success.Should().BeTrue();
+
+                // Enable locked mode and request force-evaluate, but with an SDK that predates the new warning.
+                packageSpec.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(
+                    restorePackagesWithLockFile: "true",
+                    packageSpec.RestoreMetadata.RestoreLockProperties.NuGetLockFilePath,
+                    restoreLockedMode: true);
+                // SdkAnalysisLevel null + UsingMicrosoftNETSdk true => feature disabled (below minimum).
+                packageSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
+                packageSpec.RestoreMetadata.SdkAnalysisLevel = null;
+                logger.Clear();
+
+                var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, packageSpec);
+                request.RestoreForceEvaluate = true;
+
+                // Act.
+                result = await new RestoreCommand(request).ExecuteAsync();
+
+                // Assert. Old behavior is preserved: force-evaluate wins and no NU1512 warning is raised.
+                result.Success.Should().BeTrue();
+                logger.WarningMessages.Should().NotContain(e => e.Contains("NU1512"));
+            }
+        }
+
+        [Fact]
         public async Task RestoreCommand_PackagesLockFile_InLockedMode_WhenATargetFrameworkIsAdded_FailsWithNU1004()
         {
             // Arrange

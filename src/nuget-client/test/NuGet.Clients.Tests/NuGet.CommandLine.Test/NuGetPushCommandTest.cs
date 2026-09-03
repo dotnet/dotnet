@@ -682,7 +682,7 @@ namespace NuGet.CommandLine.Test
 
                     // Assert
                     Assert.NotEqual(0, r1.ExitCode);
-                    Assert.Contains("Please provide credentials for:", r1.Output);
+                    Assert.Contains("Provide credentials for:", r1.Output);
                     Assert.Contains("UserName:", r1.Output);
                 }
             }

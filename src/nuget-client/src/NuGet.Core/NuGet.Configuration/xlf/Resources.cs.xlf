@@ -164,8 +164,8 @@
 1- attributes count</note>
       </trans-unit>
       <trans-unit id="NoWritteableConfig">
-        <source>There is no NuGet.Config that could be used for writing settings. Please create one at the desired location and restart the client.</source>
-        <target state="translated">Soubor NuGet.Config, který by bylo možné použít k zápisu nastavení, není k dispozici. Vytvořte ho prosím v požadovaném umístění a restartujte klienta.</target>
+        <source>There is no NuGet.Config that could be used for writing settings. Create one at the desired location and restart the client.</source>
+        <target state="new">There is no NuGet.Config that could be used for writing settings. Create one at the desired location and restart the client.</target>
         <note />
       </trans-unit>
       <trans-unit id="OwnersItemMustHaveAtLeastOneOwner">

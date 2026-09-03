@@ -46,6 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ServiceProvider BuildServiceProvider(this IServiceCollection services, bool validateScopes) { throw null; }
         public static ServiceProvider BuildServiceProvider(this IServiceCollection services) { throw null; }
     }
+
     public sealed partial class ServiceProvider : System.IServiceProvider, IKeyedServiceProvider, System.IDisposable, System.IAsyncDisposable
     {
         internal ServiceProvider() { }
@@ -60,5 +61,25 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public bool ValidateOnBuild { get { throw null; } set { } }
         public bool ValidateScopes { get { throw null; } set { } }
+    }
+}
+
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
     }
 }

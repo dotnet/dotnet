@@ -13,6 +13,7 @@
 - Use the following coding guidelines: https://github.com/NuGet/NuGet.Client/blob/dev/docs/coding-guidelines.md
 - Never use reflection.
 - When using value tuples, never use `var` (e.g., `var result = Method()`), but always use decomposed names (e.g., `(var name, var value) = Method()`).
+- All new classes must be nullable enabled. `#nullable disable` is not allowed in new code.
 
 ## Project-Specific Rules
 

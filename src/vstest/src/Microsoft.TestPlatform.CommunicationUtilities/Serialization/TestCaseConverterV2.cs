@@ -49,7 +49,7 @@ internal class TestCaseConverterV2 : JsonConverter<TestCase>
                 if (!prop.TryGetProperty("Key", out var keyElement))
                     continue;
 
-                var testProperty = JsonSerializer.Deserialize<TestProperty>(keyElement, options);
+                var testProperty = StjSafe.Deserialize<TestProperty>(keyElement, options);
                 if (testProperty is null)
                     continue;
 
@@ -91,7 +91,7 @@ internal class TestCaseConverterV2 : JsonConverter<TestCase>
         {
             writer.WriteStartObject();
             writer.WritePropertyName("Key");
-            JsonSerializer.Serialize(writer, property.Key, options);
+            StjSafe.Serialize(writer, property.Key, options);
             writer.WritePropertyName("Value");
             if (property.Value is null)
             {
@@ -99,7 +99,9 @@ internal class TestCaseConverterV2 : JsonConverter<TestCase>
             }
             else
             {
-                JsonSerializer.Serialize(writer, property.Value, property.Value.GetType(), options);
+                // Avoid JsonSerializer.Serialize(writer, value, value.GetType(), options) which
+                // requires reflection metadata that NativeAOT trims.
+                TestObjectBaseConverter.WritePropertyValue(writer, property.Value, options);
             }
             writer.WriteEndObject();
         }

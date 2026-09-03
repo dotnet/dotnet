@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace NuGet.Protocol.Model
@@ -14,6 +13,7 @@ namespace NuGet.Protocol.Model
     internal class RegistrationIndex
     {
         [JsonProperty("items")]
-        public List<RegistrationPage> Items { get; set; }
+        [JsonPropertyName("items")]
+        public List<RegistrationPage>? Items { get; set; }
     }
 }

@@ -83,7 +83,7 @@ namespace Microsoft.DotNet.SwaggerGenerator
         {
             foreach (var (name, template) in templates)
             {
-                hb.RegisterTemplate(name, new Action<TextWriter, object>(template));
+                hb.RegisterTemplate(name, (writer, context, data) => template(writer, context));
             }
         }
 

@@ -101,7 +101,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObject()
         {
             var json = "{\"DestinationFilePath\":\"a\",\"PackageId\":\"b\",\"PackageSourceRepository\":\"c\",\"PackageVersion\":\"d\"}";
-            var request = JsonSerializationUtilities.Deserialize<CopyNupkgFileRequest>(json);
+            var request = JsonSerializationUtilities.Deserialize<CopyNupkgFileRequest>(json)!;
 
             Assert.Equal("c", request.PackageSourceRepository);
             Assert.Equal("b", request.PackageId);

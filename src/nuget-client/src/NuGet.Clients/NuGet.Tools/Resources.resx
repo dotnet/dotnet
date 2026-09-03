@@ -145,7 +145,7 @@
     <value>{0} nuget configuration is invalid.</value>
   </data>
   <data name="SolutionIsNotSaved" xml:space="preserve">
-    <value>Solution is not saved. Please save your solution before managing NuGet packages.</value>
+    <value>Solution is not saved. Save your solution before managing NuGet packages.</value>
   </data>
   <data name="DTE_ProjectUnsupported" xml:space="preserve">
     <value>The project '{0}' is unsupported</value>
@@ -274,26 +274,34 @@
     <value>Fix my NuGet package vulnerabilities</value>
   </data>
   <data name="Error_CopilotNotReady" xml:space="preserve">
-    <value>GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in.</value>
+    <value>GitHub Copilot is not ready. Ensure GitHub Copilot is installed and signed in.</value>
     <comment>Do not translate GitHub or Copilot</comment>
   </data>
   <data name="Error_ServiceBrokerNotAvailable" xml:space="preserve">
-    <value>Service Broker is not available. Please ensure Visual Studio is running correctly.</value>
+    <value>Service Broker is not available. Ensure Visual Studio is running correctly.</value>
   </data>
   <data name="Error_CopilotServiceNotAvailable" xml:space="preserve">
-    <value>GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in.</value>
+    <value>GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</value>
     <comment>Do not translate GitHub or Copilot</comment>
   </data>
   <data name="Error_McpToolServiceNotAvailable" xml:space="preserve">
-    <value>MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in.</value>
+    <value>MCP Tool Service is not available. Ensure GitHub Copilot is installed and signed in.</value>
     <comment>Do not translate GitHub or Copilot</comment>
   </data>
   <data name="Error_CopilotAccessDenied" xml:space="preserve">
-    <value>Access denied. Please ensure you are signed in to GitHub Copilot.</value>
+    <value>Access denied. Ensure you are signed in to GitHub Copilot.</value>
     <comment>Do not translate GitHub or Copilot</comment>
   </data>
   <data name="Error_NuGetSolverNotAvailable" xml:space="preserve">
-    <value>The NuGet Solver tool is unavailable. Please enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</value>
+    <value>The NuGet Solver tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
+  <data name="Error_McpServerInfoServiceNotAvailable" xml:space="preserve">
+    <value>Unable to determine the status of the NuGet MCP Server. Ensure GitHub Copilot is installed and signed in.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
+  <data name="Error_McpServerNotActive" xml:space="preserve">
+    <value>The NuGet MCP Server is not active. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</value>
     <comment>Do not translate GitHub or Copilot</comment>
   </data>
 </root>

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,6 +104,11 @@ namespace NuGet.Protocol.Core.Types
         [Obsolete("https://github.com/NuGet/Home/issues/8479")]
         public static ISourceRepositoryProvider CreateProvider(IEnumerable<INuGetResourceProvider> resourceProviders)
         {
+            if (resourceProviders == null)
+            {
+                throw new ArgumentNullException(nameof(resourceProviders));
+            }
+
             return new SourceRepositoryProvider(Settings.LoadDefaultSettings(null, null, null), CreateLazy(resourceProviders));
         }
 
@@ -114,8 +117,13 @@ namespace NuGet.Protocol.Core.Types
         /// </summary>
         /// <param name="rootPath">lowest folder path</param>
         [Obsolete("https://github.com/NuGet/Home/issues/8479")]
-        public static ISourceRepositoryProvider CreateProvider(IEnumerable<INuGetResourceProvider> resourceProviders, string rootPath)
+        public static ISourceRepositoryProvider CreateProvider(IEnumerable<INuGetResourceProvider> resourceProviders, string? rootPath)
         {
+            if (resourceProviders == null)
+            {
+                throw new ArgumentNullException(nameof(resourceProviders));
+            }
+
             return new SourceRepositoryProvider(Settings.LoadDefaultSettings(rootPath, null, null), CreateLazy(resourceProviders));
         }
 

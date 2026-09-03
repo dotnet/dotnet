@@ -1,6 +1,10 @@
 ﻿// Copyright (c) All contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#if !(MESSAGEPACK_FORCE_AOT || ENABLE_IL2CPP)
+#define DYNAMIC_GENERATION
+#endif
+
 using System;
 using System.Buffers;
 using System.IO;
@@ -83,6 +87,8 @@ namespace MessagePack.Tests
         {
             (MemoryStream stream, MsgPack.Packer packer) = this.CreateReferencePacker();
 
+            MessagePackWriter.GetEncodedLength(target).Is(length);
+
             var sequence = new Sequence<byte>();
             var writer = new MessagePackWriter(sequence);
             writer.Write(target);
@@ -145,6 +151,8 @@ namespace MessagePack.Tests
         public void SByteTest(sbyte target, int length)
         {
             (MemoryStream stream, MsgPack.Packer packer) = this.CreateReferencePacker();
+
+            MessagePackWriter.GetEncodedLength(target).Is(length);
 
             var sequence = new Sequence<byte>();
             var writer = new MessagePackWriter(sequence);
@@ -242,6 +250,8 @@ namespace MessagePack.Tests
         {
             (MemoryStream stream, MsgPack.Packer packer) = this.CreateReferencePacker();
 
+            MessagePackWriter.GetEncodedLength(target).Is(length);
+
             var sequence = new Sequence<byte>();
             var writer = new MessagePackWriter(sequence);
             writer.Write(target);
@@ -284,6 +294,8 @@ namespace MessagePack.Tests
         {
             (MemoryStream stream, MsgPack.Packer packer) = this.CreateReferencePacker();
 
+            MessagePackWriter.GetEncodedLength(target).Is(length);
+
             var sequence = new Sequence<byte>();
             var writer = new MessagePackWriter(sequence);
             writer.Write(target);
@@ -316,7 +328,7 @@ namespace MessagePack.Tests
         [Theory]
         [InlineData(long.MinValue, 9)]
         [InlineData((long)-3372036854775807, 9)]
-#if !ENABLE_IL2CPP
+#if DYNAMIC_GENERATION
         [InlineData((long)-2147483648, 5)]
 #endif
         [InlineData((long)-50000, 5)]
@@ -344,6 +356,8 @@ namespace MessagePack.Tests
         public void Int64Test(long target, int length)
         {
             (MemoryStream stream, MsgPack.Packer packer) = this.CreateReferencePacker();
+
+            MessagePackWriter.GetEncodedLength(target).Is(length);
 
             var sequence = new Sequence<byte>();
             var writer = new MessagePackWriter(sequence);
@@ -479,6 +493,8 @@ namespace MessagePack.Tests
         {
             var target = Convert.ToUInt16(targetArg);
 
+            MessagePackWriter.GetEncodedLength(target).Is(length);
+
             (MemoryStream stream, MsgPack.Packer packer) = this.CreateReferencePacker();
 
             var sequence = new Sequence<byte>();
@@ -512,6 +528,8 @@ namespace MessagePack.Tests
         public void UInt32Test(object targetArg, int length)
         {
             var target = Convert.ToUInt32(targetArg);
+
+            MessagePackWriter.GetEncodedLength(target).Is(length);
 
             (MemoryStream stream, MsgPack.Packer packer) = this.CreateReferencePacker();
 
@@ -550,6 +568,8 @@ namespace MessagePack.Tests
         public void UInt64Test(object targetArg, int length)
         {
             var target = Convert.ToUInt64(targetArg);
+
+            MessagePackWriter.GetEncodedLength(target).Is(length);
 
             (MemoryStream stream, MsgPack.Packer packer) = this.CreateReferencePacker();
 
@@ -644,7 +664,7 @@ namespace MessagePack.Tests
         [InlineData('a')]
         [InlineData('あ')]
         [InlineData('c')]
-#if !ENABLE_IL2CPP
+#if DYNAMIC_GENERATION
         [InlineData(char.MinValue)]
         [InlineData(char.MaxValue)]
 #endif

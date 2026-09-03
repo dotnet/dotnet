@@ -153,7 +153,7 @@ An attachment here, could be any file that the adapter generates during the run 
 Data driven test cases can have multiple test results, one against each data value. In that case adapters would post a RecordStart, RecordEnd and RecordResult for each data value. If the TestResult objects posted for all the data values are associated with the same TestCase object, then the VS IDE client would create a single entry in the Test Explorer with the aggregated outcome along with a summary for each test case in a separate view. If the TestResult objects posted for all the data values are associated with their own TestCase objects with different ID's, then each test result would be different entries in the VS IDE Test Explorer.
 
 #### Filtering
-The user might optionally also pass in a test case filter to run a subset of tests. In such cases along with invoking the adapters with the container set, the test platform also provides a callback in the run context instance in the form of [GetTestCaseFilter](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IRunContext.cs#L38) that enables adapters to filter a [TestCase](./src/Microsoft.TestPlatform.ObjectModel/TestCase.cs) object. The adapters can query this API with the set of properties it supports filtering on, along with a provider of TestProperty instances  for each property. From the filter expression returned by this API, the adapter would then just have to perform a [ITestCaseFilterExpression.MatchTestCase](./src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/ITestCaseFilterExpression.cs#L20) on each test case which returns false if the test case has been filtered out. Below is sample code that demonstrates filtering:
+The user might optionally also pass in a test case filter to run a subset of tests. In such cases along with invoking the adapters with the container set, the test platform also provides a callback in the run context instance in the form of [GetTestCaseFilter](../../src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/IRunContext.cs#L38) that enables adapters to filter a [TestCase](../../src/Microsoft.TestPlatform.ObjectModel/TestCase.cs) object. The adapters can query this API with the set of properties it supports filtering on, along with a provider of TestProperty instances  for each property. From the filter expression returned by this API, the adapter would then just have to perform a [ITestCaseFilterExpression.MatchTestCase](../../src/Microsoft.TestPlatform.ObjectModel/Adapter/Interfaces/ITestCaseFilterExpression.cs#L20) on each test case which returns false if the test case has been filtered out. Below is sample code that demonstrates filtering:
 
 ```csharp
 static readonly TestProperty PriorityProperty = TestProperty.Register(
@@ -187,7 +187,7 @@ if (filterExpression != null &&
 ```
 
 #### TestCase Extensibility
-Adapters can choose to fill in custom data into the [TestCase](./src/Microsoft.TestPlatform.ObjectModel/TestCase.cs) object through its [Property](./src/Microsoft.TestPlatform.ObjectModel/TestObject.cs#L112) bag. This data can be:
+Adapters can choose to fill in custom data into the [TestCase](../../src/Microsoft.TestPlatform.ObjectModel/TestCase.cs) object through its [Property](../../src/Microsoft.TestPlatform.ObjectModel/TestObject.cs#L112) bag. This data can be:
 
 1. If the test case is adorned by a "Do Not Run"  attribute.
 2. If the test case is data driven, the values of the data to drive it with.

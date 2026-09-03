@@ -38,4 +38,4 @@ tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\VideoRecorder\Micros
 tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\VideoRecorder\Microsoft.VisualStudio.TestTools.DataCollection.MediaRecorder.Model.dll
 tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\VideoRecorder\VSTestVideoRecorder.exe
 
-Previously there was also recorder for `V1`. That was removed with TPv0 removal from VS2026 in https://github.com/microsoft/vstest/pull/15247, where VSTest Video recorder was also removed by mistake.
+Previously there was also recorder for `V1`. That was removed with TPv0 removal from VS2026 in [PR #15247](https://github.com/microsoft/vstest/pull/15247), where VSTest Video recorder was also removed by mistake.

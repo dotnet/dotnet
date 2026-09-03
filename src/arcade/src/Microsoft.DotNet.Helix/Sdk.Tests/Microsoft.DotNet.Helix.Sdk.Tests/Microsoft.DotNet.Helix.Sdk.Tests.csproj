@@ -21,7 +21,9 @@
     <ProjectReference Include="..\..\..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
     <ProjectReference Include="..\..\..\Common\Microsoft.Arcade.Test.Common\Microsoft.Arcade.Test.Common.csproj" />
     <ProjectReference Include="..\..\..\Microsoft.DotNet.Internal.DependencyInjection.Testing\Microsoft.DotNet.Internal.DependencyInjection.Testing.csproj" />
+    <ProjectReference Include="..\..\AzureDevOpsTestPublisher\Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.csproj" />
     <ProjectReference Include="..\..\Sdk\Microsoft.DotNet.Helix.Sdk.csproj" />
+    <ProjectReference Include="..\..\JobMonitor\Microsoft.DotNet.Helix.JobMonitor.csproj" />
   </ItemGroup>
 
 </Project>

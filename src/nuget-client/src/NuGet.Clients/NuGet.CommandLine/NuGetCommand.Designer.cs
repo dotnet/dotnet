@@ -260,7 +260,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid value provided for &apos;{0}&apos;. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to Invalid value provided for &apos;{0}&apos;. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
         internal static string CommandInvalidArgumentException {
             get {
@@ -895,7 +895,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NoCache is deprecated and has been renamed to NoHttpCache. Please use NoHttpCache instead..
+        ///   Looks up a localized string similar to NoCache is deprecated and has been renamed to NoHttpCache. Use NoHttpCache instead..
         /// </summary>
         internal static string Log_RestoreNoCacheInformation {
             get {
@@ -1636,7 +1636,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No value provided for &apos;{0}&apos;, which is needed when using the &apos;{1}&apos; option. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to No value provided for &apos;{0}&apos;, which is needed when using the &apos;{1}&apos; option. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
         internal static string SignCommandMissingArgumentException {
             get {
@@ -1645,7 +1645,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
         internal static string SignCommandMultipleCertificateException {
             get {
@@ -1654,7 +1654,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No value provided for &apos;{0}&apos;. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to No value provided for &apos;{0}&apos;. For a list of accepted values, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
         internal static string SignCommandNoArgumentException {
             get {
@@ -1663,7 +1663,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No certificate was provided. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to No certificate was provided. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
         internal static string SignCommandNoCertificateException {
             get {
@@ -1672,7 +1672,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to No package was provided. For a list of accepted ways to provide a package, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
         internal static string SignCommandNoPackageException {
             get {
@@ -1681,7 +1681,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;-Timestamper&apos; option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference.
+        ///   Looks up a localized string similar to The &apos;-Timestamper&apos; option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
         internal static string SignCommandNoTimestamperWarning {
             get {

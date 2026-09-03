@@ -1634,7 +1634,10 @@ namespace Microsoft.Deployment.MageCLI
 
                 manifest.Validate();
 
+                // EntryPoint can be null for manifests that don't reference an entry-point
+                // assembly (e.g. those using customHostRequired), so guard before dereferencing.
                 bool launcherBasedDeployment =
+                    manifest.EntryPoint != null && manifest.EntryPoint.TargetPath != null &&
                     string.Equals(manifest.EntryPoint.TargetPath.ToLower(), LauncherUtil.LauncherFilename.ToLower(), StringComparison.OrdinalIgnoreCase);
 
                 // Prints out all the information.

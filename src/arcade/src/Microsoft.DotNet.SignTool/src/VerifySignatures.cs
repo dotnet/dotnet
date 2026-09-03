@@ -147,7 +147,11 @@ namespace Microsoft.DotNet.SignTool
 
         public static SigningStatus IsSignedPE(string filePath)
         {
-            using (var stream = new FileStream(filePath, FileMode.Open))
+            // Open read-only with a shared lock. Verification only reads PE headers, so
+            // requesting write access (the FileStream(path, FileMode) default) is unnecessary
+            // and causes a sharing violation when another process (e.g. an antimalware scanner)
+            // momentarily holds the freshly-built file open.
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 return IsSignedPE(stream);
             }

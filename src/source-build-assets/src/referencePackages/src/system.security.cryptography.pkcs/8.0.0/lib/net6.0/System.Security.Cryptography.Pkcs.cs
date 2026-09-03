@@ -36,17 +36,15 @@ namespace System.Security.Cryptography
         public Oid Oid { get { throw null; } }
         public AsnEncodedDataCollection Values { get { throw null; } }
     }
+
     public sealed partial class CryptographicAttributeObjectCollection : Collections.ICollection, Collections.IEnumerable
     {
         public CryptographicAttributeObjectCollection() { }
         public CryptographicAttributeObjectCollection(CryptographicAttributeObject attribute) { }
         public int Count { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
         public CryptographicAttributeObject this[int index] { get { throw null; } }
-
         public object SyncRoot { get { throw null; } }
-
         public int Add(AsnEncodedData asnEncodedData) { throw null; }
         public int Add(CryptographicAttributeObject attribute) { throw null; }
         public void CopyTo(CryptographicAttributeObject[] array, int index) { }
@@ -60,9 +58,7 @@ namespace System.Security.Cryptography
     {
         internal CryptographicAttributeObjectEnumerator() { }
         public CryptographicAttributeObject Current { get { throw null; } }
-
         object Collections.IEnumerator.Current { get { throw null; } }
-
         public bool MoveNext() { throw null; }
         public void Reset() { }
     }
@@ -79,6 +75,7 @@ namespace System.Security.Cryptography.Pkcs
         public Oid Oid { get { throw null; } set { } }
         public byte[] Parameters { get { throw null; } set { } }
     }
+
     public sealed partial class CmsRecipient
     {
         public CmsRecipient(SubjectIdentifierType recipientIdentifierType, X509Certificates.X509Certificate2 certificate, RSAEncryptionPadding rsaEncryptionPadding) { }
@@ -89,6 +86,7 @@ namespace System.Security.Cryptography.Pkcs
         public SubjectIdentifierType RecipientIdentifierType { get { throw null; } }
         public RSAEncryptionPadding? RSAEncryptionPadding { get { throw null; } }
     }
+
     public sealed partial class CmsRecipientCollection : Collections.ICollection, Collections.IEnumerable
     {
         public CmsRecipientCollection() { }
@@ -96,11 +94,8 @@ namespace System.Security.Cryptography.Pkcs
         public CmsRecipientCollection(SubjectIdentifierType recipientIdentifierType, X509Certificates.X509Certificate2Collection certificates) { }
         public int Count { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
         public CmsRecipient this[int index] { get { throw null; } }
-
         public object SyncRoot { get { throw null; } }
-
         public int Add(CmsRecipient recipient) { throw null; }
         public void CopyTo(Array array, int index) { }
         public void CopyTo(CmsRecipient[] array, int index) { }
@@ -113,9 +108,7 @@ namespace System.Security.Cryptography.Pkcs
     {
         internal CmsRecipientEnumerator() { }
         public CmsRecipient Current { get { throw null; } }
-
         object Collections.IEnumerator.Current { get { throw null; } }
-
         public bool MoveNext() { throw null; }
         public void Reset() { }
     }
@@ -140,16 +133,17 @@ namespace System.Security.Cryptography.Pkcs
         public SubjectIdentifierType SignerIdentifierType { get { throw null; } set { } }
         public CryptographicAttributeObjectCollection UnsignedAttributes { get { throw null; } }
     }
+
     public sealed partial class ContentInfo
     {
         public ContentInfo(byte[] content) { }
         public ContentInfo(Oid contentType, byte[] content) { }
         public byte[] Content { get { throw null; } }
         public Oid ContentType { get { throw null; } }
-
         public static Oid GetContentType(byte[] encodedMessage) { throw null; }
         public static Oid GetContentType(ReadOnlySpan<byte> encodedMessage) { throw null; }
     }
+
     public sealed partial class EnvelopedCms
     {
         public EnvelopedCms() { }
@@ -161,7 +155,6 @@ namespace System.Security.Cryptography.Pkcs
         public RecipientInfoCollection RecipientInfos { get { throw null; } }
         public CryptographicAttributeObjectCollection UnprotectedAttributes { get { throw null; } }
         public int Version { get { throw null; } }
-
         public void Decode(byte[] encodedMessage) { }
         public void Decode(ReadOnlySpan<byte> encodedMessage) { }
         public void Decrypt() { }
@@ -173,6 +166,7 @@ namespace System.Security.Cryptography.Pkcs
         public void Encrypt(CmsRecipient recipient) { }
         public void Encrypt(CmsRecipientCollection recipients) { }
     }
+
     public sealed partial class KeyAgreeRecipientInfo : RecipientInfo
     {
         internal KeyAgreeRecipientInfo() { }
@@ -197,7 +191,6 @@ namespace System.Security.Cryptography.Pkcs
     public sealed partial class Pkcs12Builder
     {
         public bool IsSealed { get { throw null; } }
-
         public void AddSafeContentsEncrypted(Pkcs12SafeContents safeContents, byte[]? passwordBytes, PbeParameters pbeParameters) { }
         public void AddSafeContentsEncrypted(Pkcs12SafeContents safeContents, ReadOnlySpan<byte> passwordBytes, PbeParameters pbeParameters) { }
         public void AddSafeContentsEncrypted(Pkcs12SafeContents safeContents, ReadOnlySpan<char> password, PbeParameters pbeParameters) { }
@@ -209,12 +202,12 @@ namespace System.Security.Cryptography.Pkcs
         public void SealWithoutIntegrity() { }
         public bool TryEncode(Span<byte> destination, out int bytesWritten) { throw null; }
     }
+
     public sealed partial class Pkcs12CertBag : Pkcs12SafeBag
     {
         public Pkcs12CertBag(Oid certificateType, ReadOnlyMemory<byte> encodedCertificate) : base(default!, default, default) { }
         public ReadOnlyMemory<byte> EncodedCertificate { get { throw null; } }
         public bool IsX509Certificate { get { throw null; } }
-
         public X509Certificates.X509Certificate2 GetCertificate() { throw null; }
         public Oid GetCertificateType() { throw null; }
     }
@@ -232,11 +225,11 @@ namespace System.Security.Cryptography.Pkcs
         internal Pkcs12Info() { }
         public Collections.ObjectModel.ReadOnlyCollection<Pkcs12SafeContents> AuthenticatedSafe { get { throw null; } }
         public Pkcs12IntegrityMode IntegrityMode { get { throw null; } }
-
         public static Pkcs12Info Decode(ReadOnlyMemory<byte> encodedBytes, out int bytesConsumed, bool skipCopy = false) { throw null; }
         public bool VerifyMac(ReadOnlySpan<char> password) { throw null; }
         public bool VerifyMac(string? password) { throw null; }
     }
+
     public enum Pkcs12IntegrityMode
     {
         Unknown = 0,
@@ -256,16 +249,15 @@ namespace System.Security.Cryptography.Pkcs
         protected Pkcs12SafeBag(string bagIdValue, ReadOnlyMemory<byte> encodedBagValue, bool skipCopy = false) { }
         public CryptographicAttributeObjectCollection Attributes { get { throw null; } }
         public ReadOnlyMemory<byte> EncodedBagValue { get { throw null; } }
-
         public byte[] Encode() { throw null; }
         public Oid GetBagId() { throw null; }
         public bool TryEncode(Span<byte> destination, out int bytesWritten) { throw null; }
     }
+
     public sealed partial class Pkcs12SafeContents
     {
         public Pkcs12ConfidentialityMode ConfidentialityMode { get { throw null; } }
         public bool IsReadOnly { get { throw null; } }
-
         public Pkcs12CertBag AddCertificate(X509Certificates.X509Certificate2 certificate) { throw null; }
         public Pkcs12KeyBag AddKeyUnencrypted(AsymmetricAlgorithm key) { throw null; }
         public Pkcs12SafeContentsBag AddNestedContents(Pkcs12SafeContents safeContents) { throw null; }
@@ -281,6 +273,7 @@ namespace System.Security.Cryptography.Pkcs
         public void Decrypt(string? password) { }
         public Collections.Generic.IEnumerable<Pkcs12SafeBag> GetBags() { throw null; }
     }
+
     public sealed partial class Pkcs12SafeContentsBag : Pkcs12SafeBag
     {
         internal Pkcs12SafeContentsBag() : base(default!, default, default) { }
@@ -291,7 +284,6 @@ namespace System.Security.Cryptography.Pkcs
     {
         internal Pkcs12SecretBag() : base(default!, default, default) { }
         public ReadOnlyMemory<byte> SecretValue { get { throw null; } }
-
         public Oid GetSecretType() { throw null; }
     }
 
@@ -308,7 +300,6 @@ namespace System.Security.Cryptography.Pkcs
         public ReadOnlyMemory<byte>? AlgorithmParameters { get { throw null; } }
         public CryptographicAttributeObjectCollection Attributes { get { throw null; } }
         public ReadOnlyMemory<byte> PrivateKeyBytes { get { throw null; } }
-
         public static Pkcs8PrivateKeyInfo Create(AsymmetricAlgorithm privateKey) { throw null; }
         public static Pkcs8PrivateKeyInfo Decode(ReadOnlyMemory<byte> source, out int bytesRead, bool skipCopy = false) { throw null; }
         public static Pkcs8PrivateKeyInfo DecryptAndDecode(ReadOnlySpan<byte> passwordBytes, ReadOnlyMemory<byte> source, out int bytesRead) { throw null; }
@@ -320,6 +311,7 @@ namespace System.Security.Cryptography.Pkcs
         public bool TryEncrypt(ReadOnlySpan<byte> passwordBytes, PbeParameters pbeParameters, Span<byte> destination, out int bytesWritten) { throw null; }
         public bool TryEncrypt(ReadOnlySpan<char> password, PbeParameters pbeParameters, Span<byte> destination, out int bytesWritten) { throw null; }
     }
+
     public partial class Pkcs9AttributeObject : AsnEncodedData
     {
         public Pkcs9AttributeObject() { }
@@ -327,14 +319,12 @@ namespace System.Security.Cryptography.Pkcs
         public Pkcs9AttributeObject(Oid oid, byte[] encodedData) { }
         public Pkcs9AttributeObject(string oid, byte[] encodedData) { }
         public new Oid? Oid { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
     public sealed partial class Pkcs9ContentType : Pkcs9AttributeObject
     {
         public Oid ContentType { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
@@ -344,7 +334,6 @@ namespace System.Security.Cryptography.Pkcs
         public Pkcs9DocumentDescription(byte[] encodedDocumentDescription) { }
         public Pkcs9DocumentDescription(string documentDescription) { }
         public string DocumentDescription { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
@@ -354,7 +343,6 @@ namespace System.Security.Cryptography.Pkcs
         public Pkcs9DocumentName(byte[] encodedDocumentName) { }
         public Pkcs9DocumentName(string documentName) { }
         public string DocumentName { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
@@ -364,14 +352,12 @@ namespace System.Security.Cryptography.Pkcs
         public Pkcs9LocalKeyId(byte[] keyId) { }
         public Pkcs9LocalKeyId(ReadOnlySpan<byte> keyId) { }
         public ReadOnlyMemory<byte> KeyId { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
     public sealed partial class Pkcs9MessageDigest : Pkcs9AttributeObject
     {
         public byte[] MessageDigest { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
@@ -381,7 +367,6 @@ namespace System.Security.Cryptography.Pkcs
         public Pkcs9SigningTime(byte[] encodedSigningTime) { }
         public Pkcs9SigningTime(DateTime signingTime) { }
         public DateTime SigningTime { get { throw null; } }
-
         public override void CopyFrom(AsnEncodedData asnEncodedData) { }
     }
 
@@ -391,6 +376,7 @@ namespace System.Security.Cryptography.Pkcs
         public AlgorithmIdentifier Algorithm { get { throw null; } }
         public byte[] KeyValue { get { throw null; } }
     }
+
     public abstract partial class RecipientInfo
     {
         internal RecipientInfo() { }
@@ -400,16 +386,14 @@ namespace System.Security.Cryptography.Pkcs
         public RecipientInfoType Type { get { throw null; } }
         public abstract int Version { get; }
     }
+
     public sealed partial class RecipientInfoCollection : Collections.ICollection, Collections.IEnumerable
     {
         internal RecipientInfoCollection() { }
         public int Count { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
         public RecipientInfo this[int index] { get { throw null; } }
-
         public object SyncRoot { get { throw null; } }
-
         public void CopyTo(Array array, int index) { }
         public void CopyTo(RecipientInfo[] array, int index) { }
         public RecipientInfoEnumerator GetEnumerator() { throw null; }
@@ -420,9 +404,7 @@ namespace System.Security.Cryptography.Pkcs
     {
         internal RecipientInfoEnumerator() { }
         public RecipientInfo Current { get { throw null; } }
-
         object Collections.IEnumerator.Current { get { throw null; } }
-
         public bool MoveNext() { throw null; }
         public void Reset() { }
     }
@@ -442,7 +424,6 @@ namespace System.Security.Cryptography.Pkcs
         public Oid? RequestedPolicyId { get { throw null; } }
         public bool RequestSignerCertificate { get { throw null; } }
         public int Version { get { throw null; } }
-
         public static Rfc3161TimestampRequest CreateFromData(ReadOnlySpan<byte> data, HashAlgorithmName hashAlgorithm, Oid? requestedPolicyId = null, ReadOnlyMemory<byte>? nonce = null, bool requestSignerCertificates = false, X509Certificates.X509ExtensionCollection? extensions = null) { throw null; }
         public static Rfc3161TimestampRequest CreateFromHash(ReadOnlyMemory<byte> hash, HashAlgorithmName hashAlgorithm, Oid? requestedPolicyId = null, ReadOnlyMemory<byte>? nonce = null, bool requestSignerCertificates = false, X509Certificates.X509ExtensionCollection? extensions = null) { throw null; }
         public static Rfc3161TimestampRequest CreateFromHash(ReadOnlyMemory<byte> hash, Oid hashAlgorithmId, Oid? requestedPolicyId = null, ReadOnlyMemory<byte>? nonce = null, bool requestSignerCertificates = false, X509Certificates.X509ExtensionCollection? extensions = null) { throw null; }
@@ -455,11 +436,11 @@ namespace System.Security.Cryptography.Pkcs
         public static bool TryDecode(ReadOnlyMemory<byte> encodedBytes, out Rfc3161TimestampRequest? request, out int bytesConsumed) { throw null; }
         public bool TryEncode(Span<byte> destination, out int bytesWritten) { throw null; }
     }
+
     public sealed partial class Rfc3161TimestampToken
     {
         internal Rfc3161TimestampToken() { }
         public Rfc3161TimestampTokenInfo TokenInfo { get { throw null; } }
-
         public SignedCms AsSignedCms() { throw null; }
         public static bool TryDecode(ReadOnlyMemory<byte> encodedBytes, out Rfc3161TimestampToken? token, out int bytesConsumed) { throw null; }
         public bool VerifySignatureForData(ReadOnlySpan<byte> data, out X509Certificates.X509Certificate2? signerCertificate, X509Certificates.X509Certificate2Collection? extraCandidates = null) { throw null; }
@@ -467,6 +448,7 @@ namespace System.Security.Cryptography.Pkcs
         public bool VerifySignatureForHash(ReadOnlySpan<byte> hash, Oid hashAlgorithmId, out X509Certificates.X509Certificate2? signerCertificate, X509Certificates.X509Certificate2Collection? extraCandidates = null) { throw null; }
         public bool VerifySignatureForSignerInfo(SignerInfo signerInfo, out X509Certificates.X509Certificate2? signerCertificate, X509Certificates.X509Certificate2Collection? extraCandidates = null) { throw null; }
     }
+
     public sealed partial class Rfc3161TimestampTokenInfo
     {
         public Rfc3161TimestampTokenInfo(Oid policyId, Oid hashAlgorithmId, ReadOnlyMemory<byte> messageHash, ReadOnlyMemory<byte> serialNumber, DateTimeOffset timestamp, long? accuracyInMicroseconds = null, bool isOrdering = false, ReadOnlyMemory<byte>? nonce = null, ReadOnlyMemory<byte>? timestampAuthorityName = null, X509Certificates.X509ExtensionCollection? extensions = null) { }
@@ -477,7 +459,6 @@ namespace System.Security.Cryptography.Pkcs
         public Oid PolicyId { get { throw null; } }
         public DateTimeOffset Timestamp { get { throw null; } }
         public int Version { get { throw null; } }
-
         public byte[] Encode() { throw null; }
         public X509Certificates.X509ExtensionCollection GetExtensions() { throw null; }
         public ReadOnlyMemory<byte> GetMessageHash() { throw null; }
@@ -487,6 +468,7 @@ namespace System.Security.Cryptography.Pkcs
         public static bool TryDecode(ReadOnlyMemory<byte> encodedBytes, out Rfc3161TimestampTokenInfo? timestampTokenInfo, out int bytesConsumed) { throw null; }
         public bool TryEncode(Span<byte> destination, out int bytesWritten) { throw null; }
     }
+
     public sealed partial class SignedCms
     {
         public SignedCms() { }
@@ -500,7 +482,6 @@ namespace System.Security.Cryptography.Pkcs
         public bool Detached { get { throw null; } }
         public SignerInfoCollection SignerInfos { get { throw null; } }
         public int Version { get { throw null; } }
-
         public void AddCertificate(X509Certificates.X509Certificate2 certificate) { }
         public void CheckHash() { }
         public void CheckSignature(bool verifySignatureOnly) { }
@@ -515,6 +496,7 @@ namespace System.Security.Cryptography.Pkcs
         public void RemoveSignature(int index) { }
         public void RemoveSignature(SignerInfo signerInfo) { }
     }
+
     public sealed partial class SignerInfo
     {
         internal SignerInfo() { }
@@ -526,7 +508,6 @@ namespace System.Security.Cryptography.Pkcs
         public SubjectIdentifier SignerIdentifier { get { throw null; } }
         public CryptographicAttributeObjectCollection UnsignedAttributes { get { throw null; } }
         public int Version { get { throw null; } }
-
         public void AddUnsignedAttribute(AsnEncodedData unsignedAttribute) { }
         public void CheckHash() { }
         public void CheckSignature(bool verifySignatureOnly) { }
@@ -539,16 +520,14 @@ namespace System.Security.Cryptography.Pkcs
         public void RemoveCounterSignature(SignerInfo counterSignerInfo) { }
         public void RemoveUnsignedAttribute(AsnEncodedData unsignedAttribute) { }
     }
+
     public sealed partial class SignerInfoCollection : Collections.ICollection, Collections.IEnumerable
     {
         internal SignerInfoCollection() { }
         public int Count { get { throw null; } }
         public bool IsSynchronized { get { throw null; } }
-
         public SignerInfo this[int index] { get { throw null; } }
-
         public object SyncRoot { get { throw null; } }
-
         public void CopyTo(Array array, int index) { }
         public void CopyTo(SignerInfo[] array, int index) { }
         public SignerInfoEnumerator GetEnumerator() { throw null; }
@@ -559,9 +538,7 @@ namespace System.Security.Cryptography.Pkcs
     {
         internal SignerInfoEnumerator() { }
         public SignerInfo Current { get { throw null; } }
-
         object Collections.IEnumerator.Current { get { throw null; } }
-
         public bool MoveNext() { throw null; }
         public void Reset() { }
     }
@@ -571,15 +548,16 @@ namespace System.Security.Cryptography.Pkcs
         internal SubjectIdentifier() { }
         public SubjectIdentifierType Type { get { throw null; } }
         public object? Value { get { throw null; } }
-
         public bool MatchesCertificate(X509Certificates.X509Certificate2 certificate) { throw null; }
     }
+
     public sealed partial class SubjectIdentifierOrKey
     {
         internal SubjectIdentifierOrKey() { }
         public SubjectIdentifierOrKeyType Type { get { throw null; } }
         public object Value { get { throw null; } }
     }
+
     public enum SubjectIdentifierOrKeyType
     {
         Unknown = 0,

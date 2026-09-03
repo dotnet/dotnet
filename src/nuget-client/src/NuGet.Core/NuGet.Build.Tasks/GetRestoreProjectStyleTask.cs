@@ -11,6 +11,7 @@ namespace NuGet.Build.Tasks
     /// <summary>
     /// Gets the project style.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public sealed class GetRestoreProjectStyleTask : Microsoft.Build.Utilities.Task
     {
         /// <summary>

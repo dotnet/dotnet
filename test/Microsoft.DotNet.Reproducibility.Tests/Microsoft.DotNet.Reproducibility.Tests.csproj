@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+    <DefaultExcludesInProjectFolder>$(DefaultExcludesInProjectFolder);assets/**/*</DefaultExcludesInProjectFolder>
+    <VSTestLogger>console%3bverbosity=normal;trx%3bverbosity=diagnostic%3bLogFileName=$(MSBuildProjectName).trx</VSTestLogger>
+    <VSTestCLIRunSettings Condition="'$(DotnetTool)' != ''">$(VSTestCLIRunSettings);RunConfiguration.DotNetHostPath=$(DotnetTool)</VSTestCLIRunSettings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TestUtilities\TestUtilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="assets\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Target Name="SetRuntimeConfigOptions"
+          BeforeTargets="_GenerateRuntimeConfigurationFilesInputCache">
+    <ItemGroup>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).LogsDirectory">
+        <Value>$(ArtifactsTestResultsDir)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MsftSdkTarballPath1">
+        <Value>$(MsftSdkTarballPath1)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).MsftSdkTarballPath2">
+        <Value>$(MsftSdkTarballPath2)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceBuiltSdkTarballPath1">
+        <Value>$(SourceBuiltSdkTarballPath1)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SourceBuiltSdkTarballPath2">
+        <Value>$(SourceBuiltSdkTarballPath2)</Value>
+      </RuntimeHostConfigurationOption>
+    </ItemGroup>
+  </Target>
+
+</Project>

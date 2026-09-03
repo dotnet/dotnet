@@ -31,7 +31,7 @@ parameters:
   type: string
 
 stages:
-- template: stages\visual-studio\build-to-build-upgrade\agent.yml@DartLabTemplates
+- template: stages\visual-studio\build-to-build-upgrade\agent.yml@LegacyDartLabTemplates
   parameters:
     name: ${{parameters.stageName}}
     displayName: 'E2E Tests ${{parameters.stageDisplayName}}'
@@ -66,14 +66,14 @@ stages:
 ## preTestMachineConfigurationStepList
 ##############################
     preTestMachineConfigurationStepList:
-    - template: '\steps\powershell\execute-script.yml@DartLabTemplates'
+    - template: '\steps\powershell\execute-script.yml@LegacyDartLabTemplates'
       parameters:
         displayName: Set 'VisualStudio.InstallationUnderTest.SetupParameters'
         filePath: $(DartLab.Path)\Scripts\VisualStudio\Installation\Get-VisualStudioSetupParameters.ps1
         arguments: -RunSettingsURI '$(runSettingsURI)' -InstallPath 'C:\Test\VisualStudio' -NoRestart -Quiet -Wait -OutVariableName 'VisualStudio.InstallationUnderTest.SetupParameters' -ServiceConnectionTenantID $env:AZURESUBSCRIPTION_TENANT_ID -ServiceConnectionClientID $env:AZURESUBSCRIPTION_CLIENT_ID -ServiceConnectionID $env:AZURESUBSCRIPTION_SERVICE_CONNECTION_ID
         serviceConnectionName: DartLab-TestMachine
 
-    - template: '\steps\powershell\execute-script.yml@DartLabTemplates'
+    - template: '\steps\powershell\execute-script.yml@LegacyDartLabTemplates'
       parameters:
         displayName: Get Baseline Build ID using CloudBuild Session ID
         continueOnError: true

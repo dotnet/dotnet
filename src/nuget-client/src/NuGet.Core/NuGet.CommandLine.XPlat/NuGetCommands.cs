@@ -3,7 +3,6 @@
 
 #nullable enable
 
-using System;
 using System.CommandLine;
 using System.Linq;
 using NuGet.CommandLine.XPlat.Commands.Package.PackageDownload;
@@ -17,40 +16,35 @@ namespace NuGet.CommandLine.XPlat;
 public static class NuGetCommands
 {
     /// <summary>
-    /// <para>Adds NuGet's dotnet CLI commands to the dotnet CLI RootCommand object</para>
+    /// <para>Adds NuGet's dotnet CLI commands to the dotnet CLI command object</para>
     /// </summary>
-    /// <param name="rootCommand">The CLI's RootCommand instance</param>
+    /// <param name="command">The CLI's Command instance</param>
     /// <param name="interactiveOption">The .NET SDK has code to detect when output is redirected or </param>
     /// <param name="virtualProjectBuilder">For handling file-based apps.</param>
     /// <remarks>Many of NuGet's commands are defined in the dotnet/sdk repo, and those run NuGet.CommandLine.XPlat.dll as a child process.
     /// Those commands are not added by this method.</remarks>
-    public static void Add(RootCommand rootCommand, Option<bool> interactiveOption, IVirtualProjectBuilder? virtualProjectBuilder = null)
+    public static void Add(Command command, Option<bool> interactiveOption, IVirtualProjectBuilder? virtualProjectBuilder)
     {
-        var packageCommand = rootCommand.Subcommands.FirstOrDefault(c => c.Name == "package");
+        var packageCommand = command.Subcommands.FirstOrDefault(c => c.Name == "package");
         if (packageCommand is null)
         {
             packageCommand = new Command("package");
-            rootCommand.Subcommands.Add(packageCommand);
+            command.Subcommands.Add(packageCommand);
         }
 
         PackageUpdateCommand.Register(packageCommand, interactiveOption, virtualProjectBuilder);
         PackageDownloadCommand.Register(packageCommand, interactiveOption);
     }
 
-    // For binary backcompat. To delete once the SDK starts using the first overload.
-    public static void Add(RootCommand rootCommand, Option<bool> interactiveOption)
+    // For binary backcompat. To delete once the SDK starts using the Command overload.
+    public static void Add(RootCommand rootCommand, Option<bool> interactiveOption, IVirtualProjectBuilder? virtualProjectBuilder)
     {
-        Add(rootCommand, interactiveOption, virtualProjectBuilder: null);
+        Add((Command)rootCommand, interactiveOption, virtualProjectBuilder);
     }
 
-    // To delete once the SDK starts using the first overload. Joys of public APIs.
-    public static void Add(RootCommand rootCommand)
+    // For binary backcompat. To delete once the SDK starts using the Command overload.
+    public static void Add(RootCommand rootCommand, Option<bool> interactiveOption)
     {
-        var interactiveOption = new Option<bool>("--interactive")
-        {
-            Description = Strings.AddPkg_InteractiveDescription,
-            DefaultValueFactory = _ => Console.IsOutputRedirected
-        };
-        Add(rootCommand, interactiveOption);
+        Add((Command)rootCommand, interactiveOption, virtualProjectBuilder: null);
     }
 }

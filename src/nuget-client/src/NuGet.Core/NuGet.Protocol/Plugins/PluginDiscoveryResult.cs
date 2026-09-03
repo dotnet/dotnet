@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 
@@ -18,13 +16,13 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         public PluginFile PluginFile { get; }
 
-        private string _message;
+        private string? _message;
 
         /// <summary>
         /// Gets a message if <see cref="PluginFile.State" /> is not <see cref="PluginFileState.Valid" />;
         /// otherwise, <see langword="null" />.
         /// </summary>
-        public string Message
+        public string? Message
         {
             get
             {

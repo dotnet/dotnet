@@ -80,7 +80,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObject()
         {
             var json = "{\"PackageId\":\"a\",\"PackageSourceRepository\":\"b\",\"PackageVersion\":\"c\"}";
-            var request = JsonSerializationUtilities.Deserialize<PrefetchPackageRequest>(json);
+            var request = JsonSerializationUtilities.Deserialize<PrefetchPackageRequest>(json)!;
 
             Assert.Equal("a", request.PackageId);
             Assert.Equal("b", request.PackageSourceRepository);

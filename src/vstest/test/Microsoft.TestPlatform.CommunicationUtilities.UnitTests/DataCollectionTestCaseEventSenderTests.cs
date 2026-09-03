@@ -86,7 +86,7 @@ public class DataCollectionTestCaseEventSenderTests
         var testcaseStartEventArgs = new TestCaseStartEventArgs(_testCase);
         _dataCollectionTestCaseEventSender.SendTestCaseStart(testcaseStartEventArgs);
 
-        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.DataCollectionTestStart, testcaseStartEventArgs), Times.Once);
+        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.DataCollectionTestStart, testcaseStartEventArgs, ProtocolVersioning.HighestSupportedVersion), Times.Once);
         _mockCommunicationManager.Verify(x => x.ReceiveMessage(), Times.Once);
     }
 
@@ -94,7 +94,7 @@ public class DataCollectionTestCaseEventSenderTests
     public void SendTestCaseStartShouldThrowExceptionIfThrownByCommunicationManager()
     {
         var testcaseStartEventArgs = new TestCaseStartEventArgs(_testCase);
-        _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionTestStart, testcaseStartEventArgs)).Throws<Exception>();
+        _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionTestStart, testcaseStartEventArgs, It.IsAny<int>())).Throws<Exception>();
 
         Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseStart(testcaseStartEventArgs));
     }
@@ -117,8 +117,37 @@ public class DataCollectionTestCaseEventSenderTests
     {
         var testCaseEndEventArgs = new TestCaseEndEventArgs();
 
-        _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionTestEnd, It.IsAny<TestCaseEndEventArgs>())).Throws<Exception>();
+        _mockCommunicationManager.Setup(x => x.SendMessage(MessageType.DataCollectionTestEnd, It.IsAny<TestCaseEndEventArgs>(), It.IsAny<int>())).Throws<Exception>();
 
         Assert.ThrowsExactly<Exception>(() => _dataCollectionTestCaseEventSender.SendTestCaseEnd(testCaseEndEventArgs));
+    }
+
+    [TestMethod]
+    public void SendTestCaseEndShouldUseVersionNegotiatedFromTestCaseStartAck()
+    {
+        // Simulate a handler that echoes version 4 in the DataCollectionTestStartAck.
+        _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage())
+            .Returns(new Message() { MessageType = MessageType.DataCollectionTestStartAck, Version = 4 })
+            .Returns(new Message() { MessageType = MessageType.DataCollectionTestEndResult, Version = 4, RawMessage = JsonDataSerializer.Instance.SerializePayload(MessageType.DataCollectionTestEndResult, new Collection<AttachmentSet>(), 4) });
+
+        _dataCollectionTestCaseEventSender.SendTestCaseStart(new TestCaseStartEventArgs(_testCase));
+        _dataCollectionTestCaseEventSender.SendTestCaseEnd(new TestCaseEndEventArgs());
+
+        // After negotiating version 4 via the ack, SendTestCaseEnd must use version 4.
+        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.DataCollectionTestEnd, It.IsAny<TestCaseEndEventArgs>(), 4), Times.Once);
+    }
+
+    [TestMethod]
+    public void SendTestSessionEndShouldUseVersionNegotiatedFromTestCaseStartAck()
+    {
+        // Simulate a handler that echoes version 4 in the DataCollectionTestStartAck.
+        _mockCommunicationManager.Setup(x => x.ReceiveMessage())
+            .Returns(new Message() { MessageType = MessageType.DataCollectionTestStartAck, Version = 4 });
+
+        _dataCollectionTestCaseEventSender.SendTestCaseStart(new TestCaseStartEventArgs(_testCase));
+        _dataCollectionTestCaseEventSender.SendTestSessionEnd(new SessionEndEventArgs());
+
+        // After negotiating version 4 via the ack, SendTestSessionEnd must use version 4.
+        _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.SessionEnd, It.IsAny<SessionEndEventArgs>(), 4), Times.Once);
     }
 }

@@ -180,7 +180,7 @@ namespace NuGet.Versioning
             releaseLabels = null;
             buildMetadata = null;
 
-            var dashPos = -1;
+            var versionEndPos = -1;
             var plusPos = -1;
 
             var end = false;
@@ -188,7 +188,7 @@ namespace NuGet.Versioning
             {
                 end = (i == value.Length - 1);
 
-                if (dashPos < 0)
+                if (versionEndPos < 0)
                 {
                     if (end
                         || value[i] == '-'
@@ -197,7 +197,7 @@ namespace NuGet.Versioning
                         var endPos = i + (end ? 1 : 0);
                         versionString = value.Substring(0, endPos);
 
-                        dashPos = i;
+                        versionEndPos = i;
 
                         if (value[i] == '+')
                         {
@@ -209,7 +209,7 @@ namespace NuGet.Versioning
                 {
                     if (end || value[i] == '+')
                     {
-                        var start = dashPos + 1;
+                        var start = versionEndPos + 1;
                         var endPos = i + (end ? 1 : 0);
                         var releaseLabel = value.Substring(start, endPos - start);
 

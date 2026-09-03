@@ -31,7 +31,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullPlugin()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new MonitorNuGetProcessExitRequestHandler(plugin: null));
+                () => new MonitorNuGetProcessExitRequestHandler(plugin: null!));
 
             Assert.Equal("plugin", exception.ParamName);
         }
@@ -51,7 +51,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => _handler.HandleResponseAsync(
-                    connection: null,
+                    connection: null!,
                     request: request,
                     responseHandler: Mock.Of<IResponseHandler>(),
                     cancellationToken: CancellationToken.None));
@@ -65,7 +65,7 @@ namespace NuGet.Protocol.Plugins.Tests
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => _handler.HandleResponseAsync(
                     Mock.Of<IConnection>(),
-                    request: null,
+                    request: null!,
                     responseHandler: Mock.Of<IResponseHandler>(),
                     cancellationToken: CancellationToken.None));
 
@@ -81,7 +81,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 () => _handler.HandleResponseAsync(
                     Mock.Of<IConnection>(),
                     request,
-                    responseHandler: null,
+                    responseHandler: null!,
                     cancellationToken: CancellationToken.None));
 
             Assert.Equal("responseHandler", exception.ParamName);

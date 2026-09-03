@@ -22,6 +22,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="MSTest.TestAdapter" />
     <PackageReference Include="MSTest.TestFramework" />
+    <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
   </ItemGroup>
   <ItemGroup>
     <!-- Manually consuming compile-time assets from Microsoft.Test.Apex.VisualStudio and excluding ones that cause compile warnings -->

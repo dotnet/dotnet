@@ -114,6 +114,7 @@ namespace NuGet.PackageManagement.Telemetry
         RestartSearchCommand,
         SourceSelectionChanged,
         PackagesMissingStatusChanged,
+        WindowActivated,
     }
 
     public enum RefreshOperationStatus

@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.SwaggerGenerator.Modeler;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Reader;
 using Task = Microsoft.Build.Utilities.Task;
 
 namespace Microsoft.DotNet.SwaggerGenerator.MSBuild
@@ -99,9 +99,9 @@ namespace Microsoft.DotNet.SwaggerGenerator.MSBuild
             {
                 using (Stream docStream = await client.GetStreamAsync(input))
                 {
-                    var doc = ServiceClientModelFactory.ReadDocument(docStream, out OpenApiDiagnostic diagnostic);
+                    ReadResult result = await ServiceClientModelFactory.ReadDocumentAsync(docStream);
 
-                    return (diagnostic, doc);
+                    return (result.Diagnostic, result.Document);
                 }
             }
         }

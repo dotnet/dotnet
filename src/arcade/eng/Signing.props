@@ -12,12 +12,17 @@
     <FileSignInfo Include="DistributedLock.Redis.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Handlebars.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="LibGit2Sharp.dll" CertificateName="3PartySHA2" />
-    <FileSignInfo Include="Mono.Options.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="NetTopologySuite.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Newtonsoft.Json.Bson.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="NRedisStack.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Octokit.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="OpenTelemetry.Api.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="OpenTelemetry.Api.ProviderBuilderExtensions.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="OpenTelemetry.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="OpenTelemetry.Extensions.Hosting.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="OpenTelemetry.PersistentStorage.Abstractions.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="OpenTelemetry.PersistentStorage.FileSystem.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Pipelines.Sockets.Unofficial.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="SevenZip.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="SharpYaml.dll" CertificateName="3PartySHA2" />

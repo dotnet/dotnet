@@ -24,12 +24,13 @@ public partial class DependentBaseEntityType
             typeof(CompiledModelTestBase.DependentBase<byte?>),
             baseEntityType,
             discriminatorProperty: "EnumDiscriminator",
-            discriminatorValue: CompiledModelTestBase.Enum1.One,
             derivedTypesCount: 1,
             propertyCount: 6,
             navigationCount: 1,
             foreignKeyCount: 2,
             keyCount: 1);
+
+        runtimeEntityType.SetDiscriminatorValueFromProviderValue(1);
 
         var principalId = runtimeEntityType.AddProperty(
             "PrincipalId",
@@ -84,7 +85,8 @@ public partial class DependentBaseEntityType
             principalEntityType,
             deleteBehavior: DeleteBehavior.Cascade,
             unique: true,
-            required: true);
+            required: true,
+            constrained: false);
 
         return runtimeForeignKey;
     }
@@ -96,7 +98,8 @@ public partial class DependentBaseEntityType
             principalEntityType,
             deleteBehavior: DeleteBehavior.ClientNoAction,
             unique: true,
-            required: true);
+            required: true,
+            constrained: false);
 
         var principal = declaringEntityType.AddNavigation("Principal",
             runtimeForeignKey,

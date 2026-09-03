@@ -374,9 +374,11 @@ namespace NuGet.Tests.Apex
         [TestMethod]
         [Timeout(DefaultTimeout)]
         [TestCategory("StagingGate")]
+        [TestCategory("CanaryGate")]
         public async Task VerifyDeletedAssetsFileIsBackByReloadingProject()
         {
             // Arrange
+            using var suppressNuGetUI = NuGetUISuppression.Suppress();
             await CommonUtility.CreatePackageInSourceAsync(_pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
 
             NuGetApexTestService nugetTestService = GetNuGetTestService();

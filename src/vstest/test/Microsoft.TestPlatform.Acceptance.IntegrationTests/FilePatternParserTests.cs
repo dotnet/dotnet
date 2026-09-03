@@ -12,7 +12,6 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class FilePatternParserTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void WildCardPatternShouldCorrectlyWorkOnFiles(RunnerInfo runnerInfo)
     {
@@ -32,7 +31,6 @@ public class FilePatternParserTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void WildCardPatternShouldCorrectlyWorkOnArbitraryDepthDirectories(RunnerInfo runnerInfo)
     {
@@ -58,7 +56,6 @@ public class FilePatternParserTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void WildCardPatternShouldCorrectlyWorkForRelativeAssemblyPath(RunnerInfo runnerInfo)
     {
@@ -84,7 +81,6 @@ public class FilePatternParserTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void WildCardPatternShouldCorrectlyWorkOnMultipleFiles(RunnerInfo runnerInfo)
     {

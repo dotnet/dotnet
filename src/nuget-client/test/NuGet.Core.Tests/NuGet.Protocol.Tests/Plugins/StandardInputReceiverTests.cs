@@ -8,12 +8,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using NuGet.Common;
+using NuGet.Shared;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.Protocol.Plugins.Tests
 {
     public class StandardInputReceiverTests
     {
+        private static IEnvironmentVariableReader CreateEnvReader(bool useStj) =>
+            useStj
+                ? new TestEnvironmentVariableReader(
+                    new Dictionary<string, string> { [NuGetFeatureFlags.UseSystemTextJsonDeserializationEnvVar] = "true" })
+                : TestEnvironmentVariableReader.EmptyInstance;
+
         [Fact]
         public void Constructor_ThrowsForNullReader()
         {
@@ -96,8 +105,10 @@ namespace NuGet.Protocol.Plugins.Tests
             }
         }
 
-        [Fact]
-        public void MessageReceived_RaisedForSingleMessageWithNonBlockingStream()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void MessageReceived_RaisedForSingleMessageWithNonBlockingStream(bool useStj)
         {
             var json = "{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"None\"}";
             var requestId = "a";
@@ -106,7 +117,7 @@ namespace NuGet.Protocol.Plugins.Tests
 
             using (var receivedEvent = new ManualResetEventSlim(initialState: false))
             using (var reader = new StringReader(json))
-            using (var receiver = new StandardInputReceiver(reader))
+            using (var receiver = new StandardInputReceiver(reader, CreateEnvReader(useStj)))
             {
                 Message message = null;
 
@@ -129,10 +140,13 @@ namespace NuGet.Protocol.Plugins.Tests
         }
 
         [Theory]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"None\"}\r\n", "a", MessageType.Response, MessageMethod.None, null)]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"None\",\"Payload\":null}\r\n", "a", MessageType.Response, MessageMethod.None, null)]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"None\",\"Payload\":{\"d\":\"e\"}}\r\n", "a", MessageType.Response, MessageMethod.None, "{\"d\":\"e\"}")]
-        public void MessageReceived_RaisedForSingleMessageWithBlockingStream(string json, string requestId, MessageType type, MessageMethod method, string payload)
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"None\"}\r\n", "a", MessageType.Response, MessageMethod.None, null, false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"None\"}\r\n", "a", MessageType.Response, MessageMethod.None, null, true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"None\",\"Payload\":null}\r\n", "a", MessageType.Response, MessageMethod.None, null, false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"None\",\"Payload\":null}\r\n", "a", MessageType.Response, MessageMethod.None, null, true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Fault\",\"Method\":\"None\",\"Payload\":{\"Message\":\"x\"}}\r\n", "a", MessageType.Fault, MessageMethod.None, "{\"Message\":\"x\"}", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Fault\",\"Method\":\"None\",\"Payload\":{\"Message\":\"x\"}}\r\n", "a", MessageType.Fault, MessageMethod.None, "{\"Message\":\"x\"}", true)]
+        public void MessageReceived_RaisedForSingleMessageWithBlockingStream(string json, string requestId, MessageType type, MessageMethod method, string payload, bool useStj)
         {
             using (var receivedEvent = new ManualResetEventSlim(initialState: false))
             using (var cancellationTokenSource = new CancellationTokenSource())
@@ -142,7 +156,7 @@ namespace NuGet.Protocol.Plugins.Tests
             using (var outboundStream = new SimulatedWriteOnlyFileStream(stream, readWriteSemaphore, dataWrittenEvent, cancellationTokenSource.Token))
             using (var inboundStream = new SimulatedReadOnlyFileStream(stream, readWriteSemaphore, dataWrittenEvent, cancellationTokenSource.Token))
             using (var reader = new SimulatedStreamReader(inboundStream))
-            using (var receiver = new StandardInputReceiver(reader))
+            using (var receiver = new StandardInputReceiver(reader, CreateEnvReader(useStj)))
             {
                 Message message = null;
 
@@ -168,14 +182,16 @@ namespace NuGet.Protocol.Plugins.Tests
             }
         }
 
-        [Fact]
-        public void MessageReceived_RaisedForSingleMessageInChunksWithBlockingStream()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void MessageReceived_RaisedForSingleMessageInChunksWithBlockingStream(bool useStj)
         {
-            var json = "{\"RequestId\":\"a\",\"Type\":\"Progress\",\"Method\":\"None\",\"Payload\":{\"d\":\"e\"}}\r\n";
+            var json = "{\"RequestId\":\"a\",\"Type\":\"Progress\",\"Method\":\"None\",\"Payload\":{\"Percentage\":0.5}}\r\n";
             var requestId = "a";
             var type = MessageType.Progress;
             var method = MessageMethod.None;
-            var payload = "{\"d\":\"e\"}";
+            var payload = "{\"Percentage\":0.5}";
 
             using (var receivedEvent = new ManualResetEventSlim(initialState: false))
             using (var cancellationTokenSource = new CancellationTokenSource())
@@ -185,7 +201,7 @@ namespace NuGet.Protocol.Plugins.Tests
             using (var outboundStream = new SimulatedWriteOnlyFileStream(stream, readWriteSemaphore, dataWrittenEvent, cancellationTokenSource.Token))
             using (var inboundStream = new SimulatedReadOnlyFileStream(stream, readWriteSemaphore, dataWrittenEvent, cancellationTokenSource.Token))
             using (var reader = new SimulatedStreamReader(inboundStream))
-            using (var receiver = new StandardInputReceiver(reader))
+            using (var receiver = new StandardInputReceiver(reader, CreateEnvReader(useStj)))
             {
                 Message message = null;
 
@@ -216,14 +232,16 @@ namespace NuGet.Protocol.Plugins.Tests
             }
         }
 
-        [Fact]
-        public void MessageReceived_RaisedForMultipleMessagesWithNonBlockingStream()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void MessageReceived_RaisedForMultipleMessagesWithNonBlockingStream(bool useStj)
         {
             var json = "{\"RequestId\":\"de08f561-50c1-4816-adc3-73d2c283d8cf\",\"Type\":\"Request\",\"Method\":\"Handshake\",\"Payload\":{\"ProtocolVersion\":\"3.0.0\",\"MinimumProtocolVersion\":\"1.0.0\"}}\r\n{\"RequestId\":\"e2db1e2d-0282-45c4-9004-b096e221230d\",\"Type\":\"Response\",\"Method\":\"Handshake\",\"Payload\":{\"ResponseCode\":0,\"ProtocolVersion\":\"2.0.0\"}}\r\n";
 
             using (var receivedEvent = new ManualResetEventSlim(initialState: false))
             using (var reader = new StringReader(json))
-            using (var receiver = new StandardInputReceiver(reader))
+            using (var receiver = new StandardInputReceiver(reader, CreateEnvReader(useStj)))
             {
                 var messages = new List<Message>();
 
@@ -243,8 +261,10 @@ namespace NuGet.Protocol.Plugins.Tests
             }
         }
 
-        [Fact]
-        public void MessageReceived_RaisedForMultipleMessagesWithBlockingStream()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void MessageReceived_RaisedForMultipleMessagesWithBlockingStream(bool useStj)
         {
             var json = "{\"RequestId\":\"de08f561-50c1-4816-adc3-73d2c283d8cf\",\"Type\":\"Request\",\"Method\":\"Handshake\",\"Payload\":{\"ProtocolVersion\":\"3.0.0\",\"MinimumProtocolVersion\":\"1.0.0\"}}\r\n{\"RequestId\":\"e2db1e2d-0282-45c4-9004-b096e221230d\",\"Type\":\"Response\",\"Method\":\"Handshake\",\"Payload\":{\"ResponseCode\":0,\"ProtocolVersion\":\"2.0.0\"}}\r\n";
 
@@ -256,7 +276,7 @@ namespace NuGet.Protocol.Plugins.Tests
             using (var outboundStream = new SimulatedWriteOnlyFileStream(stream, readWriteSemaphore, dataWrittenEvent, cancellationTokenSource.Token))
             using (var inboundStream = new SimulatedReadOnlyFileStream(stream, readWriteSemaphore, dataWrittenEvent, cancellationTokenSource.Token))
             using (var reader = new SimulatedStreamReader(inboundStream))
-            using (var receiver = new StandardInputReceiver(reader))
+            using (var receiver = new StandardInputReceiver(reader, CreateEnvReader(useStj)))
             {
                 var messages = new List<Message>();
 
@@ -280,14 +300,16 @@ namespace NuGet.Protocol.Plugins.Tests
             }
         }
 
-        [Fact]
-        public void Faulted_RaisedForParseError()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Faulted_RaisedForParseError(bool useStj)
         {
             var invalidJson = "text\r\n";
 
             using (var faultedEvent = new ManualResetEventSlim(initialState: false))
             using (var reader = new StringReader(invalidJson))
-            using (var receiver = new StandardInputReceiver(reader))
+            using (var receiver = new StandardInputReceiver(reader, CreateEnvReader(useStj)))
             {
                 ProtocolErrorEventArgs args = null;
 
@@ -308,13 +330,15 @@ namespace NuGet.Protocol.Plugins.Tests
         }
 
         [Theory]
-        [InlineData("1")]
-        [InlineData("[]")]
-        public void Faulted_RaisedForDeserializationOfInvalidJson(string invalidJson)
+        [InlineData("1", false)]
+        [InlineData("1", true)]
+        [InlineData("[]", false)]
+        [InlineData("[]", true)]
+        public void Faulted_RaisedForDeserializationOfInvalidJson(string invalidJson, bool useStj)
         {
             using (var faultedEvent = new ManualResetEventSlim(initialState: false))
             using (var reader = new StringReader(invalidJson))
-            using (var receiver = new StandardInputReceiver(reader))
+            using (var receiver = new StandardInputReceiver(reader, CreateEnvReader(useStj)))
             {
                 ProtocolErrorEventArgs args = null;
 
@@ -334,14 +358,16 @@ namespace NuGet.Protocol.Plugins.Tests
             }
         }
 
-        [Fact]
-        public void Faulted_RaisedForDeserializationError()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Faulted_RaisedForDeserializationError(bool useStj)
         {
             var json = "{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"None\",\"Payload\":\"{\\\"d\\\":\\\"e\\\"}\"}\r\n";
 
             using (var faultedEvent = new ManualResetEventSlim(initialState: false))
             using (var reader = new StringReader(json))
-            using (var receiver = new StandardInputReceiver(reader))
+            using (var receiver = new StandardInputReceiver(reader, CreateEnvReader(useStj)))
             {
                 ProtocolErrorEventArgs args = null;
 
@@ -362,23 +388,35 @@ namespace NuGet.Protocol.Plugins.Tests
         }
 
         [Theory]
-        [InlineData("{\"Type\":\"Response\",\"Method\":\"None\"}\r\n")]
-        [InlineData("{\"RequestId\":null,\"Type\":\"Response\",\"Method\":\"None\"}\r\n")]
-        [InlineData("{\"RequestId\":\"\",\"Type\":\"Response\",\"Method\":\"None\"}\r\n")]
-        [InlineData("{\"RequestId\":\"a\",\"Method\":\"None\"}\r\n")]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":null,\"Method\":\"None\"}\r\n")]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\"\",\"Method\":\"None\"}\r\n")]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\" \",\"Method\":\"None\"}\r\n")]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\"abc\",\"Method\":\"None\"}\r\n")]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\"}\r\n")]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":null}\r\n")]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"\"}\r\n")]
-        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"abc\"}\r\n")]
-        public void Faulted_RaisedForInvalidMessage(string json)
+        [InlineData("{\"Type\":\"Response\",\"Method\":\"None\"}\r\n", false)]
+        [InlineData("{\"Type\":\"Response\",\"Method\":\"None\"}\r\n", true)]
+        [InlineData("{\"RequestId\":null,\"Type\":\"Response\",\"Method\":\"None\"}\r\n", false)]
+        [InlineData("{\"RequestId\":null,\"Type\":\"Response\",\"Method\":\"None\"}\r\n", true)]
+        [InlineData("{\"RequestId\":\"\",\"Type\":\"Response\",\"Method\":\"None\"}\r\n", false)]
+        [InlineData("{\"RequestId\":\"\",\"Type\":\"Response\",\"Method\":\"None\"}\r\n", true)]
+        [InlineData("{\"RequestId\":\"a\",\"Method\":\"None\"}\r\n", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Method\":\"None\"}\r\n", true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":null,\"Method\":\"None\"}\r\n", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":null,\"Method\":\"None\"}\r\n", true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"\",\"Method\":\"None\"}\r\n", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"\",\"Method\":\"None\"}\r\n", true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\" \",\"Method\":\"None\"}\r\n", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\" \",\"Method\":\"None\"}\r\n", true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"abc\",\"Method\":\"None\"}\r\n", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"abc\",\"Method\":\"None\"}\r\n", true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\"}\r\n", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\"}\r\n", true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":null}\r\n", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":null}\r\n", true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"\"}\r\n", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"\"}\r\n", true)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"abc\"}\r\n", false)]
+        [InlineData("{\"RequestId\":\"a\",\"Type\":\"Response\",\"Method\":\"abc\"}\r\n", true)]
+        public void Faulted_RaisedForInvalidMessage(string json, bool useStj)
         {
             using (var faultedEvent = new ManualResetEventSlim(initialState: false))
             using (var reader = new StringReader(json))
-            using (var receiver = new StandardInputReceiver(reader))
+            using (var receiver = new StandardInputReceiver(reader, CreateEnvReader(useStj)))
             {
                 ProtocolErrorEventArgs args = null;
 

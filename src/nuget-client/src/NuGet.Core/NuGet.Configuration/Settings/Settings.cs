@@ -352,7 +352,7 @@ namespace NuGet.Configuration
         /// Loads Specific NuGet.Config file. The method only loads specific config file 
         /// which is file <paramref name="configFileName"/>from <paramref name="root"/>.
         /// </summary>
-        public static ISettings LoadSpecificSettings(string root, string configFileName)
+        public static ISettings LoadSpecificSettings(string? root, string configFileName)
         {
             if (string.IsNullOrEmpty(configFileName))
             {

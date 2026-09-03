@@ -247,7 +247,13 @@ public class SqlServerModelValidator(
         {
 #pragma warning disable EF1001 // Internal EF Core API usage.
             var notFound = includeProperties
-                .FirstOrDefault(i => RelationalModel.FindPropertyByPath(index.DeclaringEntityType, i) == null);
+                .FirstOrDefault(i =>
+                {
+                    var propertyBase = RelationalModel.FindPropertyBaseByPath(index.DeclaringEntityType, i);
+                    return propertyBase == null
+                        || (propertyBase is IComplexProperty complexProperty
+                            && !complexProperty.ComplexType.IsMappedToJson());
+                });
 #pragma warning restore EF1001 // Internal EF Core API usage.
 
             if (notFound != null)
@@ -257,6 +263,21 @@ public class SqlServerModelValidator(
                         notFound,
                         index.DisplayName(),
                         index.DeclaringEntityType.DisplayName()));
+            }
+
+            foreach (var includeProperty in includeProperties)
+            {
+#pragma warning disable EF1001 // Internal EF Core API usage.
+                var propertyBase = RelationalModel.FindPropertyBaseByPath(index.DeclaringEntityType, includeProperty)!;
+#pragma warning restore EF1001 // Internal EF Core API usage.
+                if (propertyBase.DeclaringType.IsMappedToJson())
+                {
+                    throw new InvalidOperationException(
+                        SqlServerStrings.IncludePropertyInJsonMappedType(
+                            includeProperty,
+                            index.DisplayName(),
+                            index.DeclaringEntityType.DisplayName()));
+                }
             }
 
             var duplicateProperty = includeProperties
@@ -303,6 +324,10 @@ public class SqlServerModelValidator(
         }
 
         var entityType = index.DeclaringEntityType;
+
+        ValidateUnsupportedIndexOptions(
+            index,
+            (option) => SqlServerStrings.FullTextIndexUnsupportedOption(index.DisplayName(), entityType.DisplayName(), option));
 
         if (++_entityFullTextIndexCount > 1)
         {
@@ -363,6 +388,11 @@ public class SqlServerModelValidator(
     {
         if (index.IsVectorIndex())
         {
+            ValidateUnsupportedIndexOptions(
+                index,
+                (option) => SqlServerStrings.VectorIndexUnsupportedOption(
+                    index.DisplayName(), index.DeclaringEntityType.DisplayName(), option));
+
             if (index.Properties is not [var propertyBase])
             {
                 throw new InvalidOperationException(
@@ -396,6 +426,28 @@ public class SqlServerModelValidator(
                         index.DeclaringEntityType.DisplayName(),
                         propertyBase.Name));
             }
+        }
+    }
+
+    private static void ValidateUnsupportedIndexOptions(IIndex index, Func<string, string> errorFactory)
+    {
+        var option = index switch
+        {
+            { IsUnique: true } => nameof(index.IsUnique),
+            { IsDescending: not null } => nameof(index.IsDescending),
+            _ when index.GetFilter() is not null => "Filter",
+            _ when index.IsClustered() is not null => "IsClustered",
+            _ when index.GetIncludeProperties() is not null => "IncludeProperties",
+            _ when index.GetFillFactor() is not null => "FillFactor",
+            _ when index.IsCreatedOnline() is not null => "IsCreatedOnline",
+            _ when index.GetSortInTempDb() is not null => "SortInTempDb",
+            _ when index.GetDataCompression() is not null => "DataCompression",
+            _ => null
+        };
+
+        if (option is not null)
+        {
+            throw new InvalidOperationException(errorFactory(option));
         }
     }
 

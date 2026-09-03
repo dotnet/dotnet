@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +11,7 @@ namespace NuGet.Protocol
     /// </summary>
     public class V2FeedPage
     {
-        public V2FeedPage(List<V2FeedPackageInfo> items, string nextUri)
+        public V2FeedPage(List<V2FeedPackageInfo> items, string? nextUri)
         {
             if (items == null)
             {
@@ -25,6 +23,6 @@ namespace NuGet.Protocol
         }
 
         public IReadOnlyList<V2FeedPackageInfo> Items { get; }
-        public string NextUri { get; }
+        public string? NextUri { get; }
     }
 }

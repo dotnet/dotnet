@@ -70,7 +70,8 @@ public class PlatformAssemblyResolver : IAssemblyResolver
     /// </returns>
     private Assembly? AssemblyResolverEvent(object sender, object eventArgs)
     {
-        return eventArgs is not AssemblyName args ? null : AssemblyResolve?.Invoke(this, new AssemblyResolveEventArgs(args.Name));
+        // AssemblyLoadContext.Resolving does not expose the requesting assembly, so null is passed explicitly.
+        return eventArgs is not AssemblyName args ? null : AssemblyResolve?.Invoke(this, new AssemblyResolveEventArgs(args.Name, requestingAssembly: null));
     }
 }
 

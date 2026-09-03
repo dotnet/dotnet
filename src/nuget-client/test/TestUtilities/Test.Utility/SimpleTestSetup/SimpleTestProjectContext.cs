@@ -448,6 +448,7 @@ namespace NuGet.Test.Utility
             context.Frameworks.AddRange(frameworks.Select(f => new SimpleTestProjectFrameworkContext(NuGetFramework.Parse(f)) { TargetAlias = f }));
             context.ToolingVersion15 = true;
             context.Properties.Add("BuildWithNetFrameworkHostedCompiler", bool.FalseString);
+            context.Properties.Add("AutomaticallyUseReferenceAssemblyPackages", bool.FalseString);
             return context;
         }
 

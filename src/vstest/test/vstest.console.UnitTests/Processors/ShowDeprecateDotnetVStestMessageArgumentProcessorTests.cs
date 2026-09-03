@@ -7,7 +7,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace vstest.console.UnitTests.Processors;
 
 [TestClass]
-[TestCategory("Windows-Review")]
 public class ShowDeprecateDotnetVStestMessageArgumentProcessorTests
 {
     [TestMethod]

@@ -64,5 +64,52 @@ namespace NuGet.Frameworks.Test
             var assetTargetFallback = new AssetTargetFallbackFramework(nugetFramework, fallbackFrameworks: SampleFrameworkList);
             Assert.False(assetTargetFallback.Equals((object)nugetFramework));
         }
+
+        [Fact]
+        public void Equals_WithDualCompatibilityFramework_DifferentFromPlainFramework()
+        {
+            var net6Win = NuGetFramework.Parse("net6.0-windows7.0");
+            var native = NuGetFramework.Parse("native");
+            var fallbacks = new NuGetFramework[] { NuGetFramework.Parse("net461") };
+
+            var atfPlain = new AssetTargetFallbackFramework(net6Win, fallbacks);
+            var atfDcf = new AssetTargetFallbackFramework(
+                new DualCompatibilityFramework(net6Win, native), fallbacks);
+
+            atfPlain.Equals(atfDcf).Should().BeFalse(
+                because: "ATF wrapping DualCompatibilityFramework(net6.0, native) must differ from ATF wrapping plain net6.0");
+            atfDcf.Equals(atfPlain).Should().BeFalse();
+        }
+
+        [Fact]
+        public void GetHashCode_WithDualCompatibilityFramework_DifferentFromPlainFramework()
+        {
+            var net6Win = NuGetFramework.Parse("net6.0-windows7.0");
+            var native = NuGetFramework.Parse("native");
+            var fallbacks = new NuGetFramework[] { NuGetFramework.Parse("net461") };
+
+            var atfPlain = new AssetTargetFallbackFramework(net6Win, fallbacks);
+            var atfDcf = new AssetTargetFallbackFramework(
+                new DualCompatibilityFramework(net6Win, native), fallbacks);
+
+            atfPlain.GetHashCode().Should().NotBe(atfDcf.GetHashCode(),
+                because: "hash codes must differ to avoid cache collisions in LockFileBuilderCache");
+        }
+
+        [Fact]
+        public void Equals_TwoDualCompatibilityFrameworks_WithSameSecondary_AreEqual()
+        {
+            var net6Win = NuGetFramework.Parse("net6.0-windows7.0");
+            var native = NuGetFramework.Parse("native");
+            var fallbacks = new NuGetFramework[] { NuGetFramework.Parse("net461") };
+
+            var atf1 = new AssetTargetFallbackFramework(
+                new DualCompatibilityFramework(net6Win, native), fallbacks);
+            var atf2 = new AssetTargetFallbackFramework(
+                new DualCompatibilityFramework(net6Win, native), fallbacks);
+
+            atf1.Equals(atf2).Should().BeTrue();
+            atf1.GetHashCode().Should().Be(atf2.GetHashCode());
+        }
     }
 }

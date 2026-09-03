@@ -109,6 +109,7 @@ namespace System
         public static ReadOnlySpan<char> TrimStart(this ReadOnlySpan<char> span, ReadOnlySpan<char> trimChars) { throw null; }
         public static ReadOnlySpan<char> TrimStart(this ReadOnlySpan<char> span) { throw null; }
     }
+
     public readonly partial struct Memory<T>
     {
         private readonly object _dummy;
@@ -119,7 +120,6 @@ namespace System
         public bool IsEmpty { get { throw null; } }
         public int Length { get { throw null; } }
         public Span<T> Span { get { throw null; } }
-
         public readonly void CopyTo(Memory<T> destination) { }
         public readonly bool Equals(Memory<T> other) { throw null; }
         public override readonly bool Equals(object obj) { throw null; }
@@ -145,7 +145,6 @@ namespace System
         public bool IsEmpty { get { throw null; } }
         public int Length { get { throw null; } }
         public ReadOnlySpan<T> Span { get { throw null; } }
-
         public readonly void CopyTo(Memory<T> destination) { }
         public override readonly bool Equals(object obj) { throw null; }
         public readonly bool Equals(ReadOnlyMemory<T> other) { throw null; }
@@ -170,11 +169,8 @@ namespace System
         public unsafe ReadOnlySpan(void* pointer, int length) { }
         public static ReadOnlySpan<T> Empty { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
-
         public ref readonly T this[int index] { get { throw null; } }
-
         public int Length { get { throw null; } }
-
         public readonly void CopyTo(Span<T> destination) { }
         [Obsolete("Equals() on ReadOnlySpan will always throw an exception. Use == instead.")]
         public override readonly bool Equals(object obj) { throw null; }
@@ -197,7 +193,6 @@ namespace System
             private object _dummy;
             private int _dummyPrimitive;
             public ref readonly T Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
         }
     }
@@ -224,11 +219,8 @@ namespace System
         public unsafe Span(void* pointer, int length) { }
         public static Span<T> Empty { get { throw null; } }
         public bool IsEmpty { get { throw null; } }
-
         public ref T this[int index] { get { throw null; } }
-
         public int Length { get { throw null; } }
-
         public readonly void Clear() { }
         public readonly void CopyTo(Span<T> destination) { }
         [Obsolete("Equals() on Span will always throw an exception. Use == instead.")]
@@ -254,7 +246,6 @@ namespace System
             private object _dummy;
             private int _dummyPrimitive;
             public ref T Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
         }
     }
@@ -269,6 +260,7 @@ namespace System.Buffers
         public static T[] ToArray<T>(this in ReadOnlySequence<T> sequence) { throw null; }
         public static void Write<T>(this IBufferWriter<T> writer, ReadOnlySpan<T> value) { }
     }
+
     public partial interface IBufferWriter<T>
     {
         void Advance(int count);
@@ -295,14 +287,12 @@ namespace System.Buffers
         public unsafe MemoryHandle(void* pointer, Runtime.InteropServices.GCHandle handle = default, IPinnable pinnable = null) { }
         [CLSCompliant(false)]
         public unsafe void* Pointer { get { throw null; } }
-
         public void Dispose() { }
     }
 
     public abstract partial class MemoryManager<T> : IMemoryOwner<T>, IDisposable, IPinnable
     {
         public virtual Memory<T> Memory { get { throw null; } }
-
         protected Memory<T> CreateMemory(int start, int length) { throw null; }
         protected Memory<T> CreateMemory(int length) { throw null; }
         protected abstract void Dispose(bool disposing);
@@ -317,7 +307,6 @@ namespace System.Buffers
     {
         public abstract int MaxBufferSize { get; }
         public static MemoryPool<T> Shared { get { throw null; } }
-
         public void Dispose() { }
         protected abstract void Dispose(bool disposing);
         public abstract IMemoryOwner<T> Rent(int minBufferSize = -1);
@@ -337,6 +326,7 @@ namespace System.Buffers
         public ReadOnlySequenceSegment<T> Next { get { throw null; } protected set { } }
         public long RunningIndex { get { throw null; } protected set { } }
     }
+
     public readonly partial struct ReadOnlySequence<T>
     {
         public static readonly ReadOnlySequence<T> Empty;
@@ -350,7 +340,6 @@ namespace System.Buffers
         public bool IsSingleSegment { get { throw null; } }
         public long Length { get { throw null; } }
         public SequencePosition Start { get { throw null; } }
-
         public readonly Enumerator GetEnumerator() { throw null; }
         public readonly SequencePosition GetPosition(long offset, SequencePosition origin) { throw null; }
         public readonly SequencePosition GetPosition(long offset) { throw null; }
@@ -372,7 +361,6 @@ namespace System.Buffers
             private int _dummyPrimitive;
             public Enumerator(in ReadOnlySequence<T> sequence) { }
             public ReadOnlyMemory<T> Current { get { throw null; } }
-
             public bool MoveNext() { throw null; }
         }
     }
@@ -387,7 +375,6 @@ namespace System.Buffers
         public bool IsDefault { get { throw null; } }
         public byte Precision { get { throw null; } }
         public char Symbol { get { throw null; } }
-
         public readonly bool Equals(StandardFormat other) { throw null; }
         public override readonly bool Equals(object obj) { throw null; }
         public override readonly int GetHashCode() { throw null; }
@@ -502,6 +489,7 @@ namespace System.Buffers.Text
         public static int GetMaxDecodedFromUtf8Length(int length) { throw null; }
         public static int GetMaxEncodedToUtf8Length(int length) { throw null; }
     }
+
     public static partial class Utf8Formatter
     {
         public static bool TryFormat(bool value, Span<byte> destination, out int bytesWritten, StandardFormat format = default) { throw null; }
@@ -525,6 +513,7 @@ namespace System.Buffers.Text
         [CLSCompliant(false)]
         public static bool TryFormat(ulong value, Span<byte> destination, out int bytesWritten, StandardFormat format = default) { throw null; }
     }
+
     public static partial class Utf8Parser
     {
         public static bool TryParse(ReadOnlySpan<byte> source, out bool value, out int bytesConsumed, char standardFormat = '\0') { throw null; }
@@ -572,6 +561,7 @@ namespace System.Runtime.InteropServices
         public static bool TryWrite<T>(Span<byte> destination, ref T value) where T : struct { throw null; }
         public static void Write<T>(Span<byte> destination, ref T value) where T : struct { }
     }
+
     public static partial class SequenceMarshal
     {
         public static bool TryGetArray<T>(Buffers.ReadOnlySequence<T> sequence, out ArraySegment<T> segment) { throw null; }

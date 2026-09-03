@@ -385,7 +385,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please provide arguments for package id and package version..
+        ///   Looks up a localized string similar to Provide arguments for package id and package version..
         /// </summary>
         internal static string Delete_MissingArguments {
             get {
@@ -529,7 +529,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No assets file was found for `{0}`. Please run restore before running this command..
+        ///   Looks up a localized string similar to No assets file was found for `{0}`. Run restore before running this command..
         /// </summary>
         internal static string Error_AssetsFileNotFound {
             get {
@@ -701,7 +701,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The directory &apos;{0}&apos; contains multiple project or solution files. Please specify which project or solution file to use..
+        ///   Looks up a localized string similar to The directory &apos;{0}&apos; contains multiple project or solution files. Specify which project or solution file to use..
         /// </summary>
         internal static string Error_MultipleProjectOrSolutionFilesInDirectory {
             get {
@@ -773,7 +773,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing or invalid path &apos;{0}&apos;. Please provide a path to a project, solution file, file-based app, or project directory..
+        ///   Looks up a localized string similar to Missing or invalid path &apos;{0}&apos;. Provide a path to a project, solution file, file-based app, or project directory..
         /// </summary>
         internal static string Error_PathIsMissingOrInvalid {
             get {
@@ -1025,7 +1025,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to read the assets file `{0}`. Please make sure the file has the write format..
+        ///   Looks up a localized string similar to Unable to read the assets file `{0}`. Make sure the file has the correct format..
         /// </summary>
         internal static string ListPkg_ErrorReadingAssetsFile {
             get {
@@ -1034,7 +1034,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to read a package reference from the project `{0}`. Please make sure that your project file and project.assets.json file are in sync by running restore..
+        ///   Looks up a localized string similar to Unable to read a package reference from the project `{0}`. Make sure that your project file and project.assets.json file are in sync by running restore..
         /// </summary>
         internal static string ListPkg_ErrorReadingReferenceFromProject {
             get {
@@ -1431,7 +1431,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Both operations, --list and --clear, are not supported in the same command. Please specify only one operation.
+        ///   Looks up a localized string similar to Both operations, --list and --clear, are not supported in the same command. Specify only one operation.
         ///usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
         ///For more information, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
@@ -1453,7 +1453,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please specify an operation i.e. --list or --clear.
+        ///   Looks up a localized string similar to Specify an operation i.e. --list or --clear.
         ///usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
         ///For more information, visit https://docs.nuget.org/docs/reference/command-line-reference.
         /// </summary>
@@ -2004,7 +2004,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please specify the path to the package..
+        ///   Looks up a localized string similar to Specify the path to the package..
         /// </summary>
         internal static string Push_MissingArguments {
             get {
@@ -2206,7 +2206,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The &apos;--timestamper&apos; option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.microsoft.com/dotnet/core/tools.
+        ///   Looks up a localized string similar to The &apos;--timestamper&apos; option was not provided. The signed package will not be timestamped. To learn more about this option, visit https://docs.microsoft.com/dotnet/core/tools.
         /// </summary>
         internal static string SignCommandNoTimestamperWarning {
             get {
@@ -2557,7 +2557,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Please edit the project file directly. ({1}).
+        ///   Looks up a localized string similar to The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Edit the project file directly. ({1}).
         /// </summary>
         internal static string Unsupported_UpdatePackageWithDifferentPerTfmVersions {
             get {
@@ -2737,7 +2737,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file &apos;{0}&apos; does not appear to be a NuGet assets file. Please run restore for project &apos;{1}&apos; before running this command..
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; does not appear to be a NuGet assets file. Run restore for project &apos;{1}&apos; before running this command..
         /// </summary>
         internal static string WhyCommand_Error_InvalidAssetsFile_WithProject {
             get {

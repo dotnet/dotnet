@@ -263,7 +263,7 @@ namespace NuGet.Protocol.Plugins.Tests
                 responseHandler.Setup(x => x.SendResponseAsync(
                         It.Is<Message>(r => r == request),
                         It.Is<GetServiceIndexResponse>(r => r.ResponseCode == MessageResponseCode.Success
-                            && r.ServiceIndex.ToString(Formatting.None) == serviceIndex.ToString(Formatting.None)),
+                            && r.ServiceIndexJson == serviceIndex.ToString(Formatting.None)),
                         It.IsAny<CancellationToken>()))
                     .Returns(Task.CompletedTask);
 

@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,20 +19,30 @@ namespace NuGet.Protocol.Core.Types
         }
 
         // higher goes last
-        public int Compare(INuGetResourceProvider providerA, INuGetResourceProvider providerB)
+        public int Compare(INuGetResourceProvider? providerA, INuGetResourceProvider? providerB)
         {
+            if (providerA == null)
+            {
+                throw new ArgumentNullException(nameof(providerA));
+            }
+
+            if (providerB == null)
+            {
+                throw new ArgumentNullException(nameof(providerB));
+            }
+
             if (StringComparer.Ordinal.Equals(providerA.Name, providerB.Name))
             {
                 return 0;
             }
 
             // empty names go last
-            if (String.IsNullOrEmpty(providerA.Name))
+            if (string.IsNullOrEmpty(providerA.Name))
             {
                 return 1;
             }
 
-            if (String.IsNullOrEmpty(providerB.Name))
+            if (string.IsNullOrEmpty(providerB.Name))
             {
                 return -1;
             }

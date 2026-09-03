@@ -1,6 +1,7 @@
 <Project>
 
   <Import Project="..\..\Directory.Build.targets" />
+  <Import Project="$(RepositoryEngineeringDir)PackageValidation.targets" />
   <Import Project="$(RepositoryEngineeringDir)ILTooling.targets" />
 
   <!-- Targeting packs assemble their .il sources directly into $(BaseOutputPath)pack/ in the

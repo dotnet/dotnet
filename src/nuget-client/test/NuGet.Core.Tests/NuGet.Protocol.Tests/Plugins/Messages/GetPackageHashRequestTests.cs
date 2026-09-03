@@ -101,7 +101,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void JsonDeserialization_ReturnsCorrectObject()
         {
             var json = "{\"HashAlgorithm\":\"a\",\"PackageId\":\"b\",\"PackageSourceRepository\":\"c\",\"PackageVersion\":\"d\"}";
-            var request = JsonSerializationUtilities.Deserialize<GetPackageHashRequest>(json);
+            var request = JsonSerializationUtilities.Deserialize<GetPackageHashRequest>(json)!;
 
             Assert.Equal("a", request.HashAlgorithm);
             Assert.Equal("b", request.PackageId);

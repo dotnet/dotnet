@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace NuGet.Protocol.Plugins
@@ -15,21 +14,26 @@ namespace NuGet.Protocol.Plugins
     public sealed class PluginProcess : IPluginProcess
     {
         private int? _exitCode;
-        private bool _hasStarted;
         private int? _id;
         private bool _isDisposed;
         private readonly Process _process;
-        private readonly ProcessStartInfo _startInfo;
+        private readonly ProcessStartInfo? _startInfo;
+
+        // When HasStarted is false, _startInfo is guaranteed non-null
+        // (parameterless ctor sets HasStarted=true; the only way it can be false is the
+        // ProcessStartInfo ctor, which assigns _startInfo).
+        [MemberNotNullWhen(false, nameof(_startInfo))]
+        private bool HasStarted { get; set; }
 
         /// <summary>
         /// Occurs when a process exits.
         /// </summary>
-        public event EventHandler<IPluginProcess> Exited;
+        public event EventHandler<IPluginProcess>? Exited;
 
         /// <summary>
         /// Occurs when a line of output has been received.
         /// </summary>
-        public event EventHandler<LineReadEventArgs> LineRead;
+        public event EventHandler<LineReadEventArgs>? LineRead;
 
         public int? ExitCode
         {
@@ -41,7 +45,7 @@ namespace NuGet.Protocol.Plugins
             }
         }
 
-        internal string FilePath => _process.MainModule.FileName;
+        internal string FilePath => _process.MainModule!.FileName;
 
         /// <summary>
         /// Gets the process ID if the process was started; otherwise, <see langword="null" />.
@@ -64,7 +68,7 @@ namespace NuGet.Protocol.Plugins
         public PluginProcess()
         {
             _process = Process.GetCurrentProcess();
-            _hasStarted = true;
+            HasStarted = true;
         }
 
         /// <summary>
@@ -140,7 +144,7 @@ namespace NuGet.Protocol.Plugins
 
         public void Start()
         {
-            if (_hasStarted)
+            if (HasStarted)
             {
                 throw new InvalidOperationException();
             }
@@ -151,17 +155,17 @@ namespace NuGet.Protocol.Plugins
             _process.EnableRaisingEvents = true;
             _process.StartInfo = _startInfo;
 
-            _hasStarted = true;
+            HasStarted = true;
 
             _process.Start();
         }
 
-        private void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
+        private void OnOutputDataReceived(object? sender, DataReceivedEventArgs e)
         {
             LineRead?.Invoke(sender, new LineReadEventArgs(e.Data));
         }
 
-        private void OnProcessExited(object sender, EventArgs e)
+        private void OnProcessExited(object? sender, EventArgs e)
         {
             if (sender is Process process)
             {

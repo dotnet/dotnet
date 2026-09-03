@@ -8,11 +8,28 @@
 
   <PropertyGroup>
     <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
-    <NuspecFile>Microsoft.TestPlatform.Filter.Source.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.Filter.Source</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing filter</PackageTags>
     <PackageDescription>The Microsoft Test Platform Filter Implementation.</PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- Source-only package: don't ship the built DLL -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <!-- Source files packed as contentFiles with Compile build action -->
+  <ItemGroup>
+    <Content Include="Condition.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/VSTestFilterSource/Condition.g.cs" BuildAction="Compile" />
+    <Content Include="EmbeddedAttribute.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/VSTestFilterSource/EmbeddedAttribute.g.cs" BuildAction="Compile" />
+    <Content Include="FastFilter.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/VSTestFilterSource/FastFilter.g.cs" BuildAction="Compile" />
+    <Content Include="FilterExpression.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/VSTestFilterSource/FilterExpression.g.cs" BuildAction="Compile" />
+    <Content Include="FilterExpressionWrapper.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/VSTestFilterSource/FilterExpressionWrapper.g.cs" BuildAction="Compile" />
+    <Content Include="FilterHelper.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/VSTestFilterSource/FilterHelper.g.cs" BuildAction="Compile" />
+    <Content Include="TestCaseFilterExpression.cs" Pack="true" PackagePath="contentFiles/cs/netstandard2.0/VSTestFilterSource/TestCaseFilterExpression.g.cs" BuildAction="Compile" />
+  </ItemGroup>
 
 </Project>

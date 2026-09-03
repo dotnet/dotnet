@@ -469,6 +469,52 @@ public class DataCollectionManagerTests
         Assert.IsFalse(isEndInvoked);
     }
 
+    [TestMethod]
+    public void TestCaseStartedShouldThrowInvalidOperationExceptionWhenTestElementIsNull()
+    {
+        _dataCollectionManager.InitializeDataCollectors(_dataCollectorSettings);
+        var args = new TestCaseStartEventArgs(); // TestElement is null by default
+        Assert.ThrowsExactly<InvalidOperationException>(() => _dataCollectionManager.TestCaseStarted(args));
+    }
+
+    [TestMethod]
+    public void TestCaseEndedShouldThrowInvalidOperationExceptionWhenTestElementIsNull()
+    {
+        _dataCollectionManager.InitializeDataCollectors(_dataCollectorSettings);
+        var args = new TestCaseEndEventArgs();
+        Assert.ThrowsExactly<InvalidOperationException>(() => _dataCollectionManager.TestCaseEnded(args));
+    }
+
+    [TestMethod]
+    public void TestCaseStartedShouldThrowInvalidOperationExceptionWhenContextNotInitialized()
+    {
+        // Do not call InitializeDataCollectors so _dataCollectionEnvironmentContext is null
+        SetupMockDataCollector((XmlElement a, DataCollectionEvents b, DataCollectionSink c, DataCollectionLogger d, DataCollectionEnvironmentContext e) => { });
+        _dataCollectionManager.InitializeDataCollectors(_dataCollectorSettings);
+
+        // Access internal state: force _dataCollectionEnvironmentContext to null by not running SessionStarted
+        // TestCaseStarted with a valid TestElement but no session context should throw
+        var fieldInfo = typeof(DataCollectionManager).GetField("_dataCollectionEnvironmentContext", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        fieldInfo!.SetValue(_dataCollectionManager, null);
+
+        var args = new TestCaseStartEventArgs(new TestCase());
+        Assert.ThrowsExactly<InvalidOperationException>(() => _dataCollectionManager.TestCaseStarted(args));
+    }
+
+    [TestMethod]
+    public void TestCaseEndedShouldThrowInvalidOperationExceptionWhenContextNotInitialized()
+    {
+        SetupMockDataCollector((XmlElement a, DataCollectionEvents b, DataCollectionSink c, DataCollectionLogger d, DataCollectionEnvironmentContext e) => { });
+        _dataCollectionManager.InitializeDataCollectors(_dataCollectorSettings);
+
+        var fieldInfo = typeof(DataCollectionManager).GetField("_dataCollectionEnvironmentContext", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        fieldInfo!.SetValue(_dataCollectionManager, null);
+
+        var args = new TestCaseEndEventArgs();
+        args.TestElement = new TestCase();
+        Assert.ThrowsExactly<InvalidOperationException>(() => _dataCollectionManager.TestCaseEnded(args));
+    }
+
     private void SetupMockDataCollector(Action<XmlElement, DataCollectionEvents, DataCollectionSink, DataCollectionLogger, DataCollectionEnvironmentContext> callback)
     {
         _mockDataCollector.Setup(

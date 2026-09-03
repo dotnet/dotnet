@@ -4,10 +4,10 @@
 #nullable disable
 
 using System.Collections.Generic;
+using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Microsoft.Extensions.CommandLineUtils;
 using Moq;
 using NuGet.CommandLine.XPlat;
 using NuGet.Packaging;
@@ -49,19 +49,18 @@ namespace NuGet.XPlat.FuncTest
                     projectPath};
 
                 var logger = new TestCommandOutputLogger(_testOutputHelper);
-                var testApp = new CommandLineApplication();
+                var testApp = new RootCommand();
                 var mockCommandRunner = new Mock<IPackageReferenceCommandRunner>();
                 mockCommandRunner
                     .Setup(m => m.ExecuteCommand(It.IsAny<PackageReferenceArgs>(), It.IsAny<MSBuildAPIUtility>()))
                     .ReturnsAsync(0);
 
-                testApp.Name = "dotnet nuget_test";
                 RemovePackageReferenceCommand.Register(testApp,
                     () => logger,
                     () => mockCommandRunner.Object);
 
                 // Act
-                var result = testApp.Execute(argList.ToArray());
+                var result = testApp.Parse(argList.ToArray()).Invoke();
 
                 XPlatTestUtils.DisposeTemporaryFile(projectPath);
 

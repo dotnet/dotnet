@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
+using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
 using NuGet.VisualStudio;
 using Xunit;
@@ -175,6 +176,29 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.True(getProjectNameSuccess);
             Assert.Same(projectRestoreInfo, actual);
             Assert.Equal(@"folder\project", names.CustomUniqueName);
+        }
+
+        [Fact]
+        public void AddProject_WhenProjectAlreadyExists_SwapsNuGetProjectInPlaceWithoutRemoving()
+        {
+            // Arrange
+            var target = new ProjectSystemCache();
+            var projectNames = GetTestProjectNames();
+            NuGetProject originalProject = new Mock<NuGetProject>().Object;
+            NuGetProject migratedProject = new Mock<NuGetProject>().Object;
+
+            target.AddProject(projectNames, vsProjectAdapter: null, originalProject);
+
+            // Act
+            target.AddProject(projectNames, vsProjectAdapter: null, migratedProject);
+
+            // Assert
+            IReadOnlyList<NuGetProject> projects = target.GetNuGetProjects();
+            Assert.Equal(1, projects.Count);
+            Assert.Same(migratedProject, projects[0]);
+
+            Assert.True(target.TryGetNuGetProject(projectNames.FullName, out NuGetProject byFullName));
+            Assert.Same(migratedProject, byFullName);
         }
 
         [Fact]

@@ -5,17 +5,24 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Xml;
 using Newtonsoft.Json;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
+using NuGet.Shared;
 
 namespace NuGet.Protocol
 {
     public static class HttpStreamValidation
     {
         public static void ValidateJObject(string uri, Stream stream)
+        {
+            ValidateJObject(uri, stream, environmentVariableReader: null);
+        }
+
+        internal static void ValidateJObject(string uri, Stream stream, Common.IEnvironmentVariableReader? environmentVariableReader)
         {
             if (uri == null)
             {
@@ -27,6 +34,46 @@ namespace NuGet.Protocol
                 throw new ArgumentNullException(nameof(stream));
             }
 
+            if (NuGetFeatureFlags.UseSystemTextJsonDeserializationFeatureSwitch)
+            {
+                ValidateJsonObjectWithStj(uri, stream);
+                return;
+            }
+
+            if (NuGetFeatureFlags.IsSystemTextJsonDeserializationEnabledByEnvironment(environmentVariableReader))
+            {
+                ValidateJsonObjectWithStj(uri, stream);
+                return;
+            }
+
+            ValidateJObjectWithNewtonsoftJson(uri, stream);
+        }
+
+        private static void ValidateJsonObjectWithStj(string uri, Stream stream)
+        {
+            try
+            {
+                using (JsonDocument document = JsonDocument.Parse(stream))
+                {
+                    if (document.RootElement.ValueKind != JsonValueKind.Object)
+                    {
+                        throw new InvalidOperationException("The JSON document is not an object.");
+                    }
+                }
+            }
+            catch (Exception e) when (!(e is InvalidDataException))
+            {
+                string message = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.Protocol_InvalidJsonObject,
+                    uri);
+
+                throw new InvalidDataException(message, e);
+            }
+        }
+
+        private static void ValidateJObjectWithNewtonsoftJson(string uri, Stream stream)
+        {
             try
             {
                 using (var reader = new StreamReader(
@@ -173,7 +220,7 @@ namespace NuGet.Protocol
 
                     if (xmlReader.Depth != 0)
                     {
-                        throw new JsonReaderException("The XML document is not complete.");
+                        throw new InvalidOperationException("The XML document is not complete.");
                     }
                 }
             }

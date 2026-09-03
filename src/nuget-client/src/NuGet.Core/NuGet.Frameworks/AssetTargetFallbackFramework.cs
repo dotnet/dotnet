@@ -78,6 +78,14 @@ namespace NuGet.Frameworks
 
                 combiner.AddObject(Comparer.GetHashCode(this));
 
+                // Include DualCompatibilityFramework's secondary framework in the hash
+                // to distinguish ATF(DCF(net6.0, native)) from ATF(net6.0).
+                if (RootFramework is DualCompatibilityFramework dualCompatibilityFramework)
+                {
+                    combiner.AddStringIgnoreCase(nameof(DualCompatibilityFramework));
+                    combiner.AddObject(Comparer.GetHashCode(dualCompatibilityFramework.SecondaryFramework));
+                }
+
                 foreach (var each in Fallback)
                 {
                     combiner.AddObject(Comparer.GetHashCode(each));
@@ -101,8 +109,26 @@ namespace NuGet.Frameworks
                 return true;
             }
 
-            return NuGetFramework.Comparer.Equals(this, other)
-                && Fallback.SequenceEqual(other.Fallback);
+            if (!NuGetFramework.Comparer.Equals(this, other))
+            {
+                return false;
+            }
+
+            // Check DualCompatibilityFramework secondary framework equality to distinguish
+            // ATF(DCF(net6.0, native)) from ATF(net6.0).
+            var thisDcf = RootFramework as DualCompatibilityFramework;
+            var otherDcf = other.RootFramework as DualCompatibilityFramework;
+            if ((thisDcf == null) != (otherDcf == null))
+            {
+                return false;
+            }
+
+            if (thisDcf != null && !Comparer.Equals(thisDcf.SecondaryFramework, otherDcf!.SecondaryFramework))
+            {
+                return false;
+            }
+
+            return Fallback.SequenceEqual(other.Fallback);
         }
     }
 }

@@ -131,7 +131,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Languages
                 if (reference is TypeReference.ArrayTypeReference arrayTypeRef)
                 {
                     template(output, context);
-                    output.WriteSafeString(".map((e: any) => ");
+                    output.Write(".map((e: any) => ");
                     SerializeToRawObject(output, context, (o, c) => o.Write("e"), arrayTypeRef.BaseType, args);
                     output.Write(")");
                     return;
@@ -141,7 +141,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Languages
                 {
                     output.Write("Helper.mapValues(");
                     template(output, context);
-                    output.WriteSafeString(", (v: any) => ");
+                    output.Write(", (v: any) => ");
                     SerializeToRawObject(output, context, (o, c) => o.Write("v"), dictTypeRef.ValueType, args);
                     output.Write(")");
                     return;
@@ -220,7 +220,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Languages
                 if (reference is TypeReference.ArrayTypeReference arrayTypeRef)
                 {
                     template(output, context);
-                    output.WriteSafeString(".map((e: any) => ");
+                    output.Write(".map((e: any) => ");
                     DeserializeFromRawObject(output, context, (o, c) => o.Write("e"), arrayTypeRef.BaseType, args);
                     output.Write(")");
                     return;
@@ -230,7 +230,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Languages
                 {
                     output.Write("Helper.mapValues(");
                     template(output, context);
-                    output.WriteSafeString(", (v: any) => ");
+                    output.Write(", (v: any) => ");
                     DeserializeFromRawObject(output, context, (o, c) => o.Write("v"), dictTypeRef.ValueType, args);
                     output.Write(")");
                     return;
@@ -298,7 +298,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Languages
                     reference == TypeReference.Double)
                 {
                     template(output, context);
-                    output.WriteSafeString(" + \"\"");
+                    output.Write(" + \"\"");
                     return;
                 }
 

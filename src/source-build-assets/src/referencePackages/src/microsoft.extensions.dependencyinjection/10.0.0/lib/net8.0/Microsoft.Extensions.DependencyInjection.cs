@@ -46,6 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ServiceProvider BuildServiceProvider(this IServiceCollection services, bool validateScopes) { throw null; }
         public static ServiceProvider BuildServiceProvider(this IServiceCollection services) { throw null; }
     }
+
     public sealed partial class ServiceProvider : System.IServiceProvider, IKeyedServiceProvider, System.IDisposable, System.IAsyncDisposable
     {
         internal ServiceProvider() { }

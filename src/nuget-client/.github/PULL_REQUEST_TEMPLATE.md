@@ -1,4 +1,5 @@
 <!-- DO NOT MODIFY OR DELETE THIS TEMPLATE. IT IS USED IN AUTOMATION. -->
+<!-- Keep all section headings and checklist items when filling out this PR description. -->
 
 # Bug
 

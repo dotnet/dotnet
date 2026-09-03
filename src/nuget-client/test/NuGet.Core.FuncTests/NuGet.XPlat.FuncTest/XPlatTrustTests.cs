@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.CommandLine;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
-using Microsoft.Extensions.CommandLineUtils;
 using NuGet.CommandLine.XPlat;
 using NuGet.Common;
 using NuGet.Test.Utility;
@@ -44,12 +44,11 @@ namespace NuGet.XPlat.FuncTest
 
                 // Assert
                 Assert.Equal(1, result.ExitCode);
-                Assert.True(result.AllOutput.Contains($"Unrecognized option '{unrecognizedOption}'"));
+                Assert.True(result.AllOutput.Contains($"Unrecognized command or argument '{unrecognizedOption}'"));
             }
         }
 
         [Theory]
-        [InlineData("-v")]
         [InlineData("--algorithm")]
         [InlineData("--allow-untrusted-root")]
         [InlineData("--owners")]
@@ -119,7 +118,7 @@ namespace NuGet.XPlat.FuncTest
                     var argList = new List<string> { "trust", "list", option, verbosity };
 
                     // Act
-                    int result = testApp.Execute(argList.ToArray());
+                    int result = testApp.Parse(argList.ToArray()).Invoke();
 
                     // Assert
                     Assert.Equal(logLevel, getLogLevel());
@@ -127,14 +126,13 @@ namespace NuGet.XPlat.FuncTest
                 });
         }
 
-        private void TrustCommandArgs(Action<CommandLineApplication, Func<LogLevel>> verify)
+        private void TrustCommandArgs(Action<RootCommand, Func<LogLevel>> verify)
         {
             // Arrange
             var logLevel = LogLevel.Information;
             var logger = new TestCommandOutputLogger(_testOutputHelper);
-            var testApp = new CommandLineApplication();
+            var testApp = new RootCommand();
 
-            testApp.Name = "dotnet nuget_test";
             TrustedSignersCommand.Register(testApp,
                 () => logger,
                 ll => logLevel = ll);

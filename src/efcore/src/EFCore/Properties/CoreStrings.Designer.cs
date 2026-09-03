@@ -869,6 +869,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 propertyList, entityType, principalEntityType);
 
         /// <summary>
+        ///     The index named '{indexName}' on entity type '{entityType}' cannot be configured on properties {propertyList} because an index with the same name has already been defined on different properties or with different complex-collection indices. Use a different name for this index.
+        /// </summary>
+        public static string ConflictingNamedIndex(object? indexName, object? entityType, object? propertyList)
+            => string.Format(
+                GetString("ConflictingNamedIndex", nameof(indexName), nameof(entityType), nameof(propertyList)),
+                indexName, entityType, propertyList);
+
+        /// <summary>
         ///     The entity type '{entity}' has both [Keyless] and [PrimaryKey] attributes; one must be removed.
         /// </summary>
         public static string ConflictingKeylessAndPrimaryKeyAttributes(object? entity)
@@ -1177,6 +1185,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("DuplicateEntityType", nameof(entityType)),
                 entityType);
+
+        /// <summary>
+        ///     The same object instance of type '{entityType}' is being referenced from the navigation '{firstNavigation}' on '{firstOwnerType}' and from the navigation '{secondNavigation}' on '{secondOwnerType}'. Owned entity types cannot have multiple owners pointing to the same instance. Consider creating a copy of the object to use for each navigation.
+        /// </summary>
+        public static string DuplicateOwnedEntityInstance(object? entityType, object? firstNavigation, object? firstOwnerType, object? secondNavigation, object? secondOwnerType)
+            => string.Format(
+                GetString("DuplicateOwnedEntityInstance", nameof(entityType), nameof(firstNavigation), nameof(firstOwnerType), nameof(secondNavigation), nameof(secondOwnerType)),
+                entityType, firstNavigation, firstOwnerType, secondNavigation, secondOwnerType);
 
         /// <summary>
         ///     The foreign key {foreignKeyProperties} cannot be added to the entity type '{entityType}' because a foreign key on the same properties already exists on entity type '{duplicateEntityType}' and also targets the key {keyProperties} on '{principalType}'.
@@ -1728,14 +1744,6 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 indexProperties, entityType, property);
 
         /// <summary>
-        ///     A value factory cannot be created for the index {indexProperties} on the entity type '{entityType}' because it contains the complex property '{property}'. Index value factories are not supported for indexes that contain complex properties.
-        /// </summary>
-        public static string IndexValueFactoryWithComplexProperty(object? indexProperties, object? entityType, object? property)
-            => string.Format(
-                GetString("IndexValueFactoryWithComplexProperty", nameof(indexProperties), nameof(entityType), nameof(property)),
-                indexProperties, entityType, property);
-
-        /// <summary>
         ///     The specified index properties {indexProperties} are not declared on the entity type '{entityType}'. Ensure that index properties are declared on the target entity type.
         /// </summary>
         public static string IndexPropertiesWrongEntity(object? indexProperties, object? entityType)
@@ -1750,6 +1758,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("IndexPropertyMustBePropertyOrComplexProperty", nameof(property), nameof(entityType)),
                 property, entityType);
+
+        /// <summary>
+        ///     A value factory cannot be created for the index {indexProperties} on the entity type '{entityType}' because it contains the complex property '{property}'. Index value factories are not supported for indexes that contain complex properties.
+        /// </summary>
+        public static string IndexValueFactoryWithComplexProperty(object? indexProperties, object? entityType, object? property)
+            => string.Format(
+                GetString("IndexValueFactoryWithComplexProperty", nameof(indexProperties), nameof(entityType), nameof(property)),
+                indexProperties, entityType, property);
 
         /// <summary>
         ///     The index {index} cannot be removed from the entity type '{entityType}' because it is defined on the entity type '{otherEntityType}'.
@@ -1782,6 +1798,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("InvalidAlternateKeyValue", nameof(entityType), nameof(keyProperty)),
                 entityType, keyProperty);
+
+        /// <summary>
+        ///     The collection-indices entry for property '{property}' on index {indexProperties} has {actualCount} element(s), but the property path traverses {expectedCount} complex collection(s).
+        /// </summary>
+        public static string InvalidCollectionIndicesEntryLength(object? property, object? indexProperties, object? actualCount, object? expectedCount)
+            => string.Format(
+                GetString("InvalidCollectionIndicesEntryLength", nameof(property), nameof(indexProperties), nameof(actualCount), nameof(expectedCount)),
+                property, indexProperties, actualCount, expectedCount);
 
         /// <summary>
         ///     The specified type '{type}' must be a non-interface type with a public constructor to be used as a complex type.
@@ -1830,14 +1854,6 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 expression);
 
         /// <summary>
-        ///     The number of indices provided ({indicesCount}) must match the number of array segments in the JSON path ({arraySegmentCount}).
-        /// </summary>
-        public static string InvalidStructuredJsonPathIndexCount(object? indicesCount, object? arraySegmentCount)
-            => string.Format(
-                GetString("InvalidStructuredJsonPathIndexCount", nameof(indicesCount), nameof(arraySegmentCount)),
-                indicesCount, arraySegmentCount);
-
-        /// <summary>
         ///     Unable to track an entity of type '{entityType}' because its primary key property '{keyProperty}' is null.
         /// </summary>
         public static string InvalidKeyValue(object? entityType, object? keyProperty)
@@ -1876,6 +1892,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("InvalidNavigationWithInverseProperty", "0_property", "1_entityType", nameof(referencedProperty), nameof(referencedEntityType)),
                 property, entityType, referencedProperty, referencedEntityType);
+
+        /// <summary>
+        ///     Invalid number of index collection-indices entries provided for {indexProperties}: {numValues} entries were provided, but the index has {numProperties} properties.
+        /// </summary>
+        public static string InvalidNumberOfIndexCollectionIndices(object? indexProperties, object? numValues, object? numProperties)
+            => string.Format(
+                GetString("InvalidNumberOfIndexCollectionIndices", nameof(indexProperties), nameof(numValues), nameof(numProperties)),
+                indexProperties, numValues, numProperties);
 
         /// <summary>
         ///     Invalid number of index sort order values provided for {indexProperties}: {numValues} values were provided, but the index has {numProperties} properties.
@@ -1954,6 +1978,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("InvalidSetTypeOwned", nameof(typeName), nameof(ownerType)),
                 typeName, ownerType);
+
+        /// <summary>
+        ///     The number of indices provided ({indicesCount}) must match the number of array segments in the JSON path ({arraySegmentCount}).
+        /// </summary>
+        public static string InvalidStructuredJsonPathIndexCount(object? indicesCount, object? arraySegmentCount)
+            => string.Format(
+                GetString("InvalidStructuredJsonPathIndexCount", nameof(indicesCount), nameof(arraySegmentCount)),
+                indicesCount, arraySegmentCount);
 
         /// <summary>
         ///     Invalid {name}: {value}
@@ -2724,6 +2756,22 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("OwnerlessOwnedType", nameof(ownedType)),
                 ownedType);
+
+        /// <summary>
+        ///     The ownership relationship from '{principalEntityType}' to '{dependentEntityType}' is configured with '{deleteBehavior}' delete behavior. Ownership relationships must use '{cascadeBehavior}' delete behavior. Either remove the explicit delete behavior configuration or don't configure this relationship as an ownership.
+        /// </summary>
+        public static string OwnershipNotCascadeDelete(object? principalEntityType, object? dependentEntityType, object? deleteBehavior, object? cascadeBehavior)
+            => string.Format(
+                GetString("OwnershipNotCascadeDelete", nameof(principalEntityType), nameof(dependentEntityType), nameof(deleteBehavior), nameof(cascadeBehavior)),
+                principalEntityType, dependentEntityType, deleteBehavior, cascadeBehavior);
+
+        /// <summary>
+        ///     The ownership relationship from '{principalEntityType}' to '{dependentEntityType}' is configured as optional. Ownership relationships must be required. Either remove the optional configuration or don't configure this relationship as an ownership.
+        /// </summary>
+        public static string OwnershipNotRequired(object? principalEntityType, object? dependentEntityType)
+            => string.Format(
+                GetString("OwnershipNotRequired", nameof(principalEntityType), nameof(dependentEntityType)),
+                principalEntityType, dependentEntityType);
 
         /// <summary>
         ///     The navigation '{navigation}' cannot be changed, because the foreign key between '{principalEntityType}' and '{dependentEntityType}' is an ownership. To change the navigation to the owned entity type remove the ownership.
@@ -3562,6 +3610,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 type);
 
         /// <summary>
+        ///     The type '{type}' cannot be mapped because union types are not supported. See https://github.com/dotnet/efcore/issues/36375 for more information.
+        /// </summary>
+        public static string UnionTypeNotSupported(object? type)
+            => string.Format(
+                GetString("UnionTypeNotSupported", nameof(type)),
+                type);
+
+        /// <summary>
         ///     Unhandled {entity} encountered.
         /// </summary>
         public static string UnknownEntity(object? entity)
@@ -3951,31 +4007,6 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics.Internal
         }
 
         /// <summary>
-        ///     'EnsureCreated' was called on a context that is already tracking added, modified, or deleted entities. These tracked changes would be lost if a retry occurs due to a transient failure.
-        /// </summary>
-        public static EventDefinition LogEnsureCreatedWithTrackedEntities(IDiagnosticsLogger logger)
-        {
-            var definition = ((LoggingDefinitions)logger.Definitions).LogEnsureCreatedWithTrackedEntities;
-            if (definition == null)
-            {
-                definition = NonCapturingLazyInitializer.EnsureInitialized(
-                    ref ((LoggingDefinitions)logger.Definitions).LogEnsureCreatedWithTrackedEntities,
-                    logger,
-                    static logger => new EventDefinition(
-                        logger.Options,
-                        CoreEventId.EnsureCreatedWithTrackedEntitiesWarning,
-                        LogLevel.Warning,
-                        "CoreEventId.EnsureCreatedWithTrackedEntitiesWarning",
-                        level => LoggerMessage.Define(
-                            level,
-                            CoreEventId.EnsureCreatedWithTrackedEntitiesWarning,
-                            _resourceManager.GetString("LogEnsureCreatedWithTrackedEntities")!)));
-            }
-
-            return (EventDefinition)definition;
-        }
-
-        /// <summary>
         ///     The unchanged property '{typePath}.{property}' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
         /// </summary>
         public static EventDefinition<string, string> LogComplexElementPropertyChangeDetected(IDiagnosticsLogger logger)
@@ -4273,6 +4304,31 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics.Internal
             }
 
             return (EventDefinition<string, string>)definition;
+        }
+
+        /// <summary>
+        ///     'EnsureCreated' was called on a context that is already tracking added, modified, or deleted entities. These tracked changes would be lost if a retry occurs due to a transient failure. Call 'EnsureCreated' before making changes to the context, or disable this warning by using 'ConfigureWarnings(w =&gt; w.Ignore(CoreEventId.EnsureCreatedWithTrackedEntitiesWarning))'.
+        /// </summary>
+        public static EventDefinition LogEnsureCreatedWithTrackedEntities(IDiagnosticsLogger logger)
+        {
+            var definition = ((LoggingDefinitions)logger.Definitions).LogEnsureCreatedWithTrackedEntities;
+            if (definition == null)
+            {
+                definition = NonCapturingLazyInitializer.EnsureInitialized(
+                    ref ((LoggingDefinitions)logger.Definitions).LogEnsureCreatedWithTrackedEntities,
+                    logger,
+                    static logger => new EventDefinition(
+                        logger.Options,
+                        CoreEventId.EnsureCreatedWithTrackedEntitiesWarning,
+                        LogLevel.Warning,
+                        "CoreEventId.EnsureCreatedWithTrackedEntitiesWarning",
+                        level => LoggerMessage.Define(
+                            level,
+                            CoreEventId.EnsureCreatedWithTrackedEntitiesWarning,
+                            _resourceManager.GetString("LogEnsureCreatedWithTrackedEntities")!)));
+            }
+
+            return (EventDefinition)definition;
         }
 
         /// <summary>

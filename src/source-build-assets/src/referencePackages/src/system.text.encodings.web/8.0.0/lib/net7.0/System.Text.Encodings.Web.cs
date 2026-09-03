@@ -31,7 +31,6 @@ namespace System.Text.Encodings.Web
     public abstract partial class HtmlEncoder : TextEncoder
     {
         public static HtmlEncoder Default { get { throw null; } }
-
         public static HtmlEncoder Create(TextEncoderSettings settings) { throw null; }
         public static HtmlEncoder Create(params Unicode.UnicodeRange[] allowedRanges) { throw null; }
     }
@@ -40,7 +39,6 @@ namespace System.Text.Encodings.Web
     {
         public static JavaScriptEncoder Default { get { throw null; } }
         public static JavaScriptEncoder UnsafeRelaxedJsonEscaping { get { throw null; } }
-
         public static JavaScriptEncoder Create(TextEncoderSettings settings) { throw null; }
         public static JavaScriptEncoder Create(params Unicode.UnicodeRange[] allowedRanges) { throw null; }
     }
@@ -48,7 +46,6 @@ namespace System.Text.Encodings.Web
     public abstract partial class TextEncoder
     {
         public abstract int MaxOutputCharactersPerInputCharacter { get; }
-
         public virtual void Encode(IO.TextWriter output, char[] value, int startIndex, int characterCount) { }
         public virtual void Encode(IO.TextWriter output, string value, int startIndex, int characterCount) { }
         public void Encode(IO.TextWriter output, string value) { }
@@ -62,6 +59,7 @@ namespace System.Text.Encodings.Web
         public abstract unsafe bool TryEncodeUnicodeScalar(int unicodeScalar, char* buffer, int bufferLength, out int numberOfCharactersWritten);
         public abstract bool WillEncode(int unicodeScalar);
     }
+
     public partial class TextEncoderSettings
     {
         public TextEncoderSettings() { }
@@ -79,10 +77,10 @@ namespace System.Text.Encodings.Web
         public virtual void ForbidRanges(params Unicode.UnicodeRange[] ranges) { }
         public virtual Collections.Generic.IEnumerable<int> GetAllowedCodePoints() { throw null; }
     }
+
     public abstract partial class UrlEncoder : TextEncoder
     {
         public static UrlEncoder Default { get { throw null; } }
-
         public static UrlEncoder Create(TextEncoderSettings settings) { throw null; }
         public static UrlEncoder Create(params Unicode.UnicodeRange[] allowedRanges) { throw null; }
     }
@@ -95,9 +93,9 @@ namespace System.Text.Unicode
         public UnicodeRange(int firstCodePoint, int length) { }
         public int FirstCodePoint { get { throw null; } }
         public int Length { get { throw null; } }
-
         public static UnicodeRange Create(char firstCharacter, char lastCharacter) { throw null; }
     }
+
     public static partial class UnicodeRanges
     {
         public static UnicodeRange All { get { throw null; } }

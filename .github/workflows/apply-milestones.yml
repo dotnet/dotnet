@@ -6,7 +6,12 @@ on:
     branches:
       - 'main'
       - 'release/**'
-    paths: ['src/source-manifest.json']
+    # NOTE: Intentionally NO `paths:` filter here. GitHub omits the changed-files
+    # list from the pull_request webhook payload when a PR modifies more than 300
+    # files, which makes `paths` filters silently fail to match — the workflow
+    # never runs for large codeflow PRs (e.g. dotnet/dotnet#7184, 415 files).
+    # Instead, the job below always runs on merged PRs and the script no-ops
+    # when src/source-manifest.json was not changed (see extractChildPRs).
   workflow_dispatch:
     inputs:
       dry-run:
@@ -22,8 +27,13 @@ permissions:
   contents: read
   pull-requests: read
 
+# Scope concurrency to the individual PR being processed so that runs for
+# different PRs never share a group. A shared (e.g. per-branch) group causes
+# GitHub to cancel older pending runs with "a higher priority waiting request
+# exists", which would leave those PRs un-milestoned. Per-PR grouping ensures
+# every PR's run executes and is never auto-cancelled by an unrelated PR.
 concurrency:
-  group: milestone-${{ github.event.pull_request.base.ref || github.ref_name }}
+  group: milestone-${{ github.event.pull_request.number || github.event.inputs['pr-number'] }}
   cancel-in-progress: false
 
 jobs:
@@ -38,7 +48,38 @@ jobs:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
           fetch-depth: 2  # Need parent commit for diff
 
+      # Codeflow PRs (the only PRs that produce child-repo milestones) are the
+      # ones that change src/source-manifest.json. Every other merged PR — most
+      # notably fork PRs, which on `pull_request` events have NO access to the
+      # MILESTONE_APP_* secrets and would otherwise fail the token step below —
+      # has nothing to do here. Detect the codeflow signal up front so those PRs
+      # skip the token + apply steps and the job exits green instead of red.
+      #
+      # Use the PR's file list from the API (the default GITHUB_TOKEN can read it
+      # even for fork PRs) rather than a local `git diff` of the merge commit, so
+      # the signal reflects the full PR independent of merge strategy (rebase /
+      # squash / merge) and shallow-checkout depth.
+      - name: Detect codeflow change
+        id: codeflow
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+            const isCodeflow = files.some(f => f.filename === 'src/source-manifest.json');
+            core.info(isCodeflow
+              ? 'src/source-manifest.json changed — codeflow PR, proceeding.'
+              : 'src/source-manifest.json not changed — not a codeflow PR, nothing to milestone. Skipping.');
+            core.setOutput('is-codeflow', isCodeflow ? 'true' : 'false');
+
       - name: Generate dotnet org token
+        if: >-
+          github.event_name == 'workflow_dispatch' ||
+          steps.codeflow.outputs.is-codeflow == 'true'
         uses: actions/create-github-app-token@v3
         id: dotnet-token
         with:
@@ -57,6 +98,9 @@ jobs:
       #     owner: microsoft
 
       - name: Apply milestones
+        if: >-
+          github.event_name == 'workflow_dispatch' ||
+          steps.codeflow.outputs.is-codeflow == 'true'
         uses: actions/github-script@v9
         env:
           DOTNET_TOKEN: ${{ steps.dotnet-token.outputs.token }}

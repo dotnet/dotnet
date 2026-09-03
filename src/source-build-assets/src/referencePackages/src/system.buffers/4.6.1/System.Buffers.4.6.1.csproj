@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>System.Buffers</PackageId>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netstandard2.0;netstandard2.1</TargetFrameworks>
     <PackageVersion>4.6.1</PackageVersion>
     <AssemblyName>System.Buffers</AssemblyName>
     <StrongNameKeyId>Open</StrongNameKeyId>
@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/dotnet/maintenance-packages</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PlaceholderTargetFrameworks>netstandard2.1</PlaceholderTargetFrameworks>
+    <PlaceholderTargetFrameworks>netcoreapp2.0;netstandard2.1</PlaceholderTargetFrameworks>
   </PropertyGroup>
 
 </Project>

@@ -3,9 +3,9 @@
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
+    <Target>T:System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.CodeAnalysis.Workspaces.MSBuild.Contracts.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.CodeAnalysis.Workspaces.MSBuild.Contracts.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
@@ -38,12 +38,6 @@
     <Right>/sb/sdk/x.y.z/Spectre.Console.dll</Right>
   </Suppression>
   <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Microsoft.IdentityModel.Tokens.SignatureProvider.Sign(System.ReadOnlySpan{System.Byte},System.Span{System.Byte},System.Int32@)</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
     <Target>Humanizer, Version=x.y.z, Culture=neutral, PublicKeyToken=979442b78dfc278e</Target>
     <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Humanizer.dll</Left>
@@ -54,12 +48,6 @@
     <Target>Microsoft.Build.Locator, Version=x.y.z, Culture=neutral, PublicKeyToken=9dff12846e04bfbd</Target>
     <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.Build.Locator.dll</Left>
     <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.Build.Locator.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Microsoft.VisualStudio.SolutionPersistence, Version=x.y.z, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</Target>
-    <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
-    <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>

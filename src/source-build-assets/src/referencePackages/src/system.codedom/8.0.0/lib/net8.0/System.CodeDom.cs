@@ -36,7 +36,6 @@ namespace Microsoft.CSharp
         public CSharpCodeProvider() { }
         public CSharpCodeProvider(System.Collections.Generic.IDictionary<string, string> providerOptions) { }
         public override string FileExtension { get { throw null; } }
-
         [System.Obsolete("ICodeCompiler has been deprecated. Use the methods directly on the CodeDomProvider class instead.")]
         public override System.CodeDom.Compiler.ICodeCompiler CreateCompiler() { throw null; }
         [System.Obsolete("ICodeGenerator has been deprecated. Use the methods directly on the CodeDomProvider class instead.")]
@@ -54,7 +53,6 @@ namespace Microsoft.VisualBasic
         public VBCodeProvider(System.Collections.Generic.IDictionary<string, string> providerOptions) { }
         public override string FileExtension { get { throw null; } }
         public override System.CodeDom.Compiler.LanguageOptions LanguageOptions { get { throw null; } }
-
         [System.Obsolete("ICodeCompiler has been deprecated. Use the methods directly on the CodeDomProvider class instead.")]
         public override System.CodeDom.Compiler.ICodeCompiler CreateCompiler() { throw null; }
         [System.Obsolete("ICodeGenerator has been deprecated. Use the methods directly on the CodeDomProvider class instead.")]
@@ -124,13 +122,13 @@ namespace System.CodeDom
         public string Name { get { throw null; } set { } }
         public CodeExpression Value { get { throw null; } set { } }
     }
+
     public partial class CodeAttributeArgumentCollection : Collections.CollectionBase
     {
         public CodeAttributeArgumentCollection() { }
         public CodeAttributeArgumentCollection(CodeAttributeArgument[] value) { }
         public CodeAttributeArgumentCollection(CodeAttributeArgumentCollection value) { }
         public CodeAttributeArgument this[int index] { get { throw null; } set { } }
-
         public int Add(CodeAttributeArgument value) { throw null; }
         public void AddRange(CodeAttributeArgument[] value) { }
         public void AddRange(CodeAttributeArgumentCollection value) { }
@@ -152,13 +150,13 @@ namespace System.CodeDom
         public CodeTypeReference AttributeType { get { throw null; } }
         public string Name { get { throw null; } set { } }
     }
+
     public partial class CodeAttributeDeclarationCollection : Collections.CollectionBase
     {
         public CodeAttributeDeclarationCollection() { }
         public CodeAttributeDeclarationCollection(CodeAttributeDeclaration[] value) { }
         public CodeAttributeDeclarationCollection(CodeAttributeDeclarationCollection value) { }
         public CodeAttributeDeclaration this[int index] { get { throw null; } set { } }
-
         public int Add(CodeAttributeDeclaration value) { throw null; }
         public void AddRange(CodeAttributeDeclaration[] value) { }
         public void AddRange(CodeAttributeDeclarationCollection value) { }
@@ -223,13 +221,13 @@ namespace System.CodeDom
         public string LocalName { get { throw null; } set { } }
         public CodeStatementCollection Statements { get { throw null; } }
     }
+
     public partial class CodeCatchClauseCollection : Collections.CollectionBase
     {
         public CodeCatchClauseCollection() { }
         public CodeCatchClauseCollection(CodeCatchClause[] value) { }
         public CodeCatchClauseCollection(CodeCatchClauseCollection value) { }
         public CodeCatchClause this[int index] { get { throw null; } set { } }
-
         public int Add(CodeCatchClause value) { throw null; }
         public void AddRange(CodeCatchClause[] value) { }
         public void AddRange(CodeCatchClauseCollection value) { }
@@ -273,7 +271,6 @@ namespace System.CodeDom
         public CodeCommentStatementCollection(CodeCommentStatement[] value) { }
         public CodeCommentStatementCollection(CodeCommentStatementCollection value) { }
         public CodeCommentStatement this[int index] { get { throw null; } set { } }
-
         public int Add(CodeCommentStatement value) { throw null; }
         public void AddRange(CodeCommentStatement[] value) { }
         public void AddRange(CodeCommentStatementCollection value) { }
@@ -352,7 +349,6 @@ namespace System.CodeDom
         public CodeDirectiveCollection(CodeDirective[] value) { }
         public CodeDirectiveCollection(CodeDirectiveCollection value) { }
         public CodeDirective this[int index] { get { throw null; } set { } }
-
         public int Add(CodeDirective value) { throw null; }
         public void AddRange(CodeDirective[] value) { }
         public void AddRange(CodeDirectiveCollection value) { }
@@ -385,7 +381,6 @@ namespace System.CodeDom
         public CodeExpressionCollection(CodeExpression[] value) { }
         public CodeExpressionCollection(CodeExpressionCollection value) { }
         public CodeExpression this[int index] { get { throw null; } set { } }
-
         public int Add(CodeExpression value) { throw null; }
         public void AddRange(CodeExpression[] value) { }
         public void AddRange(CodeExpressionCollection value) { }
@@ -452,6 +447,7 @@ namespace System.CodeDom
         public string FileName { get { throw null; } set { } }
         public int LineNumber { get { throw null; } set { } }
     }
+
     public partial class CodeMemberEvent : CodeTypeMember
     {
         public CodeTypeReferenceCollection ImplementationTypes { get { throw null; } }
@@ -478,21 +474,9 @@ namespace System.CodeDom
         public CodeAttributeDeclarationCollection ReturnTypeCustomAttributes { get { throw null; } }
         public CodeStatementCollection Statements { get { throw null; } }
         public CodeTypeParameterCollection TypeParameters { get { throw null; } }
-
-        public event EventHandler PopulateImplementationTypes {
-            add { }
-            remove { }
-        }
-
-        public event EventHandler PopulateParameters {
-            add { }
-            remove { }
-        }
-
-        public event EventHandler PopulateStatements {
-            add { }
-            remove { }
-        }
+        public event EventHandler PopulateImplementationTypes { add { } remove { } }
+        public event EventHandler PopulateParameters { add { } remove { } }
+        public event EventHandler PopulateStatements { add { } remove { } }
     }
 
     public partial class CodeMemberProperty : CodeTypeMember
@@ -541,21 +525,9 @@ namespace System.CodeDom
         public CodeNamespaceImportCollection Imports { get { throw null; } }
         public string Name { get { throw null; } set { } }
         public CodeTypeDeclarationCollection Types { get { throw null; } }
-
-        public event EventHandler PopulateComments {
-            add { }
-            remove { }
-        }
-
-        public event EventHandler PopulateImports {
-            add { }
-            remove { }
-        }
-
-        public event EventHandler PopulateTypes {
-            add { }
-            remove { }
-        }
+        public event EventHandler PopulateComments { add { } remove { } }
+        public event EventHandler PopulateImports { add { } remove { } }
+        public event EventHandler PopulateTypes { add { } remove { } }
     }
 
     public partial class CodeNamespaceCollection : Collections.CollectionBase
@@ -564,7 +536,6 @@ namespace System.CodeDom
         public CodeNamespaceCollection(CodeNamespace[] value) { }
         public CodeNamespaceCollection(CodeNamespaceCollection value) { }
         public CodeNamespace this[int index] { get { throw null; } set { } }
-
         public int Add(CodeNamespace value) { throw null; }
         public void AddRange(CodeNamespace[] value) { }
         public void AddRange(CodeNamespaceCollection value) { }
@@ -586,21 +557,13 @@ namespace System.CodeDom
     public partial class CodeNamespaceImportCollection : Collections.IList, Collections.ICollection, Collections.IEnumerable
     {
         public int Count { get { throw null; } }
-
         public CodeNamespaceImport this[int index] { get { throw null; } set { } }
-
         int Collections.ICollection.Count { get { throw null; } }
-
         bool Collections.ICollection.IsSynchronized { get { throw null; } }
-
         object Collections.ICollection.SyncRoot { get { throw null; } }
-
         bool Collections.IList.IsFixedSize { get { throw null; } }
-
         bool Collections.IList.IsReadOnly { get { throw null; } }
-
         object Collections.IList.this[int index] { get { throw null; } set { } }
-
         public void Add(CodeNamespaceImport value) { }
         public void AddRange(CodeNamespaceImport[] value) { }
         public void Clear() { }
@@ -620,6 +583,7 @@ namespace System.CodeDom
     {
         public Collections.IDictionary UserData { get { throw null; } }
     }
+
     public partial class CodeObjectCreateExpression : CodeExpression
     {
         public CodeObjectCreateExpression() { }
@@ -648,7 +612,6 @@ namespace System.CodeDom
         public CodeParameterDeclarationExpressionCollection(CodeParameterDeclarationExpression[] value) { }
         public CodeParameterDeclarationExpressionCollection(CodeParameterDeclarationExpressionCollection value) { }
         public CodeParameterDeclarationExpression this[int index] { get { throw null; } set { } }
-
         public int Add(CodeParameterDeclarationExpression value) { throw null; }
         public void AddRange(CodeParameterDeclarationExpression[] value) { }
         public void AddRange(CodeParameterDeclarationExpressionCollection value) { }
@@ -744,7 +707,6 @@ namespace System.CodeDom
         public CodeStatementCollection(CodeStatement[] value) { }
         public CodeStatementCollection(CodeStatementCollection value) { }
         public CodeStatement this[int index] { get { throw null; } set { } }
-
         public int Add(CodeExpression value) { throw null; }
         public int Add(CodeStatement value) { throw null; }
         public void AddRange(CodeStatement[] value) { }
@@ -794,16 +756,8 @@ namespace System.CodeDom
         public CodeTypeMemberCollection Members { get { throw null; } }
         public Reflection.TypeAttributes TypeAttributes { get { throw null; } set { } }
         public CodeTypeParameterCollection TypeParameters { get { throw null; } }
-
-        public event EventHandler PopulateBaseTypes {
-            add { }
-            remove { }
-        }
-
-        public event EventHandler PopulateMembers {
-            add { }
-            remove { }
-        }
+        public event EventHandler PopulateBaseTypes { add { } remove { } }
+        public event EventHandler PopulateMembers { add { } remove { } }
     }
 
     public partial class CodeTypeDeclarationCollection : Collections.CollectionBase
@@ -812,7 +766,6 @@ namespace System.CodeDom
         public CodeTypeDeclarationCollection(CodeTypeDeclaration[] value) { }
         public CodeTypeDeclarationCollection(CodeTypeDeclarationCollection value) { }
         public CodeTypeDeclaration this[int index] { get { throw null; } set { } }
-
         public int Add(CodeTypeDeclaration value) { throw null; }
         public void AddRange(CodeTypeDeclaration[] value) { }
         public void AddRange(CodeTypeDeclarationCollection value) { }
@@ -848,7 +801,6 @@ namespace System.CodeDom
         public CodeTypeMemberCollection(CodeTypeMember[] value) { }
         public CodeTypeMemberCollection(CodeTypeMemberCollection value) { }
         public CodeTypeMember this[int index] { get { throw null; } set { } }
-
         public int Add(CodeTypeMember value) { throw null; }
         public void AddRange(CodeTypeMember[] value) { }
         public void AddRange(CodeTypeMemberCollection value) { }
@@ -884,7 +836,6 @@ namespace System.CodeDom
         public CodeTypeParameterCollection(CodeTypeParameter[] value) { }
         public CodeTypeParameterCollection(CodeTypeParameterCollection value) { }
         public CodeTypeParameter this[int index] { get { throw null; } set { } }
-
         public int Add(CodeTypeParameter value) { throw null; }
         public void Add(string value) { }
         public void AddRange(CodeTypeParameter[] value) { }
@@ -920,7 +871,6 @@ namespace System.CodeDom
         public CodeTypeReferenceCollection(CodeTypeReference[] value) { }
         public CodeTypeReferenceCollection(CodeTypeReferenceCollection value) { }
         public CodeTypeReference this[int index] { get { throw null; } set { } }
-
         public int Add(CodeTypeReference value) { throw null; }
         public void Add(string value) { }
         public void Add(Type value) { }
@@ -1004,7 +954,6 @@ namespace System.CodeDom.Compiler
     {
         protected abstract string CompilerName { get; }
         protected abstract string FileExtension { get; }
-
         protected abstract string CmdArgsFromParameters(CompilerParameters options);
         protected virtual CompilerResults FromDom(CompilerParameters options, CodeCompileUnit e) { throw null; }
         protected virtual CompilerResults FromDomBatch(CompilerParameters options, CodeCompileUnit[] ea) { throw null; }
@@ -1028,7 +977,6 @@ namespace System.CodeDom.Compiler
     {
         public virtual string FileExtension { get { throw null; } }
         public virtual LanguageOptions LanguageOptions { get { throw null; } }
-
         public virtual CompilerResults CompileAssemblyFromDom(CompilerParameters options, params CodeCompileUnit[] compilationUnits) { throw null; }
         public virtual CompilerResults CompileAssemblyFromFile(CompilerParameters options, params string[] fileNames) { throw null; }
         public virtual CompilerResults CompileAssemblyFromSource(CompilerParameters options, params string[] sources) { throw null; }
@@ -1077,7 +1025,6 @@ namespace System.CodeDom.Compiler
         protected abstract string NullToken { get; }
         protected CodeGeneratorOptions Options { get { throw null; } }
         protected IO.TextWriter Output { get { throw null; } }
-
         protected virtual void ContinueOnNewLine(string st) { }
         protected abstract string CreateEscapedIdentifier(string value);
         protected abstract string CreateValidIdentifier(string value);
@@ -1195,11 +1142,10 @@ namespace System.CodeDom.Compiler
         public string BracingStyle { get { throw null; } set { } }
         public bool ElseOnClosing { get { throw null; } set { } }
         public string IndentString { get { throw null; } set { } }
-
         public object this[string index] { get { throw null; } set { } }
-
         public bool VerbatimOrder { get { throw null; } set { } }
     }
+
     public abstract partial class CodeParser : ICodeParser
     {
         public abstract CodeCompileUnit Parse(IO.TextReader codeStream);
@@ -1215,9 +1161,9 @@ namespace System.CodeDom.Compiler
         public string FileName { get { throw null; } set { } }
         public bool IsWarning { get { throw null; } set { } }
         public int Line { get { throw null; } set { } }
-
         public override string ToString() { throw null; }
     }
+
     public partial class CompilerErrorCollection : Collections.CollectionBase
     {
         public CompilerErrorCollection() { }
@@ -1225,9 +1171,7 @@ namespace System.CodeDom.Compiler
         public CompilerErrorCollection(CompilerErrorCollection value) { }
         public bool HasErrors { get { throw null; } }
         public bool HasWarnings { get { throw null; } }
-
         public CompilerError this[int index] { get { throw null; } set { } }
-
         public int Add(CompilerError value) { throw null; }
         public void AddRange(CompilerError[] value) { }
         public void AddRange(CompilerErrorCollection value) { }
@@ -1243,7 +1187,6 @@ namespace System.CodeDom.Compiler
         internal CompilerInfo() { }
         public Type CodeDomProviderType { get { throw null; } }
         public bool IsCodeDomProviderTypeValid { get { throw null; } }
-
         public CompilerParameters CreateDefaultCompilerParameters() { throw null; }
         public CodeDomProvider CreateProvider() { throw null; }
         public CodeDomProvider CreateProvider(Collections.Generic.IDictionary<string, string> providerOptions) { throw null; }
@@ -1252,6 +1195,7 @@ namespace System.CodeDom.Compiler
         public override int GetHashCode() { throw null; }
         public string[] GetLanguages() { throw null; }
     }
+
     public partial class CompilerParameters
     {
         public CompilerParameters() { }
@@ -1274,6 +1218,7 @@ namespace System.CodeDom.Compiler
         public int WarningLevel { get { throw null; } set { } }
         public string Win32Resource { get { throw null; } set { } }
     }
+
     public partial class CompilerResults
     {
         public CompilerResults(TempFileCollection tempFiles) { }
@@ -1284,6 +1229,7 @@ namespace System.CodeDom.Compiler
         public string PathToAssembly { get { throw null; } set { } }
         public TempFileCollection TempFiles { get { throw null; } set { } }
     }
+
     public static partial class Executor
     {
         public static void ExecWait(string cmd, TempFileCollection tempFiles) { }
@@ -1292,6 +1238,7 @@ namespace System.CodeDom.Compiler
         public static int ExecWaitWithCapture(string cmd, TempFileCollection tempFiles, ref string outputName, ref string errorName) { throw null; }
         public static int ExecWaitWithCapture(string cmd, string currentDir, TempFileCollection tempFiles, ref string outputName, ref string errorName) { throw null; }
     }
+
     [Flags]
     public enum GeneratorSupport
     {
@@ -1368,14 +1315,10 @@ namespace System.CodeDom.Compiler
         public string BasePath { get { throw null; } }
         public int Count { get { throw null; } }
         public bool KeepFiles { get { throw null; } set { } }
-
         int Collections.ICollection.Count { get { throw null; } }
-
         bool Collections.ICollection.IsSynchronized { get { throw null; } }
-
         object Collections.ICollection.SyncRoot { get { throw null; } }
         public string TempDir { get { throw null; } }
-
         public string AddExtension(string fileExtension, bool keepFile) { throw null; }
         public string AddExtension(string fileExtension) { throw null; }
         public void AddFile(string fileName, bool keepFile) { }
@@ -1384,7 +1327,6 @@ namespace System.CodeDom.Compiler
         protected virtual void Dispose(bool disposing) { }
         ~TempFileCollection() {
         }
-
         public Collections.IEnumerator GetEnumerator() { throw null; }
         void Collections.ICollection.CopyTo(Array array, int start) { }
         Collections.IEnumerator Collections.IEnumerable.GetEnumerator() { throw null; }

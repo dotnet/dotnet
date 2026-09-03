@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <!-- Per-component overrides (FileVersionRevision, AssemblyVersionOverride, etc.) and the
+       <FileVersionValidationPackage> item shared with the update-external-metadata tool
+       and ExternalPackageTests live in this sibling file. SourceRevisionId stays in the
+       .proj below — it's per-.proj source provenance, orthogonal to validation overrides. -->
+  <Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" />
+
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
     <SourceRevisionId>e67b25be77532af9ba405670b34b4d263d505fde</SourceRevisionId>
-    <!-- The FileVersion revision from the Microsoft-shipped package. This must be updated
-         when the submodule is updated. See https://github.com/dotnet/source-build/issues/5509 -->
-    <FileVersionRevision>50722</FileVersionRevision>
-    <!-- Used by the update-external-metadata script to determine the package to download. -->
-    <FileVersionValidationPackage>Microsoft.IdentityModel.Tokens</FileVersionValidationPackage>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">

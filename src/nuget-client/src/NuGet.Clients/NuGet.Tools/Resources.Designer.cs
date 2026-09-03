@@ -106,7 +106,7 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Access denied. Please ensure you are signed in to GitHub Copilot..
+        ///   Looks up a localized string similar to Access denied. Ensure you are signed in to GitHub Copilot..
         /// </summary>
         internal static string Error_CopilotAccessDenied {
             get {
@@ -115,7 +115,7 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to GitHub Copilot is not ready. Please ensure GitHub Copilot is installed and signed in..
+        ///   Looks up a localized string similar to GitHub Copilot is not ready. Ensure GitHub Copilot is installed and signed in..
         /// </summary>
         internal static string Error_CopilotNotReady {
             get {
@@ -124,7 +124,7 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to GitHub Copilot Service is not available. Please ensure GitHub Copilot is installed and signed in..
+        ///   Looks up a localized string similar to GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in..
         /// </summary>
         internal static string Error_CopilotServiceNotAvailable {
             get {
@@ -133,7 +133,25 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MCP Tool Service is not available. Please ensure GitHub Copilot is installed and signed in..
+        ///   Looks up a localized string similar to The NuGet MCP Server is not active. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again..
+        /// </summary>
+        internal static string Error_McpServerNotActive {
+            get {
+                return ResourceManager.GetString("Error_McpServerNotActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to determine the status of the NuGet MCP Server. Ensure GitHub Copilot is installed and signed in..
+        /// </summary>
+        internal static string Error_McpServerInfoServiceNotAvailable {
+            get {
+                return ResourceManager.GetString("Error_McpServerInfoServiceNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MCP Tool Service is not available. Ensure GitHub Copilot is installed and signed in..
         /// </summary>
         internal static string Error_McpToolServiceNotAvailable {
             get {
@@ -142,7 +160,7 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The NuGet Solver tool is unavailable. Please enable the NuGet MCP Server in the GitHub Copilot chat window and try again..
+        ///   Looks up a localized string similar to The NuGet Solver tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again..
         /// </summary>
         internal static string Error_NuGetSolverNotAvailable {
             get {
@@ -196,7 +214,7 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Service Broker is not available. Please ensure Visual Studio is running correctly..
+        ///   Looks up a localized string similar to Service Broker is not available. Ensure Visual Studio is running correctly..
         /// </summary>
         internal static string Error_ServiceBrokerNotAvailable {
             get {
@@ -385,7 +403,7 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution is not saved. Please save your solution before managing NuGet packages..
+        ///   Looks up a localized string similar to Solution is not saved. Save your solution before managing NuGet packages..
         /// </summary>
         internal static string SolutionIsNotSaved {
             get {

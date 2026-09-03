@@ -187,7 +187,7 @@
 1- attributes count</comment>
   </data>
   <data name="NoWritteableConfig" xml:space="preserve">
-    <value>There is no NuGet.Config that could be used for writing settings. Please create one at the desired location and restart the client.</value>
+    <value>There is no NuGet.Config that could be used for writing settings. Create one at the desired location and restart the client.</value>
   </data>
   <data name="OwnersItemMustHaveAtLeastOneOwner" xml:space="preserve">
     <value>Owners item must have at least one owner.</value>

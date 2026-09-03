@@ -70,7 +70,18 @@ namespace Microsoft.TestPlatform.TestHostProvider.Resources {
                 return ResourceManager.GetString("MultipleFileVersions", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string for testhost not found with path and directory info.
+        /// </summary>
+        internal static string CouldNotFindTesthost
+        {
+            get
+            {
+                return ResourceManager.GetString("CouldNotFindTesthost", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Unable to find {0}. Make sure test project has a nuget reference of package &quot;Microsoft.NET.Test.Sdk&quot;..
         /// </summary>
@@ -97,6 +108,15 @@ namespace Microsoft.TestPlatform.TestHostProvider.Resources {
             get
             {
                 return ResourceManager.GetString("NoDotnetMuxerFoundForArchitecture", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Running .NET Framework tests is supported on Windows only..
+        /// </summary>
+        internal static string NetFrameworkTestsNotSupportedOnNonWindows {
+            get {
+                return ResourceManager.GetString("NetFrameworkTestsNotSupportedOnNonWindows", resourceCulture);
             }
         }
 

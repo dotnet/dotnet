@@ -173,7 +173,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Languages
                 else
                 {
                     template(output, context);
-                    output.WriteSafeString($" == {GetDefaultExpression(reference, required)}");
+                    output.Write($" == {GetDefaultExpression(reference, required)}");
                 }
             }
 
@@ -189,7 +189,7 @@ namespace Microsoft.DotNet.SwaggerGenerator.Languages
                 else
                 {
                     template(output, context);
-                    output.WriteSafeString($" != {GetDefaultExpression(reference, required)}");
+                    output.Write($" != {GetDefaultExpression(reference, required)}");
                 }
             }
 

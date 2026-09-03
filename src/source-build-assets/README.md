@@ -64,12 +64,53 @@ to .NET. The following sections describe how to add/upgrade the various types of
    This ensures the correct commit hash is embedded in the built binaries rather than the VMR's.
    If the component computes `FileVersion` from non-deterministic values (e.g., `DateTime.Now`),
    include a `FileVersionRevision` property set to the revision from the Microsoft-shipped package
-   and pass it via `/p:FileVersion` in the build command args.
-   Also include a `FileVersionValidationPackage` property naming a NuGet package produced by the
-   component so that tests can validate the revision.
+   and pass it via `/p:FileVersion` in the build command args. Per-component overrides like this
+   live in a sibling `src/externalPackages/projects/<component>.props` file that the `.proj`
+   imports via `<Import Project="$(MSBuildThisFileDirectory)$(MSBuildProjectName).props" />`.
+
+   In that same `<component>.props`, also declare a `FileVersionValidationPackage` **item** naming a
+   NuGet package produced by the component so the metadata-update script and tests can validate the
+   version. The default property name bindings (defined in `src/externalPackages/projects/validation.props`
+   via `<ItemDefinitionGroup>`, imported by each per-component `.props`) point at conventional
+   property names — for the common case of one item per project using those names, no per-item
+   metadata is needed:
+
+   ```xml
+   <ItemGroup>
+     <FileVersionValidationPackage Include="Microsoft.MyPackage" />
+   </ItemGroup>
+   ```
+
+   The defaults bind `FileVersionRevisionProperty=FileVersionRevision`,
+   `AssemblyVersionOverrideProperty=AssemblyVersionOverride`, and
+   `InformationalVersionOverrideProperty=InformationalVersionOverride`. Each aspect is validated
+   only if the named property is defined in the `<component>.props` — items don't need to opt out
+   of aspects they don't override. If an aspect's property name is overridden per-item, the named
+   property **must** exist in the `<component>.props` or the tool/test will error.
+
+   When a single submodule produces multiple packages with different release versions or revisions
+   (each from its own release tag), declare one item per package, each with its own per-package
+   property names so the items don't compete to write the same property:
+
+   ```xml
+   <ItemGroup>
+     <FileVersionValidationPackage Include="MyOrg.PackageA">
+       <FileVersionRevisionProperty>MyOrgPackageAFileVersionRevision</FileVersionRevisionProperty>
+       <ReleaseVersionProperty>MyOrgPackageAReleaseVersion</ReleaseVersionProperty>
+     </FileVersionValidationPackage>
+     <FileVersionValidationPackage Include="MyOrg.PackageB">
+       <FileVersionRevisionProperty>MyOrgPackageBFileVersionRevision</FileVersionRevisionProperty>
+       <ReleaseVersionProperty>MyOrgPackageBReleaseVersion</ReleaseVersionProperty>
+     </FileVersionValidationPackage>
+   </ItemGroup>
+   ```
+
+   By default the release version is auto-derived from the `.proj` filename
+   (e.g. `my-component.proj` &rarr; `<MyComponentReleaseVersion>` in `eng/Versions.props`).
+   Setting `ReleaseVersionProperty` overrides that lookup.
 
    After defining the project, run the metadata update script to automatically populate
-   `SourceRevisionId` and `FileVersionRevision` from the submodule and published package:
+   `SourceRevisionId` and the package-derived properties from the submodule and published package:
 
    ```bash
    # Linux/macOS
@@ -113,7 +154,7 @@ to .NET. The following sections describe how to add/upgrade the various types of
        There are a number of projects that utilize MSBuild properties to specify the version.
        These need to be manually updated with each upgrade.
 
-    1. Run the metadata update script to refresh `SourceRevisionId` and `FileVersionRevision`:
+    1. Run the metadata update script to refresh `SourceRevisionId` and package-derived version metadata (for example `FileVersionRevision`, `AssemblyVersionOverride`, and `InformationalVersionOverride`):
 
        ```bash
        # Linux/macOS
@@ -223,7 +264,17 @@ generated packages show changes when being regenerated.
     1. The generate tooling has changed since the last time this package was generated.
        The new changes should be considered better/correct and should be committed.
 
-1. Run build with the `./build.sh -sb` command.
+1. Run build with the `./build.sh -sb` command. This includes API compatibility validation
+   that compares the generated package against the official baseline from NuGet.
+
+1. If the build produces **API compatibility errors** (e.g., CP0001, CP0002, CP0008, CP0021):
+   - Determine whether the difference is a real API gap (fix the generated code) or a
+     generator limitation (the generator cannot perfectly reproduce certain metadata).
+   - For generator limitations, ensure there is a tracking issue in
+     [dotnet/sdk](https://github.com/dotnet/sdk/issues) with the `Area-GenAPI` label.
+   - Add a `CompatibilitySuppressions.xml` file in the package version directory.
+     You can auto-generate it by building with `/p:GenerateCompatibilitySuppressionFile=true`.
+   - Commit the suppression file as part of the package.
 
 1. If the compilation produces numerous compilation issue - run the `./build.sh --projects <path to .csproj file>`
    command for each generated reference package separately.
@@ -240,9 +291,9 @@ generated packages show changes when being regenerated.
    You can search the code base to see example usages.
    The benefit of using these files is that they will be preserved when the packages are regenerated.
 
-1. Add comments calling out any modifications to the generated code that were necessary.
+   You can also search for [known GenAPI issues](https://github.com/dotnet/sdk/issues?q=is%3Aissue+label%3AArea-GenAPI).
 
-You can search for known issues in the [Known Generator Issues Markdown file](docs/known_generator_issues.md).
+1. Add comments calling out any modifications to the generated code that were necessary.
 
 > **Note:** When porting new packages between branches, you must regenerate the packages when crossing the 10.0/9.0 boundary.
 This is because in 10.0 the generated projects switched from using PackageReference to ProjectReference.

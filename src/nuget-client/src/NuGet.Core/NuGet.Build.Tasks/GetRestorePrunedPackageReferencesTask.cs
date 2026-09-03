@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace NuGet.Build.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public class GetRestorePrunePackageReferencesTask : Task
     {
         /// <summary>

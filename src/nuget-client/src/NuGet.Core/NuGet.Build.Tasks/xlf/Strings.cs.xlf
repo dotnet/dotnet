@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="Error_ReadingProjectInformation">
         <source>Unable to read project information for '{0}': {1}</source>
-        <target state="new">Unable to read project information for '{0}': {1}</target>
+        <target state="translated">Nepovedlo se přečíst informace o projektu pro {0}: {1}</target>
         <note>0 - The project name
 1 - The error message</note>
       </trans-unit>
@@ -117,8 +117,8 @@
 1 - list of projects</note>
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
-        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</source>
-        <target state="translated">Funkce RestoreNoCache je zastaralá a byla přejmenována na RestoreNoHttpCache. Místo toho prosím použijte RestoreNoHttpCache.</target>
+        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</source>
+        <target state="new">RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Use RestoreNoHttpCache instead.</target>
         <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
       </trans-unit>
       <trans-unit id="Log_RunningStaticGraphRestoreCommand">

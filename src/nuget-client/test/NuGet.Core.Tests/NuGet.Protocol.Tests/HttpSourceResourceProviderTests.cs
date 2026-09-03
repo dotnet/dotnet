@@ -23,7 +23,8 @@ namespace NuGet.Protocol.Tests
             var sourceRepository = new SourceRepository(packageSource, new[] { new HttpSourceResourceProvider() });
 
             // Act
-            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
+            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected HttpSourceResource.");
 
             // Assert
             Assert.NotNull(httpSourceResource);
@@ -38,7 +39,8 @@ namespace NuGet.Protocol.Tests
             var sourceRepository = new SourceRepository(packageSource, new[] { new HttpSourceResourceProvider() });
 
             // Act
-            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
+            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected HttpSourceResource.");
 
             // Assert
             Assert.NotNull(httpSourceResource);
@@ -56,7 +58,8 @@ namespace NuGet.Protocol.Tests
             var sourceRepository = new SourceRepository(packageSource, new[] { new HttpSourceResourceProvider() });
 
             // Act
-            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None);
+            HttpSourceResource httpSourceResource = await sourceRepository.GetResourceAsync<HttpSourceResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected HttpSourceResource.");
 
             // Assert
             Assert.NotNull(httpSourceResource);

@@ -19,6 +19,10 @@ public class AdHocMiscellaneousQuerySqlServerTest(NonSharedFixture fixture) : Ad
     protected override ITestStoreFactory NonSharedTestStoreFactory
         => SqlServerTestStoreFactory.Instance;
 
+    protected override DbContextOptionsBuilder AddNonSharedOptions(DbContextOptionsBuilder builder)
+        => base.AddNonSharedOptions(builder)
+            .ConfigureWarnings(w => w.Ignore(RelationalEventId.OwnedEntityMappedToJsonCollectionWarning));
+
     protected override DbContextOptionsBuilder SetParameterizedCollectionMode(
         DbContextOptionsBuilder optionsBuilder,
         ParameterTranslationMode parameterizedCollectionMode)
@@ -1533,7 +1537,6 @@ FROM [Entities] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [e]
     {
         public DbSet<Entity30478> Entities { get; set; }
 
-#pragma warning disable EF8001 // Owned JSON entities are obsolete
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Entity30478>().Property(x => x.Id).ValueGeneratedNever();
@@ -1552,7 +1555,6 @@ FROM [Entities] FOR SYSTEM_TIME AS OF '2010-01-01T00:00:00.0000000' AS [e]
                     nb.OwnsOne(x => x.Nested);
                 });
         }
-#pragma warning restore EF8001
 
         public async Task SeedAsync()
         {
@@ -2358,7 +2360,7 @@ ORDER BY [o].[OrderId]
 @orderItemType='MyType1' (Nullable = false) (Size = 4000)
 @p='1'
 
-SELECT [o1].[Id], COALESCE((
+SELECT [o1].[Id], ISNULL((
     SELECT TOP(1) [o3].[Price]
     FROM [OrderItems] AS [o3]
     WHERE [o1].[Id] = [o3].[OrderId] AND [o3].[Type] = @orderItemType), 0.0E0) AS [SpecialSum]
@@ -2440,8 +2442,8 @@ GROUP BY [t].[Value]
 
         AssertSql(
             """
-SELECT [t].[Value] AS [A], COALESCE(SUM([t].[Id]), 0) AS [B], COALESCE((
-    SELECT TOP(1) COALESCE(SUM([t].[Id]), 0) + COALESCE(SUM([t0].[Id]), 0)
+SELECT [t].[Value] AS [A], ISNULL(SUM([t].[Id]), 0) AS [B], ISNULL((
+    SELECT TOP(1) ISNULL(SUM([t].[Id]), 0) + ISNULL(SUM([t0].[Id]), 0)
     FROM [Tables] AS [t0]
     GROUP BY [t0].[Value]
     ORDER BY (SELECT 1)), 0) AS [C]

@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.ValueGeneration.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -83,27 +84,13 @@ public partial class ManyTypesEntityType
             typeof(bool),
             propertyInfo: typeof(CompiledModelTestBase.ManyTypes).GetProperty("BoolToStringConverterProperty", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
             fieldInfo: typeof(CompiledModelTestBase.ManyTypes).GetField("<BoolToStringConverterProperty>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-        boolToStringConverterProperty.TypeMapping = CosmosTypeMapping.Default.Clone(
-            comparer: new ValueComparer<bool>(
-                bool (bool v1, bool v2) => v1 == v2,
-                int (bool v) => ((object)v).GetHashCode(),
-                bool (bool v) => v),
-            keyComparer: new ValueComparer<bool>(
-                bool (bool v1, bool v2) => v1 == v2,
-                int (bool v) => ((object)v).GetHashCode(),
-                bool (bool v) => v),
-            providerValueComparer: new ValueComparer<string>(
-                bool (string v1, string v2) => v1 == v2,
-                int (string v) => ((object)v).GetHashCode(),
-                string (string v) => v),
-            converter: new ValueConverter<bool, string>(
-                string (bool v) => ((string)((v ? "B" : "A"))),
-                bool (string v) => !(string.IsNullOrEmpty(v)) && ((int)(v.ToUpperInvariant()[0])) == ((int)("B".ToUpperInvariant()[0]))),
+        boolToStringConverterProperty.TypeMapping = CosmosTypeMapping<string>.Default.Clone(
+            comparer: DefaultValueComparer<bool>.Default,
+            providerValueComparer: DefaultValueComparer<string>.Default,
+            converter: new ValueConverter<bool, string>(string (bool v) => ((string)((v ? "B" : "A"))), bool (string v) => !(string.IsNullOrEmpty(v)) && ((int)(v.ToUpperInvariant()[0])) == ((int)("B".ToUpperInvariant()[0]))),
             jsonValueReaderWriter: new JsonConvertedValueReaderWriter<bool, string>(
                 JsonStringReaderWriter.Instance,
-                new ValueConverter<bool, string>(
-                    string (bool v) => ((string)((v ? "B" : "A"))),
-                    bool (string v) => !(string.IsNullOrEmpty(v)) && ((int)(v.ToUpperInvariant()[0])) == ((int)("B".ToUpperInvariant()[0])))));
+                new ValueConverter<bool, string>(string (bool v) => ((string)((v ? "B" : "A"))), bool (string v) => !(string.IsNullOrEmpty(v)) && ((int)(v.ToUpperInvariant()[0])) == ((int)("B".ToUpperInvariant()[0])))));
         boolToStringConverterProperty.SetSentinelFromProviderValue("A");
 
         var boolToTwoValuesConverterProperty = runtimeEntityType.AddProperty(
@@ -111,9 +98,7 @@ public partial class ManyTypesEntityType
             typeof(bool),
             propertyInfo: typeof(CompiledModelTestBase.ManyTypes).GetProperty("BoolToTwoValuesConverterProperty", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
             fieldInfo: typeof(CompiledModelTestBase.ManyTypes).GetField("<BoolToTwoValuesConverterProperty>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-        boolToTwoValuesConverterProperty.SetValueConverter(new ValueConverter<bool, byte>(
-            byte (bool v) => ((byte)((v ? 1 : 0))),
-            bool (byte v) => v == 1));
+        boolToTwoValuesConverterProperty.SetValueConverter(new ValueConverter<bool, byte>(byte (bool v) => ((byte)((v ? 1 : 0))), bool (byte v) => v == 1));
         boolToTwoValuesConverterProperty.SetSentinelFromProviderValue((byte)0);
 
         var boolToZeroOneConverterProperty = runtimeEntityType.AddProperty(
@@ -1071,9 +1056,7 @@ public partial class ManyTypesEntityType
             propertyInfo: typeof(CompiledModelTestBase.ManyTypes).GetProperty("StringToBytesConverterProperty", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
             fieldInfo: typeof(CompiledModelTestBase.ManyTypes).GetField("<StringToBytesConverterProperty>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
             nullable: true);
-        stringToBytesConverterProperty.SetValueConverter(new ValueConverter<string, string>(
-            string (string v) => Convert.ToBase64String(Encoding.GetEncoding(12000).GetBytes(v)),
-            string (string v) => Encoding.GetEncoding(12000).GetString(Convert.FromBase64String(v))));
+        stringToBytesConverterProperty.SetValueConverter(new ValueConverter<string, string>(string (string v) => Convert.ToBase64String(Encoding.GetEncoding(12000).GetBytes(v)), string (string v) => Encoding.GetEncoding(12000).GetString(Convert.FromBase64String(v))));
 
         var stringToCharConverterProperty = runtimeEntityType.AddProperty(
             "StringToCharConverterProperty",

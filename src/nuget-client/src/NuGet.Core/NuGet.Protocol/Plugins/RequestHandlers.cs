@@ -1,10 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -74,7 +73,7 @@ namespace NuGet.Protocol.Plugins
         /// <param name="method">A message method.</param>
         /// <param name="handler">An existing request handler.</param>
         /// <returns><see langword="true" /> if the request handler exists; otherwise, <see langword="false" />.</returns>
-        public bool TryGet(MessageMethod method, out IRequestHandler handler)
+        public bool TryGet(MessageMethod method, [NotNullWhen(true)] out IRequestHandler? handler)
         {
             return _handlers.TryGetValue(method, out handler);
         }
@@ -86,9 +85,7 @@ namespace NuGet.Protocol.Plugins
         /// <returns><see langword="true" /> if a request handler was removed; otherwise, <see langword="false" />.</returns>
         public bool TryRemove(MessageMethod method)
         {
-            IRequestHandler handler;
-
-            return _handlers.TryRemove(method, out handler);
+            return _handlers.TryRemove(method, out _);
         }
     }
 }

@@ -77,7 +77,7 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             var version = versionString == null ? null : SemanticVersion.Parse(versionString);
 
-            var response = JsonSerializationUtilities.Deserialize<HandshakeResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<HandshakeResponse>(json)!;
 
             Assert.Equal(responseCode, response.ResponseCode);
             Assert.Equal(version, response.ProtocolVersion);

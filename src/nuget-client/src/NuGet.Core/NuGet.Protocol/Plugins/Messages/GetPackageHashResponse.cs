@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using Newtonsoft.Json;
@@ -17,7 +15,7 @@ namespace NuGet.Protocol.Plugins
         /// <summary>
         /// Gets the package hash.
         /// </summary>
-        public string Hash { get; }
+        public string? Hash { get; }
 
         /// <summary>
         /// Gets the response code.
@@ -35,7 +33,7 @@ namespace NuGet.Protocol.Plugins
         /// is <see cref="MessageResponseCode.Success" /> and <paramref name="hash" />
         /// is either <see langword="null" /> or empty.</exception>
         [JsonConstructor]
-        public GetPackageHashResponse(MessageResponseCode responseCode, string hash)
+        public GetPackageHashResponse(MessageResponseCode responseCode, string? hash)
         {
             if (!Enum.IsDefined(typeof(MessageResponseCode), responseCode))
             {

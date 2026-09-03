@@ -3,12 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.CommandLineUtils;
 using Moq;
 using NuGet.CommandLine.XPlat;
 using NuGet.Commands;
@@ -116,19 +116,18 @@ namespace NuGet.XPlat.FuncTest
                 }
 
                 var logger = new TestCommandOutputLogger(_testOutputHelper);
-                var testApp = new CommandLineApplication();
+                var testApp = new RootCommand();
                 var mockCommandRunner = new Mock<IPackageReferenceCommandRunner>();
                 mockCommandRunner
                     .Setup(m => m.ExecuteCommand(It.IsAny<PackageReferenceArgs>(), It.IsAny<MSBuildAPIUtility>()))
                     .ReturnsAsync(0);
 
-                testApp.Name = "dotnet nuget_test";
                 AddPackageReferenceCommand.Register(testApp,
                     () => logger,
                     () => mockCommandRunner.Object);
 
                 // Act
-                var result = testApp.Execute(argList.ToArray());
+                var result = testApp.Parse(argList.ToArray()).Invoke();
 
                 XPlatTestUtils.DisposeTemporaryFile(projectPath);
 
@@ -216,20 +215,19 @@ namespace NuGet.XPlat.FuncTest
                 }
 
                 var logger = new TestCommandOutputLogger(_testOutputHelper);
-                var testApp = new CommandLineApplication();
+                var testApp = new RootCommand();
                 var mockCommandRunner = new Mock<IPackageReferenceCommandRunner>();
                 mockCommandRunner
                     .Setup(m => m.ExecuteCommand(It.IsAny<PackageReferenceArgs>(), It.IsAny<MSBuildAPIUtility>()))
                     .ReturnsAsync(0);
 
-                testApp.Name = "dotnet nuget_test";
                 AddPackageReferenceCommand.Register(testApp,
                     () => logger,
                     () => mockCommandRunner.Object);
 
                 // Act & Assert
-                var exception = Assert.Throws<ArgumentException>(() => testApp.Execute(argList.ToArray()));
-                Assert.Equal(Strings.Error_PrereleaseWhenVersionSpecified, exception.Message);
+                var result = testApp.Parse(argList.ToArray()).Invoke();
+                Assert.NotEqual(0, result);
                 XPlatTestUtils.DisposeTemporaryFile(projectPath);
             }
         }

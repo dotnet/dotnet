@@ -14,6 +14,7 @@ Param(
 
 try {
   if ($ci) {
+    $nodeReuse = $false
   }
 
   MSBuild @extraArgs

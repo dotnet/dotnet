@@ -1,6 +1,8 @@
 ﻿// Copyright (c) All contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#nullable disable
+
 #pragma warning disable SA1136 // enum values on their own lines
 #pragma warning disable SA1201 // type ordering
 #pragma warning disable SA1307 // capitalize public fields
@@ -83,6 +85,18 @@ namespace SharedData
         ////[MessagePackFormatter(typeof(OreOreFormatter2), 100, "hogehoge")]
         ////[MessagePackFormatter(typeof(OreOreFormatter))]
         ////public int Prop7 { get; set; }
+    }
+
+    [MessagePackObject]
+    public class SimpleGenericData<T>
+    {
+        [Key(0)]
+        public T Value { get; set; }
+
+        public SimpleGenericData(T value)
+        {
+            this.Value = value;
+        }
     }
 
     public class OreOreFormatter : IMessagePackFormatter<int>

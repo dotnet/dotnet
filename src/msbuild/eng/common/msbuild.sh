@@ -51,6 +51,7 @@ done
 . "$scriptroot/tools.sh"
 
 if [[ "$ci" == true ]]; then
+  node_reuse=false
 fi
 
 MSBuild $extra_args

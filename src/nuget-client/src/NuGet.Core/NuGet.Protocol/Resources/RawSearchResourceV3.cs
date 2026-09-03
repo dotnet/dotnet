@@ -69,13 +69,9 @@ namespace NuGet.Protocol
                     queryString += "&" + frameworks;
                 }
 
-                if (filters.PackageTypes != null
-                    && filters.PackageTypes.Any())
+                if (!string.IsNullOrEmpty(filters.PackageType))
                 {
-                    var types = string.Join("&",
-                        filters.PackageTypes.Select(
-                            s => "packageTypeFilter=" + s));
-                    queryString += "&" + types;
+                    queryString += "&packageType=" + filters.PackageType;
                 }
 
                 queryString += "&semVerLevel=2.0.0";

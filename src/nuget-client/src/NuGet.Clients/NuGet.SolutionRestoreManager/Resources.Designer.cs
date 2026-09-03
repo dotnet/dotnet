@@ -198,7 +198,7 @@ namespace NuGet.SolutionRestoreManager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NuGet Package restore failed for project {0}: {1}. Please see Error List window for detailed warnings and errors..
+        ///   Looks up a localized string similar to NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors..
         /// </summary>
         internal static string PackageRestoreFailedForProject {
             get {
@@ -225,7 +225,7 @@ namespace NuGet.SolutionRestoreManager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NuGet package restore failed. Please see Error List window for detailed warnings and errors..
+        ///   Looks up a localized string similar to NuGet package restore failed. See the Error List window for detailed warnings and errors..
         /// </summary>
         internal static string PackageRestoreFinishedWithError {
             get {
@@ -253,7 +253,7 @@ namespace NuGet.SolutionRestoreManager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;globalPackagesFolder&apos; from nuget.config file or the environment variable is &apos;{0}&apos;, a relative path and the solution is not saved. Please save your solution or configure a &apos;globalPackagesFolder&apos; which is a full path..
+        ///   Looks up a localized string similar to &apos;globalPackagesFolder&apos; from nuget.config file or the environment variable is &apos;{0}&apos;, a relative path and the solution is not saved. Save your solution or configure a &apos;globalPackagesFolder&apos; which is a full path..
         /// </summary>
         internal static string RelativeGlobalPackagesFolder {
             get {
@@ -280,7 +280,7 @@ namespace NuGet.SolutionRestoreManager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution is not saved. Please save your solution before managing NuGet packages..
+        ///   Looks up a localized string similar to Solution is not saved. Save your solution before managing NuGet packages..
         /// </summary>
         internal static string SolutionIsNotSaved {
             get {

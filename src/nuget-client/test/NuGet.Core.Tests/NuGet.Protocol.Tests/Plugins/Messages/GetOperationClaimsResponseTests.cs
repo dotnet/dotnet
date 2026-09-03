@@ -12,7 +12,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [Fact]
         public void Constructor_ThrowsForNullClaims()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new GetOperationClaimsResponse(claims: null));
+            var exception = Assert.Throws<ArgumentNullException>(() => new GetOperationClaimsResponse(claims: null!));
 
             Assert.Equal("claims", exception.ParamName);
         }
@@ -60,7 +60,7 @@ namespace NuGet.Protocol.Plugins.Tests
         [InlineData("{\"Claims\":[\"DownloadPackage\"]}", new[] { OperationClaim.DownloadPackage })]
         public void JsonDeserialization_ReturnsCorrectObject(string json, OperationClaim[] claims)
         {
-            var response = JsonSerializationUtilities.Deserialize<GetOperationClaimsResponse>(json);
+            var response = JsonSerializationUtilities.Deserialize<GetOperationClaimsResponse>(json)!;
 
             Assert.Equal(claims.Length, response.Claims.Count);
 

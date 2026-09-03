@@ -26,6 +26,79 @@
 [assembly: System.Reflection.AssemblyVersionAttribute("8.0.0.0")]
 [assembly: System.Runtime.CompilerServices.ReferenceAssembly]
 [assembly: System.Reflection.AssemblyFlagsAttribute((System.Reflection.AssemblyNameFlags)0x70)]
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+}
+
 namespace System.Formats.Asn1
 {
     public readonly partial struct Asn1Tag : IEquatable<Asn1Tag>
@@ -49,7 +122,6 @@ namespace System.Formats.Asn1
         public bool IsConstructed { get { throw null; } }
         public TagClass TagClass { get { throw null; } }
         public int TagValue { get { throw null; } }
-
         public readonly Asn1Tag AsConstructed() { throw null; }
         public readonly Asn1Tag AsPrimitive() { throw null; }
         public readonly int CalculateEncodedSize() { throw null; }
@@ -110,6 +182,7 @@ namespace System.Formats.Asn1
         [CLSCompliant(false)]
         public static bool TryReadUInt64(ReadOnlySpan<byte> source, AsnEncodingRules ruleSet, out ulong value, out int bytesConsumed, Asn1Tag? expectedTag = null) { throw null; }
     }
+
     public enum AsnEncodingRules
     {
         BER = 0,
@@ -122,7 +195,6 @@ namespace System.Formats.Asn1
         public AsnReader(ReadOnlyMemory<byte> data, AsnEncodingRules ruleSet, AsnReaderOptions options = default) { }
         public bool HasData { get { throw null; } }
         public AsnEncodingRules RuleSet { get { throw null; } }
-
         public AsnReader Clone() { throw null; }
         public ReadOnlyMemory<byte> PeekContentBytes() { throw null; }
         public ReadOnlyMemory<byte> PeekEncodedValue() { throw null; }
@@ -163,6 +235,7 @@ namespace System.Formats.Asn1
         [CLSCompliant(false)]
         public bool TryReadUInt64(out ulong value, Asn1Tag? expectedTag = null) { throw null; }
     }
+
     public partial struct AsnReaderOptions
     {
         private int _dummyPrimitive;
@@ -175,7 +248,6 @@ namespace System.Formats.Asn1
         public AsnWriter(AsnEncodingRules ruleSet, int initialCapacity) { }
         public AsnWriter(AsnEncodingRules ruleSet) { }
         public AsnEncodingRules RuleSet { get { throw null; } }
-
         public void CopyTo(AsnWriter destination) { }
         public byte[] Encode() { throw null; }
         public int Encode(Span<byte> destination) { throw null; }
@@ -220,6 +292,7 @@ namespace System.Formats.Asn1
             public readonly void Dispose() { }
         }
     }
+
     public enum TagClass
     {
         Universal = 0,

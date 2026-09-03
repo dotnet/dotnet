@@ -47,6 +47,7 @@ namespace Microsoft.DotNet.Helix.Client
         public string ResultContainerPrefix { get; private set; }
         public IDictionary<IPayload, string> CorrelationPayloads { get; } = new Dictionary<IPayload, string>();
         public int? MaxRetryCount { get; private set; }
+        public bool ShowQueueStats { get; private set; }
         public string StorageAccountConnectionString { get; private set; }
         public string TargetContainerName { get; set; } = DefaultContainerName;
         public string TargetResultsContainerName { get; set; } = DefaultContainerName;
@@ -241,7 +242,108 @@ namespace Microsoft.DotNet.Helix.Client
             string jobStartIdentifier = Guid.NewGuid().ToString("N");
             var newJob = await JobApi.NewAsync(creationRequest, jobStartIdentifier, cancellationToken: cancellationToken).ConfigureAwait(false);
 
+            if (ShowQueueStats)
+            {
+                LogQueueStats(log, queueId, newJob?.QueueStats);
+            }
+
             return new SentJob(JobApi, newJob);
+        }
+
+        // Helix SLA threshold; estimated waits above this are flagged as queue-at-capacity / unhealthy.
+        private static readonly TimeSpan QueueWaitSlaThreshold = TimeSpan.FromMinutes(30);
+
+        // If the Observer snapshot is older than this, the reported numbers may not reflect current queue state.
+        private static readonly TimeSpan SnapshotStaleThreshold = TimeSpan.FromMinutes(15);
+
+        private const string FirstRespondersUrl = "https://teams.microsoft.com/l/channel/19%3Aafba3d1545dd45d7b79f34c1821f6055%40thread.skype/First%20Responders?groupId=4d73664c-9f2f-450d-82a5-c2f02756606d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47";
+
+        private static int s_queueStatsHeaderShown;
+        private static int s_firstRespondersHintShown;
+
+        private static void LogQueueStats(Action<string> log, string queueId, Models.QueueStats stats)
+        {
+            if (log == null || stats == null)
+            {
+                return;
+            }
+
+            string depth = stats.Depth?.ToString(CultureInfo.InvariantCulture) ?? "unknown";
+            string avgRun = FormatTimeSpan(stats.AverageRunDuration);
+            string estWait = FormatTimeSpan(stats.EstimatedWait);
+            string snapshot = FormatSnapshotTime(stats.GeneratedAt);
+
+            bool overSla = stats.EstimatedWait is TimeSpan wait && wait > QueueWaitSlaThreshold;
+            TimeSpan? snapshotAge = stats.GeneratedAt is DateTimeOffset gen
+                ? DateTimeOffset.UtcNow - gen
+                : (TimeSpan?)null;
+            bool stale = snapshotAge is TimeSpan age && age > SnapshotStaleThreshold;
+
+            string healthTag = overSla ? " [AT CAPACITY]" : string.Empty;
+            string staleTag = stale ? " (stale)" : string.Empty;
+
+            if (Interlocked.Exchange(ref s_queueStatsHeaderShown, 1) == 0)
+            {
+                log("note : Helix queue health reporting is a preview feature; data and format may change.");
+            }
+
+            string queueName = string.IsNullOrEmpty(stats.QueueName) ? queueId : stats.QueueName;
+
+            log($"Helix queue '{queueName}' health{healthTag}:");
+            log($"  Estimated wait : {estWait}   (queue depth: {depth}, avg run: {avgRun})");
+            log($"  Snapshot taken : {snapshot}{staleTag}");
+
+            if (overSla)
+            {
+                log($"warning : Helix queue '{queueName}' estimated wait of {estWait} exceeds the {QueueWaitSlaThreshold.TotalMinutes:F0}-minute SLA - the queue is at capacity or unhealthy. Jobs may take longer than usual to start.");
+            }
+
+            if (stale)
+            {
+                log($"warning : Helix queue '{queueName}' health snapshot is {FormatTimeSpan(snapshotAge)} old (threshold {SnapshotStaleThreshold.TotalMinutes:F0}m) - reported wait/depth may not reflect current queue state.");
+            }
+
+            if (Interlocked.Exchange(ref s_firstRespondersHintShown, 1) == 0)
+            {
+                log($"  Questions about Helix queue health? Reach the dnceng First Responders channel: {FirstRespondersUrl}");
+            }
+        }
+
+        private static string FormatTimeSpan(TimeSpan? value)
+        {
+            if (value is not TimeSpan ts)
+            {
+                return "unknown";
+            }
+
+            if (ts.TotalDays >= 1)
+            {
+                return $"{(int)ts.TotalDays}d {ts.Hours}h {ts.Minutes}m";
+            }
+            if (ts.TotalHours >= 1)
+            {
+                return $"{(int)ts.TotalHours}h {ts.Minutes}m";
+            }
+            if (ts.TotalMinutes >= 1)
+            {
+                return $"{(int)ts.TotalMinutes}m {ts.Seconds}s";
+            }
+            return $"{ts.Seconds}s";
+        }
+
+        private static string FormatSnapshotTime(DateTimeOffset? value)
+        {
+            if (value is not DateTimeOffset utc)
+            {
+                return "unknown";
+            }
+
+            DateTime local = utc.LocalDateTime;
+            string tz = TimeZoneInfo.Local.IsDaylightSavingTime(local)
+                ? TimeZoneInfo.Local.DaylightName
+                : TimeZoneInfo.Local.StandardName;
+
+            return $"{local.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)} {tz}";
         }
 
         private void WarnForImpendingRemoval(Action<string> log, QueueInfo queueInfo) 
@@ -351,6 +453,12 @@ namespace Microsoft.DotNet.Helix.Client
         public IJobDefinition WithMaxRetryCount(int? maxRetryCount)
         {
             MaxRetryCount = maxRetryCount;
+            return this;
+        }
+
+        public IJobDefinition WithQueueStats()
+        {
+            ShowQueueStats = true;
             return this;
         }
 

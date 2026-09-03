@@ -41,7 +41,7 @@
     ============================================================
   -->
   <Target Name="GenerateProgramFile"
-          Condition="'$(GenerateProgramFile)' == 'true'">
+          Condition="'$(GenerateProgramFile)' == 'true' AND '$(UseWinUI)' != 'true' AND '$(UseUwpTools)' != 'true'">
 
     <ItemGroup Condition="'$(Language)' == 'VB' or '$(Language)' == 'C#'">
       <RemoveExistingMicrosoftNETTestSdkProgram Include="@(Compile)" Condition="'%(FileName)' == 'Microsoft.NET.Test.Sdk.Program'" />

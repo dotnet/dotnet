@@ -10,7 +10,6 @@ namespace Microsoft.TestPlatform.AcceptanceTests;
 public class TestCaseFilterTests : AcceptanceTestBase
 {
     [TestMethod]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, inProcess: true)]
     [NetCoreTargetFrameworkDataSource]
     public void RunSelectedTestsWithAndOperatorTrait(RunnerInfo runnerInfo)
     {
@@ -27,7 +26,6 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void RunSelectedTestsWithCategoryTraitInMixCase(RunnerInfo runnerInfo)
     {
@@ -44,7 +42,6 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void RunSelectedTestsWithClassNameTrait(RunnerInfo runnerInfo)
     {
@@ -61,7 +58,6 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void RunSelectedTestsWithFullyQualifiedNameTrait(RunnerInfo runnerInfo)
     {
@@ -80,7 +76,6 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void RunSelectedTestsWithNameTrait(RunnerInfo runnerInfo)
     {
@@ -97,7 +92,6 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void RunSelectedTestsWithOrOperatorTrait(RunnerInfo runnerInfo)
     {
@@ -114,7 +108,6 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void RunSelectedTestsWithPriorityTrait(RunnerInfo runnerInfo)
     {
@@ -135,7 +128,6 @@ public class TestCaseFilterTests : AcceptanceTestBase
     /// this command should provide same results as /TestCaseFilter:"FullyQualifiedName~UnitTest1".
     /// </summary>
     [TestMethod]
-    [NetFullTargetFrameworkDataSource]
     [NetCoreTargetFrameworkDataSource]
     public void TestCaseFilterShouldWorkIfOnlyPropertyValueGivenInExpression(RunnerInfo runnerInfo)
     {
@@ -179,7 +171,6 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, inProcess: true)]
     [NetCoreTargetFrameworkDataSource]
     public void RunSelectedTestsWithNoneTestCategoryFilterMatchesUncategorizedTests(RunnerInfo runnerInfo)
     {
@@ -199,7 +190,6 @@ public class TestCaseFilterTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [NetFullTargetFrameworkDataSourceAttribute(inIsolation: true, inProcess: true)]
     [NetCoreTargetFrameworkDataSource]
     public void RunSelectedTestsWithNoneTestCategoryNotEqualFilterMatchesCategorizedTests(RunnerInfo runnerInfo)
     {

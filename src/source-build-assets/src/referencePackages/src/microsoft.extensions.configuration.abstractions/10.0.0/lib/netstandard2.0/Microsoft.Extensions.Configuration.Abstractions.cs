@@ -49,6 +49,7 @@ namespace Microsoft.Extensions.Configuration
         public static string? GetConnectionString(this IConfiguration configuration, string name) { throw null; }
         public static IConfigurationSection GetRequiredSection(this IConfiguration configuration, string key) { throw null; }
     }
+
     [System.AttributeUsage(System.AttributeTargets.Property)]
     public sealed partial class ConfigurationKeyNameAttribute : System.Attribute
     {
@@ -64,15 +65,16 @@ namespace Microsoft.Extensions.Configuration
         public static string? GetParentPath(string? path) { throw null; }
         public static string? GetSectionKey(string? path) { throw null; }
     }
+
     public static partial class ConfigurationRootExtensions
     {
         public static string GetDebugView(this IConfigurationRoot root, System.Func<ConfigurationDebugViewContext, string>? processValue) { throw null; }
         public static string GetDebugView(this IConfigurationRoot root) { throw null; }
     }
+
     public partial interface IConfiguration
     {
         string? this[string key] { get; set; }
-
         System.Collections.Generic.IEnumerable<IConfigurationSection> GetChildren();
         Primitives.IChangeToken GetReloadToken();
         IConfigurationSection GetSection(string key);
@@ -81,9 +83,7 @@ namespace Microsoft.Extensions.Configuration
     public partial interface IConfigurationBuilder
     {
         System.Collections.Generic.IDictionary<string, object> Properties { get; }
-
         System.Collections.Generic.IList<IConfigurationSource> Sources { get; }
-
         IConfigurationBuilder Add(IConfigurationSource source);
         IConfigurationRoot Build();
     }
@@ -104,21 +104,91 @@ namespace Microsoft.Extensions.Configuration
     public partial interface IConfigurationRoot : IConfiguration
     {
         System.Collections.Generic.IEnumerable<IConfigurationProvider> Providers { get; }
-
         void Reload();
     }
 
     public partial interface IConfigurationSection : IConfiguration
     {
         string Key { get; }
-
         string Path { get; }
-
         string? Value { get; set; }
     }
 
     public partial interface IConfigurationSource
     {
         IConfigurationProvider Build(IConfigurationBuilder builder);
+    }
+}
+
+namespace System.Diagnostics.CodeAnalysis
+{
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class AllowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DisallowNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    internal sealed partial class DoesNotReturnAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class DoesNotReturnIfAttribute : Attribute
+    {
+        public DoesNotReturnIfAttribute(bool parameterValue) { }
+        public bool ParameterValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class MaybeNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class MaybeNullWhenAttribute : Attribute
+    {
+        public MaybeNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullAttribute : Attribute
+    {
+        public MemberNotNullAttribute(string member) { }
+        public MemberNotNullAttribute(params string[] members) { }
+        public string[] Members { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false, AllowMultiple = true)]
+    internal sealed partial class MemberNotNullWhenAttribute : Attribute
+    {
+        public MemberNotNullWhenAttribute(bool returnValue, string member) { }
+        public MemberNotNullWhenAttribute(bool returnValue, params string[] members) { }
+        public string[] Members { get { throw null; } }
+        public bool ReturnValue { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    internal sealed partial class NotNullAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+    internal sealed partial class NotNullIfNotNullAttribute : Attribute
+    {
+        public NotNullIfNotNullAttribute(string parameterName) { }
+        public string ParameterName { get { throw null; } }
+    }
+
+    [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
+    internal sealed partial class NotNullWhenAttribute : Attribute
+    {
+        public NotNullWhenAttribute(bool returnValue) { }
+        public bool ReturnValue { get { throw null; } }
     }
 }

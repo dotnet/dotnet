@@ -163,7 +163,7 @@ Missing packages: {0}</value>
     <value>NuGet package restore canceled.</value>
   </data>
   <data name="PackageRestoreFailedForProject" xml:space="preserve">
-    <value>NuGet Package restore failed for project {0}: {1}. Please see Error List window for detailed warnings and errors.</value>
+    <value>NuGet Package restore failed for project {0}: {1}. See the Error List window for detailed warnings and errors.</value>
   </data>
   <data name="PackageRestoreFinished" xml:space="preserve">
     <value>NuGet package restore finished.</value>
@@ -172,14 +172,14 @@ Missing packages: {0}</value>
     <value>NuGet Package restore finished for project '{0}'.</value>
   </data>
   <data name="PackageRestoreFinishedWithError" xml:space="preserve">
-    <value>NuGet package restore failed. Please see Error List window for detailed warnings and errors.</value>
+    <value>NuGet package restore failed. See the Error List window for detailed warnings and errors.</value>
   </data>
   <data name="PackageRestoreOptOutMessage" xml:space="preserve">
     <value>Restoring NuGet packages...
 To prevent NuGet from restoring packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck 'Allow NuGet to download missing packages during build.'</value>
   </data>
   <data name="RelativeGlobalPackagesFolder" xml:space="preserve">
-    <value>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Please save your solution or configure a 'globalPackagesFolder' which is a full path.</value>
+    <value>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Save your solution or configure a 'globalPackagesFolder' which is a full path.</value>
   </data>
   <data name="RestoredPackage" xml:space="preserve">
     <value>Restored NuGet package {0}.</value>
@@ -188,7 +188,7 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
     <value>Restoring NuGet packages...</value>
   </data>
   <data name="SolutionIsNotSaved" xml:space="preserve">
-    <value>Solution is not saved. Please save your solution before managing NuGet packages.</value>
+    <value>Solution is not saved. Save your solution before managing NuGet packages.</value>
   </data>
   <data name="PropertyDoesNotHaveSingleValue" xml:space="preserve">
     <value>The property {0} was expected to have a single value across all target frameworks, but instead had the following values: {1}</value>

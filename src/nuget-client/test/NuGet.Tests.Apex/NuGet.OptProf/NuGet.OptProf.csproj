@@ -16,6 +16,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Test.Apex.VisualStudio" ExcludeAssets="Compile" GeneratePathProperty="true" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
+    <!-- Microsoft.VisualStudio.Sdk has a dependency on a vulnerable version of MessagePack. Once it no longer has a transitive dependency on a vulnerable version, this can be removed -->
+    <PackageReference Include="MessagePack" />
     <PackageReference Include="MSTest.TestAdapter" />
     <PackageReference Include="MSTest.TestFramework" />
     <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />

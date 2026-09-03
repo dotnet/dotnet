@@ -7,7 +7,6 @@ namespace NuGet.PackageManagement.UI
     {
         public const string SuppressUIDisclaimerRegistryName = "SuppressUILegalDisclaimer";
         public const string DoNotShowPreviewWindowRegistryName = "DoNotShowPreviewWindow";
-        public const string SuppressUpgradePackagesConfigName = "SuppressUpgradePackagesConfig";
         public const string IncludePrereleaseRegistryName = "IncludePrerelease";
     }
 }

@@ -13,7 +13,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullPlugin()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new FaultedPluginEventArgs(plugin: null, exception: new Exception()));
+                () => new FaultedPluginEventArgs(plugin: null!, exception: new Exception()));
 
             Assert.Equal("plugin", exception.ParamName);
         }
@@ -22,7 +22,7 @@ namespace NuGet.Protocol.Plugins.Tests
         public void Constructor_ThrowsForNullException()
         {
             var exception = Assert.Throws<ArgumentNullException>(
-                () => new FaultedPluginEventArgs(Mock.Of<IPlugin>(), exception: null));
+                () => new FaultedPluginEventArgs(Mock.Of<IPlugin>(), exception: null!));
 
             Assert.Equal("exception", exception.ParamName);
         }

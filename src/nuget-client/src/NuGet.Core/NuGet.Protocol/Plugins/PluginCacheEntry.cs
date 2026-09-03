@@ -1,14 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace NuGet.Protocol.Plugins
 {
@@ -36,7 +32,7 @@ namespace NuGet.Protocol.Plugins
         private string RootFolder { get; }
         private string NewCacheFileName { get; }
 
-        public IReadOnlyList<OperationClaim> OperationClaims { get; set; }
+        public IReadOnlyList<OperationClaim>? OperationClaims { get; set; }
 
         /// <summary>
         /// Loads and processes the contet from the generated file if it exists.
@@ -44,28 +40,18 @@ namespace NuGet.Protocol.Plugins
         /// </summary>
         public void LoadFromFile()
         {
-            Stream content = null;
+            Stream? content = null;
             try
             {
                 content = CachingUtility.ReadCacheFile(MaxAge, CacheFileName);
                 if (content != null)
                 {
-                    ProcessContent(content);
+                    OperationClaims = System.Text.Json.JsonSerializer.Deserialize(content, PluginCacheJsonContext.Default.IReadOnlyListOperationClaim);
                 }
             }
             finally
             {
                 content?.Dispose();
-            }
-        }
-
-        private void ProcessContent(Stream content)
-        {
-            var serializer = new JsonSerializer();
-            using (var sr = new StreamReader(content))
-            using (var jsonTextReader = new JsonTextReader(sr))
-            {
-                OperationClaims = serializer.Deserialize<IReadOnlyList<OperationClaim>>(jsonTextReader);
             }
         }
 
@@ -90,7 +76,7 @@ namespace NuGet.Protocol.Plugins
                     FileShare.None,
                     CachingUtility.BufferSize))
                 {
-                    var json = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(OperationClaims, Formatting.Indented));
+                    byte[] json = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(OperationClaims, PluginCacheJsonContext.Default.IReadOnlyListOperationClaim);
                     await fileStream.WriteAsync(json, 0, json.Length);
                 }
 

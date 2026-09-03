@@ -39,7 +39,7 @@ internal class TestCaseConverter : JsonConverter<TestCase>
                 return null;
             }
 
-            var testProperty = JsonSerializer.Deserialize<TestProperty>(keyElement.GetRawText(), options);
+            var testProperty = StjSafe.Deserialize<TestProperty>(keyElement.GetRawText(), options);
 
             if (testProperty is null)
             {
@@ -153,7 +153,7 @@ internal class TestCaseConverter : JsonConverter<TestCase>
 
         foreach (var property in value.GetProperties())
         {
-            JsonSerializer.Serialize(writer, property, options);
+            StjSafe.Serialize(writer, property, options);
         }
 
         writer.WriteEndArray();
@@ -163,7 +163,7 @@ internal class TestCaseConverter : JsonConverter<TestCase>
     private static void WriteProperty(Utf8JsonWriter writer, TestProperty property, JsonSerializerOptions options)
     {
         writer.WritePropertyName("Key");
-        JsonSerializer.Serialize(writer, property, options);
+        StjSafe.Serialize(writer, property, options);
         writer.WritePropertyName("Value");
     }
 }

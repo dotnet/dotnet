@@ -8,4 +8,8 @@
     <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio\NuGet.VisualStudio.csproj" />
     <ProjectReference Include="..\..\TestUtilities\VisualStudio.Test.Utility\VisualStudio.Test.Utility.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
+  </ItemGroup>
 </Project>

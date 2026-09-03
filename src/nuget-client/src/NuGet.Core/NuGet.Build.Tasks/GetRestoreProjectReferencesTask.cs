@@ -12,8 +12,19 @@ using Newtonsoft.Json;
 
 namespace NuGet.Build.Tasks
 {
+#if !NETFRAMEWORK
+    [MSBuildMultiThreadableTask]
+#endif
     public class GetRestoreProjectReferencesTask : Microsoft.Build.Utilities.Task
+#if !NETFRAMEWORK
+        , IMultiThreadableTask
+#endif
     {
+#if !NETFRAMEWORK
+        /// <inheritdoc />
+        public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+#endif
+
         /// <summary>
         /// Full path to the msbuild project.
         /// </summary>
@@ -60,7 +71,12 @@ namespace NuGet.Build.Tasks
                     || Boolean.TrueString.Equals(refOutput, StringComparison.OrdinalIgnoreCase))
                 {
                     // Get the absolute path
-                    var referencePath = Path.GetFullPath(Path.Combine(parentDirectory, project.ItemSpec));
+                    var combinedPath = Path.Combine(parentDirectory, project.ItemSpec);
+#if !NETFRAMEWORK
+                    var referencePath = Path.GetFullPath(TaskEnvironment.GetAbsolutePath(combinedPath));
+#else
+                    var referencePath = Path.GetFullPath(combinedPath);
+#endif
 
                     if (!seen.Add(referencePath))
                     {

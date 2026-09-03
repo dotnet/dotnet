@@ -6,5 +6,6 @@ namespace CreateBaselineUpdatePR;
 public enum Pipelines
 {
     Sdk,
-    License
+    License,
+    Reproducibility
 }

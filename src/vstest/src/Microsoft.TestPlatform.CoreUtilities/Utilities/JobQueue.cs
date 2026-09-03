@@ -38,7 +38,7 @@ public class JobQueue<T> : IDisposable
     /// <summary>
     /// Signaled when a job is added to the queue.  Used to wakeup the background thread.
     /// </summary>
-    private readonly ManualResetEvent _jobAdded;
+    private readonly ManualResetEventSlim _jobAdded;
 
     /// <summary>
     /// The maximum number of jobs the job queue may hold.
@@ -64,7 +64,7 @@ public class JobQueue<T> : IDisposable
     /// Used to pause and resume processing of the queue.  By default the manual reset event is
     /// set so the queue can continue processing.
     /// </summary>
-    private readonly ManualResetEvent _queueProcessing;
+    private readonly ManualResetEventSlim _queueProcessing;
 
     /// <summary>
     /// The background thread which is processing the jobs.  Used when disposing to wait
@@ -122,10 +122,8 @@ public class JobQueue<T> : IDisposable
 
         // Initialize defaults.
         _jobsQueue = new Queue<Job<T>>();
-        _jobAdded = new ManualResetEvent(false);
-        _queueProcessing = new ManualResetEvent(true);
-        _currentNumberOfBytesQueueIsHolding = 0;
-        _isDisposed = false;
+        _jobAdded = new ManualResetEventSlim(false);
+        _queueProcessing = new ManualResetEventSlim(true);
 
         // Save off the arguments.
         _displayName = displayName;
@@ -183,13 +181,13 @@ public class JobQueue<T> : IDisposable
         CheckDisposed();
 
         // Create the wait job.
-        using var waitEvent = new ManualResetEvent(false);
+        using var waitEvent = new ManualResetEventSlim(false);
         var waitJob = Job<T>.CreateWaitJob(waitEvent);
 
         // Queue the wait job and wait for it to be processed.
         InternalQueueJob(waitJob);
 
-        waitEvent.WaitOne();
+        waitEvent.Wait();
     }
 
     /// <summary>
@@ -210,7 +208,7 @@ public class JobQueue<T> : IDisposable
         }
 
         // If the queue is paused, then throw.
-        if (!_queueProcessing.WaitOne(0))
+        if (!_queueProcessing.IsSet)
         {
             throw new InvalidOperationException(
                 string.Format(CultureInfo.CurrentCulture, Resources.QueuePausedDisposeError, _displayName));
@@ -297,7 +295,7 @@ public class JobQueue<T> : IDisposable
 
         do
         {
-            _jobAdded.WaitOne();
+            _jobAdded.Wait();
 
             // Pull all of the current jobs out of the queue.
             List<Job<T>> jobs = new();
@@ -332,7 +330,7 @@ public class JobQueue<T> : IDisposable
             foreach (var job in jobs)
             {
                 // Wait for the queue to be open (not paused) and process the job.
-                _queueProcessing.WaitOne();
+                _queueProcessing.Wait();
 
                 // If this is a wait job, signal the manual reset event and continue.
                 if (job.WaitManualResetEvent != null)

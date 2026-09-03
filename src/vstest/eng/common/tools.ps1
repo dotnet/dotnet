@@ -13,12 +13,6 @@
 # Set to true to output binary log from msbuild. Note that emitting binary log slows down the build.
 [bool]$binaryLog = if (Test-Path variable:binaryLog) { $binaryLog } else { $ci -and !$excludeCIBinarylog }
 
-# Set to true to use the pipelines logger which will enable Azure logging output.
-# https://github.com/Microsoft/azure-pipelines-tasks/blob/master/docs/authoring/commands.md
-# This flag is meant as a temporary opt-opt for the feature while validate it across
-# our consumers. It will be deleted in the future.
-[bool]$pipelinesLog = if (Test-Path variable:pipelinesLog) { $pipelinesLog } else { $ci }
-
 # Turns on machine preparation/clean up code that changes the machine state (e.g. kills build processes).
 [bool]$prepareMachine = if (Test-Path variable:prepareMachine) { $prepareMachine } else { $false }
 
@@ -480,7 +474,6 @@ function LocateVisualStudio([object]$vsRequirements = $null){
   if (Get-Member -InputObject $GlobalJson.tools -Name 'vswhere') {
     $vswhereVersion = $GlobalJson.tools.vswhere
   } else {
-    # keep this in sync with the VSWhereVersion in DefaultVersions.props
     $vswhereVersion = '3.1.7'
   }
 
@@ -597,16 +590,16 @@ function GetDefaultMSBuildEngine() {
   ExitWithExitCode 1
 }
 
-function GetNuGetPackageCachePath() {
+function InitializeNuGetPackageCachePath() {
   if ($env:NUGET_PACKAGES -eq $null) {
     # Use local cache on CI to ensure deterministic build.
-    # Avoid using the http cache as workaround for https://github.com/NuGet/Home/issues/3116
     # use global cache in dev builds to avoid cost of downloading packages.
     # For directory normalization, see also: https://github.com/NuGet/Home/issues/7968
     if ($useGlobalNuGetCache) {
-      $env:NUGET_PACKAGES = Join-Path $env:UserProfile '.nuget\packages\'
+      $userProfile = if (IsWindowsPlatform) { $env:UserProfile } else { $env:HOME }
+      $env:NUGET_PACKAGES = [IO.Path]::Combine($userProfile, '.nuget', 'packages') + [IO.Path]::DirectorySeparatorChar
     } else {
-      $env:NUGET_PACKAGES = Join-Path $RepoRoot '.packages\'
+      $env:NUGET_PACKAGES = [IO.Path]::Combine($RepoRoot, '.packages') + [IO.Path]::DirectorySeparatorChar
     }
   }
 
@@ -615,7 +608,13 @@ function GetNuGetPackageCachePath() {
 
 # Returns a full path to an Arcade SDK task project file.
 function GetSdkTaskProject([string]$taskName) {
-  return Join-Path (Split-Path (InitializeToolset) -Parent) "SdkTasks\$taskName.proj"
+  $toolsetDir = Split-Path (InitializeToolset) -Parent
+  $proj = Join-Path $toolsetDir "$taskName.proj"
+  if (Test-Path $proj) {
+    return $proj
+  }
+
+  throw "Unable to find $taskName.proj in toolset at: $toolsetDir"
 }
 
 function InitializeNativeTools() {
@@ -649,16 +648,19 @@ function InitializeToolset() {
     return $global:_InitializeToolset
   }
 
-  $nugetCache = GetNuGetPackageCachePath
-
   $toolsetVersion = Read-ArcadeSdkVersion
-  $toolsetLocationFile = Join-Path $ToolsetDir "$toolsetVersion.txt"
+  $toolsetToolsDir = Join-Path $ToolsetDir $toolsetVersion
 
-  if (Test-Path $toolsetLocationFile) {
-    $path = Get-Content $toolsetLocationFile -TotalCount 1
-    if (Test-Path $path) {
-      return $global:_InitializeToolset = $path
-    }
+  # Check if the toolset has already been extracted
+  $toolsetBuildProj = $null
+  $buildProjPath = Join-Path $toolsetToolsDir 'Build.proj'
+
+  if (Test-Path $buildProjPath) {
+    $toolsetBuildProj = $buildProjPath
+  }
+
+  if ($toolsetBuildProj -ne $null) {
+    return $global:_InitializeToolset = $toolsetBuildProj
   }
 
   if (-not $restore) {
@@ -666,21 +668,41 @@ function InitializeToolset() {
     ExitWithExitCode 1
   }
 
-  $buildTool = InitializeBuildTool
+  $downloadArgs = @("package", "download", "Microsoft.DotNet.Arcade.Sdk@$toolsetVersion", "--verbosity", "minimal", "--prerelease", "--output", "$nugetPackageCachePath")
+  $nugetConfig = $env:NUGET_CONFIG
+  if (-not $nugetConfig) {
+    # Search for any variation of nuget.config in the RepoRoot
+    $configFile = Get-ChildItem -Path $RepoRoot -File | Where-Object { $_.Name -ieq "nuget.config" } | Select-Object -First 1
 
-  $proj = Join-Path $ToolsetDir 'restore.proj'
-  $bl = if ($binaryLog) { '/bl:' + (Join-Path $LogDir 'ToolsetRestore.binlog') } else { '' }
-
-  '<Project Sdk="Microsoft.DotNet.Arcade.Sdk"/>' | Set-Content $proj
-
-  MSBuild-Core $proj $bl /t:__WriteToolsetLocation /clp:ErrorsOnly`;NoSummary /p:__ToolsetLocationOutputFile=$toolsetLocationFile
-
-  $path = Get-Content $toolsetLocationFile -Encoding UTF8 -TotalCount 1
-  if (!(Test-Path $path)) {
-    throw "Invalid toolset path: $path"
+    if ($configFile) {
+        $nugetConfig = $configFile.FullName
+    }
   }
 
-  return $global:_InitializeToolset = $path
+  if ($nugetConfig) {
+    $downloadArgs += "--configfile"
+    $downloadArgs += $nugetConfig
+  }
+  DotNet @downloadArgs
+
+  $packageDir = Join-Path $nugetPackageCachePath (Join-Path 'microsoft.dotnet.arcade.sdk' $toolsetVersion)
+  $packageToolsetDir = Join-Path $packageDir 'toolset'
+
+  if (!(Test-Path $packageToolsetDir)) {
+    Write-PipelineTelemetryError -Category 'InitializeToolset' -Message "Arcade SDK package does not contain a toolset or tools folder: $packageDir"
+    ExitWithExitCode 3
+  }
+
+  New-Item -ItemType Directory -Path $toolsetToolsDir -Force | Out-Null
+  Copy-Item -Path "$packageToolsetDir\*" -Destination $toolsetToolsDir -Recurse -Force
+
+  if (Test-Path $buildProjPath) {
+    $toolsetBuildProj = $buildProjPath
+  } else {
+    throw "Unable to find Build.proj in toolset at: $toolsetToolsDir"
+  }
+
+  return $global:_InitializeToolset = $toolsetBuildProj
 }
 
 function ExitWithExitCode([int] $exitCode) {
@@ -714,52 +736,19 @@ function Stop-Processes() {
 # Terminates the script if the build fails.
 #
 function MSBuild() {
-  if ($pipelinesLog) {
-    $buildTool = InitializeBuildTool
-
-    if ($ci -and $buildTool.Tool -eq 'dotnet') {
-      $env:NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS = 20
-      $env:NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS = 20
-      Write-PipelineSetVariable -Name 'NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS' -Value '20'
-      Write-PipelineSetVariable -Name 'NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS' -Value '20'
-    }
-
-    Enable-Nuget-EnhancedRetry
-
-    $toolsetBuildProject = InitializeToolset
-    $basePath = Split-Path -parent $toolsetBuildProject
-    $selectedPath = Join-Path $basePath (Join-Path $buildTool.Framework 'Microsoft.DotNet.ArcadeLogging.dll')
-
-    if (-not $selectedPath) {
-      Write-PipelineTelemetryError -Category 'Build' -Message "Unable to find arcade sdk logger assembly: $selectedPath"
-      ExitWithExitCode 1
-    }
-
-    $args += "/logger:$selectedPath"
-  }
-
-  MSBuild-Core @args
-}
-
-#
-# Executes msbuild (or 'dotnet msbuild') with arguments passed to the function.
-# The arguments are automatically quoted.
-# Terminates the script if the build fails.
-#
-function MSBuild-Core() {
   if ($ci) {
     if (!$binaryLog -and !$excludeCIBinarylog) {
       Write-PipelineTelemetryError -Category 'Build' -Message 'Binary log must be enabled in CI build, or explicitly opted-out from with the -excludeCIBinarylog switch.'
       ExitWithExitCode 1
     }
 
-    if ($nodeReuse) {
+    # Node reuse must be disabled in CI builds unless explicitly opted in via MSBUILD_NODEREUSE_ENABLED.
+    # Internal testing only; this env var will be replaced with a switch (https://github.com/dotnet/arcade/issues/17013) and must not be depended on.
+    if ($nodeReuse -and $env:MSBUILD_NODEREUSE_ENABLED -ne "1") {
       Write-PipelineTelemetryError -Category 'Build' -Message 'Node reuse must be disabled in CI build.'
       ExitWithExitCode 1
     }
   }
-
-  Enable-Nuget-EnhancedRetry
 
   $buildTool = InitializeBuildTool
 
@@ -811,6 +800,40 @@ function MSBuild-Core() {
       Write-PipelineSetResult -Result "Failed" -Message "msbuild execution failed."
       # Exiting with an exit code causes the azure pipelines task to log yet another "noise" error
       # The above Write-PipelineSetResult will cause the task to be marked as failure without adding yet another error
+      ExitWithExitCode 0
+    } else {
+      ExitWithExitCode $exitCode
+    }
+  }
+}
+
+#
+# Executes a dotnet command with arguments passed to the function.
+# Terminates the script if the command fails.
+#
+function DotNet() {
+  $dotnetRoot = InitializeDotNetCli -install:$restore
+  $dotnetPath = Join-Path $dotnetRoot (GetExecutableFileName 'dotnet')
+
+  $cmdArgs = ""
+  foreach ($arg in $args) {
+    if ($null -ne $arg -and $arg.Trim() -ne "") {
+      if ($arg.EndsWith('\')) {
+        $arg = $arg + "\"
+      }
+      $cmdArgs += " `"$arg`""
+    }
+  }
+
+  $env:ARCADE_BUILD_TOOL_COMMAND = "`"$dotnetPath`" $cmdArgs"
+
+  $exitCode = Exec-Process $dotnetPath $cmdArgs
+
+  if ($exitCode -ne 0) {
+    Write-Host "dotnet command failed with exit code $exitCode. Check errors above." -ForegroundColor Red
+
+    if ($ci -and $env:SYSTEM_TEAMPROJECT -ne $null -and !$fromVMR) {
+      Write-PipelineSetResult -Result "Failed" -Message "dotnet command execution failed."
       ExitWithExitCode 0
     } else {
       ExitWithExitCode $exitCode
@@ -875,6 +898,12 @@ Create-Directory $ToolsetDir
 Create-Directory $TempDir
 Create-Directory $LogDir
 
+# Direct MSBuild crash diagnostics (MSB4166 failure.txt files) to a known location
+# under artifacts/log so they are captured as build artifacts in CI.
+if (-not $env:MSBUILDDEBUGPATH) {
+  $env:MSBUILDDEBUGPATH = Join-Path $LogDir 'MsbuildDebugLogs'
+}
+
 Write-PipelineSetVariable -Name 'Artifacts' -Value $ArtifactsDir
 Write-PipelineSetVariable -Name 'Artifacts.Toolset' -Value $ToolsetDir
 Write-PipelineSetVariable -Name 'Artifacts.Log' -Value $LogDir
@@ -896,19 +925,5 @@ if (!$disableConfigureToolsetImport) {
   }
 }
 
-#
-# If $ci flag is set, turn on (and log that we did) special environment variables for improved Nuget client retry logic.
-#
-function Enable-Nuget-EnhancedRetry() {
-    if ($ci) {
-      Write-Host "Setting NUGET enhanced retry environment variables"
-      $env:NUGET_ENABLE_ENHANCED_HTTP_RETRY = 'true'
-      $env:NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT = 6
-      $env:NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS = 1000
-      $env:NUGET_RETRY_HTTP_429 = 'true'
-      Write-PipelineSetVariable -Name 'NUGET_ENABLE_ENHANCED_HTTP_RETRY' -Value 'true'
-      Write-PipelineSetVariable -Name 'NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT' -Value '6'
-      Write-PipelineSetVariable -Name 'NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS' -Value '1000'
-      Write-PipelineSetVariable -Name 'NUGET_RETRY_HTTP_429' -Value 'true'
-    }
-}
+# Initialize the nuget package cache vars
+$nugetPackageCachePath = InitializeNuGetPackageCachePath

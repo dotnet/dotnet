@@ -159,15 +159,7 @@ public class DefaultIdentityTokenCredential : TokenCredential
             !string.IsNullOrEmpty(serviceConnectionId) &&
             !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SYSTEM_OIDCREQUESTURI")))
         {
-            var credentialOptions = new AzurePipelinesCredentialOptions
-            {
-                TokenCachePersistenceOptions = new TokenCachePersistenceOptions
-                {
-                    Name = $"TokenCache-AzurePipelinesCredential-{serviceConnectionId}",
-                    UnsafeAllowUnencryptedStorage = false
-                }
-            };
-            return new AzurePipelinesCredential(tenantId, clientId, serviceConnectionId, systemAccessToken, credentialOptions);
+            return new AzurePipelinesCredential(tenantId, clientId, serviceConnectionId, systemAccessToken);
         }
         return null;
     }

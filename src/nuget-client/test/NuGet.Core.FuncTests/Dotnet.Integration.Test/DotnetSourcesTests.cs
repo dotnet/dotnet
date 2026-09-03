@@ -1201,8 +1201,9 @@ namespace Dotnet.Integration.Test
         /// <summary>
         /// Verify non-zero status code and proper messages
         /// </summary>
-        /// <remarks>Checks invalid arguments message in stderr, check help message in stdout</remarks>
-        /// <param name="commandName">The nuget.exe command name to verify, without "nuget.exe" at the beginning</param>
+        /// <remarks>Checks invalid arguments message in stderr or stdout (System.CommandLine may write parse errors to stderr), check help message in stdout</remarks>
+        /// <param name="command">The nuget.exe command name to verify, without "nuget.exe" at the beginning</param>
+        /// <param name="badCommandIndex">Index of the bad argument in the space-split command string</param>
         internal void TestCommandInvalidArguments(string command, int badCommandIndex)
         {
             using (var testDirectory = _fixture.CreateTestDirectory())
@@ -1222,24 +1223,17 @@ namespace Dotnet.Integration.Test
                 // 3rd - nextParam
                 string badCommand = commandSplit[badCommandIndex];
 
-                // Assert command
-                Assert.Contains("'" + badCommand + "'", result.Output, StringComparison.InvariantCultureIgnoreCase);
+                // System.CommandLine may write parse errors to stderr, so check AllOutput
+                Assert.Contains("'" + badCommand + "'", result.AllOutput, StringComparison.InvariantCultureIgnoreCase);
 
+                // System.CommandLine uses "Unrecognized command or argument" or "'X' was not matched"
+                bool hasUnrecognized = result.AllOutput.Contains("Unrecognized command or argument", StringComparison.OrdinalIgnoreCase);
+                bool hasNotMatched = result.AllOutput.Contains("was not matched", StringComparison.OrdinalIgnoreCase);
+                Assert.True(hasUnrecognized || hasNotMatched,
+                    "Expected 'Unrecognized command or argument' or 'was not matched' error. Actual output: " + result.AllOutput);
 
-                // Assert invalid argument message
-                string invalidMessage;
-                if (badCommand.StartsWith("-"))
-                {
-                    invalidMessage = ": Unrecognized option";
-                }
-                else
-                {
-                    invalidMessage = ": Unrecognized command";
-                }
-
-                Assert.True(result.Output.Contains(invalidMessage), "Expected error is " + invalidMessage + ". Actual error is " + result.Output);
-                // Verify traits of help message in stdout
-                Assert.Contains("Specify --help for a list of available options and commands.", result.Output);
+                // Verify help message is shown in output
+                Assert.Contains("Show help and usage information", result.AllOutput);
             }
         }
     }

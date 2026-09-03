@@ -7,32 +7,55 @@
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
+  <!-- NativeAOT / trimming compatibility analysis (net8.0+ only) -->
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <IsAotCompatible>true</IsAotCompatible>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
+  </PropertyGroup>
+
   <PropertyGroup>
     <DocumentationFile>$(BaseIntermediateOutputPath)\Microsoft.TestPlatform.VsTestConsole.TranslationLayer.XML</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
     <IsPackable Condition="'$(DotNetBuildSourceOnly)' != 'true'">true</IsPackable>
-    <NuspecFile>Microsoft.TestPlatform.VsTestConsole.TranslationLayer.nuspec</NuspecFile>
-    <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.TranslationLayer</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>
     <PackageDescription>
       C# SDK for the test platform protocol. This SDK can be used in IDE or Editors to use test platform for discovery and execution of tests.
     </PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);IncludeBundledAssembliesInPackage</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
-  <ItemGroup Label="NuGet">
-    <NuspecProperty Include="NewtonsoftJsonVersion=$(NewtonsoftJsonVersion)" />
-    <NuspecProperty Include="SrcPackageFolder=$(SrcPackageFolder)" />
+  <ItemGroup>
+    <!-- ObjectModel ships as its own NuGet package, so it stays a real dependency. -->
+    <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
+    <!-- These assemblies are bundled into this package (they are not separate NuGet packages), so suppress them as dependencies. -->
+    <ProjectReference Include="..\Microsoft.TestPlatform.Common\Microsoft.TestPlatform.Common.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Microsoft.TestPlatform.CommunicationUtilities\Microsoft.TestPlatform.CommunicationUtilities.csproj" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.TestPlatform.Common\Microsoft.TestPlatform.Common.csproj" />
-    <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
-    <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
-    <ProjectReference Include="..\Microsoft.TestPlatform.CommunicationUtilities\Microsoft.TestPlatform.CommunicationUtilities.csproj" />
+    <None Include="README.md" Pack="true" PackagePath="" />
+    <None Include="$(SrcPackageFolder)ThirdPartyNotices.txt" Pack="true" PackagePath="" />
   </ItemGroup>
+
+  <!-- Bundle Common and CommunicationUtilities DLLs plus satellite resources (including CoreUtilities resources) into the package. -->
+  <Target Name="IncludeBundledAssembliesInPackage">
+    <ItemGroup>
+      <!-- The XML doc is emitted into the intermediate output, so include it explicitly (pack does not auto-pick it up). -->
+      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.VsTestConsole.TranslationLayer.XML" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.VisualStudio.TestPlatform.Common.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)Microsoft.TestPlatform.CommunicationUtilities.dll" PackagePath="lib/$(TargetFramework)/" />
+      <!-- Satellite resources for bundled assemblies -->
+      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.VisualStudio.TestPlatform.Common.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.TestPlatform.CommunicationUtilities.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+      <TfmSpecificPackageFile Include="$(OutputPath)**/Microsoft.TestPlatform.CoreUtilities.resources.dll" PackagePath="lib/$(TargetFramework)/" />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">
     <Reference Include="System.Xml" />

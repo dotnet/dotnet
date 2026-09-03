@@ -31,7 +31,8 @@ namespace NuGet.Protocol.Tests
             var repo = StaticHttpHandler.CreateSource(serviceAddress, Repository.Provider.GetCoreV3(), responses,
                  ProtocolUtility.GetResource("NuGet.Protocol.Tests.compiler.resources.500Error.xml", GetType()));
 
-            var downloadResource = await repo.GetResourceAsync<DownloadResource>(CancellationToken.None);
+            var downloadResource = await repo.GetResourceAsync<DownloadResource>(CancellationToken.None)
+                ?? throw new Xunit.Sdk.XunitException("Expected DownloadResource.");
 
             // Act
             using (var packagesFolder = TestDirectory.Create())

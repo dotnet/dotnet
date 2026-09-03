@@ -90,6 +90,11 @@ internal class PortArgumentExecutor : IArgumentExecutor
     private IDesignModeClient? _designModeClient;
 
     /// <summary>
+    /// Port number captured during Initialize, used in Execute to avoid re-reading the shared singleton.
+    /// </summary>
+    private int _port;
+
+    /// <summary>
     /// Process helper for process management actions.
     /// </summary>
     private readonly IProcessHelper _processHelper;
@@ -140,6 +145,7 @@ internal class PortArgumentExecutor : IArgumentExecutor
             throw new CommandLineException(CommandLineResources.InvalidPortArgument);
         }
 
+        _port = portNumber;
         _commandLineOptions.Port = portNumber;
         _commandLineOptions.IsDesignMode = true;
         RunSettingsHelper.Instance.IsDesignMode = true;
@@ -154,11 +160,11 @@ internal class PortArgumentExecutor : IArgumentExecutor
     {
         try
         {
-            _designModeClient?.ConnectToClientAndProcessRequests(_commandLineOptions.Port, _testRequestManager);
+            _designModeClient?.ConnectToClientAndProcessRequests(_port, _testRequestManager);
         }
         catch (TimeoutException ex)
         {
-            throw new CommandLineException(string.Format(CultureInfo.CurrentCulture, CommandLineResources.DesignModeClientTimeoutError, _commandLineOptions.Port), ex);
+            throw new CommandLineException(string.Format(CultureInfo.CurrentCulture, CommandLineResources.DesignModeClientTimeoutError, _port), ex);
         }
 
         return ArgumentProcessorResult.Success;

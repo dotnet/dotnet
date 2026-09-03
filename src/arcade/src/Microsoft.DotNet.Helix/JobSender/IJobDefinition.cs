@@ -176,6 +176,13 @@ namespace Microsoft.DotNet.Helix.Client
         IJobDefinition WithMaxRetryCount(int? maxRetryCount);
 
         /// <summary>
+        /// Opts in to logging the preview Helix queue health summary (estimated wait, depth,
+        /// snapshot time) returned in the job creation response. Off by default.
+        /// </summary>
+        /// <returns>Fluent job builder.</returns>
+        IJobDefinition WithQueueStats();
+
+        /// <summary>
         /// <para>Sends the fully specified job to execution.</para>
         /// 
         /// <para>This includes upload of all the provided correlation data, but does not

@@ -17,6 +17,7 @@ using Task = Microsoft.Build.Utilities.Task;
 
 namespace NuGet.Build.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public class CheckForDuplicateNuGetItemsTask : Task
     {
         [Required]

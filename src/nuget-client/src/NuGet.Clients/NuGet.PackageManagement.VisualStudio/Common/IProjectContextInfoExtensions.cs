@@ -15,26 +15,6 @@ namespace NuGet.PackageManagement.VisualStudio
 {
     public static class IProjectContextInfoExtensions
     {
-        public static async ValueTask<bool> IsUpgradeableAsync(
-            this IProjectContextInfo projectContextInfo,
-            IServiceBroker serviceBroker,
-            CancellationToken cancellationToken)
-        {
-            Assumes.NotNull(projectContextInfo);
-            Assumes.NotNull(serviceBroker);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            using (INuGetProjectUpgraderService? projectUpgrader = await serviceBroker.GetProxyAsync<INuGetProjectUpgraderService>(
-                NuGetServices.ProjectUpgraderService,
-                cancellationToken: cancellationToken))
-            {
-                Assumes.NotNull(projectUpgrader);
-
-                return await projectUpgrader.IsProjectUpgradeableAsync(projectContextInfo.ProjectId, cancellationToken);
-            }
-        }
-
         public static async ValueTask<IReadOnlyCollection<IPackageReferenceContextInfo>> GetInstalledPackagesAsync(
             this IProjectContextInfo projectContextInfo,
             IServiceBroker serviceBroker,
