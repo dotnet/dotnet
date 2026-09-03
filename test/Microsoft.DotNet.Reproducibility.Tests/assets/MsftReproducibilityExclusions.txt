@@ -8,4 +8,3 @@
 # The JSON files are included as well due to a cascade effect of sha512 hash diffs from the nupkgs
 
 # libaspnetcoretools.so is known non-reproducible
-sdk/*/DotnetTools/aspnetcoretools/*/tools/any/linux-x64/libaspnetcoretools.so
