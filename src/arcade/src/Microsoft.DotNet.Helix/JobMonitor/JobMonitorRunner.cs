@@ -501,7 +501,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 StringComparer.OrdinalIgnoreCase);
             Volatile.Write(
                 ref _latestStatus,
-                new PollStatusSnapshot(authoritativeJobs, workItemsByJob, authoritativeCompletedJobNames));
+                new PollStatusSnapshot(
+                    authoritativeJobs,
+                    workItemsByJob,
+                    authoritativeCompletedJobNames,
+                    timelineRecords));
             if (!loopState.HasLoggedInitialStatus)
             {
                 LogLatestStatus();
@@ -813,6 +817,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 snapshot.Jobs,
                 snapshot.WorkItemsByJob,
                 snapshot.CompletedJobNames,
+                snapshot.TimelineRecords,
                 _uploads.Snapshot);
         }
 
@@ -837,7 +842,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         private sealed record PollStatusSnapshot(
             IReadOnlyList<HelixJobInfo> Jobs,
             IReadOnlyDictionary<string, IReadOnlyCollection<WorkItemSummary>> WorkItemsByJob,
-            IReadOnlySet<string> CompletedJobNames);
+            IReadOnlySet<string> CompletedJobNames,
+            IReadOnlyList<AzureDevOpsTimelineRecord> TimelineRecords);
 
         private sealed record ProductionDependencies(
             IAzureDevOpsService AzureDevOps,

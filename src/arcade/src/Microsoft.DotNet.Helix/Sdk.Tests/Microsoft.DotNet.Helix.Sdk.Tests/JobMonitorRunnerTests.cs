@@ -4738,13 +4738,49 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             exitCode.Should().Be(1);
             logger.Messages.Should().Contain(message =>
-                message.Contains("0 processed / 0 completed / 1 running / 0 waiting jobs", StringComparison.Ordinal));
+                message.Contains("Helix jobs: 0 processed / 0 completed / 1 running / 0 waiting", StringComparison.Ordinal));
             logger.Messages.Should().Contain(message =>
-                message.Contains("0 processed / 0 completed / 3 running / 0 waiting work items", StringComparison.Ordinal));
+                message.Contains("Helix work items: 0 processed / 0 completed / 3 running / 0 waiting", StringComparison.Ordinal));
+            logger.Messages.Should().Contain(message =>
+                message.Contains("Azure DevOps jobs: 0 completed / 1 running / 0 waiting", StringComparison.Ordinal));
             logger.Messages.Should().NotContain(message =>
                 message.Contains("Helix job details:", StringComparison.Ordinal));
             logger.Messages.Should().Contain(message =>
                 message.Contains($"Work item 'wi-2' in job 'helix-linux' failed (Finished, exit code 1).{Environment.NewLine}Console: https://helix.example/wi-2/console", StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public async Task LoopStatus_CompletedHelixJobs_ReportsWaitingPipelineJobs()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+            var logger = new RecordingLogger();
+            using var cts = new CancellationTokenSource();
+
+            azdo.AddTimelineResponse(MonitorJob(), PipelineJob("Test Linux", "pending"));
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(passed: ["workitem-1"]),
+                });
+
+            var runner = new JobMonitorRunner(DefaultOptions(), logger, azdo, helix,
+                (_, _) =>
+                {
+                    cts.Cancel();
+                    return Task.CompletedTask;
+                });
+
+            int exitCode = await runner.RunAsync(cts.Token);
+
+            exitCode.Should().Be(1);
+            logger.Messages.Should().Contain(message =>
+                message.Contains("1 completed / 0 running / 0 waiting", StringComparison.Ordinal)
+                && message.Contains("Azure DevOps jobs: 0 completed / 0 running / 1 waiting", StringComparison.Ordinal));
+            logger.Messages.Should().Contain(message =>
+                message.Contains("Helix work is complete. Waiting for 1 Azure DevOps job(s) before the monitor can finish:", StringComparison.Ordinal)
+                && message.Contains("Test Linux [state=pending, result=none]", StringComparison.Ordinal));
         }
 
         [Fact]
@@ -4822,9 +4858,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
 
             exitCode.Should().Be(1);
             logger.Messages.Should().Contain(message =>
-                message.Contains("0 processed / 0 completed / 1 running / 0 waiting jobs", StringComparison.Ordinal));
+                message.Contains("Helix jobs: 0 processed / 0 completed / 1 running / 0 waiting", StringComparison.Ordinal));
             logger.Messages.Should().Contain(message =>
-                message.Contains("0 processed / 0 completed / 0 running / 2 waiting work items", StringComparison.Ordinal));
+                message.Contains("Helix work items: 0 processed / 0 completed / 0 running / 2 waiting", StringComparison.Ordinal));
             logger.Messages.Should().Contain(message =>
                 message.Contains("Upload pipeline:", StringComparison.Ordinal));
         }
