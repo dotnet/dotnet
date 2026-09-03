@@ -86,4 +86,3 @@ module Tuple =
         |> typecheck
         |> shouldFail
         |> withSingleDiagnostic (Warning 26, Line 12, Col 28, Line 12, Col 29, "This rule will never be matched")
-        
