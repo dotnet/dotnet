@@ -36,7 +36,7 @@ set "__RepoRootDir=%__ProjectDir%\..\.."
 for %%i in ("%__RepoRootDir%") do set "__RepoRootDir=%%~fi"
 
 set "__ProjectFilesDir=%__ProjectDir%"
-set "__RootBinDir=%__RepoRootDir%\artifacts"
+if not defined __RootBinDir set "__RootBinDir=%__RepoRootDir%\artifacts"
 
 set __BuildAll=
 
@@ -232,7 +232,7 @@ set "__BinDir=%__RootBinDir%\bin\coreclr\%__TargetOSDirName%.%__TargetArch%.%__B
 set "__IntermediatesDir=%__RootBinDir%\obj\coreclr\%__TargetOSDirName%.%__TargetArch%.%__BuildType%"
 set "__LogsDir=%__RootBinDir%\log\!__BuildType!"
 set "__MsbuildDebugLogsDir=%__LogsDir%\MsbuildDebugLogs"
-set "__ArtifactsIntermediatesDir=%__RepoRootDir%\artifacts\obj\coreclr\"
+set "__ArtifactsIntermediatesDir=%__RootBinDir%\obj\coreclr\"
 if "%__Ninja%"=="0" (set "__IntermediatesDir=%__IntermediatesDir%\ide")
 set "__PackagesBinDir=%__BinDir%\.nuget"
 
@@ -298,10 +298,12 @@ set __IntermediatesIncDir=%__IntermediatesDir%\src\inc
 set __IntermediatesEventingDir=%__ArtifactsIntermediatesDir%\Eventing\%__TargetArch%\%__BuildType%
 
 REM Find python and set it to the variable PYTHON
+set "__PythonLocationFile=%TEMP%\pythonlocation-%RANDOM%-%RANDOM%.txt"
 set _C=-c "import sys; sys.stdout.write(sys.executable)"
-(py -3 %_C% || py -2 %_C% || python3 %_C% || python2 %_C% || python %_C%) > "%TEMP%\pythonlocation.txt" 2> NUL
+(py -3 %_C% || py -2 %_C% || python3 %_C% || python2 %_C% || python %_C%) > "%__PythonLocationFile%" 2> NUL
 set _C=
-set /p PYTHON=<"%TEMP%\pythonlocation.txt"
+set /p PYTHON=<"%__PythonLocationFile%"
+del "%__PythonLocationFile%" > NUL 2> NUL
 
 if NOT DEFINED PYTHON (
     echo %__ErrMsgPrefix%%__MsgPrefix%Error: Could not find a Python installation.

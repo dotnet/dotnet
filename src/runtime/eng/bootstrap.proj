@@ -1,0 +1,169 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <PropertyGroup>
+    <BootstrapBuildArtifactsDir Condition="'$(BootstrapBuildArtifactsDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bootstrap-build', '$(TargetRid)'))</BootstrapBuildArtifactsDir>
+    <BootstrapConsumerCoreCLRArtifactsPath>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'bin', 'coreclr', '$(TargetOS).$(TargetArchitecture).$(CoreCLRConfiguration)'))</BootstrapConsumerCoreCLRArtifactsPath>
+    <BootstrapConsumerHostArtifactsPath>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'bin', '$(TargetOS)-$(TargetArchitecture).$(HostConfiguration)'))</BootstrapConsumerHostArtifactsPath>
+    <BootstrapIntermediateDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'obj', 'bootstrap', '$(TargetRid)'))</BootstrapIntermediateDir>
+    <BootstrapInputManifest>$(BootstrapIntermediateDir)inputs.txt</BootstrapInputManifest>
+    <BootstrapReadyFile>$([MSBuild]::NormalizePath('$(BootstrapBuildArtifactsDir)', 'bootstrap', '$(TargetRid)', '.complete'))</BootstrapReadyFile>
+    <BootstrapLayoutDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'bootstrap', '$(TargetRid)'))</BootstrapLayoutDir>
+    <BootstrapRefPackDir>$([MSBuild]::NormalizeDirectory('$(BootstrapLayoutDir)', 'microsoft.netcore.app', 'ref'))</BootstrapRefPackDir>
+    <BootstrapRuntimePackDir>$([MSBuild]::NormalizeDirectory('$(BootstrapLayoutDir)', 'microsoft.netcore.app', 'lib'))</BootstrapRuntimePackDir>
+    <BootstrapAotSdkDir>$([MSBuild]::NormalizeDirectory('$(BootstrapLayoutDir)', 'aotsdk'))</BootstrapAotSdkDir>
+    <BootstrapHostDir>$([MSBuild]::NormalizeDirectory('$(BootstrapLayoutDir)', 'host'))</BootstrapHostDir>
+    <BootstrapRidGraphDir>$([MSBuild]::NormalizeDirectory('$(BootstrapLayoutDir)', 'ridgraph'))</BootstrapRidGraphDir>
+    <_BootstrapConsumerProperties>UseBootstrap=true;ArtifactsDir=$(BootstrapBuildArtifactsDir);CoreCLROverridePath=$(BootstrapConsumerCoreCLRArtifactsPath);LibrariesOverridePath=$(BootstrapBuildArtifactsDir);LibrariesAllConfigurationsOverridePath=$(BootstrapBuildArtifactsDir);HostArtifactsPath=$(BootstrapConsumerHostArtifactsPath);BootstrapRefPackDir=$(BootstrapRefPackDir);BootstrapRuntimePackDir=$(BootstrapRuntimePackDir);BootstrapAotSdkDir=$(BootstrapAotSdkDir);BootstrapHostDir=$(BootstrapHostDir);BootstrapRidGraphDir=$(BootstrapRidGraphDir);CreateHardLinksForCopyFilesToOutputDirectory=false;CreateHardLinksForCopyLocalIfPossible=false;CreateHardLinksForPublishFilesIfPossible=false</_BootstrapConsumerProperties>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepositoryEngineeringDir)bootstrap-producers.proj"
+                      AdditionalProperties="EnableBootstrap=false;BootstrapMainBuild=true"
+                      GlobalPropertiesToRemove="BootstrapBuildLane;BootstrapBuildArtifactsDir"
+                      BuildInParallel="false" />
+  </ItemGroup>
+
+  <Target Name="_BuildBootstrapProducersBeforeBootstrap"
+          BeforeTargets="Build">
+    <MSBuild Projects="$(RepositoryEngineeringDir)bootstrap-producers.proj"
+             Properties="EnableBootstrap=false;BootstrapMainBuild=true"
+             RemoveProperties="BootstrapBuildLane;BootstrapBuildArtifactsDir"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+  </Target>
+
+  <Target Name="_CollectBootstrapFiles">
+    <ItemGroup>
+      <AotSdkFile
+        Include="$(CoreCLRAotSdkDir)/*"
+        Condition="'$(UseNativeAotForComponents)' == 'true'" />
+      <AppHostFile
+        Include="$([MSBuild]::NormalizePath('$(DotNetHostBinDir)', 'apphost$(ExeSuffix)'))" />
+      <AppHostFile
+        Include="$([MSBuild]::NormalizePath('$(CoreCLRArtifactsPath)', 'corehost', 'singlefilehost$(ExeSuffix)'))"
+        Condition="'$(UseNativeAotForComponents)' != 'true'" />
+      <RefPackFile Include="$(MicrosoftNetCoreAppRefPackDir)/**/*" />
+      <RuntimePackFile Include="$(MicrosoftNetCoreAppRuntimePackDir)/**/*" />
+      <PortableRuntimePackFile
+        Include="$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)/**/*"
+        Condition="'$(PortableTargetRid)' != '' and
+                   '$(PortableTargetRid)' != '$(TargetRid)' and
+                   !Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)') and
+                   Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)')" />
+      <TargetRuntimePackAliasFile
+        Include="$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)/**/*"
+        Condition="'$(PortableTargetRid)' != '' and
+                   '$(PortableTargetRid)' != '$(TargetRid)' and
+                   !Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)') and
+                   Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)')" />
+      <RidGraphFile Include="$(ArtifactsBinDir)Microsoft.NETCore.Platforms/*.json" />
+
+      <AotSdkFile DestinationPath="$(BootstrapAotSdkDir)/%(Filename)%(Extension)" />
+      <AppHostFile DestinationPath="$(BootstrapHostDir)/%(Filename)%(Extension)" />
+      <RefPackFile DestinationPath="$(BootstrapRefPackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <RuntimePackFile DestinationPath="$(BootstrapRuntimePackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <PortableRuntimePackFile DestinationPath="$(BootstrapRuntimePackDir)/runtimes/$(PortableTargetRid)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <TargetRuntimePackAliasFile DestinationPath="$(BootstrapRuntimePackDir)/runtimes/$(TargetRid)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <RidGraphFile DestinationPath="$(BootstrapRidGraphDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+
+      <BootstrapFile Include="@(AotSdkFile);@(AppHostFile);@(RefPackFile);@(RuntimePackFile);@(PortableRuntimePackFile);@(TargetRuntimePackAliasFile);@(RidGraphFile)" />
+    </ItemGroup>
+
+    <Error Text="The bootstrap AOT SDK was not produced."
+           Condition="'$(UseNativeAotForComponents)' == 'true' and '@(AotSdkFile)' == ''" />
+    <Error Text="The bootstrap apphost was not produced."
+           Condition="'@(AppHostFile)' == ''" />
+    <Error Text="The bootstrap reference pack was not produced."
+           Condition="'@(RefPackFile)' == ''" />
+    <Error Text="The bootstrap runtime pack was not produced."
+           Condition="'@(RuntimePackFile)' == ''" />
+  </Target>
+
+  <Target Name="BuildBootstrapProducers" />
+
+  <Target Name="_WriteBootstrapInputManifest"
+          DependsOnTargets="_CollectBootstrapFiles">
+    <GetFileHash Files="@(BootstrapFile)" Algorithm="SHA256">
+      <Output TaskParameter="Items" ItemName="BootstrapFileWithHash" />
+    </GetFileHash>
+    <ItemGroup>
+      <BootstrapInputManifestLine Include="@(BootstrapFileWithHash)">
+        <Value>%(FullPath)|%(DestinationPath)|%(FileHash)</Value>
+      </BootstrapInputManifestLine>
+    </ItemGroup>
+    <MakeDir Directories="$(BootstrapIntermediateDir)" />
+    <WriteLinesToFile
+      File="$(BootstrapInputManifest)"
+      Lines="@(BootstrapInputManifestLine->'%(Value)')"
+      Overwrite="true"
+      WriteOnlyWhenDifferent="true" />
+    <ItemGroup>
+      <FileWrites Include="$(BootstrapInputManifest)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_ValidateBootstrapLayout"
+          DependsOnTargets="_WriteBootstrapInputManifest">
+    <ItemGroup>
+      <MissingBootstrapFile Include="@(BootstrapFile)"
+                            Condition="!Exists('%(DestinationPath)')" />
+    </ItemGroup>
+    <Delete Files="$(BootstrapReadyFile)"
+            Condition="'@(MissingBootstrapFile)' != ''" />
+  </Target>
+
+  <Target Name="CreateBootstrapLayout"
+          AfterTargets="Build"
+          DependsOnTargets="BuildBootstrapProducers;_ValidateBootstrapLayout"
+          Inputs="$(BootstrapInputManifest)"
+          Outputs="$(BootstrapReadyFile)">
+    <RemoveDir Directories="$(BootstrapLayoutDir)" />
+    <Copy
+      SourceFiles="@(BootstrapFile)"
+      DestinationFiles="@(BootstrapFile->Metadata('DestinationPath'))" />
+    <WriteLinesToFile
+      File="$(BootstrapReadyFile)"
+      Lines="$(GitCommitHash);$(TargetRid);$(Configuration)"
+      Overwrite="true" />
+    <ItemGroup>
+      <FileWrites Include="@(BootstrapFile->Metadata('DestinationPath'));$(BootstrapReadyFile)" />
+    </ItemGroup>
+    <Message Importance="high" Text="Bootstrap layout created at $(BootstrapLayoutDir)" />
+  </Target>
+
+  <Target Name="BuildBootstrapConsumers"
+          AfterTargets="CreateBootstrapLayout"
+          Condition="'$(EnableBootstrap)' == 'true'">
+    <ItemGroup>
+      <BootstrapConsumerPrerequisite Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj"
+                                     Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj"
+                         Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj"
+                         Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapConsumer Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj"
+                         Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapConsumer Include="$(SharedNativeRoot)managed\compile-native.proj"
+                         Condition="$(_subset.Contains('+tools.cdac+'))" />
+    </ItemGroup>
+    <MSBuild Projects="@(BootstrapConsumerPrerequisite)"
+             Targets="Restore"
+             Properties="$(_BootstrapConsumerProperties)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapConsumerPrerequisite)"
+             Properties="$(_BootstrapConsumerProperties);ExcludeRestorePackageImports=false"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapConsumer)"
+             Targets="Restore"
+             Properties="$(_BootstrapConsumerProperties)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapConsumer)"
+             Properties="$(_BootstrapConsumerProperties);ExcludeRestorePackageImports=false"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+  </Target>
+
+</Project>

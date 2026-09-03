@@ -1,48 +1,67 @@
 <Project Sdk="Microsoft.Build.Traversal">
 
-  <ItemGroup>
+  <PropertyGroup>
+    <_OrchestrateBootstrap Condition="'$(EnableBootstrap)' == 'true' and '$(BootstrapBuildLane)' != 'true'">true</_OrchestrateBootstrap>
+    <BootstrapBuildArtifactsDir Condition="'$(BootstrapBuildArtifactsDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bootstrap-build', '$(TargetRid)'))</BootstrapBuildArtifactsDir>
+    <BootstrapCoreCLRArtifactsPath>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'bin', 'coreclr', '$(TargetOS).$(TargetArchitecture).$(CoreCLRConfiguration)'))</BootstrapCoreCLRArtifactsPath>
+    <BootstrapBuildLayoutDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildArtifactsDir)', 'bootstrap', '$(TargetRid)'))</BootstrapBuildLayoutDir>
+    <BootstrapBuildRefPackDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'microsoft.netcore.app', 'ref'))</BootstrapBuildRefPackDir>
+    <BootstrapBuildRuntimePackDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'microsoft.netcore.app', 'lib'))</BootstrapBuildRuntimePackDir>
+    <BootstrapBuildAotSdkDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'aotsdk'))</BootstrapBuildAotSdkDir>
+    <BootstrapBuildHostDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'host'))</BootstrapBuildHostDir>
+    <BootstrapBuildRidGraphDir>$([MSBuild]::NormalizeDirectory('$(BootstrapBuildLayoutDir)', 'ridgraph'))</BootstrapBuildRidGraphDir>
+    <MainCoreCLRArtifactsPath>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bin', 'coreclr', '$(TargetOS).$(TargetArchitecture).$(CoreCLRConfiguration)'))</MainCoreCLRArtifactsPath>
+    <_BootstrapPackageProperties>UseBootstrap=true;CoreCLROverridePath=$(BootstrapCoreCLRArtifactsPath);BootstrapRefPackDir=$(BootstrapBuildRefPackDir);BootstrapRuntimePackDir=$(BootstrapBuildRuntimePackDir);BootstrapAotSdkDir=$(BootstrapBuildAotSdkDir);BootstrapHostDir=$(BootstrapBuildHostDir);BootstrapRidGraphDir=$(BootstrapBuildRidGraphDir)</_BootstrapPackageProperties>
+    <_BootstrapPackageProperties>$(_BootstrapPackageProperties);CrossgenSmokeTestCoreLibPath=$(MainCoreCLRArtifactsPath)IL/System.Private.CoreLib.dll;CrossgenPublishArtifactsDir=$(BootstrapBuildArtifactsDir);CrossgenPublishCoreCLROverridePath=$(BootstrapCoreCLRArtifactsPath)</_BootstrapPackageProperties>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(_OrchestrateBootstrap)' != 'true'">
     <ProjectReference Include="$(RepoTasksDir)tasks.proj" BuildInParallel="false" />
     <!-- Subsets.props which defines @(ProjectToBuild) is already imported in Directory.Build.props. -->
     <ProjectReference Include="@(ProjectToBuild)" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(_OrchestrateBootstrap)' == 'true'">
+    <ProjectReference Include="$(RepositoryEngineeringDir)main-build.proj"
+                      AdditionalProperties="EnableBootstrap=false;BootstrapMainBuild=true"
+                      BuildInParallel="true" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)bootstrap.proj"
+                      AdditionalProperties="BootstrapBuildLane=true;BootstrapBuildArtifactsDir=$(BootstrapBuildArtifactsDir)"
+                      BuildInParallel="true"
+                      Pack="false"
+                      Publish="false" />
+  </ItemGroup>
+
+  <Target Name="BuildBootstrapPackages"
+          AfterTargets="Build"
+          Condition="'$(_OrchestrateBootstrap)' == 'true'">
+    <ItemGroup>
+      <BootstrapPackageProject Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj"
+                               Condition="'$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" />
+      <BootstrapPackageProject Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj"
+                               Condition="'$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" />
+      <BootstrapPackageProject Include="$(InstallerProjectRoot)pkg\projects\nativeaot-packages.proj"
+                               Condition="'$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" />
+    </ItemGroup>
+    <MSBuild Projects="@(BootstrapPackageProject)"
+             Targets="Restore"
+             Properties="$(_BootstrapPackageProperties)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapPackageProject)"
+             Properties="$(_BootstrapPackageProperties);ExcludeRestorePackageImports=false"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj"
+             Targets="Restore"
+             Properties="CdacReaderArtifactsPath=$(BootstrapCoreCLRArtifactsPath)"
+             Condition="'$(_BuildCdacPack)' == 'true'" />
+    <MSBuild Projects="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj"
+             Properties="CdacReaderArtifactsPath=$(BootstrapCoreCLRArtifactsPath);ExcludeRestorePackageImports=false"
+             Condition="'$(_BuildCdacPack)' == 'true'" />
+  </Target>
+
   <Import Project="$(RepositoryEngineeringDir)SubsetValidation.targets" />
   <Import Project="$(RepositoryEngineeringDir)restore\optimizationData.targets" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-
-  <Target Name="SetupBootstrapLayout"
-          AfterTargets="Build"
-          Condition="'$(Subset)' == 'bootstrap'">
-    <ItemGroup>
-      <AotSdkFile
-        Include="$(CoreCLRAotSdkDir)/*"
-        Condition="'$(UseNativeAotForComponents)' == 'true'" />
-      <AppHostFile
-        Include="$([MSBuild]::NormalizePath('$(DotNetHostBinDir)', 'apphost$(ExeSuffix)'))" />
-      <AppHostFile
-        Include="$([MSBuild]::NormalizePath('$(CoreCLRArtifactsPath)', 'corehost', 'singlefilehost$(ExeSuffix)'))"
-        Condition="'$(UseNativeAotForComponents)' != 'true'" />
-      <RefPackFile Include="$(MicrosoftNetCoreAppRefPackDir)/**/*" />
-      <RuntimePackFile Include="$(MicrosoftNetCoreAppRuntimePackDir)/**/*" />
-      <RidGraphFile Include="$(ArtifactsBinDir)Microsoft.NETCore.Platforms/*.json" />
-
-      <AotSdkFile
-        DestinationPath="$(BootstrapAotSdkDir)/%(Filename)%(Extension)" />
-      <AppHostFile
-        DestinationPath="$(BootstrapHostDir)/%(Filename)%(Extension)" />
-      <RefPackFile
-        DestinationPath="$(BootstrapRefPackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
-      <RuntimePackFile
-        DestinationPath="$(BootstrapRuntimePackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
-      <RidGraphFile
-        DestinationPath="$(BootstrapRidGraphDir)/%(RecursiveDir)%(Filename)%(Extension)" />
-      <BootstrapFile Include="@(AotSdkFile);@(AppHostFile);@(RefPackFile);@(RuntimePackFile);@(RidGraphFile)" />
-    </ItemGroup>
-
-    <Copy
-      SourceFiles="@(BootstrapFile)"
-      DestinationFiles="@(BootstrapFile->Metadata('DestinationPath'))"
-      SkipUnchangedFiles="true" />
-    <Message Importance="high" Text="Bootstrap files copied to $(ArtifactsDir)bootstrap" />
-  </Target>
 
 </Project>

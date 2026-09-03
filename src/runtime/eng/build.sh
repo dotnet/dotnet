@@ -53,7 +53,7 @@ usage()
   echo "  --verbosity (-v)                MSBuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]."
   echo "                                  [Default: Minimal]"
   echo "  --use-bootstrap                 Use the results of building the bootstrap subset to build published tools on the target machine."
-  echo "  --bootstrap                     Build the bootstrap subset and then build the repo with --use-bootstrap."
+  echo "  --bootstrap                     Build shipping tools from live runtime assets in the main build."
   echo ""
 
   echo "Actions (defaults to --restore --build):"
@@ -163,7 +163,6 @@ extraargs=()
 crossBuild=0
 portableBuild=1
 bootstrap=0
-bootstrapConfig='Debug'
 dynamiccodecompiled=""
 
 source $scriptroot/common/native/init-os-and-arch.sh
@@ -250,7 +249,6 @@ while [[ $# -gt 0 ]]; do
           exit 1
           ;;
       esac
-      bootstrapConfig=$val
       arguments+=("-configuration" "$val")
       shift 2
       ;;
@@ -629,29 +627,7 @@ arguments+=("/p:TargetArchitecture=$arch" "/p:BuildArchitecture=$hostArch")
 arguments+=("/p:CMakeArgs=\"$cmakeargs\"" ${extraargs[@]+"${extraargs[@]}"})
 
 if [[ "$bootstrap" == "1" ]]; then
-  # Strip build actions other than -restore and -build from the arguments for the bootstrap build.
-  bootstrapArguments=()
-  for argument in "${arguments[@]}"; do
-    add=1
-    for flag in --sign --publish --pack --test -sign -publish -pack -test; do
-      if [[ "$argument" == "$flag" ]]; then
-        add=0
-      fi
-    done
-    if [[ $add == 1 ]]; then
-      bootstrapArguments+=("$argument")
-    fi
-  done
-
-  # Set a different path for prebuilt usage tracking for the bootstrap build.
-  "$scriptroot/common/build.sh" ${bootstrapArguments[@]+"${bootstrapArguments[@]}"} /p:Subset=bootstrap /p:TrackPrebuiltUsageReportFile=$scriptroot/../artifacts/log/bootstrap-prebuilt-usage.xml -bl:$scriptroot/../artifacts/log/$bootstrapConfig/bootstrap.binlog
-
-  # Remove artifacts from the bootstrap build so the product build is a "clean" build.
-  echo "Cleaning up artifacts from bootstrap build..."
-  rm -r "$scriptroot/../artifacts/bin"
-  # Remove all directories in obj except for the source-built-upstream-cache directory to avoid breaking SourceBuild.
-  find "$scriptroot/../artifacts/obj" -mindepth 1 -maxdepth 1 ! -name 'source-built-upstream-cache' -exec rm -rf {} +
-  arguments+=("/p:UseBootstrap=true")
+  arguments+=("/p:EnableBootstrap=true")
 fi
 
 "$scriptroot/common/build.sh" ${arguments[@]+"${arguments[@]}"}

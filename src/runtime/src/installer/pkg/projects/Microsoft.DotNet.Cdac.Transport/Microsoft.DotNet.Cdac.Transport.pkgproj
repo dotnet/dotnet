@@ -2,6 +2,7 @@
   <PropertyGroup>
     <PackageDescription>Transport package for the cdac reader to be used with diagnostics tooling</PackageDescription>
     <IsShipping>false</IsShipping>
+    <CdacReaderArtifactsPath Condition="'$(CdacReaderArtifactsPath)' == ''">$(CoreCLRArtifactsPath)</CdacReaderArtifactsPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +12,7 @@
       infrastructure auto-discover the adjacent symbol file (.so.dbg/.dylib.dwarf/.pdb) and add
       it to the symbol package.
     -->
-    <NativeBinary Include="$(CoreCLRArtifactsPath)$(LibPrefix)mscordaccore_universal$(LibSuffix)" />
+    <NativeBinary Include="$(CdacReaderArtifactsPath)$(LibPrefix)mscordaccore_universal$(LibSuffix)" />
     <NativeBinary Include="$(CoreCLRArtifactsPath)$(LibPrefix)mscordbi_universal$(LibSuffix)" />
   </ItemGroup>
 
