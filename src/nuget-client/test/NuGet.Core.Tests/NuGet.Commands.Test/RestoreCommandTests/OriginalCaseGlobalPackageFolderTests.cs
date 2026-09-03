@@ -320,6 +320,7 @@ namespace NuGet.Commands.Test.RestoreCommandTests
                         {
                             Data = new RemoteResolveResult
                             {
+                                Dependencies = new(),
                                 Match = new RemoteMatch
                                 {
                                     Library = libraryIdentity,

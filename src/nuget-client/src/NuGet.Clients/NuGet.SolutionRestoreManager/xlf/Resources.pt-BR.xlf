@@ -111,7 +111,7 @@ Para impedir que o NuGet restaure pacotes durante o build, abra a caixa de diál
       </trans-unit>
       <trans-unit id="Prompt_ResolveSupplyChainSecurityNUCode">
         <source>Resolve {0} by reviewing my NuGet supply chain security configuration.</source>
-        <target state="new">Resolve {0} by reviewing my NuGet supply chain security configuration.</target>
+        <target state="translated">Resolva {0} examinando minha configuração de segurança da cadeia de fornecedores do NuGet.</target>
         <note>Do not translate NuGet</note>
       </trans-unit>
       <trans-unit id="PropertyDoesNotHaveSingleValue">
@@ -141,7 +141,7 @@ Para impedir que o NuGet restaure pacotes durante o build, abra a caixa de diál
       </trans-unit>
       <trans-unit id="Title_AskCopilotForFix">
         <source>Ask Copilot for a fix</source>
-        <target state="new">Ask Copilot for a fix</target>
+        <target state="translated">Perguntar ao Copilot por uma correção</target>
         <note>Do not translate Copilot</note>
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">

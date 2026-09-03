@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Error_SupplyChainSecurityToolNotAvailable">
         <source>The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</source>
-        <target state="new">The Review Supply Chain Security tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</target>
+        <target state="translated">無法使用檢閱供應鏈安全性工具。在 GitHub Copilot 聊天視窗啟用 NuGet MCP 伺服器，然後再試一次。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="NoProjectSelected">
@@ -284,7 +284,7 @@
       </trans-unit>
       <trans-unit id="Title_ResolveSupplyChainSecurityWithCopilot">
         <source>Resolve Supply Chain Security with GitHub Copilot</source>
-        <target state="new">Resolve Supply Chain Security with GitHub Copilot</target>
+        <target state="translated">使用 GitHub Copilot 解決供應鏈安全性問題</target>
         <note>Do not translate "GitHub Copilot"</note>
       </trans-unit>
       <trans-unit id="VSOptions_Button_PackageSourceMappingReview">

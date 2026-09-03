@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using NuGet.LibraryModel;
 
 namespace NuGet.DependencyResolver
@@ -15,7 +13,7 @@ namespace NuGet.DependencyResolver
     /// </summary>
     public class GraphEdge<TItem>
     {
-        public GraphEdge(GraphEdge<TItem> outerEdge, GraphItem<TItem> item, LibraryDependency edge)
+        public GraphEdge(GraphEdge<TItem>? outerEdge, GraphItem<TItem> item, LibraryDependency edge)
         {
             OuterEdge = outerEdge;
             Item = item;
@@ -25,7 +23,7 @@ namespace NuGet.DependencyResolver
         /// <summary>
         /// Incoming edge to <see cref="Item"/>.
         /// </summary>
-        public GraphEdge<TItem> OuterEdge { get; }
+        public GraphEdge<TItem>? OuterEdge { get; }
 
         /// <summary>
         /// Graph node between <see cref="OuterEdge"/> and <see cref="Edge"/>.
