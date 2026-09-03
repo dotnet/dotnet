@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.LibraryModel;
@@ -28,8 +26,8 @@ namespace NuGet.DependencyResolver
         //All empty ParentNodes and InnerNodes point to this EmptyList, to reduce the memory allocation for empty ParentNodes and InnerNodes
         internal static readonly IList<GraphNode<TItem>> EmptyList = Array.Empty<GraphNode<TItem>>();
         public LibraryRange Key { get; set; }
-        public GraphItem<TItem> Item { get; set; }
-        public GraphNode<TItem> OuterNode { get; set; }
+        public GraphItem<TItem>? Item { get; set; }
+        public GraphNode<TItem>? OuterNode { get; set; }
         public IList<GraphNode<TItem>> InnerNodes { get; set; }
         public Disposition Disposition { get; set; }
 

@@ -1175,7 +1175,10 @@ namespace NuGet.Commands.Test
             {
                 Data = new RemoteResolveResult()
                 {
-                    Match = new RemoteMatch(),
+                    Match = new RemoteMatch()
+                    {
+                        Library = new LibraryIdentity(id, NuGetVersion.Parse(version), libraryType)
+                    },
                     Dependencies = dependencies.ToList()
                 }
             };

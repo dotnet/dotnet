@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,7 +52,7 @@ namespace NuGet.DependencyResolver
 
             static bool AreAllParentsAccepted(DowngradeResult<RemoteResolveResult> d)
             {
-                GraphNode<RemoteResolveResult> resultToCheck = d.DowngradedFrom.OuterNode;
+                GraphNode<RemoteResolveResult>? resultToCheck = d.DowngradedFrom.OuterNode;
 
                 while (resultToCheck != null)
                 {
@@ -129,7 +127,7 @@ namespace NuGet.DependencyResolver
 
                 // Remove this node from the tree so the nothing else evaluates this.
                 // This is ok since we have a parent pointer and we can still print the path
-                node.OuterNode.InnerNodes.Remove(node);
+                node.OuterNode!.InnerNodes.Remove(node);
 
                 return;
             }
@@ -165,7 +163,7 @@ namespace NuGet.DependencyResolver
                                 continue;
                             }
 
-                            workingDowngrades[node] = sideNode;
+                            workingDowngrades[node] = sideNode!;
                         }
                         else
                         {
@@ -177,7 +175,7 @@ namespace NuGet.DependencyResolver
 
             // Remove this node from the tree so the nothing else evaluates this.
             // This is ok since we have a parent pointer and we can still print the path
-            node.OuterNode.InnerNodes.Remove(node);
+            node.OuterNode!.InnerNodes.Remove(node);
         }
 
         /// <summary>
@@ -217,11 +215,11 @@ namespace NuGet.DependencyResolver
         }
 
         // A helper to navigate the graph nodes
-        public static GraphNode<TItem> Path<TItem>(this GraphNode<TItem> node, params string[] path)
+        public static GraphNode<TItem>? Path<TItem>(this GraphNode<TItem> node, params string[] path)
         {
             foreach (var item in path)
             {
-                GraphNode<TItem> childNode = null;
+                GraphNode<TItem>? childNode = null;
                 var innerNodes = node.InnerNodes;
                 var count = innerNodes.Count;
                 for (var i = 0; i < count; i++)
@@ -313,7 +311,7 @@ namespace NuGet.DependencyResolver
         /// <summary>
         /// Version of the resolved node version if it exists.
         /// </summary>
-        public static NuGetVersion GetVersionOrDefault<TItem>(this GraphNode<TItem> node)
+        public static NuGetVersion? GetVersionOrDefault<TItem>(this GraphNode<TItem> node)
         {
             // Prefer the name of the resolved item, this will have
             // the correct casing. If it was not resolved use the parent
@@ -357,13 +355,13 @@ namespace NuGet.DependencyResolver
             var incomplete = true;
 
             var tracker = Cache<TItem>.RentTracker();
-            Func<GraphNode<TItem>, bool> skipNode = null;
+            Func<GraphNode<TItem>, bool>? skipNode = null;
 
-            var centralTransitiveNodes = root.InnerNodes.Where(n => n.Item.IsCentralTransitive).ToList();
+            var centralTransitiveNodes = root.InnerNodes.Where(n => n.Item?.IsCentralTransitive == true).ToList();
             var hasCentralTransitiveDependencies = centralTransitiveNodes.Count > 0;
             if (hasCentralTransitiveDependencies)
             {
-                skipNode = (node) => { return node.Item.IsCentralTransitive; };
+                skipNode = (node) => node.Item?.IsCentralTransitive == true;
             }
 
             while (incomplete && --patience != 0)
@@ -419,13 +417,14 @@ namespace NuGet.DependencyResolver
             for (var i = 0; i < count; i++)
             {
                 var childNode = innerNodes[i];
-                GraphNode<TItem> acceptedNode;
+                GraphNode<TItem>? acceptedNode;
                 if (acceptedLibraries.TryGetValue(childNode.Key.Name, out acceptedNode) &&
+                    acceptedNode?.Item is GraphItem<TItem> acceptedItem &&
                     childNode != acceptedNode &&
                     childNode.Key.VersionRange != null &&
-                    acceptedNode.Item.Key.Version != null)
+                    acceptedItem.Key.Version != null)
                 {
-                    var acceptedType = LibraryDependencyTargetUtils.Parse(acceptedNode.Item.Key.Type);
+                    var acceptedType = LibraryDependencyTargetUtils.Parse(acceptedItem.Key.Type);
                     var childType = childNode.Key.TypeConstraint;
 
                     // Skip the check if a project reference override a package dependency
@@ -434,7 +433,7 @@ namespace NuGet.DependencyResolver
                         && (childType & acceptedType) != LibraryDependencyTarget.None)
                     {
                         var versionRange = childNode.Key.VersionRange;
-                        var checkVersion = acceptedNode.Item.Key.Version;
+                        var checkVersion = acceptedItem.Key.Version;
 
                         if (!versionRange.Satisfies(checkVersion))
                         {
@@ -467,6 +466,11 @@ namespace NuGet.DependencyResolver
                 return WalkState.Rejected;
             }
 
+            if (node.Item == null)
+            {
+                return state;
+            }
+
             if (state == WalkState.Walking
                 && context.IsDisputed(node.Item))
             {
@@ -490,7 +494,10 @@ namespace NuGet.DependencyResolver
                 return false;
             }
 
-            context.Track(node.Item);
+            if (node.Item != null)
+            {
+                context.Track(node.Item);
+            }
             return true;
         }
 
@@ -505,7 +512,7 @@ namespace NuGet.DependencyResolver
                 return false;
             }
 
-            if (tracker.IsAmbiguous(node.Item))
+            if (node.Item == null || tracker.IsAmbiguous(node.Item))
             {
                 return false;
             }
@@ -526,7 +533,7 @@ namespace NuGet.DependencyResolver
             return node.Disposition == Disposition.Accepted;
         }
 
-        private static TState ForEachGlobalState<TItem, TState>(this GraphNode<TItem> root, TState state, Func<GraphNode<TItem>, TState, TState> visitor, Func<GraphNode<TItem>, bool> skipNode = null)
+        private static TState ForEachGlobalState<TItem, TState>(this GraphNode<TItem> root, TState state, Func<GraphNode<TItem>, TState, TState> visitor, Func<GraphNode<TItem>, bool>? skipNode = null)
         {
             var queue = Cache<TItem>.RentQueue();
             // breadth-first walk of Node tree
@@ -548,7 +555,7 @@ namespace NuGet.DependencyResolver
             return state;
         }
 
-        private static void ForEach<TItem, TState, TContext>(this GraphNode<TItem> root, TState state, Func<GraphNode<TItem>, TState, TContext, TState> visitor, TContext context, Func<GraphNode<TItem>, bool> skipNode = null)
+        private static void ForEach<TItem, TState, TContext>(this GraphNode<TItem> root, TState state, Func<GraphNode<TItem>, TState, TContext, TState> visitor, TContext context, Func<GraphNode<TItem>, bool>? skipNode = null)
         {
             var queue = Cache<TItem, TState>.RentQueue();
 
@@ -589,7 +596,7 @@ namespace NuGet.DependencyResolver
             Cache<TItem>.ReleaseQueue(queue);
         }
 
-        private static void ForEach<TItem>(this GraphNode<TItem> root, Action<GraphNode<TItem>> visitor, Func<GraphNode<TItem>, bool> skipNode)
+        private static void ForEach<TItem>(this GraphNode<TItem> root, Action<GraphNode<TItem>> visitor, Func<GraphNode<TItem>, bool>? skipNode)
         {
             var queue = Cache<TItem>.RentQueue();
 
@@ -614,7 +621,7 @@ namespace NuGet.DependencyResolver
             ForEach(root, visitor, skipNode: null);
         }
 
-        private static void ForEach<TItem, TContext>(this GraphNode<TItem> root, Action<GraphNode<TItem>, TContext> visitor, TContext context, Func<GraphNode<TItem>, bool> skipNode)
+        private static void ForEach<TItem, TContext>(this GraphNode<TItem> root, Action<GraphNode<TItem>, TContext> visitor, TContext context, Func<GraphNode<TItem>, bool>? skipNode)
         {
             var queue = Cache<TItem>.RentQueue();
 
@@ -660,7 +667,7 @@ namespace NuGet.DependencyResolver
         }
 
         [ThreadStatic]
-        private static Dictionary<GraphNode<RemoteResolveResult>, GraphNode<RemoteResolveResult>> _tempDowngrades;
+        private static Dictionary<GraphNode<RemoteResolveResult>, GraphNode<RemoteResolveResult>>? _tempDowngrades;
 
         public static Dictionary<GraphNode<RemoteResolveResult>, GraphNode<RemoteResolveResult>> RentDowngradesDictionary()
         {
@@ -686,7 +693,7 @@ namespace NuGet.DependencyResolver
         private static class Cache<TItem, TState>
         {
             [ThreadStatic]
-            private static Queue<NodeWithState<TItem, TState>> _queue;
+            private static Queue<NodeWithState<TItem, TState>>? _queue;
 
 
             public static Queue<NodeWithState<TItem, TState>> RentQueue()
@@ -715,11 +722,11 @@ namespace NuGet.DependencyResolver
         private static class Cache<TItem>
         {
             [ThreadStatic]
-            private static Queue<GraphNode<TItem>> _queue;
+            private static Queue<GraphNode<TItem>>? _queue;
             [ThreadStatic]
-            private static Dictionary<string, GraphNode<TItem>> _dictionary;
+            private static Dictionary<string, GraphNode<TItem>>? _dictionary;
             [ThreadStatic]
-            private static Tracker<TItem> _tracker;
+            private static Tracker<TItem>? _tracker;
 
             public static Queue<GraphNode<TItem>> RentQueue()
             {
@@ -859,14 +866,22 @@ namespace NuGet.DependencyResolver
                     if (centralTransitiveNodes[i].Disposition == Disposition.Acceptable)
                     {
                         bool allParentsAreDisputedOrAmbiguous = !centralTransitiveNodes[i].ParentNodes
-                            .Any(p => p.Disposition != Disposition.Rejected && !(tracker.IsDisputed(p.Item) || tracker.IsAmbiguous(p.Item)));
+                            .Any(p => p.Item == null || (p.Disposition != Disposition.Rejected && !(tracker.IsDisputed(p.Item) || tracker.IsAmbiguous(p.Item))));
 
-                        if (allParentsAreDisputedOrAmbiguous && !tracker.IsAmbiguous(centralTransitiveNodes[i].Item))
+                        if (allParentsAreDisputedOrAmbiguous &&
+                            centralTransitiveNodes[i].Item is GraphItem<TItem> centralItem &&
+                            !tracker.IsAmbiguous(centralItem))
                         {
                             nodeMarkedAmbiguous = true;
 
                             // children of ambiguous nodes were already marked as ambiguous, skip them
-                            centralTransitiveNodes[i].ForEach(x => tracker.MarkAmbiguous(x.Item), pn => tracker.IsAmbiguous(pn.Item));
+                            centralTransitiveNodes[i].ForEach(x =>
+                            {
+                                if (x.Item != null)
+                                {
+                                    tracker.MarkAmbiguous(x.Item);
+                                }
+                            }, pn => pn.Item != null && tracker.IsAmbiguous(pn.Item));
                         }
                     }
                 }
@@ -910,7 +925,10 @@ namespace NuGet.DependencyResolver
             {
                 if (node.Disposition != Disposition.Rejected)
                 {
-                    tracker.Track(node.Item);
+                    if (node.Item != null)
+                    {
+                        tracker.Track(node.Item);
+                    }
                 }
             }
         }

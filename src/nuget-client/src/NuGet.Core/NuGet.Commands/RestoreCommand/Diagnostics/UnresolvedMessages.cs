@@ -161,10 +161,11 @@ namespace NuGet.Commands
                     if (isPackageSourceMappingEnabled && allRemoteLibraryProviders.Count != applicableRemoteLibraryProviders.Count)
                     {
                         lines.AddRange(GetUnusedLibraryProviders(applicableRemoteLibraryProviders, allRemoteLibraryProviders)
-                            .OrderBy(e => e.Source.Name)
-                            .Select(packageSource => string.Format(CultureInfo.CurrentCulture,
+                            .Select(GetRequiredSource)
+                            .OrderBy(source => source.Name)
+                            .Select(source => string.Format(CultureInfo.CurrentCulture,
                                             Strings.SourceNotConsidered,
-                                            packageSource.Source.Name)));
+                                            source.Name)));
                     }
 
                     message = DiagnosticUtility.GetMultiLineMessage(lines);
@@ -202,8 +203,14 @@ namespace NuGet.Commands
 
         private static string FormatProviderNames(IEnumerable<IRemoteDependencyProvider> allRemoteLibraryProviders)
         {
-            return string.Join(", ", allRemoteLibraryProviders.Select(e => e.Source.Name)
+            return string.Join(", ", allRemoteLibraryProviders.Select(GetRequiredSource)
+                    .Select(source => source.Name)
                     .OrderBy(e => e, StringComparer.OrdinalIgnoreCase));
+        }
+
+        private static PackageSource GetRequiredSource(IRemoteDependencyProvider provider)
+        {
+            return provider.Source ?? throw new InvalidOperationException("A remote provider must have a package source.");
         }
 
         /// <summary>
@@ -289,7 +296,7 @@ namespace NuGet.Commands
             var versions = await provider.GetAllVersionsAsync(id, cacheContext, logger, token);
 
             return new KeyValuePair<PackageSource, ImmutableArray<NuGetVersion>>(
-                provider.Source,
+                GetRequiredSource(provider),
                 versions != null ? [.. versions] : ImmutableArray<NuGetVersion>.Empty);
         }
 
