@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
         <source>Fix with GitHub Copilot</source>
-        <target state="new">Fix with GitHub Copilot</target>
+        <target state="translated">Corrigir com GitHub Copilot</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
       <trans-unit id="Label_Action">
@@ -589,7 +589,7 @@
       </trans-unit>
       <trans-unit id="Label_Installed_VulnerableWarning_Single">
         <source>You have 1 vulnerable package version installed.</source>
-        <target state="new">You have 1 vulnerable package version installed.</target>
+        <target state="translated">Você tem 1 versão de pacote vulnerável instalada.</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_License">

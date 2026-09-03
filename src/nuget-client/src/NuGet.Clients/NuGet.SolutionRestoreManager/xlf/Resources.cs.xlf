@@ -111,7 +111,7 @@ Když nechcete, aby aplikace NuGet obnovovala balíčky během vytváření sest
       </trans-unit>
       <trans-unit id="Prompt_ResolveSupplyChainSecurityNUCode">
         <source>Resolve {0} by reviewing my NuGet supply chain security configuration.</source>
-        <target state="new">Resolve {0} by reviewing my NuGet supply chain security configuration.</target>
+        <target state="translated">Vyřešte {0} kontrolou konfigurace zabezpečení dodavatelského řetězce NuGet.</target>
         <note>Do not translate NuGet</note>
       </trans-unit>
       <trans-unit id="PropertyDoesNotHaveSingleValue">
@@ -141,7 +141,7 @@ Když nechcete, aby aplikace NuGet obnovovala balíčky během vytváření sest
       </trans-unit>
       <trans-unit id="Title_AskCopilotForFix">
         <source>Ask Copilot for a fix</source>
-        <target state="new">Ask Copilot for a fix</target>
+        <target state="translated">Požádat Copilota o opravu</target>
         <note>Do not translate Copilot</note>
       </trans-unit>
       <trans-unit id="Title_FixVulnerabilitiesWithCopilot">

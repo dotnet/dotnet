@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Microsoft.DotNet.Helix.Client;
 using Microsoft.DotNet.Helix.Client.Models;
 using Microsoft.DotNet.Helix.JobMonitor.Models;
@@ -58,7 +59,9 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 dependencies.Helix,
                 delayFunc: null,
                 statusDelayFunc: null,
-                metrics: dependencies.Metrics)
+                metrics: dependencies.Metrics,
+                resultProcessor: dependencies.ResultProcessor,
+                resultPublisher: dependencies.ResultPublisher)
         {
         }
 
@@ -72,7 +75,9 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             IHelixService helix,
             Func<TimeSpan, CancellationToken, Task> delayFunc,
             Func<TimeSpan, CancellationToken, Task> statusDelayFunc = null,
-            JobMonitorMetrics metrics = null)
+            JobMonitorMetrics metrics = null,
+            ITestResultProcessor resultProcessor = null,
+            IAzureDevOpsResultPublisher resultPublisher = null)
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -95,6 +100,16 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 _logger,
                 _options,
                 _azdo,
+                resultProcessor
+                    ?? azdo as ITestResultProcessor
+                    ?? throw new ArgumentException(
+                        "A test result processor must be provided.",
+                        nameof(resultProcessor)),
+                resultPublisher
+                    ?? azdo as IAzureDevOpsResultPublisher
+                    ?? throw new ArgumentException(
+                        "An Azure DevOps result publisher must be provided.",
+                        nameof(resultPublisher)),
                 _helix,
                 _state,
                 _metrics);
@@ -743,13 +758,28 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         {
             var metrics = new JobMonitorMetrics();
             var azureDevOps = new AzureDevOpsService(options, logger, metrics);
+            var resultProcessor = new TestResultProcessor(
+                options.TestResultAttachmentMode,
+                options.UseFullyQualifiedTestName,
+                logger,
+                metrics);
+            var resultPublisher = new AzureDevOpsResultPublisher(
+                logger,
+                options.UseFullyQualifiedTestName,
+                azureDevOps,
+                metrics);
             var helix = new HelixService(
                 string.IsNullOrEmpty(options.HelixAccessToken)
                     ? ApiFactory.GetAnonymous(options.HelixBaseUri)
                     : ApiFactory.GetAuthenticated(options.HelixBaseUri, options.HelixAccessToken),
                 logger,
                 metrics);
-            return new ProductionDependencies(azureDevOps, helix, metrics);
+            return new ProductionDependencies(
+                azureDevOps,
+                resultProcessor,
+                resultPublisher,
+                helix,
+                metrics);
         }
 
         public void Dispose()
@@ -811,6 +841,8 @@ namespace Microsoft.DotNet.Helix.JobMonitor
 
         private sealed record ProductionDependencies(
             IAzureDevOpsService AzureDevOps,
+            ITestResultProcessor ResultProcessor,
+            IAzureDevOpsResultPublisher ResultPublisher,
             IHelixService Helix,
             JobMonitorMetrics Metrics);
     }
