@@ -21,6 +21,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
     {
         private const string AzdoWarningPrefix = "##vso[task.logissue type=warning]";
         private const string AzdoErrorPrefix = "##vso[task.logissue type=error]";
+        private const int MaximumReportedPipelineJobs = 10;
 
         /// <summary>
         /// Public link to the Helix Job Monitor user documentation. Printed at the start
@@ -144,6 +145,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             IReadOnlyList<HelixJobInfo> jobs,
             IReadOnlyDictionary<string, IReadOnlyCollection<WorkItemSummary>> workItemsByJob,
             IReadOnlySet<string> completedJobNames,
+            IReadOnlyList<AzureDevOpsTimelineRecord> timelineRecords,
             UploadPipelineSnapshot uploads)
         {
             List<HelixJobInfo> orderedJobs =
@@ -158,10 +160,17 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             }
 
             JobWorkItemStatusCounts counts = ComputeCounts(orderedJobs, workItemsByJob, completedJobNames);
+            IReadOnlyList<AzureDevOpsTimelineRecord> pipelineJobs =
+            [
+                ..HelixJobMonitorUtilities
+                    .GetRelevantNonMonitorJobRecords(timelineRecords, _options.JobMonitorName)
+            ];
+            PipelineJobStatusCounts pipelineCounts = ComputePipelineJobCounts(pipelineJobs);
 
             _logger.LogInformation(
-                "ℹ️ Status: {ProcessedJobs} processed / {CompletedJobs} completed / {RunningJobs} running / {WaitingJobs} waiting jobs{nl}"
-              + "           {ProcessedWorkItems} processed / {CompletedWorkItems} completed / {RunningWorkItems} running / {WaitingWorkItems} waiting work items",
+                "ℹ️ Status: Helix jobs: {ProcessedJobs} processed / {CompletedJobs} completed / {RunningJobs} running / {WaitingJobs} waiting{nl}"
+              + "           Helix work items: {ProcessedWorkItems} processed / {CompletedWorkItems} completed / {RunningWorkItems} running / {WaitingWorkItems} waiting{nl}"
+              + "           Azure DevOps jobs: {CompletedPipelineJobs} completed / {RunningPipelineJobs} running / {WaitingPipelineJobs} waiting",
                 counts.ProcessedJobs,
                 counts.CompletedJobs,
                 counts.RunningJobs,
@@ -170,7 +179,18 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 counts.ProcessedWorkItems,
                 counts.CompletedWorkItems,
                 counts.RunningWorkItems,
-                counts.WaitingWorkItems);
+                counts.WaitingWorkItems,
+                Environment.NewLine,
+                pipelineCounts.Completed,
+                pipelineCounts.Running,
+                pipelineCounts.Waiting);
+
+            if (counts.RunningJobs == 0
+                && counts.WaitingJobs == 0
+                && pipelineCounts.Running + pipelineCounts.Waiting > 0)
+            {
+                LogPipelineCompletionWait(pipelineJobs);
+            }
 
             if (_options.Verbose)
             {
@@ -437,6 +457,58 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 waitingJobs, waitingWorkItems);
         }
 
+        private static PipelineJobStatusCounts ComputePipelineJobCounts(
+            IReadOnlyList<AzureDevOpsTimelineRecord> pipelineJobs)
+        {
+            int completed = 0, running = 0, waiting = 0;
+
+            foreach (AzureDevOpsTimelineRecord job in pipelineJobs)
+            {
+                if (string.Equals(job.State, "completed", StringComparison.OrdinalIgnoreCase))
+                {
+                    completed++;
+                }
+                else if (string.Equals(job.State, "inProgress", StringComparison.OrdinalIgnoreCase))
+                {
+                    running++;
+                }
+                else
+                {
+                    waiting++;
+                }
+            }
+
+            return new PipelineJobStatusCounts(completed, running, waiting);
+        }
+
+        private void LogPipelineCompletionWait(
+            IReadOnlyList<AzureDevOpsTimelineRecord> pipelineJobs)
+        {
+            List<AzureDevOpsTimelineRecord> unfinishedJobs =
+            [
+                ..pipelineJobs
+                    .Where(job => !string.Equals(job.State, "completed", StringComparison.OrdinalIgnoreCase))
+                    .OrderBy(job => job.Name ?? job.ReferenceName ?? job.Identifier, StringComparer.OrdinalIgnoreCase)
+            ];
+            List<string> details =
+            [
+                ..unfinishedJobs
+                    .Take(MaximumReportedPipelineJobs)
+                    .Select(FormatInProgressPipelineJob)
+            ];
+
+            if (unfinishedJobs.Count > MaximumReportedPipelineJobs)
+            {
+                details.Add($"... and {unfinishedJobs.Count - MaximumReportedPipelineJobs} more");
+            }
+
+            _logger.LogInformation(
+                "Helix work is complete. Waiting for {JobCount} Azure DevOps job(s) before the monitor can finish:{nl}- {Jobs}",
+                unfinishedJobs.Count,
+                Environment.NewLine,
+                string.Join(Environment.NewLine + "- ", details));
+        }
+
         private string GetTestResultsUri()
             => $"{_options.CollectionUri}{_options.TeamProject}/_build/results?buildId={_options.BuildId}&view=ms.vss-test-web.build-test-results-tab";
 
@@ -464,5 +536,10 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             int CompletedJobs, int CompletedWorkItems,
             int RunningJobs, int RunningWorkItems,
             int WaitingJobs, int WaitingWorkItems);
+
+        private sealed record PipelineJobStatusCounts(
+            int Completed,
+            int Running,
+            int Waiting);
     }
 }
