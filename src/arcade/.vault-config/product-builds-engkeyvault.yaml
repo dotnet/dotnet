@@ -17,6 +17,13 @@ keys:
     size: 2048
 
 secrets:
+  ddfuse-pr-review-dashboard-app:
+    type: github-app-secret
+    parameters:
+      hasPrivateKey: true
+      hasWebhookSecret: false
+      hasOAuthSecret: false
+
   BotAccount-dotnet-maestro-bot:
     type: github-account
     parameters:
