@@ -40,6 +40,15 @@
     <FailOnMissionControlTestFailure Condition="'$(FailOnMissionControlTestFailure)' != 'true'">false</FailOnMissionControlTestFailure>
   </PropertyGroup>
 
+  <!--
+    When the standalone Helix Job Monitor is enabled, the build job that submits the Helix jobs
+    should not block waiting for them to complete - the monitor job will track completion and
+    publish results out-of-band.
+  -->
+  <PropertyGroup Condition="'$(EnableHelixJobMonitor)' == 'true'">
+    <WaitForWorkItemCompletion>false</WaitForWorkItemCompletion>
+  </PropertyGroup>
+
   <Target Name="RestoreProjects"
           BeforeTargets="Restore">
     <MSBuild Projects="$(MSBuildProjectFile)"
