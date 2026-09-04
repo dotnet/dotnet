@@ -112,14 +112,24 @@
     portable SDK, whose $(NETCoreSdkRuntimeIdentifier) is the portable RID (e.g. linux-x64) and would
     not unblock publishing for the build's non-portable RID.
   -->
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <KnownRuntimePack Update="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(TargetRid)' != ''">
+    <KnownFrameworkReference Update="Microsoft.NETCore.App">
+      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
+    </KnownFrameworkReference>
+
+    <KnownFrameworkReference Update="Microsoft.AspNetCore.App">
+      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
+    </KnownFrameworkReference>
+
+    <KnownRuntimePack Update="Microsoft.NETCore.App">
       <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
     </KnownRuntimePack>
-    <KnownCrossgen2Pack Update="@(KnownCrossgen2Pack->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Crossgen2'))">
+
+    <KnownCrossgen2Pack Update="Microsoft.NETCore.App.Crossgen2">
       <Crossgen2RuntimeIdentifiers>%(Crossgen2RuntimeIdentifiers);$(TargetRid)</Crossgen2RuntimeIdentifiers>
     </KnownCrossgen2Pack>
-    <KnownILCompilerPack Update="@(KnownILCompilerPack->WithMetadataValue('Identity', 'Microsoft.DotNet.ILCompiler'))">
+
+    <KnownILCompilerPack Update="Microsoft.DotNet.ILCompiler">
       <ILCompilerRuntimeIdentifiers>%(ILCompilerRuntimeIdentifiers);$(TargetRid)</ILCompilerRuntimeIdentifiers>
     </KnownILCompilerPack>
   </ItemGroup>

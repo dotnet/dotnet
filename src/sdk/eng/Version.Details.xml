@@ -314,11 +314,11 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>11e3a8dcce675974e3e3a3d942309ac07f0d77cc</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Web.ItemTemplates.11.0" Version="11.0.0-rc.1.26452.110">
+    <Dependency Name="Microsoft.DotNet.Web.ItemTemplates.12.0" Version="11.0.0-rc.1.26452.110">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>11e3a8dcce675974e3e3a3d942309ac07f0d77cc</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Web.ProjectTemplates.11.0" Version="11.0.0-rc.1.26452.110">
+    <Dependency Name="Microsoft.DotNet.Web.ProjectTemplates.12.0" Version="11.0.0-rc.1.26452.110">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>11e3a8dcce675974e3e3a3d942309ac07f0d77cc</Sha>
     </Dependency>
@@ -474,7 +474,7 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>11e3a8dcce675974e3e3a3d942309ac07f0d77cc</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.McpServer.ProjectTemplates.11.0" Version="11.0.0-rc.1.26452.110">
+    <Dependency Name="Microsoft.McpServer.ProjectTemplates.12.0" Version="11.0.0-rc.1.26452.110">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>11e3a8dcce675974e3e3a3d942309ac07f0d77cc</Sha>
     </Dependency>
