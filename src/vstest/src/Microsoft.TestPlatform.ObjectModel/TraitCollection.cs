@@ -15,14 +15,29 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel;
 public class TraitCollection : IEnumerable<Trait>
 {
     internal const string TraitPropertyId = "TestObject.Traits";
+
+    /// <summary>
+    /// Bit value of the obsolete <see cref="TestPropertyAttributes.Trait"/> flag (0x04).
+    /// </summary>
+    ///
+    /// <remarks>
+    /// The flag is part of the serialized shape of the <c>TestObject.Traits</c> property, so the value has to
+    /// stay exactly <c>0x04</c> for wire compatibility with older hosts and adapters. The constant is defined
+    /// in terms of the enum member rather than a literal so the enum stays the single source of truth, and the
+    /// deprecation is suppressed once here instead of at the use site.
+    /// <c>TraitCollectionRegressionTests.TraitsProperty_HasHiddenAndTraitAttributes</c> guards the serialized
+    /// value against drift.
+    /// </remarks>
+#pragma warning disable CS0618 // TestPropertyAttributes.Trait is obsolete; named here so the enum stays the source of truth.
+    private const TestPropertyAttributes TraitAttribute = TestPropertyAttributes.Trait;
+#pragma warning restore CS0618
+
     private static readonly TestProperty TraitsProperty = TestProperty.Register(
         TraitPropertyId,
         // REVIEW ME: We should make some test to see if that's causing any crash on WinUI/UWP
         Resources.Resources.TestCasePropertyTraitsLabel,
         typeof(KeyValuePair<string, string>[]),
-#pragma warning disable 618
-        TestPropertyAttributes.Hidden | TestPropertyAttributes.Trait,
-#pragma warning restore 618
+        TestPropertyAttributes.Hidden | TraitAttribute,
         typeof(TestObject));
 
     [NonSerialized]
