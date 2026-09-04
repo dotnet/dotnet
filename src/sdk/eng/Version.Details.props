@@ -95,34 +95,34 @@ This file should be imported by eng/Versions.props
     <MicrosoftTemplateEngineAbstractionsPackageVersion>10.0.400</MicrosoftTemplateEngineAbstractionsPackageVersion>
     <MicrosoftTemplateEngineAuthoringTemplateVerifierPackageVersion>10.0.400</MicrosoftTemplateEngineAuthoringTemplateVerifierPackageVersion>
     <MicrosoftTemplateEngineEdgePackageVersion>10.0.400</MicrosoftTemplateEngineEdgePackageVersion>
-    <MicrosoftTemplateEngineMocksPackageVersion>10.0.400-preview.26379.103</MicrosoftTemplateEngineMocksPackageVersion>
+    <MicrosoftTemplateEngineMocksPackageVersion>10.0.400-preview.26412.112</MicrosoftTemplateEngineMocksPackageVersion>
     <MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>10.0.400</MicrosoftTemplateEngineOrchestratorRunnableProjectsPackageVersion>
-    <MicrosoftTemplateEngineTestHelperPackageVersion>10.0.400-preview.26379.103</MicrosoftTemplateEngineTestHelperPackageVersion>
+    <MicrosoftTemplateEngineTestHelperPackageVersion>10.0.400-preview.26412.112</MicrosoftTemplateEngineTestHelperPackageVersion>
     <MicrosoftTemplateEngineUtilsPackageVersion>10.0.400</MicrosoftTemplateEngineUtilsPackageVersion>
     <MicrosoftTemplateSearchCommonPackageVersion>10.0.400</MicrosoftTemplateSearchCommonPackageVersion>
-    <MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>10.0.400-preview.26379.103</MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>
-    <MicrosoftTestPlatformBuildPackageVersion>18.7.0-release-26379-103</MicrosoftTestPlatformBuildPackageVersion>
-    <MicrosoftTestPlatformCLIPackageVersion>18.7.0-release-26379-103</MicrosoftTestPlatformCLIPackageVersion>
-    <MicrosoftWebXdtPackageVersion>3.2.12</MicrosoftWebXdtPackageVersion>
-    <MicrosoftWin32SystemEventsPackageVersion>10.0.12</MicrosoftWin32SystemEventsPackageVersion>
-    <MicrosoftWindowsDesktopAppInternalPackageVersion>10.0.12-servicing.26422.108</MicrosoftWindowsDesktopAppInternalPackageVersion>
-    <MicrosoftWindowsDesktopAppRefPackageVersion>10.0.12</MicrosoftWindowsDesktopAppRefPackageVersion>
-    <NuGetBuildTasksPackageVersion>7.9.0-rc.38003</NuGetBuildTasksPackageVersion>
-    <NuGetBuildTasksConsolePackageVersion>7.9.0-rc.38003</NuGetBuildTasksConsolePackageVersion>
-    <NuGetBuildTasksPackPackageVersion>7.9.0-rc.38003</NuGetBuildTasksPackPackageVersion>
-    <NuGetCommandLineXPlatPackageVersion>7.9.0-rc.38003</NuGetCommandLineXPlatPackageVersion>
-    <NuGetCommandsPackageVersion>7.9.0-rc.38003</NuGetCommandsPackageVersion>
-    <NuGetCommonPackageVersion>7.9.0-rc.38003</NuGetCommonPackageVersion>
-    <NuGetConfigurationPackageVersion>7.9.0-rc.38003</NuGetConfigurationPackageVersion>
-    <NuGetCredentialsPackageVersion>7.9.0-rc.38003</NuGetCredentialsPackageVersion>
-    <NuGetDependencyResolverCorePackageVersion>7.9.0-rc.38003</NuGetDependencyResolverCorePackageVersion>
-    <NuGetFrameworksPackageVersion>7.9.0-rc.38003</NuGetFrameworksPackageVersion>
-    <NuGetLibraryModelPackageVersion>7.9.0-rc.38003</NuGetLibraryModelPackageVersion>
-    <NuGetLocalizationPackageVersion>7.9.0-rc.38003</NuGetLocalizationPackageVersion>
-    <NuGetPackagingPackageVersion>7.9.0-rc.38003</NuGetPackagingPackageVersion>
-    <NuGetProjectModelPackageVersion>7.9.0-rc.38003</NuGetProjectModelPackageVersion>
-    <NuGetProtocolPackageVersion>7.9.0-rc.38003</NuGetProtocolPackageVersion>
-    <NuGetVersioningPackageVersion>7.9.0-rc.38003</NuGetVersioningPackageVersion>
+    <MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>10.0.400-preview.26412.112</MicrosoftTemplateSearchTemplateDiscoveryPackageVersion>
+    <MicrosoftTestPlatformBuildPackageVersion>18.7.0-release-26412-112</MicrosoftTestPlatformBuildPackageVersion>
+    <MicrosoftTestPlatformCLIPackageVersion>18.7.0-release-26412-112</MicrosoftTestPlatformCLIPackageVersion>
+    <MicrosoftWebXdtPackageVersion>3.2.11</MicrosoftWebXdtPackageVersion>
+    <MicrosoftWin32SystemEventsPackageVersion>10.0.11</MicrosoftWin32SystemEventsPackageVersion>
+    <MicrosoftWindowsDesktopAppInternalPackageVersion>10.0.11-servicing.26373.116</MicrosoftWindowsDesktopAppInternalPackageVersion>
+    <MicrosoftWindowsDesktopAppRefPackageVersion>10.0.11</MicrosoftWindowsDesktopAppRefPackageVersion>
+    <NuGetBuildTasksPackageVersion>7.9.0-rc.41312</NuGetBuildTasksPackageVersion>
+    <NuGetBuildTasksConsolePackageVersion>7.9.0-rc.41312</NuGetBuildTasksConsolePackageVersion>
+    <NuGetBuildTasksPackPackageVersion>7.9.0-rc.41312</NuGetBuildTasksPackPackageVersion>
+    <NuGetCommandLineXPlatPackageVersion>7.9.0-rc.41312</NuGetCommandLineXPlatPackageVersion>
+    <NuGetCommandsPackageVersion>7.9.0-rc.41312</NuGetCommandsPackageVersion>
+    <NuGetCommonPackageVersion>7.9.0-rc.41312</NuGetCommonPackageVersion>
+    <NuGetConfigurationPackageVersion>7.9.0-rc.41312</NuGetConfigurationPackageVersion>
+    <NuGetCredentialsPackageVersion>7.9.0-rc.41312</NuGetCredentialsPackageVersion>
+    <NuGetDependencyResolverCorePackageVersion>7.9.0-rc.41312</NuGetDependencyResolverCorePackageVersion>
+    <NuGetFrameworksPackageVersion>7.9.0-rc.41312</NuGetFrameworksPackageVersion>
+    <NuGetLibraryModelPackageVersion>7.9.0-rc.41312</NuGetLibraryModelPackageVersion>
+    <NuGetLocalizationPackageVersion>7.9.0-rc.41312</NuGetLocalizationPackageVersion>
+    <NuGetPackagingPackageVersion>7.9.0-rc.41312</NuGetPackagingPackageVersion>
+    <NuGetProjectModelPackageVersion>7.9.0-rc.41312</NuGetProjectModelPackageVersion>
+    <NuGetProtocolPackageVersion>7.9.0-rc.41312</NuGetProtocolPackageVersion>
+    <NuGetVersioningPackageVersion>7.9.0-rc.41312</NuGetVersioningPackageVersion>
     <SystemCodeDomPackageVersion>10.0.12</SystemCodeDomPackageVersion>
     <SystemCommandLinePackageVersion>2.0.12</SystemCommandLinePackageVersion>
     <SystemComponentModelCompositionPackageVersion>10.0.12</SystemComponentModelCompositionPackageVersion>
