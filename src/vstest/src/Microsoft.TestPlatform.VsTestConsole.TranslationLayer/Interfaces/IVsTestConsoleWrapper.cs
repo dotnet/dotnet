@@ -13,7 +13,17 @@ namespace Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 /// <summary>
 /// Controller for various test operations on the test runner.
 /// </summary>
+///
+/// <remarks>
+/// This interface still inherits the obsolete <see cref="IVsTestConsoleWrapperAsync"/> on purpose: dropping
+/// the base interface would be a binary breaking change for the shipped Translation Layer contract. The
+/// inherited asynchronous members stay individually obsolete, so consumers reaching them through this
+/// interface keep getting a deprecation warning.
+/// </remarks>
+// Deriving from an obsolete interface warns, and the inheritance is deliberate, so it is suppressed here.
+#pragma warning disable CS0618
 public interface IVsTestConsoleWrapper : IVsTestConsoleWrapperAsync
+#pragma warning restore CS0618
 {
     /// <summary>
     /// Starts the test runner process and readies for requests.
