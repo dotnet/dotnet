@@ -17,6 +17,7 @@ reason.
 
 | File | Owner | Purpose |
 | --- | --- | --- |
+| `daily-file-diet.txt` | [`daily-file-diet.md`](../../.github/workflows/daily-file-diet.md) | Files already proposed for refactoring or excluded from consideration. |
 | `known-broken-links.txt` | [`http-link-check-probe.yml`](../../.github/workflows/http-link-check-probe.yml) | Accepted set of broken absolute HTTP(S) links. |
 
 `tmp/` is gitignored scratch for local runs of the checkers. Pipeline runs write to the
@@ -24,10 +25,15 @@ runner's temp directory instead and never touch the working tree.
 
 ## Editing
 
-Regenerate these files; do not hand-write entries. A line that does not match the checker's
-output byte for byte looks like a change to the probe, which dispatches the agent every week —
-exactly the cost the fingerprint exists to avoid. Each probe run also publishes its freshly
-generated set as `broken-links.txt` in the run's artifact, which you can copy over wholesale.
+`daily-file-diet.txt` is a durable, sorted ledger with no regenerating checker. The Daily File
+Diet agent adds records through state pull requests. Manual corrections are allowed when they
+preserve the pipe-delimited schema and file-path sort order documented in the file.
+
+Regenerate the link-checker fingerprint files; do not hand-write their entries. A line that does
+not match the checker's output byte for byte looks like a change to the probe, which dispatches
+the agent every week — exactly the cost the fingerprint exists to avoid. Each probe run also
+publishes its freshly generated set as `broken-links.txt` in the run's artifact, which you can
+copy over wholesale.
 
 This is the same discipline as [`eng/expected-nupkg-file-counts.json`](../expected-nupkg-file-counts.json)
 and [`eng/expected-dll-frameworks.json`](../expected-dll-frameworks.json).

@@ -78,4 +78,24 @@ public class TraitCollectionRegressionTests
         var allTraits = testCase.Traits.ToList();
         Assert.HasCount(3, allTraits);
     }
+
+    // The attributes of the registered TestObject.Traits property are part of the serialized shape of a
+    // TestObject, so they have to keep the exact bit value they have always had. TraitCollection names the
+    // flag through an internal constant so that the obsolete TestPropertyAttributes.Trait member is referenced
+    // in exactly one place; this test pins both the resulting numeric value and its equivalence to the enum
+    // member, so the constant cannot drift away from the wire format.
+    [TestMethod]
+    public void TraitsProperty_HasHiddenAndTraitAttributes()
+    {
+        var testCase = new TestCase("Test5", new System.Uri("executor://test"), "source.dll");
+        testCase.Traits.Add("Key", "Value");
+
+        var traitsProperty = TestProperty.Find("TestObject.Traits");
+
+        Assert.IsNotNull(traitsProperty);
+        Assert.AreEqual((TestPropertyAttributes)0x05, traitsProperty.Attributes);
+#pragma warning disable CS0618 // TestPropertyAttributes.Trait is obsolete; referenced here to pin the bit value.
+        Assert.AreEqual(TestPropertyAttributes.Hidden | TestPropertyAttributes.Trait, traitsProperty.Attributes);
+#pragma warning restore CS0618
+    }
 }
