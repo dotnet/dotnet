@@ -1,6 +1,4 @@
 parameters:
-- name: part
-  type: string
 - name: stageName
   type: string
 - name: stageDisplayName
@@ -44,8 +42,6 @@ stages:
       value: ${{parameters.bootstrapperUrl}}
     - name: runSettingsURI
       value: ${{parameters.runSettingsURI}}
-    - name: Part
-      value: ${{parameters.part}}
     - ${{if gt(length(parameters.variables), 0)}}:
       - ${{parameters.variables}}
     visualStudioBootstrapperURI: $(bootstrapperUrl)
@@ -76,8 +72,8 @@ stages:
       inputs:
         scriptType: "inlineScript"
         inlineScript: |
-          $EndToEndTestCommandToRunPart = '"' + "Run-Test -Exclude '${env:PART}' -Verbose *>&1 | Tee-Object $(System.DefaultWorkingDirectory)\artifacts\EndToEnd\FullLog_$(Build.BuildNumber).txt" +'"'
-          Write-Host "##vso[task.setvariable variable=EndToEndTestCommandToRunPart]$EndToEndTestCommandToRunPart"
+          $endToEndTestCommand = '"' + "Run-Test -Verbose *>&1 | Tee-Object $(System.DefaultWorkingDirectory)\artifacts\EndToEnd\FullLog_$(Build.BuildNumber).txt" + '"'
+          Write-Host "##vso[task.setvariable variable=EndToEndTestCommandToRunPart]$endToEndTestCommand"
 
     - task: PowerShell@1
       displayName: "Print Environment Variables"
