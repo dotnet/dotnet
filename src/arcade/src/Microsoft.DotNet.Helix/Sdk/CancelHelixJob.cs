@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Helix.Sdk
 {
+    [MSBuildMultiThreadableTask]
     public class CancelHelixJobs : HelixTask
     {
         /// <summary>

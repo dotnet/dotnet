@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.DotNet.Helix.AzureDevOps
 {
+    [MSBuildMultiThreadableTask]
     public class CheckAzurePipelinesTestResults : AzureDevOpsTask
     {
         public int[] TestRunIds { get; set; }

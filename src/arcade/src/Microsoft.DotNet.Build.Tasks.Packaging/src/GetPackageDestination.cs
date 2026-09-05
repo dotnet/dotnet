@@ -12,6 +12,7 @@ using System.Text;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
+    [MSBuildMultiThreadableTask]
     public class GetPackageDestination : Task
     {
         /// <summary>

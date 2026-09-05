@@ -1,0 +1,73 @@
+# Configuration for Microsoft.Build.TaskAuthoring.Analyzer (referenced from eng/BuildTask.targets).
+
+is_global = true
+
+# Only 0002, 0003 and 0005 read this; it limits them to tasks that implement IMultiThreadableTask
+# (including inherited, so all of ToolTask) or carry [MSBuildMultiThreadableTask]. Every other rule
+# ignores it and applies to all ITask implementations in the compilation.
+msbuild_task_analyzer.scope = multithreadable_only
+
+# Every rule the analyzer defines is listed below with an explicit severity, so this file doubles as
+# the record of what is enforced. The analyzer has no shipped release yet and its defaults still
+# move between builds (0010 went from error to warning in 18.12), so pinning them keeps a package
+# update from silently changing what the build enforces.
+
+# 0001: APIs that are never safe in a task. Environment.Exit and friends terminate the whole MSBuild
+#       process, and the ThreadPool and CurrentCulture setters mutate process-wide state.
+dotnet_diagnostic.MSBuildTask0001.severity = error
+
+# 0002: APIs that have a TaskEnvironment replacement, mostly the Environment.*EnvironmentVariable
+#       family and Directory.GetCurrentDirectory. Reading these off the process is wrong once tasks
+#       share one, because each task has its own environment and working directory.
+dotnet_diagnostic.MSBuildTask0002.severity = warning
+
+# 0003: File system APIs called with a path that is not known to be absolute. A task cannot rely on
+#       the process working directory to resolve one, so paths have to be rooted via TaskEnvironment.
+dotnet_diagnostic.MSBuildTask0003.severity = warning
+
+# 0004: Assembly.Load/LoadFrom, Activator.CreateInstanceFrom and the AppDomain equivalents, which can
+#       cause assembly version conflicts once tasks from different packages share a process.
+dotnet_diagnostic.MSBuildTask0004.severity = warning
+
+# 0005: Any of the above reached indirectly, through a helper type or another method on the task.
+#       This is the rule that catches most real problems, since tasks rarely call these APIs inline.
+dotnet_diagnostic.MSBuildTask0005.severity = warning
+
+# 0006: Prefer AbsolutePath/FileInfo/DirectoryInfo over string for a task property, rather than
+#       converting inside the task body. Retyping a property changes how every target in the
+#       ecosystem binds to it, so this is left off; it reports on GatherXlf today.
+dotnet_diagnostic.MSBuildTask0006.severity = none
+
+# 0007: Prefer ITaskItem<T> over parsing ItemSpec by hand. Same reasoning as 0006, since it also
+#       changes a task's public parameter shape. Reports nothing today.
+dotnet_diagnostic.MSBuildTask0007.severity = none
+
+# 0008: Initialize relative default paths in Execute() so TaskEnvironment can root them once the
+#       property is retyped. Only actionable together with 0006, so it is off for the same reason.
+#       Reports nothing today.
+dotnet_diagnostic.MSBuildTask0008.severity = none
+
+# 0009: ITaskItem<T> with a type argument MSBuild cannot bind as a task parameter at all.
+dotnet_diagnostic.MSBuildTask0009.severity = warning
+
+# 0010: ITaskItem<T> with a type argument MSBuild binds through Convert.ChangeType, which is culture
+#       sensitive and so can parse differently depending on the machine locale.
+dotnet_diagnostic.MSBuildTask0010.severity = warning
+
+# 0011: Prefer taking TaskEnvironment through the constructor over the settable property. Left off
+#       because it is an API-shape suggestion like 0006-0008; it reports on 6 tasks today.
+dotnet_diagnostic.MSBuildTask0011.severity = none
+
+# 0012: TaskEnvironment property without IMultiThreadableTask, so MSBuild never assigns it and the
+#       task silently keeps TaskEnvironment.Fallback.
+dotnet_diagnostic.MSBuildTask0012.severity = warning
+
+# 0013: the interface without the attribute, so the task still runs in an out-of-proc TaskHost.
+#       Only directly declared interfaces count, so ToolTask-derived tasks that merely inherit the
+#       interface are not reported. Off by default upstream.
+dotnet_diagnostic.MSBuildTask0013.severity = warning
+
+# 0014: the attribute somewhere it can never take effect -- a non-ITask helper, or an abstract base
+#       whose subclasses do not inherit it. Relevant here because AzureDevOpsTask is an abstract
+#       IMultiThreadableTask base whose four concrete subclasses each carry their own attribute.
+dotnet_diagnostic.MSBuildTask0014.severity = warning

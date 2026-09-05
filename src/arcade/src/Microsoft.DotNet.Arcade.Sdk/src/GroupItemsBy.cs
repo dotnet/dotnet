@@ -30,7 +30,8 @@ namespace Microsoft.DotNet.Arcade.Sdk
     /// ]]>
     /// 
     /// </summary>
-    public sealed class GroupItemsBy : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public sealed class GroupItemsBy : Task
     {
         /// <summary>
         /// Items to group by their ItemSpec.
