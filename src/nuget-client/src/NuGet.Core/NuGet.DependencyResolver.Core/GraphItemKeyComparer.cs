@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 
@@ -33,13 +31,13 @@ namespace NuGet.DependencyResolver
         {
         }
 
-        public bool Equals(GraphItem<T> x, GraphItem<T> y)
+        public bool Equals(GraphItem<T>? x, GraphItem<T>? y)
         {
             if (x == null)
             {
                 return y == null;
             }
-            return x.Key.Equals(y.Key);
+            return y != null && x.Key.Equals(y.Key);
         }
 
         public int GetHashCode(GraphItem<T> obj)

@@ -29,15 +29,8 @@ parameters:
   values:
   - Production
   - Staging
-- name: E2EPart1AgentCleanup
-  displayName: Delete or keep E2E Part 1 machine for debugging
-  type: string
-  default: delete
-  values:
-  - delete
-  - stop
-- name: E2EPart2AgentCleanup
-  displayName: Delete or keep E2E Part 2 machine for debugging
+- name: E2EAgentCleanup
+  displayName: Delete or keep E2E machine for debugging
   type: string
   default: delete
   values:
@@ -88,11 +81,10 @@ stages:
       parameters:
         enableApexBlameHangDumpCollector: ${{parameters.EnableApexBlameHangDumpCollector}}
 
-# Dartlab's template defines this in its own stage
 - template: vs-test/end_to_end.yml
   parameters:
-    stageName: VS_EndToEnd_Part1
-    stageDisplayName: Part 1
+    stageName: VS_EndToEnd
+    stageDisplayName: On Windows
     condition: "and(succeeded(), ne(variables['RunEndToEndTests'], 'false'))"
     dependsOn:
     - Build
@@ -103,30 +95,9 @@ stages:
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
     bootstrapperUrl: $(VsBootstrapperUrl)
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
-    part: "InstallPackageTest.ps1,UninstallPackageTest.ps1,UpdatePackageTest.ps1"
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
     testExecutionJobTimeoutInMinutes: 100
-    testMachineCleanUpStrategy: ${{parameters.E2EPart1AgentCleanup}}
-
-# Dartlab's template defines this in its own stage
-- template: vs-test/end_to_end.yml
-  parameters:
-    stageName: VS_EndToEnd_Part2
-    stageDisplayName: Part 2
-    condition: "and(succeeded(), ne(variables['RunEndToEndTests'], 'false'))"
-    dependsOn:
-    - Build
-    variables:
-    - name: VsBootstrapperUrl
-      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.bootstrapperUrl']]
-    - name: RunSettingsDrop
-      value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
-    bootstrapperUrl: $(VsBootstrapperUrl)
-    DartLabEnvironment: ${{parameters.DartLabEnvironment}}
-    part: "BuildIntegratedTest.ps1,ExecuteInitScriptTest.ps1,FindPackageTest.ps1,GetPackageTest.ps1,GetProjectTest.ps1,LegacyPackageRefProjectTest.ps1,NativeProjectTest.ps1,NetCoreProjectTest.ps1,PackTest.ps1,ProjectRetargeting.ps1,ServicesTest.ps1,Settings.ps1,SyncPackageTest.ps1,TabExpansionTest.ps1,UniversalWindowsProjectTest.ps1"
-    runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
-    testExecutionJobTimeoutInMinutes: 100
-    testMachineCleanUpStrategy: ${{parameters.E2EPart2AgentCleanup}}
+    testMachineCleanUpStrategy: ${{parameters.E2EAgentCleanup}}
 
 # Dartlab's template defines this in its own stage
 - template: vs-test/apex.yml
@@ -144,5 +115,7 @@ stages:
     bootstrapperUrl: $(bootstrapperUrl)
     runSettingsURI: https://vsdrop.corp.microsoft.com/file/v1/$(RunSettingsDrop);NuGet.Tests.Apex.runsettings
     testExecutionJobTimeoutInMinutes: 412 # cloud test minimum
+    testMachineTotalCount: '2'
+    testCaseDistributionBatchingStrategy: OptimizeDurationForPerformance
     testDeploymentCleanupMode: ${{parameters.ApexAgentCleanup}}
     VsBootstrapperBranch: $(VsBootstrapperBranch)
