@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Globalization;
 
 using Microsoft.Testing.Platform.ServerMode.Client;
+using Microsoft.TestPlatform.Hashing;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
 
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.MTP;
 
@@ -65,7 +67,26 @@ internal static class MtpTestNodeConverter
     public static bool IsActionNode(MtpTestNodeUpdate update)
         => update.NodeType is ActionNodeType;
 
+    /// <summary>
+    /// Resolves the test id algorithm requested for this run, from the environment variables
+    /// declared in runsettings <c>RunConfiguration/EnvironmentVariables</c>.
+    /// </summary>
+    /// <remarks>
+    /// On the classic path this choice is read from the testhost's own environment, which those
+    /// runsettings variables populate. MTP applications are their own host and their nodes are
+    /// converted here, in the runner, which never receives those variables, so the runner has to
+    /// read the declared value itself and pass the choice to the test case.
+    /// Returns <see langword="null"/> when the run does not declare the flag, so the test case falls
+    /// back to the runner's own environment and the platform default. Declaring it explicitly wins,
+    /// so a runsettings value overrides an inherited one rather than silently agreeing with it.
+    /// </remarks>
+    public static TestCaseIdAlgorithm? ResolveTestCaseIdAlgorithm(IDictionary<string, string?>? runSettingsEnvironmentVariables)
+        => TestCaseIdAlgorithmResolver.ResolveDeclared(runSettingsEnvironmentVariables);
+
     public static TestCase ToTestCase(MtpTestNodeUpdate update, string source)
+        => ToTestCase(update, source, testCaseIdAlgorithm: null);
+
+    public static TestCase ToTestCase(MtpTestNodeUpdate update, string source, TestCaseIdAlgorithm? testCaseIdAlgorithm)
     {
         string? uid = update.Uid;
         string fullyQualifiedName = GetRawString(update, VsTestFullyQualifiedNameKey)
@@ -93,12 +114,46 @@ internal static class MtpTestNodeConverter
         }
 
         AddTraits(update, testCase);
+
+        // Deliberately last: setting FullyQualifiedName or Source resets the default id, so assigning
+        // it earlier could be silently undone by a later assignment. The managed name properties are
+        // part of the seed too (see TestCase.GetFullyQualifiedName), and assigning Id here pins an
+        // explicit id that a later property assignment does not reset, so this block has to stay
+        // after everything that feeds the seed, not just after FullyQualifiedName and Source.
+        //
+        // Only a run that declared an algorithm needs an explicit assignment. Leaving the id alone
+        // otherwise lets TestCase compute it lazily, exactly as it does on the classic path, so the
+        // default stays in one place and this does not have to be revisited when the default moves.
+        // The seed is composed with TestIdSeed, from the test case's own properties rather than the
+        // raw wire values, because this must hash precisely the bytes TestCase would have hashed
+        // itself - notably ExecutorUri, which Uri normalizes (it lowercases the scheme and host, so
+        // the raw string and the parsed uri do not necessarily render the same), and the name, which
+        // TestCase takes from GetFullyQualifiedName so that ManagedType and ManagedMethod win when
+        // they are set. Calling the same method here means the two cannot drift apart if this
+        // converter ever starts populating those properties.
+        if (testCaseIdAlgorithm is { } algorithm)
+        {
+            string seed = TestIdSeed.Compose(testCase.ExecutorUri.ToString(), testCase.Source, testCase.GetFullyQualifiedName());
+            testCase.Id = algorithm switch
+            {
+                TestCaseIdAlgorithm.XxHash128 => EqtHash.GuidFromStringXxHash128(seed),
+                TestCaseIdAlgorithm.Sha1 => EqtHash.GuidFromString(seed),
+
+                // Naming both members above means adding a third one surfaces here as a deliberate
+                // decision rather than silently resolving to SHA1.
+                _ => throw new ArgumentOutOfRangeException(nameof(testCaseIdAlgorithm), algorithm, null),
+            };
+        }
+
         return testCase;
     }
 
     public static TestResult ToTestResult(MtpTestNodeUpdate update, string source)
+        => ToTestResult(update, source, testCaseIdAlgorithm: null);
+
+    public static TestResult ToTestResult(MtpTestNodeUpdate update, string source, TestCaseIdAlgorithm? testCaseIdAlgorithm)
     {
-        var testCase = ToTestCase(update, source);
+        var testCase = ToTestCase(update, source, testCaseIdAlgorithm);
 
         var result = new TestResult(testCase)
         {

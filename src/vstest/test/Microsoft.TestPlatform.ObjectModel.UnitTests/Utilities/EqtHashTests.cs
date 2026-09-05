@@ -1,0 +1,127 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Microsoft.TestPlatform.ObjectModel.UnitTests.Utilities;
+
+/// <summary>
+/// Pins <see cref="EqtHash.GuidFromStringXxHash128(string)"/>, the xxHash128 based successor to
+/// <see cref="EqtHash.GuidFromString(string)"/>, which is available but not yet the algorithm test
+/// case ids are computed with by default.
+/// </summary>
+/// <remarks>
+/// Once a run selects it, these ids end up in TRX files, in Azure DevOps and in Test Case work item
+/// association, so they must never change by accident. If a change is deliberate, bump the hash
+/// version alongside it.
+/// </remarks>
+[TestClass]
+[DoNotParallelize]
+public class EqtHashTests
+{
+    private string? _originalFlag;
+
+    // TestCase_Id_UsesGuidFromStringXxHash128_WhenXxHash128IsSelected drives TestCase through the
+    // feature flag, so pin the flag here rather than inheriting whatever the developer's machine has
+    // set.
+    [TestInitialize]
+    public void SelectXxHash128TestIdAlgorithm()
+    {
+        _originalFlag = Environment.GetEnvironmentVariable(TestCase.TestCaseIdAlgorithmFeatureFlag);
+        Environment.SetEnvironmentVariable(TestCase.TestCaseIdAlgorithmFeatureFlag, TestCase.XxHash128OptInValue);
+        ResetFeatureFlagCache();
+    }
+
+    [TestCleanup]
+    public void RestoreTestIdAlgorithm()
+    {
+        Environment.SetEnvironmentVariable(TestCase.TestCaseIdAlgorithmFeatureFlag, _originalFlag);
+        ResetFeatureFlagCache();
+    }
+
+#pragma warning disable CS0618 // ResetFeatureFlagCacheForTesting is what its name says it is.
+    private static void ResetFeatureFlagCache() => TestCase.ResetFeatureFlagCacheForTesting();
+#pragma warning restore CS0618
+
+    [TestMethod]
+    [DataRow("", "19aa06d3-0147-88d8-a001-c324468d497f")]
+    [DataRow("abc", "1dcae961-3d3c-87ca-8340-2c89fa0d3198")]
+    [DataRow("abcdbcdecdefdefgefghfghighij", "104a4cb6-4809-8833-8bb8-ad8d0d87f655")]
+    [DataRow("executor://mstestadapter/v2MyTest.dllMyNamespace.MyClass.MyMethod", "1bdbbaf9-e478-82dc-bc1a-f161fabee1ee")]
+    public void GuidFromStringXxHash128_ProducesPinnedIds(string data, string expected)
+        => Assert.AreEqual(expected, EqtHash.GuidFromStringXxHash128(data).ToString(), $"Test id for '{data}' changed.");
+
+    [TestMethod]
+    public void GuidFromStringXxHash128_ProducesPinnedId_ForVeryLargeInput()
+    {
+        // Long enough to exercise the block based path rather than the short input path.
+        string data = string.Concat(System.Linq.Enumerable.Repeat("abc", 100_000));
+
+        Assert.AreEqual("154504d8-e373-86f7-b493-b93fb9f2970a", EqtHash.GuidFromStringXxHash128(data).ToString());
+    }
+
+    [TestMethod]
+    public void GuidFromStringXxHash128_IsDeterministic()
+        => Assert.AreEqual(EqtHash.GuidFromStringXxHash128("some.test.name"), EqtHash.GuidFromStringXxHash128("some.test.name"));
+
+    [TestMethod]
+    public void GuidFromStringXxHash128_ProducesVersion8Uuids()
+    {
+        Guid id = EqtHash.GuidFromStringXxHash128("some.test.name");
+
+        string text = id.ToString("D");
+        Assert.AreEqual('8', text[14], $"Expected a version 8 UUID but got {id}.");
+        Assert.IsTrue(text[19] is '8' or '9' or 'a' or 'b', $"Expected an RFC 9562 variant but got {id}.");
+        Assert.AreEqual('1', text[0], $"Expected hash version 1 to be embedded in {id}.");
+    }
+
+    [TestMethod]
+    public void GuidFromStringXxHash128_DiffersFromLegacySha1Id()
+    {
+        // The whole point of the change: the new id is not the old id. If these ever match, selecting
+        // an algorithm would be a silent no-op.
+        Guid legacy = EqtHash.GuidFromString("some.test.name");
+
+        Assert.AreNotEqual(legacy, EqtHash.GuidFromStringXxHash128("some.test.name"));
+    }
+
+    /// <summary>
+    /// The same input must produce the same id here as it does in MSTest.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This vector is not ours. It is lifted from MSTest's own pinned expectation in
+    /// <c>UnitTestElementTests</c> in microsoft/testfx, for the input MSTest composes there:
+    /// the assembly file name followed by the fully qualified name. Reproducing it exactly proves
+    /// that the two implementations agree byte for byte - the seed encoding (UTF-16), the hash, the
+    /// hash version nibble, the UUID version and variant bits, and the big-endian byte layout - and
+    /// not merely that each is internally consistent with itself.
+    /// </para>
+    /// <para>
+    /// This is the check that would catch a byte order or bit placement mistake that our own pinned
+    /// vectors cannot, because those were generated by this same implementation and would happily
+    /// pin a wrong answer.
+    /// </para>
+    /// </remarks>
+    [TestMethod]
+    public void GuidFromStringXxHash128_AgreesWithMsTestForTheSameInput()
+        => Assert.AreEqual(
+            "157ad7ac-90d2-8e05-a240-056ef4253f19",
+            EqtHash.GuidFromStringXxHash128("MyAssemblyMyProduct.MyNamespace.MyClass.MyMethod").ToString(),
+            "vstest and MSTest no longer produce the same id for the same input.");
+
+    [TestMethod]
+    public void TestCase_Id_UsesGuidFromStringXxHash128_WhenXxHash128IsSelected()
+    {
+        var testCase = new TestCase("MyNamespace.MyClass.MyMethod", new Uri("executor://mstestadapter/v2"), "MyTest.dll");
+
+        // TestCase.Id hashes ExecutorUri + fileName(Source) + FullyQualifiedName.
+        Guid expected = EqtHash.GuidFromStringXxHash128("executor://mstestadapter/v2MyTest.dllMyNamespace.MyClass.MyMethod");
+
+        Assert.AreEqual(expected, testCase.Id);
+    }
+}
