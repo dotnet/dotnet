@@ -20,10 +20,11 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-dnceng dependencies -->
     <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.26421.1</MicrosoftDncEngSecretManagerPackageVersion>
     <!-- dotnet-msbuild dependencies -->
-    <MicrosoftBuildPackageVersion>17.12.50</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildFrameworkPackageVersion>17.12.50</MicrosoftBuildFrameworkPackageVersion>
-    <MicrosoftBuildTasksCorePackageVersion>17.12.50</MicrosoftBuildTasksCorePackageVersion>
-    <MicrosoftBuildUtilitiesCorePackageVersion>17.12.50</MicrosoftBuildUtilitiesCorePackageVersion>
+    <MicrosoftBuildPackageVersion>18.8.2</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildFrameworkPackageVersion>18.8.2</MicrosoftBuildFrameworkPackageVersion>
+    <MicrosoftBuildTaskAuthoringAnalyzerPackageVersion>18.12.0-1.26454.2</MicrosoftBuildTaskAuthoringAnalyzerPackageVersion>
+    <MicrosoftBuildTasksCorePackageVersion>18.8.2</MicrosoftBuildTasksCorePackageVersion>
+    <MicrosoftBuildUtilitiesCorePackageVersion>18.8.2</MicrosoftBuildUtilitiesCorePackageVersion>
     <!-- dotnet-roslyn dependencies -->
     <MicrosoftCodeAnalysisCSharpPackageVersion>4.8.0</MicrosoftCodeAnalysisCSharpPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.8.0</MicrosoftNetCompilersToolsetPackageVersion>
@@ -79,6 +80,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-msbuild dependencies -->
     <MicrosoftBuildVersion>$(MicrosoftBuildPackageVersion)</MicrosoftBuildVersion>
     <MicrosoftBuildFrameworkVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildFrameworkVersion>
+    <MicrosoftBuildTaskAuthoringAnalyzerVersion>$(MicrosoftBuildTaskAuthoringAnalyzerPackageVersion)</MicrosoftBuildTaskAuthoringAnalyzerVersion>
     <MicrosoftBuildTasksCoreVersion>$(MicrosoftBuildTasksCorePackageVersion)</MicrosoftBuildTasksCoreVersion>
     <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildUtilitiesCorePackageVersion)</MicrosoftBuildUtilitiesCoreVersion>
     <!-- dotnet-roslyn dependencies -->

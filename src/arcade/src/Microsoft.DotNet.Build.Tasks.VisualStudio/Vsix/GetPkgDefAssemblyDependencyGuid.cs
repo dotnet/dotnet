@@ -17,7 +17,8 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio
     /// Calculates Guid used in .pkgdef files for codeBase and bindingRedirect entries.
     /// The implementation matches Microsoft.VisualStudio.Shell.ProvideDependentAssemblyAttribute.
     /// </summary>
-    public sealed class GetPkgDefAssemblyDependencyGuid : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public sealed class GetPkgDefAssemblyDependencyGuid : Task
     {
         [Required]
         public ITaskItem[] Items { get; set; }

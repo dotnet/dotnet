@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
+    [MSBuildMultiThreadableTask]
     public class GetMinimumNETStandard : Task
     {
         [Required]

@@ -12,7 +12,8 @@ namespace Microsoft.DotNet.Arcade.Sdk
     /// File version has 4 parts and need to increase every official build. This is especially important when building MSIs.
     /// See https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Versioning.md#assembly-version.
     /// </summary>
-    public class CalculateAssemblyAndFileVersions : Microsoft.Build.Utilities.Task
+    [MSBuildMultiThreadableTask]
+    public class CalculateAssemblyAndFileVersions : Task
     {
         private const int MaxMinor = 654;
         private const int MaxBuild = 9999;

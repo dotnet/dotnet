@@ -119,21 +119,21 @@
       <Sha>81e19c5faa4dd033d0c1be8fb6d74b9dac7aac92</Sha>
     </Dependency>
     <!-- Dependencies required for source build to lift to the previously-source-built version. -->
-    <Dependency Name="Microsoft.Build" Version="17.12.50">
+    <Dependency Name="Microsoft.Build" Version="18.8.2">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
+      <Sha>ce25c01082c9c46cd02ad1ff3ff8f16fe5cc2f44</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Framework" Version="17.12.50">
+    <Dependency Name="Microsoft.Build.Framework" Version="18.8.2">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
+      <Sha>ce25c01082c9c46cd02ad1ff3ff8f16fe5cc2f44</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Core" Version="17.12.50">
+    <Dependency Name="Microsoft.Build.Tasks.Core" Version="18.8.2">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
+      <Sha>ce25c01082c9c46cd02ad1ff3ff8f16fe5cc2f44</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.12.50">
+    <Dependency Name="Microsoft.Build.Utilities.Core" Version="18.8.2">
       <Uri>https://github.com/dotnet/msbuild</Uri>
-      <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
+      <Sha>ce25c01082c9c46cd02ad1ff3ff8f16fe5cc2f44</Sha>
     </Dependency>
     <!-- NuGet dependencies required for source build to lift to the previously-source-built version.
          Arcade redistributes these in its MSBuild task packages and needs real executable assemblies,
@@ -173,6 +173,10 @@
     <Dependency Name="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>f7d90799ce4ef09a0bb257852a57248d2a8fb8dd</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Build.TaskAuthoring.Analyzer" Version="18.12.0-1.26454.2">
+      <Uri>https://github.com/dotnet/msbuild</Uri>
+      <Sha>5955a5fd29dcd23282a71a04d1cfb35f0a7a0e66</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
