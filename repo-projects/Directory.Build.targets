@@ -216,7 +216,7 @@
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PreviouslySourceBuiltNuGetSourceName)"
                             SourcePath="$(PreviouslySourceBuiltPackagesPath)"
-                            Condition="'$(AddPrebuiltFeeds)' == 'true'" />
+                            Condition="'$(AddPrebuiltFeeds)' == 'true' or '$(CustomPreviouslySourceBuiltPackagesPath)' != ''" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
@@ -256,6 +256,9 @@
                      Condition="'$(AddPrebuiltFeeds)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'" />
       <_BuildSources Include="$(ReferencePackagesNuGetSourceName)"
                      Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
+      <!-- Microsoft bootstrap builds supply only the stage 1 packages as a source-built input. -->
+      <_BuildSources Include="$(PreviouslySourceBuiltNuGetSourceName)"
+                     Condition="'$(AddPrebuiltFeeds)' != 'true' and '$(CustomPreviouslySourceBuiltPackagesPath)' != ''" />
       <_BuildSources Include="@(_CommonBuildSources)" />
     </ItemGroup>
 
