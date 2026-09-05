@@ -21,24 +21,49 @@ public class FeatureFlagTests
     [TestMethod]
     public void MtpTestHostIsDisabledByDefault()
     {
-        AssertMtpTestHostDisableFlag(environmentValue: null, expected: true);
+        AssertFlag(FeatureFlag.VSTEST_DISABLE_MTP_TESTHOST, environmentValue: null, expected: true);
     }
 
     [TestMethod]
     public void MtpTestHostCanBeEnabledBySettingDisableFlagToZero()
     {
-        AssertMtpTestHostDisableFlag(environmentValue: "0", expected: false);
+        AssertFlag(FeatureFlag.VSTEST_DISABLE_MTP_TESTHOST, environmentValue: "0", expected: false);
     }
 
     [TestMethod]
     public void MtpTestHostRemainsDisabledWhenDisableFlagIsNonZero()
     {
-        AssertMtpTestHostDisableFlag(environmentValue: "1", expected: true);
+        AssertFlag(FeatureFlag.VSTEST_DISABLE_MTP_TESTHOST, environmentValue: "1", expected: true);
     }
 
-    private static void AssertMtpTestHostDisableFlag(string? environmentValue, bool expected)
+    /// <summary>
+    /// xxHash128 test case ids ship available but not default, so the flag defaults to set.
+    /// </summary>
+    /// <remarks>
+    /// Which ids that actually produces is asserted in one place only, TestCaseIdAlgorithmTests.
+    /// What is pinned here is the mechanism it rests on: that the default entry exists at all, and
+    /// that the two explicit values keep meaning what they mean once it is removed.
+    /// </remarks>
+    [TestMethod]
+    public void XxHash128TestCaseIdsAreDisabledByDefault()
     {
-        const string featureFlag = FeatureFlag.VSTEST_DISABLE_MTP_TESTHOST;
+        AssertFlag(FeatureFlag.VSTEST_DISABLE_XXHASH128_TESTCASE_ID, environmentValue: null, expected: true);
+    }
+
+    [TestMethod]
+    public void XxHash128TestCaseIdsCanBeEnabledBySettingDisableFlagToZero()
+    {
+        AssertFlag(FeatureFlag.VSTEST_DISABLE_XXHASH128_TESTCASE_ID, environmentValue: "0", expected: false);
+    }
+
+    [TestMethod]
+    public void XxHash128TestCaseIdsRemainDisabledWhenDisableFlagIsNonZero()
+    {
+        AssertFlag(FeatureFlag.VSTEST_DISABLE_XXHASH128_TESTCASE_ID, environmentValue: "1", expected: true);
+    }
+
+    private static void AssertFlag(string featureFlag, string? environmentValue, bool expected)
+    {
         var originalValue = Environment.GetEnvironmentVariable(featureFlag);
         try
         {

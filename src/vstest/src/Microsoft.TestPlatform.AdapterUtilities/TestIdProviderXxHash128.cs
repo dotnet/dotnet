@@ -1,32 +1,37 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Security.Cryptography;
 using System.Text;
+
+using Microsoft.TestPlatform.Hashing;
 
 namespace Microsoft.TestPlatform.AdapterUtilities;
 
 /// <summary>
-/// Used to generate id for tests, using SHA1.
+/// Used to generate id for tests, using xxHash128.
 /// </summary>
 /// <remarks>
-/// This is the algorithm test case ids are computed with by default. See <see cref="TestIdProviderXxHash128"/>
-/// for the xxHash128 based successor, which is available but not yet the default.
+/// This is the intended successor to <see cref="TestIdProvider"/>, which uses SHA1. SHA1 is a
+/// cryptographic hash being used for a non-cryptographic purpose; it is slower than necessary and
+/// its presence trips security tooling. The ids produced here are RFC 9562 version 8 UUIDs that
+/// carry the version of the hashing scheme, so a future change to the algorithm is detectable
+/// from the id itself. It ships available but not default: <see cref="TestIdProvider"/> is still
+/// what test ids are computed with unless a run selects otherwise.
 /// </remarks>
-public class TestIdProvider
+public class TestIdProviderXxHash128
 {
     private Guid _id = Guid.Empty;
     private byte[]? _hash;
 
-    private readonly SHA1 _sha;
+    private readonly XxHash128 _hasher;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TestIdProvider"/> class.
+    /// Initializes a new instance of the <see cref="TestIdProviderXxHash128"/> class.
     /// </summary>
-    public TestIdProvider()
+    public TestIdProviderXxHash128()
     {
-        _sha = SHA1.Create();
+        _hasher = new XxHash128();
     }
 
     /// <summary>
@@ -43,9 +48,9 @@ public class TestIdProvider
         }
         _ = str ?? throw new ArgumentNullException(nameof(str));
 
-        var bytes = Encoding.Unicode.GetBytes(str);
+        byte[] bytes = Encoding.Unicode.GetBytes(str);
 
-        _sha.TransformBlock(bytes, 0, bytes.Length, null, 0);
+        _hasher.Append(bytes);
     }
 
     /// <summary>
@@ -67,7 +72,7 @@ public class TestIdProvider
             return;
         }
 
-        _sha.TransformBlock(bytes, 0, bytes.Length, null, 0);
+        _hasher.Append(bytes);
     }
 
     /// <summary>
@@ -76,20 +81,13 @@ public class TestIdProvider
     /// <returns>An array containing the seed.</returns>
     /// <remarks>
     /// <see cref="AppendBytes(byte[])"/> and <see cref="AppendString(string)"/> cannot be called
-    /// on instance after this method is called.
+    /// on instance after this method is called. Unlike <see cref="TestIdProvider.GetHash"/>, which
+    /// hands out the array it caches, the returned array is a copy, so mutating it does not disturb
+    /// a later <see cref="GetId"/> or <see cref="GetHash"/> call.
     /// </remarks>
     public byte[] GetHash()
     {
-        if (_hash != null)
-        {
-            return _hash;
-        }
-
-        // Finalize the hash. We don't have any more data so we provide empty.
-        _sha.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-        _hash = _sha.Hash;
-
-        return _hash!;
+        return (byte[])EnsureHash().Clone();
     }
 
     /// <summary>
@@ -107,16 +105,13 @@ public class TestIdProvider
             return _id;
         }
 
-#if NET
-        var hashSlice = GetHash().AsSpan().Slice(0, 16);
-        _id = new Guid(hashSlice);
-#else
-        // create from span?
-        var toGuid = new byte[16];
-        Array.Copy(GetHash(), toGuid, 16);
-        _id = new Guid(toGuid);
-#endif
+        // VersionedGuidFromHash mutates what it is given, so hand it a copy and keep the cached
+        // hash intact for callers that ask for it themselves.
+        byte[] hash = (byte[])EnsureHash().Clone();
+        _id = TestIdGuid.VersionedGuidFromHash(hash, TestIdGuid.CurrentHashVersion);
 
         return _id;
     }
+
+    private byte[] EnsureHash() => _hash ??= _hasher.GetCurrentHash();
 }
