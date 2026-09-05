@@ -1287,8 +1287,8 @@ Hata: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
-        <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">Başlatıldıktan sonra bu eylem iptal edilemez.</target>
+        <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
+        <target state="needs-review-translation">Başlatıldıktan sonra bu eylem iptal edilemez.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

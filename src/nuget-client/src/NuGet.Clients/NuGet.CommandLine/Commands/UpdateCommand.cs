@@ -3,7 +3,6 @@
 
 #nullable disable
 
-extern alias CoreV2;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

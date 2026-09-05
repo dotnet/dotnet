@@ -80,7 +80,7 @@ namespace NuGet.DependencyResolver
                     var current = RemoteLibraryProviders[i];
                     for (int j = 0; j < sources.Count; ++j)
                     {
-                        if (StringComparer.OrdinalIgnoreCase.Equals(sources[j], current.Source.Name))
+                        if (StringComparer.OrdinalIgnoreCase.Equals(sources[j], current.Source?.Name))
                         {
                             filteredLibraryProviders.Add(current);
                             break;
@@ -112,7 +112,9 @@ namespace NuGet.DependencyResolver
 
                 GraphItem<RemoteResolveResult> item = await task;
 
-                if (item.Key.Type == LibraryType.Unresolved || !RemoteLibraryProviders.Contains(item.Data.Match.Provider))
+                if (item.Key.Type == LibraryType.Unresolved ||
+                    item.Data.Match.Provider == null ||
+                    !RemoteLibraryProviders.Contains(item.Data.Match.Provider))
                 {
                     continue;
                 }

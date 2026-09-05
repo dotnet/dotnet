@@ -59,15 +59,14 @@ namespace NuGet.Tools.Commands
                 try
                 {
                     await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                    var isUserContinuing = MessageHelper.ShowQueryMessage(
+                    var isUserContinuing = MessageHelper.ShowOkCancelMessage(
                         message: Resx.VSOptions_Text_ClearLocalsPromptMessage,
                         title: Resx.VSOptions_Text_ClearLocalsPromptTitle,
-                        showCancelButton: false,
                         defaultButton: OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_SECOND);
 
                     NavigatedTelemetryEvent evt;
 
-                    if (isUserContinuing == true)
+                    if (isUserContinuing)
                     {
                         var clearNuGetLocalsViewModel = new ClearNuGetLocalsViewModel(ClearNuGetLocalsCommandExecuteAsync);
                         OutputConsoleLogger.Start();
