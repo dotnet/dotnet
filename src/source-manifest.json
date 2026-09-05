@@ -91,10 +91,10 @@
       "commitSha": "ed8295c1a79236410c1972c8781407caffd089ae"
     },
     {
-      "barId": 330091,
+      "barId": 330498,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "ee99bdbe51ca5a6e3cd1b6c5288318cb1da5f513"
+      "commitSha": "5a9ef7630670fd7721407ebf0b37a6839d5ede26"
     },
     {
       "barId": 324879,
