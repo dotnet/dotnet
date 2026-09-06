@@ -53,6 +53,7 @@ $logdir = Join-Path $artifactsdir "log"
 $logdir = Join-Path $logdir Windows_NT.$architecture.$configuration
 
 $bl = if ($binaryLog) { '-binaryLog' } else { '' }
+$unprocessedBuildArgs = @($remainingargs)
 
 if ($ci) {
     $remainingargs = "-ci " + $remainingargs
@@ -74,19 +75,27 @@ if (-not $skipnative) {
     }
 }
 
-# Overlay an externally-provided cDAC (mscordaccore_universal) next to the freshly built sos.dll. SOS
-# resolves the cDAC from its own native binaries directory, so this is the only spot it is picked up
-# from. Used by the cdac DacMode to exercise the runtime-under-test's own cDAC instead of the copy
-# restored from a referenced runtime package.
+# Overlay externally-provided cDAC/dbi binaries next to the freshly built sos.dll. SOS resolves the
+# cDAC and universal DBI from its own native binaries directory, so both files must come from the
+# runtime under test instead of mixing one with the copy restored from a referenced runtime package.
 if ($cdacPath -ne '') {
     if (-not (Test-Path $cdacPath)) {
         Write-Error "-cdacPath '$cdacPath' does not exist."
         exit 1
     }
-    $cdacDest = Join-Path (Join-Path $artifactsdir "bin\$os.$architecture.$configuration") "mscordaccore_universal.dll"
-    New-Item -ItemType Directory -Force -Path (Split-Path $cdacDest -Parent) | Out-Null
+    $dbiPath = Join-Path (Split-Path $cdacPath -Parent) "mscordbi_universal.dll"
+    if (-not (Test-Path $dbiPath)) {
+        Write-Error "-cdacPath requires the matching universal DBI at '$dbiPath'."
+        exit 1
+    }
+    $nativeBinDir = Join-Path $artifactsdir "bin\$os.$architecture.$configuration"
+    $cdacDest = Join-Path $nativeBinDir "mscordaccore_universal.dll"
+    $dbiDest = Join-Path $nativeBinDir "mscordbi_universal.dll"
+    New-Item -ItemType Directory -Force -Path $nativeBinDir | Out-Null
     Write-Host "Overlaying cDAC: $cdacPath -> $cdacDest"
     Copy-Item $cdacPath $cdacDest -Force
+    Write-Host "Overlaying universal DBI: $dbiPath -> $dbiDest"
+    Copy-Item $dbiPath $dbiDest -Force
 }
 
 # Install sdk for building, restore and build managed components.
@@ -162,7 +171,8 @@ if ($test) {
           /p:RuntimeSourceFeed="$runtimesourcefeed" `
           /p:RuntimeSourceFeedKey="$runtimesourcefeedkey" `
           /p:LiveRuntimeDir="$liveRuntimeDir" `
-          $testFilterArg
+          $testFilterArg `
+          @unprocessedBuildArgs
 
         if ($lastExitCode -ne 0) {
             exit $lastExitCode
