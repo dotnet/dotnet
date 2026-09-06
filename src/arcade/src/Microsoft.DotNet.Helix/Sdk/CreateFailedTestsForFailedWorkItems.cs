@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.DotNet.Helix.Sdk
 {
+    [MSBuildMultiThreadableTask]
     public class CreateTestsForWorkItems : AzureDevOpsTask
     {
         [Required]

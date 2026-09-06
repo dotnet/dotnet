@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.DotNet.Helix.AzureDevOps
 {
+    [MSBuildMultiThreadableTask]
     public class StopAzurePipelinesTestRun : AzureDevOpsTask
     {
         [Required]

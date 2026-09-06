@@ -48,6 +48,10 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net48')) != 'true' and '$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     <PackageReference Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     <PackageReference Include="System.Reflection.Metadata" Version="$(SystemReflectionMetadataVersion)" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
+    <!-- Span<T> and BinaryPrimitives, required by the vendored xxHash128 implementation on the
+         frameworks that don't ship them inbox. This was already pulled in transitively via
+         System.Reflection.Metadata, and already has binding redirects in every app.config. -->
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +66,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/FilterHelper.cs" />
+  </ItemGroup>
+  <PropertyGroup>
+    <!-- Required by the vendored xxHash128 implementation. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Vendored xxHash128, compiled in as internal. See src/Microsoft.TestPlatform.Hashing.Source/README.md. -->
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Hashing.Source/*.cs" LinkBase="Hashing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources\CommonResources.Designer.cs">

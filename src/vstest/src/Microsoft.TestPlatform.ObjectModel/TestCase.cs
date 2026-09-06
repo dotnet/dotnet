@@ -8,8 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 
+using Microsoft.TestPlatform.Hashing;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
@@ -19,6 +21,30 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel;
 [DataContract]
 public sealed class TestCase : TestObject
 {
+    /// <summary>
+    /// Disables computing <see cref="Id"/> with xxHash128, falling back to the SHA1 ids the platform
+    /// has always produced. Set to <see cref="XxHash128OptInValue"/> to opt in to the new ids.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Moving to xxHash128 changes the id of every test whose id is computed by the platform, which
+    /// is a breaking change for anything that stored those ids - most notably Azure DevOps Test Case
+    /// work item association. It is therefore introduced as opt-in first, so that a release exists in
+    /// which the new algorithm can be evaluated against real data without changing anyone's ids, and
+    /// becomes the default only in a later release.
+    /// </para>
+    /// <para>
+    /// See <see cref="TestCaseIdAlgorithmResolver"/> for why this is an opt-out flag rather than a
+    /// selector naming an algorithm.
+    /// </para>
+    /// </remarks>
+    internal const string TestCaseIdAlgorithmFeatureFlag = TestCaseIdAlgorithmResolver.FeatureFlagName;
+
+    /// <summary>
+    /// The value of <see cref="TestCaseIdAlgorithmFeatureFlag"/> that opts in to the xxHash128 ids.
+    /// </summary>
+    internal const string XxHash128OptInValue = TestCaseIdAlgorithmResolver.OptInValue;
+
     private Guid _defaultId = Guid.Empty;
     private Guid _id;
     private string? _displayName;
@@ -167,41 +193,65 @@ public sealed class TestCase : TestObject
     }
 
     /// <summary>
+    /// The algorithm used to compute test case ids in this process.
+    /// </summary>
+    /// <remarks>
+    /// Resolved from the <see cref="TestCaseIdAlgorithmFeatureFlag"/> feature flag, which reads the
+    /// environment lazily on first use and then caches it. Both properties matter here: reading
+    /// lazily keeps the choice observable from a test rather than baking it in whenever the type
+    /// happened to be loaded, and caching keeps an id stable for the lifetime of the process.
+    /// </remarks>
+    private static TestCaseIdAlgorithm IdAlgorithm => TestCaseIdAlgorithmResolver.Ambient;
+
+    /// <summary>
+    /// Clears every cached feature flag, so <see cref="IdAlgorithm"/> reads its own again. For tests
+    /// only - production code must not change algorithm mid-process.
+    /// </summary>
+    /// <remarks>
+    /// Named for what it actually does rather than for the one flag this type cares about: it resets
+    /// the whole <see cref="FeatureFlag"/> cache, because that is the granularity available. Flags
+    /// that are pure environment reads are simply read again, but any value a test injected with
+    /// <c>FeatureFlag.SetFlag</c> is discarded, so a caller has to know the scope. It is exposed here
+    /// rather than used directly because CoreUtilities internals are not visible to the ObjectModel
+    /// test assembly, and it carries the same <see cref="ObsoleteAttribute"/> the method it forwards
+    /// to carries, so a production assembly that can see it cannot call it without saying so.
+    /// </remarks>
+    [Obsolete("Only use this in tests.")]
+#pragma warning disable CS0618 // FeatureFlag.Reset exists for tests, which is what this is for.
+    internal static void ResetFeatureFlagCacheForTesting() => FeatureFlag.Reset();
+#pragma warning restore CS0618
+
+    /// <summary>
     /// Creates a Id of TestCase
     /// </summary>
     /// <returns>Guid test id</returns>
-    private Guid GetTestId()
+    private Guid GetTestId() => GetTestId(IdAlgorithm);
+
+    /// <summary>
+    /// Creates a Id of TestCase using the given algorithm.
+    /// </summary>
+    /// <returns>Guid test id</returns>
+    private Guid GetTestId(TestCaseIdAlgorithm algorithm)
     {
-        // To generate id hash "ExecutorUri + source + Name";
+        // To generate id hash "ExecutorUri + source + Name". The composition lives in TestIdSeed
+        // because the Microsoft.Testing.Platform path has to reproduce it exactly from the runner
+        // process, where a TestCase is built rather than computed. If ManagedType and ManagedMethod
+        // properties are filled then the id is based on those, which is what GetFullyQualifiedName
+        // resolves.
+        // ExecutorUri is passed as text rather than concatenated directly: the original expression
+        // concatenated the Uri object, which renders a null as empty, and a test case built through
+        // the serialization constructor can still be missing it.
+        string testcaseFullName = TestIdSeed.Compose(ExecutorUri?.ToString(), Source, GetFullyQualifiedName());
 
-        // If source is a file name then just use the filename for the identifier since the
-        // file might have moved between discovery and execution (in appx mode for example)
-        // This is not elegant because the Source contents should be a black box to the framework.
-        // For example in the database adapter case this is not a file path.
-        string source = Source;
-
-        // As discussed with team, we found no scenario for netcore, & fullclr where the Source is not present where ID is generated,
-        // which means we would always use FileName to generate ID. In cases where somehow Source Path contained garbage character the API Path.GetFileName()
-        // we are simply returning original input.
-        // For UWP where source during discovery, & during execution can be on different machine, in such case we should always use Path.GetFileName()
-        try
+        return algorithm switch
         {
-            // If source name is malformed, GetFileName API will throw exception, so use same input malformed string to generate ID
-            source = Path.GetFileName(source);
-        }
-        catch
-        {
-            // do nothing
-        }
+            TestCaseIdAlgorithm.XxHash128 => EqtHash.GuidFromStringXxHash128(testcaseFullName),
+            TestCaseIdAlgorithm.Sha1 => EqtHash.GuidFromString(testcaseFullName),
 
-        // We still need to handle parameters in the case of a Theory or TestGroup of test cases that are only
-        // distinguished by parameters.
-        var testcaseFullName = ExecutorUri + source;
-
-        // If ManagedType and ManagedMethod properties are filled than TestId should be based on those.
-        testcaseFullName += GetFullyQualifiedName();
-
-        return EqtHash.GuidFromString(testcaseFullName);
+            // Naming both members above means adding a third one surfaces here as a deliberate
+            // decision rather than silently resolving to SHA1.
+            _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null),
+        };
     }
 
     private void SetVariableAndResetId<T>(ref T variable, T value)
@@ -307,7 +357,7 @@ public sealed class TestCase : TestObject
         set => SetPropertyAndResetId(ManagedMethodProperty, value);
     }
 
-    private string GetFullyQualifiedName() => ContainsManagedMethodAndType ? $"{ManagedType}.{ManagedMethod}" : FullyQualifiedName;
+    internal string GetFullyQualifiedName() => ContainsManagedMethodAndType ? $"{ManagedType}.{ManagedMethod}" : FullyQualifiedName;
 
     /// <inheritdoc/>
     public override string ToString() => GetFullyQualifiedName();

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 namespace XliffTasks.Tasks
 {
+    [MSBuildMultiThreadableTask]
     public sealed class GatherXlf : XlfTask
     {
         [Required]

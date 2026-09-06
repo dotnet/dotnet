@@ -38,6 +38,21 @@
     <PackageReference Update="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
   </ItemGroup>
 
+  <!--
+    Analyzer that validates tasks against MSBuild's multithreaded execution model. The environment
+    and path rules (MSBuildTask0002/0003/0005) are narrowed to tasks that opt in via
+    [MSBuildMultiThreadableTask] or implement IMultiThreadableTask, which includes everything
+    deriving from ToolTask; the remaining rules apply to every ITask in the compilation. See
+    MultiThreadableTaskAnalyzer.globalconfig, which sets that scope and pins each rule's severity.
+    Not available when building from source, where the package feeds aren't reachable.
+  -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <PackageReference Include="Microsoft.Build.TaskAuthoring.Analyzer" PrivateAssets="all" IncludeAssets="analyzers" />
+    <!-- GlobalAnalyzerConfigFiles is folded into EditorConfigFiles by Microsoft.Managed.Core.targets,
+         which is imported before this file, so contribute to EditorConfigFiles directly. -->
+    <EditorConfigFiles Include="$(RepositoryEngineeringDir)MultiThreadableTaskAnalyzer.globalconfig" />
+  </ItemGroup>
+
   <!-- Publish assets and include them in the package under $(BuildTaskTargetFolder) directory. -->
   <Target Name="_AddBuildOutputToPackage">
     <ItemGroup>

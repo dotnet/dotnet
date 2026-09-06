@@ -17,6 +17,7 @@ namespace Microsoft.DotNet.Helix.Sdk
     /// run directly with 'dotnet exec'. This applies to MSTest 4.x, xUnit v3 with MTP,
     /// NUnit with MTP, TUnit, and any custom MTP-based test framework.
     /// </summary>
+    [MSBuildMultiThreadableTask]
     public class CreateMTPWorkItems : BaseTask
     {
         /// <summary>

@@ -16,6 +16,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Microsoft.DotNet.Helix.Sdk
 {
+    [MSBuildMultiThreadableTask]
     public class GetHelixWorkItems : HelixTask
     {
         public const int DelayBetweenHelixApiCallsInMs = 500;

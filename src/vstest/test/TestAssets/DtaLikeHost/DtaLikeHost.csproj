@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    Minimal repro for System.Collections.Immutable binding mismatch.
+    Minimal repro for .NET Framework assembly binding failures in hosts that load our DLLs
+    without binding redirects.
 
     Simulates how Azure DevOps' Distributed Test Agent (DTAExecutionHost) consumes
     the Microsoft.TestPlatform nupkg:
@@ -12,14 +13,23 @@
         tools/net462/Common7/IDE/Extensions/TestPlatform/ layout, which is the
         same layout the VsTest task lays out on the agent.
 
-    FilterExpressionWrapper's ctor calls FilterExpression.Parse which, for simple
-    filters, builds a FastFilter via FastFilter.Builder. FastFilter.Builder uses
-    ImmutableDictionary / ImmutableHashSet, which forces System.Collections.Immutable
-    to load.
+    Two dependencies are exercised, because both were introduced by a change that looked
+    self-contained and would have shipped broken to hosts like this one:
 
-    With the fix, Common.dll's metadata references System.Collections.Immutable v10.0.0.0
-    and the package ships v10.0.0.0 next to it, so hosts without binding redirects
-    can load SCI without FileLoadException.
+    1. System.Collections.Immutable, via Common.dll. FilterExpressionWrapper's ctor calls
+       FilterExpression.Parse which, for simple filters, builds a FastFilter via
+       FastFilter.Builder. FastFilter.Builder uses ImmutableDictionary / ImmutableHashSet,
+       which forces System.Collections.Immutable to load.
+
+    2. System.Memory, via ObjectModel.dll. Computing a test case id with the xxHash128
+       algorithm goes through the vendored xxHash128 implementation, which uses Span<T> and
+       BinaryPrimitives - neither of which .NET Framework ships inbox. Note that this only
+       happens when xxHash128 is actually in use: with the SHA1 default the Span-using code
+       is never JIT-compiled and the dependency is never resolved, so the host opts in with
+       VSTEST_DISABLE_XXHASH128_TESTCASE_ID=0 and then asserts System.Memory really loaded.
+
+    With the fix, each of those assemblies' metadata references match the DLLs that ship next
+    to ours, so hosts without binding redirects can load them without FileLoadException.
   -->
 
   <PropertyGroup>
@@ -68,6 +78,7 @@
       <Content Include="$(_TestPlatformToolsDir)\System.Memory.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
       <Content Include="$(_TestPlatformToolsDir)\System.Buffers.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
       <Content Include="$(_TestPlatformToolsDir)\System.Runtime.CompilerServices.Unsafe.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+      <Content Include="$(_TestPlatformToolsDir)\System.Numerics.Vectors.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     </ItemGroup>
   </Target>
 

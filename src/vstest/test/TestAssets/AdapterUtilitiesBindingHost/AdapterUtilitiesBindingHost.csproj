@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Minimal repro for a System.Memory binding failure in Microsoft.TestPlatform.AdapterUtilities.
+
+    AdapterUtilities had zero NuGet dependencies until the vendored xxHash128 implementation was
+    compiled into it. That code uses Span<T> and BinaryPrimitives, so the assembly now needs
+    System.Memory on every target framework that does not ship them inbox. On .NET Framework,
+    strong-named binding is exact-version, so a host that loads AdapterUtilities.dll without
+    binding redirects fails at runtime if System.Memory is missing or is a different assembly
+    version than the one baked into AdapterUtilities' metadata.
+
+    This asset is a sibling of DtaLikeHost rather than part of it because AdapterUtilities.dll is
+    not in the Microsoft.TestPlatform nupkg's tools layout at all. Covering it from DtaLikeHost
+    would mean a reference that is conditional on the layout, which silently skips the scenario in
+    the nupkg run - the one outcome a regression guard must never have.
+
+    It runs in the two layouts that do carry AdapterUtilities, matching how it is really consumed:
+      - Default: a PackageReference on Microsoft.TestPlatform.AdapterUtilities, which is how test
+        adapters consume it. This additionally guards that the nuspec declares the System.Memory
+        dependency at all - excluding it would give every consumer a FileNotFoundException.
+      - TestPlatformToolsDirOverride: the flat layout of the
+        Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI VSIX, as Visual Studio consumes it,
+        where System.Memory.dll has to ship next to AdapterUtilities.dll.
+  -->
+
+  <PropertyGroup>
+    <AssemblyName>AdapterUtilitiesBindingHost</AssemblyName>
+    <TargetFramework>net472</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <!-- Emulate a host with no binding redirects: no app.config, nothing generated. -->
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>false</GenerateBindingRedirectsOutputType>
+    <ImplicitlyExpandNETStandardFacades>true</ImplicitlyExpandNETStandardFacades>
+    <!-- Avoid warnings-as-errors on NuGet audit for a repro asset. -->
+    <NuGetAudit>false</NuGetAudit>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TestPlatformToolsDirOverride)' == ''">
+    <!-- Package consumption: NuGet decides which System.Memory ends up next to us, exactly as it
+         would for a test adapter that takes a dependency on AdapterUtilities. -->
+    <PackageReference Include="Microsoft.TestPlatform.AdapterUtilities" Version="$(PackageVersion)" />
+  </ItemGroup>
+
+  <Target Name="AddTestPlatformToolsReferences" BeforeTargets="ResolveAssemblyReferences"
+          Condition="'$(TestPlatformToolsDirOverride)' != '' And Exists('$(TestPlatformToolsDirOverride)')">
+    <ItemGroup>
+      <Reference Include="Microsoft.TestPlatform.AdapterUtilities">
+        <HintPath>$(TestPlatformToolsDirOverride)\Microsoft.TestPlatform.AdapterUtilities.dll</HintPath>
+        <Private>true</Private>
+      </Reference>
+      <!-- Copy the assemblies that actually ship next to AdapterUtilities.dll so the runtime
+           probing sees exactly what the consuming host would see. -->
+      <Content Include="$(TestPlatformToolsDirOverride)\System.Memory.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+      <Content Include="$(TestPlatformToolsDirOverride)\System.Buffers.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+      <Content Include="$(TestPlatformToolsDirOverride)\System.Runtime.CompilerServices.Unsafe.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+      <Content Include="$(TestPlatformToolsDirOverride)\System.Numerics.Vectors.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    </ItemGroup>
+  </Target>
+
+</Project>

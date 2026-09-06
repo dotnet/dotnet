@@ -48,6 +48,27 @@
     <Compile Include="..\..\shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <!-- Required by the vendored xxHash128 implementation. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Vendored xxHash128, compiled in as internal. See src/Microsoft.TestPlatform.Hashing.Source/README.md.
+         The test case id algorithm resolver must be excluded rather than merely need not be included:
+         it reads the CoreUtilities feature flag, and this assembly has no reference to CoreUtilities,
+         so compiling it in is an error. It is also not needed - this assembly does not read the flag. -->
+    <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Hashing.Source/*.cs"
+             Exclude="$(RepoRoot)src/Microsoft.TestPlatform.Hashing.Source/TestCaseIdAlgorithm.cs"
+             LinkBase="Hashing" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'">
+    <!-- Span<T> and BinaryPrimitives, required by the vendored xxHash128 implementation on the
+         frameworks that don't ship them inbox. This already has binding redirects in every app.config. -->
+    <PackageReference Include="System.Memory" Version="$(SystemMemoryVersion)" />
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>

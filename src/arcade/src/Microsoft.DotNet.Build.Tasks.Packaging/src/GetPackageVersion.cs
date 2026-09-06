@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Packaging
 {
+    [MSBuildMultiThreadableTask]
     public class GetPackageVersion : Task
     {
         [Required]

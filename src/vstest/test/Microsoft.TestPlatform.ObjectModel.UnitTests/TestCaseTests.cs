@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -10,18 +10,82 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.TestPlatform.ObjectModel.UnitTests;
 
 [TestClass]
+[DoNotParallelize]
 public class TestCaseTests
 {
     private readonly TestCase _testCase;
+    private string? _originalFlag;
 
     public TestCaseTests()
     {
         _testCase = new TestCase("sampleTestClass.sampleTestCase", new Uri("executor://sampleTestExecutor"), "sampleTest.dll");
     }
 
+    // The ids below are pinned to the default algorithm, so make sure an ambient
+    // VSTEST_DISABLE_XXHASH128_TESTCASE_ID on the developer's machine cannot change what they
+    // assert. TestCase.Id is computed lazily on first access, so doing this after the constructor is
+    // fine.
+    [TestInitialize]
+    public void ForceDefaultTestIdAlgorithm()
+    {
+        _originalFlag = Environment.GetEnvironmentVariable(TestCase.TestCaseIdAlgorithmFeatureFlag);
+        Environment.SetEnvironmentVariable(TestCase.TestCaseIdAlgorithmFeatureFlag, null);
+        ResetFeatureFlagCache();
+    }
+
+    [TestCleanup]
+    public void RestoreTestIdAlgorithm()
+    {
+        Environment.SetEnvironmentVariable(TestCase.TestCaseIdAlgorithmFeatureFlag, _originalFlag);
+        ResetFeatureFlagCache();
+    }
+
+#pragma warning disable CS0618 // ResetFeatureFlagCacheForTesting is what its name says it is.
+    private static void ResetFeatureFlagCache() => TestCase.ResetFeatureFlagCacheForTesting();
+#pragma warning restore CS0618
+
     [TestMethod]
     public void TestCaseIdIfNotSetExplicitlyShouldReturnGuidBasedOnSourceAndName()
     {
+        Assert.AreEqual("28e7a7ed-8fb9-05b7-5e90-4a8c52f32b5b", _testCase.Id.ToString());
+    }
+
+    /// <summary>
+    /// The managed name properties, when both are set, replace the fully qualified name in the seed
+    /// the id is hashed from.
+    /// </summary>
+    /// <remarks>
+    /// Anything that computes a test case id outside this class - the Microsoft.Testing.Platform
+    /// converter in the runner does - has to seed the hash with the same name, which means calling
+    /// <c>GetFullyQualifiedName</c> rather than reading <see cref="TestCase.FullyQualifiedName"/>.
+    /// Pinned here because that is where the rule lives.
+    /// </remarks>
+    [TestMethod]
+    public void TestCaseIdIsSeededWithTheManagedNamesWhenBothAreSet()
+    {
+        _testCase.SetPropertyValue(TestProperty.Find("TestCase.ManagedType")!, "sampleTestClass");
+        _testCase.SetPropertyValue(TestProperty.Find("TestCase.ManagedMethod")!, "sampleTestCase");
+
+        // Same rendered name as FullyQualifiedName, so the id has to be the plain one.
+        Assert.AreEqual("28e7a7ed-8fb9-05b7-5e90-4a8c52f32b5b", _testCase.Id.ToString());
+
+        // A fresh test case, because SetPropertyValue on these hidden properties stores the value
+        // without resetting an already computed id, unlike assigning FullyQualifiedName or Source.
+        var renamed = new TestCase("sampleTestClass.sampleTestCase", new Uri("executor://sampleTestExecutor"), "sampleTest.dll");
+        renamed.SetPropertyValue(TestProperty.Find("TestCase.ManagedType")!, "sampleTestClass");
+        renamed.SetPropertyValue(TestProperty.Find("TestCase.ManagedMethod")!, "otherTestCase");
+
+        Assert.AreNotEqual("28e7a7ed-8fb9-05b7-5e90-4a8c52f32b5b", renamed.Id.ToString(), "A managed name change must move the id.");
+    }
+
+    /// <summary>
+    /// One managed name on its own is not enough, so it must not disturb the id.
+    /// </summary>
+    [TestMethod]
+    public void TestCaseIdIgnoresAManagedTypeWithoutAManagedMethod()
+    {
+        _testCase.SetPropertyValue(TestProperty.Find("TestCase.ManagedType")!, "someOtherClass");
+
         Assert.AreEqual("28e7a7ed-8fb9-05b7-5e90-4a8c52f32b5b", _testCase.Id.ToString());
     }
 
