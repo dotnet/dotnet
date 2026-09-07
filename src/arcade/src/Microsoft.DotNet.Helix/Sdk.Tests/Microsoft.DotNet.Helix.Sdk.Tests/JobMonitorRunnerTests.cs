@@ -515,6 +515,34 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
         }
 
         [Fact]
+        public async Task FailedWorkItemWithoutTestResults_UploadsSyntheticFailure()
+        {
+            var azdo = new FakeAzureDevOpsService();
+            var helix = new FakeHelixService();
+
+            azdo.AddTimelineResponse(
+                MonitorJob(),
+                PipelineJob("Test Linux", "completed", "succeeded"));
+            helix.AddResponse(
+                jobs: [HelixJob("helix-linux", "finished")],
+                passFailByJob: new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["helix-linux"] = PassFail(failed: ["workitem-1"]),
+                });
+
+            int exitCode = await CreateRunner(azdo, helix).RunAsync(CancellationToken.None);
+
+            exitCode.Should().Be(1);
+            PreparedTestResults prepared = azdo.PublishedPreparedResults[("helix-linux", "workitem-1")];
+            prepared.AllPassed.Should().BeFalse();
+            AggregatedResult result = prepared.Results.Should().ContainSingle().Which;
+            result.Name.Should().Be("workitem-1.WorkItemExecution");
+            result.Result.Should().Be("Failed");
+            result.DurationSeconds.Should().Be(60);
+            result.FailureMessage.Should().Contain("The Helix Work Item failed");
+        }
+
+        [Fact]
         public async Task CompletedHelixJob_QueuesTestResultUploadWithoutBlockingNextPoll()
         {
             var azdo = new FakeAzureDevOpsService();
