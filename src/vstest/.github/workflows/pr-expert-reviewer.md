@@ -35,6 +35,10 @@ permissions:
   copilot-requests: write
 
 tools:
+  # This reviewer reads the PR through the GitHub MCP tools only; it never shells out.
+  # gh-aw strict mode requires the setting to be explicit when min-integrity is 'none'.
+  bash: false
+  cli-proxy: false
   cache-memory: true
   github:
     toolsets: [pull_requests, repos]
@@ -58,9 +62,6 @@ safe-outputs:
     run-failure: "⚠️ [{workflow_name}]({run_url}) {status}. Expert review could not be completed."
 
 timeout-minutes: 15
-
-imports:
-  - shared/repo-build-setup.md
 ---
 
 # Expert Code Reviewer 🧠
