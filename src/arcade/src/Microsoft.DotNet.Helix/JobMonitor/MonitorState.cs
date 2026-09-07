@@ -53,6 +53,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
         // _workItemOutcomes. Prevents the second reconciliation pass from re-processing
         // jobs that were observed in an earlier poll.
         private readonly HashSet<string> _workItemOutcomeJobs = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _ignoredWorkItemOutcomeJobs = new(StringComparer.OrdinalIgnoreCase);
 
         // Previous-attempt jobs whose submitter has a newer timeline attempt. These remain
         // uploadable history but must not contribute to current status or pass/fail.
@@ -254,6 +255,7 @@ namespace Microsoft.DotNet.Helix.JobMonitor
             lock (_sync)
             {
                 _workItemOutcomeJobs.Add(jobName);
+                _ignoredWorkItemOutcomeJobs.Add(jobName);
             }
         }
 
@@ -335,6 +337,11 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                     }
 
                     if (!_associatedJobs.TryGetValue(entry.Key.JobName, out HelixJobInfo job))
+                    {
+                        continue;
+                    }
+
+                    if (_ignoredWorkItemOutcomeJobs.Contains(job.JobName))
                     {
                         continue;
                     }
