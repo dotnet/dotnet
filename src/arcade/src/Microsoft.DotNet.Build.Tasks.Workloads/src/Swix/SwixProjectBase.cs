@@ -4,92 +4,91 @@
 using System;
 using System.IO;
 
-namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix
+namespace Microsoft.DotNet.Build.Tasks.Workloads.Swix;
+
+/// <summary>
+/// A base class to create SWIX projects for Visual Studio setup packages.
+/// </summary>
+public abstract class SwixProjectBase : WorkloadTemplateBase
 {
     /// <summary>
-    /// A base class to create SWIX projects for Visual Studio setup packages.
+    /// The maximum relative path length for a SWIX package. The length accounts for the Visual Studio package cache
+    /// created at install time. 
     /// </summary>
-    public abstract class SwixProjectBase : WorkloadTemplateBase
+    public const int MaxRelativePackagePath = 182;
+
+    /// <summary>
+    /// The ID of the SWIX package in the Visual Studio setup catalog. The ID is used
+    /// to reference the package inside other setup packages such as components and component groups.
+    /// </summary>
+    public string Id
     {
-        /// <summary>
-        /// The maximum relative path length for a SWIX package. The length accounts for the Visual Studio package cache
-        /// created at install time. 
-        /// </summary>
-        public const int MaxRelativePackagePath = 182;
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// The ID of the SWIX package in the Visual Studio setup catalog. The ID is used
-        /// to reference the package inside other setup packages such as components and component groups.
-        /// </summary>
-        public string Id
+    /// <summary>
+    /// Determines whether the package is marked as out-of-support.
+    /// </summary>
+    public bool OutOfSupport
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// The version of the SWIX package.
+    /// </summary>
+    public Version Version
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="SwixProjectBase"/> instance that can be used to generate a SWIX project for a Visual Studio setup package.
+    /// </summary>
+    /// <param name="id">The SWIX package ID.</param>
+    /// <param name="version">The package version.</param>
+    public SwixProjectBase(string id, Version version, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
+        base(baseIntermediateOutputPath)
+    {
+        Id = id;
+        Version = version;
+        OutOfSupport = outOfSupport;
+        SourcePath = Path.Combine(SourcePath, "swix");
+
+        // Values common to all SWIX packages.
+        ReplacementTokens[SwixTokens.__VS_PACKAGE_NAME__] = Id;
+        ReplacementTokens[SwixTokens.__VS_PACKAGE_VERSION__] = $"{Version}";
+        ReplacementTokens[SwixTokens.__MICROSOFT_BUILD_NOTARGETS_PACKAGE_VERSION__] = "3.7.0";
+    }
+
+    internal SwixProjectBase(SwixPackageBase package, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
+        this(package.Name, package.Version, baseIntermediateOutputPath, baseOutputPath, outOfSupport)
+    {
+    }
+
+    /// <summary>
+    /// Compute the relative path of the package within the Visual Studio package cache.
+    /// </summary>
+    /// <returns>The relative path of the package.</returns>
+    protected virtual string GetRelativePackagePath() => $"{Id},version={Version}";
+
+    /// <summary>
+    /// Validates that the length of the relative package path does not execeed the maximum limit allowed by Visual Studio. The length
+    /// accounts for the location of the Visual Studio installer package cache.
+    /// </summary>
+    /// <exception cref="Exception" />
+    internal static void ValidateRelativePackagePath(string relativePackagePath)
+    {
+        _ = relativePackagePath ?? throw new ArgumentNullException(nameof(relativePackagePath));
+
+        // Visual Studio will verify this as part of its manifest validation logic during PR builds, but
+        // any error would require rebuilding workloads and effectively reset .NET builds. 
+        if (relativePackagePath.Length > MaxRelativePackagePath)
         {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Determines whether the package is marked as out-of-support.
-        /// </summary>
-        public bool OutOfSupport
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The version of the SWIX package.
-        /// </summary>
-        public Version Version
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="SwixProjectBase"/> instance that can be used to generate a SWIX project for a Visual Studio setup package.
-        /// </summary>
-        /// <param name="id">The SWIX package ID.</param>
-        /// <param name="version">The package version.</param>
-        public SwixProjectBase(string id, Version version, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
-            base(baseIntermediateOutputPath)
-        {
-            Id = id;
-            Version = version;
-            OutOfSupport = outOfSupport;
-            SourcePath = Path.Combine(SourcePath, "swix");
-
-            // Values common to all SWIX packages.
-            ReplacementTokens[SwixTokens.__VS_PACKAGE_NAME__] = Id;
-            ReplacementTokens[SwixTokens.__VS_PACKAGE_VERSION__] = $"{Version}";
-            ReplacementTokens[SwixTokens.__MICROSOFT_BUILD_NOTARGETS_PACKAGE_VERSION__] = "3.7.0";
-        }
-
-        internal SwixProjectBase(SwixPackageBase package, string baseIntermediateOutputPath, string baseOutputPath, bool outOfSupport = false) :
-            this(package.Name, package.Version, baseIntermediateOutputPath, baseOutputPath, outOfSupport)
-        {
-        }
-
-        /// <summary>
-        /// Compute the relative path of the package within the Visual Studio package cache.
-        /// </summary>
-        /// <returns>The relative path of the package.</returns>
-        protected virtual string GetRelativePackagePath() => $"{Id},version={Version}";
-
-        /// <summary>
-        /// Validates that the length of the relative package path does not execeed the maximum limit allowed by Visual Studio. The length
-        /// accounts for the location of the Visual Studio installer package cache.
-        /// </summary>
-        /// <exception cref="Exception" />
-        internal static void ValidateRelativePackagePath(string relativePackagePath)
-        {
-            _ = relativePackagePath ?? throw new ArgumentNullException(nameof(relativePackagePath));
-
-            // Visual Studio will verify this as part of its manifest validation logic during PR builds, but
-            // any error would require rebuilding workloads and effectively reset .NET builds. 
-            if (relativePackagePath.Length > MaxRelativePackagePath)
-            {
-                throw new Exception(string.Format(Strings.RelativePackagePathTooLong, MaxRelativePackagePath, relativePackagePath));
-            }
+            throw new Exception(string.Format(Strings.RelativePackagePathTooLong, MaxRelativePackagePath, relativePackagePath));
         }
     }
 }

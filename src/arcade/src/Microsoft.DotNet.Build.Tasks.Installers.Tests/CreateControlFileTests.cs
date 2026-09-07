@@ -9,64 +9,63 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Xunit;
 
-namespace Microsoft.DotNet.Build.Tasks.Installers.Tests
+namespace Microsoft.DotNet.Build.Tasks.Installers.Tests;
+
+/// <summary>
+/// Tests Debian control file generation.
+/// </summary>
+public class CreateControlFileTests : IDisposable
 {
-    /// <summary>
-    /// Tests Debian control file generation.
-    /// </summary>
-    public class CreateControlFileTests : IDisposable
+    private readonly string _tempDir;
+
+    public CreateControlFileTests()
     {
-        private readonly string _tempDir;
+        _tempDir = Path.Combine(Path.GetTempPath(), "debcontroltests-" + Guid.NewGuid().ToString("n"));
+        Directory.CreateDirectory(_tempDir);
+    }
 
-        public CreateControlFileTests()
+    public void Dispose()
+    {
+        try
         {
-            _tempDir = Path.Combine(Path.GetTempPath(), "debcontroltests-" + Guid.NewGuid().ToString("n"));
-            Directory.CreateDirectory(_tempDir);
+            Directory.Delete(_tempDir, recursive: true);
         }
-
-        public void Dispose()
+        catch
         {
-            try
-            {
-                Directory.Delete(_tempDir, recursive: true);
-            }
-            catch
-            {
-                // Best-effort cleanup.
-            }
+            // Best-effort cleanup.
         }
+    }
 
-        private CreateControlFile CreateTask(string outputPath) => new()
-        {
-            BuildEngine = new MockBuildEngine(),
-            PackageName = "dotnet-host",
-            PackageVersion = "11.0.0",
-            PackageArchitecture = "amd64",
-            Maintainer = "Test Maintainer",
-            Description = "Test description",
-            InstalledSize = "1024",
-            Depends = Array.Empty<ITaskItem>(),
-            Section = "devel",
-            ControlFileOutputPath = outputPath,
-        };
+    private CreateControlFile CreateTask(string outputPath) => new()
+    {
+        BuildEngine = new MockBuildEngine(),
+        PackageName = "dotnet-host",
+        PackageVersion = "11.0.0",
+        PackageArchitecture = "amd64",
+        Maintainer = "Test Maintainer",
+        Description = "Test description",
+        InstalledSize = "1024",
+        Depends = Array.Empty<ITaskItem>(),
+        Section = "devel",
+        ControlFileOutputPath = outputPath,
+    };
 
-        /// <summary>
-        /// Verifies that additional Debian control properties preserve bounded version relationships.
-        /// </summary>
-        [Fact]
-        public void ReplacesAdditionalProperty_IsEmittedVerbatim()
-        {
-            string outputPath = Path.Combine(_tempDir, "control");
-            CreateControlFile task = CreateTask(outputPath);
+    /// <summary>
+    /// Verifies that additional Debian control properties preserve bounded version relationships.
+    /// </summary>
+    [Fact]
+    public void ReplacesAdditionalProperty_IsEmittedVerbatim()
+    {
+        string outputPath = Path.Combine(_tempDir, "control");
+        CreateControlFile task = CreateTask(outputPath);
 
-            ITaskItem replaces = new TaskItem("Replaces");
-            replaces.SetMetadata("Value", "dotnet-sdk-10.0 (<< 10.1.0)");
-            task.AdditionalProperties = [replaces];
+        ITaskItem replaces = new TaskItem("Replaces");
+        replaces.SetMetadata("Value", "dotnet-sdk-10.0 (<< 10.1.0)");
+        task.AdditionalProperties = [replaces];
 
-            task.Execute().Should().BeTrue();
+        task.Execute().Should().BeTrue();
 
-            string content = File.ReadAllText(outputPath);
-            content.Should().Contain("Replaces: dotnet-sdk-10.0 (<< 10.1.0)");
-        }
+        string content = File.ReadAllText(outputPath);
+        content.Should().Contain("Replaces: dotnet-sdk-10.0 (<< 10.1.0)");
     }
 }

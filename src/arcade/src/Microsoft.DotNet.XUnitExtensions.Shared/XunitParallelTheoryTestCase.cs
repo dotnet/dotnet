@@ -11,23 +11,22 @@ using System.Threading.Tasks;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Microsoft.DotNet.XUnitExtensions
-{
-    internal sealed class XunitParallelTheoryTestCase : XunitTheoryTestCase
-    {
-        [Obsolete("Requried for deserialization")]
-        public XunitParallelTheoryTestCase()
-            : base()
-        {
-        }
-    
-        public XunitParallelTheoryTestCase(IMessageSink diagnosticMessageSink, TestMethodDisplay defaultMethodDisplay, TestMethodDisplayOptions defaultMethodDisplayOptions, ITestMethod testMethod)
-            : base(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod)
-        {
-        }
+namespace Microsoft.DotNet.XUnitExtensions;
 
-        public override Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink, IMessageBus messageBus, object[] constructorArguments, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
-            => new XunitParallelTheoryTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource).RunAsync();
+internal sealed class XunitParallelTheoryTestCase : XunitTheoryTestCase
+{
+    [Obsolete("Requried for deserialization")]
+    public XunitParallelTheoryTestCase()
+        : base()
+    {
     }
+
+    public XunitParallelTheoryTestCase(IMessageSink diagnosticMessageSink, TestMethodDisplay defaultMethodDisplay, TestMethodDisplayOptions defaultMethodDisplayOptions, ITestMethod testMethod)
+        : base(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod)
+    {
+    }
+
+    public override Task<RunSummary> RunAsync(IMessageSink diagnosticMessageSink, IMessageBus messageBus, object[] constructorArguments, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
+        => new XunitParallelTheoryTestCaseRunner(this, DisplayName, SkipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource).RunAsync();
 }
 #endif

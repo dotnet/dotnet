@@ -13,50 +13,49 @@ using Microsoft.Cci.Writers.Syntax;
 using Microsoft.Cci.Filters;
 using Microsoft.Cci.Writers.CSharp;
 
-namespace Microsoft.DotNet.GenAPI
+namespace Microsoft.DotNet.GenAPI;
+
+internal class TypeListWriter : SimpleTypeMemberTraverser, ICciWriter
 {
-    internal class TypeListWriter : SimpleTypeMemberTraverser, ICciWriter
+    private readonly ISyntaxWriter _syntaxWriter;
+    private readonly ICciDeclarationWriter _declarationWriter;
+
+    public TypeListWriter(ISyntaxWriter writer, ICciFilter filter)
+        : base(filter)
     {
-        private readonly ISyntaxWriter _syntaxWriter;
-        private readonly ICciDeclarationWriter _declarationWriter;
+        _syntaxWriter = writer;
+        _declarationWriter = new CSDeclarationWriter(_syntaxWriter, filter, false);
+    }
 
-        public TypeListWriter(ISyntaxWriter writer, ICciFilter filter)
-            : base(filter)
+    public void WriteAssemblies(IEnumerable<IAssembly> assemblies)
+    {
+        foreach (IAssembly assembly in assemblies)
+            Visit(assembly);
+    }
+
+    public override void Visit(IAssembly assembly)
+    {
+        _syntaxWriter.Write("assembly " + assembly.Name.Value);
+
+        using (_syntaxWriter.StartBraceBlock())
         {
-            _syntaxWriter = writer;
-            _declarationWriter = new CSDeclarationWriter(_syntaxWriter, filter, false);
+            base.Visit(assembly);
         }
+    }
 
-        public void WriteAssemblies(IEnumerable<IAssembly> assemblies)
+    public override void Visit(INamespaceDefinition ns)
+    {
+        _declarationWriter.WriteDeclaration(ns);
+
+        using (_syntaxWriter.StartBraceBlock())
         {
-            foreach (IAssembly assembly in assemblies)
-                Visit(assembly);
+            base.Visit(ns);
         }
+    }
 
-        public override void Visit(IAssembly assembly)
-        {
-            _syntaxWriter.Write("assembly " + assembly.Name.Value);
-
-            using (_syntaxWriter.StartBraceBlock())
-            {
-                base.Visit(assembly);
-            }
-        }
-
-        public override void Visit(INamespaceDefinition ns)
-        {
-            _declarationWriter.WriteDeclaration(ns);
-
-            using (_syntaxWriter.StartBraceBlock())
-            {
-                base.Visit(ns);
-            }
-        }
-
-        public override void Visit(ITypeDefinition type)
-        {
-            _declarationWriter.WriteDeclaration(type);
-            _syntaxWriter.WriteLine();
-        }
+    public override void Visit(ITypeDefinition type)
+    {
+        _declarationWriter.WriteDeclaration(type);
+        _syntaxWriter.WriteLine();
     }
 }

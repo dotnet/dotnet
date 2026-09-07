@@ -22,6 +22,10 @@ tab_width = 2
 indent_size = 4
 tab_width = 4
 
+# IDE0161: Namespace declaration must be file-scoped
+csharp_style_namespace_declarations = file_scoped
+dotnet_diagnostic.IDE0161.severity = error
+
 # WiX files
 [*.{wixproj,wxs,wxi,wxl,thm}]
 indent_size = 2

@@ -3,14 +3,13 @@
 
 using Newtonsoft.Json;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio
-{
-    internal sealed class OptProfInstrumentationArgument
-    {
-        [JsonProperty(PropertyName = "relativeInstallationFolder", Order = 3)]
-        public string RelativeInstallationFolder { get; set; }
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
 
-        [JsonProperty(PropertyName = "instrumentationExecutable", Order = 3)]
-        public string InstrumentationExecutable { get; set; }
-    }
+internal sealed class OptProfInstrumentationArgument
+{
+    [JsonProperty(PropertyName = "relativeInstallationFolder", Order = 3)]
+    public string RelativeInstallationFolder { get; set; }
+
+    [JsonProperty(PropertyName = "instrumentationExecutable", Order = 3)]
+    public string InstrumentationExecutable { get; set; }
 }

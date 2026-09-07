@@ -1,14 +1,13 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace Internal.Microsoft.Extensions.DependencyModel
+namespace Internal.Microsoft.Extensions.DependencyModel;
+
+internal class FileSystemWrapper : IFileSystem
 {
-    internal class FileSystemWrapper : IFileSystem
-    {
-        public static IFileSystem Default { get; } = new FileSystemWrapper();
+    public static IFileSystem Default { get; } = new FileSystemWrapper();
 
-        public IFile File { get; } = new FileWrapper();
+    public IFile File { get; } = new FileWrapper();
 
-        public IDirectory Directory { get; } = new DirectoryWrapper();
-    }
+    public IDirectory Directory { get; } = new DirectoryWrapper();
 }

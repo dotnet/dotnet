@@ -10,39 +10,38 @@ using Microsoft.Cci.Extensions;
 using System.IO;
 using Microsoft.Cci.Filters;
 
-namespace Microsoft.Cci.Writers
+namespace Microsoft.Cci.Writers;
+
+public class TypeForwardWriter : SimpleTypeMemberTraverser, ICciWriter
 {
-    public class TypeForwardWriter : SimpleTypeMemberTraverser, ICciWriter
+    private TextWriter _writer;
+    public TypeForwardWriter(TextWriter writer, ICciFilter filter)
+        : base(filter)
     {
-        private TextWriter _writer;
-        public TypeForwardWriter(TextWriter writer, ICciFilter filter)
-            : base(filter)
-        {
-            _writer = writer;
-        }
+        _writer = writer;
+    }
 
-        public void WriteAssemblies(IEnumerable<IAssembly> assemblies)
-        {
-            foreach (var assembly in assemblies)
-                Visit(assembly);
-        }
+    public void WriteAssemblies(IEnumerable<IAssembly> assemblies)
+    {
+        foreach (var assembly in assemblies)
+            Visit(assembly);
+    }
 
-        public override void Visit(ITypeDefinition type)
+    public override void Visit(ITypeDefinition type)
+    {
+        if (IsForwardable(type))
         {
-            if (IsForwardable(type))
-            {
-                _writer.WriteLine("[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof({0}))]",
-                    TypeHelper.GetTypeName(type, NameFormattingOptions.TypeParameters | NameFormattingOptions.EmptyTypeParameterList | NameFormattingOptions.UseTypeKeywords));
-            }
-            base.Visit(type);
+            _writer.WriteLine("[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof({0}))]",
+                TypeHelper.GetTypeName(type, NameFormattingOptions.TypeParameters | NameFormattingOptions.EmptyTypeParameterList | NameFormattingOptions.UseTypeKeywords));
         }
+        base.Visit(type);
+    }
 
-        public bool IsForwardable(ITypeDefinition type)
-        {
-            INestedTypeDefinition nestedType = type as INestedTypeDefinition;
-            if (nestedType != null)
-                return false;
-            return true;
-        }
+    public bool IsForwardable(ITypeDefinition type)
+    {
+        INestedTypeDefinition nestedType = type as INestedTypeDefinition;
+        if (nestedType != null)
+            return false;
+        return true;
     }
 }

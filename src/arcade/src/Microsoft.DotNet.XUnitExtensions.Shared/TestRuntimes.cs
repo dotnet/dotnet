@@ -3,13 +3,12 @@
 
 using System;
 
-namespace Xunit
+namespace Xunit;
+
+[Flags]
+public enum TestRuntimes
 {
-    [Flags]
-    public enum TestRuntimes
-    {
-        CoreCLR = 1,
-        Mono = 2,
-        Any = ~0
-    }
+    CoreCLR = 1,
+    Mono = 2,
+    Any = ~0
 }

@@ -3,14 +3,13 @@
 
 using System;
 
-namespace Xunit
+namespace Xunit;
+
+[Flags]
+public enum RuntimeConfiguration
 {
-    [Flags]
-    public enum RuntimeConfiguration
-    {
-        Any = ~0,
-        Checked = 1,
-        Debug = 1 << 1,
-        Release = 1 << 2
-    }
+    Any = ~0,
+    Checked = 1,
+    Debug = 1 << 1,
+    Release = 1 << 2
 }

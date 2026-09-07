@@ -3,12 +3,11 @@
 
 using System;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed
-{
-    public class PushOptions
-    {
-        public bool AllowOverwrite { get; set; }
+namespace Microsoft.DotNet.Build.Tasks.Feed;
 
-        public bool PassIfExistingItemIdentical { get; set; }
-    }
+public class PushOptions
+{
+    public bool AllowOverwrite { get; set; }
+
+    public bool PassIfExistingItemIdentical { get; set; }
 }

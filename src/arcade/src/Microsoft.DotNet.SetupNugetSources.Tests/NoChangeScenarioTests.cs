@@ -8,61 +8,61 @@ using AwesomeAssertions;
 using Microsoft.DotNet.XUnitExtensions;
 using Xunit;
 
-namespace Microsoft.DotNet.SetupNugetSources.Tests
+namespace Microsoft.DotNet.SetupNugetSources.Tests;
+
+public class NoChangeScenarioTests : IClassFixture<SetupNugetSourcesFixture>, IDisposable
 {
-    public class NoChangeScenarioTests : IClassFixture<SetupNugetSourcesFixture>, IDisposable
+    private readonly ScriptRunner _scriptRunner;
+    private readonly string _testOutputDirectory;
+
+    public NoChangeScenarioTests(SetupNugetSourcesFixture fixture)
     {
-        private readonly ScriptRunner _scriptRunner;
-        private readonly string _testOutputDirectory;
+        _testOutputDirectory = Path.Combine(Path.GetTempPath(), "SetupNugetSourcesTests", Guid.NewGuid().ToString());
+        Directory.CreateDirectory(_testOutputDirectory);
+        _scriptRunner = fixture.ScriptRunner;
+    }
 
-        public NoChangeScenarioTests(SetupNugetSourcesFixture fixture)
+    public void Dispose()
+    {
+        try
         {
-            _testOutputDirectory = Path.Combine(Path.GetTempPath(), "SetupNugetSourcesTests", Guid.NewGuid().ToString());
-            Directory.CreateDirectory(_testOutputDirectory);
-            _scriptRunner = fixture.ScriptRunner;
-        }
-
-        public void Dispose()
-        {
-            try
+            if (Directory.Exists(_testOutputDirectory))
             {
-                if (Directory.Exists(_testOutputDirectory))
-                {
-                    Directory.Delete(_testOutputDirectory, true);
-                }
+                Directory.Delete(_testOutputDirectory, true);
             }
-            catch { }
         }
+        catch { }
+    }
 
 
 
-        [Fact]
-        public async Task BasicConfig_NoChanges()
-        {
-            // Arrange
-            var originalConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+    [Fact]
+    public async Task BasicConfig_NoChanges()
+    {
+        // Arrange
+        var originalConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <configuration>
   <packageSources>
     <add key=""dotnet-public"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"" />
   </packageSources>
 </configuration>";
-            var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
-            await Task.Run(() => File.WriteAllText(configPath, originalConfig));
+        var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
+        await Task.Run(() => File.WriteAllText(configPath, originalConfig));
 
-            // Act
-            var result = await _scriptRunner.RunScript(configPath);
+        // Act
+        var result = await _scriptRunner.RunScript(configPath);
 
-            // Assert
-            result.exitCode.Should().Be(0, "script should succeed, but got error: {result.error}");
-            var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
-            modifiedConfig.ShouldBeSemanticallySame(originalConfig, "basic config with no special feeds should not be modified");
-        }
+        // Assert
+        result.exitCode.Should().Be(0, "script should succeed, but got error: {result.error}");
+        var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
+        modifiedConfig.ShouldBeSemanticallySame(originalConfig, "basic config with no special feeds should not be modified");
+    }
 
-        [Fact]
-        public async Task ConfigWithNonDotNetFeeds_NoChanges()
-        {
-            // Arrange
-            var originalConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+    [Fact]
+    public async Task ConfigWithNonDotNetFeeds_NoChanges()
+    {
+        // Arrange
+        var originalConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <configuration>
   <packageSources>
     <add key=""dotnet-public"" value=""https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public/nuget/v3/index.json"" />
@@ -70,16 +70,15 @@ namespace Microsoft.DotNet.SetupNugetSources.Tests
     <add key=""company-internal"" value=""https://company.example.com/nuget"" />
   </packageSources>
 </configuration>";
-            var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
-            await Task.Run(() => File.WriteAllText(configPath, originalConfig));
-            // Act
-            var result = await _scriptRunner.RunScript(configPath);
+        var configPath = Path.Combine(_testOutputDirectory, "nuget.config");
+        await Task.Run(() => File.WriteAllText(configPath, originalConfig));
+        // Act
+        var result = await _scriptRunner.RunScript(configPath);
 
-            // Assert
-            result.exitCode.Should().Be(0, "Script should succeed, but got error: {result.error}");
-            var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
-            modifiedConfig.ShouldBeSemanticallySame(originalConfig, "config with non-dotnet feeds should not be modified");
-        }
+        // Assert
+        result.exitCode.Should().Be(0, "Script should succeed, but got error: {result.error}");
+        var modifiedConfig = await Task.Run(() => File.ReadAllText(configPath));
+        modifiedConfig.ShouldBeSemanticallySame(originalConfig, "config with non-dotnet feeds should not be modified");
     }
 }
 

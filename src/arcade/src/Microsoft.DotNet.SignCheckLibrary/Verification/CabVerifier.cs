@@ -3,19 +3,18 @@
 
 using Microsoft.SignCheck.Logging;
 
-namespace Microsoft.SignCheck.Verification
+namespace Microsoft.SignCheck.Verification;
+
+public class CabVerifier : AuthentiCodeVerifier
 {
-    public class CabVerifier : AuthentiCodeVerifier
+    public CabVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".cab", new CabSecurityInfoProvider())
     {
-        public CabVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".cab", new CabSecurityInfoProvider())
-        {
 
-        }
+    }
 
-        public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
-        {
-            // Defer to the base class to verify the AuthentiCode signature
-            return base.VerifySignature(path, parent, virtualPath);
-        }
+    public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
+    {
+        // Defer to the base class to verify the AuthentiCode signature
+        return base.VerifySignature(path, parent, virtualPath);
     }
 }

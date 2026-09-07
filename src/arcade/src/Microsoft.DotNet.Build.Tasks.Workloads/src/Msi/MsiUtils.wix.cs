@@ -7,270 +7,269 @@ using System.Linq;
 using WixToolset.Dtf.WindowsInstaller;
 using WixToolset.Dtf.WindowsInstaller.Package;
 
-namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
+namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi;
+
+/// <summary>
+/// Utility methods for Windows Installer (MSI) packages.
+/// </summary>
+public class MsiUtils
 {
     /// <summary>
-    /// Utility methods for Windows Installer (MSI) packages.
+    /// Query string to retrieve all the rows from the MSI Component table.
     /// </summary>
-    public class MsiUtils
+    private const string _getComponentsQuery = "SELECT `Component`, `ComponentId`, `Directory_`, `Attributes`, `Condition`, `KeyPath` FROM `Component`";
+
+    /// <summary>
+    /// Query string to retrieve all the rows from the MSI CustomAction table.
+    /// </summary>
+    private const string _getCustomActionsQuery = "SELECT `Action`, `Type`, `Source`, `Target` FROM `CustomAction`";
+
+    /// <summary>
+    /// Query string to retrieve all the rows from the MSI File table.
+    /// </summary>
+    private const string _getFilesQuery = "SELECT `File`, `Component_`, `FileName`, `FileSize`, `Version`, `Language`, `Attributes`, `Sequence` FROM `File`";
+
+    /// <summary>
+    /// Query string to retrieve all the rows from the MSI Upgrade table.
+    /// </summary>
+    private const string _getUpgradeQuery = "SELECT `UpgradeCode`, `VersionMin`, `VersionMax`, `Language`, `Attributes`, `ActionProperty` FROM `Upgrade`";
+
+    /// <summary>
+    /// Query string to retrieve the dependency provider key from the WixDependencyProvider table.
+    /// </summary>
+    private const string _getWixDependencyProviderQuery = "SELECT `ProviderKey` FROM `Wix4DependencyProvider`";
+
+    /// <summary>
+    /// Query string to retrieve all the rows from the MSI Directory table.
+    /// </summary>
+    private const string _getDirectoriesQuery = "SELECT `Directory`, `Directory_Parent`, `DefaultDir` FROM `Directory`";
+
+    /// <summary>
+    /// Query string to retrieve all rows from the MSI Registry table.
+    /// </summary>
+    private const string _getRegistryQuery = "SELECT `Root`, `Key`, `Name`, `Value` FROM `Registry`";
+
+    /// <summary>
+    /// Gets an enumeration of all the components inside an MSI.
+    /// </summary>
+    /// <param name="packagePath">The path of the MSI package to query.</param>
+    /// <returns>And enumeration of all the components.</returns>
+    public static IEnumerable<ComponentRow> GetAllComponents(string packagePath)
     {
-        /// <summary>
-        /// Query string to retrieve all the rows from the MSI Component table.
-        /// </summary>
-        private const string _getComponentsQuery = "SELECT `Component`, `ComponentId`, `Directory_`, `Attributes`, `Condition`, `KeyPath` FROM `Component`";
-
-        /// <summary>
-        /// Query string to retrieve all the rows from the MSI CustomAction table.
-        /// </summary>
-        private const string _getCustomActionsQuery = "SELECT `Action`, `Type`, `Source`, `Target` FROM `CustomAction`";
-
-        /// <summary>
-        /// Query string to retrieve all the rows from the MSI File table.
-        /// </summary>
-        private const string _getFilesQuery = "SELECT `File`, `Component_`, `FileName`, `FileSize`, `Version`, `Language`, `Attributes`, `Sequence` FROM `File`";
-
-        /// <summary>
-        /// Query string to retrieve all the rows from the MSI Upgrade table.
-        /// </summary>
-        private const string _getUpgradeQuery = "SELECT `UpgradeCode`, `VersionMin`, `VersionMax`, `Language`, `Attributes`, `ActionProperty` FROM `Upgrade`";
-
-        /// <summary>
-        /// Query string to retrieve the dependency provider key from the WixDependencyProvider table.
-        /// </summary>
-        private const string _getWixDependencyProviderQuery = "SELECT `ProviderKey` FROM `Wix4DependencyProvider`";
-
-        /// <summary>
-        /// Query string to retrieve all the rows from the MSI Directory table.
-        /// </summary>
-        private const string _getDirectoriesQuery = "SELECT `Directory`, `Directory_Parent`, `DefaultDir` FROM `Directory`";
-
-        /// <summary>
-        /// Query string to retrieve all rows from the MSI Registry table.
-        /// </summary>
-        private const string _getRegistryQuery = "SELECT `Root`, `Key`, `Name`, `Value` FROM `Registry`";
-
-        /// <summary>
-        /// Gets an enumeration of all the components inside an MSI.
-        /// </summary>
-        /// <param name="packagePath">The path of the MSI package to query.</param>
-        /// <returns>And enumeration of all the components.</returns>
-        public static IEnumerable<ComponentRow> GetAllComponents(string packagePath)
+        using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using View componentView = db.OpenView(_getComponentsQuery);
+        List<ComponentRow> components = new();
+        componentView.Execute();
+        foreach (Record componentRecord in componentView)
         {
-            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using View componentView = db.OpenView(_getComponentsQuery);
-            List<ComponentRow> components = new();
-            componentView.Execute();
-            foreach (Record componentRecord in componentView)
-            {
-                components.Add(ComponentRow.Create(componentRecord));
-            }
-            return components;
+            components.Add(ComponentRow.Create(componentRecord));
+        }
+        return components;
+    }
+
+    /// <summary>
+    /// Gets an enumeration of all the files inside an MSI.
+    /// </summary>
+    /// <param name="packagePath">The path of the MSI package to query.</param>
+    /// <returns>An enumeration of all the files.</returns>
+    public static IEnumerable<FileRow> GetAllFiles(string packagePath)
+    {
+        using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using View fileView = db.OpenView(_getFilesQuery);
+        List<FileRow> files = new();
+        fileView.Execute();
+
+        foreach (Record fileRecord in fileView)
+        {
+            files.Add(FileRow.Create(fileRecord));
         }
 
-        /// <summary>
-        /// Gets an enumeration of all the files inside an MSI.
-        /// </summary>
-        /// <param name="packagePath">The path of the MSI package to query.</param>
-        /// <returns>An enumeration of all the files.</returns>
-        public static IEnumerable<FileRow> GetAllFiles(string packagePath)
+        return files;
+    }
+
+    /// <summary>
+    /// Gets an enumeration of all the directories inside an MSI.
+    /// </summary>
+    /// <param name="packagePath">The path of the MSI package to query.</param>
+    /// <returns>An enumeration of all the directories.</returns>
+    public static IEnumerable<DirectoryRow> GetAllDirectories(string packagePath)
+    {
+        using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using View directoryView = db.OpenView(_getDirectoriesQuery);
+        List<DirectoryRow> directories = new();
+        directoryView.Execute();
+
+        foreach (Record directoryRecord in directoryView)
         {
-            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using View fileView = db.OpenView(_getFilesQuery);
-            List<FileRow> files = new();
-            fileView.Execute();
-
-            foreach (Record fileRecord in fileView)
-            {
-                files.Add(FileRow.Create(fileRecord));
-            }
-
-            return files;
+            directories.Add(DirectoryRow.Create(directoryRecord));
         }
 
-        /// <summary>
-        /// Gets an enumeration of all the directories inside an MSI.
-        /// </summary>
-        /// <param name="packagePath">The path of the MSI package to query.</param>
-        /// <returns>An enumeration of all the directories.</returns>
-        public static IEnumerable<DirectoryRow> GetAllDirectories(string packagePath)
+        return directories;
+    }
+
+    /// <summary>
+    /// Gets an enumeration of all the registry keys inside an MSI.
+    /// </summary>
+    /// <param name="packagePath">The path of the MSI package to query.</param>
+    /// <returns>An enumeration of all the registry keys.</returns>
+    public static IEnumerable<RegistryRow> GetAllRegistryKeys(string packagePath)
+    {
+        using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using View view = db.OpenView(_getRegistryQuery);
+        List<RegistryRow> registryKeys = new();
+        view.Execute();
+
+        foreach (Record directoryRecord in view)
         {
-            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using View directoryView = db.OpenView(_getDirectoriesQuery);
-            List<DirectoryRow> directories = new();
-            directoryView.Execute();
-
-            foreach (Record directoryRecord in directoryView)
-            {
-                directories.Add(DirectoryRow.Create(directoryRecord));
-            }
-
-            return directories;
+            registryKeys.Add(RegistryRow.Create(directoryRecord));
         }
 
-        /// <summary>
-        /// Gets an enumeration of all the registry keys inside an MSI.
-        /// </summary>
-        /// <param name="packagePath">The path of the MSI package to query.</param>
-        /// <returns>An enumeration of all the registry keys.</returns>
-        public static IEnumerable<RegistryRow> GetAllRegistryKeys(string packagePath)
-        {
-            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using View view = db.OpenView(_getRegistryQuery);
-            List<RegistryRow> registryKeys = new();
-            view.Execute();
+        return registryKeys;
+    }
 
-            foreach (Record directoryRecord in view)
+    /// <summary>
+    /// Gets an enumeration describing related products defined in the Upgrade table of an MSI
+    /// </summary>
+    /// <param name="packagePath">The path of the MSI package to query.</param>
+    /// <returns>An enumeration of upgrade related products.</returns>
+    public static IEnumerable<RelatedProduct> GetRelatedProducts(string packagePath)
+    {
+        using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+
+        if (db.Tables.Contains("Upgrade"))
+        {
+            using View upgradeView = db.OpenView(_getUpgradeQuery);
+            List<RelatedProduct> relatedProducts = new();
+            upgradeView.Execute();
+
+            foreach (Record relatedProduct in upgradeView)
             {
-                registryKeys.Add(RegistryRow.Create(directoryRecord));
+                relatedProducts.Add(RelatedProduct.Create(relatedProduct));
             }
 
-            return registryKeys;
+            return relatedProducts;
         }
 
-        /// <summary>
-        /// Gets an enumeration describing related products defined in the Upgrade table of an MSI
-        /// </summary>
-        /// <param name="packagePath">The path of the MSI package to query.</param>
-        /// <returns>An enumeration of upgrade related products.</returns>
-        public static IEnumerable<RelatedProduct> GetRelatedProducts(string packagePath)
+        return Enumerable.Empty<RelatedProduct>();
+    }
+
+    /// <summary>
+    /// Gets all custom actions defined in the CustomAction table of an MSI.
+    /// </summary>
+    /// <param name="packagePath">The path of the MSI package to query.</param>
+    /// <returns>An enumeration of custom action rows.</returns>
+    public static IEnumerable<CustomActionRow> GetCustomActions(string packagePath)
+    {
+        using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+        if (db.Tables.Contains("CustomAction"))
         {
-            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
-
-            if (db.Tables.Contains("Upgrade"))
+            using View customActionView = db.OpenView(_getCustomActionsQuery);
+            List<CustomActionRow> customActions = new();
+            customActionView.Execute();
+            foreach (Record customAction in customActionView)
             {
-                using View upgradeView = db.OpenView(_getUpgradeQuery);
-                List<RelatedProduct> relatedProducts = new();
-                upgradeView.Execute();
-
-                foreach (Record relatedProduct in upgradeView)
-                {
-                    relatedProducts.Add(RelatedProduct.Create(relatedProduct));
-                }
-
-                return relatedProducts;
+                customActions.Add(CustomActionRow.Create(customAction));
             }
-
-            return Enumerable.Empty<RelatedProduct>();
+            return customActions;
         }
+        return Enumerable.Empty<CustomActionRow>();
+    }
 
-        /// <summary>
-        /// Gets all custom actions defined in the CustomAction table of an MSI.
-        /// </summary>
-        /// <param name="packagePath">The path of the MSI package to query.</param>
-        /// <returns>An enumeration of custom action rows.</returns>
-        public static IEnumerable<CustomActionRow> GetCustomActions(string packagePath)
+    /// <summary>
+    /// Gets the dependency provider key from the MSI package.
+    /// </summary>
+    /// <param name="packagePath">The path of the MSI package to query.</param>
+    /// <returns>The name of the provider key or <see langword="null" /> if the WixDependencyProvider table does not exist.</returns>
+    public static string GetProviderKeyName(string packagePath)
+    {
+        using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+
+        if (db.Tables.Contains("Wix4DependencyProvider"))
         {
-            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
-            if (db.Tables.Contains("CustomAction"))
-            {
-                using View customActionView = db.OpenView(_getCustomActionsQuery);
-                List<CustomActionRow> customActions = new();
-                customActionView.Execute();
-                foreach (Record customAction in customActionView)
-                {
-                    customActions.Add(CustomActionRow.Create(customAction));
-                }
-                return customActions;
-            }
-            return Enumerable.Empty<CustomActionRow>();
+            using View depProviderView = db.OpenView(_getWixDependencyProviderQuery);
+            depProviderView.Execute();
+
+            Record providerKey = depProviderView.First();
+
+            return providerKey != null ? (string)providerKey["ProviderKey"] : null;
         }
 
-        /// <summary>
-        /// Gets the dependency provider key from the MSI package.
-        /// </summary>
-        /// <param name="packagePath">The path of the MSI package to query.</param>
-        /// <returns>The name of the provider key or <see langword="null" /> if the WixDependencyProvider table does not exist.</returns>
-        public static string GetProviderKeyName(string packagePath)
+        return null;
+    }
+
+    /// <summary>
+    /// Extracts the specified property from the MSI Property table.
+    /// </summary>
+    /// <param name="packagePath">The path to the MSI package.</param>
+    /// <param name="property">The name of the property to extract.</param>
+    /// <returns>The value of the property.</returns>
+    public static string GetProperty(string packagePath, string property)
+    {
+        using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+        return ip.Property[property];
+    }
+
+    /// <summary>
+    /// Gets the ProductVersion property of the specified MSI.
+    /// </summary>
+    /// <param name="packagePath">The path to the MSI package.</param>
+    /// <returns>The ProductVersion property.</returns>
+    public static Version GetVersion(string packagePath) =>
+        new Version(GetProperty(packagePath, MsiProperty.ProductVersion));
+
+    /// <summary>
+    /// Calculates the number of bytes a Windows Installer Package would consume on disk. The function assumes that all files will be installed.
+    /// </summary>
+    /// <param name="packagePath">The path to the MSI package.</param>
+    /// <param name="factor">Multiplication factor to use to account for additional space requirements such as registry entries for components 
+    /// in the installer database.</param>
+    /// <returns>The number of bytes required to install the MSI.</returns>
+    public static long GetInstallSize(string packagePath, double factor = 1.4) =>
+        GetAllFiles(packagePath).Sum(f => Convert.ToInt64(f.FileSize * factor));
+
+    /// <summary>
+    /// Validates that a <see cref="Version"/> represents a valid MSI ProductVersion.
+    /// </summary>
+    /// <param name="version">The version to validate.</param>
+    /// <exception cref="ArgumentOutOfRangeException" />
+    public static void ValidateProductVersion(Version version)
+    {
+        // See to https://learn.microsoft.com/en-us/windows/win32/msi/productversion for additional information.
+
+        if (version.Major > 255)
         {
-            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
-
-            if (db.Tables.Contains("Wix4DependencyProvider"))
-            {
-                using View depProviderView = db.OpenView(_getWixDependencyProviderQuery);
-                depProviderView.Execute();
-
-                Record providerKey = depProviderView.First();
-
-                return providerKey != null ? (string)providerKey["ProviderKey"] : null;
-            }
-
-            return null;
+            throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Major), 255));
         }
 
-        /// <summary>
-        /// Extracts the specified property from the MSI Property table.
-        /// </summary>
-        /// <param name="packagePath">The path to the MSI package.</param>
-        /// <param name="property">The name of the property to extract.</param>
-        /// <returns>The value of the property.</returns>
-        public static string GetProperty(string packagePath, string property)
+        if (version.Minor > 255)
         {
-            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
-            return ip.Property[property];
+            throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Minor), 255));
         }
 
-        /// <summary>
-        /// Gets the ProductVersion property of the specified MSI.
-        /// </summary>
-        /// <param name="packagePath">The path to the MSI package.</param>
-        /// <returns>The ProductVersion property.</returns>
-        public static Version GetVersion(string packagePath) =>
-            new Version(GetProperty(packagePath, MsiProperty.ProductVersion));
-
-        /// <summary>
-        /// Calculates the number of bytes a Windows Installer Package would consume on disk. The function assumes that all files will be installed.
-        /// </summary>
-        /// <param name="packagePath">The path to the MSI package.</param>
-        /// <param name="factor">Multiplication factor to use to account for additional space requirements such as registry entries for components 
-        /// in the installer database.</param>
-        /// <returns>The number of bytes required to install the MSI.</returns>
-        public static long GetInstallSize(string packagePath, double factor = 1.4) =>
-            GetAllFiles(packagePath).Sum(f => Convert.ToInt64(f.FileSize * factor));
-
-        /// <summary>
-        /// Validates that a <see cref="Version"/> represents a valid MSI ProductVersion.
-        /// </summary>
-        /// <param name="version">The version to validate.</param>
-        /// <exception cref="ArgumentOutOfRangeException" />
-        public static void ValidateProductVersion(Version version)
+        if (version.Build > ushort.MaxValue)
         {
-            // See to https://learn.microsoft.com/en-us/windows/win32/msi/productversion for additional information.
-
-            if (version.Major > 255)
-            {
-                throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Major), 255));
-            }
-
-            if (version.Minor > 255)
-            {
-                throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Minor), 255));
-            }
-
-            if (version.Build > ushort.MaxValue)
-            {
-                throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Build), ushort.MaxValue));
-            }
+            throw new ArgumentOutOfRangeException(string.Format(Strings.MsiProductVersionOutOfRange, nameof(version.Build), ushort.MaxValue));
         }
+    }
 
-        /// <summary>
-        /// Determines if the MSI contains a specific table.
-        /// </summary>
-        /// <param name="packagePath">The path to the MSI package.</param>
-        /// <param name="tableName">The name of the table.</param>
-        /// <returns><see langword="true"/> if the table exists; <see langword="false"/> otherwise.</returns>
-        public static bool HasTable(string packagePath, string tableName)
-        {
-            using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
-            using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
+    /// <summary>
+    /// Determines if the MSI contains a specific table.
+    /// </summary>
+    /// <param name="packagePath">The path to the MSI package.</param>
+    /// <param name="tableName">The name of the table.</param>
+    /// <returns><see langword="true"/> if the table exists; <see langword="false"/> otherwise.</returns>
+    public static bool HasTable(string packagePath, string tableName)
+    {
+        using InstallPackage ip = new(packagePath, DatabaseOpenMode.ReadOnly);
+        using Database db = new(packagePath, DatabaseOpenMode.ReadOnly);
 
-            return db.Tables.Contains(tableName);
-        }
+        return db.Tables.Contains(tableName);
     }
 }

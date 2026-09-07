@@ -4,23 +4,22 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Microsoft.DotNet.SignTool.Tests
+namespace Microsoft.DotNet.SignTool.Tests;
+
+internal static class StrongNameSupportHelper
 {
-    internal static class StrongNameSupportHelper
+    internal static bool GetPlatformSupportsRSASHA1()
     {
-        internal static bool GetPlatformSupportsRSASHA1()
+        using (RSA rsa = RSA.Create(2048))
         {
-            using (RSA rsa = RSA.Create(2048))
+            try
             {
-                try
-                {
-                    rsa.SignData(Array.Empty<byte>(), HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
-                    return true;
-                }
-                catch (CryptographicException)
-                {
-                    return false;
-                }
+                rsa.SignData(Array.Empty<byte>(), HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
+                return true;
+            }
+            catch (CryptographicException)
+            {
+                return false;
             }
         }
     }

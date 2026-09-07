@@ -5,21 +5,20 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.DotNet.Helix.Client
+namespace Microsoft.DotNet.Helix.Client;
+
+internal class EmptyPayload : IPayload
 {
-    internal class EmptyPayload : IPayload
+    private readonly Task<string> _emptyStringTask = Task.FromResult("");
+
+    private EmptyPayload()
     {
-        private readonly Task<string> _emptyStringTask = Task.FromResult("");
+    }
 
-        private EmptyPayload()
-        {
-        }
+    public static IPayload Instance { get; } = new EmptyPayload();
 
-        public static IPayload Instance { get; } = new EmptyPayload();
-
-        public Task<string> UploadAsync(IBlobContainer payloadContainer, Action<string> log, CancellationToken cancellationToken)
-        {
-            return _emptyStringTask;
-        }
+    public Task<string> UploadAsync(IBlobContainer payloadContainer, Action<string> log, CancellationToken cancellationToken)
+    {
+        return _emptyStringTask;
     }
 }

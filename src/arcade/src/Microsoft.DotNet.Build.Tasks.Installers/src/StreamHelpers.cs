@@ -3,39 +3,38 @@
 using System;
 using System.IO;
 
-namespace Microsoft.DotNet.Build.Tasks.Installers
+namespace Microsoft.DotNet.Build.Tasks.Installers;
+
+internal static class StreamHelpers
 {
-    internal static class StreamHelpers
+    public static Span<byte> ReadExactly(this Stream stream, int n)
     {
-        public static Span<byte> ReadExactly(this Stream stream, int n)
-        {
-            byte[] buffer = new byte[n];
-            stream.ReadExactly(buffer, 0, n);
-            return buffer;
-        }
+        byte[] buffer = new byte[n];
+        stream.ReadExactly(buffer, 0, n);
+        return buffer;
+    }
 
-        public static int AlignUp(this int value, int alignment)
-        {
-            return (value + alignment - 1) & ~(alignment - 1);
-        }
+    public static int AlignUp(this int value, int alignment)
+    {
+        return (value + alignment - 1) & ~(alignment - 1);
+    }
 
-        public static long AlignUp(this long value, int alignment)
-        {
-            return (value + alignment - 1) & ~(alignment - 1);
-        }
+    public static long AlignUp(this long value, int alignment)
+    {
+        return (value + alignment - 1) & ~(alignment - 1);
+    }
 
-        public static void AlignReadTo(this Stream stream, int alignment)
-        {
-            stream.Position = stream.Position.AlignUp(alignment);
-        }
+    public static void AlignReadTo(this Stream stream, int alignment)
+    {
+        stream.Position = stream.Position.AlignUp(alignment);
+    }
 
-        public static void AlignWriteTo(this Stream stream, int alignment)
+    public static void AlignWriteTo(this Stream stream, int alignment)
+    {
+        int padding = (int)(stream.Position.AlignUp(alignment) - stream.Position);
+        for (int i = 0; i < padding; i++)
         {
-            int padding = (int)(stream.Position.AlignUp(alignment) - stream.Position);
-            for (int i = 0; i < padding; i++)
-            {
-                stream.WriteByte(0);
-            }
+            stream.WriteByte(0);
         }
     }
 }

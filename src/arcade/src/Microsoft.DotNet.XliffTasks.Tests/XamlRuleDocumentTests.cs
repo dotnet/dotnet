@@ -6,14 +6,14 @@ using System.IO;
 using XliffTasks.Model;
 using Xunit;
 
-namespace XliffTasks.Tests
+namespace XliffTasks.Tests;
+
+public class XamlRuleTranslationTests
 {
-    public class XamlRuleTranslationTests
+  [Fact]
+    public void BasicLoadAndTranslate()
     {
-      [Fact]
-        public void BasicLoadAndTranslate()
-        {
-            string source =
+        string source =
 @"<Rule Name=""MyRule""
         DisplayName=""My rule display name""
         PageTemplate=""generic""
@@ -49,7 +49,7 @@ namespace XliffTasks.Tests
   </StringProperty>
 </Rule>";
 
-            string expectedXlf =
+        string expectedXlf =
 @"<xliff xmlns=""urn:oasis:names:tc:xliff:document:1.2"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" version=""1.2"" xsi:schemaLocation=""urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd"">
   <file datatype=""xml"" source-language=""en"" target-language=""fr"" original=""test.xaml"">
     <body>
@@ -122,24 +122,24 @@ namespace XliffTasks.Tests
   </file>
 </xliff>";
 
-            Dictionary<string, string> translations = new()
-            {
-                ["Rule|MyRule|DisplayName"] = "AAA",
-                ["Rule|MyRule|Description"] = "BBB",
-                ["Category|MyCategory|DisplayName"] = "CCC",
-                ["EnumProperty|MyEnumProperty|DisplayName"] = "DDD",
-                ["EnumProperty|MyEnumProperty|Description"] = "EEE",
-                ["EnumValue|MyEnumProperty.First|DisplayName"] = "FFF",
-                ["EnumValue|MyEnumProperty.Second|DisplayName"] = "GGG",
-                ["EnumValue|MyEnumProperty.Third|DisplayName"] = "HHH",
-                ["BoolProperty|MyBoolProperty|Description"] = "III",
-                ["StringProperty|MyStringProperty|Metadata|SearchTerms"] = "JJJ",
-                ["StringProperty|MyStringProperty|Metadata|TypeDescriptorText|Value"] = "NNN",
-                ["StringProperty|MyStringProperty|Metadata|SearchTerms|TranslatableProp1"] = "LLL",
-                ["StringProperty|MyStringProperty|Metadata|SearchTerms|TranslatableProp2"] = "MMM",
-            };
+        Dictionary<string, string> translations = new()
+        {
+            ["Rule|MyRule|DisplayName"] = "AAA",
+            ["Rule|MyRule|Description"] = "BBB",
+            ["Category|MyCategory|DisplayName"] = "CCC",
+            ["EnumProperty|MyEnumProperty|DisplayName"] = "DDD",
+            ["EnumProperty|MyEnumProperty|Description"] = "EEE",
+            ["EnumValue|MyEnumProperty.First|DisplayName"] = "FFF",
+            ["EnumValue|MyEnumProperty.Second|DisplayName"] = "GGG",
+            ["EnumValue|MyEnumProperty.Third|DisplayName"] = "HHH",
+            ["BoolProperty|MyBoolProperty|Description"] = "III",
+            ["StringProperty|MyStringProperty|Metadata|SearchTerms"] = "JJJ",
+            ["StringProperty|MyStringProperty|Metadata|TypeDescriptorText|Value"] = "NNN",
+            ["StringProperty|MyStringProperty|Metadata|SearchTerms|TranslatableProp1"] = "LLL",
+            ["StringProperty|MyStringProperty|Metadata|SearchTerms|TranslatableProp2"] = "MMM",
+        };
 
-            string expectedTranslation =
+        string expectedTranslation =
 @"<Rule Name=""MyRule"" DisplayName=""AAA"" PageTemplate=""generic"" Description=""BBB"" xmlns=""http://schemas.microsoft.com/build/2009/properties"" xmlns:xliff=""https://github.com/dotnet/xliff-tasks"" xmlns:mc=""http://schemas.openxmlformats.org/markup-compatibility/2006"" mc:Ignorable=""xliff"">
   <!-- DisplayName: My rule display name comment -->
   <!-- Description: My rule description comment -->
@@ -170,27 +170,27 @@ namespace XliffTasks.Tests
   </StringProperty>
 </Rule>";
 
-            RunXamlTranslationTest(source, translations, expectedTranslation, expectedXlf);
-        }
+        RunXamlTranslationTest(source, translations, expectedTranslation, expectedXlf);
+    }
 
-        
-        /* the purpose of this test is to ensure that deeply nested translations translate as expected, as well as attributes declared as a nested element:
-          such as:
-          <A Name="MyName">
-            <A.Description>MyName Description</A.Description>
-            <B>
-              <C>
-                <D>
-                  <NameValuePair Name="SearchTerms" TranslatableProp1="this-is-translated" xliff:LocalizedProperties="TranslatableProp1">
-                    <NameValuePair.Value>My Search Terms</NameValuePair.Value> 
-                </D>
-                ....
     
-        */
-        [Fact]
-        public void LoadAndTranslateWithDeeplyNestedTranslationAndElementAttributeSyntax()
-        {
-            string source =
+    /* the purpose of this test is to ensure that deeply nested translations translate as expected, as well as attributes declared as a nested element:
+      such as:
+      <A Name="MyName">
+        <A.Description>MyName Description</A.Description>
+        <B>
+          <C>
+            <D>
+              <NameValuePair Name="SearchTerms" TranslatableProp1="this-is-translated" xliff:LocalizedProperties="TranslatableProp1">
+                <NameValuePair.Value>My Search Terms</NameValuePair.Value> 
+            </D>
+            ....
+
+    */
+    [Fact]
+    public void LoadAndTranslateWithDeeplyNestedTranslationAndElementAttributeSyntax()
+    {
+        string source =
 @"<Rule Name=""MyRule""
         DisplayName=""My rule display name""
         PageTemplate=""generic""
@@ -227,7 +227,7 @@ namespace XliffTasks.Tests
   </StringProperty>
 </Rule>";
 
-            string expectedXlf =
+        string expectedXlf =
 @"<xliff xmlns=""urn:oasis:names:tc:xliff:document:1.2"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" version=""1.2"" xsi:schemaLocation=""urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd"">
   <file datatype=""xml"" source-language=""en"" target-language=""fr"" original=""test.xaml"">
     <body>
@@ -290,24 +290,24 @@ namespace XliffTasks.Tests
   </file>
 </xliff>";
 
-            Dictionary<string, string> translations = new()
-            {
-                ["Rule|MyRule|DisplayName"] = "AAA",
-                ["Rule|MyRule|Description"] = "BBB",
-                ["Category|MyCategory|DisplayName"] = "CCC",
-                ["EnumProperty|MyEnumProperty|DisplayName"] = "DDD",
-                ["EnumProperty|MyEnumProperty|Description"] = "EEE",
-                ["EnumValue|MyEnumProperty.First|DisplayName"] = "FFF",
-                ["EnumValue|MyEnumProperty.Second|DisplayName"] = "GGG",
-                ["EnumValue|MyEnumProperty.Third|DisplayName"] = "HHH",
-                ["BoolProperty|MyBoolProperty|Description"] = "III",
-                ["StringProperty|MyStringProperty|Metadata|SearchTerms"] = "JJJ",
-                ["StringProperty|MyStringProperty|Metadata|TypeDescriptorText|Value"] = "NNN",
-                ["StringProperty|MyStringProperty|Metadata|SearchTerms|TranslatableProp1"] = "LLL",
-                ["StringProperty|MyStringProperty|Metadata|SearchTerms|TranslatableProp2"] = "MMM",
-            };
+        Dictionary<string, string> translations = new()
+        {
+            ["Rule|MyRule|DisplayName"] = "AAA",
+            ["Rule|MyRule|Description"] = "BBB",
+            ["Category|MyCategory|DisplayName"] = "CCC",
+            ["EnumProperty|MyEnumProperty|DisplayName"] = "DDD",
+            ["EnumProperty|MyEnumProperty|Description"] = "EEE",
+            ["EnumValue|MyEnumProperty.First|DisplayName"] = "FFF",
+            ["EnumValue|MyEnumProperty.Second|DisplayName"] = "GGG",
+            ["EnumValue|MyEnumProperty.Third|DisplayName"] = "HHH",
+            ["BoolProperty|MyBoolProperty|Description"] = "III",
+            ["StringProperty|MyStringProperty|Metadata|SearchTerms"] = "JJJ",
+            ["StringProperty|MyStringProperty|Metadata|TypeDescriptorText|Value"] = "NNN",
+            ["StringProperty|MyStringProperty|Metadata|SearchTerms|TranslatableProp1"] = "LLL",
+            ["StringProperty|MyStringProperty|Metadata|SearchTerms|TranslatableProp2"] = "MMM",
+        };
 
-            string expectedTranslation =
+        string expectedTranslation =
 @"<Rule Name=""MyRule"" DisplayName=""AAA"" PageTemplate=""generic"" Description=""BBB"" xmlns=""http://schemas.microsoft.com/build/2009/properties"" xmlns:xliff=""https://github.com/dotnet/xliff-tasks"" xmlns:mc=""http://schemas.openxmlformats.org/markup-compatibility/2006"" mc:Ignorable=""xliff"">
   <!-- DisplayName: My rule display name comment -->
   <!-- Description: My rule description comment -->
@@ -337,28 +337,27 @@ namespace XliffTasks.Tests
   </StringProperty>
 </Rule>";
 
-            RunXamlTranslationTest(source, translations, expectedTranslation, expectedXlf);
-        }
-        
-        private static void RunXamlTranslationTest(string source, Dictionary<string, string> translations, string expectedTranslation, string expectedXlf)
-        {
-          XamlRuleDocument document = new();
-          StringWriter writer = new();
-          document.Load(new StringReader(source));
+        RunXamlTranslationTest(source, translations, expectedTranslation, expectedXlf);
+    }
+    
+    private static void RunXamlTranslationTest(string source, Dictionary<string, string> translations, string expectedTranslation, string expectedXlf)
+    {
+      XamlRuleDocument document = new();
+      StringWriter writer = new();
+      document.Load(new StringReader(source));
 
-          XlfDocument xliffDocument = new();
-          xliffDocument.LoadNew("fr");
-          xliffDocument.Update(document, "test.xaml");
+      XlfDocument xliffDocument = new();
+      xliffDocument.LoadNew("fr");
+      xliffDocument.Update(document, "test.xaml");
 
-          document.Translate(translations);
-          document.Save(writer);
+      document.Translate(translations);
+      document.Save(writer);
 
-          AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
+      AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
 
-          StringWriter xliffWriter = new();
-          xliffDocument.Save(xliffWriter);
+      StringWriter xliffWriter = new();
+      xliffDocument.Save(xliffWriter);
 
-          AssertEx.EqualIgnoringLineEndings(expectedXlf, xliffWriter.ToString());
-        }
+      AssertEx.EqualIgnoringLineEndings(expectedXlf, xliffWriter.ToString());
     }
 }

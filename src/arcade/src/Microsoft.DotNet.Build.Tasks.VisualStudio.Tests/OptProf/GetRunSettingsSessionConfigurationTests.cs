@@ -5,13 +5,13 @@ using System;
 using System.IO;
 using Xunit;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests;
+
+public class GetRunSettingsSessionConfigurationTests
 {
-    public class GetRunSettingsSessionConfigurationTests
-    {
-        private const string products_only_expectedContainerString = "  <TestContainer FileName=\"DDRIT.RPS.CSharp.dll\" />\r\n  <TestContainer FileName=\"VSPE.dll\" />";
-        private const string products_only_expectedTestCaseFilterString = "FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_ide_searchtest|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_editor_intellisense_globalcompletionlist_cs|FullyQualifiedName=VSPE.OptProfTests.vs_asl_cs_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_ddbvtqa_vbwi|FullyQualifiedName=VSPE.OptProfTests.vs_asl_vb_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_env_solution_createnewproject_vb_winformsapp|FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging";
-        private const string products_only = @"
+    private const string products_only_expectedContainerString = "  <TestContainer FileName=\"DDRIT.RPS.CSharp.dll\" />\r\n  <TestContainer FileName=\"VSPE.dll\" />";
+    private const string products_only_expectedTestCaseFilterString = "FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_ide_searchtest|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_editor_intellisense_globalcompletionlist_cs|FullyQualifiedName=VSPE.OptProfTests.vs_asl_cs_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_ddbvtqa_vbwi|FullyQualifiedName=VSPE.OptProfTests.vs_asl_vb_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_env_solution_createnewproject_vb_winformsapp|FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging";
+    private const string products_only = @"
 {
   ""products"": [
     {
@@ -73,9 +73,9 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
 }
 ";
 
-        private const string assemblies_only_expectedContainerString = "  <TestContainer FileName=\"DDRIT.RPS.CSharp.dll\" />";
-        private const string assemblies_only_expectedTestCaseFilterString = "FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging";
-        private const string assemblies_only = @"
+    private const string assemblies_only_expectedContainerString = "  <TestContainer FileName=\"DDRIT.RPS.CSharp.dll\" />";
+    private const string assemblies_only_expectedTestCaseFilterString = "FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging";
+    private const string assemblies_only = @"
 {
   ""assemblies"" : [
     {
@@ -140,9 +140,9 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
 }
 ";
 
-        private const string products_and_assemblies_expectedContainerString = "  <TestContainer FileName=\"DDRIT.RPS.CSharp.dll\" />\r\n  <TestContainer FileName=\"VSPE.dll\" />";
-        private const string products_and_assemblies_expectedTestCaseFilterString = "FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_ide_searchtest|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_editor_intellisense_globalcompletionlist_cs|FullyQualifiedName=VSPE.OptProfTests.vs_asl_cs_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_ddbvtqa_vbwi|FullyQualifiedName=VSPE.OptProfTests.vs_asl_vb_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_env_solution_createnewproject_vb_winformsapp|FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging";
-        private const string products_and_assemblies = @"
+    private const string products_and_assemblies_expectedContainerString = "  <TestContainer FileName=\"DDRIT.RPS.CSharp.dll\" />\r\n  <TestContainer FileName=\"VSPE.dll\" />";
+    private const string products_and_assemblies_expectedTestCaseFilterString = "FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_ide_searchtest|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_editor_intellisense_globalcompletionlist_cs|FullyQualifiedName=VSPE.OptProfTests.vs_asl_cs_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_ddbvtqa_vbwi|FullyQualifiedName=VSPE.OptProfTests.vs_asl_vb_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_env_solution_createnewproject_vb_winformsapp|FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging";
+    private const string products_and_assemblies = @"
 {
   ""products"": [
     {
@@ -264,9 +264,9 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
 }
 ";
 
-        private const string filtered_products_and_assemblies_expectedContainerString = "  <TestContainer FileName=\"DDRIT.RPS.CSharp.dll\" />\r\n  <TestContainer FileName=\"VSPE.dll\" />";
-        private const string filtered_products_and_assemblies_expectedTestCaseFilterString = "FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_ide_searchtest|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_editor_intellisense_globalcompletionlist_cs|FullyQualifiedName=VSPE.OptProfTests.vs_asl_cs_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_ddbvtqa_vbwi|FullyQualifiedName=VSPE.OptProfTests.vs_asl_vb_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_env_solution_createnewproject_vb_winformsapp|FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging";
-        private const string filtered_products_and_assemblies = @"
+    private const string filtered_products_and_assemblies_expectedContainerString = "  <TestContainer FileName=\"DDRIT.RPS.CSharp.dll\" />\r\n  <TestContainer FileName=\"VSPE.dll\" />";
+    private const string filtered_products_and_assemblies_expectedTestCaseFilterString = "FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_ide_searchtest|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_editor_intellisense_globalcompletionlist_cs|FullyQualifiedName=VSPE.OptProfTests.vs_asl_cs_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_ddbvtqa_vbwi|FullyQualifiedName=VSPE.OptProfTests.vs_asl_vb_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_env_solution_createnewproject_vb_winformsapp|FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging";
+    private const string filtered_products_and_assemblies = @"
 {
   ""products"": [
     {
@@ -393,44 +393,44 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
 }
 ";
 
-        [Theory]
-        [InlineData(@"[{""BuildDrop"": ""https://vsdrop.corp.microsoft.com/file/v1/Products/42.42.42.42/42.42.42.42""}]", "Tests/42.42.42.42/42.42.42.42")]
-        public static void TestsCorrectJsonFiles(string jsonString, string expectedUrl)
+    [Theory]
+    [InlineData(@"[{""BuildDrop"": ""https://vsdrop.corp.microsoft.com/file/v1/Products/42.42.42.42/42.42.42.42""}]", "Tests/42.42.42.42/42.42.42.42")]
+    public static void TestsCorrectJsonFiles(string jsonString, string expectedUrl)
+    {
+        Assert.Equal(expectedUrl, GetRunSettingsSessionConfiguration.GetTestsDropName(jsonString));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(@"[{""BuildDrop"": ""https://vsdrop.corp.microsoft.com/file/v1/Tests/42.42.42.42/42.42.42.42""}]")]
+    [InlineData(@"Products/42.42.42.42/42.42.42.42")]
+    public static void TestsIncorrectJsonFiles(string jsonString)
+    {
+        Assert.Throws<InvalidDataException>(() => GetRunSettingsSessionConfiguration.GetTestsDropName(jsonString));
+    }
+
+    [Fact]
+    public void Execute()
+    {
+        var temp = Path.GetTempPath();
+        var dir = Path.Combine(temp, Guid.NewGuid().ToString());
+        Directory.CreateDirectory(dir);
+
+        var configPath = Path.Combine(dir, "OptProf.json");
+        File.WriteAllText(configPath, products_only);
+
+        var bootstrapperPath = Path.Combine(dir, "BootstrapperInfo.json");
+        File.WriteAllText(bootstrapperPath, @"[{""BuildDrop"": ""https://vsdrop.corp.microsoft.com/file/v1/Products/42.42.42.42/42.42.42.42""}]");
+
+        var task = new GetRunSettingsSessionConfiguration()
         {
-            Assert.Equal(expectedUrl, GetRunSettingsSessionConfiguration.GetTestsDropName(jsonString));
-        }
+            ConfigurationFile = configPath,
+            ProductDropName = "Products/abc",
+            BootstrapperInfoPath = bootstrapperPath
+        };
 
-        [Theory]
-        [InlineData("")]
-        [InlineData(@"[{""BuildDrop"": ""https://vsdrop.corp.microsoft.com/file/v1/Tests/42.42.42.42/42.42.42.42""}]")]
-        [InlineData(@"Products/42.42.42.42/42.42.42.42")]
-        public static void TestsIncorrectJsonFiles(string jsonString)
-        {
-            Assert.Throws<InvalidDataException>(() => GetRunSettingsSessionConfiguration.GetTestsDropName(jsonString));
-        }
-
-        [Fact]
-        public void Execute()
-        {
-            var temp = Path.GetTempPath();
-            var dir = Path.Combine(temp, Guid.NewGuid().ToString());
-            Directory.CreateDirectory(dir);
-
-            var configPath = Path.Combine(dir, "OptProf.json");
-            File.WriteAllText(configPath, products_only);
-
-            var bootstrapperPath = Path.Combine(dir, "BootstrapperInfo.json");
-            File.WriteAllText(bootstrapperPath, @"[{""BuildDrop"": ""https://vsdrop.corp.microsoft.com/file/v1/Products/42.42.42.42/42.42.42.42""}]");
-
-            var task = new GetRunSettingsSessionConfiguration()
-            {
-                ConfigurationFile = configPath,
-                ProductDropName = "Products/abc",
-                BootstrapperInfoPath = bootstrapperPath
-            };
-
-            bool result = task.Execute();
-            Assert.Equal(
+        bool result = task.Execute();
+        Assert.Equal(
 $@"<TestStores>
   <TestStore Uri=""vstsdrop:ProfilingInputs/abc"" />
   <TestStore Uri=""vstsdrop:Tests/42.42.42.42/42.42.42.42"" />
@@ -441,21 +441,20 @@ $@"<TestStores>
 </TestContainers>
 <TestCaseFilter>FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_ide_searchtest|FullyQualifiedName=VSPE.OptProfTests.vs_perf_designtime_editor_intellisense_globalcompletionlist_cs|FullyQualifiedName=VSPE.OptProfTests.vs_asl_cs_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_ddbvtqa_vbwi|FullyQualifiedName=VSPE.OptProfTests.vs_asl_vb_scenario|FullyQualifiedName=VSPE.OptProfTests.vs_env_solution_createnewproject_vb_winformsapp|FullyQualifiedName=DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging</TestCaseFilter>", task.SessionConfiguration, ignoreLineEndingDifferences: true);
 
-            Assert.True(result);
+        Assert.True(result);
 
-            Directory.Delete(dir, recursive: true);
-        }
+        Directory.Delete(dir, recursive: true);
+    }
 
-        [Theory]
-        [InlineData(products_only, products_only_expectedContainerString, products_only_expectedTestCaseFilterString)]
-        [InlineData(assemblies_only, assemblies_only_expectedContainerString, assemblies_only_expectedTestCaseFilterString)]
-        [InlineData(products_and_assemblies, products_and_assemblies_expectedContainerString, products_and_assemblies_expectedTestCaseFilterString)]
-        [InlineData(filtered_products_and_assemblies, filtered_products_and_assemblies_expectedContainerString, filtered_products_and_assemblies_expectedTestCaseFilterString)]
-        public void TestProductsOnly(string configJson, string expectedContainerString, string expectedTestCaseFilterString)
-        {
-            var (actualContainerString, actualTestCaseFilterString) = GetRunSettingsSessionConfiguration.GetTestContainersAndFilters(configJson, "config.json");
-            Assert.Equal(expectedContainerString, actualContainerString, ignoreLineEndingDifferences: true);
-            Assert.Equal(expectedTestCaseFilterString, actualTestCaseFilterString, ignoreLineEndingDifferences: true);
-        }
+    [Theory]
+    [InlineData(products_only, products_only_expectedContainerString, products_only_expectedTestCaseFilterString)]
+    [InlineData(assemblies_only, assemblies_only_expectedContainerString, assemblies_only_expectedTestCaseFilterString)]
+    [InlineData(products_and_assemblies, products_and_assemblies_expectedContainerString, products_and_assemblies_expectedTestCaseFilterString)]
+    [InlineData(filtered_products_and_assemblies, filtered_products_and_assemblies_expectedContainerString, filtered_products_and_assemblies_expectedTestCaseFilterString)]
+    public void TestProductsOnly(string configJson, string expectedContainerString, string expectedTestCaseFilterString)
+    {
+        var (actualContainerString, actualTestCaseFilterString) = GetRunSettingsSessionConfiguration.GetTestContainersAndFilters(configJson, "config.json");
+        Assert.Equal(expectedContainerString, actualContainerString, ignoreLineEndingDifferences: true);
+        Assert.Equal(expectedTestCaseFilterString, actualTestCaseFilterString, ignoreLineEndingDifferences: true);
     }
 }

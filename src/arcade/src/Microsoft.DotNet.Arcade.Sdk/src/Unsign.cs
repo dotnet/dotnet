@@ -10,45 +10,44 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Threading;
 
-namespace Microsoft.DotNet.Arcade.Sdk
+namespace Microsoft.DotNet.Arcade.Sdk;
+
+public class Unsign : Microsoft.Build.Utilities.Task
 {
-    public class Unsign : Microsoft.Build.Utilities.Task
+    [Required]
+    public string FilePath { get; set; }
+
+    public override bool Execute()
     {
-        [Required]
-        public string FilePath { get; set; }
-
-        public override bool Execute()
+        try
         {
-            try
-            {
-                ExecuteImpl();
-                return !Log.HasLoggedErrors;
-            }
-            finally
-            {
-            }
+            ExecuteImpl();
+            return !Log.HasLoggedErrors;
         }
-
-        private void ExecuteImpl()
+        finally
         {
-            using (var stream = File.Open(FilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
-            using (var peReader = new PEReader(stream))
+        }
+    }
+
+    private void ExecuteImpl()
+    {
+        using (var stream = File.Open(FilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+        using (var peReader = new PEReader(stream))
+        {
+            var headers = peReader.PEHeaders;
+            var entry = headers.PEHeader.CertificateTableDirectory;
+            if (entry.Size == 0)
             {
-                var headers = peReader.PEHeaders;
-                var entry = headers.PEHeader.CertificateTableDirectory;
-                if (entry.Size == 0)
-                {
-                    return;
-                }
+                return;
+            }
 
-                using (var writer = new BinaryWriter(stream))
-                {
-                    int certificateTableDirectoryOffset = (headers.PEHeader.Magic == PEMagic.PE32Plus) ? 144 : 128;
-                    stream.Position = peReader.PEHeaders.PEHeaderStartOffset + certificateTableDirectoryOffset;
+            using (var writer = new BinaryWriter(stream))
+            {
+                int certificateTableDirectoryOffset = (headers.PEHeader.Magic == PEMagic.PE32Plus) ? 144 : 128;
+                stream.Position = peReader.PEHeaders.PEHeaderStartOffset + certificateTableDirectoryOffset;
 
-                    writer.Write((long)0);
-                    writer.Flush();
-                }
+                writer.Write((long)0);
+                writer.Flush();
             }
         }
     }

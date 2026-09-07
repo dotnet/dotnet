@@ -3,10 +3,9 @@
 
 using Microsoft.Cci.Mappings;
 
-namespace Microsoft.Cci.Differs
+namespace Microsoft.Cci.Differs;
+
+public interface IElementDifferenceFactory
 {
-    public interface IElementDifferenceFactory
-    {
-        IDifferences GetDiffer<T>(ElementMapping<T> element) where T : class;
-    }
+    IDifferences GetDiffer<T>(ElementMapping<T> element) where T : class;
 }

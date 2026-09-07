@@ -10,147 +10,146 @@ using STATSTG = Microsoft.VisualStudio.OLE.Interop.STATSTG;
 
 #pragma warning disable CA1416 // Validate platform compatibility
 
-namespace Microsoft.SignCheck.Interop
+namespace Microsoft.SignCheck.Interop;
+
+// This code is a C# adaptation of MSIX:
+// https://blogs.msdn.microsoft.com/heaths/2006/02/27/identifying-windows-installer-file-types/
+// https://blogs.msdn.microsoft.com/heaths/2006/04/07/patch-files-extractor/
+public class StructuredStorage
 {
-    // This code is a C# adaptation of MSIX:
-    // https://blogs.msdn.microsoft.com/heaths/2006/02/27/identifying-windows-installer-file-types/
-    // https://blogs.msdn.microsoft.com/heaths/2006/04/07/patch-files-extractor/
-    public class StructuredStorage
+    // CLSID for MSP storage
+    private const string MSP_CLSID = "000C1086-0000-0000-C000-000000000046";
+
+    public const int S_OK = 0;
+
+    /// <summary>
+    /// Returns true if the storage represents a patch (MSP)
+    /// </summary>
+    /// <param name="storage">The store to check.</param>
+    /// <returns>true if the storage is an MSP, false otherwise.</returns>
+    public static bool IsPatch(IStorage storage)
     {
-        // CLSID for MSP storage
-        private const string MSP_CLSID = "000C1086-0000-0000-C000-000000000046";
-
-        public const int S_OK = 0;
-
-        /// <summary>
-        /// Returns true if the storage represents a patch (MSP)
-        /// </summary>
-        /// <param name="storage">The store to check.</param>
-        /// <returns>true if the storage is an MSP, false otherwise.</returns>
-        public static bool IsPatch(IStorage storage)
+        if (storage == null)
         {
-            if (storage == null)
-            {
-                throw new ArgumentNullException("storage");
-            }
-
-            STATSTG[] stg = new STATSTG[] { new STATSTG() };
-            storage.Stat(stg, (uint)STATFLAG.STATFLAG_NONAME);
-
-            return String.Equals(stg[0].clsid.ToString(), MSP_CLSID, StringComparison.OrdinalIgnoreCase);
+            throw new ArgumentNullException("storage");
         }
 
-        public static void OpenAndExtractStorages(string filename, string dir)
+        STATSTG[] stg = new STATSTG[] { new STATSTG() };
+        storage.Stat(stg, (uint)STATFLAG.STATFLAG_NONAME);
+
+        return String.Equals(stg[0].clsid.ToString(), MSP_CLSID, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static void OpenAndExtractStorages(string filename, string dir)
+    {
+        Guid iidStorage = typeof(IStorage).GUID;
+        int hresult = Ole32.StgOpenStorageEx(filename, STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE,
+            Ole32.STGFMT_STORAGE, 0, IntPtr.Zero, IntPtr.Zero, ref iidStorage, out object rootStorageObj);
+        IStorage rootStorage = rootStorageObj as IStorage;
+
+        if ((hresult == S_OK) && (rootStorage != null))
         {
-            Guid iidStorage = typeof(IStorage).GUID;
-            int hresult = Ole32.StgOpenStorageEx(filename, STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE,
-                Ole32.STGFMT_STORAGE, 0, IntPtr.Zero, IntPtr.Zero, ref iidStorage, out object rootStorageObj);
-            IStorage rootStorage = rootStorageObj as IStorage;
-
-            if ((hresult == S_OK) && (rootStorage != null))
+            try
             {
-                try
+                if (IsPatch(rootStorage))
                 {
-                    if (IsPatch(rootStorage))
-                    {
-                        IEnumSTATSTG rootStorageEnum = null;
-                        rootStorage.EnumElements(0, IntPtr.Zero, 0, out rootStorageEnum);
+                    IEnumSTATSTG rootStorageEnum = null;
+                    rootStorage.EnumElements(0, IntPtr.Zero, 0, out rootStorageEnum);
 
-                        STATSTG[] enumStg = new STATSTG[] { new STATSTG() };
-                        uint numFetched = 0;
+                    STATSTG[] enumStg = new STATSTG[] { new STATSTG() };
+                    uint numFetched = 0;
+                    rootStorageEnum.Next(1, enumStg, out numFetched);
+
+                    while (numFetched == 1)
+                    {
+                        if (enumStg[0].type == (uint)STGTY.STGTY_STORAGE)
+                        {
+                            // Save the nested transform storages with an .mst extension
+                            SaveStorage(rootStorage, dir, enumStg[0].pwcsName, ".mst");
+                        }
+
                         rootStorageEnum.Next(1, enumStg, out numFetched);
-
-                        while (numFetched == 1)
-                        {
-                            if (enumStg[0].type == (uint)STGTY.STGTY_STORAGE)
-                            {
-                                // Save the nested transform storages with an .mst extension
-                                SaveStorage(rootStorage, dir, enumStg[0].pwcsName, ".mst");
-                            }
-
-                            rootStorageEnum.Next(1, enumStg, out numFetched);
-                        }
-
-                        if (rootStorageEnum != null)
-                        {
-                            Marshal.ReleaseComObject(rootStorageEnum);
-                        }
-
-                        // Release the exclusive lock before opening the Database,
-                        // which internally uses OLE structured storage and would
-                        // fail with a sharing violation otherwise.
-                        Marshal.ReleaseComObject(rootStorage);
-                        rootStorage = null;
-
-                        using (Database installDatabase = new Database(filename, DatabaseOpenMode.ReadOnly))
-                        using (View view = installDatabase.OpenView("SELECT `Name`, `Data` FROM `_Streams`"))
-                        {
-                            view.Execute();
-
-                            foreach (Record record in view)
-                            {
-                                SaveStream(record, dir);
-                                record.Close();
-                            }
-                        }
                     }
-                }
-                finally
-                {
-                    if (rootStorage != null)
+
+                    if (rootStorageEnum != null)
                     {
-                        Marshal.ReleaseComObject(rootStorage);
+                        Marshal.ReleaseComObject(rootStorageEnum);
+                    }
+
+                    // Release the exclusive lock before opening the Database,
+                    // which internally uses OLE structured storage and would
+                    // fail with a sharing violation otherwise.
+                    Marshal.ReleaseComObject(rootStorage);
+                    rootStorage = null;
+
+                    using (Database installDatabase = new Database(filename, DatabaseOpenMode.ReadOnly))
+                    using (View view = installDatabase.OpenView("SELECT `Name`, `Data` FROM `_Streams`"))
+                    {
+                        view.Execute();
+
+                        foreach (Record record in view)
+                        {
+                            SaveStream(record, dir);
+                            record.Close();
+                        }
                     }
                 }
             }
-        }
-
-        public static void SaveStorage(IStorage rootStorage, string storageDir, string storageName, string storageExtension)
-        {
-            IStorage stg;
-            IStorage fileStg;
-            int hr = StructuredStorage.S_OK;
-
-            rootStorage.OpenStorage(storageName, null, (STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE), IntPtr.Zero, 0, out stg);
-
-            if (stg != null)
+            finally
             {
-                string storageFullName = Path.Combine(storageDir, storageName + storageExtension);
-                if (!Directory.Exists(storageDir))
+                if (rootStorage != null)
                 {
-                    Directory.CreateDirectory(storageDir);
+                    Marshal.ReleaseComObject(rootStorage);
                 }
-
-                hr = Ole32.StgCreateDocfile(storageFullName,
-                    STGM.STGM_WRITE | STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_CREATE,
-                    0,
-                    out fileStg);
-
-                if (fileStg != null)
-                {
-                    stg.CopyTo(0, null, IntPtr.Zero, fileStg);
-                    Marshal.ReleaseComObject(fileStg);
-                }
-
-                Marshal.ReleaseComObject(stg);
             }
         }
+    }
 
-        public static void SaveStream(Record record, string dir)
+    public static void SaveStorage(IStorage rootStorage, string storageDir, string storageName, string storageExtension)
+    {
+        IStorage stg;
+        IStorage fileStg;
+        int hr = StructuredStorage.S_OK;
+
+        rootStorage.OpenStorage(storageName, null, (STGM.STGM_READ | STGM.STGM_SHARE_EXCLUSIVE), IntPtr.Zero, 0, out stg);
+
+        if (stg != null)
         {
-            if (record == null)
+            string storageFullName = Path.Combine(storageDir, storageName + storageExtension);
+            if (!Directory.Exists(storageDir))
             {
-                throw new ArgumentNullException("record");
+                Directory.CreateDirectory(storageDir);
             }
-            Stream recordStream = (Stream)record["Data"];
-            string path = Path.Combine(dir, (string)record["Name"]);
 
-            if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+            hr = Ole32.StgCreateDocfile(storageFullName,
+                STGM.STGM_WRITE | STGM.STGM_SHARE_EXCLUSIVE | STGM.STGM_CREATE,
+                0,
+                out fileStg);
+
+            if (fileStg != null)
             {
-                using (FileStream fs = new FileStream(path, FileMode.CreateNew))
-                {
-                    recordStream.CopyTo(fs);
-                }
+                stg.CopyTo(0, null, IntPtr.Zero, fileStg);
+                Marshal.ReleaseComObject(fileStg);
+            }
+
+            Marshal.ReleaseComObject(stg);
+        }
+    }
+
+    public static void SaveStream(Record record, string dir)
+    {
+        if (record == null)
+        {
+            throw new ArgumentNullException("record");
+        }
+        Stream recordStream = (Stream)record["Data"];
+        string path = Path.Combine(dir, (string)record["Name"]);
+
+        if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+        {
+            using (FileStream fs = new FileStream(path, FileMode.CreateNew))
+            {
+                recordStream.CopyTo(fs);
             }
         }
     }

@@ -4,32 +4,31 @@
 using Microsoft.DotNet.Helix.JobMonitor;
 using Xunit;
 
-namespace Microsoft.DotNet.Helix.Sdk.Tests
+namespace Microsoft.DotNet.Helix.Sdk.Tests;
+
+public class HelixJobMonitorUtilitiesTests
 {
-    public class HelixJobMonitorUtilitiesTests
+    [Fact]
+    public void AreNonMonitorJobsComplete_IgnoresMonitorRecord()
     {
-        [Fact]
-        public void AreNonMonitorJobsComplete_IgnoresMonitorRecord()
+        var records = new[]
         {
-            var records = new[]
-            {
-                new AzureDevOpsTimelineRecord { Type = "Job", ReferenceName = "Build Linux", State = "completed", Result = "succeeded" },
-                new AzureDevOpsTimelineRecord { Type = "Job", ReferenceName = "Helix Job Monitor", State = "inProgress", Result = null },
-            };
+            new AzureDevOpsTimelineRecord { Type = "Job", ReferenceName = "Build Linux", State = "completed", Result = "succeeded" },
+            new AzureDevOpsTimelineRecord { Type = "Job", ReferenceName = "Helix Job Monitor", State = "inProgress", Result = null },
+        };
 
-            Assert.True(HelixJobMonitorUtilities.AreNonMonitorJobsComplete(records, "Helix Job Monitor"));
-        }
+        Assert.True(HelixJobMonitorUtilities.AreNonMonitorJobsComplete(records, "Helix Job Monitor"));
+    }
 
-        [Fact]
-        public void HasFailedNonMonitorJobs_DetectsFailures()
+    [Fact]
+    public void HasFailedNonMonitorJobs_DetectsFailures()
+    {
+        var records = new[]
         {
-            var records = new[]
-            {
-                new AzureDevOpsTimelineRecord { Type = "Job", ReferenceName = "Build Linux", State = "completed", Result = "failed" },
-                new AzureDevOpsTimelineRecord { Type = "Job", ReferenceName = "Helix Job Monitor", State = "inProgress", Result = null },
-            };
+            new AzureDevOpsTimelineRecord { Type = "Job", ReferenceName = "Build Linux", State = "completed", Result = "failed" },
+            new AzureDevOpsTimelineRecord { Type = "Job", ReferenceName = "Helix Job Monitor", State = "inProgress", Result = null },
+        };
 
-            Assert.True(HelixJobMonitorUtilities.HasFailedNonMonitorJobs(records, "Helix Job Monitor"));
-        }
+        Assert.True(HelixJobMonitorUtilities.HasFailedNonMonitorJobs(records, "Helix Job Monitor"));
     }
 }

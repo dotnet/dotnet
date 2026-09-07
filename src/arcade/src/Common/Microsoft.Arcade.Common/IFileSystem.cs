@@ -4,40 +4,39 @@
 using System.IO;
 
 #nullable enable
-namespace Microsoft.Arcade.Common
+namespace Microsoft.Arcade.Common;
+
+public interface IFileSystem
 {
-    public interface IFileSystem
-    {
-        void WriteToFile(string path, string content);
+    void WriteToFile(string path, string content);
 
-        bool FileExists(string path);
+    bool FileExists(string path);
 
-        bool DirectoryExists(string path);
+    bool DirectoryExists(string path);
 
-        void CreateDirectory(string path);
+    void CreateDirectory(string path);
 
-        string? GetFileName(string? path);
+    string? GetFileName(string? path);
 
-        string? GetDirectoryName(string? path);
+    string? GetDirectoryName(string? path);
 
-        string? GetFileNameWithoutExtension(string? path);
+    string? GetFileNameWithoutExtension(string? path);
 
-        string? GetExtension(string? path);
+    string? GetExtension(string? path);
 
-        string PathCombine(string path1, string path2);
+    string PathCombine(string path1, string path2);
 
-        string PathCombine(string path1, string path2, string path3);
+    string PathCombine(string path1, string path2, string path3);
 
-        string GetFullPath(string path);
+    string GetFullPath(string path);
 
-        void DeleteFile(string path);
+    void DeleteFile(string path);
 
-        void CopyFile(string sourceFileName, string destFileName, bool overwrite = false);
+    void CopyFile(string sourceFileName, string destFileName, bool overwrite = false);
 
-        Stream GetFileStream(string path, FileMode mode, FileAccess access);
+    Stream GetFileStream(string path, FileMode mode, FileAccess access);
 
-        FileAttributes GetAttributes(string path);
+    FileAttributes GetAttributes(string path);
 
-        string GetRelativePath(string basePath, string targetPath);
-    }
+    string GetRelativePath(string basePath, string targetPath);
 }

@@ -13,255 +13,254 @@ using Microsoft.Build.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace Microsoft.DotNet.Helix.Sdk.Tests
+namespace Microsoft.DotNet.Helix.Sdk.Tests;
+
+public class FindDotNetCliPackageTests
 {
-    public class FindDotNetCliPackageTests
+    [Fact]
+    public void InstallRuntimeSuccessfully()
     {
-        [Fact]
-        public void InstallRuntimeSuccessfully()
+        List<RequestResponseHelper> requestResponseHelpers = new List<RequestResponseHelper>()
         {
-            List<RequestResponseHelper> requestResponseHelpers = new List<RequestResponseHelper>()
+            new RequestResponseHelper()
             {
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage= new HttpRequestMessage(HttpMethod.Head, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://ci.dot.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://ci.dot.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
-                }
-            };
-
-            MockBuildEngine buildEngineMock = new MockBuildEngine();
-
-            FindDotNetCliPackage task = new FindDotNetCliPackage()
+                RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
+            },
+            new RequestResponseHelper()
             {
-                Channel = "Current",
-                Version = "6.0.102",
-                Runtime = "win-x86",
-                PackageType = "runtime",
-                BuildEngine = buildEngineMock
-            };
+                RequestMessage= new HttpRequestMessage(HttpMethod.Head, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
+            },
+            new RequestResponseHelper()
+            {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://ci.dot.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
+            },
+            new RequestResponseHelper()
+            {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://ci.dot.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+            }
+        };
 
-            var collection = CreateMockServiceCollection(requestResponseHelpers.ToArray());
-            task.ConfigureServices(collection);
+        MockBuildEngine buildEngineMock = new MockBuildEngine();
 
-            // Act
-            using var provider = collection.BuildServiceProvider();
-            task.InvokeExecute(provider).Should().BeTrue();
-
-            buildEngineMock.BuildMessageEvents.Should().Contain(x => x.Message.Contains("is valid."));
-        }
-
-        [Fact]
-        public void InstallAdditionalRuntimeSuccessfully()
+        FindDotNetCliPackage task = new FindDotNetCliPackage()
         {
-            List<RequestResponseHelper> requestResponseHelpers = new List<RequestResponseHelper>(GetDefaultRequestResponseHelpers());
-            requestResponseHelpers.AddRange(new [] {
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://fakeazureaccount.blob.core.windows.net/Runtime/6.0.102/runtime-productVersion.txt"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://fakeazureaccount.blob.core.windows.net/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
-                }
-            });
+            Channel = "Current",
+            Version = "6.0.102",
+            Runtime = "win-x86",
+            PackageType = "runtime",
+            BuildEngine = buildEngineMock
+        };
 
-            var collection = CreateMockServiceCollection(requestResponseHelpers.ToArray());
-            Dictionary<string, string> metadata = new Dictionary<string, string>()
+        var collection = CreateMockServiceCollection(requestResponseHelpers.ToArray());
+        task.ConfigureServices(collection);
+
+        // Act
+        using var provider = collection.BuildServiceProvider();
+        task.InvokeExecute(provider).Should().BeTrue();
+
+        buildEngineMock.BuildMessageEvents.Should().Contain(x => x.Message.Contains("is valid."));
+    }
+
+    [Fact]
+    public void InstallAdditionalRuntimeSuccessfully()
+    {
+        List<RequestResponseHelper> requestResponseHelpers = new List<RequestResponseHelper>(GetDefaultRequestResponseHelpers());
+        requestResponseHelpers.AddRange(new [] {
+            new RequestResponseHelper()
             {
-                { "SasToken", "bar" }
-            };
-            ITaskItem[] additionalFeed = new TaskItem[]
+                RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://fakeazureaccount.blob.core.windows.net/Runtime/6.0.102/runtime-productVersion.txt"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
+            },
+            new RequestResponseHelper()
             {
-                new TaskItem("https://fakeazureaccount.blob.core.windows.net", metadata)
-            };
-            MockBuildEngine buildEngineMock = new MockBuildEngine();
+                RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://fakeazureaccount.blob.core.windows.net/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+            }
+        });
 
-            FindDotNetCliPackage task = new FindDotNetCliPackage()
-            {
-                Channel = "Current",
-                Version = "6.0.102",
-                Runtime = "win-x86",
-                PackageType = "runtime",
-                BuildEngine = buildEngineMock
-            };
-
-            task.AdditionalFeeds = additionalFeed;
-            task.ConfigureServices(collection);
-
-            // Act
-            using var provider = collection.BuildServiceProvider();
-            task.InvokeExecute(provider).Should().BeTrue();
-
-            // verify we didn't print the sas token 
-            buildEngineMock.BuildMessageEvents.Should().NotContain(x => Regex.IsMatch(x.Message, @"\?sv=[^ ]+"));
-
-            buildEngineMock.BuildMessageEvents.Should().Contain(x => x.Message.Contains("is valid."));
-        }
-
-        [Fact]
-        public void IfAuthenticatedFeedReturnsForbiddenFails()
+        var collection = CreateMockServiceCollection(requestResponseHelpers.ToArray());
+        Dictionary<string, string> metadata = new Dictionary<string, string>()
         {
-            List<RequestResponseHelper> requestResponseHelpers = new List<RequestResponseHelper>(GetDefaultRequestResponseHelpers());
-            requestResponseHelpers.AddRange(new[] {
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://fakeazureaccount.blob.core.windows.net/Runtime/6.0.102/runtime-productVersion.txt"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
-                },
-                new RequestResponseHelper()
-                {
-                    // If your sas token is invalid or missing, azure storage returns 403 (Forbidden)
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://fakeazureaccount.blob.core.windows.net/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden)
-                }
-            });
-
-            var collection = CreateMockServiceCollection(requestResponseHelpers.ToArray());
-            Dictionary<string, string> metadata = new Dictionary<string, string>()
-            {
-                { "SasToken", "bar" }
-            };
-            ITaskItem[] additionalFeed = new TaskItem[]
-            {
-                new TaskItem("https://fakeazureaccount.blob.core.windows.net", metadata)
-            };
-            MockBuildEngine buildEngineMock = new MockBuildEngine();
-
-            FindDotNetCliPackage task = new FindDotNetCliPackage()
-            {
-                Channel = "Current",
-                Version = "6.0.102",
-                Runtime = "win-x86",
-                PackageType = "runtime",
-                BuildEngine = buildEngineMock
-            };
-
-            task.AdditionalFeeds = additionalFeed;
-            task.ConfigureServices(collection);
-
-            // Act
-            using var provider = collection.BuildServiceProvider();
-            task.InvokeExecute(provider).Should().BeFalse();
-
-            // verify we reported being unable to access container
-            buildEngineMock.BuildMessageEvents.Should().Contain(x => x.Message.Contains("Response status code does not indicate success: 403 (Forbidden)."));
-            // verify we didn't print the sas token 
-            buildEngineMock.BuildMessageEvents.Should().NotContain(x => Regex.IsMatch(x.Message, @"\?sv=[^ ]+"));
-
-            buildEngineMock.BuildMessageEvents.Should().NotContain(x => x.Message.Contains("is valid."));
-        }
-
-        [Fact]
-        public void InstallRuntimeFailsIfNotFound()
+            { "SasToken", "bar" }
+        };
+        ITaskItem[] additionalFeed = new TaskItem[]
         {
-            List<RequestResponseHelper> requestResponseHelpers = new List<RequestResponseHelper>()
-            {
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage= new HttpRequestMessage(HttpMethod.Head, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://ci.dot.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://ci.dot.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
-                }
-            };
+            new TaskItem("https://fakeazureaccount.blob.core.windows.net", metadata)
+        };
+        MockBuildEngine buildEngineMock = new MockBuildEngine();
 
-            var collection = CreateMockServiceCollection(requestResponseHelpers.ToArray());
-
-            MockBuildEngine buildEngineMock = new MockBuildEngine();
-
-            FindDotNetCliPackage task = new FindDotNetCliPackage()
-            {
-                Channel = "Current",
-                Version = "6.0.102",
-                Runtime = "win-x86",
-                PackageType = "runtime",
-                BuildEngine = buildEngineMock
-            };
-
-            task.ConfigureServices(collection);
-
-            // Act
-            using var provider = collection.BuildServiceProvider();
-            task.InvokeExecute(provider).Should().BeFalse();
-
-            // verify we didn't print the sas token 
-            buildEngineMock.BuildMessageEvents.Should().NotContain(x => Regex.IsMatch(x.Message, @"\?sv=[^ ]+"));
-
-            buildEngineMock.BuildMessageEvents.Should().NotContain(x => x.Message.Contains("is valid."));
-        }
-
-        private IServiceCollection CreateMockServiceCollection(RequestResponseHelper[] requestResponseHelpers)
+        FindDotNetCliPackage task = new FindDotNetCliPackage()
         {
-            var collection = new ServiceCollection();
+            Channel = "Current",
+            Version = "6.0.102",
+            Runtime = "win-x86",
+            PackageType = "runtime",
+            BuildEngine = buildEngineMock
+        };
 
-            // Our message has to be unique or we will get the failure 
-            // "The request message was already sent"
-            collection.AddScoped<HttpMessageHandler, ArcadeHttpMessageHandler>(mh =>
+        task.AdditionalFeeds = additionalFeed;
+        task.ConfigureServices(collection);
+
+        // Act
+        using var provider = collection.BuildServiceProvider();
+        task.InvokeExecute(provider).Should().BeTrue();
+
+        // verify we didn't print the sas token 
+        buildEngineMock.BuildMessageEvents.Should().NotContain(x => Regex.IsMatch(x.Message, @"\?sv=[^ ]+"));
+
+        buildEngineMock.BuildMessageEvents.Should().Contain(x => x.Message.Contains("is valid."));
+    }
+
+    [Fact]
+    public void IfAuthenticatedFeedReturnsForbiddenFails()
+    {
+        List<RequestResponseHelper> requestResponseHelpers = new List<RequestResponseHelper>(GetDefaultRequestResponseHelpers());
+        requestResponseHelpers.AddRange(new[] {
+            new RequestResponseHelper()
             {
-                return new ArcadeHttpMessageHandler()
-                {
-                    RequestResponses = requestResponseHelpers
-                };
-            });
-            return collection;
-        }
+                RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://fakeazureaccount.blob.core.windows.net/Runtime/6.0.102/runtime-productVersion.txt"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
+            },
+            new RequestResponseHelper()
+            {
+                // If your sas token is invalid or missing, azure storage returns 403 (Forbidden)
+                RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://fakeazureaccount.blob.core.windows.net/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.Forbidden)
+            }
+        });
 
-        private RequestResponseHelper[] GetDefaultRequestResponseHelpers()
+        var collection = CreateMockServiceCollection(requestResponseHelpers.ToArray());
+        Dictionary<string, string> metadata = new Dictionary<string, string>()
         {
-            var requestResponseHelpers = new RequestResponseHelper[] {
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102") }
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://ci.dot.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102") }
-                },
-                new RequestResponseHelper()
-                {
-                    RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://ci.dot.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
-                    ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
-                }
+            { "SasToken", "bar" }
+        };
+        ITaskItem[] additionalFeed = new TaskItem[]
+        {
+            new TaskItem("https://fakeazureaccount.blob.core.windows.net", metadata)
+        };
+        MockBuildEngine buildEngineMock = new MockBuildEngine();
+
+        FindDotNetCliPackage task = new FindDotNetCliPackage()
+        {
+            Channel = "Current",
+            Version = "6.0.102",
+            Runtime = "win-x86",
+            PackageType = "runtime",
+            BuildEngine = buildEngineMock
+        };
+
+        task.AdditionalFeeds = additionalFeed;
+        task.ConfigureServices(collection);
+
+        // Act
+        using var provider = collection.BuildServiceProvider();
+        task.InvokeExecute(provider).Should().BeFalse();
+
+        // verify we reported being unable to access container
+        buildEngineMock.BuildMessageEvents.Should().Contain(x => x.Message.Contains("Response status code does not indicate success: 403 (Forbidden)."));
+        // verify we didn't print the sas token 
+        buildEngineMock.BuildMessageEvents.Should().NotContain(x => Regex.IsMatch(x.Message, @"\?sv=[^ ]+"));
+
+        buildEngineMock.BuildMessageEvents.Should().NotContain(x => x.Message.Contains("is valid."));
+    }
+
+    [Fact]
+    public void InstallRuntimeFailsIfNotFound()
+    {
+        List<RequestResponseHelper> requestResponseHelpers = new List<RequestResponseHelper>()
+        {
+            new RequestResponseHelper()
+            {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
+            },
+            new RequestResponseHelper()
+            {
+                RequestMessage= new HttpRequestMessage(HttpMethod.Head, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
+            },
+            new RequestResponseHelper()
+            {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://ci.dot.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102")}
+            },
+            new RequestResponseHelper()
+            {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://ci.dot.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
+            }
+        };
+
+        var collection = CreateMockServiceCollection(requestResponseHelpers.ToArray());
+
+        MockBuildEngine buildEngineMock = new MockBuildEngine();
+
+        FindDotNetCliPackage task = new FindDotNetCliPackage()
+        {
+            Channel = "Current",
+            Version = "6.0.102",
+            Runtime = "win-x86",
+            PackageType = "runtime",
+            BuildEngine = buildEngineMock
+        };
+
+        task.ConfigureServices(collection);
+
+        // Act
+        using var provider = collection.BuildServiceProvider();
+        task.InvokeExecute(provider).Should().BeFalse();
+
+        // verify we didn't print the sas token 
+        buildEngineMock.BuildMessageEvents.Should().NotContain(x => Regex.IsMatch(x.Message, @"\?sv=[^ ]+"));
+
+        buildEngineMock.BuildMessageEvents.Should().NotContain(x => x.Message.Contains("is valid."));
+    }
+
+    private IServiceCollection CreateMockServiceCollection(RequestResponseHelper[] requestResponseHelpers)
+    {
+        var collection = new ServiceCollection();
+
+        // Our message has to be unique or we will get the failure 
+        // "The request message was already sent"
+        collection.AddScoped<HttpMessageHandler, ArcadeHttpMessageHandler>(mh =>
+        {
+            return new ArcadeHttpMessageHandler()
+            {
+                RequestResponses = requestResponseHelpers
             };
-            return requestResponseHelpers;
-        }
+        });
+        return collection;
+    }
+
+    private RequestResponseHelper[] GetDefaultRequestResponseHelpers()
+    {
+        var requestResponseHelpers = new RequestResponseHelper[] {
+            new RequestResponseHelper()
+            {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/runtime-productVersion.txt"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102") }
+            },
+            new RequestResponseHelper()
+            {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
+            },
+            new RequestResponseHelper()
+            {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Get, "https://ci.dot.net/public/Runtime/6.0.102/runtime-productVersion.txt"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("6.0.102") }
+            },
+            new RequestResponseHelper()
+            {
+                RequestMessage = new HttpRequestMessage(HttpMethod.Head, "https://ci.dot.net/public/Runtime/6.0.102/dotnet-runtime-6.0.102-win-x86.zip"),
+                ResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
+            }
+        };
+        return requestResponseHelpers;
     }
 }
 

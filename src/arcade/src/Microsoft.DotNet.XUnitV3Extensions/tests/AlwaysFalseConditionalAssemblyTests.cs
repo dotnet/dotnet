@@ -12,19 +12,18 @@ using Xunit;
 [assembly: ConditionalAssembly(typeof(Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssemblyTests.Conditions),
     nameof(Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssemblyTests.Conditions.AlwaysFalse))]
 
-namespace Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssemblyTests
-{
-    public static class Conditions
-    {
-        public static bool AlwaysFalse => false;
-    }
+namespace Microsoft.DotNet.XUnitV3Extensions.AlwaysFalseConditionalAssemblyTests;
 
-    public class FailingTests
+public static class Conditions
+{
+    public static bool AlwaysFalse => false;
+}
+
+public class FailingTests
+{
+    [Fact]
+    public void AlwaysFails()
     {
-        [Fact]
-        public void AlwaysFails()
-        {
-            Assert.Fail("This test is expected to be skipped via [assembly: ConditionalAssembly].");
-        }
+        Assert.Fail("This test is expected to be skipped via [assembly: ConditionalAssembly].");
     }
 }

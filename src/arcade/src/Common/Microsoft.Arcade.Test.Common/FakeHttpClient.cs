@@ -8,80 +8,79 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.Arcade.Test.Common
+namespace Microsoft.Arcade.Test.Common;
+
+public static class FakeHttpClient
 {
-    public static class FakeHttpClient
+    
+    public static HttpClient WithResponses(params HttpResponseMessage[] responses)
+        => new HttpClient( // lgtm [cs/httpclient-checkcertrevlist-disabled] HttpClient used in unit tests
+            new FakeResponseOnlyHttpMessageHandler(responses));
+
+    public static HttpClient WithResponsesGivenUris(Dictionary<string, IEnumerable<HttpResponseMessage>> FakeHttpMessageHandler)
+        => new HttpClient( // lgtm [cs/httpclient-checkcertrevlist-disabled] HttpClient used in unit tests
+            new FakeHttpMessageHandler(FakeHttpMessageHandler));
+
+    public class FakeResponseOnlyHttpMessageHandler : HttpMessageHandler
     {
-        
-        public static HttpClient WithResponses(params HttpResponseMessage[] responses)
-            => new HttpClient( // lgtm [cs/httpclient-checkcertrevlist-disabled] HttpClient used in unit tests
-                new FakeResponseOnlyHttpMessageHandler(responses));
+        private readonly IEnumerator<HttpResponseMessage> _responseEnumerator;
 
-        public static HttpClient WithResponsesGivenUris(Dictionary<string, IEnumerable<HttpResponseMessage>> FakeHttpMessageHandler)
-            => new HttpClient( // lgtm [cs/httpclient-checkcertrevlist-disabled] HttpClient used in unit tests
-                new FakeHttpMessageHandler(FakeHttpMessageHandler));
-
-        public class FakeResponseOnlyHttpMessageHandler : HttpMessageHandler
+        public FakeResponseOnlyHttpMessageHandler(IEnumerable<HttpResponseMessage> responses)
         {
-            private readonly IEnumerator<HttpResponseMessage> _responseEnumerator;
+            _responseEnumerator = responses.GetEnumerator();
+        }
 
-            public FakeResponseOnlyHttpMessageHandler(IEnumerable<HttpResponseMessage> responses)
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                _responseEnumerator = responses.GetEnumerator();
-            }
-
-            protected override void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    _responseEnumerator.Dispose();
-                }
-            }
-
-            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-            {
-                if (!_responseEnumerator.MoveNext())
-                    throw new InvalidOperationException($"Unexpected end of response sequence. Number of predefined responses should be at least equal to number of requests invoked by HttpClient.");
-
-                return Task.FromResult(_responseEnumerator.Current);
+                _responseEnumerator.Dispose();
             }
         }
 
-        public class FakeHttpMessageHandler : HttpMessageHandler
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            private readonly Dictionary<string, IEnumerator<HttpResponseMessage>> _responseEnumerators;
+            if (!_responseEnumerator.MoveNext())
+                throw new InvalidOperationException($"Unexpected end of response sequence. Number of predefined responses should be at least equal to number of requests invoked by HttpClient.");
 
-            public FakeHttpMessageHandler(Dictionary<string, IEnumerable<HttpResponseMessage>> responses)
-            {
-                _responseEnumerators = responses.Select(kvp =>
-                    new KeyValuePair<string, IEnumerator<HttpResponseMessage>>(kvp.Key, kvp.Value.GetEnumerator()))
-                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
-            }
+            return Task.FromResult(_responseEnumerator.Current);
+        }
+    }
 
-            protected override void Dispose(bool disposing)
+    public class FakeHttpMessageHandler : HttpMessageHandler
+    {
+        private readonly Dictionary<string, IEnumerator<HttpResponseMessage>> _responseEnumerators;
+
+        public FakeHttpMessageHandler(Dictionary<string, IEnumerable<HttpResponseMessage>> responses)
+        {
+            _responseEnumerators = responses.Select(kvp =>
+                new KeyValuePair<string, IEnumerator<HttpResponseMessage>>(kvp.Key, kvp.Value.GetEnumerator()))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                if (disposing)
+                foreach (var e in _responseEnumerators.Values)
                 {
-                    foreach (var e in _responseEnumerators.Values)
-                    {
-                        e.Dispose();
-                    }
+                    e.Dispose();
                 }
             }
+        }
 
-            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            if (!_responseEnumerators.TryGetValue(request.RequestUri.ToString(), out var responseEnumerator))
             {
-                if (!_responseEnumerators.TryGetValue(request.RequestUri.ToString(), out var responseEnumerator))
-                {
-                    if (request.RequestUri != null)
-                        throw new InvalidOperationException($"Unexpected request URI: {request.RequestUri}.");
-                }
-                if (!responseEnumerator.MoveNext())
-                    throw new InvalidOperationException($"Unexpected end of response sequence for uri '{request.RequestUri}'. " +
-                        $"Number of predefined responses should be at least equal to number of requests invoked by HttpClient.");
-
-                return Task.FromResult(responseEnumerator.Current);
+                if (request.RequestUri != null)
+                    throw new InvalidOperationException($"Unexpected request URI: {request.RequestUri}.");
             }
+            if (!responseEnumerator.MoveNext())
+                throw new InvalidOperationException($"Unexpected end of response sequence for uri '{request.RequestUri}'. " +
+                    $"Number of predefined responses should be at least equal to number of requests invoked by HttpClient.");
+
+            return Task.FromResult(responseEnumerator.Current);
         }
     }
 }
