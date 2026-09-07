@@ -9,16 +9,15 @@ using System.Text;
 using Xunit;
 using Xunit.Sdk;
 
-namespace Microsoft.DotNet.XUnitExtensions.Attributes
-{
+namespace Microsoft.DotNet.XUnitExtensions.Attributes;
+
 #if USES_XUNIT_3
-    [XunitTestCaseDiscoverer(typeof(ParallelTheoryDiscoverer))]
+[XunitTestCaseDiscoverer(typeof(ParallelTheoryDiscoverer))]
 #else
-    [XunitTestCaseDiscoverer("Microsoft.DotNet.XUnitExtensions.ParallelTheoryDiscoverer", "Microsoft.DotNet.XUnitExtensions")]
+[XunitTestCaseDiscoverer("Microsoft.DotNet.XUnitExtensions.ParallelTheoryDiscoverer", "Microsoft.DotNet.XUnitExtensions")]
 #endif
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public sealed class ParallelTheoryAttribute : TheoryAttribute
-    {
-    }
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+public sealed class ParallelTheoryAttribute : TheoryAttribute
+{
 }
 #endif

@@ -11,93 +11,92 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging
+namespace Microsoft.DotNet.Build.Tasks.Packaging;
+
+/// <summary>
+/// Examines all dependencies 
+/// </summary>
+public class SplitDependenciesBySupport : BuildTask
 {
-    /// <summary>
-    /// Examines all dependencies 
-    /// </summary>
-    public class SplitDependenciesBySupport : BuildTask
+    [Required]
+    public ITaskItem[] OriginalDependencies { get; set; }
+
+    [Output]
+    public ITaskItem[] SplitDependencies { get; set; }
+
+    public override bool Execute()
     {
-        [Required]
-        public ITaskItem[] OriginalDependencies { get; set; }
+        var dependencies = OriginalDependencies.Select(od => new Dependency(od)).ToArray();
 
-        [Output]
-        public ITaskItem[] SplitDependencies { get; set; }
-        
-        public override bool Execute()
+        // preserve all of the TFM-specific dependencies that are not NETStandard.
+        List<ITaskItem> splitDependencies = new List<ITaskItem>(dependencies.Where(d => d.TargetFramework != null && d.TargetFramework.Framework != FrameworkConstants.FrameworkIdentifiers.NetStandard).Select(d => d.OriginalItem));
+
+        // for any dependency with unspecified TFM, get its minimum supported netstandard version
+        // and treat it as targeting that.
+        var unspecDeps = dependencies.Where(d => d.TargetFramework == null).ToArray();
+        foreach (var unspecDep in unspecDeps)
         {
-            var dependencies = OriginalDependencies.Select(od => new Dependency(od)).ToArray();
-
-            // preserve all of the TFM-specific dependencies that are not NETStandard.
-            List<ITaskItem> splitDependencies = new List<ITaskItem>(dependencies.Where(d => d.TargetFramework != null && d.TargetFramework.Framework != FrameworkConstants.FrameworkIdentifiers.NetStandard).Select(d => d.OriginalItem));
-
-            // for any dependency with unspecified TFM, get its minimum supported netstandard version
-            // and treat it as targeting that.
-            var unspecDeps = dependencies.Where(d => d.TargetFramework == null).ToArray();
-            foreach (var unspecDep in unspecDeps)
-            {
-                unspecDep.TargetFramework = unspecDep.MinimumNETStandard;
-            }
-
-            // get all distinct netstandard TFMs
-            var netStandardGroups = dependencies.Select(d => d.TargetFramework)
-                                     .Where(fx => fx != null && fx.Framework == FrameworkConstants.FrameworkIdentifiers.NetStandard)
-                                     .Distinct()
-                                     .OrderBy(fx => fx.Version)
-                                     .ToArray();
-
-            // for every netstandard group include all dependencies that support that version of NETStandard or lower
-            foreach (var netStandardGroup in netStandardGroups)
-            {
-                var applicableDependencies = dependencies.Where(d => d.TargetFramework != null &&
-                                                              d.TargetFramework.Framework == FrameworkConstants.FrameworkIdentifiers.NetStandard &&
-                                                              d.TargetFramework.Version <= netStandardGroup.Version);
-                splitDependencies.AddRange(applicableDependencies.Select(d => d.GetItemWithTargetFramework(netStandardGroup)));
-            }
-
-            SplitDependencies = splitDependencies.ToArray();
-
-            return !Log.HasLoggedErrors;
+            unspecDep.TargetFramework = unspecDep.MinimumNETStandard;
         }
 
-        private class Dependency
+        // get all distinct netstandard TFMs
+        var netStandardGroups = dependencies.Select(d => d.TargetFramework)
+                                 .Where(fx => fx != null && fx.Framework == FrameworkConstants.FrameworkIdentifiers.NetStandard)
+                                 .Distinct()
+                                 .OrderBy(fx => fx.Version)
+                                 .ToArray();
+
+        // for every netstandard group include all dependencies that support that version of NETStandard or lower
+        foreach (var netStandardGroup in netStandardGroups)
         {
-            public Dependency(ITaskItem originalItem)
-            {
-                OriginalItem = originalItem;
-                Name = originalItem.ItemSpec;
-                string fx = originalItem.GetMetadata("TargetFramework");
-                if (!String.IsNullOrEmpty(fx))
-                {
-                    TargetFramework = NuGetFramework.Parse(fx);
-                }
-                else
-                {
-                    TargetFramework = null;
-                }
+            var applicableDependencies = dependencies.Where(d => d.TargetFramework != null &&
+                                                          d.TargetFramework.Framework == FrameworkConstants.FrameworkIdentifiers.NetStandard &&
+                                                          d.TargetFramework.Version <= netStandardGroup.Version);
+            splitDependencies.AddRange(applicableDependencies.Select(d => d.GetItemWithTargetFramework(netStandardGroup)));
+        }
 
-                string minNSFx = originalItem.GetMetadata("MinimumNETStandard");
-                if (!String.IsNullOrEmpty(minNSFx))
-                {
-                    MinimumNETStandard = NuGetFramework.Parse(minNSFx);
-                }
-                else
-                {
-                    MinimumNETStandard = null;
-                }
+        SplitDependencies = splitDependencies.ToArray();
+
+        return !Log.HasLoggedErrors;
+    }
+
+    private class Dependency
+    {
+        public Dependency(ITaskItem originalItem)
+        {
+            OriginalItem = originalItem;
+            Name = originalItem.ItemSpec;
+            string fx = originalItem.GetMetadata("TargetFramework");
+            if (!String.IsNullOrEmpty(fx))
+            {
+                TargetFramework = NuGetFramework.Parse(fx);
+            }
+            else
+            {
+                TargetFramework = null;
             }
 
-            public ITaskItem OriginalItem { get; }
-            public string Name { get; }
-            public NuGetFramework TargetFramework { get; set; }
-            public NuGetFramework MinimumNETStandard { get; }
-
-            public ITaskItem GetItemWithTargetFramework(NuGetFramework framework)
+            string minNSFx = originalItem.GetMetadata("MinimumNETStandard");
+            if (!String.IsNullOrEmpty(minNSFx))
             {
-                var newItem = new TaskItem(OriginalItem);
-                newItem.SetMetadata("TargetFramework", framework.GetShortFolderName());
-                return newItem;
+                MinimumNETStandard = NuGetFramework.Parse(minNSFx);
             }
+            else
+            {
+                MinimumNETStandard = null;
+            }
+        }
+
+        public ITaskItem OriginalItem { get; }
+        public string Name { get; }
+        public NuGetFramework TargetFramework { get; set; }
+        public NuGetFramework MinimumNETStandard { get; }
+
+        public ITaskItem GetItemWithTargetFramework(NuGetFramework framework)
+        {
+            var newItem = new TaskItem(OriginalItem);
+            newItem.SetMetadata("TargetFramework", framework.GetShortFolderName());
+            return newItem;
         }
     }
 }

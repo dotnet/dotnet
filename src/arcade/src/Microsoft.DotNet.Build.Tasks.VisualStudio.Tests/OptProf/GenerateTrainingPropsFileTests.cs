@@ -5,64 +5,63 @@ using System;
 using System.IO;
 using Xunit;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests;
+
+public class GenerateTrainingPropsFileTests
 {
-    public class GenerateTrainingPropsFileTests
+    [Fact]
+    public void Execute()
     {
-        [Fact]
-        public void Execute()
+        var temp = Path.GetTempPath();
+        var dir = Path.Combine(temp, Guid.NewGuid().ToString());
+
+        var task = new GenerateTrainingPropsFile()
         {
-            var temp = Path.GetTempPath();
-            var dir = Path.Combine(temp, Guid.NewGuid().ToString());
+            ProductDropName = "Products/DevDiv/dotnet/roslyn/12345",
+            RepositoryName = "dotnet/roslyn",
+            OutputDirectory = dir,
+        };
 
-            var task = new GenerateTrainingPropsFile()
-            {
-                ProductDropName = "Products/DevDiv/dotnet/roslyn/12345",
-                RepositoryName = "dotnet/roslyn",
-                OutputDirectory = dir,
-            };
+        bool result = task.Execute();
 
-            bool result = task.Execute();
-
-            var actual = File.ReadAllText(Path.Combine(dir, "dotnet.roslyn.props"));
-            Assert.Equal(@"<?xml version=""1.0""?>
+        var actual = File.ReadAllText(Path.Combine(dir, "dotnet.roslyn.props"));
+        Assert.Equal(@"<?xml version=""1.0""?>
 <Project>
   <ItemGroup>
     <TestStore Include=""vstsdrop:ProfilingInputs/DevDiv/dotnet/roslyn/12345"" />
   </ItemGroup>
 </Project>", actual);
 
-            Assert.True(result);
+        Assert.True(result);
 
-            Directory.Delete(dir, recursive: true);
-        }
+        Directory.Delete(dir, recursive: true);
+    }
 
-        [Fact]
-        public void EmptyArgs()
+    [Fact]
+    public void EmptyArgs()
+    {
+        var temp = Path.GetTempPath();
+        var dir = Path.Combine(temp, Guid.NewGuid().ToString());
+
+        var task = new GenerateTrainingPropsFile()
         {
-            var temp = Path.GetTempPath();
-            var dir = Path.Combine(temp, Guid.NewGuid().ToString());
+            ProductDropName = null,
+            RepositoryName = null,
+            OutputDirectory = dir,
+        };
 
-            var task = new GenerateTrainingPropsFile()
-            {
-                ProductDropName = null,
-                RepositoryName = null,
-                OutputDirectory = dir,
-            };
+        bool result = task.Execute();
 
-            bool result = task.Execute();
-
-            var actual = File.ReadAllText(Path.Combine(dir, "ProfilingInputs.props"));
-            Assert.Equal(@"<?xml version=""1.0""?>
+        var actual = File.ReadAllText(Path.Combine(dir, "ProfilingInputs.props"));
+        Assert.Equal(@"<?xml version=""1.0""?>
 <Project>
   <ItemGroup>
     <TestStore Include=""vstsdrop:ProfilingInputs/dummy"" />
   </ItemGroup>
 </Project>", actual);
 
-            Assert.True(result);
+        Assert.True(result);
 
-            Directory.Delete(dir, recursive: true);
-        }
+        Directory.Delete(dir, recursive: true);
     }
 }

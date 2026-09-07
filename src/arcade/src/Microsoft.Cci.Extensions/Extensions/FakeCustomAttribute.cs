@@ -8,59 +8,58 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Cci;
 
-namespace Microsoft.Cci.Extensions
+namespace Microsoft.Cci.Extensions;
+
+public class FakeCustomAttribute : ICustomAttribute
 {
-    public class FakeCustomAttribute : ICustomAttribute
+    public FakeCustomAttribute(string nspace, string typeName)
     {
-        public FakeCustomAttribute(string nspace, string typeName)
+        TypeName = typeName;
+        Namespace = nspace;
+    }
+
+    public string TypeName { get; }
+    public string Namespace { get; }
+    public string FullTypeName { get { return Namespace + "." + TypeName; } }
+    public string DocId { get { return "T:" + FullTypeName; } }
+
+    IEnumerable<IMetadataExpression> ICustomAttribute.Arguments
+    {
+        get
         {
-            TypeName = typeName;
-            Namespace = nspace;
+            return Enumerable.Empty<IMetadataExpression>();
         }
+    }
 
-        public string TypeName { get; }
-        public string Namespace { get; }
-        public string FullTypeName { get { return Namespace + "." + TypeName; } }
-        public string DocId { get { return "T:" + FullTypeName; } }
-
-        IEnumerable<IMetadataExpression> ICustomAttribute.Arguments
+    IMethodReference ICustomAttribute.Constructor
+    {
+        get
         {
-            get
-            {
-                return Enumerable.Empty<IMetadataExpression>();
-            }
+            return null;
         }
+    }
 
-        IMethodReference ICustomAttribute.Constructor
+    IEnumerable<IMetadataNamedArgument> ICustomAttribute.NamedArguments
+    {
+        get
         {
-            get
-            {
-                return null;
-            }
+            return Enumerable.Empty<IMetadataNamedArgument>();
         }
+    }
 
-        IEnumerable<IMetadataNamedArgument> ICustomAttribute.NamedArguments
+    ushort ICustomAttribute.NumberOfNamedArguments
+    {
+        get
         {
-            get
-            {
-                return Enumerable.Empty<IMetadataNamedArgument>();
-            }
+            return 0;
         }
+    }
 
-        ushort ICustomAttribute.NumberOfNamedArguments
+    ITypeReference ICustomAttribute.Type
+    {
+        get
         {
-            get
-            {
-                return 0;
-            }
-        }
-
-        ITypeReference ICustomAttribute.Type
-        {
-            get
-            {
-                return null;
-            }
+            return null;
         }
     }
 }

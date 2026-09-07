@@ -7,67 +7,66 @@ using System.Collections.Immutable;
 using System.Threading;
 using Microsoft.Build.Utilities;
 
-namespace Microsoft.DotNet.Helix.Sdk
+namespace Microsoft.DotNet.Helix.Sdk;
+
+public static class LoggerExtensions
 {
-    public static class LoggerExtensions
+    private static readonly AsyncLocal<ImmutableStack<string>> s_localCategoryStack = new AsyncLocal<ImmutableStack<string>>();
+
+    private static ImmutableStack<string> CategoryStack
     {
-        private static readonly AsyncLocal<ImmutableStack<string>> s_localCategoryStack = new AsyncLocal<ImmutableStack<string>>();
+        get => s_localCategoryStack.Value ?? ImmutableStack<string>.Empty;
+        set => s_localCategoryStack.Value = value;
+    }
 
-        private static ImmutableStack<string> CategoryStack
+    public static FailureCategoryScope EnterFailureCategoryScope(this TaskLoggingHelper log, FailureCategory category)
+    {
+        if (log == null)
         {
-            get => s_localCategoryStack.Value ?? ImmutableStack<string>.Empty;
-            set => s_localCategoryStack.Value = value;
+            throw new ArgumentNullException(nameof(log));
         }
 
-        public static FailureCategoryScope EnterFailureCategoryScope(this TaskLoggingHelper log, FailureCategory category)
-        {
-            if (log == null)
-            {
-                throw new ArgumentNullException(nameof(log));
-            }
+        CategoryStack = CategoryStack.Push(category.Value);
+        return new FailureCategoryScope(log);
+    }
 
-            CategoryStack = CategoryStack.Push(category.Value);
-            return new FailureCategoryScope(log);
+    public static void LogError(this TaskLoggingHelper log, FailureCategory category, string message, params object[] messageArgs)
+    {
+        using (EnterFailureCategoryScope(log, category))
+        {
+            log.LogError(message, messageArgs);
+        }
+    }
+
+    public static void LogErrorFromException(
+        this TaskLoggingHelper log,
+        FailureCategory category,
+        Exception exception,
+        bool showStackTrace = false,
+        bool showDetail = false,
+        string file = null)
+    {
+        using (EnterFailureCategoryScope(log, category))
+        {
+            log.LogErrorFromException(exception, showStackTrace, showDetail, file);
+        }
+    }
+
+    public struct FailureCategoryScope : IDisposable
+    {
+        private TaskLoggingHelper _log;
+
+        public FailureCategoryScope(TaskLoggingHelper log)
+        {
+            _log = log;
         }
 
-        public static void LogError(this TaskLoggingHelper log, FailureCategory category, string message, params object[] messageArgs)
+        public void Dispose()
         {
-            using (EnterFailureCategoryScope(log, category))
-            {
-                log.LogError(message, messageArgs);
-            }
-        }
-
-        public static void LogErrorFromException(
-            this TaskLoggingHelper log,
-            FailureCategory category,
-            Exception exception,
-            bool showStackTrace = false,
-            bool showDetail = false,
-            string file = null)
-        {
-            using (EnterFailureCategoryScope(log, category))
-            {
-                log.LogErrorFromException(exception, showStackTrace, showDetail, file);
-            }
-        }
-
-        public struct FailureCategoryScope : IDisposable
-        {
-            private TaskLoggingHelper _log;
-
-            public FailureCategoryScope(TaskLoggingHelper log)
-            {
-                _log = log;
-            }
-
-            public void Dispose()
-            {
-                if (_log == null)
-                    return;
-                CategoryStack = CategoryStack.Pop();
-                _log = null;
-            }
+            if (_log == null)
+                return;
+            CategoryStack = CategoryStack.Pop();
+            _log = null;
         }
     }
 }

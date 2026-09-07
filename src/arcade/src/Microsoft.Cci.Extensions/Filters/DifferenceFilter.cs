@@ -3,13 +3,12 @@
 
 using Microsoft.Cci.Differs;
 
-namespace Microsoft.Cci.Filters
+namespace Microsoft.Cci.Filters;
+
+public class DifferenceFilter<T> : IDifferenceFilter where T : Difference
 {
-    public class DifferenceFilter<T> : IDifferenceFilter where T : Difference
+    public virtual bool Include(Difference difference)
     {
-        public virtual bool Include(Difference difference)
-        {
-            return difference is T;
-        }
+        return difference is T;
     }
 }

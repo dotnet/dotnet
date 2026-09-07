@@ -5,46 +5,45 @@ using System;
 using System.Diagnostics;
 using System.Text;
 
-namespace Validation.Tests
+namespace Validation.Tests;
+
+internal struct CommandResult
 {
-    internal struct CommandResult
+    public static readonly CommandResult Empty = new CommandResult();
+
+    public ProcessStartInfo StartInfo { get; }
+    public int ExitCode { get; }
+    public string StdOut { get; }
+    public string StdErr { get; }
+
+    public CommandResult(ProcessStartInfo startInfo, int exitCode, string stdOut, string stdErr)
     {
-        public static readonly CommandResult Empty = new CommandResult();
+        StartInfo = startInfo;
+        ExitCode = exitCode;
+        StdOut = stdOut;
+        StdErr = stdErr;
+    }
 
-        public ProcessStartInfo StartInfo { get; }
-        public int ExitCode { get; }
-        public string StdOut { get; }
-        public string StdErr { get; }
-
-        public CommandResult(ProcessStartInfo startInfo, int exitCode, string stdOut, string stdErr)
+    public void EnsureSuccessful(bool suppressOutput = false)
+    {
+        if (ExitCode != 0)
         {
-            StartInfo = startInfo;
-            ExitCode = exitCode;
-            StdOut = stdOut;
-            StdErr = stdErr;
-        }
+            StringBuilder message = new StringBuilder($"Command failed with exit code {ExitCode}: {StartInfo.FileName} {StartInfo.Arguments}");
 
-        public void EnsureSuccessful(bool suppressOutput = false)
-        {
-            if (ExitCode != 0)
+            if (!suppressOutput)
             {
-                StringBuilder message = new StringBuilder($"Command failed with exit code {ExitCode}: {StartInfo.FileName} {StartInfo.Arguments}");
-
-                if (!suppressOutput)
+                if (!string.IsNullOrEmpty(StdOut))
                 {
-                    if (!string.IsNullOrEmpty(StdOut))
-                    {
-                        message.AppendLine($"{Environment.NewLine}Standard Output:{Environment.NewLine}{StdOut}");
-                    }
-
-                    if (!string.IsNullOrEmpty(StdErr))
-                    {
-                        message.AppendLine($"{Environment.NewLine}Standard Error:{Environment.NewLine}{StdErr}");
-                    }
+                    message.AppendLine($"{Environment.NewLine}Standard Output:{Environment.NewLine}{StdOut}");
                 }
 
-                throw new Exception(message.ToString());
+                if (!string.IsNullOrEmpty(StdErr))
+                {
+                    message.AppendLine($"{Environment.NewLine}Standard Error:{Environment.NewLine}{StdErr}");
+                }
             }
+
+            throw new Exception(message.ToString());
         }
     }
 }

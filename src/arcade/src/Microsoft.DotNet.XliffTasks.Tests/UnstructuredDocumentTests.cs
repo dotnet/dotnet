@@ -6,59 +6,58 @@ using System.IO;
 using XliffTasks.Model;
 using Xunit;
 
-namespace XliffTasks.Tests
+namespace XliffTasks.Tests;
+
+public class UnstructuredDocumentTests
 {
-    public class UnstructuredDocumentTests
+    [Fact]
+    public void BasicLoadAndTranslate()
     {
-        [Fact]
-        public void BasicLoadAndTranslate()
-        {
-            string source =
+        string source =
 @"
 Say hello: @@@idhello|Hello@@@<end>
 Say goodbye: @@@idgoodbye|Goodbye@@@<end>
 ";
 
-            Dictionary<string, string> translations = new()
-            {
-                ["idhello"] = "Bonjour!",
-                ["idgoodbye"] = "Au revoir!",
-            };
+        Dictionary<string, string> translations = new()
+        {
+            ["idhello"] = "Bonjour!",
+            ["idgoodbye"] = "Au revoir!",
+        };
 
-            string expectedTranslation =
+        string expectedTranslation =
 @"
 Say hello: Bonjour!<end>
 Say goodbye: Au revoir!<end>
 ";
 
-            UnstructuredDocument document = new();
-            StringWriter writer = new();
-            document.Load(new StringReader(source));
-            document.Translate(translations);
-            document.Save(writer);
+        UnstructuredDocument document = new();
+        StringWriter writer = new();
+        document.Load(new StringReader(source));
+        document.Translate(translations);
+        document.Save(writer);
 
-            AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
-        }
+        AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
+    }
 
-        [Fact]
-        public void SourceEndsWithTranslatableSpan()
+    [Fact]
+    public void SourceEndsWithTranslatableSpan()
+    {
+        string source = "@@@idhello|Hello@@@";
+
+        Dictionary<string, string> translations = new()
         {
-            string source = "@@@idhello|Hello@@@";
+            ["idhello"] = "Bonjour!",
+        };
 
-            Dictionary<string, string> translations = new()
-            {
-                ["idhello"] = "Bonjour!",
-            };
+        string expectedTranslation = "Bonjour!";
 
-            string expectedTranslation = "Bonjour!";
+        UnstructuredDocument document = new();
+        StringWriter writer = new();
+        document.Load(new StringReader(source));
+        document.Translate(translations);
+        document.Save(writer);
 
-            UnstructuredDocument document = new();
-            StringWriter writer = new();
-            document.Load(new StringReader(source));
-            document.Translate(translations);
-            document.Save(writer);
-
-            AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
-        }
+        AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
     }
 }
