@@ -424,6 +424,13 @@ namespace Microsoft.DotNet.Helix.JobMonitor
                 authoritativeJobs.Select(static job => job.JobName),
                 StringComparer.OrdinalIgnoreCase);
 
+            // Upload all historical jobs, but establish the outcome authority boundary before
+            // background uploads can report synthetic failures for superseded incarnations.
+            foreach (HelixJobInfo job in stageJobs.Where(job => !authoritativeJobNames.Contains(job.JobName)))
+            {
+                _state.MarkWorkItemOutcomesIgnored(job.JobName);
+            }
+
             // Helix job summaries can omit Finished for failed jobs even after all work
             // items have terminal exit codes, so fall back to per-work-item status.
             IReadOnlyList<HelixJobInfo> jobsToRefresh =

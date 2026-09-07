@@ -42,6 +42,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
         public List<string> CreatedTestRuns { get; } = [];
         public List<int> CompletedTestRunIds { get; } = [];
         public Dictionary<int, List<WorkItemTestResults>> UploadedResultsByRunId { get; } = [];
+        public Dictionary<(string JobName, string WorkItemName), PreparedTestResults> PublishedPreparedResults { get; } = [];
         public List<string> UploadedJobNames { get; } = [];
         public int CreateTestRunCallCount { get; private set; }
         public int PublishTestResultsCallCount { get; private set; }
@@ -298,6 +299,7 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests.Fakes
                     }
 
                     existing.Add(results);
+                    PublishedPreparedResults[(results.JobName, results.WorkItemName)] = prepared;
                     if (!UploadedJobNames.Contains(results.JobName, StringComparer.OrdinalIgnoreCase))
                     {
                         UploadedJobNames.Add(results.JobName);
