@@ -7,85 +7,84 @@ using System.Linq;
 using Microsoft.DotNet.Build.Tasks.Installers;
 using Microsoft.SignCheck.Logging;
 
-namespace Microsoft.SignCheck.Verification
+namespace Microsoft.SignCheck.Verification;
+
+public class DebVerifier : PgpVerifier
 {
-    public class DebVerifier : PgpVerifier
+    public DebVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".deb") { }
+
+    protected override IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath)
+        => ReadDebContainerEntries(archivePath, "data.tar");
+
+    protected override (string signatureDocument, string signableContent) GetSignatureDocumentAndSignableContent(string archivePath, string tempDir)
     {
-        public DebVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".deb") { }
-
-        protected override IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath)
-            => ReadDebContainerEntries(archivePath, "data.tar");
-
-        protected override (string signatureDocument, string signableContent) GetSignatureDocumentAndSignableContent(string archivePath, string tempDir)
+        string signatureDocument = null;
+        string signableContent = null;
+        try
         {
-            string signatureDocument = null;
-            string signableContent = null;
-            try
-            {
-                string debianBinary = ExtractDebContainerEntry(archivePath, "debian-binary", tempDir);
-                string controlTar = ExtractDebContainerEntry(archivePath, "control.tar", tempDir);
-                string dataTar = ExtractDebContainerEntry(archivePath, "data.tar", tempDir);
-                signatureDocument = ExtractDebContainerEntry(archivePath, "_gpgorigin", tempDir);
+            string debianBinary = ExtractDebContainerEntry(archivePath, "debian-binary", tempDir);
+            string controlTar = ExtractDebContainerEntry(archivePath, "control.tar", tempDir);
+            string dataTar = ExtractDebContainerEntry(archivePath, "data.tar", tempDir);
+            signatureDocument = ExtractDebContainerEntry(archivePath, "_gpgorigin", tempDir);
 
-                signableContent = Path.Combine(tempDir, "signableContent");
-                Utils.RunBashCommand($"cat {debianBinary} {controlTar} {dataTar} > {signableContent}");
-            }
-            catch (FileNotFoundException)
-            {
-                // The signature document may be missing if the package is not signed.
-            }
-
-            return (signatureDocument, signableContent);
+            signableContent = Path.Combine(tempDir, "signableContent");
+            Utils.RunBashCommand($"cat {debianBinary} {controlTar} {dataTar} > {signableContent}");
+        }
+        catch (FileNotFoundException)
+        {
+            // The signature document may be missing if the package is not signed.
         }
 
-        protected override void WriteArchiveEntry(ArchiveEntry archiveEntry, string targetPath)
-            => File.WriteAllBytes(targetPath, ((MemoryStream)archiveEntry.ContentStream).ToArray());
+        return (signatureDocument, signableContent);
+    }
 
-        /// <summary>
-        /// Read the entries in the deb container.
-        /// </summary>
-        private IEnumerable<ArchiveEntry> ReadDebContainerEntries(string archivePath, string match = null)
+    protected override void WriteArchiveEntry(ArchiveEntry archiveEntry, string targetPath)
+        => File.WriteAllBytes(targetPath, ((MemoryStream)archiveEntry.ContentStream).ToArray());
+
+    /// <summary>
+    /// Read the entries in the deb container.
+    /// </summary>
+    private IEnumerable<ArchiveEntry> ReadDebContainerEntries(string archivePath, string match = null)
+    {
+        using var archive = new ArReader(File.OpenRead(archivePath), leaveOpen: false);
+
+        while (archive.GetNextEntry() is ArEntry entry)
         {
-            using var archive = new ArReader(File.OpenRead(archivePath), leaveOpen: false);
+            string relativePath = entry.Name; // lgtm [cs/zipslip] Archive from trusted source
 
-            while (archive.GetNextEntry() is ArEntry entry)
+            // The relative path ocassionally ends with a '/', which is not a valid path given that the path is a file.
+            // Remove the following workaround once https://github.com/dotnet/arcade/issues/15384 is resolved.
+            if (relativePath.EndsWith("/"))
             {
-                string relativePath = entry.Name; // lgtm [cs/zipslip] Archive from trusted source
+                relativePath = relativePath.TrimEnd('/');
+            }
 
-                // The relative path ocassionally ends with a '/', which is not a valid path given that the path is a file.
-                // Remove the following workaround once https://github.com/dotnet/arcade/issues/15384 is resolved.
-                if (relativePath.EndsWith("/"))
+            if (match == null || relativePath.StartsWith(match))
+            {
+                yield return new ArchiveEntry()
                 {
-                    relativePath = relativePath.TrimEnd('/');
-                }
-
-                if (match == null || relativePath.StartsWith(match))
-                {
-                    yield return new ArchiveEntry()
-                    {
-                        RelativePath = relativePath,
-                        ContentStream = entry.DataStream,
-                        ContentSize = entry.DataStream.Length
-                    };
-                }
+                    RelativePath = relativePath,
+                    ContentStream = entry.DataStream,
+                    ContentSize = entry.DataStream.Length
+                };
             }
         }
+    }
 
-        /// <summary>
-        /// Extract a single entry from the deb container.
-        /// </summary>
-        private string ExtractDebContainerEntry(string archivePath, string entryName, string workingDir)
+    /// <summary>
+    /// Extract a single entry from the deb container.
+    /// </summary>
+    private string ExtractDebContainerEntry(string archivePath, string entryName, string workingDir)
+    {
+        IEnumerable<ArchiveEntry> entries = ReadDebContainerEntries(archivePath, entryName);
+        if (!entries.Any())
         {
-            IEnumerable<ArchiveEntry> entries = ReadDebContainerEntries(archivePath, entryName);
-            if (!entries.Any())
-            {
-                throw new FileNotFoundException($"The entry '{entryName}' was not found in the archive '{archivePath}'");
-            }
-            ArchiveEntry archiveEntry = entries.First();
-            string entryPath = Path.Combine(workingDir, archiveEntry.RelativePath);
-            WriteArchiveEntry(archiveEntry, entryPath);
-
-            return entryPath;
+            throw new FileNotFoundException($"The entry '{entryName}' was not found in the archive '{archivePath}'");
         }
+        ArchiveEntry archiveEntry = entries.First();
+        string entryPath = Path.Combine(workingDir, archiveEntry.RelativePath);
+        WriteArchiveEntry(archiveEntry, entryPath);
+
+        return entryPath;
     }
 }

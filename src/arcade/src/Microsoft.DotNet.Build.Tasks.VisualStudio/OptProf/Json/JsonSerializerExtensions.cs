@@ -4,11 +4,10 @@
 using Newtonsoft.Json;
 using System.IO;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
+
+internal static class JsonSerializerExtensions
 {
-    internal static class JsonSerializerExtensions
-    {
-        public static T Deserialize<T>(this JsonSerializer serializer, TextReader reader) 
-            => (T)serializer.Deserialize(reader, typeof(T));
-    }
+    public static T Deserialize<T>(this JsonSerializer serializer, TextReader reader) 
+        => (T)serializer.Deserialize(reader, typeof(T));
 }

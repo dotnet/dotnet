@@ -8,49 +8,48 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.DotNet.Build.Tasks.Workloads.Wix;
 
-namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
+namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi;
+
+internal class WorkloadSetMsi : MsiBase
 {
-    internal class WorkloadSetMsi : MsiBase
+    private WorkloadSetPackage _package;
+
+    protected override string BaseOutputName => Path.GetFileNameWithoutExtension(_package.PackagePath);
+
+    protected override string? MsiPackageType => DefaultValues.WorkloadSetMsi;
+
+    public WorkloadSetMsi(WorkloadSetPackage package, string platform, IBuildEngine buildEngine,
+        WixToolsetConfiguration wixToolsetConfig,
+        string baseIntermediatOutputPath,
+        bool createWixPack = true) :
+        base(package, buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath, createWixPack)
     {
-        private WorkloadSetPackage _package;
+        _package = package;
+        InstallationRecordKey = $@"{InstallRecordBaseKey}\InstalledWorkloadSets\{Platform}\{_package.SdkFeatureBand}\{_package.PackageVersion}";
+        UpgradeCode = Utils.CreateUuid(UpgradeCodeNamespaceUuid, $"{_package.Identity};{Platform}");
+        ProviderKeyName = $"Microsoft.NET.Workload.Set,{_package.SdkFeatureBand},{_package.PackageVersion},{Platform}";
+        ReplacementTokens[MsiTokens.__PROVIDER_KEY_NAME__] = ProviderKeyName;
+        ReplacementTokens[MsiTokens.__UPGRADECODE__] = UpgradeCode.ToString("B");
+    }
 
-        protected override string BaseOutputName => Path.GetFileNameWithoutExtension(_package.PackagePath);
+    public override string Create()
+    {
+        WixDocument productDoc = CreateProduct();
 
-        protected override string? MsiPackageType => DefaultValues.WorkloadSetMsi;
+        productDoc.AddRegistryKey("C_InstallationRecord", CreateInstallationRecord());
 
-        public WorkloadSetMsi(WorkloadSetPackage package, string platform, IBuildEngine buildEngine,
-            WixToolsetConfiguration wixToolsetConfig,
-            string baseIntermediatOutputPath,
-            bool createWixPack = true) :
-            base(package, buildEngine, wixToolsetConfig, platform, baseIntermediatOutputPath, createWixPack)
-        {
-            _package = package;
-            InstallationRecordKey = $@"{InstallRecordBaseKey}\InstalledWorkloadSets\{Platform}\{_package.SdkFeatureBand}\{_package.PackageVersion}";
-            UpgradeCode = Utils.CreateUuid(UpgradeCodeNamespaceUuid, $"{_package.Identity};{Platform}");
-            ProviderKeyName = $"Microsoft.NET.Workload.Set,{_package.SdkFeatureBand},{_package.PackageVersion},{Platform}";
-            ReplacementTokens[MsiTokens.__PROVIDER_KEY_NAME__] = ProviderKeyName;
-            ReplacementTokens[MsiTokens.__UPGRADECODE__] = UpgradeCode.ToString("B");
-        }
+        var directory = productDoc.GetDirectory(MsiDirectories.DOTNETHOME)
+            .AddDirectory(MsiDirectories.SdkManifestDir, "sdk-manifests")
+            .AddDirectory(MsiDirectories.SdkFeatureBandVersionDir, $"{_package.SdkFeatureBand}")
+            .AddDirectory(MsiDirectories.WorkloadSetsDir, $"workloadsets")
+            .AddDirectory(MsiDirectories.WorkloadSetVersionDir, $"{_package.WorkloadSetVersion}");
 
-        public override string Create()
-        {
-            WixDocument productDoc = CreateProduct();
+        string packageDataDirectory = Path.Combine(_package.DestinationDirectory, "data");
+        productDoc.GetFeature("F_PackageContents")
+            .AddComponentGroupRef(HarvestDirectory(packageDataDirectory, MsiDirectories.WorkloadSetVersionDir));
+        productDoc.Save();
 
-            productDoc.AddRegistryKey("C_InstallationRecord", CreateInstallationRecord());
-
-            var directory = productDoc.GetDirectory(MsiDirectories.DOTNETHOME)
-                .AddDirectory(MsiDirectories.SdkManifestDir, "sdk-manifests")
-                .AddDirectory(MsiDirectories.SdkFeatureBandVersionDir, $"{_package.SdkFeatureBand}")
-                .AddDirectory(MsiDirectories.WorkloadSetsDir, $"workloadsets")
-                .AddDirectory(MsiDirectories.WorkloadSetVersionDir, $"{_package.WorkloadSetVersion}");
-
-            string packageDataDirectory = Path.Combine(_package.DestinationDirectory, "data");
-            productDoc.GetFeature("F_PackageContents")
-                .AddComponentGroupRef(HarvestDirectory(packageDataDirectory, MsiDirectories.WorkloadSetVersionDir));
-            productDoc.Save();
-
-            return "";
-        }
+        return "";
     }
 }
 

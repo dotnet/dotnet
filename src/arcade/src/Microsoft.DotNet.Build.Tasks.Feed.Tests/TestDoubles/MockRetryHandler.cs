@@ -6,42 +6,41 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Arcade.Common;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed.Tests.TestDoubles
+namespace Microsoft.DotNet.Build.Tasks.Feed.Tests.TestDoubles;
+
+public class MockRetryHandler : IRetryHandler
 {
-    public class MockRetryHandler : IRetryHandler
+    private readonly int _maxAttempts;
+
+    public int ActualAttempts { get; private set; }
+
+    public MockRetryHandler()
+        : this(maxAttempts: 1)
     {
-        private readonly int _maxAttempts;
+    }
 
-        public int ActualAttempts { get; private set; }
+    public MockRetryHandler(int maxAttempts)
+    {
+        _maxAttempts = maxAttempts;
+    }
 
-        public MockRetryHandler()
-            : this(maxAttempts: 1)
+    public Task<bool> RunAsync(Func<int, Task<RetryResult>> actionAsync)
+        => RunAsync(actionAsync, CancellationToken.None);
+
+    public async Task<bool> RunAsync(Func<int, Task<RetryResult>> actionAsync, CancellationToken cancellationToken)
+    {
+        for (var attempt = 0; attempt < _maxAttempts; attempt++)
         {
-        }
+            cancellationToken.ThrowIfCancellationRequested();
+            ActualAttempts++;
 
-        public MockRetryHandler(int maxAttempts)
-        {
-            _maxAttempts = maxAttempts;
-        }
-
-        public Task<bool> RunAsync(Func<int, Task<RetryResult>> actionAsync)
-            => RunAsync(actionAsync, CancellationToken.None);
-
-        public async Task<bool> RunAsync(Func<int, Task<RetryResult>> actionAsync, CancellationToken cancellationToken)
-        {
-            for (var attempt = 0; attempt < _maxAttempts; attempt++)
+            RetryResult result = await actionAsync(attempt);
+            if (result.Succeeded)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                ActualAttempts++;
-
-                RetryResult result = await actionAsync(attempt);
-                if (result.Succeeded)
-                {
-                    return true;
-                }
+                return true;
             }
-
-            return false;
         }
+
+        return false;
     }
 }

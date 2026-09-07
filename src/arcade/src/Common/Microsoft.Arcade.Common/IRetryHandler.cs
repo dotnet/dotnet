@@ -5,26 +5,25 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.Arcade.Common
+namespace Microsoft.Arcade.Common;
+
+public interface IRetryHandler
 {
-    public interface IRetryHandler
-    {
-        Task<bool> RunAsync(
-            Func<int, Task<RetryResult>> actionAsync);
+    Task<bool> RunAsync(
+        Func<int, Task<RetryResult>> actionAsync);
 
-        Task<bool> RunAsync(
-            Func<int, Task<RetryResult>> actionAsync,
-            CancellationToken cancellationToken);
-    }
+    Task<bool> RunAsync(
+        Func<int, Task<RetryResult>> actionAsync,
+        CancellationToken cancellationToken);
+}
 
-    public readonly record struct RetryResult(bool Succeeded, TimeSpan? RetryAfter = null)
-    {
-        public static RetryResult Success => new(true);
+public readonly record struct RetryResult(bool Succeeded, TimeSpan? RetryAfter = null)
+{
+    public static RetryResult Success => new(true);
 
-        public static RetryResult Retry(TimeSpan? retryAfter = null)
-            => new(false, retryAfter);
+    public static RetryResult Retry(TimeSpan? retryAfter = null)
+        => new(false, retryAfter);
 
-        public static implicit operator RetryResult(bool succeeded)
-            => succeeded ? Success : Retry();
-    }
+    public static implicit operator RetryResult(bool succeeded)
+        => succeeded ? Success : Retry();
 }

@@ -3,13 +3,12 @@
 
 using NuGet.Packaging;
 
-namespace Microsoft.Arcade.Common
+namespace Microsoft.Arcade.Common;
+
+public class PackageArchiveReaderFactory : IPackageArchiveReaderFactory
 {
-    public class PackageArchiveReaderFactory : IPackageArchiveReaderFactory
+    public PackageArchiveReader CreatePackageArchiveReader(string path)
     {
-        public PackageArchiveReader CreatePackageArchiveReader(string path)
-        {
-            return new PackageArchiveReader(path);
-        }
+        return new PackageArchiveReader(path);
     }
 }

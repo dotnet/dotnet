@@ -12,134 +12,133 @@ using Microsoft.DotNet.Build.Manifest;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using Microsoft.DotNet.Deployment.Tasks.Links;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed
+namespace Microsoft.DotNet.Build.Tasks.Feed;
+
+public class LatestLinksManager
 {
-    public class LatestLinksManager
+    private TaskLoggingHelper _logger { get; }
+    private AkaMSLinkManager _linkManager { get; } = null;
+    private string _akaMSOwners { get; }
+    private string _akaMSCreatedBy { get; }
+    private string _akaMSGroupOwner { get; }
+
+    public LatestLinksManager(
+        string akaMSClientId,
+        X509Certificate2 certificate,
+        string akaMSTenant,
+        string akaMSGroupOwner,
+        string akaMSCreatedBy,
+        string akaMsOwners,
+        TaskLoggingHelper logger)
     {
-        private TaskLoggingHelper _logger { get; }
-        private AkaMSLinkManager _linkManager { get; } = null;
-        private string _akaMSOwners { get; }
-        private string _akaMSCreatedBy { get; }
-        private string _akaMSGroupOwner { get; }
+        _logger = logger;
+        _akaMSGroupOwner = akaMSGroupOwner;
+        _akaMSCreatedBy = akaMSCreatedBy;
+        _akaMSOwners = akaMsOwners;
+        _linkManager = new AkaMSLinkManager(akaMSClientId, certificate, akaMSTenant, _logger);
+    }
 
-        public LatestLinksManager(
-            string akaMSClientId,
-            X509Certificate2 certificate,
-            string akaMSTenant,
-            string akaMSGroupOwner,
-            string akaMSCreatedBy,
-            string akaMsOwners,
-            TaskLoggingHelper logger)
+
+
+    public async System.Threading.Tasks.Task CreateOrUpdateLatestLinksAsync(
+        HashSet<string> assetsToPublish,
+        TargetFeedConfig feedConfig)
+    {
+        // The link manager should only be used if there are actually links that could
+        // be created.
+        if (!feedConfig.LatestLinkShortUrlPrefixes.Any())
         {
-            _logger = logger;
-            _akaMSGroupOwner = akaMSGroupOwner;
-            _akaMSCreatedBy = akaMSCreatedBy;
-            _akaMSOwners = akaMsOwners;
-            _linkManager = new AkaMSLinkManager(akaMSClientId, certificate, akaMSTenant, _logger);
+            throw new ArgumentException("No link prefixes specified.");
         }
 
+        string feedBaseUrl = ComputeLatestLinkBase(feedConfig);
 
+        IEnumerable<AkaMSLink> linksToCreate = GetLatestLinksToCreate(assetsToPublish, feedConfig, feedBaseUrl);
 
-        public async System.Threading.Tasks.Task CreateOrUpdateLatestLinksAsync(
-            HashSet<string> assetsToPublish,
-            TargetFeedConfig feedConfig)
+        if (linksToCreate.Any())
         {
-            // The link manager should only be used if there are actually links that could
-            // be created.
-            if (!feedConfig.LatestLinkShortUrlPrefixes.Any())
-            {
-                throw new ArgumentException("No link prefixes specified.");
-            }
+            _logger.LogMessage(MessageImportance.High, "\nThe following aka.ms links for blobs will be created:");
 
-            string feedBaseUrl = ComputeLatestLinkBase(feedConfig);
-
-            IEnumerable<AkaMSLink> linksToCreate = GetLatestLinksToCreate(assetsToPublish, feedConfig, feedBaseUrl);
-
-            if (linksToCreate.Any())
-            {
-                _logger.LogMessage(MessageImportance.High, "\nThe following aka.ms links for blobs will be created:");
-
-                await _linkManager.CreateOrUpdateLinksAsync(linksToCreate, _akaMSOwners, _akaMSCreatedBy, _akaMSGroupOwner, true);
-            }
+            await _linkManager.CreateOrUpdateLinksAsync(linksToCreate, _akaMSOwners, _akaMSCreatedBy, _akaMSGroupOwner, true);
         }
+    }
 
-        public IEnumerable<AkaMSLink> GetLatestLinksToCreate(HashSet<string> assetsToPublish, TargetFeedConfig feedConfig, string feedBaseUrl)
-        {
-            IEnumerable<AkaMSLink> linksToCreate = assetsToPublish
-                .Where(asset => !feedConfig.AkaMSDoNotCreateLinkPatterns.Any(p => p.IsMatch(asset)) &&
-                                    feedConfig.AkaMSCreateLinkPatterns.Any(p => p.IsMatch(asset)))
-                .Select(asset =>
+    public IEnumerable<AkaMSLink> GetLatestLinksToCreate(HashSet<string> assetsToPublish, TargetFeedConfig feedConfig, string feedBaseUrl)
+    {
+        IEnumerable<AkaMSLink> linksToCreate = assetsToPublish
+            .Where(asset => !feedConfig.AkaMSDoNotCreateLinkPatterns.Any(p => p.IsMatch(asset)) &&
+                                feedConfig.AkaMSCreateLinkPatterns.Any(p => p.IsMatch(asset)))
+            .Select(asset =>
+            {
+
+                // blob path.
+                string actualTargetUrl = feedBaseUrl + asset;
+
+                List<AkaMSLink> newLinks = new List<AkaMSLink>();
+                foreach (string shortUrlPrefix in feedConfig.LatestLinkShortUrlPrefixes)
                 {
+                    newLinks.Add(GetAkaMSLinkForAsset(shortUrlPrefix, feedBaseUrl, asset, feedConfig.Flatten));
+                }
 
-                    // blob path.
-                    string actualTargetUrl = feedBaseUrl + asset;
+                return newLinks;
+            })
+            .SelectMany(links => links)
+            .ToList();
+        return linksToCreate;
+    }
 
-                    List<AkaMSLink> newLinks = new List<AkaMSLink>();
-                    foreach (string shortUrlPrefix in feedConfig.LatestLinkShortUrlPrefixes)
-                    {
-                        newLinks.Add(GetAkaMSLinkForAsset(shortUrlPrefix, feedBaseUrl, asset, feedConfig.Flatten));
-                    }
-
-                    return newLinks;
-                })
-                .SelectMany(links => links)
-                .ToList();
-            return linksToCreate;
-        }
-
-        /// <summary>
-        /// Internal for testing
-        /// </summary>
-        /// <param name="feedConfig"></param>
-        /// <param name="expectedSuffixLength"></param>
-        /// <returns></returns>
-        public static string ComputeLatestLinkBase(TargetFeedConfig feedConfig)
+    /// <summary>
+    /// Internal for testing
+    /// </summary>
+    /// <param name="feedConfig"></param>
+    /// <param name="expectedSuffixLength"></param>
+    /// <returns></returns>
+    public static string ComputeLatestLinkBase(TargetFeedConfig feedConfig)
+    {
+        string feedBaseUrl = feedConfig.SafeTargetURL;
+        if (!feedBaseUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase))
         {
-            string feedBaseUrl = feedConfig.SafeTargetURL;
-            if (!feedBaseUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase))
-            {
-                feedBaseUrl += "/";
-            }
-
-            return feedBaseUrl;
+            feedBaseUrl += "/";
         }
 
-        /// <sunnary>
-        ///     Create the aka.ms link info
-        /// </summary>
-        /// <param name="shortUrlPrefix">aka.ms short url prefix</param>
-        /// <param name="feedBaseUrl">Base feed url for the asset</param>
-        /// <param name="asset">Asset</param>
-        /// <param name="flatten">If we should only use the filename when creating the aka.ms link</param>
-        /// <returns>The AkaMSLink object for the asset</returns>
-        public AkaMSLink GetAkaMSLinkForAsset(string shortUrlPrefix, string feedBaseUrl, string asset, bool flatten)
+        return feedBaseUrl;
+    }
+
+    /// <sunnary>
+    ///     Create the aka.ms link info
+    /// </summary>
+    /// <param name="shortUrlPrefix">aka.ms short url prefix</param>
+    /// <param name="feedBaseUrl">Base feed url for the asset</param>
+    /// <param name="asset">Asset</param>
+    /// <param name="flatten">If we should only use the filename when creating the aka.ms link</param>
+    /// <returns>The AkaMSLink object for the asset</returns>
+    public AkaMSLink GetAkaMSLinkForAsset(string shortUrlPrefix, string feedBaseUrl, string asset, bool flatten)
+    {
+        // blob path.
+        string actualTargetUrl = feedBaseUrl + asset;
+
+        AkaMSLink newLink = new AkaMSLink(GetLatestShortUrlForBlob(shortUrlPrefix, asset, flatten), actualTargetUrl);
+        _logger.LogMessage(MessageImportance.High, $"  aka.ms/{newLink.ShortUrl} -> {newLink.TargetUrl}");
+
+        return newLink;
+    }
+
+    /// <summary>
+    ///     Get the short url for a blob.
+    /// </summary>
+    /// <param name="latestLinkShortUrlPrefix">aka.ms short url prefix</param>
+    /// <param name="asset">Asset</param>
+    /// <param name="flatten">If we should only use the filename when creating the aka.ms link</param>
+    /// <returns>Short url prefix for the blob.</returns>
+    public string GetLatestShortUrlForBlob(string latestLinkShortUrlPrefix, string asset, bool flatten)
+    {
+        string blobIdWithoutVersions = VersionIdentifier.RemoveVersions(asset);
+
+        if (flatten)
         {
-            // blob path.
-            string actualTargetUrl = feedBaseUrl + asset;
-
-            AkaMSLink newLink = new AkaMSLink(GetLatestShortUrlForBlob(shortUrlPrefix, asset, flatten), actualTargetUrl);
-            _logger.LogMessage(MessageImportance.High, $"  aka.ms/{newLink.ShortUrl} -> {newLink.TargetUrl}");
-
-            return newLink;
+            blobIdWithoutVersions = Path.GetFileName(blobIdWithoutVersions);
         }
 
-        /// <summary>
-        ///     Get the short url for a blob.
-        /// </summary>
-        /// <param name="latestLinkShortUrlPrefix">aka.ms short url prefix</param>
-        /// <param name="asset">Asset</param>
-        /// <param name="flatten">If we should only use the filename when creating the aka.ms link</param>
-        /// <returns>Short url prefix for the blob.</returns>
-        public string GetLatestShortUrlForBlob(string latestLinkShortUrlPrefix, string asset, bool flatten)
-        {
-            string blobIdWithoutVersions = VersionIdentifier.RemoveVersions(asset);
-
-            if (flatten)
-            {
-                blobIdWithoutVersions = Path.GetFileName(blobIdWithoutVersions);
-            }
-
-            return Path.Combine(latestLinkShortUrlPrefix, blobIdWithoutVersions).Replace("\\", "/");
-        }
+        return Path.Combine(latestLinkShortUrlPrefix, blobIdWithoutVersions).Replace("\\", "/");
     }
 }

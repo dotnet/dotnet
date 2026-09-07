@@ -3,32 +3,31 @@
 
 using System;
 
-namespace Internal.Microsoft.Extensions.DependencyModel
-{
-    internal class TargetInfo
-    {
-        public TargetInfo(string framework,
-            string runtime,
-            string runtimeSignature,
-            bool isPortable)
-        {
-            if (string.IsNullOrEmpty(framework))
-            {
-                throw new ArgumentException(nameof(framework));
-            }
+namespace Internal.Microsoft.Extensions.DependencyModel;
 
-            Framework = framework;
-            Runtime = runtime;
-            RuntimeSignature = runtimeSignature;
-            IsPortable = isPortable;
+internal class TargetInfo
+{
+    public TargetInfo(string framework,
+        string runtime,
+        string runtimeSignature,
+        bool isPortable)
+    {
+        if (string.IsNullOrEmpty(framework))
+        {
+            throw new ArgumentException(nameof(framework));
         }
 
-        public string Framework { get; }
-
-        public string Runtime { get; }
-
-        public string RuntimeSignature { get; }
-
-        public bool IsPortable { get; }
+        Framework = framework;
+        Runtime = runtime;
+        RuntimeSignature = runtimeSignature;
+        IsPortable = isPortable;
     }
+
+    public string Framework { get; }
+
+    public string Runtime { get; }
+
+    public string RuntimeSignature { get; }
+
+    public bool IsPortable { get; }
 }

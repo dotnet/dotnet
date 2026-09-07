@@ -4,15 +4,14 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.SignCheck.Interop
+namespace Microsoft.SignCheck.Interop;
+
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+public struct WinTrustFileInfo
 {
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct WinTrustFileInfo
-    {
-        public uint cbStruct;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string pcwszFilePath;
-        public IntPtr hFile;
-        public IntPtr pgKnownSubject;
-    }
+    public uint cbStruct;
+    [MarshalAs(UnmanagedType.LPWStr)]
+    public string pcwszFilePath;
+    public IntPtr hFile;
+    public IntPtr pgKnownSubject;
 }

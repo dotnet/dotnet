@@ -4,54 +4,53 @@
 using System;
 using Xunit.Abstractions;
 
-namespace Xunit.ConsoleClient
+namespace Xunit.ConsoleClient;
+
+public class DiagnosticMessageSink : MarshalByRefObject, IMessageSink
 {
-    public class DiagnosticMessageSink : MarshalByRefObject, IMessageSink
+    readonly string assemblyDisplayName;
+    readonly object consoleLock;
+    readonly ConsoleColor displayColor;
+    readonly bool noColor;
+    readonly bool showDiagnostics;
+
+    DiagnosticMessageSink(object consoleLock, string assemblyDisplayName, bool showDiagnostics, bool noColor, ConsoleColor displayColor)
     {
-        readonly string assemblyDisplayName;
-        readonly object consoleLock;
-        readonly ConsoleColor displayColor;
-        readonly bool noColor;
-        readonly bool showDiagnostics;
+        this.consoleLock = consoleLock;
+        this.assemblyDisplayName = assemblyDisplayName;
+        this.noColor = noColor;
+        this.displayColor = displayColor;
+        this.showDiagnostics = showDiagnostics;
+    }
 
-        DiagnosticMessageSink(object consoleLock, string assemblyDisplayName, bool showDiagnostics, bool noColor, ConsoleColor displayColor)
+    public static DiagnosticMessageSink ForDiagnostics(object consoleLock, string assemblyDisplayName, bool showDiagnostics, bool noColor)
+        => new DiagnosticMessageSink(consoleLock, assemblyDisplayName, showDiagnostics, noColor, ConsoleColor.Yellow);
+
+    public static DiagnosticMessageSink ForInternalDiagnostics(object consoleLock, bool showDiagnostics, bool noColor)
+        => new DiagnosticMessageSink(consoleLock, null, showDiagnostics, noColor, ConsoleColor.DarkGray);
+
+    public static DiagnosticMessageSink ForInternalDiagnostics(object consoleLock, string assemblyDisplayName, bool showDiagnostics, bool noColor)
+        => new DiagnosticMessageSink(consoleLock, assemblyDisplayName, showDiagnostics, noColor, ConsoleColor.DarkGray);
+
+    public bool OnMessage(IMessageSinkMessage message)
+    {
+        if (showDiagnostics && message is IDiagnosticMessage diagnosticMessage)
         {
-            this.consoleLock = consoleLock;
-            this.assemblyDisplayName = assemblyDisplayName;
-            this.noColor = noColor;
-            this.displayColor = displayColor;
-            this.showDiagnostics = showDiagnostics;
-        }
-
-        public static DiagnosticMessageSink ForDiagnostics(object consoleLock, string assemblyDisplayName, bool showDiagnostics, bool noColor)
-            => new DiagnosticMessageSink(consoleLock, assemblyDisplayName, showDiagnostics, noColor, ConsoleColor.Yellow);
-
-        public static DiagnosticMessageSink ForInternalDiagnostics(object consoleLock, bool showDiagnostics, bool noColor)
-            => new DiagnosticMessageSink(consoleLock, null, showDiagnostics, noColor, ConsoleColor.DarkGray);
-
-        public static DiagnosticMessageSink ForInternalDiagnostics(object consoleLock, string assemblyDisplayName, bool showDiagnostics, bool noColor)
-            => new DiagnosticMessageSink(consoleLock, assemblyDisplayName, showDiagnostics, noColor, ConsoleColor.DarkGray);
-
-        public bool OnMessage(IMessageSinkMessage message)
-        {
-            if (showDiagnostics && message is IDiagnosticMessage diagnosticMessage)
+            lock (consoleLock)
             {
-                lock (consoleLock)
-                {
-                    if (!noColor)
-                        ConsoleHelper.SetForegroundColor(displayColor);
+                if (!noColor)
+                    ConsoleHelper.SetForegroundColor(displayColor);
 
-                    if (assemblyDisplayName != null)
-                        Console.WriteLine($"   {assemblyDisplayName}: {diagnosticMessage.Message}");
-                    else
-                        Console.WriteLine($"   {diagnosticMessage.Message}");
+                if (assemblyDisplayName != null)
+                    Console.WriteLine($"   {assemblyDisplayName}: {diagnosticMessage.Message}");
+                else
+                    Console.WriteLine($"   {diagnosticMessage.Message}");
 
-                    if (!noColor)
-                        ConsoleHelper.ResetColor();
-                }
+                if (!noColor)
+                    ConsoleHelper.ResetColor();
             }
-
-            return true;
         }
+
+        return true;
     }
 }

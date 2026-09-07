@@ -3,8 +3,7 @@
 
 using Xunit;
 
-namespace Microsoft.DotNet.Helix.Sdk.Tests
-{
-    [CollectionDefinition("NonParallel", DisableParallelization = true)]
-    public class NonParallelTestCollection { }
-}
+namespace Microsoft.DotNet.Helix.Sdk.Tests;
+
+[CollectionDefinition("NonParallel", DisableParallelization = true)]
+public class NonParallelTestCollection { }

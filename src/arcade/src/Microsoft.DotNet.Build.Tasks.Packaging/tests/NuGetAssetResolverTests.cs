@@ -6,36 +6,35 @@ using Xunit;
 using Xunit.Abstractions;
 using AwesomeAssertions;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
+namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests;
+
+public class NuGetAssetResolverTests
 {
-    public class NuGetAssetResolverTests
+    private Log _log;
+
+
+    public NuGetAssetResolverTests(ITestOutputHelper output)
     {
-        private Log _log;
+        _log = new Log(output);
+    }
 
-
-        public NuGetAssetResolverTests(ITestOutputHelper output)
+    [Fact]
+    public void RuntimeResolutionTest()
+    {
+        string[] items =
         {
-            _log = new Log(output);
-        }
+            "runtimes/any/lib/netcore50/System.Xml.XmlSerializer.dll",
+            "runtimes/aot/lib/netcore50/_._"
+        };
 
-        [Fact]
-        public void RuntimeResolutionTest()
-        {
-            string[] items =
-            {
-                "runtimes/any/lib/netcore50/System.Xml.XmlSerializer.dll",
-                "runtimes/aot/lib/netcore50/_._"
-            };
+        NuGetAssetResolver resolver = new NuGetAssetResolver("runtime.json", items);
 
-            NuGetAssetResolver resolver = new NuGetAssetResolver("runtime.json", items);
+        var runtimeItems = resolver.GetRuntimeItems(NuGetFramework.Parse("netcore50"), "win10-x64-aot");
 
-            var runtimeItems = resolver.GetRuntimeItems(NuGetFramework.Parse("netcore50"), "win10-x64-aot");
+        runtimeItems.Should().NotBeNull();
+        runtimeItems.Items.Should().HaveCount(1);
 
-            runtimeItems.Should().NotBeNull();
-            runtimeItems.Items.Should().HaveCount(1);
-
-            // Fails due to https://github.com/NuGet/Home/issues/1676
-            // Assert.Equal(items[1], runtimeItems.Items.FirstOrDefault().Path);
-        }
+        // Fails due to https://github.com/NuGet/Home/issues/1676
+        // Assert.Equal(items[1], runtimeItems.Items.FirstOrDefault().Path);
     }
 }
