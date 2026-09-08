@@ -12,19 +12,18 @@ using Xunit.Abstractions;
 #endif
 using Xunit.Sdk;
 
-namespace Microsoft.DotNet.XUnitExtensions
+namespace Microsoft.DotNet.XUnitExtensions;
+
+public class ParallelTheoryDiscoverer : TheoryDiscoverer
 {
-    public class ParallelTheoryDiscoverer : TheoryDiscoverer
-    {
 #if !USES_XUNIT_3
-        public ParallelTheoryDiscoverer(IMessageSink diagnosticMessageSink) : base(diagnosticMessageSink)
-        {
-        }
+    public ParallelTheoryDiscoverer(IMessageSink diagnosticMessageSink) : base(diagnosticMessageSink)
+    {
+    }
 #endif
-        protected override IEnumerable<IXunitTestCase> CreateTestCasesForTheory(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo theoryAttribute)
-        {
-            return new[] { new XunitParallelTheoryTestCase(DiagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod) };
-        }
+    protected override IEnumerable<IXunitTestCase> CreateTestCasesForTheory(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo theoryAttribute)
+    {
+        return new[] { new XunitParallelTheoryTestCase(DiagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod) };
     }
 }
 #endif

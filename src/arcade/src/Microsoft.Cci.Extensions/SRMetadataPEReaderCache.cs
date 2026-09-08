@@ -9,59 +9,57 @@ using System.Reflection.Metadata;
 using System.Text;
 using SRMetadataReader = System.Reflection.Metadata.MetadataReader;
 
-namespace Microsoft.Cci.Extensions
+namespace Microsoft.Cci.Extensions;
+
+public class SRMetadataPEReaderCache : IDisposable
 {
+    private bool _disposed;
 
-    public class SRMetadataPEReaderCache : IDisposable
+    private Dictionary<string, (FileStream, PEReader)> _cache = null;
+
+    public SRMetadataReader GetMetadataReader(string assemblyPath)
     {
-        private bool _disposed;
-
-        private Dictionary<string, (FileStream, PEReader)> _cache = null;
-
-        public SRMetadataReader GetMetadataReader(string assemblyPath)
+        if (_cache == null)
         {
-            if (_cache == null)
-            {
-                _cache = new Dictionary<string, (FileStream, PEReader)>();
-            }
-            else
-            {
-                if (_cache.TryGetValue(assemblyPath, out (FileStream _, PEReader peReader) value))
-                {
-                    return value.peReader.GetMetadataReader();
-                }
-            }
-
-            FileStream stream = File.OpenRead(assemblyPath);
-            PEReader peReader = new PEReader(stream);
-
-            _cache.Add(assemblyPath, (stream, peReader));
-            return peReader.GetMetadataReader();
+            _cache = new Dictionary<string, (FileStream, PEReader)>();
         }
-
-        protected virtual void Dispose(bool disposing)
+        else
         {
-            if (!_disposed)
+            if (_cache.TryGetValue(assemblyPath, out (FileStream _, PEReader peReader) value))
             {
-                if (_cache != null)
-                {
-                    foreach ((FileStream stream, PEReader reader) in _cache.Values)
-                    {
-                        stream.Dispose();
-                        reader.Dispose();
-                    }
-
-                    _cache.Clear();
-                }
-
-                _disposed = true;
+                return value.peReader.GetMetadataReader();
             }
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+        FileStream stream = File.OpenRead(assemblyPath);
+        PEReader peReader = new PEReader(stream);
 
+        _cache.Add(assemblyPath, (stream, peReader));
+        return peReader.GetMetadataReader();
     }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (_cache != null)
+            {
+                foreach ((FileStream stream, PEReader reader) in _cache.Values)
+                {
+                    stream.Dispose();
+                    reader.Dispose();
+                }
+
+                _cache.Clear();
+            }
+
+            _disposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+    }
+
 }

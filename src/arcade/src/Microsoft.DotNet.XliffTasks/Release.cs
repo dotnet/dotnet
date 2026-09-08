@@ -4,18 +4,17 @@
 using System;
 using System.Diagnostics;
 
-namespace XliffTasks
-{
-    internal static class Release
-    {
-        public static void Assert(bool condition)
-        {
-            Debug.Assert(condition);
+namespace XliffTasks;
 
-            if (!condition)
-            {
-                throw new InvalidOperationException("Assertion failure.");
-            }
+internal static class Release
+{
+    public static void Assert(bool condition)
+    {
+        Debug.Assert(condition);
+
+        if (!condition)
+        {
+            throw new InvalidOperationException("Assertion failure.");
         }
     }
 }

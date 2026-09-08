@@ -8,72 +8,71 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 
-namespace Microsoft.DotNet.Arcade.Sdk.Tests
+namespace Microsoft.DotNet.Arcade.Sdk.Tests;
+
+[CollectionDefinition(Name)]
+public class TestProjectCollection : ICollectionFixture<TestProjectFixture>
 {
-    [CollectionDefinition(Name)]
-    public class TestProjectCollection : ICollectionFixture<TestProjectFixture>
+    public const string Name = nameof(TestProjectCollection);
+}
+
+public class TestProjectFixture : IDisposable
+{
+    private readonly ConcurrentQueue<IDisposable> _disposables = new ConcurrentQueue<IDisposable>();
+    private readonly string _logOutputDir;
+    private readonly string _tempRoot;
+    private readonly string _testAssets;
+    private readonly string _boilerPlateDir;
+
+    private static readonly string[] _packagesToClear =
     {
-        public const string Name = nameof(TestProjectCollection);
+        "Microsoft.DotNet.Arcade.Sdk",
+    };
+
+    public TestProjectFixture()
+    {
+        ClearPackages();
+        var helixWorkItemRoot = Environment.GetEnvironmentVariable("HELIX_WORKITEM_ROOT");
+        helixWorkItemRoot = string.IsNullOrWhiteSpace(helixWorkItemRoot) ? null : helixWorkItemRoot;
+        _logOutputDir = helixWorkItemRoot == null
+            ? GetType().Assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Single(m => m.Key == "LogOutputDir").Value
+            : Path.Combine(helixWorkItemRoot, "test-logs");
+        _tempRoot = helixWorkItemRoot ?? Path.GetTempPath();
+        _testAssets = Path.Combine(AppContext.BaseDirectory, "testassets");
+        _boilerPlateDir = Path.Combine(_testAssets, "boilerplate");
     }
 
-    public class TestProjectFixture : IDisposable
+    public TestApp CreateTestApp(string name)
     {
-        private readonly ConcurrentQueue<IDisposable> _disposables = new ConcurrentQueue<IDisposable>();
-        private readonly string _logOutputDir;
-        private readonly string _tempRoot;
-        private readonly string _testAssets;
-        private readonly string _boilerPlateDir;
+        var testAppFiles = Path.Combine(_testAssets, name);
+        var instanceName = Path.GetRandomFileName();
+        var tempDir = Path.Combine(_tempRoot, "arcade", instanceName);
+        var app = new TestApp(tempDir, _logOutputDir, new[] { testAppFiles, _boilerPlateDir });
+        _disposables.Enqueue(app);
+        return app;
+    }
 
-        private static readonly string[] _packagesToClear =
+    private void ClearPackages()
+    {
+        var nugetRoot = GetType().Assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Single(m => m.Key == "NuGetPackageRoot").Value;
+        var pkgVersion = GetType().Assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Single(m => m.Key == "PackageVersion").Value;
+        foreach (var package in _packagesToClear)
         {
-            "Microsoft.DotNet.Arcade.Sdk",
-        };
-
-        public TestProjectFixture()
-        {
-            ClearPackages();
-            var helixWorkItemRoot = Environment.GetEnvironmentVariable("HELIX_WORKITEM_ROOT");
-            helixWorkItemRoot = string.IsNullOrWhiteSpace(helixWorkItemRoot) ? null : helixWorkItemRoot;
-            _logOutputDir = helixWorkItemRoot == null
-                ? GetType().Assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Single(m => m.Key == "LogOutputDir").Value
-                : Path.Combine(helixWorkItemRoot, "test-logs");
-            _tempRoot = helixWorkItemRoot ?? Path.GetTempPath();
-            _testAssets = Path.Combine(AppContext.BaseDirectory, "testassets");
-            _boilerPlateDir = Path.Combine(_testAssets, "boilerplate");
-        }
-
-        public TestApp CreateTestApp(string name)
-        {
-            var testAppFiles = Path.Combine(_testAssets, name);
-            var instanceName = Path.GetRandomFileName();
-            var tempDir = Path.Combine(_tempRoot, "arcade", instanceName);
-            var app = new TestApp(tempDir, _logOutputDir, new[] { testAppFiles, _boilerPlateDir });
-            _disposables.Enqueue(app);
-            return app;
-        }
-
-        private void ClearPackages()
-        {
-            var nugetRoot = GetType().Assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Single(m => m.Key == "NuGetPackageRoot").Value;
-            var pkgVersion = GetType().Assembly.GetCustomAttributes<AssemblyMetadataAttribute>().Single(m => m.Key == "PackageVersion").Value;
-            foreach (var package in _packagesToClear)
+            var pkgRoot = Path.Combine(nugetRoot, package, pkgVersion);
+            if (Directory.Exists(pkgRoot))
             {
-                var pkgRoot = Path.Combine(nugetRoot, package, pkgVersion);
-                if (Directory.Exists(pkgRoot))
-                {
-                    Directory.Delete(pkgRoot, recursive: true);
-                }
+                Directory.Delete(pkgRoot, recursive: true);
             }
         }
+    }
 
-        public void Dispose()
+    public void Dispose()
+    {
+        while (_disposables.Count > 0)
         {
-            while (_disposables.Count > 0)
+            if (_disposables.TryDequeue(out var disposable))
             {
-                if (_disposables.TryDequeue(out var disposable))
-                {
-                    disposable.Dispose();
-                }
+                disposable.Dispose();
             }
         }
     }

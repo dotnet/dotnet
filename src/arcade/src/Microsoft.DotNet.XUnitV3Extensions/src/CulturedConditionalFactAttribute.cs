@@ -6,31 +6,30 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Microsoft.DotNet.XUnitExtensions;
 
-namespace Xunit
-{
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public sealed class CulturedConditionalFactAttribute : CulturedFactAttribute
-    {
-        [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
-        public Type CalleeType { get; private set; }
-        public string[] ConditionMemberNames { get; private set; }
+namespace Xunit;
 
-        public CulturedConditionalFactAttribute(
-            string[] cultures,
-            [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
-            Type calleeType,
-            string[] conditionMemberNames,
-            [CallerFilePath] string sourceFilePath = null,
-            [CallerLineNumber] int sourceLineNumber = 0)
-            : base(cultures, sourceFilePath, sourceLineNumber)
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+public sealed class CulturedConditionalFactAttribute : CulturedFactAttribute
+{
+    [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
+    public Type CalleeType { get; private set; }
+    public string[] ConditionMemberNames { get; private set; }
+
+    public CulturedConditionalFactAttribute(
+        string[] cultures,
+        [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
+        Type calleeType,
+        string[] conditionMemberNames,
+        [CallerFilePath] string sourceFilePath = null,
+        [CallerLineNumber] int sourceLineNumber = 0)
+        : base(cultures, sourceFilePath, sourceLineNumber)
+    {
+        CalleeType = calleeType;
+        ConditionMemberNames = conditionMemberNames;
+        string skipReason = ConditionalTestDiscoverer.EvaluateSkipConditions(calleeType, conditionMemberNames);
+        if (skipReason != null)
         {
-            CalleeType = calleeType;
-            ConditionMemberNames = conditionMemberNames;
-            string skipReason = ConditionalTestDiscoverer.EvaluateSkipConditions(calleeType, conditionMemberNames);
-            if (skipReason != null)
-            {
-                Skip = skipReason;
-            }
+            Skip = skipReason;
         }
     }
 }

@@ -10,57 +10,56 @@ using Microsoft.DotNet.Build.CloudTestTasks;
 using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Task = System.Threading.Tasks.Task;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed
+namespace Microsoft.DotNet.Build.Tasks.Feed;
+
+public abstract class AzureStorageAssetPublisher : IAssetPublisher
 {
-    public abstract class AzureStorageAssetPublisher : IAssetPublisher
+    private readonly TaskLoggingHelper _log;
+
+    protected AzureStorageAssetPublisher(TaskLoggingHelper log)
     {
-        private readonly TaskLoggingHelper _log;
+        _log = log;
+    }
 
-        protected AzureStorageAssetPublisher(TaskLoggingHelper log)
+    public LocationType LocationType => LocationType.Container;
+
+    public abstract BlobClient CreateBlobClient(string blobPath);
+
+    public async Task PublishAssetAsync(string file, string blobPath, PushOptions options, SemaphoreSlim clientThrottle = null)
+    {
+        using (await SemaphoreLock.LockAsync(clientThrottle))
         {
-            _log = log;
-        }
-
-        public LocationType LocationType => LocationType.Container;
-
-        public abstract BlobClient CreateBlobClient(string blobPath);
-
-        public async Task PublishAssetAsync(string file, string blobPath, PushOptions options, SemaphoreSlim clientThrottle = null)
-        {
-            using (await SemaphoreLock.LockAsync(clientThrottle))
+            blobPath = blobPath.Replace("\\", "/");
+            var blobClient = CreateBlobClient(blobPath);
+            if (!options.AllowOverwrite && await blobClient.ExistsAsync())
             {
-                blobPath = blobPath.Replace("\\", "/");
-                var blobClient = CreateBlobClient(blobPath);
-                if (!options.AllowOverwrite && await blobClient.ExistsAsync())
+                if (options.PassIfExistingItemIdentical)
                 {
-                    if (options.PassIfExistingItemIdentical)
+                    if (!await blobClient.IsFileIdenticalToBlobAsync(file))
                     {
-                        if (!await blobClient.IsFileIdenticalToBlobAsync(file))
-                        {
-                            _log.LogError($"Asset '{file}' already exists with different contents at '{blobClient.Uri}'");
-                        }
-
-                        return;
+                        _log.LogError($"Asset '{file}' already exists with different contents at '{blobClient.Uri}'");
                     }
 
-                    _log.LogError($"Asset '{file}' already exists at '{blobClient.Uri}'");
                     return;
                 }
 
-                _log.LogMessage($"Uploading '{file}' to '{blobClient.Uri}'");
+                _log.LogError($"Asset '{file}' already exists at '{blobClient.Uri}'");
+                return;
+            }
 
-                try
+            _log.LogMessage($"Uploading '{file}' to '{blobClient.Uri}'");
+
+            try
+            {
+                BlobUploadOptions blobUploadOptions = new()
                 {
-                    BlobUploadOptions blobUploadOptions = new()
-                    {
-                        HttpHeaders = AzureStorageUtils.GetBlobHeadersByExtension(file)
-                    };
-                    await blobClient.UploadAsync(file, blobUploadOptions);
-                }
-                catch (Exception e)
-                {
-                    _log.LogError($"Unexpected exception publishing file {file} to {blobClient.Uri}: {e.Message}");
-                }
+                    HttpHeaders = AzureStorageUtils.GetBlobHeadersByExtension(file)
+                };
+                await blobClient.UploadAsync(file, blobUploadOptions);
+            }
+            catch (Exception e)
+            {
+                _log.LogError($"Unexpected exception publishing file {file} to {blobClient.Uri}: {e.Message}");
             }
         }
     }

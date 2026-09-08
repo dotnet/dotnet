@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace Always
+namespace Always;
+
+public class Class1
 {
-    public class Class1
-    {
-    }
 }

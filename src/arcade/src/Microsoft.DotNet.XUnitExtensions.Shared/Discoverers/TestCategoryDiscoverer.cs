@@ -18,15 +18,14 @@ using Xunit.Sdk;
 /// <code>-trait "Category=BVT"</code> for example that will only run the tests with [TestCategory("BVT")] on it.
 /// </summary>
 
-namespace Microsoft.DotNet.XUnitExtensions
+namespace Microsoft.DotNet.XUnitExtensions;
+
+public class TestCategoryDiscoverer : ITraitDiscoverer
 {
-    public class TestCategoryDiscoverer : ITraitDiscoverer
+    public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
     {
-        public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
-        {
-            var ctorArgs = traitAttribute.GetConstructorArguments().ToList();
-            yield return new KeyValuePair<string, string>("Category", ctorArgs[0].ToString());
-        }
+        var ctorArgs = traitAttribute.GetConstructorArguments().ToList();
+        yield return new KeyValuePair<string, string>("Category", ctorArgs[0].ToString());
     }
 }
 #endif

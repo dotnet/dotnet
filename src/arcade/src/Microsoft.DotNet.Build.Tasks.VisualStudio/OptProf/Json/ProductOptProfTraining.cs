@@ -3,14 +3,13 @@
 
 using Newtonsoft.Json;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio
-{
-    internal sealed class ProductOptProfTraining
-    {
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
 
-        [JsonProperty(PropertyName = "tests")]
-        public OptProfTrainingTest[] Tests { get; set; }
-    }
+internal sealed class ProductOptProfTraining
+{
+    [JsonProperty(PropertyName = "name")]
+    public string Name { get; set; }
+
+    [JsonProperty(PropertyName = "tests")]
+    public OptProfTrainingTest[] Tests { get; set; }
 }

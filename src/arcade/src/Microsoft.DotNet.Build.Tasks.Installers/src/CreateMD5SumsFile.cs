@@ -8,45 +8,44 @@ using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace Microsoft.DotNet.Build.Tasks.Installers
+namespace Microsoft.DotNet.Build.Tasks.Installers;
+
+/// <summary>
+/// Produce an md5sums file for a set of files.
+/// </summary>
+/// <remarks>
+/// Emits a file of the format specified by https://manpages.debian.org/bookworm/dpkg-dev/deb-md5sums.5.en.html
+/// </remarks>
+public sealed class CreateMD5SumsFile : Task
 {
-    /// <summary>
-    /// Produce an md5sums file for a set of files.
-    /// </summary>
-    /// <remarks>
-    /// Emits a file of the format specified by https://manpages.debian.org/bookworm/dpkg-dev/deb-md5sums.5.en.html
-    /// </remarks>
-    public sealed class CreateMD5SumsFile : Task
+    [Required]
+    public string RootDirectory { get; set; }
+    [Required]
+    public ITaskItem[] Files { get; set; }
+    [Required]
+    public string OutputFile { get; set; }
+
+    [Output]
+    public string InstalledSize { get; set; }
+
+    public override bool Execute()
     {
-        [Required]
-        public string RootDirectory { get; set; }
-        [Required]
-        public ITaskItem[] Files { get; set; }
-        [Required]
-        public string OutputFile { get; set; }
-
-        [Output]
-        public string InstalledSize { get; set; }
-
-        public override bool Execute()
+        using FileStream outputFile = File.Create(OutputFile);
+        using StreamWriter writer = new(outputFile, Encoding.ASCII);
+        ulong installedSize = 0;
+        foreach (ITaskItem file in Files)
         {
-            using FileStream outputFile = File.Create(OutputFile);
-            using StreamWriter writer = new(outputFile, Encoding.ASCII);
-            ulong installedSize = 0;
-            foreach (ITaskItem file in Files)
-            {
-                using MD5 md5 = MD5.Create();
-                using FileStream fileStream = File.OpenRead(file.ItemSpec);
-                installedSize += (ulong)fileStream.Length;
-                byte[] hash = md5.ComputeHash(fileStream);
-                string relativePath = file.ItemSpec.Substring(RootDirectory.Length).TrimStart(Path.DirectorySeparatorChar).Replace('\\', '/');
-                // Always use Linux line-endings
-                writer.Write($"{Convert.ToHexStringLower(hash)}  {relativePath}\n");
-            }
-
-            InstalledSize = (installedSize / 1024).ToString();
-
-            return true;
+            using MD5 md5 = MD5.Create();
+            using FileStream fileStream = File.OpenRead(file.ItemSpec);
+            installedSize += (ulong)fileStream.Length;
+            byte[] hash = md5.ComputeHash(fileStream);
+            string relativePath = file.ItemSpec.Substring(RootDirectory.Length).TrimStart(Path.DirectorySeparatorChar).Replace('\\', '/');
+            // Always use Linux line-endings
+            writer.Write($"{Convert.ToHexStringLower(hash)}  {relativePath}\n");
         }
+
+        InstalledSize = (installedSize / 1024).ToString();
+
+        return true;
     }
 }

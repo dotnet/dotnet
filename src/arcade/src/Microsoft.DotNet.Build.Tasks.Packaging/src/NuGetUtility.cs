@@ -16,127 +16,126 @@ using System.Threading;
 using System.Threading.Tasks;
 using TaskLoggingHelper = Microsoft.Build.Utilities.TaskLoggingHelper;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging
-{
-    public static class NuGetUtility
-    {
-        internal static IEnumerable<Version> GetAllVersionsForPackageId(string packageId, bool includePrerelease, bool includeUnlisted, TaskLoggingHelper log, CancellationToken cancellationToken)
-        {
-            List<Version> result = new List<Version>();
-            ISettings settings = Settings.LoadDefaultSettings(Directory.GetCurrentDirectory());
-            IEnumerable<PackageSource> enabledSources = GetEnabledSources(settings);
-            var logger = new NuGetLogger(log);
-            Parallel.ForEach(enabledSources, (packageSource) =>
-            {
-                 using (var sourceCacheContext = new SourceCacheContext())
-                 {
-                    bool loadedData = false;
-                    int retriesRemaining = 2;
-                    IEnumerable<IPackageSearchMetadata> searchMetadata = null;
-                    while (!loadedData) {
-                        try
-                        {
-                            var sourceRepository = new SourceRepository(packageSource, Repository.Provider.GetCoreV3());
-                            var packageMetadataResource = sourceRepository.GetResourceAsync<PackageMetadataResource>().GetAwaiter().GetResult();
-#pragma warning disable CA2025 // we force GetMetadataAsync to be synchronous so sourceCacheContext can't be disposed early
-                            searchMetadata = packageMetadataResource.GetMetadataAsync(packageId, includePrerelease, includeUnlisted, sourceCacheContext, logger, cancellationToken).GetAwaiter().GetResult();
-#pragma warning restore
-                            loadedData = true;
-                        }
-                        catch (Exception e)
-                        {
-                            retriesRemaining--;
-                            if (retriesRemaining <= 0) {
-                                logger.Log(LogLevel.Error, "Encountered Connection Issue: " + e.ToString() + ", retries exhausted");
-                                throw;
-                            }
-                            logger.Log(LogLevel.Information, "Encountered Connection Issue: " + e.ToString() + ", retrying...");
-                            // returns to start of while loop to retry after a delay
-                            Thread.Sleep(5000);
-                        }
-                    }
+namespace Microsoft.DotNet.Build.Tasks.Packaging;
 
-                    foreach (IPackageSearchMetadata packageMetadata in searchMetadata)
+public static class NuGetUtility
+{
+    internal static IEnumerable<Version> GetAllVersionsForPackageId(string packageId, bool includePrerelease, bool includeUnlisted, TaskLoggingHelper log, CancellationToken cancellationToken)
+    {
+        List<Version> result = new List<Version>();
+        ISettings settings = Settings.LoadDefaultSettings(Directory.GetCurrentDirectory());
+        IEnumerable<PackageSource> enabledSources = GetEnabledSources(settings);
+        var logger = new NuGetLogger(log);
+        Parallel.ForEach(enabledSources, (packageSource) =>
+        {
+             using (var sourceCacheContext = new SourceCacheContext())
+             {
+                bool loadedData = false;
+                int retriesRemaining = 2;
+                IEnumerable<IPackageSearchMetadata> searchMetadata = null;
+                while (!loadedData) {
+                    try
                     {
-                        lock (result)
-                        {
-                            Version threePartVersion = VersionUtility.As3PartVersion(packageMetadata.Identity.Version.Version);
-                            if (!result.Contains(threePartVersion))
-                                result.Add(threePartVersion);
+                        var sourceRepository = new SourceRepository(packageSource, Repository.Provider.GetCoreV3());
+                        var packageMetadataResource = sourceRepository.GetResourceAsync<PackageMetadataResource>().GetAwaiter().GetResult();
+#pragma warning disable CA2025 // we force GetMetadataAsync to be synchronous so sourceCacheContext can't be disposed early
+                        searchMetadata = packageMetadataResource.GetMetadataAsync(packageId, includePrerelease, includeUnlisted, sourceCacheContext, logger, cancellationToken).GetAwaiter().GetResult();
+#pragma warning restore
+                        loadedData = true;
+                    }
+                    catch (Exception e)
+                    {
+                        retriesRemaining--;
+                        if (retriesRemaining <= 0) {
+                            logger.Log(LogLevel.Error, "Encountered Connection Issue: " + e.ToString() + ", retries exhausted");
+                            throw;
                         }
+                        logger.Log(LogLevel.Information, "Encountered Connection Issue: " + e.ToString() + ", retrying...");
+                        // returns to start of while loop to retry after a delay
+                        Thread.Sleep(5000);
                     }
                 }
-            });
-            // Given we are looking in different sources, we reorder all versions.
-            return result.OrderBy(v => v);
-        }
 
-        private static IEnumerable<PackageSource> GetEnabledSources(ISettings settings)
-        {
-            if (settings == null)
-            {
-                throw new ArgumentNullException(nameof(settings));
+                foreach (IPackageSearchMetadata packageMetadata in searchMetadata)
+                {
+                    lock (result)
+                    {
+                        Version threePartVersion = VersionUtility.As3PartVersion(packageMetadata.Identity.Version.Version);
+                        if (!result.Contains(threePartVersion))
+                            result.Add(threePartVersion);
+                    }
+                }
             }
+        });
+        // Given we are looking in different sources, we reorder all versions.
+        return result.OrderBy(v => v);
+    }
 
-            var provider = new PackageSourceProvider(settings);
-            return provider.LoadPackageSources().Where(e => e.IsEnabled == true).ToList();
-        }
-
-        public static Version GetLatestPatchStableVersionForRelease(this IEnumerable<Version> versions, int eraMajorVersion, int eraMinorVersion)
+    private static IEnumerable<PackageSource> GetEnabledSources(ISettings settings)
+    {
+        if (settings == null)
         {
-            return versions.Where(v => VersionUtility.As2PartVersion(v) == new Version(eraMajorVersion, eraMinorVersion))
-                           .OrderByDescending(v => v)
-                           .FirstOrDefault();
+            throw new ArgumentNullException(nameof(settings));
         }
 
-        public static void WriteRuntimeGraph(string filePath, RuntimeGraph runtimeGraph)
+        var provider = new PackageSourceProvider(settings);
+        return provider.LoadPackageSources().Where(e => e.IsEnabled == true).ToList();
+    }
+
+    public static Version GetLatestPatchStableVersionForRelease(this IEnumerable<Version> versions, int eraMajorVersion, int eraMinorVersion)
+    {
+        return versions.Where(v => VersionUtility.As2PartVersion(v) == new Version(eraMajorVersion, eraMinorVersion))
+                       .OrderByDescending(v => v)
+                       .FirstOrDefault();
+    }
+
+    public static void WriteRuntimeGraph(string filePath, RuntimeGraph runtimeGraph)
+    {
+        using (var fileStream = new FileStream(filePath, FileMode.Create))
+        using (var textWriter = new StreamWriter(fileStream))
+        using (var jsonWriter = new JsonTextWriter(textWriter))
+        using (var writer = new JsonObjectWriter(jsonWriter))
         {
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            using (var textWriter = new StreamWriter(fileStream))
-            using (var jsonWriter = new JsonTextWriter(textWriter))
-            using (var writer = new JsonObjectWriter(jsonWriter))
-            {
-                jsonWriter.Formatting = Formatting.Indented;
+            jsonWriter.Formatting = Formatting.Indented;
 
-                // workaround https://github.com/NuGet/Home/issues/9532
-                writer.WriteObjectStart();
+            // workaround https://github.com/NuGet/Home/issues/9532
+            writer.WriteObjectStart();
 
-                JsonRuntimeFormat.WriteRuntimeGraph(writer, runtimeGraph);
+            JsonRuntimeFormat.WriteRuntimeGraph(writer, runtimeGraph);
 
-                writer.WriteObjectEnd();
-            }
+            writer.WriteObjectEnd();
         }
+    }
 
-        internal class NuGetLogger : ILogger
+    internal class NuGetLogger : ILogger
+    {
+        private readonly TaskLoggingHelper _log;
+
+        public NuGetLogger(TaskLoggingHelper log)
         {
-            private readonly TaskLoggingHelper _log;
-
-            public NuGetLogger(TaskLoggingHelper log)
-            {
-                _log = log;
-            }
-
-            public void Log(LogLevel level, string data) => _log.LogMessage($"{level.ToString()} - {data}");
-
-            public void Log(ILogMessage message) => _log.LogMessage(message.ToString());
-
-            public Task LogAsync(LogLevel level, string data) => Task.Run(() => Log(level, data));
-
-            public Task LogAsync(ILogMessage message) => Task.Run(() => Log(message));
-
-            public void LogDebug(string data) => _log.LogMessage(data);
-
-            public void LogError(string data) => _log.LogError(data);
-
-            public void LogInformation(string data) => _log.LogMessage(data);
-
-            public void LogInformationSummary(string data) => _log.LogMessage(data);
-
-            public void LogMinimal(string data) => _log.LogMessage(data);
-
-            public void LogVerbose(string data) => _log.LogMessage(data);
-
-            public void LogWarning(string data) => _log.LogWarning(data);
+            _log = log;
         }
+
+        public void Log(LogLevel level, string data) => _log.LogMessage($"{level.ToString()} - {data}");
+
+        public void Log(ILogMessage message) => _log.LogMessage(message.ToString());
+
+        public Task LogAsync(LogLevel level, string data) => Task.Run(() => Log(level, data));
+
+        public Task LogAsync(ILogMessage message) => Task.Run(() => Log(message));
+
+        public void LogDebug(string data) => _log.LogMessage(data);
+
+        public void LogError(string data) => _log.LogError(data);
+
+        public void LogInformation(string data) => _log.LogMessage(data);
+
+        public void LogInformationSummary(string data) => _log.LogMessage(data);
+
+        public void LogMinimal(string data) => _log.LogMessage(data);
+
+        public void LogVerbose(string data) => _log.LogMessage(data);
+
+        public void LogWarning(string data) => _log.LogWarning(data);
     }
 }

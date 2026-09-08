@@ -8,115 +8,114 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.DotNet.PackageTesting
+namespace Microsoft.DotNet.PackageTesting;
+
+public class GetCompatiblePackageTargetFrameworks : Task
 {
-    public class GetCompatiblePackageTargetFrameworks : Task
+    private readonly List<NuGetFramework> allTargetFrameworks = new();
+    private readonly Dictionary<NuGetFramework, HashSet<NuGetFramework>> packageTfmMapping = new();
+
+    [Required]
+    public string[] PackagePaths { get; set; }
+
+    [Required]
+    public string SupportedTestFrameworks { get; set; }
+
+    [Output]
+    public ITaskItem[] TestProjects { get; set; }
+
+    public override bool Execute()
     {
-        private readonly List<NuGetFramework> allTargetFrameworks = new();
-        private readonly Dictionary<NuGetFramework, HashSet<NuGetFramework>> packageTfmMapping = new();
+        List<ITaskItem> testProjects = new();
 
-        [Required]
-        public string[] PackagePaths { get; set; }
-
-        [Required]
-        public string SupportedTestFrameworks { get; set; }
-
-        [Output]
-        public ITaskItem[] TestProjects { get; set; }
-
-        public override bool Execute()
+        try
         {
-            List<ITaskItem> testProjects = new();
+            Initialize(SupportedTestFrameworks);
+            string minDotnetTargetFramework = allTargetFrameworks.Where(t => t.Framework == ".NETCoreApp")
+                .OrderBy(t => t.Version)
+                .FirstOrDefault()?
+                .GetShortFolderName();
 
-            try
+            foreach (var packagePath in PackagePaths)
             {
-                Initialize(SupportedTestFrameworks);
-                string minDotnetTargetFramework = allTargetFrameworks.Where(t => t.Framework == ".NETCoreApp")
-                    .OrderBy(t => t.Version)
-                    .FirstOrDefault()?
-                    .GetShortFolderName();
+                Package package = NupkgParser.CreatePackageObject(packagePath);
 
-                foreach (var packagePath in PackagePaths)
-                {
-                    Package package = NupkgParser.CreatePackageObject(packagePath);
-
-                    IEnumerable<NuGetFramework> testFrameworks = GetTestFrameworks(package, minDotnetTargetFramework);
-                    testProjects.AddRange(CreateItemFromTestFramework(package.PackageId, package.Version, testFrameworks));
-                }
-
-                // Removing empty items.
-                TestProjects = testProjects.Where(tfm => tfm.ItemSpec != "").ToArray();
-            }
-            catch (Exception e)
-            {
-                Log.LogErrorFromException(e, showStackTrace: false);
+                IEnumerable<NuGetFramework> testFrameworks = GetTestFrameworks(package, minDotnetTargetFramework);
+                testProjects.AddRange(CreateItemFromTestFramework(package.PackageId, package.Version, testFrameworks));
             }
 
-            return !Log.HasLoggedErrors;
+            // Removing empty items.
+            TestProjects = testProjects.Where(tfm => tfm.ItemSpec != "").ToArray();
+        }
+        catch (Exception e)
+        {
+            Log.LogErrorFromException(e, showStackTrace: false);
         }
 
-        public IEnumerable<NuGetFramework> GetTestFrameworks(Package package, string minDotnetTargetFramework)
+        return !Log.HasLoggedErrors;
+    }
+
+    public IEnumerable<NuGetFramework> GetTestFrameworks(Package package, string minDotnetTargetFramework)
+    {
+        List<NuGetFramework> frameworksToTest= new();
+        IEnumerable<NuGetFramework> packageTargetFrameworks = package.FrameworksInPackage;
+
+        // Testing the package installation on all tfms linked with package targetframeworks.
+        foreach (var item in packageTargetFrameworks)
         {
-            List<NuGetFramework> frameworksToTest= new();
-            IEnumerable<NuGetFramework> packageTargetFrameworks = package.FrameworksInPackage;
-
-            // Testing the package installation on all tfms linked with package targetframeworks.
-            foreach (var item in packageTargetFrameworks)
+            if (packageTfmMapping.ContainsKey(item))
             {
-                if (packageTfmMapping.ContainsKey(item))
-                {
-                    frameworksToTest.AddRange(packageTfmMapping[item]);
-                }
-
-                // Adding the frameworks in the packages to the test matrix.
-                frameworksToTest.Add(item);
+                frameworksToTest.AddRange(packageTfmMapping[item]);
             }
 
-            if (!string.IsNullOrEmpty(minDotnetTargetFramework) && frameworksToTest.Any(t => t.Framework == ".NETStandard"))
-            {
-                frameworksToTest.Add(NuGetFramework.Parse(minDotnetTargetFramework));
-            }
-
-            return frameworksToTest.Where(tfm => allTargetFrameworks.Contains(tfm)).Distinct();
+            // Adding the frameworks in the packages to the test matrix.
+            frameworksToTest.Add(item);
         }
 
-        public void Initialize(string targetFrameworks)
+        if (!string.IsNullOrEmpty(minDotnetTargetFramework) && frameworksToTest.Any(t => t.Framework == ".NETStandard"))
         {
-            // Defining the set of known frameworks that we care to test
-            foreach (var tfm in targetFrameworks.Split(';'))
-            {
-                allTargetFrameworks.Add(NuGetFramework.Parse(tfm));
-            }
-
-            // creating a map framework in package => frameworks to test based on default compatibilty mapping.
-            foreach (var item in DefaultFrameworkMappings.Instance.CompatibilityMappings)
-            {
-                NuGetFramework forwardTfm = item.SupportedFrameworkRange.Max;
-                NuGetFramework reverseTfm = item.TargetFrameworkRange.Min;
-                if (packageTfmMapping.ContainsKey(forwardTfm))
-                {
-                    packageTfmMapping[forwardTfm].Add(reverseTfm);
-                }
-                else
-                {
-                    packageTfmMapping.Add(forwardTfm, new HashSet<NuGetFramework> { reverseTfm });
-                }
-            }
+            frameworksToTest.Add(NuGetFramework.Parse(minDotnetTargetFramework));
         }
 
-        private static List<ITaskItem> CreateItemFromTestFramework(string packageId, string version, IEnumerable<NuGetFramework> testFrameworks)
-        {
-            List<ITaskItem> testprojects = new();
-            foreach (var framework in testFrameworks)
-            {
-                TaskItem supportedPackage = new(packageId);
-                supportedPackage.SetMetadata("Version", version);
-                supportedPackage.SetMetadata("TargetFramework", framework.ToString());
-                supportedPackage.SetMetadata("TargetFrameworkShort", framework.GetShortFolderName());
-                testprojects.Add(supportedPackage);
-            }
+        return frameworksToTest.Where(tfm => allTargetFrameworks.Contains(tfm)).Distinct();
+    }
 
-            return testprojects;
+    public void Initialize(string targetFrameworks)
+    {
+        // Defining the set of known frameworks that we care to test
+        foreach (var tfm in targetFrameworks.Split(';'))
+        {
+            allTargetFrameworks.Add(NuGetFramework.Parse(tfm));
         }
+
+        // creating a map framework in package => frameworks to test based on default compatibilty mapping.
+        foreach (var item in DefaultFrameworkMappings.Instance.CompatibilityMappings)
+        {
+            NuGetFramework forwardTfm = item.SupportedFrameworkRange.Max;
+            NuGetFramework reverseTfm = item.TargetFrameworkRange.Min;
+            if (packageTfmMapping.ContainsKey(forwardTfm))
+            {
+                packageTfmMapping[forwardTfm].Add(reverseTfm);
+            }
+            else
+            {
+                packageTfmMapping.Add(forwardTfm, new HashSet<NuGetFramework> { reverseTfm });
+            }
+        }
+    }
+
+    private static List<ITaskItem> CreateItemFromTestFramework(string packageId, string version, IEnumerable<NuGetFramework> testFrameworks)
+    {
+        List<ITaskItem> testprojects = new();
+        foreach (var framework in testFrameworks)
+        {
+            TaskItem supportedPackage = new(packageId);
+            supportedPackage.SetMetadata("Version", version);
+            supportedPackage.SetMetadata("TargetFramework", framework.ToString());
+            supportedPackage.SetMetadata("TargetFrameworkShort", framework.GetShortFolderName());
+            testprojects.Add(supportedPackage);
+        }
+
+        return testprojects;
     }
 }
