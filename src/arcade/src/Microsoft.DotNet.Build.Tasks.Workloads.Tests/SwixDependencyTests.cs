@@ -4,23 +4,22 @@
 using System;
 using Xunit;
 
-namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
+namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests;
+
+public class SwixDependencyTests
 {
-    public class SwixDependencyTests
+    [WindowsOnlyTheory]
+    [InlineData("1.0.0", null, "[1.0.0,)")]
+    [InlineData("1.0.0", "2.0.0", "[1.0.0,2.0.0)")]
+    [InlineData("1.0.0", "1.0.0", "[1.0.0]")]
+    [InlineData(null, "1.2.3", "[,1.2.3)")]
+    public void ItGeneratesVersionRanges(string minVersion, string maxVersion, string expectedVersionRange)
     {
-        [WindowsOnlyTheory]
-        [InlineData("1.0.0", null, "[1.0.0,)")]
-        [InlineData("1.0.0", "2.0.0", "[1.0.0,2.0.0)")]
-        [InlineData("1.0.0", "1.0.0", "[1.0.0]")]
-        [InlineData(null, "1.2.3", "[,1.2.3)")]
-        public void ItGeneratesVersionRanges(string minVersion, string maxVersion, string expectedVersionRange)
-        {
-            Version v1 = string.IsNullOrWhiteSpace(minVersion) ? null : new Version(minVersion);
-            Version v2 = string.IsNullOrWhiteSpace(maxVersion) ? null : new Version(maxVersion);
+        Version v1 = string.IsNullOrWhiteSpace(minVersion) ? null : new Version(minVersion);
+        Version v2 = string.IsNullOrWhiteSpace(maxVersion) ? null : new Version(maxVersion);
 
-            SwixDependency dep = new("foo", v1, v2);
+        SwixDependency dep = new("foo", v1, v2);
 
-            Assert.Equal(expectedVersionRange, dep.GetVersionRange());
-        }
+        Assert.Equal(expectedVersionRange, dep.GetVersionRange());
     }
 }

@@ -4,24 +4,23 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.DotNet.Git.IssueManager
+namespace Microsoft.DotNet.Git.IssueManager;
+
+public class AzureDevOpsCommit
 {
-    public class AzureDevOpsCommit
-    {
-        public List<Value> Value { get; set; }
-    }
+    public List<Value> Value { get; set; }
+}
 
-    public class Value
-    {
-        public Author Author { get; set; }
-    }
+public class Value
+{
+    public Author Author { get; set; }
+}
 
-    public class Author
-    {
-        public string Name { get; set; }
+public class Author
+{
+    public string Name { get; set; }
 
-        public string Email { get; set; }
+    public string Email { get; set; }
 
-        public DateTime Date { get; set; }
-    }
+    public DateTime Date { get; set; }
 }

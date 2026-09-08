@@ -3,10 +3,9 @@
 
 using System.Collections.Generic;
 
-namespace Internal.Microsoft.Extensions.DependencyModel.Resolution
+namespace Internal.Microsoft.Extensions.DependencyModel.Resolution;
+
+internal interface ICompilationAssemblyResolver
 {
-    internal interface ICompilationAssemblyResolver
-    {
-        bool TryResolveAssemblyPaths(CompilationLibrary library, List<string> assemblies);
-    }
+    bool TryResolveAssemblyPaths(CompilationLibrary library, List<string> assemblies);
 }

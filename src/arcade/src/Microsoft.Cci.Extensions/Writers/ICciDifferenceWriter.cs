@@ -7,10 +7,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.Cci.Mappings;
 
-namespace Microsoft.Cci.Writers
+namespace Microsoft.Cci.Writers;
+
+public interface ICciDifferenceWriter
 {
-    public interface ICciDifferenceWriter
-    {
-        void Write(string oldAssembliesName, IEnumerable<IAssembly> oldAssemblies, string newAssembliesName, IEnumerable<IAssembly> newAssemblies);
-    }
+    void Write(string oldAssembliesName, IEnumerable<IAssembly> oldAssemblies, string newAssembliesName, IEnumerable<IAssembly> newAssemblies);
 }

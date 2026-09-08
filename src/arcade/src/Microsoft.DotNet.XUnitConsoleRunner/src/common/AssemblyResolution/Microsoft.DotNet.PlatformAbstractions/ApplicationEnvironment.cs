@@ -4,16 +4,15 @@
 using System;
 using System.IO;
 
-namespace Internal.Microsoft.DotNet.PlatformAbstractions
-{
-    internal static class ApplicationEnvironment
-    {
-        public static string ApplicationBasePath { get; } = GetApplicationBasePath();
+namespace Internal.Microsoft.DotNet.PlatformAbstractions;
 
-        private static string GetApplicationBasePath()
-        {
-            var basePath = AppContext.BaseDirectory;
-            return Path.GetFullPath(basePath);
-        }
+internal static class ApplicationEnvironment
+{
+    public static string ApplicationBasePath { get; } = GetApplicationBasePath();
+
+    private static string GetApplicationBasePath()
+    {
+        var basePath = AppContext.BaseDirectory;
+        return Path.GetFullPath(basePath);
     }
 }

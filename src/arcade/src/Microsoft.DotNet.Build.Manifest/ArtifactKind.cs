@@ -1,12 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace Microsoft.DotNet.Build.Manifest
+namespace Microsoft.DotNet.Build.Manifest;
+
+public enum ArtifactKind
 {
-    public enum ArtifactKind
-    {
-        Package,
-        Blob,
-        Pdb
-    }
+    Package,
+    Blob,
+    Pdb
 }

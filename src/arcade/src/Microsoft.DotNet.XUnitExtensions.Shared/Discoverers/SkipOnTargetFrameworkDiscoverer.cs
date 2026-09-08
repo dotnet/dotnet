@@ -9,27 +9,26 @@ using Xunit.Abstractions;
 using Xunit.Sdk;
 using Xunit;
 
-namespace Microsoft.DotNet.XUnitExtensions
+namespace Microsoft.DotNet.XUnitExtensions;
+
+/// <summary>
+/// This class discovers all of the tests and test classes that have
+/// applied the TestOnTargetFrameworkDiscoverer attribute
+/// </summary>
+public class SkipOnTargetFrameworkDiscoverer : ITraitDiscoverer
 {
     /// <summary>
-    /// This class discovers all of the tests and test classes that have
-    /// applied the TestOnTargetFrameworkDiscoverer attribute
+    /// Gets the trait values from the Category attribute.
     /// </summary>
-    public class SkipOnTargetFrameworkDiscoverer : ITraitDiscoverer
+    /// <param name="traitAttribute">The trait attribute containing the trait values.</param>
+    /// <returns>The trait values.</returns>
+    public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
     {
-        /// <summary>
-        /// Gets the trait values from the Category attribute.
-        /// </summary>
-        /// <param name="traitAttribute">The trait attribute containing the trait values.</param>
-        /// <returns>The trait values.</returns>
-        public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
-        {
-            TargetFrameworkMonikers frameworks = (TargetFrameworkMonikers)traitAttribute.GetConstructorArguments().First();
+        TargetFrameworkMonikers frameworks = (TargetFrameworkMonikers)traitAttribute.GetConstructorArguments().First();
 
-            return DiscovererHelpers.TestFrameworkApplies(frameworks) ?
-                new[] { new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing) } :
-                Array.Empty<KeyValuePair<string, string>>();
-        }
+        return DiscovererHelpers.TestFrameworkApplies(frameworks) ?
+            new[] { new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing) } :
+            Array.Empty<KeyValuePair<string, string>>();
     }
 }
 #endif

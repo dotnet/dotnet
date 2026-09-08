@@ -10,20 +10,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.DotNet.Build.Tasks.Installers
+namespace Microsoft.DotNet.Build.Tasks.Installers;
+
+internal static class HexConverter
 {
-   internal static class HexConverter
+    public static string ToHexStringLower(byte[] byteArray)
     {
-        public static string ToHexStringLower(byte[] byteArray)
+        StringBuilder hexString = new(byteArray.Length * 2);
+        foreach (byte b in byteArray)
         {
-            StringBuilder hexString = new(byteArray.Length * 2);
-            foreach (byte b in byteArray)
-            {
-                hexString.AppendFormat("{0:x2}", b);
-            }
-            return hexString.ToString();
+            hexString.AppendFormat("{0:x2}", b);
         }
+        return hexString.ToString();
     }
 }
 
 #endif
+

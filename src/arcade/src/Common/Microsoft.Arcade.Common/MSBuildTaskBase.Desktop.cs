@@ -2,13 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 using Microsoft.Arcade.Common.Desktop;
 
-namespace Microsoft.Arcade.Common
+namespace Microsoft.Arcade.Common;
+
+public partial class MSBuildTaskBase
 {
-    public partial class MSBuildTaskBase
+    static MSBuildTaskBase()
     {
-        static MSBuildTaskBase()
-        {
-            AssemblyResolver.Enable();
-        }
+        AssemblyResolver.Enable();
     }
 }
