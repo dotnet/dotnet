@@ -8,38 +8,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.DotNet.SignTool
+namespace Microsoft.DotNet.SignTool;
+
+internal struct WixPackInfo
 {
-    internal struct WixPackInfo
+    internal string Moniker { get; private set; }
+
+    internal string FullPath { get; private set; }
+
+    private const string WixPackExtension = ".wixpack.zip";
+
+    internal WixPackInfo(string fullPath)
     {
-        internal string Moniker { get; private set; }
+        Moniker = GetMoniker(fullPath);
+        FullPath = fullPath;
+    }
 
-        internal string FullPath { get; private set; }
+    internal static string GetMoniker(string path)
+    {
+        string moniker = null;
 
-        private const string WixPackExtension = ".wixpack.zip";
-
-        internal WixPackInfo(string fullPath)
+        if (IsWixPack(path))
         {
-            Moniker = GetMoniker(fullPath);
-            FullPath = fullPath;
+            string filename = Path.GetFileName(path);
+            int trimLength = WixPackExtension.Length;
+            moniker = filename.Remove(filename.Length - trimLength, trimLength);
         }
+        return moniker;
+    }
 
-        internal static string GetMoniker(string path)
-        {
-            string moniker = null;
-
-            if (IsWixPack(path))
-            {
-                string filename = Path.GetFileName(path);
-                int trimLength = WixPackExtension.Length;
-                moniker = filename.Remove(filename.Length - trimLength, trimLength);
-            }
-            return moniker;
-        }
-
-        internal static bool IsWixPack(string path)
-        {
-            return Path.GetFileName(path).EndsWith(WixPackExtension, StringComparison.OrdinalIgnoreCase);
-        }
+    internal static bool IsWixPack(string path)
+    {
+        return Path.GetFileName(path).EndsWith(WixPackExtension, StringComparison.OrdinalIgnoreCase);
     }
 }

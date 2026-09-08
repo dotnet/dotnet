@@ -7,60 +7,59 @@ using System.Linq;
 using Microsoft.SignCheck.Logging;
 using Microsoft.SignCheck.Verification.Jar;
 
-namespace Microsoft.SignCheck.Verification
+namespace Microsoft.SignCheck.Verification;
+
+public class JarVerifier : FileVerifier
 {
-    public class JarVerifier : FileVerifier
+    public JarVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, fileExtension: ".jar")
     {
-        public JarVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, fileExtension: ".jar")
-        {
 
-        }
+    }
 
-        public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
+    public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
+    {
+        if (VerifyJarSignatures)
         {
-            if (VerifyJarSignatures)
+            var svr = new SignatureVerificationResult(path, parent, virtualPath);
+
+            try
             {
-                var svr = new SignatureVerificationResult(path, parent, virtualPath);
+                JarError.ClearErrors();
+                var jarFile = new JarFile(path);
+                svr.IsSigned = jarFile.IsSigned();
 
-                try
+                if (!svr.IsSigned && JarError.HasErrors())
                 {
-                    JarError.ClearErrors();
-                    var jarFile = new JarFile(path);
-                    svr.IsSigned = jarFile.IsSigned();
-
-                    if (!svr.IsSigned && JarError.HasErrors())
+                    svr.AddDetail(DetailKeys.Error, JarError.GetLastError());
+                }
+                else
+                {
+                    foreach (Timestamp timestamp in jarFile.Timestamps)
                     {
-                        svr.AddDetail(DetailKeys.Error, JarError.GetLastError());
-                    }
-                    else
-                    {
-                        foreach (Timestamp timestamp in jarFile.Timestamps)
-                        {
-                            svr.AddDetail(DetailKeys.Misc, SignCheckResources.DetailTimestamp, timestamp.SignedOn, timestamp.SignatureAlgorithm);
-                        }
-
-                        IEnumerable<Timestamp> invalidTimestamps = from ts in jarFile.Timestamps
-                                                                   where !ts.IsValid
-                                                                   select ts;
-
-                        foreach (Timestamp ts in invalidTimestamps)
-                        {
-                            svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailTimestampOutisdeCertValidity, ts.SignedOn, ts.EffectiveDate, ts.ExpiryDate);
-                            svr.IsSigned = false;
-                        }
+                        svr.AddDetail(DetailKeys.Misc, SignCheckResources.DetailTimestamp, timestamp.SignedOn, timestamp.SignatureAlgorithm);
                     }
 
-                    svr.AddDetail(DetailKeys.File, SignCheckResources.DetailSigned, svr.IsSigned);
-                }
-                catch (Exception e)
-                {
-                    svr.AddDetail(DetailKeys.Error, e.Message);
+                    IEnumerable<Timestamp> invalidTimestamps = from ts in jarFile.Timestamps
+                                                               where !ts.IsValid
+                                                               select ts;
+
+                    foreach (Timestamp ts in invalidTimestamps)
+                    {
+                        svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailTimestampOutisdeCertValidity, ts.SignedOn, ts.EffectiveDate, ts.ExpiryDate);
+                        svr.IsSigned = false;
+                    }
                 }
 
-                return svr;
+                svr.AddDetail(DetailKeys.File, SignCheckResources.DetailSigned, svr.IsSigned);
+            }
+            catch (Exception e)
+            {
+                svr.AddDetail(DetailKeys.Error, e.Message);
             }
 
-            return SignatureVerificationResult.UnsupportedFileTypeResult(path, parent, virtualPath);
+            return svr;
         }
+
+        return SignatureVerificationResult.UnsupportedFileTypeResult(path, parent, virtualPath);
     }
 }

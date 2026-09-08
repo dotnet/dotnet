@@ -9,27 +9,26 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Microsoft.DotNet.XUnitExtensions
+namespace Microsoft.DotNet.XUnitExtensions;
+
+public class SkipOnPlatformDiscoverer : ITraitDiscoverer
 {
-    public class SkipOnPlatformDiscoverer : ITraitDiscoverer
+    public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
     {
-        public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
+        TestPlatforms testPlatforms = (TestPlatforms)0;
+
+        // First argument is either the TestPlatform or the test platform to skip the test on.
+        if (traitAttribute.GetConstructorArguments().FirstOrDefault() is TestPlatforms tp)
         {
-            TestPlatforms testPlatforms = (TestPlatforms)0;
-
-            // First argument is either the TestPlatform or the test platform to skip the test on.
-            if (traitAttribute.GetConstructorArguments().FirstOrDefault() is TestPlatforms tp)
-            {
-                testPlatforms = tp;
-            }
-
-            if (DiscovererHelpers.TestPlatformApplies(testPlatforms))
-            {
-                return new[] { new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing) };
-            }
-
-            return Array.Empty<KeyValuePair<string, string>>();
+            testPlatforms = tp;
         }
+
+        if (DiscovererHelpers.TestPlatformApplies(testPlatforms))
+        {
+            return new[] { new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing) };
+        }
+
+        return Array.Empty<KeyValuePair<string, string>>();
     }
 }
 #endif

@@ -52,6 +52,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Discoverers\SkipOnPlatformDiscoverer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Discoverers\SkipOnTargetFrameworkDiscoverer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Discoverers\TestCategoryDiscoverer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DynamicallyAccessedMembersAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TheoryExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RuntimeConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RuntimeTestModes.cs" />

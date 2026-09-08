@@ -3,16 +3,15 @@
 
 using System;
 
-namespace Microsoft.Cci.Mappings
-{
-    public class MemberMapping : AttributesMapping<ITypeDefinitionMember>
-    {
-        public MemberMapping(TypeMapping containingType, MappingSettings settings)
-            : base(settings)
-        {
-            this.ContainingType = containingType;
-        }
+namespace Microsoft.Cci.Mappings;
 
-        public TypeMapping ContainingType { get; private set; }
+public class MemberMapping : AttributesMapping<ITypeDefinitionMember>
+{
+    public MemberMapping(TypeMapping containingType, MappingSettings settings)
+        : base(settings)
+    {
+        this.ContainingType = containingType;
     }
+
+    public TypeMapping ContainingType { get; private set; }
 }

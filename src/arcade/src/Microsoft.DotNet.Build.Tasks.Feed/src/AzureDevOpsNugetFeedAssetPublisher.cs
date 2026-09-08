@@ -14,82 +14,81 @@ using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using Task = System.Threading.Tasks.Task;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed
+namespace Microsoft.DotNet.Build.Tasks.Feed;
+
+public class AzureDevOpsNugetFeedAssetPublisher : IAssetPublisher, IDisposable
 {
-    public class AzureDevOpsNugetFeedAssetPublisher : IAssetPublisher, IDisposable
+    private readonly TaskLoggingHelper _log;
+    private readonly string _targetUrl;
+    private readonly string _accessToken;
+    private readonly PublishArtifactsInManifestBase _task;
+    private readonly string _feedAccount;
+    private readonly string _feedVisibility;
+    private readonly string _feedName;
+    private readonly HttpClient _httpClient;
+
+    public AzureDevOpsNugetFeedAssetPublisher(TaskLoggingHelper log, string targetUrl, string accessToken, PublishArtifactsInManifestBase task)
     {
-        private readonly TaskLoggingHelper _log;
-        private readonly string _targetUrl;
-        private readonly string _accessToken;
-        private readonly PublishArtifactsInManifestBase _task;
-        private readonly string _feedAccount;
-        private readonly string _feedVisibility;
-        private readonly string _feedName;
-        private readonly HttpClient _httpClient;
+        _log = log;
+        _targetUrl = targetUrl;
+        _accessToken = accessToken;
+        _task = task;
 
-        public AzureDevOpsNugetFeedAssetPublisher(TaskLoggingHelper log, string targetUrl, string accessToken, PublishArtifactsInManifestBase task)
+        var parsedUri = Regex.Match(_targetUrl, PublishingConstants.AzDoNuGetFeedPattern);
+        if (!parsedUri.Success)
         {
-            _log = log;
-            _targetUrl = targetUrl;
-            _accessToken = accessToken;
-            _task = task;
+            throw new ArgumentException(
+                $"Azure DevOps NuGetFeed was not in the expected format '{PublishingConstants.AzDoNuGetFeedPattern}'");
+        }
+        _feedAccount = parsedUri.Groups["account"].Value;
+        _feedVisibility = parsedUri.Groups["visibility"].Value;
+        _feedName = parsedUri.Groups["feed"].Value;
 
-            var parsedUri = Regex.Match(_targetUrl, PublishingConstants.AzDoNuGetFeedPattern);
-            if (!parsedUri.Success)
+        _httpClient = new HttpClient(new HttpClientHandler {CheckCertificateRevocationList = true})
+        {
+            Timeout = GeneralUtils.NugetFeedPublisherHttpClientTimeout,
+            DefaultRequestHeaders =
             {
-                throw new ArgumentException(
-                    $"Azure DevOps NuGetFeed was not in the expected format '{PublishingConstants.AzDoNuGetFeedPattern}'");
-            }
-            _feedAccount = parsedUri.Groups["account"].Value;
-            _feedVisibility = parsedUri.Groups["visibility"].Value;
-            _feedName = parsedUri.Groups["feed"].Value;
+                Authorization = new AuthenticationHeaderValue(
+                    "Basic",
+                    Convert.ToBase64String(Encoding.ASCII.GetBytes($":{_accessToken}")))
+            },
+        };
+    }
 
-            _httpClient = new HttpClient(new HttpClientHandler {CheckCertificateRevocationList = true})
-            {
-                Timeout = GeneralUtils.NugetFeedPublisherHttpClientTimeout,
-                DefaultRequestHeaders =
-                {
-                    Authorization = new AuthenticationHeaderValue(
-                        "Basic",
-                        Convert.ToBase64String(Encoding.ASCII.GetBytes($":{_accessToken}")))
-                },
-            };
+    public void Dispose()
+    {
+        _httpClient?.Dispose();
+    }
+
+    public LocationType LocationType => LocationType.NugetFeed;
+
+    public async Task PublishAssetAsync(string file, string blobPath, PushOptions options, SemaphoreSlim clientThrottle = null)
+    {
+        if (!file.EndsWith(GeneralUtils.PackageSuffix, StringComparison.OrdinalIgnoreCase))
+        {
+            _log.LogWarning(
+                $"AzDO feed publishing not available for blobs. Blob '{file}' was not published.");
+            return;
         }
 
-        public void Dispose()
+        string id;
+        string version;
+        using (var packageReader = new PackageArchiveReader(file))
         {
-            _httpClient?.Dispose();
+            PackageIdentity packageIdentity = packageReader.GetIdentity();
+            id = packageIdentity.Id;
+            version = packageIdentity.Version.ToString();
         }
 
-        public LocationType LocationType => LocationType.NugetFeed;
-
-        public async Task PublishAssetAsync(string file, string blobPath, PushOptions options, SemaphoreSlim clientThrottle = null)
+        try
         {
-            if (!file.EndsWith(GeneralUtils.PackageSuffix, StringComparison.OrdinalIgnoreCase))
-            {
-                _log.LogWarning(
-                    $"AzDO feed publishing not available for blobs. Blob '{file}' was not published.");
-                return;
-            }
-
-            string id;
-            string version;
-            using (var packageReader = new PackageArchiveReader(file))
-            {
-                PackageIdentity packageIdentity = packageReader.GetIdentity();
-                id = packageIdentity.Id;
-                version = packageIdentity.Version.ToString();
-            }
-
-            try
-            {
-                var config = new TargetFeedConfig(default, _targetUrl, default, default, default, default, default);
-                await _task.PushNugetPackageAsync(config, _httpClient, file, id, version, _feedAccount, _feedVisibility, _feedName);
-            }
-            catch (Exception e)
-            {
-                _log.LogErrorFromException(e);
-            }
+            var config = new TargetFeedConfig(default, _targetUrl, default, default, default, default, default);
+            await _task.PushNugetPackageAsync(config, _httpClient, file, id, version, _feedAccount, _feedVisibility, _feedName);
+        }
+        catch (Exception e)
+        {
+            _log.LogErrorFromException(e);
         }
     }
 }

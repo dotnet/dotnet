@@ -10,27 +10,26 @@ using Xunit.Abstractions;
 using Xunit.Sdk;
 using Xunit;
 
-namespace Microsoft.DotNet.XUnitExtensions
+namespace Microsoft.DotNet.XUnitExtensions;
+
+/// <summary>
+/// This class discovers all of the tests and test classes that have
+/// applied the PlatformSpecific attribute
+/// </summary>
+public class PlatformSpecificDiscoverer : ITraitDiscoverer
 {
     /// <summary>
-    /// This class discovers all of the tests and test classes that have
-    /// applied the PlatformSpecific attribute
+    /// Gets the trait values from the Category attribute.
     /// </summary>
-    public class PlatformSpecificDiscoverer : ITraitDiscoverer
+    /// <param name="traitAttribute">The trait attribute containing the trait values.</param>
+    /// <returns>The trait values.</returns>
+    public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
     {
-        /// <summary>
-        /// Gets the trait values from the Category attribute.
-        /// </summary>
-        /// <param name="traitAttribute">The trait attribute containing the trait values.</param>
-        /// <returns>The trait values.</returns>
-        public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
-        {
-            TestPlatforms platforms = (TestPlatforms)traitAttribute.GetConstructorArguments().First();
+        TestPlatforms platforms = (TestPlatforms)traitAttribute.GetConstructorArguments().First();
 
-            return DiscovererHelpers.TestPlatformApplies(platforms) ?
-                Array.Empty<KeyValuePair<string, string>>() :
-                new[] { new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing) };
-        }
+        return DiscovererHelpers.TestPlatformApplies(platforms) ?
+            Array.Empty<KeyValuePair<string, string>>() :
+            new[] { new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing) };
     }
 }
 #endif

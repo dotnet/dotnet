@@ -7,58 +7,57 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
+
+/// <summary>
+/// Generates a .props file pointing to a drops URL where IBC optimization inputs will be uploaded.
+/// </summary>
+public sealed class GenerateTrainingPropsFile : Microsoft.Build.Utilities.Task
 {
+    private const string ProductDropNamePrefix = "Products/";
+
     /// <summary>
-    /// Generates a .props file pointing to a drops URL where IBC optimization inputs will be uploaded.
+    /// GitHub repository name (e.g. 'dotnet/roslyn'). If unspecified a dummy value is used.
     /// </summary>
-    public sealed class GenerateTrainingPropsFile : Microsoft.Build.Utilities.Task
+    public string RepositoryName { get; set; }
+
+    /// <summary>
+    /// Product drop name, e.g. 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'. If unspecified a dummy value is used.
+    /// </summary>
+    public string ProductDropName { get; set; }
+
+    /// <summary>
+    /// Directory to output the props file to.
+    /// </summary>
+    [Required]
+    public string OutputDirectory { get; set; }
+
+    public override bool Execute()
     {
-        private const string ProductDropNamePrefix = "Products/";
+        ExecuteImpl();
+        return !Log.HasLoggedErrors;
+    }
 
-        /// <summary>
-        /// GitHub repository name (e.g. 'dotnet/roslyn'). If unspecified a dummy value is used.
-        /// </summary>
-        public string RepositoryName { get; set; }
-
-        /// <summary>
-        /// Product drop name, e.g. 'Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'. If unspecified a dummy value is used.
-        /// </summary>
-        public string ProductDropName { get; set; }
-
-        /// <summary>
-        /// Directory to output the props file to.
-        /// </summary>
-        [Required]
-        public string OutputDirectory { get; set; }
-
-        public override bool Execute()
+    private void ExecuteImpl()
+    {
+        bool hasDropName = !string.IsNullOrEmpty(ProductDropName);
+        if (hasDropName && !ProductDropName.StartsWith(ProductDropNamePrefix, StringComparison.Ordinal))
         {
-            ExecuteImpl();
-            return !Log.HasLoggedErrors;
+            Log.LogError($"Invalid value of vsDropName argument: must start with '{ProductDropNamePrefix}'.");
+            return;
         }
 
-        private void ExecuteImpl()
-        {
-            bool hasDropName = !string.IsNullOrEmpty(ProductDropName);
-            if (hasDropName && !ProductDropName.StartsWith(ProductDropNamePrefix, StringComparison.Ordinal))
-            {
-                Log.LogError($"Invalid value of vsDropName argument: must start with '{ProductDropNamePrefix}'.");
-                return;
-            }
+        var dropName = hasDropName ? ProductDropName.Substring(ProductDropNamePrefix.Length) : "dummy";
+        var outputFileNameNoExt = string.IsNullOrEmpty(RepositoryName) ? "ProfilingInputs" : RepositoryName.Replace('/', '.');
+        var outputFilePath = Path.Combine(OutputDirectory, outputFileNameNoExt + ".props");
 
-            var dropName = hasDropName ? ProductDropName.Substring(ProductDropNamePrefix.Length) : "dummy";
-            var outputFileNameNoExt = string.IsNullOrEmpty(RepositoryName) ? "ProfilingInputs" : RepositoryName.Replace('/', '.');
-            var outputFilePath = Path.Combine(OutputDirectory, outputFileNameNoExt + ".props");
-
-            Directory.CreateDirectory(OutputDirectory);
-            File.WriteAllText(outputFilePath,
+        Directory.CreateDirectory(OutputDirectory);
+        File.WriteAllText(outputFilePath,
 $@"<?xml version=""1.0""?>
 <Project>
   <ItemGroup>
     <TestStore Include=""vstsdrop:ProfilingInputs/{dropName}"" />
   </ItemGroup>
 </Project>", Encoding.UTF8);
-        }
     }
 }

@@ -6,99 +6,98 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Microsoft.DotNet.Git.IssueManager.Helpers
+namespace Microsoft.DotNet.Git.IssueManager.Helpers;
+
+static class RepositoryHelper
 {
-    static class RepositoryHelper
+    public static async Task<string> GetCommitAuthorAsync(
+        string repositoryUrl,
+        string commit,
+        string gitHubPersonalAccessToken,
+        string azureDevOpsPersonalAccessToken)
     {
-        public static async Task<string> GetCommitAuthorAsync(
-            string repositoryUrl,
-            string commit,
-            string gitHubPersonalAccessToken,
-            string azureDevOpsPersonalAccessToken)
+        if (Uri.TryCreate(repositoryUrl, UriKind.Absolute, out Uri parsedUri))
         {
-            if (Uri.TryCreate(repositoryUrl, UriKind.Absolute, out Uri parsedUri))
+            if (parsedUri.Host == "github.com")
             {
-                if (parsedUri.Host == "github.com")
+                if (string.IsNullOrEmpty(gitHubPersonalAccessToken))
                 {
-                    if (string.IsNullOrEmpty(gitHubPersonalAccessToken))
-                    {
-                        throw new ArgumentException("A GitHub personal access token is needed for this operation.");
-                    }
-
-                    return await GitHubClient.GetCommitAuthorAsync(repositoryUrl, commit, gitHubPersonalAccessToken);
+                    throw new ArgumentException("A GitHub personal access token is needed for this operation.");
                 }
 
-                if (string.IsNullOrEmpty(azureDevOpsPersonalAccessToken))
-                {
-                    throw new ArgumentException("An Azure DevOps personal access token is needed for this operation.");
-                }
-
-                return await AzureDevOpsClient.GetCommitAuthorAsync(repositoryUrl, commit, azureDevOpsPersonalAccessToken);
+                return await GitHubClient.GetCommitAuthorAsync(repositoryUrl, commit, gitHubPersonalAccessToken);
             }
 
-            throw new InvalidCastException($"'{parsedUri}' is not a valid URI");
-        }
-
-        public static async Task<int> CreateNewIssueAsync(
-            string repositoryUrl,
-            string issueTitle,
-            string issueDescription,
-            string gitHubPersonalAccessToken,
-            int? milestone = null,
-            IEnumerable<string> labels = null,
-            IEnumerable<string> assignees = null)
-        {
-            if (Uri.TryCreate(repositoryUrl, UriKind.Absolute, out Uri parsedUri))
+            if (string.IsNullOrEmpty(azureDevOpsPersonalAccessToken))
             {
-                if (parsedUri.Host == "github.com")
-                {
-                    if (string.IsNullOrEmpty(gitHubPersonalAccessToken))
-                    {
-                        throw new ArgumentException("A GitHub personal access token is needed for this operation.");
-                    }
-
-                    return await GitHubClient.CreateNewIssueAsync(
-                        repositoryUrl,
-                        issueTitle,
-                        issueDescription,
-                        gitHubPersonalAccessToken,
-                        milestone,
-                        labels,
-                        assignees);
-                }
-
-                throw new NotImplementedException("Creating issues is not currently supported for an Azure DevOps repo.");
+                throw new ArgumentException("An Azure DevOps personal access token is needed for this operation.");
             }
 
-            throw new InvalidCastException($"'{parsedUri}' is not a valid URI");
+            return await AzureDevOpsClient.GetCommitAuthorAsync(repositoryUrl, commit, azureDevOpsPersonalAccessToken);
         }
 
-        public static async Task<string> CreateNewIssueCommentAsync(
-            string repositoryUrl,
-            int issueNumber,
-            string comment,
-            string gitHubPersonalAccessToken)
-        {
-            if (Uri.TryCreate(repositoryUrl, UriKind.Absolute, out Uri parsedUri))
-            {
-                if (parsedUri.Host == "github.com")
-                {
-                    if (string.IsNullOrEmpty(gitHubPersonalAccessToken))
-                    {
-                        throw new ArgumentException("A GitHub personal access token is needed for this operation.");
-                    }
+        throw new InvalidCastException($"'{parsedUri}' is not a valid URI");
+    }
 
-                    return await GitHubClient.CreateNewIssueCommentAsync(
-                        repositoryUrl,
-                        issueNumber,
-                        comment,
-                        gitHubPersonalAccessToken);
+    public static async Task<int> CreateNewIssueAsync(
+        string repositoryUrl,
+        string issueTitle,
+        string issueDescription,
+        string gitHubPersonalAccessToken,
+        int? milestone = null,
+        IEnumerable<string> labels = null,
+        IEnumerable<string> assignees = null)
+    {
+        if (Uri.TryCreate(repositoryUrl, UriKind.Absolute, out Uri parsedUri))
+        {
+            if (parsedUri.Host == "github.com")
+            {
+                if (string.IsNullOrEmpty(gitHubPersonalAccessToken))
+                {
+                    throw new ArgumentException("A GitHub personal access token is needed for this operation.");
                 }
 
-                throw new NotImplementedException("Creating comments is not currently supported for an Azure DevOps repo.");
+                return await GitHubClient.CreateNewIssueAsync(
+                    repositoryUrl,
+                    issueTitle,
+                    issueDescription,
+                    gitHubPersonalAccessToken,
+                    milestone,
+                    labels,
+                    assignees);
             }
 
-            throw new InvalidCastException($"'{parsedUri}' is not a valid URI");
+            throw new NotImplementedException("Creating issues is not currently supported for an Azure DevOps repo.");
         }
+
+        throw new InvalidCastException($"'{parsedUri}' is not a valid URI");
+    }
+
+    public static async Task<string> CreateNewIssueCommentAsync(
+        string repositoryUrl,
+        int issueNumber,
+        string comment,
+        string gitHubPersonalAccessToken)
+    {
+        if (Uri.TryCreate(repositoryUrl, UriKind.Absolute, out Uri parsedUri))
+        {
+            if (parsedUri.Host == "github.com")
+            {
+                if (string.IsNullOrEmpty(gitHubPersonalAccessToken))
+                {
+                    throw new ArgumentException("A GitHub personal access token is needed for this operation.");
+                }
+
+                return await GitHubClient.CreateNewIssueCommentAsync(
+                    repositoryUrl,
+                    issueNumber,
+                    comment,
+                    gitHubPersonalAccessToken);
+            }
+
+            throw new NotImplementedException("Creating comments is not currently supported for an Azure DevOps repo.");
+        }
+
+        throw new InvalidCastException($"'{parsedUri}' is not a valid URI");
     }
 }

@@ -5,20 +5,19 @@
 
 using System;
 
-namespace Microsoft.DotNet.RemoteExecutor
-{
-    /// <summary>
-    /// Exception thrown for a remote execution failure.
-    /// </summary>
-    public sealed class RemoteExecutionException : Exception
-    {
-        private readonly string? _stackTrace;
-        public RemoteExecutionException(string message, string? stackTrace = null)
-            : base(message)
-        {
-            _stackTrace = stackTrace;
-        }
+namespace Microsoft.DotNet.RemoteExecutor;
 
-        public override string? StackTrace => _stackTrace ?? base.StackTrace;
+/// <summary>
+/// Exception thrown for a remote execution failure.
+/// </summary>
+public sealed class RemoteExecutionException : Exception
+{
+    private readonly string? _stackTrace;
+    public RemoteExecutionException(string message, string? stackTrace = null)
+        : base(message)
+    {
+        _stackTrace = stackTrace;
     }
+
+    public override string? StackTrace => _stackTrace ?? base.StackTrace;
 }

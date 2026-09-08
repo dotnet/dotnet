@@ -3,17 +3,16 @@
 
 using Newtonsoft.Json;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
+
+internal sealed class AssemblyOptProfTraining
 {
-    internal sealed class AssemblyOptProfTraining
-    {
-        [JsonProperty(PropertyName = "assembly")]
-        public string Assembly { get; set; }
+    [JsonProperty(PropertyName = "assembly")]
+    public string Assembly { get; set; }
 
-        [JsonProperty(PropertyName = "instrumentationArguments")]
-        public OptProfInstrumentationArgument[] InstrumentationArguments { get; set; }
+    [JsonProperty(PropertyName = "instrumentationArguments")]
+    public OptProfInstrumentationArgument[] InstrumentationArguments { get; set; }
 
-        [JsonProperty(PropertyName = "tests")]
-        public OptProfTrainingTest[] Tests { get; set; }
-    }
+    [JsonProperty(PropertyName = "tests")]
+    public OptProfTrainingTest[] Tests { get; set; }
 }

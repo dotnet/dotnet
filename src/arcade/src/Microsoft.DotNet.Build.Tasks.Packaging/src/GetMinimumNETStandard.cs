@@ -8,40 +8,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging
+namespace Microsoft.DotNet.Build.Tasks.Packaging;
+
+public class GetMinimumNETStandard : BuildTask
 {
-    public class GetMinimumNETStandard : BuildTask
+    [Required]
+    public ITaskItem[] Frameworks
     {
-        [Required]
-        public ITaskItem[] Frameworks
+        get;
+        set;
+    }
+
+    [Output]
+    public string MinimumNETStandard
+    {
+        get;
+        private set;
+    }
+
+    public override bool Execute()
+    {
+        var minNETStandard = Frameworks.Select(fx => NuGetFramework.Parse(fx.ItemSpec))
+            .Where(fx => fx.Framework == FrameworkConstants.FrameworkIdentifiers.NetStandard)
+            .OrderBy(fx => fx.Version)
+            .FirstOrDefault();
+
+        if (minNETStandard == null)
         {
-            get;
-            set;
+            minNETStandard = FrameworkConstants.CommonFrameworks.NetStandard10;
+            Log.LogMessage($"Could not find any NETStandard frameworks, defaulting to {minNETStandard}.");
         }
 
-        [Output]
-        public string MinimumNETStandard
-        {
-            get;
-            private set;
-        }
+        MinimumNETStandard = minNETStandard.ToString();
 
-        public override bool Execute()
-        {
-            var minNETStandard = Frameworks.Select(fx => NuGetFramework.Parse(fx.ItemSpec))
-                .Where(fx => fx.Framework == FrameworkConstants.FrameworkIdentifiers.NetStandard)
-                .OrderBy(fx => fx.Version)
-                .FirstOrDefault();
-
-            if (minNETStandard == null)
-            {
-                minNETStandard = FrameworkConstants.CommonFrameworks.NetStandard10;
-                Log.LogMessage($"Could not find any NETStandard frameworks, defaulting to {minNETStandard}.");
-            }
-            
-            MinimumNETStandard = minNETStandard.ToString();
-
-            return !Log.HasLoggedErrors;
-        }
+        return !Log.HasLoggedErrors;
     }
 }

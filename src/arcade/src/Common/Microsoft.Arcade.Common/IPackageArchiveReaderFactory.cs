@@ -3,10 +3,9 @@
 
 using NuGet.Packaging;
 
-namespace Microsoft.Arcade.Common
+namespace Microsoft.Arcade.Common;
+
+public interface IPackageArchiveReaderFactory
 {
-    public interface IPackageArchiveReaderFactory
-    {
-        PackageArchiveReader CreatePackageArchiveReader(string path);
-    }
+    PackageArchiveReader CreatePackageArchiveReader(string path);
 }

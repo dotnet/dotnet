@@ -4,31 +4,30 @@
 using System.Collections.Generic;
 using Microsoft.Cci.Extensions;
 
-namespace Microsoft.Cci.Filters
+namespace Microsoft.Cci.Filters;
+
+public class ExcludeAttributesFilter : ICciFilter
 {
-    public class ExcludeAttributesFilter : ICciFilter
+    private readonly HashSet<string> _attributeDocIds;
+
+    public ExcludeAttributesFilter(IEnumerable<string> attributeDocIds)
     {
-        private readonly HashSet<string> _attributeDocIds;
+        _attributeDocIds = new HashSet<string>(attributeDocIds);
+    }
 
-        public ExcludeAttributesFilter(IEnumerable<string> attributeDocIds)
-        {
-            _attributeDocIds = new HashSet<string>(attributeDocIds);
-        }
+    public ExcludeAttributesFilter(string attributeDocIdFile)
+    {
+        _attributeDocIds = new HashSet<string>(DocIdExtensions.ReadDocIds(attributeDocIdFile));
+    }
 
-        public ExcludeAttributesFilter(string attributeDocIdFile)
-        {
-            _attributeDocIds = new HashSet<string>(DocIdExtensions.ReadDocIds(attributeDocIdFile));
-        }
+    public bool Include(INamespaceDefinition ns) => true;
 
-        public bool Include(INamespaceDefinition ns) => true;
+    public bool Include(ITypeDefinition type) => true;
 
-        public bool Include(ITypeDefinition type) => true;
+    public bool Include(ITypeDefinitionMember member) => true;
 
-        public bool Include(ITypeDefinitionMember member) => true;
-
-        public bool Include(ICustomAttribute attribute)
-        {
-            return !_attributeDocIds.Contains(attribute.DocId());
-        }
+    public bool Include(ICustomAttribute attribute)
+    {
+        return !_attributeDocIds.Contains(attribute.DocId());
     }
 }
