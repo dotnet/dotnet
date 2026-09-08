@@ -1789,8 +1789,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
             public bool IsInitialized => throw new NotImplementedException();
 
-            public Task InitializationTask { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
             public string SolutionDirectory => _directory.Path;
 
             public CancellationToken VsShutdownToken => CancellationToken.None;
