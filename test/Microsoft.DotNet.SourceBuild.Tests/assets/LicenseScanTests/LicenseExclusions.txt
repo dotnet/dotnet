@@ -112,8 +112,15 @@ src/roslyn/src/Analyzers/VisualBasic/Tests/FileHeaders/FileHeaderTests.vb|unknow
 src/roslyn/src/EditorFeatures/CSharpTest2/EmbeddedLanguages/RegularExpressions/Regex_RealWorldPatterns.json
 src/roslyn/src/VisualStudio/IntegrationTest/Harness/IntegrationTestServiceDev18/source.extension.vsixmanifest|unknown-license-reference
 
+# Package template placeholders, not actual license references
+src/roslyn/src/RoslynSdk/Samples/VisualBasic/Analyzers/Analyzers.Implementation/Analyzers.VisualBasic.vbproj|unknown-license-reference
+src/roslyn/src/RoslynSdk/Samples/VisualBasic/MakeConst/MakeConst/MakeConst.VisualBasic.vbproj|unknown-license-reference
+src/roslyn/src/RoslynSdk/VisualStudio.Roslyn.SDK/Roslyn.SDK/ProjectTemplates/CSharp/Diagnostic/Package/Package.csproj|unknown-license-reference
+src/roslyn/src/RoslynSdk/VisualStudio.Roslyn.SDK/Roslyn.SDK/ProjectTemplates/VisualBasic/Diagnostic/Package/Package.vbproj|unknown-license-reference
+
 # Applicable to installer, not source
 src/roslyn/src/RoslynAnalyzers/Assets/EULA.txt|ms-net-library
+src/roslyn/src/RoslynSdk/VisualStudio.Roslyn.SDK/EULA.rtf
 src/roslyn/src/Setup/Roslyn.ThirdPartyNotices/ThirdPartyNotices.rtf
 src/roslyn/src/Setup/Roslyn.VsixLicense/EULA.rtf
 
@@ -123,6 +130,9 @@ src/roslyn/src/Setup/Roslyn.VsixLicense/EULA.rtf
 
 # Installer asset, not applicable to source
 src/runtime/src/installer/pkg/LICENSE-MSFT.TXT
+
+# Package license metadata does not license the lockfile source
+src/runtime/.github/workflows/evals/package-lock.json|unknown-license-reference
 
 # False positive
 src/runtime/THIRD-PARTY-NOTICES.TXT|clear-bsd
