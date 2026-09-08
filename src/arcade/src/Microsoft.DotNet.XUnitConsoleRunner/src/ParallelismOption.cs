@@ -1,13 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace Xunit.ConsoleClient
+namespace Xunit.ConsoleClient;
+
+public enum ParallelismOption
 {
-    public enum ParallelismOption
-    {
-        none,
-        collections,
-        assemblies,
-        all
-    }
+    none,
+    collections,
+    assemblies,
+    all
 }

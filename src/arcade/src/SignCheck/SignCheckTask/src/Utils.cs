@@ -4,45 +4,44 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace SignCheckTask
+namespace SignCheckTask;
+
+public static class Utils
 {
-    public static class Utils
+    public static readonly char[] WildCards = new char[] { '*', '?' };
+
+    public static string[] GetDirectories(string path, string searchPattern, SearchOption searchOption)
     {
-        public static readonly char[] WildCards = new char[] { '*', '?' };
-
-        public static string[] GetDirectories(string path, string searchPattern, SearchOption searchOption)
+        if (path.IndexOfAny(WildCards) > -1)
         {
-            if (path.IndexOfAny(WildCards) > -1)
+            var directoryPath = Path.GetDirectoryName(path);
+            var directory = Path.GetFileName(path);
+
+            var matchedDirectories = GetDirectories(directoryPath, directory, searchOption);
+            var directories = new List<string>();
+
+            if (searchPattern != null)
             {
-                var directoryPath = Path.GetDirectoryName(path);
-                var directory = Path.GetFileName(path);
-
-                var matchedDirectories = GetDirectories(directoryPath, directory, searchOption);
-                var directories = new List<string>();
-
-                if (searchPattern != null)
+                foreach (var match in matchedDirectories)
                 {
-                    foreach (var match in matchedDirectories)
-                    {
-                        directories.AddRange(Directory.GetDirectories(match, searchPattern, searchOption));
-                    }
+                    directories.AddRange(Directory.GetDirectories(match, searchPattern, searchOption));
+                }
 
-                    return directories.ToArray();
-                }
-                else
-                {
-                    return matchedDirectories;
-                }
+                return directories.ToArray();
             }
             else
             {
-                if (searchPattern != null)
-                {
-                    return Directory.GetDirectories(path, searchPattern, searchOption);
-                }
+                return matchedDirectories;
             }
-
-            return null;
         }
+        else
+        {
+            if (searchPattern != null)
+            {
+                return Directory.GetDirectories(path, searchPattern, searchOption);
+            }
+        }
+
+        return null;
     }
 }

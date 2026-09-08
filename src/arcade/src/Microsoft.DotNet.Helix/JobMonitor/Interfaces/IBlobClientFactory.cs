@@ -3,12 +3,11 @@
 
 using System;
 
-namespace Microsoft.DotNet.Helix.JobMonitor
-{
-    internal interface IBlobClientFactory
-    {
-        IBlobClient CreateBlobClient(string blobUri, string sasToken = null);
+namespace Microsoft.DotNet.Helix.JobMonitor;
 
-        IBlobClient CreateBlobClient(Uri containerUri, string blobName, string sasToken);
-    }
+internal interface IBlobClientFactory
+{
+    IBlobClient CreateBlobClient(string blobUri, string sasToken = null);
+
+    IBlobClient CreateBlobClient(Uri containerUri, string blobName, string sasToken);
 }

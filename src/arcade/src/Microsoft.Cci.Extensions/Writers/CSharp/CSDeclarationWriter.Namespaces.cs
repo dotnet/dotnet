@@ -1,14 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace Microsoft.Cci.Writers.CSharp
+namespace Microsoft.Cci.Writers.CSharp;
+
+public partial class CSDeclarationWriter
 {
-    public partial class CSDeclarationWriter
+    public void WriteNamespaceDeclaration(INamespaceDefinition ns)
     {
-        public void WriteNamespaceDeclaration(INamespaceDefinition ns)
-        {
-            WriteKeyword("namespace");
-            WriteIdentifier(TypeHelper.GetNamespaceName((IUnitNamespace)ns, NameFormattingOptions.None));
-        }
+        WriteKeyword("namespace");
+        WriteIdentifier(TypeHelper.GetNamespaceName((IUnitNamespace)ns, NameFormattingOptions.None));
     }
 }

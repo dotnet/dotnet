@@ -6,24 +6,23 @@ using Azure.Core;
 using Azure.Storage.Blobs;
 using Microsoft.Build.Utilities;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed
+namespace Microsoft.DotNet.Build.Tasks.Feed;
+
+public class AzureStorageContainerAssetTokenCredentialPublisher : AzureStorageAssetPublisher
 {
-    public class AzureStorageContainerAssetTokenCredentialPublisher : AzureStorageAssetPublisher
+    private readonly Uri _containerUri;
+    private readonly TokenCredential _tokenCredential;
+
+    public AzureStorageContainerAssetTokenCredentialPublisher(Uri containerUri, TokenCredential tokenCredential, TaskLoggingHelper log) : base(log)
     {
-        private readonly Uri _containerUri;
-        private readonly TokenCredential _tokenCredential;
+        _containerUri = containerUri;
+        _tokenCredential = tokenCredential;
+    }
 
-        public AzureStorageContainerAssetTokenCredentialPublisher(Uri containerUri, TokenCredential tokenCredential, TaskLoggingHelper log) : base(log)
-        {
-            _containerUri = containerUri;
-            _tokenCredential = tokenCredential;
-        }
-
-        public override BlobClient CreateBlobClient(string blobPath)
-        {
-            // When creating the blob client from the URI, only utilize the query parameters for the SAS uri (excluding the leading ?)
-            var containerClient = new BlobContainerClient(_containerUri, _tokenCredential);
-            return containerClient.GetBlobClient(blobPath);
-        }
+    public override BlobClient CreateBlobClient(string blobPath)
+    {
+        // When creating the blob client from the URI, only utilize the query parameters for the SAS uri (excluding the leading ?)
+        var containerClient = new BlobContainerClient(_containerUri, _tokenCredential);
+        return containerClient.GetBlobClient(blobPath);
     }
 }

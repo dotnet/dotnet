@@ -9,104 +9,103 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.DotNet.Git.IssueManager.Helpers;
 
-namespace Microsoft.DotNet.Git.IssueManager.Clients
+namespace Microsoft.DotNet.Git.IssueManager.Clients;
+
+static class GitHubClient
 {
-    static class GitHubClient
+    public static async Task<string> GetCommitAuthorAsync(
+        string repositoryUrl,
+        string commit,
+        string personalAccessToken)
     {
-        public static async Task<string> GetCommitAuthorAsync(
-            string repositoryUrl,
-            string commit,
-            string personalAccessToken)
+        (string owner, string repoName) = ParseRepoUri(repositoryUrl);
+
+        Octokit.GitHubClient client = new Octokit.GitHubClient(new ProductHeaderValue("assets-publisher"));
+        Credentials tokenAuth = new Credentials(personalAccessToken);
+        client.Credentials = tokenAuth;
+
+        GitHubCommit commitInfo = await client.Repository.Commit.Get(owner, repoName, commit);
+
+        while (commitInfo.Author.Type == "Bot")
         {
-            (string owner, string repoName) = ParseRepoUri(repositoryUrl);
-
-            Octokit.GitHubClient client = new Octokit.GitHubClient(new ProductHeaderValue("assets-publisher"));
-            Credentials tokenAuth = new Credentials(personalAccessToken);
-            client.Credentials = tokenAuth;
-
-            GitHubCommit commitInfo = await client.Repository.Commit.Get(owner, repoName, commit);
-
-            while (commitInfo.Author.Type == "Bot")
-            {
-                if (!commitInfo.Parents.Any()) break;
-                commit = commitInfo.Parents.First().Sha;
-                commitInfo = await client.Repository.Commit.Get(owner, repoName, commit);
-            }
-
-            return $"@{commitInfo.Author.Login}";
+            if (!commitInfo.Parents.Any()) break;
+            commit = commitInfo.Parents.First().Sha;
+            commitInfo = await client.Repository.Commit.Get(owner, repoName, commit);
         }
 
-        public static async Task<int> CreateNewIssueAsync(
-            string repositoryUrl,
-            string issueTitle,
-            string issueDescription,
-            string personalAccessToken,
-            int? milestone = null,
-            IEnumerable<string> labels = null,
-            IEnumerable<string> assignees = null)
+        return $"@{commitInfo.Author.Login}";
+    }
+
+    public static async Task<int> CreateNewIssueAsync(
+        string repositoryUrl,
+        string issueTitle,
+        string issueDescription,
+        string personalAccessToken,
+        int? milestone = null,
+        IEnumerable<string> labels = null,
+        IEnumerable<string> assignees = null)
+    {
+        (string owner, string repoName) = ParseRepoUri(repositoryUrl);
+
+        Octokit.GitHubClient client = new Octokit.GitHubClient(new ProductHeaderValue("assets-publisher"));
+        Credentials tokenAuth = new Credentials(personalAccessToken);
+        client.Credentials = tokenAuth;
+
+        NewIssue issueToBeCreated = new NewIssue(issueTitle)
         {
-            (string owner, string repoName) = ParseRepoUri(repositoryUrl);
+            Body = issueDescription,
+            Milestone = milestone
+        };
 
-            Octokit.GitHubClient client = new Octokit.GitHubClient(new ProductHeaderValue("assets-publisher"));
-            Credentials tokenAuth = new Credentials(personalAccessToken);
-            client.Credentials = tokenAuth;
-
-            NewIssue issueToBeCreated = new NewIssue(issueTitle)
-            {
-                Body = issueDescription,
-                Milestone = milestone
-            };
-
-            if (labels is not null)
-            {
-                issueToBeCreated.Labels.AddRange(labels);
-            }
-
-            if (assignees is not null)
-            {
-                issueToBeCreated.Assignees.AddRange(assignees);
-            }
-
-            Issue createdIssue = await client.Issue.Create(owner, repoName, issueToBeCreated);
-
-            return createdIssue.Number;
+        if (labels is not null)
+        {
+            issueToBeCreated.Labels.AddRange(labels);
         }
 
-        public static async Task<string> CreateNewIssueCommentAsync(
-            string repositoryUrl,
-            int issueNumber,
-            string comment,
-            string personalAccessToken)
+        if (assignees is not null)
         {
-            (string owner, string repoName) = ParseRepoUri(repositoryUrl);
-
-            Octokit.GitHubClient client = new Octokit.GitHubClient(new ProductHeaderValue("assets-publisher"));
-            Credentials tokenAuth = new Credentials(personalAccessToken);
-            client.Credentials = tokenAuth;
-
-            IssueComment createdComment = await client.Issue.Comment.Create(owner, repoName, issueNumber, comment);
-
-            return createdComment.HtmlUrl;
+            issueToBeCreated.Assignees.AddRange(assignees);
         }
 
-        /// <summary>
-        /// Extracts the owner and repository name from <paramref name="repositoryUri"/>. 
-        /// </summary>
-        /// <param name="repositoryUri">The repository URI.</param>
-        /// <returns>The owner and the repository name</returns>
-        private static (string owner, string repositoryName) ParseRepoUri(string repositoryUri)
+        Issue createdIssue = await client.Issue.Create(owner, repoName, issueToBeCreated);
+
+        return createdIssue.Number;
+    }
+
+    public static async Task<string> CreateNewIssueCommentAsync(
+        string repositoryUrl,
+        int issueNumber,
+        string comment,
+        string personalAccessToken)
+    {
+        (string owner, string repoName) = ParseRepoUri(repositoryUrl);
+
+        Octokit.GitHubClient client = new Octokit.GitHubClient(new ProductHeaderValue("assets-publisher"));
+        Credentials tokenAuth = new Credentials(personalAccessToken);
+        client.Credentials = tokenAuth;
+
+        IssueComment createdComment = await client.Issue.Comment.Create(owner, repoName, issueNumber, comment);
+
+        return createdComment.HtmlUrl;
+    }
+
+    /// <summary>
+    /// Extracts the owner and repository name from <paramref name="repositoryUri"/>. 
+    /// </summary>
+    /// <param name="repositoryUri">The repository URI.</param>
+    /// <returns>The owner and the repository name</returns>
+    private static (string owner, string repositoryName) ParseRepoUri(string repositoryUri)
+    {
+        Regex repositoryUriPattern = new Regex(@"^/(?<owner>[^/]+)/(?<repo>[^/]+)/?$");
+        Uri uri = new Uri(repositoryUri);
+
+        Match match = repositoryUriPattern.Match(uri.AbsolutePath);
+
+        if (!match.Success)
         {
-            Regex repositoryUriPattern = new Regex(@"^/(?<owner>[^/]+)/(?<repo>[^/]+)/?$");
-            Uri uri = new Uri(repositoryUri);
-
-            Match match = repositoryUriPattern.Match(uri.AbsolutePath);
-
-            if (!match.Success)
-            {
-                return default;
-            }
-
-            return (match.Groups["owner"].Value, match.Groups["repo"].Value);
+            return default;
         }
+
+        return (match.Groups["owner"].Value, match.Groups["repo"].Value);
     }
 }

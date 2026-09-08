@@ -7,21 +7,20 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.NET.Sdk.WorkloadManifestReader;
 
-namespace Microsoft.DotNet.Build.Tasks.Workloads
-{
-    /// <summary>
-    /// Represents an SDK workload pack.
-    /// </summary>
-    internal class SdkPackPackage : WorkloadPackPackage
-    {
-        /// <inheritdoc />
-        public override PackageExtractionMethod ExtractionMethod => PackageExtractionMethod.Unzip;
+namespace Microsoft.DotNet.Build.Tasks.Workloads;
 
-        public SdkPackPackage(WorkloadPack pack, string packagePath, string[] platforms,
-            string destinationBaseDirectory, ITaskItem[]? shortNames = null, TaskLoggingHelper? log = null) : 
-            base(pack, packagePath, platforms, destinationBaseDirectory, shortNames, log)
-        {
-        }
+/// <summary>
+/// Represents an SDK workload pack.
+/// </summary>
+internal class SdkPackPackage : WorkloadPackPackage
+{
+    /// <inheritdoc />
+    public override PackageExtractionMethod ExtractionMethod => PackageExtractionMethod.Unzip;
+
+    public SdkPackPackage(WorkloadPack pack, string packagePath, string[] platforms,
+        string destinationBaseDirectory, ITaskItem[]? shortNames = null, TaskLoggingHelper? log = null) : 
+        base(pack, packagePath, platforms, destinationBaseDirectory, shortNames, log)
+    {
     }
 }
 
