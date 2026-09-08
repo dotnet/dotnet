@@ -10,36 +10,35 @@ using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Packaging.Signing;
 
-namespace Microsoft.SignCheck.Verification
+namespace Microsoft.SignCheck.Verification;
+
+public class NupkgVerifier : ZipVerifier
 {
-    public class NupkgVerifier : ZipVerifier
+    public NupkgVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, fileExtension: ".nupkg")
     {
-        public NupkgVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, fileExtension: ".nupkg")
+
+    }
+
+    public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath) 
+        => VerifySupportedFileType(path, parent, virtualPath);
+
+    protected override bool IsSigned(string path, SignatureVerificationResult svr)
+        => IsSignedAsync(path, svr).GetAwaiter().GetResult();
+
+    private async Task<bool> IsSignedAsync(string path, SignatureVerificationResult svr)
+    {
+        List<ISignatureVerificationProvider> providers = new()
         {
+            new IntegrityVerificationProvider(),
+            new SignatureTrustAndValidityVerificationProvider(),
+        };
+        var verifierSettings = SignedPackageVerifierSettings.GetVerifyCommandDefaultPolicy();
+        var packageSignatureVerifier = new PackageSignatureVerifier(providers);
 
-        }
-
-        public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath) 
-            => VerifySupportedFileType(path, parent, virtualPath);
-
-        protected override bool IsSigned(string path, SignatureVerificationResult svr)
-            => IsSignedAsync(path, svr).GetAwaiter().GetResult();
-
-        private async Task<bool> IsSignedAsync(string path, SignatureVerificationResult svr)
+        using (var pr = new PackageArchiveReader(path))
         {
-            List<ISignatureVerificationProvider> providers = new()
-            {
-                new IntegrityVerificationProvider(),
-                new SignatureTrustAndValidityVerificationProvider(),
-            };
-            var verifierSettings = SignedPackageVerifierSettings.GetVerifyCommandDefaultPolicy();
-            var packageSignatureVerifier = new PackageSignatureVerifier(providers);
-
-            using (var pr = new PackageArchiveReader(path))
-            {
-                VerifySignaturesResult verifySignatureResult = await packageSignatureVerifier.VerifySignaturesAsync(pr, verifierSettings, CancellationToken.None);
-                return verifySignatureResult.IsValid;
-            }
+            VerifySignaturesResult verifySignatureResult = await packageSignatureVerifier.VerifySignaturesAsync(pr, verifierSettings, CancellationToken.None);
+            return verifySignatureResult.IsValid;
         }
     }
 }

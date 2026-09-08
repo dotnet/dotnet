@@ -4,15 +4,14 @@
 using System;
 using System.Xml.Linq;
 
-namespace Microsoft.DotNet.Build.Manifest
+namespace Microsoft.DotNet.Build.Manifest;
+
+public class AssetManifestModel : ArtifactModel
 {
-    public class AssetManifestModel : ArtifactModel
-    {
-        /// <summary>
-        /// The asset manifest is not not represented as XML
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public override XElement ToXml() => throw new NotImplementedException();
-    }
+    /// <summary>
+    /// The asset manifest is not not represented as XML
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public override XElement ToXml() => throw new NotImplementedException();
 }

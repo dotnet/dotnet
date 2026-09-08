@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace Maybe
+namespace Maybe;
+
+public class Class1
 {
-    public class Class1
-    {
-    }
 }

@@ -8,57 +8,57 @@ using System.Linq;
 using Microsoft.DotNet.Tools.Tests.Utilities;
 using Xunit;
 
-namespace Microsoft.DotNet.Tools.Tests
+namespace Microsoft.DotNet.Tools.Tests;
+
+public class ReplacePackagePartsTests
 {
-    public class ReplacePackagePartsTests
+    [Fact()]
+    public static void ReplaceFile()
     {
-        [Fact()]
-        public static void ReplaceFile()
+        var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(dir);
+
+        string originalNupkgPath;
+        File.WriteAllBytes(originalNupkgPath = Path.Combine(dir, TestResources.MiscPackages.NameSigned), TestResources.MiscPackages.Signed);
+
+        string replacementFilePath;
+        File.WriteAllText(replacementFilePath = Path.Combine(dir, "Replacement.txt"), "<replacement>");
+
+        var engine = new FakeBuildEngine();
+        var task = new ReplacePackageParts()
         {
-            var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            Directory.CreateDirectory(dir);
+            BuildEngine = engine,
+            SourcePackage = originalNupkgPath,
+            Parts = new[] { "tools/EmptyBinary.dll" },
+            ReplacementFiles = new[] { replacementFilePath },
+            NewVersionSuffix = "replaced",
+            DestinationFolder = dir
+        };
 
-            string originalNupkgPath;
-            File.WriteAllBytes(originalNupkgPath = Path.Combine(dir, TestResources.MiscPackages.NameSigned), TestResources.MiscPackages.Signed);
+        bool result = task.Execute();
+        AssertEx.Equal(Array.Empty<string>(), engine.LogErrorEvents.Select(w => w.Message));
+        AssertEx.Equal(Array.Empty<string>(), engine.LogWarningEvents.Select(w => $"{w.Code}: {w.Message}"));
+        Assert.True(result);
 
-            string replacementFilePath;
-            File.WriteAllText(replacementFilePath = Path.Combine(dir, "Replacement.txt"), "<replacement>");
-
-            var engine = new FakeBuildEngine();
-            var task = new ReplacePackageParts()
+        using (var archive = new ZipArchive(File.Open(task.NewPackage, FileMode.Open, FileAccess.Read), ZipArchiveMode.Read))
+        {
+            AssertEx.Equal(new[]
             {
-                BuildEngine = engine,
-                SourcePackage = originalNupkgPath,
-                Parts = new[] { "tools/EmptyBinary.dll" },
-                ReplacementFiles = new[] { replacementFilePath },
-                NewVersionSuffix = "replaced",
-                DestinationFolder = dir
-            };
+                "_rels/.rels",
+                "Signed.nuspec",
+                "tools/EmptyBinary.dll",
+                "[Content_Types].xml",
+                "package/services/metadata/core-properties/501236e2491945269f45c5507859c951.psmdcp"
+            }, archive.Entries.Select(e => e.FullName));
 
-            bool result = task.Execute();
-            AssertEx.Equal(Array.Empty<string>(), engine.LogErrorEvents.Select(w => w.Message));
-            AssertEx.Equal(Array.Empty<string>(), engine.LogWarningEvents.Select(w => $"{w.Code}: {w.Message}"));
-            Assert.True(result);
-
-            using (var archive = new ZipArchive(File.Open(task.NewPackage, FileMode.Open, FileAccess.Read), ZipArchiveMode.Read))
+            using (var reader = new StreamReader(archive.GetEntry("tools/EmptyBinary.dll").Open()))
             {
-                AssertEx.Equal(new[]
-                {
-                    "_rels/.rels",
-                    "Signed.nuspec",
-                    "tools/EmptyBinary.dll",
-                    "[Content_Types].xml",
-                    "package/services/metadata/core-properties/501236e2491945269f45c5507859c951.psmdcp"
-                }, archive.Entries.Select(e => e.FullName));
+                Assert.Equal("<replacement>", reader.ReadToEnd());
+            }
 
-                using (var reader = new StreamReader(archive.GetEntry("tools/EmptyBinary.dll").Open()))
-                {
-                    Assert.Equal("<replacement>", reader.ReadToEnd());
-                }
-
-                using (var reader = new StreamReader(archive.GetEntry("Signed.nuspec").Open()))
-                {
-                    AssertEx.AssertEqualToleratingWhitespaceDifferences(@"
+            using (var reader = new StreamReader(archive.GetEntry("Signed.nuspec").Open()))
+            {
+                AssertEx.AssertEqualToleratingWhitespaceDifferences(@"
 <?xml version=""1.0"" encoding=""utf-8""?>
 <package xmlns=""http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"">
   <metadata>
@@ -70,11 +70,11 @@ namespace Microsoft.DotNet.Tools.Tests
     <description>Signed</description>
   </metadata>
 </package>", reader.ReadToEnd());
-                }
+            }
 
-                using (var reader = new StreamReader(archive.GetEntry("package/services/metadata/core-properties/501236e2491945269f45c5507859c951.psmdcp").Open()))
-                {
-                    AssertEx.AssertEqualToleratingWhitespaceDifferences(
+            using (var reader = new StreamReader(archive.GetEntry("package/services/metadata/core-properties/501236e2491945269f45c5507859c951.psmdcp").Open()))
+            {
+                AssertEx.AssertEqualToleratingWhitespaceDifferences(
 @"<?xml version=""1.0"" encoding=""utf-8""?>" +
 @"<coreProperties xmlns:dc=""http://purl.org/dc/elements/1.1/"" xmlns:dcterms=""http://purl.org/dc/terms/"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""http://schemas.openxmlformats.org/package/2006/metadata/core-properties"">" +
 @"<dc:creator>Microsoft</dc:creator>" +
@@ -84,10 +84,9 @@ namespace Microsoft.DotNet.Tools.Tests
 @"<keywords></keywords>" +
 @"<lastModifiedBy>NuGet, Version=4.7.0.5, Culture=neutral, PublicKeyToken=31bf3856ad364e35;Microsoft Windows NT 6.2.9200.0;.NET Framework 4.6</lastModifiedBy>" +
 @"</coreProperties>", reader.ReadToEnd());
-                }
             }
-
-            Directory.Delete(dir, recursive: true);
         }
+
+        Directory.Delete(dir, recursive: true);
     }
 }

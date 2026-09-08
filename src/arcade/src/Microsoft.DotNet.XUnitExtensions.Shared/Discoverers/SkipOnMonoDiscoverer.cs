@@ -9,30 +9,29 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Microsoft.DotNet.XUnitExtensions
+namespace Microsoft.DotNet.XUnitExtensions;
+
+public class SkipOnMonoDiscoverer : ITraitDiscoverer
 {
-    public class SkipOnMonoDiscoverer : ITraitDiscoverer
+    public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
     {
-        public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
+        if (DiscovererHelpers.IsMonoRuntime)
         {
-            if (DiscovererHelpers.IsMonoRuntime)
+            TestPlatforms testPlatforms = TestPlatforms.Any;
+
+            // Last argument is either the TestPlatform or the test platform to skip the test on.
+            if (traitAttribute.GetConstructorArguments().LastOrDefault() is TestPlatforms tp)
             {
-                TestPlatforms testPlatforms = TestPlatforms.Any;
-
-                // Last argument is either the TestPlatform or the test platform to skip the test on.
-                if (traitAttribute.GetConstructorArguments().LastOrDefault() is TestPlatforms tp)
-                {
-                    testPlatforms = tp;
-                }
-
-                if (DiscovererHelpers.TestPlatformApplies(testPlatforms))
-                {
-                    return new[] { new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing) };
-                }
+                testPlatforms = tp;
             }
 
-            return Array.Empty<KeyValuePair<string, string>>();
+            if (DiscovererHelpers.TestPlatformApplies(testPlatforms))
+            {
+                return new[] { new KeyValuePair<string, string>(XunitConstants.Category, XunitConstants.Failing) };
+            }
         }
+
+        return Array.Empty<KeyValuePair<string, string>>();
     }
 }
 #endif

@@ -5,264 +5,263 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace Microsoft.DotNet.Build.Manifest
+namespace Microsoft.DotNet.Build.Manifest;
+
+public enum PublishingInfraVersion
 {
-    public enum PublishingInfraVersion
+    UnsupportedV1 = 1,
+    UnsupportedV2 = 2,
+    V3 = 3,
+    V4 = 4,
+    Latest = V3,
+    Dev = V4
+}
+
+public class BuildIdentity
+{
+    private static readonly string[] AttributeOrder =
     {
-        UnsupportedV1 = 1,
-        UnsupportedV2 = 2,
-        V3 = 3,
-        V4 = 4,
-        Latest = V3,
-        Dev = V4
+        nameof(PublishingVersion),
+        nameof(Name),
+        nameof(BuildId),
+        nameof(ProductVersion),
+        nameof(Branch),
+        nameof(Commit)
+    };
+
+    private static readonly string[] RequiredAttributes =
+    {
+        nameof(Name)
+    };
+
+    public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
+
+    public string Name
+    {
+        get { return Attributes.GetOrDefault(nameof(Name)); }
+        set { Attributes[nameof(Name)] = value; }
     }
 
-    public class BuildIdentity
+    public string BuildId
     {
-        private static readonly string[] AttributeOrder =
-        {
-            nameof(PublishingVersion),
-            nameof(Name),
-            nameof(BuildId),
-            nameof(ProductVersion),
-            nameof(Branch),
-            nameof(Commit)
-        };
+        get { return Attributes.GetOrDefault(nameof(BuildId)); }
+        set { Attributes[nameof(BuildId)] = value; }
+    }
 
-        private static readonly string[] RequiredAttributes =
-        {
-            nameof(Name)
-        };
+    public string ProductVersion
+    {
+        get { return Attributes.GetOrDefault(nameof(ProductVersion)); }
+        set { Attributes[nameof(ProductVersion)] = value; }
+    }
 
-        public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
+    public string Branch
+    {
+        get { return Attributes.GetOrDefault(nameof(Branch)); }
+        set { Attributes[nameof(Branch)] = value; }
+    }
 
-        public string Name
-        {
-            get { return Attributes.GetOrDefault(nameof(Name)); }
-            set { Attributes[nameof(Name)] = value; }
-        }
+    public string Commit
+    {
+        get { return Attributes.GetOrDefault(nameof(Commit)); }
+        set { Attributes[nameof(Commit)] = value; }
+    }
 
-        public string BuildId
-        {
-            get { return Attributes.GetOrDefault(nameof(BuildId)); }
-            set { Attributes[nameof(BuildId)] = value; }
-        }
+    public string AzureDevOpsRepository
+    {
+        get { return Attributes.GetOrDefault(nameof(AzureDevOpsRepository)); }
+        set { Attributes[nameof(AzureDevOpsRepository)] = value; }
+    }
 
-        public string ProductVersion
-        {
-            get { return Attributes.GetOrDefault(nameof(ProductVersion)); }
-            set { Attributes[nameof(ProductVersion)] = value; }
-        }
+    public string AzureDevOpsBranch
+    {
+        get { return Attributes.GetOrDefault(nameof(AzureDevOpsBranch)); }
+        set { Attributes[nameof(AzureDevOpsBranch)] = value; }
+    }
 
-        public string Branch
-        {
-            get { return Attributes.GetOrDefault(nameof(Branch)); }
-            set { Attributes[nameof(Branch)] = value; }
-        }
+    public string AzureDevOpsBuildNumber
+    {
+        get { return Attributes.GetOrDefault(nameof(AzureDevOpsBuildNumber)); }
+        set { Attributes[nameof(AzureDevOpsBuildNumber)] = value; }
+    }
 
-        public string Commit
-        {
-            get { return Attributes.GetOrDefault(nameof(Commit)); }
-            set { Attributes[nameof(Commit)] = value; }
-        }
+    public string AzureDevOpsAccount
+    {
+        get { return Attributes.GetOrDefault(nameof(AzureDevOpsAccount)); }
+        set { Attributes[nameof(AzureDevOpsAccount)] = value; }
+    }
 
-        public string AzureDevOpsRepository
-        {
-            get { return Attributes.GetOrDefault(nameof(AzureDevOpsRepository)); }
-            set { Attributes[nameof(AzureDevOpsRepository)] = value; }
-        }
+    public string AzureDevOpsProject
+    {
+        get { return Attributes.GetOrDefault(nameof(AzureDevOpsProject)); }
+        set { Attributes[nameof(AzureDevOpsProject)] = value; }
+    }
 
-        public string AzureDevOpsBranch
+    public int? AzureDevOpsBuildDefinitionId
+    {
+        get
         {
-            get { return Attributes.GetOrDefault(nameof(AzureDevOpsBranch)); }
-            set { Attributes[nameof(AzureDevOpsBranch)] = value; }
-        }
+            string value = Attributes.GetOrDefault(nameof(AzureDevOpsBuildDefinitionId));
 
-        public string AzureDevOpsBuildNumber
-        {
-            get { return Attributes.GetOrDefault(nameof(AzureDevOpsBuildNumber)); }
-            set { Attributes[nameof(AzureDevOpsBuildNumber)] = value; }
-        }
-
-        public string AzureDevOpsAccount
-        {
-            get { return Attributes.GetOrDefault(nameof(AzureDevOpsAccount)); }
-            set { Attributes[nameof(AzureDevOpsAccount)] = value; }
-        }
-
-        public string AzureDevOpsProject
-        {
-            get { return Attributes.GetOrDefault(nameof(AzureDevOpsProject)); }
-            set { Attributes[nameof(AzureDevOpsProject)] = value; }
-        }
-
-        public int? AzureDevOpsBuildDefinitionId
-        {
-            get
+            if (string.IsNullOrEmpty(value))
             {
-                string value = Attributes.GetOrDefault(nameof(AzureDevOpsBuildDefinitionId));
-
-                if (string.IsNullOrEmpty(value))
-                {
-                    return null;
-                }
-                else
-                {
-                    return int.Parse(value);
-                }
+                return null;
             }
-
-            set
+            else
             {
-                if (value == null)
-                {
-                    Attributes.Remove(nameof(AzureDevOpsBuildDefinitionId));
-                }
-                else
-                {
-                    Attributes[nameof(AzureDevOpsBuildDefinitionId)] = value.ToString();
-                }
+                return int.Parse(value);
             }
         }
 
-        public int? AzureDevOpsBuildId
+        set
         {
-            get
+            if (value == null)
             {
-                string value = Attributes.GetOrDefault(nameof(AzureDevOpsBuildId));
-
-                if (string.IsNullOrEmpty(value))
-                {
-                    return null;
-                }
-                else
-                {
-                    return int.Parse(value);
-                }
+                Attributes.Remove(nameof(AzureDevOpsBuildDefinitionId));
             }
-
-            set
+            else
             {
-                if (value == null)
-                {
-                    Attributes.Remove(nameof(AzureDevOpsBuildId));
-                }
-                else
-                {
-                    Attributes[nameof(AzureDevOpsBuildId)] = value.ToString();
-                }
+                Attributes[nameof(AzureDevOpsBuildDefinitionId)] = value.ToString();
             }
         }
+    }
 
-        public string InitialAssetsLocation
+    public int? AzureDevOpsBuildId
+    {
+        get
         {
-            get { return Attributes.GetOrDefault(nameof(InitialAssetsLocation)); }
-            set { Attributes[nameof(InitialAssetsLocation)] = value; }
+            string value = Attributes.GetOrDefault(nameof(AzureDevOpsBuildId));
+
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+            else
+            {
+                return int.Parse(value);
+            }
         }
 
-        public bool IsStable
+        set
         {
-            get
+            if (value == null)
             {
-                string value = Attributes.GetOrDefault(nameof(IsStable));
-
-                if (string.IsNullOrEmpty(value))
-                {
-                    return false;
-                }
-                else
-                {
-                    return bool.Parse(value);
-                }
+                Attributes.Remove(nameof(AzureDevOpsBuildId));
             }
-
-            set
+            else
             {
-                Attributes[nameof(IsStable)] = value.ToString().ToLower();
+                Attributes[nameof(AzureDevOpsBuildId)] = value.ToString();
             }
         }
+    }
 
-        public bool IsReleaseOnlyPackageVersion
+    public string InitialAssetsLocation
+    {
+        get { return Attributes.GetOrDefault(nameof(InitialAssetsLocation)); }
+        set { Attributes[nameof(InitialAssetsLocation)] = value; }
+    }
+
+    public bool IsStable
+    {
+        get
         {
-            get
-            {
-                string value = Attributes.GetOrDefault(nameof(IsReleaseOnlyPackageVersion));
+            string value = Attributes.GetOrDefault(nameof(IsStable));
 
-                if (string.IsNullOrEmpty(value))
-                {
-                    return false;
-                }
-                else
-                {
-                    return bool.Parse(value);
-                }
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
             }
-
-            set
+            else
             {
-                Attributes[nameof(IsReleaseOnlyPackageVersion)] = value.ToString().ToLower();
+                return bool.Parse(value);
             }
         }
 
-        public string VersionStamp
+        set
         {
-            get { return Attributes.GetOrDefault(nameof(VersionStamp)); }
-            set { Attributes[nameof(VersionStamp)] = value; }
+            Attributes[nameof(IsStable)] = value.ToString().ToLower();
         }
+    }
 
-        public PublishingInfraVersion PublishingVersion
+    public bool IsReleaseOnlyPackageVersion
+    {
+        get
         {
-            get {
-                string value = Attributes.GetOrDefault(nameof(PublishingVersion));
-                
-                if (string.IsNullOrEmpty(value))
-                {
-                    return PublishingInfraVersion.UnsupportedV1;
-                }
-                else
-                {
-                    return (PublishingInfraVersion)Enum.Parse(typeof(PublishingInfraVersion), value, true);
-                }
-            }
+            string value = Attributes.GetOrDefault(nameof(IsReleaseOnlyPackageVersion));
 
-            set {
-                Attributes[nameof(PublishingVersion)] = ((int)value).ToString(); 
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+            else
+            {
+                return bool.Parse(value);
             }
         }
 
-        public override string ToString()
+        set
         {
-            string s = Name;
-            if (!string.IsNullOrEmpty(ProductVersion))
+            Attributes[nameof(IsReleaseOnlyPackageVersion)] = value.ToString().ToLower();
+        }
+    }
+
+    public string VersionStamp
+    {
+        get { return Attributes.GetOrDefault(nameof(VersionStamp)); }
+        set { Attributes[nameof(VersionStamp)] = value; }
+    }
+
+    public PublishingInfraVersion PublishingVersion
+    {
+        get {
+            string value = Attributes.GetOrDefault(nameof(PublishingVersion));
+            
+            if (string.IsNullOrEmpty(value))
             {
-                s += $" {ProductVersion}";
+                return PublishingInfraVersion.UnsupportedV1;
             }
-            if (!string.IsNullOrEmpty(Branch))
+            else
             {
-                s += $" on '{Branch}'";
+                return (PublishingInfraVersion)Enum.Parse(typeof(PublishingInfraVersion), value, true);
             }
-            if (!string.IsNullOrEmpty(Commit))
-            {
-                s += $" ({Commit})";
-            }
-            if (!string.IsNullOrEmpty(BuildId))
-            {
-                s += $" build {BuildId}";
-            }
-            return s;
         }
 
-        public IEnumerable<XAttribute> ToXmlAttributes() => Attributes
+        set {
+            Attributes[nameof(PublishingVersion)] = ((int)value).ToString(); 
+        }
+    }
+
+    public override string ToString()
+    {
+        string s = Name;
+        if (!string.IsNullOrEmpty(ProductVersion))
+        {
+            s += $" {ProductVersion}";
+        }
+        if (!string.IsNullOrEmpty(Branch))
+        {
+            s += $" on '{Branch}'";
+        }
+        if (!string.IsNullOrEmpty(Commit))
+        {
+            s += $" ({Commit})";
+        }
+        if (!string.IsNullOrEmpty(BuildId))
+        {
+            s += $" build {BuildId}";
+        }
+        return s;
+    }
+
+    public IEnumerable<XAttribute> ToXmlAttributes() => Attributes
+        .ThrowIfMissingAttributes(RequiredAttributes)
+        .CreateXmlAttributes(AttributeOrder);
+
+    public XElement ToXmlBuildElement() => new XElement("Build", ToXmlAttributes());
+
+    public static BuildIdentity Parse(XElement xml) => new BuildIdentity
+    {
+        Attributes = xml
+            .CreateAttributeDictionary()
             .ThrowIfMissingAttributes(RequiredAttributes)
-            .CreateXmlAttributes(AttributeOrder);
-
-        public XElement ToXmlBuildElement() => new XElement("Build", ToXmlAttributes());
-
-        public static BuildIdentity Parse(XElement xml) => new BuildIdentity
-        {
-            Attributes = xml
-                .CreateAttributeDictionary()
-                .ThrowIfMissingAttributes(RequiredAttributes)
-        };
-    }
+    };
 }

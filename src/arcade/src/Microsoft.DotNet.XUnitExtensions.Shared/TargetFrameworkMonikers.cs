@@ -3,13 +3,12 @@
 
 using System;
 
-namespace Xunit
+namespace Xunit;
+
+[Flags]
+public enum TargetFrameworkMonikers
 {
-    [Flags]
-    public enum TargetFrameworkMonikers
-    {
-        Netcoreapp = 1,
-        NetFramework = 2,
-        Any = ~0
-    }
+    Netcoreapp = 1,
+    NetFramework = 2,
+    Any = ~0
 }

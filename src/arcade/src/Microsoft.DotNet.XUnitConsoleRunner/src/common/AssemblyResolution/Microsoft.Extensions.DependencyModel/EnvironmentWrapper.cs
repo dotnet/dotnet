@@ -3,15 +3,14 @@
 
 using System;
 
-namespace Internal.Microsoft.Extensions.DependencyModel
-{
-    internal class EnvironmentWrapper : IEnvironment
-    {
-        public static IEnvironment Default = new EnvironmentWrapper();
+namespace Internal.Microsoft.Extensions.DependencyModel;
 
-        public string GetEnvironmentVariable(string name)
-        {
-            return Environment.GetEnvironmentVariable(name);
-        }
+internal class EnvironmentWrapper : IEnvironment
+{
+    public static IEnvironment Default = new EnvironmentWrapper();
+
+    public string GetEnvironmentVariable(string name)
+    {
+        return Environment.GetEnvironmentVariable(name);
     }
 }
