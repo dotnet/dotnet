@@ -36,6 +36,9 @@ src/aspnetcore/src/Framework/App.Runtime/bundle/theme/**/*.wxl|unknown-license-r
 src/aspnetcore/src/Installers/Windows/**/*.wxl|unknown-license-reference
 src/aspnetcore/src/Installers/Windows/**/*.wxs|unknown-license-reference
 
+# Package license metadata does not license the lockfile source
+src/aspnetcore/eng/skill-evals/evaluation-tools/package-lock.json|unknown-license-reference
+
 #
 # deployment-tools
 #
