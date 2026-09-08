@@ -5,6 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -161,6 +164,10 @@ namespace NuGet.ProjectModel
             }
         }
 
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs")]
+#endif
         public static void Write(TextWriter textWriter, PackagesLockFile lockFile)
         {
             using (var jsonWriter = new JsonTextWriter(textWriter))
@@ -168,9 +175,7 @@ namespace NuGet.ProjectModel
                 jsonWriter.Formatting = Formatting.Indented;
 
                 var json = WriteLockFile(lockFile);
-#pragma warning disable IL2026, IL3050 // WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs
                 json.WriteTo(jsonWriter, Array.Empty<JsonConverter>());
-#pragma warning restore IL2026, IL3050
             }
         }
 

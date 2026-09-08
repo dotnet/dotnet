@@ -3,6 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -249,7 +252,9 @@ namespace NuGet.Protocol
             }
             else
             {
+#pragma warning disable IL2026, IL3050 // The source analyzer cannot see the app's trim-time feature switch; Native AOT removes this branch when the switch is true.
                 return await ProcessHttpStreamWithNsjAsync(httpInitialResponse, take, token);
+#pragma warning restore IL2026, IL3050
             }
         }
 
@@ -270,12 +275,14 @@ namespace NuGet.Protocol
             return results;
         }
 
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
         private static async Task<V3SearchResults?> ProcessHttpStreamWithNsjAsync(HttpResponseMessage httpInitialResponse, uint take, CancellationToken token)
         {
-#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
             var _newtonsoftConvertersSerializer = JsonSerializer.Create(JsonExtensions.ObjectSerializationSettings);
             _newtonsoftConvertersSerializer.Converters.Add(new Converters.V3SearchResultsConverter(take));
-#pragma warning restore IL2026, IL3050
 
 #if NETCOREAPP2_0_OR_GREATER
             using (var stream = await httpInitialResponse.Content.ReadAsStreamAsync(token))
