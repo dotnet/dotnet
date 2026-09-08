@@ -137,6 +137,8 @@
     <ItemGroup>
       <BootstrapConsumerPrerequisite Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj"
                                      Condition="'$(SdkToolsSupported)' == 'true'" />
+      <BootstrapConsumerPrerequisite Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj"
+                                     Condition="'$(SdkToolsSupported)' == 'true'" />
       <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj"
                          Condition="'$(SdkToolsSupported)' == 'true'" />
       <BootstrapConsumer Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj"
