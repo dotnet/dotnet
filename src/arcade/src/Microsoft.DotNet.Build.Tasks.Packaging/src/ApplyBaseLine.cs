@@ -7,136 +7,135 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging
+namespace Microsoft.DotNet.Build.Tasks.Packaging;
+
+/// <summary>
+/// Determines appropriate package version for AssemblyVersion and raises dependencies to a baseline version.
+/// Dependencies specified without a version will be raised to the highest permitted version.
+/// Dependencies with a version will be raised to the lowest baseline version that satisfies
+/// the requested version.
+/// </summary>
+public class ApplyBaseLine : Task
 {
     /// <summary>
-    /// Determines appropriate package version for AssemblyVersion and raises dependencies to a baseline version.
-    /// Dependencies specified without a version will be raised to the highest permitted version.
-    /// Dependencies with a version will be raised to the lowest baseline version that satisfies
-    /// the requested version.
+    /// Original dependencies
     /// </summary>
-    public class ApplyBaseLine : Task
+    [Required]
+    public ITaskItem[] OriginalDependencies { get; set; }
+
+    /// <summary>
+    /// Permitted package baseline versions.
+    ///   Identity: Package ID
+    ///   Version: Package version.
+    /// </summary>
+    public ITaskItem[] BaseLinePackages { get; set; }
+
+    /// <summary>
+    /// Package index files used to define baseline, and assembly to package version mapping.
+    /// </summary>
+    public ITaskItem[] PackageIndexes { get; set; }
+
+    /// <summary>
+    /// Set to true to apply the package baseline
+    /// </summary>
+    public bool Apply { get; set; }
+    
+    [Output]
+    public ITaskItem[] BaseLinedDependencies { get; set; }
+    
+    public override bool Execute()
     {
-        /// <summary>
-        /// Original dependencies
-        /// </summary>
-        [Required]
-        public ITaskItem[] OriginalDependencies { get; set; }
-
-        /// <summary>
-        /// Permitted package baseline versions.
-        ///   Identity: Package ID
-        ///   Version: Package version.
-        /// </summary>
-        public ITaskItem[] BaseLinePackages { get; set; }
-
-        /// <summary>
-        /// Package index files used to define baseline, and assembly to package version mapping.
-        /// </summary>
-        public ITaskItem[] PackageIndexes { get; set; }
-
-        /// <summary>
-        /// Set to true to apply the package baseline
-        /// </summary>
-        public bool Apply { get; set; }
-        
-        [Output]
-        public ITaskItem[] BaseLinedDependencies { get; set; }
-        
-        public override bool Execute()
+        if (PackageIndexes != null && PackageIndexes.Length > 0)
         {
-            if (PackageIndexes != null && PackageIndexes.Length > 0)
-            {
-                GetBaseLinedDependenciesFromIndex();
-            }
-            else
-            {
-                GetBaseLinedDependenciesFromBaseLinePackages();
-            }
-
-            return !Log.HasLoggedErrors;
+            GetBaseLinedDependenciesFromIndex();
+        }
+        else
+        {
+            GetBaseLinedDependenciesFromBaseLinePackages();
         }
 
-        public void GetBaseLinedDependenciesFromBaseLinePackages()
+        return !Log.HasLoggedErrors;
+    }
+
+    public void GetBaseLinedDependenciesFromBaseLinePackages()
+    {
+        Dictionary<string, SortedSet<Version>> baseLineVersions = new Dictionary<string, SortedSet<Version>>();
+        foreach (var baseLinePackage in BaseLinePackages.NullAsEmpty())
         {
-            Dictionary<string, SortedSet<Version>> baseLineVersions = new Dictionary<string, SortedSet<Version>>();
-            foreach (var baseLinePackage in BaseLinePackages.NullAsEmpty())
+            SortedSet<Version> versions = null;
+            if (!baseLineVersions.TryGetValue(baseLinePackage.ItemSpec, out versions))
             {
-                SortedSet<Version> versions = null;
-                if (!baseLineVersions.TryGetValue(baseLinePackage.ItemSpec, out versions))
-                {
-                    baseLineVersions[baseLinePackage.ItemSpec] = versions = new SortedSet<Version>();
-                }
-                versions.Add(new Version(baseLinePackage.GetMetadata("Version")));
+                baseLineVersions[baseLinePackage.ItemSpec] = versions = new SortedSet<Version>();
             }
+            versions.Add(new Version(baseLinePackage.GetMetadata("Version")));
+        }
 
-            List<ITaskItem> baseLinedDependencies = new List<ITaskItem>();
+        List<ITaskItem> baseLinedDependencies = new List<ITaskItem>();
 
-            foreach (var dependency in OriginalDependencies)
+        foreach (var dependency in OriginalDependencies)
+        {
+            if (Apply)
             {
-                if (Apply)
+                SortedSet<Version> dependencyBaseLineVersions = null;
+                Version requestedVersion = null;
+                Version.TryParse(dependency.GetMetadata("Version"), out requestedVersion);
+
+                if (baseLineVersions.TryGetValue(dependency.ItemSpec, out dependencyBaseLineVersions))
                 {
-                    SortedSet<Version> dependencyBaseLineVersions = null;
-                    Version requestedVersion = null;
-                    Version.TryParse(dependency.GetMetadata("Version"), out requestedVersion);
+                    // if no version is requested, choose the highest.  Otherwise choose the first that is 
+                    // greater than or equal to the version requested.
+                    Version baseLineVersion = requestedVersion == null ?
+                        dependencyBaseLineVersions.Last() :
+                        dependencyBaseLineVersions.FirstOrDefault(v => v >= requestedVersion);
 
-                    if (baseLineVersions.TryGetValue(dependency.ItemSpec, out dependencyBaseLineVersions))
+                    if (baseLineVersion != null)
                     {
-                        // if no version is requested, choose the highest.  Otherwise choose the first that is 
-                        // greater than or equal to the version requested.
-                        Version baseLineVersion = requestedVersion == null ?
-                            dependencyBaseLineVersions.Last() :
-                            dependencyBaseLineVersions.FirstOrDefault(v => v >= requestedVersion);
-
-                        if (baseLineVersion != null)
-                        {
-                            dependency.SetMetadata("Version", baseLineVersion.ToString(3));
-                        }
+                        dependency.SetMetadata("Version", baseLineVersion.ToString(3));
                     }
                 }
-
-                baseLinedDependencies.Add(dependency);
             }
 
-            BaseLinedDependencies = baseLinedDependencies.ToArray();
+            baseLinedDependencies.Add(dependency);
         }
 
-        public void GetBaseLinedDependenciesFromIndex()
+        BaseLinedDependencies = baseLinedDependencies.ToArray();
+    }
+
+    public void GetBaseLinedDependenciesFromIndex()
+    {
+        var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+
+        List<ITaskItem> baseLinedDependencies = new List<ITaskItem>();
+
+        foreach (var dependency in OriginalDependencies)
         {
-            var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
+            Version assemblyVersion = null, packageVersion = null, baseLineVersion = null;
+            string packageId = dependency.ItemSpec;
+            Version.TryParse(dependency.GetMetadata("Version"), out packageVersion);
+            Version.TryParse(dependency.GetMetadata("AssemblyVersion"), out assemblyVersion);
 
-            List<ITaskItem> baseLinedDependencies = new List<ITaskItem>();
-
-            foreach (var dependency in OriginalDependencies)
+            // if we have an assembly version see if we have a better package version
+            if (assemblyVersion != null)
             {
-                Version assemblyVersion = null, packageVersion = null, baseLineVersion = null;
-                string packageId = dependency.ItemSpec;
-                Version.TryParse(dependency.GetMetadata("Version"), out packageVersion);
-                Version.TryParse(dependency.GetMetadata("AssemblyVersion"), out assemblyVersion);
-
-                // if we have an assembly version see if we have a better package version
-                if (assemblyVersion != null)
-                {
-                    packageVersion = index.GetPackageVersionForAssemblyVersion(packageId, assemblyVersion);
-                }
-
-                if (Apply &&
-                    index.TryGetBaseLineVersion(packageId, out baseLineVersion) &&
-                    (packageVersion == null || baseLineVersion > packageVersion))
-                {
-                    packageVersion = baseLineVersion;
-                }
-
-                if (packageVersion != assemblyVersion)
-                {
-                    dependency.SetMetadata("Version", packageVersion.ToString());
-                }
-
-                baseLinedDependencies.Add(dependency);
+                packageVersion = index.GetPackageVersionForAssemblyVersion(packageId, assemblyVersion);
             }
 
-            BaseLinedDependencies = baseLinedDependencies.ToArray();
+            if (Apply &&
+                index.TryGetBaseLineVersion(packageId, out baseLineVersion) &&
+                (packageVersion == null || baseLineVersion > packageVersion))
+            {
+                packageVersion = baseLineVersion;
+            }
 
+            if (packageVersion != assemblyVersion)
+            {
+                dependency.SetMetadata("Version", packageVersion.ToString());
+            }
+
+            baseLinedDependencies.Add(dependency);
         }
+
+        BaseLinedDependencies = baseLinedDependencies.ToArray();
+
     }
 }

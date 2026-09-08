@@ -6,117 +6,116 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Cci.Extensions;
 
-namespace Microsoft.Cci.Mappings
+namespace Microsoft.Cci.Mappings;
+
+public class AssemblyMapping : AttributesMapping<IAssembly>
 {
-    public class AssemblyMapping : AttributesMapping<IAssembly>
+    private readonly Dictionary<INamespaceDefinition, NamespaceMapping> _namespaces;
+    private Dictionary<string, ElementMapping<AssemblyProperty>> _properties;
+
+    public AssemblyMapping(MappingSettings settings)
+        : base(settings)
     {
-        private readonly Dictionary<INamespaceDefinition, NamespaceMapping> _namespaces;
-        private Dictionary<string, ElementMapping<AssemblyProperty>> _properties;
+        _namespaces = new Dictionary<INamespaceDefinition, NamespaceMapping>(settings.NamespaceComparer);
+    }
 
-        public AssemblyMapping(MappingSettings settings)
-            : base(settings)
+    public IEnumerable<NamespaceMapping> Namespaces { get { return _namespaces.Values; } }
+
+    public IEnumerable<ElementMapping<AssemblyProperty>> Properties
+    {
+        get
         {
-            _namespaces = new Dictionary<INamespaceDefinition, NamespaceMapping>(settings.NamespaceComparer);
-        }
-
-        public IEnumerable<NamespaceMapping> Namespaces { get { return _namespaces.Values; } }
-
-        public IEnumerable<ElementMapping<AssemblyProperty>> Properties
-        {
-            get
+            if (_properties == null)
             {
-                if (_properties == null)
-                {
-                    _properties = new Dictionary<string, ElementMapping<AssemblyProperty>>();
+                _properties = new Dictionary<string, ElementMapping<AssemblyProperty>>();
 
-                    for (int i = 0; i < this.ElementCount; i++)
+                for (int i = 0; i < this.ElementCount; i++)
+                {
+                    if (this[i] != null)
                     {
-                        if (this[i] != null)
+                        foreach (var prop in GetAssemblyProperties(this[i]))
                         {
-                            foreach (var prop in GetAssemblyProperties(this[i]))
+                            ElementMapping<AssemblyProperty> mapping;
+                            if (!_properties.TryGetValue(prop.Key, out mapping))
                             {
-                                ElementMapping<AssemblyProperty> mapping;
-                                if (!_properties.TryGetValue(prop.Key, out mapping))
-                                {
-                                    mapping = new ElementMapping<AssemblyProperty>(this.Settings);
-                                    _properties.Add(prop.Key, mapping);
-                                }
-                                mapping.AddMapping(i, prop);
+                                mapping = new ElementMapping<AssemblyProperty>(this.Settings);
+                                _properties.Add(prop.Key, mapping);
                             }
+                            mapping.AddMapping(i, prop);
                         }
                     }
                 }
-                return _properties.Values;
             }
+            return _properties.Values;
+        }
+    }
+
+    protected override void OnMappingAdded(int index, IAssembly element)
+    {
+        // BUG: We need to handle type forwards here as well.
+        //
+        // For example, consider an assembly which contains only type forwards for
+        // a given assembly. In that case, we'd not even try to map it's members.
+
+        foreach (var ns in element.GetAllNamespaces().Where(this.Filter.Include))
+        {
+            NamespaceMapping mapping;
+            if (!_namespaces.TryGetValue(ns, out mapping))
+            {
+                mapping = new NamespaceMapping(this.Settings);
+                _namespaces.Add(ns, mapping);
+            }
+            mapping.AddMapping(index, ns);
+        }
+    }
+
+    private static IEnumerable<AssemblyProperty> GetAssemblyProperties(IAssembly assembly)
+    {
+        yield return new AssemblyProperty("TargetRuntimeVersion", assembly.TargetRuntimeVersion);
+        yield return new AssemblyProperty("Version", assembly.Version.ToString());
+        yield return new AssemblyProperty("PublicKeyToken", assembly.GetPublicKeyToken());
+
+        foreach (IAliasForType alias in assembly.ExportedTypes.OfType<IAliasForType>())
+        {
+            yield return new AssemblyProperty(alias);
+        }
+    }
+
+    public class AssemblyProperty : IEquatable<AssemblyProperty>
+    {
+        public AssemblyProperty(string key, string value)
+        {
+            this.Key = key;
+            this.Name = key;
+            this.Value = value;
+            this.Delimiter = " : ";
         }
 
-        protected override void OnMappingAdded(int index, IAssembly element)
+        public AssemblyProperty(IAliasForType alias)
         {
-            // BUG: We need to handle type forwards here as well.
-            //
-            // For example, consider an assembly which contains only type forwards for
-            // a given assembly. In that case, we'd not even try to map it's members.
-
-            foreach (var ns in element.GetAllNamespaces().Where(this.Filter.Include))
-            {
-                NamespaceMapping mapping;
-                if (!_namespaces.TryGetValue(ns, out mapping))
-                {
-                    mapping = new NamespaceMapping(this.Settings);
-                    _namespaces.Add(ns, mapping);
-                }
-                mapping.AddMapping(index, ns);
-            }
+            this.Key = alias.AliasedType.RefDocId();
+            this.Name = "Forwarder: " + this.Key;
+            this.Value = alias.AliasedType.GetAssemblyReference().ToString();
+            this.Delimiter = " => ";
         }
 
-        private static IEnumerable<AssemblyProperty> GetAssemblyProperties(IAssembly assembly)
-        {
-            yield return new AssemblyProperty("TargetRuntimeVersion", assembly.TargetRuntimeVersion);
-            yield return new AssemblyProperty("Version", assembly.Version.ToString());
-            yield return new AssemblyProperty("PublicKeyToken", assembly.GetPublicKeyToken());
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public string Value { get; set; }
 
-            foreach (IAliasForType alias in assembly.ExportedTypes.OfType<IAliasForType>())
-            {
-                yield return new AssemblyProperty(alias);
-            }
+        public string Delimiter { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("{0}: {1}", Name, Value);
         }
 
-        public class AssemblyProperty : IEquatable<AssemblyProperty>
+        public bool Equals(AssemblyProperty other)
         {
-            public AssemblyProperty(string key, string value)
-            {
-                this.Key = key;
-                this.Name = key;
-                this.Value = value;
-                this.Delimiter = " : ";
-            }
+            if (this.Value == null)
+                return false;
 
-            public AssemblyProperty(IAliasForType alias)
-            {
-                this.Key = alias.AliasedType.RefDocId();
-                this.Name = "Forwarder: " + this.Key;
-                this.Value = alias.AliasedType.GetAssemblyReference().ToString();
-                this.Delimiter = " => ";
-            }
-
-            public string Key { get; set; }
-            public string Name { get; set; }
-            public string Value { get; set; }
-
-            public string Delimiter { get; set; }
-
-            public override string ToString()
-            {
-                return string.Format("{0}: {1}", Name, Value);
-            }
-
-            public bool Equals(AssemblyProperty other)
-            {
-                if (this.Value == null)
-                    return false;
-
-                return this.Value.Equals(other.Value);
-            }
+            return this.Value.Equals(other.Value);
         }
     }
 }

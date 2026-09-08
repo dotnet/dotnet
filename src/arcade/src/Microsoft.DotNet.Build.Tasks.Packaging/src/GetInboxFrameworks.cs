@@ -7,58 +7,57 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging
+namespace Microsoft.DotNet.Build.Tasks.Packaging;
+
+public class GetInboxFrameworks : Task
 {
-    public class GetInboxFrameworks : Task
+    [Required]
+    public ITaskItem[] PackageIndexes
     {
-        [Required]
-        public ITaskItem[] PackageIndexes
+        get;
+        set;
+    }
+
+    [Required]
+    public string AssemblyName
+    {
+        get;
+        set;
+    }
+
+    public string AssemblyVersion
+    {
+        get;
+        set;
+    }
+
+    [Output]
+    public string[] InboxFrameworks
+    {
+        get;
+        set;
+    }
+
+    public override bool Execute()
+    {
+        if (PackageIndexes == null && PackageIndexes.Length == 0)
         {
-            get;
-            set;
+            Log.LogError("PackageIndexes argument must be specified");
+            return false;
         }
 
-        [Required]
-        public string AssemblyName
+        if (String.IsNullOrEmpty(AssemblyName))
         {
-            get;
-            set;
+            Log.LogError("AssemblyName argument must be specified");
+            return false;
         }
 
-        public string AssemblyVersion
-        {
-            get;
-            set;
-        }
+        Log.LogMessage(MessageImportance.Low, "Determining inbox frameworks for {0}, {1}", AssemblyName, AssemblyVersion);
+        
+        var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
 
-        [Output]
-        public string[] InboxFrameworks
-        {
-            get;
-            set;
-        }
+        InboxFrameworks = index.GetInboxFrameworks(AssemblyName, AssemblyVersion).Select(fx => fx.GetShortFolderName()).ToArray();
 
-        public override bool Execute()
-        {
-            if (PackageIndexes == null && PackageIndexes.Length == 0)
-            {
-                Log.LogError("PackageIndexes argument must be specified");
-                return false;
-            }
-
-            if (String.IsNullOrEmpty(AssemblyName))
-            {
-                Log.LogError("AssemblyName argument must be specified");
-                return false;
-            }
-
-            Log.LogMessage(MessageImportance.Low, "Determining inbox frameworks for {0}, {1}", AssemblyName, AssemblyVersion);
-            
-            var index = PackageIndex.Load(PackageIndexes.Select(pi => pi.GetMetadata("FullPath")));
-
-            InboxFrameworks = index.GetInboxFrameworks(AssemblyName, AssemblyVersion).Select(fx => fx.GetShortFolderName()).ToArray();
-
-            return !Log.HasLoggedErrors;
-        }
+        return !Log.HasLoggedErrors;
     }
 }

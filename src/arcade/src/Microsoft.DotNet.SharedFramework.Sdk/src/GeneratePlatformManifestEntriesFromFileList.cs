@@ -9,37 +9,36 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Microsoft.DotNet.SharedFramework.Sdk
+namespace Microsoft.DotNet.SharedFramework.Sdk;
+
+public class GeneratePlatformManifestEntriesFromFileList : Task
 {
-    public class GeneratePlatformManifestEntriesFromFileList : Task
+    [Required]
+    public ITaskItem[] Files { get; set; }
+
+    [Output]
+    public ITaskItem[] PlatformManifestEntries { get; set; }
+
+    public override bool Execute()
     {
-        [Required]
-        public ITaskItem[] Files { get; set; }
-
-        [Output]
-        public ITaskItem[] PlatformManifestEntries { get; set; }
-
-        public override bool Execute()
+        var entries = new List<PlatformManifestEntry>();
+        foreach (var file in Files)
         {
-            var entries = new List<PlatformManifestEntry>();
-            foreach (var file in Files)
+            entries.Add(new PlatformManifestEntry
             {
-                entries.Add(new PlatformManifestEntry
-                {
-                    Name = file.ItemSpec,
-                    AssemblyVersion = FileUtilities.GetAssemblyName(file.GetMetadata("OriginalFilePath"))?.Version.ToString() ?? string.Empty,
-                    FileVersion = FileUtilities.GetFileVersion(file.GetMetadata("OriginalFilePath"))?.ToString() ?? string.Empty
-                });
-            }
-
-            PlatformManifestEntries = entries.Select(entry =>
-            {
-                var item = new TaskItem(entry.Name);
-                item.SetMetadata("AssemblyVersion", entry.AssemblyVersion);
-                item.SetMetadata("FileVersion", entry.FileVersion);
-                return item;
-            }).ToArray();
-            return true;
+                Name = file.ItemSpec,
+                AssemblyVersion = FileUtilities.GetAssemblyName(file.GetMetadata("OriginalFilePath"))?.Version.ToString() ?? string.Empty,
+                FileVersion = FileUtilities.GetFileVersion(file.GetMetadata("OriginalFilePath"))?.ToString() ?? string.Empty
+            });
         }
+
+        PlatformManifestEntries = entries.Select(entry =>
+        {
+            var item = new TaskItem(entry.Name);
+            item.SetMetadata("AssemblyVersion", entry.AssemblyVersion);
+            item.SetMetadata("FileVersion", entry.FileVersion);
+            return item;
+        }).ToArray();
+        return true;
     }
 }

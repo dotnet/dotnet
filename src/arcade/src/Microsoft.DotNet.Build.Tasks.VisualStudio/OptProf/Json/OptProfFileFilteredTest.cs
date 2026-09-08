@@ -3,15 +3,14 @@
 
 using Newtonsoft.Json;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
+
+internal sealed class OptProfFileFilteredTest
 {
-    internal sealed class OptProfFileFilteredTest
-    {
-        [JsonProperty(PropertyName = "fileName")]
-        public string FileName { get; set; }
+    [JsonProperty(PropertyName = "fileName")]
+    public string FileName { get; set; }
 
-        [JsonProperty(PropertyName = "testCases", Order = 3)]
-        public string[] TestCases { get; set; }
+    [JsonProperty(PropertyName = "testCases", Order = 3)]
+    public string[] TestCases { get; set; }
 
-    }
 }

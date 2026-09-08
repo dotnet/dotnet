@@ -6,25 +6,24 @@ using System.Collections.Generic;
 using NuGet.Frameworks;
 using NuGet.Packaging;
 
-namespace Microsoft.DotNet.PackageTesting
+namespace Microsoft.DotNet.PackageTesting;
+
+class NupkgParser
 {
-    class NupkgParser
+    public static Package CreatePackageObject(string packagePath)
     {
-        public static Package CreatePackageObject(string packagePath)
-        {
-            using PackageArchiveReader nupkgReader = new(packagePath);
-            NuspecReader nuspecReader = nupkgReader.NuspecReader;
+        using PackageArchiveReader nupkgReader = new(packagePath);
+        NuspecReader nuspecReader = nupkgReader.NuspecReader;
 
-            string packageId = nuspecReader.GetId();
-            string version = nuspecReader.GetVersion().ToString();
+        string packageId = nuspecReader.GetId();
+        string version = nuspecReader.GetVersion().ToString();
 
-            NuGetFramework[] dependencyFrameworks = nuspecReader.GetDependencyGroups()
-                .Select(dg => dg.TargetFramework)
-                .Where(tfm => tfm != null)
-                .ToArray();
-            IEnumerable<string> files = nupkgReader.GetFiles()?.Where(t => t.EndsWith(packageId + ".dll"));
+        NuGetFramework[] dependencyFrameworks = nuspecReader.GetDependencyGroups()
+            .Select(dg => dg.TargetFramework)
+            .Where(tfm => tfm != null)
+            .ToArray();
+        IEnumerable<string> files = nupkgReader.GetFiles()?.Where(t => t.EndsWith(packageId + ".dll"));
 
-            return new Package(packageId, version, files, dependencyFrameworks);
-        }
+        return new Package(packageId, version, files, dependencyFrameworks);
     }
 }

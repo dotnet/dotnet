@@ -1,0 +1,11 @@
+# Licensed to the .NET Foundation under one or more agreements.
+# The .NET Foundation licenses this file to you under the MIT license.
+
+# This file is consumed by GitHub by default and the git-blame command
+# optionally to make blames ignore uninteresting commits. See docs here:
+# https://docs.github.com/en/repositories/working-with-files/using-files/viewing-and-understanding-files#ignore-commits-in-the-blame-view
+# To configure git-blame to use this file, run:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Moved to file-scoped namespaces. Ignore when doing a git blame.
+a71b81ea1fa9f2aa39d524903e025fa55b16f4cc

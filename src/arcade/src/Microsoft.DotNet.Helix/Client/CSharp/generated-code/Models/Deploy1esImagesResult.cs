@@ -5,18 +5,17 @@ using System;
 using System.Collections.Immutable;
 using Newtonsoft.Json;
 
-namespace Microsoft.DotNet.Helix.Client.Models
+namespace Microsoft.DotNet.Helix.Client.Models;
+
+public partial class Deploy1esImagesResult
 {
-    public partial class Deploy1esImagesResult
+    public Deploy1esImagesResult()
     {
-        public Deploy1esImagesResult()
-        {
-        }
-
-        [JsonProperty("Images")]
-        public IImmutableList<Models.Deployed1esImage> Images { get; set; }
-
-        [JsonProperty("ResourceGroupName")]
-        public string ResourceGroupName { get; set; }
     }
+
+    [JsonProperty("Images")]
+    public IImmutableList<Models.Deployed1esImage> Images { get; set; }
+
+    [JsonProperty("ResourceGroupName")]
+    public string ResourceGroupName { get; set; }
 }

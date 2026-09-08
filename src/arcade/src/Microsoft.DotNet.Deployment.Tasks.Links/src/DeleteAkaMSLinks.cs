@@ -6,34 +6,33 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Microsoft.DotNet.Deployment.Tasks.Links
+namespace Microsoft.DotNet.Deployment.Tasks.Links;
+
+public class DeleteAkaMSLinks : AkaMSLinksBase
 {
-    public class DeleteAkaMSLinks : AkaMSLinksBase
+    /// <summary>
+    /// Set of short urls that should be deleted. Should not include
+    /// the "aka.ms/" prefix.
+    /// </summary>
+    [Required]
+    public string[] ShortUrls { get; set; }
+
+    public override bool Execute()
     {
-        /// <summary>
-        /// Set of short urls that should be deleted. Should not include
-        /// the "aka.ms/" prefix.
-        /// </summary>
-        [Required]
-        public string[] ShortUrls { get; set; }
+        return ExecuteAsync().GetAwaiter().GetResult();
+    }
 
-        public override bool Execute()
+    public async Task<bool> ExecuteAsync()
+    {
+        try
         {
-            return ExecuteAsync().GetAwaiter().GetResult();
+            AkaMSLinkManager manager = CreateAkaMSLinksManager();
+            await manager.DeleteLinksAsync(new List<string>(ShortUrls));
         }
-
-        public async Task<bool> ExecuteAsync()
+        catch (Exception e)
         {
-            try
-            {
-                AkaMSLinkManager manager = CreateAkaMSLinksManager();
-                await manager.DeleteLinksAsync(new List<string>(ShortUrls));
-            }
-            catch (Exception e)
-            {
-                Log.LogErrorFromException(e);
-            }
-            return !Log.HasLoggedErrors;
+            Log.LogErrorFromException(e);
         }
+        return !Log.HasLoggedErrors;
     }
 }

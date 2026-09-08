@@ -3,14 +3,13 @@
 
 using System;
 
-namespace Microsoft.Cci.Extensions
+namespace Microsoft.Cci.Extensions;
+
+public enum AccessorType
 {
-    public enum AccessorType
-    {
-        None,
-        EventAdder,
-        EventRemover,
-        PropertySetter,
-        PropertyGetter
-    }
+    None,
+    EventAdder,
+    EventRemover,
+    PropertySetter,
+    PropertyGetter
 }
