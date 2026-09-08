@@ -6,40 +6,39 @@ using System.Collections.Generic;
 using System.IO;
 using XliffTasks.Model;
 
-namespace XliffTasks.Tasks
+namespace XliffTasks.Tasks;
+
+public sealed class TranslateSource : XlfTask
 {
-    public sealed class TranslateSource : XlfTask
+    [Required]
+    public ITaskItem XlfFile { get; set; }
+
+    protected override void ExecuteCore()
     {
-        [Required]
-        public ITaskItem XlfFile { get; set; }
+        string sourcePath = XlfFile.GetMetadataOrThrow(MetadataKey.XlfSource);
+        string sourceFormat = XlfFile.GetMetadataOrThrow(MetadataKey.XlfSourceFormat);
+        string language = XlfFile.GetMetadataOrThrow(MetadataKey.XlfLanguage);
+        string translatedFullPath = XlfFile.GetMetadataOrThrow(MetadataKey.XlfTranslatedFullPath);
 
-        protected override void ExecuteCore()
+        TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(sourcePath, XlfFile.GetMetadata(MetadataKey.XlfSourceFormat));
+        XlfDocument xlfDocument = XlfTask.LoadXlfDocument(XlfFile.ItemSpec);
+
+        bool validationFailed = false;
+        xlfDocument.Validate(validationError =>
         {
-            string sourcePath = XlfFile.GetMetadataOrThrow(MetadataKey.XlfSource);
-            string sourceFormat = XlfFile.GetMetadataOrThrow(MetadataKey.XlfSourceFormat);
-            string language = XlfFile.GetMetadataOrThrow(MetadataKey.XlfLanguage);
-            string translatedFullPath = XlfFile.GetMetadataOrThrow(MetadataKey.XlfTranslatedFullPath);
+            validationFailed = true;
+            Log.LogErrorInFile(XlfFile.ItemSpec, validationError.LineNumber, validationError.Message);
+        });
 
-            TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(sourcePath, XlfFile.GetMetadata(MetadataKey.XlfSourceFormat));
-            XlfDocument xlfDocument = XlfTask.LoadXlfDocument(XlfFile.ItemSpec);
+        IReadOnlyDictionary<string, string> translations = validationFailed
+            ? new Dictionary<string, string>()
+            : xlfDocument.GetTranslations();
 
-            bool validationFailed = false;
-            xlfDocument.Validate(validationError =>
-            {
-                validationFailed = true;
-                Log.LogErrorInFile(XlfFile.ItemSpec, validationError.LineNumber, validationError.Message);
-            });
+        sourceDocument.Translate(translations);
 
-            IReadOnlyDictionary<string, string> translations = validationFailed
-                ? new Dictionary<string, string>()
-                : xlfDocument.GetTranslations();
+        Directory.CreateDirectory(Path.GetDirectoryName(translatedFullPath));
 
-            sourceDocument.Translate(translations);
-
-            Directory.CreateDirectory(Path.GetDirectoryName(translatedFullPath));
-
-            sourceDocument.RewriteRelativePathsToAbsolute(Path.GetFullPath(sourcePath));
-            sourceDocument.Save(translatedFullPath);
-        }
+        sourceDocument.RewriteRelativePathsToAbsolute(Path.GetFullPath(sourcePath));
+        sourceDocument.Save(translatedFullPath);
     }
 }

@@ -5,13 +5,12 @@ using System.Threading;
 using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Task = System.Threading.Tasks.Task;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed
-{
-    public interface IAssetPublisher
-    {
-        LocationType LocationType { get; }
+namespace Microsoft.DotNet.Build.Tasks.Feed;
 
-        Task PublishAssetAsync(string file, string blobPath, PushOptions options, SemaphoreSlim clientThrottle = null);
-    }
+public interface IAssetPublisher
+{
+    LocationType LocationType { get; }
+
+    Task PublishAssetAsync(string file, string blobPath, PushOptions options, SemaphoreSlim clientThrottle = null);
 }
 

@@ -13,219 +13,218 @@ using Azure.Core;
 
 
 
-namespace Microsoft.DotNet.Helix.Client
+namespace Microsoft.DotNet.Helix.Client;
+
+public partial interface ILogSearch
 {
-    public partial interface ILogSearch
+    Task DoBuildSearchAsync(
+        DateTimeOffset endDate,
+        Models.ResponseType responseType,
+        DateTimeOffset startDate,
+        string repository = default,
+        string searchString = default,
+        CancellationToken cancellationToken = default
+    );
+
+    Task DoTestLogSearchAsync(
+        DateTimeOffset endDate,
+        Models.ResponseType responseType,
+        DateTimeOffset startDate,
+        string repository = default,
+        string searchString = default,
+        CancellationToken cancellationToken = default
+    );
+
+}
+
+internal partial class LogSearch : IServiceOperations<HelixApi>, ILogSearch
+{
+    public LogSearch(HelixApi client)
     {
-        Task DoBuildSearchAsync(
-            DateTimeOffset endDate,
-            Models.ResponseType responseType,
-            DateTimeOffset startDate,
-            string repository = default,
-            string searchString = default,
-            CancellationToken cancellationToken = default
-        );
-
-        Task DoTestLogSearchAsync(
-            DateTimeOffset endDate,
-            Models.ResponseType responseType,
-            DateTimeOffset startDate,
-            string repository = default,
-            string searchString = default,
-            CancellationToken cancellationToken = default
-        );
-
+        Client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    internal partial class LogSearch : IServiceOperations<HelixApi>, ILogSearch
+    public HelixApi Client { get; }
+
+    partial void HandleFailedRequest(RestApiException ex);
+
+    partial void HandleFailedDoBuildSearchRequest(RestApiException ex);
+
+    public async Task DoBuildSearchAsync(
+        DateTimeOffset endDate,
+        Models.ResponseType responseType,
+        DateTimeOffset startDate,
+        string repository = default,
+        string searchString = default,
+        CancellationToken cancellationToken = default
+    )
     {
-        public LogSearch(HelixApi client)
+
+        if (responseType == default(Models.ResponseType))
         {
-            Client = client ?? throw new ArgumentNullException(nameof(client));
+            throw new ArgumentNullException(nameof(responseType));
         }
 
-        public HelixApi Client { get; }
+        const string apiVersion = "2019-06-17";
 
-        partial void HandleFailedRequest(RestApiException ex);
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/logs/search/build",
+            false);
 
-        partial void HandleFailedDoBuildSearchRequest(RestApiException ex);
-
-        public async Task DoBuildSearchAsync(
-            DateTimeOffset endDate,
-            Models.ResponseType responseType,
-            DateTimeOffset startDate,
-            string repository = default,
-            string searchString = default,
-            CancellationToken cancellationToken = default
-        )
+        if (!string.IsNullOrEmpty(repository))
         {
-
-            if (responseType == default(Models.ResponseType))
-            {
-                throw new ArgumentNullException(nameof(responseType));
-            }
-
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/logs/search/build",
-                false);
-
-            if (!string.IsNullOrEmpty(repository))
-            {
-                _url.AppendQuery("repository", Client.Serialize(repository));
-            }
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                _url.AppendQuery("searchString", Client.Serialize(searchString));
-            }
-            if (startDate != default(DateTimeOffset))
-            {
-                _url.AppendQuery("startDate", Client.Serialize(startDate));
-            }
-            if (endDate != default(DateTimeOffset))
-            {
-                _url.AppendQuery("endDate", Client.Serialize(endDate));
-            }
-            if (responseType != default(Models.ResponseType))
-            {
-                _url.AppendQuery("responseType", Client.Serialize(responseType));
-            }
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+            _url.AppendQuery("repository", Client.Serialize(repository));
+        }
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            _url.AppendQuery("searchString", Client.Serialize(searchString));
+        }
+        if (startDate != default(DateTimeOffset))
+        {
+            _url.AppendQuery("startDate", Client.Serialize(startDate));
+        }
+        if (endDate != default(DateTimeOffset))
+        {
+            _url.AppendQuery("endDate", Client.Serialize(endDate));
+        }
+        if (responseType != default(Models.ResponseType))
+        {
+            _url.AppendQuery("responseType", Client.Serialize(responseType));
+        }
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
 
 
-            using (var _req = Client.Pipeline.CreateRequest())
-            {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Get;
+        using (var _req = Client.Pipeline.CreateRequest())
+        {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Get;
 
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+            {
+                if (_res.Status < 200 || _res.Status >= 300)
                 {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnDoBuildSearchFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-
-                    return;
+                    await OnDoBuildSearchFailed(_req, _res).ConfigureAwait(false);
                 }
+
+
+                return;
             }
         }
+    }
 
-        internal async Task OnDoBuildSearchFailed(Request req, Response res)
+    internal async Task OnDoBuildSearchFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
         {
-            string content = null;
-            if (res.ContentStream != null)
+            using (var reader = new StreamReader(res.ContentStream))
             {
-                using (var reader = new StreamReader(res.ContentStream))
-                {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                }
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
             }
-
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedDoBuildSearchRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
         }
 
-        partial void HandleFailedDoTestLogSearchRequest(RestApiException ex);
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedDoBuildSearchRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
+    }
 
-        public async Task DoTestLogSearchAsync(
-            DateTimeOffset endDate,
-            Models.ResponseType responseType,
-            DateTimeOffset startDate,
-            string repository = default,
-            string searchString = default,
-            CancellationToken cancellationToken = default
-        )
+    partial void HandleFailedDoTestLogSearchRequest(RestApiException ex);
+
+    public async Task DoTestLogSearchAsync(
+        DateTimeOffset endDate,
+        Models.ResponseType responseType,
+        DateTimeOffset startDate,
+        string repository = default,
+        string searchString = default,
+        CancellationToken cancellationToken = default
+    )
+    {
+
+        if (responseType == default(Models.ResponseType))
         {
-
-            if (responseType == default(Models.ResponseType))
-            {
-                throw new ArgumentNullException(nameof(responseType));
-            }
-
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/logs/search/test",
-                false);
-
-            if (!string.IsNullOrEmpty(repository))
-            {
-                _url.AppendQuery("repository", Client.Serialize(repository));
-            }
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                _url.AppendQuery("searchString", Client.Serialize(searchString));
-            }
-            if (startDate != default(DateTimeOffset))
-            {
-                _url.AppendQuery("startDate", Client.Serialize(startDate));
-            }
-            if (endDate != default(DateTimeOffset))
-            {
-                _url.AppendQuery("endDate", Client.Serialize(endDate));
-            }
-            if (responseType != default(Models.ResponseType))
-            {
-                _url.AppendQuery("responseType", Client.Serialize(responseType));
-            }
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
-
-
-            using (var _req = Client.Pipeline.CreateRequest())
-            {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Get;
-
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
-                {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnDoTestLogSearchFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-
-                    return;
-                }
-            }
+            throw new ArgumentNullException(nameof(responseType));
         }
 
-        internal async Task OnDoTestLogSearchFailed(Request req, Response res)
+        const string apiVersion = "2019-06-17";
+
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/logs/search/test",
+            false);
+
+        if (!string.IsNullOrEmpty(repository))
         {
-            string content = null;
-            if (res.ContentStream != null)
-            {
-                using (var reader = new StreamReader(res.ContentStream))
-                {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                }
-            }
-
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedDoTestLogSearchRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
+            _url.AppendQuery("repository", Client.Serialize(repository));
         }
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            _url.AppendQuery("searchString", Client.Serialize(searchString));
+        }
+        if (startDate != default(DateTimeOffset))
+        {
+            _url.AppendQuery("startDate", Client.Serialize(startDate));
+        }
+        if (endDate != default(DateTimeOffset))
+        {
+            _url.AppendQuery("endDate", Client.Serialize(endDate));
+        }
+        if (responseType != default(Models.ResponseType))
+        {
+            _url.AppendQuery("responseType", Client.Serialize(responseType));
+        }
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+
+
+        using (var _req = Client.Pipeline.CreateRequest())
+        {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Get;
+
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+            {
+                if (_res.Status < 200 || _res.Status >= 300)
+                {
+                    await OnDoTestLogSearchFailed(_req, _res).ConfigureAwait(false);
+                }
+
+
+                return;
+            }
+        }
+    }
+
+    internal async Task OnDoTestLogSearchFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
+        {
+            using (var reader = new StreamReader(res.ContentStream))
+            {
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
+            }
+        }
+
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedDoTestLogSearchRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
     }
 }

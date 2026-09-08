@@ -11,107 +11,106 @@ using Microsoft.Cci.Mappings;
 using Microsoft.Cci.Differs;
 using System.Diagnostics.Contracts;
 
-namespace Microsoft.Cci.Traversers
+namespace Microsoft.Cci.Traversers;
+
+public class MappingsTypeMemberTraverser
 {
-    public class MappingsTypeMemberTraverser
+    private readonly MappingSettings _settings;
+
+    public MappingsTypeMemberTraverser(MappingSettings settings)
     {
-        private readonly MappingSettings _settings;
+        Contract.Requires(settings != null);
+        _settings = settings;
+    }
 
-        public MappingsTypeMemberTraverser(MappingSettings settings)
+    public MappingSettings Settings { get { return _settings; } }
+
+    public IMappingDifferenceFilter DiffFilter { get { return _settings.DiffFilter; } }
+
+    public virtual void Visit(AssemblySetMapping assemblySet)
+    {
+        if (this.Settings.GroupByAssembly)
         {
-            Contract.Requires(settings != null);
-            _settings = settings;
+            Visit(assemblySet.Assemblies);
         }
-
-        public MappingSettings Settings { get { return _settings; } }
-
-        public IMappingDifferenceFilter DiffFilter { get { return _settings.DiffFilter; } }
-
-        public virtual void Visit(AssemblySetMapping assemblySet)
+        else
         {
-            if (this.Settings.GroupByAssembly)
-            {
-                Visit(assemblySet.Assemblies);
-            }
-            else
-            {
-                Visit(assemblySet.Namespaces);
-            }
+            Visit(assemblySet.Namespaces);
         }
+    }
 
-        public virtual void Visit(IEnumerable<AssemblyMapping> assemblies)
-        {
-            assemblies = assemblies.Where(this.DiffFilter.Include);
-            assemblies = assemblies.OrderBy(GetAssemblyKey, StringComparer.OrdinalIgnoreCase);
+    public virtual void Visit(IEnumerable<AssemblyMapping> assemblies)
+    {
+        assemblies = assemblies.Where(this.DiffFilter.Include);
+        assemblies = assemblies.OrderBy(GetAssemblyKey, StringComparer.OrdinalIgnoreCase);
 
-            foreach (var assembly in assemblies)
-                Visit(assembly);
-        }
+        foreach (var assembly in assemblies)
+            Visit(assembly);
+    }
 
-        public virtual string GetAssemblyKey(AssemblyMapping assembly)
-        {
-            return assembly.Representative.Name.Value;
-        }
+    public virtual string GetAssemblyKey(AssemblyMapping assembly)
+    {
+        return assembly.Representative.Name.Value;
+    }
 
-        public virtual void Visit(AssemblyMapping assembly)
-        {
-            Visit(assembly.Namespaces);
-        }
+    public virtual void Visit(AssemblyMapping assembly)
+    {
+        Visit(assembly.Namespaces);
+    }
 
-        public virtual void Visit(IEnumerable<NamespaceMapping> namespaces)
-        {
-            namespaces = namespaces.Where(this.DiffFilter.Include);
-            namespaces = namespaces.OrderBy(GetNamespaceKey, StringComparer.OrdinalIgnoreCase);
+    public virtual void Visit(IEnumerable<NamespaceMapping> namespaces)
+    {
+        namespaces = namespaces.Where(this.DiffFilter.Include);
+        namespaces = namespaces.OrderBy(GetNamespaceKey, StringComparer.OrdinalIgnoreCase);
 
-            foreach (var ns in namespaces)
-                Visit(ns);
-        }
+        foreach (var ns in namespaces)
+            Visit(ns);
+    }
 
-        public virtual string GetNamespaceKey(NamespaceMapping mapping)
-        {
-            return mapping.Representative.UniqueId();
-        }
+    public virtual string GetNamespaceKey(NamespaceMapping mapping)
+    {
+        return mapping.Representative.UniqueId();
+    }
 
-        public virtual void Visit(NamespaceMapping ns)
-        {
-            Visit(ns.Types);
-        }
+    public virtual void Visit(NamespaceMapping ns)
+    {
+        Visit(ns.Types);
+    }
 
-        public virtual void Visit(IEnumerable<TypeMapping> types)
-        {
-            types = types.Where(this.DiffFilter.Include);
-            types = types.OrderBy(t => t.Representative, new TypeDefinitionComparer());
+    public virtual void Visit(IEnumerable<TypeMapping> types)
+    {
+        types = types.Where(this.DiffFilter.Include);
+        types = types.OrderBy(t => t.Representative, new TypeDefinitionComparer());
 
-            foreach (var type in types)
-                Visit(type);
-        }
+        foreach (var type in types)
+            Visit(type);
+    }
 
-        public virtual void Visit(TypeMapping type)
-        {
-            Visit(type.Fields);
-            Visit(type.Methods.Where(m => ((IMethodDefinition)m.Representative).IsConstructor));
-            Visit(type.Properties);
-            Visit(type.Events);
-            Visit(type.Methods.Where(m => !((IMethodDefinition)m.Representative).IsConstructor));
-            Visit((IEnumerable<TypeMapping>)type.NestedTypes);
-        }
+    public virtual void Visit(TypeMapping type)
+    {
+        Visit(type.Fields);
+        Visit(type.Methods.Where(m => ((IMethodDefinition)m.Representative).IsConstructor));
+        Visit(type.Properties);
+        Visit(type.Events);
+        Visit(type.Methods.Where(m => !((IMethodDefinition)m.Representative).IsConstructor));
+        Visit((IEnumerable<TypeMapping>)type.NestedTypes);
+    }
 
-        public virtual void Visit(IEnumerable<MemberMapping> members)
-        {
-            members = members.Where(this.DiffFilter.Include);
-            members = members.OrderBy(GetMemberKey, StringComparer.OrdinalIgnoreCase);
+    public virtual void Visit(IEnumerable<MemberMapping> members)
+    {
+        members = members.Where(this.DiffFilter.Include);
+        members = members.OrderBy(GetMemberKey, StringComparer.OrdinalIgnoreCase);
 
-            foreach (var member in members)
-                Visit(member);
-        }
+        foreach (var member in members)
+            Visit(member);
+    }
 
-        public virtual string GetMemberKey(MemberMapping member)
-        {
-            return MemberHelper.GetMemberSignature(member.Representative, NameFormattingOptions.Signature | NameFormattingOptions.TypeParameters | NameFormattingOptions.OmitContainingType);
-        }
+    public virtual string GetMemberKey(MemberMapping member)
+    {
+        return MemberHelper.GetMemberSignature(member.Representative, NameFormattingOptions.Signature | NameFormattingOptions.TypeParameters | NameFormattingOptions.OmitContainingType);
+    }
 
-        public virtual void Visit(MemberMapping member)
-        {
-        }
+    public virtual void Visit(MemberMapping member)
+    {
     }
 }

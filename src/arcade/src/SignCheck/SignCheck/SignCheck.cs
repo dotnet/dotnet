@@ -4,20 +4,19 @@
 using System;
 using SignCheckTask;
 
-namespace SignCheck
+namespace SignCheck;
+
+class SignCheck
 {
-    class SignCheck
+    public static int Main(string[] args)
     {
-        public static int Main(string[] args)
+        // Exit code 3 for help output
+        int retVal = 3;
+        var sc = new SignCheckTask.SignCheck(args);
+        if ((sc.Options != null) && (!sc.HasArgErrors))
         {
-            // Exit code 3 for help output
-            int retVal = 3;
-            var sc = new SignCheckTask.SignCheck(args);
-            if ((sc.Options != null) && (!sc.HasArgErrors))
-            {
-                retVal = sc.Run();
-            }
-            return retVal;
+            retVal = sc.Run();
         }
+        return retVal;
     }
 }

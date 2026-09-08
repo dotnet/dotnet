@@ -18,46 +18,47 @@ using Xunit.Abstractions;
 #endif
 using Xunit.Sdk;
 
-namespace Microsoft.DotNet.XUnitExtensions
+namespace Microsoft.DotNet.XUnitExtensions;
+
+public class ConditionalFactDiscoverer : FactDiscoverer
 {
-    public class ConditionalFactDiscoverer : FactDiscoverer
-    {
 #if !USES_XUNIT_3
-        public ConditionalFactDiscoverer(IMessageSink diagnosticMessageSink) : base(diagnosticMessageSink) { }
+    public ConditionalFactDiscoverer(IMessageSink diagnosticMessageSink) : base(diagnosticMessageSink) { }
 #endif
 
 #if USES_XUNIT_3
-        protected override IXunitTestCase CreateTestCase(ITestFrameworkDiscoveryOptions discoveryOptions, IXunitTestMethod testMethod, IFactAttribute factAttribute)
+    protected override IXunitTestCase CreateTestCase(ITestFrameworkDiscoveryOptions discoveryOptions, IXunitTestMethod testMethod, IFactAttribute factAttribute)
 #else
-        protected override IXunitTestCase CreateTestCase(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
+    protected override IXunitTestCase CreateTestCase(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IAttributeInfo factAttribute)
+#endif
+    {
+#if USES_XUNIT_3
+        var conditionalFactAttribute = (ConditionalFactAttribute)factAttribute;
+        object[] constructorArgs = conditionalFactAttribute.CalleeType is null
+            ? [conditionalFactAttribute.ConditionMemberNames]
+            : [conditionalFactAttribute.CalleeType, conditionalFactAttribute.ConditionMemberNames];
+
+        if (ConditionalTestDiscoverer.TryEvaluateSkipConditions(discoveryOptions, testMethod, constructorArgs, out string skipReason, out ExecutionErrorTestCase errorTestCase))
+#else
+        if (ConditionalTestDiscoverer.TryEvaluateSkipConditions(discoveryOptions, DiagnosticMessageSink, testMethod, factAttribute.GetConstructorArguments().ToArray(), out string skipReason, out ExecutionErrorTestCase errorTestCase))
 #endif
         {
 #if USES_XUNIT_3
-            var conditionalFactAttribute = (ConditionalFactAttribute)factAttribute;
-            object[] constructorArgs = conditionalFactAttribute.CalleeType is null
-                ? [conditionalFactAttribute.ConditionMemberNames]
-                : [conditionalFactAttribute.CalleeType, conditionalFactAttribute.ConditionMemberNames];
+            var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, factAttribute);
 
-            if (ConditionalTestDiscoverer.TryEvaluateSkipConditions(discoveryOptions, testMethod, constructorArgs, out string skipReason, out ExecutionErrorTestCase errorTestCase))
+            return skipReason != null
+                ? (IXunitTestCase)new SkippedTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, details.SkipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout)
+                : new SkippedFactTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, details.SkipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout); // Test case skippable at runtime.
 #else
-            if (ConditionalTestDiscoverer.TryEvaluateSkipConditions(discoveryOptions, DiagnosticMessageSink, testMethod, factAttribute.GetConstructorArguments().ToArray(), out string skipReason, out ExecutionErrorTestCase errorTestCase))
+            return skipReason != null
+                ? (IXunitTestCase) new SkippedTestCase(skipReason, DiagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)
+                : new SkippedFactTestCase(DiagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod); // Test case skippable at runtime.
 #endif
-            {
-#if USES_XUNIT_3
-                var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, factAttribute);
-
-                return skipReason != null
-                    ? (IXunitTestCase)new SkippedTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, details.SkipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout)
-                    : new SkippedFactTestCase(details.ResolvedTestMethod, details.TestCaseDisplayName, details.UniqueID, details.Explicit, details.SkipExceptions, details.SkipReason, details.SkipType, details.SkipUnless, details.SkipWhen, testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase), timeout: details.Timeout); // Test case skippable at runtime.
-#else
-                return skipReason != null
-                    ? (IXunitTestCase) new SkippedTestCase(skipReason, DiagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod)
-                    : new SkippedFactTestCase(DiagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod); // Test case skippable at runtime.
-#endif
-            }
-
-            return errorTestCase;
         }
+
+        return errorTestCase;
     }
 }
+
 #endif
+
