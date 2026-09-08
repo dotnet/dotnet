@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "path": "eng/skill-evals/evaluation-tools/package-lock.json",
+      "detected_license_expression": "mit AND unknown-license-reference AND apache-2.0 AND isc AND bsd-zero"
+    }
+  ]
+}
