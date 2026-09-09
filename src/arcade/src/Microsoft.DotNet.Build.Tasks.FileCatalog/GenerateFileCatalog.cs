@@ -13,8 +13,12 @@ namespace Microsoft.DotNet.Build.Tasks.FileCatalog;
 /// (no <c>makecat.exe</c> / Windows SDK required). The catalog is unsigned and ready to be
 /// Authenticode-signed by the Arcade signing infrastructure (via <c>FileExtensionSignInfo</c>).
 /// </summary>
-public class GenerateFileCatalog : Task
+[MSBuildMultiThreadableTask]
+public class GenerateFileCatalog : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>The files to include in the catalog.</summary>
     [Required]
     public ITaskItem[] Files { get; set; } = Array.Empty<ITaskItem>();
@@ -31,15 +35,17 @@ public class GenerateFileCatalog : Task
             return false;
         }
 
+        AbsolutePath outputPath = TaskEnvironment.GetAbsolutePath(OutputPath);
+
         if (Files is null || Files.Length == 0)
         {
             Log.LogWarning("No files were provided - skipping catalog generation for '{0}'.", OutputPath);
 
             // Remove any stale catalog from a previous run so incremental builds don't
             // package a catalog describing files that are no longer present.
-            if (File.Exists(OutputPath))
+            if (File.Exists(outputPath))
             {
-                File.Delete(OutputPath);
+                File.Delete(outputPath);
             }
 
             return true;
@@ -56,22 +62,23 @@ public class GenerateFileCatalog : Task
                 path = file.ItemSpec;
             }
 
-            if (!File.Exists(path))
+            AbsolutePath filePath = TaskEnvironment.GetAbsolutePath(path);
+            if (!File.Exists(filePath))
             {
                 Log.LogError("File not found: '{0}'.", path);
                 return false;
             }
 
-            builder.AddFile(path);
+            builder.AddFile(new FileInfo(filePath));
         }
 
-        string? directory = Path.GetDirectoryName(OutputPath);
+        string? directory = Path.GetDirectoryName(outputPath);
         if (!string.IsNullOrEmpty(directory))
         {
             Directory.CreateDirectory(directory);
         }
 
-        builder.WriteTo(OutputPath);
+        builder.WriteTo(new FileInfo(outputPath));
         Log.LogMessage(MessageImportance.High, "Generated catalog with {0} file(s): {1}", Files.Length, OutputPath);
         return !Log.HasLoggedErrors;
     }

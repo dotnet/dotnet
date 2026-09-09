@@ -15,8 +15,12 @@ namespace Microsoft.DotNet.PackageTesting;
 /// <summary>
 /// Verifies no type overlap in a set of DLLs
 /// </summary>
-public class VerifyTypes : Task
+[MSBuildMultiThreadableTask]
+public class VerifyTypes : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// Sources to scan.  Items can be directories or files.
     /// </summary>
@@ -95,7 +99,7 @@ public class VerifyTypes : Task
 
     private void AddSourceFile(string file)
     {
-        var assemblyInfo = AssemblyInfo.GetAssemblyInfo(file);
+        var assemblyInfo = AssemblyInfo.GetAssemblyInfo(TaskEnvironment.GetAbsolutePath(file));
 
         if (assemblyInfo != null)
         {
@@ -145,7 +149,7 @@ public class VerifyTypes : Task
         public string Name { get; }
         public string[] Types { get; }
 
-        public static AssemblyInfo GetAssemblyInfo(string path)
+        public static AssemblyInfo GetAssemblyInfo(AbsolutePath path)
         {
             try
             {

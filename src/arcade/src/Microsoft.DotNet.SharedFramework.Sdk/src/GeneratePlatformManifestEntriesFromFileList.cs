@@ -11,8 +11,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk;
 
-public class GeneratePlatformManifestEntriesFromFileList : Task
+[MSBuildMultiThreadableTask]
+public class GeneratePlatformManifestEntriesFromFileList : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     [Required]
     public ITaskItem[] Files { get; set; }
 
@@ -24,11 +28,12 @@ public class GeneratePlatformManifestEntriesFromFileList : Task
         var entries = new List<PlatformManifestEntry>();
         foreach (var file in Files)
         {
+            FileInfo originalFilePath = new(TaskEnvironment.GetAbsolutePath(file.GetMetadata("OriginalFilePath")));
             entries.Add(new PlatformManifestEntry
             {
                 Name = file.ItemSpec,
-                AssemblyVersion = FileUtilities.GetAssemblyName(file.GetMetadata("OriginalFilePath"))?.Version.ToString() ?? string.Empty,
-                FileVersion = FileUtilities.GetFileVersion(file.GetMetadata("OriginalFilePath"))?.ToString() ?? string.Empty
+                AssemblyVersion = FileUtilities.GetAssemblyName(originalFilePath)?.Version.ToString() ?? string.Empty,
+                FileVersion = FileUtilities.GetFileVersion(originalFilePath)?.ToString() ?? string.Empty
             });
         }
 

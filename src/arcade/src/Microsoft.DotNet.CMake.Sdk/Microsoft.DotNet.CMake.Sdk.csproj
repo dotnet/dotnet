@@ -14,5 +14,8 @@
     <PackageReference Include="Microsoft.Build.Framework" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Common\Internal\AbsolutePathExtensions.cs" Link="Internal\AbsolutePathExtensions.cs" />
+  </ItemGroup>
 
 </Project>

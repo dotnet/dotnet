@@ -10,9 +10,13 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk;
 
-public class ValidateFileVersions : Task
+[MSBuildMultiThreadableTask]
+public class ValidateFileVersions : Task, IMultiThreadableTask
 {
     private static readonly Version ZeroVersion = new Version(0, 0, 0, 0);
+
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
     [Required]
     public ITaskItem[] Files { get; set; }
@@ -91,9 +95,9 @@ public class ValidateFileVersions : Task
 
     FileVersionData GetFileVersionData(ITaskItem file)
     {
-        var filePath = file.GetMetadata("FullPath");
+        FileInfo filePath = new(TaskEnvironment.GetAbsolutePath(file.ItemSpec));
 
-        if (File.Exists(filePath))
+        if (filePath.Exists)
         {
             return new FileVersionData()
             {

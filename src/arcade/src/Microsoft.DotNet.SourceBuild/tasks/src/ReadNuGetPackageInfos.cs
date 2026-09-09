@@ -10,8 +10,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks;
 
-public class ReadNuGetPackageInfos : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public class ReadNuGetPackageInfos : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     [Required]
     public string[] PackagePaths { get; set; }
 
@@ -28,7 +32,8 @@ public class ReadNuGetPackageInfos : Microsoft.Build.Utilities.Task
         PackageInfoItems = PackagePaths
             .Select(p =>
             {
-                PackageIdentity identity = ReadIdentity(p);
+                // Read through the resolved path, but keep the original spec as the item identity.
+                PackageIdentity identity = ReadIdentity(TaskEnvironment.GetAbsolutePath(p));
                 return new TaskItem(
                     p,
                     new Dictionary<string, string>

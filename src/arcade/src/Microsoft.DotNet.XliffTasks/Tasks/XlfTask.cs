@@ -5,10 +5,11 @@ using Microsoft.Build.Utilities;
 using System;
 using System.IO;
 using XliffTasks.Model;
+using Microsoft.Build.Framework;
 
 namespace XliffTasks.Tasks;
 
-public abstract class XlfTask : Task
+public abstract class XlfTask : Task, IMultiThreadableTask
 {
     /// <summary>
     /// The language of the neutral (language-agnostic) .xlf file, which is handed to the
@@ -23,6 +24,9 @@ public abstract class XlfTask : Task
     internal XlfTask()
     {
     }
+
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
     public sealed override bool Execute()
     {
@@ -40,7 +44,7 @@ public abstract class XlfTask : Task
 
     protected abstract void ExecuteCore();
 
-    internal static TranslatableDocument LoadSourceDocument(string path, string format)
+    internal static TranslatableDocument LoadSourceDocument(AbsolutePath path, string format)
     {
         TranslatableDocument document;
 
@@ -72,17 +76,17 @@ public abstract class XlfTask : Task
             };
         }
 
-        document.Load(path);
+        document.Load(new FileInfo(path));
         return document;
     }
 
-    internal static XlfDocument LoadXlfDocument(string path, string language = null, bool createIfNonExistent = false)
+    internal static XlfDocument LoadXlfDocument(AbsolutePath path, string language = null, bool createIfNonExistent = false)
     {
         XlfDocument document = new();
 
         if (File.Exists(path))
         {
-            document.Load(path);
+            document.Load(new FileInfo(path));
         }
         else if (createIfNonExistent)
         {

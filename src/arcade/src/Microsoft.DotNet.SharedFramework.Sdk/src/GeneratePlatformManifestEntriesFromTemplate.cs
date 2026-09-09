@@ -10,8 +10,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk;
 
-public class GeneratePlatformManifestEntriesFromTemplate : Task
+[MSBuildMultiThreadableTask]
+public class GeneratePlatformManifestEntriesFromTemplate : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     [Required]
     public ITaskItem[] PlatformManifestEntryTemplates { get; set; }
 
@@ -35,11 +39,12 @@ public class GeneratePlatformManifestEntriesFromTemplate : Task
             {
                 // This file in the platform manifest template exists on this platform.
                 // Use the information from the file itself in its entry.
+                FileInfo existingFilePath = new(TaskEnvironment.GetAbsolutePath(existingFile.ItemSpec));
                 entries.Add(new PlatformManifestEntry
                 {
                     Name = entryTemplate.ItemSpec,
-                    AssemblyVersion = FileUtilities.GetAssemblyName(existingFile.ItemSpec)?.Version.ToString() ?? string.Empty,
-                    FileVersion = FileUtilities.GetFileVersion(existingFile.ItemSpec)?.ToString() ?? string.Empty
+                    AssemblyVersion = FileUtilities.GetAssemblyName(existingFilePath)?.Version.ToString() ?? string.Empty,
+                    FileVersion = FileUtilities.GetFileVersion(existingFilePath)?.ToString() ?? string.Empty
                 });
             }
             else

@@ -69,7 +69,7 @@
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.29.2" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
-    <PackageVersion Include="AwesomeAssertions" Version="9.5.0" />
+    <PackageVersion Include="AwesomeAssertions" Version="9.6.0" />
     <PackageVersion Include="Handlebars.Net" Version="2.4.3" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="10.0.0" />
     <PackageVersion Include="LZMA-SDK" Version="22.1.1" />
@@ -78,7 +78,7 @@
     <PackageVersion Include="Microsoft.Data.Services.Client" Version="5.8.5" />
     <PackageVersion Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.741601" />
     <PackageVersion Include="Microsoft.Diagnostics.Runtime" Version="4.1.737102" />
-    <PackageVersion Include="Microsoft.Identity.Client" Version="4.86.1" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.88.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="3.10.2" />
     <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.10.2" />
     <PackageVersion Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" />

@@ -32,8 +32,8 @@ internal abstract class TranslatableNode
     public string Note { get; }
 
     /// <summary>
-    /// Mutates the parent document such that subsequent calls to <see cref="TranslatableDocument.Save(string)" />
+    /// Mutates the parent document such that subsequent calls to <see cref="TranslatableDocument.Save(System.IO.FileInfo)" />
     /// will replace <see cref="Source"/> with <paramref name="translation"/> in this node.
-    /// <summary>
+    /// </summary>
     public abstract void Translate(string translation);
 }

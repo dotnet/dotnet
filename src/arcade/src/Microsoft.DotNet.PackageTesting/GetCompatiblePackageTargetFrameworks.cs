@@ -10,10 +10,14 @@ using System.Linq;
 
 namespace Microsoft.DotNet.PackageTesting;
 
-public class GetCompatiblePackageTargetFrameworks : Task
+[MSBuildMultiThreadableTask]
+public class GetCompatiblePackageTargetFrameworks : Task, IMultiThreadableTask
 {
     private readonly List<NuGetFramework> allTargetFrameworks = new();
     private readonly Dictionary<NuGetFramework, HashSet<NuGetFramework>> packageTfmMapping = new();
+
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
     [Required]
     public string[] PackagePaths { get; set; }
@@ -38,7 +42,7 @@ public class GetCompatiblePackageTargetFrameworks : Task
 
             foreach (var packagePath in PackagePaths)
             {
-                Package package = NupkgParser.CreatePackageObject(packagePath);
+                Package package = NupkgParser.CreatePackageObject(TaskEnvironment.GetAbsolutePath(packagePath));
 
                 IEnumerable<NuGetFramework> testFrameworks = GetTestFrameworks(package, minDotnetTargetFramework);
                 testProjects.AddRange(CreateItemFromTestFramework(package.PackageId, package.Version, testFrameworks));

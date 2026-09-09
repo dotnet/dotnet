@@ -12,8 +12,12 @@ using System.Linq;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk;
 
-public class GenerateSharedFrameworkDepsFile : Task
+[MSBuildMultiThreadableTask]
+public class GenerateSharedFrameworkDepsFile : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     [Required]
     public string TargetFrameworkMoniker { get; set; }
 
@@ -59,8 +63,9 @@ public class GenerateSharedFrameworkDepsFile : Task
             }
             string filePath = file.ItemSpec;
             string fileName = Path.GetFileName(filePath);
-            string fileVersion = FileUtilities.GetFileVersion(filePath)?.ToString() ?? string.Empty;
-            Version assemblyVersion = FileUtilities.GetAssemblyName(filePath)?.Version;
+            FileInfo absoluteFilePath = new(TaskEnvironment.GetAbsolutePath(filePath));
+            string fileVersion = FileUtilities.GetFileVersion(absoluteFilePath)?.ToString() ?? string.Empty;
+            Version assemblyVersion = FileUtilities.GetAssemblyName(absoluteFilePath)?.Version;
             string cultureMaybe = file.GetMetadata("Culture");
             if (!string.IsNullOrEmpty(cultureMaybe))
             {
@@ -96,7 +101,12 @@ public class GenerateSharedFrameworkDepsFile : Task
 
         if (IncludeFallbacksInDepsFile)
         {
-            RuntimeGraph runtimeGraph = JsonRuntimeFormat.ReadRuntimeGraph(RuntimeIdentifierGraph);
+            // RuntimeIdentifierGraph is optional; only resolve it when set so an unset value keeps
+            // producing the existing error from ReadRuntimeGraph rather than throwing from GetAbsolutePath.
+            string runtimeIdentifierGraphPath = string.IsNullOrEmpty(RuntimeIdentifierGraph)
+                ? RuntimeIdentifierGraph
+                : TaskEnvironment.GetAbsolutePath(RuntimeIdentifierGraph);
+            RuntimeGraph runtimeGraph = JsonRuntimeFormat.ReadRuntimeGraph(runtimeIdentifierGraphPath);
             runtimeFallbackGraph = runtimeGraph.Runtimes
                     .Select(runtimeDict => runtimeGraph.ExpandRuntime(runtimeDict.Key))
                     .Where(expansion => expansion.Contains(RuntimeIdentifier))
@@ -114,16 +124,17 @@ public class GenerateSharedFrameworkDepsFile : Task
         var depsFilePath = Path.Combine(IntermediateOutputPath, depsFileName);
         try
         {
-            using var depsStream = File.Create(depsFilePath);
+            using var depsStream = File.Create(TaskEnvironment.GetAbsolutePath(depsFilePath));
             new DependencyContextWriter().Write(context, depsStream);
             GeneratedDepsFile = new TaskItem(depsFilePath);
         }
         catch (Exception ex)
         {
             // If there is a problem, ensure we don't write a partially complete version to disk.
-            if (File.Exists(depsFilePath))
+            AbsolutePath absoluteDepsFilePath = TaskEnvironment.GetAbsolutePath(depsFilePath);
+            if (File.Exists(absoluteDepsFilePath))
             {
-                File.Delete(depsFilePath);
+                File.Delete(absoluteDepsFilePath);
             }
             Log.LogErrorFromException(ex, false);
             return false;

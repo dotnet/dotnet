@@ -13,11 +13,15 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.DotNet.SourceBuild.Tasks;
 
-public class WriteBuildOutputProps : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public class WriteBuildOutputProps : Task, IMultiThreadableTask
 {
     private static readonly Regex InvalidElementNameCharRegex = new Regex(@"(^|[^A-Za-z0-9])(?<FirstPartChar>.)");
 
     public const string CreationTimePropertyName = "BuildOutputPropsCreationTime";
+
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
     [Required]
     public ITaskItem[] NuGetPackages { get; set; }
@@ -65,16 +69,21 @@ public class WriteBuildOutputProps : Microsoft.Build.Utilities.Task
             .ToArray();
 
         var additionalAssets = (AdditionalAssetDirs ?? new string[0])
-            .Where(Directory.Exists)
-            .Where(dir => Directory.GetDirectories(dir).Count() > 0)
+            // Whitespace has to be filtered out before resolving: Windows path normalization trims trailing
+            // spaces, so a whitespace-only entry would resolve to the project directory itself and be picked
+            // up as a real asset directory. Unresolved, Directory.Exists simply returned false for it.
+            .Where(dir => !string.IsNullOrWhiteSpace(dir))
+            .Select(dir => TaskEnvironment.GetAbsolutePath(dir))
+            .Where(dir => Directory.Exists(dir))
+            .Where(dir => Directory.EnumerateDirectories(dir).Any())
             .Select(dir => new {
                 Name = new DirectoryInfo(dir).Name + "Version",
-                Version = new DirectoryInfo(Directory.EnumerateDirectories(dir).OrderBy(s => s).Last()).Name
+                Version = new DirectoryInfo(TaskEnvironment.GetAbsolutePath(Directory.EnumerateDirectories(dir).OrderBy(s => s).Last())).Name
             }).ToArray();
 
-        Directory.CreateDirectory(Path.GetDirectoryName(OutputPath));
+        Directory.CreateDirectory(Path.GetDirectoryName(TaskEnvironment.GetAbsolutePath(OutputPath)));
 
-        using (var outStream = File.Open(OutputPath, FileMode.Create))
+        using (var outStream = File.Open(TaskEnvironment.GetAbsolutePath(OutputPath), FileMode.Create))
         using (var sw = new StreamWriter(outStream, new UTF8Encoding(false)))
         {
             sw.WriteLine(@"<?xml version=""1.0"" encoding=""utf-8""?>");

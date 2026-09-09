@@ -15,8 +15,12 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
 /// Calculates the SessionConfiguration to be used in .runsettings for OptProf training 
 /// based on given OptProf.json configuration and VS bootstrapper information.
 /// </summary>
-public sealed class GetRunSettingsSessionConfiguration : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public sealed class GetRunSettingsSessionConfiguration : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// Absolute path to the OptProf.json config file.
     /// </summary>
@@ -46,8 +50,8 @@ public sealed class GetRunSettingsSessionConfiguration : Microsoft.Build.Utiliti
         try
         {
             var profilingInputsDropName = GetProfilingInputsDropName(ProductDropName);
-            var buildDropName = GetTestsDropName(File.ReadAllText(BootstrapperInfoPath, Encoding.UTF8));
-            var (testContainersString, testCaseFilterString) = GetTestContainersAndFilters(File.ReadAllText(ConfigurationFile, Encoding.UTF8), ConfigurationFile);
+            var buildDropName = GetTestsDropName(File.ReadAllText(TaskEnvironment.GetAbsolutePath(BootstrapperInfoPath), Encoding.UTF8));
+            var (testContainersString, testCaseFilterString) = GetTestContainersAndFilters(File.ReadAllText(TaskEnvironment.GetAbsolutePath(ConfigurationFile), Encoding.UTF8), ConfigurationFile);
 
             SessionConfiguration = 
 $@"<TestStores>

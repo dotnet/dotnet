@@ -7,6 +7,7 @@ using XliffTasks.Model;
 
 namespace XliffTasks.Tasks;
 
+[MSBuildMultiThreadableTask]
 public sealed class UpdateXlf : XlfTask
 {
     [Required]
@@ -31,19 +32,22 @@ public sealed class UpdateXlf : XlfTask
             string sourcePath = item.ItemSpec;
             string sourceDocumentPath = item.GetMetadataOrDefault(MetadataKey.SourceDocumentPath, item.ItemSpec);
             string sourceFormat = item.GetMetadataOrThrow(MetadataKey.XlfSourceFormat);
-            TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(sourcePath, sourceFormat);
+            TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(TaskEnvironment.GetAbsolutePath(sourcePath), sourceFormat);
             string sourceDocumentId = XlfTask.GetSourceDocumentId(sourcePath);
 
             foreach (string language in Languages)
             {
                 string xlfPath = XlfTask.GetXlfPath(sourceDocumentPath, language);
+                AbsolutePath absoluteXlfPath = TaskEnvironment.GetAbsolutePath(xlfPath);
                 XlfDocument xlfDocument;
 
                 try
                 {
-                    xlfDocument = XlfTask.LoadXlfDocument(xlfPath, language, createIfNonExistent: AllowModification);
+                    xlfDocument = XlfTask.LoadXlfDocument(absoluteXlfPath, language, createIfNonExistent: AllowModification);
                 }
-                catch (FileNotFoundException fileNotFoundEx) when (fileNotFoundEx.FileName == xlfPath)
+                // Document.Load opens the file through FileInfo.FullName, which canonicalizes it,
+                // so compare against the canonical form rather than the raw absolute path.
+                catch (FileNotFoundException fileNotFoundEx) when (fileNotFoundEx.FileName == absoluteXlfPath.GetCanonicalForm().Value)
                 {
                     Release.Assert(!AllowModification);
                     throw new BuildErrorException($"'{xlfPath}' for '{sourcePath}' does not exist. {HowToUpdate}");
@@ -68,8 +72,8 @@ public sealed class UpdateXlf : XlfTask
                     throw new BuildErrorException($"'{xlfPath}' is out-of-date with '{sourcePath}'. {HowToUpdate}");
                 }
 
-                Directory.CreateDirectory(Path.GetDirectoryName(xlfPath));
-                xlfDocument.Save(xlfPath);
+                Directory.CreateDirectory(Path.GetDirectoryName(absoluteXlfPath));
+                xlfDocument.Save(new FileInfo(absoluteXlfPath));
             }
         }
     }

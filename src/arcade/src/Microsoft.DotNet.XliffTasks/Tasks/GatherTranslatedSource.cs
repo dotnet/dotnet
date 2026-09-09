@@ -8,6 +8,7 @@ using Microsoft.Build.Utilities;
 
 namespace XliffTasks.Tasks;
 
+[MSBuildMultiThreadableTask]
 public sealed class GatherTranslatedSource : XlfTask
 {
     [Required]
@@ -103,13 +104,15 @@ public sealed class GatherTranslatedSource : XlfTask
         }
     }
 
-    private static void AdjustDependentUpon(ITaskItem xlf, ITaskItem output)
+    private void AdjustDependentUpon(ITaskItem xlf, ITaskItem output)
     {
         string dependentUpon = xlf.GetMetadata(MetadataKey.DependentUpon);
         if (!string.IsNullOrEmpty(dependentUpon))
         {
             string sourceDirectory = Path.GetDirectoryName(xlf.GetMetadataOrThrow(MetadataKey.XlfSource));
-            dependentUpon = Path.GetFullPath(Path.Combine(sourceDirectory, dependentUpon));
+            // Combining a directory with a relative DependentUpon routinely produces ".." segments
+            // that Path.GetFullPath used to resolve before this metadata was emitted.
+            dependentUpon = TaskEnvironment.GetAbsolutePath(Path.Combine(sourceDirectory, dependentUpon)).GetCanonicalForm();
             output.SetMetadata(MetadataKey.DependentUpon, dependentUpon);
         }
     }

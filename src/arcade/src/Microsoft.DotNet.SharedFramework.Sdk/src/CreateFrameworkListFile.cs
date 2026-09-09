@@ -13,8 +13,12 @@ using System.Xml.Linq;
 
 namespace Microsoft.DotNet.SharedFramework.Sdk;
 
-public class CreateFrameworkListFile : Task
+[MSBuildMultiThreadableTask]
+public class CreateFrameworkListFile : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// Files to extract basic information from and include in the list.
     /// </summary>
@@ -78,18 +82,23 @@ public class CreateFrameworkListFile : Task
 
         foreach (var f in Files
             .Where(IsTargetPathIncluded)
-            .Select(item => new
+            .Select(item =>
             {
-                Item = item,
-                Filename = Path.GetFileName(item.ItemSpec),
-                TargetPath = item.GetMetadata("TargetPath"),
-                AssemblyName = FileUtilities.GetAssemblyName(item.ItemSpec),
-                FileVersion = FileUtilities.GetFileVersion(item.ItemSpec),
-                IsNative = item.GetMetadata("IsNative") == "true",
-                IsSymbolFile = item.GetMetadata("IsSymbolFile") == "true",
-                IsPgoData = item.GetMetadata("IsPgoData") == "true",
-                IsResourceFile = item.ItemSpec
-                    .EndsWith(".resources.dll", StringComparison.OrdinalIgnoreCase)
+                FileInfo itemPath = new(TaskEnvironment.GetAbsolutePath(item.ItemSpec));
+
+                return new
+                {
+                    Item = item,
+                    Filename = Path.GetFileName(item.ItemSpec),
+                    TargetPath = item.GetMetadata("TargetPath"),
+                    AssemblyName = FileUtilities.GetAssemblyName(itemPath),
+                    FileVersion = FileUtilities.GetFileVersion(itemPath),
+                    IsNative = item.GetMetadata("IsNative") == "true",
+                    IsSymbolFile = item.GetMetadata("IsSymbolFile") == "true",
+                    IsPgoData = item.GetMetadata("IsPgoData") == "true",
+                    IsResourceFile = item.ItemSpec
+                        .EndsWith(".resources.dll", StringComparison.OrdinalIgnoreCase)
+                };
             })
             .Where(f =>
                 !f.IsSymbolFile &&
@@ -257,8 +266,8 @@ public class CreateFrameworkListFile : Task
             Log.LogError($"Classification matches no files: {unused}");
         }
 
-        Directory.CreateDirectory(Path.GetDirectoryName(TargetFile));
-        File.WriteAllText(TargetFile, frameworkManifest.ToString());
+        Directory.CreateDirectory(Path.GetDirectoryName(TaskEnvironment.GetAbsolutePath(TargetFile)));
+        File.WriteAllText(TaskEnvironment.GetAbsolutePath(TargetFile), frameworkManifest.ToString());
 
         return !Log.HasLoggedErrors;
     }

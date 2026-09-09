@@ -24,7 +24,7 @@ internal static class NuGetVersionUpdater
     {
         public Package Package { get; }
         public string Id { get; }
-        public string TempPathOpt { get; }
+        public FileInfo TempPathOpt { get; }
         public SemanticVersion OldVersion { get; }
         public SemanticVersion NewVersion { get; }
 
@@ -37,7 +37,7 @@ internal static class NuGetVersionUpdater
             string id,
             SemanticVersion oldVersion,
             SemanticVersion newVersion,
-            string tempPathOpt,
+            FileInfo tempPathOpt,
             Stream specificationStream,
             XDocument specificationXml,
             string nuspecXmlns)
@@ -54,22 +54,13 @@ internal static class NuGetVersionUpdater
     }
 
     public static void Run(
-        IEnumerable<string> packagePaths,
-        string outDirectoryOpt,
+        IEnumerable<FileInfo> packagePaths,
+        DirectoryInfo outDirectoryOpt,
         VersionTranslation translation,
         bool exactVersions,
         Func<string, string, string, bool> allowPreReleaseDependency = null)
     {
-        string tempDirectoryOpt;
-        if (outDirectoryOpt != null)
-        {
-            tempDirectoryOpt = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            Directory.CreateDirectory(tempDirectoryOpt);
-        }
-        else
-        {
-            tempDirectoryOpt = null;
-        }
+        DirectoryInfo tempDirectoryOpt = outDirectoryOpt != null ? Directory.CreateTempSubdirectory() : null;
 
         var packages = new Dictionary<string, PackageInfo>();
         try
@@ -92,30 +83,30 @@ internal static class NuGetVersionUpdater
 
             if (tempDirectoryOpt != null)
             {
-                Directory.Delete(tempDirectoryOpt, recursive: true);
+                tempDirectoryOpt.Delete(recursive: true);
             }
         }
     }
 
-    private static void LoadPackages(IEnumerable<string> packagePaths, Dictionary<string, PackageInfo> packages, string tempDirectoryOpt, VersionTranslation translation)
+    private static void LoadPackages(IEnumerable<FileInfo> packagePaths, Dictionary<string, PackageInfo> packages, DirectoryInfo tempDirectoryOpt, VersionTranslation translation)
     {
         bool readOnly = tempDirectoryOpt == null;
 
         foreach (var packagePath in packagePaths)
         {
             Package package;
-            string tempPathOpt;
+            FileInfo tempPathOpt;
             bool isDotnetTool = false;
             if (readOnly)
             {
                 tempPathOpt = null;
-                package = Package.Open(packagePath, FileMode.Open, FileAccess.Read);
+                package = Package.Open(packagePath.FullName, FileMode.Open, FileAccess.Read);
             }
             else
             {
-                tempPathOpt = Path.Combine(tempDirectoryOpt, Guid.NewGuid().ToString());
-                File.Copy(packagePath, tempPathOpt);
-                package = Package.Open(tempPathOpt, FileMode.Open, FileAccess.ReadWrite);
+                tempPathOpt = new FileInfo(Path.Combine(tempDirectoryOpt.FullName, Guid.NewGuid().ToString()));
+                File.Copy(packagePath.FullName, tempPathOpt.FullName);
+                package = Package.Open(tempPathOpt.FullName, FileMode.Open, FileAccess.ReadWrite);
             }
 
             string packageId = null;
@@ -247,12 +238,12 @@ internal static class NuGetVersionUpdater
             {
                 if (packageInfo == null)
                 {
-                    nuspecStream.Dispose();
+                    nuspecStream?.Dispose();
                     package.Close();
 
                     if (tempPathOpt != null)
                     {
-                        File.Delete(tempPathOpt);
+                        tempPathOpt.Delete();
                     }
                 }
             }
@@ -355,9 +346,9 @@ internal static class NuGetVersionUpdater
         ThrowExceptions(errors);
     }
 
-    private static void SavePackages(Dictionary<string, PackageInfo> packages, string outDirectory)
+    private static void SavePackages(Dictionary<string, PackageInfo> packages, DirectoryInfo outDirectory)
     {
-        Directory.CreateDirectory(outDirectory);
+        outDirectory.Create();
 
         var errors = new List<Exception>();
         foreach (var package in packages.Values)
@@ -367,11 +358,11 @@ internal static class NuGetVersionUpdater
 
             package.Package.Close();
 
-            string finalPath = Path.Combine(outDirectory, package.Id + "." + package.NewVersion + ".nupkg");
+            string finalPath = Path.Combine(outDirectory.FullName, package.Id + "." + package.NewVersion + ".nupkg");
 
             try
             {
-                File.Copy(package.TempPathOpt, finalPath, overwrite: true);
+                File.Copy(package.TempPathOpt.FullName, finalPath, overwrite: true);
             }
             catch (Exception e)
             {

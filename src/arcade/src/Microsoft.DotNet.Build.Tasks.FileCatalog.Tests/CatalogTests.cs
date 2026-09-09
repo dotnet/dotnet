@@ -156,7 +156,7 @@ public class CatalogTests
         {
             File.WriteAllBytes(path, s_registerJsContent);
 
-            byte[] fromFile = new CatalogBuilder().AddFile(path, "register.js").Build();
+            byte[] fromFile = new CatalogBuilder().AddFile(new FileInfo(path), "register.js").Build();
             byte[] fromMemory = new CatalogBuilder().Add(new CatalogEntry("register.js", s_registerJsContent)).Build();
 
             fromFile.Should().Equal(fromMemory);
