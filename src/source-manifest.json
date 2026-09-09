@@ -61,16 +61,16 @@
       "commitSha": "0ff3bda45be8c3dfbc049c905edb63453d65b77a"
     },
     {
-      "barId": 330992,
+      "barId": 331042,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "5955c01753eb6f21529d29ce318e459319c968f5"
+      "commitSha": "be359d74907427a05d8e1bea717460ffe53687d4"
     },
     {
-      "barId": 330911,
+      "barId": 330995,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "0faec45fdeec2b2b8baec690f49dc33dd5386658"
+      "commitSha": "7a0bd965442d02b0dd7334d1eb0a03a5f9bda4d9"
     },
     {
       "barId": 330998,
