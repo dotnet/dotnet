@@ -1431,8 +1431,8 @@ PCODE ReadyToRunInfo::GetEntryPoint(MethodDesc * pMD, PrepareCodeConfig* pConfig
 #error "Portable entry points are not currently supported with tiered compilation, as the interaction between the two is not yet fully worked out."
 #endif
 #ifdef TARGET_WASM
-    PCODE actualEntryPoint;
-    actualEntryPoint = GetMinFunctionTableIndex() + id;
+    void* actualEntryPoint;
+    actualEntryPoint = (void*)(GetMinFunctionTableIndex() + id);
     PCODE virtualEntrypointIP;
     virtualEntrypointIP = R2RRelativeFunctionIndexToVirtualIP(id);
     pEntryPoint = pMD->GetTemporaryEntryPoint();
@@ -2755,7 +2755,7 @@ PCODE DynamicHelpers::CreateDictionaryLookupHelper(LoaderAllocator * pAllocator,
             else
             {
                 _ASSERTE(pLookup->sizeOffset == CORINFO_NO_SIZE_CHECK);
-                // SecondIndir is in bytes, but actual indirections into the table are always pointer aligned. 
+                // SecondIndir is in bytes, but actual indirections into the table are always pointer aligned.
                 // A value of 0 indicates that the second indirection is into the first generic dictionary of
                 // the type, which is the most common access pattern for generics. For Dictionary<TKey,TValue>,
                 // a SecondIndir of 0, and a LastIndir of 0 would indicate the MethodTable pointer of TKey,
