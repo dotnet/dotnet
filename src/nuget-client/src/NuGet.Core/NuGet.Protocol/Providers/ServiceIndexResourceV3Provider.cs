@@ -3,6 +3,9 @@
 
 using System;
 using System.Collections.Concurrent;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.Globalization;
 using System.IO;
 using System.Text.Json;
@@ -204,7 +207,9 @@ namespace NuGet.Protocol
             }
             else
             {
+#pragma warning disable IL2026, IL3050 // The source analyzer cannot see the app's trim-time feature switch; Native AOT removes this branch when the switch is true.
                 return await ConsumeServiceIndexStreamNsjAsync(stream, utcNow, source, token);
+#pragma warning restore IL2026, IL3050
             }
         }
 
@@ -243,6 +248,10 @@ namespace NuGet.Protocol
             return new ServiceIndexResourceV3(index, utcNow, source);
         }
 
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+        [RequiresDynamicCode("Uses Newtonsoft.Json reflection-based deserialization.")]
+#endif
         private static async Task<ServiceIndexResourceV3> ConsumeServiceIndexStreamNsjAsync(Stream stream, DateTime utcNow, PackageSource source, CancellationToken token)
         {
             // Parse the JSON
@@ -258,9 +267,7 @@ namespace NuGet.Protocol
                 if (SemanticVersion.TryParse((string)versionToken!, out version) &&
                     version.Major == 3)
                 {
-#pragma warning disable IL2026, IL3050 // Legacy Newtonsoft.Json code path is unreachable when feature switch is true; ILC trims this branch in AOT
                     return new ServiceIndexResourceV3(json, utcNow, source);
-#pragma warning restore IL2026, IL3050
                 }
                 else
                 {

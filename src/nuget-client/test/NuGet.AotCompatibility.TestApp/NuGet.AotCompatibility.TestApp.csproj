@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>$(LatestNETCoreTargetFramework)</TargetFramework>
+    <TargetFrameworks />
+    <!-- Newtonsoft.Json 13.0.4 includes the AOT annotations this compatibility test needs. -->
+    <SkipEnsureNewtonsoftJsonVersion>true</SkipEnsureNewtonsoftJsonVersion>
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <!-- Ignore the single warn files marked below to suppress their known warnings. -->
+    <NoWarn>$(NoWarn);IL2104;IL3053</NoWarn>
+  </PropertyGroup>
+
+  <Target Name="ConfigureTrimming"
+          BeforeTargets="PrepareForILLink">
+    <!-- Single warn the following assemblies (produces IL2104 and IL3053), which have known warnings, so the warnings can be suppressed. -->
+    <ItemGroup>
+      <ManagedAssemblyToLink Condition="'%(Filename)' == 'Microsoft.CSharp'">
+        <TrimmerSingleWarn>true</TrimmerSingleWarn>
+      </ManagedAssemblyToLink>
+      <ManagedAssemblyToLink Condition="'%(Filename)' == 'Newtonsoft.Json'">
+        <TrimmerSingleWarn>true</TrimmerSingleWarn>
+      </ManagedAssemblyToLink>
+      <ManagedAssemblyToLink Condition="'%(Filename)' == 'System.Linq.Expressions'">
+        <TrimmerSingleWarn>true</TrimmerSingleWarn>
+      </ManagedAssemblyToLink>
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <!-- Newtonsoft.Json 13.0.4 includes the AOT annotations this compatibility test needs. -->
+    <PackageReference Include="Newtonsoft.Json" VersionOverride="13.0.4" />
+
+    <RuntimeHostConfigurationOption Include="NuGet.UseSystemTextJsonDeserialization"
+                                    Value="true"
+                                    Trim="true" />
+
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Common\NuGet.Common.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Configuration\NuGet.Configuration.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Credentials\NuGet.Credentials.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Frameworks\NuGet.Frameworks.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.LibraryModel\NuGet.LibraryModel.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Packaging\NuGet.Packaging.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.ProjectModel\NuGet.ProjectModel.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
+
+    <TrimmerRootAssembly Include="@(CoreLibraryProjects->'%(FileName)')" />
+    <ProjectReference Include="@(CoreLibraryProjects)" />
+  </ItemGroup>
+
+</Project>
