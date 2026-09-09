@@ -89,12 +89,12 @@ internal static class TrustedMachinePath
     /// </summary>
     public static void ValidateDirectory(string path)
     {
+        Validate(new DirectoryInfo(path).GetAccessControl(AccessControlSections.Access | AccessControlSections.Owner), path);
+
         if ((File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0)
         {
             ThrowUntrusted(path);
         }
-
-        Validate(new DirectoryInfo(path).GetAccessControl(AccessControlSections.Access | AccessControlSections.Owner), path);
     }
 
     /// <summary>
