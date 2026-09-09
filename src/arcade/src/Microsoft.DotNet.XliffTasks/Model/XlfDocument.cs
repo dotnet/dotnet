@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
@@ -21,8 +22,8 @@ namespace XliffTasks.Model;
 /// </summary>
 internal sealed class XlfDocument : Document
 {
-    private static XmlSchemaSet s_schemaSet;
-    
+    private static readonly Lazy<XmlSchemaSet> s_schemaSet =
+        new(CreateSchemaSet, LazyThreadSafetyMode.ExecutionAndPublication);
     private static readonly XNamespace XsiNS = "http://www.w3.org/2001/XMLSchema-instance";
 
     private XDocument _document;
@@ -298,27 +299,29 @@ internal sealed class XlfDocument : Document
             return;
         }
 
-        XmlSchemaSet schemas = GetSchemaSet();
+        XmlSchemaSet schemas = s_schemaSet.Value;
 
         _document.Validate(schemas, (o, e) => validationErrorHandler(e.Exception));
     }
 
-    private static XmlSchemaSet GetSchemaSet()
+    /// <summary>
+    /// Builds the shared schema set. <see cref="XmlSchemaSet"/> mutates itself while compiling,
+    /// and validating an uncompiled set compiles it on first use, so the set is compiled here
+    /// before it is published. Combined with <see cref="LazyThreadSafetyMode.ExecutionAndPublication"/>
+    /// this guarantees that concurrent tasks only ever share a fully compiled, read-only set.
+    /// </summary>
+    private static XmlSchemaSet CreateSchemaSet()
     {
-        if (s_schemaSet == null)
-        {
-            System.IO.Stream xmlSchemaResourceStream = typeof(XlfDocument).Assembly.GetManifestResourceStream("XliffTasks.Model.xml.xsd");
-            XmlReader xmlSchemaReader = XmlReader.Create(xmlSchemaResourceStream);
-            System.IO.Stream xliffSchemaResourceStream = typeof(XlfDocument).Assembly.GetManifestResourceStream("XliffTasks.Model.xliff-core-1.2-transitional.xsd");
-            XmlReader xliffSchemaReader = XmlReader.Create(xliffSchemaResourceStream);
+        using System.IO.Stream xmlSchemaResourceStream = typeof(XlfDocument).Assembly.GetManifestResourceStream("XliffTasks.Model.xml.xsd");
+        using XmlReader xmlSchemaReader = XmlReader.Create(xmlSchemaResourceStream);
+        using System.IO.Stream xliffSchemaResourceStream = typeof(XlfDocument).Assembly.GetManifestResourceStream("XliffTasks.Model.xliff-core-1.2-transitional.xsd");
+        using XmlReader xliffSchemaReader = XmlReader.Create(xliffSchemaResourceStream);
 
-            XmlSchemaSet schemas = new();
-            schemas.Add(targetNamespace: null, xmlSchemaReader);
-            schemas.Add(targetNamespace: null, xliffSchemaReader);
+        XmlSchemaSet schemas = new();
+        schemas.Add(targetNamespace: null, xmlSchemaReader);
+        schemas.Add(targetNamespace: null, xliffSchemaReader);
+        schemas.Compile();
 
-            s_schemaSet = schemas;
-        }
-
-        return s_schemaSet;
+        return schemas;
     }
 }

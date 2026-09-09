@@ -27,8 +27,12 @@ namespace Microsoft.DotNet.Build.Tasks.Templating;
 /// </code>
 /// </example>
 /// </summary>
-public class GenerateFileFromTemplate : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public class GenerateFileFromTemplate : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// The template file using the variable syntax <c>${VarName}</c>.
     /// If your template file needs to output this format, you can escape the dollar sign with a backtick e.g. <c>`${NotReplaced}</c>.
@@ -66,16 +70,21 @@ public class GenerateFileFromTemplate : Microsoft.Build.Utilities.Task
 
     public override bool Execute()
     {
-        ResolvedOutputPath = Path.GetFullPath(OutputPath.Replace('\\', '/'));
+        // GetAbsolutePath deliberately does not canonicalize, but this output property was
+        // produced by Path.GetFullPath, which also resolved "." and ".." and turned the forward
+        // slashes substituted just above back into the platform separator.
+        AbsolutePath resolvedOutputPath = TaskEnvironment.GetAbsolutePath(OutputPath.Replace('\\', '/')).GetCanonicalForm();
+        ResolvedOutputPath = resolvedOutputPath;
 
-        if (!File.Exists(TemplateFile))
+        AbsolutePath templateFile = TaskEnvironment.GetAbsolutePath(TemplateFile);
+        if (!File.Exists(templateFile))
         {
             Log.LogError($"File {TemplateFile} does not exist");
             return false;
         }
 
         IDictionary<string, string> values = MSBuildListSplitter.GetNamedProperties(Properties, Log);
-        string template = File.ReadAllText(TemplateFile);
+        string template = File.ReadAllText(templateFile);
 
         string result = Replace(template, values);
 
@@ -83,24 +92,24 @@ public class GenerateFileFromTemplate : Microsoft.Build.Utilities.Task
         // to determine whether the on-disk bytes would actually change.
         byte[] resultBytes = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false).GetBytes(result);
 
-        if (SkipUnchanged && FileContentsMatch(ResolvedOutputPath, resultBytes))
+        if (SkipUnchanged && FileContentsMatch(resolvedOutputPath, resultBytes))
         {
             Log.LogMessage(MessageImportance.Low, $"Skipping unchanged file {ResolvedOutputPath}");
             return !Log.HasLoggedErrors;
         }
 
-        string directory = Path.GetDirectoryName(ResolvedOutputPath);
+        string directory = Path.GetDirectoryName(resolvedOutputPath);
         if (!string.IsNullOrEmpty(directory))
         {
             Directory.CreateDirectory(directory);
         }
 
-        File.WriteAllBytes(ResolvedOutputPath, resultBytes);
+        File.WriteAllBytes(resolvedOutputPath, resultBytes);
 
         return !Log.HasLoggedErrors;
     }
 
-    private static bool FileContentsMatch(string path, byte[] expectedBytes)
+    private static bool FileContentsMatch(AbsolutePath path, byte[] expectedBytes)
     {
         var fileInfo = new FileInfo(path);
         if (!fileInfo.Exists || fileInfo.Length != expectedBytes.Length)

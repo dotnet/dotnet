@@ -22,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Common\Internal\AbsolutePathExtensions.cs" Link="Internal\AbsolutePathExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Model\xliff-core-1.2-transitional.xsd" />
     <EmbeddedResource Include="Model\xml.xsd" />
   </ItemGroup>

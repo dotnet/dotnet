@@ -16,8 +16,12 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
 /// Generates OptProf training input files for VS components listed in OptProf.json file and 
 /// their VSIX files located in the specified directory.
 /// </summary>
-public sealed class GenerateTrainingInputFiles : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public sealed class GenerateTrainingInputFiles : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// Absolute path to the OptProf.json config file.
     /// </summary>
@@ -47,7 +51,7 @@ public sealed class GenerateTrainingInputFiles : Microsoft.Build.Utilities.Task
         OptProfTrainingConfiguration config;
         try
         {
-            config = OptProfTrainingConfiguration.Deserialize(File.ReadAllText(ConfigurationFile, Encoding.UTF8));
+            config = OptProfTrainingConfiguration.Deserialize(File.ReadAllText(TaskEnvironment.GetAbsolutePath(ConfigurationFile), Encoding.UTF8));
         }
         catch (Exception e)
         {
@@ -65,7 +69,8 @@ public sealed class GenerateTrainingInputFiles : Microsoft.Build.Utilities.Task
             Log.LogError($"Invalid configuration file format: missing 'assemblies' element in '{ConfigurationFile}'.");
         }
 
-        if (!Directory.Exists(InsertionDirectory))
+        AbsolutePath insertionDirectory = TaskEnvironment.GetAbsolutePath(InsertionDirectory);
+        if (!Directory.Exists(insertionDirectory))
         {
             Log.LogError($"Directory specified in InsertionDirectory does not exist: '{InsertionDirectory}'.");
         }
@@ -78,9 +83,7 @@ public sealed class GenerateTrainingInputFiles : Microsoft.Build.Utilities.Task
         // Handle product entries
         foreach (var product in config.Products)
         {
-            string vsixFilePath = Path.Combine(InsertionDirectory, product.Name);
-
-            var jsonManifest = ReadVsixJsonManifest(vsixFilePath);
+            var jsonManifest = ReadVsixJsonManifest(TaskEnvironment.GetAbsolutePath(Path.Combine(insertionDirectory, product.Name)));
             var ibcEntries = IbcEntry.GetEntriesFromVsixJsonManifest(jsonManifest).ToArray();
 
             WriteEntries(product.Tests, ibcEntries);
@@ -94,7 +97,7 @@ public sealed class GenerateTrainingInputFiles : Microsoft.Build.Utilities.Task
         }
     }
 
-    private static JObject ReadVsixJsonManifest(string vsixPath)
+    private JObject ReadVsixJsonManifest(AbsolutePath vsixPath)
     {
         using (var archive = new ZipArchive(File.Open(vsixPath, FileMode.Open), ZipArchiveMode.Read))
         {
@@ -137,24 +140,25 @@ public sealed class GenerateTrainingInputFiles : Microsoft.Build.Utilities.Task
         }
     }
 
-    private static void WriteEntries(IbcEntry[] ibcEntries, string outDir)
+    private void WriteEntries(IbcEntry[] ibcEntries, string outDir)
     {
-        Directory.CreateDirectory(outDir);
+        AbsolutePath outDirPath = TaskEnvironment.GetAbsolutePath(outDir);
+        Directory.CreateDirectory(outDirPath);
 
         foreach (var entry in ibcEntries)
         {
             int index = 0;
-            string basePath = Path.Combine(outDir, entry.RelativeDirectoryPath.Replace("\\", "") + Path.GetFileNameWithoutExtension(entry.RelativeInstallationPath));
+            string basePath = Path.Combine(outDirPath, entry.RelativeDirectoryPath.Replace("\\", "") + Path.GetFileNameWithoutExtension(entry.RelativeInstallationPath));
 
-            string fullPath;
+            AbsolutePath fullAbsolutePath;
             do
             {
-                fullPath = basePath + "." + index + ".IBC.json";
+                fullAbsolutePath = TaskEnvironment.GetAbsolutePath(basePath + "." + index + ".IBC.json");
                 index++;
             }
-            while (File.Exists(fullPath));
+            while (File.Exists(fullAbsolutePath));
 
-            using (var writer = new StreamWriter(File.Open(fullPath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+            using (var writer = new StreamWriter(File.Open(fullAbsolutePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
             {
                 writer.WriteLine(entry.ToJson().ToString());
             }

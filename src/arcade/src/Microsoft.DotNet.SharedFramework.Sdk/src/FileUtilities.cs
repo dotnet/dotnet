@@ -17,9 +17,9 @@ internal static partial class FileUtilities
         new[] { ".dll", ".exe" },
         StringComparer.OrdinalIgnoreCase);
 
-    public static Version GetFileVersion(string sourcePath)
+    public static Version GetFileVersion(FileInfo sourceFile)
     {
-        var fvi = FileVersionInfo.GetVersionInfo(sourcePath);
+        var fvi = FileVersionInfo.GetVersionInfo(sourceFile.FullName);
 
         if (fvi != null)
         {
@@ -29,16 +29,16 @@ internal static partial class FileUtilities
         return null;
     }
 
-    public static AssemblyName GetAssemblyName(string path)
+    public static AssemblyName GetAssemblyName(FileInfo file)
     {
-        if (!s_assemblyExtensions.Contains(Path.GetExtension(path)))
+        if (!s_assemblyExtensions.Contains(file.Extension))
         {
             return null;
         }
 
         try
         {
-            using (var stream = File.OpenRead(path))
+            using (var stream = File.OpenRead(file.FullName))
             using (var peReader = new PEReader(stream))
             {
                 if (peReader.HasMetadata)

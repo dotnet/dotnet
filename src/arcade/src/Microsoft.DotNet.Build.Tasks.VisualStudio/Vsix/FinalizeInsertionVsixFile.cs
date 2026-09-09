@@ -20,8 +20,12 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
 /// 
 /// Replaces Experimental="true" attribute of the Installation element with SystemComponent="true" in the VSIX manifest file.
 /// </summary>
-public sealed class FinalizeInsertionVsixFile : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public sealed class FinalizeInsertionVsixFile : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     private const string VsixManifestPartName = "/extension.vsixmanifest";
     private const string VsixNamespace = "http://schemas.microsoft.com/developer/vsx-schema/2011";
 
@@ -30,10 +34,8 @@ public sealed class FinalizeInsertionVsixFile : Microsoft.Build.Utilities.Task
 
     public override bool Execute()
     {
-        using (var package = Package.Open(VsixFilePath))
-        {
-            UpdatePartHashInManifestJson(package, VsixManifestPartName, UpdateExtensionVsixManifest(package));
-        }
+        using var package = Package.Open(TaskEnvironment.GetAbsolutePath(VsixFilePath));
+        UpdatePartHashInManifestJson(package, VsixManifestPartName, UpdateExtensionVsixManifest(package));
 
         return !Log.HasLoggedErrors;
     }

@@ -17,8 +17,12 @@ namespace Microsoft.DotNet.Tools;
 /// <summary>
 /// Replaces content of files in specified package with new content and updates version of the package.
 /// </summary>
-public sealed class ReplacePackageParts : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public sealed class ReplacePackageParts : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// Full path to the package to process.
     /// </summary>
@@ -107,10 +111,14 @@ public sealed class ReplacePackageParts : Microsoft.Build.Utilities.Task
 
         string packageId = null;
         SemanticVersion packageVersion = null;
-        string tempPackagePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        // Directory.CreateTempSubdirectory atomically creates a uniquely named directory, so the
+        // package copy below can never collide with a concurrently running task.
+        DirectoryInfo tempDirectory = Directory.CreateTempSubdirectory();
+        string tempPackagePath = Path.Combine(tempDirectory.FullName, "package.nupkg");
+        AbsolutePath tempPackageAbsolutePath = TaskEnvironment.GetAbsolutePath(tempPackagePath);
         try
         {
-            File.Copy(SourcePackage, tempPackagePath);
+            File.Copy(TaskEnvironment.GetAbsolutePath(SourcePackage), tempPackageAbsolutePath);
 
             using (var package = Package.Open(tempPackagePath, FileMode.Open, FileAccess.ReadWrite))
             {
@@ -178,7 +186,7 @@ public sealed class ReplacePackageParts : Microsoft.Build.Utilities.Task
                         Stream replacementStream;
                         try
                         {
-                            replacementStream = File.OpenRead(replacementFilePath);
+                            replacementStream = File.OpenRead(TaskEnvironment.GetAbsolutePath(replacementFilePath));
                         }
                         catch (Exception e)
                         {
@@ -216,19 +224,19 @@ public sealed class ReplacePackageParts : Microsoft.Build.Utilities.Task
             }
 
             // remove signature if present (the signature part is not accessible thru Package API):
-            using (var archive = new ZipArchive(File.Open(tempPackagePath, FileMode.Open, FileAccess.ReadWrite), ZipArchiveMode.Update))
+            using (var archive = new ZipArchive(File.Open(tempPackageAbsolutePath, FileMode.Open, FileAccess.ReadWrite), ZipArchiveMode.Update))
             {
                 archive.Entries.FirstOrDefault(e => e.FullName == NuGetUtils.SignaturePartUri)?.Delete();
             }
 
             NewPackage = Path.Combine(DestinationFolder, packageId + "." + packageVersion + ".nupkg");
 
-            Directory.CreateDirectory(DestinationFolder);
-            File.Copy(tempPackagePath, NewPackage, overwrite: true);
+            Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(DestinationFolder));
+            File.Copy(tempPackageAbsolutePath, TaskEnvironment.GetAbsolutePath(NewPackage), overwrite: true);
         }
         finally
         {
-            File.Delete(tempPackagePath);
+            tempDirectory.Delete(recursive: true);
         }
     }
 

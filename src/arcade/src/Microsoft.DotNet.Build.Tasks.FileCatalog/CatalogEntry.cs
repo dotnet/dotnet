@@ -24,18 +24,18 @@ public sealed class CatalogEntry
     /// of <paramref name="filePath"/>. The name is not embedded in the catalog (makecat
     /// V2 catalogs do not carry per-member file names); it is retained only for diagnostics.
     /// </param>
-    public static CatalogEntry FromFile(string filePath, string? name = null)
+    public static CatalogEntry FromFile(FileInfo filePath, string? name = null)
     {
-        if (string.IsNullOrEmpty(filePath))
+        if (filePath is null)
         {
-            throw new ArgumentException("File path must not be null or empty.", nameof(filePath));
+            throw new ArgumentNullException(nameof(filePath));
         }
 
         // Stream the file through both hash algorithms in a single pass so the full
         // content is never buffered in memory (catalog generation only needs the hashes).
         using IncrementalHash sha1 = IncrementalHash.CreateHash(HashAlgorithmName.SHA1);
         using IncrementalHash sha256 = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
-        using (FileStream stream = File.OpenRead(filePath))
+        using (FileStream stream = File.OpenRead(filePath.FullName))
         {
             byte[] buffer = ArrayPool<byte>.Shared.Rent(81920);
             try
@@ -53,7 +53,7 @@ public sealed class CatalogEntry
             }
         }
 
-        return new CatalogEntry(name ?? Path.GetFileName(filePath), sha1.GetHashAndReset(), sha256.GetHashAndReset());
+        return new CatalogEntry(name ?? filePath.Name, sha1.GetHashAndReset(), sha256.GetHashAndReset());
     }
 
     /// <summary>

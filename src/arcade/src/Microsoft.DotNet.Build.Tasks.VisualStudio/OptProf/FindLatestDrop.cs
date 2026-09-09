@@ -14,8 +14,12 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
 /// <summary>
 /// Find the latest drop in a JSON list of VS drops.
 /// </summary>
-public sealed class FindLatestDrop : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public sealed class FindLatestDrop : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// Full path to JSON file containing list of drops.
     /// </summary>
@@ -38,7 +42,7 @@ public sealed class FindLatestDrop : Microsoft.Build.Utilities.Task
     {
         try
         {
-            DropName = GetLatestDropName(File.ReadAllText(DropListPath));
+            DropName = GetLatestDropName(File.ReadAllText(TaskEnvironment.GetAbsolutePath(DropListPath)));
         }
         catch (Exception e)
         {

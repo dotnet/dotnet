@@ -12,6 +12,7 @@ using XliffTasks.Model;
 
 namespace XliffTasks.Tasks;
 
+[MSBuildMultiThreadableTask]
 public sealed class TransformTemplates : XlfTask
 {
     [Required]
@@ -75,15 +76,15 @@ public sealed class TransformTemplates : XlfTask
         string localizedTemplateDirectory = transformingDefaultTemplate
             ? Path.Combine(TranslatedOutputDirectory, $"{templateName}.default.1033")
             : Path.Combine(TranslatedOutputDirectory, $"{templateName}.{language}");
-        Directory.CreateDirectory(localizedTemplateDirectory);
+        Directory.CreateDirectory(TaskEnvironment.GetAbsolutePath(localizedTemplateDirectory));
         string cultureSpecificTemplateFile = Path.Combine(localizedTemplateDirectory, Path.GetFileName(template.ItemSpec));
-        File.Copy(templatePath, cultureSpecificTemplateFile, overwrite: true);
+        File.Copy(TaskEnvironment.GetAbsolutePath(templatePath), TaskEnvironment.GetAbsolutePath(cultureSpecificTemplateFile), overwrite: true);
 
         // copy the template project files
         foreach (XElement projectNode in templateXml.Descendants().Where(d => d.Name.LocalName == "Project"))
         {
             string projectFileFullPath = Path.Combine(templateDirectory, projectNode.Attribute("File").Value);
-            File.Copy(projectFileFullPath, Path.Combine(localizedTemplateDirectory, Path.GetFileName(projectNode.Attribute("File").Value)), overwrite: true);
+            File.Copy(TaskEnvironment.GetAbsolutePath(projectFileFullPath), TaskEnvironment.GetAbsolutePath(Path.Combine(localizedTemplateDirectory, Path.GetFileName(projectNode.Attribute("File").Value))), overwrite: true);
         }
 
         // copy the template project items
@@ -91,14 +92,15 @@ public sealed class TransformTemplates : XlfTask
         {
             string templateItemFullPath = Path.Combine(templateDirectory, templateItem.Value);
             string templateItemDestinationPath = Path.Combine(localizedTemplateDirectory, templateItem.Value);
+            AbsolutePath templateItemDestinationAbsolutePath = TaskEnvironment.GetAbsolutePath(templateItemDestinationPath);
             if (transformingDefaultTemplate)
             {
                 // if not localizing anything, simply strip out the translation markers
                 UnstructuredDocument document = new();
-                document.Load(templateItemFullPath);
+                document.Load(new FileInfo(TaskEnvironment.GetAbsolutePath(templateItemFullPath)));
                 Dictionary<string, string> defaultTranslation = document.Nodes.ToDictionary(node => node.Id, node => node.Source);
                 document.Translate(defaultTranslation);
-                document.Save(templateItemDestinationPath);
+                document.Save(new FileInfo(templateItemDestinationAbsolutePath));
             }
             else
             {
@@ -111,12 +113,12 @@ public sealed class TransformTemplates : XlfTask
                         ".",
                         language,
                         Path.GetExtension(unstructuredResource.ItemSpec));
-                    File.Copy(Path.Combine(TranslatedOutputDirectory, localizedFileName), templateItemDestinationPath, overwrite: true);
+                    File.Copy(TaskEnvironment.GetAbsolutePath(Path.Combine(TranslatedOutputDirectory, localizedFileName)), templateItemDestinationAbsolutePath, overwrite: true);
                 }
                 else
                 {
                     // copy the original unaltered file
-                    File.Copy(templateItemFullPath, templateItemDestinationPath, overwrite: true);
+                    File.Copy(TaskEnvironment.GetAbsolutePath(templateItemFullPath), templateItemDestinationAbsolutePath, overwrite: true);
                 }
             }
         }

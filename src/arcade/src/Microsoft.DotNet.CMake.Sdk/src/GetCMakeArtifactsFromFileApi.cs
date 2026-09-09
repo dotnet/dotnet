@@ -14,8 +14,12 @@ namespace Microsoft.DotNet.CMake.Sdk;
 /// <summary>
 /// Reads CMake File API response to find artifacts for a specific source directory.
 /// </summary>
-public class GetCMakeArtifactsFromFileApi : Task
+[MSBuildMultiThreadableTask]
+public class GetCMakeArtifactsFromFileApi : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// The CMake build output directory containing the File API response.
     /// </summary>
@@ -46,14 +50,15 @@ public class GetCMakeArtifactsFromFileApi : Task
         {
             string replyDir = Path.Combine(CMakeOutputDir, ".cmake", "api", "v1", "reply");
             
-            if (!Directory.Exists(replyDir))
+            AbsolutePath replyDirPath = TaskEnvironment.GetAbsolutePath(replyDir);
+            if (!Directory.Exists(replyDirPath))
             {
                 Log.LogError("CMake File API reply directory does not exist: {0}", replyDir);
                 return false;
             }
 
             // Find the latest index file
-            var indexFiles = Directory.GetFiles(replyDir, "index-*.json");
+            var indexFiles = Directory.GetFiles(replyDirPath, "index-*.json");
             if (indexFiles.Length == 0)
             {
                 Log.LogError("No CMake File API index files found.");
@@ -63,7 +68,7 @@ public class GetCMakeArtifactsFromFileApi : Task
             string indexFile = indexFiles.OrderByDescending(f => f).First();
             Log.LogMessage(MessageImportance.Low, "Reading CMake File API index: {0}", indexFile);
 
-            string indexJson = File.ReadAllText(indexFile);
+            string indexJson = File.ReadAllText(TaskEnvironment.GetAbsolutePath(indexFile));
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -79,7 +84,8 @@ public class GetCMakeArtifactsFromFileApi : Task
             }
 
             string codeModelFile = Path.Combine(replyDir, index.Reply.ClientReply.CodemodelV2.JsonFile);
-            if (!File.Exists(codeModelFile))
+            AbsolutePath codeModelFilePath = TaskEnvironment.GetAbsolutePath(codeModelFile);
+            if (!File.Exists(codeModelFilePath))
             {
                 Log.LogError("Codemodel file not found: {0}", codeModelFile);
                 return false;
@@ -87,7 +93,7 @@ public class GetCMakeArtifactsFromFileApi : Task
 
             Log.LogMessage(MessageImportance.Low, "Reading codemodel: {0}", codeModelFile);
             
-            string codeModelJson = File.ReadAllText(codeModelFile);
+            string codeModelJson = File.ReadAllText(codeModelFilePath);
             var codeModel = JsonSerializer.Deserialize<CMakeCodeModel>(codeModelJson, options);
 
             if (codeModel == null)
@@ -100,7 +106,10 @@ public class GetCMakeArtifactsFromFileApi : Task
             string sourceRoot = codeModel.Paths?.Source?.Replace('\\', '/').TrimEnd('/') ?? "";
 
             // Normalize source directory for comparison
-            string normalizedSourceDir = Path.GetFullPath(SourceDirectory).Replace('\\', '/').TrimEnd('/');
+            // GetAbsolutePath does not canonicalize, but this value is string-compared against
+            // dirSource below, and Path.GetFullPath used to resolve the "." and ".." segments that
+            // CMake's file API routinely emits.
+            string normalizedSourceDir = TaskEnvironment.GetAbsolutePath(SourceDirectory).GetCanonicalForm().Value.Replace('\\', '/').TrimEnd('/');
 
             // Find the configuration using LINQ
             var config = codeModel.Configurations?.FirstOrDefault(c => 
@@ -129,7 +138,7 @@ public class GetCMakeArtifactsFromFileApi : Task
                 if (!Path.IsPathRooted(dirSource))
                 {
                     dirSource = Path.Combine(sourceRoot, dirSource);
-                    dirSource = Path.GetFullPath(dirSource).Replace('\\', '/').TrimEnd('/');
+                    dirSource = TaskEnvironment.GetAbsolutePath(dirSource).GetCanonicalForm().Value.Replace('\\', '/').TrimEnd('/');
                 }
                 
                 return string.Equals(dirSource, normalizedSourceDir, StringComparison.OrdinalIgnoreCase);
@@ -162,7 +171,8 @@ public class GetCMakeArtifactsFromFileApi : Task
                     }
 
                     string targetFile = Path.Combine(replyDir, target.JsonFile);
-                    if (!File.Exists(targetFile))
+                    AbsolutePath targetFilePath = TaskEnvironment.GetAbsolutePath(targetFile);
+                    if (!File.Exists(targetFilePath))
                     {
                         continue;
                     }
@@ -170,7 +180,7 @@ public class GetCMakeArtifactsFromFileApi : Task
                     Log.LogMessage(MessageImportance.Low, "Reading target file: {0}", targetFile);
 
                     // Read target details
-                    string targetJson = File.ReadAllText(targetFile);
+                    string targetJson = File.ReadAllText(targetFilePath);
                     var targetDetails = JsonSerializer.Deserialize<CMakeTargetDetails>(targetJson, options);
 
                     // Get artifacts
@@ -181,7 +191,10 @@ public class GetCMakeArtifactsFromFileApi : Task
                             if (!string.IsNullOrEmpty(artifact.Path))
                             {
                                 string fullPath = Path.Combine(CMakeOutputDir, artifact.Path);
-                                fullPath = Path.GetFullPath(fullPath);
+                                // Emitted as an item spec, and combining the output dir with a
+                                // CMake-relative artifact path routinely produces ".." segments
+                                // that Path.GetFullPath used to resolve.
+                                fullPath = TaskEnvironment.GetAbsolutePath(fullPath).GetCanonicalForm();
                                 
                                 var item = new TaskItem(fullPath);
                                 artifacts.Add(item);

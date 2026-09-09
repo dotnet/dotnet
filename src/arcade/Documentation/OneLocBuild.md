@@ -67,7 +67,9 @@ that the official build is based on.
 As a further note, the template by default assumes that your mirror repository is located in the dotnet GitHub
 organization. If that is not the case, you will need to specify `GitHubOrg` as well.
 
-If the repo is not in the dotnet organization, dotnet-bot may need to be granted additional permissions to interact with your repository.  Invite dotnet-bot (Go to the repository's "Settings" then click "Collaborators" in the left menu).  After the invite has been sent, reach out to the "First Responders" [channel](https://teams.microsoft.com/l/channel/19%3Aafba3d1545dd45d7b79f34c1821f6055%40thread.skype/First%20Responders?groupId=4d73664c-9f2f-450d-82a5-c2f02756606d&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) and ask them to accept the "dotnet bot" collaboration invite.  To accept the invite, the first responder will need to [login](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/869/How-to-log-into-a-GitHub-bot-in-Key-Vault) as dotnet bot, go to the inviting repository, and then accept the invitation which should appear.
+If the repo is not in the dotnet organization, the `dotnet OneLoc Localization` GitHub App must
+be installed for that organization and granted access to the repository. Follow the
+[OneLocBuild GitHub App instructions](OneLocBuildGitHubApp.md).
 
 8. Merge the changes to your main branch and then open a
    [repo modification ticket](https://aka.ms/ceChangeLocConfig)
@@ -200,10 +202,8 @@ The parameters that can be passed to the template are as follows:
 | `LanguageSet` | `VS_Main_Languages` | This defines the `LanguageSet` of the LocProject.json as described in the [OneLocBuild task documentation](https://dev.azure.com/ceapex/CEINTL/_wiki/wikis/CEINTL.wiki/107/Localization-with-OneLocBuild-Task?anchor=languageset%2C-languages-(required)). |
 | `LclSource` | `LclFilesInRepo` | This passes the `LclSource` input to the OneLocBuild task as described in [its documentation](https://dev.azure.com/ceapex/CEINTL/_wiki/wikis/CEINTL.wiki/107/Localization-with-OneLocBuild-Task?anchor=languageset%2C-languages-(required)). For most repos, this should be set to `LclFilesfromPackage`. |
 | `LclPackageId` | `''` | When `LclSource` is set to `LclFilesfromPackage`, this passes in the package ID as described in the [OneLocBuild task documentation](https://dev.azure.com/ceapex/CEINTL/_wiki/wikis/CEINTL.wiki/107/Localization-with-OneLocBuild-Task?anchor=scenario-2%3A-lcl-files-from-a-package). |
-| `CeapexServiceConnection` | `'dnceng-onelocbuild-ceapex'` | The project-scoped WIF service connection used to acquire a short-lived token for the Ceapex feeds. This path is enabled in `dnceng/internal` and `DevDiv/DevDiv`; other projects continue to use `CeapexPat`. Pipelines in either supported project must be authorized to use their project's connection. Set to `''` to explicitly use the PAT path. |
-| `UseGitHubAppAuthentication` | `true` | Use GitHub App authentication for the check-in PR. The App path is enabled by default in `dnceng/internal` and `DevDiv/DevDiv`; other projects must also set `UseGitHubAppAuthenticationInOtherProjects`. Set to `false` to temporarily use the PAT path. See [the GitHub App doc](OneLocBuildGitHubApp.md). |
-| `UseGitHubAppAuthenticationInOtherProjects` | `false` | Explicitly enable the App path outside `dnceng/internal` and `DevDiv/DevDiv`. The project must have its own WIF service connection with signing access, supplied through `GitHubAppServiceConnection`. |
-| `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The dnceng/internal WIF service connection used to sign the App JWT. When the value remains the `dnceng-oneloc-githubapp` default, Arcade automatically uses `devdiv-oneloc-githubapp` in `DevDiv/DevDiv`; overrides to a different value are preserved for separately provisioned infrastructure. |
+| `CeapexServiceConnection` | `'dnceng-onelocbuild-ceapex'` | The project-scoped WIF service connection used to acquire a short-lived token for the Ceapex feeds. OneLocBuild supports only `dnceng/internal` and `DevDiv/DevDiv`; pipelines must be authorized to use the connection. |
+| `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The dnceng/internal WIF service connection used to sign the App JWT. When the value remains the default, Arcade automatically uses `devdiv-oneloc-githubapp` in `DevDiv/DevDiv`. |
 | `GitHubAppClientId` | `'Iv23lijBU8x3gc9lDOc9'` | The GitHub App's Client ID. |
 | `GitHubAppKeyVaultName` | `'EngKeyVault'` | Key Vault holding the App's RSA signing key. |
 | `GitHubAppKeyName` | `'oneloc-localization-app-key'` | Name of the App's RSA signing key in the Key Vault. |

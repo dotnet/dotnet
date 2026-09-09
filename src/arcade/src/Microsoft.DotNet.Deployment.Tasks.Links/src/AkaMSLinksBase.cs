@@ -5,11 +5,15 @@ using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Deployment.Tasks.Links;
 
-public abstract class AkaMSLinksBase : Microsoft.Build.Utilities.Task
+public abstract class AkaMSLinksBase : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     [Required]
     // Authentication data
     public string ClientId { get; set; }
@@ -24,7 +28,8 @@ public abstract class AkaMSLinksBase : Microsoft.Build.Utilities.Task
         AkaMSLinkManager manager;
         if (!string.IsNullOrEmpty(ClientCertificate))
         {
-            manager = new AkaMSLinkManager(ClientId, X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(File.ReadAllText(ClientCertificate)), password: null), Tenant, Log);
+            string certificatePath = TaskEnvironment.GetAbsolutePath(ClientCertificate);
+            manager = new AkaMSLinkManager(ClientId, X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(File.ReadAllText(certificatePath)), password: null), Tenant, Log);
         }
         else if (!string.IsNullOrEmpty(ClientSecret))
         {

@@ -10,8 +10,12 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Tools;
 
-public class UpdatePackageVersionTask : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public class UpdatePackageVersionTask : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     public string VersionKind { get; set; }
 
     [Required]
@@ -61,7 +65,12 @@ public class UpdatePackageVersionTask : Microsoft.Build.Utilities.Task
 
         try
         {
-            NuGetVersionUpdater.Run(Packages, OutputDirectory, translation, ExactVersions, allowPreReleaseDependency: (packageId, dependencyId, dependencyVersion) =>
+            // OutputDirectory is [Required], so MSBuild fails the task with MSB4044 before Execute runs
+            // if it is unset or expands to an empty string. Always pass a non-null directory here:
+            // NuGetVersionUpdater treats a null directory as read-only mode and writes no packages.
+            var outputDirectory = new DirectoryInfo(TaskEnvironment.GetAbsolutePath(OutputDirectory));
+
+            NuGetVersionUpdater.Run(Packages.Select(p => new FileInfo(TaskEnvironment.GetAbsolutePath(p))), outputDirectory, translation, ExactVersions, allowPreReleaseDependency: (packageId, dependencyId, dependencyVersion) =>
             {
                 if (AllowPreReleaseDependencies)
                 {
@@ -75,7 +84,7 @@ public class UpdatePackageVersionTask : Microsoft.Build.Utilities.Task
 
             if (translation == VersionTranslation.Release)
             {
-                File.WriteAllLines(Path.Combine(OutputDirectory, "PreReleaseDependencies.txt"), preReleaseDependencies.Distinct());
+                File.WriteAllLines(Path.Combine(outputDirectory.FullName, "PreReleaseDependencies.txt"), preReleaseDependencies.Distinct());
             }
         }
         catch (AggregateException e)

@@ -8,6 +8,7 @@ using XliffTasks.Model;
 
 namespace XliffTasks.Tasks;
 
+[MSBuildMultiThreadableTask]
 public sealed class TranslateSource : XlfTask
 {
     [Required]
@@ -20,8 +21,10 @@ public sealed class TranslateSource : XlfTask
         string language = XlfFile.GetMetadataOrThrow(MetadataKey.XlfLanguage);
         string translatedFullPath = XlfFile.GetMetadataOrThrow(MetadataKey.XlfTranslatedFullPath);
 
-        TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(sourcePath, XlfFile.GetMetadata(MetadataKey.XlfSourceFormat));
-        XlfDocument xlfDocument = XlfTask.LoadXlfDocument(XlfFile.ItemSpec);
+        AbsolutePath sourceAbsolutePath = TaskEnvironment.GetAbsolutePath(sourcePath);
+        AbsolutePath translatedAbsolutePath = TaskEnvironment.GetAbsolutePath(translatedFullPath);
+        TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(sourceAbsolutePath, XlfFile.GetMetadata(MetadataKey.XlfSourceFormat));
+        XlfDocument xlfDocument = XlfTask.LoadXlfDocument(TaskEnvironment.GetAbsolutePath(XlfFile.ItemSpec));
 
         bool validationFailed = false;
         xlfDocument.Validate(validationError =>
@@ -36,9 +39,11 @@ public sealed class TranslateSource : XlfTask
 
         sourceDocument.Translate(translations);
 
-        Directory.CreateDirectory(Path.GetDirectoryName(translatedFullPath));
+        Directory.CreateDirectory(Path.GetDirectoryName(translatedAbsolutePath));
 
-        sourceDocument.RewriteRelativePathsToAbsolute(Path.GetFullPath(sourcePath));
-        sourceDocument.Save(translatedFullPath);
+        // These paths are written into the translated document, and Path.GetFullPath canonicalized
+        // them before they were embedded.
+        sourceDocument.RewriteRelativePathsToAbsolute(sourceAbsolutePath.GetCanonicalForm());
+        sourceDocument.Save(new FileInfo(translatedAbsolutePath));
     }
 }
