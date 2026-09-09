@@ -1,0 +1,53 @@
+{
+    "microsoft.net.sdk.maui": {
+        "workload": {
+            "alias": [
+                "maui"
+            ],
+            "version": "11.0.0-rc.1.26451.6"
+        },
+        "windowsAppSdk": {
+            "version": "[2.3.1,)",
+            "recommendedVersion": "2.3.1"
+        },
+        "windowsSdkBuildTools": {
+            "version": "[10.0.28000.2526,)",
+            "recommendedVersion": "10.0.28000.2526"
+        },
+        "win2d": {
+            "version": "[1.4.0,)",
+            "recommendedVersion": "1.4.0"
+        },
+        "webview2": {
+            "version": "[1.0.4078.44,)",
+            "recommendedVersion": "1.0.4078.44"
+        },
+        "appium": {
+            "version": "[2.17.1,)",
+            "recommendedVersion": "2.17.1",
+            "drivers": [
+                {
+                    "name": "windows",
+                    "version": "[3.1.1,)",
+                    "recommendedVersion": "3.1.1"
+                },
+                {
+                    "name": "xcuitest",
+                    "version": "[7.32.0,)",
+                    "recommendedVersion": "7.32.0"
+                },
+                {
+                    "name": "mac2",
+                    "version": "[1.20.3,)",
+                    "recommendedVersion": "1.20.3"
+                },
+                {
+                    "name": "uiautomator2",
+                    "version": "[4.2.1,)",
+                    "recommendedVersion": "4.2.1"
+                }
+            ]
+        }
+    }
+}
+  
