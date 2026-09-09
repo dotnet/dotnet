@@ -9,6 +9,10 @@
   <ItemGroup>
     <BuiltSdkPackage Include="Microsoft.Build.NoTargets" />
     <BuiltSdkPackage Include="Microsoft.Build.Traversal" />
+
+    <!-- Preserve the PSB version before shared-components metadata overwrites the generic property. -->
+    <ExtraPackageVersionPropsPackageInfo Include="IdentityModelMicrosoftBclCryptographyVersion"
+                                         Version="%24(MicrosoftBclCryptographyPreviousVersion)" />
   </ItemGroup>
 
   <Target Name="GetProducedReferenceOnlyPackages"
