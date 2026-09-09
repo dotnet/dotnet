@@ -2,13 +2,13 @@
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26379.115">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26423.113">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>14fbf8d5271c98133561eb55185fdb05b286f578</Sha>
+      <Sha>e34a38d2ae1fc26406a317517196e55c68ff83ab</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="10.0.0-beta.26379.115">
+    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="10.0.0-beta.26423.113">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>14fbf8d5271c98133561eb55185fdb05b286f578</Sha>
+      <Sha>e34a38d2ae1fc26406a317517196e55c68ff83ab</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Sdk" Version="10.0.111-servicing.26373.116">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
@@ -22,9 +22,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>e2f47b0110ed922f21a1522da67279133ce28f32</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="10.0.0-beta.26379.115">
+    <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="10.0.0-beta.26423.113">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>14fbf8d5271c98133561eb55185fdb05b286f578</Sha>
+      <Sha>e34a38d2ae1fc26406a317517196e55c68ff83ab</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25407.5">
       <Uri>arcade-services</Uri>
