@@ -501,7 +501,7 @@ jobs:
           GH_AW_MIN_INTEGRITY: none
         run: bash "${RUNNER_TEMP}/gh-aw/actions/setup_cache_memory_git.sh"
       - name: Download super-linter log
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: super-linter-log
           path: /tmp/gh-aw/
@@ -1842,7 +1842,7 @@ jobs:
           GH_HOST="${GH_HOST#http://}"
           echo "GH_HOST=${GH_HOST}" >> "$GITHUB_ENV"
       - name: Checkout repository
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -1872,7 +1872,7 @@ jobs:
           fi
       - name: Upload super-linter log
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: super-linter-log
           path: super-linter.log
