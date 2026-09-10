@@ -187,10 +187,11 @@
     list. We do NOT depend on GetFilesToPublish directly, because
     GetFilesToPublish populates the project-global FilesToPackage/_FilesToPackage items that arcade's Pack
     path (_AddFilesToNuGetPackage) also consumes; resolving them in this configuration adds every assembly
-    to the package twice and trips NU5118. Capturing the file list through TargetOutputs into a private
-    item avoids mutating the packaging items, and passing no global property overrides reuses the file list
-    already computed for packaging (no extra compile). The layout TargetPath transform below mirrors
-    arcade's GetFilesToPublish for a TargetingPack.
+    to the package twice and trips NU5118. CallTarget evaluates the requested target in a separate scope,
+    so its packaging item mutations do not flow back into this target; only TargetOutputs are captured into
+    a private item. It also stays in the current project configuration without global property overrides,
+    reusing the already-computed file list without an extra compile. The layout TargetPath transform below
+    mirrors arcade's GetFilesToPublish for a TargetingPack.
   -->
   <Target Name="PublishToSharedLayoutRoot" AfterTargets="Build">
     <CallTarget Targets="_GetAllSharedFrameworkFiles">
