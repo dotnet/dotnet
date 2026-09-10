@@ -230,6 +230,9 @@
          builds. Always set (not just when node reuse is explicitly requested) because node reuse is on by
          default for local dev builds. -->
     <EnvironmentVariables Include="MSBUILDNODEHANDSHAKESALT=dotnet-vmr-$(RepositoryName)" />
+    <!-- Limit the idle timeout (in ms) of reusable nodes. With the default timeout of 15min, they would survive
+         long after the repo build is completed, but wouldn't accept any work as the handshake salt is unique per repo. -->
+    <EnvironmentVariables Include="MSBUILDNODECONNECTIONTIMEOUT=90000" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">
