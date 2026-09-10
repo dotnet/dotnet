@@ -21,4 +21,27 @@
     <RepositoryReference Include="source-build-assets" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <!--
+      src/TaskAnalyzer (Microsoft.Build.TaskAuthoring.Analyzer) is a Roslyn analyzer. Its
+      Microsoft.CodeAnalysis.* references are pinned to nuget.org releases so the analyzer it
+      produces stays loadable by older compilers; in a source-only build those pins are prebuilts.
+
+      They cannot be lifted to the live source-built Roslyn either. Inner repos always compile with
+      the compiler in the executing (previously source-built) SDK - see
+      UsingToolMicrosoftNetCompilers=false in repo-projects/Directory.Build.targets - and roslyn
+      builds before msbuild, so the live Roslyn is always newer than that compiler:
+
+        CSC error CS9057: Analyzer assembly '...' cannot be used because it references version
+        '<live>' of the compiler, which is newer than the currently running version '<N-1>'.
+
+      Redirect them to the previously-source-built (N-1) Roslyn, which is the Roslyn contained in
+      the SDK running the build. msbuild picks these up through its Analyzer_*-prefixed package
+      version properties. Same approach as repo-projects/aspnetcore.proj.
+    -->
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisAnalyzersVersion" Version="%24(MicrosoftCodeAnalysisAnalyzersPreviousVersion)" />
+  </ItemGroup>
+
 </Project>
