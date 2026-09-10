@@ -1288,7 +1288,7 @@ Chyba: {1}</target>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
-        <target state="needs-review-translation">Po zahájení se tato akce nedá zrušit.</target>
+        <target state="translated">Po spuštění se tato akce nedá zrušit. Pokračujte výběrem OK.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">
