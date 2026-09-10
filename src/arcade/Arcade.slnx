@@ -25,6 +25,7 @@
     <Project Path="src/Microsoft.DotNet.Build.Tasks.Packaging/tests/Microsoft.DotNet.Build.Tasks.Packaging.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Build.Tasks.Templating/test/Microsoft.DotNet.Build.Tasks.Templating.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Microsoft.DotNet.Build.Tasks.Workloads.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.CMake.Sdk.Tests/Microsoft.DotNet.CMake.Sdk.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/JobSender.Tests/Microsoft.DotNet.Helix.JobSender.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.Helix/Sdk.Tests/Microsoft.DotNet.Helix.Sdk.Tests/Microsoft.DotNet.Helix.Sdk.Tests.csproj" />
     <Project Path="src/Microsoft.DotNet.MacOsPkg.Tests/Microsoft.DotNet.MacOsPkg.Tests.csproj" />

@@ -26,8 +26,12 @@ namespace Microsoft.DotNet.Build.Tasks.Installers;
  * The task supports various configurations such as cultures, define constants, extensions,
  * include search paths, installer platform, output folder, and more.
  */
-public class CreateWixBuildWixpack : Task
+[MSBuildMultiThreadableTask]
+public class CreateWixBuildWixpack : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     public string AdditionalOptions { get; set; }
 
     public ITaskItem BindTrackingFile { get; set; }
@@ -95,24 +99,30 @@ public class CreateWixBuildWixpack : Task
 
             if (string.IsNullOrWhiteSpace(WixpackWorkingDir))
             {
+                // MSBuildTask0002: the temp root is only used as the parent of a freshly generated unique
+                // directory/file name, so it is never shared between concurrently running tasks.
+#pragma warning disable MSBuildTask0002
                 WixpackWorkingDir = Path.Combine(Path.GetTempPath(), "WixpackTemp", Guid.NewGuid().ToString().Split('-')[0]);
+#pragma warning restore MSBuildTask0002
             }
 
             _installerFilename = Path.GetFileName(InstallerFile);
 
-            if (Directory.Exists(WixpackWorkingDir))
+            AbsolutePath wixpackWorkingDir = TaskEnvironment.GetAbsolutePath(WixpackWorkingDir);
+            if (Directory.Exists(wixpackWorkingDir))
             {
-                Directory.Delete(WixpackWorkingDir, true);
+                Directory.Delete(wixpackWorkingDir, true);
             }
-            Directory.CreateDirectory(WixpackWorkingDir);
+            Directory.CreateDirectory(wixpackWorkingDir);
 
             if (_defineConstantsDictionary.TryGetValue("ProjectDir", out _wixprojDir))
             {
                 // Copy wixproj file - fail if ProjectPath is not defined
                 if (_defineConstantsDictionary.TryGetValue("ProjectPath", out var projectPath))
                 {
-                    string destPath = Path.Combine(WixpackWorkingDir, Path.GetFileName(projectPath));
-                    File.Copy(projectPath, destPath, overwrite: true);
+                    AbsolutePath projectPathAbsolute = TaskEnvironment.GetAbsolutePath(projectPath);
+                    AbsolutePath destPathAbsolute = TaskEnvironment.GetAbsolutePath(Path.Combine(wixpackWorkingDir, Path.GetFileName(projectPath)));
+                    File.Copy(projectPathAbsolute, destPathAbsolute, overwrite: true);
                 }
                 else
                 {
@@ -124,15 +134,15 @@ public class CreateWixBuildWixpack : Task
                 _wixprojDir = string.Empty;
             }
 
-            CopyIncludeSearchPathsContents();
-            ProcessIncludeFilesInSearchPaths();
-            CopySourceFilesAndContent();
+            CopyIncludeSearchPathsContents(wixpackWorkingDir);
+            ProcessIncludeFilesInSearchPaths(wixpackWorkingDir);
+            CopySourceFilesAndContent(wixpackWorkingDir);
             CopyExtensions();
             CopyBindPathContents();
             CopyLocalizationFiles();
             UpdatePaths();
-            GenerateWixBuildCommandLineFile();
-            CreateWixpackPackage();
+            GenerateWixBuildCommandLineFile(wixpackWorkingDir);
+            CreateWixpackPackage(wixpackWorkingDir);
         }
         catch (Exception e)
         {
@@ -142,23 +152,25 @@ public class CreateWixBuildWixpack : Task
         return !Log.HasLoggedErrors;
     }
 
-    private void CreateWixpackPackage()
+    private void CreateWixpackPackage(AbsolutePath wixpackWorkingDir)
     {
         OutputFile = Path.Combine(OutputFolder, $"{_installerFilename}{_packageExtension}");
-        if (File.Exists(OutputFile))
+        AbsolutePath outputFile = TaskEnvironment.GetAbsolutePath(OutputFile);
+        if (File.Exists(outputFile))
         {
-            File.Delete(OutputFile);
+            File.Delete(outputFile);
         }
 
-        if (!Directory.Exists(OutputFolder))
+        AbsolutePath outputFolder = TaskEnvironment.GetAbsolutePath(OutputFolder);
+        if (!Directory.Exists(outputFolder))
         {
-            Directory.CreateDirectory(OutputFolder);
+            Directory.CreateDirectory(outputFolder);
         }
 
-        ZipFile.CreateFromDirectory(WixpackWorkingDir, OutputFile);
+        ZipFile.CreateFromDirectory(wixpackWorkingDir, outputFile);
     }
 
-    private void CopyIncludeSearchPathsContents()
+    private void CopyIncludeSearchPathsContents(AbsolutePath wixpackWorkingDir)
     {
         if (IncludeSearchPaths == null || IncludeSearchPaths.Length == 0)
         {
@@ -169,7 +181,8 @@ public class CreateWixBuildWixpack : Task
         {
             // If not rooted, resolve relative to _wixprojDir
             var fullSourceDir = GetAbsoluteSourcePath(IncludeSearchPaths[i]);
-            if (!Directory.Exists(fullSourceDir))
+            AbsolutePath fullSourceDirPath = TaskEnvironment.GetAbsolutePath(fullSourceDir);
+            if (!Directory.Exists(fullSourceDirPath))
             {
                 Log.LogWarning($"IncludeSearchPath directory not found: {fullSourceDir}");
                 continue;
@@ -179,48 +192,55 @@ public class CreateWixBuildWixpack : Task
             var randomDirName = Path.GetRandomFileName();
             IncludeSearchPaths[i] = randomDirName;
 
-            CopyDirectoryRecursive(fullSourceDir, Path.Combine(WixpackWorkingDir, randomDirName));
+            AbsolutePath destinationDir = TaskEnvironment.GetAbsolutePath(Path.Combine(wixpackWorkingDir, randomDirName));
+            CopyDirectoryRecursive(fullSourceDirPath, destinationDir);
         }
     }
 
-    private void ProcessIncludeFilesInSearchPaths()
+    private void ProcessIncludeFilesInSearchPaths(AbsolutePath wixpackWorkingDir)
     {
         _defineVariablesDictionary = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
-        foreach (var includeFile in Directory.GetFiles(WixpackWorkingDir, "*.wxi", SearchOption.AllDirectories))
+        foreach (var includeFile in Directory.GetFiles(wixpackWorkingDir, "*.wxi", SearchOption.AllDirectories))
         {
-            ProcessIncludeFile(includeFile);
+            AbsolutePath includeFilePath = TaskEnvironment.GetAbsolutePath(includeFile);
+            ProcessIncludeFile(includeFilePath);
         }
     }
 
-    private void ProcessIncludeFile(string includeFile)
+    private void ProcessIncludeFile(AbsolutePath includeFilePath)
     {
         // Copy includeFile to %temp% folder
         // We want to keep original files in wixpack, and only preprocess
         // them for wixpack creation. This ensures that repacking process would not be
         // affected by some unintentional change, or a bug in preprocessor.
+        // MSBuildTask0002: the temp root is only used as the parent of a freshly generated unique
+        // directory/file name, so it is never shared between concurrently running tasks.
+#pragma warning disable MSBuildTask0002
         var tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.Copy(includeFile, tempFilePath, overwrite: true);
+#pragma warning restore MSBuildTask0002
+        AbsolutePath tempFileAbsolutePath = TaskEnvironment.GetAbsolutePath(tempFilePath);
+        File.Copy(includeFilePath, tempFileAbsolutePath, overwrite: true);
 
         // We're processing a Wix include file, which contains preprocessor
         // and other custom elements that are processed as strings using Regex.
         // It can also contain XML comments that we need to remove, so we don't ingest
         // variables from elements that are commented out.
-        RemoveAllXmlComments(tempFilePath);
-        PreprocessWixSourceFile(tempFilePath);
-        IngestDefineVariablesFromWixFile(tempFilePath);
+        RemoveAllXmlComments(tempFileAbsolutePath);
+        PreprocessWixSourceFile(tempFileAbsolutePath);
+        IngestDefineVariablesFromWixFile(tempFileAbsolutePath);
 
-        File.Delete(tempFilePath);
+        File.Delete(tempFileAbsolutePath);
     }
 
-    private void IngestDefineVariablesFromWixFile(string file)
+    private void IngestDefineVariablesFromWixFile(AbsolutePath filePath)
     {
         try
         {
-            IngestDefineVariablesFromString(XDocument.Load(file).ToString());
+            IngestDefineVariablesFromString(XDocument.Load(filePath).ToString());
         }
         catch (Exception ex)
         {
-            Log.LogError($"Error ingesting variables from include file {file}: {ex.Message}");
+            Log.LogError($"Error ingesting variables from include file {filePath.OriginalValue}: {ex.Message}");
         }
     }
 
@@ -238,14 +258,14 @@ public class CreateWixBuildWixpack : Task
         }
     }
 
-    private static void RemoveAllXmlComments(string file)
+    private static void RemoveAllXmlComments(AbsolutePath filePath)
     {
-        XDocument xmlDocument = XDocument.Load(file);
+        XDocument xmlDocument = XDocument.Load(filePath);
         xmlDocument.DescendantNodes()
                    .OfType<XComment>()
                    .ToList()
                    .ForEach(comment => comment.Remove());
-        xmlDocument.Save(file);
+        xmlDocument.Save(filePath);
     }
 
     private void UpdatePaths()
@@ -299,7 +319,7 @@ public class CreateWixBuildWixpack : Task
         }
     }
 
-    private void GenerateWixBuildCommandLineFile()
+    private void GenerateWixBuildCommandLineFile(AbsolutePath wixpackWorkingDir)
     {
         var commandLineArgs = new List<string>();
 
@@ -429,7 +449,8 @@ public class CreateWixBuildWixpack : Task
 
         // The command lines can be quite long, and cmd would reject them. Wix does support
         // response files, so create a response file (create.rsp) to package alongside.
-        File.WriteAllText(Path.Combine(WixpackWorkingDir, "create.rsp"), string.Join(System.Environment.NewLine, commandLineArgs)); 
+        AbsolutePath responseFilePath = TaskEnvironment.GetAbsolutePath(Path.Combine(wixpackWorkingDir, "create.rsp"));
+        File.WriteAllText(responseFilePath, string.Join(System.Environment.NewLine, commandLineArgs));
 
         string commandLine = "wix.exe build @create.rsp";
 
@@ -443,7 +464,8 @@ public class CreateWixBuildWixpack : Task
         createCmdFileContents.AppendLine(")");
         createCmdFileContents.AppendLine("REM Wix build command");
         createCmdFileContents.AppendLine(commandLine);
-        File.WriteAllText(Path.Combine(WixpackWorkingDir, "create.cmd"), createCmdFileContents.ToString());
+        AbsolutePath commandFilePath = TaskEnvironment.GetAbsolutePath(Path.Combine(wixpackWorkingDir, "create.cmd"));
+        File.WriteAllText(commandFilePath, createCmdFileContents.ToString());
     }
 
     /// <summary>
@@ -498,7 +520,7 @@ public class CreateWixBuildWixpack : Task
     /// If File@Source contains $(<value>), replaces it with the value from _defineConstantsDictionary.
     /// Creates a subfolder in WixpackWorkingDir with the name equal to File@Id value.
     /// </summary>
-    private void CopySourceFilesAndContent()
+    private void CopySourceFilesAndContent(AbsolutePath wixpackWorkingDir)
     {
         if (SourceFiles == null || _defineConstantsDictionary == null || string.IsNullOrEmpty(WixpackWorkingDir))
         {
@@ -508,7 +530,8 @@ public class CreateWixBuildWixpack : Task
         foreach (var sourceFile in SourceFiles)
         {
             var xmlPath = GetAbsoluteSourcePath(sourceFile.ItemSpec);
-            if (!File.Exists(xmlPath))
+            AbsolutePath xmlFilePath = TaskEnvironment.GetAbsolutePath(xmlPath);
+            if (!File.Exists(xmlFilePath))
             {
                 Log.LogError($"Source file not found: {sourceFile.ItemSpec}");
                 continue;
@@ -516,22 +539,23 @@ public class CreateWixBuildWixpack : Task
 
             // Copy the sourceFile to WixpackWorkingDir
             var copiedXmlPath = Path.Combine(WixpackWorkingDir, Path.GetFileName(xmlPath));
-            File.Copy(xmlPath, copiedXmlPath, overwrite: true);
+            AbsolutePath copiedXmlFilePath = TaskEnvironment.GetAbsolutePath(copiedXmlPath);
+            File.Copy(xmlFilePath, copiedXmlFilePath, overwrite: true);
             string sourceFileFolder = Path.GetDirectoryName(xmlPath);
 
             // First preprocess the source file to remove non-applicable include files.
             // We defer ingestion of variables, until all variables from include files
             // were ingested, as they may reference each other.
-            RemoveAllXmlComments(copiedXmlPath);
-            PreprocessWixSourceFile(copiedXmlPath);
+            RemoveAllXmlComments(copiedXmlFilePath);
+            PreprocessWixSourceFile(copiedXmlFilePath);
 
             // Ingest variables after file preprocessing
-            ProcessAllReferencedIncludeFiles(copiedXmlPath, sourceFileFolder);
-            IngestDefineVariablesFromWixFile(copiedXmlPath);
+            ProcessAllReferencedIncludeFiles(copiedXmlFilePath, sourceFileFolder, wixpackWorkingDir);
+            IngestDefineVariablesFromWixFile(copiedXmlFilePath);
 
             try
             {
-                var doc = XDocument.Load(copiedXmlPath);
+                var doc = XDocument.Load(copiedXmlFilePath);
 
                 var contentElements = new (string, string, string[])[]
                 {
@@ -591,7 +615,8 @@ public class CreateWixBuildWixpack : Task
                                 }
 
                                 // Enumerate directories in parts[0]
-                                var dirs = Directory.GetDirectories(parts[0], "*", SearchOption.TopDirectoryOnly);
+                                AbsolutePath sourceDir = TaskEnvironment.GetAbsolutePath(parts[0]);
+                                var dirs = Directory.GetDirectories(sourceDir, "*", SearchOption.TopDirectoryOnly);
                                 foreach (var dir in dirs)
                                 {
                                     var filePath = Path.Combine(dir, Path.GetFileName(source));
@@ -619,7 +644,7 @@ public class CreateWixBuildWixpack : Task
                     }
                 }
 
-                doc.Save(copiedXmlPath);
+                doc.Save(copiedXmlFilePath);
             }
             catch (Exception ex)
             {
@@ -633,10 +658,9 @@ public class CreateWixBuildWixpack : Task
     /// It will update the source file with new paths for included files,
     /// in the wixpack working directory.
     /// </summary>
-    /// <param name="file"></param>
-    private void ProcessAllReferencedIncludeFiles(string file, string relativeRoot)
+    private void ProcessAllReferencedIncludeFiles(AbsolutePath filePath, string relativeRoot, AbsolutePath wixpackWorkingDir)
     {
-        string content = File.ReadAllText(file);
+        string content = File.ReadAllText(filePath);
 
         // Regex to match <?include value ?>
         var regex = new Regex(@"<\?include\s+([^\s\?>]+)\s*\?>", RegexOptions.IgnoreCase);
@@ -646,13 +670,14 @@ public class CreateWixBuildWixpack : Task
             {
                 string filename = match.Groups[1].Value.Trim('\"');
                 string includeFilePath = GetAbsoluteSourcePath(ResolvePath(filename), relativeRoot);
-                if (File.Exists(includeFilePath))
+                AbsolutePath includeFileAbsolutePath = TaskEnvironment.GetAbsolutePath(includeFilePath);
+                if (File.Exists(includeFileAbsolutePath))
                 {
                     // Copy the include file, update the source file with new path
                     // and ingest the variables.
                     string id = Path.GetFileName(includeFilePath);
-                    string path = CopySourceFile(id, includeFilePath, relativeRoot);
-                    ProcessIncludeFile(path);
+                    AbsolutePath copiedIncludeFilePath = CopySourceFile(id, includeFilePath, relativeRoot);
+                    ProcessIncludeFile(copiedIncludeFilePath);
                     content = content.Replace(filename, $"{id}\\{id}");
                 }
                 else
@@ -663,8 +688,9 @@ public class CreateWixBuildWixpack : Task
                     {
                         foreach (var searchPath in IncludeSearchPaths)
                         {
-                            var potentialPath = Path.Combine(WixpackWorkingDir, searchPath, Path.GetFileName(includeFilePath));
-                            if (File.Exists(potentialPath))
+                            var potentialPath = Path.Combine(wixpackWorkingDir, searchPath, Path.GetFileName(includeFilePath));
+                            AbsolutePath potentialFilePath = TaskEnvironment.GetAbsolutePath(potentialPath);
+                            if (File.Exists(potentialFilePath))
                             {
                                 foundInSearchPath = true;
                                 break;
@@ -680,7 +706,7 @@ public class CreateWixBuildWixpack : Task
             }
         }
 
-        File.WriteAllText(file, content);
+        File.WriteAllText(filePath, content);
     }
 
     private string ResolvePath(string path)
@@ -742,11 +768,11 @@ public class CreateWixBuildWixpack : Task
     /// <?ifdef ... ?>
     /// <?ifndef ... ?>
     /// </summary>
-    /// <param name="sourceFile"></param>
+    /// <param name="sourceFilePath"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    private void PreprocessWixSourceFile(string sourceFile)
+    private void PreprocessWixSourceFile(AbsolutePath sourceFilePath)
     {
-        string input = File.ReadAllText(sourceFile);
+        string input = File.ReadAllText(sourceFilePath);
         var output = new StringBuilder();
 
         int pos = 0;
@@ -930,7 +956,7 @@ public class CreateWixBuildWixpack : Task
             }
         }
 
-        File.WriteAllText(sourceFile, output.ToString());
+        File.WriteAllText(sourceFilePath, output.ToString());
     }
 
     /// <summary>
@@ -1011,17 +1037,18 @@ public class CreateWixBuildWixpack : Task
         }
     }
 
-    private string CopySourceFile(string fileId, string source, string relativeRoot = "")
+    private AbsolutePath CopySourceFile(string fileId, string source, string relativeRoot = "")
     {
-        var destDir = Path.Combine(WixpackWorkingDir, fileId);
+        AbsolutePath destDir = TaskEnvironment.GetAbsolutePath(Path.Combine(WixpackWorkingDir, fileId));
         Directory.CreateDirectory(destDir);
 
         source = GetAbsoluteSourcePath(source, relativeRoot);
+        AbsolutePath sourcePath = TaskEnvironment.GetAbsolutePath(source);
 
-        if (File.Exists(source))
+        if (File.Exists(sourcePath))
         {
-            var destPath = Path.Combine(destDir, Path.GetFileName(source));
-            File.Copy(source, destPath, overwrite: true);
+            AbsolutePath destPath = TaskEnvironment.GetAbsolutePath(Path.Combine(destDir, Path.GetFileName(source)));
+            File.Copy(sourcePath, destPath, overwrite: true);
             return destPath;
         }
         else
@@ -1054,7 +1081,8 @@ public class CreateWixBuildWixpack : Task
                 string wixpackSubfolder = Path.GetRandomFileName();
                 string bindPath = BindPaths[i].ItemSpec;
 
-                foreach (string file in Directory.GetFiles(bindPath, "*", SearchOption.TopDirectoryOnly))
+                AbsolutePath bindPathAbsolute = TaskEnvironment.GetAbsolutePath(bindPath);
+                foreach (string file in Directory.GetFiles(bindPathAbsolute, "*", SearchOption.TopDirectoryOnly))
                 {
                     // Copy known usable files only
                     // .dll, .exe, .msi
@@ -1099,18 +1127,22 @@ public class CreateWixBuildWixpack : Task
         return source;
     }
 
-    private static void CopyDirectoryRecursive(string sourceDir, string destDir)
+    private void CopyDirectoryRecursive(AbsolutePath sourceDir, AbsolutePath destDir)
     {
         Directory.CreateDirectory(destDir);
 
         foreach (var file in Directory.GetFiles(sourceDir))
         {
-            File.Copy(file, Path.Combine(destDir, Path.GetFileName(file)), overwrite: true);
+            AbsolutePath filePath = TaskEnvironment.GetAbsolutePath(file);
+            AbsolutePath destinationFilePath = TaskEnvironment.GetAbsolutePath(Path.Combine(destDir, Path.GetFileName(file)));
+            File.Copy(filePath, destinationFilePath, overwrite: true);
         }
 
         foreach (var dir in Directory.GetDirectories(sourceDir))
         {
-            CopyDirectoryRecursive(dir, Path.Combine(destDir, Path.GetFileName(dir)));
+            AbsolutePath subdirectoryPath = TaskEnvironment.GetAbsolutePath(dir);
+            AbsolutePath destinationSubdirectoryPath = TaskEnvironment.GetAbsolutePath(Path.Combine(destDir, Path.GetFileName(dir)));
+            CopyDirectoryRecursive(subdirectoryPath, destinationSubdirectoryPath);
         }
     }
 }

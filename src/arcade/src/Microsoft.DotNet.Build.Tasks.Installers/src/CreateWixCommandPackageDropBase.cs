@@ -14,8 +14,11 @@ using System.Xml.XPath;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers;
 
-public abstract class CreateWixCommandPackageDropBase : Task
+public abstract class CreateWixCommandPackageDropBase : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     private const int _fieldsArtifactId = 0;
     private const int _fieldsArtifactPath1 = 6;
     private const int _fieldsArtifactPath2 = 1;
@@ -50,36 +53,41 @@ public abstract class CreateWixCommandPackageDropBase : Task
     [Output]
     public string OutputFile { get; set; }
 
-    protected abstract void ProcessToolSpecificCommandLineParameters(string packageDropOutputFolder, StringBuilder commandString);
+    protected abstract void ProcessToolSpecificCommandLineParameters(AbsolutePath packageDropDir, StringBuilder commandString);
 
     protected void ProcessWixCommand(string packageDropOutputFolder, string toolExecutable, string originalCommand)
     {
-        if (!Directory.Exists(packageDropOutputFolder))
+        AbsolutePath packageDropDir = TaskEnvironment.GetAbsolutePath(packageDropOutputFolder);
+        if (!Directory.Exists(packageDropDir))
         {
-            Directory.CreateDirectory(packageDropOutputFolder);
+            Directory.CreateDirectory(packageDropDir);
         }
 
-        ProcessWixSrcFiles(packageDropOutputFolder);
+        ProcessWixSrcFiles(packageDropDir);
 
-        ProcessLocFiles(packageDropOutputFolder);
+        ProcessLocFiles(packageDropDir);
 
-        CreateCommandFile(toolExecutable, originalCommand, packageDropOutputFolder);
+        CreateCommandFile(toolExecutable, originalCommand, packageDropDir);
 
+        // OutputFile is an [Output] property, so it keeps the form the project supplied through
+        // OutputFolder. Only the copy used for file I/O below is resolved.
         OutputFile = Path.Combine(OutputFolder, $"{Path.GetFileName(InstallerFile)}{_packageExtension}");
-        if(File.Exists(OutputFile))
+        AbsolutePath outputFilePath = TaskEnvironment.GetAbsolutePath(OutputFile);
+        if(File.Exists(outputFilePath))
         {
-            File.Delete(OutputFile);
+            File.Delete(outputFilePath);
         }
-        if(!Directory.Exists(OutputFolder))
+        AbsolutePath outputFolderPath = TaskEnvironment.GetAbsolutePath(OutputFolder);
+        if(!Directory.Exists(outputFolderPath))
         {
-            Directory.CreateDirectory(OutputFolder);
+            Directory.CreateDirectory(outputFolderPath);
         }
-        ZipFile.CreateFromDirectory(packageDropOutputFolder, OutputFile);
+        ZipFile.CreateFromDirectory(packageDropDir, outputFilePath);
     }
 
-    private void CreateCommandFile(string toolExecutable, string originalCommand, string packageDropOutputFolder)
+    private void CreateCommandFile(string toolExecutable, string originalCommand, AbsolutePath packageDropDir)
     {
-        string commandFilename = Path.Combine(packageDropOutputFolder, $"create.cmd");
+        AbsolutePath commandFilename = TaskEnvironment.GetAbsolutePath(Path.Combine(packageDropDir, $"create.cmd"));
         StringBuilder commandString = new StringBuilder();
         commandString.AppendLine("@echo off");
         commandString.AppendLine("set outputfolder=%1");
@@ -121,11 +129,11 @@ public abstract class CreateWixCommandPackageDropBase : Task
                 commandString.Append($" {Path.GetFileName(wixSrcFile.ItemSpec)}");
             }
         }
-        ProcessToolSpecificCommandLineParameters(packageDropOutputFolder, commandString);
+        ProcessToolSpecificCommandLineParameters(packageDropDir, commandString);
         commandString.AppendLine();
-        if(!Directory.Exists(packageDropOutputFolder))
+        if(!Directory.Exists(packageDropDir))
         {
-            Directory.CreateDirectory(packageDropOutputFolder);
+            Directory.CreateDirectory(packageDropDir);
         }
         File.WriteAllText(commandFilename, commandString.ToString());
     }
@@ -133,8 +141,8 @@ public abstract class CreateWixCommandPackageDropBase : Task
     /// <summary>
     ///     Process each of the wix src files
     /// </summary>
-    /// <param name="packageDropOutputFolder">Drop folder to place artifacts</param>
-    private void ProcessWixSrcFiles(string packageDropOutputFolder)
+    /// <param name="packageDropDir">Drop folder to place artifacts</param>
+    private void ProcessWixSrcFiles(AbsolutePath packageDropDir)
     {
         XmlNamespaceManager nsmgr = new XmlNamespaceManager(new NameTable());
         nsmgr.AddNamespace("wix", "http://schemas.microsoft.com/wix/2006/objects");
@@ -142,8 +150,8 @@ public abstract class CreateWixCommandPackageDropBase : Task
         foreach (var wixSrcFile in WixSrcFiles)
         {
             // copy the file to outputPath
-            string newWixSrcFilePath = Path.Combine(packageDropOutputFolder, Path.GetFileName(wixSrcFile.ItemSpec));
-            File.Copy(wixSrcFile.ItemSpec, newWixSrcFilePath, true);
+            AbsolutePath newWixSrcFilePath = TaskEnvironment.GetAbsolutePath(Path.Combine(packageDropDir, Path.GetFileName(wixSrcFile.ItemSpec)));
+            File.Copy(TaskEnvironment.GetAbsolutePath(wixSrcFile.ItemSpec), newWixSrcFilePath, true);
 
             string wixSrcFileExtension = Path.GetExtension(wixSrcFile.ItemSpec);
             // These files are typically .wixobj. Occasionally we have a wixlib as input, which
@@ -160,22 +168,22 @@ public abstract class CreateWixCommandPackageDropBase : Task
                 continue;
             }
 
-            ProcessWixObj(newWixSrcFilePath, packageDropOutputFolder, nsmgr);
+            ProcessWixObj(newWixSrcFilePath, packageDropDir, nsmgr);
         }
     }
 
     /// <summary>
     ///     Process the .wxl files and copy to the local drop folder
     /// </summary>
-    /// <param name="packageDropOutputFolder">Drop location for wxl files</param>
-    private void ProcessLocFiles(string packageDropOutputFolder)
+    /// <param name="packageDropDir">Drop location for wxl files</param>
+    private void ProcessLocFiles(AbsolutePath packageDropDir)
     {
         if (Loc != null)
         {
             foreach (var locItem in Loc)
             {
-                var destinationPath = Path.Combine(packageDropOutputFolder, Path.GetFileName(locItem.ItemSpec));
-                File.Copy(locItem.ItemSpec, destinationPath, true);
+                AbsolutePath destinationPath = TaskEnvironment.GetAbsolutePath(Path.Combine(packageDropDir, Path.GetFileName(locItem.ItemSpec)));
+                File.Copy(TaskEnvironment.GetAbsolutePath(locItem.ItemSpec), destinationPath, true);
             }
         }
     }
@@ -184,9 +192,9 @@ public abstract class CreateWixCommandPackageDropBase : Task
     ///     Process a .wixobj file that is an input to the light/lit command.
     /// </summary>
     /// <param name="wixObjFilePath">Path to the wixobj file in its new drop location</param>
-    /// <param name="packageDropOutputFolder">Output light/lit command drop folder</param>
+    /// <param name="packageDropDir">Output light/lit command drop folder</param>
     /// <param name="nsmgr">xml namespace manager</param>
-    private void ProcessWixObj(string wixObjFilePath, string packageDropOutputFolder, XmlNamespaceManager nsmgr)
+    private void ProcessWixObj(AbsolutePath wixObjFilePath, AbsolutePath packageDropDir, XmlNamespaceManager nsmgr)
     {
         Log.LogMessage(MessageImportance.Normal, $"Creating modified wixobj file '{wixObjFilePath}'...");
 
@@ -200,48 +208,48 @@ public abstract class CreateWixCommandPackageDropBase : Task
         // process fragment - WixFile elements
         // path in field 7
         string xpath = "//wix:wixObject/wix:section[@type='fragment']/wix:table[@name='WixFile']/wix:row";
-        ProcessXPath(doc, xpath, packageDropOutputFolder, nsmgr, _fieldsArtifactPath1);
+        ProcessXPath(doc, xpath, packageDropDir, nsmgr, _fieldsArtifactPath1);
 
         // process product - WixFile elements
         // path in field 7
         xpath = "//wix:wixObject/wix:section[@type='product']/wix:table[@name='WixFile']/wix:row";
-        ProcessXPath(doc, xpath, packageDropOutputFolder, nsmgr, _fieldsArtifactPath1);
+        ProcessXPath(doc, xpath, packageDropDir, nsmgr, _fieldsArtifactPath1);
 
         // process fragment - Binary elements
         // path in field 2
         xpath = "//wix:wixObject/wix:section[@type='fragment']/wix:table[@name='Binary']/wix:row";
-        ProcessXPath(doc, xpath, packageDropOutputFolder, nsmgr, _fieldsArtifactPath2);
+        ProcessXPath(doc, xpath, packageDropDir, nsmgr, _fieldsArtifactPath2);
 
         // process product - Icon elements
         // path in field 2
         xpath = "//wix:wixObject/wix:section[@type='product']/wix:table[@name='Icon']/wix:row";
-        ProcessXPath(doc, xpath, packageDropOutputFolder, nsmgr, _fieldsArtifactPath2);
+        ProcessXPath(doc, xpath, packageDropDir, nsmgr, _fieldsArtifactPath2);
 
         // process product - WixVariable elements
         // path in field 2
         xpath = "//wix:wixObject/wix:section[@type='product']/wix:table[@name='WixVariable']/wix:row";
-        ProcessXPath(doc, xpath, packageDropOutputFolder, nsmgr, _fieldsArtifactPath2);
+        ProcessXPath(doc, xpath, packageDropDir, nsmgr, _fieldsArtifactPath2);
 
         // Bundle specific items.
 
         // path in fields 3 and 6
         xpath = "//wix:wixObject/wix:section[@type='bundle']/wix:table[@name='Payload']/wix:row";
-        ProcessXPath(doc, xpath, packageDropOutputFolder, nsmgr, _fieldsArtifactPath3, _fieldsArtifactPath6);
+        ProcessXPath(doc, xpath, packageDropDir, nsmgr, _fieldsArtifactPath3, _fieldsArtifactPath6);
 
         // process WixVariable data
         // path in field 2
         xpath = "//wix:wixObject/wix:section[@type='bundle']/wix:table[@name='WixVariable']/wix:row";
-        ProcessXPath(doc, xpath, packageDropOutputFolder, nsmgr, _fieldsArtifactPath2);
+        ProcessXPath(doc, xpath, packageDropDir, nsmgr, _fieldsArtifactPath2);
 
         // process Payload, in fragment section, data
         // path in fields 3 and 6
         xpath = "//wix:wixObject/wix:section[@type='fragment']/wix:table[@name='Payload']/wix:row";
-        ProcessXPath(doc, xpath, packageDropOutputFolder, nsmgr, _fieldsArtifactPath3, _fieldsArtifactPath6);
+        ProcessXPath(doc, xpath, packageDropDir, nsmgr, _fieldsArtifactPath3, _fieldsArtifactPath6);
 
         doc.Save(wixObjFilePath);
     }
 
-    private void ProcessXPath(XDocument doc, string xpath, string outputPath, XmlNamespaceManager nsmgr, int pathField1, int pathField2 = 0)
+    private void ProcessXPath(XDocument doc, string xpath, AbsolutePath outputPath, XmlNamespaceManager nsmgr, int pathField1, int pathField2 = 0)
     {
         IEnumerable<XElement> iels = doc.XPathSelectElements(xpath, nsmgr);
         if (iels != null && iels.Count() > 0)
@@ -290,7 +298,7 @@ public abstract class CreateWixCommandPackageDropBase : Task
                             }
                             foreach (var additionalBasePath in AdditionalBasePaths)
                             {
-                                var possiblePath = Path.Combine(additionalBasePath.ItemSpec, oldPath);
+                                AbsolutePath possiblePath = TaskEnvironment.GetAbsolutePath(Path.Combine(additionalBasePath.ItemSpec, oldPath));
                                 if (File.Exists(possiblePath))
                                 {
                                     oldPath = possiblePath;
@@ -299,7 +307,7 @@ public abstract class CreateWixCommandPackageDropBase : Task
                                 }
                             }
                         }
-                        else if (File.Exists(oldPath))
+                        else if (File.Exists(TaskEnvironment.GetAbsolutePath(oldPath)))
                         {
                             foundArtifact = true;
                         }
@@ -323,13 +331,13 @@ public abstract class CreateWixCommandPackageDropBase : Task
                 {
                     if (foundArtifact)
                     {
-                        string newFolder = Path.Combine(outputPath, id);
+                        AbsolutePath newFolder = TaskEnvironment.GetAbsolutePath(Path.Combine(outputPath, id));
                         if (!Directory.Exists(newFolder))
                         {
                             Directory.CreateDirectory(newFolder);
                         }
 
-                        File.Copy(oldPath, Path.Combine(outputPath, newRelativePath), true);
+                        File.Copy(TaskEnvironment.GetAbsolutePath(oldPath), TaskEnvironment.GetAbsolutePath(Path.Combine(outputPath, newRelativePath)), true);
                     }
                     else if (oldPath == null)
                     {
