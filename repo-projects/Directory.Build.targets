@@ -364,14 +364,27 @@
       <Output TaskParameter="KnownPackages" ItemName="_PreviouslyBuiltSourceBuiltPackages" />
     </GetKnownArtifactsFromAssetManifests>
 
-    <!-- Repositories built before runtime need the approved bootstrap ILLink pack until the live pack is available. -->
+    <!-- Use approved bootstrap packs until runtime's live packs are available to the repository being built. -->
     <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
       <_PreviouslySourceBuiltILLinkPackage Include="@(_PreviouslyBuiltSourceBuiltPackages)"
                                            Condition="'%(Identity)' == 'Microsoft.NET.ILLink.Tasks'" />
+      <_PreviouslySourceBuiltRuntimePack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
+                                         Condition="'%(Identity)' == 'Microsoft.NETCore.App.Runtime.$(PortableTargetRid)'" />
+      <_PreviouslySourceBuiltCrossgen2Pack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
+                                           Condition="'%(Identity)' == 'Microsoft.NETCore.App.Crossgen2.$(PortableTargetRid)'" />
       <_PreviouslySourceBuiltExtraPackageVersionProps Include="KnownILLinkPackCurrentVersion"
                                                        Version="%(_PreviouslySourceBuiltILLinkPackage.Version)"
                                                        DoNotOverwrite="true"
                                                        Condition="'@(_PreviouslySourceBuiltILLinkPackage)' != ''" />
+      <_PreviouslySourceBuiltExtraPackageVersionProps Include="KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion;
+                                                               KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion"
+                                                       Version="%(_PreviouslySourceBuiltRuntimePack.Version)"
+                                                       DoNotOverwrite="true"
+                                                       Condition="'@(_PreviouslySourceBuiltRuntimePack)' != ''" />
+      <_PreviouslySourceBuiltExtraPackageVersionProps Include="KnownCrossgen2PackCurrentVersion"
+                                                       Version="%(_PreviouslySourceBuiltCrossgen2Pack.Version)"
+                                                       DoNotOverwrite="true"
+                                                       Condition="'@(_PreviouslySourceBuiltCrossgen2Pack)' != ''" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -594,12 +607,14 @@
       <!-- Use the targeting pack version as a shortcut for other pack versions since they all version consistently -->
       <RuntimePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref')->Metadata('Version'))</RuntimePackVersion>
       <SourceBuiltILLinkPackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NET.ILLink.Tasks')->Metadata('Version'))</SourceBuiltILLinkPackVersion>
+      <SourceBuiltCrossgen2PackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Crossgen2.$(PortableTargetRid)')->Metadata('Version'))</SourceBuiltCrossgen2PackVersion>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs Condition="'$(SourceBuiltILLinkPackVersion)' != ''">$(BuildArgs) /p:KnownILLinkPackCurrentVersion=$(SourceBuiltILLinkPackVersion)</BuildArgs>
+      <BuildArgs Condition="'$(SourceBuiltCrossgen2PackVersion)' != ''">$(BuildArgs) /p:KnownCrossgen2PackCurrentVersion=$(SourceBuiltCrossgen2PackVersion)</BuildArgs>
     </PropertyGroup>
 
     <PropertyGroup>

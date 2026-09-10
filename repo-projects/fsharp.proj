@@ -14,8 +14,7 @@
     <BuildActions Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(BuildActions) $(FlagParameterPrefix)noVisualStudio</BuildActions>
 
     <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
-    <!-- F# builds before runtime, so source-only builds cannot publish with the current runtime and Crossgen2 packs. -->
-    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)tfm $(NetCurrent) /p:EnablePublishReadyToRun=false</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)tfm $(NetCurrent)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
