@@ -18,9 +18,15 @@
 
     <ItemGroup>
       <TraceDataCollectorArtifacts Include="$(MSBuildThisFileDirectory)\**\*.*" />
+      <_TraceDataCollectorArtifactsToPublish Include="@(TraceDataCollectorArtifacts)"
+                                             RelativePath="%(TraceDataCollectorArtifacts.RecursiveDir)%(Filename)%(Extension)" />
+      <_TraceDataCollectorArtifactsToPublish Remove="@(ResolvedFileToPublish)"
+                                             MatchOnMetadata="RelativePath"
+                                             MatchOnMetadataOptions="PathLike" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(TraceDataCollectorArtifacts)" DestinationFolder="$(PublishDir)%(RecursiveDir)" />
+    <Copy SourceFiles="@(_TraceDataCollectorArtifactsToPublish)"
+          DestinationFiles="@(_TraceDataCollectorArtifactsToPublish->'$(PublishDir)%(RelativePath)')" />
 
   </Target>
 
