@@ -3,12 +3,6 @@
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:Microsoft.IdentityModel.Tokens.MlDsaSecurityKey</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute</Target>
     <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.CodeAnalysis.Workspaces.MSBuild.Contracts.dll</Left>
     <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.CodeAnalysis.Workspaces.MSBuild.Contracts.dll</Right>
@@ -194,70 +188,10 @@
     <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
   </Suppression>
   <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>F:Microsoft.IdentityModel.Tokens.JsonWebAlgorithmsKeyTypes.Akp</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>F:Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.Priv</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>F:Microsoft.IdentityModel.Tokens.JsonWebKeyParameterNames.Pub</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>F:Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa44</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>F:Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa65</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>F:Microsoft.IdentityModel.Tokens.SecurityAlgorithms.MlDsa87</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Microsoft.IdentityModel.Tokens.JsonWebKey.get_Priv</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Microsoft.IdentityModel.Tokens.JsonWebKey.get_Pub</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Microsoft.IdentityModel.Tokens.JsonWebKey.set_Priv(System.String)</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Microsoft.IdentityModel.Tokens.JsonWebKey.set_Pub(System.String)</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0002</DiagnosticId>
-    <Target>M:Microsoft.IdentityModel.Tokens.JsonWebKeyConverter.ConvertFromMlDsaSecurityKey(Microsoft.IdentityModel.Tokens.MlDsaSecurityKey)</Target>
-    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
+    <DiagnosticId>CP0003</DiagnosticId>
+    <Target>Microsoft.Bcl.Cryptography, Version=x.y.z, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Bcl.Cryptography.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Bcl.Cryptography.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
