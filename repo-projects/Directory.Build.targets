@@ -364,6 +364,16 @@
       <Output TaskParameter="KnownPackages" ItemName="_PreviouslyBuiltSourceBuiltPackages" />
     </GetKnownArtifactsFromAssetManifests>
 
+    <!-- Repositories built before runtime need the approved bootstrap ILLink pack until the live pack is available. -->
+    <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+      <_PreviouslySourceBuiltILLinkPackage Include="@(_PreviouslyBuiltSourceBuiltPackages)"
+                                           Condition="'%(Identity)' == 'Microsoft.NET.ILLink.Tasks'" />
+      <_PreviouslySourceBuiltExtraPackageVersionProps Include="KnownILLinkPackCurrentVersion"
+                                                       Version="%(_PreviouslySourceBuiltILLinkPackage.Version)"
+                                                       DoNotOverwrite="true"
+                                                       Condition="'@(_PreviouslySourceBuiltILLinkPackage)' != ''" />
+    </ItemGroup>
+
     <PropertyGroup>
       <_SharedComponentFilterMode>$(SharedComponentFilter_NonToolingOnly)</_SharedComponentFilterMode>
       <_SharedComponentFilterMode Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">$(SharedComponentFilter_BootstrapRepoDepsOnly)</_SharedComponentFilterMode>
@@ -402,6 +412,7 @@
 
     <!-- Create previously source-built inputs info -->
     <WritePackageVersionsProps KnownPackages="@(_PreviouslyBuiltSourceBuiltPackages)"
+                               ExtraProperties="@(_PreviouslySourceBuiltExtraPackageVersionProps)"
                                VersionPropsFlowType="$(PackageVersionPropsFlowType)"
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(PreviouslySourceBuiltPackageVersionPropsPath)"
