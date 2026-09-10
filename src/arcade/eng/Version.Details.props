@@ -9,8 +9,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26458.14</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26458.14</MicrosoftDotNetHelixSdkPackageVersion>
     <!-- dotnet-arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26374.1</MicrosoftDotNetDarcLibPackageVersion>
-    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.26374.1</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
+    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26451.2</MicrosoftDotNetDarcLibPackageVersion>
+    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.26451.2</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
     <!-- dotnet-command-line-api dependencies -->
     <SystemCommandLinePackageVersion>2.0.3</SystemCommandLinePackageVersion>
     <!-- dotnet-deployment-tools dependencies -->
@@ -28,14 +28,14 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisCSharpPackageVersion>4.8.0</MicrosoftCodeAnalysisCSharpPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.8.0</MicrosoftNetCompilersToolsetPackageVersion>
     <!-- dotnet-runtime dependencies -->
-    <MicrosoftExtensionsDependencyInjectionPackageVersion>10.0.10</MicrosoftExtensionsDependencyInjectionPackageVersion>
-    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>10.0.10</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
-    <MicrosoftExtensionsDependencyModelPackageVersion>10.0.10</MicrosoftExtensionsDependencyModelPackageVersion>
-    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.10</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.10</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <MicrosoftExtensionsHttpPackageVersion>10.0.10</MicrosoftExtensionsHttpPackageVersion>
-    <MicrosoftExtensionsLoggingAbstractionsPackageVersion>10.0.10</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
-    <MicrosoftExtensionsLoggingConsolePackageVersion>10.0.10</MicrosoftExtensionsLoggingConsolePackageVersion>
+    <MicrosoftExtensionsDependencyInjectionPackageVersion>10.0.11</MicrosoftExtensionsDependencyInjectionPackageVersion>
+    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>10.0.11</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>10.0.11</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.11</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.11</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftExtensionsHttpPackageVersion>10.0.11</MicrosoftExtensionsHttpPackageVersion>
+    <MicrosoftExtensionsLoggingAbstractionsPackageVersion>10.0.11</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
+    <MicrosoftExtensionsLoggingConsolePackageVersion>10.0.11</MicrosoftExtensionsLoggingConsolePackageVersion>
     <SystemCompositionPackageVersion>10.0.10</SystemCompositionPackageVersion>
     <SystemIOPackagingPackageVersion>10.0.10</SystemIOPackagingPackageVersion>
     <SystemSecurityCryptographyPkcsPackageVersion>10.0.10</SystemSecurityCryptographyPkcsPackageVersion>
