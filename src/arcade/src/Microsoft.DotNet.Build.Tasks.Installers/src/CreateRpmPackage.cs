@@ -18,9 +18,13 @@ namespace Microsoft.DotNet.Build.Tasks.Installers;
 /// <remarks>
 /// Implements the format specified in https://manpages.debian.org/bookworm/dpkg-dev/deb.5.en.html
 /// </remarks>
-public sealed class CreateRpmPackage : Task
+[MSBuildMultiThreadableTask]
+public sealed class CreateRpmPackage : Task, IMultiThreadableTask
 {
     private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
     [Required]
     public string OutputRpmPackagePath { get; set; } = "";
@@ -128,7 +132,7 @@ public sealed class CreateRpmPackage : Task
 
         foreach (ITaskItem script in Scripts)
         {
-            builder.AddScript(script.GetMetadata("Kind"), File.ReadAllText(script.ItemSpec));
+            builder.AddScript(script.GetMetadata("Kind"), File.ReadAllText(TaskEnvironment.GetAbsolutePath(script.ItemSpec)));
         }
 
         foreach (ITaskItem trigger in FileTriggers)
@@ -149,13 +153,14 @@ public sealed class CreateRpmPackage : Task
                 Log.LogError($"File trigger '{trigger.ItemSpec}' does not specify any paths in its 'Paths' metadata.");
                 return false;
             }
-            if (!File.Exists(trigger.ItemSpec))
+            AbsolutePath triggerPath = TaskEnvironment.GetAbsolutePath(trigger.ItemSpec);
+            if (!File.Exists(triggerPath))
             {
                 Log.LogError($"File trigger script '{trigger.ItemSpec}' does not exist.");
                 return false;
             }
 
-            builder.AddFileTrigger(kind, File.ReadAllText(trigger.ItemSpec), paths);
+            builder.AddFileTrigger(kind, File.ReadAllText(triggerPath), paths);
         }
 
         // Normalize ghost paths (e.g. "/usr/bin/dnx") to the CPIO-relative form used for payload entries ("./usr/bin/dnx").
@@ -173,7 +178,7 @@ public sealed class CreateRpmPackage : Task
         }
         HashSet<string> ghostFilesFound = new();
 
-        using (CpioReader reader = new(File.OpenRead(Payload), leaveOpen: false))
+        using (CpioReader reader = new(File.OpenRead(TaskEnvironment.GetAbsolutePath(Payload)), leaveOpen: false))
         {
             Dictionary<string, string> filePathToKind = RawPayloadFileKinds.Select(k => k.ItemSpec.Split(':')).ToDictionary(k => k[0], k => k[1].Trim());
             for (CpioEntry entry = reader.GetNextEntry(); entry is not null; entry = reader.GetNextEntry())
@@ -220,7 +225,7 @@ public sealed class CreateRpmPackage : Task
 
         RpmPackage package = builder.Build();
 
-        using FileStream rpmPackageStream = new(OutputRpmPackagePath, FileMode.Create, FileAccess.Write);
+        using FileStream rpmPackageStream = new(TaskEnvironment.GetAbsolutePath(OutputRpmPackagePath), FileMode.Create, FileAccess.Write);
 
         package.WriteTo(rpmPackageStream);
         return true;

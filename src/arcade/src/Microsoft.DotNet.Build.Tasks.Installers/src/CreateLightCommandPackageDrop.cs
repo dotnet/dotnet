@@ -7,6 +7,7 @@ using System.Text;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers;
 
+[MSBuildMultiThreadableTask]
 public class CreateLightCommandPackageDrop : CreateWixCommandPackageDropBase
 {
     [Required]
@@ -36,7 +37,7 @@ public class CreateLightCommandPackageDrop : CreateWixCommandPackageDropBase
         return !Log.HasLoggedErrors;
     }
 
-    protected override void ProcessToolSpecificCommandLineParameters(string packageDropOutputFolder, StringBuilder commandString)
+    protected override void ProcessToolSpecificCommandLineParameters(AbsolutePath packageDropDir, StringBuilder commandString)
     {
         if (Cultures != null)
         {
@@ -52,8 +53,8 @@ public class CreateLightCommandPackageDrop : CreateWixCommandPackageDropBase
         }
         if (WixProjectFile != null)
         {
-            var destinationPath = Path.Combine(packageDropOutputFolder, Path.GetFileName(WixProjectFile));
-            File.Copy(WixProjectFile, destinationPath, true);
+            AbsolutePath destinationPath = TaskEnvironment.GetAbsolutePath(Path.Combine(packageDropDir, Path.GetFileName(WixProjectFile)));
+            File.Copy(TaskEnvironment.GetAbsolutePath(WixProjectFile), destinationPath, true);
             commandString.Append($" -wixprojectfile {Path.GetFileName(WixProjectFile)}");
         }
         if (ContentsFile != null)

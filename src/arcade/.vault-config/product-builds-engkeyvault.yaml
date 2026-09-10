@@ -37,6 +37,13 @@ secrets:
       hasWebhookSecret: false
       hasOAuthSecret: false
 
+  workload-versions-github-app:
+    type: github-app-secret
+    parameters:
+      hasPrivateKey: true
+      hasWebhookSecret: false
+      hasOAuthSecret: false
+
   ddfuse-pr-review-dashboard-app:
     type: github-app-secret
     parameters:
@@ -76,15 +83,3 @@ secrets:
     type: text
     parameters:
       description: Client id for akams app
-
-  #OneLocBuildVariables
-  dn-bot-ceapex-package-r:
-    type: azure-devops-access-token
-    parameters:
-      domainAccountName: dn-bot
-      domainAccountSecret:
-          location: helixkv
-          name: dn-bot-account-redmond
-      name: dn-bot-ceapex-package-r
-      organizations: ceapex
-      scopes: packaging

@@ -16,8 +16,12 @@ namespace Microsoft.DotNet.Build.Tasks.Installers;
 /// <remarks>
 /// The format is specified at https://manpages.debian.org/bookworm/dpkg-dev/deb-changelog.5.en.html
 /// </remarks>
-public sealed class CreateChangelogFile : Task
+[MSBuildMultiThreadableTask]
+public sealed class CreateChangelogFile : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     [Required]
     public string ChangelogOutputPath { get; set; }
 
@@ -38,7 +42,7 @@ public sealed class CreateChangelogFile : Task
 
     public override bool Execute()
     {
-        using GZipStream stream = new(File.Create(ChangelogOutputPath), CompressionLevel.Optimal);
+        using GZipStream stream = new(File.Create(TaskEnvironment.GetAbsolutePath(ChangelogOutputPath)), CompressionLevel.Optimal);
         using StreamWriter writer = new(stream, Encoding.ASCII);
         writer.WriteLine($"{PackageName} ({PackageVersion}) unstable; urgency=low");
         writer.WriteLine();
