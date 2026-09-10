@@ -187,7 +187,7 @@ internal sealed class DefaultHotReloadClient(ILogger logger, ILogger agentLogger
         }, cancellationToken);
 
         // Wait until the environment variables are set in the target process:
-        var response = await transport.ReadAsync(cancellationToken);
+        using var response = await transport.ReadAsync(cancellationToken);
         if (response != null && response.Value.Type != ResponseType.EnvironmentVariablesSet)
         {
             throw new InvalidOperationException($"Unexpected response received from the agent: {response.Value.Type}");
