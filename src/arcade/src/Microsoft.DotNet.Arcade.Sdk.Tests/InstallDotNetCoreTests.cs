@@ -17,8 +17,8 @@ public class InstallDotNetCoreTests
         string installScriptPath = Path.GetTempFileName();
         try
         {
-            // The runtime version uses a property reference, which would require a
-            // VersionsPropsPath translation file. That file is intentionally not provided,
+            // The runtime version uses a property reference, which would require the
+            // VersionsPropsPath properties file. That file is intentionally not provided,
             // so processing the runtimes would log an error. With SkipRuntimesInstall set,
             // the runtimes block should be skipped entirely and no error should be logged.
             File.WriteAllText(globalJsonPath, "{ \"tools\": { \"runtimes\": { \"dotnet\": [ \"$(SomeRuntimeVersion)\" ] } } }");

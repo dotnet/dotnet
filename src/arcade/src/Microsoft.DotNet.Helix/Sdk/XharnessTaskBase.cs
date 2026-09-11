@@ -11,13 +11,17 @@ using Microsoft.Build.Framework;
 namespace Microsoft.DotNet.Helix.Sdk;
 
 /// <summary>
-/// MSBuild custom task to create HelixWorkItems for provided Android application packages.
+/// Shared base for the MSBuild custom tasks that create HelixWorkItems for XHarness
+/// application packages, both Android and Apple.
 /// </summary>
-public abstract class XHarnessTaskBase : MSBuildTaskBase
+public abstract class XHarnessTaskBase : MSBuildTaskBase, IMultiThreadableTask
 {
     private static readonly TimeSpan s_defaultWorkItemTimeout = TimeSpan.FromMinutes(20);
     private static readonly TimeSpan s_defaultTestTimeout = TimeSpan.FromMinutes(12);
     private static readonly TimeSpan s_telemetryBuffer = TimeSpan.FromMinutes(2); // extra time to send the XHarness telemetry
+
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
     public class MetadataName
     {

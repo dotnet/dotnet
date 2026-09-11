@@ -2,9 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Core;
+using Azure.Core.Pipeline;
+using Microsoft.Arcade.Test.Common;
 using Microsoft.DotNet.Helix.Client;
 using Xunit;
 
@@ -162,6 +166,41 @@ public class HelixApiAuthenticationTests
         Assert.Contains("GetAuthenticated", explicitScopeException.Message);
     }
 
+    [Fact]
+    public async Task EntraCredentialReacquiresTokenAfterExpiration()
+    {
+        TimeSpan tokenLifetime = TimeSpan.FromMilliseconds(200);
+        TimeSpan expirationMargin = TimeSpan.FromMilliseconds(300);
+        var credential = new ShortLivedTokenCredential(tokenLifetime);
+        using var httpClient = FakeHttpClient.WithResponses(
+            new HttpResponseMessage(HttpStatusCode.OK),
+            new HttpResponseMessage(HttpStatusCode.OK));
+        var options = new HelixApiOptions(
+            new Uri("https://helix.dot.net/"),
+            credential)
+        {
+            Transport = new HttpClientTransport(httpClient),
+        };
+        var api = new HelixApi(options);
+
+        using HttpMessage firstMessage = api.Pipeline.CreateMessage();
+        firstMessage.Request.Method = RequestMethod.Get;
+        firstMessage.Request.Uri.Reset(options.BaseUri);
+        await api.Pipeline.SendAsync(firstMessage, CancellationToken.None);
+        Assert.True(firstMessage.Request.Headers.TryGetValue("Authorization", out string firstAuthorization));
+
+        await Task.Delay(tokenLifetime + expirationMargin);
+
+        using HttpMessage secondMessage = api.Pipeline.CreateMessage();
+        secondMessage.Request.Method = RequestMethod.Get;
+        secondMessage.Request.Uri.Reset(options.BaseUri);
+        await api.Pipeline.SendAsync(secondMessage, CancellationToken.None);
+        Assert.True(secondMessage.Request.Headers.TryGetValue("Authorization", out string secondAuthorization));
+
+        Assert.Equal(2, credential.CallCount);
+        Assert.NotEqual(firstAuthorization, secondAuthorization);
+    }
+
     private sealed class TestTokenCredential : TokenCredential
     {
         public override AccessToken GetToken(
@@ -169,6 +208,34 @@ public class HelixApiAuthenticationTests
             CancellationToken cancellationToken)
         {
             return new AccessToken("test-token", DateTimeOffset.UtcNow.AddMinutes(30));
+        }
+
+        public override ValueTask<AccessToken> GetTokenAsync(
+            TokenRequestContext requestContext,
+            CancellationToken cancellationToken)
+        {
+            return new ValueTask<AccessToken>(GetToken(requestContext, cancellationToken));
+        }
+    }
+
+    private sealed class ShortLivedTokenCredential : TokenCredential
+    {
+        private readonly TimeSpan _lifetime;
+
+        public ShortLivedTokenCredential(TimeSpan lifetime)
+        {
+            _lifetime = lifetime;
+        }
+
+        public int CallCount { get; private set; }
+
+        public override AccessToken GetToken(
+            TokenRequestContext requestContext,
+            CancellationToken cancellationToken)
+        {
+            return new AccessToken(
+                $"test-token-{++CallCount}",
+                DateTimeOffset.UtcNow.Add(_lifetime));
         }
 
         public override ValueTask<AccessToken> GetTokenAsync(
