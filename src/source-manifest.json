@@ -43,10 +43,10 @@
       "commitSha": "c38d5992a97db7959479ef26f7b851fad456b21c"
     },
     {
-      "barId": 327516,
+      "barId": 331142,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "8397e5dfcb69c8c5dbbba279c0ad3287c05b0216"
+      "commitSha": "48ac8b22a8981381eec795187a9b98635b63a0d9"
     },
     {
       "barId": 315177,
@@ -73,16 +73,16 @@
       "commitSha": "11cb49ace31d470b506722258875ba6f47be55d1"
     },
     {
-      "barId": 330630,
+      "barId": 331155,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "6773d8c49c142c794fefb104d4282f8560d7b93f"
+      "commitSha": "0ea4de6ed5bc350a1ce1479344105fdd2c75ce93"
     },
     {
-      "barId": 330742,
+      "barId": 331537,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "4426fd0d83344ca67b2a44806a90cb69432e025c"
+      "commitSha": "c97b65804e0d573e013c7e3b984346cfe02c1da9"
     },
     {
       "barId": 330768,
