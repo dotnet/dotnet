@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.DotNet.Helix.Sdk;
 
+[MSBuildMultiThreadableTask]
 public class FindDotNetCliPackage : MSBuildTaskBase
 {
     // Use lots of retries since an Http Client failure here means failure to send to Helix
@@ -55,7 +56,7 @@ public class FindDotNetCliPackage : MSBuildTaskBase
     [Output]
     public string PackageUri { get; set; }
 
-    private static HttpClient _client;
+    private HttpClient _client;
     private HttpMessageHandler _httpMessageHandler;
 
     public override void ConfigureServices(IServiceCollection collection)

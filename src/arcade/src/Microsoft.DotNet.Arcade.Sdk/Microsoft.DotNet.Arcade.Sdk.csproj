@@ -27,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Common\Internal\AbsolutePathExtensions.cs" Link="Internal\AbsolutePathExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.DotNet.Arcade.Sdk.Tests" />
   </ItemGroup>
 

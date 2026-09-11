@@ -15,6 +15,7 @@ namespace Microsoft.DotNet.Helix.Sdk;
 /// <summary>
 /// MSBuild custom task to create HelixWorkItems for provided Android application packages.
 /// </summary>
+[MSBuildMultiThreadableTask]
 public class CreateXHarnessAndroidWorkItems : XHarnessTaskBase
 {
     public static class MetadataNames
@@ -72,6 +73,16 @@ public class CreateXHarnessAndroidWorkItems : XHarnessTaskBase
     private async Task<ITaskItem> PrepareWorkItem(IZipArchiveManager zipArchiveManager, IFileSystem fileSystem, ITaskItem appPackage)
     {
         var (workItemName, apkPath) = GetNameAndPath(appPackage, MetadataNames.ApkPath, fileSystem);
+
+        // The APK path is documented as relative (see tools/xharness-runner/Readme.md), so it has to be
+        // resolved against the project directory before it reaches IFileSystem/ZipArchiveManager, which
+        // use raw File/Directory APIs and would otherwise bind to the shared node's current directory.
+        // GetAbsolutePath rejects a null or empty path, so that case is left to the existence check
+        // below, which reports it as a missing payload instead of throwing.
+        if (!string.IsNullOrEmpty(apkPath))
+        {
+            apkPath = TaskEnvironment.GetAbsolutePath(apkPath);
+        }
 
         if (!fileSystem.FileExists(apkPath))
         {

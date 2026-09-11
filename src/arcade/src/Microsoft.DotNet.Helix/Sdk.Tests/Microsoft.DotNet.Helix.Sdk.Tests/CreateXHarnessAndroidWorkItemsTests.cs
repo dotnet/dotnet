@@ -58,6 +58,26 @@ public class CreateXHarnessAndroidWorkItemsTests
     }
 
     [Fact]
+    public void EmptyApkPathIsReportedAsMissingPayload()
+    {
+        var collection = CreateMockServiceCollection();
+        _task.ConfigureServices(collection);
+
+        var mockBundle = new Mock<ITaskItem>();
+        mockBundle.SetupGet(x => x.ItemSpec).Returns(string.Empty);
+        mockBundle.Setup(x => x.GetMetadata(CreateXHarnessAndroidWorkItems.MetadataNames.AndroidPackageName)).Returns("System.Foo");
+        _task.Apks = new[] { mockBundle.Object };
+
+        // Act: an empty path must not reach TaskEnvironment.GetAbsolutePath, which rejects it.
+        // It has to surface as the regular "not found" error instead of an unhandled exception.
+        using var provider = collection.BuildServiceProvider();
+        _task.InvokeExecute(provider).Should().BeFalse();
+
+        // Verify
+        _task.WorkItems.Length.Should().Be(0);
+    }
+
+    [Fact]
     public void AndroidXHarnessWorkItemIsCreated()
     {
         var collection = CreateMockServiceCollection();
@@ -104,7 +124,7 @@ public class CreateXHarnessAndroidWorkItemsTests
             CreateApk("apks/System.Bar.apk", "System.Bar"),
         };
 
-        _fileSystem.Files.Add("apks/xharness-payload-system.foo.zip", "archive");
+        _fileSystem.Files.Add(_task.TaskEnvironment.GetAbsolutePath("apks/xharness-payload-system.foo.zip"), "archive");
 
         // Act
         using var provider = collection.BuildServiceProvider();
@@ -245,7 +265,7 @@ public class CreateXHarnessAndroidWorkItemsTests
             mockBundle.Setup(x => x.GetMetadata(CreateXHarnessAndroidWorkItems.MetadataNames.ApkPath)).Returns(apkPath);
         }
 
-        _fileSystem.WriteToFile(apkPath ?? itemSpec, "apk");
+        _fileSystem.WriteToFile(_task.TaskEnvironment.GetAbsolutePath(apkPath ?? itemSpec), "apk");
 
         return mockBundle.Object;
     }

@@ -14,8 +14,12 @@ namespace Microsoft.DotNet.Arcade.Sdk;
 /// This task writes msbuild Items with their metadata to a props file.
 /// Useful to statically save a status of an Item that will be used later on by just importing the generated file.
 /// </summary>
-public class SaveItems : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public class SaveItems : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     [Required]
     public string ItemName { get; set; }
 
@@ -42,14 +46,15 @@ public class SaveItems : Microsoft.Build.Utilities.Task
             project.AddItem(ItemName, item.ItemSpec, metadataPairs);
         }
 
-        string path = Path.GetDirectoryName(File);
+        AbsolutePath outputPath = TaskEnvironment.GetAbsolutePath(File);
+        string path = Path.GetDirectoryName(outputPath);
 
         if (!string.IsNullOrEmpty(path))
         {
             Directory.CreateDirectory(path);
         }
 
-        project.Save(File);
+        project.Save(outputPath);
 
         return !Log.HasLoggedErrors;
     }
