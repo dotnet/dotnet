@@ -3,27 +3,26 @@
 
 using System;
 
-namespace Internal.Microsoft.Extensions.DependencyModel
+namespace Internal.Microsoft.Extensions.DependencyModel;
+
+internal class ResourceAssembly
 {
-    internal class ResourceAssembly
+    public ResourceAssembly(string path, string locale)
     {
-        public ResourceAssembly(string path, string locale)
+        if (string.IsNullOrEmpty(path))
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentException(nameof(path));
-            }
-            if (string.IsNullOrEmpty(locale))
-            {
-                throw new ArgumentException(nameof(locale));
-            }
-            Locale = locale;
-            Path = path;
+            throw new ArgumentException(nameof(path));
         }
-
-        public string Locale { get; set; }
-
-        public string Path { get; set; }
-
+        if (string.IsNullOrEmpty(locale))
+        {
+            throw new ArgumentException(nameof(locale));
+        }
+        Locale = locale;
+        Path = path;
     }
+
+    public string Locale { get; set; }
+
+    public string Path { get; set; }
+
 }

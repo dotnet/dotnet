@@ -10,58 +10,57 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Threading;
 
-namespace Microsoft.DotNet.Arcade.Sdk
+namespace Microsoft.DotNet.Arcade.Sdk;
+
+#if NET472
+[LoadInSeparateAppDomain]
+public sealed class Unsign : AppDomainIsolatedTask
 {
-#if NET472
-    [LoadInSeparateAppDomain]
-    public sealed class Unsign : AppDomainIsolatedTask
-    {
-        static Unsign() => AssemblyResolution.Initialize();
+    static Unsign() => AssemblyResolution.Initialize();
 #else
-    public class Unsign : Microsoft.Build.Utilities.Task
+public class Unsign : Microsoft.Build.Utilities.Task
+{
+#endif
+    [Required]
+    public string FilePath { get; set; }
+
+    public override bool Execute()
     {
+#if NET472
+        AssemblyResolution.Log = Log;
 #endif
-        [Required]
-        public string FilePath { get; set; }
-
-        public override bool Execute()
+        try
         {
-#if NET472
-            AssemblyResolution.Log = Log;
-#endif
-            try
-            {
-                ExecuteImpl();
-                return !Log.HasLoggedErrors;
-            }
-            finally
-            {
-#if NET472
-                AssemblyResolution.Log = null;
-#endif
-            }
+            ExecuteImpl();
+            return !Log.HasLoggedErrors;
         }
-
-        private void ExecuteImpl()
+        finally
         {
-            using (var stream = File.Open(FilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
-            using (var peReader = new PEReader(stream))
+#if NET472
+            AssemblyResolution.Log = null;
+#endif
+        }
+    }
+
+    private void ExecuteImpl()
+    {
+        using (var stream = File.Open(FilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+        using (var peReader = new PEReader(stream))
+        {
+            var headers = peReader.PEHeaders;
+            var entry = headers.PEHeader.CertificateTableDirectory;
+            if (entry.Size == 0)
             {
-                var headers = peReader.PEHeaders;
-                var entry = headers.PEHeader.CertificateTableDirectory;
-                if (entry.Size == 0)
-                {
-                    return;
-                }
+                return;
+            }
 
-                using (var writer = new BinaryWriter(stream))
-                {
-                    int certificateTableDirectoryOffset = (headers.PEHeader.Magic == PEMagic.PE32Plus) ? 144 : 128;
-                    stream.Position = peReader.PEHeaders.PEHeaderStartOffset + certificateTableDirectoryOffset;
+            using (var writer = new BinaryWriter(stream))
+            {
+                int certificateTableDirectoryOffset = (headers.PEHeader.Magic == PEMagic.PE32Plus) ? 144 : 128;
+                stream.Position = peReader.PEHeaders.PEHeaderStartOffset + certificateTableDirectoryOffset;
 
-                    writer.Write((long)0);
-                    writer.Flush();
-                }
+                writer.Write((long)0);
+                writer.Flush();
             }
         }
     }

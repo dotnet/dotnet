@@ -11,128 +11,127 @@ using Azure.Storage.Blobs.Specialized;
 using Azure.Storage.Blobs;
 using Microsoft.DotNet.Build.Tasks.Feed;
 
-namespace Microsoft.DotNet.Build.CloudTestTasks
+namespace Microsoft.DotNet.Build.CloudTestTasks;
+
+public class UploadToAzure : AzureConnectionStringBuildTask, ICancelableTask
 {
-    public class UploadToAzure : AzureConnectionStringBuildTask, ICancelableTask
+    private static readonly CancellationTokenSource TokenSource = new CancellationTokenSource();
+    private static readonly CancellationToken CancellationToken = TokenSource.Token;
+
+    /// <summary>
+    /// The name of the container to access.  The specified name must be in the correct format, see the
+    /// following page for more info.  https://msdn.microsoft.com/en-us/library/azure/dd135715.aspx
+    /// </summary>
+    [Required]
+    public string ContainerName { get; set; }
+
+    /// <summary>
+    /// An item group of files to upload.  Each item must have metadata RelativeBlobPath
+    /// that specifies the path relative to ContainerName where the item will be uploaded.
+    /// </summary>
+    [Required]
+    public ITaskItem[] Items { get; set; }
+
+    /// <summary>
+    /// Indicates if the destination blob should be overwritten if it already exists.  The default if false.
+    /// </summary>
+    public bool Overwrite { get; set; } = false;
+
+    /// <summary>
+    /// Enables idempotency when Overwrite is false.
+    /// 
+    /// false: (default) Attempting to upload an item that already exists fails.
+    /// 
+    /// true: When an item already exists, download the existing blob to check if it's
+    /// byte-for-byte identical to the one being uploaded. If so, pass. If not, fail.
+    /// </summary>
+    public bool PassIfExistingItemIdentical { get; set; }
+
+    /// <summary>
+    /// Specifies the maximum number of clients to concurrently upload blobs to azure
+    /// </summary>
+    [Obsolete]
+    public int MaxClients { get; set; } = 8;
+
+    public int UploadTimeoutInMinutes { get; set; } = 5;
+
+    public void Cancel()
     {
-        private static readonly CancellationTokenSource TokenSource = new CancellationTokenSource();
-        private static readonly CancellationToken CancellationToken = TokenSource.Token;
+        TokenSource.Cancel();
+    }
 
-        /// <summary>
-        /// The name of the container to access.  The specified name must be in the correct format, see the
-        /// following page for more info.  https://msdn.microsoft.com/en-us/library/azure/dd135715.aspx
-        /// </summary>
-        [Required]
-        public string ContainerName { get; set; }
+    public override bool Execute()
+    {
+        return ExecuteAsync(CancellationToken).GetAwaiter().GetResult();
+    }
 
-        /// <summary>
-        /// An item group of files to upload.  Each item must have metadata RelativeBlobPath
-        /// that specifies the path relative to ContainerName where the item will be uploaded.
-        /// </summary>
-        [Required]
-        public ITaskItem[] Items { get; set; }
-
-        /// <summary>
-        /// Indicates if the destination blob should be overwritten if it already exists.  The default if false.
-        /// </summary>
-        public bool Overwrite { get; set; } = false;
-
-        /// <summary>
-        /// Enables idempotency when Overwrite is false.
-        /// 
-        /// false: (default) Attempting to upload an item that already exists fails.
-        /// 
-        /// true: When an item already exists, download the existing blob to check if it's
-        /// byte-for-byte identical to the one being uploaded. If so, pass. If not, fail.
-        /// </summary>
-        public bool PassIfExistingItemIdentical { get; set; }
-
-        /// <summary>
-        /// Specifies the maximum number of clients to concurrently upload blobs to azure
-        /// </summary>
-        [Obsolete]
-        public int MaxClients { get; set; } = 8;
-
-        public int UploadTimeoutInMinutes { get; set; } = 5;
-
-        public void Cancel()
+    public async Task<bool> ExecuteAsync(CancellationToken ct)
+    {
+        if (Items.Length == 0)
         {
-            TokenSource.Cancel();
+            Log.LogError("No items were provided for upload.");
+            return false;
         }
 
-        public override bool Execute()
+        Log.LogMessage("Begin uploading blobs to Azure account {0} in container {1}.",
+            AccountName,
+            ContainerName);
+
+        try
         {
-            return ExecuteAsync(CancellationToken).GetAwaiter().GetResult();
-        }
+            AzureStorageUtils blobUtils = new AzureStorageUtils(AccountName, AccountKey, ContainerName);
 
-        public async Task<bool> ExecuteAsync(CancellationToken ct)
-        {
-            if (Items.Length == 0)
+            List<Task> uploadTasks = new List<Task>();
+
+            foreach (var item in Items)
             {
-                Log.LogError("No items were provided for upload.");
-                return false;
-            }
-
-            Log.LogMessage("Begin uploading blobs to Azure account {0} in container {1}.",
-                AccountName,
-                ContainerName);
-
-            try
-            {
-                AzureStorageUtils blobUtils = new AzureStorageUtils(AccountName, AccountKey, ContainerName);
-
-                List<Task> uploadTasks = new List<Task>();
-
-                foreach (var item in Items)
+                uploadTasks.Add(Task.Run(async () =>
                 {
-                    uploadTasks.Add(Task.Run(async () =>
+                    string relativeBlobPath = item.GetMetadata("RelativeBlobPath");
+
+                    if (string.IsNullOrEmpty(relativeBlobPath))
                     {
-                        string relativeBlobPath = item.GetMetadata("RelativeBlobPath");
+                        throw new Exception(string.Format("Metadata 'RelativeBlobPath' is missing for item '{0}'.", item.ItemSpec));
+                    }
 
-                        if (string.IsNullOrEmpty(relativeBlobPath))
+                    if (!File.Exists(item.ItemSpec))
+                    {
+                        throw new Exception(string.Format("The file '{0}' does not exist.", item.ItemSpec));
+                    }
+
+                    BlobClient blobReference = blobUtils.GetBlob(relativeBlobPath);
+
+                    if (!Overwrite && await blobReference.ExistsAsync())
+                    {
+                        if (PassIfExistingItemIdentical)
                         {
-                            throw new Exception(string.Format("Metadata 'RelativeBlobPath' is missing for item '{0}'.", item.ItemSpec));
-                        }
-
-                        if (!File.Exists(item.ItemSpec))
-                        {
-                            throw new Exception(string.Format("The file '{0}' does not exist.", item.ItemSpec));
-                        }
-
-                        BlobClient blobReference = blobUtils.GetBlob(relativeBlobPath);
-
-                        if (!Overwrite && await blobReference.ExistsAsync())
-                        {
-                            if (PassIfExistingItemIdentical)
+                            if (await blobReference.IsFileIdenticalToBlobAsync(item.ItemSpec))
                             {
-                                if (await blobReference.IsFileIdenticalToBlobAsync(item.ItemSpec))
-                                {
-                                    return;
-                                }
+                                return;
                             }
-
-                            throw new Exception(string.Format("The blob '{0}' already exists.", relativeBlobPath));
                         }
 
-                        CancellationTokenSource timeoutTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(UploadTimeoutInMinutes));
+                        throw new Exception(string.Format("The blob '{0}' already exists.", relativeBlobPath));
+                    }
 
-                        using (Stream localFileStream = File.OpenRead(item.ItemSpec))
-                        {
-                            await blobReference.UploadAsync(localFileStream, timeoutTokenSource.Token);
-                        }
-                    }));
-                }
+                    CancellationTokenSource timeoutTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(UploadTimeoutInMinutes));
 
-                await Task.WhenAll(uploadTasks);
-
-                Log.LogMessage("Upload to Azure is complete, a total of {0} items were uploaded.", Items.Length);
-            }
-            catch (Exception e)
-            {
-                Log.LogErrorFromException(e, true);
+                    using (Stream localFileStream = File.OpenRead(item.ItemSpec))
+                    {
+                        await blobReference.UploadAsync(localFileStream, timeoutTokenSource.Token);
+                    }
+                }));
             }
 
-            return !Log.HasLoggedErrors;
+            await Task.WhenAll(uploadTasks);
+
+            Log.LogMessage("Upload to Azure is complete, a total of {0} items were uploaded.", Items.Length);
         }
+        catch (Exception e)
+        {
+            Log.LogErrorFromException(e, true);
+        }
+
+        return !Log.HasLoggedErrors;
     }
 }

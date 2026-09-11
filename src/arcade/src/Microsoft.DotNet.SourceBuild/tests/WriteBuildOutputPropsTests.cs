@@ -3,20 +3,19 @@
 
 using Xunit;
 
-namespace Microsoft.DotNet.SourceBuild.Tasks.Tests
-{
-    public class WriteBuildOutputPropsTests
-    {
-        [Fact]
-        public void TestPropertyNameHelpers()
-        {
-            Assert.Equal(
-                "MicrosoftNETCoreAppRefPackageVersion",
-                WriteBuildOutputProps.GetPropertyName("Microsoft.NETCore.App.Ref"));
+namespace Microsoft.DotNet.SourceBuild.Tasks.Tests;
 
-            Assert.Equal(
-                "MicrosoftNETCoreAppRefVersion",
-                WriteBuildOutputProps.GetAlternatePropertyName("Microsoft.NETCore.App.Ref"));
-        }
+public class WriteBuildOutputPropsTests
+{
+    [Fact]
+    public void TestPropertyNameHelpers()
+    {
+        Assert.Equal(
+            "MicrosoftNETCoreAppRefPackageVersion",
+            WriteBuildOutputProps.GetPropertyName("Microsoft.NETCore.App.Ref"));
+
+        Assert.Equal(
+            "MicrosoftNETCoreAppRefVersion",
+            WriteBuildOutputProps.GetAlternatePropertyName("Microsoft.NETCore.App.Ref"));
     }
 }

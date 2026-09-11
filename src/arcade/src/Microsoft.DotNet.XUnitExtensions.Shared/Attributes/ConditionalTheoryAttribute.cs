@@ -13,33 +13,34 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.DotNet.XUnitExtensions;
 using Xunit.Sdk;
 
-namespace Xunit
-{
+namespace Xunit;
+
 #if USES_XUNIT_3
-    [XunitTestCaseDiscoverer(typeof(ConditionalTheoryDiscoverer))]
+[XunitTestCaseDiscoverer(typeof(ConditionalTheoryDiscoverer))]
 #else
-    [XunitTestCaseDiscoverer("Microsoft.DotNet.XUnitExtensions.ConditionalTheoryDiscoverer", "Microsoft.DotNet.XUnitExtensions")]
+[XunitTestCaseDiscoverer("Microsoft.DotNet.XUnitExtensions.ConditionalTheoryDiscoverer", "Microsoft.DotNet.XUnitExtensions")]
 #endif
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public sealed class ConditionalTheoryAttribute : TheoryAttribute
-    {
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+public sealed class ConditionalTheoryAttribute : TheoryAttribute
+{
+    [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
+    public Type     CalleeType { get; private set; }
+    public string[] ConditionMemberNames { get; private set; }
+
+    public ConditionalTheoryAttribute(
         [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
-        public Type     CalleeType { get; private set; }
-        public string[] ConditionMemberNames { get; private set; }
+        Type calleeType,
+        params string[] conditionMemberNames)
+    {
+        CalleeType = calleeType;
+        ConditionMemberNames = conditionMemberNames;
+    }
 
-        public ConditionalTheoryAttribute(
-            [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
-            Type calleeType,
-            params string[] conditionMemberNames)
-        {
-            CalleeType = calleeType;
-            ConditionMemberNames = conditionMemberNames;
-        }
-
-        public ConditionalTheoryAttribute(params string[] conditionMemberNames)
-        {
-            ConditionMemberNames = conditionMemberNames;
-        }
+    public ConditionalTheoryAttribute(params string[] conditionMemberNames)
+    {
+        ConditionMemberNames = conditionMemberNames;
     }
 }
+
 #endif
+

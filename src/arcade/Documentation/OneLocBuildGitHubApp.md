@@ -18,24 +18,15 @@ job is to open/update the localization check-in PR on your repository.
 
 ## How it works
 
-The App path is enabled by default. In
-[`onelocbuild.yml`](/eng/common/core-templates/job/onelocbuild.yml), the App token is minted only
-when **all** of the following are true:
-
-- `UseGitHubAppAuthentication` is `true` (the default), **and**
-- `RepoType` is `gitHub`, **and**
-- the build is running in the **`dnceng/internal`** or **`DevDiv/DevDiv`** Azure DevOps project, or
-  `UseGitHubAppAuthenticationInOtherProjects` is explicitly set to `true` for a separately
-  provisioned service connection.
+In [`onelocbuild.yml`](/eng/common/core-templates/job/onelocbuild.yml), the App token is minted
+whenever `RepoType` is `gitHub`. OneLocBuild supports the **`dnceng/internal`** and
+**`DevDiv/DevDiv`** Azure DevOps projects.
 
 When those hold, the job runs [`get-github-app-token.yml`](/eng/common/core-templates/steps/get-github-app-token.yml),
 which signs a JWT with the App's RSA key in Key Vault, exchanges it for an installation token, and
 passes that token to the OneLocBuild task via `gitHubPatVariable`.
 
-If `UseGitHubAppAuthentication` is explicitly set to `false`, or a project outside the two
-supported projects does not explicitly opt in, the job uses the existing `GithubPat` parameter. This is a
-template-selection fallback only: if App token minting or authentication fails after the App path
-is selected, the job fails and does not retry with the PAT.
+If App token minting or authentication fails, the job fails; there is no stored-PAT fallback.
 
 ## Gaining access
 
@@ -44,13 +35,11 @@ is selected, the job fails and does not retry with the PAT.
 1. **The App must be installed on the GitHub org/account that owns your target repo, and your
    specific repository must be selected in that installation.** The App can only open a PR against a
    repository it is installed on. This is what actually grants the App permission to your repo.
-2. **Your pipeline must use the App path.** In `dnceng/internal` and `DevDiv/DevDiv`, leave
-   `UseGitHubAppAuthentication` set to `true`. In another project, provision a project-scoped
-   service connection and explicitly opt in as described below.
+2. **Your pipeline must run in `dnceng/internal` or `DevDiv/DevDiv` and be authorized to use that
+   project's App service connection.**
 
-The .NET Engineering Services team manages the App signing key. Contact the First Responders before
-enabling another Azure DevOps project so they can provision or approve a least-privilege WIF service
-connection and authorize the intended pipeline.
+The .NET Engineering Services team manages the App signing key and the project-scoped service
+connections. Contact the First Responders to authorize an intended pipeline.
 
 ### Step 1 — Request that your repository be added to the App installation
 
@@ -93,32 +82,13 @@ Arcade automatically selects the project-scoped service connection:
 | `DevDiv/DevDiv` | `devdiv-oneloc-githubapp` |
 
 The App client ID, Key Vault, and key name are also centralized in the Arcade template. A pipeline
-still needs one-time authorization to use its project's connection. It can temporarily set
-`UseGitHubAppAuthentication: false` to select the PAT path instead.
-
-For a pipeline outside `dnceng/internal` and `DevDiv/DevDiv`, keep using the wrapper appropriate for that pipeline
-(`templates/job` or `templates-official/job`) and explicitly select its project-scoped connection.
-This example uses the official wrapper:
-
-```yaml
-- template: /eng/common/templates-official/job/onelocbuild.yml
-  parameters:
-    LclSource: lclFilesfromPackage
-    LclPackageId: 'LCL-JUNO-PROD-YOURREPO'
-    UseGitHubAppAuthenticationInOtherProjects: true
-    GitHubAppServiceConnection: 'your-project-oneloc-githubapp'
-```
-
-The service connection identity needs the `Key Vault Crypto User` role on the App signing key, and
-the pipeline must be authorized to use the connection.
+still needs one-time authorization to use its project's connection.
 
 ### GitHub App parameters
 
 | **Parameter** | **Default** | **Notes** |
 |:-:|:-:|-|
-| `UseGitHubAppAuthentication` | `true` | Activates the App path for GitHub repos in `dnceng/internal` and `DevDiv/DevDiv`, or in another project that explicitly opts in. Set to `false` to select the PAT path. |
-| `UseGitHubAppAuthenticationInOtherProjects` | `false` | Explicitly activates the App path outside `dnceng/internal` and `DevDiv/DevDiv`. Requires separately provisioned infrastructure. |
-| `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The Azure DevOps **WIF service connection** used by `dnceng/internal` and explicit opt-ins. When the value remains the `dnceng-oneloc-githubapp` default, Arcade selects `devdiv-oneloc-githubapp` automatically in `DevDiv/DevDiv`; overrides to a different value are preserved. |
+| `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The Azure DevOps **WIF service connection** used by `dnceng/internal`. When the value remains the default, Arcade selects `devdiv-oneloc-githubapp` automatically in `DevDiv/DevDiv`. |
 | `GitHubAppClientId` | `'Iv23lijBU8x3gc9lDOc9'` | The GitHub App's **Client ID** (used as the JWT `iss` claim). |
 | `GitHubAppKeyVaultName` | `'EngKeyVault'` | The Key Vault holding the App's RSA signing key. |
 | `GitHubAppKeyName` | `'oneloc-localization-app-key'` | The name of the RSA key inside that Key Vault (the App's private key). |
@@ -136,9 +106,7 @@ The token is minted for the installation on the `GitHubOrg` account (default `do
 
 ## Troubleshooting
 
-- **The App-token step is skipped.** The App path only activates when
-  `UseGitHubAppAuthentication` is `true`, `RepoType` is `gitHub`, and the build runs in
-  `dnceng/internal`, `DevDiv/DevDiv`, or explicitly sets `UseGitHubAppAuthenticationInOtherProjects: true`.
+- **The App-token step is skipped.** The App path activates when `RepoType` is `gitHub`.
 - **The pipeline pauses for service-connection authorization.** Authorize the pipeline to use
   `dnceng-oneloc-githubapp` in `dnceng/internal` or `devdiv-oneloc-githubapp` in `DevDiv/DevDiv`.
 - **Token minting fails with a Key Vault authorization error.** The service connection identity
@@ -151,6 +119,4 @@ The token is minted for the installation on the `GitHubOrg` account (default `do
 
 ## Scope and limitations
 
-- Arcade has project-scoped defaults for **`dnceng/internal`** and **`DevDiv/DevDiv`**.
-  Pipelines in other projects use `GithubPat` unless they explicitly opt in with a project-scoped
-  service connection and signing-key access.
+- Arcade supports OneLocBuild in **`dnceng/internal`** and **`DevDiv/DevDiv`**.

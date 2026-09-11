@@ -5,16 +5,15 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.DotNet.Helix.JobMonitor
+namespace Microsoft.DotNet.Helix.JobMonitor;
+
+internal interface IBlobClient
 {
-    internal interface IBlobClient
-    {
-        Uri Uri { get; }
+    Uri Uri { get; }
 
-        Task DownloadToAsync(string destinationFile, CancellationToken cancellationToken);
+    Task DownloadToAsync(string destinationFile, CancellationToken cancellationToken);
 
-        Task<BinaryData> DownloadContentAsync(CancellationToken cancellationToken);
+    Task<BinaryData> DownloadContentAsync(CancellationToken cancellationToken);
 
-        Task UploadAsync(BinaryData content, bool overwrite, CancellationToken cancellationToken);
-    }
+    Task UploadAsync(BinaryData content, bool overwrite, CancellationToken cancellationToken);
 }

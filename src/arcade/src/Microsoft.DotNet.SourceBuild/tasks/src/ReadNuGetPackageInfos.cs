@@ -8,46 +8,45 @@ using NuGet.Packaging.Core;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.DotNet.SourceBuild.Tasks
+namespace Microsoft.DotNet.SourceBuild.Tasks;
+
+public class ReadNuGetPackageInfos : Microsoft.Build.Utilities.Task
 {
-    public class ReadNuGetPackageInfos : Microsoft.Build.Utilities.Task
+    [Required]
+    public string[] PackagePaths { get; set; }
+
+    /// <summary>
+    /// %(Identity): Path to the original nupkg.
+    /// %(PackageId): Identity of the package.
+    /// %(PackageVersion): Version of the package.
+    /// </summary>
+    [Output]
+    public ITaskItem[] PackageInfoItems { get; set; }
+
+    public override bool Execute()
     {
-        [Required]
-        public string[] PackagePaths { get; set; }
-
-        /// <summary>
-        /// %(Identity): Path to the original nupkg.
-        /// %(PackageId): Identity of the package.
-        /// %(PackageVersion): Version of the package.
-        /// </summary>
-        [Output]
-        public ITaskItem[] PackageInfoItems { get; set; }
-
-        public override bool Execute()
-        {
-            PackageInfoItems = PackagePaths
-                .Select(p =>
-                {
-                    PackageIdentity identity = ReadIdentity(p);
-                    return new TaskItem(
-                        p,
-                        new Dictionary<string, string>
-                        {
-                            ["PackageId"] = identity.Id,
-                            ["PackageVersion"] = identity.Version.OriginalVersion
-                        });
-                })
-                .ToArray();
-
-            return !Log.HasLoggedErrors;
-        }
-
-        public static PackageIdentity ReadIdentity(string nupkgFile)
-        {
-            using (var reader = new PackageArchiveReader(nupkgFile))
+        PackageInfoItems = PackagePaths
+            .Select(p =>
             {
-                return reader.GetIdentity();
-            }
+                PackageIdentity identity = ReadIdentity(p);
+                return new TaskItem(
+                    p,
+                    new Dictionary<string, string>
+                    {
+                        ["PackageId"] = identity.Id,
+                        ["PackageVersion"] = identity.Version.OriginalVersion
+                    });
+            })
+            .ToArray();
+
+        return !Log.HasLoggedErrors;
+    }
+
+    public static PackageIdentity ReadIdentity(string nupkgFile)
+    {
+        using (var reader = new PackageArchiveReader(nupkgFile))
+        {
+            return reader.GetIdentity();
         }
     }
 }

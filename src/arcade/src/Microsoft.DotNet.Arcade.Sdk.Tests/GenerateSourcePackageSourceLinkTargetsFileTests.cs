@@ -8,32 +8,32 @@ using Microsoft.Build.Utilities;
 using Microsoft.Arcade.Test.Common;
 using Xunit;
 
-namespace Microsoft.DotNet.Arcade.Sdk.Tests
+namespace Microsoft.DotNet.Arcade.Sdk.Tests;
+
+public sealed class GenerateSourcePackageSourceLinkTargetsFileTests 
 {
-    public sealed class GenerateSourcePackageSourceLinkTargetsFileTests 
+    [Fact]
+    public void GetOutputFileContent()
     {
-        [Fact]
-        public void GetOutputFileContent()
+        string NormalizePath(string path) =>
+            path.Replace('\\', Path.DirectorySeparatorChar);
+
+        var task = new GenerateSourcePackageSourceLinkTargetsFile
         {
-            string NormalizePath(string path) =>
-                path.Replace('\\', Path.DirectorySeparatorChar);
-
-            var task = new GenerateSourcePackageSourceLinkTargetsFile
+            ProjectDirectory = NormalizePath(@"C:\temp\A\B\C\D\E\F"),
+            PackageId = "My.Package",
+            SourceRoots = new TaskItem[] 
             {
-                ProjectDirectory = NormalizePath(@"C:\temp\A\B\C\D\E\F"),
-                PackageId = "My.Package",
-                SourceRoots = new TaskItem[] 
-                {
-                    new TaskItem(NormalizePath(@"C:\temp\A\"), new Dictionary<string, string> { { "SourceLinkUrl", "http://A-git/commitsha/*" } }),
-                    new TaskItem(NormalizePath(@"C:\temp\A\B\")),
-                    new TaskItem(NormalizePath(@"C:\temp\A\B\C\"), new Dictionary<string, string> { { "SourceLinkUrl", "http://C-git/commitsha/*?var=value" } }),
-                    new TaskItem(NormalizePath(@"C:\temp\A\B\C\D\")),
-                },
-                OutputPath = "xxx",
-            };
+                new TaskItem(NormalizePath(@"C:\temp\A\"), new Dictionary<string, string> { { "SourceLinkUrl", "http://A-git/commitsha/*" } }),
+                new TaskItem(NormalizePath(@"C:\temp\A\B\")),
+                new TaskItem(NormalizePath(@"C:\temp\A\B\C\"), new Dictionary<string, string> { { "SourceLinkUrl", "http://C-git/commitsha/*?var=value" } }),
+                new TaskItem(NormalizePath(@"C:\temp\A\B\C\D\")),
+            },
+            OutputPath = "xxx",
+        };
 
-            string content = task.GetOutputFileContent();
-            AssertEx.AssertEqualToleratingWhitespaceDifferences(@"<?xml version=""1.0"" encoding=""utf-8""?>
+        string content = task.GetOutputFileContent();
+        AssertEx.AssertEqualToleratingWhitespaceDifferences(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
   <Target Name=""_AddSourcePackageSourceRoot_CFB3FCB48DA6C1861F924045FCA162F513465D35"" BeforeTargets=""InitializeSourceControlInformation"">
     <ItemGroup>
@@ -51,7 +51,6 @@ namespace Microsoft.DotNet.Arcade.Sdk.Tests
   </Target>
 </Project>
 ", content);
-            XDocument.Load(new StringReader(content));
-        }
+        XDocument.Load(new StringReader(content));
     }
 }

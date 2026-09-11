@@ -6,27 +6,26 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.Cci;
 
-namespace Microsoft.Cci.Extensions
-{
-    public static class AssemblyIdentityHelpers
-    {
-        public static string Format(this AssemblyIdentity assemblyIdentity)
-        {
-            var name = new System.Reflection.AssemblyName();
-            name.Name = assemblyIdentity.Name.Value;
-            name.Version = assemblyIdentity.Version;
-            name.SetPublicKeyToken(assemblyIdentity.PublicKeyToken.ToArray());
-            return name.ToString();
-        }
+namespace Microsoft.Cci.Extensions;
 
-        public static AssemblyIdentity Parse(INameTable nameTable, string formattedName)
-        {
-            var name = new System.Reflection.AssemblyName(formattedName);
-            return new AssemblyIdentity(nameTable.GetNameFor(name.Name),
-                                        name.CultureName,
-                                        name.Version,
-                                        name.GetPublicKeyToken(),
-                                        "");
-        }
+public static class AssemblyIdentityHelpers
+{
+    public static string Format(this AssemblyIdentity assemblyIdentity)
+    {
+        var name = new System.Reflection.AssemblyName();
+        name.Name = assemblyIdentity.Name.Value;
+        name.Version = assemblyIdentity.Version;
+        name.SetPublicKeyToken(assemblyIdentity.PublicKeyToken.ToArray());
+        return name.ToString();
+    }
+
+    public static AssemblyIdentity Parse(INameTable nameTable, string formattedName)
+    {
+        var name = new System.Reflection.AssemblyName(formattedName);
+        return new AssemblyIdentity(nameTable.GetNameFor(name.Name),
+                                    name.CultureName,
+                                    name.Version,
+                                    name.GetPublicKeyToken(),
+                                    "");
     }
 }

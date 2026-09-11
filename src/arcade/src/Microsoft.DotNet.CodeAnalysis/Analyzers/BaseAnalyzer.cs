@@ -5,41 +5,40 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System;
 using System.Linq;
 
-namespace Microsoft.DotNet.CodeAnalysis.Analyzers
+namespace Microsoft.DotNet.CodeAnalysis.Analyzers;
+
+public abstract class BaseAnalyzer : DiagnosticAnalyzer
 {
-    public abstract class BaseAnalyzer : DiagnosticAnalyzer
+    private const string ConfigFileName = @"disabledAnalyzers.config";
+
+    public sealed override void Initialize(AnalysisContext context)
     {
-        private const string ConfigFileName = @"disabledAnalyzers.config";
+        context.EnableConcurrentExecution();
+        context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+        context.RegisterCompilationStartAction(InitializeAnalyzer);
+    }
 
-        public sealed override void Initialize(AnalysisContext context)
+    private void InitializeAnalyzer(CompilationStartAnalysisContext context)
+    {
+        var configFile = context.Options.AdditionalFiles.FirstOrDefault(file => file.Path.Contains(ConfigFileName));
+
+        if (configFile != null)
         {
-            context.EnableConcurrentExecution();
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
-            context.RegisterCompilationStartAction(InitializeAnalyzer);
-        }
-
-        private void InitializeAnalyzer(CompilationStartAnalysisContext context)
-        {
-            var configFile = context.Options.AdditionalFiles.FirstOrDefault(file => file.Path.Contains(ConfigFileName));
-
-            if (configFile != null)
+            foreach (var line in configFile.GetText().Lines)
             {
-                foreach (var line in configFile.GetText().Lines)
+                if (StringComparer.OrdinalIgnoreCase.Equals(line.ToString(), GetType().Name))
                 {
-                    if (StringComparer.OrdinalIgnoreCase.Equals(line.ToString(), GetType().Name))
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
-
-            OnCompilationStart(context);
         }
 
-        /// <summary>
-        /// This is going to be called only if the analyzer was not disabled
-        /// </summary>
-        /// <param name="context"></param>
-        public abstract void OnCompilationStart(CompilationStartAnalysisContext context);
+        OnCompilationStart(context);
     }
+
+    /// <summary>
+    /// This is going to be called only if the analyzer was not disabled
+    /// </summary>
+    /// <param name="context"></param>
+    public abstract void OnCompilationStart(CompilationStartAnalysisContext context);
 }

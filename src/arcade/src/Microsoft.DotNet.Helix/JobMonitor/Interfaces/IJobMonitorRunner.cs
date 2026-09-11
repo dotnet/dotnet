@@ -4,16 +4,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.DotNet.Helix.JobMonitor
+namespace Microsoft.DotNet.Helix.JobMonitor;
+
+/// <summary>
+/// Contract for the job monitor's main execution loop.
+/// </summary>
+public interface IJobMonitorRunner
 {
     /// <summary>
-    /// Contract for the job monitor's main execution loop.
+    /// Runs the monitor loop. Returns 0 for success, 1 for failure.
     /// </summary>
-    public interface IJobMonitorRunner
-    {
-        /// <summary>
-        /// Runs the monitor loop. Returns 0 for success, 1 for failure.
-        /// </summary>
-        Task<int> RunAsync(CancellationToken cancellationToken);
-    }
+    Task<int> RunAsync(CancellationToken cancellationToken);
 }

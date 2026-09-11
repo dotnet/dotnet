@@ -7,19 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Composition;
 
-namespace Microsoft.Cci.Differs
-{
-    [MetadataAttribute]
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class ExportDifferenceRuleAttribute : ExportAttribute
-    {
-        public ExportDifferenceRuleAttribute()
-            : base(typeof(IDifferenceRule))
-        {
-        }
+namespace Microsoft.Cci.Differs;
 
-        public bool NonAPIConformanceRule { get; set; }
-        public bool MdilServicingRule { get; set; }
-        public bool OptionalRule { get; set; }
+[MetadataAttribute]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public class ExportDifferenceRuleAttribute : ExportAttribute
+{
+    public ExportDifferenceRuleAttribute()
+        : base(typeof(IDifferenceRule))
+    {
     }
+
+    public bool NonAPIConformanceRule { get; set; }
+    public bool MdilServicingRule { get; set; }
+    public bool OptionalRule { get; set; }
 }

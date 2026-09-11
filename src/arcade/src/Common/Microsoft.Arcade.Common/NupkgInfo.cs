@@ -3,38 +3,37 @@
 
 using System;
 
-namespace Microsoft.Arcade.Common
+namespace Microsoft.Arcade.Common;
+
+public class NupkgInfo
 {
-    public class NupkgInfo
+    public NupkgInfo(PackageIdentity identity)
     {
-        public NupkgInfo(PackageIdentity identity)
-        {
-            Id = identity.Id;
-            Version = identity.Version;
-        }
-
-        public string Id { get; }
-        public string Version { get; }
-        public string Prerelease { get { throw new NotImplementedException();} }
-
-        public static bool IsSymbolPackagePath(string path) => path.EndsWith(".symbols.nupkg");
+        Id = identity.Id;
+        Version = identity.Version;
     }
 
-    public class PackageIdentity
-    {
-        public PackageIdentity(string id, string version)
-        {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
+    public string Id { get; }
+    public string Version { get; }
+    public string Prerelease { get { throw new NotImplementedException();} }
 
-            Id = id;
-            Version = version;
+    public static bool IsSymbolPackagePath(string path) => path.EndsWith(".symbols.nupkg");
+}
+
+public class PackageIdentity
+{
+    public PackageIdentity(string id, string version)
+    {
+        if (id == null)
+        {
+            throw new ArgumentNullException(nameof(id));
         }
 
-        public string Id { get; }
-
-        public string Version { get; }
+        Id = id;
+        Version = version;
     }
+
+    public string Id { get; }
+
+    public string Version { get; }
 }

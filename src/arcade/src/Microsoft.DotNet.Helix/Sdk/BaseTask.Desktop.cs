@@ -3,13 +3,12 @@
 
 using Microsoft.Arcade.Common.Desktop;
 
-namespace Microsoft.DotNet.Helix
+namespace Microsoft.DotNet.Helix;
+
+public partial class BaseTask
 {
-    public partial class BaseTask
+    static BaseTask()
     {
-        static BaseTask()
-        {
-            AssemblyResolver.Enable();
-        }
+        AssemblyResolver.Enable();
     }
 }

@@ -3,27 +3,26 @@
 
 using System.Collections.Generic;
 
-namespace Internal.Microsoft.Extensions.DependencyModel.Resolution
+namespace Internal.Microsoft.Extensions.DependencyModel.Resolution;
+
+internal class CompositeCompilationAssemblyResolver: ICompilationAssemblyResolver
 {
-    internal class CompositeCompilationAssemblyResolver: ICompilationAssemblyResolver
+    private readonly ICompilationAssemblyResolver[] _resolvers;
+
+    public CompositeCompilationAssemblyResolver(ICompilationAssemblyResolver[] resolvers)
     {
-        private readonly ICompilationAssemblyResolver[] _resolvers;
+        _resolvers = resolvers;
+    }
 
-        public CompositeCompilationAssemblyResolver(ICompilationAssemblyResolver[] resolvers)
+    public bool TryResolveAssemblyPaths(CompilationLibrary library, List<string> assemblies)
+    {
+        foreach (var resolver in _resolvers)
         {
-            _resolvers = resolvers;
-        }
-
-        public bool TryResolveAssemblyPaths(CompilationLibrary library, List<string> assemblies)
-        {
-            foreach (var resolver in _resolvers)
+            if (resolver.TryResolveAssemblyPaths(library, assemblies))
             {
-                if (resolver.TryResolveAssemblyPaths(library, assemblies))
-                {
-                    return true;
-                }
+                return true;
             }
-            return false;
         }
+        return false;
     }
 }
