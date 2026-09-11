@@ -377,6 +377,10 @@
                                            Condition="'%(Identity)' == 'Microsoft.NETCore.App.Crossgen2.$(PortableTargetRid)'" />
       <_PreviouslySourceBuiltCrossgen2Pack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
                                            Condition="'@(_PreviouslySourceBuiltCrossgen2Pack)' == '' and '%(Identity)' == 'Microsoft.NETCore.App.Crossgen2.$(TargetRid)'" />
+      <_PreviouslySourceBuiltILCompilerPack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
+                                            Condition="'%(Identity)' == 'runtime.$(PortableTargetRid).Microsoft.DotNet.ILCompiler'" />
+      <_PreviouslySourceBuiltILCompilerPack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
+                                            Condition="'@(_PreviouslySourceBuiltILCompilerPack)' == '' and '%(Identity)' == 'runtime.$(TargetRid).Microsoft.DotNet.ILCompiler'" />
       <_PreviouslySourceBuiltAspNetCoreRuntimePack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
                                                    Condition="'%(Identity)' == 'Microsoft.AspNetCore.App.Runtime.$(PortableTargetRid)'" />
       <_PreviouslySourceBuiltAspNetCoreRuntimePack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
@@ -386,7 +390,9 @@
                                                        DoNotOverwrite="true"
                                                        Condition="'@(_PreviouslySourceBuiltILLinkPackage)' != ''" />
       <_PreviouslySourceBuiltExtraPackageVersionProps Include="KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion;
-                                                               KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion"
+                                                               KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion;
+                                                               KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion;
+                                                               KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion"
                                                        Version="%(_PreviouslySourceBuiltRuntimePack.Version)"
                                                        DoNotOverwrite="true"
                                                        Condition="'@(_PreviouslySourceBuiltRuntimePack)' != ''" />
@@ -394,6 +400,10 @@
                                                        Version="%(_PreviouslySourceBuiltCrossgen2Pack.Version)"
                                                        DoNotOverwrite="true"
                                                        Condition="'@(_PreviouslySourceBuiltCrossgen2Pack)' != ''" />
+      <_PreviouslySourceBuiltExtraPackageVersionProps Include="KnownILCompilerPackCurrentVersion"
+                                                       Version="%(_PreviouslySourceBuiltILCompilerPack.Version)"
+                                                       DoNotOverwrite="true"
+                                                       Condition="'@(_PreviouslySourceBuiltILCompilerPack)' != ''" />
       <_PreviouslySourceBuiltExtraPackageVersionProps Include="KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion;
                                                                KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion"
                                                        Version="%(_PreviouslySourceBuiltAspNetCoreRuntimePack.Version)"
@@ -622,6 +632,7 @@
       <RuntimePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref')->Metadata('Version'))</RuntimePackVersion>
       <SourceBuiltILLinkPackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NET.ILLink.Tasks')->Metadata('Version'))</SourceBuiltILLinkPackVersion>
       <SourceBuiltCrossgen2PackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Crossgen2.$(PortableTargetRid)')->Metadata('Version'))</SourceBuiltCrossgen2PackVersion>
+      <SourceBuiltILCompilerPackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'runtime.$(PortableTargetRid).Microsoft.DotNet.ILCompiler')->Metadata('Version'))</SourceBuiltILCompilerPackVersion>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
@@ -629,6 +640,7 @@
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs Condition="'$(SourceBuiltILLinkPackVersion)' != ''">$(BuildArgs) /p:KnownILLinkPackCurrentVersion=$(SourceBuiltILLinkPackVersion)</BuildArgs>
       <BuildArgs Condition="'$(SourceBuiltCrossgen2PackVersion)' != ''">$(BuildArgs) /p:KnownCrossgen2PackCurrentVersion=$(SourceBuiltCrossgen2PackVersion)</BuildArgs>
+      <BuildArgs Condition="'$(SourceBuiltILCompilerPackVersion)' != ''">$(BuildArgs) /p:KnownILCompilerPackCurrentVersion=$(SourceBuiltILCompilerPackVersion)</BuildArgs>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'aspnetcore'))' == 'true'">
