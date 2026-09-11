@@ -386,6 +386,40 @@ This section captures lessons learned from actual migration runs that don't fit 
   `-DependencyVersion` arguments. Use `SimpleTestSettingsContext.SetDependencyVersion` before
   creating `ApexTestContext`, and leave the command-line argument empty for that row.
 
+### 2026-09-10: Install/Update/Uninstall bulk migration
+
+- **Assert the solution `packages` folder via `simpleTestPathContext.PackagesV2`.**
+  `ApexTestContext` does not expose it, so create your own `SimpleTestPathContext` and pass it in.
+  `Assert-SolutionPackage X 1.0.0` maps to
+  `CommonUtility.WaitForDirectoryExists(Path.Combine(pathContext.PackagesV2, "X.1.0.0"))`, and
+  `Assert-Null (Get-SolutionPackage ...)` maps to `WaitForDirectoryNotExists`. Use the wait helpers
+  rather than `Directory.Exists` because uninstall deletes the folder asynchronously.
+- **`Update-Package -ToHighestPatch` is an `[Alias]` of `-Safe`** (`UpdatePackageCommand`), so PS
+  tests for the two flags are the same scenario. Migrate them as one `[DataTestMethod]` with a
+  `[DataRow]` per flag instead of two duplicate test methods. `-ToHighestMinor` is a real, separate
+  switch.
+- **`Install-Package <path>\Id.Version.nupkg` works without `-Source`.**
+  `InstallPackageCommand.ParseUserInputForId` detects a `.nupkg` suffix, derives `Source` from the
+  containing directory, and parses id/version from the file name. Quote the path in the `Execute()`
+  string so directories with spaces still work.
+- **`-Source` accepts the configured source *name*.** Use
+  `SimpleTestSettingsContext.DefaultPackageSourceName` (`"source"`) rather than repeating the
+  literal when migrating PS tests that pass a friendly source name.
+- **Build diamond/transitive graphs with `CommonUtility.CreatePackage` + `Dependencies.Add`**, then
+  create only the root(s) with `SimpleTestPackageUtility.CreatePackagesAsync` — it recursively
+  creates every referenced dependency package, so each concrete version ends up in the source.
+- **Watch for duplicate function names in the PS files.** `UpdatePackageTest.ps1` defines
+  `Test-UpdatePackageDoesNotConsiderPrereleasePackagesForSafeUpdateIfFlagIsNotSpecified` twice; the
+  later definition wins at runtime. Don't include such a function in a migration set, and don't
+  "clean up" the duplicate as a side effect of an unrelated migration.
+- **PS functions without a `Test-` prefix never run** (e.g. `PackageInstallAcceptsAllAsSourceName`,
+  `UninstallSolutionOnlyPackageWhenAmbiguous`). They are dead code, not coverage — exclude them from
+  migration counts and leave them alone.
+- **Build the Apex project with VS MSBuild, not `dotnet`.** `msbuild` isn't on `PATH`; locate it via
+  `vswhere.exe -latest -prerelease -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe`
+  and pass `/restore`. Executing Apex tests requires a live VS host, so build-only validation is the
+  realistic bar for a migration change.
+
 ---
 
 # Migrating PowerShell E2E Tests to Unit Tests
