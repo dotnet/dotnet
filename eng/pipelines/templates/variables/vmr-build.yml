@@ -32,7 +32,9 @@ variables:
   value: DotNetCore
 
 - name: defaultContainerOptions
-  value: --privileged
+  # Reap orphaned compiler servers so build-server shutdown does not wait on zombie processes.
+  # This can be removed when https://github.com/dotnet/roslyn/pull/83921 exists in SDK used by 10.0.1xx
+  value: --privileged --init
 
 - ${{ if eq(parameters.desiredIBC, 'Enabled') }}:
   - name: ibcEnabled
