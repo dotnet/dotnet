@@ -9,59 +9,58 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging
+namespace Microsoft.DotNet.Build.Tasks.Packaging;
+
+// Read a runtime.json file into an msbuild item group
+public class GetRuntimeJsonValues : Microsoft.Build.Utilities.Task
 {
-    // Read a runtime.json file into an msbuild item group
-    public class GetRuntimeJsonValues : Microsoft.Build.Utilities.Task
+    // runtime.json file path
+    [Required]
+    public string JsonFilename { get; set; }
+
+    [Output]
+    public string[] JsonItems { get; set; }
+
+    public override bool Execute()
     {
-        // runtime.json file path
-        [Required]
-        public string JsonFilename { get; set; }
+        return ParseRuntimeJsonFile();
+    }
 
-        [Output]
-        public string[] JsonItems { get; set; }
+    private bool ParseRuntimeJsonFile()
+    {
+        if (string.IsNullOrEmpty(JsonFilename) || !File.Exists(JsonFilename))
+            return false;
+        List<string> items = new List<string>();
+        JObject jObject = JObject.Parse(File.ReadAllText(JsonFilename));
 
-        public override bool Execute()
+        var runtimes = from r in jObject["runtimes"] select r;
+        foreach (JToken runtime in runtimes)
         {
-            return ParseRuntimeJsonFile();
+            JProperty prop = (JProperty)runtime;
+            string leafItem = ReadJsonLeaf(runtime);
+            if (!items.Contains(leafItem))
+                items.Add(leafItem);
         }
-
-        private bool ParseRuntimeJsonFile()
+        JsonItems = items.ToArray();
+        return true;
+    }
+    private string ReadJsonLeaf(JToken jToken)
+    {
+        if (jToken.HasValues)
         {
-            if (string.IsNullOrEmpty(JsonFilename) || !File.Exists(JsonFilename))
-                return false;
-            List<string> items = new List<string>();
-            JObject jObject = JObject.Parse(File.ReadAllText(JsonFilename));
-
-            var runtimes = from r in jObject["runtimes"] select r;
-            foreach (JToken runtime in runtimes)
+            foreach (JToken value in jToken.Values())
             {
-                JProperty prop = (JProperty)runtime;
-                string leafItem = ReadJsonLeaf(runtime);
-                if (!items.Contains(leafItem))
-                    items.Add(leafItem);
+                return ReadJsonLeaf(value);
             }
-            JsonItems = items.ToArray();
-            return true;
         }
-        private string ReadJsonLeaf(JToken jToken)
+        else
         {
-            if (jToken.HasValues)
+            if (jToken is JValue)
             {
-                foreach (JToken value in jToken.Values())
-                {
-                    return ReadJsonLeaf(value);
-                }
+                JValue jValue = (JValue)jToken;
+                return jValue.Value.ToString();
             }
-            else
-            {
-                if (jToken is JValue)
-                {
-                    JValue jValue = (JValue)jToken;
-                    return jValue.Value.ToString();
-                }
-            }
-            return string.Empty;
         }
+        return string.Empty;
     }
 }

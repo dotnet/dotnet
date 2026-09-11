@@ -8,72 +8,71 @@ using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace Microsoft.DotNet.Arcade.Sdk
+namespace Microsoft.DotNet.Arcade.Sdk;
+
+/// <summary>
+/// Checks that the content of two license files is the same modulo line breaks, leading and trailing whitespace.
+/// </summary>
+public class ValidateLicense : Microsoft.Build.Utilities.Task
 {
     /// <summary>
-    /// Checks that the content of two license files is the same modulo line breaks, leading and trailing whitespace.
+    /// Full path to the file that contains the license text to be validated.
     /// </summary>
-    public class ValidateLicense : Microsoft.Build.Utilities.Task
+    [Required]
+    public string LicensePath { get; set; }
+
+    /// <summary>
+    /// Full path to the file that contains expected license text.
+    /// </summary>
+    [Required]
+    public string ExpectedLicensePath { get; set; }
+
+    public override bool Execute()
     {
-        /// <summary>
-        /// Full path to the file that contains the license text to be validated.
-        /// </summary>
-        [Required]
-        public string LicensePath { get; set; }
+        ExecuteImpl();
+        return !Log.HasLoggedErrors;
+    }
 
-        /// <summary>
-        /// Full path to the file that contains expected license text.
-        /// </summary>
-        [Required]
-        public string ExpectedLicensePath { get; set; }
+    private void ExecuteImpl()
+    {
+        var actualLines = File.ReadAllLines(LicensePath, Encoding.UTF8);
+        var expectedLines = File.ReadAllLines(ExpectedLicensePath, Encoding.UTF8);
 
-        public override bool Execute()
+        if (!LinesEqual(actualLines, expectedLines))
         {
-            ExecuteImpl();
-            return !Log.HasLoggedErrors;
+            Log.LogError($"License file content '{LicensePath}' doesn't match the expected license '{ExpectedLicensePath}'.");
+        }
+    }
+
+    internal static bool LinesEqual(IEnumerable<string> actual, IEnumerable<string> expected)
+    {
+        IEnumerable<string> normalize(IEnumerable<string> lines)
+            => from line in lines
+               where !string.IsNullOrWhiteSpace(line)
+               select line.Trim();
+
+        var normalizedActual = normalize(actual).ToArray();
+        var normalizedExpected = normalize(expected).ToArray();
+
+        if (normalizedActual.Length != normalizedExpected.Length)
+        {
+            return false;
         }
 
-        private void ExecuteImpl()
+        for (int i = 0; i < normalizedActual.Length; i++)
         {
-            var actualLines = File.ReadAllLines(LicensePath, Encoding.UTF8);
-            var expectedLines = File.ReadAllLines(ExpectedLicensePath, Encoding.UTF8);
-
-            if (!LinesEqual(actualLines, expectedLines))
+            if (normalizedExpected[i] == "*ignore-line*")
             {
-                Log.LogError($"License file content '{LicensePath}' doesn't match the expected license '{ExpectedLicensePath}'.");
+                continue;
             }
-        }
 
-        internal static bool LinesEqual(IEnumerable<string> actual, IEnumerable<string> expected)
-        {
-            IEnumerable<string> normalize(IEnumerable<string> lines)
-                => from line in lines
-                   where !string.IsNullOrWhiteSpace(line)
-                   select line.Trim();
-
-            var normalizedActual = normalize(actual).ToArray();
-            var normalizedExpected = normalize(expected).ToArray();
-
-            if (normalizedActual.Length != normalizedExpected.Length)
+            if (normalizedActual[i] != normalizedExpected[i])
             {
                 return false;
             }
-
-            for (int i = 0; i < normalizedActual.Length; i++)
-            {
-                if (normalizedExpected[i] == "*ignore-line*")
-                {
-                    continue;
-                }
-
-                if (normalizedActual[i] != normalizedExpected[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
+        return true;
     }
+
 }

@@ -4,88 +4,87 @@
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Xunit;
 
-namespace Microsoft.DotNet.Helix.Sdk.Tests
+namespace Microsoft.DotNet.Helix.Sdk.Tests;
+
+public class TestNameFormatterTests
 {
-    public class TestNameFormatterTests
+    [Fact]
+    public void DisplayName_IsMethodName_ReturnsFullyQualifiedName()
     {
-        [Fact]
-        public void DisplayName_IsMethodName_ReturnsFullyQualifiedName()
-        {
-            // MSTest default: display name is just the method name.
-            string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.MyMethod", "MyMethod");
-            Assert.Equal("Ns.MyTests.MyMethod", result);
-        }
+        // MSTest default: display name is just the method name.
+        string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.MyMethod", "MyMethod");
+        Assert.Equal("Ns.MyTests.MyMethod", result);
+    }
 
-        [Fact]
-        public void DisplayName_EqualsFullyQualifiedName_ReturnsFullyQualifiedName()
-        {
-            // xUnit default: display name is already the fully qualified name.
-            string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.MyMethod", "Ns.MyTests.MyMethod");
-            Assert.Equal("Ns.MyTests.MyMethod", result);
-        }
+    [Fact]
+    public void DisplayName_EqualsFullyQualifiedName_ReturnsFullyQualifiedName()
+    {
+        // xUnit default: display name is already the fully qualified name.
+        string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.MyMethod", "Ns.MyTests.MyMethod");
+        Assert.Equal("Ns.MyTests.MyMethod", result);
+    }
 
-        [Fact]
-        public void ParameterizedRow_WithSpaceBeforeArgs_QualifiesWithoutDuplicatingMethod()
-        {
-            // The scenario from dotnet/sdk#55123: FQN does not end with the display name because of the args part.
-            string result = TestNameFormatter.FormatDisplayName(
-                "Ns.NativeAotTests.NativeAotTests_WillRunWithExitCodeZero",
-                "NativeAotTests_WillRunWithExitCodeZero (\"net10.0\")");
+    [Fact]
+    public void ParameterizedRow_WithSpaceBeforeArgs_QualifiesWithoutDuplicatingMethod()
+    {
+        // The scenario from dotnet/sdk#55123: FQN does not end with the display name because of the args part.
+        string result = TestNameFormatter.FormatDisplayName(
+            "Ns.NativeAotTests.NativeAotTests_WillRunWithExitCodeZero",
+            "NativeAotTests_WillRunWithExitCodeZero (\"net10.0\")");
 
-            Assert.Equal("Ns.NativeAotTests.NativeAotTests_WillRunWithExitCodeZero (\"net10.0\")", result);
-        }
+        Assert.Equal("Ns.NativeAotTests.NativeAotTests_WillRunWithExitCodeZero (\"net10.0\")", result);
+    }
 
-        [Fact]
-        public void ParameterizedRow_WithoutSpaceBeforeArgs_QualifiesWithoutDuplicatingMethod()
-        {
-            string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.Theory", "Theory(value: 1)");
-            Assert.Equal("Ns.MyTests.Theory (value: 1)", result);
-        }
+    [Fact]
+    public void ParameterizedRow_WithoutSpaceBeforeArgs_QualifiesWithoutDuplicatingMethod()
+    {
+        string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.Theory", "Theory(value: 1)");
+        Assert.Equal("Ns.MyTests.Theory (value: 1)", result);
+    }
 
-        [Fact]
-        public void ParameterizedRow_AsDataDrivenSubResult_KeepsFrameworkDisplayName()
-        {
-            string result = TestNameFormatter.FormatDisplayName(
-                "Microsoft.DotNet.Cli.New.IntegrationTests.CommonTemplatesTests.FeaturesSupport",
-                "FeaturesSupport(\"classlib\",True,\"netstandard2.0\")",
-                isDataDrivenSubResult: true);
+    [Fact]
+    public void ParameterizedRow_AsDataDrivenSubResult_KeepsFrameworkDisplayName()
+    {
+        string result = TestNameFormatter.FormatDisplayName(
+            "Microsoft.DotNet.Cli.New.IntegrationTests.CommonTemplatesTests.FeaturesSupport",
+            "FeaturesSupport(\"classlib\",True,\"netstandard2.0\")",
+            isDataDrivenSubResult: true);
 
-            Assert.Equal("FeaturesSupport(\"classlib\",True,\"netstandard2.0\")", result);
-        }
+        Assert.Equal("FeaturesSupport(\"classlib\",True,\"netstandard2.0\")", result);
+    }
 
-        [Theory]
-        [InlineData("")]
-        [InlineData(null)]
-        public void MissingDisplayName_AsDataDrivenSubResult_DoesNotRepeatFullyQualifiedName(string displayName)
-        {
-            string result = TestNameFormatter.FormatDisplayName(
-                "Ns.MyTests.Theory",
-                displayName,
-                isDataDrivenSubResult: true);
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void MissingDisplayName_AsDataDrivenSubResult_DoesNotRepeatFullyQualifiedName(string displayName)
+    {
+        string result = TestNameFormatter.FormatDisplayName(
+            "Ns.MyTests.Theory",
+            displayName,
+            isDataDrivenSubResult: true);
 
-            Assert.Empty(result);
-        }
+        Assert.Empty(result);
+    }
 
-        [Fact]
-        public void CustomDisplayName_KeepsBothFullyQualifiedNameAndDisplayName()
-        {
-            // xUnit [Fact(DisplayName = "...")] with an arbitrary, non-unique name.
-            string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.MyMethod", "My friendly scenario");
-            Assert.Equal("Ns.MyTests.MyMethod (My friendly scenario)", result);
-        }
+    [Fact]
+    public void CustomDisplayName_KeepsBothFullyQualifiedNameAndDisplayName()
+    {
+        // xUnit [Fact(DisplayName = "...")] with an arbitrary, non-unique name.
+        string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.MyMethod", "My friendly scenario");
+        Assert.Equal("Ns.MyTests.MyMethod (My friendly scenario)", result);
+    }
 
-        [Fact]
-        public void CustomDisplayName_WithParentheses_KeepsWholeDisplayName()
-        {
-            string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.MyMethod", "Scenario (special case)");
-            Assert.Equal("Ns.MyTests.MyMethod (Scenario (special case))", result);
-        }
+    [Fact]
+    public void CustomDisplayName_WithParentheses_KeepsWholeDisplayName()
+    {
+        string result = TestNameFormatter.FormatDisplayName("Ns.MyTests.MyMethod", "Scenario (special case)");
+        Assert.Equal("Ns.MyTests.MyMethod (Scenario (special case))", result);
+    }
 
-        [Fact]
-        public void EmptyFullyQualifiedName_FallsBackToDisplayName()
-        {
-            string result = TestNameFormatter.FormatDisplayName("", "MyMethod");
-            Assert.Equal("MyMethod", result);
-        }
+    [Fact]
+    public void EmptyFullyQualifiedName_FallsBackToDisplayName()
+    {
+        string result = TestNameFormatter.FormatDisplayName("", "MyMethod");
+        Assert.Equal("MyMethod", result);
     }
 }

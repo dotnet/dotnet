@@ -5,33 +5,32 @@ using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace Microsoft.DotNet.Arcade.Sdk
+namespace Microsoft.DotNet.Arcade.Sdk;
+
+public class GetAssemblyFullName : Microsoft.Build.Utilities.Task
 {
-    public class GetAssemblyFullName : Microsoft.Build.Utilities.Task
+    [Required]
+    public ITaskItem[] Items { get; set; }
+
+    public string PathMetadata { get; set; }
+
+    [Required]
+    public string FullNameMetadata { get; set; }
+
+    [Output]
+    public ITaskItem[] ItemsWithFullName { get; set; }
+
+    public override bool Execute()
     {
-        [Required]
-        public ITaskItem[] Items { get; set; }
+        ItemsWithFullName = Items;
 
-        public string PathMetadata { get; set; }
-
-        [Required]
-        public string FullNameMetadata { get; set; }
-
-        [Output]
-        public ITaskItem[] ItemsWithFullName { get; set; }
-
-        public override bool Execute()
+        foreach (var item in Items)
         {
-            ItemsWithFullName = Items;
-
-            foreach (var item in Items)
-            {
-                var assemblyPath = string.IsNullOrEmpty(PathMetadata) ? item.ItemSpec : item.GetMetadata(PathMetadata);
-                item.SetMetadata(FullNameMetadata, AssemblyName.GetAssemblyName(assemblyPath).FullName);
-            }
-
-            return true;
+            var assemblyPath = string.IsNullOrEmpty(PathMetadata) ? item.ItemSpec : item.GetMetadata(PathMetadata);
+            item.SetMetadata(FullNameMetadata, AssemblyName.GetAssemblyName(assemblyPath).FullName);
         }
+
+        return true;
     }
 }
 

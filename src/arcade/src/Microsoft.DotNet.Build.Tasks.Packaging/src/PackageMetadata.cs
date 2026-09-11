@@ -5,19 +5,18 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging
+namespace Microsoft.DotNet.Build.Tasks.Packaging;
+
+internal class PackageMetadata
 {
-    internal class PackageMetadata
+    public string Name = null;  // Remove warnings
+    public string Description = null;
+    public string[] CommonTypes = null;
+
+    public static IEnumerable<PackageMetadata> ReadFrom(string path)
     {
-        public string Name = null;  // Remove warnings
-        public string Description = null;
-        public string[] CommonTypes = null;
+        string packageMetadata = File.ReadAllText(path);
 
-        public static IEnumerable<PackageMetadata> ReadFrom(string path)
-        {
-            string packageMetadata = File.ReadAllText(path);
-
-            return JsonConvert.DeserializeObject<List<PackageMetadata>>(packageMetadata);
-        }
+        return JsonConvert.DeserializeObject<List<PackageMetadata>>(packageMetadata);
     }
 }

@@ -5,18 +5,17 @@ using System;
 using System.Collections.Immutable;
 using Newtonsoft.Json;
 
-namespace Microsoft.DotNet.Helix.Client.Models
+namespace Microsoft.DotNet.Helix.Client.Models;
+
+public partial class JobResultsUri
 {
-    public partial class JobResultsUri
+    public JobResultsUri()
     {
-        public JobResultsUri()
-        {
-        }
-
-        [JsonProperty("ResultsUri")]
-        public string ResultsUri { get; set; }
-
-        [JsonProperty("ResultsUriRSAS")]
-        public string ResultsUriRSAS { get; set; }
     }
+
+    [JsonProperty("ResultsUri")]
+    public string ResultsUri { get; set; }
+
+    [JsonProperty("ResultsUriRSAS")]
+    public string ResultsUriRSAS { get; set; }
 }

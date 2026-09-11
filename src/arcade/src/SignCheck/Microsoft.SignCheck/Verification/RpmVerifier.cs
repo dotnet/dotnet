@@ -9,59 +9,58 @@ using System.Runtime.InteropServices;
 using Microsoft.DotNet.Build.Tasks.Installers;
 using Microsoft.SignCheck.Logging;
 
-namespace Microsoft.SignCheck.Verification
+namespace Microsoft.SignCheck.Verification;
+
+public class RpmVerifier : PgpVerifier
 {
-    public class RpmVerifier : PgpVerifier
+    public RpmVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".rpm") { }
+
+    protected override IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath)
     {
-        public RpmVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".rpm") { }
-
-        protected override IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath)
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                throw new PlatformNotSupportedException("RPM unpacking is only supported on Linux.");
-            }
-
-            using var stream = File.Open(archivePath, FileMode.Open);
-            using RpmPackage rpmPackage = RpmPackage.Read(stream);
-            using var dataStream = File.Create(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()));
-            using var archive = new CpioReader(rpmPackage.ArchiveStream, leaveOpen: false);
-
-            while (archive.GetNextEntry() is CpioEntry entry)
-            {
-                yield return new ArchiveEntry()
-                {
-                    RelativePath = entry.Name,
-                    ContentStream = entry.DataStream,
-                    ContentSize= entry.DataStream.Length
-                };
-            }
+            throw new PlatformNotSupportedException("RPM unpacking is only supported on Linux.");
         }
 
-        protected override (string signatureDocument, string signableContent) GetSignatureDocumentAndSignableContent(string archivePath, string tempDir)
+        using var stream = File.Open(archivePath, FileMode.Open);
+        using RpmPackage rpmPackage = RpmPackage.Read(stream);
+        using var dataStream = File.Create(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()));
+        using var archive = new CpioReader(rpmPackage.ArchiveStream, leaveOpen: false);
+
+        while (archive.GetNextEntry() is CpioEntry entry)
         {
-            string signatureDocument = Path.Combine(tempDir, "signableContent");
-            string signableContent = Path.Combine(tempDir, "pgpSignableContent");
-
-            using var rpmPackageStream = File.Open(archivePath, FileMode.Open);
-            using (RpmPackage rpmPackage = RpmPackage.Read(rpmPackageStream))
+            yield return new ArchiveEntry()
             {
-                var pgpEntry = rpmPackage.Signature.Entries.FirstOrDefault(e => e.Tag == RpmSignatureTag.PgpHeaderAndPayload).Value;
-                if (pgpEntry == null)
-                {
-                    return (null, null);
-                }
-
-                File.WriteAllBytes(signatureDocument, [.. (ArraySegment<byte>)pgpEntry]);
-            }
-
-            using (var signableContentStream = File.Create(signableContent))
-            {
-                rpmPackageStream.Seek(0, SeekOrigin.Begin);
-                RpmPackage.GetSignableContent(rpmPackageStream).CopyTo(signableContentStream);
-            }
-
-            return (signatureDocument, signableContent);
+                RelativePath = entry.Name,
+                ContentStream = entry.DataStream,
+                ContentSize= entry.DataStream.Length
+            };
         }
+    }
+
+    protected override (string signatureDocument, string signableContent) GetSignatureDocumentAndSignableContent(string archivePath, string tempDir)
+    {
+        string signatureDocument = Path.Combine(tempDir, "signableContent");
+        string signableContent = Path.Combine(tempDir, "pgpSignableContent");
+
+        using var rpmPackageStream = File.Open(archivePath, FileMode.Open);
+        using (RpmPackage rpmPackage = RpmPackage.Read(rpmPackageStream))
+        {
+            var pgpEntry = rpmPackage.Signature.Entries.FirstOrDefault(e => e.Tag == RpmSignatureTag.PgpHeaderAndPayload).Value;
+            if (pgpEntry == null)
+            {
+                return (null, null);
+            }
+
+            File.WriteAllBytes(signatureDocument, [.. (ArraySegment<byte>)pgpEntry]);
+        }
+
+        using (var signableContentStream = File.Create(signableContent))
+        {
+            rpmPackageStream.Seek(0, SeekOrigin.Begin);
+            RpmPackage.GetSignableContent(rpmPackageStream).CopyTo(signableContentStream);
+        }
+
+        return (signatureDocument, signableContent);
     }
 }

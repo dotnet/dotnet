@@ -3,10 +3,9 @@
 
 using System;
 
-namespace Microsoft.DotNet.XUnitExtensions
+namespace Microsoft.DotNet.XUnitExtensions;
+
+internal class ConditionalDiscovererException : Exception
 {
-    internal class ConditionalDiscovererException : Exception
-    {
-        public ConditionalDiscovererException(string message) : base(message) { }
-    }
+    public ConditionalDiscovererException(string message) : base(message) { }
 }

@@ -3,10 +3,9 @@
 
 using Microsoft.Cci.Differs;
 
-namespace Microsoft.Cci.Filters
+namespace Microsoft.Cci.Filters;
+
+public interface IDifferenceFilter
 {
-    public interface IDifferenceFilter
-    {
-        bool Include(Difference difference);
-    }
+    bool Include(Difference difference);
 }

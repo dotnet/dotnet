@@ -3,24 +3,23 @@
 
 using System.IO;
 
-namespace Internal.Microsoft.Extensions.DependencyModel
+namespace Internal.Microsoft.Extensions.DependencyModel;
+
+internal interface IFile
 {
-    internal interface IFile
-    {
-        bool Exists(string path);
+    bool Exists(string path);
 
-        string ReadAllText(string path);
+    string ReadAllText(string path);
 
-        Stream OpenRead(string path);
+    Stream OpenRead(string path);
 
-        Stream OpenFile(
-            string path,
-            FileMode fileMode,
-            FileAccess fileAccess,
-            FileShare fileShare,
-            int bufferSize,
-            FileOptions fileOptions);
+    Stream OpenFile(
+        string path,
+        FileMode fileMode,
+        FileAccess fileAccess,
+        FileShare fileShare,
+        int bufferSize,
+        FileOptions fileOptions);
 
-        void CreateEmptyFile(string path);
-    }
+    void CreateEmptyFile(string path);
 }

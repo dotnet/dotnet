@@ -3,25 +3,24 @@
 
 using System;
 
-namespace Microsoft.DotNet.SwaggerGenerator.Modeler
+namespace Microsoft.DotNet.SwaggerGenerator.Modeler;
+
+public class Disposable : IDisposable
 {
-    public class Disposable : IDisposable
+    private readonly Action _onDispose;
+
+    private Disposable(Action onDispose)
     {
-        private readonly Action _onDispose;
+        _onDispose = onDispose;
+    }
 
-        private Disposable(Action onDispose)
-        {
-            _onDispose = onDispose;
-        }
+    public void Dispose()
+    {
+        _onDispose?.Invoke();
+    }
 
-        public void Dispose()
-        {
-            _onDispose?.Invoke();
-        }
-
-        public static IDisposable Create(Action onDispose)
-        {
-            return new Disposable(onDispose);
-        }
+    public static IDisposable Create(Action onDispose)
+    {
+        return new Disposable(onDispose);
     }
 }
