@@ -6,6 +6,8 @@
 
     <!-- sdk always wants to build portable on FreeBSD etc. -->
     <BuildArgs Condition="('$(TargetOS)' == 'freebsd' or '$(TargetOS)' == 'solaris') and '$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) /p:PortableBuild=true</BuildArgs>
+    <!-- The source-built Test CLI package uses the VMR's current TFM, which can lag the SDK's during a TFM rollover. -->
+    <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) /p:TestCliNuGetDirectoryTargetFramework=$(NetCurrent)</BuildArgs>
     <BuildArgs Condition="'$(TargetOS)' != 'windows'">$(BuildArgs) /p:NetRuntimeRid=$(TargetRid)</BuildArgs>
 
     <BuildArgs Condition="'$(TargetRid)' == 'linux-x64' or '$(TargetRid)' == 'linux-arm64' ">$(BuildArgs) /p:BuildSdkDeb=true /p:BuildSdkRpm=true</BuildArgs>
