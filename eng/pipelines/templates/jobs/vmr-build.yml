@@ -82,6 +82,11 @@ parameters:
   type: object
   default: []
 
+# Name of a previous Microsoft-build job whose SDK and Arcade packages should bootstrap this job.
+- name: bootstrapArtifactsFrom
+  type: string
+  default: ''
+
 # Enables usage of the system libraries when building.
 - name: useSystemLibraries
   type: boolean
@@ -212,12 +217,14 @@ jobs:
         image: ${{ parameters.container.image }}
         options: $(defaultContainerOptions)
 
-  ${{ if or(gt(length(parameters.reuseBuildArtifactsFrom), 0), gt(length(parameters.dependsOn), 0)) }}:
+  ${{ if or(gt(length(parameters.reuseBuildArtifactsFrom), 0), gt(length(parameters.dependsOn), 0), ne(parameters.bootstrapArtifactsFrom, '')) }}:
     dependsOn:
     - ${{ each dep in parameters.reuseBuildArtifactsFrom }}:
       - ${{ dep }}
     - ${{ each dep in parameters.dependsOn }}:
       - ${{ dep }}
+    - ${{ if ne(parameters.bootstrapArtifactsFrom, '') }}:
+      - ${{ parameters.bootstrapArtifactsFrom }}
   variables:
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - group: AzureDevOps-Artifact-Feeds-Pats
@@ -270,6 +277,9 @@ jobs:
     value: $(Agent.TempDirectory)/previously-source-built-sdk
   - name: previouslySourceBuiltArtifactsDir
     value: $(Agent.TempDirectory)/previously-source-built-artifacts
+
+  - name: bootstrapArguments
+    value: ''
 
   - name: successfulJobArtifactName
     value: $(Agent.JobName)_Artifacts
@@ -517,6 +527,11 @@ jobs:
             targetPath: $(sourcesPath)/artifacts/
           displayName: Download Previous Build (${{ reuseBuildArtifacts }})
 
+  - ${{ if ne(parameters.bootstrapArtifactsFrom, '') }}:
+    - template: ../steps/bootstrap-toolset.yml
+      parameters:
+        artifactName: ${{ parameters.bootstrapArtifactsFrom }}_Artifacts
+
   - ${{ if eq(parameters.withPreviousSDK, 'true') }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
@@ -657,6 +672,7 @@ jobs:
         $(buildPassProperties)
         $(runtimeSourceFeedKeyProperties)
         $(_SignDiagnosticFilesArgs)
+        $(bootstrapArguments)
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
@@ -690,6 +706,7 @@ jobs:
           $(baseArguments)
           $(targetProperties)
           $(buildPassProperties)
+          $(bootstrapArguments)
           ${{ parameters.extraProperties }}
           -test
           -excludeCIBinarylog
