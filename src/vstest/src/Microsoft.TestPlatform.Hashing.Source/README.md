@@ -7,7 +7,11 @@ as `internal` types, following the same pattern as `src/Microsoft.TestPlatform.F
 runner process on the Microsoft.Testing.Platform path, does **not** compile these files: it uses
 ObjectModel's copy through the `InternalsVisibleTo` in
 `src/Microsoft.TestPlatform.ObjectModel/Friends.cs`, so there is exactly one `TestIdSeed` and one
-`TestCaseIdAlgorithm` on that path.
+`TestCaseIdAlgorithm` on that path. The temporary test id report logger
+(`src/Microsoft.TestPlatform.Extensions.TestIdsLogger`) takes the same route for `TestIdSeed` alone -
+it reports what each algorithm computes rather than resolving one, so it needs the seed and not
+`TestCaseIdAlgorithm`. That grant is removed together with the logger, which goes when the SHA1
+implementation it reports on does.
 
 Consumers pick files deliberately rather than taking everything: `AdapterUtilities` must exclude
 `TestCaseIdAlgorithm.cs`, because that file reads the CoreUtilities feature flag and `AdapterUtilities`
