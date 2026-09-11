@@ -16,8 +16,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 {
     public class WriteAnnotatedUsageReport : Task
     {
-        private const string SnapshotPrefix = "PackageVersions.";
-        private const string SnapshotSuffix = ".Snapshot.props";
+        private const string ProducedPrefix = "PackageVersions.";
+        private const string ProducedSuffix = ".Produced.props";
 
         /// <summary>
         /// Source usage data JSON file.
@@ -32,12 +32,13 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
         public string VersionPropertySuffix { get; set; }
 
         /// <summary>
-        /// A set of "PackageVersions.{repo}.Snapshot.props" files. They are analyzed to find
-        /// packages built during source-build, and which repo built them. This info is added to the
-        /// report. New packages are associated to a repo by going through each PVP in ascending
-        /// file modification order.
+        /// A set of "PackageVersions.{repo}.Produced.props" files. Each file lists the packages
+        /// directly produced by a specific repo, providing accurate attribution without relying
+        /// on snapshot diffs (which can misattribute packages when repos have independent
+        /// dependency trees).
         /// </summary>
-        public ITaskItem[] PackageVersionPropsSnapshots { get; set; }
+        [Required]
+        public ITaskItem[] PackageVersionPropsProducedFiles { get; set; }
 
         /// <summary>
         /// File containing the results of poisoning the prebuilts. Example format:
@@ -142,57 +143,20 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
 
         private RepoOutput[] GetSourceBuildRepoOutputs()
         {
-            var pvpSnapshotFiles = PackageVersionPropsSnapshots.NullAsEmpty()
+            return PackageVersionPropsProducedFiles.NullAsEmpty()
                 .Select(item =>
                 {
-                    var content = File.ReadAllText(item.ItemSpec);
-                    return new
+                    string filename = Path.GetFileName(item.ItemSpec);
+                    string repo = filename.Substring(
+                        ProducedPrefix.Length,
+                        filename.Length - ProducedPrefix.Length - ProducedSuffix.Length);
+
+                    var xml = XElement.Parse(File.ReadAllText(item.ItemSpec));
+                    return new RepoOutput
                     {
-                        Path = item.ItemSpec,
-                        Content = content,
-                        Xml = XElement.Parse(content)
+                        Repo = repo,
+                        Built = PackageVersionPropsElement.Parse(xml)
                     };
-                })
-                .OrderBy(snapshot =>
-                {
-                    // Get the embedded creation time if possible: the file's original metadata may
-                    // have been destroyed by copying, zipping, etc.
-                    string creationTime = snapshot.Xml
-                        // Get all elements
-                        .Elements()
-                        // Select all the subelements
-                        .SelectMany(e => e.Elements())
-                        // Find all that match the creation time property name
-                        .Where(e => e.Name == snapshot.Xml.GetDefaultNamespace().GetName(WritePackageVersionsProps.CreationTimePropertyName))
-                        // There should be only one or zero
-                        .SingleOrDefault()?.Value;
-
-                    if (string.IsNullOrEmpty(creationTime))
-                    {
-                        Log.LogError($"No creation time property found in snapshot {snapshot.Path}");
-                        return default(DateTime);
-                    }
-
-                    return new DateTime(long.Parse(creationTime));
-                })
-                .Select(snapshot =>
-                {
-                    string filename = Path.GetFileName(snapshot.Path);
-                    return new
-                    {
-                        Repo = filename.Substring(
-                            SnapshotPrefix.Length,
-                            filename.Length - SnapshotPrefix.Length - SnapshotSuffix.Length),
-                        PackageVersionProp = PackageVersionPropsElement.Parse(snapshot.Xml)
-                    };
-                })
-                .ToArray();
-
-            return pvpSnapshotFiles.Skip(1)
-                .Zip(pvpSnapshotFiles, (pvp, prev) => new RepoOutput
-                {
-                    Repo = prev.Repo,
-                    Built = pvp.PackageVersionProp.Except(prev.PackageVersionProp).ToArray()
                 })
                 .ToArray();
         }
