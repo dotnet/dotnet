@@ -139,6 +139,9 @@
     - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion
     - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion
     - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion
+    - KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion
+    - KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion
+    - KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentTargetingPackVersion
     - KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion
     - KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion
     - KnownILCompilerPackCurrentVersion
@@ -151,6 +154,12 @@
       <DefaultRuntimeFrameworkVersion Condition="'$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion)</DefaultRuntimeFrameworkVersion>
       <LatestRuntimeFrameworkVersion Condition="'$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
       <TargetingPackVersion Condition="'$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)</TargetingPackVersion>
+    </KnownFrameworkReference>
+
+    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
+      <DefaultRuntimeFrameworkVersion Condition="'$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion)</DefaultRuntimeFrameworkVersion>
+      <LatestRuntimeFrameworkVersion Condition="'$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
+      <TargetingPackVersion Condition="'$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentTargetingPackVersion)' != ''">$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentTargetingPackVersion)</TargetingPackVersion>
     </KnownFrameworkReference>
 
     <KnownRuntimePack Update="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)')->WithMetadataValue('RuntimePackLabels', 'Mono'))">

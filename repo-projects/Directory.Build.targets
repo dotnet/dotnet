@@ -368,10 +368,19 @@
     <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
       <_PreviouslySourceBuiltILLinkPackage Include="@(_PreviouslyBuiltSourceBuiltPackages)"
                                            Condition="'%(Identity)' == 'Microsoft.NET.ILLink.Tasks'" />
+      <!-- Bootstrap archives can contain portable packages while recording the producing vertical's RID in the manifest. -->
       <_PreviouslySourceBuiltRuntimePack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
                                          Condition="'%(Identity)' == 'Microsoft.NETCore.App.Runtime.$(PortableTargetRid)'" />
+      <_PreviouslySourceBuiltRuntimePack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
+                                         Condition="'@(_PreviouslySourceBuiltRuntimePack)' == '' and '%(Identity)' == 'Microsoft.NETCore.App.Runtime.$(TargetRid)'" />
       <_PreviouslySourceBuiltCrossgen2Pack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
                                            Condition="'%(Identity)' == 'Microsoft.NETCore.App.Crossgen2.$(PortableTargetRid)'" />
+      <_PreviouslySourceBuiltCrossgen2Pack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
+                                           Condition="'@(_PreviouslySourceBuiltCrossgen2Pack)' == '' and '%(Identity)' == 'Microsoft.NETCore.App.Crossgen2.$(TargetRid)'" />
+      <_PreviouslySourceBuiltAspNetCoreRuntimePack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
+                                                   Condition="'%(Identity)' == 'Microsoft.AspNetCore.App.Runtime.$(PortableTargetRid)'" />
+      <_PreviouslySourceBuiltAspNetCoreRuntimePack Include="@(_PreviouslyBuiltSourceBuiltPackages)"
+                                                   Condition="'@(_PreviouslySourceBuiltAspNetCoreRuntimePack)' == '' and '%(Identity)' == 'Microsoft.AspNetCore.App.Runtime.$(TargetRid)'" />
       <_PreviouslySourceBuiltExtraPackageVersionProps Include="KnownILLinkPackCurrentVersion"
                                                        Version="%(_PreviouslySourceBuiltILLinkPackage.Version)"
                                                        DoNotOverwrite="true"
@@ -385,6 +394,11 @@
                                                        Version="%(_PreviouslySourceBuiltCrossgen2Pack.Version)"
                                                        DoNotOverwrite="true"
                                                        Condition="'@(_PreviouslySourceBuiltCrossgen2Pack)' != ''" />
+      <_PreviouslySourceBuiltExtraPackageVersionProps Include="KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion;
+                                                               KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion"
+                                                       Version="%(_PreviouslySourceBuiltAspNetCoreRuntimePack.Version)"
+                                                       DoNotOverwrite="true"
+                                                       Condition="'@(_PreviouslySourceBuiltAspNetCoreRuntimePack)' != ''" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -615,6 +629,13 @@
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs Condition="'$(SourceBuiltILLinkPackVersion)' != ''">$(BuildArgs) /p:KnownILLinkPackCurrentVersion=$(SourceBuiltILLinkPackVersion)</BuildArgs>
       <BuildArgs Condition="'$(SourceBuiltCrossgen2PackVersion)' != ''">$(BuildArgs) /p:KnownCrossgen2PackCurrentVersion=$(SourceBuiltCrossgen2PackVersion)</BuildArgs>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'aspnetcore'))' == 'true'">
+      <AspNetCorePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App.Ref')->Metadata('Version'))</AspNetCorePackVersion>
+      <BuildArgs Condition="'$(AspNetCorePackVersion)' != ''">$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentTargetingPackVersion=$(AspNetCorePackVersion)</BuildArgs>
+      <BuildArgs Condition="'$(AspNetCorePackVersion)' != ''">$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion=$(AspNetCorePackVersion)</BuildArgs>
+      <BuildArgs Condition="'$(AspNetCorePackVersion)' != ''">$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion=$(AspNetCorePackVersion)</BuildArgs>
     </PropertyGroup>
 
     <PropertyGroup>
