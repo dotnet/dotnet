@@ -759,6 +759,11 @@
               Non-VMR builds normally use the crossgen2 built for the target host SDK from another build leg, but builds without one can opt in.
             -->
             <ProjectToBuild Condition="'$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' or '$(TargetOS)' == 'browser') and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" />
+            <!-- Package the target host binaries under the portable RID used by the SDK. -->
+            <ProjectToBuild Condition="'$(_BuildHostPack)' == 'true' and '$(BuildHostTools)' == 'true' and '$(NETCoreSdkRuntimeIdentifier)' != '' and '$(NETCoreSdkRuntimeIdentifier)' != '$(TargetRid)'"
+                            Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Host.sfxproj"
+                            AdditionalProperties="RuntimeIdentifier=$(NETCoreSdkRuntimeIdentifier)"
+                            Category="packs" />
           </ItemGroup>
           <ItemGroup>
             <SharedFrameworkProjectToBuild Condition="'$(_BuildHostPack)' == 'true'" Include="$(InstallerProjectRoot)pkg\archives\dotnet-nethost.proj" />

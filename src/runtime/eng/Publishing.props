@@ -33,6 +33,9 @@
     <_HostArtifact Include="$(ArtifactsPackagesDir)**\Microsoft.NETCore.App.Crossgen2.*.nupkg"
                     Exclude="$(ArtifactsPackagesDir)**\Microsoft.NETCore.App.Crossgen2.$(TargetRid).*.nupkg" />
 
+    <_HostArtifact Include="$(ArtifactsPackagesDir)**\Microsoft.NETCore.App.Host.*.nupkg"
+                    Exclude="$(ArtifactsPackagesDir)**\Microsoft.NETCore.App.Host.$(TargetRid).*.nupkg" />
+
     <Artifact Update="@(_HostArtifact)"
               Visibility="Vertical"
               IsShipping="false" />
