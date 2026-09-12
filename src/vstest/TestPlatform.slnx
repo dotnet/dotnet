@@ -58,6 +58,7 @@
   </Folder>
   <Folder Name="/src/Loggers/">
     <Project Path="src/Microsoft.TestPlatform.Extensions.HtmlLogger/Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
+    <Project Path="src/Microsoft.TestPlatform.Extensions.TestIdsLogger/Microsoft.TestPlatform.Extensions.TestIdsLogger.csproj" />
     <Project Path="src/Microsoft.TestPlatform.Extensions.TrxLogger/Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
   </Folder>
   <Folder Name="/src/Package/">
@@ -106,6 +107,7 @@
   </Folder>
   <Folder Name="/test/Loggers/">
     <Project Path="test/Microsoft.TestPlatform.Extensions.HtmlLogger.UnitTests/Microsoft.TestPlatform.Extensions.HtmlLogger.UnitTests.csproj" />
+    <Project Path="test/Microsoft.TestPlatform.Extensions.TestIdsLogger.UnitTests/Microsoft.TestPlatform.Extensions.TestIdsLogger.UnitTests.csproj" />
     <Project Path="test/Microsoft.TestPlatform.Extensions.TrxLogger.UnitTests/Microsoft.TestPlatform.Extensions.TrxLogger.UnitTests.csproj" />
   </Folder>
   <Folder Name="/test/Platform/">

@@ -2,6 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -55,10 +58,12 @@ namespace NuGet.Protocol.Plugins
         /// <param name="packageSourceRepository">The package source location.</param>
         /// <param name="serviceIndex">The service index (index.json).</param>
         [Obsolete("Use GetOperationClaimsRequest(string, string) instead.")]
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage("AOT", "IL2026", Justification = "ToString without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs")]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "ToString without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs")]
+#endif
         public GetOperationClaimsRequest(string? packageSourceRepository, JObject? serviceIndex)
-#pragma warning disable IL2026, IL3050 // WriteTo without converters is safe. See https://github.com/JamesNK/Newtonsoft.Json/blob/13.0.4/Src/Newtonsoft.Json/Linq/JToken.cs
             : this(packageSourceRepository, serviceIndex?.ToString(Formatting.None, Array.Empty<JsonConverter>()))
-#pragma warning restore IL2026, IL3050
         {
         }
     }

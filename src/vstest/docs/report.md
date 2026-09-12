@@ -24,6 +24,7 @@ if you're interested in the architecture of a test logger.
 | Local, CI, CD | Inbuilt | [Trx Logger][] |
 | Local, CI, CD | Inbuilt | [Console Logger][] |
 | Local, CI, CD | Inbuilt | [Html Logger][] |
+| Migration only, temporary | Inbuilt | [Test Id Report Logger][] |
 | Local, CI, CD | [XunitXml.TestLogger][xunit.nuget] | [Xunit Logger][] |
 | Local, CI, CD | [NunitXml.TestLogger][nunit.nuget] | [Nunit Logger][] |
 | Local, CI, CD | [JunitXml.TestLogger][junit.nuget] | [Junit Logger][] |
@@ -34,6 +35,7 @@ if you're interested in the architecture of a test logger.
 
 [Trx Logger]: https://github.com/Microsoft/vstest/tree/main/src/Microsoft.TestPlatform.Extensions.TrxLogger
 [Html Logger]: https://github.com/Microsoft/vstest/tree/main/src/Microsoft.TestPlatform.Extensions.HtmlLogger
+[Test Id Report Logger]: https://github.com/Microsoft/vstest/tree/main/src/Microsoft.TestPlatform.Extensions.TestIdsLogger
 [Console Logger]: ./src/vstest.console/Internal/ConsoleLogger.cs
 [Xunit Logger]: https://github.com/spekt/xunit.testlogger
 [Nunit Logger]: https://github.com/spekt/nunit.testlogger
@@ -225,6 +227,40 @@ vstest.console.exe Tests.dll /logger:"html;LogFileName=c:\temp\logFile.html"
 ```
 
 HTML file will be `c:\temp\logFile.html`.
+
+### 4) Test id report logger
+
+> [!WARNING]
+> This logger is temporary and will be removed together with the SHA1 test id implementation it
+> reports on. It exists only to support migrating stored test case ids across the change of id
+> hashing algorithm. See [Test id report logger](test-ids-logger.md) for the full documentation,
+> including the columns, a worked example, and the important case of adapter assigned ids.
+
+The test id report logger writes one row per test carrying both the SHA1 derived and the xxHash128
+derived test id, so that ids stored before the algorithm changes can be mapped onto the ids that
+replace them.
+
+#### Syntax
+
+```shell
+/logger:testids [;LogFileName=<Defaults to TestIds.csv, qualified by target framework>]
+```
+
+Where `LogFileName` can be absolute or relative path. If the path is relative, it will be relative to
+the `TestResults` directory, created under current working directory. An explicitly named report is
+overwritten if it exists. When `LogFileName` is not given the default name is qualified by the target
+framework and an existing report is not overwritten - the next free `TestIds_net8.0(1).csv` is taken
+- so that a multi targeted project, or several projects of a solution sharing a results directory, do
+not overwrite each other's mappings.
+
+#### Example
+
+```shell
+vstest.console.exe Tests.dll /logger:testids
+```
+
+The report will be `c:\tempDirectory\TestResults\TestIds_net8.0.csv` for a test assembly targeting
+`net8.0`. The path is printed at the end of the run.
 
 ## Related links
 
