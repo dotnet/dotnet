@@ -11,9 +11,13 @@ using NuGet.Versioning;
 
 namespace Microsoft.DotNet.Arcade.Sdk;
 
-public class CheckRequiredDotNetVersion : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public class CheckRequiredDotNetVersion : Task, IMultiThreadableTask
 {
-    private readonly record struct CacheKey(string GlobalJsonPath, string SdkVersion, DateTime LastWrite);
+    private readonly record struct CacheKey(AbsolutePath GlobalJsonPath, string SdkVersion, DateTime LastWrite);
+
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
     [Required]
     public string RepositoryRoot { get; set; }
@@ -29,7 +33,7 @@ public class CheckRequiredDotNetVersion : Microsoft.Build.Utilities.Task
             return false;
         }
 
-        var globalJsonPath = Path.Combine(RepositoryRoot, "global.json");
+        var globalJsonPath = TaskEnvironment.GetAbsolutePath(Path.Combine(RepositoryRoot, "global.json"));
         DateTime lastWrite;
         try
         {
@@ -41,6 +45,10 @@ public class CheckRequiredDotNetVersion : Microsoft.Build.Utilities.Task
             return false;
         }
 
+        // The read/write pair below is not atomic, so under multithreaded execution two threads
+        // can both miss and both run the check. The check itself is pure, so the result is
+        // identical either way; the only observable effect is that a failing check can log its
+        // error twice, since deduplicating that reporting is part of what the cache buys.
         var cacheKey = new CacheKey(globalJsonPath, SdkVersion, lastWrite);
         if (BuildEngine4.GetRegisteredTaskObject(cacheKey, RegisteredTaskObjectLifetime.Build) is bool cachedSuccess)
         {

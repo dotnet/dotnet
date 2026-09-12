@@ -106,10 +106,26 @@ Your goal: **drive open issues to zero.** Process the backlog systematically:
    c. Issues without repro steps that you can investigate from the description alone
 4. **Skip**: issues labeled `State: Blocked`, `Needs: Design`, `State: Approved`, or `State: In-PR`
 5. **Skip**: issues you already commented on in the last 7 days (don't re-triage the same issue)
+6. **Check existing work** using Step 0 before triaging each candidate. When an issue is skipped, continue to another eligible issue; do not end the run with `noop` while other eligible work remains.
 
 The goal is steady progress: the maintainer wakes up to draft fix PRs or root cause analysis comments — actionable work ready to go.
 
 ## Process
+
+### Step 0: Check for existing issues (MANDATORY)
+
+Before reproducing or implementing anything, check whether the work is already tracked:
+
+1. Search open issues in `${{ github.repository }}` for the candidate's issue number in the title, body, and comments. Also search by distinctive title terms, affected symbols, and the proposed fix, since duplicates may not link to the original issue.
+2. Do not restrict these searches by author, label, or creation date. Exclude the candidate itself from duplicate matches.
+3. Read matching issues and their comments to confirm they cover the same bug and fix, not just the same component. Follow links to the original report when the candidate is itself a generated fix issue.
+
+**An open fix/fallback issue counts as existing work, even when no PR exists.** Recognize issues containing a patch, a pushed fix branch, a "Click here to create the pull request" link, or a note that PR creation failed because of permissions or protected files. Do not treat these as fresh bug reports.
+
+- If an open fix/fallback issue covers the candidate, skip the fix and move to another eligible issue. Do not recreate the patch, push another branch, or call `create_pull_request` again. This applies even if the original report is closed, the fallback lacks `State: In-PR`, or cache-memory says the PR is `pending`.
+- If the candidate is itself a fix/fallback issue, leave it for maintainer review and move on. A missing PR is not a reason to retry a known blocked attempt.
+- For duplicate bug reports without an existing fix, work from the original report (or the report a maintainer designated as canonical), not each duplicate.
+- If the searches or issue reads fail, do not assume no duplicate exists. Skip that candidate and mention the lookup failure in the final run summary.
 
 ### Step 1: Evaluate Issue Completeness
 
@@ -155,9 +171,9 @@ Check whether the issue contains actionable information:
 
 If the bug is reproducible and the fix appears scoped (not requiring architectural decisions):
 
-#### Step 4a: Check for existing PRs (MANDATORY)
+#### Step 4a: Check for existing issues and PRs (MANDATORY)
 
-Before writing any code, search for existing open PRs that already address this issue:
+Before writing any code, apply Step 0 and search for existing open PRs that already address this issue:
 
 1. Search for open PRs with branch names matching `fix/issue-<number>` (e.g. `fix/issue-15643`)
 2. Search for open PRs whose title or body references this issue number
@@ -166,8 +182,7 @@ Before writing any code, search for existing open PRs that already address this 
 **If an existing open PR is found:**
 - Do NOT create a new PR. Instead, add a comment on the issue noting the existing PR (if not already noted).
 - Add label `State: In-PR` to the issue if not already present.
-- If the existing PR has review feedback that hasn't been addressed, consider iterating on it instead of creating a new one — but only if you can push to the branch.
-- `noop` with message: "Existing PR #NNN already addresses this issue."
+- Leave review follow-up to the PR Iteration workflow and continue to another eligible issue. Do not end the run with `noop` just because this issue already has a PR.
 
 **If all existing PRs for this issue are closed** (not merged), evaluate whether the previous approach was wrong or just abandoned. If wrong, try a different approach. If abandoned, consider reopening rather than creating yet another PR.
 
@@ -178,7 +193,7 @@ Before writing any code, search for existing open PRs that already address this 
 3. **Implement a fix** on a new branch `fix/issue-<number>`
 4. **Write tests** — see testing requirements below
 5. **Build and run tests** to verify nothing is broken
-6. **Create a draft PR** referencing the issue
+6. **Repeat the existing-issue and PR checks from Step 4a immediately before calling `create_pull_request`.** If another run has already produced a fix issue or PR, do not submit this duplicate. Otherwise, create a draft PR referencing the issue.
 
 ##### Testing Requirements
 
@@ -228,7 +243,7 @@ Write to cache-memory key `auto-fix-prs`, appending the new PR to the existing a
 
 ### Step 5: Done
 
-If no action was needed:
+After checking for other eligible issues, if no action was needed anywhere in the run:
 
 ```json
 {"noop": {"message": "No action needed: [brief explanation]"}}

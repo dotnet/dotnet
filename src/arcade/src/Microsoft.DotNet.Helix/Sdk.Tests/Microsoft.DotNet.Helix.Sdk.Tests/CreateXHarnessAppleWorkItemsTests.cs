@@ -114,7 +114,7 @@ public class CreateXHarnessAppleWorkItemsTests
             CreateAppBundle("apps/System.Bar.app", "ios-simulator-64_13.5"),
         };
 
-        _fileSystem.Files.Add("apps/xharness-payload-system.foo.zip", "archive");
+        _fileSystem.Files.Add(_task.TaskEnvironment.GetAbsolutePath("apps/xharness-payload-system.foo.zip"), "archive");
 
         // Act
         using var provider = collection.BuildServiceProvider();
@@ -318,7 +318,7 @@ public class CreateXHarnessAppleWorkItemsTests
             mockBundle.Setup(x => x.GetMetadata(CreateXHarnessAppleWorkItems.MetadataNames.AppBundlePath)).Returns(appBundlePath);
         }
 
-        _fileSystem.CreateDirectory(appBundlePath ?? itemSpec);
+        _fileSystem.CreateDirectory(_task.TaskEnvironment.GetAbsolutePath(appBundlePath ?? itemSpec));
 
         return mockBundle.Object;
     }

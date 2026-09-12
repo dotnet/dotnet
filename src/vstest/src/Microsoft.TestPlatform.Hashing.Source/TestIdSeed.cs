@@ -13,9 +13,11 @@ namespace Microsoft.TestPlatform.Hashing;
 /// Shared source, compiled into <c>Microsoft.TestPlatform.ObjectModel</c>, where <c>TestCase</c>
 /// computes its own id. <c>Microsoft.TestPlatform.CrossPlatEngine</c>, where the
 /// Microsoft.Testing.Platform path has to compute the id in the runner process, uses that same
-/// definition through <c>InternalsVisibleTo</c>. Both must derive the id from exactly the same
-/// bytes, so the composition lives in one place rather than being written out twice and silently
-/// drifting apart.
+/// definition through <c>InternalsVisibleTo</c>, as does the temporary test id report logger
+/// (<c>Microsoft.VisualStudio.TestPlatform.Extensions.TestIds.TestLogger</c>), which reports what
+/// each algorithm computes and so has to hash exactly these bytes; that grant goes away with it.
+/// All must derive the id from exactly the same bytes, so the composition lives in one place rather
+/// than being written out several times and silently drifting apart.
 /// </remarks>
 internal static class TestIdSeed
 {

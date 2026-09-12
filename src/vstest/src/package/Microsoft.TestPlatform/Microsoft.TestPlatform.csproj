@@ -68,6 +68,7 @@
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TestIdsLogger\Microsoft.TestPlatform.Extensions.TestIdsLogger.csproj" SetTargetFramework="TargetFramework=$(NetFrameworkRunnerTargetFramework)" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\Microsoft.TestPlatform.PlatformAbstractions.csproj" />
     <ProjectReference Include="..\..\SettingsMigrator\SettingsMigrator.csproj" />
@@ -407,6 +408,9 @@
       <_HtmlLoggerContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\net48\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*.dll">
         <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_HtmlLoggerContent>
+      <_TestIdsLoggerContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TestIdsLogger\$(Configuration)\net48\**\Microsoft.VisualStudio.TestPlatform.Extensions.TestIds.TestLogger*.dll">
+        <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_TestIdsLoggerContent>
       <_TestHostRuntimeProviderContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.TestHostProvider\$(Configuration)\net48\**\Microsoft.TestPlatform.TestHostRuntimeProvider*.dll">
         <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_TestHostRuntimeProviderContent>
@@ -416,7 +420,7 @@
       <_EventLogCollectorContent Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\net48\Microsoft.TestPlatform.Extensions.EventLogCollector.dll">
         <PackagePath>tools\net462\Common7\IDE\Extensions\TestPlatform\Extensions\%(Filename)%(Extension)</PackagePath>
       </_EventLogCollectorContent>
-      <TfmSpecificPackageFile Include="@(_TrxLoggerContent);@(_HtmlLoggerContent);@(_TestHostRuntimeProviderContent);@(_BlameDataCollectorContent);@(_EventLogCollectorContent)" />
+      <TfmSpecificPackageFile Include="@(_TrxLoggerContent);@(_HtmlLoggerContent);@(_TestIdsLoggerContent);@(_TestHostRuntimeProviderContent);@(_BlameDataCollectorContent);@(_EventLogCollectorContent)" />
     </ItemGroup>
   </Target>
   <!--
