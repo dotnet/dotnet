@@ -809,6 +809,65 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
+        public void GetResolvedVersions_WithPackageReferenceCasingDifferentFromAssetsFile_GetsVersion()
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+            var net8 = NuGetFramework.Parse("net8.0");
+            string targetAlias = net8.GetShortFolderName();
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, net8);
+            projectA.AddPackageToAllFrameworks(new SimpleTestPackageContext("myPackage", "1.1.1"));
+            solution.Projects.Add(projectA);
+            solution.Create();
+
+            var project = Project.FromFile(projectA.ProjectPath, new ProjectOptions());
+            var lockFile = new LockFile
+            {
+                Version = 3,
+                Targets =
+                [
+                    new LockFileTarget
+                    {
+                        TargetFramework = net8,
+                        TargetAlias = targetAlias,
+                        Libraries =
+                        [
+                            new LockFileTargetLibrary
+                            {
+                                Name = "myPackage",
+                                Version = new NuGetVersion("1.1.1")
+                            }
+                        ]
+                    }
+                ],
+                PackageSpec = new PackageSpec(
+                [
+                    new TargetFrameworkInformation
+                    {
+                        FrameworkName = net8,
+                        TargetAlias = targetAlias,
+                        Dependencies =
+                        [
+                            new LibraryDependency
+                            {
+                                LibraryRange = new LibraryRange("MYPACKAGE")
+                            }
+                        ]
+                    }
+                ])
+            };
+
+            // Act
+            var result = MSBuildAPIUtility.GetResolvedVersions(project, new List<string>(), lockFile, transitive: false);
+
+            // Assert
+            var package = Assert.Single(Assert.Single(result).TopLevelPackages);
+            Assert.Equal("myPackage", package.Name);
+            Assert.Equal("1.1.1", package.OriginalRequestedVersion);
+        }
+
+        [Fact]
         public void GetResolvedVersions_WithAPackageInDirectoryPackageProps_GetsVersion()
         {
             // Arrange
