@@ -447,12 +447,12 @@
       <_MacOSSharedInstallDir>/usr/local/share/dotnet</_MacOSSharedInstallDir>
 
       <_pkgArgs></_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) --root $(_OutputPathRoot)</_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) --identifier $(_MacOSComponentName)</_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) --version $(InstallerPackageVersion)</_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) --install-location $(_MacOSSharedInstallDir)</_pkgArgs>
-      <_pkgArgs Condition="'$(MacOSScriptsDirectory)' != ''">$(_pkgArgs) --scripts $(MacOSScriptsDirectory)</_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) $(_InstallerFile)</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --root &quot;$(_OutputPathRoot)&quot;</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --identifier &quot;$(_MacOSComponentName)&quot;</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --version &quot;$(InstallerPackageVersion)&quot;</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --install-location &quot;$(_MacOSSharedInstallDir)&quot;</_pkgArgs>
+      <_pkgArgs Condition="'$(MacOSScriptsDirectory)' != ''">$(_pkgArgs) --scripts &quot;$(MacOSScriptsDirectory)&quot;</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) &quot;$(_InstallerFile)&quot;</_pkgArgs>
     </PropertyGroup>
 
     <Exec Command="pkgbuild $(_pkgArgs)" />
