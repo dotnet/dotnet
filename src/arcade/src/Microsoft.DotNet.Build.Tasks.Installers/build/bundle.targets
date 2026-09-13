@@ -175,12 +175,12 @@
     
     <PropertyGroup>
       <_pkgArgs></_pkgArgs>
-      <_pkgArgs Condition="'$(MacOSBundleResourcesPath)' == ''">$(_pkgArgs) --resources $(MacOSBundleResourcesPath)</_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) --identifier $(MacOSBundleIdentifierName)</_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) --version $(ProductVersion)</_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) --package-path $(_MacOSIntermediatesPath)</_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) --distribution $(_MacOSDistributionFile)</_pkgArgs>
-      <_pkgArgs>$(_pkgArgs) $(_InstallerFile)</_pkgArgs>
+      <_pkgArgs Condition="'$(MacOSBundleResourcesPath)' == ''">$(_pkgArgs) --resources &quot;$(MacOSBundleResourcesPath)&quot;</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --identifier &quot;$(MacOSBundleIdentifierName)&quot;</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --version &quot;$(ProductVersion)&quot;</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --package-path &quot;$(_MacOSIntermediatesPath)&quot;</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) --distribution &quot;$(_MacOSDistributionFile)&quot;</_pkgArgs>
+      <_pkgArgs>$(_pkgArgs) &quot;$(_InstallerFile)&quot;</_pkgArgs>
     </PropertyGroup>
 
     <Exec Command="productbuild $(_pkgArgs)" />

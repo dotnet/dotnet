@@ -825,7 +825,7 @@ namespace NuGet.CommandLine.XPlat
                         {
                             try
                             { // In case proj and assets file are not in sync and some refs were deleted
-                                installedPackage = projectPackages.First(p => p.Name.Equals(topLevelPackage.Name, StringComparison.Ordinal));
+                                installedPackage = projectPackages.First(p => p.Name.Equals(topLevelPackage.Name, StringComparison.OrdinalIgnoreCase));
                             }
                             catch (Exception)
                             {
