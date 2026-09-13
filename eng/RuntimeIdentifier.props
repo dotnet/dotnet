@@ -1,15 +1,11 @@
 <Project>
   <!-- TargetRid calculations should go in this file. -->
-  <PropertyGroup Label="CalculateTargetOS">
-    <BuildOS>linux</BuildOS>
-    <BuildOS Condition="$(NETCoreSdkPortableRuntimeIdentifier.StartsWith('linux-musl'))">linux-musl</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('FREEBSD'))">freebsd</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('NETBSD'))">netbsd</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('ILLUMOS'))">illumos</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('SOLARIS'))">solaris</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('HAIKU'))">haiku</BuildOS>
-    <BuildOS Condition="$([MSBuild]::IsOSPlatform('WINDOWS'))">windows</BuildOS>
+  <PropertyGroup Label="CalculateOS">
+    <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' == 'core'">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</BuildRid>
+    <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' != 'core'">win-$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant)</BuildRid>
+
+    <BuildOS Condition="'$(BuildOS)' == ''">$(BuildRid.Substring(0, $(BuildRid.LastIndexOf('-'))))</BuildOS>
+    <BuildOS Condition="'$(BuildOS)' == 'win'">windows</BuildOS>
     <TargetOS Condition="'$(TargetOS)' == ''">$(BuildOS)</TargetOS>
     <HostOS Condition="'$(HostOS)' == ''">$(TargetOS)</HostOS>
   </PropertyGroup>
@@ -43,10 +39,6 @@
   </PropertyGroup>
 
   <PropertyGroup Label="CalculateRID">
-    <!-- Use current machine distro RID if set. Otherwise, fall back to RuntimeInformation.RuntimeIdentifier -->
-    <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' == 'core'">$([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier)</BuildRid>
-    <BuildRid Condition="'$(BuildRid)' == '' and '$(MSBuildRuntimeType)' != 'core'">win-$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant)</BuildRid>
-
     <TargetRid Condition="'$(TargetRid)' == ''">$(BuildRid.Substring(0, $(BuildRid.LastIndexOf('-'))))-$(TargetArchitecture)</TargetRid>
     <HostRid Condition="'$(HostRid)' == ''">$(TargetRid)</HostRid>
 
