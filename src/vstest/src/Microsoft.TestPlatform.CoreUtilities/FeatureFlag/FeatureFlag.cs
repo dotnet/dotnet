@@ -27,6 +27,7 @@ internal partial class FeatureFlag : IFeatureFlag
     private static readonly IReadOnlyDictionary<string, bool> DefaultValues = new Dictionary<string, bool>
     {
         [VSTEST_DISABLE_MTP_TESTHOST] = true,
+        [VSTEST_DISABLE_XXHASH128_TESTCASE_ID] = true,
     };
 
     private readonly ConcurrentDictionary<string, bool> _cache = new();
@@ -90,6 +91,17 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable running Microsoft.Testing.Platform applications under vstest while the integration is experimental.
     // This defaults to true. Set it to 0 to opt in to the feature.
     public const string VSTEST_DISABLE_MTP_TESTHOST = nameof(VSTEST_DISABLE_MTP_TESTHOST);
+
+    // Disable computing test case ids with xxHash128, falling back to the SHA1 ids the platform has
+    // always produced. Moving to xxHash128 changes the id of every test whose id the platform
+    // computes, which is a breaking change for anything that stored those ids - most notably Azure
+    // DevOps Test Case work item association. It therefore ships available but not default: this
+    // defaults to true, so this release changes no id at all, and set it to 0 to opt in early.
+    //
+    // Deleting the DefaultValues entry above is the entire behavioural change of the release that
+    // makes xxHash128 the default. The polarity survives that flip - 1 selects SHA1 and 0 selects
+    // xxHash128 both before and after - so a value written down today keeps meaning the same thing.
+    public const string VSTEST_DISABLE_XXHASH128_TESTCASE_ID = nameof(VSTEST_DISABLE_XXHASH128_TESTCASE_ID);
 
     private static bool GetValue(string featureFlag)
     {

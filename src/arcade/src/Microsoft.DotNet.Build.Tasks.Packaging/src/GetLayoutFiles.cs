@@ -9,143 +9,142 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging
+namespace Microsoft.DotNet.Build.Tasks.Packaging;
+
+public class GetLayoutFiles : Task
 {
-    public class GetLayoutFiles : Task
+    /// <summary>
+    /// Package report files
+    /// </summary>
+    [Required]
+    public string[] PackageReports { get; set; }
+
+    /// <summary>
+    /// Destination directory for layout
+    /// </summary>
+    [Required]
+    public string DestinationDirectory { get; set; }
+
+    /// <summary>
+    /// Optional set of frameworks to restrict the layout
+    ///   Identity: Framework
+    ///   RuntimeIDs: Semi-colon separated list of runtime IDs
+    /// </summary>
+    public ITaskItem[] Frameworks { get; set; }
+
+    /// <summary>
+    /// Files to be copied to layout
+    ///   Identity : source path
+    ///   Destination : destination path
+    /// </summary>
+    [Output]
+    public ITaskItem[] LayoutFiles { get; set; }
+    
+    public override bool Execute()
     {
-        /// <summary>
-        /// Package report files
-        /// </summary>
-        [Required]
-        public string[] PackageReports { get; set; }
-
-        /// <summary>
-        /// Destination directory for layout
-        /// </summary>
-        [Required]
-        public string DestinationDirectory { get; set; }
-
-        /// <summary>
-        /// Optional set of frameworks to restrict the layout
-        ///   Identity: Framework
-        ///   RuntimeIDs: Semi-colon separated list of runtime IDs
-        /// </summary>
-        public ITaskItem[] Frameworks { get; set; }
-
-        /// <summary>
-        /// Files to be copied to layout
-        ///   Identity : source path
-        ///   Destination : destination path
-        /// </summary>
-        [Output]
-        public ITaskItem[] LayoutFiles { get; set; }
-        
-        public override bool Execute()
-        {
-            var frameworks = Frameworks.NullAsEmpty().ToDictionary(
-                i => NuGetFramework.Parse(i.ItemSpec),
-                i => 
-                {
-                    var rids = i.GetMetadata("RuntimeIds");
-                    return String.IsNullOrEmpty(rids) ? new HashSet<string>() : new HashSet<string>(rids.Split(';'));
-                },
-                NuGetFramework.Comparer);
-
-            var layoutFiles = new List<ITaskItem>();
-
-            foreach(var packageReportFile in PackageReports)
+        var frameworks = Frameworks.NullAsEmpty().ToDictionary(
+            i => NuGetFramework.Parse(i.ItemSpec),
+            i => 
             {
-                var packageReport = PackageReport.Load(packageReportFile);
+                var rids = i.GetMetadata("RuntimeIds");
+                return String.IsNullOrEmpty(rids) ? new HashSet<string>() : new HashSet<string>(rids.Split(';'));
+            },
+            NuGetFramework.Comparer);
 
-                foreach(var targetInfo in packageReport.Targets)
+        var layoutFiles = new List<ITaskItem>();
+
+        foreach(var packageReportFile in PackageReports)
+        {
+            var packageReport = PackageReport.Load(packageReportFile);
+
+            foreach(var targetInfo in packageReport.Targets)
+            {
+                var targetName = targetInfo.Key;
+                var target = targetInfo.Value;
+
+                var targetParts = targetName.Split('/');
+
+                var fx = NuGetFramework.Parse(targetParts[0]);
+                string rid = null;
+
+                if (targetParts.Length > 1)
                 {
-                    var targetName = targetInfo.Key;
-                    var target = targetInfo.Value;
+                    rid = targetParts[1];
+                }
+                
+                if (frameworks.Count != 0)
+                {
+                    HashSet<string> rids = null;
 
-                    var targetParts = targetName.Split('/');
-
-                    var fx = NuGetFramework.Parse(targetParts[0]);
-                    string rid = null;
-
-                    if (targetParts.Length > 1)
+                    if (!frameworks.TryGetValue(fx, out rids))
                     {
-                        rid = targetParts[1];
-                    }
-                    
-                    if (frameworks.Count != 0)
-                    {
-                        HashSet<string> rids = null;
-
-                        if (!frameworks.TryGetValue(fx, out rids))
-                        {
-                            Log.LogMessage(MessageImportance.Low, $"Skipping {fx} since it is not in {nameof(Frameworks)}");
-                            continue;
-                        }
-
-                        if (rid != null && rids.Count > 0 && !rids.Contains(rid))
-                        {
-                            Log.LogMessage(MessageImportance.Low, $"Skipping {fx}/{rid} since it is not in {nameof(Frameworks)}");
-                            continue;
-                        }
-                    }
-
-                    if (!packageReport.SupportedFrameworks.ContainsKey(fx.ToString()))
-                    {
-                        Log.LogMessage(MessageImportance.Low, $"Skipping {fx} since it is not supported");
+                        Log.LogMessage(MessageImportance.Low, $"Skipping {fx} since it is not in {nameof(Frameworks)}");
                         continue;
                     }
 
-                    var fxFolder = fx.GetShortFolderName();
-
-                    if (rid == null)
+                    if (rid != null && rids.Count > 0 && !rids.Contains(rid))
                     {
-                        // only consider compile assets for RID-less target
-                        layoutFiles.AddRange(CreateLayoutFiles(target.CompileAssets, $"ref\\{fxFolder}", "Compile"));
+                        Log.LogMessage(MessageImportance.Low, $"Skipping {fx}/{rid} since it is not in {nameof(Frameworks)}");
+                        continue;
                     }
-
-                    layoutFiles.AddRange(CreateLayoutFiles(target.RuntimeAssets, $"runtimes\\{rid}\\lib\\{fxFolder}", "Runtime"));
-                    layoutFiles.AddRange(CreateLayoutFiles(target.NativeAssets, $"runtimes\\{rid}\\native", "Native"));
                 }
-            }
 
-            LayoutFiles = layoutFiles.ToArray();
-
-            return !Log.HasLoggedErrors;
-        }
-
-
-        private IEnumerable<ITaskItem> CreateLayoutFiles(IEnumerable<PackageAsset> assets, string subFolder, string assetType)
-        {
-            return assets.Where(a => !NuGetAssetResolver.IsPlaceholder(a.LocalPath))
-                .SelectMany(a => CreateLayoutFile(a.LocalPath, subFolder, assetType));
-                 
-        }
-
-        static string[] s_symbolExtensions = { ".pdb", ".dwarf", ".dbg" };
-        private IEnumerable<ITaskItem> CreateLayoutFile(string source, string subfolder, string assetType)
-        {
-            var item = new TaskItem(source);
-            var destination = Path.Combine(DestinationDirectory, subfolder, Path.GetFileName(source));
-
-            item.SetMetadata("Destination", destination);
-            item.SetMetadata("AssetType", assetType);
-
-            yield return item;
-
-            foreach(var symbolExtension in s_symbolExtensions)
-            {
-                var symbolSource = Path.ChangeExtension(source, symbolExtension);
-
-                if (File.Exists(symbolSource))
+                if (!packageReport.SupportedFrameworks.ContainsKey(fx.ToString()))
                 {
-                    var symbolItem = new TaskItem(symbolSource);
-                    var symbolDestination = Path.Combine(DestinationDirectory, subfolder, Path.GetFileName(symbolSource));
-
-                    symbolItem.SetMetadata("Destination", symbolDestination);
-                    symbolItem.SetMetadata("AssetType", assetType);
-
-                    yield return symbolItem;
+                    Log.LogMessage(MessageImportance.Low, $"Skipping {fx} since it is not supported");
+                    continue;
                 }
+
+                var fxFolder = fx.GetShortFolderName();
+
+                if (rid == null)
+                {
+                    // only consider compile assets for RID-less target
+                    layoutFiles.AddRange(CreateLayoutFiles(target.CompileAssets, $"ref\\{fxFolder}", "Compile"));
+                }
+
+                layoutFiles.AddRange(CreateLayoutFiles(target.RuntimeAssets, $"runtimes\\{rid}\\lib\\{fxFolder}", "Runtime"));
+                layoutFiles.AddRange(CreateLayoutFiles(target.NativeAssets, $"runtimes\\{rid}\\native", "Native"));
+            }
+        }
+
+        LayoutFiles = layoutFiles.ToArray();
+
+        return !Log.HasLoggedErrors;
+    }
+
+
+    private IEnumerable<ITaskItem> CreateLayoutFiles(IEnumerable<PackageAsset> assets, string subFolder, string assetType)
+    {
+        return assets.Where(a => !NuGetAssetResolver.IsPlaceholder(a.LocalPath))
+            .SelectMany(a => CreateLayoutFile(a.LocalPath, subFolder, assetType));
+             
+    }
+
+    static string[] s_symbolExtensions = { ".pdb", ".dwarf", ".dbg" };
+    private IEnumerable<ITaskItem> CreateLayoutFile(string source, string subfolder, string assetType)
+    {
+        var item = new TaskItem(source);
+        var destination = Path.Combine(DestinationDirectory, subfolder, Path.GetFileName(source));
+
+        item.SetMetadata("Destination", destination);
+        item.SetMetadata("AssetType", assetType);
+
+        yield return item;
+
+        foreach(var symbolExtension in s_symbolExtensions)
+        {
+            var symbolSource = Path.ChangeExtension(source, symbolExtension);
+
+            if (File.Exists(symbolSource))
+            {
+                var symbolItem = new TaskItem(symbolSource);
+                var symbolDestination = Path.Combine(DestinationDirectory, subfolder, Path.GetFileName(symbolSource));
+
+                symbolItem.SetMetadata("Destination", symbolDestination);
+                symbolItem.SetMetadata("AssetType", assetType);
+
+                yield return symbolItem;
             }
         }
     }

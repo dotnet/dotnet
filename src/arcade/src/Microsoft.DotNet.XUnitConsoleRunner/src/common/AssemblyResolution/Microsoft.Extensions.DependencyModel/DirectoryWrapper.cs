@@ -3,13 +3,12 @@
 
 using System.IO;
 
-namespace Internal.Microsoft.Extensions.DependencyModel
+namespace Internal.Microsoft.Extensions.DependencyModel;
+
+internal class DirectoryWrapper: IDirectory
 {
-    internal class DirectoryWrapper: IDirectory
+    public bool Exists(string path)
     {
-        public bool Exists(string path)
-        {
-            return Directory.Exists(path);
-        }
+        return Directory.Exists(path);
     }
 }

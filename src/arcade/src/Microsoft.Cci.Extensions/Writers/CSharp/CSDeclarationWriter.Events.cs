@@ -4,54 +4,53 @@
 using System.Linq;
 using Microsoft.Cci.Extensions.CSharp;
 
-namespace Microsoft.Cci.Writers.CSharp
+namespace Microsoft.Cci.Writers.CSharp;
+
+public partial class CSDeclarationWriter
 {
-    public partial class CSDeclarationWriter
+    private void WriteEventDefinition(IEventDefinition evnt)
     {
-        private void WriteEventDefinition(IEventDefinition evnt)
+        // Adder and Remover modifiers should be same.
+        IMethodDefinition accessor = evnt.Accessors.First().ResolvedMethod;
+
+        if (!evnt.ContainingTypeDefinition.IsInterface)
         {
-            // Adder and Remover modifiers should be same.
-            IMethodDefinition accessor = evnt.Accessors.First().ResolvedMethod;
-
-            if (!evnt.ContainingTypeDefinition.IsInterface)
-            {
-                WriteAttributes(evnt.Attributes);
-                if (!accessor.IsExplicitInterfaceMethod())
-                    WriteVisibility(evnt.Visibility);
-                WriteMethodModifiers(accessor);
-            }
-
-            if (evnt.GetHiddenBaseEvent(_filter) != Dummy.Event)
-                WriteKeyword("new");
-
-            if (accessor.Attributes.HasIsReadOnlyAttribute() && (LangVersion >= LangVersion8_0))
-            {
-                WriteKeyword("readonly");
-            }
-
-            WriteKeyword("event");
-            WriteTypeName(evnt.Type, evnt.Attributes);
-            WriteIdentifier(evnt.Name);
-
-            if (_forCompilation && !evnt.IsAbstract())
-            {
-                WriteSpace();
-                WriteSymbol("{", addSpace: true);
-                WriteEventBody("add");
-                WriteEventBody("remove");
-                WriteSymbol("}");
-            }
-            else
-            {
-                WriteSymbol(";");
-            }
+            WriteAttributes(evnt.Attributes);
+            if (!accessor.IsExplicitInterfaceMethod())
+                WriteVisibility(evnt.Visibility);
+            WriteMethodModifiers(accessor);
         }
 
-        private void WriteEventBody(string keyword)
+        if (evnt.GetHiddenBaseEvent(_filter) != Dummy.Event)
+            WriteKeyword("new");
+
+        if (accessor.Attributes.HasIsReadOnlyAttribute() && (LangVersion >= LangVersion8_0))
         {
-            WriteKeyword(keyword);
+            WriteKeyword("readonly");
+        }
+
+        WriteKeyword("event");
+        WriteTypeName(evnt.Type, evnt.Attributes);
+        WriteIdentifier(evnt.Name);
+
+        if (_forCompilation && !evnt.IsAbstract())
+        {
+            WriteSpace();
             WriteSymbol("{", addSpace: true);
-            WriteSymbol("}", addSpace: true);
+            WriteEventBody("add");
+            WriteEventBody("remove");
+            WriteSymbol("}");
         }
+        else
+        {
+            WriteSymbol(";");
+        }
+    }
+
+    private void WriteEventBody(string keyword)
+    {
+        WriteKeyword(keyword);
+        WriteSymbol("{", addSpace: true);
+        WriteSymbol("}", addSpace: true);
     }
 }

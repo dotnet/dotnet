@@ -3,15 +3,14 @@
 
 using System.Security.Cryptography.Pkcs;
 
-namespace Microsoft.SignCheck.Verification
+namespace Microsoft.SignCheck.Verification;
+
+public interface ISecurityInfoProvider
 {
-    public interface ISecurityInfoProvider
-    {
-        /// <summary>
-        /// Reads the security information from the specified path.
-        /// </summary>
-        /// <param name="path">The path to the file.</param>
-        /// <returns>A SignedCms object containing the security information.</returns>
-        SignedCms ReadSecurityInfo(string path);
-    }
+    /// <summary>
+    /// Reads the security information from the specified path.
+    /// </summary>
+    /// <param name="path">The path to the file.</param>
+    /// <returns>A SignedCms object containing the security information.</returns>
+    SignedCms ReadSecurityInfo(string path);
 }

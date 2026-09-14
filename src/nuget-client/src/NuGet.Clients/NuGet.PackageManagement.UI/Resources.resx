@@ -990,7 +990,7 @@ Error: {1}</value>
     <value>Close</value>
   </data>
   <data name="VSOptions_Text_ClearLocalsPromptMessage" xml:space="preserve">
-    <value>Once started, this action cannot be cancelled.</value>
+    <value>Once started, this action cannot be cancelled. Select OK to continue.</value>
   </data>
   <data name="CopyMenuCommandLabel" xml:space="preserve">
     <value>_Copy</value>

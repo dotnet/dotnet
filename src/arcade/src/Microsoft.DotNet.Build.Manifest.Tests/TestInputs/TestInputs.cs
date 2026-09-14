@@ -3,22 +3,21 @@
 
 using System.IO;
 
-namespace Microsoft.DotNet.Build.Manifest.Tests
-{
-    public static class TestInputs
-    {
-        public static string GetFullPath(string relativeTestInputPath)
-        {
-            return Path.Combine(
-                Path.GetDirectoryName(typeof(TestInputs).Assembly.Location),
-                "TestInputs",
-                relativeTestInputPath);
-        }
+namespace Microsoft.DotNet.Build.Manifest.Tests;
 
-        public static byte[] ReadAllBytes(string relativeTestInputPath)
-        {
-            var path = GetFullPath(relativeTestInputPath);
-            return File.ReadAllBytes(path);
-        }
+public static class TestInputs
+{
+    public static string GetFullPath(string relativeTestInputPath)
+    {
+        return Path.Combine(
+            Path.GetDirectoryName(typeof(TestInputs).Assembly.Location),
+            "TestInputs",
+            relativeTestInputPath);
+    }
+
+    public static byte[] ReadAllBytes(string relativeTestInputPath)
+    {
+        var path = GetFullPath(relativeTestInputPath);
+        return File.ReadAllBytes(path);
     }
 }

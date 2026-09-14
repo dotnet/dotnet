@@ -10,86 +10,53 @@ using Microsoft.Deployment.WindowsInstaller.Package;
 using Microsoft.SignCheck.Interop;
 using Microsoft.SignCheck.Logging;
 
-namespace Microsoft.SignCheck.Verification
+namespace Microsoft.SignCheck.Verification;
+
+[SupportedOSPlatform("windows")]
+public class MsiVerifier : AuthentiCodeVerifier
 {
-    [SupportedOSPlatform("windows")]
-    public class MsiVerifier : AuthentiCodeVerifier
+    public MsiVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msi", new OleStorageSecurityInfoProvider())
     {
-        public MsiVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options) : base(log, exclusions, options, ".msi", new OleStorageSecurityInfoProvider())
+
+    }
+
+    public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
+    {
+        SignatureVerificationResult svr = base.VerifySignature(path, parent, virtualPath);
+
+        if (VerifyRecursive)
         {
+            CreateDirectory(svr.TempPath);
 
-        }
-
-        public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
-        {
-            SignatureVerificationResult svr = base.VerifySignature(path, parent, virtualPath);
-
-            if (VerifyRecursive)
+            // TODO: Fix for MSIs with external CABs that are not present.
+            using (var installPackage = new InstallPackage(svr.FullPath, DatabaseOpenMode.Transact, sourceDir: null, workingDir: svr.TempPath))
             {
-                CreateDirectory(svr.TempPath);
+                InstallPathMap files = installPackage.Files;
+                var originalFiles = new Dictionary<string, string>();
 
-                // TODO: Fix for MSIs with external CABs that are not present.
-                using (var installPackage = new InstallPackage(svr.FullPath, DatabaseOpenMode.Transact, sourceDir: null, workingDir: svr.TempPath))
+                // Flatten the files to avoid path too long errors. We use the File column and extension to create a unique file
+                // and record the original, relative MSI path in the result.
+                foreach (string key in installPackage.Files.Keys)
                 {
-                    InstallPathMap files = installPackage.Files;
-                    var originalFiles = new Dictionary<string, string>();
-
-                    // Flatten the files to avoid path too long errors. We use the File column and extension to create a unique file
-                    // and record the original, relative MSI path in the result.
-                    foreach (string key in installPackage.Files.Keys)
-                    {
-                        originalFiles[key] = installPackage.Files[key].TargetPath;
-                        string name = key + Path.GetExtension(installPackage.Files[key].TargetName);
-                        string targetPath = Path.Combine(svr.TempPath, name);
-                        installPackage.Files[key].TargetName = name;
-                        installPackage.Files[key].SourceName = name;
-                        installPackage.Files[key].SourcePath = targetPath;
-                        installPackage.Files[key].TargetPath = targetPath;
-                    }
-
-                    try
-                    {
-                        Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagExtractingFileContents, svr.TempPath);
-                        installPackage.ExtractFiles(installPackage.Files.Keys);
-
-                        foreach (string key in installPackage.Files.Keys)
-                        {
-                            SignatureVerificationResult packageFileResult = VerifyFile(installPackage.Files[key].TargetPath, svr.Filename, Path.Combine(svr.VirtualPath, originalFiles[key]), containerPath: null);
-                            packageFileResult.AddDetail(DetailKeys.File, SignCheckResources.DetailFullName, originalFiles[key]);
-                            svr.NestedResults.Add(packageFileResult);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Log.WriteError(e.Message);
-                        svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailVerificationError, e.Message);
-                    }
+                    originalFiles[key] = installPackage.Files[key].TargetPath;
+                    string name = key + Path.GetExtension(installPackage.Files[key].TargetName);
+                    string targetPath = Path.Combine(svr.TempPath, name);
+                    installPackage.Files[key].TargetName = name;
+                    installPackage.Files[key].SourceName = name;
+                    installPackage.Files[key].SourcePath = targetPath;
+                    installPackage.Files[key].TargetPath = targetPath;
                 }
 
-                // Extract files from the Binary table - this is where items such as custom actions are stored.
-                // Be aware if there is no Binary table.
                 try
                 {
-                    using (var installDatabase = new Database(svr.FullPath, DatabaseOpenMode.ReadOnly))
-                    {
-                        if (installDatabase.Tables.Contains("Binary"))
-                        {
-                            using (View view = installDatabase.OpenView("SELECT `Name`, `Data` FROM `Binary`"))
-                            {
-                                view.Execute();
+                    Log.WriteMessage(LogVerbosity.Diagnostic, SignCheckResources.DiagExtractingFileContents, svr.TempPath);
+                    installPackage.ExtractFiles(installPackage.Files.Keys);
 
-                                foreach (Record record in view)
-                                {
-                                    string binaryFile = (string)record["Name"];
-                                    string binaryFilePath = Path.Combine(svr.TempPath, binaryFile);
-                                    StructuredStorage.SaveStream(record, svr.TempPath);
-                                    SignatureVerificationResult binaryStreamResult = VerifyFile(binaryFilePath, svr.Filename, Path.Combine(svr.VirtualPath, binaryFile), containerPath: null);
-                                    binaryStreamResult.AddDetail(DetailKeys.Misc, SignCheckResources.FileExtractedFromBinaryTable);
-                                    svr.NestedResults.Add(binaryStreamResult);
-                                    record.Close();
-                                }
-                            }
-                        }
+                    foreach (string key in installPackage.Files.Keys)
+                    {
+                        SignatureVerificationResult packageFileResult = VerifyFile(installPackage.Files[key].TargetPath, svr.Filename, Path.Combine(svr.VirtualPath, originalFiles[key]), containerPath: null);
+                        packageFileResult.AddDetail(DetailKeys.File, SignCheckResources.DetailFullName, originalFiles[key]);
+                        svr.NestedResults.Add(packageFileResult);
                     }
                 }
                 catch (Exception e)
@@ -97,11 +64,43 @@ namespace Microsoft.SignCheck.Verification
                     Log.WriteError(e.Message);
                     svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailVerificationError, e.Message);
                 }
-
-                DeleteDirectory(svr.TempPath);
             }
 
-            return svr;
+            // Extract files from the Binary table - this is where items such as custom actions are stored.
+            // Be aware if there is no Binary table.
+            try
+            {
+                using (var installDatabase = new Database(svr.FullPath, DatabaseOpenMode.ReadOnly))
+                {
+                    if (installDatabase.Tables.Contains("Binary"))
+                    {
+                        using (View view = installDatabase.OpenView("SELECT `Name`, `Data` FROM `Binary`"))
+                        {
+                            view.Execute();
+
+                            foreach (Record record in view)
+                            {
+                                string binaryFile = (string)record["Name"];
+                                string binaryFilePath = Path.Combine(svr.TempPath, binaryFile);
+                                StructuredStorage.SaveStream(record, svr.TempPath);
+                                SignatureVerificationResult binaryStreamResult = VerifyFile(binaryFilePath, svr.Filename, Path.Combine(svr.VirtualPath, binaryFile), containerPath: null);
+                                binaryStreamResult.AddDetail(DetailKeys.Misc, SignCheckResources.FileExtractedFromBinaryTable);
+                                svr.NestedResults.Add(binaryStreamResult);
+                                record.Close();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.WriteError(e.Message);
+                svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailVerificationError, e.Message);
+            }
+
+            DeleteDirectory(svr.TempPath);
         }
+
+        return svr;
     }
 }

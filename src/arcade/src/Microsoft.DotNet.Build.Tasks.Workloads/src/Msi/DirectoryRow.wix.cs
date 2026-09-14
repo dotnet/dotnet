@@ -3,53 +3,52 @@
 
 using WixToolset.Dtf.WindowsInstaller;
 
-namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi
+namespace Microsoft.DotNet.Build.Tasks.Workloads.Msi;
+
+/// <summary>
+/// Defines a single row inside the <see href="https://learn.microsoft.com/en-us/windows/win32/msi/directory-table">Directory</see> table of an MSI.
+/// </summary>
+public class DirectoryRow
 {
     /// <summary>
-    /// Defines a single row inside the <see href="https://learn.microsoft.com/en-us/windows/win32/msi/directory-table">Directory</see> table of an MSI.
+    /// The directory ID or an absolute path.
     /// </summary>
-    public class DirectoryRow
+    public string Directory
     {
-        /// <summary>
-        /// The directory ID or an absolute path.
-        /// </summary>
-        public string Directory
-        {
-            get;
-            set;
-        }
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// A reference to the directory's parent.
-        /// </summary>
-        public string DirectoryParent
-        {
-            get;
-            set;
-        }
+    /// <summary>
+    /// A reference to the directory's parent.
+    /// </summary>
+    public string DirectoryParent
+    {
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// The localizable directory name under the parent.
-        /// </summary>
-        public string DefaultDir
-        {
-            get;
-            set;
-        }
+    /// <summary>
+    /// The localizable directory name under the parent.
+    /// </summary>
+    public string DefaultDir
+    {
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// Creates a new <see cref="DirectoryRow"/> instance from the specified <see cref="Record"/>.
-        /// </summary>
-        /// <param name="directoryRecord">The file record obtained from querying the MSI Directory table.</param>
-        /// <returns>A single directory row.</returns>
-        public static DirectoryRow Create(Record directoryRecord)
+    /// <summary>
+    /// Creates a new <see cref="DirectoryRow"/> instance from the specified <see cref="Record"/>.
+    /// </summary>
+    /// <param name="directoryRecord">The file record obtained from querying the MSI Directory table.</param>
+    /// <returns>A single directory row.</returns>
+    public static DirectoryRow Create(Record directoryRecord)
+    {
+        return new DirectoryRow
         {
-            return new DirectoryRow
-            {
-                Directory = (string)directoryRecord["Directory"],
-                DirectoryParent = (string)directoryRecord["Directory_Parent"],
-                DefaultDir = (string)directoryRecord["DefaultDir"]
-            };
-        }
+            Directory = (string)directoryRecord["Directory"],
+            DirectoryParent = (string)directoryRecord["Directory_Parent"],
+            DefaultDir = (string)directoryRecord["DefaultDir"]
+        };
     }
 }

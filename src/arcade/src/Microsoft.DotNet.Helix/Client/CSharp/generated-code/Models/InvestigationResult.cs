@@ -5,18 +5,17 @@ using System;
 using System.Collections.Immutable;
 using Newtonsoft.Json;
 
-namespace Microsoft.DotNet.Helix.Client.Models
+namespace Microsoft.DotNet.Helix.Client.Models;
+
+public partial class InvestigationResult
 {
-    public partial class InvestigationResult
+    public InvestigationResult()
     {
-        public InvestigationResult()
-        {
-        }
-
-        [JsonProperty("Result")]
-        public IImmutableList<Models.InvestigationGroup> Result { get; set; }
-
-        [JsonProperty("ContinuationToken")]
-        public string ContinuationToken { get; set; }
     }
+
+    [JsonProperty("Result")]
+    public IImmutableList<Models.InvestigationGroup> Result { get; set; }
+
+    [JsonProperty("ContinuationToken")]
+    public string ContinuationToken { get; set; }
 }

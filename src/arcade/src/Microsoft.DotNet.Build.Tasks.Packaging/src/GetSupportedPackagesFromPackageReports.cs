@@ -9,53 +9,52 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging
+namespace Microsoft.DotNet.Build.Tasks.Packaging;
+
+public class GetSupportedPackagesFromPackageReports : Task
 {
-    public class GetSupportedPackagesFromPackageReports : Task
+    [Required]
+    public string[] PackageReports { get; set; }
+
+    [Output]
+    public ITaskItem[] SupportedPackages { get; set; }
+
+    public override bool Execute()
     {
-        [Required]
-        public string[] PackageReports { get; set; }
-
-        [Output]
-        public ITaskItem[] SupportedPackages { get; set; }
-
-        public override bool Execute()
+        var supportedPackages = new List<ITaskItem>();
+        foreach (var packageReport in PackageReports.NullAsEmpty())
         {
-            var supportedPackages = new List<ITaskItem>();
-            foreach (var packageReport in PackageReports.NullAsEmpty())
+            var report = PackageReport.Load(packageReport);
+            var packageId = report.Id;
+            var packageVersion = report.Version;
+
+            var supportedTargets = report.Targets.Values.Where(target => report.SupportedFrameworks.ContainsKey(target.Framework));
+            var fxRIDGroupings = supportedTargets.GroupBy(target => target.Framework, target => target.RuntimeID);
+
+            foreach (var fxRIDGrouping in fxRIDGroupings)
             {
-                var report = PackageReport.Load(packageReport);
-                var packageId = report.Id;
-                var packageVersion = report.Version;
+                var fx = fxRIDGrouping.Key;
+                var rids = fxRIDGrouping.ToArray();
+                var nugetFx = NuGetFramework.Parse(fx);
 
-                var supportedTargets = report.Targets.Values.Where(target => report.SupportedFrameworks.ContainsKey(target.Framework));
-                var fxRIDGroupings = supportedTargets.GroupBy(target => target.Framework, target => target.RuntimeID);
+                var supportedPackage = new TaskItem(packageId);
+                supportedPackage.SetMetadata("Version", packageVersion);
+                supportedPackage.SetMetadata("TargetFramework", fx);
+                supportedPackage.SetMetadata("TargetFrameworkShort", nugetFx.GetShortFolderName());
 
-                foreach (var fxRIDGrouping in fxRIDGroupings)
+                var ridList = string.Join(";", rids);
+
+                if (!String.IsNullOrEmpty(ridList))
                 {
-                    var fx = fxRIDGrouping.Key;
-                    var rids = fxRIDGrouping.ToArray();
-                    var nugetFx = NuGetFramework.Parse(fx);
-
-                    var supportedPackage = new TaskItem(packageId);
-                    supportedPackage.SetMetadata("Version", packageVersion);
-                    supportedPackage.SetMetadata("TargetFramework", fx);
-                    supportedPackage.SetMetadata("TargetFrameworkShort", nugetFx.GetShortFolderName());
-
-                    var ridList = string.Join(";", rids);
-
-                    if (!String.IsNullOrEmpty(ridList))
-                    {
-                        supportedPackage.SetMetadata("RuntimeIdentifiers", ridList);
-                    }
-
-                    supportedPackages.Add(supportedPackage);
+                    supportedPackage.SetMetadata("RuntimeIdentifiers", ridList);
                 }
+
+                supportedPackages.Add(supportedPackage);
             }
-
-            SupportedPackages = supportedPackages.ToArray();
-
-            return !Log.HasLoggedErrors;
         }
+
+        SupportedPackages = supportedPackages.ToArray();
+
+        return !Log.HasLoggedErrors;
     }
 }

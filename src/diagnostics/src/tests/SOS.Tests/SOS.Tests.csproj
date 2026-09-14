@@ -14,6 +14,11 @@
     <TestRunnerName>XUnitV3</TestRunnerName>
   </PropertyGroup>
 
+  <!-- Temporary until SOS.Tests moves to Helix in https://github.com/dotnet/diagnostics/pull/6002. -->
+  <PropertyGroup Condition="'$(OfficialBuildId)' != ''">
+    <SkipTests>true</SkipTests>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\SOS.TestHarness\SOS.TestHarness.csproj" />
     <ProjectReference Include="..\SOS.TestHarness.SourceGen\SOS.TestHarness.SourceGen.csproj"
@@ -28,7 +33,7 @@
 
   <Target Name="EnsureUnixTestAppHostExecutable"
           BeforeTargets="RunTests"
-          Condition="'$(OS)' != 'Windows_NT'">
+          Condition="'$(OS)' != 'Windows_NT' and '$(SkipTests)' != 'true'">
     <!-- Pipeline artifact transfer does not preserve Unix executable permissions. -->
     <Exec Command="chmod +x &quot;%(TestToRun.RunCommand)&quot;" />
   </Target>

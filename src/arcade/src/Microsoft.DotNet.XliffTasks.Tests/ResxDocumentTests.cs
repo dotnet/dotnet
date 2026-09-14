@@ -6,14 +6,14 @@ using System.IO;
 using XliffTasks.Model;
 using Xunit;
 
-namespace XliffTasks.Tests
+namespace XliffTasks.Tests;
+
+public class ResxTranslationTests
 {
-    public class ResxTranslationTests
+    [Fact]
+    public void BasicLoadAndTranslate()
     {
-        [Fact]
-        public void BasicLoadAndTranslate()
-        {
-            string source =
+        string source =
 @"<root>
   <data name=""Hello"" xml:space=""preserve"">
     <value>Hello!</value>
@@ -23,13 +23,13 @@ namespace XliffTasks.Tests
   </data>
 </root>";
 
-            Dictionary<string, string> translations = new()
-            {
-                ["Hello"] = "Bonjour!",
-                ["Goodbye"] = "Au revoir!",
-            };
+        Dictionary<string, string> translations = new()
+        {
+            ["Hello"] = "Bonjour!",
+            ["Goodbye"] = "Au revoir!",
+        };
 
-            string expectedTranslation =
+        string expectedTranslation =
 @"<root>
   <data name=""Hello"" xml:space=""preserve"">
     <value>Bonjour!</value>
@@ -39,46 +39,45 @@ namespace XliffTasks.Tests
   </data>
 </root>";
 
-            ResxDocument document = new();
-            StringWriter writer = new();
-            document.Load(new StringReader(source));
-            document.Translate(translations);
-            document.Save(writer);
+        ResxDocument document = new();
+        StringWriter writer = new();
+        document.Load(new StringReader(source));
+        document.Translate(translations);
+        document.Save(writer);
 
-            AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
-        }
+        AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
+    }
 
-        [Fact]
-        public void RewriteFileReferenceToAbsoluteInDestinyFolder()
-        {
-            string sourceFolder = Directory.GetCurrentDirectory();
-            string expectedAbsoluteLocation = Path.Combine(
-              Directory.GetCurrentDirectory(),
-              @"Resources\Package.ico".Replace('\\', Path.DirectorySeparatorChar));
-            string source =
+    [Fact]
+    public void RewriteFileReferenceToAbsoluteInDestinyFolder()
+    {
+        string sourceFolder = Directory.GetCurrentDirectory();
+        string expectedAbsoluteLocation = Path.Combine(
+          Directory.GetCurrentDirectory(),
+          @"Resources\Package.ico".Replace('\\', Path.DirectorySeparatorChar));
+        string source =
 @"<root>
   <data name=""400"" type=""System.Resources.ResXFileRef, System.Windows.Forms"">
     <value>Resources\Package.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>";
 
-            string expectedTranslation =
+        string expectedTranslation =
 @"<root>
   <data name=""400"" type=""System.Resources.ResXFileRef, System.Windows.Forms"">
     <value>ABSOLUTEPATH;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>".Replace("ABSOLUTEPATH", expectedAbsoluteLocation);
 
-            ResxDocument document = new();
-            StringWriter writer = new();
-            document.Load(new StringReader(source));
-            document.RewriteRelativePathsToAbsolute(
-                Path.Combine(sourceFolder, "Resources.resx"));
-            document.Save(writer);
+        ResxDocument document = new();
+        StringWriter writer = new();
+        document.Load(new StringReader(source));
+        document.RewriteRelativePathsToAbsolute(
+            Path.Combine(sourceFolder, "Resources.resx"));
+        document.Save(writer);
 
-            AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
-        }
-
-        
+        AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
     }
+
+    
 }

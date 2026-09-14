@@ -5,55 +5,54 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace XliffTasks.Model
+namespace XliffTasks.Model;
+
+/// <summary>
+/// A <see cref="TranslatableDocument"/> backed by an XML-based format
+/// </summary>
+internal abstract class TranslatableXmlDocument : TranslatableDocument
 {
-    /// <summary>
-    /// A <see cref="TranslatableDocument"/> backed by an XML-based format
-    /// </summary>
-    internal abstract class TranslatableXmlDocument : TranslatableDocument
+    protected XDocument Document { get; private set; }
+
+    protected override void LoadCore(TextReader reader)
     {
-        protected XDocument Document { get; private set; }
+        Document = XDocument.Load(reader);
+    }
 
-        protected override void LoadCore(TextReader reader)
+    protected override void SaveCore(TextWriter writer)
+    {
+        Document.SaveCustom(writer);
+    }
+
+    protected sealed class TranslatableXmlElement : TranslatableNode
+    {
+        private readonly XElement _element;
+
+        public TranslatableXmlElement(string id, string source, string note, XElement element)
+           : base(id, source, note)
         {
-            Document = XDocument.Load(reader);
+            _element = element;
         }
 
-        protected override void SaveCore(TextWriter writer)
+        public override void Translate(string translation)
         {
-            Document.SaveCustom(writer);
+            _element.Value = translation;
+        }
+    }
+
+    protected sealed class TranslatableXmlAttribute : TranslatableNode
+    {
+        private readonly XAttribute _attribute;
+
+        public TranslatableXmlAttribute(string id, string source, string note, XAttribute attribute)
+           : base(id, source, note)
+        {
+            _attribute = attribute;
         }
 
-        protected sealed class TranslatableXmlElement : TranslatableNode
+        public override void Translate(string translation)
         {
-            private readonly XElement _element;
-
-            public TranslatableXmlElement(string id, string source, string note, XElement element)
-               : base(id, source, note)
-            {
-                _element = element;
-            }
-
-            public override void Translate(string translation)
-            {
-                _element.Value = translation;
-            }
-        }
-
-        protected sealed class TranslatableXmlAttribute : TranslatableNode
-        {
-            private readonly XAttribute _attribute;
-
-            public TranslatableXmlAttribute(string id, string source, string note, XAttribute attribute)
-               : base(id, source, note)
-            {
-                _attribute = attribute;
-            }
-
-            public override void Translate(string translation)
-            {
-                _attribute.Value = translation;
-            }
+            _attribute.Value = translation;
         }
     }
 }

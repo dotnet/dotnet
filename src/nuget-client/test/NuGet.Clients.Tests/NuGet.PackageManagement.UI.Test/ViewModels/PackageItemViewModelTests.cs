@@ -688,6 +688,47 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
                 because: $"vulnerability data was queried for version {queriedVersion}, " +
                          $"but VulnerableVersions only contains: [{string.Join(", ", viewModel.VulnerableVersions.Keys)}]");
         }
+
+        [Fact]
+        public async Task GetVulnerableVersionsAsync_ReturnsVulnerableVersionsWithoutUpdatingPackageState()
+        {
+            // Arrange
+            var modelIdentity = new PackageIdentity("Newtonsoft.Json", new NuGetVersion("12.0.1"));
+            var vulnerableVersion = new NuGetVersion("12.0.2");
+            var safeVersion = new NuGetVersion("13.0.1");
+
+            var mockVulnService = new Mock<IPackageVulnerabilityService>();
+            mockVulnService
+                .Setup(s => s.GetVulnerableVersionsAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<IReadOnlyCollection<NuGetVersion>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Dictionary<NuGetVersion, int>
+                {
+                    { vulnerableVersion, (int)PackageVulnerabilitySeverity.High }
+                });
+
+            PackageModel packageModel = PackageModelCreationTestHelper.CreateRemotePackageModel(
+                modelIdentity,
+                vulnerableCapability: Mock.Of<IVulnerableCapable>(),
+                deprecationCapability: Mock.Of<IDeprecationCapable>(),
+                embeddedResourcesCapability: Mock.Of<IEmbeddedResourcesCapable>());
+
+            var viewModel = new PackageItemViewModel(
+                _searchService.Object,
+                packageModel,
+                mockVulnService.Object);
+
+            // Act
+            IReadOnlyDictionary<NuGetVersion, int> result = await viewModel.GetVulnerableVersionsAsync(
+                new[] { vulnerableVersion, safeVersion },
+                CancellationToken.None);
+
+            // Assert
+            result.Should().ContainKey(vulnerableVersion);
+            result.Should().NotContainKey(safeVersion);
+            viewModel.VulnerableVersions.Should().BeEmpty();
+            viewModel.IsPackageVulnerable.Should().BeFalse();
+        }
     }
 }
-

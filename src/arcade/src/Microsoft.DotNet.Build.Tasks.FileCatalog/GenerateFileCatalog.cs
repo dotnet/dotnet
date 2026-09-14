@@ -6,74 +6,80 @@ using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace Microsoft.DotNet.Build.Tasks.FileCatalog
+namespace Microsoft.DotNet.Build.Tasks.FileCatalog;
+
+/// <summary>
+/// Generates a Windows catalog (.cat) file covering a set of files, in pure managed code
+/// (no <c>makecat.exe</c> / Windows SDK required). The catalog is unsigned and ready to be
+/// Authenticode-signed by the Arcade signing infrastructure (via <c>FileExtensionSignInfo</c>).
+/// </summary>
+[MSBuildMultiThreadableTask]
+public class GenerateFileCatalog : Task, IMultiThreadableTask
 {
-    /// <summary>
-    /// Generates a Windows catalog (.cat) file covering a set of files, in pure managed code
-    /// (no <c>makecat.exe</c> / Windows SDK required). The catalog is unsigned and ready to be
-    /// Authenticode-signed by the Arcade signing infrastructure (via <c>FileExtensionSignInfo</c>).
-    /// </summary>
-    public class GenerateFileCatalog : Task
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
+    /// <summary>The files to include in the catalog.</summary>
+    [Required]
+    public ITaskItem[] Files { get; set; } = Array.Empty<ITaskItem>();
+
+    /// <summary>Full path of the .cat file to write.</summary>
+    [Required]
+    public string OutputPath { get; set; } = string.Empty;
+
+    public override bool Execute()
     {
-        /// <summary>The files to include in the catalog.</summary>
-        [Required]
-        public ITaskItem[] Files { get; set; } = Array.Empty<ITaskItem>();
-
-        /// <summary>Full path of the .cat file to write.</summary>
-        [Required]
-        public string OutputPath { get; set; } = string.Empty;
-
-        public override bool Execute()
+        if (string.IsNullOrEmpty(OutputPath))
         {
-            if (string.IsNullOrEmpty(OutputPath))
+            Log.LogError("OutputPath must be specified.");
+            return false;
+        }
+
+        AbsolutePath outputPath = TaskEnvironment.GetAbsolutePath(OutputPath);
+
+        if (Files is null || Files.Length == 0)
+        {
+            Log.LogWarning("No files were provided - skipping catalog generation for '{0}'.", OutputPath);
+
+            // Remove any stale catalog from a previous run so incremental builds don't
+            // package a catalog describing files that are no longer present.
+            if (File.Exists(outputPath))
             {
-                Log.LogError("OutputPath must be specified.");
+                File.Delete(outputPath);
+            }
+
+            return true;
+        }
+
+        var builder = new CatalogBuilder();
+        foreach (ITaskItem file in Files)
+        {
+            // Prefer the computed FullPath, but fall back to ItemSpec for custom ITaskItem
+            // implementations that don't populate FullPath metadata.
+            string path = file.GetMetadata("FullPath");
+            if (string.IsNullOrEmpty(path))
+            {
+                path = file.ItemSpec;
+            }
+
+            AbsolutePath filePath = TaskEnvironment.GetAbsolutePath(path);
+            if (!File.Exists(filePath))
+            {
+                Log.LogError("File not found: '{0}'.", path);
                 return false;
             }
 
-            if (Files is null || Files.Length == 0)
-            {
-                Log.LogWarning("No files were provided - skipping catalog generation for '{0}'.", OutputPath);
-
-                // Remove any stale catalog from a previous run so incremental builds don't
-                // package a catalog describing files that are no longer present.
-                if (File.Exists(OutputPath))
-                {
-                    File.Delete(OutputPath);
-                }
-
-                return true;
-            }
-
-            var builder = new CatalogBuilder();
-            foreach (ITaskItem file in Files)
-            {
-                // Prefer the computed FullPath, but fall back to ItemSpec for custom ITaskItem
-                // implementations that don't populate FullPath metadata.
-                string path = file.GetMetadata("FullPath");
-                if (string.IsNullOrEmpty(path))
-                {
-                    path = file.ItemSpec;
-                }
-
-                if (!File.Exists(path))
-                {
-                    Log.LogError("File not found: '{0}'.", path);
-                    return false;
-                }
-
-                builder.AddFile(path);
-            }
-
-            string? directory = Path.GetDirectoryName(OutputPath);
-            if (!string.IsNullOrEmpty(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            builder.WriteTo(OutputPath);
-            Log.LogMessage(MessageImportance.High, "Generated catalog with {0} file(s): {1}", Files.Length, OutputPath);
-            return !Log.HasLoggedErrors;
+            builder.AddFile(new FileInfo(filePath));
         }
+
+        string? directory = Path.GetDirectoryName(outputPath);
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        builder.WriteTo(new FileInfo(outputPath));
+        Log.LogMessage(MessageImportance.High, "Generated catalog with {0} file(s): {1}", Files.Length, OutputPath);
+        return !Log.HasLoggedErrors;
     }
 }

@@ -6,25 +6,24 @@ using Microsoft.Cci.Extensions;
 using Microsoft.Cci.Filters;
 using Microsoft.Cci.Writers.CSharp;
 
-namespace Microsoft.Cci.Comparers
+namespace Microsoft.Cci.Comparers;
+
+public class AttributeComparer : StringKeyComparer<ICustomAttribute>
 {
-    public class AttributeComparer : StringKeyComparer<ICustomAttribute>
+    private readonly CSDeclarationHelper _helper;
+
+    public AttributeComparer()
+        : this(new IncludeAllFilter(), false)
     {
-        private readonly CSDeclarationHelper _helper;
+    }
 
-        public AttributeComparer()
-            : this(new IncludeAllFilter(), false)
-        {
-        }
+    public AttributeComparer(ICciFilter filter, bool forCompilation)
+    {
+        _helper = new CSDeclarationHelper(filter, forCompilation);
+    }
 
-        public AttributeComparer(ICciFilter filter, bool forCompilation)
-        {
-            _helper = new CSDeclarationHelper(filter, forCompilation);
-        }
-
-        public override string GetKey(ICustomAttribute c)
-        {
-            return _helper.GetString(c);
-        }
+    public override string GetKey(ICustomAttribute c)
+    {
+        return _helper.GetString(c);
     }
 }

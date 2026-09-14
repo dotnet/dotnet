@@ -7,59 +7,57 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 
-namespace Microsoft.DotNet.Helix.Client
+namespace Microsoft.DotNet.Helix.Client;
+
+internal class ConnectionStringBlobHelper : IBlobHelper
 {
+    private readonly string _connectionString;
 
-    internal class ConnectionStringBlobHelper : IBlobHelper
+    public ConnectionStringBlobHelper(string connectionString)
     {
-        private readonly string _connectionString;
+        _connectionString = connectionString;
+    }
 
-        public ConnectionStringBlobHelper(string connectionString)
+    public async Task<IBlobContainer> GetContainerAsync(string requestedName, string targetQueue, CancellationToken cancellationToken)
+    {
+        BlobServiceClient account = new BlobServiceClient(_connectionString, StorageRetryPolicy.GetBlobClientOptionsRetrySettings());
+
+        BlobContainerClient container = account.GetBlobContainerClient(requestedName);
+        await container.CreateIfNotExistsAsync();
+        return new Container(container);
+    }
+
+    private class Container : ContainerBase
+    {
+        private readonly BlobContainerClient _container;
+
+        public Container(BlobContainerClient container)
         {
-            _connectionString = connectionString;
+            _container = container;
         }
 
-        public async Task<IBlobContainer> GetContainerAsync(string requestedName, string targetQueue, CancellationToken cancellationToken)
-        {
-            BlobServiceClient account = new BlobServiceClient(_connectionString, StorageRetryPolicy.GetBlobClientOptionsRetrySettings());
+        public override string Uri => _container.Uri.ToString();
+        public override string ReadSas => GetSasTokenForPermissions(BlobContainerSasPermissions.Read, DateTime.UtcNow.AddDays(30));
+        public override string WriteSas => GetSasTokenForPermissions(BlobContainerSasPermissions.Write | 
+                                                                     BlobContainerSasPermissions.Read,
+                                                                     DateTime.UtcNow.AddDays(30));
 
-            BlobContainerClient container = account.GetBlobContainerClient(requestedName);
-            await container.CreateIfNotExistsAsync();
-            return new Container(container);
+        private string GetSasTokenForPermissions(BlobContainerSasPermissions permissions, DateTime expiration)
+        {
+            string sas = _container.GenerateSasUri(permissions, expiration).ToString();
+            return sas.Substring(sas.IndexOf('?'));
         }
 
-        private class Container : ContainerBase
+        protected override (BlobClient blob, string sasToken) GetBlob(string blobName)
         {
-            private readonly BlobContainerClient _container;
-
-            public Container(BlobContainerClient container)
+            string sasToken = GetSasTokenForPermissions(BlobContainerSasPermissions.Read, DateTime.UtcNow.AddDays(30));
+            if (sasToken.StartsWith("?"))
             {
-                _container = container;
+                sasToken = sasToken.Substring(1);
             }
 
-            public override string Uri => _container.Uri.ToString();
-            public override string ReadSas => GetSasTokenForPermissions(BlobContainerSasPermissions.Read, DateTime.UtcNow.AddDays(30));
-            public override string WriteSas => GetSasTokenForPermissions(BlobContainerSasPermissions.Write | 
-                                                                         BlobContainerSasPermissions.Read,
-                                                                         DateTime.UtcNow.AddDays(30));
-
-            private string GetSasTokenForPermissions(BlobContainerSasPermissions permissions, DateTime expiration)
-            {
-                string sas = _container.GenerateSasUri(permissions, expiration).ToString();
-                return sas.Substring(sas.IndexOf('?'));
-            }
-
-            protected override (BlobClient blob, string sasToken) GetBlob(string blobName)
-            {
-                string sasToken = GetSasTokenForPermissions(BlobContainerSasPermissions.Read, DateTime.UtcNow.AddDays(30));
-                if (sasToken.StartsWith("?"))
-                {
-                    sasToken = sasToken.Substring(1);
-                }
-
-                BlobClient blob = _container.GetBlobClient(blobName);
-                return (blob, sasToken);
-            }
+            BlobClient blob = _container.GetBlobClient(blobName);
+            return (blob, sasToken);
         }
     }
 }

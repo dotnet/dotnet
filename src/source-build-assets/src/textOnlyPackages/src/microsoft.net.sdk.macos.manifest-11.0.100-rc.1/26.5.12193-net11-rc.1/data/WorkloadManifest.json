@@ -1,0 +1,64 @@
+{
+	"version": "26.5.12193-net11-rc.1",
+	"workloads": {
+		"macos": {
+			"description": ".NET SDK Workload for building macOS applications.",
+			"packs": [
+				"Microsoft.macOS.Sdk.net11.0_26.5",
+				"Microsoft.macOS.Sdk.net10.0_26.0",
+				"Microsoft.macOS.Sdk.net10.0_26.5",
+				"Microsoft.macOS.Sdk.net10.0_27.0",
+				"Microsoft.macOS.Ref.net11.0_26.5",
+				"Microsoft.macOS.Runtime.osx.net11.0_26.5",
+				"Microsoft.macOS.Runtime.osx-x64.net11.0_26.5",
+				"Microsoft.macOS.Runtime.osx-arm64.net11.0_26.5",
+				"Microsoft.macOS.Templates.net9"
+			],
+			"extends": [
+				"microsoft-net-runtime-mono-tooling",
+				"microsoft-net-runtime-mono-tooling-net10",
+			]
+		},
+	},
+	"packs": {
+		"Microsoft.macOS.Sdk.net11.0_26.5": {
+			"kind": "sdk",
+			"version": "26.5.12193-net11-rc.1",
+		},
+		"Microsoft.macOS.Sdk.net10.0_26.0": {
+			"kind": "sdk",
+			"version": "26.0.11017",
+		},
+		"Microsoft.macOS.Sdk.net10.0_26.5": {
+			"kind": "sdk",
+			"version": "26.5.10318",
+		},
+		"Microsoft.macOS.Sdk.net10.0_27.0": {
+			"kind": "sdk",
+			"version": "27.0.10539-xcode27.0",
+		},
+		"Microsoft.macOS.Ref.net11.0_26.5": {
+			"kind": "framework",
+			"version": "26.5.12193-net11-rc.1"
+		},
+		"Microsoft.macOS.Runtime.osx.net11.0_26.5": {
+			"kind": "framework",
+			"version": "26.5.12193-net11-rc.1"
+		},
+		"Microsoft.macOS.Runtime.osx-x64.net11.0_26.5": {
+			"kind": "framework",
+			"version": "26.5.12193-net11-rc.1"
+		},
+		"Microsoft.macOS.Runtime.osx-arm64.net11.0_26.5": {
+			"kind": "framework",
+			"version": "26.5.12193-net11-rc.1"
+		},
+		"Microsoft.macOS.Templates.net9": {
+			"kind": "template",
+			"version": "26.5.12193-net11-rc.1",
+			"alias-to": {
+				"any": "Microsoft.macOS.Templates",
+			}
+		}
+	}
+}

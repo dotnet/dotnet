@@ -4,47 +4,46 @@
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-namespace Microsoft.DotNet.Build.Manifest
+namespace Microsoft.DotNet.Build.Manifest;
+
+public interface IBlobArtifactModelFactory
 {
-    public interface IBlobArtifactModelFactory
+    BlobArtifactModel CreateBlobArtifactModel(ITaskItem item, string repoOrigin);
+}
+
+public class BlobArtifactModelFactory : IBlobArtifactModelFactory
+{
+    private readonly TaskLoggingHelper _log;
+
+    public BlobArtifactModelFactory(TaskLoggingHelper logger)
     {
-        BlobArtifactModel CreateBlobArtifactModel(ITaskItem item, string repoOrigin);
+        _log = logger;
     }
 
-    public class BlobArtifactModelFactory : IBlobArtifactModelFactory
+    /// <summary>
+    /// Creates a BlobArtifactModel based on the data in the ITaskItem provided. Logs errors that may occur,
+    /// but does not prevent the creation of the BlobArtifactModel. Errors do not prevent the creation because 
+    /// we want to allow for the capture of all errors that may occur and report back all to the user so they can 
+    /// mitigate all the errors found instead of one at a time, which would require continual re-runs of this code
+    /// in order to find it. 
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="log"></param>
+    /// <returns></returns>
+    public BlobArtifactModel CreateBlobArtifactModel(ITaskItem item, string repoOrigin)
     {
-        private readonly TaskLoggingHelper _log;
-
-        public BlobArtifactModelFactory(TaskLoggingHelper logger)
+        string path = item.GetMetadata("RelativeBlobPath");
+        if (string.IsNullOrEmpty(path))
         {
-            _log = logger;
+            _log.LogError($"Missing 'RelativeBlobPath' property on blob {item.ItemSpec}");
         }
 
-        /// <summary>
-        /// Creates a BlobArtifactModel based on the data in the ITaskItem provided. Logs errors that may occur,
-        /// but does not prevent the creation of the BlobArtifactModel. Errors do not prevent the creation because 
-        /// we want to allow for the capture of all errors that may occur and report back all to the user so they can 
-        /// mitigate all the errors found instead of one at a time, which would require continual re-runs of this code
-        /// in order to find it. 
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="log"></param>
-        /// <returns></returns>
-        public BlobArtifactModel CreateBlobArtifactModel(ITaskItem item, string repoOrigin)
+        return new BlobArtifactModel
         {
-            string path = item.GetMetadata("RelativeBlobPath");
-            if (string.IsNullOrEmpty(path))
-            {
-                _log.LogError($"Missing 'RelativeBlobPath' property on blob {item.ItemSpec}");
-            }
-
-            return new BlobArtifactModel
-            {
-                Attributes = MSBuildListSplitter.GetNamedProperties(item.GetMetadata("ManifestArtifactData")),
-                Id = path,
-                RepoOrigin = repoOrigin,
-                OriginalFile = item.ItemSpec
-            };
-        }
+            Attributes = MSBuildListSplitter.GetNamedProperties(item.GetMetadata("ManifestArtifactData")),
+            Id = path,
+            RepoOrigin = repoOrigin,
+            OriginalFile = item.ItemSpec
+        };
     }
 }

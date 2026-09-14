@@ -82,8 +82,6 @@ namespace NuGet.PackageManagement.VisualStudio
 
         public INuGetProjectContext NuGetProjectContext { get; set; }
 
-        public Task InitializationTask { get; set; }
-
         public bool IsInitialized
         {
             get
@@ -322,8 +320,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
         public async Task<IEnumerable<NuGetProject>> GetNuGetProjectsAsync()
         {
-            InitializationTask = EnsureInitializeAsync();
-            await InitializationTask;
+            await EnsureInitializeAsync();
 
             // In certain cases project cache is populated with incomplete project data
             // Filter out null entries here.
@@ -332,7 +329,6 @@ namespace NuGet.PackageManagement.VisualStudio
                 .Where(p => p != null)
                 .ToList();
 
-            InitializationTask = null;
             return projects;
         }
 

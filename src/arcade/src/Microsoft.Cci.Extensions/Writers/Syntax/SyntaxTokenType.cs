@@ -6,14 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Microsoft.Cci.Writers.Syntax
+namespace Microsoft.Cci.Writers.Syntax;
+
+public enum SyntaxTokenType
 {
-    public enum SyntaxTokenType
-    {
-        Literal,
-        Symbol,
-        Identifier,
-        Keyword,
-        TypeName,
-    }
+    Literal,
+    Symbol,
+    Identifier,
+    Keyword,
+    TypeName,
 }

@@ -33,6 +33,8 @@ Here are a list of MSBuild properties that this SDK consumes:
   - The root CMakeLists.txt of the native build. This is required.
 - CMakeGenerator
   - The CMake generator to use. To use a Visual Studio based generator, you can specify "Visual Studio" and this SDK will resolve a VS that supports the target platform.
+- VSGeneratorVersionRange (optional)
+  - The Visual Studio version range (in `vswhere` syntax) to consider when resolving the "Visual Studio" generator. Defaults to the range of Visual Studio versions the SDK knows how to map to a CMake generator.
 - CMakeCompilerToolchain
   - The compiler to use for the build. Defaults to MSVC on Windows and Clang on non-Windows.
 - CMakeCompilerMajorVersion (optional)

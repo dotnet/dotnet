@@ -3,38 +3,37 @@
 
 using System;
 
-namespace Microsoft.Cci.Filters
+namespace Microsoft.Cci.Filters;
+
+public static partial class CciFilterExtensions
 {
-    public static partial class CciFilterExtensions
+    public static ICciFilter And(this ICciFilter left, ICciFilter right)
     {
-        public static ICciFilter And(this ICciFilter left, ICciFilter right)
-        {
-            if (left == null)
-                throw new ArgumentNullException(nameof(left));
+        if (left == null)
+            throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
-                throw new ArgumentNullException(nameof(right));
+        if (right == null)
+            throw new ArgumentNullException(nameof(right));
 
-            return new AndFilter(left, right);
-        }
+        return new AndFilter(left, right);
+    }
 
-        public static ICciFilter Or(this ICciFilter left, ICciFilter right)
-        {
-            if (left == null)
-                throw new ArgumentNullException(nameof(left));
+    public static ICciFilter Or(this ICciFilter left, ICciFilter right)
+    {
+        if (left == null)
+            throw new ArgumentNullException(nameof(left));
 
-            if (right == null)
-                throw new ArgumentNullException(nameof(right));
+        if (right == null)
+            throw new ArgumentNullException(nameof(right));
 
-            return new OrFilter(left, right);
-        }
+        return new OrFilter(left, right);
+    }
 
-        public static ICciFilter Not(this ICciFilter filter)
-        {
-            if (filter == null)
-                throw new ArgumentNullException(nameof(filter));
+    public static ICciFilter Not(this ICciFilter filter)
+    {
+        if (filter == null)
+            throw new ArgumentNullException(nameof(filter));
 
-            return new NegatedFilter(filter);
-        }
+        return new NegatedFilter(filter);
     }
 }

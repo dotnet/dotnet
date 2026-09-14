@@ -1,15 +1,17 @@
 #nullable disable
 
-extern alias CoreV2;
-
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using NuGet.Configuration;
+using NuGet.Credentials;
 
 namespace NuGet.CommandLine
 {
-    public class SettingsCredentialProvider : CoreV2.NuGet.ICredentialProvider
+    public class SettingsCredentialProvider : ICredentialProvider
     {
         private readonly Configuration.IPackageSourceProvider _packageSourceProvider;
         private readonly Common.ILogger _logger;
@@ -28,12 +30,43 @@ namespace NuGet.CommandLine
 
             _packageSourceProvider = packageSourceProvider;
             _logger = logger;
+            Id = $"{typeof(SettingsCredentialProvider).Name}_{Guid.NewGuid()}";
         }
 
-        public ICredentials GetCredentials(Uri uri, IWebProxy proxy, CoreV2.NuGet.CredentialType credentialType, bool retrying)
+        public string Id { get; }
+
+        public Task<CredentialResponse> GetAsync(
+            Uri uri,
+            IWebProxy proxy,
+            CredentialRequestType type,
+            string message,
+            bool isRetry,
+            bool nonInteractive,
+            CancellationToken cancellationToken)
+        {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            ICredentials credentials = GetCredentials(
+                uri,
+                isRequestCredentials: type != CredentialRequestType.Proxy,
+                isRetry);
+
+            CredentialResponse response = credentials == null
+                ? new CredentialResponse(CredentialStatus.ProviderNotApplicable)
+                : new CredentialResponse(credentials);
+
+            return Task.FromResult(response);
+        }
+
+        private ICredentials GetCredentials(Uri uri, bool isRequestCredentials, bool retrying)
         {
             // If we are retrying, the stored credentials must be invalid.
-            if (!retrying && (credentialType == CoreV2.NuGet.CredentialType.RequestCredentials) && TryGetCredentials(uri, out var credentials, out var username))
+            if (!retrying && isRequestCredentials && TryGetCredentials(uri, out var credentials, out var username))
             {
                 _logger.LogMinimal(
                     string.Format(
@@ -42,6 +75,7 @@ namespace NuGet.CommandLine
                         username));
                 return credentials;
             }
+
             return null;
         }
 

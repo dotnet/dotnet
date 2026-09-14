@@ -91,7 +91,7 @@ Behavior notes:
 - Result processing uses globally bounded work-item parallelism and streams XML
   instead of loading complete result documents. Status polling remains
   independent from result upload latency.
-- If no result files are found for a work item, no test results are uploaded for that work item; Helix work-item failures still affect the monitor job's final pass/fail status.
+- If a failed work item has no parseable test results, the monitor uploads a synthetic failed `<work item>.WorkItemExecution` result. Passed work items without results do not produce a synthetic result.
 - The reporter is safe to rerun because it checks for already-completed test runs and only processes new results.
 
 #### What changes for pipeline users when the monitor is on

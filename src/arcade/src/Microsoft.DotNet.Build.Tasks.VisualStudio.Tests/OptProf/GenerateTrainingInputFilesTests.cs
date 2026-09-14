@@ -8,11 +8,11 @@ using System.IO.Compression;
 using Microsoft.Arcade.Test.Common;
 using Xunit;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests;
+
+public class GenerateTrainingInputFilesTests
 {
-    public class GenerateTrainingInputFilesTests
-    {
-        private readonly string s_optProfJson = @"
+    private readonly string s_optProfJson = @"
 {
   ""products"": [
     {
@@ -69,7 +69,7 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
   ]
 }
 ";
-        private readonly string s_manifestJson = @"
+    private readonly string s_manifestJson = @"
 {
   ""id"": ""Setup"",
   ""version"": ""42.42.42.4242424"",
@@ -115,68 +115,68 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
 }
 ";
 
-        private static void CreateVsix(string vsixPath, string manifestContent)
+    private static void CreateVsix(string vsixPath, string manifestContent)
+    {
+        using (var fileStream = new FileStream(vsixPath, FileMode.CreateNew))
         {
-            using (var fileStream = new FileStream(vsixPath, FileMode.CreateNew))
+            using (var archive = new ZipArchive(fileStream, ZipArchiveMode.Create))
             {
-                using (var archive = new ZipArchive(fileStream, ZipArchiveMode.Create))
+                var entry = archive.CreateEntry("manifest.json");
+                using (var writer = new StreamWriter(entry.Open()))
                 {
-                    var entry = archive.CreateEntry("manifest.json");
-                    using (var writer = new StreamWriter(entry.Open()))
-                    {
-                        writer.Write(manifestContent);
-                    }
+                    writer.Write(manifestContent);
                 }
             }
         }
+    }
 
-        [WindowsOnlyFact]
-        public void Execute()
+    [WindowsOnlyFact]
+    public void Execute()
+    {
+        var temp = Path.GetTempPath();
+        var dir = Path.Combine(temp, Guid.NewGuid().ToString());
+        Directory.CreateDirectory(dir);
+
+        var configPath = Path.Combine(dir, "OptProf.json");
+        File.WriteAllText(configPath, s_optProfJson);
+
+        var insertionDir = Path.Combine(dir, "Insertion");
+        Directory.CreateDirectory(insertionDir);
+        CreateVsix(Path.Combine(insertionDir, "Setup.vsix"), manifestContent: s_manifestJson);
+
+        var outputDir = Path.Combine(dir, "Output");
+
+        var task = new GenerateTrainingInputFiles()
         {
-            var temp = Path.GetTempPath();
-            var dir = Path.Combine(temp, Guid.NewGuid().ToString());
-            Directory.CreateDirectory(dir);
+            ConfigurationFile = configPath,
+            InsertionDirectory = insertionDir,
+            OutputDirectory = outputDir
+        };
 
-            var configPath = Path.Combine(dir, "OptProf.json");
-            File.WriteAllText(configPath, s_optProfJson);
+        bool result = task.Execute();
 
-            var insertionDir = Path.Combine(dir, "Insertion");
-            Directory.CreateDirectory(insertionDir);
-            CreateVsix(Path.Combine(insertionDir, "Setup.vsix"), manifestContent: s_manifestJson);
-
-            var outputDir = Path.Combine(dir, "Output");
-
-            var task = new GenerateTrainingInputFiles()
-            {
-                ConfigurationFile = configPath,
-                InsertionDirectory = insertionDir,
-                OutputDirectory = outputDir
-            };
-
-            bool result = task.Execute();
-
-            var entries = Directory.GetFileSystemEntries(outputDir, "*.*", SearchOption.AllDirectories);
-            AssertEx.SetEqual(new[] 
-            {
-                Path.Combine(outputDir, @"DDRIT.RPS.CSharp"),
-                Path.Combine(outputDir, @"TeamEng"),
-                Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations"),
-                Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging"),
-                Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner"),
-                Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\System.Collections.Immutable.0.IBC.json"),
-                Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\System.Collections.Immutable.1.IBC.json"),
-                Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\xyzMicrosoft.CodeAnalysis.0.IBC.json"),
-                Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner\xyzMicrosoft.CodeAnalysis.CSharp.0.IBC.json"),
-                Path.Combine(outputDir, @"TeamEng\Configurations"),
-                Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble"),
-                Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble\xyzMicrosoft.CodeAnalysis.0.IBC.json"),
-                Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble\xyzMicrosoft.CodeAnalysis.CSharp.0.IBC.json"),
-                Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble\xyzMicrosoft.CodeAnalysis.VisualBasic.0.IBC.json")
-            }, entries);
+        var entries = Directory.GetFileSystemEntries(outputDir, "*.*", SearchOption.AllDirectories);
+        AssertEx.SetEqual(new[] 
+        {
+            Path.Combine(outputDir, @"DDRIT.RPS.CSharp"),
+            Path.Combine(outputDir, @"TeamEng"),
+            Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations"),
+            Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging"),
+            Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner"),
+            Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\System.Collections.Immutable.0.IBC.json"),
+            Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\System.Collections.Immutable.1.IBC.json"),
+            Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\xyzMicrosoft.CodeAnalysis.0.IBC.json"),
+            Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner\xyzMicrosoft.CodeAnalysis.CSharp.0.IBC.json"),
+            Path.Combine(outputDir, @"TeamEng\Configurations"),
+            Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble"),
+            Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble\xyzMicrosoft.CodeAnalysis.0.IBC.json"),
+            Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble\xyzMicrosoft.CodeAnalysis.CSharp.0.IBC.json"),
+            Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble\xyzMicrosoft.CodeAnalysis.VisualBasic.0.IBC.json")
+        }, entries);
 
 
-            var json = File.ReadAllText(Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\System.Collections.Immutable.0.IBC.json"));
-            Assert.Equal(
+        var json = File.ReadAllText(Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\System.Collections.Immutable.0.IBC.json"));
+        Assert.Equal(
 @"{
   ""Technology"": ""IBC"",
   ""RelativeInstallationPath"": ""Common7\\IDE\\PrivateAssemblies\\System.Collections.Immutable.dll"",
@@ -184,10 +184,10 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
 }
 ", json, ignoreLineEndingDifferences: true);
 
-            JObject.Parse(json);
+        JObject.Parse(json);
 
-            json = File.ReadAllText(Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\System.Collections.Immutable.1.IBC.json"));
-            Assert.Equal(
+        json = File.ReadAllText(Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.BuildAndDebugging\System.Collections.Immutable.1.IBC.json"));
+        Assert.Equal(
 @"{
   ""Technology"": ""IBC"",
   ""RelativeInstallationPath"": ""MSBuild\\15.0\\Bin\\Roslyn\\System.Collections.Immutable.dll"",
@@ -195,30 +195,29 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
 }
 ", json, ignoreLineEndingDifferences: true);
 
-            JObject.Parse(json);
+        JObject.Parse(json);
 
-            json = File.ReadAllText(Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner\xyzMicrosoft.CodeAnalysis.CSharp.0.IBC.json"));
-            Assert.Equal(
+        json = File.ReadAllText(Path.Combine(outputDir, @"DDRIT.RPS.CSharp\Configurations\DDRIT.RPS.CSharp.CSharpTest.EditingAndDesigner\xyzMicrosoft.CodeAnalysis.CSharp.0.IBC.json"));
+        Assert.Equal(
 @"{
   ""Technology"": ""IBC"",
   ""RelativeInstallationPath"": ""Common7\\IDE\\CommonExtensions\\Microsoft\\ManagedLanguages\\VBCSharp\\LanguageServices\\x\\y\\z\\Microsoft.CodeAnalysis.CSharp.dll"",
   ""InstrumentationArguments"": ""/ExeConfig:\""%VisualStudio.InstallationUnderTest.Path%\\Common7\\IDE\\vsn.exe\""""
 }
 ", json, ignoreLineEndingDifferences: true);
-            JObject.Parse(json);
+        JObject.Parse(json);
 
-            json = File.ReadAllText(Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble\xyzMicrosoft.CodeAnalysis.VisualBasic.0.IBC.json"));
-            Assert.Equal(
+        json = File.ReadAllText(Path.Combine(outputDir, @"TeamEng\Configurations\TeamEng.OptProfTest.vs_debugger_start_no_build_cs_scribble\xyzMicrosoft.CodeAnalysis.VisualBasic.0.IBC.json"));
+        Assert.Equal(
 @"{
   ""Technology"": ""IBC"",
   ""RelativeInstallationPath"": ""Common7\\IDE\\CommonExtensions\\Microsoft\\ManagedLanguages\\VBCSharp\\LanguageServices\\x\\y\\z\\Microsoft.CodeAnalysis.VisualBasic.dll"",
   ""InstrumentationArguments"": ""/ExeConfig:\""%VisualStudio.InstallationUnderTest.Path%\\Common7\\IDE\\vsn.exe\""""
 }
 ", json, ignoreLineEndingDifferences: true);
-            JObject.Parse(json);
+        JObject.Parse(json);
 
-            Assert.True(result);
-            Directory.Delete(dir, recursive: true);
-        }
+        Assert.True(result);
+        Directory.Delete(dir, recursive: true);
     }
 }

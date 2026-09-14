@@ -6,40 +6,39 @@ using System.IO;
 using XliffTasks.Model;
 using Xunit;
 
-namespace XliffTasks.Tests
+namespace XliffTasks.Tests;
+
+public class JsonDocumentTests
 {
-    public class JsonDocumentTests
+    [Fact]
+    public void BasicLoadAndTranslate()
     {
-        [Fact]
-        public void BasicLoadAndTranslate()
-        {
-            string source = """
+        string source = """
                 {
                   "Command1": "Hello!",
                   "Command2": "Goodbye!"
                 }
                 """;
 
-            Dictionary<string, string> translations = new()
-            {
-                ["Command1"] = "Bonjour!",
-                ["Command2"] = "Au revoir!",
-            };
+        Dictionary<string, string> translations = new()
+        {
+            ["Command1"] = "Bonjour!",
+            ["Command2"] = "Au revoir!",
+        };
 
-            string expectedTranslation = """
+        string expectedTranslation = """
                 {
                   "Command1": "Bonjour!",
                   "Command2": "Au revoir!"
                 }
                 """;
 
-            JsonDocument document = new();
-            StringWriter writer = new();
-            document.Load(new StringReader(source));
-            document.Translate(translations);
-            document.Save(writer);
+        JsonDocument document = new();
+        StringWriter writer = new();
+        document.Load(new StringReader(source));
+        document.Translate(translations);
+        document.Save(writer);
 
-            AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
-        }
+        AssertEx.EqualIgnoringLineEndings(expectedTranslation, writer.ToString());
     }
 }

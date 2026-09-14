@@ -52,33 +52,44 @@ function GetConfiguration {
     $urlToConfigurationFile = "https://raw.githubusercontent.com/$RepoOwner/$RepoName/$ConfigurationFileBranch/$ConfigurationFilePath"
     Write-Host "Fetching configuration file from $urlToConfigurationFile"
 
-    try{
-        $response = Invoke-WebRequest -UseBasicParsing -Method GET -MaximumRetryCount 3 -Headers $headers `
+    try {
+        $response = Invoke-WebRequest -UseBasicParsing -Method GET -MaximumRetryCount 3 -Headers $headers -ErrorAction Stop `
                 $urlToConfigurationFile
-        
-        $mergeFlowConfig = ConvertFrom-Json -InputObject $response.Content -AsHashTable
-        if ($mergeFlowConfig -eq $null) {
-            Write-Warning "Failed to read configuration file"
-            return $null
+    } catch {
+        $responseProperty = $_.Exception.PSObject.Properties['Response']
+        $statusCode = if ($null -ne $responseProperty -and $null -ne $responseProperty.Value) {
+            " HTTP status $([int]$responseProperty.Value.StatusCode)."
+        } else {
+            ""
         }
 
-        if (!$mergeFlowConfig.ContainsKey('merge-flow-configurations')) {
-            Write-Host "No merge-flow-configurations found in configuration file"
-            return $null
-        }
-
-        if($mergeFlowConfig['merge-flow-configurations'].ContainsKey($MergeFromBranch)){
-            $config = $mergeFlowConfig['merge-flow-configurations'][$MergeFromBranch]
-            Write-Host "Found Configuration"
-            Write-Host $config
-            return $config
-        }else{
-            Write-Host "There was no configuration found for $MergeFromBranch"
-        }
-    }catch{
-        Write-Warning "Failed to fetch and process configuration file"
+        throw "Failed to fetch configuration file '$urlToConfigurationFile'.$statusCode $($_.Exception.Message)"
     }
 
+    try {
+        $mergeFlowConfig = ConvertFrom-Json -InputObject $response.Content -AsHashTable -ErrorAction Stop
+    } catch {
+        throw "Invalid JSON in configuration file '$urlToConfigurationFile'. $($_.Exception.Message)"
+    }
+
+    if ($mergeFlowConfig -isnot [System.Collections.IDictionary] -or
+        !$mergeFlowConfig.ContainsKey('merge-flow-configurations') -or
+        $mergeFlowConfig['merge-flow-configurations'] -isnot [System.Collections.IDictionary]) {
+        throw "Configuration file '$urlToConfigurationFile' must contain a 'merge-flow-configurations' object."
+    }
+
+    if ($mergeFlowConfig['merge-flow-configurations'].ContainsKey($MergeFromBranch)) {
+        $config = $mergeFlowConfig['merge-flow-configurations'][$MergeFromBranch]
+        if ($config -isnot [System.Collections.IDictionary]) {
+            throw "Configuration for branch '$MergeFromBranch' in '$urlToConfigurationFile' must be an object."
+        }
+
+        Write-Host "Found Configuration"
+        Write-Host $config
+        return $config
+    }
+
+    Write-Host "There was no configuration found for $MergeFromBranch"
     return $null
 }
 
@@ -86,22 +97,35 @@ function GetConfiguration {
 $configuration = GetConfiguration
 
 if ($configuration -ne $null) {
-    if($configuration.ContainsKey('MergeToBranch')){
-        $MergeToBranch = $configuration['MergeToBranch']
-    }else{
-        Write-Warning "Configuration provided is incorrect and does not contain the required parameter: MergeToBranch"
-        exit 0
+    $configuredMergeToBranch = $configuration['MergeToBranch']
+    if ($configuredMergeToBranch -is [string] -and
+        ![string]::IsNullOrWhiteSpace($configuredMergeToBranch)) {
+        $MergeToBranch = $configuredMergeToBranch
+    } else {
+        throw "Configuration for branch '$MergeFromBranch' must contain a non-empty string 'MergeToBranch' value."
     }
 
     $ExtraSwitches = "";
-    if($configuration.ContainsKey('ExtraSwitches')){
-        $ExtraSwitches = $configuration['ExtraSwitches']
+    if ($configuration.ContainsKey('ExtraSwitches')) {
+        $configuredExtraSwitches = $configuration['ExtraSwitches']
+        if ($configuredExtraSwitches -isnot [string]) {
+            throw "Configuration for branch '$MergeFromBranch' must contain a string 'ExtraSwitches' value."
+        }
+
+        $ExtraSwitches = $configuredExtraSwitches
     }
 
     $ResetToTargetPaths = "";
-    if($configuration.ContainsKey('ResetToTargetPaths')){
-        # Convert array to semicolon-separated string for output
-        $ResetToTargetPaths = $configuration['ResetToTargetPaths'] -join ";"
+    if ($configuration.ContainsKey('ResetToTargetPaths')) {
+        $configuredResetToTargetPaths = $configuration['ResetToTargetPaths']
+        if ($configuredResetToTargetPaths -is [string]) {
+            $ResetToTargetPaths = $configuredResetToTargetPaths
+        } elseif ($configuredResetToTargetPaths -is [array] -and
+            @($configuredResetToTargetPaths | Where-Object { $_ -isnot [string] }).Count -eq 0) {
+            $ResetToTargetPaths = $configuredResetToTargetPaths -join ";"
+        } else {
+            throw "Configuration for branch '$MergeFromBranch' must contain a string or an array of strings 'ResetToTargetPaths' value."
+        }
     }
 
     "mergeSwitchArguments=$ExtraSwitches" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
@@ -109,5 +133,3 @@ if ($configuration -ne $null) {
     "resetToTargetPaths=$ResetToTargetPaths" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
     "configurationFound=$true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 }
-
-exit 0

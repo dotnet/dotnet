@@ -6,40 +6,44 @@ using System.Collections.Generic;
 using System.IO;
 using XliffTasks.Model;
 
-namespace XliffTasks.Tasks
+namespace XliffTasks.Tasks;
+
+[MSBuildMultiThreadableTask]
+public sealed class TranslateSource : XlfTask
 {
-    public sealed class TranslateSource : XlfTask
+    [Required]
+    public ITaskItem XlfFile { get; set; }
+
+    protected override void ExecuteCore()
     {
-        [Required]
-        public ITaskItem XlfFile { get; set; }
+        string sourcePath = XlfFile.GetMetadataOrThrow(MetadataKey.XlfSource);
+        string sourceFormat = XlfFile.GetMetadataOrThrow(MetadataKey.XlfSourceFormat);
+        string language = XlfFile.GetMetadataOrThrow(MetadataKey.XlfLanguage);
+        string translatedFullPath = XlfFile.GetMetadataOrThrow(MetadataKey.XlfTranslatedFullPath);
 
-        protected override void ExecuteCore()
+        AbsolutePath sourceAbsolutePath = TaskEnvironment.GetAbsolutePath(sourcePath);
+        AbsolutePath translatedAbsolutePath = TaskEnvironment.GetAbsolutePath(translatedFullPath);
+        TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(sourceAbsolutePath, XlfFile.GetMetadata(MetadataKey.XlfSourceFormat));
+        XlfDocument xlfDocument = XlfTask.LoadXlfDocument(TaskEnvironment.GetAbsolutePath(XlfFile.ItemSpec));
+
+        bool validationFailed = false;
+        xlfDocument.Validate(validationError =>
         {
-            string sourcePath = XlfFile.GetMetadataOrThrow(MetadataKey.XlfSource);
-            string sourceFormat = XlfFile.GetMetadataOrThrow(MetadataKey.XlfSourceFormat);
-            string language = XlfFile.GetMetadataOrThrow(MetadataKey.XlfLanguage);
-            string translatedFullPath = XlfFile.GetMetadataOrThrow(MetadataKey.XlfTranslatedFullPath);
+            validationFailed = true;
+            Log.LogErrorInFile(XlfFile.ItemSpec, validationError.LineNumber, validationError.Message);
+        });
 
-            TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(sourcePath, XlfFile.GetMetadata(MetadataKey.XlfSourceFormat));
-            XlfDocument xlfDocument = XlfTask.LoadXlfDocument(XlfFile.ItemSpec);
+        IReadOnlyDictionary<string, string> translations = validationFailed
+            ? new Dictionary<string, string>()
+            : xlfDocument.GetTranslations();
 
-            bool validationFailed = false;
-            xlfDocument.Validate(validationError =>
-            {
-                validationFailed = true;
-                Log.LogErrorInFile(XlfFile.ItemSpec, validationError.LineNumber, validationError.Message);
-            });
+        sourceDocument.Translate(translations);
 
-            IReadOnlyDictionary<string, string> translations = validationFailed
-                ? new Dictionary<string, string>()
-                : xlfDocument.GetTranslations();
+        Directory.CreateDirectory(Path.GetDirectoryName(translatedAbsolutePath));
 
-            sourceDocument.Translate(translations);
-
-            Directory.CreateDirectory(Path.GetDirectoryName(translatedFullPath));
-
-            sourceDocument.RewriteRelativePathsToAbsolute(Path.GetFullPath(sourcePath));
-            sourceDocument.Save(translatedFullPath);
-        }
+        // These paths are written into the translated document, and Path.GetFullPath canonicalized
+        // them before they were embedded.
+        sourceDocument.RewriteRelativePathsToAbsolute(sourceAbsolutePath.GetCanonicalForm());
+        sourceDocument.Save(new FileInfo(translatedAbsolutePath));
     }
 }

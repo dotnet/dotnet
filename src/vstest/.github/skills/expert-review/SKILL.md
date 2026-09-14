@@ -1,6 +1,6 @@
 ---
 name: expert-reviewing
-description: "Route code changes to relevant review dimensions based on affected files and folders. Use when reviewing PRs, analyzing code quality, or performing targeted reviews of specific vstest subsystems."
+description: "Route code and dependency changes to relevant review dimensions based on affected files and folders. Use when reviewing PRs, including Dependabot updates, GitHub Actions and generated workflow changes, or specific vstest subsystems."
 ---
 
 # Expert Review Routing
@@ -11,6 +11,8 @@ This skill maps changed folders to review dimensions, enabling focused expert re
 
 | Folder | Primary Dimensions |
 |--------|-------------------|
+| `.github/workflows/` (including `.md`, shared sources, and `.lock.yml`) | Build Script & Infrastructure Hygiene, Dependency & Package Integrity |
+| `.github/aw/`, `.github/dependabot.yml` | Build Script & Infrastructure Hygiene, Dependency & Package Integrity |
 | `eng/` | Build Script & Infrastructure Hygiene, Dependency & Package Integrity, Source Build & Cross-Platform Compliance |
 | `src/Microsoft.TestPlatform.CrossPlatEngine/` | Parallel Execution & Scheduling Safety, Error Reporting & Diagnostic Clarity, Process Architecture & Host Resolution |
 | `src/vstest.console/` | RunSettings Validation & Inference, Process Architecture & Host Resolution, Environment Variable & Feature Flag Contracts |
@@ -68,6 +70,12 @@ This skill maps changed folders to review dimensions, enabling focused expert re
 **PR adds or bumps package dependencies**
 → Activate: Dependency & Package Integrity, Cross-TFM & Framework Resolution, Backward Compatibility & Rollback Safety
 
+**Dependabot PR updates GitHub Actions, or a PR recompiles workflow `.lock.yml` files**
+→ Activate: Build Script & Infrastructure Hygiene, Dependency & Package Integrity. Apply the canonical [Generated workflow action versions checks](../../agents/expert-reviewer.md#generated-workflow-action-versions), even when the `.md` sources are not in the diff.
+
+**PR changes only workflow `.md` sources or shared imports**
+→ Activate: Build Script & Infrastructure Hygiene, Dependency & Package Integrity. These are executable configuration, not documentation-only changes.
+
 **PR touches testhost or TestHostProvider**
 → Activate: Testhost Assembly Loading & Resolution, Process Architecture & Host Resolution, Cross-TFM & Framework Resolution
 
@@ -81,7 +89,7 @@ This skill provides the **routing configuration** that tells the expert-reviewer
 **Invocation:** Reference `@expert-reviewer` in a PR comment or use the `pr-expert-reviewer` workflow.
 
 **How routing works:**
-1. Agent identifies changed files/folders in the PR
+1. Agent loads this skill and identifies changed files/folders in the PR. Bot authorship, generated files, and absence of C# changes are not scope exclusions.
 2. This skill's routing table maps folders to applicable dimensions
 3. Agent activates the matched dimensions and applies their CHECK items
 4. Agent produces findings limited to activated dimensions only

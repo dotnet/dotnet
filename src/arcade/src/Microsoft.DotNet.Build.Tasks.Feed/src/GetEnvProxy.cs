@@ -3,25 +3,24 @@
 
 using System;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed
+namespace Microsoft.DotNet.Build.Tasks.Feed;
+
+public interface IGetEnvProxy
 {
-    public interface IGetEnvProxy
-    {
-        public string GetEnv(string key);
-    }
+    public string GetEnv(string key);
+}
 
-    internal class GetEnvProxy : IGetEnvProxy
+internal class GetEnvProxy : IGetEnvProxy
+{
+    public string GetEnv(string key)
     {
-        public string GetEnv(string key)
+        var value = Environment.GetEnvironmentVariable(key);
+
+        if (string.IsNullOrEmpty(value))
         {
-            var value = Environment.GetEnvironmentVariable(key);
-
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new InvalidOperationException($"Required Environment variable {key} not found.");
-            }
-
-            return value;
+            throw new InvalidOperationException($"Required Environment variable {key} not found.");
         }
+
+        return value;
     }
 }

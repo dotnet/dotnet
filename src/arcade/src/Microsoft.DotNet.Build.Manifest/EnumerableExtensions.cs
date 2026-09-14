@@ -3,17 +3,16 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.DotNet.Build.Manifest
+namespace Microsoft.DotNet.Build.Manifest;
+
+public static class DictionaryExtensions
 {
-    public static class DictionaryExtensions
+    public static TValue GetOrDefault<TKey, TValue>(
+        this IDictionary<TKey, TValue> attributes,
+        TKey key)
     {
-        public static TValue GetOrDefault<TKey, TValue>(
-            this IDictionary<TKey, TValue> attributes,
-            TKey key)
-        {
-            TValue value;
-            attributes.TryGetValue(key, out value);
-            return value;
-        }
+        TValue value;
+        attributes.TryGetValue(key, out value);
+        return value;
     }
 }

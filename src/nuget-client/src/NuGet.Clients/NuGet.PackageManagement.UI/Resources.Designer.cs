@@ -2411,7 +2411,7 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Once started, this action cannot be cancelled..
+        ///   Looks up a localized string similar to Once started, this action cannot be cancelled. Select OK to continue..
         /// </summary>
         public static string VSOptions_Text_ClearLocalsPromptMessage {
             get {

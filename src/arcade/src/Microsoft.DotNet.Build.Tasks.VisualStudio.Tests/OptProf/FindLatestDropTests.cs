@@ -4,15 +4,15 @@
 using System;
 using Xunit;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests;
+
+public class FindLatestDropTests
 {
-    public class FindLatestDropTests
+    [Fact]
+    public void GetLatestDropName()
     {
-        [Fact]
-        public void GetLatestDropName()
-        {
-            Assert.Equal("OptimizationData/dotnet/roslyn/master-vs-deps/41416da1e8531ab0f4e5e7dc67318237323acf23/202326/813349/1", 
-                FindLatestDrop.GetLatestDropName(@"
+        Assert.Equal("OptimizationData/dotnet/roslyn/master-vs-deps/41416da1e8531ab0f4e5e7dc67318237323acf23/202326/813349/1", 
+            FindLatestDrop.GetLatestDropName(@"
 [
   {
     ""CreatedDateUtc"": ""2018-11-27T08:09:10.9866839Z"",
@@ -34,16 +34,15 @@ namespace Microsoft.DotNet.Build.Tasks.VisualStudio.UnitTests
   }
 ]
 "));
-        }
+    }
 
-        [Theory]
-        [InlineData(@"[]")]
-        [InlineData(@"[ { } ]")]
-        [InlineData(@"[ { ""CreatedDateUtc"" : 1 } ]")]
-        [InlineData(@"[ { ""CreatedDateUtc"" : ""2018-11-28T14:54:59.5832452Z"" } ]")]
-        public void GetLatestDropName_Error(string json)
-        {
-            Assert.Throws<ApplicationException>(() => FindLatestDrop.GetLatestDropName(json));
-        }
+    [Theory]
+    [InlineData(@"[]")]
+    [InlineData(@"[ { } ]")]
+    [InlineData(@"[ { ""CreatedDateUtc"" : 1 } ]")]
+    [InlineData(@"[ { ""CreatedDateUtc"" : ""2018-11-28T14:54:59.5832452Z"" } ]")]
+    public void GetLatestDropName_Error(string json)
+    {
+        Assert.Throws<ApplicationException>(() => FindLatestDrop.GetLatestDropName(json));
     }
 }

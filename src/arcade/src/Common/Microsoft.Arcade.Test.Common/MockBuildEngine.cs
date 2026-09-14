@@ -6,46 +6,45 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Microsoft.Arcade.Test.Common
+namespace Microsoft.Arcade.Test.Common;
+
+public class MockBuildEngine : IBuildEngine
 {
-    public class MockBuildEngine : IBuildEngine
+    public bool ContinueOnError => throw new NotImplementedException();
+
+    public int LineNumberOfTaskNode => 0;
+
+    public int ColumnNumberOfTaskNode => 0;
+
+    public string ProjectFileOfTaskNode => "Fake File";
+
+    public List<CustomBuildEventArgs> CustomBuildEvents = new List<CustomBuildEventArgs>();
+    public List<BuildErrorEventArgs> BuildErrorEvents = new List<BuildErrorEventArgs>();
+    public List<BuildMessageEventArgs> BuildMessageEvents = new List<BuildMessageEventArgs>();
+    public List<BuildWarningEventArgs> BuildWarningEvents = new List<BuildWarningEventArgs>();
+
+    public bool BuildProjectFile(string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs)
     {
-        public bool ContinueOnError => throw new NotImplementedException();
+        throw new NotImplementedException();
+    }
 
-        public int LineNumberOfTaskNode => 0;
+    public void LogCustomEvent(CustomBuildEventArgs e)
+    {
+        CustomBuildEvents.Add(e);
+    }
 
-        public int ColumnNumberOfTaskNode => 0;
+    public void LogErrorEvent(BuildErrorEventArgs e)
+    {
+        BuildErrorEvents.Add(e);
+    }
 
-        public string ProjectFileOfTaskNode => "Fake File";
+    public void LogMessageEvent(BuildMessageEventArgs e)
+    {
+        BuildMessageEvents.Add(e);
+    }
 
-        public List<CustomBuildEventArgs> CustomBuildEvents = new List<CustomBuildEventArgs>();
-        public List<BuildErrorEventArgs> BuildErrorEvents = new List<BuildErrorEventArgs>();
-        public List<BuildMessageEventArgs> BuildMessageEvents = new List<BuildMessageEventArgs>();
-        public List<BuildWarningEventArgs> BuildWarningEvents = new List<BuildWarningEventArgs>();
-
-        public bool BuildProjectFile(string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void LogCustomEvent(CustomBuildEventArgs e)
-        {
-            CustomBuildEvents.Add(e);
-        }
-
-        public void LogErrorEvent(BuildErrorEventArgs e)
-        {
-            BuildErrorEvents.Add(e);
-        }
-
-        public void LogMessageEvent(BuildMessageEventArgs e)
-        {
-            BuildMessageEvents.Add(e);
-        }
-
-        public void LogWarningEvent(BuildWarningEventArgs e)
-        {
-            BuildWarningEvents.Add(e);
-        }
+    public void LogWarningEvent(BuildWarningEventArgs e)
+    {
+        BuildWarningEvents.Add(e);
     }
 }

@@ -1,10 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace Microsoft.Arcade.Common
+namespace Microsoft.Arcade.Common;
+
+public interface INupkgInfoFactory
 {
-    public interface INupkgInfoFactory
-    {
-        NupkgInfo CreateNupkgInfo(string path);
-    }
+    NupkgInfo CreateNupkgInfo(string path);
 }
