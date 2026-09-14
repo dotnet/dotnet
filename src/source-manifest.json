@@ -67,34 +67,34 @@
       "commitSha": "fa2dec964199e620ce7acf82a70ba4060862767d"
     },
     {
-      "barId": 330825,
+      "barId": 331851,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "11cb49ace31d470b506722258875ba6f47be55d1"
+      "commitSha": "ab9ebbd339a4ed8c2b82a3ec45a32f3a7f01cfa1"
     },
     {
-      "barId": 331155,
+      "barId": 331876,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "0ea4de6ed5bc350a1ce1479344105fdd2c75ce93"
+      "commitSha": "61a9a48c5098da7c03b77eb01477889f9856b13f"
     },
     {
-      "barId": 331649,
+      "barId": 331845,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "7cd12b80d01f6f3f0f500a262a15132c64870deb"
+      "commitSha": "cff5d451db5a6b15802892ae3875f1c0adf83554"
     },
     {
-      "barId": 330768,
+      "barId": 331905,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "e4fee26e96b91d018fe2be50bbd0adad528c0d67"
+      "commitSha": "7a3a3139c8f76e123f80958f48bbf82c9bfced4d"
     },
     {
-      "barId": 331013,
+      "barId": 331435,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2e59cacd0dcb2a835a5b38da1e59f53defac9104"
+      "commitSha": "dd99e0d00da7bb293a5fc82b70e6927b3a17452c"
     },
     {
       "barId": 330997,
@@ -127,10 +127,10 @@
       "commitSha": "c73f02dc21cc53262431529f1e30da0ea079d0e5"
     },
     {
-      "barId": 331087,
+      "barId": 331717,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "3495947924c24057824718cb438e3aaff61feef9"
+      "commitSha": "b803ab6250228083a008b1d2d8ea6bbbe487dc20"
     },
     {
       "barId": 331335,
@@ -139,10 +139,10 @@
       "commitSha": "ef2a0b2fe3df358efe9787ff496e86e531b759be"
     },
     {
-      "barId": 331103,
+      "barId": 331730,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "5f8bd22c73ea55abee1e151b13f679115d2b41dd"
+      "commitSha": "9b3c29b3f8948c9b2f293eeb5e52d93da5b7fce1"
     },
     {
       "barId": 327376,
