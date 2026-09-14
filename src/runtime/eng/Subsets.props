@@ -760,7 +760,7 @@
             <!-- Package the target host binaries under the portable RID used by the SDK. -->
             <ProjectToBuild Condition="'$(_BuildHostPack)' == 'true' and '$(BuildHostTools)' == 'true' and '$(NETCoreSdkRuntimeIdentifier)' != '' and '$(NETCoreSdkRuntimeIdentifier)' != '$(TargetRid)'"
                             Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Host.sfxproj"
-                            AdditionalProperties="RuntimeIdentifier=$(NETCoreSdkRuntimeIdentifier)"
+                            AdditionalProperties="RuntimeIdentifier=$(NETCoreSdkRuntimeIdentifier);OutDirName=Microsoft.NETCore.App.Host.$(NETCoreSdkRuntimeIdentifier)"
                             Category="packs" />
 
             <!--
