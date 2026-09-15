@@ -7,9 +7,9 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>411469b8cd5e1ac891644ef6e3bf5cc8fa7943cc</Sha>
     </Dependency>
-    <Dependency Name="System.CommandLine" Version="2.0.12">
+    <Dependency Name="System.CommandLine" Version="2.0.13">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>95017c711e6afc1085133d440e42b4bd78155701</Sha>
+      <Sha>e034900fdf2dcf29b972ccd65757f18b6b1ac751</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="10.0.1">
