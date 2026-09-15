@@ -18,10 +18,24 @@
 
     <ItemGroup>
       <TraceDataCollectorArtifacts Include="$(MSBuildThisFileDirectory)\**\*.*" />
+      <!-- The collector host discovers collectors recursively next to the test assembly and resolves
+           their dependencies in the collector's directory. Keep the complete native/resource layout,
+           but never overwrite the application's assemblies with the collector's private dependencies. -->
+      <ResolvedFileToPublish Include="@(TraceDataCollectorArtifacts)">
+        <RelativePath>Microsoft.CodeCoverage/%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
     </ItemGroup>
 
-    <Copy SourceFiles="@(TraceDataCollectorArtifacts)" DestinationFolder="$(PublishDir)%(RecursiveDir)" />
+  </Target>
 
+  <!-- The browser-WASM SDK discovers managed bundle inputs with a recursive publish-directory glob,
+       including files left by earlier publishes. These tools run in the collector host, not in WASM. -->
+  <Target Name="ExcludeTraceDataCollectorArtifactsFromWasmBundle" AfterTargets="_GetDefaultWasmAssembliesToBundle">
+    <ItemGroup>
+      <WasmAssembliesToBundle Remove="$([MSBuild]::EnsureTrailingSlash('$(PublishDir)'))Microsoft.CodeCoverage/**/*.dll" />
+    </ItemGroup>
   </Target>
 
   <PropertyGroup Condition="'$(NETCoreSdkVersion)' != '' and '$(DisableMsCoverageReferencedPathMaps)' != 'true'">
