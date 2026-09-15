@@ -18,23 +18,15 @@ job is to open/update the localization check-in PR on your repository.
 
 ## How it works
 
-The App path is enabled by default. In
-[`onelocbuild.yml`](/eng/common/core-templates/job/onelocbuild.yml), the App token is minted only
-when **all** of the following are true:
-
-- `UseGitHubAppAuthentication` is `true` (the default), **and**
-- `RepoType` is `gitHub`, **and**
-- the build is running in the **`internal`** Azure DevOps project (the App service connection and
-  Key Vault key are scoped to `dnceng/internal`).
+In [`onelocbuild.yml`](/eng/common/core-templates/job/onelocbuild.yml), the App token is minted
+whenever `RepoType` is `gitHub`. OneLocBuild supports the **`dnceng/internal`** and
+**`DevDiv/DevDiv`** Azure DevOps projects.
 
 When those hold, the job runs [`get-github-app-token.yml`](/eng/common/core-templates/steps/get-github-app-token.yml),
 which signs a JWT with the App's RSA key in Key Vault, exchanges it for an installation token, and
 passes that token to the OneLocBuild task via `gitHubPatVariable`.
 
-If `UseGitHubAppAuthentication` is explicitly set to `false` — or the build runs in any project
-other than `internal` (e.g. `DevDiv`, `public`) — the job uses the existing `GithubPat` parameter.
-This is a template-selection fallback only: if App token minting or authentication fails after the
-App path is selected, the job fails and does not retry with the PAT.
+If App token minting or authentication fails, the job fails; there is no stored-PAT fallback.
 
 ## Gaining access
 
@@ -43,8 +35,11 @@ App path is selected, the job fails and does not retry with the PAT.
 1. **The App must be installed on the GitHub org/account that owns your target repo, and your
    specific repository must be selected in that installation.** The App can only open a PR against a
    repository it is installed on. This is what actually grants the App permission to your repo.
-2. **Your pipeline must use the default App path** by leaving `UseGitHubAppAuthentication` set to
-   `true` in the `onelocbuild.yml` template call.
+2. **Your pipeline must run in `dnceng/internal` or `DevDiv/DevDiv` and be authorized to use that
+   project's App service connection.**
+
+The .NET Engineering Services team manages the App signing key and the project-scoped service
+connections. Contact the First Responders to authorize an intended pipeline.
 
 ### Step 1 — Request that your repository be added to the App installation
 
@@ -79,16 +74,21 @@ OneLocBuild template call. For example:
       LclPackageId: 'LCL-JUNO-PROD-YOURREPO'
 ```
 
-The dnceng service connection, App client ID, Key Vault, and key name are centralized as defaults in
-the Arcade template. They can be overridden for separately provisioned infrastructure. A pipeline
-can temporarily set `UseGitHubAppAuthentication: false` to select the PAT path instead.
+Arcade automatically selects the project-scoped service connection:
+
+| Azure DevOps project | Service connection |
+|---|---|
+| `dnceng/internal` | `dnceng-oneloc-githubapp` |
+| `DevDiv/DevDiv` | `devdiv-oneloc-githubapp` |
+
+The App client ID, Key Vault, and key name are also centralized in the Arcade template. A pipeline
+still needs one-time authorization to use its project's connection.
 
 ### GitHub App parameters
 
 | **Parameter** | **Default** | **Notes** |
 |:-:|:-:|-|
-| `UseGitHubAppAuthentication` | `true` | Activates the App path for GitHub repos in `dnceng/internal`. Set to `false` to select the PAT path. |
-| `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The Azure DevOps **WIF service connection** whose identity has `Sign` permission on the App's Key Vault key. |
+| `GitHubAppServiceConnection` | `'dnceng-oneloc-githubapp'` | The Azure DevOps **WIF service connection** used by `dnceng/internal`. When the value remains the default, Arcade selects `devdiv-oneloc-githubapp` automatically in `DevDiv/DevDiv`. |
 | `GitHubAppClientId` | `'Iv23lijBU8x3gc9lDOc9'` | The GitHub App's **Client ID** (used as the JWT `iss` claim). |
 | `GitHubAppKeyVaultName` | `'EngKeyVault'` | The Key Vault holding the App's RSA signing key. |
 | `GitHubAppKeyName` | `'oneloc-localization-app-key'` | The name of the RSA key inside that Key Vault (the App's private key). |
@@ -98,7 +98,7 @@ The token is minted for the installation on the `GitHubOrg` account (default `do
 
 ## Verifying it works
 
-1. Run your pipeline (on the `internal` project) from a branch where the OneLocBuild job runs.
+1. Run your pipeline from a branch where the OneLocBuild job runs.
 2. In the build, confirm the **`Get GitHub App installation token`** step runs and succeeds before
    the `OneLocBuild` task.
 3. Confirm the check-in PR is opened by the **`dotnet OneLoc Localization`** App (the PR author will
@@ -106,9 +106,9 @@ The token is minted for the installation on the `GitHubOrg` account (default `do
 
 ## Troubleshooting
 
-- **The App-token step is skipped.** The App path only activates when
-  `UseGitHubAppAuthentication` is `true`, `RepoType` is `gitHub`, and the build runs in the
-  `internal` project. Verify all three.
+- **The App-token step is skipped.** The App path activates when `RepoType` is `gitHub`.
+- **The pipeline pauses for service-connection authorization.** Authorize the pipeline to use
+  `dnceng-oneloc-githubapp` in `dnceng/internal` or `devdiv-oneloc-githubapp` in `DevDiv/DevDiv`.
 - **Token minting fails with a Key Vault authorization error.** The service connection identity
   needs the `Key Vault Crypto User` role (or at least the `Sign` action) on the App's key. Contact
   First Responders.
@@ -119,7 +119,4 @@ The token is minted for the installation on the `GitHubOrg` account (default `do
 
 ## Scope and limitations
 
-- The App path is only available in the **`dnceng/internal`** Azure DevOps project. Pipelines in
-  other projects use `GithubPat` and are not covered by the `dnceng-oneloc-githubapp` service
-  connection. DevDiv can use the same template path after a DevDiv-scoped service connection and
-  signing-key access are provisioned.
+- Arcade supports OneLocBuild in **`dnceng/internal`** and **`DevDiv/DevDiv`**.
