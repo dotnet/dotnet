@@ -167,15 +167,13 @@ public class SendHelixJob : HelixTask, IMultiThreadableTask
 
     protected override async Task ExecuteCore(CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(AccessToken) && string.IsNullOrEmpty(Creator))
+        string creatorValidationError = GetCreatorValidationError(
+            UseEntraAuthentication,
+            AccessToken,
+            Creator);
+        if (creatorValidationError != null)
         {
-            Log.LogError(FailureCategory.Build, "Creator is required when using anonymous access.");
-            return;
-        }
-
-        if (!string.IsNullOrEmpty(AccessToken) && !string.IsNullOrEmpty(Creator))
-        {
-            Log.LogError(FailureCategory.Build, "Creator is forbidden when using authenticated access.");
+            Log.LogError(FailureCategory.Build, creatorValidationError);
             return;
         }
 
@@ -290,6 +288,22 @@ public class SendHelixJob : HelixTask, IMultiThreadableTask
         }
 
         cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    internal static string GetCreatorValidationError(
+        bool useEntraAuthentication,
+        string accessToken,
+        string creator)
+    {
+        bool isAuthenticated = useEntraAuthentication || !string.IsNullOrEmpty(accessToken);
+        if (!isAuthenticated && string.IsNullOrEmpty(creator))
+        {
+            return "Creator is required when using anonymous access.";
+        }
+
+        return isAuthenticated && !string.IsNullOrEmpty(creator)
+            ? "Creator is forbidden when using authenticated access."
+            : null;
     }
 
     /// <summary>
