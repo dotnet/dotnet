@@ -9,6 +9,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>$(RuntimeBinDir)/cdac-build-tool</OutputPath>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RollForward Condition="'$(DotNetBuildSourceOnly)' == 'true'">Major</RollForward>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <IsPackable>false</IsPackable>
     <IsShipping>false</IsShipping> <!-- This tool is an implementation detail of the build process, it does not ship -->

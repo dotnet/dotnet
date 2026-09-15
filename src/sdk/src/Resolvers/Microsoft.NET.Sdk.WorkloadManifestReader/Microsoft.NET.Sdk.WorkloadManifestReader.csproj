@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(SdkTargetFramework);net472</TargetFrameworks>
+    <!-- Stage 2 Arcade tasks consume this package before Arcade advances to the SDK's target framework. -->
+    <TargetFrameworks Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(NetMinimum)' != '$(SdkTargetFramework)'">$(TargetFrameworks);$(NetMinimum)</TargetFrameworks>
     <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
