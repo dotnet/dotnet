@@ -71,7 +71,10 @@
     <MicrosoftDotNetApiCompatTaskVersion>10.0.100</MicrosoftDotNetApiCompatTaskVersion>
     <!-- testfx dependencies. Overrides the Arcade default to pick up the automatic DOTNET_ROOT configuration for
          app host launches (https://github.com/microsoft/testfx/pull/10413), which the test projects rely on to run
-         against the repo-local .NET installation. Restored from the test-tools feed, see https://aka.ms/mstest/preview. -->
+         against the repo-local .NET installation. Restored from the test-tools feed, see https://aka.ms/mstest/preview.
+         TODO: Remove this override and the root NuGet.config test-tools feed once
+         https://github.com/dotnet/arcade/pull/17542 flows into the VMR's consumed Arcade SDK, providing
+         MicrosoftTestingPlatformVersion 2.4.0 or later by default. See https://github.com/dotnet/dotnet/issues/8207. -->
     <MicrosoftTestingPlatformVersion>2.4.0-preview.26403.13</MicrosoftTestingPlatformVersion>
   </PropertyGroup>
 
