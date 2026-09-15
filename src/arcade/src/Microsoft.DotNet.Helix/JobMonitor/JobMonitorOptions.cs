@@ -3,7 +3,9 @@
 
 using System;
 using System.CommandLine;
+#if DEBUG
 using Azure.Identity;
+#endif
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher.Model;
 
 namespace Microsoft.DotNet.Helix.JobMonitor;
@@ -12,6 +14,8 @@ public sealed class JobMonitorOptions
 {
     // Helix API access token
     public string HelixAccessToken { get; set; }
+
+    public bool UseEntraAuthentication { get; set; }
 
     /// <summary>
     /// Azure DevOps build token
@@ -136,6 +140,12 @@ public sealed class JobMonitorOptions
             DefaultValueFactory = _ => "https://helix.dot.net/"
         };
 
+        Option<bool> useEntraAuthenticationOption = new("--use-entra-authentication")
+        {
+            Description = "Use a refreshable Entra credential for Helix API authentication. Defaults to the HELIX_USE_ENTRA_AUTHENTICATION environment variable.",
+            DefaultValueFactory = _ => ParseBoolean(Environment.GetEnvironmentVariable("HELIX_USE_ENTRA_AUTHENTICATION"))
+        };
+
         Option<int> pollingIntervalSecondsOption = new("--polling-interval-seconds")
         {
             Description = "Polling interval in seconds.",
@@ -221,6 +231,7 @@ public sealed class JobMonitorOptions
         rootCommand.Options.Add(collectionUriOption);
         rootCommand.Options.Add(teamProjectOption);
         rootCommand.Options.Add(helixBaseUriOption);
+        rootCommand.Options.Add(useEntraAuthenticationOption);
         rootCommand.Options.Add(pollingIntervalSecondsOption);
         rootCommand.Options.Add(maximumWaitMinutesOption);
         rootCommand.Options.Add(jobMonitorNameOption);
@@ -247,6 +258,7 @@ public sealed class JobMonitorOptions
                 CollectionUri = parseResult.GetValue(collectionUriOption),
                 TeamProject = parseResult.GetValue(teamProjectOption),
                 HelixBaseUri = parseResult.GetValue(helixBaseUriOption),
+                UseEntraAuthentication = parseResult.GetValue(useEntraAuthenticationOption),
                 PollingIntervalSeconds = parseResult.GetValue(pollingIntervalSecondsOption),
                 MaximumWaitMinutes = parseResult.GetValue(maximumWaitMinutesOption),
                 JobMonitorName = parseResult.GetValue(jobMonitorNameOption),

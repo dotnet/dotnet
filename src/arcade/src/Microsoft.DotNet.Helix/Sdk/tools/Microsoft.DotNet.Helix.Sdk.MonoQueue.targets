@@ -83,6 +83,7 @@
                   Creator="$(Creator)"
                   BaseUri="$(HelixBaseUri)"
                   AccessToken="$(HelixAccessToken)"
+                  UseEntraAuthentication="$(HelixUseEntraAuthentication)"
                   MaxRetryCount="$(MaxRetryCount)"
                   EnableShowHelixQueueStats="$(EnableShowHelixQueueStats)"
                   PreCommands="$(HelixPreCommands)"
