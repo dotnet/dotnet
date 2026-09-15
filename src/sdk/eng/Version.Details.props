@@ -58,8 +58,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetHelixJobMonitorPackageVersion>11.0.0-beta.26453.118</MicrosoftDotNetHelixJobMonitorPackageVersion>
     <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.26453.118</MicrosoftDotNetHelixSdkPackageVersion>
     <MicrosoftDotNetSignToolPackageVersion>11.0.0-beta.26453.118</MicrosoftDotNetSignToolPackageVersion>
-    <MicrosoftDotNetWebItemTemplates120PackageVersion>11.0.0-rc.1.26452.110</MicrosoftDotNetWebItemTemplates120PackageVersion>
-    <MicrosoftDotNetWebProjectTemplates120PackageVersion>11.0.0-rc.1.26452.110</MicrosoftDotNetWebProjectTemplates120PackageVersion>
+    <MicrosoftDotNetWebItemTemplatesPackageVersion>11.0.0-rc.1.26452.110</MicrosoftDotNetWebItemTemplatesPackageVersion>
+    <MicrosoftDotNetWebProjectTemplatesPackageVersion>11.0.0-rc.1.26452.110</MicrosoftDotNetWebProjectTemplatesPackageVersion>
     <MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>11.0.0-rc.1.26453.118</MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>
     <MicrosoftDotNetWpfProjectTemplatesPackageVersion>11.0.0-rc.1.26453.118</MicrosoftDotNetWpfProjectTemplatesPackageVersion>
     <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.26453.118</MicrosoftDotNetXliffTasksPackageVersion>
@@ -76,7 +76,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftExtensionsObjectPoolPackageVersion>11.0.0-rc.1.26453.118</MicrosoftExtensionsObjectPoolPackageVersion>
     <MicrosoftFSharpCompilerPackageVersion>15.2.101-rc2.26453.118</MicrosoftFSharpCompilerPackageVersion>
     <MicrosoftJSInteropPackageVersion>11.0.0-rc.1.26453.118</MicrosoftJSInteropPackageVersion>
-    <MicrosoftMcpServerProjectTemplates120PackageVersion>11.0.0-rc.1.26452.110</MicrosoftMcpServerProjectTemplates120PackageVersion>
+    <MicrosoftMcpServerProjectTemplatesPackageVersion>11.0.0-rc.1.26452.110</MicrosoftMcpServerProjectTemplatesPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.12.0-1.26453.118</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftNetCompilersToolsetFrameworkPackageVersion>5.12.0-1.26453.118</MicrosoftNetCompilersToolsetFrameworkPackageVersion>
     <MicrosoftNETHostModelPackageVersion>11.0.0-rc.1.26453.118</MicrosoftNETHostModelPackageVersion>
@@ -197,8 +197,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetHelixJobMonitorVersion>$(MicrosoftDotNetHelixJobMonitorPackageVersion)</MicrosoftDotNetHelixJobMonitorVersion>
     <MicrosoftDotNetHelixSdkVersion>$(MicrosoftDotNetHelixSdkPackageVersion)</MicrosoftDotNetHelixSdkVersion>
     <MicrosoftDotNetSignToolVersion>$(MicrosoftDotNetSignToolPackageVersion)</MicrosoftDotNetSignToolVersion>
-    <MicrosoftDotNetWebItemTemplates120Version>$(MicrosoftDotNetWebItemTemplates120PackageVersion)</MicrosoftDotNetWebItemTemplates120Version>
-    <MicrosoftDotNetWebProjectTemplates120Version>$(MicrosoftDotNetWebProjectTemplates120PackageVersion)</MicrosoftDotNetWebProjectTemplates120Version>
+    <MicrosoftDotNetWebItemTemplatesVersion>$(MicrosoftDotNetWebItemTemplatesPackageVersion)</MicrosoftDotNetWebItemTemplatesVersion>
+    <MicrosoftDotNetWebProjectTemplatesVersion>$(MicrosoftDotNetWebProjectTemplatesPackageVersion)</MicrosoftDotNetWebProjectTemplatesVersion>
     <MicrosoftDotnetWinFormsProjectTemplatesVersion>$(MicrosoftDotnetWinFormsProjectTemplatesPackageVersion)</MicrosoftDotnetWinFormsProjectTemplatesVersion>
     <MicrosoftDotNetWpfProjectTemplatesVersion>$(MicrosoftDotNetWpfProjectTemplatesPackageVersion)</MicrosoftDotNetWpfProjectTemplatesVersion>
     <MicrosoftDotNetXliffTasksVersion>$(MicrosoftDotNetXliffTasksPackageVersion)</MicrosoftDotNetXliffTasksVersion>
@@ -215,7 +215,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftExtensionsObjectPoolVersion>$(MicrosoftExtensionsObjectPoolPackageVersion)</MicrosoftExtensionsObjectPoolVersion>
     <MicrosoftFSharpCompilerVersion>$(MicrosoftFSharpCompilerPackageVersion)</MicrosoftFSharpCompilerVersion>
     <MicrosoftJSInteropVersion>$(MicrosoftJSInteropPackageVersion)</MicrosoftJSInteropVersion>
-    <MicrosoftMcpServerProjectTemplates120Version>$(MicrosoftMcpServerProjectTemplates120PackageVersion)</MicrosoftMcpServerProjectTemplates120Version>
+    <MicrosoftMcpServerProjectTemplatesVersion>$(MicrosoftMcpServerProjectTemplatesPackageVersion)</MicrosoftMcpServerProjectTemplatesVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
     <MicrosoftNetCompilersToolsetFrameworkVersion>$(MicrosoftNetCompilersToolsetFrameworkPackageVersion)</MicrosoftNetCompilersToolsetFrameworkVersion>
     <MicrosoftNETHostModelVersion>$(MicrosoftNETHostModelPackageVersion)</MicrosoftNETHostModelVersion>
