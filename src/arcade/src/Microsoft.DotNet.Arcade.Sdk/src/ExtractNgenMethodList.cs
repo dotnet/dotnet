@@ -17,8 +17,12 @@ namespace Microsoft.DotNet.Arcade.Sdk;
 /// Used to convert a raw XML dump from IBCMerge into the set of methods which will be NGEN'd when 
 /// partial NGEN is enabled
 /// </summary>
-public sealed class ExtractNgenMethodList : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public sealed class ExtractNgenMethodList : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// This is the XML file produced by passing -dxml to ibcmerge. It will be transformed into the set of
     /// methods marked for NGEN in the assembly
@@ -50,7 +54,7 @@ public sealed class ExtractNgenMethodList : Microsoft.Build.Utilities.Task
 
     public override bool Execute()
     {
-        var document = XDocument.Load(IbcXmlFilePath);
+        var document = XDocument.Load(TaskEnvironment.GetAbsolutePath(IbcXmlFilePath));
         var items = new List<string>();
         var parentElement = document.Root.Element("MethodProfilingData");
         if (parentElement != null)
@@ -69,7 +73,8 @@ public sealed class ExtractNgenMethodList : Microsoft.Build.Utilities.Task
 
         items.Sort();
 
-        Directory.CreateDirectory(OutputDirectory);
+        AbsolutePath outputDirectory = TaskEnvironment.GetAbsolutePath(OutputDirectory);
+        Directory.CreateDirectory(outputDirectory);
 
         // When AssemblyTargetFramework is set then this is an assembly that is being built by the current
         // build. Appending the target framework means we will avoid name clashes. When it's not set then
@@ -80,7 +85,7 @@ public sealed class ExtractNgenMethodList : Microsoft.Build.Utilities.Task
             ? GetAssemblyMvid().ToString()
             : AssemblyTargetFramework;
         var outputFileName = $"{Path.GetFileNameWithoutExtension(AssemblyFilePath)}-{outputFileNameSuffix}.ngen.txt";
-        var outputFilePath = Path.Combine(OutputDirectory, outputFileName);
+        var outputFilePath = Path.Combine(outputDirectory, outputFileName);
         using (var outputFileStream = new StreamWriter(outputFilePath, append: false))
         {
             foreach (var item in items)
@@ -94,7 +99,7 @@ public sealed class ExtractNgenMethodList : Microsoft.Build.Utilities.Task
 
     private Guid GetAssemblyMvid()
     {
-        using (var stream = File.Open(AssemblyFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var stream = File.Open(TaskEnvironment.GetAbsolutePath(AssemblyFilePath), FileMode.Open, FileAccess.Read, FileShare.Read))
         {
             var peReader = new PEReader(stream);
             var metadataReader = peReader.GetMetadataReader();

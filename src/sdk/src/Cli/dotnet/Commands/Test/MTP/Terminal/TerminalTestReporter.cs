@@ -294,7 +294,6 @@ internal sealed partial class TerminalTestReporter : IDisposable
         int totalRetriedTests = 0;
         int totalRetriedExecutions = 0;
         int totalFlakyTests = 0;
-        bool anyAssemblyUnsuccessful = false;
         int failedAssembliesWithoutFailedTests = 0;
 
         foreach (TestProgressState assembly in assemblies)
@@ -308,7 +307,6 @@ internal sealed partial class TerminalTestReporter : IDisposable
             totalFlakyTests += assembly.FlakyTests;
             if (!assembly.Success)
             {
-                anyAssemblyUnsuccessful = true;
                 if (assembly.FailedTests == 0)
                 {
                     failedAssembliesWithoutFailedTests++;
@@ -316,49 +314,33 @@ internal sealed partial class TerminalTestReporter : IDisposable
             }
         }
 
-        bool notEnoughTests = totalTests < _options.MinimumExpectedTests;
-        bool allTestsWereSkipped = (totalTests == 0 && !_options.AllowZeroTests)
-            || (totalTests > 0 && totalTests == totalSkippedTests);
-        bool anyTestFailed = totalFailedTests > 0;
-        bool anyAssemblyFailed = anyAssemblyUnsuccessful || HasHandshakeFailure;
-        bool unexpectedNonZeroExitCode = exitCode is not null
-            && exitCode != ExitCode.Success
-            && exitCode != ExitCode.ZeroTests
-            && exitCode != ExitCode.MinimumExpectedTestsPolicyViolation;
-        bool runFailed = anyAssemblyFailed || anyTestFailed || notEnoughTests || allTestsWereSkipped || unexpectedNonZeroExitCode || _wasCancelled;
+        bool runFailed = exitCode is null || exitCode != ExitCode.Success;
+        bool zeroTestsFailure = exitCode == ExitCode.ZeroTests;
+        bool minimumExpectedTestsFailure = exitCode == ExitCode.MinimumExpectedTestsPolicyViolation;
         terminal.SetColor(runFailed ? TerminalColor.DarkRed : TerminalColor.DarkGreen);
 
         terminal.Append(CliCommandStrings.TestRunSummary);
         terminal.Append(' ');
 
-        if (_wasCancelled)
+        if (!runFailed)
+        {
+            terminal.Append(string.Format(CultureInfo.CurrentCulture, "{0}!", CliCommandStrings.Passed));
+        }
+        else if (_wasCancelled)
         {
             terminal.Append(CliCommandStrings.Aborted);
         }
-        else if (notEnoughTests)
+        else if (minimumExpectedTestsFailure && _options.MinimumExpectedTests > 0)
         {
             terminal.Append(string.Format(CultureInfo.CurrentCulture, CliCommandStrings.MinimumExpectedTestsPolicyViolation, totalTests, _options.MinimumExpectedTests));
         }
-        else if (anyTestFailed || HasHandshakeFailure || unexpectedNonZeroExitCode)
-        {
-            // Handshake failures take precedence over "Zero tests ran": when an assembly failed to
-            // hand-shake we want the headline to reflect that the run failed, not that no tests ran
-            // (which would imply a benign empty run). We intentionally do NOT escalate the broader
-            // anyAssemblyFailed here, because a project that legitimately contains zero tests exits
-            // with ExitCodes.ZeroTests (non-zero) and would otherwise be misclassified as a failure.
-            terminal.Append(string.Format(CultureInfo.CurrentCulture, "{0}!", CliCommandStrings.Failed));
-        }
-        else if (allTestsWereSkipped)
+        else if (zeroTestsFailure)
         {
             terminal.Append(CliCommandStrings.ZeroTestsRan);
         }
-        else if (anyAssemblyFailed)
-        {
-            terminal.Append(string.Format(CultureInfo.CurrentCulture, "{0}!", CliCommandStrings.Failed));
-        }
         else
         {
-            terminal.Append(string.Format(CultureInfo.CurrentCulture, "{0}!", CliCommandStrings.Passed));
+            terminal.Append(string.Format(CultureInfo.CurrentCulture, "{0}!", CliCommandStrings.Failed));
         }
 
         if (!_options.ShowAssembly && assemblies.Count == 1)
@@ -399,7 +381,7 @@ internal sealed partial class TerminalTestReporter : IDisposable
         bool colorizeFailed = failed > 0;
         bool colorizeError = error > 0;
         bool colorizePassed = passed > 0 && _buildErrorsCount == 0 && failed == 0 && error == 0;
-        bool colorizeSkipped = skipped > 0 && skipped == total && _buildErrorsCount == 0 && failed == 0 && error == 0;
+        bool colorizeSkipped = skipped > 0;
 
         string errorText = $"{SingleIndentation}{CliCommandStrings.ErrorColon} {error}";
         string totalText = $"{SingleIndentation}{CliCommandStrings.TotalColon} {total}";
@@ -686,8 +668,33 @@ internal sealed partial class TerminalTestReporter : IDisposable
             return;
         }
 
-        terminal.AppendLine(string.Format(isRun ? CliCommandStrings.TestRunExitCode : CliCommandStrings.TestDiscoveryExitCode, exitCode));
+        string description = GetExitCodeDescription(exitCode.Value);
+        terminal.AppendLine(string.Format(
+            CultureInfo.CurrentCulture,
+            isRun ? CliCommandStrings.TestRunExitCode : CliCommandStrings.TestDiscoveryExitCode,
+            exitCode,
+            description));
     }
+
+    internal static string GetExitCodeDescription(int exitCode)
+        => exitCode switch
+        {
+            ExitCode.GenericFailure => CliCommandStrings.ExitCodeGenericFailureDescription,
+            ExitCode.AtLeastOneTestFailed => CliCommandStrings.ExitCodeAtLeastOneTestFailedDescription,
+            ExitCode.TestSessionAborted => CliCommandStrings.ExitCodeTestSessionAbortedDescription,
+            ExitCode.InvalidPlatformSetup => CliCommandStrings.ExitCodeInvalidPlatformSetupDescription,
+            ExitCode.InvalidCommandLine => CliCommandStrings.ExitCodeInvalidCommandLineDescription,
+            ExitCode.TestHostProcessExitedNonGracefully => CliCommandStrings.ExitCodeTestHostProcessExitedNonGracefullyDescription,
+            ExitCode.ZeroTests => CliCommandStrings.ExitCodeZeroTestsDescription,
+            ExitCode.MinimumExpectedTestsPolicyViolation => CliCommandStrings.ExitCodeMinimumExpectedTestsPolicyViolationDescription,
+            ExitCode.TestAdapterTestSessionFailure => CliCommandStrings.ExitCodeTestAdapterTestSessionFailureDescription,
+            ExitCode.DependentProcessExited => CliCommandStrings.ExitCodeDependentProcessExitedDescription,
+            ExitCode.IncompatibleProtocolVersion => CliCommandStrings.ExitCodeIncompatibleProtocolVersionDescription,
+            ExitCode.TestExecutionStoppedForMaxFailedTests => CliCommandStrings.ExitCodeTestExecutionStoppedForMaxFailedTestsDescription,
+            ExitCode.CoverageThresholdFailed => CliCommandStrings.ExitCodeCoverageThresholdFailedDescription,
+            ExitCode.TestExecutionStoppedAtDeadline => CliCommandStrings.ExitCodeTestExecutionStoppedAtDeadlineDescription,
+            _ => CliCommandStrings.ExitCodeUnknownDescription,
+        };
 
     /// <summary>
     /// Print a build result summary to the output.
@@ -766,7 +773,7 @@ internal sealed partial class TerminalTestReporter : IDisposable
 
         int attempt = asm.GetAttemptNumber(instanceId);
         _terminalWithProgress.UpdateWorker(asm.SlotIndex);
-        if (outcome != TestOutcome.Passed || _options.ShowPassedTests)
+        if (IsTestResultVisible(outcome))
         {
             _terminalWithProgress.WriteToTerminal(terminal => RenderTestCompleted(
                 terminal,
@@ -786,6 +793,15 @@ internal sealed partial class TerminalTestReporter : IDisposable
         }
     }
 
+    private bool IsTestResultVisible(TestOutcome outcome) => outcome switch
+    {
+        TestOutcome.Passed => (_options.ShowTestResults & TestResultVisibility.Passed) != 0,
+        TestOutcome.Skipped => (_options.ShowTestResults & TestResultVisibility.Skipped) != 0,
+        TestOutcome.Fail or TestOutcome.Error or TestOutcome.Timeout or TestOutcome.Canceled =>
+            (_options.ShowTestResults & TestResultVisibility.Failed) != 0,
+        _ => throw new NotSupportedException(),
+    };
+
     internal /* for testing */ void RenderTestCompleted(
         ITerminal terminal,
         string assembly,
@@ -802,11 +818,6 @@ internal sealed partial class TerminalTestReporter : IDisposable
         string? standardOutput,
         string? errorOutput)
     {
-        if (outcome == TestOutcome.Passed && !_options.ShowPassedTests)
-        {
-            return;
-        }
-
         TerminalColor color = outcome switch
         {
             TestOutcome.Error or TestOutcome.Fail or TestOutcome.Canceled or TestOutcome.Timeout => TerminalColor.DarkRed,

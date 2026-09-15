@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="73ec55960bb496e6b2541b2fcf0a59576d1f8cd3" BarId="330943" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="228813c91085ec1f2fb8a4c0277e31a8eb9a7c33" BarId="331094" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -16,13 +16,13 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>43b5827697e501c442eb75ffff832cd4df2514fe</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26458.13">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26460.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>a9b15831d57b7125e2e3ba17b60bb8d9596f82db</Sha>
+      <Sha>98c48ebed253c0231d84a0a157828c7f7a8b177e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.26458.13">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.26460.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>a9b15831d57b7125e2e3ba17b60bb8d9596f82db</Sha>
+      <Sha>98c48ebed253c0231d84a0a157828c7f7a8b177e</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.26451.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>

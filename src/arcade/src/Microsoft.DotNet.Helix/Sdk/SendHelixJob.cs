@@ -16,8 +16,14 @@ using Newtonsoft.Json;
 
 namespace Microsoft.DotNet.Helix.Sdk;
 
-public class SendHelixJob : HelixTask
+// Deliberately not marked multithreadable: SendAsync reaches the JobSender and HelixApi stack,
+// which has not been audited for shared mutable state, and this is the most side-effecting task in
+// the SDK (payload upload and job creation). The interface is still applied so that paths and AzDO
+// variables resolve against the project rather than the process. Tracked for a follow-up change.
+#pragma warning disable MSBuildTask0013 // Interface without the attribute is deliberate; see the comment above.
+public class SendHelixJob : HelixTask, IMultiThreadableTask
 {
+#pragma warning restore MSBuildTask0013
     public static class MetadataNames
     {
         public const string Identity = "Identity";
@@ -39,6 +45,9 @@ public class SendHelixJob : HelixTask
         public const string IncludeDirectoryName = "IncludeDirectoryName";
         public const string AsArchive = "AsArchive";
     }
+
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
     /// <summary>
     ///   The 'type' value reported to Helix
@@ -158,15 +167,13 @@ public class SendHelixJob : HelixTask
 
     protected override async Task ExecuteCore(CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(AccessToken) && string.IsNullOrEmpty(Creator))
+        string creatorValidationError = GetCreatorValidationError(
+            UseEntraAuthentication,
+            AccessToken,
+            Creator);
+        if (creatorValidationError != null)
         {
-            Log.LogError(FailureCategory.Build, "Creator is required when using anonymous access.");
-            return;
-        }
-
-        if (!string.IsNullOrEmpty(AccessToken) && !string.IsNullOrEmpty(Creator))
-        {
-            Log.LogError(FailureCategory.Build, "Creator is forbidden when using authenticated access.");
+            Log.LogError(FailureCategory.Build, creatorValidationError);
             return;
         }
 
@@ -283,6 +290,22 @@ public class SendHelixJob : HelixTask
         cancellationToken.ThrowIfCancellationRequested();
     }
 
+    internal static string GetCreatorValidationError(
+        bool useEntraAuthentication,
+        string accessToken,
+        string creator)
+    {
+        bool isAuthenticated = useEntraAuthentication || !string.IsNullOrEmpty(accessToken);
+        if (!isAuthenticated && string.IsNullOrEmpty(creator))
+        {
+            return "Creator is required when using anonymous access.";
+        }
+
+        return isAuthenticated && !string.IsNullOrEmpty(creator)
+            ? "Creator is forbidden when using authenticated access."
+            : null;
+    }
+
     /// <summary>
     /// Builds the pair of log callbacks used when submitting a Helix job. Routine submission
     /// progress is logged at <see cref="MessageImportance.Normal"/>; the opt-in queue-health
@@ -307,7 +330,7 @@ public class SendHelixJob : HelixTask
     {
         string envName = FromAzdoVariableNameToEnvironmentVariableName(azdoVariableName);
 
-        var value = Environment.GetEnvironmentVariable(envName);
+        var value = TaskEnvironment.GetEnvironmentVariable(envName);
         if (string.IsNullOrEmpty(value))
         {
             return def;
@@ -548,7 +571,16 @@ public class SendHelixJob : HelixTask
             }
         }
 
-        if (Directory.Exists(path))
+        // GetMetadata returns an empty string for absent metadata, and GetAbsolutePath rejects that, so
+        // keep reporting a missing payload here instead of throwing.
+        if (string.IsNullOrEmpty(path))
+        {
+            Log.LogError(FailureCategory.Build, $"Correlation Payload '{path}' not found.");
+            return def;
+        }
+
+        AbsolutePath payloadPath = TaskEnvironment.GetAbsolutePath(path);
+        if (Directory.Exists(payloadPath))
         {
             string includeDirectoryNameStr = correlationPayload.GetMetadata(MetadataNames.IncludeDirectoryName);
             if (!bool.TryParse(includeDirectoryNameStr, out bool includeDirectoryName))
@@ -560,11 +592,11 @@ public class SendHelixJob : HelixTask
                 MessageImportance.Low,
                 $"Adding Correlation Payload Directory '{path}', destination '{destination}'"
             );
-            return def.WithCorrelationPayloadDirectory(path, includeDirectoryName, destination);
+            return def.WithCorrelationPayloadDirectory(payloadPath, includeDirectoryName, destination);
 
         }
 
-        if (File.Exists(path))
+        if (File.Exists(payloadPath))
         {
             string asArchiveStr = correlationPayload.GetMetadata(MetadataNames.AsArchive);
             if (!bool.TryParse(asArchiveStr, out bool asArchive))
@@ -580,14 +612,14 @@ public class SendHelixJob : HelixTask
                     MessageImportance.Low,
                     $"Adding Correlation Payload Archive '{path}', destination '{destination}'"
                 );
-                return def.WithCorrelationPayloadArchive(path, destination);
+                return def.WithCorrelationPayloadArchive(payloadPath, destination);
             }
 
             Log.LogMessage(
                 MessageImportance.Low,
                 $"Adding Correlation Payload File '{path}', destination '{destination}'"
             );
-            return def.WithCorrelationPayloadFiles(path);
+            return def.WithCorrelationPayloadFiles(payloadPath);
         }
 
         Log.LogError(FailureCategory.Build, $"Correlation Payload '{path}' not found.");

@@ -14,8 +14,12 @@ using Tasks = System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Arcade.Sdk;
 
-public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask
+[MSBuildMultiThreadableTask]
+public class DownloadFile : Task, ICancelableTask, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// List of URls to attempt download from. Accepted metadata are:
     ///     - Token: Base64 encoded token to be appended to base URL for accessing private locations.
@@ -59,23 +63,28 @@ public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask
             return false;
         }
 
-        if (File.Exists(DestinationPath) && !Overwrite)
+        AbsolutePath destinationPath = TaskEnvironment.GetAbsolutePath(DestinationPath);
+
+        if (File.Exists(destinationPath) && !Overwrite)
         {
             return true;
         }
 
-        if (string.IsNullOrWhiteSpace(Uri) && (Uris == null || Uris.Count() == 0)) {
+        if (string.IsNullOrWhiteSpace(Uri) && (Uris == null || Uris.Count() == 0))
+        {
             Log.LogError($"Invalid task parameter value: {nameof(Uri)} and {nameof(Uris)} are empty.");
             return false;
         }
 
-        Directory.CreateDirectory(Path.GetDirectoryName(DestinationPath));
+        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
-        if (!string.IsNullOrWhiteSpace(Uri)) {
-            return DownloadFromUriAsync(Uri).Result;
+        if (!string.IsNullOrWhiteSpace(Uri))
+        {
+            return DownloadFromUriAsync(Uri, destinationPath).Result;
         }
 
-        if (Uris != null) {
+        if (Uris != null)
+        {
             foreach (var uriConfig in Uris)
             {
                 var uri = uriConfig.ItemSpec;
@@ -94,7 +103,8 @@ public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask
                     uri = $"{uri}{decodedToken}";
                 }
 
-                if (DownloadFromUriAsync(uri).Result) {
+                if (DownloadFromUriAsync(uri, destinationPath).Result)
+                {
                     return true;
                 }
             }
@@ -107,19 +117,28 @@ public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask
         return false;
     }
 
-    private async Tasks.Task<bool> DownloadFromUriAsync(string uri) {
+    private async Tasks.Task<bool> DownloadFromUriAsync(string uri, AbsolutePath destinationPath)
+    {
         if (uri.StartsWith(FileUriProtocol, StringComparison.Ordinal))
         {
             var filePath = uri.Substring(FileUriProtocol.Length);
 
-            if (File.Exists(filePath)) {
-                Log.LogMessage($"Copying '{filePath}' to '{DestinationPath}'");
-                File.Copy(filePath, DestinationPath, overwrite: true);
-                return true;
-            } else {
-                Log.LogMessage($"'{filePath}' does not exist.");
-                return false;
+            // GetAbsolutePath rejects a null or empty path, whereas the File.Exists probe it feeds
+            // used to simply report the file as missing.
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                AbsolutePath sourcePath = TaskEnvironment.GetAbsolutePath(filePath);
+
+                if (File.Exists(sourcePath))
+                {
+                    Log.LogMessage($"Copying '{filePath}' to '{DestinationPath}'");
+                    File.Copy(sourcePath, destinationPath, overwrite: true);
+                    return true;
+                }
             }
+
+            Log.LogMessage($"'{filePath}' does not exist.");
+            return false;
         }
 
         Log.LogMessage($"Downloading '{uri}' to '{DestinationPath}'");
@@ -154,7 +173,7 @@ public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask
             httpClient.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds);
             try
             {
-                return await DownloadWithRetriesAsync(httpClient, uri);
+                return await DownloadWithRetriesAsync(httpClient, uri, destinationPath);
             }
             catch (AggregateException e)
             {
@@ -169,7 +188,7 @@ public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask
         }
     }
 
-    private async Tasks.Task<bool> DownloadWithRetriesAsync(HttpClient httpClient, string uri)
+    private async Tasks.Task<bool> DownloadWithRetriesAsync(HttpClient httpClient, string uri, AbsolutePath destinationPath)
     {            
         int attempt = 0;
 
@@ -191,7 +210,7 @@ public class DownloadFile : Microsoft.Build.Utilities.Task, ICancelableTask
 
                 httpResponse.EnsureSuccessStatusCode();
 
-                using (var outStream = File.Create(DestinationPath))
+                using (var outStream = File.Create(destinationPath))
                 {
                     await httpResponse.Content.CopyToAsync(outStream).ConfigureAwait(false);
                 }

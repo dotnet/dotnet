@@ -108,7 +108,7 @@ jobs:
       binlog-found: ${{ steps.find-binlog.outputs.found }}
       binlog-relative-path: ${{ steps.find-binlog.outputs.relative-path }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
 
       - name: Build with binary log
         id: build
@@ -156,7 +156,7 @@ jobs:
       - name: Upload analysis artifact
         if: always() && steps.build.outcome == 'failure'
         continue-on-error: true
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: build-failure-analysis-data
           path: |
@@ -172,13 +172,13 @@ jobs:
 # on a passing PR.
 steps:
   - name: Download analysis artifact
-    uses: actions/download-artifact@v4
+    uses: actions/download-artifact@v8.0.1
     with:
       name: build-failure-analysis-data
       path: /tmp/
 
   - name: Setup .NET (for NuGet MCP Server)
-    uses: actions/setup-dotnet@v4
+    uses: actions/setup-dotnet@v6.0.0
     with:
       dotnet-version: '9.0.x'
 

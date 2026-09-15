@@ -63,6 +63,7 @@
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.BlameDataCollector\Microsoft.TestPlatform.Extensions.BlameDataCollector.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TrxLogger\Microsoft.TestPlatform.Extensions.TrxLogger.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.HtmlLogger\Microsoft.TestPlatform.Extensions.HtmlLogger.csproj" />
+    <ProjectReference Include="..\..\Microsoft.TestPlatform.Extensions.TestIdsLogger\Microsoft.TestPlatform.Extensions.TestIdsLogger.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.TestHostProvider\Microsoft.TestPlatform.TestHostProvider.csproj" />
     <ProjectReference Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\Microsoft.TestPlatform.PlatformAbstractions.csproj" />
   </ItemGroup>
@@ -241,6 +242,9 @@
       <_PortableNetFxHtml Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\net48\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*.dll">
         <PackagePath>tools\net462\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetFxHtml>
+      <_PortableNetFxTestIds Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TestIdsLogger\$(Configuration)\net48\**\Microsoft.VisualStudio.TestPlatform.Extensions.TestIds.TestLogger*.dll">
+        <PackagePath>tools\net462\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_PortableNetFxTestIds>
       <_PortableNetFxTrx Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TrxLogger\$(Configuration)\net462\**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger*.dll">
         <PackagePath>tools\net462\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetFxTrx>
@@ -250,7 +254,7 @@
       <_PortableNetFxEventLog Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.EventLogCollector\$(Configuration)\net48\**\Microsoft.TestPlatform.Extensions.EventLogCollector.resources.dll">
         <PackagePath>tools\net462\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetFxEventLog>
-      <TfmSpecificPackageFile Include="@(_PortableNetFxBlame);@(_PortableNetFxHtml);@(_PortableNetFxTrx);@(_PortableNetFxTestHostProvider);@(_PortableNetFxEventLog)" />
+      <TfmSpecificPackageFile Include="@(_PortableNetFxBlame);@(_PortableNetFxHtml);@(_PortableNetFxTestIds);@(_PortableNetFxTrx);@(_PortableNetFxTestHostProvider);@(_PortableNetFxEventLog)" />
     </ItemGroup>
   </Target>
 
@@ -318,13 +322,16 @@
       <_PortableNetHtml Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.HtmlLogger\$(Configuration)\netstandard2.0\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger*.dll">
         <PackagePath>tools\net8.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetHtml>
+      <_PortableNetTestIds Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TestIdsLogger\$(Configuration)\netstandard2.0\**\Microsoft.VisualStudio.TestPlatform.Extensions.TestIds.TestLogger*.dll">
+        <PackagePath>tools\net8.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      </_PortableNetTestIds>
       <_PortableNetTrx Include="$(ArtifactsBinDir)Microsoft.TestPlatform.Extensions.TrxLogger\$(Configuration)\netstandard2.0\**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger*.dll">
         <PackagePath>tools\net8.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetTrx>
       <_PortableNetTestHostProvider Include="$(ArtifactsBinDir)Microsoft.TestPlatform.TestHostProvider\$(Configuration)\netstandard2.0\**\Microsoft.TestPlatform.TestHostRuntimeProvider*.dll">
         <PackagePath>tools\net8.0\Extensions\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       </_PortableNetTestHostProvider>
-      <TfmSpecificPackageFile Include="@(_PortableNetBlame);@(_PortableNetHtml);@(_PortableNetTrx);@(_PortableNetTestHostProvider)" />
+      <TfmSpecificPackageFile Include="@(_PortableNetBlame);@(_PortableNetHtml);@(_PortableNetTestIds);@(_PortableNetTrx);@(_PortableNetTestHostProvider)" />
     </ItemGroup>
   </Target>
 

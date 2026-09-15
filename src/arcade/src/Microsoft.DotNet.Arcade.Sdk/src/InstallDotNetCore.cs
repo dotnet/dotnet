@@ -16,9 +16,13 @@ using System.Text.Json;
 
 namespace Microsoft.DotNet.Arcade.Sdk;
 
-public class InstallDotNetCore : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public class InstallDotNetCore : Task, IMultiThreadableTask
 {
     private static readonly char[] s_keyTrimChars = ['$', '(', ')'];
+
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
 
     [Required]
     public string DotNetInstallScript { get; set; }
@@ -45,18 +49,21 @@ public class InstallDotNetCore : Microsoft.Build.Utilities.Task
 
     public override bool Execute()
     {
-        if (!File.Exists(GlobalJsonPath))
+        AbsolutePath globalJsonPath = TaskEnvironment.GetAbsolutePath(GlobalJsonPath);
+        if (!File.Exists(globalJsonPath))
         {
-            Log.LogWarning($"Unable to find global.json file '{GlobalJsonPath} exiting");
+            Log.LogWarning($"Unable to find global.json file '{GlobalJsonPath}' exiting");
             return true;
         }
-        if (!File.Exists(DotNetInstallScript))
+
+        AbsolutePath dotNetInstallScript = TaskEnvironment.GetAbsolutePath(DotNetInstallScript);
+        if (!File.Exists(dotNetInstallScript))
         {
-            Log.LogError($"Unable to find dotnet install script '{DotNetInstallScript} exiting");
+            Log.LogError($"Unable to find dotnet install script '{DotNetInstallScript}' exiting");
             return !Log.HasLoggedErrors;
         }
 
-        var jsonContent = File.ReadAllText(GlobalJsonPath);
+        var jsonContent = File.ReadAllText(globalJsonPath);
         var bytes = Encoding.UTF8.GetBytes(jsonContent);
 
         using (JsonDocument jsonDocument = JsonDocument.Parse(bytes))
@@ -84,16 +91,21 @@ public class InstallDotNetCore : Microsoft.Build.Utilities.Task
                         // Only load Versions.props if there's a need to look for a version identifier (ie, there's a value listed that's not a parsable version).
                         if (runtimeItems.SelectMany(r => r.Value).Select(r => r.Key).FirstOrDefault(f => !SemanticVersion.TryParse(f, out SemanticVersion version)) != null)
                         {
-                            if (!File.Exists(VersionsPropsPath))
+                            if (string.IsNullOrEmpty(VersionsPropsPath))
                             {
-                                Log.LogError($"Unable to find translation file {VersionsPropsPath}");
+                                Log.LogError($"{nameof(VersionsPropsPath)} must be specified to resolve version identifiers.");
                                 return !Log.HasLoggedErrors;
                             }
-                            else
+
+                            AbsolutePath versionsPropsPath = TaskEnvironment.GetAbsolutePath(VersionsPropsPath);
+                            if (!File.Exists(versionsPropsPath))
                             {
-                                var proj = Project.FromFile(VersionsPropsPath, new Build.Definition.ProjectOptions() { ProjectCollection = new ProjectCollection() });
-                                properties = proj.AllEvaluatedProperties.ToLookup(p => p.Name, StringComparer.OrdinalIgnoreCase);
+                                Log.LogError($"Unable to find the properties file '{VersionsPropsPath}' used to resolve version identifiers.");
+                                return !Log.HasLoggedErrors;
                             }
+
+                            var proj = Project.FromFile(versionsPropsPath, new Build.Definition.ProjectOptions() { ProjectCollection = new ProjectCollection() });
+                            properties = proj.AllEvaluatedProperties.ToLookup(p => p.Name, StringComparer.OrdinalIgnoreCase);
                         }
 
                         foreach (var runtimeItem in runtimeItems)
@@ -145,17 +157,17 @@ public class InstallDotNetCore : Microsoft.Build.Utilities.Task
                                         }
                                     }
 
-                                    Log.LogMessage(MessageImportance.Low, $"Executing: {DotNetInstallScript} {arguments}");
-                                    var process = Process.Start(new ProcessStartInfo()
-                                    {
-                                        FileName = DotNetInstallScript,
-                                        Arguments = arguments,
-                                        UseShellExecute = false,
-                                        // Redirect to stdout/err. Addressing https://github.com/dotnet/msbuild/issues/7913
-                                        // Without it script execution was failing on Linux when run from
-                                        RedirectStandardOutput = true,
-                                        RedirectStandardError = true,
-                                    });
+                                    Log.LogMessage(MessageImportance.Low, $"Executing: {dotNetInstallScript} {arguments}");
+                                    var startInfo = TaskEnvironment.GetProcessStartInfo();
+                                    startInfo.FileName = dotNetInstallScript;
+                                    startInfo.Arguments = arguments;
+                                    startInfo.UseShellExecute = false;
+                                    // Redirect to stdout/err. Addressing https://github.com/dotnet/msbuild/issues/7913
+                                    // Without it script execution was failing on Linux when run from
+                                    startInfo.RedirectStandardOutput = true;
+                                    startInfo.RedirectStandardError = true;
+
+                                    using var process = new Process { StartInfo = startInfo };
                                     process.OutputDataReceived += (sender, e) =>
                                     {
                                         if (!String.IsNullOrEmpty(e.Data))
@@ -170,13 +182,14 @@ public class InstallDotNetCore : Microsoft.Build.Utilities.Task
                                             Log.LogMessage(MessageImportance.High, e.Data);
                                         }
                                     };
+                                    process.Start();
                                     process.BeginOutputReadLine();
                                     process.BeginErrorReadLine();
                                     process.WaitForExit();
                                     if (process.ExitCode != 0)
                                     {
                                         string safeArguments = BuildInstallArguments(runtime, normalizedVersion, architecture, includeRuntimeSourceOptions: false);
-                                        Log.LogError($"dotnet-install failed for runtime '{runtime}' version '{normalizedVersion}' (exit code {process.ExitCode}). Command: {DotNetInstallScript} {safeArguments}");
+                                        Log.LogError($"dotnet-install failed for runtime '{runtime}' version '{normalizedVersion}' (exit code {process.ExitCode}). Command: {dotNetInstallScript} {safeArguments}");
                                     }
                                 }
                             }
@@ -292,7 +305,8 @@ public class InstallDotNetCore : Microsoft.Build.Utilities.Task
             _ => Path.Combine(dotnetRoot, "shared", version)
         };
 
-        if (Directory.Exists(runtimePath))
+        AbsolutePath runtimeDirectory = TaskEnvironment.GetAbsolutePath(runtimePath);
+        if (Directory.Exists(runtimeDirectory))
         {
             Log.LogMessage(MessageImportance.Normal, $"  Runtime toolset '{runtime}/{architecture} v{version}' already installed in directory '{runtimePath}'.");
             return true;

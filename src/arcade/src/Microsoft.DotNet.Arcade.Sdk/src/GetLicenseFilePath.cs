@@ -13,8 +13,12 @@ namespace Microsoft.DotNet.Arcade.Sdk;
 /// Finds a license file in the given directory.
 /// File is considered a license file if its name matches 'license(.txt|.md|)', ignoring case.
 /// </summary>
-public class GetLicenseFilePath : Microsoft.Build.Utilities.Task
+[MSBuildMultiThreadableTask]
+public class GetLicenseFilePath : Task, IMultiThreadableTask
 {
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
     /// <summary>
     /// Full path to the directory to search for the license file.
     /// </summary>
@@ -40,8 +44,10 @@ public class GetLicenseFilePath : Microsoft.Build.Utilities.Task
 
         options.AttributesToSkip |= FileAttributes.Directory;
 
+        AbsolutePath directory = TaskEnvironment.GetAbsolutePath(Directory);
+
         IEnumerable<string> enumerateFiles(string extension) =>
-            System.IO.Directory.EnumerateFileSystemEntries(Directory, fileName + extension, options);
+            System.IO.Directory.EnumerateFileSystemEntries(directory, fileName + extension, options);
 
         var matches = 
             (from extension in new[] { ".txt", ".md", "" }
