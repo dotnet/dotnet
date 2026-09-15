@@ -24,6 +24,7 @@
     <DownloadFromResultsContainer
         Condition="$(_shouldDownloadResults)"
         AccessToken="$(HelixAccessToken)"
+        UseEntraAuthentication="$(HelixUseEntraAuthentication)"
         WorkItems="@(_workItemsWithDownloadMetadata)"
         OutputDirectory="$(HelixResultsDestinationDir)"
         MetadataToWrite="@(HelixDownloadResultsMetadata)"

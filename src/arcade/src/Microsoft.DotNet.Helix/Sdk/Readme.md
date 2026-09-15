@@ -27,7 +27,17 @@ Versions of the package can be found by browsing the feed at https://dev.azure.c
 
 ### Developing Helix SDK
 
-The examples can all be run with `dotnet msbuild` and will require an environment variable or MSBuildProperty `HelixAccessToken` set if a queue with a value of IsInternalOnly=true (usually any not ending in '.Open') is selected for `HelixTargetQueues`. You will also need to set the following environment variables before building:
+The examples can all be run with `dotnet msbuild`. Internal queues (usually any queue not ending in `.Open`) require either:
+
+- `HelixUseEntraAuthentication=true` with an available `DefaultIdentityTokenCredential`, or
+- the legacy `HelixAccessToken` environment variable or MSBuild property.
+
+When Entra authentication is explicitly enabled, any legacy access token still
+injected by an existing variable group is ignored with a warning. Entra
+authentication supports Azure Pipelines workload identity, managed identity,
+and Azure CLI credentials and refreshes access tokens based on their expiry.
+
+You will also need to set the following environment variables before building:
 
 ```
 BUILD_SOURCEBRANCH
@@ -75,7 +85,9 @@ jobs:
 Useful parameters:
 
 - `helixBaseUri`: base URI for the Helix service. Defaults to `https://helix.dot.net/`.
-- `helixAccessToken`: optional token for authenticated Helix access on internal builds.
+- `helixAccessToken`: optional token for authenticated Helix access on internal builds; ignored with a warning when `useEntraAuthentication` is enabled.
+- `useEntraAuthentication`: use a refreshable Entra credential for authenticated Helix access.
+- `azureSubscription`: Azure service connection ID authorized for Helix; required when `useEntraAuthentication` is enabled.
 - `pollingIntervalSeconds`: how often the job monitor checks for new completed jobs.
 - `timeoutInMinutes`: overall timeout for the job monitor.
 - `continueOnError`: allow the pipeline to continue when the monitor job fails. Defaults to `false`.
