@@ -396,24 +396,12 @@ TEST(PrintCharTest, UnsignedChar) {
   EXPECT_EQ("'b' (98, 0x62)", Print(static_cast<unsigned char>('b')));
 }
 
-TEST(PrintCharTest, Char16) {
-  EXPECT_EQ("U+0041", Print(u'A'));
-  EXPECT_EQ("U+754C", Print(u'界'));
-  // Surrogates are not code points, so they are printed as code units.
-  EXPECT_EQ("u'\\xD800' (55296)", Print(static_cast<char16_t>(0xD800)));
-  EXPECT_EQ("u'\\xDFFF' (57343)", Print(static_cast<char16_t>(0xDFFF)));
-}
+TEST(PrintCharTest, Char16) { EXPECT_EQ("U+0041", Print(u'A')); }
 
 TEST(PrintCharTest, Char32) { EXPECT_EQ("U+0041", Print(U'A')); }
 
 #ifdef __cpp_lib_char8_t
-TEST(PrintCharTest, Char8) {
-  EXPECT_EQ("U+0041", Print(u8'A'));
-  // Only ASCII code units encode a code point on their own; the rest are
-  // printed as code units.
-  EXPECT_EQ("u8'\\x80' (128)", Print(static_cast<char8_t>(0x80)));
-  EXPECT_EQ("u8'\\xFF' (255)", Print(static_cast<char8_t>(0xFF)));
-}
+TEST(PrintCharTest, Char8) { EXPECT_EQ("U+0041", Print(u8'A')); }
 #endif
 
 // Tests printing other simple, built-in types.
@@ -468,7 +456,7 @@ TEST(PrintBuiltInTypeTest, Integer) {
 #ifdef __cpp_lib_char8_t
   EXPECT_EQ("U+0000",
             Print(std::numeric_limits<char8_t>::min()));  // char8_t
-  EXPECT_EQ("u8'\\xFF' (255)",
+  EXPECT_EQ("U+00FF",
             Print(std::numeric_limits<char8_t>::max()));  // char8_t
 #endif
   EXPECT_EQ("U+0000",
@@ -660,8 +648,13 @@ TEST(PrintU32StringTest, EscapesProperly) {
             Print(p));
 }
 
-#if GTEST_HAS_NATIVE_WCHAR
-#if GTEST_HAS_STD_WSTRING
+// MSVC compiler can be configured to define whar_t as a typedef
+// of unsigned short. Defining an overload for const wchar_t* in that case
+// would cause pointers to unsigned shorts be printed as wide strings,
+// possibly accessing more memory than intended and causing invalid
+// memory accesses. MSVC defines _NATIVE_WCHAR_T_DEFINED symbol when
+// wchar_t is implemented as a native type.
+#if !defined(_MSC_VER) || defined(_NATIVE_WCHAR_T_DEFINED)
 
 // const wchar_t*.
 TEST(PrintWideCStringTest, Const) {
@@ -692,8 +685,7 @@ TEST(PrintWideCStringTest, EscapesProperly) {
                 "\\n\\r\\t\\v\\xD3\\x576\\x8D3\\xC74D a\"",
             Print(static_cast<const wchar_t*>(s)));
 }
-#endif  // GTEST_HAS_STD_WSTRING
-#endif  // GTEST_HAS_NATIVE_WCHAR
+#endif  // native wchar_t
 
 // Tests printing pointers to other char types.
 
