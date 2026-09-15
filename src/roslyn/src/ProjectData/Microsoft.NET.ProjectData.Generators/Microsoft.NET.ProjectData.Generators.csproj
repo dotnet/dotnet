@@ -21,12 +21,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\Dependencies\Contracts\IsExternalInit.cs" />
+    <Compile Include="..\..\Dependencies\Contracts\IsExternalInit.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
     <PackageReference Include="System.Text.Json" PrivateAssets="all" />
   </ItemGroup>
