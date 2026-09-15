@@ -427,21 +427,20 @@ class [[nodiscard]] OnceAction<Result(Args...)> final {
   // via StdFunctionAdaptor.
   template <typename Callable>
   using IsDirectlyCompatible = internal::conjunction<
-      // It must be possible to capture the callable in StdFunctionAdaptor.
-      std::is_constructible<typename std::decay<Callable>::type, Callable>,
       // The callable must be compatible with our signature.
-      internal::is_callable_r<Result, typename std::decay<Callable>::type,
-                              Args...>>;
+      internal::is_callable_r<Result, std::decay_t<Callable>, Args...>,
+      // It must be possible to capture the callable in StdFunctionAdaptor.
+      std::is_constructible<std::decay_t<Callable>, Callable>>;
 
   // True iff we can use the given callable type via StdFunctionAdaptor once we
   // ignore incoming arguments.
   template <typename Callable>
   using IsCompatibleAfterIgnoringArguments = internal::conjunction<
-      // It must be possible to capture the callable in a lambda.
-      std::is_constructible<typename std::decay<Callable>::type, Callable>,
       // The callable must be invocable with zero arguments, returning something
       // convertible to Result.
-      internal::is_callable_r<Result, typename std::decay<Callable>::type>>;
+      internal::is_callable_r<Result, std::decay_t<Callable>>,
+      // It must be possible to capture the callable in a lambda.
+      std::is_constructible<std::decay_t<Callable>, Callable>>;
 
  public:
   // Construct from a callable that is directly compatible with our mocked
@@ -1331,22 +1330,6 @@ struct InvokeMethodAction {
   }
 };
 
-// Implements the InvokeWithoutArgs(f) action.  The template argument
-// FunctionImpl is the implementation type of f, which can be either a
-// function pointer or a functor.  InvokeWithoutArgs(f) can be used as an
-// Action<F> as long as f's type is compatible with F.
-template <typename FunctionImpl>
-struct InvokeWithoutArgsAction {
-  FunctionImpl function_impl;
-
-  // Allows InvokeWithoutArgs(f) to be used as any action whose type is
-  // compatible with f.
-  template <typename... Args>
-  auto operator()(const Args&...) -> decltype(function_impl()) {
-    return function_impl();
-  }
-};
-
 // Implements the InvokeWithoutArgs(object_ptr, &Class::Method) action.
 template <class Class, typename MethodPtr>
 struct InvokeMethodWithoutArgsAction {
@@ -2070,9 +2053,11 @@ internal::InvokeMethodAction<Class, MethodPtr> Invoke(Class* obj_ptr,
 
 // Creates an action that invokes 'function_impl' with no argument.
 template <typename FunctionImpl>
-internal::InvokeWithoutArgsAction<typename std::decay<FunctionImpl>::type>
-InvokeWithoutArgs(FunctionImpl function_impl) {
-  return {std::move(function_impl)};
+GTEST_INTERNAL_DEPRECATE_AND_INLINE(
+    "Actions can now be implicitly constructed from zero-argument callables. "
+    "No need to create wrapper objects using InvokeWithoutArgs().")
+std::decay_t<FunctionImpl> InvokeWithoutArgs(FunctionImpl&& function_impl) {
+  return std::forward<FunctionImpl>(function_impl);
 }
 
 // Creates an action that invokes the given method on the given object
