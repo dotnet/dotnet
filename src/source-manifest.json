@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 331550,
+      "barId": 332071,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "626a634a573998062c6ec7056341d8b9e63c109b"
+      "commitSha": "3302f63d37a3b7f1203590a7ee39c4670bcc7c52"
     },
     {
       "barId": 332010,
@@ -79,10 +79,10 @@
       "commitSha": "0090e56ff391f9e53bb1aadad5a5fcecd4fbeac3"
     },
     {
-      "barId": 330770,
+      "barId": 331904,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "286cb59f5fc4d17756329154d1c5bac6cb23694c"
+      "commitSha": "f4382f62e440af1f3dcd78f1db1f43191d11bd47"
     },
     {
       "barId": 331921,

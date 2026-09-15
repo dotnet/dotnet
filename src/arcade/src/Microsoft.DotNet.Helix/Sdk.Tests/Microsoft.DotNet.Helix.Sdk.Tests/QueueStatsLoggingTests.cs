@@ -10,6 +10,27 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests;
 
 public class QueueStatsLoggingTests
 {
+    [Theory]
+    [InlineData(true, null, null, null)]
+    [InlineData(true, "legacy-token", null, null)]
+    [InlineData(true, null, "creator", "Creator is forbidden when using authenticated access.")]
+    [InlineData(false, "legacy-token", "creator", "Creator is forbidden when using authenticated access.")]
+    [InlineData(false, null, null, "Creator is required when using anonymous access.")]
+    [InlineData(false, null, "creator", null)]
+    public void CreatorValidationRecognizesEntraAsAuthenticated(
+        bool useEntraAuthentication,
+        string accessToken,
+        string creator,
+        string expectedError)
+    {
+        Assert.Equal(
+            expectedError,
+            SendHelixJob.GetCreatorValidationError(
+                useEntraAuthentication,
+                accessToken,
+                creator));
+    }
+
     // Exercises the callback pair SendHelixJob hands to JobDefinition.SendAsync. Routine
     // submission progress must always stay at Normal; the opt-in queue-health summary must be
     // elevated to High only when EnableShowHelixQueueStats is set, so it survives the default
