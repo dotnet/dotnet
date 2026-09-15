@@ -2,6 +2,10 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="roslyn" Sha="c65c25f0c9889e06a5d70e275c741d8430fa353a" BarId="331079" />
   <ProductDependencies>
+    <Dependency Name="NuGet.Versioning" Version="6.14.3">
+      <Uri>https://github.com/NuGet/NuGet.Client</Uri>
+      <Sha>13eeb32d62833984c9367f8f4e22a120ebc03b47</Sha>
+    </Dependency>
     <!-- RoslynAnalyzers reference older builds of Roslyn and this is necessary for SourceBuild. -->
     <Dependency Name="Microsoft.CodeAnalysis" Version="5.12.0-1.26428.6">
       <Uri>https://github.com/dotnet/roslyn</Uri>
