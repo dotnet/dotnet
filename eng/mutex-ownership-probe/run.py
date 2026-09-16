@@ -27,6 +27,16 @@ def main():
     sdk = args.sdk.resolve()
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
+    results = [
+        {"mode": label, "status": "notStarted", "exitCode": None}
+        for label in ("initially-owned", "explicit-wait")
+    ]
+    results_path = output / "results.json"
+
+    def save_results():
+        results_path.write_text(json.dumps(results, indent=2), encoding="utf-8")
+
+    save_results()
     host = sdk / ("dotnet.exe" if os.name == "nt" else "dotnet")
     compiler = single(sdk.glob("sdk/*/Roslyn/bincore/csc.dll"), "compiler")
     runtime = single((sdk / "shared" / "Microsoft.NETCore.App").iterdir(), "runtime")
@@ -57,19 +67,24 @@ def main():
         "runtimeOptions": {"framework": {"name": "Microsoft.NETCore.App", "version": runtime.name},
                            "rollForward": "Disable"}
     }), encoding="utf-8")
-    results = []
-    for initially_owned in (True, False):
-        label = "initially-owned" if initially_owned else "explicit-wait"
+    for initially_owned, record in zip((True, False), results):
+        label = record["mode"]
+        record["status"] = "running"
+        save_results()
         with (output / (label + ".log")).open("w", encoding="utf-8") as log:
-            result = subprocess.run(
-                [str(host), str(assembly), str(args.seconds), str(initially_owned)],
-                cwd=str(output), env=env, stdout=log, stderr=subprocess.STDOUT,
-                timeout=args.seconds + 100)
+            try:
+                result = subprocess.run(
+                    [str(host), str(assembly), str(args.seconds), str(initially_owned)],
+                    cwd=str(output), env=env, stdout=log, stderr=subprocess.STDOUT,
+                    timeout=args.seconds + 100)
+                record.update(status="completed", exitCode=result.returncode)
+            except subprocess.TimeoutExpired:
+                record.update(status="timedOut", timeoutSeconds=args.seconds + 100)
+                log.write("\nProbe exceeded its subprocess time budget.\n")
+        save_results()
         text = (output / (label + ".log")).read_text(encoding="utf-8")
-        print("{} (exit {}):\n{}".format(label, result.returncode, text), flush=True)
-        results.append({"mode": label, "exitCode": result.returncode})
-    (output / "results.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
-    return 0 if all(r["exitCode"] == 0 for r in results) else 1
+        print("{} ({}; exit {}):\n{}".format(label, record["status"], record["exitCode"], text), flush=True)
+    return 0 if all(r["status"] == "completed" and r["exitCode"] == 0 for r in results) else 1
 
 
 if __name__ == "__main__":
