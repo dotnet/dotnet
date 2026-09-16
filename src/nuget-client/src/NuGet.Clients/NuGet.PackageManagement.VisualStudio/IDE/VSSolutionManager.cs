@@ -207,13 +207,9 @@ namespace NuGet.PackageManagement.VisualStudio
             UserAgent.SetUserAgentString(
                     new UserAgentStringBuilder(VSNuGetClientName).WithVisualStudioSKU(dte.GetFullVsVersionString()));
 
-            HttpHandlerResourceV3.CredentialService = new Lazy<ICredentialService>(() =>
-            {
-                return NuGetUIThreadHelper.JoinableTaskFactory.Run(async () =>
-                {
-                    return await _credentialServiceProvider.GetCredentialServiceAsync();
-                });
-            });
+            HttpHandlerResourceV3.CredentialService = CreateCredentialService(
+                _credentialServiceProvider.GetCredentialServiceAsync,
+                NuGetUIThreadHelper.JoinableTaskFactory);
 
             _vsMonitorSelection = await _asyncServiceProvider.GetServiceAsync<SVsShellMonitorSelection, IVsMonitorSelection>();
 
@@ -259,6 +255,22 @@ namespace NuGet.PackageManagement.VisualStudio
             _solutionSaveAsEvent.AfterExecute += SolutionSaveAs_AfterExecute;
 
             _projectSystemCache.CacheUpdated += NuGetCacheUpdate_After;
+        }
+
+        internal static Lazy<ICredentialService> CreateCredentialService(
+            Func<Task<ICredentialService>> credentialServiceFactory,
+            JoinableTaskFactory joinableTaskFactory)
+        {
+            Assumes.Present(joinableTaskFactory);
+
+            var credentialService = new Microsoft.VisualStudio.Threading.AsyncLazy<ICredentialService>(
+                credentialServiceFactory,
+                joinableTaskFactory);
+
+            // Allow each caller to join the AsyncLazy task instead of blocking on the outer Lazy's monitor.
+            return new Lazy<ICredentialService>(
+                credentialService.GetValue,
+                LazyThreadSafetyMode.PublicationOnly);
         }
 
         private void UpdateSolutionDirectory()
