@@ -642,8 +642,7 @@
                           $(ArtifactsAssetsDir)" />
 
     <!-- Create directories for extra debugging. -->
-    <MakeDir Directories="$(MSBuildDebugPathTargetDir);
-                          $(RoslynDebugPathTargetDir);
+    <MakeDir Directories="$(RoslynDebugPathTargetDir);
                           $(AspNetRazorBuildServerLogDir)"
              Condition="'$(EnableExtraDebugging)' == 'true'" />
 

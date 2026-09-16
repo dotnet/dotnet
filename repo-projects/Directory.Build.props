@@ -184,7 +184,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(EnableExtraDebugging)' == 'true'">
-    <MSBuildDebugPathTargetDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'msbuild-debug'))</MSBuildDebugPathTargetDir>
+    <!-- MSBuild's own debug output (MSBUILDDEBUGCOMM traces, 'MSBuild_*.failure.txt') is directed to
+         MSBUILDDEBUGPATH below, which points at the per-repo log directory so that CI publishes it. -->
     <RoslynDebugPathTargetDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'roslyn-debug'))</RoslynDebugPathTargetDir>
 
     <AspNetRazorBuildServerLogDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'aspnet-debug'))</AspNetRazorBuildServerLogDir>
