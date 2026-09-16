@@ -173,6 +173,10 @@ parameters:
   type: boolean
   default: false
 
+- name: enableAstred
+  type: boolean
+  default: false
+
 # Source Index: name for the uploaded source index bundle (e.g., 'dotnet-dotnet').
 # When set, processes per-repo Build.binlog files and uploads SLN data.
 - name: sourceIndexName
@@ -257,6 +261,13 @@ jobs:
   - ${{ else }}:
     - name: sourcesPath
       value: $(vmrPath)
+
+  - ${{ if and(parameters.enableAstred, parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: MSBUILDDEBUGENGINE
+      value: 1
+    # Child builds override MSBUILDDEBUGPATH with per-repo directories beneath this root.
+    - name: MSBUILDDEBUGPATH
+      value: $(sourcesPath)/artifacts/log/${{ parameters.configuration }}
 
   - name: artifactsStagingDir
     value: $(Build.ArtifactStagingDirectory)/artifacts
@@ -1031,6 +1042,13 @@ jobs:
         logsPath: $(sourcesPath)/artifacts/log/Release
         excludeRepos: ${{ parameters.sourceIndexExcludeRepos }}
         includeRepos: ${{ parameters.sourceIndexIncludeRepos }}
+
+  - ${{ if and(parameters.enableAstred, parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    # Use the current Arcade template rather than the older bootstrap copy in eng/common.
+    - template: /src/arcade/eng/common/core-templates/steps/astred-artifacts.yml
+      parameters:
+        sourcesPath: $(sourcesPath)
+        binlogDir: $(MSBUILDDEBUGPATH)
 
   # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2
