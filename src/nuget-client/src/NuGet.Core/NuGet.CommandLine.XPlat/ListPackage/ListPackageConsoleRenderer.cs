@@ -98,7 +98,7 @@ namespace NuGet.CommandLine.XPlat.ListPackage
 
                 if (project.ProjectProblems?.Any(p => p.ProblemType == ProblemType.Error) == true)
                 {
-                    return;
+                    continue;
                 }
 
                 if (project.TargetFrameworkPackages == null)

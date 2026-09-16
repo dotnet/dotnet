@@ -392,7 +392,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>Sources to lookup for latest versions. Works only with `--outdated`.</value>
   </data>
   <data name="Error_NotPRProject" xml:space="preserve">
-    <value>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</value>
+    <value>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</value>
+    <comment>{0} - Path to the project with the error, {Locked="PackageReference"}</comment>
   </data>
   <data name="ListPkg_ErrorReadingAssetsFile" xml:space="preserve">
     <value>Unable to read the assets file `{0}`. Make sure the file has the correct format.</value>
