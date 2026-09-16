@@ -22,10 +22,9 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <!-- TaskAnalyzer's released Roslyn packages are prebuilts. Use the N-1 SDK Roslyn because
-         live Roslyn is newer than the executing compiler and causes CS9057. -->
-    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
-    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
+    <!-- Use source-built Roslyn 4.14 so TaskAnalyzer remains loadable by older compilers. -->
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="4.14.0-3.25210.103" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="4.14.0-3.25210.103" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisAnalyzersVersion" Version="%24(MicrosoftCodeAnalysisAnalyzersPreviousVersion)" />
   </ItemGroup>
 

@@ -73,7 +73,7 @@
   </ItemGroup>
 
   <!-- TaskAnalyzer uses released Roslyn packages by default.
-       Source-only builds use the N-1 SDK Roslyn to avoid CS9057. -->
+       Source-only builds use source-built Roslyn 4.14 for compiler compatibility. -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
     <PackageVersion Update="Microsoft.CodeAnalysis.CSharp" Condition="'$(Analyzer_MicrosoftCodeAnalysisCSharpVersion)' != ''" Version="$(Analyzer_MicrosoftCodeAnalysisCSharpVersion)" />
