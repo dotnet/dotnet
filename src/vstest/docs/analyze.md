@@ -162,7 +162,7 @@ In TPv2, DataCollectors are loaded from `TestAdaptersPaths` specified in runSett
 
 Code coverage can be collected from the command line with `dotnet test` or from Visual Studio Test Explorer. For current .NET projects, choose the collector that matches your platform and report format needs:
 
-- `dotnet test --collect "Code Coverage"` uses the built-in Visual Studio code coverage collector. It produces Visual Studio coverage output and is supported on Windows.
+- `dotnet test --collect "Code Coverage"` uses the Microsoft.CodeCoverage collector included with Microsoft.NET.Test.Sdk. It supports .NET code coverage on Windows, Linux, and macOS; see the [supported operating systems and architectures](https://github.com/microsoft/codecoverage/blob/main/docs/supported-os.md) for details.
 - `dotnet test --collect "XPlat Code Coverage"` uses the cross-platform Coverlet collector (requires the `coverlet.collector` NuGet package). It works on Windows, Linux, and macOS and produces coverage files such as Cobertura XML.
 
 For complete command-line examples, package requirements, report generation, and customization options, see [Unit testing code coverage for .NET](https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage).
