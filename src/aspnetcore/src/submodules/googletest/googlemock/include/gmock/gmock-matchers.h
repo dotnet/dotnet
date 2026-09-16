@@ -277,13 +277,6 @@
 #include "gtest/gtest.h"
 #include "gtest/internal/gtest-internal.h"
 
-// MSVC warning C5046 is new as of VS2017 version 15.8.
-#if defined(_MSC_VER) && _MSC_VER >= 1915
-#define GMOCK_MAYBE_5046_ 5046
-#else
-#define GMOCK_MAYBE_5046_
-#endif
-
 #if GTEST_HAS_RTTI
 namespace proto2 {
 namespace internal {
@@ -323,8 +316,8 @@ T* DynamicCastMessageForGtest(proto2::MessageLite* msg) {
 #endif  // GTEST_HAS_RTTI
 
 GTEST_DISABLE_MSC_WARNINGS_PUSH_(
-    4251 GMOCK_MAYBE_5046_ /* class A needs to have dll-interface to be used by
-                              clients of class B */
+    // class A needs to have dll-interface to be used by clients of class B
+    4251 5046
     /* Symbol involving type with internal linkage not defined */)
 
 namespace testing {
@@ -3971,8 +3964,8 @@ class [[nodiscard]] UnorderedElementsAreMatcherImpl
   }
 
  private:
-  template <typename ElementIter>
-  MatchMatrix AnalyzeElements(ElementIter elem_first, ElementIter elem_last,
+  template <typename ElementIter, typename ElementIterEnd>
+  MatchMatrix AnalyzeElements(ElementIter elem_first, ElementIterEnd elem_last,
                               ::std::vector<std::string>* element_printouts,
                               MatchResultListener* listener) const {
     element_printouts->clear();
@@ -4538,7 +4531,7 @@ class [[nodiscard]] ArgsMatcherImpl : public MatcherInterface<ArgsTuple> {
 
   bool MatchAndExplain(ArgsTuple args,
                        MatchResultListener* listener) const override {
-    // Workaround spurious C4100 on MSVC<=15.7 when k is empty.
+    // Workaround spurious GCC warning when k is empty.
     (void)args;
     const SelectedArgs& selected_args =
         std::forward_as_tuple(std::get<k>(args)...);
@@ -4571,7 +4564,7 @@ class [[nodiscard]] ArgsMatcherImpl : public MatcherInterface<ArgsTuple> {
   static void PrintIndices(::std::ostream* os) {
     *os << "whose fields (";
     const char* sep = "";
-    // Workaround spurious C4189 on MSVC<=15.7 when k is empty.
+    // Workaround spurious GCC warning when k is empty.
     (void)sep;
     // The static_cast to void is needed to silence Clang's -Wcomma warning.
     // This pattern looks suspiciously like we may have mismatched parentheses
