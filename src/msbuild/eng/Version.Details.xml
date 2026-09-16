@@ -104,26 +104,18 @@
       <Sha>
       </Sha>
     </Dependency>
-    <!-- Source-built Roslyn packages used to build TaskAnalyzer. -->
+    <!-- Previously source-built Roslyn packages used to build TaskAnalyzer. -->
     <Dependency Name="Microsoft.CodeAnalysis.Analyzers" Version="5.11.0-1.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.Common" Version="4.14.0-3.25210.103">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="5.11.0-1.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>828de040c57fc492ae7288950f9c4a54e6a18429</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.14.0-3.25210.103">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.11.0-1.26420.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>828de040c57fc492ae7288950f9c4a54e6a18429</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0-3.25210.103">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>828de040c57fc492ae7288950f9c4a54e6a18429</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.14.0-3.25210.103">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>828de040c57fc492ae7288950f9c4a54e6a18429</Sha>
+      <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
