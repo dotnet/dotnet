@@ -27,13 +27,15 @@ stages:
         buildVersionToDownload: specific
         pipelineId: ${{ parameters.sdkBuildId }}
         artifactName: SB_Fedora43_Offline_MsftSdk_x64_Artifacts
-        itemPattern: '**/dotnet-sdk-*.tar.gz'
+        itemPattern: 'assets/Release/dotnet-sdk-12.0.100-ci-fedora.43-x64.tar.gz'
         targetPath: $(Agent.TempDirectory)/mutex-sdk-download
     - bash: |
         set -euo pipefail
+        mkdir -p "$OUTPUT"
         mapfile -t archives < <(find "$DOWNLOAD" -name 'dotnet-sdk-*.tar.gz' -type f)
         if [[ ${#archives[@]} -ne 1 ]]; then
           echo "Expected exactly one source-built SDK archive, found ${#archives[@]}"
+          printf '%s\n' "${archives[@]}" | tee "$OUTPUT/unexpected-archives.txt"
           exit 1
         fi
         mkdir -p "$SDK" "$OUTPUT"
