@@ -19,6 +19,7 @@
   -->
   <PropertyGroup>
     <EnableHelixJobMonitor Condition="'$(EnableHelixJobMonitor)' != 'true'">false</EnableHelixJobMonitor>
+    <HelixUseEntraAuthentication Condition="'$(HelixUseEntraAuthentication)' == ''">false</HelixUseEntraAuthentication>
   </PropertyGroup>
 
   <!--
