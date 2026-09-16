@@ -3,6 +3,9 @@ using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using Microsoft.Build.Framework;
+#if !DOTNET_BUILD_SOURCE_ONLY && !NETFRAMEWORK
+using Microsoft.DotNet.ArcadeAzureIntegration;
+#endif
 using Microsoft.DotNet.Helix.Client;
 
 namespace Microsoft.DotNet.Helix.Sdk
@@ -22,6 +25,11 @@ namespace Microsoft.DotNet.Helix.Sdk
         public string AccessToken { get; set; }
 
         /// <summary>
+        /// Use a refreshable Entra credential instead of anonymous or PAT authentication.
+        /// </summary>
+        public bool UseEntraAuthentication { get; set; }
+
+        /// <summary>
         ///   If <see langword="true"/>, fail when posting jobs to non-existent queues; If <see langword="false"/> allow it and print a warning.
         ///   Note if an MSBuild sequence starts and waits on jobs, and none are started, this will still fail.
         ///   Defined on HelixTask so the catch block around Execute() can know about it.
@@ -34,14 +42,60 @@ namespace Microsoft.DotNet.Helix.Sdk
 
         private IHelixApi GetHelixApi()
         {
+            if (UseEntraAuthentication && !string.IsNullOrEmpty(AccessToken))
+            {
+                Log.LogWarning(
+                    "HelixAccessToken is set but ignored because HelixUseEntraAuthentication is enabled.");
+            }
+
+            if (UseEntraAuthentication)
+            {
+                Log.LogMessage(MessageImportance.Low, "Authenticating to helix api using a refreshable Entra credential.");
+                return CreateHelixApi(
+                    BaseUri,
+                    AccessToken,
+                    UseEntraAuthentication,
+                    () => CreateEntraHelixApi(BaseUri));
+            }
+
             if (string.IsNullOrEmpty(AccessToken))
             {
                 Log.LogMessage(MessageImportance.Low, "No AccessToken provided, using anonymous access to helix api.");
-                return ApiFactory.GetAnonymous(BaseUri);
+            }
+            else
+            {
+                Log.LogMessage(MessageImportance.Low, "Authenticating to helix api using provided AccessToken");
             }
 
-            Log.LogMessage(MessageImportance.Low, "Authenticating to helix api using provided AccessToken");
-            return ApiFactory.GetAuthenticated(BaseUri, AccessToken);
+            return CreateHelixApi(BaseUri, AccessToken, UseEntraAuthentication, entraApiFactory: null);
+        }
+
+        internal static IHelixApi CreateHelixApi(
+            string baseUri,
+            string accessToken,
+            bool useEntraAuthentication,
+            Func<IHelixApi> entraApiFactory)
+        {
+            if (useEntraAuthentication)
+            {
+                return entraApiFactory();
+            }
+
+            return string.IsNullOrEmpty(accessToken)
+                ? ApiFactory.GetAnonymous(baseUri)
+                : ApiFactory.GetAuthenticated(baseUri, accessToken);
+        }
+
+        private static IHelixApi CreateEntraHelixApi(string baseUri)
+        {
+#if DOTNET_BUILD_SOURCE_ONLY || NETFRAMEWORK
+            throw new PlatformNotSupportedException(
+                "Helix Entra authentication is not available in source-build or .NET Framework MSBuild.");
+#else
+            return ApiFactory.GetAuthenticatedWithEntra(
+                baseUri,
+                new DefaultIdentityTokenCredential());
+#endif
         }
 
         public void Cancel()
@@ -59,7 +113,11 @@ namespace Microsoft.DotNet.Helix.Sdk
             }
             catch (RestApiException ex) when (ex.Response.Status == (int)HttpStatusCode.Unauthorized)
             {
-                Log.LogError(FailureCategory.Build, "Helix operation returned 'Unauthorized'. Did you forget to set HelixAccessToken?");
+                Log.LogError(
+                    FailureCategory.Build,
+                    UseEntraAuthentication
+                        ? "Helix operation returned 'Unauthorized'. Verify that the configured Entra identity is authorized for Helix."
+                        : "Helix operation returned 'Unauthorized'. Did you forget to set HelixAccessToken?");
             }
             catch (RestApiException ex) when (ex.Response.Status == (int)HttpStatusCode.Forbidden)
             {
