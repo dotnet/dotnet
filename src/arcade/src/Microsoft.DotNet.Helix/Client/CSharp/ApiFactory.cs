@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using Azure.Core;
 
 namespace Microsoft.DotNet.Helix.Client;
 
@@ -18,6 +19,18 @@ public static class ApiFactory
     public static IHelixApi GetAuthenticated(string accessToken)
     {
         return new HelixApi(new HelixApiOptions(new HelixApiTokenCredential(accessToken)));
+    }
+
+    /// <summary>
+    /// Obtains an API client using an Entra credential for authenticated access to internal queues.
+    /// The client requests the production Helix API scope and refreshes tokens based on their expiry.
+    /// </summary>
+    public static IHelixApi GetAuthenticatedWithEntra(TokenCredential credential)
+    {
+        return new HelixApi(new HelixApiOptions(
+            new Uri("https://helix.dot.net/"),
+            ValidateEntraCredential(credential),
+            new[] { HelixApiOptions.ProductionScope }));
     }
 
     /// <summary>
@@ -47,6 +60,33 @@ public static class ApiFactory
     }
 
     /// <summary>
+    /// Obtains an API client using an Entra credential for authenticated access to the provided Helix instance.
+    /// Production and staging scopes are selected from the base URI.
+    /// </summary>
+    public static IHelixApi GetAuthenticatedWithEntra(string baseUri, TokenCredential credential)
+    {
+        var uri = new Uri(baseUri);
+        return new HelixApi(new HelixApiOptions(
+            uri,
+            ValidateEntraCredential(credential),
+            new[] { HelixApiOptions.GetDefaultScope(uri) }));
+    }
+
+    /// <summary>
+    /// Obtains an API client using an Entra credential and explicit scope for a custom Helix instance.
+    /// </summary>
+    public static IHelixApi GetAuthenticatedWithEntra(
+        string baseUri,
+        TokenCredential credential,
+        string scope)
+    {
+        return new HelixApi(new HelixApiOptions(
+            new Uri(baseUri),
+            ValidateEntraCredential(credential),
+            new[] { scope }));
+    }
+
+    /// <summary>
     /// Obtains API client for unauthenticated access to external queues.
     /// The client will access Helix instance at the provided URI.
     /// </summary>
@@ -57,5 +97,22 @@ public static class ApiFactory
     public static IHelixApi GetAnonymous(string baseUri)
     {
         return new HelixApi(new HelixApiOptions(new Uri(baseUri)));
+    }
+
+    private static TokenCredential ValidateEntraCredential(TokenCredential credential)
+    {
+        if (credential == null)
+        {
+            throw new ArgumentNullException(nameof(credential));
+        }
+
+        if (credential is HelixApiTokenCredential)
+        {
+            throw new ArgumentException(
+                "HelixApiTokenCredential represents a PAT. Use GetAuthenticated(...) for PAT authentication.",
+                nameof(credential));
+        }
+
+        return credential;
     }
 }
