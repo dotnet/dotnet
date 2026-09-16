@@ -305,7 +305,7 @@ def run(args):
                             package.write(str(path), path.name)
                 job = os.environ.get("AGENT_JOBNAME")
                 if job:
-                    print(f"##vso[artifact.upload containerfolder=experiment;artifactname={job}_Experiment;]{archive}", flush=True)
+                    print(f"##vso[artifact.upload containerfolder=experiment/{job};artifactname={job}_Experiment;]{archive}", flush=True)
                 if args.stop_at_checkpoint:
                     cutoff = True
                     metadata["cutoffObservedSeconds"] = elapsed
