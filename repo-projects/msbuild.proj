@@ -23,8 +23,8 @@
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <!-- Use source-built Roslyn 4.14 so TaskAnalyzer remains loadable by older compilers. -->
-    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="4.14.0-3.25210.103" />
-    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="4.14.0-3.25210.103" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisAnalyzersVersion" Version="%24(MicrosoftCodeAnalysisAnalyzersPreviousVersion)" />
   </ItemGroup>
 
