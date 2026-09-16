@@ -125,6 +125,9 @@ def snapshot(output, root, known, label):
         "utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "processes": table,
     })
+    if sys.platform == "darwin":
+        diagnostic_command(["vm_stat"], output / f"memory-{label}.txt", timeout=5)
+        diagnostic_command(["sysctl", "vm.swapusage"], output / f"swap-{label}.txt", timeout=5)
     return table
 
 
@@ -264,6 +267,10 @@ def run(args):
     args.output.mkdir(parents=True, exist_ok=True)
     # Fail before starting a build if this image cannot provide process diagnostics.
     process_table()
+    if sys.platform == "darwin":
+        diagnostic_command(
+            ["sysctl", "hw.model", "hw.memsize", "hw.physicalcpu", "hw.logicalcpu",
+             "machdep.cpu.brand_string"], args.output / "host-info.txt", timeout=10)
     started = time.monotonic()
     metadata = {
         "startUtc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
