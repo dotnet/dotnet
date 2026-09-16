@@ -77,6 +77,8 @@
     <WaitForHelixJobCompletion 
       Condition="$(WaitForWorkItemCompletion)"
       AccessToken="$(HelixAccessToken)"
+      UseEntraAuthentication="$(HelixUseEntraAuthentication)"
+      EntraScope="$(HelixEntraScope)"
       BaseUri="$(HelixBaseUri)"
       CancelHelixJobsOnTaskCancellation="$(CancelHelixJobsIfBuildCancelled)"
       Jobs="@(SentJob)" />
@@ -84,6 +86,8 @@
     <GetHelixWorkItems
       Condition="$(WaitForWorkItemCompletion)"
       AccessToken="$(HelixAccessToken)"
+      UseEntraAuthentication="$(HelixUseEntraAuthentication)"
+      EntraScope="$(HelixEntraScope)"
       BaseUri="$(HelixBaseUri)"
       Jobs="@(SentJob)">
       <Output TaskParameter="WorkItems" ItemName="CompletedWorkItem" />
@@ -100,6 +104,8 @@
     <CheckHelixJobStatus
       Condition="$(WaitForWorkItemCompletion)"
       AccessToken="$(HelixAccessToken)"
+      UseEntraAuthentication="$(HelixUseEntraAuthentication)"
+      EntraScope="$(HelixEntraScope)"
       BaseUri="$(HelixBaseUri)"
       Jobs="@(SentJob)"
       WorkItems="@(CompletedWorkItem)"
