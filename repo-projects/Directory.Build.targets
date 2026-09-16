@@ -47,10 +47,10 @@
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
 
-    <!-- MSBuild's multi-threaded mode is opt-in for now, so it's off unless it's explicitly requested.
+    <!-- MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI.
          Set DotNetBuildMT to explicitly opt in or out for all repo builds. Disable on VS msbuild for now. -->
     <CommonArgs Condition="'$(DotNetBuildMT)' == 'true' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
-    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false' or '$(ForceDotNetMSBuildEngine)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
   </PropertyGroup>
 
   <PropertyGroup>
