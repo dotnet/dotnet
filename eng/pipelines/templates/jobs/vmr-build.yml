@@ -669,7 +669,6 @@ jobs:
         $(_SignDiagnosticFilesArgs)
         ${{ parameters.extraProperties }}
       displayName: Build
-      timeoutInMinutes: 180
       workingDirectory: ${{ variables.sourcesPath }}
       ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
         env:
@@ -937,7 +936,6 @@ jobs:
             --cutoff $(experimentCutoffSeconds) \
             -- $customPreBuildArgs ./build.sh $buildArgs --excludeCIBinarylog /bl:artifacts/log/Release/1.binlog
         displayName: Build
-        timeoutInMinutes: 180
         workingDirectory: $(sourcesPath)
         ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
           env:

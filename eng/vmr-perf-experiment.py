@@ -27,6 +27,8 @@ def write_json(path, value):
 
 
 def setup(tools):
+    processes = process_table()
+    print(f"Process diagnostics available: {len(processes)} processes", flush=True)
     tools.mkdir(parents=True, exist_ok=True)
     url = ("https://api.nuget.org/v3-flatcontainer/dotnet-stack/"
            f"{STACK_VERSION}/dotnet-stack.{STACK_VERSION}.nupkg")
@@ -49,6 +51,27 @@ def setup(tools):
 
 
 def process_table():
+    if sys.platform.startswith("linux"):
+        processes = []
+        for directory in Path("/proc").iterdir():
+            if not directory.name.isdigit():
+                continue
+            try:
+                raw = (directory / "stat").read_text()
+                name_end = raw.rfind(")")
+                fields = raw[name_end + 2:].split()
+                command = os.fsdecode((directory / "cmdline").read_bytes().replace(b"\0", b" ")).strip()
+                processes.append({
+                    "pid": int(directory.name), "ppid": int(fields[1]),
+                    "name": raw[raw.find("(") + 1:name_end],
+                    "identity": fields[19], "cpu": int(fields[11]) + int(fields[12]),
+                    "rss": fields[21], "state": fields[0], "command": command,
+                })
+            except (FileNotFoundError, ProcessLookupError):
+                continue
+            except PermissionError as error:
+                print(f"Cannot inspect process {directory.name}: {error}", flush=True)
+        return processes
     if os.name == "nt":
         command = (
             "Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId,"
@@ -58,7 +81,8 @@ def process_table():
         )
         result = subprocess.run(
             ["powershell.exe", "-NoProfile", "-Command", command],
-            capture_output=True, text=True, check=True, timeout=30)
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            universal_newlines=True, check=True, timeout=30)
         return [{
             "pid": p["ProcessId"], "ppid": p["ParentProcessId"],
             "name": p["Name"], "command": p["CommandLine"] or "",
@@ -68,7 +92,8 @@ def process_table():
         } for p in json.loads(result.stdout)]
     result = subprocess.run(
         ["ps", "-axo", "pid=,ppid=,lstart=,time=,rss=,stat=,command="],
-        capture_output=True, text=True, check=True, timeout=30)
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        universal_newlines=True, check=True, timeout=30)
     processes = []
     for line in result.stdout.splitlines():
         fields = line.split(None, 10)
@@ -237,6 +262,8 @@ def stop_build(process, known, output):
 
 def run(args):
     args.output.mkdir(parents=True, exist_ok=True)
+    # Fail before starting a build if this image cannot provide process diagnostics.
+    process_table()
     started = time.monotonic()
     metadata = {
         "startUtc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -254,35 +281,52 @@ def run(args):
     process = subprocess.Popen(args.command, cwd=args.sources, shell=os.name == "nt", **creation)
     known = {}
     cutoff = False
-    while process.poll() is None:
-        elapsed = time.monotonic() - started
-        table = snapshot(args.output, process.pid, known, f"{int(elapsed):05}")
-        if elapsed >= args.cutoff:
-            cutoff = True
-            metadata["cutoffObservedSeconds"] = elapsed
-            print("##vso[task.logissue type=error]Experiment cutoff reached; capturing stacks before stopping the build.", flush=True)
-            deadline = time.monotonic() + 600
-            collect_stacks(args, table, 1, deadline - 300)
-            time.sleep(15)
-            table = snapshot(args.output, process.pid, known, "cutoff-second")
-            collect_stacks(args, table, 2, deadline)
+    next_capture = args.cutoff
+    captures = 0
+    try:
+        while process.poll() is None:
+            elapsed = time.monotonic() - started
+            table = snapshot(args.output, process.pid, known, f"{int(elapsed):05}")
+            if elapsed >= next_capture:
+                captures += 1
+                metadata["diagnosticCaptureCount"] = captures
+                print("Experiment diagnostic checkpoint reached; this is NOT a declaration of a hang.", flush=True)
+                deadline = time.monotonic() + 600
+                collect_stacks(args, table, f"{captures}-1", deadline - 300)
+                time.sleep(15)
+                table = snapshot(args.output, process.pid, known, f"checkpoint-{captures}-second")
+                collect_stacks(args, table, f"{captures}-2", deadline)
+                write_json(args.output / "measurement.json", metadata)
+                # Upload while the build is alive; a later job cancellation cannot erase this snapshot.
+                archive = args.output.parent / f"checkpoint-{captures}.zip"
+                with zipfile.ZipFile(str(archive), "w", zipfile.ZIP_DEFLATED) as package:
+                    for path in args.output.iterdir():
+                        if path.is_file():
+                            package.write(str(path), path.name)
+                job = os.environ.get("AGENT_JOBNAME")
+                if job:
+                    print(f"##vso[artifact.upload containerfolder=experiment;artifactname={job}_Experiment;]{archive}", flush=True)
+                if args.stop_at_checkpoint:
+                    cutoff = True
+                    metadata["cutoffObservedSeconds"] = elapsed
+                    stop_build(process, known, args.output)
+                    break
+                next_capture += 3600
+            try:
+                process.wait(timeout=min(60, max(0.1, next_capture - (time.monotonic() - started))))
+            except subprocess.TimeoutExpired:
+                pass
+    finally:
+        if process.poll() is None:
+            print("Stopping owned build processes before watchdog exit.", flush=True)
             stop_build(process, known, args.output)
-            break
-        try:
-            process.wait(timeout=min(60, max(0.1, args.cutoff - elapsed)))
-        except subprocess.TimeoutExpired:
-            pass
-    metadata.update({
-        "finishUtc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "elapsedSecondsIncludingDiagnostics": time.monotonic() - started,
-        "buildElapsedSeconds": metadata.get("cutoffObservedSeconds", time.monotonic() - started),
-        "cutoffReached": cutoff, "exitCode": process.poll(),
-    })
-    write_json(args.output / "measurement.json", metadata)
-    # Copy even incomplete logs; killed jobs otherwise lose the only evidence.
-    logs = args.sources / "artifacts" / "log"
-    if cutoff and logs.exists():
-        shutil.copytree(logs, args.output / "preserved-logs")
+        metadata.update({
+            "finishUtc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "elapsedSecondsIncludingDiagnostics": time.monotonic() - started,
+            "buildElapsedSeconds": metadata.get("cutoffObservedSeconds", time.monotonic() - started),
+            "cutoffReached": cutoff, "exitCode": process.poll(),
+        })
+        write_json(args.output / "measurement.json", metadata)
     return 124 if cutoff else process.returncode
 
 
@@ -294,6 +338,7 @@ def main():
     parser.add_argument("--output", type=Path)
     parser.add_argument("--sdk", type=Path)
     parser.add_argument("--cutoff", type=float, default=9000)
+    parser.add_argument("--stop-at-checkpoint", action="store_true")
     args, command = parser.parse_known_args()
     args.command = command[1:] if command[:1] == ["--"] else command
     if args.action == "setup":
