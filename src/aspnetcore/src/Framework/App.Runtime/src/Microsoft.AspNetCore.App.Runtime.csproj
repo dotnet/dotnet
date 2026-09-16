@@ -688,7 +688,7 @@ This package is an internal implementation of the .NET Core SDK and is not meant
           Outputs="$(CompositeArchiveOutputPath)">
     <Message Importance="High" Text="$(MSbuildProjectFile) -> $(CompositeArchiveOutputPath)" />
     <Exec
-      Command="tar -czf $(CompositeArchiveOutputPath) ."
+      Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(CompositeArchiveOutputPath) ."
       WorkingDirectory="$(CompositeFrameworkLayoutRoot)" />
   </Target>
 
@@ -703,7 +703,7 @@ This package is an internal implementation of the .NET Core SDK and is not meant
       Overwrite="true"
       Condition="'$(ArchiveExtension)' == '.zip'" />
     <Exec
-      Command="tar -czf $(RedistArchiveOutputPath) ."
+      Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(RedistArchiveOutputPath) ."
       WorkingDirectory="$(RedistSharedFrameworkLayoutRoot)"
       Condition="'$(ArchiveExtension)' == '.tar.gz'" />
   </Target>
