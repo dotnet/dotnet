@@ -35,6 +35,20 @@ schedules:
     always: false # run only if there were changes since the last successful scheduled run.
 
 parameters:
+- name: experimentMT
+  type: string
+  default: '0'
+  values: ['0', '1']
+
+- name: experimentNR
+  type: string
+  default: '0'
+  values: ['0', '1']
+
+- name: experimentCutoffSeconds
+  type: number
+  default: 9000
+
 - name: buildScope
   displayName: 'Build Scope'
   type: string
@@ -45,6 +59,13 @@ parameters:
     - full
 
 variables:
+- name: experimentMT
+  value: ${{ parameters.experimentMT }}
+- name: experimentNR
+  value: ${{ parameters.experimentNR }}
+- name: experimentCutoffSeconds
+  value: ${{ parameters.experimentCutoffSeconds }}
+
 - name: isScheduleTrigger
   value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
 
