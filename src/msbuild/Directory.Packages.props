@@ -19,12 +19,12 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Contracts" Version="$(MicrosoftCodeAnalysisContractsVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PooledObjects" Version="$(MicrosoftCodeAnalysisPooledObjectsVersion)" />
 
-    <!-- TaskAnalyzer dependencies define its minimum supported compiler version. Update manually. -->
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <!-- TaskAnalyzer dependencies define its minimum supported compiler version. -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisCSharpPackageVersion)" />
     <PackageVersion Update="Microsoft.CodeAnalysis.CSharp" Condition="'$(Analyzer_MicrosoftCodeAnalysisCSharpVersion)' != ''" Version="$(Analyzer_MicrosoftCodeAnalysisCSharpVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion)" />
     <PackageVersion Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Condition="'$(Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion)' != ''" Version="$(Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersPackageVersion)" />
     <PackageVersion Update="Microsoft.CodeAnalysis.Analyzers" Condition="'$(Analyzer_MicrosoftCodeAnalysisAnalyzersVersion)' != ''" Version="$(Analyzer_MicrosoftCodeAnalysisAnalyzersVersion)" />
 
     <PackageVersion Include="Microsoft.DotNet.XUnitV3Extensions" Version="$(MicrosoftDotNetXUnitV3ExtensionsVersion)" />
