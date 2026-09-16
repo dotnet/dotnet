@@ -16,7 +16,7 @@ namespace NuGet.Protocol.Core.Types
     /// </summary>
     public class SourceRepository
     {
-        internal const int ProviderCacheTypes = 25;
+        internal const int ProviderCacheTypes = 26;
         private readonly Dictionary<Type, IReadOnlyList<INuGetResourceProvider>> _providerCache = new(ProviderCacheTypes);
         private readonly PackageSource _source = null!; // Protected constructor is for subclasses that provide their own package source.
 
