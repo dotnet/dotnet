@@ -384,7 +384,7 @@ namespace NuGet.ProjectModel
             // Preserve default sort order
             foreach (var restoreName in _restore)
             {
-                writer.WriteObjectStart(restoreName);
+                writer.WriteObjectStart(PackageSpecWriter.NormalizePathForHashing(restoreName, hashing));
                 writer.WriteObjectEnd();
             }
 
@@ -397,7 +397,7 @@ namespace NuGet.ProjectModel
             {
                 var project = pair.Value;
 
-                writer.WriteObjectStart(project.RestoreMetadata.ProjectUniqueName);
+                writer.WriteObjectStart(PackageSpecWriter.NormalizePathForHashing(project.RestoreMetadata.ProjectUniqueName, hashing));
                 writeAction.Invoke(project, writer, hashing, EnvironmentVariableWrapper.Instance);
                 writer.WriteObjectEnd();
             }

@@ -394,9 +394,9 @@ NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGe
         <note>{0} - PackageID</note>
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
-        <source>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</source>
-        <target state="translated">`{0}` 프로젝트는 NuGet 패키지에 대한 package.config를 사용합니다. 명령은 패키지 참조 프로젝트에서만 작동합니다.</target>
-        <note />
+        <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
+        <target state="needs-review-translation">`{0}` 프로젝트는 NuGet 패키지에 대한 package.config를 사용합니다. 명령은 패키지 참조 프로젝트에서만 작동합니다.</target>
+        <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
         <source>Unable to find a valid package version</source>

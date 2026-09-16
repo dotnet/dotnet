@@ -394,9 +394,9 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
         <note>{0} - PackageID</note>
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
-        <source>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</source>
-        <target state="translated">В проекте "{0}" используется файл package.config для пакетов NuGet, а команда работает только с проектами, содержащими ссылки на пакеты.</target>
-        <note />
+        <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
+        <target state="needs-review-translation">В проекте "{0}" используется файл package.config для пакетов NuGet, а команда работает только с проектами, содержащими ссылки на пакеты.</target>
+        <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
         <source>Unable to find a valid package version</source>
