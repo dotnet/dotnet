@@ -589,7 +589,7 @@ namespace Microsoft.CodeAnalysis.BuildTasks
             catch (Exception e)
             {
                 Log.LogErrorWithCodeFromResources("Compiler_UnexpectedException");
-                Log.LogErrorFromException(e);
+                Log.LogErrorFromException(e, showStackTrace: true, showDetail: true, file: null);
                 ExitCode = -1;
             }
             finally

@@ -194,6 +194,7 @@ parameters:
 
 jobs:
 - job: ${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}
+  condition: and(succeeded(), or(eq(variables['experimentJobs'], ''), contains(variables['experimentJobs'], '|${{ parameters.buildName }}_${{ parameters.targetArchitecture }}${{ replace(format('_BuildPass{0}', coalesce(parameters.buildPass, '1')), '_BuildPass1', '') }}|')))
   pool: ${{ parameters.pool }}
   cancelTimeoutInMinutes: 30
 

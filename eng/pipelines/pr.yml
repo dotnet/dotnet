@@ -35,6 +35,10 @@ schedules:
     always: false # run only if there were changes since the last successful scheduled run.
 
 parameters:
+- name: experimentJobs
+  type: string
+  default: ''
+
 - name: experimentMT
   type: string
   default: '0'
@@ -59,6 +63,8 @@ parameters:
     - full
 
 variables:
+- name: experimentJobs
+  value: ${{ parameters.experimentJobs }}
 - name: experimentMT
   value: ${{ parameters.experimentMT }}
 - name: experimentNR
