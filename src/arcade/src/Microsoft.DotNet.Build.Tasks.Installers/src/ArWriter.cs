@@ -8,52 +8,51 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.DotNet.Build.Tasks.Installers
+namespace Microsoft.DotNet.Build.Tasks.Installers;
+
+internal sealed class ArWriter : IDisposable
 {
-    internal sealed class ArWriter : IDisposable
+    private Stream _stream;
+    private readonly bool _leaveOpen;
+
+    public ArWriter(Stream output, bool leaveOpen)
     {
-        private Stream _stream;
-        private readonly bool _leaveOpen;
+        _stream = output;
+        _leaveOpen = leaveOpen;
+        _stream.Write("!<arch>\n"u8);
+    }
 
-        public ArWriter(Stream output, bool leaveOpen)
+    public void AddEntry(ArEntry entry)
+    {
+        Write(Encoding.ASCII.GetBytes(entry.Name.PadRight(16, ' ').Substring(0, 16)));
+        Write(Encoding.ASCII.GetBytes(entry.Timestamp.ToString().PadRight(12, ' ').Substring(0, 12)));
+        Write(Encoding.ASCII.GetBytes(entry.OwnerID.ToString().PadRight(6, ' ').Substring(0, 6)));
+        Write(Encoding.ASCII.GetBytes(entry.GroupID.ToString().PadRight(6, ' ').Substring(0, 6)));
+        Write(Encoding.ASCII.GetBytes(Convert.ToString(entry.Mode, 8).PadRight(8, ' ').Substring(0, 8)));
+
+        ulong length = (ulong)entry.DataStream.Length;
+
+        Write(Encoding.ASCII.GetBytes(length.ToString().PadRight(10, ' ').Substring(0, 10)));
+        Write(Encoding.ASCII.GetBytes("`\n"));
+        entry.DataStream.CopyTo(_stream);
+
+        if ((length % 2) == 1)
         {
-            _stream = output;
-            _leaveOpen = leaveOpen;
-            _stream.Write("!<arch>\n"u8);
+            // Pad to even length with a newline
+            _stream.WriteByte((byte)'\n');
         }
+    }
 
-        public void AddEntry(ArEntry entry)
+    private void Write(byte[] data)
+    {
+        _stream.Write(data);
+    }
+
+    public void Dispose()
+    {
+        if (!_leaveOpen)
         {
-            Write(Encoding.ASCII.GetBytes(entry.Name.PadRight(16, ' ').Substring(0, 16)));
-            Write(Encoding.ASCII.GetBytes(entry.Timestamp.ToString().PadRight(12, ' ').Substring(0, 12)));
-            Write(Encoding.ASCII.GetBytes(entry.OwnerID.ToString().PadRight(6, ' ').Substring(0, 6)));
-            Write(Encoding.ASCII.GetBytes(entry.GroupID.ToString().PadRight(6, ' ').Substring(0, 6)));
-            Write(Encoding.ASCII.GetBytes(Convert.ToString(entry.Mode, 8).PadRight(8, ' ').Substring(0, 8)));
-
-            ulong length = (ulong)entry.DataStream.Length;
-
-            Write(Encoding.ASCII.GetBytes(length.ToString().PadRight(10, ' ').Substring(0, 10)));
-            Write(Encoding.ASCII.GetBytes("`\n"));
-            entry.DataStream.CopyTo(_stream);
-
-            if ((length % 2) == 1)
-            {
-                // Pad to even length with a newline
-                _stream.WriteByte((byte)'\n');
-            }
-        }
-
-        private void Write(byte[] data)
-        {
-            _stream.Write(data);
-        }
-
-        public void Dispose()
-        {
-            if (!_leaveOpen)
-            {
-                _stream.Dispose();
-            }
+            _stream.Dispose();
         }
     }
 }

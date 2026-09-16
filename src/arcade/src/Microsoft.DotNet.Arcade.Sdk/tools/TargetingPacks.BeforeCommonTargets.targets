@@ -99,38 +99,40 @@
   </ItemGroup>
 
   <!--
-    When .NET gets built from source, make the SDK aware there are bootstrap packages
-    for Microsoft.NETCore.App.Runtime.<rid> (including the NativeAOT-labeled runtime pack),
-    Microsoft.NETCore.App.Crossgen2.<rid>, and the ILCompiler packs
-    (runtime.<rid>.Microsoft.DotNet.ILCompiler / Microsoft.NETCore.App.Runtime.NativeAOT.<rid>).
-    The on-disk previous SDK does not list the build's non-portable RID in these RID sets, so
-    append it in-memory here. This allows publishing for the non-portable RID (e.g. self-contained,
-    ReadyToRun, and AOT) to validate and restore the matching source-built packs.
+    Ensure the SDK knows about NETCoreSdkRuntimeIdentifier and TargetRid.
+    - TargetRid can be an unknown rid. The build will produce assets for this rid which can then be used at later steps of the build.
+    - NETCoreSdkRuntimeIdentifier is the known rid of the SDK.
+      While the SDK knows the rid, it may not consider all assets to be available for this rid by default.
+      For example, it may always fall back to a compatible portable rid assets for the end-user.
+      For source-build such assets are available for NETCoreSdkRuntimeIdentifier either as prebuilts or as packages produced during the build.
 
-    Use $(TargetRid) (the build's non-portable RID, e.g. centos.10-x64), not
-    $(NETCoreSdkRuntimeIdentifier). In a stage 1 source-build leg the previous SDK is the Microsoft
-    portable SDK, whose $(NETCoreSdkRuntimeIdentifier) is the portable RID (e.g. linux-x64) and would
-    not unblock publishing for the build's non-portable RID.
+    ILCompiler's SingleEntry.targets can only handle the rids meant for end-users.
+    It doesn't work when using a non-portable SDK to build an SDK with a different non-portable RID.
+    We set IlcHostRuntimeIdentifier/IlcTargetOS to provide it with the information it needs.
   -->
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(TargetRid)' != ''">
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <IlcHostRuntimeIdentifier Condition="'$(IlcHostRuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</IlcHostRuntimeIdentifier>
+    <IlcTargetOS Condition="'$(IlcTargetOS)' == ''">$(TargetOS)</IlcTargetOS>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <KnownFrameworkReference Update="Microsoft.NETCore.App">
-      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
+      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier);$(TargetRid)</RuntimePackRuntimeIdentifiers>
     </KnownFrameworkReference>
 
     <KnownFrameworkReference Update="Microsoft.AspNetCore.App">
-      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
+      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier);$(TargetRid)</RuntimePackRuntimeIdentifiers>
     </KnownFrameworkReference>
 
     <KnownRuntimePack Update="Microsoft.NETCore.App">
-      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(TargetRid)</RuntimePackRuntimeIdentifiers>
+      <RuntimePackRuntimeIdentifiers>%(RuntimePackRuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier);$(TargetRid)</RuntimePackRuntimeIdentifiers>
     </KnownRuntimePack>
 
     <KnownCrossgen2Pack Update="Microsoft.NETCore.App.Crossgen2">
-      <Crossgen2RuntimeIdentifiers>%(Crossgen2RuntimeIdentifiers);$(TargetRid)</Crossgen2RuntimeIdentifiers>
+      <Crossgen2RuntimeIdentifiers>%(Crossgen2RuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier);$(TargetRid)</Crossgen2RuntimeIdentifiers>
     </KnownCrossgen2Pack>
 
     <KnownILCompilerPack Update="Microsoft.DotNet.ILCompiler">
-      <ILCompilerRuntimeIdentifiers>%(ILCompilerRuntimeIdentifiers);$(TargetRid)</ILCompilerRuntimeIdentifiers>
+      <ILCompilerRuntimeIdentifiers>%(ILCompilerRuntimeIdentifiers);$(NETCoreSdkRuntimeIdentifier);$(TargetRid)</ILCompilerRuntimeIdentifiers>
     </KnownILCompilerPack>
   </ItemGroup>
 

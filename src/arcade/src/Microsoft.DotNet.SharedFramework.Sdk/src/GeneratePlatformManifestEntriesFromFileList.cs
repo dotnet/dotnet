@@ -9,37 +9,41 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Microsoft.DotNet.SharedFramework.Sdk
+namespace Microsoft.DotNet.SharedFramework.Sdk;
+
+[MSBuildMultiThreadableTask]
+public class GeneratePlatformManifestEntriesFromFileList : Task, IMultiThreadableTask
 {
-    public class GeneratePlatformManifestEntriesFromFileList : Task
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
+    [Required]
+    public ITaskItem[] Files { get; set; }
+
+    [Output]
+    public ITaskItem[] PlatformManifestEntries { get; set; }
+
+    public override bool Execute()
     {
-        [Required]
-        public ITaskItem[] Files { get; set; }
-
-        [Output]
-        public ITaskItem[] PlatformManifestEntries { get; set; }
-
-        public override bool Execute()
+        var entries = new List<PlatformManifestEntry>();
+        foreach (var file in Files)
         {
-            var entries = new List<PlatformManifestEntry>();
-            foreach (var file in Files)
+            FileInfo originalFilePath = new(TaskEnvironment.GetAbsolutePath(file.GetMetadata("OriginalFilePath")));
+            entries.Add(new PlatformManifestEntry
             {
-                entries.Add(new PlatformManifestEntry
-                {
-                    Name = file.ItemSpec,
-                    AssemblyVersion = FileUtilities.GetAssemblyName(file.GetMetadata("OriginalFilePath"))?.Version.ToString() ?? string.Empty,
-                    FileVersion = FileUtilities.GetFileVersion(file.GetMetadata("OriginalFilePath"))?.ToString() ?? string.Empty
-                });
-            }
-
-            PlatformManifestEntries = entries.Select(entry =>
-            {
-                var item = new TaskItem(entry.Name);
-                item.SetMetadata("AssemblyVersion", entry.AssemblyVersion);
-                item.SetMetadata("FileVersion", entry.FileVersion);
-                return item;
-            }).ToArray();
-            return true;
+                Name = file.ItemSpec,
+                AssemblyVersion = FileUtilities.GetAssemblyName(originalFilePath)?.Version.ToString() ?? string.Empty,
+                FileVersion = FileUtilities.GetFileVersion(originalFilePath)?.ToString() ?? string.Empty
+            });
         }
+
+        PlatformManifestEntries = entries.Select(entry =>
+        {
+            var item = new TaskItem(entry.Name);
+            item.SetMetadata("AssemblyVersion", entry.AssemblyVersion);
+            item.SetMetadata("FileVersion", entry.FileVersion);
+            return item;
+        }).ToArray();
+        return true;
     }
 }

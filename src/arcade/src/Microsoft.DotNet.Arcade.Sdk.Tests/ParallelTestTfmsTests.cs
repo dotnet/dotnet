@@ -7,63 +7,62 @@ using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.DotNet.Arcade.Sdk.Tests
+namespace Microsoft.DotNet.Arcade.Sdk.Tests;
+
+[Collection(TestProjectCollection.Name)]
+public class ParallelTestTfmsTests
 {
-    [Collection(TestProjectCollection.Name)]
-    public class ParallelTestTfmsTests
+    private readonly ITestOutputHelper _output;
+    private readonly TestProjectFixture _fixture;
+
+    public ParallelTestTfmsTests(ITestOutputHelper output, TestProjectFixture fixture)
     {
-        private readonly ITestOutputHelper _output;
-        private readonly TestProjectFixture _fixture;
+        _output = output;
+        _fixture = fixture;
+    }
 
-        public ParallelTestTfmsTests(ITestOutputHelper output, TestProjectFixture fixture)
+    [Fact]
+    public void TargetFrameworksRunInParallel()
+    {
+        var app = _fixture.CreateTestApp("ParallelTestTfms");
+        var startInfo = new ProcessStartInfo
         {
-            _output = output;
-            _fixture = fixture;
-        }
+            FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
+            WorkingDirectory = app.WorkingDirectory,
+        };
+        startInfo.ArgumentList.Add("msbuild");
+        startInfo.ArgumentList.Add("ParallelTestTfms.proj");
+        startInfo.ArgumentList.Add("/t:Test");
+        startInfo.ArgumentList.Add("/m:4");
+        startInfo.ArgumentList.Add("/nr:false");
 
-        [Fact]
-        public void TargetFrameworksRunInParallel()
+        var exitCode = app.Run(_output, startInfo);
+
+        Assert.Equal(0, exitCode);
+        Assert.True(File.Exists(Path.Combine(app.WorkingDirectory, "artifacts", "tmp", "test-tfm-a.started")));
+        Assert.True(File.Exists(Path.Combine(app.WorkingDirectory, "artifacts", "tmp", "test-tfm-b.started")));
+    }
+
+    [Fact]
+    public void ExplicitTargetFrameworkRunsOnlyThatTargetFramework()
+    {
+        var app = _fixture.CreateTestApp("ParallelTestTfms");
+        var startInfo = new ProcessStartInfo
         {
-            var app = _fixture.CreateTestApp("ParallelTestTfms");
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
-                WorkingDirectory = app.WorkingDirectory,
-            };
-            startInfo.ArgumentList.Add("msbuild");
-            startInfo.ArgumentList.Add("ParallelTestTfms.proj");
-            startInfo.ArgumentList.Add("/t:Test");
-            startInfo.ArgumentList.Add("/m:4");
-            startInfo.ArgumentList.Add("/nr:false");
+            FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
+            WorkingDirectory = app.WorkingDirectory,
+        };
+        startInfo.ArgumentList.Add("msbuild");
+        startInfo.ArgumentList.Add("ParallelTestTfms.proj");
+        startInfo.ArgumentList.Add("/t:Test");
+        startInfo.ArgumentList.Add("/p:TargetFramework=test-tfm-a");
+        startInfo.ArgumentList.Add("/p:ExpectedStartedTfms=test-tfm-a");
+        startInfo.ArgumentList.Add("/nr:false");
 
-            var exitCode = app.Run(_output, startInfo);
+        var exitCode = app.Run(_output, startInfo);
 
-            Assert.Equal(0, exitCode);
-            Assert.True(File.Exists(Path.Combine(app.WorkingDirectory, "artifacts", "tmp", "test-tfm-a.started")));
-            Assert.True(File.Exists(Path.Combine(app.WorkingDirectory, "artifacts", "tmp", "test-tfm-b.started")));
-        }
-
-        [Fact]
-        public void ExplicitTargetFrameworkRunsOnlyThatTargetFramework()
-        {
-            var app = _fixture.CreateTestApp("ParallelTestTfms");
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
-                WorkingDirectory = app.WorkingDirectory,
-            };
-            startInfo.ArgumentList.Add("msbuild");
-            startInfo.ArgumentList.Add("ParallelTestTfms.proj");
-            startInfo.ArgumentList.Add("/t:Test");
-            startInfo.ArgumentList.Add("/p:TargetFramework=test-tfm-a");
-            startInfo.ArgumentList.Add("/p:ExpectedStartedTfms=test-tfm-a");
-            startInfo.ArgumentList.Add("/nr:false");
-
-            var exitCode = app.Run(_output, startInfo);
-
-            Assert.Equal(0, exitCode);
-            Assert.True(File.Exists(Path.Combine(app.WorkingDirectory, "artifacts", "tmp", "test-tfm-a.started")));
-            Assert.False(File.Exists(Path.Combine(app.WorkingDirectory, "artifacts", "tmp", "test-tfm-b.started")));
-        }
+        Assert.Equal(0, exitCode);
+        Assert.True(File.Exists(Path.Combine(app.WorkingDirectory, "artifacts", "tmp", "test-tfm-a.started")));
+        Assert.False(File.Exists(Path.Combine(app.WorkingDirectory, "artifacts", "tmp", "test-tfm-b.started")));
     }
 }

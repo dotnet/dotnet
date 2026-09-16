@@ -11,114 +11,114 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
-namespace Microsoft.DotNet.Helix.Sdk.Tests
+namespace Microsoft.DotNet.Helix.Sdk.Tests;
+
+public class LocalTestResultsReaderTests
 {
-    public class LocalTestResultsReaderTests
+    [Theory]
+    [InlineData("results.trx")]
+    [InlineData("results.trx.txt")]
+    [InlineData("testResults.xml")]
+    [InlineData("testResults.xml.txt")]
+    [InlineData("junit-results.xml")]
+    [InlineData("junit-results.xml.txt")]
+    public void LooksLikeTestResultFile_RecognizesHelixTextSuffix(string fileName)
     {
-        [Theory]
-        [InlineData("results.trx")]
-        [InlineData("results.trx.txt")]
-        [InlineData("testResults.xml")]
-        [InlineData("testResults.xml.txt")]
-        [InlineData("junit-results.xml")]
-        [InlineData("junit-results.xml.txt")]
-        public void LooksLikeTestResultFile_RecognizesHelixTextSuffix(string fileName)
-        {
-            Assert.True(LocalTestResultsReader.LooksLikeTestResultFile(fileName));
-        }
+        Assert.True(LocalTestResultsReader.LooksLikeTestResultFile(fileName));
+    }
 
-        [Theory]
-        [InlineData("results.xml")]
-        [InlineData("results.txt")]
-        [InlineData("testResults.xml.log")]
-        public void LooksLikeTestResultFile_RejectsUnknownNames(string fileName)
-        {
-            Assert.False(LocalTestResultsReader.LooksLikeTestResultFile(fileName));
-        }
+    [Theory]
+    [InlineData("results.xml")]
+    [InlineData("results.txt")]
+    [InlineData("testResults.xml.log")]
+    public void LooksLikeTestResultFile_RejectsUnknownNames(string fileName)
+    {
+        Assert.False(LocalTestResultsReader.LooksLikeTestResultFile(fileName));
+    }
 
-        public static IEnumerable<object[]> AttachmentModeCases()
+    public static IEnumerable<object[]> AttachmentModeCases()
+    {
+        foreach (string format in new[] { "xunit", "junit", "trx" })
         {
-            foreach (string format in new[] { "xunit", "junit", "trx" })
+            foreach (string outcome in new[] { "Pass", "Skip", "Fail" })
             {
-                foreach (string outcome in new[] { "Pass", "Skip", "Fail" })
-                {
-                    yield return [format, outcome, TestResultAttachmentMode.Failed, outcome == "Fail"];
-                    yield return [format, outcome, TestResultAttachmentMode.All, true];
-                    yield return [format, outcome, TestResultAttachmentMode.None, false];
-                    yield return [format, outcome, null, outcome == "Fail"];
-                }
+                yield return [format, outcome, TestResultAttachmentMode.Failed, outcome == "Fail"];
+                yield return [format, outcome, TestResultAttachmentMode.All, true];
+                yield return [format, outcome, TestResultAttachmentMode.None, false];
+                yield return [format, outcome, null, outcome == "Fail"];
             }
         }
+    }
 
-        [Theory]
-        [MemberData(nameof(AttachmentModeCases))]
-        public async Task LocalTestResultsReader_AppliesAttachmentMode(
-            string format,
-            string outcome,
-            TestResultAttachmentMode? mode,
-            bool expectsAttachments)
+    [Theory]
+    [MemberData(nameof(AttachmentModeCases))]
+    public async Task LocalTestResultsReader_AppliesAttachmentMode(
+        string format,
+        string outcome,
+        TestResultAttachmentMode? mode,
+        bool expectsAttachments)
+    {
+        string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string workItemDirectory = Path.Combine(tempDirectory, "work-item");
+        Directory.CreateDirectory(workItemDirectory);
+
+        try
         {
-            string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-            string workItemDirectory = Path.Combine(tempDirectory, "work-item");
-            Directory.CreateDirectory(workItemDirectory);
+            string filePath = WriteResultFile(workItemDirectory, format, outcome, includeOutput: true);
+            LocalTestResultsReader reader = mode.HasValue
+                ? new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>(), mode.Value)
+                : new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>());
 
-            try
-            {
-                string filePath = WriteResultFile(workItemDirectory, format, outcome, includeOutput: true);
-                LocalTestResultsReader reader = mode.HasValue
-                    ? new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>(), mode.Value)
-                    : new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>());
+            TestResult result = Assert.Single(await reader.ReadResultFileAsync(filePath));
 
-                TestResult result = Assert.Single(await reader.ReadResultFileAsync(filePath));
-
-                Assert.Equal(outcome, result.Result);
-                Assert.Equal(expectsAttachments ? ExpectedAttachmentCount(format) : 0, result.Attachments.Count);
-            }
-            finally
-            {
-                Directory.Delete(tempDirectory, recursive: true);
-            }
+            Assert.Equal(outcome, result.Result);
+            Assert.Equal(expectsAttachments ? ExpectedAttachmentCount(format) : 0, result.Attachments.Count);
         }
-
-        [Theory]
-        [InlineData("xunit")]
-        [InlineData("junit")]
-        [InlineData("trx")]
-        public async Task LocalTestResultsReader_DoesNotAttachEmptyOutput(string format)
+        finally
         {
-            string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-            string workItemDirectory = Path.Combine(tempDirectory, "work-item");
-            Directory.CreateDirectory(workItemDirectory);
-
-            try
-            {
-                string filePath = WriteResultFile(workItemDirectory, format, "Fail", includeOutput: false);
-                var reader = new LocalTestResultsReader(
-                    NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>(),
-                    TestResultAttachmentMode.All);
-
-                TestResult result = Assert.Single(await reader.ReadResultFileAsync(filePath));
-
-                Assert.Empty(result.Attachments);
-            }
-            finally
-            {
-                Directory.Delete(tempDirectory, recursive: true);
-            }
+            Directory.Delete(tempDirectory, recursive: true);
         }
+    }
 
-        [Fact]
-        public async Task LocalTestResultsReader_ReadsXunitFileFromDownloadedResults()
+    [Theory]
+    [InlineData("xunit")]
+    [InlineData("junit")]
+    [InlineData("trx")]
+    public async Task LocalTestResultsReader_DoesNotAttachEmptyOutput(string format)
+    {
+        string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string workItemDirectory = Path.Combine(tempDirectory, "work-item");
+        Directory.CreateDirectory(workItemDirectory);
+
+        try
         {
-            string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-            string workItemDirectory = Path.Combine(tempDirectory, "work-item");
-            Directory.CreateDirectory(workItemDirectory);
+            string filePath = WriteResultFile(workItemDirectory, format, "Fail", includeOutput: false);
+            var reader = new LocalTestResultsReader(
+                NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>(),
+                TestResultAttachmentMode.All);
 
-            try
-            {
-                File.WriteAllText(
-                    Path.Combine(workItemDirectory, "testResults.xml.txt"),
-                    """
+            TestResult result = Assert.Single(await reader.ReadResultFileAsync(filePath));
+
+            Assert.Empty(result.Attachments);
+        }
+        finally
+        {
+            Directory.Delete(tempDirectory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task LocalTestResultsReader_ReadsXunitFileFromDownloadedResults()
+    {
+        string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string workItemDirectory = Path.Combine(tempDirectory, "work-item");
+        Directory.CreateDirectory(workItemDirectory);
+
+        try
+        {
+            File.WriteAllText(
+                Path.Combine(workItemDirectory, "testResults.xml.txt"),
+                """
                     <assemblies>
                       <assembly name="Sample.Tests.dll" total="1" passed="1" failed="0" skipped="0">
                         <collection total="1" passed="1" failed="0" skipped="0">
@@ -128,39 +128,39 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                     </assemblies>
                     """);
 
-                var reader = new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>());
-                string filePath = Path.Combine(workItemDirectory, "testResults.xml.txt");
-                IReadOnlyList<TestResult> resultSets = await reader.ReadResultFileAsync(filePath);
-                IReadOnlyList<AggregatedResult> aggregate = new ResultAggregator().Aggregate([resultSets]);
-                AggregatedResult result = Assert.Single(aggregate);
+            var reader = new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>());
+            string filePath = Path.Combine(workItemDirectory, "testResults.xml.txt");
+            IReadOnlyList<TestResult> resultSets = await reader.ReadResultFileAsync(filePath);
+            IReadOnlyList<AggregatedResult> aggregate = new ResultAggregator().Aggregate([resultSets]);
+            AggregatedResult result = Assert.Single(aggregate);
 
-                Assert.Equal("Sample.Tests.Passes", result.Name);
-                Assert.Equal("Passed", result.Result);
-            }
-            finally
-            {
-                Directory.Delete(tempDirectory, recursive: true);
-            }
+            Assert.Equal("Sample.Tests.Passes", result.Name);
+            Assert.Equal("Passed", result.Result);
         }
-
-        [Fact]
-        public async Task LocalTestResultsReader_CombinesPackedAndXmlResultsAcrossWorkItems()
+        finally
         {
-            string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-            string packedDirectory = Path.Combine(tempDirectory, "packed-item");
-            string xmlDirectory = Path.Combine(tempDirectory, "xml-item");
-            Directory.CreateDirectory(packedDirectory);
-            Directory.CreateDirectory(xmlDirectory);
-            string originalDirectory = Environment.CurrentDirectory;
+            Directory.Delete(tempDirectory, recursive: true);
+        }
+    }
 
-            try
-            {
-                Environment.CurrentDirectory = packedDirectory;
-                string filePath = Path.Combine(xmlDirectory, "testResults.xml");
+    [Fact]
+    public async Task LocalTestResultsReader_CombinesPackedAndXmlResultsAcrossWorkItems()
+    {
+        string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string packedDirectory = Path.Combine(tempDirectory, "packed-item");
+        string xmlDirectory = Path.Combine(tempDirectory, "xml-item");
+        Directory.CreateDirectory(packedDirectory);
+        Directory.CreateDirectory(xmlDirectory);
+        string originalDirectory = Environment.CurrentDirectory;
 
-                File.WriteAllText(
-                    filePath,
-                    """
+        try
+        {
+            Environment.CurrentDirectory = packedDirectory;
+            string filePath = Path.Combine(xmlDirectory, "testResults.xml");
+
+            File.WriteAllText(
+                filePath,
+                """
                     <assemblies>
                       <assembly name="Xml.Tests.dll" total="1" passed="1" failed="0" skipped="0">
                         <collection total="1" passed="1" failed="0" skipped="0">
@@ -170,32 +170,32 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                     </assemblies>
                     """);
 
-                IReadOnlyList<TestResult> resultSets = await new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>()).ReadResultFileAsync(filePath);
-                IReadOnlyList<AggregatedResult> aggregate = new ResultAggregator().Aggregate([resultSets]);
+            IReadOnlyList<TestResult> resultSets = await new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>()).ReadResultFileAsync(filePath);
+            IReadOnlyList<AggregatedResult> aggregate = new ResultAggregator().Aggregate([resultSets]);
 
-                Assert.Single(aggregate);
-                Assert.Contains(aggregate, static x => x.Name == "Xml.Tests.Passes");
-            }
-            finally
-            {
-                Environment.CurrentDirectory = originalDirectory;
-                Directory.Delete(tempDirectory, recursive: true);
-            }
+            Assert.Single(aggregate);
+            Assert.Contains(aggregate, static x => x.Name == "Xml.Tests.Passes");
         }
-
-        [Fact]
-        public async Task LocalTestResultsReader_TrxWithUnqualifiedTestName_DerivesFullyQualifiedName()
+        finally
         {
-            string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
-            string workItemDirectory = Path.Combine(tempDirectory, "work-item");
-            Directory.CreateDirectory(workItemDirectory);
+            Environment.CurrentDirectory = originalDirectory;
+            Directory.Delete(tempDirectory, recursive: true);
+        }
+    }
 
-            try
-            {
-                // MSTest emits testName as just the method name; the class lives in TestMethod.className.
-                File.WriteAllText(
-                    Path.Combine(workItemDirectory, "results.trx"),
-                    """
+    [Fact]
+    public async Task LocalTestResultsReader_TrxWithUnqualifiedTestName_DerivesFullyQualifiedName()
+    {
+        string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+        string workItemDirectory = Path.Combine(tempDirectory, "work-item");
+        Directory.CreateDirectory(workItemDirectory);
+
+        try
+        {
+            // MSTest emits testName as just the method name; the class lives in TestMethod.className.
+            File.WriteAllText(
+                Path.Combine(workItemDirectory, "results.trx"),
+                """
                     <TestRun xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
                       <Results>
                         <UnitTestResult testId="11111111-1111-1111-1111-111111111111" testName="MyMethod" outcome="Passed" duration="00:00:00.1234567" />
@@ -208,37 +208,37 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                     </TestRun>
                     """);
 
-                var reader = new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>());
-                string filePath = Path.Combine(workItemDirectory, "results.trx");
-                IReadOnlyList<TestResult> resultSets = await reader.ReadResultFileAsync(filePath);
+            var reader = new LocalTestResultsReader(NullLoggerFactory.Instance.CreateLogger<LocalTestResultsReader>());
+            string filePath = Path.Combine(workItemDirectory, "results.trx");
+            IReadOnlyList<TestResult> resultSets = await reader.ReadResultFileAsync(filePath);
 
-                TestResult test = Assert.Single(resultSets);
-                Assert.Equal("MyMethod", test.Name);
-                Assert.Equal("Ns.MyTests.MyMethod", test.FullyQualifiedName);
+            TestResult test = Assert.Single(resultSets);
+            Assert.Equal("MyMethod", test.Name);
+            Assert.Equal("Ns.MyTests.MyMethod", test.FullyQualifiedName);
 
-                AggregatedResult aggregated = Assert.Single(new ResultAggregator().Aggregate([resultSets], useFullyQualifiedName: true));
-                Assert.Equal("Ns.MyTests.MyMethod", aggregated.FullyQualifiedName);
-                Assert.Equal("Passed", aggregated.Result);
-            }
-            finally
-            {
-                Directory.Delete(tempDirectory, recursive: true);
-            }
+            AggregatedResult aggregated = Assert.Single(new ResultAggregator().Aggregate([resultSets], useFullyQualifiedName: true));
+            Assert.Equal("Ns.MyTests.MyMethod", aggregated.FullyQualifiedName);
+            Assert.Equal("Passed", aggregated.Result);
         }
-
-        private static int ExpectedAttachmentCount(string format)
-            => format == "xunit" ? 1 : 2;
-
-        private static string WriteResultFile(string directory, string format, string outcome, bool includeOutput)
+        finally
         {
-            string output = includeOutput ? "test output" : "   ";
-            string errorOutput = includeOutput ? "test error output" : string.Empty;
+            Directory.Delete(tempDirectory, recursive: true);
+        }
+    }
 
-            (string FileName, string Content) result = format switch
-            {
-                "xunit" => (
-                    "testResults.xml",
-                    $"""
+    private static int ExpectedAttachmentCount(string format)
+        => format == "xunit" ? 1 : 2;
+
+    private static string WriteResultFile(string directory, string format, string outcome, bool includeOutput)
+    {
+        string output = includeOutput ? "test output" : "   ";
+        string errorOutput = includeOutput ? "test error output" : string.Empty;
+
+        (string FileName, string Content) result = format switch
+        {
+            "xunit" => (
+                "testResults.xml",
+                $"""
                     <assemblies>
                       <assembly>
                         <collection>
@@ -251,9 +251,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                       </assembly>
                     </assemblies>
                     """),
-                "junit" => (
-                    "junit-results.xml",
-                    $"""
+            "junit" => (
+                "junit-results.xml",
+                $"""
                     <testsuites>
                       <testsuite>
                         <testcase classname="Sample.Tests" name="Test">
@@ -265,9 +265,9 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                       </testsuite>
                     </testsuites>
                     """),
-                "trx" => (
-                    "results.trx",
-                    $"""
+            "trx" => (
+                "results.trx",
+                $"""
                     <TestRun xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
                       <Results>
                         <UnitTestResult testId="11111111-1111-1111-1111-111111111111" testName="Test" outcome="{TrxOutcome(outcome)}">
@@ -285,21 +285,20 @@ namespace Microsoft.DotNet.Helix.Sdk.Tests
                       </TestDefinitions>
                     </TestRun>
                     """),
-                _ => throw new ArgumentOutOfRangeException(nameof(format)),
-            };
+            _ => throw new ArgumentOutOfRangeException(nameof(format)),
+        };
 
-            string filePath = Path.Combine(directory, result.FileName);
-            File.WriteAllText(filePath, result.Content);
-            return filePath;
-        }
-
-        private static string TrxOutcome(string outcome)
-            => outcome switch
-            {
-                "Pass" => "Passed",
-                "Skip" => "NotExecuted",
-                "Fail" => "Failed",
-                _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
-            };
+        string filePath = Path.Combine(directory, result.FileName);
+        File.WriteAllText(filePath, result.Content);
+        return filePath;
     }
+
+    private static string TrxOutcome(string outcome)
+        => outcome switch
+        {
+            "Pass" => "Passed",
+            "Skip" => "NotExecuted",
+            "Fail" => "Failed",
+            _ => throw new ArgumentOutOfRangeException(nameof(outcome)),
+        };
 }

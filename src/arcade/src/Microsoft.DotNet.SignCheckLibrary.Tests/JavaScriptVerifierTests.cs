@@ -8,93 +8,92 @@ using Microsoft.SignCheck.Logging;
 using Microsoft.SignCheck.Verification;
 using Xunit;
 
-namespace Microsoft.DotNet.SignCheckLibrary.Tests
+namespace Microsoft.DotNet.SignCheckLibrary.Tests;
+
+public class JavaScriptVerifierTests
 {
-    public class JavaScriptVerifierTests
+    private const string SignedJavaScriptFileName = "SignedJavaScript.js";
+
+    public static bool IsWindows => OperatingSystem.IsWindows();
+
+    [ConditionalTheory(typeof(JavaScriptVerifierTests), nameof(IsWindows))]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public void VerifiesJavaScriptSignatureIntegrity(bool tamper, bool expected)
     {
-        private const string SignedJavaScriptFileName = "SignedJavaScript.js";
+        string directory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        string scriptPath = Path.Combine(directory, "signed.js");
+        Directory.CreateDirectory(directory);
 
-        public static bool IsWindows => OperatingSystem.IsWindows();
-
-        [ConditionalTheory(typeof(JavaScriptVerifierTests), nameof(IsWindows))]
-        [InlineData(false, true)]
-        [InlineData(true, false)]
-        public void VerifiesJavaScriptSignatureIntegrity(bool tamper, bool expected)
+        try
         {
-            string directory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            string scriptPath = Path.Combine(directory, "signed.js");
-            Directory.CreateDirectory(directory);
+            File.Copy(
+                Path.Combine(AppContext.BaseDirectory, "Resources", SignedJavaScriptFileName),
+                scriptPath);
 
-            try
+            if (tamper)
             {
-                File.Copy(
-                    Path.Combine(AppContext.BaseDirectory, "Resources", SignedJavaScriptFileName),
-                    scriptPath);
-
-                if (tamper)
-                {
-                    byte[] script = File.ReadAllBytes(scriptPath);
-                    int offset = script.AsSpan().IndexOf(Encoding.ASCII.GetBytes("Hello"));
-                    Assert.True(offset >= 0);
-                    script[offset] = (byte)'h';
-                    File.WriteAllBytes(scriptPath, script);
-                }
-
-                SignatureVerificationResult result = VerifyScript(scriptPath, directory);
-
-                Assert.True(
-                    result.IsSigned == expected,
-                    $"Expected IsSigned to be {expected}. Details: {result.ToString(DetailKeys.ResultKeysVerbose)}");
-                Assert.Equal(expected, result.IsAuthentiCodeSigned);
+                byte[] script = File.ReadAllBytes(scriptPath);
+                int offset = script.AsSpan().IndexOf(Encoding.ASCII.GetBytes("Hello"));
+                Assert.True(offset >= 0);
+                script[offset] = (byte)'h';
+                File.WriteAllBytes(scriptPath, script);
             }
-            finally
-            {
-                Directory.Delete(directory, recursive: true);
-            }
+
+            SignatureVerificationResult result = VerifyScript(scriptPath, directory);
+
+            Assert.True(
+                result.IsSigned == expected,
+                $"Expected IsSigned to be {expected}. Details: {result.ToString(DetailKeys.ResultKeysVerbose)}");
+            Assert.Equal(expected, result.IsAuthentiCodeSigned);
         }
-
-        [Fact]
-        public void RejectsUnsignedJavaScript()
+        finally
         {
-            string directory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-            string scriptPath = Path.Combine(directory, "unsigned.js");
-            Directory.CreateDirectory(directory);
-
-            try
-            {
-                File.Copy(
-                    Path.Combine(AppContext.BaseDirectory, "Resources", "UnsignedJavaScript.js"),
-                    scriptPath);
-
-                SignatureVerificationResult result = VerifyScript(scriptPath, directory);
-
-                Assert.False(result.IsSigned);
-                Assert.False(result.IsAuthentiCodeSigned);
-            }
-            finally
-            {
-                Directory.Delete(directory, recursive: true);
-            }
+            Directory.Delete(directory, recursive: true);
         }
+    }
 
-        private static SignatureVerificationResult VerifyScript(string scriptPath, string directory)
+    [Fact]
+    public void RejectsUnsignedJavaScript()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        string scriptPath = Path.Combine(directory, "unsigned.js");
+        Directory.CreateDirectory(directory);
+
+        try
         {
-            Log log = new(
-                Path.Combine(directory, "signcheck.log"),
-                Path.Combine(directory, "signcheck.error.log"),
-                Path.Combine(directory, "signcheck.xml"),
-                LogVerbosity.Normal,
-                consoleOutput: false);
+            File.Copy(
+                Path.Combine(AppContext.BaseDirectory, "Resources", "UnsignedJavaScript.js"),
+                scriptPath);
 
-            try
-            {
-                JavaScriptVerifier verifier = new(log, new Exclusions(), SignatureVerificationOptions.None);
-                return verifier.VerifySignature(scriptPath, parent: null, virtualPath: scriptPath);
-            }
-            finally
-            {
-                log.Close();
-            }
+            SignatureVerificationResult result = VerifyScript(scriptPath, directory);
+
+            Assert.False(result.IsSigned);
+            Assert.False(result.IsAuthentiCodeSigned);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    private static SignatureVerificationResult VerifyScript(string scriptPath, string directory)
+    {
+        Log log = new(
+            Path.Combine(directory, "signcheck.log"),
+            Path.Combine(directory, "signcheck.error.log"),
+            Path.Combine(directory, "signcheck.xml"),
+            LogVerbosity.Normal,
+            consoleOutput: false);
+
+        try
+        {
+            JavaScriptVerifier verifier = new(log, new Exclusions(), SignatureVerificationOptions.None);
+            return verifier.VerifySignature(scriptPath, parent: null, virtualPath: scriptPath);
+        }
+        finally
+        {
+            log.Close();
         }
     }
 }

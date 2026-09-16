@@ -5,79 +5,78 @@ using System;
 using System.Linq;
 using Microsoft.Cci.Extensions;
 
-namespace Microsoft.Cci.Filters
+namespace Microsoft.Cci.Filters;
+
+/// <summary>
+/// An <see cref="ICciFilter"/> to remove members marked with
+/// <see cref="T:System.Runtime.CompilerServices.CompilerGeneratedAttribute"/>.
+/// </summary>
+/// <remarks>
+/// This is a hardened version of <see cref="AttributeMarkedFilter"/>. This <see cref="ICciFilter"/> has the
+/// following differences:
+/// <list type="number">
+/// <item>Is specific to <see cref="T:System.Runtime.CompilerServices.CompilerGeneratedAttribute"/>.</item>
+/// <item>Includes property and event accessors despite annotations.</item>
+/// <item>Excludes leftover <see cref="T:System.Runtime.CompilerServices.CompilerGeneratedAttribute"/>s.</item>
+/// </list>
+/// </remarks>
+public class ExcludeCompilerGeneratedCciFilter : ICciFilter
 {
-    /// <summary>
-    /// An <see cref="ICciFilter"/> to remove members marked with
-    /// <see cref="T:System.Runtime.CompilerServices.CompilerGeneratedAttribute"/>.
-    /// </summary>
-    /// <remarks>
-    /// This is a hardened version of <see cref="AttributeMarkedFilter"/>. This <see cref="ICciFilter"/> has the
-    /// following differences:
-    /// <list type="number">
-    /// <item>Is specific to <see cref="T:System.Runtime.CompilerServices.CompilerGeneratedAttribute"/>.</item>
-    /// <item>Includes property and event accessors despite annotations.</item>
-    /// <item>Excludes leftover <see cref="T:System.Runtime.CompilerServices.CompilerGeneratedAttribute"/>s.</item>
-    /// </list>
-    /// </remarks>
-    public class ExcludeCompilerGeneratedCciFilter : ICciFilter
+    private const string CompilerGeneratedTypeName = "System.Runtime.CompilerServices.CompilerGeneratedAttribute";
+
+    public virtual bool Include(INamespaceDefinition ns)
     {
-        private const string CompilerGeneratedTypeName = "System.Runtime.CompilerServices.CompilerGeneratedAttribute";
+        return ns.GetTypes(includeForwards: true).Any(Include);
+    }
 
-        public virtual bool Include(INamespaceDefinition ns)
+    public virtual bool Include(ITypeDefinition type)
+    {
+        return IsNotMarkedWithAttribute(type);
+    }
+
+    public virtual bool Include(ITypeDefinitionMember member)
+    {
+        // Include all accessors. Accessors are marked with CompilerGeneratedAttribute when compiler provides the
+        // body e.g. for { get; }.
+        if (member is IMethodDefinition methodDefinition &&
+            methodDefinition.IsPropertyOrEventAccessor())
         {
-            return ns.GetTypes(includeForwards: true).Any(Include);
+            return true;
         }
 
-        public virtual bool Include(ITypeDefinition type)
+        return IsNotMarkedWithAttribute(member);
+    }
+
+    public virtual bool Include(ICustomAttribute attribute)
+    {
+        // Include all FakeCustomAttribute because they cannot be annotated and they have simple arguments.
+        if (attribute is FakeCustomAttribute)
         {
-            return IsNotMarkedWithAttribute(type);
+            return true;
         }
 
-        public virtual bool Include(ITypeDefinitionMember member)
+        // Exclude leftover [CompilerGenerated] annotations (should exist only on event and property accessors).
+        if (string.Equals(CompilerGeneratedTypeName, attribute.Type.FullName(), StringComparison.Ordinal))
         {
-            // Include all accessors. Accessors are marked with CompilerGeneratedAttribute when compiler provides the
-            // body e.g. for { get; }.
-            if (member is IMethodDefinition methodDefinition &&
-                methodDefinition.IsPropertyOrEventAccessor())
-            {
-                return true;
-            }
-
-            return IsNotMarkedWithAttribute(member);
+            return false;
         }
 
-        public virtual bool Include(ICustomAttribute attribute)
+        // Exclude attributes with typeof() argument of a compiler-generated type.
+        foreach (var arg in attribute.Arguments.OfType<IMetadataTypeOf>())
         {
-            // Include all FakeCustomAttribute because they cannot be annotated and they have simple arguments.
-            if (attribute is FakeCustomAttribute)
-            {
-                return true;
-            }
-
-            // Exclude leftover [CompilerGenerated] annotations (should exist only on event and property accessors).
-            if (string.Equals(CompilerGeneratedTypeName, attribute.Type.FullName(), StringComparison.Ordinal))
+            var typeDef = arg.TypeToGet.GetDefinitionOrNull();
+            if (typeDef != null && !IsNotMarkedWithAttribute(typeDef))
             {
                 return false;
             }
-
-            // Exclude attributes with typeof() argument of a compiler-generated type.
-            foreach (var arg in attribute.Arguments.OfType<IMetadataTypeOf>())
-            {
-                var typeDef = arg.TypeToGet.GetDefinitionOrNull();
-                if (typeDef != null && !IsNotMarkedWithAttribute(typeDef))
-                {
-                    return false;
-                }
-            }
-
-            return IsNotMarkedWithAttribute(attribute.Type.ResolvedType);
         }
 
-        private static bool IsNotMarkedWithAttribute(IReference definition)
-        {
-            return !definition.Attributes.Any(
-                a => string.Equals(a.Type.FullName(), CompilerGeneratedTypeName, StringComparison.Ordinal));
-        }
+        return IsNotMarkedWithAttribute(attribute.Type.ResolvedType);
+    }
+
+    private static bool IsNotMarkedWithAttribute(IReference definition)
+    {
+        return !definition.Attributes.Any(
+            a => string.Equals(a.Type.FullName(), CompilerGeneratedTypeName, StringComparison.Ordinal));
     }
 }

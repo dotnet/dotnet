@@ -5,46 +5,48 @@ using Microsoft.Build.Framework;
 using System.IO;
 using XliffTasks.Model;
 
-namespace XliffTasks.Tasks
+namespace XliffTasks.Tasks;
+
+[MSBuildMultiThreadableTask]
+public sealed class SortXlf : XlfTask
 {
-    public sealed class SortXlf : XlfTask
+    [Required]
+    public ITaskItem[] Sources { get; set; }
+
+    [Required]
+    public string[] Languages { get; set; }
+
+    protected override void ExecuteCore()
     {
-        [Required]
-        public ITaskItem[] Sources { get; set; }
-
-        [Required]
-        public string[] Languages { get; set; }
-
-        protected override void ExecuteCore()
+        foreach (ITaskItem item in Sources)
         {
-            foreach (ITaskItem item in Sources)
+            string sourceDocumentPath = item.GetMetadataOrDefault(MetadataKey.SourceDocumentPath, item.ItemSpec);
+
+            foreach (string language in Languages)
             {
-                string sourceDocumentPath = item.GetMetadataOrDefault(MetadataKey.SourceDocumentPath, item.ItemSpec);
+                string xlfPath = XlfTask.GetXlfPath(sourceDocumentPath, language);
+                XlfDocument xlfDocument;
+                AbsolutePath xlfAbsolutePath;
 
-                foreach (string language in Languages)
+                try
                 {
-                    string xlfPath = XlfTask.GetXlfPath(sourceDocumentPath, language);
-                    XlfDocument xlfDocument;
-
-                    try
-                    {
-                        xlfDocument = XlfTask.LoadXlfDocument(xlfPath);
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        // If the file doesn't exist, we don't need to worry about sorting it.
-                        continue;
-                    }
-
-                    bool modified = xlfDocument.Sort();
-                    if (!modified)
-                    {
-                        continue; // no changes
-                    }
-
-                    Directory.CreateDirectory(Path.GetDirectoryName(xlfPath));
-                    xlfDocument.Save(xlfPath);
+                    xlfAbsolutePath = TaskEnvironment.GetAbsolutePath(xlfPath);
+                    xlfDocument = XlfTask.LoadXlfDocument(xlfAbsolutePath);
                 }
+                catch (FileNotFoundException)
+                {
+                    // If the file doesn't exist, we don't need to worry about sorting it.
+                    continue;
+                }
+
+                bool modified = xlfDocument.Sort();
+                if (!modified)
+                {
+                    continue; // no changes
+                }
+
+                Directory.CreateDirectory(Path.GetDirectoryName(xlfAbsolutePath));
+                xlfDocument.Save(new FileInfo(xlfAbsolutePath));
             }
         }
     }

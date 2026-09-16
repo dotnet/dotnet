@@ -104,12 +104,8 @@
       <Sha>
       </Sha>
     </Dependency>
-    <!-- Roslyn packages referenced at compile time (PrivateAssets="all") by src/TaskAnalyzer
-         (Microsoft.Build.TaskAuthoring.Analyzer). Declared here so that source-build resolves their
-         previously-source-built (N-1) versions, which repo-projects/msbuild.proj maps onto the
-         Analyzer_* properties that eng/dependabot/Directory.Packages.props consumes. The N-1 Roslyn
-         is the Roslyn inside the SDK running the build, so the analyzer stays loadable by it.
-         These versions are manually updated. -->
+    <!-- Track the N-1 Roslyn packages used to build TaskAnalyzer in source-only builds.
+         Update these manual dependencies with the N-1 SDK. -->
     <Dependency Name="Microsoft.CodeAnalysis.Analyzers" Version="5.11.0-1.26420.103" Label="Manual">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>1d599674e31ad86ca9e6e1dad7055b531e4d58e4</Sha>
@@ -124,9 +120,9 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26430.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.26456.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5403b94aa10dc99d67036c9ee45429f832c3700e</Sha>
+      <Sha>66b75e61d883abd9e3af86a811c3809a8d9142ca</Sha>
     </Dependency>
     <Dependency Name="NuGet.Build.Tasks" Version="7.11.0-rc.32">
       <Uri>https://github.com/nuget/nuget.client</Uri>
@@ -136,9 +132,9 @@
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>92a36efa9ae1a26a14872f87798526a1c3dd050b</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XUnitV3Extensions" Version="11.0.0-beta.26430.1">
+    <Dependency Name="Microsoft.DotNet.XUnitV3Extensions" Version="11.0.0-beta.26456.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5403b94aa10dc99d67036c9ee45429f832c3700e</Sha>
+      <Sha>66b75e61d883abd9e3af86a811c3809a8d9142ca</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

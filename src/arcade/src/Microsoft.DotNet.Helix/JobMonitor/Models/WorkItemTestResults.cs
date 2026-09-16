@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.DotNet.Helix.JobMonitor
-{
-    public record WorkItemTestResults(string JobName, string WorkItemName, List<string> TestResultFiles);
-}
+namespace Microsoft.DotNet.Helix.JobMonitor;
+
+public record WorkItemTestResults(string JobName, string WorkItemName, List<string> TestResultFiles);

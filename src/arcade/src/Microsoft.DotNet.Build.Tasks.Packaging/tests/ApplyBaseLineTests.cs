@@ -7,145 +7,144 @@ using Xunit;
 using Xunit.Abstractions;
 using AwesomeAssertions;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
+namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests;
+
+public class ApplyBaseLineTests
 {
-    public class ApplyBaseLineTests
+    private Log _log;
+    private TestBuildEngine _engine;
+    private ITaskItem[] _packageIndexes;
+
+    public ApplyBaseLineTests(ITestOutputHelper output)
     {
-        private Log _log;
-        private TestBuildEngine _engine;
-        private ITaskItem[] _packageIndexes;
+        _log = new Log(output);
+        _engine = new TestBuildEngine(_log);
+        _packageIndexes = new[] { new TaskItem("packageIndex.json") };
+    }
 
-        public ApplyBaseLineTests(ITestOutputHelper output)
+    [Fact]
+    public void ApplyBaseLineLiftToBaseLine()
+    {
+        ITaskItem[] dependencies = new[]
         {
-            _log = new Log(output);
-            _engine = new TestBuildEngine(_log);
-            _packageIndexes = new[] { new TaskItem("packageIndex.json") };
+            CreateItem("System.Runtime", "4.0.0")
+        };
+
+        ApplyBaseLine task = new ApplyBaseLine()
+        {
+            BuildEngine = _engine,
+            Apply = true,
+            PackageIndexes = _packageIndexes,
+            OriginalDependencies = dependencies
+        };
+
+        _log.Reset();
+        task.Execute();
+        _log.ErrorsLogged.Should().Be(0);
+        _log.WarningsLogged.Should().Be(0);
+        task.BaseLinedDependencies.Should().SatisfyRespectively(
+            item =>
+            {
+                item.ItemSpec.Should().Be("System.Runtime");
+                item.GetMetadata("Version").Should().Be("4.0.21");
+            });
+    }
+
+    [Fact]
+    public void DontApplyBaseLineIfGreater()
+    {
+
+        ITaskItem[] dependencies = new[]
+        {
+            CreateItem("System.Runtime", "4.1.0")
+        };
+
+        ApplyBaseLine task = new ApplyBaseLine()
+        {
+            BuildEngine = _engine,
+            Apply = true,
+            PackageIndexes = _packageIndexes,
+            OriginalDependencies = dependencies
+        };
+
+        _log.Reset();
+        task.Execute();
+        _log.ErrorsLogged.Should().Be(0);
+        _log.WarningsLogged.Should().Be(0);
+        task.BaseLinedDependencies.Should().SatisfyRespectively(
+            item =>
+            {
+                item.ItemSpec.Should().Be("System.Runtime");
+                item.GetMetadata("Version").Should().Be("4.1.0");
+            });
+    }
+
+    [Fact]
+    public void ApplyBaselineToUnversionedDependency()
+    {
+        ITaskItem[] dependencies = new[]
+        {
+            CreateItem("System.Runtime", null)
+        };
+
+        ApplyBaseLine task = new ApplyBaseLine()
+        {
+            BuildEngine = _engine,
+            Apply = true,
+            PackageIndexes = _packageIndexes,
+            OriginalDependencies = dependencies
+        };
+
+        _log.Reset();
+        task.Execute();
+        _log.ErrorsLogged.Should().Be(0);
+        _log.WarningsLogged.Should().Be(0);
+        task.BaseLinedDependencies.Should().SatisfyRespectively(
+            item =>
+            {
+                item.ItemSpec.Should().Be("System.Runtime");
+                item.GetMetadata("Version").Should().Be("4.0.21");
+            });
+    }
+
+    [Fact]
+    public void ApplyBaselineToUntrackedDependency()
+    {
+
+        ITaskItem[] dependencies = new[]
+        {
+            CreateItem("System.Banana", "4.0.0")
+        };
+
+        ApplyBaseLine task = new ApplyBaseLine()
+        {
+            BuildEngine = _engine,
+            Apply = true,
+            PackageIndexes = _packageIndexes,
+            OriginalDependencies = dependencies
+        };
+
+        _log.Reset();
+        task.Execute();
+        _log.ErrorsLogged.Should().Be(0);
+        _log.WarningsLogged.Should().Be(0);
+        task.BaseLinedDependencies.Should().SatisfyRespectively(
+            item =>
+            {
+                item.ItemSpec.Should().Be("System.Banana");
+                item.GetMetadata("Version").Should().Be("4.0.0");
+            });
+    }
+
+    private static ITaskItem CreateItem(string name, string version)
+    {
+        TaskItem item = new TaskItem(name);
+
+        if (version != null)
+        {
+            item.SetMetadata("Version", version);
         }
 
-        [Fact]
-        public void ApplyBaseLineLiftToBaseLine()
-        {
-            ITaskItem[] dependencies = new[]
-            {
-                CreateItem("System.Runtime", "4.0.0")
-            };
-
-            ApplyBaseLine task = new ApplyBaseLine()
-            {
-                BuildEngine = _engine,
-                Apply = true,
-                PackageIndexes = _packageIndexes,
-                OriginalDependencies = dependencies
-            };
-
-            _log.Reset();
-            task.Execute();
-            _log.ErrorsLogged.Should().Be(0);
-            _log.WarningsLogged.Should().Be(0);
-            task.BaseLinedDependencies.Should().SatisfyRespectively(
-                item =>
-                {
-                    item.ItemSpec.Should().Be("System.Runtime");
-                    item.GetMetadata("Version").Should().Be("4.0.21");
-                });
-        }
-
-        [Fact]
-        public void DontApplyBaseLineIfGreater()
-        {
-
-            ITaskItem[] dependencies = new[]
-            {
-                CreateItem("System.Runtime", "4.1.0")
-            };
-
-            ApplyBaseLine task = new ApplyBaseLine()
-            {
-                BuildEngine = _engine,
-                Apply = true,
-                PackageIndexes = _packageIndexes,
-                OriginalDependencies = dependencies
-            };
-
-            _log.Reset();
-            task.Execute();
-            _log.ErrorsLogged.Should().Be(0);
-            _log.WarningsLogged.Should().Be(0);
-            task.BaseLinedDependencies.Should().SatisfyRespectively(
-                item =>
-                {
-                    item.ItemSpec.Should().Be("System.Runtime");
-                    item.GetMetadata("Version").Should().Be("4.1.0");
-                });
-        }
-
-        [Fact]
-        public void ApplyBaselineToUnversionedDependency()
-        {
-            ITaskItem[] dependencies = new[]
-            {
-                CreateItem("System.Runtime", null)
-            };
-
-            ApplyBaseLine task = new ApplyBaseLine()
-            {
-                BuildEngine = _engine,
-                Apply = true,
-                PackageIndexes = _packageIndexes,
-                OriginalDependencies = dependencies
-            };
-
-            _log.Reset();
-            task.Execute();
-            _log.ErrorsLogged.Should().Be(0);
-            _log.WarningsLogged.Should().Be(0);
-            task.BaseLinedDependencies.Should().SatisfyRespectively(
-                item =>
-                {
-                    item.ItemSpec.Should().Be("System.Runtime");
-                    item.GetMetadata("Version").Should().Be("4.0.21");
-                });
-        }
-
-        [Fact]
-        public void ApplyBaselineToUntrackedDependency()
-        {
-
-            ITaskItem[] dependencies = new[]
-            {
-                CreateItem("System.Banana", "4.0.0")
-            };
-
-            ApplyBaseLine task = new ApplyBaseLine()
-            {
-                BuildEngine = _engine,
-                Apply = true,
-                PackageIndexes = _packageIndexes,
-                OriginalDependencies = dependencies
-            };
-
-            _log.Reset();
-            task.Execute();
-            _log.ErrorsLogged.Should().Be(0);
-            _log.WarningsLogged.Should().Be(0);
-            task.BaseLinedDependencies.Should().SatisfyRespectively(
-                item =>
-                {
-                    item.ItemSpec.Should().Be("System.Banana");
-                    item.GetMetadata("Version").Should().Be("4.0.0");
-                });
-        }
-
-        private static ITaskItem CreateItem(string name, string version)
-        {
-            TaskItem item = new TaskItem(name);
-
-            if (version != null)
-            {
-                item.SetMetadata("Version", version);
-            }
-
-            return item;
-        }
+        return item;
     }
 }

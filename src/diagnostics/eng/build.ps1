@@ -67,6 +67,10 @@ if ($bundletools) {
     $test = $False
 }
 
+if ($testInterpreter) {
+    $env:SOS_TEST_INTERPRETER="true"
+}
+
 # Build native components
 if (-not $skipnative) {
     Invoke-Expression "& `"$engroot\Build-Native.cmd`" -architecture $architecture -configuration $configuration -verbosity $verbosity $remainingargs"
@@ -119,18 +123,14 @@ if ($test) {
             $env:SOS_TEST_DAC_MODE=$dacMode
         }
 
-        if ($testInterpreter) {
-            $env:SOS_TEST_INTERPRETER="true"
-        }
-
         # Build the test filter argument if provided
         # Use backslash-escaped quotes so they survive the additional quoting in tools.ps1
         $testFilterArg = ''
         if ($methodfilter -ne '') {
-            $testFilterArg = "/p:TestRunnerAdditionalArguments=\`"-method $methodfilter\`""
+            $testFilterArg = "/p:DiagnosticsTestMethodFilter=\`"$methodfilter\`""
         }
         elseif ($classfilter -ne '') {
-            $testFilterArg = "/p:TestRunnerAdditionalArguments=\`"-class $classfilter\`""
+            $testFilterArg = "/p:DiagnosticsTestClassFilter=\`"$classfilter\`""
         }
 
         # When the managed build was skipped (e.g. the test-only CI legs that download prebuilt

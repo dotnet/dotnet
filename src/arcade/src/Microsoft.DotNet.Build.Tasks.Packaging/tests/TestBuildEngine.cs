@@ -5,52 +5,51 @@ using Microsoft.Build.Framework;
 using System;
 using System.Collections;
 
-namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests
+namespace Microsoft.DotNet.Build.Tasks.Packaging.Tests;
+
+public class TestBuildEngine : IBuildEngine
 {
-    public class TestBuildEngine : IBuildEngine
+    private Log _log;
+
+    public TestBuildEngine(Log log)
     {
-        private Log _log;
+        ColumnNumberOfTaskNode = 0;
+        ContinueOnError = true;
+        LineNumberOfTaskNode = 0;
+        ProjectFileOfTaskNode = "test";
+        _log = log;
+    }
 
-        public TestBuildEngine(Log log)
-        {
-            ColumnNumberOfTaskNode = 0;
-            ContinueOnError = true;
-            LineNumberOfTaskNode = 0;
-            ProjectFileOfTaskNode = "test";
-            _log = log;
-        }
+    public int ColumnNumberOfTaskNode { get; set; }
 
-        public int ColumnNumberOfTaskNode { get; set; }
+    public bool ContinueOnError { get; set; }
 
-        public bool ContinueOnError { get; set; }
+    public int LineNumberOfTaskNode { get; set; }
 
-        public int LineNumberOfTaskNode { get; set; }
+    public string ProjectFileOfTaskNode { get; set; }
 
-        public string ProjectFileOfTaskNode { get; set; }
+    public bool BuildProjectFile(string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool BuildProjectFile(string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs)
-        {
-            throw new NotImplementedException();
-        }
+    public void LogCustomEvent(CustomBuildEventArgs e)
+    {
+        _log.LogMessage(e.Message);
+    }
 
-        public void LogCustomEvent(CustomBuildEventArgs e)
-        {
-            _log.LogMessage(e.Message);
-        }
+    public void LogErrorEvent(BuildErrorEventArgs e)
+    {
+        _log.LogError(e.Message);
+    }
 
-        public void LogErrorEvent(BuildErrorEventArgs e)
-        {
-            _log.LogError(e.Message);
-        }
+    public void LogMessageEvent(BuildMessageEventArgs e)
+    {
+        _log.LogMessage((MessageImportance)e.Importance, e.Message);
+    }
 
-        public void LogMessageEvent(BuildMessageEventArgs e)
-        {
-            _log.LogMessage((MessageImportance)e.Importance, e.Message);
-        }
-
-        public void LogWarningEvent(BuildWarningEventArgs e)
-        {
-            _log.LogWarning(e.Message);
-        }
+    public void LogWarningEvent(BuildWarningEventArgs e)
+    {
+        _log.LogWarning(e.Message);
     }
 }

@@ -31,11 +31,6 @@ namespace NuGet.PackageManagement.VisualStudio
         bool IsInitialized { get; }
 
         /// <summary>
-        /// Gets the SolutionManager initialization task, if there is one running.
-        /// </summary>
-        Task InitializationTask { get; set; }
-
-        /// <summary>
         /// Retrieves <see cref="NuGetProject"/> instance associated with VS project.
         /// Creates new instance if not found in project system cache.
         /// </summary>

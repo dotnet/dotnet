@@ -41,7 +41,7 @@
       <_CMakeMultiConfigurationGenerator>true</_CMakeMultiConfigurationGenerator>
       <_CMakePassArchitectureToGenerator>true</_CMakePassArchitectureToGenerator>
       <!-- We limit the VS version range for the generator since CMake only knows about specific VS versions -->
-      <VSGeneratorVersionRange Condition="'$(VSGeneratorVersionRange)' == ''">[15,18.0)</VSGeneratorVersionRange>
+      <VSGeneratorVersionRange Condition="'$(VSGeneratorVersionRange)' == ''">[15,19.0)</VSGeneratorVersionRange>
       <!-- Visual Studio uses the Win32 name for the x86 target architecture. -->
       <Platform Condition="'$(Platform)' == 'x86'">Win32</Platform>
     </PropertyGroup>
@@ -61,10 +61,32 @@
     <PropertyGroup>
       <VSGenerator Condition="$(_HighestCompatibleVSVersion.StartsWith(16.))">Visual Studio 16 2019</VSGenerator>
       <VSGenerator Condition="$(_HighestCompatibleVSVersion.StartsWith(17.))">Visual Studio 17 2022</VSGenerator>
+      <VSGenerator Condition="$(_HighestCompatibleVSVersion.StartsWith(18.))">Visual Studio 18 2026</VSGenerator>
     </PropertyGroup>
 
     <Error Condition="'$(VSGenerator)' == ''"
            Text="Unable to determine the correct CMake Generator for Visual Studio. The SDK may need to be updated to understand a new VS version. Unknown Visual Studio version $(_HighestCompatibleVSVersion)" />
+
+    <!-- Older CMake releases don't know about newer Visual Studio generators, so validate that the CMake we'll use supports the generator we resolved.
+         Use the same command wrapper as the configure step so that we inspect the same cmake that will be used to configure the project.
+         Design-time builds never invoke cmake, so skip the extra process launch there. -->
+    <Exec
+      Condition="'$(DesignTimeBuild)' != 'true'"
+      Command="$(CMakeConfigureCommandWrapper) cmake --help"
+      EchoOff="true"
+      ConsoleToMsBuild="true"
+      StandardOutputImportance="Low"
+      IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" ItemName="_CMakeHelpOutputLine" />
+      <Output TaskParameter="ExitCode" PropertyName="_CMakeHelpExitCode" />
+    </Exec>
+
+    <PropertyGroup>
+      <_CMakeSupportedGenerators>@(_CMakeHelpOutputLine, '%0A')</_CMakeSupportedGenerators>
+    </PropertyGroup>
+
+    <Error Condition="'$(_CMakeHelpExitCode)' == '0' and !$(_CMakeSupportedGenerators.Contains('$(VSGenerator)'))"
+           Text="The cmake used to configure this project does not support the '$(VSGenerator)' generator. Install a newer version of CMake or set the VSGeneratorVersionRange property to restrict the SDK to an older Visual Studio version." />
 
     <PropertyGroup>
       <CMakeGenerator>$(VSGenerator)</CMakeGenerator>

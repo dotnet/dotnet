@@ -13,714 +13,713 @@ using Azure.Core;
 
 
 
-namespace Microsoft.DotNet.Helix.Client
+namespace Microsoft.DotNet.Helix.Client;
+
+public partial interface IJob
 {
-    public partial interface IJob
+    Task<Models.JobCreationResult> NewAsync(
+        Models.JobCreationRequest body,
+        string idempotencyKey,
+        bool? returnSas = default,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<IImmutableList<Models.JobSummary>> ListAsync(
+        string build = default,
+        int? count = default,
+        string creator = default,
+        string name = default,
+        IImmutableDictionary<string, string> properties = default,
+        string source = default,
+        string type = default,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<Models.JobResultsUri> ResultsAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<Models.JobPassFail> PassFailAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<Models.JobSummary> SummaryAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<Models.JobDetails> DetailsAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    );
+
+    Task CancelAsync(
+        string job,
+        string jobCancellationToken = default,
+        CancellationToken cancellationToken = default
+    );
+
+    Task WaitAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    );
+
+}
+
+internal partial class Job : IServiceOperations<HelixApi>, IJob
+{
+    public Job(HelixApi client)
     {
-        Task<Models.JobCreationResult> NewAsync(
-            Models.JobCreationRequest body,
-            string idempotencyKey,
-            bool? returnSas = default,
-            CancellationToken cancellationToken = default
-        );
-
-        Task<IImmutableList<Models.JobSummary>> ListAsync(
-            string build = default,
-            int? count = default,
-            string creator = default,
-            string name = default,
-            IImmutableDictionary<string, string> properties = default,
-            string source = default,
-            string type = default,
-            CancellationToken cancellationToken = default
-        );
-
-        Task<Models.JobResultsUri> ResultsAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        );
-
-        Task<Models.JobPassFail> PassFailAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        );
-
-        Task<Models.JobSummary> SummaryAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        );
-
-        Task<Models.JobDetails> DetailsAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        );
-
-        Task CancelAsync(
-            string job,
-            string jobCancellationToken = default,
-            CancellationToken cancellationToken = default
-        );
-
-        Task WaitAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        );
-
+        Client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    internal partial class Job : IServiceOperations<HelixApi>, IJob
+    public HelixApi Client { get; }
+
+    partial void HandleFailedRequest(RestApiException ex);
+
+    partial void HandleFailedNewRequest(RestApiException ex);
+
+    public async Task<Models.JobCreationResult> NewAsync(
+        Models.JobCreationRequest body,
+        string idempotencyKey,
+        bool? returnSas = default,
+        CancellationToken cancellationToken = default
+    )
     {
-        public Job(HelixApi client)
+
+        if (body == default(Models.JobCreationRequest))
         {
-            Client = client ?? throw new ArgumentNullException(nameof(client));
+            throw new ArgumentNullException(nameof(body));
         }
 
-        public HelixApi Client { get; }
-
-        partial void HandleFailedRequest(RestApiException ex);
-
-        partial void HandleFailedNewRequest(RestApiException ex);
-
-        public async Task<Models.JobCreationResult> NewAsync(
-            Models.JobCreationRequest body,
-            string idempotencyKey,
-            bool? returnSas = default,
-            CancellationToken cancellationToken = default
-        )
+        if (!body.IsValid)
         {
+            throw new ArgumentException("The parameter is not valid", nameof(body));
+        }
 
-            if (body == default(Models.JobCreationRequest))
+        if (string.IsNullOrEmpty(idempotencyKey))
+        {
+            throw new ArgumentNullException(nameof(idempotencyKey));
+        }
+
+        const string apiVersion = "2019-06-17";
+
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/jobs",
+            false);
+
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+
+
+        using (var _req = Client.Pipeline.CreateRequest())
+        {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Post;
+
+            if (!string.IsNullOrEmpty(idempotencyKey))
             {
-                throw new ArgumentNullException(nameof(body));
+                _req.Headers.Add("Idempotency-Key", idempotencyKey);
             }
 
-            if (!body.IsValid)
+            if (returnSas != default(bool?))
             {
-                throw new ArgumentException("The parameter is not valid", nameof(body));
+                _req.Headers.Add("return-sas", returnSas.ToString());
             }
 
-            if (string.IsNullOrEmpty(idempotencyKey))
+            if (body != default(Models.JobCreationRequest))
             {
-                throw new ArgumentNullException(nameof(idempotencyKey));
+                _req.Content = RequestContent.Create(Encoding.UTF8.GetBytes(Client.Serialize(body)));
+                _req.Headers.Add("Content-Type", "application/json; charset=utf-8");
             }
 
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/jobs",
-                false);
-
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
-
-
-            using (var _req = Client.Pipeline.CreateRequest())
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
             {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Post;
-
-                if (!string.IsNullOrEmpty(idempotencyKey))
+                if (_res.Status < 200 || _res.Status >= 300)
                 {
-                    _req.Headers.Add("Idempotency-Key", idempotencyKey);
+                    await OnNewFailed(_req, _res).ConfigureAwait(false);
                 }
 
-                if (returnSas != default(bool?))
+                if (_res.ContentStream == null)
                 {
-                    _req.Headers.Add("return-sas", returnSas.ToString());
+                    await OnNewFailed(_req, _res).ConfigureAwait(false);
                 }
 
-                if (body != default(Models.JobCreationRequest))
+                using (var _reader = new StreamReader(_res.ContentStream))
                 {
-                    _req.Content = RequestContent.Create(Encoding.UTF8.GetBytes(Client.Serialize(body)));
-                    _req.Headers.Add("Content-Type", "application/json; charset=utf-8");
-                }
-
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
-                {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnNewFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-                    if (_res.ContentStream == null)
-                    {
-                        await OnNewFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-                    using (var _reader = new StreamReader(_res.ContentStream))
-                    {
-                        var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
-                        var _body = Client.Deserialize<Models.JobCreationResult>(_content);
-                        return _body;
-                    }
+                    var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
+                    var _body = Client.Deserialize<Models.JobCreationResult>(_content);
+                    return _body;
                 }
             }
         }
+    }
 
-        internal async Task OnNewFailed(Request req, Response res)
+    internal async Task OnNewFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
         {
-            string content = null;
-            if (res.ContentStream != null)
+            using (var reader = new StreamReader(res.ContentStream))
             {
-                using (var reader = new StreamReader(res.ContentStream))
-                {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                }
-            }
-
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedNewRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
-        }
-
-        partial void HandleFailedListRequest(RestApiException ex);
-
-        public async Task<IImmutableList<Models.JobSummary>> ListAsync(
-            string build = default,
-            int? count = default,
-            string creator = default,
-            string name = default,
-            IImmutableDictionary<string, string> properties = default,
-            string source = default,
-            string type = default,
-            CancellationToken cancellationToken = default
-        )
-        {
-
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/jobs",
-                false);
-
-            if (!string.IsNullOrEmpty(creator))
-            {
-                _url.AppendQuery("Creator", Client.Serialize(creator));
-            }
-            if (!string.IsNullOrEmpty(source))
-            {
-                _url.AppendQuery("Source", Client.Serialize(source));
-            }
-            if (!string.IsNullOrEmpty(type))
-            {
-                _url.AppendQuery("Type", Client.Serialize(type));
-            }
-            if (!string.IsNullOrEmpty(build))
-            {
-                _url.AppendQuery("Build", Client.Serialize(build));
-            }
-            if (!string.IsNullOrEmpty(name))
-            {
-                _url.AppendQuery("Name", Client.Serialize(name));
-            }
-            if (properties != default(IImmutableDictionary<string, string>))
-            {
-                _url.AppendQuery("Properties", properties);
-            }
-            if (count != default(int?))
-            {
-                _url.AppendQuery("count", Client.Serialize(count));
-            }
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
-
-
-            using (var _req = Client.Pipeline.CreateRequest())
-            {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Get;
-
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
-                {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnListFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-                    if (_res.ContentStream == null)
-                    {
-                        await OnListFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-                    using (var _reader = new StreamReader(_res.ContentStream))
-                    {
-                        var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
-                        var _body = Client.Deserialize<IImmutableList<Models.JobSummary>>(_content);
-                        return _body;
-                    }
-                }
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
             }
         }
 
-        internal async Task OnListFailed(Request req, Response res)
-        {
-            string content = null;
-            if (res.ContentStream != null)
-            {
-                using (var reader = new StreamReader(res.ContentStream))
-                {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                }
-            }
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedNewRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
+    }
 
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedListRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
+    partial void HandleFailedListRequest(RestApiException ex);
+
+    public async Task<IImmutableList<Models.JobSummary>> ListAsync(
+        string build = default,
+        int? count = default,
+        string creator = default,
+        string name = default,
+        IImmutableDictionary<string, string> properties = default,
+        string source = default,
+        string type = default,
+        CancellationToken cancellationToken = default
+    )
+    {
+
+        const string apiVersion = "2019-06-17";
+
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/jobs",
+            false);
+
+        if (!string.IsNullOrEmpty(creator))
+        {
+            _url.AppendQuery("Creator", Client.Serialize(creator));
         }
-
-        partial void HandleFailedResultsRequest(RestApiException ex);
-
-        public async Task<Models.JobResultsUri> ResultsAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        )
+        if (!string.IsNullOrEmpty(source))
         {
-
-            if (string.IsNullOrEmpty(job))
-            {
-                throw new ArgumentNullException(nameof(job));
-            }
-
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/jobs/{job}/results".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
-                false);
-
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
-
-
-            using (var _req = Client.Pipeline.CreateRequest())
-            {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Get;
-
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
-                {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnResultsFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-                    if (_res.ContentStream == null)
-                    {
-                        await OnResultsFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-                    using (var _reader = new StreamReader(_res.ContentStream))
-                    {
-                        var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
-                        var _body = Client.Deserialize<Models.JobResultsUri>(_content);
-                        return _body;
-                    }
-                }
-            }
+            _url.AppendQuery("Source", Client.Serialize(source));
         }
-
-        internal async Task OnResultsFailed(Request req, Response res)
+        if (!string.IsNullOrEmpty(type))
         {
-            string content = null;
-            if (res.ContentStream != null)
-            {
-                using (var reader = new StreamReader(res.ContentStream))
-                {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                }
-            }
-
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedResultsRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
+            _url.AppendQuery("Type", Client.Serialize(type));
         }
-
-        partial void HandleFailedPassFailRequest(RestApiException ex);
-
-        public async Task<Models.JobPassFail> PassFailAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        )
+        if (!string.IsNullOrEmpty(build))
         {
+            _url.AppendQuery("Build", Client.Serialize(build));
+        }
+        if (!string.IsNullOrEmpty(name))
+        {
+            _url.AppendQuery("Name", Client.Serialize(name));
+        }
+        if (properties != default(IImmutableDictionary<string, string>))
+        {
+            _url.AppendQuery("Properties", properties);
+        }
+        if (count != default(int?))
+        {
+            _url.AppendQuery("count", Client.Serialize(count));
+        }
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
 
-            if (string.IsNullOrEmpty(job))
+
+        using (var _req = Client.Pipeline.CreateRequest())
+        {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Get;
+
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
             {
-                throw new ArgumentNullException(nameof(job));
-            }
-
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/jobs/{job}/pf".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
-                false);
-
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
-
-
-            using (var _req = Client.Pipeline.CreateRequest())
-            {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Get;
-
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+                if (_res.Status < 200 || _res.Status >= 300)
                 {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnPassFailFailed(_req, _res).ConfigureAwait(false);
-                    }
+                    await OnListFailed(_req, _res).ConfigureAwait(false);
+                }
 
-                    if (_res.ContentStream == null)
-                    {
-                        await OnPassFailFailed(_req, _res).ConfigureAwait(false);
-                    }
+                if (_res.ContentStream == null)
+                {
+                    await OnListFailed(_req, _res).ConfigureAwait(false);
+                }
 
-                    using (var _reader = new StreamReader(_res.ContentStream))
-                    {
-                        var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
-                        var _body = Client.Deserialize<Models.JobPassFail>(_content);
-                        return _body;
-                    }
+                using (var _reader = new StreamReader(_res.ContentStream))
+                {
+                    var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
+                    var _body = Client.Deserialize<IImmutableList<Models.JobSummary>>(_content);
+                    return _body;
                 }
             }
         }
+    }
 
-        internal async Task OnPassFailFailed(Request req, Response res)
+    internal async Task OnListFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
         {
-            string content = null;
-            if (res.ContentStream != null)
+            using (var reader = new StreamReader(res.ContentStream))
             {
-                using (var reader = new StreamReader(res.ContentStream))
-                {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                }
-            }
-
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedPassFailRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
-        }
-
-        partial void HandleFailedSummaryRequest(RestApiException ex);
-
-        public async Task<Models.JobSummary> SummaryAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        )
-        {
-
-            if (string.IsNullOrEmpty(job))
-            {
-                throw new ArgumentNullException(nameof(job));
-            }
-
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/jobs/{job}".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
-                false);
-
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
-
-
-            using (var _req = Client.Pipeline.CreateRequest())
-            {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Get;
-
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
-                {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnSummaryFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-                    if (_res.ContentStream == null)
-                    {
-                        await OnSummaryFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-                    using (var _reader = new StreamReader(_res.ContentStream))
-                    {
-                        var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
-                        var _body = Client.Deserialize<Models.JobSummary>(_content);
-                        return _body;
-                    }
-                }
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
             }
         }
 
-        internal async Task OnSummaryFailed(Request req, Response res)
-        {
-            string content = null;
-            if (res.ContentStream != null)
-            {
-                using (var reader = new StreamReader(res.ContentStream))
-                {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                }
-            }
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedListRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
+    }
 
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedSummaryRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
+    partial void HandleFailedResultsRequest(RestApiException ex);
+
+    public async Task<Models.JobResultsUri> ResultsAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    )
+    {
+
+        if (string.IsNullOrEmpty(job))
+        {
+            throw new ArgumentNullException(nameof(job));
         }
 
-        partial void HandleFailedDetailsRequest(RestApiException ex);
+        const string apiVersion = "2019-06-17";
 
-        public async Task<Models.JobDetails> DetailsAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        )
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/jobs/{job}/results".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
+            false);
+
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+
+
+        using (var _req = Client.Pipeline.CreateRequest())
         {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Get;
 
-            if (string.IsNullOrEmpty(job))
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
             {
-                throw new ArgumentNullException(nameof(job));
-            }
-
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/jobs/{job}/details".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
-                false);
-
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
-
-
-            using (var _req = Client.Pipeline.CreateRequest())
-            {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Get;
-
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+                if (_res.Status < 200 || _res.Status >= 300)
                 {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnDetailsFailed(_req, _res).ConfigureAwait(false);
-                    }
+                    await OnResultsFailed(_req, _res).ConfigureAwait(false);
+                }
 
-                    if (_res.ContentStream == null)
-                    {
-                        await OnDetailsFailed(_req, _res).ConfigureAwait(false);
-                    }
+                if (_res.ContentStream == null)
+                {
+                    await OnResultsFailed(_req, _res).ConfigureAwait(false);
+                }
 
-                    using (var _reader = new StreamReader(_res.ContentStream))
-                    {
-                        var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
-                        var _body = Client.Deserialize<Models.JobDetails>(_content);
-                        return _body;
-                    }
+                using (var _reader = new StreamReader(_res.ContentStream))
+                {
+                    var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
+                    var _body = Client.Deserialize<Models.JobResultsUri>(_content);
+                    return _body;
                 }
             }
         }
+    }
 
-        internal async Task OnDetailsFailed(Request req, Response res)
+    internal async Task OnResultsFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
         {
-            string content = null;
-            if (res.ContentStream != null)
+            using (var reader = new StreamReader(res.ContentStream))
             {
-                using (var reader = new StreamReader(res.ContentStream))
-                {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                }
-            }
-
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedDetailsRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
-        }
-
-        partial void HandleFailedCancelRequest(RestApiException ex);
-
-        public async Task CancelAsync(
-            string job,
-            string jobCancellationToken = default,
-            CancellationToken cancellationToken = default
-        )
-        {
-
-            if (string.IsNullOrEmpty(job))
-            {
-                throw new ArgumentNullException(nameof(job));
-            }
-
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/jobs/{job}/cancel".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
-                false);
-
-            if (!string.IsNullOrEmpty(jobCancellationToken))
-            {
-                _url.AppendQuery("jobCancellationToken", Client.Serialize(jobCancellationToken));
-            }
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
-
-
-            using (var _req = Client.Pipeline.CreateRequest())
-            {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Post;
-
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
-                {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnCancelFailed(_req, _res).ConfigureAwait(false);
-                    }
-
-
-                    return;
-                }
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
             }
         }
 
-        internal async Task OnCancelFailed(Request req, Response res)
-        {
-            string content = null;
-            if (res.ContentStream != null)
-            {
-                using (var reader = new StreamReader(res.ContentStream))
-                {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                }
-            }
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedResultsRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
+    }
 
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedCancelRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
+    partial void HandleFailedPassFailRequest(RestApiException ex);
+
+    public async Task<Models.JobPassFail> PassFailAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    )
+    {
+
+        if (string.IsNullOrEmpty(job))
+        {
+            throw new ArgumentNullException(nameof(job));
         }
 
-        partial void HandleFailedWaitRequest(RestApiException ex);
+        const string apiVersion = "2019-06-17";
 
-        public async Task WaitAsync(
-            string job,
-            CancellationToken cancellationToken = default
-        )
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/jobs/{job}/pf".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
+            false);
+
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+
+
+        using (var _req = Client.Pipeline.CreateRequest())
         {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Get;
 
-            if (string.IsNullOrEmpty(job))
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
             {
-                throw new ArgumentNullException(nameof(job));
-            }
-
-            const string apiVersion = "2019-06-17";
-
-            var _baseUri = Client.Options.BaseUri;
-            var _url = new RequestUriBuilder();
-            _url.Reset(_baseUri);
-            _url.AppendPath(
-                "/api/jobs/{job}/wait".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
-                false);
-
-            _url.AppendQuery("api-version", Client.Serialize(apiVersion));
-
-
-            using (var _req = Client.Pipeline.CreateRequest())
-            {
-                _req.Uri = _url;
-                _req.Method = RequestMethod.Get;
-
-                using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+                if (_res.Status < 200 || _res.Status >= 300)
                 {
-                    if (_res.Status < 200 || _res.Status >= 300)
-                    {
-                        await OnWaitFailed(_req, _res).ConfigureAwait(false);
-                    }
+                    await OnPassFailFailed(_req, _res).ConfigureAwait(false);
+                }
 
+                if (_res.ContentStream == null)
+                {
+                    await OnPassFailFailed(_req, _res).ConfigureAwait(false);
+                }
 
-                    return;
+                using (var _reader = new StreamReader(_res.ContentStream))
+                {
+                    var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
+                    var _body = Client.Deserialize<Models.JobPassFail>(_content);
+                    return _body;
                 }
             }
         }
+    }
 
-        internal async Task OnWaitFailed(Request req, Response res)
+    internal async Task OnPassFailFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
         {
-            string content = null;
-            if (res.ContentStream != null)
+            using (var reader = new StreamReader(res.ContentStream))
             {
-                using (var reader = new StreamReader(res.ContentStream))
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
+            }
+        }
+
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedPassFailRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
+    }
+
+    partial void HandleFailedSummaryRequest(RestApiException ex);
+
+    public async Task<Models.JobSummary> SummaryAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    )
+    {
+
+        if (string.IsNullOrEmpty(job))
+        {
+            throw new ArgumentNullException(nameof(job));
+        }
+
+        const string apiVersion = "2019-06-17";
+
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/jobs/{job}".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
+            false);
+
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+
+
+        using (var _req = Client.Pipeline.CreateRequest())
+        {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Get;
+
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+            {
+                if (_res.Status < 200 || _res.Status >= 300)
                 {
-                    content = await reader.ReadToEndAsync().ConfigureAwait(false);
+                    await OnSummaryFailed(_req, _res).ConfigureAwait(false);
+                }
+
+                if (_res.ContentStream == null)
+                {
+                    await OnSummaryFailed(_req, _res).ConfigureAwait(false);
+                }
+
+                using (var _reader = new StreamReader(_res.ContentStream))
+                {
+                    var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
+                    var _body = Client.Deserialize<Models.JobSummary>(_content);
+                    return _body;
                 }
             }
-
-            var ex = new RestApiException<Models.ApiError>(
-                req,
-                res,
-                content,
-                Client.Deserialize<Models.ApiError>(content)
-                );
-            HandleFailedWaitRequest(ex);
-            HandleFailedRequest(ex);
-            Client.OnFailedRequest(ex);
-            throw ex;
         }
+    }
+
+    internal async Task OnSummaryFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
+        {
+            using (var reader = new StreamReader(res.ContentStream))
+            {
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
+            }
+        }
+
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedSummaryRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
+    }
+
+    partial void HandleFailedDetailsRequest(RestApiException ex);
+
+    public async Task<Models.JobDetails> DetailsAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    )
+    {
+
+        if (string.IsNullOrEmpty(job))
+        {
+            throw new ArgumentNullException(nameof(job));
+        }
+
+        const string apiVersion = "2019-06-17";
+
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/jobs/{job}/details".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
+            false);
+
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+
+
+        using (var _req = Client.Pipeline.CreateRequest())
+        {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Get;
+
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+            {
+                if (_res.Status < 200 || _res.Status >= 300)
+                {
+                    await OnDetailsFailed(_req, _res).ConfigureAwait(false);
+                }
+
+                if (_res.ContentStream == null)
+                {
+                    await OnDetailsFailed(_req, _res).ConfigureAwait(false);
+                }
+
+                using (var _reader = new StreamReader(_res.ContentStream))
+                {
+                    var _content = await _reader.ReadToEndAsync().ConfigureAwait(false);
+                    var _body = Client.Deserialize<Models.JobDetails>(_content);
+                    return _body;
+                }
+            }
+        }
+    }
+
+    internal async Task OnDetailsFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
+        {
+            using (var reader = new StreamReader(res.ContentStream))
+            {
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
+            }
+        }
+
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedDetailsRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
+    }
+
+    partial void HandleFailedCancelRequest(RestApiException ex);
+
+    public async Task CancelAsync(
+        string job,
+        string jobCancellationToken = default,
+        CancellationToken cancellationToken = default
+    )
+    {
+
+        if (string.IsNullOrEmpty(job))
+        {
+            throw new ArgumentNullException(nameof(job));
+        }
+
+        const string apiVersion = "2019-06-17";
+
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/jobs/{job}/cancel".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
+            false);
+
+        if (!string.IsNullOrEmpty(jobCancellationToken))
+        {
+            _url.AppendQuery("jobCancellationToken", Client.Serialize(jobCancellationToken));
+        }
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+
+
+        using (var _req = Client.Pipeline.CreateRequest())
+        {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Post;
+
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+            {
+                if (_res.Status < 200 || _res.Status >= 300)
+                {
+                    await OnCancelFailed(_req, _res).ConfigureAwait(false);
+                }
+
+
+                return;
+            }
+        }
+    }
+
+    internal async Task OnCancelFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
+        {
+            using (var reader = new StreamReader(res.ContentStream))
+            {
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
+            }
+        }
+
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedCancelRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
+    }
+
+    partial void HandleFailedWaitRequest(RestApiException ex);
+
+    public async Task WaitAsync(
+        string job,
+        CancellationToken cancellationToken = default
+    )
+    {
+
+        if (string.IsNullOrEmpty(job))
+        {
+            throw new ArgumentNullException(nameof(job));
+        }
+
+        const string apiVersion = "2019-06-17";
+
+        var _baseUri = Client.Options.BaseUri;
+        var _url = new RequestUriBuilder();
+        _url.Reset(_baseUri);
+        _url.AppendPath(
+            "/api/jobs/{job}/wait".Replace("{job}", Uri.EscapeDataString(Client.Serialize(job))),
+            false);
+
+        _url.AppendQuery("api-version", Client.Serialize(apiVersion));
+
+
+        using (var _req = Client.Pipeline.CreateRequest())
+        {
+            _req.Uri = _url;
+            _req.Method = RequestMethod.Get;
+
+            using (var _res = await Client.SendAsync(_req, cancellationToken).ConfigureAwait(false))
+            {
+                if (_res.Status < 200 || _res.Status >= 300)
+                {
+                    await OnWaitFailed(_req, _res).ConfigureAwait(false);
+                }
+
+
+                return;
+            }
+        }
+    }
+
+    internal async Task OnWaitFailed(Request req, Response res)
+    {
+        string content = null;
+        if (res.ContentStream != null)
+        {
+            using (var reader = new StreamReader(res.ContentStream))
+            {
+                content = await reader.ReadToEndAsync().ConfigureAwait(false);
+            }
+        }
+
+        var ex = new RestApiException<Models.ApiError>(
+            req,
+            res,
+            content,
+            Client.Deserialize<Models.ApiError>(content)
+            );
+        HandleFailedWaitRequest(ex);
+        HandleFailedRequest(ex);
+        Client.OnFailedRequest(ex);
+        throw ex;
     }
 }

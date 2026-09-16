@@ -3,10 +3,10 @@
 
 using System;
 
-namespace Microsoft.DotNet.Tools
+namespace Microsoft.DotNet.Tools;
+
+internal static class NuGetUtils
 {
-	internal static class NuGetUtils
-	{
         public const string DefaultNuspecXmlns = "http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd";
         public const string SignaturePartUri = ".signature.p7s";
 
@@ -23,4 +23,3 @@ namespace Microsoft.DotNet.Tools
             return dirName == "/" && fileName.EndsWith(".nuspec", StringComparison.OrdinalIgnoreCase);
         }
     }
-}

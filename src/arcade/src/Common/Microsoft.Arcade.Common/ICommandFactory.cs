@@ -3,12 +3,11 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Arcade.Common
+namespace Microsoft.Arcade.Common;
+
+public interface ICommandFactory
 {
-    public interface ICommandFactory
-    {
-        ICommand Create(string executable, IEnumerable<string> args);
-        ICommand Create(string executable, params string[] args);
-        ICommand Create(string executable, string args);
-    }
+    ICommand Create(string executable, IEnumerable<string> args);
+    ICommand Create(string executable, params string[] args);
+    ICommand Create(string executable, string args);
 }

@@ -34,9 +34,9 @@
     <VersionFeature60>36</VersionFeature60>
     <VersionFeature70>20</VersionFeature70>
     <!-- This version should be N-1 (ie the currently released version) in the preview branch but N-2 in main so that workloads stay behind the unreleased version -->
-    <VersionFeature80>30</VersionFeature80>
-    <VersionFeature90>19</VersionFeature90>
-    <VersionFeature100>11</VersionFeature100>
+    <VersionFeature80>31</VersionFeature80>
+    <VersionFeature90>20</VersionFeature90>
+    <VersionFeature100>12</VersionFeature100>
     <!-- Should be kept in sync with VersionFeature70. It should match the version of Microsoft.NET.ILLink.Tasks
          referenced by the same 7.0 SDK that references the 7.0.VersionFeature70 runtime pack. -->
     <_NET70ILLinkPackVersion>7.0.100-1.23211.1</_NET70ILLinkPackVersion>
@@ -150,19 +150,19 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Workload manifest package versions">
-    <MauiFeatureBand>11.0.100-preview.6</MauiFeatureBand>
+    <MauiFeatureBand>11.0.100-rc.1</MauiFeatureBand>
 
     <!--
       Updates to any of these versions will require the updating of that package version in the
       source-build-assets repo as a text-only package.
       See https://github.com/dotnet/source-build-assets?tab=readme-ov-file#text-only
     -->
-    <MauiWorkloadManifestVersion>11.0.0-preview.6.26360.8</MauiWorkloadManifestVersion>
-    <XamarinAndroidWorkloadManifestVersion>37.0.0-preview.6.59</XamarinAndroidWorkloadManifestVersion>
-    <XamarinIOSWorkloadManifestVersion>26.5.11720-net11-p6</XamarinIOSWorkloadManifestVersion>
-    <XamarinMacCatalystWorkloadManifestVersion>26.5.11720-net11-p6</XamarinMacCatalystWorkloadManifestVersion>
-    <XamarinMacOSWorkloadManifestVersion>26.5.11720-net11-p6</XamarinMacOSWorkloadManifestVersion>
-    <XamarinTvOSWorkloadManifestVersion>26.5.11720-net11-p6</XamarinTvOSWorkloadManifestVersion>
+    <MauiWorkloadManifestVersion>11.0.0-rc.1.26451.6</MauiWorkloadManifestVersion>
+    <XamarinAndroidWorkloadManifestVersion>37.0.0-rc.1.2257</XamarinAndroidWorkloadManifestVersion>
+    <XamarinIOSWorkloadManifestVersion>26.5.12193-net11-rc.1</XamarinIOSWorkloadManifestVersion>
+    <XamarinMacCatalystWorkloadManifestVersion>26.5.12193-net11-rc.1</XamarinMacCatalystWorkloadManifestVersion>
+    <XamarinMacOSWorkloadManifestVersion>26.5.12193-net11-rc.1</XamarinMacOSWorkloadManifestVersion>
+    <XamarinTvOSWorkloadManifestVersion>26.5.12193-net11-rc.1</XamarinTvOSWorkloadManifestVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Pinned dependency">

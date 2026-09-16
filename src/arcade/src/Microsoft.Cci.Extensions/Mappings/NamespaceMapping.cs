@@ -7,32 +7,31 @@ using Microsoft.Cci.Differs;
 using Microsoft.Cci.Extensions;
 using Microsoft.Cci.Filters;
 
-namespace Microsoft.Cci.Mappings
+namespace Microsoft.Cci.Mappings;
+
+public class NamespaceMapping : ElementMapping<INamespaceDefinition>
 {
-    public class NamespaceMapping : ElementMapping<INamespaceDefinition>
+    private readonly Dictionary<ITypeDefinition, TypeMapping> _types;
+
+    public NamespaceMapping(MappingSettings settings, bool allowDuplicateMatchingAdds = false)
+        : base(settings, allowDuplicateMatchingAdds)
     {
-        private readonly Dictionary<ITypeDefinition, TypeMapping> _types;
+        _types = new Dictionary<ITypeDefinition, TypeMapping>(settings.TypeComparer);
+    }
 
-        public NamespaceMapping(MappingSettings settings, bool allowDuplicateMatchingAdds = false)
-            : base(settings, allowDuplicateMatchingAdds)
+    public IEnumerable<TypeMapping> Types { get { return _types.Values; } }
+
+    protected override void OnMappingAdded(int index, INamespaceDefinition element)
+    {
+        foreach (var type in element.GetTypes(this.Settings.IncludeForwardedTypes).Where(this.Filter.Include))
         {
-            _types = new Dictionary<ITypeDefinition, TypeMapping>(settings.TypeComparer);
-        }
-
-        public IEnumerable<TypeMapping> Types { get { return _types.Values; } }
-
-        protected override void OnMappingAdded(int index, INamespaceDefinition element)
-        {
-            foreach (var type in element.GetTypes(this.Settings.IncludeForwardedTypes).Where(this.Filter.Include))
+            TypeMapping mapping;
+            if (!_types.TryGetValue(type, out mapping))
             {
-                TypeMapping mapping;
-                if (!_types.TryGetValue(type, out mapping))
-                {
-                    mapping = new TypeMapping(this.Settings);
-                    _types.Add(type, mapping);
-                }
-                mapping.AddMapping(index, type);
+                mapping = new TypeMapping(this.Settings);
+                _types.Add(type, mapping);
             }
+            mapping.AddMapping(index, type);
         }
     }
 }

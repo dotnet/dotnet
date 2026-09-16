@@ -3,21 +3,20 @@
 
 using System;
 
-namespace XliffTasks
-{
-    internal static class Validation
-    {
-        public static void ThrowIfNullOrEmpty(string value, string parameterName)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException(parameterName);
-            }
+namespace XliffTasks;
 
-            if (value.Length == 0)
-            {
-                throw new ArgumentException("Value cannot be empty", parameterName);
-            }
+internal static class Validation
+{
+    public static void ThrowIfNullOrEmpty(string value, string parameterName)
+    {
+        if (value == null)
+        {
+            throw new ArgumentNullException(parameterName);
+        }
+
+        if (value.Length == 0)
+        {
+            throw new ArgumentException("Value cannot be empty", parameterName);
         }
     }
 }

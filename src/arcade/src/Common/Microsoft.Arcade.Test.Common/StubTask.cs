@@ -3,23 +3,22 @@
 
 using Microsoft.Build.Framework;
 
-namespace Microsoft.Arcade.Test.Common
+namespace Microsoft.Arcade.Test.Common;
+
+public class StubTask : ITask
 {
-    public class StubTask : ITask
+    public StubTask(IBuildEngine buildEngine)
     {
-        public StubTask(IBuildEngine buildEngine)
-        {
-            BuildEngine = buildEngine;
-        }
+        BuildEngine = buildEngine;
+    }
 
-        public StubTask() : this(new MockBuildEngine()) { }
+    public StubTask() : this(new MockBuildEngine()) { }
 
-        public IBuildEngine BuildEngine { get; set; }
-        public ITaskHost HostObject { get; set; }
+    public IBuildEngine BuildEngine { get; set; }
+    public ITaskHost HostObject { get; set; }
 
-        public bool Execute()
-        {
-            return true;
-        }
+    public bool Execute()
+    {
+        return true;
     }
 }

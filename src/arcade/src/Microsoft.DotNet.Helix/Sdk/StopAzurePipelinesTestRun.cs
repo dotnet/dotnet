@@ -8,41 +8,40 @@ using Microsoft.Build.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Microsoft.DotNet.Helix.AzureDevOps
+namespace Microsoft.DotNet.Helix.AzureDevOps;
+
+[MSBuildMultiThreadableTask]
+public class StopAzurePipelinesTestRun : AzureDevOpsTask
 {
-    [MSBuildMultiThreadableTask]
-    public class StopAzurePipelinesTestRun : AzureDevOpsTask
+    [Required]
+    public int TestRunId { get; set; }
+
+    [Required]
+    public string TestRunName { get; set; }
+
+    protected override async Task ExecuteCoreAsync(HttpClient client)
     {
-        [Required]
-        public int TestRunId { get; set; }
+        await RetryAsync(
+            async () =>
+            {
+                Log.LogMessage(MessageImportance.High, $"Stopping Azure Pipelines Test Run {TestRunName} (Results: {CollectionUri}{TeamProject}/_build/results?buildId={BuildId}&view=ms.vss-test-web.build-test-results-tab )");
 
-        [Required]
-        public string TestRunName { get; set; }
-
-        protected override async Task ExecuteCoreAsync(HttpClient client)
-        {
-            await RetryAsync(
-                async () =>
-                {
-                    Log.LogMessage(MessageImportance.High, $"Stopping Azure Pipelines Test Run {TestRunName} (Results: {CollectionUri}{TeamProject}/_build/results?buildId={BuildId}&view=ms.vss-test-web.build-test-results-tab )");
-
-                    using (var req =
-                        new HttpRequestMessage(
-                            new HttpMethod("PATCH"),
-                            $"{CollectionUri}{TeamProject}/_apis/test/runs/{TestRunId}?api-version=5.0")
-                        {
-                            Content = new StringContent(
-                                JsonConvert.SerializeObject(new JObject { ["state"] = "Completed", }),
-                                Encoding.UTF8,
-                                "application/json"),
-                        })
+                using (var req =
+                    new HttpRequestMessage(
+                        new HttpMethod("PATCH"),
+                        $"{CollectionUri}{TeamProject}/_apis/test/runs/{TestRunId}?api-version=5.0")
                     {
-                        using (var res = await client.SendAsync(req))
-                        {
-                            res.EnsureSuccessStatusCode();
-                        }
+                        Content = new StringContent(
+                            JsonConvert.SerializeObject(new JObject { ["state"] = "Completed", }),
+                            Encoding.UTF8,
+                            "application/json"),
+                    })
+                {
+                    using (var res = await client.SendAsync(req))
+                    {
+                        res.EnsureSuccessStatusCode();
                     }
-                });
-        }
+                }
+            });
     }
 }

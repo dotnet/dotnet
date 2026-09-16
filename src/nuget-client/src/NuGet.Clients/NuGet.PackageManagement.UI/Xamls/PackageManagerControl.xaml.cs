@@ -1129,33 +1129,44 @@ namespace NuGet.PackageManagement.UI
             IInstalledAndTransitivePackages installedAndTransitivePackages = await PackageCollection.GetInstalledAndTransitivePackagesAsync(loadContext.ServiceBroker, loadContext.Projects, includeTransitiveOrigins: true, token);
             installedPackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.InstalledPackages);
             PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.TransitivePackages.Where(p => p.TransitiveOrigins.Any()));
-            //Use ShutdownToken to ensure the operation is canceled if it's still running when VS shuts down.
-            IEnumerable<PackageVulnerabilityMetadataContextInfo>[] transitivePackageVulnerabilities = await Task.WhenAll(transitivePackageCollection.Select(p => vulnerabilityService.GetVulnerabilityInfoAsync(p, VsShellUtilities.ShutdownToken)));
 
-            foreach (IEnumerable<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfo in transitivePackageVulnerabilities)
+            async Task<bool> IsVulnerableAsync(
+                PackageIdentity packageIdentity,
+                PackageSearchMetadataContextInfo packageMetadata)
             {
-                if (vulnerabilityInfo != null && vulnerabilityInfo.Any())
+                if (!vulnerabilityService.IsAuditSourceConfigured
+                    && packageMetadata?.Vulnerabilities != null
+                    && packageMetadata.Vulnerabilities.Any())
                 {
-                    vulnerablePackagesCount++;
+                    return true;
                 }
+
+                List<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfo =
+                    await vulnerabilityService.GetVulnerabilityInfoAsync(packageIdentity, token);
+                return vulnerabilityInfo.Count > 0;
             }
+
+            bool[] transitivePackageVulnerabilities = await Task.WhenAll(transitivePackageCollection.Select(async package =>
+            {
+                PackageSearchMetadataContextInfo packageMetadata = null;
+                if (!vulnerabilityService.IsAuditSourceConfigured)
+                {
+                    (packageMetadata, _) = await GetPackageMetadataAsync(package, packageSources, token);
+                }
+
+                return await IsVulnerableAsync(package, packageMetadata);
+            }));
+            vulnerablePackagesCount += transitivePackageVulnerabilities.Count(isVulnerable => isVulnerable);
 
             var installedPackageMetadata = await Task.WhenAll(installedPackageCollection.Select(p => GetPackageMetadataAsync(p, packageSources, token)));
 
             foreach ((PackageSearchMetadataContextInfo s, PackageDeprecationMetadataContextInfo d) in installedPackageMetadata)
             {
-                if (s.Vulnerabilities != null && s.Vulnerabilities.Any())
+                if (await IsVulnerableAsync(s.Identity, s))
                 {
                     vulnerablePackagesCount++;
                 }
-                else // Fallback to checking audit sources.
-                {
-                    List<PackageVulnerabilityMetadataContextInfo> auditSourceVulnerabilityContextInfo = await _packageVulnerabilityService.GetVulnerabilityInfoAsync(s.Identity, token);
-                    if (auditSourceVulnerabilityContextInfo.Count > 0)
-                    {
-                        vulnerablePackagesCount++;
-                    }
-                }
+
                 if (d != null)
                 {
                     deprecatedPackagesCount++;
@@ -1981,4 +1992,3 @@ namespace NuGet.PackageManagement.UI
         }
     }
 }
-

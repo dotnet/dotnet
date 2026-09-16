@@ -6,8 +6,8 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26430.1</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetXUnitV3ExtensionsPackageVersion>11.0.0-beta.26430.1</MicrosoftDotNetXUnitV3ExtensionsPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26456.1</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetXUnitV3ExtensionsPackageVersion>11.0.0-beta.26456.1</MicrosoftDotNetXUnitV3ExtensionsPackageVersion>
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.11.0-1.26420.103</MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisCSharpPackageVersion>5.11.0-1.26420.103</MicrosoftCodeAnalysisCSharpPackageVersion>

@@ -520,6 +520,53 @@ WHERE [e].[IsDraft] = CAST(0 AS bit)
         AssertSql();
     }
 
+    public override async Task Query_filter_with_inline_collection_of_navigation_column(bool async)
+    {
+        await base.Query_filter_with_inline_collection_of_navigation_column(async);
+
+        AssertSql(
+            """
+SELECT [c].[Label]
+FROM [Children] AS [c]
+INNER JOIN (
+    SELECT [p].[Id], [p].[ServiceId]
+    FROM [Parents] AS [p]
+    WHERE [p].[ServiceId] = 10
+) AS [p0] ON [c].[ParentId] = [p0].[Id]
+WHERE EXISTS (
+    SELECT 1
+    FROM (VALUES ([p0].[ServiceId])) AS [v]([Value])
+    WHERE [v].[Value] = 10)
+""");
+    }
+
+    public override async Task GroupBy_aggregate_over_required_navigation_with_query_filter(bool async)
+    {
+        await base.GroupBy_aggregate_over_required_navigation_with_query_filter(async);
+
+        AssertSql(
+            """
+SELECT [d].[GroupId] AS [Key], COUNT(*) AS [Count], (
+    SELECT MAX([p0].[Value])
+    FROM [Dependents] AS [d0]
+    INNER JOIN (
+        SELECT [p].[Id], [p].[Value]
+        FROM [Principals] AS [p]
+        WHERE [p].[Filtered] = CAST(0 AS bit)
+    ) AS [p0] ON [d0].[PrincipalId] = [p0].[Id]
+    WHERE [d].[GroupId] = [d0].[GroupId]) AS [MaxValue]
+FROM [Dependents] AS [d]
+GROUP BY [d].[GroupId]
+""",
+            //
+            """
+SELECT [d].[GroupId] AS [Key], COUNT(*) AS [Count], MAX([p].[Value]) AS [MaxValue]
+FROM [Dependents] AS [d]
+INNER JOIN [Principals] AS [p] ON [d].[PrincipalId] = [p].[Id]
+GROUP BY [d].[GroupId]
+""");
+    }
+
     [Fact]
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());

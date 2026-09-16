@@ -39,38 +39,6 @@ function Test-WebsiteSimpleInstall {
     Assert-AreEqual "..\packages\MyAwesomeLibrary.1.0\lib\net40\MyAwesomeLibrary.dll" $content
 }
 
-function Test-DiamondDependencies {
-    param(
-        $context
-    )
-
-    # Scenario:
-    # D 1.0 -> B 1.0, C 1.0
-    # B 1.0 -> A 1.0
-    # C 1.0 -> A 2.0
-    #     D 1.0
-    #      /  \
-    #  B 1.0   C 1.0
-    #     |    |
-    #  A 1.0   A 2.0
-
-    # Arrange
-    $packages = @("A", "B", "C", "D")
-    $project = New-ClassLibrary
-
-    # Act
-    Install-Package D -Project $project.Name -Source $context.RepositoryPath
-
-    # Assert
-    $packages | %{ Assert-SolutionPackage $_ }
-    $packages | %{ Assert-Package $project $_ }
-    $packages | %{ Assert-Reference $project $_ }
-    Assert-Package $project A 2.0
-    Assert-Reference $project A 2.0.0.0
-    Assert-Null (Get-ProjectPackage $project A 1.0.0.0)
-    Assert-Null (Get-SolutionPackage A 1.0.0.0)
-}
-
 function Test-WebsiteWillNotDuplicateConfigOnReInstall {
     # Arrange
     $p = New-WebSite
@@ -1167,22 +1135,6 @@ function Test-WebSiteInstallPackageWithFileNamedAppCode {
     Assert-NotNull (Get-ProjectItem $p App_Code\App_Code.cs)
 }
 
-function Test-PackageInstallAcceptsSourceName {
-    # Arrange
-    $project = New-ConsoleApplication
-
-    # Act
-    Install-Package FakeItEasy -Project $project.Name -Source $SourceNuGet -Version 1.8.0
-
-    # Assert
-    Assert-Reference $project Castle.Core
-    Assert-Reference $project FakeItEasy
-    Assert-Package $project FakeItEasy
-    Assert-Package $project Castle.Core
-    Assert-SolutionPackage FakeItEasy
-    Assert-SolutionPackage Castle.Core
-}
-
 function PackageInstallAcceptsAllAsSourceName {
     # Arrange
     $project = New-ConsoleApplication
@@ -1408,22 +1360,6 @@ function Test-InstallPackageWithReferences {
     Assert-Reference $p2 B
 }
 
-function Test-InstallPackageNormalizesVersionBeforeCompare {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package PackageWithContentFileAndDependency -Source $context.RepositoryRoot -Version 1.0.0.0
-
-    # Assert
-    Assert-Package $p PackageWithContentFileAndDependency 1.0
-    Assert-Package $p PackageWithContentFile 1.0
-}
-
 function Test-InstallPackageWithFrameworkRefsOnlyRequiredForSL {
     param(
         $context
@@ -1438,39 +1374,6 @@ function Test-InstallPackageWithFrameworkRefsOnlyRequiredForSL {
     # Assert
     Assert-Package $p PackageWithNet40AndSLLibButOnlySLGacRefs
     Assert-SolutionPackage PackageWithNet40AndSLLibButOnlySLGacRefs
-}
-
-function Test-InstallPackageInstallsHighestReleasedPackageIfPreReleaseFlagIsNotSet {
-    # Arrange
-    $a = New-ClassLibrary
-
-    # Act
-    $a | Install-Package -Source $context.RepositoryRoot PreReleaseTestPackage
-
-    # Assert
-    Assert-Package $a 'PreReleaseTestPackage' '1.0.0'
-}
-
-function Test-InstallPackageInstallsHighestPackageIfPreReleaseFlagIsSet {
-    # Arrange
-    $a = New-ClassLibrary
-
-    # Act
-    $a | Install-Package -Source $context.RepositoryRoot PreReleaseTestPackage -PreRelease
-
-    # Assert
-    Assert-Package $a 'PreReleaseTestPackage' '1.0.1-a'
-}
-
-function Test-InstallPackageInstallsHighestPackageIfItIsReleaseWhenPreReleaseFlagIsSet {
-    # Arrange
-    $a = New-ClassLibrary
-
-    # Act
-    $a | Install-Package -Source $context.RepositoryRoot PreReleaseTestPackage.A -PreRelease
-
-    # Assert
-    Assert-Package $a 'PreReleaseTestPackage.A' '1.0.0'
 }
 
 function Test-InstallingPackagesWorksInTurkishLocaleWhenPackageIdContainsLetterI
@@ -2372,21 +2275,6 @@ function Test-InstallPackagesNupkgOnline
 
 # Tests that passing in local path to a .nupkg file to
 # Install-Package works.
-function Test-InstallPackagesNupkgLocal
-{
-    param($context)
-
-    # Arrange
-    $p = New-ClassLibrary
-    $pathToPackagesNupkg = Join-Path $context.RepositoryRoot "PackageWithFolder.1.0.nupkg"
-
-    # Act
-    $p | Install-Package $pathToPackagesNupkg
-
-    # Assert
-    Assert-Package $p PackageWithFolder 1.0
-}
-
 function Test-InstallPackageMissingPackage {
     # Arrange
     # create project and install package

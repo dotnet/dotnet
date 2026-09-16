@@ -5,17 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Microsoft.DotNet.SignTool
-{
-    internal class ItemToSign
-    {
-        public ItemToSign(string fullPath, string collisionPriorityId = "")
-        {
-            FullPath = fullPath;
-            CollisionPriorityId = collisionPriorityId;
-        }
+namespace Microsoft.DotNet.SignTool;
 
-        public string FullPath { get; }
-        public string CollisionPriorityId { get; }
+internal class ItemToSign
+{
+    public ItemToSign(string fullPath, string collisionPriorityId = "")
+    {
+        FullPath = fullPath;
+        CollisionPriorityId = collisionPriorityId;
     }
+
+    public string FullPath { get; }
+    public string CollisionPriorityId { get; }
 }
