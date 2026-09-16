@@ -27,7 +27,20 @@ Versions of the package can be found by browsing the feed at https://dev.azure.c
 
 ### Developing Helix SDK
 
-The examples can all be run with `dotnet msbuild` and will require an environment variable or MSBuildProperty `HelixAccessToken` set if a queue with a value of IsInternalOnly=true (usually any not ending in '.Open') is selected for `HelixTargetQueues`. You will also need to set the following environment variables before building:
+The examples can all be run with `dotnet msbuild`. Internal queues (usually any queue not ending in `.Open`) require either:
+
+- `HelixUseEntraAuthentication=true` with an available `DefaultIdentityTokenCredential`, or
+- the legacy `HelixAccessToken` environment variable or MSBuild property.
+
+When Entra authentication is explicitly enabled, any legacy access token still
+injected by an existing variable group is ignored with a warning. Entra
+authentication supports Azure Pipelines workload identity, managed identity,
+and Azure CLI credentials and refreshes access tokens based on their expiry.
+Entra authentication requires .NET Core MSBuild and is unavailable in
+source-only builds. The .NET Framework task assembly and source-only builds
+continue to support legacy access-token and anonymous authentication.
+
+You will also need to set the following environment variables before building:
 
 ```
 BUILD_SOURCEBRANCH
