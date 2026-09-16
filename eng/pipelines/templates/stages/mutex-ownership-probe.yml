@@ -1,0 +1,51 @@
+parameters:
+- name: sdkBuildId
+  type: number
+
+stages:
+- stage: MutexOwnershipProbe
+  dependsOn: []
+  jobs:
+  - job: Fedora_MutexOwnershipProbe_x64
+    timeoutInMinutes: 20
+    pool:
+      name: $(shortStackPoolName)
+      demands: ImageOverride -equals $(poolImage_Linux)
+    container:
+      image: $(fedoraContainerImage)
+    steps:
+    - checkout: self
+      fetchDepth: 1
+      fetchFilter: blob:none
+      sparseCheckoutDirectories: eng/mutex-ownership-probe
+    - task: DownloadPipelineArtifact@2
+      displayName: Download immutable Fedora SDK
+      inputs:
+        buildType: specific
+        project: public
+        definition: 303
+        buildVersionToDownload: specific
+        pipelineId: ${{ parameters.sdkBuildId }}
+        artifactName: SB_Fedora43_Offline_MsftSdk_x64_Artifacts
+        itemPattern: '**/dotnet-sdk-*.tar.gz'
+        targetPath: $(Agent.TempDirectory)/mutex-sdk-download
+    - bash: |
+        set -euo pipefail
+        mapfile -t archives < <(find "$DOWNLOAD" -name 'dotnet-sdk-*.tar.gz' -type f)
+        if [[ ${#archives[@]} -ne 1 ]]; then
+          echo "Expected exactly one source-built SDK archive, found ${#archives[@]}"
+          exit 1
+        fi
+        mkdir -p "$SDK" "$OUTPUT"
+        sha256sum "${archives[0]}" | tee "$OUTPUT/sdk-archive-sha256.txt"
+        tar -xzf "${archives[0]}" -C "$SDK"
+        python3 eng/mutex-ownership-probe/run.py --sdk "$SDK" --output "$OUTPUT" --seconds 90
+      displayName: Probe constructor ownership and explicit-wait control
+      env:
+        DOWNLOAD: $(Agent.TempDirectory)/mutex-sdk-download
+        SDK: $(Agent.TempDirectory)/mutex-sdk
+        OUTPUT: $(Build.ArtifactStagingDirectory)/mutex-probe
+        MUTEX_SDK_BUILD_ID: ${{ parameters.sdkBuildId }}
+    - publish: $(Build.ArtifactStagingDirectory)/mutex-probe
+      artifact: MutexOwnershipProbe
+      condition: always()

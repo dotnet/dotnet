@@ -35,6 +35,10 @@ schedules:
     always: false # run only if there were changes since the last successful scheduled run.
 
 parameters:
+- name: experimentMutexSdkBuild
+  type: number
+  default: 0
+
 - name: experimentJobs
   type: string
   default: ''
@@ -89,6 +93,11 @@ variables:
 - template: /eng/pipelines/templates/variables/vmr-build.yml@self
 
 stages:
+- ${{ if gt(parameters.experimentMutexSdkBuild, 0) }}:
+  - template: /eng/pipelines/templates/stages/mutex-ownership-probe.yml
+    parameters:
+      sdkBuildId: ${{ parameters.experimentMutexSdkBuild }}
+
 - template: /eng/pipelines/templates/stages/vmr-build.yml
   parameters:
     ${{ if eq(parameters.buildScope, 'auto') }}:
