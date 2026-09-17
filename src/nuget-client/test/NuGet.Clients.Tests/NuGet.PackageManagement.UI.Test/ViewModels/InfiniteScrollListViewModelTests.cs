@@ -15,6 +15,7 @@ using NuGet.PackageManagement.UI.Test.Models.Package;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
+using NuGet.Protocol;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
@@ -48,18 +49,19 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
             string id = "TestPackage",
             string version = "1.0.0",
             PackageLevel packageLevel = PackageLevel.TopLevel,
-            bool isVulnerable = false)
+            bool isVulnerable = false,
+            IVulnerableCapable vulnerableCapability = null)
         {
             var searchService = new Mock<INuGetSearchService>();
             var packageIdentity = new PackageIdentity(id, new NuGetVersion(version));
             var embeddedResource = new Mock<IEmbeddedResourcesCapable>();
-            var vulnerableCapability = new Mock<IVulnerableCapable>();
-            vulnerableCapability.SetupGet(v => v.IsVulnerable).Returns(isVulnerable);
+            var defaultVulnerableCapability = new Mock<IVulnerableCapable>();
+            defaultVulnerableCapability.SetupGet(v => v.IsVulnerable).Returns(isVulnerable);
             var deprecatedCapability = new Mock<IDeprecationCapable>();
             var packageModel = PackageModelCreationTestHelper.CreateRemotePackageModel(
-                packageIdentity, vulnerableCapability.Object, deprecatedCapability.Object, embeddedResource.Object);
+                packageIdentity, vulnerableCapability ?? defaultVulnerableCapability.Object, deprecatedCapability.Object, embeddedResource.Object);
 
-            var vm = new PackageItemViewModel(searchService.Object, packageModel: packageModel)
+            var vm = new PackageItemViewModel(searchService.Object, packageModel)
             {
                 PackageLevel = packageLevel,
             };
@@ -237,6 +239,50 @@ namespace NuGet.PackageManagement.UI.Test.ViewModels
 
             Assert.Equal(3, vm.PackageItems.Count());
             Assert.Equal(3, vm.PackageItemsCount);
+        }
+
+        [Fact]
+        public async Task LoadItemsAsync_WhenVulnerabilityArrivesAfterLoad_RemovesNoItemsFoundIndicator()
+        {
+            var packageIdentity = new PackageIdentity("PackageA", NuGetVersion.Parse("1.0.0"));
+            var isVulnerable = false;
+            var vulnerableCapability = new Mock<IVulnerableCapable>();
+            vulnerableCapability.SetupGet(capability => capability.IsVulnerable).Returns(() => isVulnerable);
+            vulnerableCapability.SetupGet(capability => capability.VulnerabilityMaxSeverity).Returns(PackageVulnerabilitySeverity.High);
+            vulnerableCapability
+                .Setup(capability => capability.PopulateDataAsync(It.IsAny<CancellationToken>()))
+                .Callback(() => isVulnerable = true)
+                .Returns(Task.CompletedTask);
+
+            var package = CreatePackageItemViewModel(
+                packageIdentity.Id,
+                packageIdentity.Version.ToNormalizedString(),
+                packageLevel: PackageLevel.Transitive,
+                vulnerableCapability: vulnerableCapability.Object);
+            var vm = CreateViewModel();
+            vm.SetVulnerabilitiesFiltering(true);
+            var loader = CreateMockLoader(LoadingStatus.Ready, [package]);
+
+            await LoadAndWaitAsync(vm, loader);
+
+            Assert.Equal(LoadingStatus.NoItemsFound, vm.LoadingVulnerabilitiesStatusIndicator.Status);
+            Assert.Contains(vm.LoadingVulnerabilitiesStatusIndicator, vm.Items);
+
+            var vulnerabilityLoaded = new TaskCompletionSource<bool>();
+            package.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(PackageItemViewModel.IsPackageVulnerable))
+                {
+                    vulnerabilityLoaded.TrySetResult(true);
+                }
+            };
+
+            await package.UpdateTransitivePackageStatusAsync(CancellationToken.None);
+
+            var completed = await Task.WhenAny(vulnerabilityLoaded.Task, Task.Delay(TimeSpan.FromSeconds(30)));
+            Assert.Same(vulnerabilityLoaded.Task, completed);
+            Assert.True(package.IsPackageVulnerable);
+            Assert.DoesNotContain(vm.LoadingVulnerabilitiesStatusIndicator, vm.Items);
         }
 
         [Fact]
