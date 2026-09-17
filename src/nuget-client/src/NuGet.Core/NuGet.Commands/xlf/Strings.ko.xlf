@@ -218,6 +218,14 @@
         <target state="translated">소스 파일 '{0}'의 프로젝트 디렉터리를 찾을 수 없습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown">
+        <source>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</source>
+        <target state="new">The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</target>
+        <note>
+      0 - The comma delimited list of package names that specified a floating version.
+      Do not localize `PackageReference`
+    </note>
+      </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">{1} 'HTTP' 원본을 사용하여 '{0}' 작업을 실행하고 있습니다. NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
