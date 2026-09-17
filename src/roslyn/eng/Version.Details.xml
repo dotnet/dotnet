@@ -9,7 +9,7 @@
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.13">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>34ac57b7d95c2d9e34f072b04d3bf06e7fb0bf64</Sha>
+      <Sha>fec20fdc4e42e954cf77a13bbda3a18a39c0d4c5</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="10.0.1">
