@@ -1044,11 +1044,25 @@ jobs:
         includeRepos: ${{ parameters.sourceIndexIncludeRepos }}
 
   - ${{ if and(parameters.enableAstred, parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    # Keep per-repo compiler logs, not orchestrator or scenario-test execution logs.
+    - task: CopyFiles@2
+      displayName: Stage product-build binlogs for Astred
+      inputs:
+        SourceFolder: '$(sourcesPath)/artifacts/log/${{ parameters.configuration }}'
+        Contents: |
+          */**/*.binlog
+          !scenario-tests/**
+          !.MSBuild_Logs/**
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/AstredCapture/binlogs'
+        CleanTargetFolder: true
+      condition: succeededOrFailed()
+      continueOnError: true
+
     # Use the current Arcade template rather than the older bootstrap copy in eng/common.
     - template: /src/arcade/eng/common/core-templates/steps/astred-artifacts.yml
       parameters:
         sourcesPath: $(sourcesPath)
-        binlogDir: $(MSBUILDDEBUGPATH)
+        binlogDir: $(Build.ArtifactStagingDirectory)/AstredCapture/binlogs
 
   # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2
