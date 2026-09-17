@@ -61,6 +61,7 @@ namespace NuGet.CommandLine.XPlat
                 };
 
                 msBuild.AddPackageReference(packageReferenceArgs.ProjectPath, libraryDependency, packageReferenceArgs.NoVersion);
+                LogPackageIdWarningIfNeeded(packageReferenceArgs.PackageId, packageReferenceArgs.Logger);
                 return 0;
             }
 
@@ -276,7 +277,19 @@ namespace NuGet.CommandLine.XPlat
             // 6. Commit restore result
             await RestoreRunner.CommitAsync(restorePreviewResult, CancellationToken.None);
 
+            LogPackageIdWarningIfNeeded(packageReferenceArgs.PackageId, packageReferenceArgs.Logger);
             return 0;
+        }
+
+        internal static void LogPackageIdWarningIfNeeded(string packageId, ILogger logger)
+        {
+            if (!PackageIdValidator.IsValidPackageId(packageId, useRestrictedCharacterSet: true))
+            {
+                logger.LogWarning(string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.Warn_AddPkgNonCompliantPackageId,
+                    packageId));
+            }
         }
 
         internal static bool TryFindResolvedVersion(List<string> userSpecifiedFrameworks, string packageId, RestoreResult restoreResult, ILogger logger, out NuGetVersion resolvedVersion)
