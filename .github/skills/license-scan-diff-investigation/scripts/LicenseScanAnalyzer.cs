@@ -1,6 +1,6 @@
 #:package System.CommandLine
 #:package Microsoft.CodeAnalysis
-#:project ..\..\..\..\test\LicenseScanUtilities\LicenseScanUtilities.csproj
+#:project ..\..\..\..\test\TestUtilities\TestUtilities.csproj
 
 using System.Diagnostics;
 using System.CommandLine;
@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.DotNet.SourceBuild.LicenseScanning;
+using TestUtilities;
 using static Microsoft.DotNet.SourceBuild.LicenseScanning.LicenseScanPolicy;
 
 // Compares license-scan baselines, exclusions, and allowed identifiers between
@@ -644,13 +645,17 @@ internal static class LicenseScanDiffApp
             .OrderBy(exclusion => exclusion.Path, StringComparer.Ordinal)
             .ThenBy(exclusion => string.Join(',', exclusion.Licenses), StringComparer.OrdinalIgnoreCase)
             .ToArray();
-        bool excludeEntireFile = matchingExclusions.Any(exclusion => exclusion.Licenses.Count == 0);
-        HashSet<string> excludedIds = new(
-            matchingExclusions.SelectMany(exclusion => exclusion.Licenses),
-            StringComparer.OrdinalIgnoreCase);
-        string[] remaining = excludeEntireFile
-            ? []
-            : disallowed.Where(id => !excludedIds.Contains(id)).ToArray();
+        ExclusionFileEntry[] matchingEntries = matchingExclusions
+            .Select(exclusion => new ExclusionFileEntry(
+                exclusion.Path,
+                exclusion.Licenses))
+            .ToArray();
+        string[] remaining = disallowed
+            .Where(id => ExclusionsHelper.FindMatchingExclusion(
+                matchingEntries,
+                vmrPath,
+                id) is null)
+            .ToArray();
 
         return new Classification(tokens, disallowed, remaining, matchingExclusions);
     }

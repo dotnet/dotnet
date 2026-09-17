@@ -4,12 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.FileSystemGlobbing;
+using TestUtilities;
 
 namespace Microsoft.DotNet.SourceBuild.LicenseScanning;
 
 /// <summary>
-/// Defines the parsing and matching rules used to filter ScanCode results.
+/// Defines the license-specific rules used to filter ScanCode results.
 /// </summary>
 public static class LicenseScanPolicy
 {
@@ -32,49 +32,16 @@ public static class LicenseScanPolicy
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
     /// <summary>
-    /// Parses license exclusions into a stable, path-and-license keyed collection.
+    /// Parses generic exclusion entries into license-specific records.
     /// </summary>
-    /// <remarks>
-    /// A line containing only a path excludes every license for that path. A pipe
-    /// followed by comma-separated identifiers limits the exclusion to those
-    /// identifiers. Blank lines and lines beginning with <c>#</c> are ignored.
-    /// </remarks>
     public static Dictionary<string, LicenseExclusion> ParseExclusions(string content)
     {
         Dictionary<string, LicenseExclusion> exclusions = new(StringComparer.Ordinal);
-        foreach (string rawLine in content.Split(["\r\n", "\n"], StringSplitOptions.None))
+        foreach (ExclusionFileEntry entry in ExclusionsHelper.ParseExclusions(content))
         {
-            string line = rawLine.Trim();
-            if (line.Length == 0 || line.StartsWith('#'))
-            {
-                continue;
-            }
-
-            int separator = line.IndexOf('|');
-            if (separator == 0 ||
-                (separator >= 0 && line.IndexOf('|', separator + 1) >= 0))
-            {
-                throw new FormatException(
-                    $"Invalid license exclusion: '{line}'. Expected a nonempty path " +
-                    "followed by at most one pipe.");
-            }
-
-            string[] licenses = separator < 0
-                ? []
-                : line[(separator + 1)..]
-                    .Split(',', StringSplitOptions.TrimEntries);
-            if (licenses.Any(string.IsNullOrEmpty))
-            {
-                throw new FormatException(
-                    $"Invalid license exclusion: '{line}'. License identifiers must " +
-                    "be nonempty.");
-            }
-
-            LicenseExclusion exclusion = separator < 0
-                ? new LicenseExclusion(NormalizePath(line), [])
-                : new LicenseExclusion(
-                    NormalizePath(line[..separator].Trim()),
-                    licenses);
+            LicenseExclusion exclusion = new(
+                NormalizePath(entry.Pattern),
+                entry.Suffixes);
             exclusions[exclusion.Key] = exclusion;
         }
 
@@ -84,12 +51,10 @@ public static class LicenseScanPolicy
     /// <summary>
     /// Applies the same file-globbing semantics used by the source-build tests.
     /// </summary>
-    public static bool PathMatches(string pattern, string path)
-    {
-        Matcher matcher = new();
-        matcher.AddInclude(NormalizePath(pattern));
-        return matcher.Match(NormalizePath(path)).HasMatches;
-    }
+    public static bool PathMatches(string pattern, string path) =>
+        ExclusionsHelper.PathMatches(
+            NormalizePath(pattern),
+            NormalizePath(path));
 
     /// <summary>
     /// Converts paths to the forward-slash form used by ScanCode and baseline files.
