@@ -591,8 +591,7 @@ internal static class LicenseScanDiffApp
                     "No matching file record was found for an added exclusion.",
                     Target: target,
                     Path: exclusion.Path,
-                    RelativePattern: relativePattern,
-                    AvailablePaths: scanCodeIndex.Keys.Order(StringComparer.Ordinal).ToArray()));
+                    RelativePattern: relativePattern));
                 continue;
             }
 
@@ -835,9 +834,10 @@ internal static class LicenseScanDiffApp
             foreach (ScanCodeFile record in document.Files)
             {
                 string recordPath = NormalizePath(record.Path ?? "");
-                if (recordPath.Length > 0)
+                if (recordPath.Length > 0 && !index.TryAdd(recordPath, record))
                 {
-                    index[recordPath] = record;
+                    throw new InvalidOperationException(
+                        $"Duplicate ScanCode path {recordPath} in {fileName}");
                 }
             }
             indexes[target] = index;
@@ -1145,9 +1145,7 @@ internal sealed record AnalysisIssue(
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     string[]? RemainingDisallowedLicenseIds = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    string? RelativePattern = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    string[]? AvailablePaths = null);
+    string? RelativePattern = null);
 
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
