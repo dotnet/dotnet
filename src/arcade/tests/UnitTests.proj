@@ -65,19 +65,19 @@
     <AzurePipelinesExpectedTestFailure Include="XunitReportingTests.ExerciseXunitCharacterFilteringFailurePath"/>
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(HelixAccessToken)' != '' ">
+  <ItemGroup Condition=" '$(HelixAccessToken)' != '' Or '$(HelixUseEntraAuthentication)' == 'true' ">
     <HelixTargetQueue Include="(AlmaLinux.9.Amd64)azurelinux.3.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64"/>
     <HelixTargetQueue Include="Windows.10.Amd64"/>
     <HelixTargetQueue Include="(Debian.13.Amd64)azurelinux.3.amd64@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64"/>
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(HelixAccessToken)' == '' ">
+  <PropertyGroup Condition=" '$(HelixAccessToken)' == '' And '$(HelixUseEntraAuthentication)' != 'true' ">
     <IsExternal>true</IsExternal>
     <Creator>$(BUILD_SOURCEVERSIONAUTHOR)</Creator>
     <Creator Condition=" '$(Creator)' == ''">anon</Creator>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(HelixAccessToken)' == '' ">
+  <ItemGroup Condition=" '$(HelixAccessToken)' == '' And '$(HelixUseEntraAuthentication)' != 'true' ">
     <HelixTargetQueue Include="(AlmaLinux.9.Amd64.Open)azurelinux.3.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:almalinux-9-helix-amd64"/>
     <HelixTargetQueue Include="Windows.10.Amd64.Open"/>
     <HelixTargetQueue Include="(Debian.13.Amd64.Open)azurelinux.3.amd64.open@mcr.microsoft.com/dotnet-buildtools/prereqs:debian-13-helix-amd64"/>
