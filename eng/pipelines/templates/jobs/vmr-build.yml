@@ -330,8 +330,13 @@ jobs:
     ${{ else }}:
       value: ''
 
+  # Cap how long a single repo build may run. A hung repo build would otherwise run into the job
+  # timeout below, and a canceled job skips the log collection steps, losing every diagnostic.
+  - name: repoBuildTimeoutMinutes
+    value: 150
+
   - name: baseArguments
-    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine $(commandPrefix)mt 1 $(commandPrefix)nodeReuse 1 -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument) /p:EnableExtraDebugging=true
+    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine $(commandPrefix)mt 1 $(commandPrefix)nodeReuse 1 -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument) /p:EnableExtraDebugging=true /p:RepoBuildTimeoutMinutes=$(repoBuildTimeoutMinutes)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
@@ -408,7 +413,7 @@ jobs:
     outputs:
     - output: pipelineArtifact
       displayName: Publish BuildLogs
-      condition: succeededOrFailed()
+      condition: always()
       targetPath: $(Build.ArtifactStagingDirectory)/BuildLogs
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
       sbomEnabled: false
@@ -1041,7 +1046,8 @@ jobs:
       TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/log'
       CleanTargetFolder: true
     continueOnError: true
-    condition: succeededOrFailed()
+    # always() so that logs are still collected when the job is canceled, e.g. on a job timeout.
+    condition: always()
 
   # Only copy test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:

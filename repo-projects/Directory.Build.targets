@@ -646,6 +646,16 @@
                           $(AspNetRazorBuildServerLogDir)"
              Condition="'$(EnableExtraDebugging)' == 'true'" />
 
+    <!-- Cap how long a single repo build may run. Without a cap, a hung repo build lets the CI job
+         run into its own timeout, which cancels the job and skips the log collection steps, losing
+         every diagnostic. A timed-out Exec instead kills the whole build process tree and fails the
+         target, so the OnError targets below still move the repo's (partial) logs into the
+         published artifacts/log directory. Opt-in: no timeout unless RepoBuildTimeoutMinutes is set. -->
+    <PropertyGroup>
+      <RepoBuildTimeoutMilliseconds>-1</RepoBuildTimeoutMilliseconds>
+      <RepoBuildTimeoutMilliseconds Condition="'$(RepoBuildTimeoutMinutes)' != ''">$([MSBuild]::Multiply($(RepoBuildTimeoutMinutes), 60000))</RepoBuildTimeoutMilliseconds>
+    </PropertyGroup>
+
     <!-- Build the repository. When MinimalConsoleLogOutput is true the console output is redirected
          to $(RepoConsoleLogFile) instead of the console. -->
     <Exec Command="$(FullCommand)"
@@ -653,6 +663,7 @@
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
           YieldDuringToolExecution="true"
           IgnoreStandardErrorWarningFormat="true"
+          Timeout="$(RepoBuildTimeoutMilliseconds)"
           StandardOutputImportance="$(RepoStandardOutputImportance)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
