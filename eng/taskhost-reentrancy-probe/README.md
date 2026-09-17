@@ -48,6 +48,7 @@ reported and prepared. It does not install global tools or change the agent.
 Only allowlisted, non-secret environment settings enter the build, with private
 CLI home, package cache and process-file directories. Ambient `MSBUILD*` flags
 are absent except `MSBUILDDISABLENODEREUSE=1`.
+Development-certificate generation and global-tool PATH setup are disabled.
 
 ## Graph and observation
 
@@ -88,7 +89,10 @@ machine. Cleanup must succeed before another run starts.
 
 ## Outcomes and artifacts
 
-`TaskHostReentrancyProbe` is published with `always()`. Keep the full artifact:
+`TaskHostReentrancyProbe` is published with `always()` from an explicit evidence
+allowlist, not the private working directory. CLI home, package caches, process
+scratch files, and staged build outputs are never published. The publication
+manifest records copied paths and hashes. Keep the full published artifact:
 stage clock, exact argv/cwd, identity/hashes, per-run stdout/stderr/build logs,
 trace/gate files, process snapshots/history, stacks, cleanup and result JSON.
 `observation-evidence.json` freezes markers **before cancellation**.

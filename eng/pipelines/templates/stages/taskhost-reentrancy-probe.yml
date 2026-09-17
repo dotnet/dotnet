@@ -21,6 +21,7 @@ stages:
         set -eo pipefail
         mkdir -p "$OUTPUT" "$SDK" "$OUTPUT/cli-home" "$OUTPUT/packages" "$OUTPUT/process-files"
         export DOTNET_CLI_HOME="$OUTPUT/cli-home"
+        export DOTNET_GENERATE_ASPNET_CERTIFICATE=false DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=false
         export NUGET_PACKAGES="$OUTPUT/packages"
         export TMPDIR="$OUTPUT/process-files"
         export TMP="$TMPDIR" TEMP="$TMPDIR"
@@ -42,7 +43,7 @@ stages:
       displayName: Bootstrap exact repository SDK using unchanged Arcade tools
       env:
         SDK: $(Build.BinariesDirectory)/taskhost-probe/$(Build.BuildId)/$(System.JobAttempt)/sdk
-        OUTPUT: $(Build.ArtifactStagingDirectory)/taskhost-reentrancy-probe
+        OUTPUT: $(Build.BinariesDirectory)/taskhost-probe/$(Build.BuildId)/$(System.JobAttempt)/private
     - bash: |
         set -eo pipefail
         python3 eng/taskhost-reentrancy-probe/run.py \
@@ -50,8 +51,17 @@ stages:
       displayName: Compile once, normal control, MT1, MT2 (120 seconds each)
       env:
         SDK: $(TaskHostProbeSdk)
-        OUTPUT: $(Build.ArtifactStagingDirectory)/taskhost-reentrancy-probe
+        OUTPUT: $(Build.BinariesDirectory)/taskhost-probe/$(Build.BuildId)/$(System.JobAttempt)/private
         TOOLS: $(Build.BinariesDirectory)/taskhost-probe/$(Build.BuildId)/$(System.JobAttempt)/tools
+    - bash: |
+        set -eo pipefail
+        python3 eng/taskhost-reentrancy-probe/publish.py \
+          --source "$PRIVATE" --destination "$PUBLIC"
+      displayName: Stage allowlisted evidence without private CLI home or caches
+      condition: always()
+      env:
+        PRIVATE: $(Build.BinariesDirectory)/taskhost-probe/$(Build.BuildId)/$(System.JobAttempt)/private
+        PUBLIC: $(Build.ArtifactStagingDirectory)/taskhost-reentrancy-probe
     - publish: $(Build.ArtifactStagingDirectory)/taskhost-reentrancy-probe
       artifact: TaskHostReentrancyProbe
       condition: always()

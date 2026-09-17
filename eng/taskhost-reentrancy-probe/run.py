@@ -90,6 +90,8 @@ def private_environment(sdk, output):
         "DOTNET_ROOT": str(sdk), "DOTNET_HOST_PATH": str(sdk / "dotnet"),
         "DOTNET_CLI_HOME": str(output / "cli-home"),
         "DOTNET_CLI_TELEMETRY_OPTOUT": "1", "DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "1",
+        "DOTNET_GENERATE_ASPNET_CERTIFICATE": "false",
+        "DOTNET_ADD_GLOBAL_TOOLS_TO_PATH": "false",
         "DOTNET_NOLOGO": "1", "DOTNET_MULTILEVEL_LOOKUP": "0",
         "MSBUILDDISABLENODEREUSE": "1", "NUGET_PACKAGES": str(output / "packages"),
         "TMPDIR": str(output / "process-files"), "TMP": str(output / "process-files"),
@@ -140,7 +142,7 @@ def stage_payload(output):
     for name in PAYLOAD:
         shutil.copyfile(str(HERE / name), str(harness / name))
     sources = [HERE / name for name in PAYLOAD] + [
-        HERE / "run.py", HERE.parent / "vmr-perf-experiment.py",
+        HERE / "run.py", HERE / "publish.py", HERE.parent / "vmr-perf-experiment.py",
         REPO / "global.json", REPO / "eng" / "common" / "tools.sh",
         REPO / "eng" / "pipelines" / "pr.yml",
         REPO / "eng" / "pipelines" / "templates" / "stages" / "taskhost-reentrancy-probe.yml",
