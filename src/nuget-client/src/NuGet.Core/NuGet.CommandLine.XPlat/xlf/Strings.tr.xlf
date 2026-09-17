@@ -1448,6 +1448,11 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <target state="translated">Paketin yolunu belirtin</target>
         <note />
       </trans-unit>
+      <trans-unit id="Warn_AddPkgNonCompliantPackageId">
+        <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
+        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <note>{0} - Package Id</note>
+      </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">
         <source>--no-restore|-n flag was used. No compatibility check will be done and the added package reference will be unconditional.</source>
         <target state="translated">--no-restore|-n bayrağı kullanıldı. Uyumluluk denetimi yapılmayacak ve eklenen paket başvurusu koşulsuz olacak.</target>
