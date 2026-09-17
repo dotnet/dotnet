@@ -1,0 +1,10 @@
+<Project DefaultTargets="Build">
+  <ItemGroup>
+    <Wrapper Include="$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'WrapperA.proj'))" />
+    <Wrapper Include="$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'WrapperB.proj'))" />
+  </ItemGroup>
+  <Target Name="Build">
+    <MSBuild Projects="@(Wrapper)" Targets="Build" BuildInParallel="true" />
+    <Message Text="PROBE ROOT COMPLETED" Importance="high" />
+  </Target>
+</Project>

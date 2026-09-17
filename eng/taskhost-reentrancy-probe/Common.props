@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <ProbeAssembly>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'bin', 'Debug', 'net11.0', 'ProbeTasks.dll'))</ProbeAssembly>
+  </PropertyGroup>
+  <UsingTask TaskName="NestedReentrancyProbe.NestedBuildTask" AssemblyFile="$(ProbeAssembly)" />
+  <UsingTask TaskName="NestedReentrancyProbe.FileGateTask" AssemblyFile="$(ProbeAssembly)" />
+  <UsingTask TaskName="NestedReentrancyProbe.PacketObserverTask" AssemblyFile="$(ProbeAssembly)" />
+</Project>

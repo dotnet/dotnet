@@ -1,0 +1,5 @@
+<Project DefaultTargets="Build">
+  <Target Name="Build">
+    <MSBuild Projects="$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'P.proj'))" Targets="B" />
+  </Target>
+</Project>

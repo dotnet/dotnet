@@ -1,0 +1,57 @@
+stages:
+- stage: TaskHostReentrancyProbe
+  displayName: Isolated TaskHost nested-callback diagnostic
+  dependsOn: []
+  jobs:
+  - job: Linux_x64
+    displayName: Exact SDK normal and two MT observations
+    timeoutInMinutes: 30
+    cancelTimeoutInMinutes: 2
+    pool:
+      name: $(shortStackPoolName)
+      demands: ImageOverride -equals $(poolImage_Linux)
+    steps:
+    - checkout: self
+      fetchDepth: 1
+      fetchFilter: blob:none
+      fetchTags: false
+      sparseCheckoutDirectories: eng
+      persistCredentials: false
+    - bash: |
+        set -eo pipefail
+        mkdir -p "$OUTPUT" "$SDK" "$OUTPUT/cli-home" "$OUTPUT/packages" "$OUTPUT/process-files"
+        export DOTNET_CLI_HOME="$OUTPUT/cli-home"
+        export NUGET_PACKAGES="$OUTPUT/packages"
+        export TMPDIR="$OUTPUT/process-files"
+        export TMP="$TMPDIR" TEMP="$TMPDIR"
+        export DOTNET_GLOBAL_INSTALL_DIR="$SDK" DOTNET_INSTALL_DIR="$SDK"
+        {
+          printf 'Bootstrap start UTC: '; date -u +%FT%TZ
+          ci=true
+          prepare_machine=false
+          use_installed_dotnet_cli=false
+          disable_configure_toolset_import=true
+          runtime_source_feed=''
+          runtime_source_feed_key=''
+          unset _InitializeDotNetCli useInstalledDotNetCli
+          source eng/common/tools.sh
+          InitializeDotNetCli true
+          printf 'Bootstrap end UTC: '; date -u +%FT%TZ
+          printf '##vso[task.setvariable variable=TaskHostProbeSdk]%s\n' "$_InitializeDotNetCli"
+        } 2>&1 | tee "$OUTPUT/bootstrap.log"
+      displayName: Bootstrap exact repository SDK using unchanged Arcade tools
+      env:
+        SDK: $(Build.BinariesDirectory)/taskhost-probe/$(Build.BuildId)/$(System.JobAttempt)/sdk
+        OUTPUT: $(Build.ArtifactStagingDirectory)/taskhost-reentrancy-probe
+    - bash: |
+        set -eo pipefail
+        python3 eng/taskhost-reentrancy-probe/run.py \
+          --sdk "$SDK" --output "$OUTPUT" --tools "$TOOLS"
+      displayName: Compile once, normal control, MT1, MT2 (120 seconds each)
+      env:
+        SDK: $(TaskHostProbeSdk)
+        OUTPUT: $(Build.ArtifactStagingDirectory)/taskhost-reentrancy-probe
+        TOOLS: $(Build.BinariesDirectory)/taskhost-probe/$(Build.BuildId)/$(System.JobAttempt)/tools
+    - publish: $(Build.ArtifactStagingDirectory)/taskhost-reentrancy-probe
+      artifact: TaskHostReentrancyProbe
+      condition: always()

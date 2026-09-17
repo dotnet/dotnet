@@ -1,0 +1,13 @@
+<Project>
+  <Import Project="Common.props" />
+  <Target Name="A">
+    <PacketObserverTask RunDir="$(RunDir)" />
+    <NestedBuildTask Role="A" RunDir="$(RunDir)" ChildProject="$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'ChildA.proj'))" />
+    <Message Text="PROBE P TARGET A PARENT COMPLETED" Importance="high" />
+  </Target>
+  <Target Name="B">
+    <FileGateTask Role="B-before-nested" RunDir="$(RunDir)" WaitFor="$([MSBuild]::NormalizePath('$(RunDir)', 'A-child-ready'))" />
+    <NestedBuildTask Role="B" RunDir="$(RunDir)" ChildProject="$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'ChildB.proj'))" />
+    <Message Text="PROBE P TARGET B PARENT COMPLETED" Importance="high" />
+  </Target>
+</Project>

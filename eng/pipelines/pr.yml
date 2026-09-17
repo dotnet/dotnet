@@ -35,6 +35,10 @@ schedules:
     always: false # run only if there were changes since the last successful scheduled run.
 
 parameters:
+- name: experimentTaskHostProbe
+  type: boolean
+  default: false
+
 - name: experimentTrace
   type: string
   default: '0'
@@ -100,59 +104,63 @@ variables:
 - template: /eng/pipelines/templates/variables/vmr-build.yml@self
 
 stages:
-- ${{ if gt(parameters.experimentMutexSdkBuild, 0) }}:
+- ${{ if parameters.experimentTaskHostProbe }}:
+  - template: /eng/pipelines/templates/stages/taskhost-reentrancy-probe.yml
+
+- ${{ if and(not(parameters.experimentTaskHostProbe), gt(parameters.experimentMutexSdkBuild, 0)) }}:
   - template: /eng/pipelines/templates/stages/mutex-ownership-probe.yml
     parameters:
       sdkBuildId: ${{ parameters.experimentMutexSdkBuild }}
 
-- template: /eng/pipelines/templates/stages/vmr-build.yml
-  parameters:
-    ${{ if eq(parameters.buildScope, 'auto') }}:
-      ${{ if or(eq(variables.isScheduleTrigger, 'true'), contains(variables['Build.DefinitionName'], '-full')) }}:
-        scope: full
-      ${{ elseif eq(variables.isPRTrigger, 'true') }}:
-        scope: lite
+- ${{ if not(parameters.experimentTaskHostProbe) }}:
+  - template: /eng/pipelines/templates/stages/vmr-build.yml
+    parameters:
+      ${{ if eq(parameters.buildScope, 'auto') }}:
+        ${{ if or(eq(variables.isScheduleTrigger, 'true'), contains(variables['Build.DefinitionName'], '-full')) }}:
+          scope: full
+        ${{ elseif eq(variables.isPRTrigger, 'true') }}:
+          scope: lite
+        ${{ else }}:
+          scope: full
       ${{ else }}:
-        scope: full
-    ${{ else }}:
-      scope: ${{ parameters.buildScope }}
-    # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
-    # This is enabled for all branches except main and 1xx
-    excludeRuntimeDependentJobs: false
+        scope: ${{ parameters.buildScope }}
+      # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
+      # This is enabled for all branches except main and 1xx
+      excludeRuntimeDependentJobs: false
 
-- stage: ValidateUserChanges
-  displayName: Validate user changes in VMR
-  dependsOn: []
-  condition: and(
-              eq(variables['isPRTrigger'], 'true'),
-              and(
-                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
-                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-')),
-                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'release-pr-'))
-              )
-          )
-  jobs:
-    - job: Validate
-      displayName: Run Validation Script
-      pool:
-        name: $(shortStackPoolName)
-        demands: ImageOverride -equals $(poolImage_Linux)
-      steps:
-        - checkout: self
-          fetchDepth: 0
-          persistCredentials: ${{ ne(variables['System.TeamProject'], 'public') }}
-          retryCountOnTaskFailure: 5
+  - stage: ValidateUserChanges
+    displayName: Validate user changes in VMR
+    dependsOn: []
+    condition: and(
+                eq(variables['isPRTrigger'], 'true'),
+                and(
+                    not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
+                    not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-')),
+                    not(startsWith(variables['System.PullRequest.SourceBranch'], 'release-pr-'))
+                )
+            )
+    jobs:
+      - job: Validate
+        displayName: Run Validation Script
+        pool:
+          name: $(shortStackPoolName)
+          demands: ImageOverride -equals $(poolImage_Linux)
+        steps:
+          - checkout: self
+            fetchDepth: 0
+            persistCredentials: ${{ ne(variables['System.TeamProject'], 'public') }}
+            retryCountOnTaskFailure: 5
 
-        - script: |
-            set -ex
-            echo "Fetching target branch: $(System.PullRequest.TargetBranch)"
-            git fetch origin $(System.PullRequest.TargetBranch)
-          displayName: Fetch target branch
+          - script: |
+              set -ex
+              echo "Fetching target branch: $(System.PullRequest.TargetBranch)"
+              git fetch origin $(System.PullRequest.TargetBranch)
+            displayName: Fetch target branch
 
-        - script: |
-            set -ex
-            eng/common/dotnet.sh run --project eng/tools/ChangeValidation/ChangeValidation.csproj
-          displayName: Run ChangeValidation tool
-          env:
-            SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
-            SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)
+          - script: |
+              set -ex
+              eng/common/dotnet.sh run --project eng/tools/ChangeValidation/ChangeValidation.csproj
+            displayName: Run ChangeValidation tool
+            env:
+              SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
+              SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)

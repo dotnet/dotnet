@@ -1,0 +1,8 @@
+<Project DefaultTargets="Build">
+  <Import Project="Common.props" />
+  <Target Name="Build">
+    <FileGateTask Role="B-child" RunDir="$(RunDir)" Signal="$([MSBuild]::NormalizePath('$(RunDir)', 'B-child-ready'))" />
+    <MSBuild Projects="$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'P.proj'))" Targets="A" />
+    <Message Text="PROBE B CHILD A REQUEST COMPLETED" Importance="high" />
+  </Target>
+</Project>

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <RestoreSources></RestoreSources>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ProbeTasks.cs" />
+    <Compile Include="SnapshotLogger.cs" />
+    <Compile Include="PacketObserverTask.cs" />
+    <Reference Include="Microsoft.Build" HintPath="$([MSBuild]::NormalizePath('$(MSBuildBinPath)', 'Microsoft.Build.dll'))" Private="false" />
+    <Reference Include="Microsoft.Build.Framework" HintPath="$([MSBuild]::NormalizePath('$(MSBuildBinPath)', 'Microsoft.Build.Framework.dll'))" Private="false" />
+    <Reference Include="Microsoft.Build.Utilities.Core" HintPath="$([MSBuild]::NormalizePath('$(MSBuildBinPath)', 'Microsoft.Build.Utilities.Core.dll'))" Private="false" />
+  </ItemGroup>
+</Project>

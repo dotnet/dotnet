@@ -1,0 +1,6 @@
+<Project DefaultTargets="Build">
+  <Import Project="Common.props" />
+  <Target Name="Build">
+    <FileGateTask Role="A-child" RunDir="$(RunDir)" Signal="$([MSBuild]::NormalizePath('$(RunDir)', 'A-child-ready'))" WaitFor="$([MSBuild]::NormalizePath('$(RunDir)', 'B-child-ready'))" />
+  </Target>
+</Project>
