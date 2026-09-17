@@ -183,9 +183,13 @@
     <TestArgs>$(TestArgs) /bl:$(ArtifactsLogRepoDir)Test.binlog</TestArgs>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- MSBuild node communication tracing ('MSBuild_CommTrace_PID_*.txt'): records node handshakes,
+         connects and reuse decisions. Cheap enough to leave on in CI. EnableExtraDebugging implies it. -->
+    <EnableMSBuildCommTracing Condition="'$(EnableMSBuildCommTracing)' == '' and '$(EnableExtraDebugging)' == 'true'">true</EnableMSBuildCommTracing>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(EnableExtraDebugging)' == 'true'">
-    <!-- MSBuild's own debug output (MSBUILDDEBUGCOMM traces, 'MSBuild_*.failure.txt') is directed to
-         MSBUILDDEBUGPATH below, which points at the per-repo log directory so that CI publishes it. -->
     <RoslynDebugPathTargetDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'roslyn-debug'))</RoslynDebugPathTargetDir>
 
     <AspNetRazorBuildServerLogDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'aspnet-debug'))</AspNetRazorBuildServerLogDir>
@@ -212,7 +216,8 @@
          or the user package cache (local dev builds). -->
     <EnvironmentVariables Include="NUGET_PACKAGES=$(RepoArtifactsPackageCache)" />
 
-    <!-- If MSBuild exits early, make sure debug output like 'MSBuild_*.failure.txt' ends up in a place we can see it. -->
+    <!-- MSBuild's own debug output (comm traces, 'MSBuild_*.failure.txt') is written here, which points
+         at the per-repo log directory so that CI publishes it even if MSBuild exits early. -->
     <EnvironmentVariables Include="MSBUILDDEBUGPATH=$(ArtifactsLogRepoDir)" />
   </ItemGroup>
 
@@ -220,8 +225,16 @@
     <EnvironmentVariables Include="NuGetAudit=false" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(EnableExtraDebugging)' == 'true'">
+  <ItemGroup Condition="'$(EnableMSBuildCommTracing)' == 'true'">
     <EnvironmentVariables Include="MSBUILDDEBUGCOMM=1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(EnableExtraDebugging)' == 'true'">
+    <!-- These are expensive and can slow a large repo build down by multiples, which makes them
+         unsuitable for a default CI run. MSBUILDDEBUGSCHEDULER in particular makes the scheduler
+         write its full state to disk synchronously after every scheduling pass; for runtime that
+         produced a multi-GB 'SchedulerState_*.txt' on the scheduler's critical path. Prefer
+         EnableMSBuildCommTracing when all that's needed is node/task host diagnostics. -->
     <EnvironmentVariables Include="MSBUILDDEBUGSCHEDULER=1" />
     <EnvironmentVariables Include="MSBUILDDEBUGFORCECACHING=1" />
     <EnvironmentVariables Include="MSBUILDDEBUG=1" />
