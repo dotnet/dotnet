@@ -1,5 +1,6 @@
 #:package System.CommandLine
 #:package Microsoft.CodeAnalysis
+#:project ..\..\..\..\test\LicenseScanUtilities\LicenseScanUtilities.csproj
 
 using System.Diagnostics;
 using System.CommandLine;
@@ -10,6 +11,8 @@ using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.DotNet.SourceBuild.LicenseScanning;
+using static Microsoft.DotNet.SourceBuild.LicenseScanning.LicenseScanPolicy;
 
 // Compares license-scan baselines, exclusions, and allowed identifiers between
 // Git revisions or the working tree. It enriches changed findings with supplied
@@ -182,16 +185,16 @@ internal static class LicenseScanDiffApp
             await ReadTextAsync(repositoryRoot, ExclusionsPath, options.BaseRef) ?? "";
         string afterExclusionText =
             await ReadTextAsync(repositoryRoot, ExclusionsPath, options.ToRef) ?? "";
-        Dictionary<string, Exclusion> beforeExclusions =
-            ParseExclusions(beforeExclusionText);
-        Dictionary<string, Exclusion> afterExclusions =
-            ParseExclusions(afterExclusionText);
+        Dictionary<string, LicenseExclusion> beforeExclusions =
+            LicenseScanPolicy.ParseExclusions(beforeExclusionText);
+        Dictionary<string, LicenseExclusion> afterExclusions =
+            LicenseScanPolicy.ParseExclusions(afterExclusionText);
 
         Dictionary<string, string> scanCodeMappings =
             ParseMappings(options.ScanCode, "--scancode");
         Dictionary<string, string> scanRootOverrides =
             ParseMappings(options.ScanRoot, "--scan-root");
-        Dictionary<string, Dictionary<string, ScanCodeFileInput>> scanCodeIndexes =
+        Dictionary<string, Dictionary<string, ScanCodeFile>> scanCodeIndexes =
             await LoadScanCodeIndexesAsync(scanCodeMappings);
 
         HashSet<string> allTargets = new(beforeBaselines.Keys, StringComparer.Ordinal);
@@ -327,7 +330,7 @@ internal static class LicenseScanDiffApp
             targetState.Analysis.AllowedIds,
             targetState.Analysis.AfterExclusions.Values,
             vmrPath);
-        ScanCodeFileInput? scanRecord =
+        ScanCodeFile? scanRecord =
             targetState.ScanCodeIndex?.GetValueOrDefault(recordPath);
 
         findings.Add(new BaselineFinding(
@@ -373,7 +376,7 @@ internal static class LicenseScanDiffApp
         BaselineTargetState targetState,
         string recordPath,
         string vmrPath,
-        ScanCodeFileInput? scanRecord,
+        ScanCodeFile? scanRecord,
         ICollection<AnalysisIssue> issues)
     {
         if (scanRecord is null)
@@ -382,7 +385,7 @@ internal static class LicenseScanDiffApp
         }
 
         Classification classification = Classify(
-            scanRecord.DetectedLicenseExpression,
+            scanRecord.LicenseExpression,
             targetState.Analysis.AllowedIds,
             targetState.Analysis.AfterExclusions.Values,
             vmrPath);
@@ -469,13 +472,13 @@ internal static class LicenseScanDiffApp
         AnalysisState state,
         ICollection<AnalysisIssue> issues)
     {
-        Exclusion[] addedExclusions = state.AfterExclusions
+        LicenseExclusion[] addedExclusions = state.AfterExclusions
             .Where(entry => !state.BeforeExclusions.ContainsKey(entry.Key))
             .Select(entry => entry.Value)
             .OrderBy(entry => entry.Path, StringComparer.Ordinal)
             .ThenBy(entry => string.Join(',', entry.Licenses), StringComparer.OrdinalIgnoreCase)
             .ToArray();
-        Exclusion[] removedExclusions = state.BeforeExclusions
+        LicenseExclusion[] removedExclusions = state.BeforeExclusions
             .Where(entry => !state.AfterExclusions.ContainsKey(entry.Key))
             .Select(entry => entry.Value)
             .OrderBy(entry => entry.Path, StringComparer.Ordinal)
@@ -524,12 +527,12 @@ internal static class LicenseScanDiffApp
     /// they match supplied ScanCode records and detected identifiers.
     /// </summary>
     private static void ValidateAddedExclusions(
-        IReadOnlyList<Exclusion> addedExclusions,
+        IReadOnlyList<LicenseExclusion> addedExclusions,
         IReadOnlyDictionary<string, string> scanRoots,
-        IReadOnlyDictionary<string, Dictionary<string, ScanCodeFileInput>> scanCodeIndexes,
+        IReadOnlyDictionary<string, Dictionary<string, ScanCodeFile>> scanCodeIndexes,
         ICollection<AnalysisIssue> issues)
     {
-        foreach (Exclusion exclusion in addedExclusions)
+        foreach (LicenseExclusion exclusion in addedExclusions)
         {
             // LicenseExclusions.txt is interpreted from the VMR root. A baseline-
             // relative path would never match in CI even if it looks plausible.
@@ -564,7 +567,7 @@ internal static class LicenseScanDiffApp
             string relativePattern = exclusion.Path[(scanRoot.Length + 1)..];
             if (!scanCodeIndexes.TryGetValue(
                     target,
-                    out Dictionary<string, ScanCodeFileInput>? scanCodeIndex))
+                    out Dictionary<string, ScanCodeFile>? scanCodeIndex))
             {
                 issues.Add(new AnalysisIssue(
                     "scancode_results_missing_for_exclusion",
@@ -576,8 +579,8 @@ internal static class LicenseScanDiffApp
 
             // Exclusion paths support globs, whereas ScanCode records contain literal
             // paths. Expand the proposed exclusion against the raw result index.
-            ScanCodeFileInput[] scanRecords = scanCodeIndex
-                .Where(entry => GlobMatches(relativePattern, entry.Key))
+            ScanCodeFile[] scanRecords = scanCodeIndex
+                .Where(entry => LicenseScanPolicy.PathMatches(relativePattern, entry.Key))
                 .Select(entry => entry.Value)
                 .ToArray();
 
@@ -601,10 +604,10 @@ internal static class LicenseScanDiffApp
             // A license-scoped exclusion is suspicious if none of its matching files
             // contain that identifier. This catches typos and copied stale entries.
             HashSet<string> detectedLicenses = new(StringComparer.OrdinalIgnoreCase);
-            foreach (ScanCodeFileInput record in scanRecords)
+            foreach (ScanCodeFile record in scanRecords)
             {
-                detectedLicenses.UnionWith(SplitLicenseExpression(
-                    record.DetectedLicenseExpression));
+                detectedLicenses.UnionWith(
+                    LicenseScanPolicy.SplitExpression(record.LicenseExpression));
             }
 
             foreach (string licenseId in exclusion.Licenses)
@@ -629,16 +632,16 @@ internal static class LicenseScanDiffApp
     private static Classification Classify(
         string? expression,
         IReadOnlySet<string> allowedIds,
-        IEnumerable<Exclusion> exclusions,
+        IEnumerable<LicenseExclusion> exclusions,
         string vmrPath)
     {
-        string[] tokens = SplitLicenseExpression(expression);
+        string[] tokens = LicenseScanPolicy.SplitExpression(expression);
         string[] disallowed = tokens.Where(id => !allowedIds.Contains(id)).ToArray();
 
         // Exclusion path matching follows FileSystemGlobbing behavior for the patterns
         // used by this repository. License identifiers remain case-insensitive.
-        Exclusion[] matchingExclusions = exclusions
-            .Where(exclusion => GlobMatches(exclusion.Path, vmrPath))
+        LicenseExclusion[] matchingExclusions = exclusions
+            .Where(exclusion => LicenseScanPolicy.PathMatches(exclusion.Path, vmrPath))
             .OrderBy(exclusion => exclusion.Path, StringComparer.Ordinal)
             .ThenBy(exclusion => string.Join(',', exclusion.Licenses), StringComparer.OrdinalIgnoreCase)
             .ToArray();
@@ -713,39 +716,6 @@ internal static class LicenseScanDiffApp
     }
 
     /// <summary>
-    /// Parses non-comment lines from LicenseExclusions.txt. Entries without a pipe
-    /// exclude the whole file; entries with a pipe exclude only listed identifiers.
-    /// </summary>
-    private static Dictionary<string, Exclusion> ParseExclusions(string content)
-    {
-        Dictionary<string, Exclusion> result = new(StringComparer.Ordinal);
-        foreach (string rawLine in content.Split(["\r\n", "\n"], StringSplitOptions.None))
-        {
-            string line = rawLine.Trim();
-            if (line.Length == 0 || line.StartsWith('#'))
-            {
-                continue;
-            }
-
-            int separator = line.IndexOf('|');
-            Exclusion exclusion;
-            if (separator < 0)
-            {
-                exclusion = new Exclusion(NormalizePath(line), []);
-            }
-            else
-            {
-                exclusion = new Exclusion(
-                    NormalizePath(line[..separator].Trim()),
-                    line[(separator + 1)..]
-                        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
-            }
-            result[exclusion.Key] = exclusion;
-        }
-        return result;
-    }
-
-    /// <summary>
     /// Loads the license baseline files from a Git tree or the working tree into an
     /// ordinal, path-keyed index grouped by scan target.
     /// </summary>
@@ -771,12 +741,12 @@ internal static class LicenseScanDiffApp
                 continue;
             }
 
-            BaselineDocument document;
+            LicenseScanDocument document;
             try
             {
                 document = JsonSerializer.Deserialize(
                     content,
-                    AnalysisJsonContext.Default.BaselineDocument)
+                    AnalysisJsonContext.Default.LicenseScanDocument)
                     ?? throw new JsonException("The document is null.");
             }
             catch (JsonException exception)
@@ -785,7 +755,7 @@ internal static class LicenseScanDiffApp
             }
 
             Dictionary<string, string?> records = new(StringComparer.Ordinal);
-            foreach (BaselineFileInput record in document.Files)
+            foreach (LicenseScanFile record in document.Files)
             {
                 if (string.IsNullOrWhiteSpace(record.Path))
                 {
@@ -796,7 +766,7 @@ internal static class LicenseScanDiffApp
                 string recordPath = NormalizePath(record.Path);
                 if (!records.TryAdd(
                         recordPath,
-                        record.DetectedLicenseExpression))
+                        record.LicenseExpression))
                 {
                     throw new InvalidOperationException(
                         $"Duplicate baseline path {recordPath} in {path}");
@@ -836,10 +806,10 @@ internal static class LicenseScanDiffApp
     /// <summary>
     /// Builds a case-sensitive file index for each supplied ScanCode JSON document.
     /// </summary>
-    private static async Task<Dictionary<string, Dictionary<string, ScanCodeFileInput>>>
+    private static async Task<Dictionary<string, Dictionary<string, ScanCodeFile>>>
         LoadScanCodeIndexesAsync(IReadOnlyDictionary<string, string> mappings)
     {
-        Dictionary<string, Dictionary<string, ScanCodeFileInput>> indexes =
+        Dictionary<string, Dictionary<string, ScanCodeFile>> indexes =
             new(StringComparer.Ordinal);
         foreach ((string target, string fileName) in mappings)
         {
@@ -861,8 +831,8 @@ internal static class LicenseScanDiffApp
 
             // ScanCode paths originate on Linux and can legally differ only by case,
             // so make the intended ordinal comparison explicit.
-            Dictionary<string, ScanCodeFileInput> index = new(StringComparer.Ordinal);
-            foreach (ScanCodeFileInput record in document.Files)
+            Dictionary<string, ScanCodeFile> index = new(StringComparer.Ordinal);
+            foreach (ScanCodeFile record in document.Files)
             {
                 string recordPath = NormalizePath(record.Path ?? "");
                 if (recordPath.Length > 0)
@@ -879,7 +849,7 @@ internal static class LicenseScanDiffApp
     /// Reduces a potentially large ScanCode file record to evidence useful during
     /// review.
     /// </summary>
-    private static ScanCodeEvidence? SummarizeScanCodeRecord(ScanCodeFileInput? record)
+    private static ScanCodeEvidence? SummarizeScanCodeRecord(ScanCodeFile? record)
     {
         if (record is null)
         {
@@ -888,9 +858,9 @@ internal static class LicenseScanDiffApp
 
         List<ScanCodeMatch> matches = [];
 
-        foreach (ScanCodeDetectionInput detection in record.LicenseDetections)
+        foreach (ScanCodeLicenseDetection detection in record.LicenseDetections)
         {
-            foreach (ScanCodeMatchInput match in detection.Matches)
+            foreach (ScanCodeLicenseMatch match in detection.Matches)
             {
                 matches.Add(CreateScanCodeMatch(
                     detection.LicenseExpression,
@@ -902,7 +872,7 @@ internal static class LicenseScanDiffApp
 
         return new ScanCodeEvidence(
             record.Path,
-            record.DetectedLicenseExpression,
+            record.LicenseExpression,
             matches.ToArray());
     }
 
@@ -914,7 +884,7 @@ internal static class LicenseScanDiffApp
         string? detectionExpression,
         string? licenseExpression,
         string? ruleIdentifier,
-        ScanCodeMatchInput match) =>
+        ScanCodeLicenseMatch match) =>
         new(
             detectionExpression,
             licenseExpression,
@@ -925,78 +895,10 @@ internal static class LicenseScanDiffApp
             match.EndLine,
             match.MatchedText);
 
-    private static ExclusionResult[] ToExclusionResults(IEnumerable<Exclusion> values) =>
+    private static ExclusionResult[] ToExclusionResults(
+        IEnumerable<LicenseExclusion> values) =>
         values.Select(exclusion =>
             new ExclusionResult(exclusion.Path, exclusion.Licenses.ToArray())).ToArray();
-
-    // Keep this transformation intentionally identical to LicenseScanTests.cs. It is
-    // not a general SPDX parser: the production test also discards AND/OR semantics
-    // and evaluates each resulting identifier independently.
-    private static string[] SplitLicenseExpression(string? expression) =>
-        expression is null
-            ? []
-            : expression
-                .Replace("(", "", StringComparison.Ordinal)
-                .Replace(")", "", StringComparison.Ordinal)
-                .Replace(" AND ", ",", StringComparison.Ordinal)
-                .Replace(" OR ", ",", StringComparison.Ordinal)
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-    private static bool GlobMatches(string pattern, string path) =>
-        GlobToRegex(pattern).IsMatch(NormalizePath(path));
-
-    /// <summary>
-    /// Translates the subset of FileSystemGlobbing syntax used by license exclusions:
-    /// '*' matches within a path segment and '**' crosses directory separators.
-    /// </summary>
-    private static Regex GlobToRegex(string pattern)
-    {
-        pattern = NormalizePath(pattern);
-        StringBuilder expression = new("^");
-        for (int index = 0; index < pattern.Length;)
-        {
-            if (pattern[index] != '*')
-            {
-                expression.Append(Regex.Escape(pattern[index].ToString()));
-                index++;
-                continue;
-            }
-
-            if (index + 1 < pattern.Length && pattern[index + 1] == '*')
-            {
-                index += 2;
-                if (index < pattern.Length && pattern[index] == '/')
-                {
-                    // "**/" may match zero or more complete directory segments.
-                    expression.Append("(?:.*/)?");
-                    index++;
-                }
-                else
-                {
-                    expression.Append(".*");
-                }
-            }
-            else
-            {
-                expression.Append("[^/]*");
-                index++;
-            }
-        }
-        expression.Append('$');
-        return new Regex(
-            expression.ToString(),
-            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-    }
-
-    private static string NormalizePath(string value)
-    {
-        string normalized = value.Replace('\\', '/');
-        while (normalized.StartsWith("./", StringComparison.Ordinal))
-        {
-            normalized = normalized[2..];
-        }
-        return normalized;
-    }
 
     /// <summary>
     /// Reconstructs the VMR scan root from the target naming convention used by
@@ -1133,12 +1035,7 @@ internal static class LicenseScanDiffApp
         IReadOnlyList<string> Tokens,
         IReadOnlyList<string> Disallowed,
         IReadOnlyList<string> RemainingDisallowed,
-        IReadOnlyList<Exclusion> MatchingExclusions);
-
-    private sealed record Exclusion(string Path, IReadOnlyList<string> Licenses)
-    {
-        public string Key => Path + '\0' + string.Join(',', Licenses);
-    }
+        IReadOnlyList<LicenseExclusion> MatchingExclusions);
 
     private sealed record ProcessResult(int ExitCode, string Output);
 
@@ -1149,9 +1046,9 @@ internal static class LicenseScanDiffApp
         Dictionary<string, string?> BeforeAllowed,
         Dictionary<string, string?> AfterAllowed,
         HashSet<string> AllowedIds,
-        Dictionary<string, Exclusion> BeforeExclusions,
-        Dictionary<string, Exclusion> AfterExclusions,
-        Dictionary<string, Dictionary<string, ScanCodeFileInput>> ScanCodeIndexes,
+        Dictionary<string, LicenseExclusion> BeforeExclusions,
+        Dictionary<string, LicenseExclusion> AfterExclusions,
+        Dictionary<string, Dictionary<string, ScanCodeFile>> ScanCodeIndexes,
         Dictionary<string, string> ScanRoots);
 
     private sealed record BaselineTargetState(
@@ -1160,7 +1057,7 @@ internal static class LicenseScanDiffApp
         string ScanRoot,
         Dictionary<string, string?> BeforeRecords,
         Dictionary<string, string?> AfterRecords,
-        Dictionary<string, ScanCodeFileInput>? ScanCodeIndex);
+        Dictionary<string, ScanCodeFile>? ScanCodeIndex);
 
     /// <summary>
     /// Immutable command-line configuration. Repeatable mappings are collected as raw
@@ -1252,60 +1149,10 @@ internal sealed record AnalysisIssue(
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     string[]? AvailablePaths = null);
 
-internal sealed class BaselineDocument
-{
-    public BaselineFileInput[] Files { get; init; } = [];
-}
-
-internal sealed class BaselineFileInput
-{
-    public string? Path { get; init; }
-
-    public string? DetectedLicenseExpression { get; init; }
-}
-
-internal sealed class ScanCodeDocument
-{
-    public ScanCodeFileInput[] Files { get; init; } = [];
-}
-
-internal sealed class ScanCodeFileInput
-{
-    public string? Path { get; init; }
-
-    public string? DetectedLicenseExpression { get; init; }
-
-    public ScanCodeDetectionInput[] LicenseDetections { get; init; } = [];
-}
-
-internal sealed class ScanCodeDetectionInput
-{
-    public string? LicenseExpression { get; init; }
-
-    public ScanCodeMatchInput[] Matches { get; init; } = [];
-}
-
-internal sealed class ScanCodeMatchInput
-{
-    public string? LicenseExpression { get; init; }
-
-    public string? RuleIdentifier { get; init; }
-
-    public string? Matcher { get; init; }
-
-    public decimal? Score { get; init; }
-
-    public int? StartLine { get; init; }
-
-    public int? EndLine { get; init; }
-
-    public string? MatchedText { get; init; }
-}
-
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
     WriteIndented = true)]
 [JsonSerializable(typeof(AnalysisResult))]
-[JsonSerializable(typeof(BaselineDocument))]
+[JsonSerializable(typeof(LicenseScanDocument))]
 [JsonSerializable(typeof(ScanCodeDocument))]
 internal sealed partial class AnalysisJsonContext : JsonSerializerContext;

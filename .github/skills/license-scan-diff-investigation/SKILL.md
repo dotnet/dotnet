@@ -22,8 +22,11 @@ indicates a licensing problem.
 
 This workflow is specific to these parts of the VMR license scan:
 
-- Test logic:
+- Allowed-license policy and scan orchestration:
   `test/Microsoft.DotNet.SourceBuild.Tests/LicenseScanTests.cs`
+- Shared expression, exclusion, and ScanCode parsing:
+  `test/LicenseScanUtilities/LicenseScanPolicy.cs` and
+  `test/LicenseScanUtilities/ScanCodeModels.cs`
 - Baseline directory:
   `test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests`
   It contains `LicenseExclusions.txt` and `Licenses.<target>.json`.
@@ -53,8 +56,10 @@ produced the proposed files.
 
 ## Understand the filtering model
 
-Read the current `LicenseScanTests.cs` before classifying findings. The
-allowed-license list and filtering behavior can change.
+Read the current `LicenseScanTests.cs` and `LicenseScanPolicy.cs` before
+classifying findings. The test owns the allowed-license list and filtering
+orchestration; the shared policy owns expression decomposition and exclusion
+parsing and matching.
 
 The current test evaluates each identifier in a mixed expression independently.
 For example, if `mit` is allowed but `unknown-license-reference` represents
@@ -115,7 +120,7 @@ The JSON output contains:
 - Allowed-license additions and removals, including adjacent references.
 - Parsed exclusion additions and removals.
 - Added, removed, and changed baseline findings.
-- Each expression split using the same rules as `LicenseScanTests.cs`.
+- Each expression split using the shared `LicenseScanPolicy` rules.
 - Allowed and remaining-disallowed identifiers for each finding.
 - Baseline-relative and VMR-rooted paths.
 - Matching literal or globbed exclusions and summarized raw ScanCode matches.
