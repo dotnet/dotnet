@@ -666,8 +666,8 @@
          target, so the OnError targets below still move the repo's (partial) logs into the
          published artifacts/log directory. Opt-in: no timeout unless RepoBuildTimeoutMinutes is set. -->
     <PropertyGroup>
-      <RepoBuildTimeoutMilliseconds>-1</RepoBuildTimeoutMilliseconds>
-      <RepoBuildTimeoutMilliseconds Condition="'$(RepoBuildTimeoutMinutes)' != ''">$([MSBuild]::Multiply($(RepoBuildTimeoutMinutes), 60000))</RepoBuildTimeoutMilliseconds>
+      <_RepoBuildTimeoutMilliseconds>-1</_RepoBuildTimeoutMilliseconds>
+      <_RepoBuildTimeoutMilliseconds Condition="'$(RepoBuildTimeoutMinutes)' != ''">$([MSBuild]::Multiply($(RepoBuildTimeoutMinutes), 60000))</_RepoBuildTimeoutMilliseconds>
     </PropertyGroup>
 
     <!-- Build the repository. When MinimalConsoleLogOutput is true the console output is redirected
@@ -677,7 +677,7 @@
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
           YieldDuringToolExecution="true"
           IgnoreStandardErrorWarningFormat="true"
-          Timeout="$(RepoBuildTimeoutMilliseconds)"
+          Timeout="$(_RepoBuildTimeoutMilliseconds)"
           StandardOutputImportance="$(RepoStandardOutputImportance)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>
