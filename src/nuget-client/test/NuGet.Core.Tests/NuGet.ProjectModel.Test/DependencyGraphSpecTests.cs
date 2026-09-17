@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Commands.Test;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -452,6 +453,144 @@ namespace NuGet.ProjectModel.Test
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
+        public void GetHash_WithDifferentProjectPathCasings_UsesFileSystemCaseSensitivity(bool useLegacyHashFunction)
+        {
+            PackageSpec firstProject = CreatePackageSpecWithPaths(Path.Combine(Path.GetTempPath(), "Projects"));
+            PackageSpec secondProject = CreatePackageSpecWithPaths(Path.Combine(Path.GetTempPath(), "projects"));
+            DependencyGraphSpec first = ProjectTestHelpers.GetDGSpecForFirstProject(firstProject);
+            DependencyGraphSpec second = ProjectTestHelpers.GetDGSpecForFirstProject(secondProject);
+            string firstJson = GetJson(first);
+            string secondJson = GetJson(second);
+
+            string firstHash = GetHash(first, useLegacyHashFunction);
+            string secondHash = GetHash(second, useLegacyHashFunction);
+
+            Assert.Equal(PathUtility.IsFileSystemCaseInsensitive, StringComparer.Ordinal.Equals(firstHash, secondHash));
+            Assert.Equal(firstJson, GetJson(first));
+            Assert.Equal(secondJson, GetJson(second));
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void GetHash_WithDifferentReferencedProjectPathCasings_UsesFileSystemCaseSensitivity(bool useLegacyHashFunction)
+        {
+            PackageSpec firstRoot = CreatePackageSpecWithPaths(Path.Combine(Path.GetTempPath(), "Root"));
+            PackageSpec secondRoot = firstRoot.Clone();
+            PackageSpec firstChild = CreatePackageSpecWithPaths(Path.Combine(Path.GetTempPath(), "Referenced"), "Child");
+            PackageSpec secondChild = CreatePackageSpecWithPaths(Path.Combine(Path.GetTempPath(), "referenced"), "Child");
+            firstRoot = firstRoot.WithTestProjectReference(firstChild);
+            secondRoot = secondRoot.WithTestProjectReference(secondChild);
+            DependencyGraphSpec first = ProjectTestHelpers.GetDGSpecForFirstProject(firstRoot, firstChild);
+            DependencyGraphSpec second = ProjectTestHelpers.GetDGSpecForFirstProject(secondRoot, secondChild);
+
+            DependencyGraphSpec firstClosure = first.WithProjectClosure(firstRoot.RestoreMetadata.ProjectUniqueName);
+            DependencyGraphSpec secondClosure = second.WithProjectClosure(secondRoot.RestoreMetadata.ProjectUniqueName);
+            Assert.Equal(2, firstClosure.Projects.Count);
+            Assert.Equal(2, secondClosure.Projects.Count);
+            string firstJson = GetJson(firstClosure);
+            string secondJson = GetJson(secondClosure);
+
+            string firstHash = GetHash(firstClosure, useLegacyHashFunction);
+            string secondHash = GetHash(secondClosure, useLegacyHashFunction);
+
+            Assert.Equal(PathUtility.IsFileSystemCaseInsensitive, StringComparer.Ordinal.Equals(firstHash, secondHash));
+            Assert.Equal(firstJson, GetJson(firstClosure));
+            Assert.Equal(secondJson, GetJson(secondClosure));
+        }
+
+        [Theory]
+        [InlineData(false, "ProjectName")]
+        [InlineData(true, "ProjectName")]
+        [InlineData(false, "Source")]
+        [InlineData(true, "Source")]
+        [InlineData(false, "PackagePath")]
+        [InlineData(true, "PackagePath")]
+        [InlineData(false, "OutputPath")]
+        [InlineData(true, "OutputPath")]
+        [InlineData(false, "DependencyVersion")]
+        [InlineData(true, "DependencyVersion")]
+        [InlineData(false, "ProjectJsonPath")]
+        [InlineData(true, "ProjectJsonPath")]
+        [InlineData(false, "PackagesPath")]
+        [InlineData(true, "PackagesPath")]
+        [InlineData(false, "ConfigFilePath")]
+        [InlineData(true, "ConfigFilePath")]
+        [InlineData(false, "FallbackFolder")]
+        [InlineData(true, "FallbackFolder")]
+        [InlineData(false, "LockFilePath")]
+        [InlineData(true, "LockFilePath")]
+        [InlineData(false, "RuntimeIdentifierGraphPath")]
+        [InlineData(true, "RuntimeIdentifierGraphPath")]
+        [InlineData(false, "AbsolutePath")]
+        [InlineData(true, "AbsolutePath")]
+        public void GetHash_WithOtherRestoreInputChanges_ReturnsDifferentHashes(bool useLegacyHashFunction, string changedValue)
+        {
+            PackageSpec first = CreatePackageSpecWithPaths(Path.Combine(Path.GetTempPath(), "Projects"));
+            PackageSpec second = first.Clone();
+
+            switch (changedValue)
+            {
+                case "ProjectName":
+                    second.RestoreMetadata.ProjectName = "project";
+                    break;
+                case "Source":
+                    second.RestoreMetadata.Sources = [new PackageSource("https://example.test/feed/index.json")];
+                    break;
+                case "PackagePath":
+                    second.RestoreMetadata.Files = [new ProjectRestoreMetadataFile("lib/net10.0/project.dll", first.RestoreMetadata.Files[0].AbsolutePath)];
+                    break;
+                case "OutputPath":
+                    second.RestoreMetadata.OutputPath = Path.Combine(Path.GetTempPath(), "OtherOutput");
+                    break;
+                case "DependencyVersion":
+                    second.TargetFrameworks[0] = new TargetFrameworkInformation(second.TargetFrameworks[0])
+                    {
+                        Dependencies = [new LibraryDependency
+                        {
+                            LibraryRange = new LibraryRange("Package", VersionRange.Parse("2.0.0"), LibraryDependencyTarget.Package)
+                        }]
+                    };
+                    break;
+                case "ProjectJsonPath":
+                    second.RestoreMetadata.ProjectJsonPath = second.RestoreMetadata.ProjectJsonPath.ToUpperInvariant();
+                    break;
+                case "PackagesPath":
+                    second.RestoreMetadata.PackagesPath = second.RestoreMetadata.PackagesPath.ToUpperInvariant();
+                    break;
+                case "ConfigFilePath":
+                    second.RestoreMetadata.ConfigFilePaths[0] = second.RestoreMetadata.ConfigFilePaths[0].ToUpperInvariant();
+                    break;
+                case "FallbackFolder":
+                    second.RestoreMetadata.FallbackFolders[0] = second.RestoreMetadata.FallbackFolders[0].ToUpperInvariant();
+                    break;
+                case "LockFilePath":
+                    second.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(
+                        "true", second.RestoreMetadata.RestoreLockProperties.NuGetLockFilePath.ToUpperInvariant(), false);
+                    break;
+                case "RuntimeIdentifierGraphPath":
+                    second.TargetFrameworks[0] = new TargetFrameworkInformation(second.TargetFrameworks[0])
+                    {
+                        RuntimeIdentifierGraphPath = second.TargetFrameworks[0].RuntimeIdentifierGraphPath.ToUpperInvariant()
+                    };
+                    break;
+                case "AbsolutePath":
+                    second.RestoreMetadata.Files = [new ProjectRestoreMetadataFile(
+                        first.RestoreMetadata.Files[0].PackagePath, first.RestoreMetadata.Files[0].AbsolutePath.ToUpperInvariant())];
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(changedValue));
+            }
+
+            string firstHash = GetHash(ProjectTestHelpers.GetDGSpecForFirstProject(first), useLegacyHashFunction);
+            string secondHash = GetHash(ProjectTestHelpers.GetDGSpecForFirstProject(second), useLegacyHashFunction);
+
+            Assert.NotEqual(firstHash, secondHash);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
         public void GetHash_WithCentralPackageVersionsAndPackagesToPrune_IgnoresDictionaryCreationOrder(bool useLegacyHashFunction)
         {
             // Arrange
@@ -747,6 +886,43 @@ namespace NuGet.ProjectModel.Test
                     Assert.True(expectedResult.Equals(actualResult));
                     Assert.NotSame(expectedResult, actualResult);
                 });
+        }
+
+        private static PackageSpec CreatePackageSpecWithPaths(string directory, string projectName = "Project")
+        {
+            string projectPath = Path.Combine(directory, projectName + ".csproj");
+            string restoreSettingsDirectory = Path.Combine(Path.GetTempPath(), "RestoreSettings");
+            var framework = new TargetFrameworkInformation
+            {
+                FrameworkName = NuGetFramework.Parse("net10.0"),
+                RuntimeIdentifierGraphPath = Path.Combine(restoreSettingsDirectory, "RuntimeIdentifierGraph.json"),
+                Dependencies = [new LibraryDependency
+                {
+                    LibraryRange = new LibraryRange("Package", VersionRange.Parse("1.0.0"), LibraryDependencyTarget.Package)
+                }]
+            };
+
+            return new PackageSpec([framework])
+            {
+                Name = projectName,
+                FilePath = projectPath,
+                RestoreMetadata = new ProjectRestoreMetadata
+                {
+                    ProjectStyle = ProjectStyle.PackageReference,
+                    ProjectUniqueName = projectPath,
+                    ProjectName = projectName,
+                    ProjectPath = projectPath,
+                    ProjectJsonPath = Path.Combine(restoreSettingsDirectory, "project.json"),
+                    OutputPath = Path.Combine(directory, "obj"),
+                    PackagesPath = Path.Combine(restoreSettingsDirectory, "Packages"),
+                    ConfigFilePaths = [Path.Combine(restoreSettingsDirectory, "NuGet.Config")],
+                    FallbackFolders = [Path.Combine(restoreSettingsDirectory, "Fallback")],
+                    Sources = [new PackageSource("https://example.test/Feed/index.json")],
+                    TargetFrameworks = [new ProjectRestoreMetadataFrameworkInfo(framework.FrameworkName)],
+                    Files = [new ProjectRestoreMetadataFile("lib/net10.0/Project.dll", Path.Combine(restoreSettingsDirectory, "bin", "Project.dll"))],
+                    RestoreLockProperties = new RestoreLockProperties("true", Path.Combine(restoreSettingsDirectory, "packages.lock.json"), false)
+                }
+            };
         }
 
         private static DependencyGraphSpec CreateDependencyGraphSpec()

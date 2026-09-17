@@ -646,6 +646,21 @@ namespace NuGet.PackageManagement.UI.ViewModels
 
                 UpdateSelectionState();
             }
+            else if (e.PropertyName == nameof(package.IsPackageVulnerable) && package.IsPackageVulnerable)
+            {
+                _joinableTaskFactory.Value.Run(async () =>
+                {
+                    await ItemsLock.ExecuteAsync(() =>
+                    {
+                        if (Items.Contains(package))
+                        {
+                            Items.Remove(_loadingVulnerabilitiesStatusIndicator);
+                        }
+
+                        return Task.CompletedTask;
+                    });
+                });
+            }
         }
 
         /// <summary>

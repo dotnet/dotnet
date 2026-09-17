@@ -405,6 +405,59 @@ namespace NuGet.XPlat.FuncTest
         }
 
         [Fact]
+        public async Task CanListPackagesAfterError()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            var unsupportedProject = SimpleTestProjectContext.CreateNonNuGet("Frontend", pathContext.SolutionRoot, NuGetFramework.Parse("net8.0"));
+            var packagesConfigProject = SimpleTestProjectContext.CreatePackagesConfigProject("Legacy", pathContext.SolutionRoot, NuGetFramework.Parse("net8.0"));
+
+            var packageReferenceProject = SetupTestProject(pathContext);
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, packagesConfigProject, unsupportedProject, packageReferenceProject);
+            solution.Create();
+
+            File.WriteAllText(
+                Path.Combine(Path.GetDirectoryName(packagesConfigProject.ProjectPath), "packages.config"),
+                "<packages />");
+            SetupAssetsAndProps(packageReferenceProject);
+
+            var output = new StringBuilder();
+            var error = new StringBuilder();
+            using TextWriter consoleOut = new StringWriter(output);
+            using TextWriter consoleError = new StringWriter(error);
+            var logger = new TestLogger(_testOutputHelper);
+            var listPackageCommandRunner = new ListPackageCommandRunner(
+                new MSBuildAPIUtility(logger, virtualProjectBuilder: null));
+            var listPackageArgs = new ListPackageArgs(
+                path: solution.SolutionPath,
+                packageSources: [new PackageSource(pathContext.PackageSource)],
+                frameworks: [],
+                reportType: ReportType.Default,
+                renderer: new ListPackageConsoleRenderer(consoleOut, consoleError),
+                includeTransitive: false,
+                prerelease: false,
+                highestPatch: false,
+                highestMinor: false,
+                auditSources: null,
+                logger: logger,
+                cancellationToken: CancellationToken.None);
+
+            // Act
+            int result = await listPackageCommandRunner.ExecuteCommandAsync(listPackageArgs);
+
+            // Assert
+            Assert.Equal(1, result);
+            Assert.Contains(
+                string.Format(CultureInfo.CurrentCulture, CommandLine.XPlat.Strings.Error_NotPRProject, packagesConfigProject.ProjectPath),
+                error.ToString());
+            Assert.Contains(
+                string.Format(CultureInfo.CurrentCulture, CommandLine.XPlat.Strings.Error_NotPRProject, unsupportedProject.ProjectPath),
+                error.ToString());
+            Assert.Contains("Project 'ProjectA'", output.ToString());
+        }
+
+        [Fact]
         public async Task GetReportDataAsync_WhenReportTypeIsVulnerable_ShouldUseAuditSources()
         {
             // Arrange

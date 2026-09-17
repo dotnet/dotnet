@@ -2663,6 +2663,15 @@ namespace NuGet.CommandLine.XPlat {
                 return ResourceManager.GetString("Warn_AddPkgWithoutRestore", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The package ID &apos;{0}&apos; does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end..
+        /// </summary>
+        internal static string Warn_AddPkgNonCompliantPackageId {
+            get {
+                return ResourceManager.GetString("Warn_AddPkgNonCompliantPackageId", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to The package {0} is already referencing the highest version {1} in project {2}.

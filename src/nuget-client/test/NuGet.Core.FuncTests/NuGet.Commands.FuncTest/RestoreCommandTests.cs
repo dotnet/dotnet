@@ -3123,6 +3123,64 @@ namespace NuGet.Commands.FuncTest
             }
         }
 
+        [PlatformFact(Platform.Windows)]
+        public async Task RestoreCommand_WithDifferentProjectPathCasings_NoOpsAsync()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var package = new SimpleTestPackageContext("Package", "1.0.0");
+            package.Files.Clear();
+            package.AddFile("lib/net10.0/Package.dll");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, PackageSaveMode.Defaultv3, package);
+
+            const string projectJson = @"{
+                ""frameworks"": {
+                    ""net10.0"": {
+                        ""dependencies"": {
+                            ""Package"": ""1.0.0""
+                        }
+                    }
+                }
+            }";
+            var logger = new TestLogger();
+            var sources = new[] { new PackageSource(pathContext.PackageSource) };
+            string firstPath = Path.Combine(pathContext.SolutionRoot, "Projects", "Project.csproj");
+            var firstSpec = JsonPackageSpecReader.GetPackageSpec(projectJson, "Project", firstPath).WithTestRestoreMetadata();
+            firstSpec.RestoreMetadata.CacheFilePath = NoOpRestoreUtilities.GetProjectCacheFilePath(firstSpec.RestoreMetadata.OutputPath);
+            var firstRequest = new TestRestoreRequest(firstSpec, sources, pathContext.UserPackagesFolder, logger)
+            {
+                ProjectStyle = ProjectStyle.PackageReference,
+                DependencyGraphSpec = ProjectTestHelpers.GetDGSpecForFirstProject(firstSpec),
+                AllowNoOp = true
+            };
+
+            string originalHash = firstRequest.DependencyGraphSpec.GetHash();
+            RestoreResult firstResult = await new RestoreCommand(firstRequest).ExecuteAsync();
+            firstResult.Success.Should().BeTrue(because: logger.ShowMessages());
+            firstResult.Should().NotBeOfType<NoOpRestoreResult>();
+            await firstResult.CommitAsync(logger, CancellationToken.None);
+            string assetsPath = Path.Combine(firstSpec.RestoreMetadata.OutputPath, "project.assets.json");
+            byte[] originalAssets = File.ReadAllBytes(assetsPath);
+            DateTime originalWriteTime = File.GetLastWriteTimeUtc(assetsPath);
+
+            string secondPath = Path.Combine(pathContext.SolutionRoot, "projects", "Project.csproj");
+            var secondSpec = JsonPackageSpecReader.GetPackageSpec(projectJson, "Project", secondPath).WithTestRestoreMetadata();
+            secondSpec.RestoreMetadata.CacheFilePath = NoOpRestoreUtilities.GetProjectCacheFilePath(secondSpec.RestoreMetadata.OutputPath);
+            var secondRequest = new TestRestoreRequest(secondSpec, sources, pathContext.UserPackagesFolder, logger)
+            {
+                ProjectStyle = ProjectStyle.PackageReference,
+                DependencyGraphSpec = ProjectTestHelpers.GetDGSpecForFirstProject(secondSpec),
+                AllowNoOp = true
+            };
+
+            secondRequest.DependencyGraphSpec.GetHash().Should().Be(originalHash);
+            RestoreResult secondResult = await new RestoreCommand(secondRequest).ExecuteAsync();
+            secondResult.Success.Should().BeTrue(because: logger.ShowMessages());
+            secondResult.Should().BeOfType<NoOpRestoreResult>(because: "only the casing of the project directory changed: {0}", logger.ShowMessages());
+            await secondResult.CommitAsync(logger, CancellationToken.None);
+            File.ReadAllBytes(assetsPath).Should().Equal(originalAssets);
+            File.GetLastWriteTimeUtc(assetsPath).Should().Be(originalWriteTime);
+        }
+
         [Fact]
         public async Task RestoreCommand_WhenRestoreNoOps_TheAssetsFileIsNotRead()
         {

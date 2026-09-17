@@ -55,11 +55,16 @@ namespace NuGet.ProjectModel
                 SetValue(writer, "version", packageSpec.Version?.ToFullString());
             }
 
-            SetMSBuildMetadata(writer, packageSpec, environmentVariableReader, useLegacyWriter);
+            SetMSBuildMetadata(writer, packageSpec, hashing, environmentVariableReader, useLegacyWriter);
 
             SetFrameworks(writer, packageSpec.TargetFrameworks, hashing, useLegacyWriter);
 
             JsonRuntimeFormat.WriteRuntimeGraph(writer, packageSpec.RuntimeGraph);
+        }
+
+        internal static string NormalizePathForHashing(string path, bool hashing)
+        {
+            return hashing && PathUtility.IsFileSystemCaseInsensitive ? path?.ToUpperInvariant() : path;
         }
 
         private static bool IsMetadataValid(ProjectRestoreMetadata msbuildMetadata)
@@ -82,7 +87,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// This method sets the msbuild metadata that's important for restore. Ensures that frameworks regardless of which way they're stores in the metadata(full name or short tfm name) are written out the same.
         /// </summary>
-        private static void SetMSBuildMetadata(IObjectWriter writer, PackageSpec packageSpec, IEnvironmentVariableReader environmentVariableReader, bool useTargetFrameworkAsKey)
+        private static void SetMSBuildMetadata(IObjectWriter writer, PackageSpec packageSpec, bool hashing, IEnvironmentVariableReader environmentVariableReader, bool useTargetFrameworkAsKey)
         {
             var msbuildMetadata = packageSpec.RestoreMetadata;
 
@@ -96,12 +101,12 @@ namespace NuGet.ProjectModel
 
             writer.WriteObjectStart(JsonPackageSpecReader.RestoreOptions);
 
-            SetValue(writer, "projectUniqueName", msbuildMetadata.ProjectUniqueName);
+            SetValue(writer, "projectUniqueName", NormalizePathForHashing(msbuildMetadata.ProjectUniqueName, hashing));
             SetValue(writer, "projectName", msbuildMetadata.ProjectName);
-            SetValue(writer, "projectPath", msbuildMetadata.ProjectPath);
+            SetValue(writer, "projectPath", NormalizePathForHashing(msbuildMetadata.ProjectPath, hashing));
             SetValue(writer, "projectJsonPath", msbuildMetadata.ProjectJsonPath);
             SetValue(writer, "packagesPath", ApplyMacro(msbuildMetadata.PackagesPath, userSettingsDirectory, useMacros));
-            SetValue(writer, "outputPath", msbuildMetadata.OutputPath);
+            SetValue(writer, "outputPath", NormalizePathForHashing(msbuildMetadata.OutputPath, hashing));
 
             if (msbuildMetadata.ProjectStyle != ProjectStyle.Unknown)
             {
@@ -131,7 +136,7 @@ namespace NuGet.ProjectModel
 
             WriteMetadataSources(writer, msbuildMetadata);
             WriteMetadataFiles(writer, msbuildMetadata);
-            WriteMetadataTargetFrameworks(writer, msbuildMetadata, useTargetFrameworkAsKey);
+            WriteMetadataTargetFrameworks(writer, msbuildMetadata, hashing, useTargetFrameworkAsKey);
             SetWarningProperties(writer, msbuildMetadata);
 
             WriteNuGetLockFileProperties(writer, msbuildMetadata);
@@ -218,7 +223,7 @@ namespace NuGet.ProjectModel
             writer.WriteObjectEnd();
         }
 
-        private static void WriteMetadataTargetFrameworks(IObjectWriter writer, ProjectRestoreMetadata msbuildMetadata, bool useTargetFrameworkAsKey)
+        private static void WriteMetadataTargetFrameworks(IObjectWriter writer, ProjectRestoreMetadata msbuildMetadata, bool hashing, bool useTargetFrameworkAsKey)
         {
             if (msbuildMetadata.TargetFrameworks?.Count > 0)
             {
@@ -244,9 +249,9 @@ namespace NuGet.ProjectModel
 
                         foreach (var project in framework.ProjectReferences.OrderBy(e => e.ProjectPath, PathUtility.GetStringComparerBasedOnOS()))
                         {
-                            writer.WriteObjectStart(project.ProjectUniqueName);
+                            writer.WriteObjectStart(NormalizePathForHashing(project.ProjectUniqueName, hashing));
 
-                            writer.WriteNameValue("projectPath", project.ProjectPath);
+                            writer.WriteNameValue("projectPath", NormalizePathForHashing(project.ProjectPath, hashing));
 
                             if (project.IncludeAssets != LibraryIncludeFlags.All)
                             {

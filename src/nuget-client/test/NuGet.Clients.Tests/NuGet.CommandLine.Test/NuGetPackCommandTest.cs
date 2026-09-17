@@ -117,6 +117,48 @@ namespace NuGet.CommandLine.Test
         }
 
         [Fact]
+        public void PackCommand_PackageFromNuspecWithNonStandardPackageId_EmitsNU5052()
+        {
+            var nugetexe = Util.GetNuGetExePath();
+
+            using var workingDirectory = TestDirectory.Create();
+
+            // Arrange
+            Util.CreateFile(
+                workingDirectory,
+                "content.txt",
+                "content");
+
+            Util.CreateFile(
+                workingDirectory,
+                "packageA.nuspec",
+@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
+  <metadata>
+    <id>Contöso.Utilities</id>
+    <version>1.0.0</version>
+    <title>packageA</title>
+    <authors>test</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Description</description>
+  </metadata>
+  <files>
+    <file src=""content.txt"" target=""content"" />
+  </files>
+</package>");
+
+            // Act
+            var r = CommandRunner.Run(
+                nugetexe,
+                workingDirectory,
+                "pack packageA.nuspec",
+                testOutputHelper: _testOutputHelper);
+
+            // Assert
+            r.Success.Should().BeTrue(because: r.AllOutput);
+            r.AllOutput.Should().Contain("NU5052");
+        }
+
+        [Fact]
         public void PackCommand_AutomaticallyExcludeNuspecs()
         {
             var nugetexe = Util.GetNuGetExePath();

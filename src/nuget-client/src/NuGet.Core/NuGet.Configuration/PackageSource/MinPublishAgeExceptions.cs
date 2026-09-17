@@ -56,6 +56,23 @@ namespace NuGet.Configuration
         }
 
         /// <summary>
+        /// Generates a <see cref="MinPublishAgeExceptions"/> based on the settings object.
+        /// </summary>
+        /// <param name="settings">The settings used to load minimum publish age exceptions.</param>
+        /// <returns>A <see cref="MinPublishAgeExceptions"/> based on the settings.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="settings"/> is <see langword="null"/>.</exception>
+        public static MinPublishAgeExceptions GetMinPublishAgeExceptions(ISettings settings)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            var provider = new MinPublishAgeExceptionsProvider(settings);
+            return new MinPublishAgeExceptions(provider.GetMinPublishAgeExceptionItems());
+        }
+
+        /// <summary>
         /// Finds the exception that matches a package ID.
         /// </summary>
         /// <param name="packageId">The package ID to match.</param>
@@ -67,5 +84,6 @@ namespace NuGet.Configuration
                 ? item
                 : null;
         }
+
     }
 }

@@ -394,9 +394,9 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
         <note>{0} - PackageID</note>
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
-        <source>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</source>
-        <target state="translated">Il progetto `{0}` usa package.config per i pacchetti NuGet, mentre il comando funziona solo con progetti di riferimento al pacchetto.</target>
-        <note />
+        <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
+        <target state="needs-review-translation">Il progetto `{0}` usa package.config per i pacchetti NuGet, mentre il comando funziona solo con progetti di riferimento al pacchetto.</target>
+        <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
         <source>Unable to find a valid package version</source>
@@ -1447,6 +1447,11 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
         <source>Specify the path to the package</source>
         <target state="translated">Specifica il percorso del pacchetto</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warn_AddPkgNonCompliantPackageId">
+        <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
+        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">
         <source>--no-restore|-n flag was used. No compatibility check will be done and the added package reference will be unconditional.</source>
