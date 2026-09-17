@@ -43,14 +43,14 @@
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true'">$(BuildArgs) /p:AllowEmptySignList=true</BuildArgs>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup>    
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
-
-    <!-- MSBuild's multi-threaded mode is opt-in for now, so it's off unless it's explicitly requested.
+   
+    <!-- MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI.
          Set DotNetBuildMT to explicitly opt in or out for all repo builds. Disable on VS msbuild for now. -->
-    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
-    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true' and ('$(BuildOS)' != 'windows' or '$(ForceDotNetMSBuildEngine)' != 'false')">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false' or ('$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' == 'false')">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
 
     <!-- MSBuild node reuse is on by default for local builds and isn't used on CI.
          Set DotNetBuildNodeReuse to explicitly opt in or out for all repo builds.
@@ -63,9 +63,7 @@
          parent then fails to deserialize and reports as MSB4217. Fixed on the task host side by
          dotnet/msbuild#14584, so this carve-out can go once the bootstrapped SDK carries that fix.
          See https://github.com/dotnet/msbuild/issues/15062. -->
-    <_UsingVSMSBuild Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' == 'false'">true</_UsingVSMSBuild>
-    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(_UsingVSMSBuild)' != 'true'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 1</CommonArgs>
-    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'true' and '$(_UsingVSMSBuild)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 0</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'true' and ('$(BuildOS)' != 'windows' or '$(ForceDotNetMSBuildEngine)' != 'false')">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 1</CommonArgs>
     <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 0</CommonArgs>
   </PropertyGroup>
 

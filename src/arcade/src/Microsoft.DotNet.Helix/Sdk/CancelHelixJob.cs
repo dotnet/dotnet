@@ -46,15 +46,21 @@ public class CancelHelixJobs : HelixTask
                     Log.LogMessage(MessageImportance.High, $"Successfully cancelled Helix Job {correlationId} via cancellation token.");
                 }
                 // Cancellation via token is preferred as these values are single-use (only work for one job) secrets and don't matter to leak.
-                else if (!string.IsNullOrEmpty(AccessToken))
+                else if (CanUseAuthenticatedCancellation(UseEntraAuthentication, AccessToken))
                 {
-                    Log.LogMessage(MessageImportance.High, "'HelixJobCancellationToken' metadata not supplied, will attempt to cancel using Access token. (Token must match user id that started the work)");
+                    string authenticationMethod = UseEntraAuthentication ? "Entra identity" : "access token";
+                    Log.LogMessage(
+                        MessageImportance.High,
+                        $"'HelixJobCancellationToken' metadata not supplied, will attempt to cancel using the configured {authenticationMethod}.");
                     await api.Job.CancelAsync(correlationId, null, cancellationToken);
-                    Log.LogMessage(MessageImportance.High, $"Successfully cancelled Helix Job {correlationId} via access token.");
+                    Log.LogMessage(
+                        MessageImportance.High,
+                        $"Successfully cancelled Helix Job {correlationId} via {authenticationMethod}.");
                 }
                 else
                 {
-                    Log.LogError($"Cannot cancel job '{job}'; please supply either the Job's cancellation token or the job creator's access token");
+                    Log.LogError(
+                        $"Cannot cancel job '{job}'; please supply the job's cancellation token or configure PAT or Entra authentication.");
                 }
             }
             catch (RestApiException e) when (e.Response.Status == 304)
@@ -78,5 +84,10 @@ public class CancelHelixJobs : HelixTask
         {
             Log.LogMessage(MessageImportance.High, $"Successfully cancelled {Jobs.Count()} Helix jobs");
         }
+    }
+
+    internal static bool CanUseAuthenticatedCancellation(bool useEntraAuthentication, string accessToken)
+    {
+        return useEntraAuthentication || !string.IsNullOrEmpty(accessToken);
     }
 }
