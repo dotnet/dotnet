@@ -250,7 +250,7 @@ This package is an internal implementation of the .NET Core SDK and is not meant
       Overwrite="true"
       Condition="'$(ArchiveExtension)' == '.zip'" />
     <Exec
-      Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(ArchiveOutputPath) ."
+      Command="tar -czf $(ArchiveOutputPath) ."
       WorkingDirectory="$(TargetingPackLayoutRoot)"
       Condition="'$(ArchiveExtension)' == '.tar.gz'" />
     <Message Importance="High" Text="$(MSBuildProjectName) -> $(ArchiveOutputPath)" />
