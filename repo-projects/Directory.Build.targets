@@ -43,10 +43,10 @@
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true'">$(BuildArgs) /p:AllowEmptySignList=true</BuildArgs>
   </PropertyGroup>
 
-  <PropertyGroup>    
+  <PropertyGroup>
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
-   
+
     <!-- MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI.
          Set DotNetBuildMT to explicitly opt in or out for all repo builds. Disable on VS msbuild for now. -->
     <CommonArgs Condition="'$(DotNetBuildMT)' == 'true' and ('$(BuildOS)' != 'windows' or '$(ForceDotNetMSBuildEngine)' != 'false')">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
