@@ -178,12 +178,6 @@
     <TestArgs>$(TestArgs) /bl:$(ArtifactsLogRepoDir)Test.binlog</TestArgs>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <!-- MSBuild node communication tracing ('MSBuild_CommTrace_PID_*.txt'): records node handshakes,
-         connects and reuse decisions. Cheap enough to leave on in CI. EnableExtraDebugging implies it. -->
-    <EnableMSBuildCommTracing Condition="'$(EnableMSBuildCommTracing)' == '' and '$(EnableExtraDebugging)' == 'true'">true</EnableMSBuildCommTracing>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(EnableExtraDebugging)' == 'true'">
     <RoslynDebugPathTargetDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'roslyn-debug'))</RoslynDebugPathTargetDir>
 
@@ -211,25 +205,31 @@
          or the user package cache (local dev builds). -->
     <EnvironmentVariables Include="NUGET_PACKAGES=$(RepoArtifactsPackageCache)" />
 
-    <!-- MSBuild's own debug output (comm traces, 'MSBuild_*.failure.txt') is written here, which points
-         at the per-repo log directory so that CI publishes it even if MSBuild exits early. -->
+    <!-- If MSBuild exits early, make sure debug output like 'MSBuild_*.failure.txt' ends up in a place we can see it. -->
     <EnvironmentVariables Include="MSBUILDDEBUGPATH=$(ArtifactsLogRepoDir)" />
+
+    <!-- MSBuild worker nodes and task hosts are keyed by a handshake that folds in MSBUILDNODEHANDSHAKESALT.
+         The VMR builds all repos one after another on a single machine, but a node caches process-wide state
+         (most notably its temp directory) for its entire lifetime, and some repos build under a different
+         TEMP: roslyn substs T: onto its own temp directory and deletes the drive again when it's done. A node
+         left running by one repo build and then reused by the next therefore keeps writing to the previous
+         repo's temp directory, which fails once that directory is gone
+         (e.g. "MSB6003: ... Could not find a part of the path 'T:\MSBuildTemp...'").
+         A per-repo salt keeps nodes reusable within a repo build while making them unshareable across repo
+         builds. Always set (not just when node reuse is explicitly requested) because node reuse is on by
+         default for local dev builds. -->
+    <EnvironmentVariables Include="MSBUILDNODEHANDSHAKESALT=dotnet-vmr-$(RepositoryName)" />
+    <!-- Limit the idle timeout (in ms) of reusable nodes. With the default timeout of 15min, they would survive
+         long after the repo build is completed, but wouldn't accept any work as the handshake salt is unique per repo. -->
+    <EnvironmentVariables Include="MSBUILDNODECONNECTIONTIMEOUT=90000" />
   </ItemGroup>
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <EnvironmentVariables Include="NuGetAudit=false" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(EnableMSBuildCommTracing)' == 'true'">
-    <EnvironmentVariables Include="MSBUILDDEBUGCOMM=1" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(EnableExtraDebugging)' == 'true'">
-    <!-- These are expensive and can slow a large repo build down by multiples, which makes them
-         unsuitable for a default CI run. MSBUILDDEBUGSCHEDULER in particular makes the scheduler
-         write its full state to disk synchronously after every scheduling pass; for runtime that
-         produced a multi-GB 'SchedulerState_*.txt' on the scheduler's critical path. Prefer
-         EnableMSBuildCommTracing when all that's needed is node/task host diagnostics. -->
+    <EnvironmentVariables Include="MSBUILDDEBUGCOMM=1" />
     <EnvironmentVariables Include="MSBUILDDEBUGSCHEDULER=1" />
     <EnvironmentVariables Include="MSBUILDDEBUGFORCECACHING=1" />
     <EnvironmentVariables Include="MSBUILDDEBUG=1" />
