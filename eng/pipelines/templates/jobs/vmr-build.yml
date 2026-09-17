@@ -298,6 +298,12 @@ jobs:
       value: '--'
 
   ### Basic arguments
+  - name: experimentPython
+    ${{ if eq(parameters.targetOS, 'windows') }}:
+      value: python
+    ${{ else }}:
+      value: python3
+
   - name: cleanArgument
     # Don't clean-while-building on internal builds to keep intermediates for compliance scanners.
     ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -1051,6 +1057,14 @@ jobs:
         logsPath: $(sourcesPath)/artifacts/log/Release
         excludeRepos: ${{ parameters.sourceIndexExcludeRepos }}
         includeRepos: ${{ parameters.sourceIndexIncludeRepos }}
+
+  - script: $(experimentPython) "$(vmrPath)/eng/vmr-perf-experiment.py" archive
+      --tools "$(Agent.TempDirectory)/vmr-perf-tools"
+      --sources "$(sourcesPath)"
+      --output "$(Build.ArtifactStagingDirectory)/BuildLogs/experiment"
+    displayName: Preserve unmerged component logs after cancellation
+    condition: always()
+    continueOnError: true
 
   # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2

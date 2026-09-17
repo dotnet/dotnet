@@ -263,6 +263,32 @@ def stop_build(process, known, output):
                 subprocess.run(["sudo", "-n", "kill", "-KILL", str(p["pid"])], check=True)
 
 
+def preserve_inner_logs(args, label):
+    destination = args.output.parent / "repo-log-snapshots" / label
+    records = []
+    for directory in sorted((args.sources / "src").glob("*/artifacts/log")):
+        for path in sorted(directory.rglob("*")):
+            if not path.is_file() or path.suffix not in (".binlog", ".log", ".txt"):
+                continue
+            relative = path.relative_to(args.sources)
+            target = destination / relative
+            record = {"source": str(relative), "destination": str(target)}
+            try:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(str(path), str(target))
+                record["bytes"] = target.stat().st_size
+            except OSError as error:
+                record["error"] = str(error)
+                print(f"Could not preserve inner log {path}: {error}", flush=True)
+            records.append(record)
+    args.output.mkdir(parents=True, exist_ok=True)
+    write_json(args.output / f"inner-log-inventory-{label}.json", records)
+    print(f"Inner-log preservation ({label}): {len(records)} files; "
+          f"{sum('error' in record for record in records)} errors. "
+          "Live binlogs may have incomplete tails.", flush=True)
+    return records
+
+
 def run(args):
     args.output.mkdir(parents=True, exist_ok=True)
     # Fail before starting a build if this image cannot provide process diagnostics.
@@ -271,6 +297,16 @@ def run(args):
         diagnostic_command(
             ["sysctl", "hw.model", "hw.memsize", "hw.physicalcpu", "hw.logicalcpu",
              "machdep.cpu.brand_string"], args.output / "host-info.txt", timeout=10)
+    trace = os.environ.get("EXPERIMENTTRACE", "0") == "1"
+    environment = os.environ.copy()
+    if trace:
+        trace_directory = args.output / "engine-trace"
+        trace_directory.mkdir(parents=True, exist_ok=True)
+        environment.update({
+            "MSBUILDDEBUGSCHEDULER": "1",
+            "MSBUILDDEBUGCOMM": "1",
+            "MSBUILDDEBUGPATH": str(trace_directory.resolve()),
+        })
     started = time.monotonic()
     metadata = {
         "startUtc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -278,6 +314,7 @@ def run(args):
         "buildId": os.environ.get("BUILD_BUILDID"),
         "job": os.environ.get("AGENT_JOBNAME"),
         "mt": os.environ.get("EXPERIMENTMT"), "nr": os.environ.get("EXPERIMENTNR"),
+        "schedulerCommunicationTrace": trace,
         "cutoffSeconds": args.cutoff, "platform": platform.platform(),
         "machine": platform.machine(), "cpuCount": os.cpu_count(),
         "command": args.command,
@@ -285,7 +322,8 @@ def run(args):
     }
     write_json(args.output / "measurement.json", metadata)
     creation = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {}
-    process = subprocess.Popen(args.command, cwd=args.sources, shell=os.name == "nt", **creation)
+    process = subprocess.Popen(args.command, cwd=args.sources, shell=os.name == "nt",
+                               env=environment, **creation)
     known = {}
     cutoff = False
     next_capture = args.cutoff
@@ -303,16 +341,25 @@ def run(args):
                 time.sleep(15)
                 table = snapshot(args.output, process.pid, known, f"checkpoint-{captures}-second")
                 collect_stacks(args, table, f"{captures}-2", deadline)
+                preserve_inner_logs(args, f"checkpoint-{captures}")
                 write_json(args.output / "measurement.json", metadata)
                 # Upload while the build is alive; a later job cancellation cannot erase this snapshot.
                 archive = args.output.parent / f"checkpoint-{captures}.zip"
                 with zipfile.ZipFile(str(archive), "w", zipfile.ZIP_DEFLATED) as package:
-                    for path in args.output.iterdir():
+                    for path in args.output.rglob("*"):
                         if path.is_file():
-                            package.write(str(path), path.name)
+                            package.write(str(path), str(path.relative_to(args.output)))
                 job = os.environ.get("AGENT_JOBNAME")
                 if job:
                     print(f"##vso[artifact.upload containerfolder=experiment/{job};artifactname={job}_Experiment;]{archive}", flush=True)
+                    logs = args.output.parent / "repo-log-snapshots" / f"checkpoint-{captures}"
+                    log_archive = args.output.parent / f"inner-logs-{captures}.zip"
+                    with zipfile.ZipFile(str(log_archive), "w", zipfile.ZIP_DEFLATED) as package:
+                        package.write(str(args.output / "measurement.json"), "measurement.json")
+                        for path in logs.rglob("*"):
+                            if path.is_file():
+                                package.write(str(path), str(path.relative_to(logs)))
+                    print(f"##vso[artifact.upload containerfolder=inner-logs/{job};artifactname={job}_InnerLogs;]{log_archive}", flush=True)
                 if args.stop_at_checkpoint:
                     cutoff = True
                     metadata["cutoffObservedSeconds"] = elapsed
@@ -334,12 +381,13 @@ def run(args):
             "cutoffReached": cutoff, "exitCode": process.poll(),
         })
         write_json(args.output / "measurement.json", metadata)
+        preserve_inner_logs(args, "wrapper-exit")
     return 124 if cutoff else process.returncode
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("setup", "run"))
+    parser.add_argument("action", choices=("setup", "run", "archive"))
     parser.add_argument("--tools", type=Path, required=True)
     parser.add_argument("--sources", type=Path)
     parser.add_argument("--output", type=Path)
@@ -351,6 +399,11 @@ def main():
     if args.action == "setup":
         setup(args.tools)
         return 0
+    if args.action == "archive":
+        if not args.sources or not args.output:
+            parser.error("archive requires sources and output")
+        records = preserve_inner_logs(args, "job-final")
+        return 1 if any("error" in record for record in records) else 0
     if not args.sources or not args.output or not args.command or args.cutoff <= 0:
         parser.error("run requires sources, output, a positive cutoff and a command after --")
     return run(args)

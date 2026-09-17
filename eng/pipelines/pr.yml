@@ -35,6 +35,11 @@ schedules:
     always: false # run only if there were changes since the last successful scheduled run.
 
 parameters:
+- name: experimentTrace
+  type: string
+  default: '0'
+  values: ['0', '1']
+
 - name: experimentMutexSdkBuild
   type: number
   default: 0
@@ -67,6 +72,8 @@ parameters:
     - full
 
 variables:
+- name: experimentTrace
+  value: ${{ parameters.experimentTrace }}
 - name: experimentJobs
   value: ${{ parameters.experimentJobs }}
 - name: experimentMT
