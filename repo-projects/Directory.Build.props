@@ -9,7 +9,7 @@
     <!-- Bootstrap Arcade repos must bootstrap from PSB rather than current 1xx shared components. -->
     <_UseSharedComponentsInputs Condition="'$(UseBootstrapArcade)' != 'true'">true</_UseSharedComponentsInputs>
 
-    <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
+    <BuildInParallel Condition="'$(BuildInParallel)' == ''">false</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
     <!-- If this is a dev build with parallelism enabled, ensure that RunEachTargetSeparately is true so that StopOnFirstFailure will be honored.
          This improves the dev experience because it will fail the build as soon as an error occurs rather than waiting for all parallel projects
