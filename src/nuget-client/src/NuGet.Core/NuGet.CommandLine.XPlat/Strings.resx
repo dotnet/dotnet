@@ -603,6 +603,12 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>There are no versions available for the package '{0}'.</value>
     <comment>{0} - PackageID</comment>
   </data>
+  <data name="Error_PackagePublishDateMissing" xml:space="preserve">
+    <value>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</value>
+    <comment>{0} - package source name
+{1} - package ID
+{2} - package version</comment>
+  </data>
   <data name="PrereleaseVersionsAvailable" xml:space="preserve">
     <value>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</value>
     <comment>{0} - Package Version</comment>
@@ -1061,6 +1067,10 @@ Do not translate "PackageVersion"</comment>
     <value>Updated {0} packages in {1} scanned packages.</value>
     <comment>{0}: Number of packages updated
 {1}: Package checked for updated versions</comment>
+  </data>
+  <data name="PackageUpdate_PackagesAwaitingCooldown" xml:space="preserve">
+    <value>Packages with newer versions that have not reached the configured minimum publish age: {0}.</value>
+    <comment>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</comment>
   </data>
   <data name="Error_AddPkgUnresolved" xml:space="preserve">
     <value>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</value>
