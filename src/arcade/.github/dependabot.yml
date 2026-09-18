@@ -24,6 +24,7 @@ updates:
       - dependency-name: "Microsoft.Build.Framework"
       - dependency-name: "Microsoft.Build.Tasks.Core"
       - dependency-name: "Microsoft.Build.Utilities.Core"
+      - dependency-name: "Microsoft.Build.TaskAuthoring.Analyzer"
       - dependency-name: "Microsoft.CodeAnalysis.CSharp"
       - dependency-name: "Microsoft.Deployment.DotNet.Releases"
       - dependency-name: "Microsoft.DiaSymReader.Converter"
