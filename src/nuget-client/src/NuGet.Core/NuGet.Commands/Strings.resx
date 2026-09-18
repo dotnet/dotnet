@@ -833,6 +833,13 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       Do not localize `PackageVersion`
   </comment>
   </data>
+  <data name="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown" xml:space="preserve">
+    <value>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</value>
+    <comment>
+      0 - The comma delimited list of package names that specified a floating version.
+      Do not localize `PackageReference`
+    </comment>
+  </data>
   <data name="Error_CentralPackageManagement_VersionOverrideNotAllowed" xml:space="preserve">
     <value>The following PackageReference items cannot specify a value for VersionOverride: {0}.  Projects using Central Package Management are currently configured to disable this functionality. For more information, visit https://aka.ms/nuget/cpm/versionoverride</value>
     <comment>

@@ -230,6 +230,15 @@ namespace NuGet.Commands {
                 return ResourceManager.GetString("Error_CentralPackageManagement_FloatingVersionsNotAllowed", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}..
+        /// </summary>
+        internal static string Error_FloatingVersionsNotAllowedWithPackageSourceCooldown {
+            get {
+                return ResourceManager.GetString("Error_FloatingVersionsNotAllowedWithPackageSourceCooldown", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to The following PackageReference items are implicitly defined and cannot define a PackageVersion item: {0}. Projects using Central Package Management require that implicit package versions be specified by the PackageReference item. For more information, visit https://aka.ms/sdkimplicitrefs.

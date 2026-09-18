@@ -403,6 +403,13 @@ NuGet erfordert HTTPS-Quellen. Um HTTP-Quellen zu verwenden, müssen Sie „allo
         <target state="translated">Es konnte keine gültige Paketversion gefunden werden.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_PackagePublishDateMissing">
+        <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
+        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <note>{0} - package source name
+{1} - package ID
+{2} - package version</note>
+      </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
         <target state="translated">Die Paketquellzuordnung ist aktiviert, aber es wurde keine Zuordnung für das Paket {0} gefunden. Weitere Informationen finden Sie unter https://aka.ms/nuget/psm.</target>
@@ -1031,6 +1038,11 @@ Weitere Informationen finden Sie unter https://docs.nuget.org/docs/reference/com
         <source>Package reference in the form of a package identifier like 'Newtonsoft.Json' or package identifier and version separated by '@' like 'Newtonsoft.Json@13.0.3'.</source>
         <target state="translated">Paketverweis in Form eines Paketbezeichners wie „Newtonsoft.Json“ oder Paketbezeichner und -version getrennt durch „@“ wie „Newtonsoft.Json@13.0.3“.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
+        <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
+        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
