@@ -4,7 +4,7 @@
   <ProductDependencies>
     <Dependency Name="System.CommandLine" Version="2.0.13">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>fec20fdc4e42e954cf77a13bbda3a18a39c0d4c5</Sha>
+      <Sha>99523e84ecd7b35ecf8f524ebe204abc7239949a</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
