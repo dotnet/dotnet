@@ -154,6 +154,14 @@ actual packaged TFM until those producers retarget. Distinguish the compiled SDK
 from generated test-app defaults in
 [`ToolsetInfo.cs`](../../test/Microsoft.NET.TestFramework/ToolsetInfo.cs).
 
+Also preserve compatibility for SDK packages consumed by other repositories during
+stage-2 source-build. For example,
+[`WorkloadManifestReader`](../../src/Resolvers/Microsoft.NET.Sdk.WorkloadManifestReader/Microsoft.NET.Sdk.WorkloadManifestReader.csproj)
+temporarily includes a previous-TFM target in source-only builds so Arcade's workload
+tasks can consume the newly source-built package before Arcade retargets. Validate both
+the online build and the offline rebuild using its outputs; the online build alone can
+hide this mismatch by consuming older, previously-source-built packages.
+
 ### 4. Flow product dependencies and update the bootstrap SDK
 
 - Flow netN runtime, WindowsDesktop, and ASP.NET Core dependencies.
