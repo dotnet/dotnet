@@ -47,18 +47,17 @@ public class AzureDevOpsNugetFeedAssetPublisher : IAssetPublisher, IDisposable
         _feedVisibility = parsedUri.Groups["visibility"].Value;
         _feedName = parsedUri.Groups["feed"].Value;
 
-        _httpClient = new HttpClient(new HttpClientHandler {CheckCertificateRevocationList = true})
-        {
-            Timeout = GeneralUtils.NugetFeedPublisherHttpClientTimeout,
-        };
-
         if (!string.IsNullOrEmpty(_accessToken))
         {
+            _httpClient = new HttpClient(new HttpClientHandler { CheckCertificateRevocationList = true })
+            {
+                Timeout = GeneralUtils.NugetFeedPublisherHttpClientTimeout,
+            };
             _httpClient.DefaultRequestHeaders.Authorization = GeneralUtils.CreateAzdoAuthHeader(_accessToken);
         }
         else
         {
-            // No token provided; acquire an Entra token via DefaultIdentityTokenCredential.
+            // No token provided; acquire an Entra token via DefaultIdentityTokenCredential with dynamic per-request refresh.
             try
             {
                 var credential = new DefaultIdentityTokenCredential(
@@ -66,16 +65,26 @@ public class AzureDevOpsNugetFeedAssetPublisher : IAssetPublisher, IDisposable
                     {
                         ManagedIdentityClientId = task.ManagedIdentityClientId
                     });
-                var tokenRequestContext = new TokenRequestContext(new[] { "499b84ac-1321-427f-aa17-267ca6975798/.default" });
-                var token = credential.GetToken(tokenRequestContext, CancellationToken.None);
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
+                var tokenRequestContext = new TokenRequestContext(TokenCredentialAuthenticationHandler.AzureDevOpsScopes);
+                // Validate token acquisition once upfront to fail fast on configuration errors
+                credential.GetToken(tokenRequestContext, CancellationToken.None);
+
+                var authHandler = new TokenCredentialAuthenticationHandler(
+                    credential,
+                    TokenCredentialAuthenticationHandler.AzureDevOpsScopes,
+                    new HttpClientHandler { CheckCertificateRevocationList = true });
+
+                _httpClient = new HttpClient(authHandler)
+                {
+                    Timeout = GeneralUtils.NugetFeedPublisherHttpClientTimeout,
+                };
             }
             catch (Exception e)
             {
                 // The constructor is throwing, so Dispose() will never be called on this instance;
                 // dispose the HttpClient here to avoid leaking the underlying handler/sockets on
                 // repeated failures (e.g. a misconfigured service connection).
-                _httpClient.Dispose();
+                _httpClient?.Dispose();
                 throw new InvalidOperationException(
                     "Failed to acquire an Entra token for Azure DevOps feed publishing. Provide 'AzureDevOpsFeedsKey', " +
                     "or run the publish step under an AzureCLI@2 task with addSpnToEnvironment: true (or a configured " +
