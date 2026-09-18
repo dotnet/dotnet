@@ -69,6 +69,7 @@ public class LicenseScanTests : TestBase
         "cc-by-sa-4.0", // https://creativecommons.org/licenses/by-sa/4.0/legalcode
         "cc-pd", // https://creativecommons.org/publicdomain/mark/1.0/
         "cc-sa-1.0", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/cc-sa-1.0.LICENSE
+        "classpath-exception-2.0", // https://www.gnu.org/software/classpath/license.html
         "epl-1.0", // https://opensource.org/license/epl-1-0/
         "generic-cla", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/generic-cla.LICENSE
         "gpl-1.0-plus", // https://opensource.org/license/gpl-1-0/
@@ -98,6 +99,7 @@ public class LicenseScanTests : TestBase
         "nist-software", // https://github.com/aboutcode-org/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/nist-software.LICENSE
         "object-form-exception-to-mit", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/object-form-exception-to-mit.LICENSE
         "ofl-1.1", // https://opensource.org/license/ofl-1-1/
+        "oracle-openjdk-classpath-exception-2.0", // https://openjdk.org/legal/gplv2+ce.html
         "osf-1990", // https://fedoraproject.org/wiki/Licensing:MIT?rd=Licensing/MIT#HP_Variant
         "pcre2-exception", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/pcre2-exception.LICENSE
         "public-domain", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/public-domain.LICENSE
