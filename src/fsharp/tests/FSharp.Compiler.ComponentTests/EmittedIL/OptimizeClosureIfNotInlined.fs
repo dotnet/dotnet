@@ -240,7 +240,7 @@ let callOpaque (a: int[]) (b: int[]) = Lib.fold2 (mkFolder ()) 0 a b
         |> withErrorCode 3916
 
     [<Fact>]
-    let ``attribute requires the FSharp 11 language feature`` () =
+    let ``attribute requires FSharp 11`` () =
         FSharp "module M\nlet inline f ([<InlineIfLambda; OptimizeClosureIfNotInlined>] g: int -> int -> int) x y = g x y"
         |> withLangVersion "10.0"
         |> compile
