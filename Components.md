@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@c700f1c](https://github.com/dotnet/installer/tree/c700f1ce07611784895d951d291ed5dce8a7e149)*
+*[dotnet/installer@71e5a07](https://github.com/dotnet/installer/tree/71e5a075c9b77bfb7f13222739fc0229096b7eff)*
 - `src/msbuild`  
 *[dotnet/msbuild@293f665](https://github.com/dotnet/msbuild/tree/293f66545288e700258d9d979e84b67b585a4f93)*
 - `src/nuget-client`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@e62fa8c](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCe62fa8c72e4e40558e1b2614d5e0f3146d06b961)*
 - `src/sdk`  
-*[_git/dotnet-sdk@d834070](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GCd834070b6cb3e3c1b229b85c7dfa2e827480a03d)*
+*[_git/dotnet-sdk@056c9db](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC056c9db1645703670ad9016c6e87de8df795c49a)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@57bfccd](https://github.com/dotnet/source-build-assets/tree/57bfccd8cd6091e138f487653e7eefcfef2e455a)*
 - `src/source-build-externals`  
@@ -84,7 +84,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/symreader`  
 *[dotnet/symreader@2c8079e](https://github.com/dotnet/symreader/tree/2c8079e2e8e78c0cd11ac75a32014756136ecdb9)*
 - `src/templating`  
-*[_git/dotnet-templating@6ad3b15](https://dev.azure.com/dnceng/internal/_git/dotnet-templating/?version=GC6ad3b15220552d755fe7cf801f2a4027906dfd2b)*
+*[_git/dotnet-templating@6c165f8](https://dev.azure.com/dnceng/internal/_git/dotnet-templating/?version=GC6c165f8eb5eeff719e22072369244ed6ee317e5c)*
 - `src/test-templates`  
 *[dotnet/test-templates@1e5f360](https://github.com/dotnet/test-templates/tree/1e5f3603af2277910aad946736ee23283e7f3e16)*
 - `src/vstest`  
