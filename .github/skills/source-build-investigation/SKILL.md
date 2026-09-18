@@ -63,11 +63,11 @@ To see the actual build order, look at the `repo-projects/` directory in the VMR
 A **stage 2 build** (also called bootstrapping) is when you take the SDK and packages produced by a source-build (stage 1) and use them to rebuild the entire product again. This validates that the source-built product is fully self-hosting — it can build itself without any Microsoft-built inputs.
 
 **CI leg naming:**
-- Stage 1 legs: `SB_<distro>_Online_MsftSdk_x64` — builds using the Microsoft SDK
+- Microsoft-SDK legs: names containing `_MsftSdk` — build using the Microsoft SDK
 - Previous-source-built SDK legs: `SB_<distro>_<mode>_PreviousSourceBuiltSdk` — use the previously published SDK and PSB.
-- Stage 2 legs: `SB_<distro>_Offline_CurrentSourceBuiltSdk` — rebuilds using the SDK from stage 1
+- Current-source-built SDK legs: names containing `_CurrentSourceBuiltSdk` — rebuild using another leg's source-built SDK and packages
 
-Stage 2 legs have `reuseBuildArtifactsFrom` set to their corresponding stage 1 leg (e.g., `SB_CentOSStream10_Offline_CurrentSourceBuiltSdk` depends on `SB_CentOSStream10_Online_MsftSdk_x64`).
+For each current-source-built SDK leg, `reuseBuildArtifactsFrom` identifies the exact Microsoft-SDK leg that supplies its SDK and packages.
 
 When a failure occurs only in stage 2 but not stage 1, the issue is likely:
 - A dependency that works when Microsoft-built but not when source-built
