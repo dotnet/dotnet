@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "path": "src/microsoft.net.sdk.android.manifest-11.0.100-rc.1/37.0.0-rc.1.2257/THIRD-PARTY-NOTICES.TXT",
+      "detected_license_expression": "(apache-2.0 AND gpl-2.0 AND classpath-exception-2.0 AND oracle-openjdk-classpath-exception-2.0) AND x11 AND apache-2.0 AND bsd-simplified AND mit AND gpl-3.0 AND (bsd-new AND bsd-simplified) AND uoi-ncsa AND bsd-new"
+    }
+  ]
+}
