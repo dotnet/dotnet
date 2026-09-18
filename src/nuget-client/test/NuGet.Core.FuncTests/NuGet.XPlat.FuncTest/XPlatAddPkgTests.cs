@@ -515,6 +515,120 @@ namespace NuGet.XPlat.FuncTest
             }
         }
 
+        [Fact]
+        public async Task AddPkg_NonCompliantPackageIdWithNoRestore_Warns()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net8.0");
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
+            string packageId = "Contöso.Utilities";
+            var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageId, "1.0.0", project, noRestore: true);
+            var commandRunner = new AddPackageReferenceCommandRunner();
+
+            int result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger, virtualProjectBuilder: null));
+
+            Assert.Equal(0, result);
+            string expectedWarning = string.Format(
+                CultureInfo.CurrentCulture,
+                Strings.Warn_AddPkgNonCompliantPackageId,
+                packageId);
+            Assert.Single(logger.Logger.WarningMessages, message => message.Equals(expectedWarning, StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public async Task AddPkg_NonCompliantPackageIdWithTreatWarningsAsErrors_Succeeds()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net8.0");
+            project.Properties["TreatWarningsAsErrors"] = "true";
+            project.Save();
+            string packageId = "Contöso.Utilities";
+            var package = XPlatTestUtils.CreatePackage(packageId: packageId);
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                package);
+
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
+            var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, packageId, package.Version, project);
+            DependencyGraphSpec dependencyGraphSpec = DependencyGraphSpec.Load(packageArgs.DgFilePath);
+            dependencyGraphSpec.Projects.Single().RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors = true;
+            dependencyGraphSpec.Save(packageArgs.DgFilePath);
+            Assert.True(DependencyGraphSpec.Load(packageArgs.DgFilePath)
+                .Projects.Single()
+                .RestoreMetadata.ProjectWideWarningProperties.AllWarningsAsErrors);
+            var commandRunner = new AddPackageReferenceCommandRunner();
+            string expectedWarning = string.Format(
+                CultureInfo.CurrentCulture,
+                Strings.Warn_AddPkgNonCompliantPackageId,
+                packageId);
+
+            int result = await commandRunner.ExecuteCommand(
+                packageArgs,
+                new MSBuildAPIUtility(logger, virtualProjectBuilder: null));
+
+            Assert.Equal(0, result);
+            string warning = Assert.Single(
+                logger.Logger.WarningMessages,
+                message => message.Equals(expectedWarning, StringComparison.Ordinal));
+            Assert.DoesNotMatch(@"NU\d{4}", warning);
+            Assert.Empty(logger.Logger.ErrorMessages);
+            Assert.Contains($"PackageReference Include=\"{packageId}\"", File.ReadAllText(project.ProjectPath), StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public async Task AddPkg_NonCompliantTransitivePackageId_DoesNotWarn()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net8.0");
+            var transitivePackage = XPlatTestUtils.CreatePackage(packageId: "Transitive.Packagé");
+            var directPackage = XPlatTestUtils.CreatePackage(packageId: "Direct.Package");
+            directPackage.Dependencies.Add(transitivePackage);
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                directPackage,
+                transitivePackage);
+
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
+            var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, directPackage.Id, directPackage.Version, project);
+            var commandRunner = new AddPackageReferenceCommandRunner();
+            string transitiveWarning = string.Format(
+                CultureInfo.CurrentCulture,
+                Strings.Warn_AddPkgNonCompliantPackageId,
+                transitivePackage.Id);
+
+            int result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger, virtualProjectBuilder: null));
+
+            Assert.Equal(0, result);
+            Assert.DoesNotContain(logger.Logger.WarningMessages, message => message.Equals(transitiveWarning, StringComparison.Ordinal));
+        }
+
+        [Fact]
+        public async Task AddPkg_FailedNonCompliantPackageId_DoesNotWarn()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var project = XPlatTestUtils.CreateProject(ProjectName, pathContext, "net46");
+            var package = XPlatTestUtils.CreatePackage(packageId: "Incompatiblé.Package", frameworkString: "netcoreapp1.0");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                package);
+
+            var logger = new TestCommandOutputLogger(_testOutputHelper);
+            var packageArgs = XPlatTestUtils.GetPackageReferenceArgs(logger, package.Id, package.Version, project);
+            var commandRunner = new AddPackageReferenceCommandRunner();
+            string expectedWarning = string.Format(
+                CultureInfo.CurrentCulture,
+                Strings.Warn_AddPkgNonCompliantPackageId,
+                package.Id);
+
+            int result = await commandRunner.ExecuteCommand(packageArgs, new MSBuildAPIUtility(logger, virtualProjectBuilder: null));
+
+            Assert.Equal(1, result);
+            Assert.DoesNotContain(logger.Logger.WarningMessages, message => message.Equals(expectedWarning, StringComparison.Ordinal));
+        }
+
         [Theory]
         [InlineData("net46; netcoreapp1.0", "1.*")]
         [InlineData("net46; netcoreapp2.0", "1.*")]

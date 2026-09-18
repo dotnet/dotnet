@@ -238,6 +238,10 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   <data name="Warn_AddPkgWithoutRestore" xml:space="preserve">
     <value>--no-restore|-n flag was used. No compatibility check will be done and the added package reference will be unconditional.</value>
   </data>
+  <data name="Warn_AddPkgNonCompliantPackageId" xml:space="preserve">
+    <value>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</value>
+    <comment>{0} - Package Id</comment>
+  </data>
   <data name="AddPkg_Description" xml:space="preserve">
     <value>Adds a package reference to a project.</value>
   </data>
@@ -392,7 +396,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>Sources to lookup for latest versions. Works only with `--outdated`.</value>
   </data>
   <data name="Error_NotPRProject" xml:space="preserve">
-    <value>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</value>
+    <value>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</value>
+    <comment>{0} - Path to the project with the error, {Locked="PackageReference"}</comment>
   </data>
   <data name="ListPkg_ErrorReadingAssetsFile" xml:space="preserve">
     <value>Unable to read the assets file `{0}`. Make sure the file has the correct format.</value>
@@ -597,6 +602,12 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   <data name="Error_NoVersionsAvailable" xml:space="preserve">
     <value>There are no versions available for the package '{0}'.</value>
     <comment>{0} - PackageID</comment>
+  </data>
+  <data name="Error_PackagePublishDateMissing" xml:space="preserve">
+    <value>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</value>
+    <comment>{0} - package source name
+{1} - package ID
+{2} - package version</comment>
   </data>
   <data name="PrereleaseVersionsAvailable" xml:space="preserve">
     <value>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</value>
@@ -1056,6 +1067,10 @@ Do not translate "PackageVersion"</comment>
     <value>Updated {0} packages in {1} scanned packages.</value>
     <comment>{0}: Number of packages updated
 {1}: Package checked for updated versions</comment>
+  </data>
+  <data name="PackageUpdate_PackagesAwaitingCooldown" xml:space="preserve">
+    <value>Packages with newer versions that have not reached the configured minimum publish age: {0}.</value>
+    <comment>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</comment>
   </data>
   <data name="Error_AddPkgUnresolved" xml:space="preserve">
     <value>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</value>

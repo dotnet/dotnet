@@ -47,10 +47,24 @@
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
 
-    <!-- MSBuild's multi-threaded mode is opt-in for now, so it's off unless it's explicitly requested.
+    <!-- MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI.
          Set DotNetBuildMT to explicitly opt in or out for all repo builds. Disable on VS msbuild for now. -->
-    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
-    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true' and ('$(BuildOS)' != 'windows' or '$(ForceDotNetMSBuildEngine)' != 'false')">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false' or ('$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' == 'false')">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
+
+    <!-- MSBuild node reuse is on by default for local builds and isn't used on CI.
+         Set DotNetBuildNodeReuse to explicitly opt in or out for all repo builds.
+
+         Keep it off for repos that build with VS MSBuild, because both engines spawn their .NET task
+         hosts from the same bootstrapped SDK. The task host handshake is salted with the task host's
+         own tools directory, which is therefore identical either way, so a VS MSBuild parent can adopt
+         a pooled task host that an SDK MSBuild parent started. The adopted host keeps the packet
+         version of the parent that launched it and serializes its reply at that layout, which the new
+         parent then fails to deserialize and reports as MSB4217. Fixed on the task host side by
+         dotnet/msbuild#14584, so this carve-out can go once the bootstrapped SDK carries that fix.
+         See https://github.com/dotnet/msbuild/issues/15062. -->
+    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'true' and ('$(BuildOS)' != 'windows' or '$(ForceDotNetMSBuildEngine)' != 'false')">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 1</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 0</CommonArgs>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -642,10 +656,19 @@
                           $(ArtifactsAssetsDir)" />
 
     <!-- Create directories for extra debugging. -->
-    <MakeDir Directories="$(MSBuildDebugPathTargetDir);
-                          $(RoslynDebugPathTargetDir);
+    <MakeDir Directories="$(RoslynDebugPathTargetDir);
                           $(AspNetRazorBuildServerLogDir)"
              Condition="'$(EnableExtraDebugging)' == 'true'" />
+
+    <!-- Cap how long a single repo build may run. Without a cap, a hung repo build lets the CI job
+         run into its own timeout, which cancels the job and skips the log collection steps, losing
+         every diagnostic. A timed-out Exec instead kills the whole build process tree and fails the
+         target, so the OnError targets below still move the repo's (partial) logs into the
+         published artifacts/log directory. Opt-in: no timeout unless RepoBuildTimeoutMinutes is set. -->
+    <PropertyGroup>
+      <_RepoBuildTimeoutMilliseconds>-1</_RepoBuildTimeoutMilliseconds>
+      <_RepoBuildTimeoutMilliseconds Condition="'$(RepoBuildTimeoutMinutes)' != ''">$([MSBuild]::Multiply($(RepoBuildTimeoutMinutes), 60000))</_RepoBuildTimeoutMilliseconds>
+    </PropertyGroup>
 
     <!-- Build the repository. When MinimalConsoleLogOutput is true the console output is redirected
          to $(RepoConsoleLogFile) instead of the console. -->
@@ -654,6 +677,7 @@
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
           YieldDuringToolExecution="true"
           IgnoreStandardErrorWarningFormat="true"
+          Timeout="$(_RepoBuildTimeoutMilliseconds)"
           StandardOutputImportance="$(RepoStandardOutputImportance)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>

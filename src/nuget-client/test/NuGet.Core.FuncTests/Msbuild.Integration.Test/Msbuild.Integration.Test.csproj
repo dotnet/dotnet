@@ -23,6 +23,8 @@
           CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.targets"
           CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks\NuGet.Build.Tasks.Pack.targets"
+          CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
