@@ -1,1 +1,3 @@
 #nullable enable
+~NuGet.Commands.RestoreRequest.MinPublishAgeExceptions.get -> NuGet.Configuration.MinPublishAgeExceptions
+~NuGet.Commands.RestoreRequest.MinPublishAgeExceptions.init -> void

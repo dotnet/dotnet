@@ -218,6 +218,14 @@
         <target state="translated">Kaynak dosyanın proje dizini '{0}' bulunamadı.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown">
+        <source>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</source>
+        <target state="new">The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</target>
+        <note>
+      0 - The comma delimited list of package names that specified a floating version.
+      Do not localize `PackageReference`
+    </note>
+      </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">'{0}' işlemini bir {1} 'HTTP' kaynağı ile çalıştırıyorsunuz. NuGet için HTTPS kaynakları gereklidir. Bir HTTP kaynağı kullanmak için NuGet.Config dosyanızda 'allowInsecureConnections' ayarını açıkça “true” olarak ayarlamanız gerekir. Daha fazla bilgi için şuraya başvurun: https://aka.ms/nuget-https-everywhere.</target>
