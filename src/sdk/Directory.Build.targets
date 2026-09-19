@@ -39,6 +39,12 @@
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
+  <PropertyGroup Condition="('$(TargetFramework)' == '$(SdkTargetFramework)' or $(TargetFramework.StartsWith('$(SdkTargetFramework)-'))) and
+                            $([MSBuild]::VersionLessThan('$(BundledNETCoreAppTargetFrameworkVersion)', '12.0'))">
+    <!-- NetTFMUpdate: The net11 stage-0 SDK has no net12 pruning data. Remove after the bootstrap update. -->
+    <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
+  </PropertyGroup>
+
   <!-- Update KnownFrameworkReferences to target the right version of the runtime
        Don't use live shims when building tool packs in .NET product build mode as only packages for the current arch are available.
        When building source-only always update the version, regardless of the TFM as that helps with re-branding major versions. -->
