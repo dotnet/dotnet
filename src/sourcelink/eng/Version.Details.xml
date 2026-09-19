@@ -4,19 +4,19 @@
   <ProductDependencies>
     <Dependency Name="System.CommandLine" Version="2.0.13">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>9cd2ce7841da7db8acedd88842ed5cfc460b047a</Sha>
+      <Sha>e4eb9f4add4c489054e5fd7a9be8322388a94174</Sha>
     </Dependency>
     <Dependency Name="System.IO.Hashing" Version="10.0.13">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>9cd2ce7841da7db8acedd88842ed5cfc460b047a</Sha>
+      <Sha>e4eb9f4add4c489054e5fd7a9be8322388a94174</Sha>
     </Dependency>
     <Dependency Name="System.Security.Cryptography.Xml" Version="10.0.13">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>9cd2ce7841da7db8acedd88842ed5cfc460b047a</Sha>
+      <Sha>e4eb9f4add4c489054e5fd7a9be8322388a94174</Sha>
     </Dependency>
     <Dependency Name="System.Text.Json" Version="10.0.13">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>9cd2ce7841da7db8acedd88842ed5cfc460b047a</Sha>
+      <Sha>e4eb9f4add4c489054e5fd7a9be8322388a94174</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
