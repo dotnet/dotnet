@@ -764,6 +764,15 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Package source &apos;{0}&apos; did not provide a publish date for package &apos;{1}&apos; version &apos;{2}&apos;, which is required because the source has a minimum publish age configured..
+        /// </summary>
+        internal static string Error_PackagePublishDateMissing {
+            get {
+                return ResourceManager.GetString("Error_PackagePublishDateMissing", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information..
         /// </summary>
         internal static string Error_PackageSourceMappingNotFound {
@@ -1769,6 +1778,15 @@ namespace NuGet.CommandLine.XPlat {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Packages with newer versions that have not reached the configured minimum publish age: {0}..
+        /// </summary>
+        internal static string PackageUpdate_PackagesAwaitingCooldown {
+            get {
+                return ResourceManager.GetString("PackageUpdate_PackagesAwaitingCooldown", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Finding versions of packages to update..
         /// </summary>

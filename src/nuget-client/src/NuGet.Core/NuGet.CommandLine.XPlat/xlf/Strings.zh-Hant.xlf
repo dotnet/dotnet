@@ -403,6 +403,13 @@ NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecur
         <target state="translated">找不到有效的套件版本</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_PackagePublishDateMissing">
+        <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
+        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <note>{0} - package source name
+{1} - package ID
+{2} - package version</note>
+      </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
         <target state="translated">已啟用套件來源對應，但找不到套件 {0} 的對應。如需詳細資訊，請參閱 https://aka.ms/nuget/psm。</target>
@@ -1031,6 +1038,11 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <source>Package reference in the form of a package identifier like 'Newtonsoft.Json' or package identifier and version separated by '@' like 'Newtonsoft.Json@13.0.3'.</source>
         <target state="translated">套件參考的格式為套件識別碼，例如 'Newtonsoft.Json'，或是以 '@' 分隔的套件識別碼和版本，例如 'Newtonsoft.Json@13.0.3'。</target>
         <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
+        <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
+        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
