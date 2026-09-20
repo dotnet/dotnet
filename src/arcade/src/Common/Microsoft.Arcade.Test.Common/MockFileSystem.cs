@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Microsoft.Arcade.Common;
 
 #nullable enable
@@ -64,7 +65,9 @@ public class MockFileSystem : IFileSystem
     public void CopyFile(string sourceFileName, string destFileName, bool overwrite = false) => Files[destFileName] = Files[sourceFileName];
 
     public Stream GetFileStream(string path, FileMode mode, FileAccess access)
-        => FileExists(path) ? new MemoryStream() : new MockFileStream(this, path);
+        => access == FileAccess.Read && FileExists(path)
+            ? new MemoryStream(Encoding.UTF8.GetBytes(Files[path]))
+            : new MockFileStream(this, path);
 
     public FileAttributes GetAttributes(string path)
     {

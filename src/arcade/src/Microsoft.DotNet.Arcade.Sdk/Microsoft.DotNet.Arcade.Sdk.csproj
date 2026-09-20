@@ -18,6 +18,7 @@
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
     <_GeneratedVersionFilePath>$(IntermediateOutputPath)DefaultVersions.Generated.props</_GeneratedVersionFilePath>
     <NoWarn>$(NoWarn);3021;NU5100;NU5105;NU5111;SYSLIB0013</NoWarn>
+    <DefineConstants>$(DefineConstants);ARCADE_SDK_BUILD_TASKS_ASSEMBLY</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +29,7 @@
 
   <ItemGroup>
     <Compile Include="..\Common\Internal\AbsolutePathExtensions.cs" Link="Internal\AbsolutePathExtensions.cs" />
+    <Compile Include="..\Common\Tasks\ExecWithRetries.cs" Link="ExecWithRetries.cs" />
   </ItemGroup>
 
   <ItemGroup>
