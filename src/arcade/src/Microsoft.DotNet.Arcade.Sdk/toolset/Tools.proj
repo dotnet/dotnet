@@ -3,6 +3,9 @@
 
   <PropertyGroup>
     <_RepoToolManifest>$([MSBuild]::NormalizePath('$(RepoRoot)', '.config', 'dotnet-tools.json'))</_RepoToolManifest>
+    <!-- Retry once by default in CI; callers can override the number of attempts. -->
+    <RestoreRepoToolsMaxAttempts Condition="'$(RestoreRepoToolsMaxAttempts)' == '' and '$(ContinuousIntegrationBuild)' == 'true'">2</RestoreRepoToolsMaxAttempts>
+    <RestoreRepoToolsMaxAttempts Condition="'$(RestoreRepoToolsMaxAttempts)' == ''">1</RestoreRepoToolsMaxAttempts>
 
     <!-- VisualStudio.InsertionManifests.targets: Keep condition in sync with import in AfterSigning.proj. -->
     <RestoreInternalTooling Condition="'$(UsingToolVSSDK)' == 'true' and '$(GenerateSbom)' == 'true' and '$(MSBuildRuntimeType)' != 'Core'">true</RestoreInternalTooling>
@@ -26,7 +29,10 @@
       <RestoreConfigFileOption Condition="'$(RestoreConfigFile)' != ''">--configfile "$(RestoreConfigFile)"</RestoreConfigFileOption>
     </PropertyGroup>
 
-    <Exec Command='"$(DotNetTool)" tool restore $(RestoreConfigFileOption)' WorkingDirectory="$(RepoRoot)" />
+    <Microsoft.DotNet.Arcade.Sdk.ExecWithRetries
+      Command='"$(DotNetTool)" tool restore $(RestoreConfigFileOption)'
+      WorkingDirectory="$(RepoRoot)"
+      MaxAttempts="$(RestoreRepoToolsMaxAttempts)" />
   </Target>
 
   <!-- Set as DependsOnTargets when internal tools (e.g. IBC data, optprof) is required -->

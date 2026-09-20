@@ -9,7 +9,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+#if ARCADE_SDK_BUILD_TASKS_ASSEMBLY
+namespace Microsoft.DotNet.Arcade.Sdk;
+#else
 namespace Microsoft.DotNet.Build.Tasks.Installers;
+#endif
 
 /// <summary>
 /// Run a command and retry if the exit code is not 0.
@@ -36,7 +40,7 @@ public class ExecWithRetries : Microsoft.Build.Utilities.Task, ICancelableTask, 
 
     /// <summary>
     /// A constant, in seconds, added to (base^retries) to find the delay before retrying.
-    /// 
+    ///
     /// The default is -1 to make the first retry instant, because ((base^0)-1) == 0.
     /// </summary>
     public double RetryDelayConstant { get; set; } = -1;
