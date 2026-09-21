@@ -52,7 +52,7 @@ internal class MsTestV1TelemetryHelper
                 var testExtension = testResult.GetPropertyValue<string?>(s_extensionIdProperty, null);
                 var hasExtension = !testExtension.IsNullOrWhiteSpace();
 
-                if (hasExtension && testExtension!.StartsWith("urn:"))
+                if (hasExtension && testExtension!.StartsWith("urn:", StringComparison.Ordinal))
                 {
                     // remove urn: prefix
                     testExtension = testExtension.Remove(0, 4);

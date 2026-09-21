@@ -193,7 +193,8 @@ namespace NuGet.Configuration.Test
                         {
                         new PackageSource("http://a.test", "a")
                             {
-                                IsEnabled = true
+                                IsEnabled = true,
+                                MinPublishAge = TimeSpan.FromHours(48)
                             },
                         new PackageSource("http://b.test", "b")
                             {
@@ -213,7 +214,7 @@ namespace NuGet.Configuration.Test
                 var result = SettingsTestUtils.RemoveWhitespace(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <configuration>
   <packageSources>
-    <add key=""a"" value=""http://a.test"" />
+    <add key=""a"" value=""http://a.test"" minPublishAgeHours=""48"" />
     <add key=""b"" value=""http://b.test"" />
   </packageSources>
   <disabledPackageSources>
@@ -1389,6 +1390,71 @@ namespace NuGet.Configuration.Test
         }
 
         [Fact]
+        public void UpdatePackageSource_WithUpdateEnabled_EnablesDisabledSource()
+        {
+            using var directory = TestDirectory.Create();
+
+            // Arrange
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <packageSources>
+                        <add key="source" value="https://source.test" />
+                    </packageSources>
+                    <disabledPackageSources>
+                        <add key="source" value="true" />
+                    </disabledPackageSources>
+                </configuration>
+                """;
+
+            File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var source = packageSourceProvider.GetPackageSourceByName("source")!;
+
+            // Act
+            source.IsEnabled = true;
+            packageSourceProvider.UpdatePackageSource(source, updateCredentials: false, updateEnabled: true);
+
+            // Assert
+            settings = new Settings(directory);
+            source = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance).GetPackageSourceByName("source")!;
+            source.IsEnabled.Should().BeTrue();
+        }
+
+        [Fact]
+        public void UpdatePackageSource_WithUpdateEnabled_DisablesEnabledSource()
+        {
+            using var directory = TestDirectory.Create();
+
+            // Arrange
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <packageSources>
+                        <add key="source" value="https://source.test" />
+                    </packageSources>
+                </configuration>
+                """;
+
+            File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var source = packageSourceProvider.GetPackageSourceByName("source")!;
+
+            // Act
+            source.IsEnabled = false;
+            packageSourceProvider.UpdatePackageSource(source, updateCredentials: false, updateEnabled: true);
+
+            // Assert
+            settings = new Settings(directory);
+            source = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance).GetPackageSourceByName("source")!;
+            source.IsEnabled.Should().BeFalse();
+        }
+
+        [Fact]
         public void UpdatePackageSource_ShouldUpdateAllowInsecureConnections()
         {
             using var directory = TestDirectory.Create();
@@ -1462,6 +1528,41 @@ namespace NuGet.Configuration.Test
             var parsedSource = children[0];
             parsedSource.Key.Should().Be("default-http");
             parsedSource.DisableTLSCertificateValidation.Should().Be("True");
+        }
+
+        [Fact]
+        public void UpdatePackageSource_ShouldSaveMinPublishAgeHours()
+        {
+            using var directory = TestDirectory.Create();
+
+            // Arrange
+            var configContents = """
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                    <packageSources>
+                        <add key="default-http" value="http://api.nuget.org/v3/index.json" />
+                    </packageSources>
+                </configuration>
+                """;
+
+            File.WriteAllText(Path.Combine(directory.Path, "NuGet.Config"), configContents);
+
+            var settings = new Settings(directory);
+            var packageSourceProvider = new PackageSourceProvider(settings, TestConfigurationDefaults.NullInstance);
+            var source = packageSourceProvider.GetPackageSourceByName("default-http")!;
+
+            // Act
+            source.MinPublishAge = TimeSpan.FromDays(2);
+            packageSourceProvider.UpdatePackageSource(source, false, false);
+
+            // Assert
+            settings = new Settings(directory);
+            var packageSourcesSection = settings.GetSection("packageSources");
+            packageSourcesSection.Should().NotBeNull();
+            packageSourcesSection!.Items.Should().ContainSingle();
+
+            var parsedSource = packageSourcesSection.Items.Cast<SourceItem>().Single();
+            parsedSource.MinPublishAgeHours.Should().Be("48");
         }
 
         // Test that a source added in a high priority config file is not

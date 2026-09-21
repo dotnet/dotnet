@@ -94,6 +94,29 @@ namespace NuGet.Configuration
             Add(new ParsedSettingSection(sectionName, item));
         }
 
+        internal void AddEmptySection(string sectionName, SettingsFile origin)
+        {
+            if (string.IsNullOrEmpty(sectionName))
+            {
+                throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Or_Empty, nameof(sectionName));
+            }
+
+            if (Sections.ContainsKey(sectionName))
+            {
+                return;
+            }
+
+            var section = new ParsedSettingSection(sectionName)
+            {
+                Parent = this
+            };
+            section.SetOrigin(origin);
+            section.SetNode(section.AsXNode());
+            Children.Add(section);
+            XElementUtility.AddIndented(Node as XElement, section.Node);
+            origin.IsDirty = true;
+        }
+
         public void Remove(string sectionName, SettingItem item)
         {
             if (string.IsNullOrEmpty(sectionName))

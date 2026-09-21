@@ -967,7 +967,7 @@ namespace Microsoft.EntityFrameworkCore.Query
                 .OrderBy(e => e.PickupStatusId);
 
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => query.ToListAsync());
-            Assert.Contains("Nullable object must have a value", ex.Message);
+            Assert.Contains("Cannot read the Value property of a Nullable object that has no value", ex.Message);
             // #30915 TODO: currently throws on base; flip to assert results if/when fixed.
         }
 
@@ -1004,25 +1004,32 @@ namespace Microsoft.EntityFrameworkCore.Query
             using var context = contextFactory.CreateDbContext();
 
             var categories = context.Requests
-                .GroupBy(r => r.PickupStatusId, (k, els) => new { pickupStatusId = k, Count = els.Count() });
+                .GroupBy(
+                    r => r.PickupStatusId,
+                    (k, els) => new Context30915.CountDto30915
+                    {
+                        PickupStatusId = k,
+                        Count = els.Count()
+                    });
 
             var first = from s in context.Statuses
-                        join c in categories on s.PickupStatusId equals c.pickupStatusId into g
+                        join c in categories on s.PickupStatusId equals c.PickupStatusId into g
                         from countInfo in g.DefaultIfEmpty()
                         select new { s.PickupStatusId, Count = countInfo == null ? 0 : countInfo.Count };
 
             var second = from s in context.Statuses
-                         join c in categories on s.PickupStatusId equals c.pickupStatusId into g
+                         join c in categories on s.PickupStatusId equals c.PickupStatusId into g
                          from countInfo in g.DefaultIfEmpty()
                          select new { s.PickupStatusId, Count = countInfo == null ? 0 : countInfo.Count };
 
             var query = first.Union(second);
 
-            // The client-side null-check projection forces a client projection on each operand,
-            // which then can't participate in the set operation.
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => query.ToListAsync());
-            Assert.Contains("Unable to translate set operation", ex.Message);
-            // #30915 TODO: currently throws on base; flip to assert results if/when fixed.
+            var result = await query.OrderBy(e => e.PickupStatusId).ToListAsync();
+
+            Assert.Equal(3, result.Count);
+            Assert.Equal((1, 2), (result[0].PickupStatusId, result[0].Count));
+            Assert.Equal((2, 0), (result[1].PickupStatusId, result[1].Count));
+            Assert.Equal((3, 1), (result[2].PickupStatusId, result[2].Count));
         }
 
         [Fact]
@@ -1428,7 +1435,7 @@ namespace Microsoft.EntityFrameworkCore.Query
             // marker is injected for the INNER nullable side of LEFT JOIN / DefaultIfEmpty only, so this
             // RIGHT JOIN whole-object shape is not covered and still fails during materialization.
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => query.ToListAsync());
-            Assert.Contains("Nullable object must have a value", ex.Message);
+            Assert.Contains("Cannot read the Value property of a Nullable object that has no value", ex.Message);
             // #30915 TODO: RightJoin (outer-nullable) whole-object not yet covered; flip to assert results if/when fixed.
         }
 

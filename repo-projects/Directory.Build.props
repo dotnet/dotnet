@@ -6,6 +6,8 @@
   <PropertyGroup>
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
     <UseBootstrapArcade Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</UseBootstrapArcade>
+    <!-- Bootstrap Arcade repos must bootstrap from PSB rather than current 1xx shared components. -->
+    <_UseSharedComponentsInputs Condition="'$(UseBootstrapArcade)' != 'true'">true</_UseSharedComponentsInputs>
 
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
@@ -109,16 +111,6 @@
 
     <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)ci</CommonArgs>
 
-    <!-- MSBuild's multi-threaded mode is opt-in for now, so it's off unless it's explicitly requested.
-         Set DotNetBuildMT to explicitly opt in or out for all repo builds. -->
-    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
-    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
-
-    <!-- MSBuild node reuse is on by default for local builds and isn't used on CI.
-         Set DotNetBuildNodeReuse to explicitly opt in or out for all repo builds. -->
-    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 1</CommonArgs>
-    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 0</CommonArgs>
-
     <!-- Pass down configuration properties -->
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)configuration $(Configuration)</CommonArgs>
     <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)verbosity $(LogVerbosity)</CommonArgs>
@@ -171,7 +163,7 @@
 
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <CommonArgs>$(CommonArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</CommonArgs>
-    <CommonArgs Condition="Exists('$(SharedComponentsArtifactsPath)')">$(CommonArgs) /p:AdditionalSourceBuiltNupkgCacheDir="$(SharedComponentsArtifactsPath)"</CommonArgs>
+    <CommonArgs Condition="'$(_UseSharedComponentsInputs)' == 'true' and Exists('$(SharedComponentsArtifactsPath)')">$(CommonArgs) /p:AdditionalSourceBuiltNupkgCacheDir="$(SharedComponentsArtifactsPath)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:TrackPrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
   </PropertyGroup>
@@ -187,7 +179,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(EnableExtraDebugging)' == 'true'">
-    <MSBuildDebugPathTargetDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'msbuild-debug'))</MSBuildDebugPathTargetDir>
     <RoslynDebugPathTargetDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'roslyn-debug'))</RoslynDebugPathTargetDir>
 
     <AspNetRazorBuildServerLogDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'aspnet-debug'))</AspNetRazorBuildServerLogDir>

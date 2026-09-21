@@ -498,7 +498,7 @@ internal abstract class BaseRunTests
                     // Only enable this for MSTestV1 telemetry for now, this might become more generic later.
                     if (MsTestV1TelemetryHelper.IsMsTestV1Adapter(executorUri))
                     {
-                        foreach (var adapterMetrics in TestRunCache.AdapterTelemetry.Keys.Where(k => k.StartsWith(executorUri)))
+                        foreach (var adapterMetrics in TestRunCache.AdapterTelemetry.Keys.Where(k => k.StartsWith(executorUri, StringComparison.Ordinal)))
                         {
                             var value = TestRunCache.AdapterTelemetry[adapterMetrics];
 

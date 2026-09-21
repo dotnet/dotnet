@@ -121,7 +121,7 @@ internal class AssemblyResolver : IDisposable
 
             TPDebug.Assert(requestedName != null && !requestedName.Name.IsNullOrEmpty(), "AssemblyResolver.OnResolve: requested is null or name is empty!");
 
-            var isResource = requestedName.Name.EndsWith(".resources");
+            var isResource = requestedName.Name.EndsWith(".resources", StringComparison.Ordinal);
             foreach (var dir in _searchDirectories)
             {
                 if (dir.IsNullOrEmpty())

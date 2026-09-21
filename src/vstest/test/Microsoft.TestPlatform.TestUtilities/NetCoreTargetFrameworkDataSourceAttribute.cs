@@ -61,7 +61,7 @@ public class NetCoreTargetFrameworkDataSourceAttribute : Attribute, ITestDataSou
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
     {
         var dataRows = new List<object[]>();
-        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win");
+        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal);
         if (_useDesktopRunner && isWindows)
         {
             var runnerFramework = IntegrationTestBase.DesktopRunnerFramework;

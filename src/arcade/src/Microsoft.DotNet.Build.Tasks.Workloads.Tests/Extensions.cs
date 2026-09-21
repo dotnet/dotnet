@@ -3,14 +3,13 @@
 
 using Microsoft.Build.Utilities;
 
-namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests
+namespace Microsoft.DotNet.Build.Tasks.Workloads.Tests;
+
+public static class Extensions
 {
-    public static class Extensions
+    public static TaskItem WithMetadata(this TaskItem item, string metadataName, string metadataValue)
     {
-        public static TaskItem WithMetadata(this TaskItem item, string metadataName, string metadataValue)
-        {
-            item.SetMetadata(metadataName, metadataValue);
-            return item;
-        }
+        item.SetMetadata(metadataName, metadataValue);
+        return item;
     }
 }

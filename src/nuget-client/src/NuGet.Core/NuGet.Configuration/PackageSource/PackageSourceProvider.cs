@@ -174,6 +174,7 @@ namespace NuGet.Configuration
         {
             return LoadAuditSources(EnvironmentVariableWrapper.Instance);
         }
+
         internal IReadOnlyList<PackageSource> LoadAuditSources(IEnvironmentVariableReader environmentVariableReader)
         {
             return LoadPackageSources(Settings, ConfigurationConstants.AuditSources, _configurationDefaultAuditSources, environmentVariableReader);
@@ -255,6 +256,7 @@ namespace NuGet.Configuration
             packageSource.ProtocolVersion = ReadProtocolVersion(setting);
             packageSource.AllowInsecureConnections = ReadAllowInsecureConnections(setting);
             packageSource.DisableTLSCertificateValidation = ReadDisableTLSCertificateValidation(setting);
+            packageSource.MinPublishAge = ReadMinPublishAge(setting);
 
             return packageSource;
         }
@@ -287,6 +289,32 @@ namespace NuGet.Configuration
             }
 
             return PackageSource.DefaultAllowInsecureConnections;
+        }
+
+        private static TimeSpan ReadMinPublishAge(SourceItem setting)
+        {
+            string? value = setting.MinPublishAgeHours;
+            if (value is null)
+            {
+                return PackageSource.DefaultMinPublishAge;
+            }
+
+            if (uint.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out uint hours) &&
+                hours <= TimeSpan.MaxValue.TotalHours)
+            {
+                return TimeSpan.FromHours(hours);
+            }
+
+            throw new NuGetConfigurationException(string.Format(
+                CultureInfo.CurrentCulture,
+                Resources.UserSettings_UnableToParseConfigFile,
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.AttributeValueNotAllowed,
+                    $"{setting.Key}:{ConfigurationConstants.MinPublishAgeHours}",
+                    value,
+                    ConfigurationConstants.PackageSources),
+                setting.ConfigPath));
         }
 
         private static void AddOrUpdateIndexedSource(
@@ -592,7 +620,7 @@ namespace NuGet.Configuration
                 {
                     // get list of disabled packages
                     var disabledSourcesSection = Settings.GetSection(ConfigurationConstants.DisabledPackageSources);
-                    disabledSourceItem = disabledSourcesSection?.GetFirstItemWithAttribute<AddItem>(ConfigurationConstants.KeyAttribute, sourceToUpdate.ElementName);
+                    disabledSourceItem = disabledSourcesSection?.GetFirstItemWithAttribute<AddItem>(ConfigurationConstants.KeyAttribute, sourceToUpdate.Key);
                 }
 
                 if (updateCredentials)
@@ -627,7 +655,8 @@ namespace NuGet.Configuration
                 if ((!string.Equals(newSource.Source, existingSource.Source, StringComparison.OrdinalIgnoreCase) ||
                     newSource.ProtocolVersion != existingSource.ProtocolVersion ||
                     newSource.AllowInsecureConnections != existingSource.AllowInsecureConnections ||
-                    newSource.DisableTLSCertificateValidation != existingSource.DisableTLSCertificateValidation) && newSource.IsPersistable)
+                    newSource.DisableTLSCertificateValidation != existingSource.DisableTLSCertificateValidation ||
+                    newSource.MinPublishAge != existingSource.MinPublishAge) && newSource.IsPersistable)
                 {
                     Settings.AddOrUpdate(ConfigurationConstants.AuditSources, newSource.AsSourceItem());
                     isDirty = true;
@@ -657,7 +686,8 @@ namespace NuGet.Configuration
                 if ((!string.Equals(newSource.Source, existingSource.Source, StringComparison.OrdinalIgnoreCase) ||
                     newSource.ProtocolVersion != existingSource.ProtocolVersion ||
                     newSource.AllowInsecureConnections != existingSource.AllowInsecureConnections ||
-                    newSource.DisableTLSCertificateValidation != existingSource.DisableTLSCertificateValidation) && newSource.IsPersistable)
+                    newSource.DisableTLSCertificateValidation != existingSource.DisableTLSCertificateValidation ||
+                    newSource.MinPublishAge != existingSource.MinPublishAge) && newSource.IsPersistable)
                 {
                     Settings.AddOrUpdate(ConfigurationConstants.PackageSources, newSource.AsSourceItem());
                     isDirty = true;

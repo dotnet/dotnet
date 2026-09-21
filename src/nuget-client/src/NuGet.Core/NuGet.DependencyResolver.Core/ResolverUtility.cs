@@ -91,7 +91,7 @@ namespace NuGet.DependencyResolver
                         // Clear the on disk and memory caches during the next request.
                         currentCacheContext = currentCacheContext.WithRefreshCacheTrue();
                     }
-                    catch (PackageNotFoundProtocolException ex) when (match.Provider.IsHttp && match.Provider.Source != null)
+                    catch (PackageNotFoundProtocolException ex) when (match.Provider?.IsHttp == true && match.Provider.Source != null)
                     {
                         // 2nd failure, the feed is likely corrupt or removing packages too fast to keep up with.
                         var message = string.Format(CultureInfo.CurrentCulture,
@@ -130,7 +130,7 @@ namespace NuGet.DependencyResolver
             else
             {
                 // Look up the dependencies from the source, this will download the package if needed.
-                dependencies = await match.Provider.GetDependenciesAsync(
+                dependencies = await (match.Provider ?? throw new InvalidOperationException()).GetDependenciesAsync(
                     match.Library,
                     framework,
                     cacheContext,
@@ -587,7 +587,7 @@ namespace NuGet.DependencyResolver
                 if (remoteDependencyProviders.Count == 0)
                     context.Logger.LogDebug(string.Format(CultureInfo.CurrentCulture, Strings.Log_NoMatchingSourceFoundForPackage, packageName));
                 else
-                    context.Logger.LogDebug(string.Format(CultureInfo.CurrentCulture, Strings.Log_MatchingSourceFoundForPackage, packageName, string.Join(",", remoteDependencyProviders.Select(provider => provider.Source.Name))));
+                    context.Logger.LogDebug(string.Format(CultureInfo.CurrentCulture, Strings.Log_MatchingSourceFoundForPackage, packageName, string.Join(",", remoteDependencyProviders.Select(provider => provider.Source?.Name))));
             }
         }
     }

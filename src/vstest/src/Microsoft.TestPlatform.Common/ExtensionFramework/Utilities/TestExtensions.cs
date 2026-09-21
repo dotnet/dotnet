@@ -426,9 +426,15 @@ public class TestExtensions
         {
             foreach (var extension in extensionCollection)
             {
-                var testPluginInformation = extension.Value as TestPluginInformation;
-                // TODO: Avoid ArgumentNullException here
-                var extensionType = Type.GetType(testPluginInformation?.AssemblyQualifiedName!);
+                if (extension.Value is not TestPluginInformation { AssemblyQualifiedName: not null } testPluginInformation)
+                {
+                    EqtTrace.Warning(
+                        "TestExtensions.GetExtensionsDiscoveredFromAssembly: Extension '{0}' has no assembly-qualified type name.",
+                        extension.Key);
+                    continue;
+                }
+
+                var extensionType = Type.GetType(testPluginInformation.AssemblyQualifiedName);
                 if (string.Equals(extensionType?.Assembly.GetAssemblyLocation(), extensionAssembly))
                 {
                     extensions.Add(extension.Key, extension.Value);

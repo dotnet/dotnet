@@ -130,7 +130,7 @@ public class BlameLogger : ITestLogger
             }
 
             // Process only Sequence_<GUID>.xml attachments
-            var uriDataAttachment = attachmentSet.Attachments.LastOrDefault((attachment) => attachment.Uri.ToString().EndsWith(".xml"));
+            var uriDataAttachment = attachmentSet.Attachments.LastOrDefault((attachment) => attachment.Uri.ToString().EndsWith(".xml", StringComparison.Ordinal));
 
             if (uriDataAttachment == null)
             {

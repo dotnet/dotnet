@@ -4,41 +4,40 @@
 using System.IO;
 using System.Linq;
 
-namespace Microsoft.DotNet.MacOsPkg.Core
+namespace Microsoft.DotNet.MacOsPkg.Core;
+
+internal static class Utilities
 {
-    internal static class Utilities
+    public static bool IsPkg(string path) =>
+        Path.GetExtension(path).Equals(".pkg");
+
+    public static bool IsAppBundle(string path) =>
+        Path.GetExtension(path).Equals(".app");
+
+    public static string? FindInPath(string name, string path, bool isDirectory, SearchOption searchOption = SearchOption.AllDirectories)
     {
-        public static bool IsPkg(string path) =>
-            Path.GetExtension(path).Equals(".pkg");
+        string[] results = isDirectory ? Directory.GetDirectories(path, name, searchOption) : Directory.GetFiles(path, name, searchOption);
+        return results.FirstOrDefault();
+    }
 
-        public static bool IsAppBundle(string path) =>
-            Path.GetExtension(path).Equals(".app");
-
-        public static string? FindInPath(string name, string path, bool isDirectory, SearchOption searchOption = SearchOption.AllDirectories)
+    public static void CleanupPath(string path)
+    {
+        if (Directory.Exists(path))
         {
-            string[] results = isDirectory ? Directory.GetDirectories(path, name, searchOption) : Directory.GetFiles(path, name, searchOption);
-            return results.FirstOrDefault();
+            Directory.Delete(path, true);
         }
-
-        public static void CleanupPath(string path)
+        else if (File.Exists(path))
         {
-            if (Directory.Exists(path))
-            {
-                Directory.Delete(path, true);
-            }
-            else if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
+            File.Delete(path);
         }
+    }
 
-        public static void CreateParentDirectory(string path)
+    public static void CreateParentDirectory(string path)
+    {
+        string? parent = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(parent))
         {
-            string? parent = Path.GetDirectoryName(path);
-            if (!string.IsNullOrEmpty(parent))
-            {
-                Directory.CreateDirectory(parent);
-            }
+            Directory.CreateDirectory(parent);
         }
     }
 }

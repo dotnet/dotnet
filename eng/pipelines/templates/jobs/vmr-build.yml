@@ -152,6 +152,11 @@ parameters:
   type: boolean
   default: false
 
+# Add the SDK version produced by this build to the Azure Pipelines build tags.
+- name: tagPipelineBuildWithSdkVersion
+  type: boolean
+  default: false
+
 #### repo parameters ####
 
 - name: isBuiltFromVmr
@@ -165,6 +170,10 @@ parameters:
 
 # Disable Component Governance detection (e.g. on unsupported platforms)
 - name: disableComponentGovernance
+  type: boolean
+  default: false
+
+- name: enableAstred
   type: boolean
   default: false
 
@@ -253,6 +262,13 @@ jobs:
     - name: sourcesPath
       value: $(vmrPath)
 
+  - ${{ if and(parameters.enableAstred, parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: MSBUILDDEBUGENGINE
+      value: 1
+    # Child builds override MSBUILDDEBUGPATH with per-repo directories beneath this root.
+    - name: MSBUILDDEBUGPATH
+      value: $(sourcesPath)/artifacts/log/${{ parameters.configuration }}
+
   - name: artifactsStagingDir
     value: $(Build.ArtifactStagingDirectory)/artifacts
 
@@ -325,8 +341,13 @@ jobs:
     ${{ else }}:
       value: ''
 
+  # Cap how long a single repo build may run. A hung repo build would otherwise run into the job
+  # timeout below, and a canceled job skips the log collection steps, losing every diagnostic.
+  - name: repoBuildTimeoutMinutes
+    value: 150
+
   - name: baseArguments
-    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
+    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine $(commandPrefix)nodeReuse 1 -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument) /p:RepoBuildTimeoutMinutes=$(repoBuildTimeoutMinutes)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
@@ -403,7 +424,7 @@ jobs:
     outputs:
     - output: pipelineArtifact
       displayName: Publish BuildLogs
-      condition: succeededOrFailed()
+      condition: always()
       targetPath: $(Build.ArtifactStagingDirectory)/BuildLogs
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
       sbomEnabled: false
@@ -438,6 +459,9 @@ jobs:
   - checkout: self
     fetchDepth: 1
     retryCountOnTaskFailure: 5
+
+  - ${{ if in(parameters.targetOS, 'osx', 'maccatalyst', 'ios', 'iossimulator', 'tvos', 'tvossimulator') }}:
+    - template: ../steps/select-xcode.yml
 
   - ${{ parameters.initSteps }}
 
@@ -660,6 +684,22 @@ jobs:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
             ${{ if eq(parameters.signDac, 'true') }}:
               ESRP_TOKEN: $(System.AccessToken)
+
+    - ${{ if eq(parameters.tagPipelineBuildWithSdkVersion, true) }}:
+      - pwsh: |
+          $versionFile = Join-Path "$(sourcesPath)" "src/sdk/artifacts/packages/${{ parameters.configuration }}/Shipping/sdk-productVersion.txt"
+          if (-not (Test-Path $versionFile)) {
+            throw "SDK version file was not produced at '$versionFile'."
+          }
+
+          $sdkVersion = (Get-Content $versionFile -Raw).Trim()
+          if ([string]::IsNullOrWhiteSpace($sdkVersion)) {
+            throw "SDK version file '$versionFile' is empty."
+          }
+
+          Write-Host "Tagging build with SDK version '$sdkVersion'."
+          Write-Host "##vso[build.addbuildtag]SDK $sdkVersion"
+        displayName: Tag build with SDK version
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: build.cmd
@@ -1008,6 +1048,27 @@ jobs:
         excludeRepos: ${{ parameters.sourceIndexExcludeRepos }}
         includeRepos: ${{ parameters.sourceIndexIncludeRepos }}
 
+  - ${{ if and(parameters.enableAstred, parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    # Keep per-repo compiler logs, not orchestrator or scenario-test execution logs.
+    - task: CopyFiles@2
+      displayName: Stage product-build binlogs for Astred
+      inputs:
+        SourceFolder: '$(sourcesPath)/artifacts/log/${{ parameters.configuration }}'
+        Contents: |
+          */**/*.binlog
+          !scenario-tests/**
+          !.MSBuild_Logs/**
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/AstredCapture/binlogs'
+        CleanTargetFolder: true
+      condition: succeededOrFailed()
+      continueOnError: true
+
+    # Use the current Arcade template rather than the older bootstrap copy in eng/common.
+    - template: /src/arcade/eng/common/core-templates/steps/astred-artifacts.yml
+      parameters:
+        sourcesPath: $(sourcesPath)
+        binlogDir: $(Build.ArtifactStagingDirectory)/AstredCapture/binlogs
+
   # Keep the following two CopyFiles tasks separate to avoid scanning the entire artifacts folder
   - task: CopyFiles@2
     displayName: Copy logs to BuildLogs staging
@@ -1017,7 +1078,8 @@ jobs:
       TargetFolder: '$(Build.ArtifactStagingDirectory)/BuildLogs/artifacts/log'
       CleanTargetFolder: true
     continueOnError: true
-    condition: succeededOrFailed()
+    # always() so that logs are still collected when the job is canceled, e.g. on a job timeout.
+    condition: always()
 
   # Only copy test results when tests ran (skip if Run Tests was skipped, e.g. Build failed)
   - ${{ if eq(parameters.runTests, 'True') }}:

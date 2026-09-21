@@ -243,7 +243,7 @@ namespace NuGet.CommandLine
                 .ToList();
             var securePluginProviders = await (new SecurePluginCredentialProviderBuilder(PluginManager.Instance, canShowDialog: true, logger: Console)).BuildAllAsync();
 
-            providers.Add(new CredentialProviderAdapter(new SettingsCredentialProvider(SourceProvider, Console)));
+            providers.Add(new SettingsCredentialProvider(SourceProvider, Console));
             providers.AddRange(securePluginProviders);
             providers.AddRange(pluginProviders);
 

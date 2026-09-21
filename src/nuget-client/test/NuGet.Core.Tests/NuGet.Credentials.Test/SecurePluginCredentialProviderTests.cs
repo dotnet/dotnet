@@ -80,6 +80,37 @@ namespace NuGet.Credentials.Test
         }
 
         [PlatformFact(Platform.Windows)]
+        public async Task GetAsync_WhenConnectionIsClosed_ThrowsPluginExceptionNamingThePlugin()
+        {
+            var expectation = new TestExpectation(
+                operationClaims: new[] { OperationClaim.Authentication },
+                connectionOptions: ConnectionOptions.CreateDefault(),
+                pluginVersion: ProtocolConstants.CurrentVersion,
+                uri: _uri,
+                authenticationUsername: _username,
+                authenticationPassword: _password,
+                success: false,
+                connectionClosed: true);
+
+            using (var test = new PluginManagerMock(
+                pluginFilePath: "pluginA.exe",
+                pluginFileState: PluginFileState.Valid,
+                expectations: expectation))
+            {
+                var discoveryResult = new PluginDiscoveryResult(new PluginFile("pluginA.exe", new Lazy<PluginFileState>(() => PluginFileState.Valid)));
+                var provider = new SecurePluginCredentialProvider(test.PluginManager, discoveryResult, canShowDialog: true, logger: NullLogger.Instance);
+
+                // A connection that is closing or closed - because the plugin process was torn down while the request
+                // was in flight - answers with null. Reporting that must name the plugin instead of surfacing as a
+                // NullReferenceException that mentions neither the plugin nor authentication.
+                var exception = await Assert.ThrowsAsync<PluginException>(
+                    () => provider.GetAsync(_uri, proxy: null, CredentialRequestType.Unauthorized, message: "nothing", isRetry: false, nonInteractive: false, cancellationToken: CancellationToken.None));
+
+                Assert.Contains("pluginA.exe", exception.Message);
+            }
+        }
+
+        [PlatformFact(Platform.Windows)]
         public async Task GetAsync_WithValidArguments_ReturnsValidCredentials()
         {
             var expectation = new TestExpectation(

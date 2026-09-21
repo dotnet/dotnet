@@ -125,31 +125,39 @@ These are **switches** handled by `eng/build.ps1` — NOT `-projects` values:
 ./test.cmd -performanceTest
 ./test.cmd -compatibilityTest
 
-# Linux / macOS use the same switch names
-./test.sh -smokeTest
+# Linux / macOS: only --integrationTest and --performanceTest exist, because test.sh
+# calls arcade's eng/common/build.sh directly and never goes through eng/build.ps1.
+./test.sh --integrationTest     # includes smoke; there is no -smokeTest switch here
 ```
 
 > `-smokeTest` and `-integrationTest` are mutually exclusive (smoke is a subset); passing both throws.
 
 ### Filter by Test Name
 
-Use the `-filter` parameter. Do **not** pass `--filter` inside `TestRunnerAdditionalArguments` —
+On Windows use the `-filter` parameter. Do **not** pass `--filter` inside `TestRunnerAdditionalArguments` —
 `eng/build.ps1` explicitly throws if you do.
+
+On Linux/macOS `test.sh` has no `-filter` parameter, so the filter goes in as an MSBuild property.
+The single quotes are required, otherwise bash interprets `&`, `|`, and the inner quotes.
 
 ```bash
 # Windows
 ./test.cmd -integrationTest -filter "FullyQualifiedName~MyScenario"
 
 # Linux / macOS
-./test.sh -integrationTest -filter "FullyQualifiedName~MyScenario"
+./test.sh --integrationTest --property:'TestRunnerAdditionalArguments=--filter "FullyQualifiedName~MyScenario"'
 ```
 
-### Running integration / smoke tests locally (DOTNET_ROOT gotcha)
+See [CONTRIBUTING.md](../../../CONTRIBUTING.md#running-a-specific-test) for more filtering examples.
 
-Integration and smoke tests self-host: they launch test-asset apphosts built against the repo's
-preview TFM (e.g. `net11.0`). An apphost resolves its shared runtime from `DOTNET_ROOT`, falling
-back to the machine-wide install (`C:\Program Files\dotnet`), which usually lacks the preview
-runtime — so it fails instantly with *"You must install or update .NET to run this application."*
+### Running tests locally (DOTNET_ROOT gotcha)
+
+Test executables are built against the repo's preview TFM (e.g. `net11.0`), and integration and
+smoke tests additionally launch test-asset apphosts built the same way. An apphost resolves its
+shared runtime from `DOTNET_ROOT`, falling back to the machine-wide install
+(`C:\Program Files\dotnet`), which usually lacks the preview runtime — so it fails instantly with
+*"You must install or update .NET to run this application."* This hits plain unit test runs too,
+not only integration and smoke tests.
 
 - `test.sh` (Linux/macOS) sets `DOTNET_ROOT` to the repo `.dotnet` automatically.
 - `test.cmd` (Windows) does **not** — set it yourself before running:
@@ -185,7 +193,8 @@ After building with `--pack` / `-pack`, validate vstest.console changes by unzip
 ## Troubleshooting
 
 - **OS mismatch errors:** If you see SDK load failures, run the mismatch detection script above to clean and re-bootstrap.
-- **Integration/smoke tests fail instantly on Windows with "You must install or update .NET to run this application":** `test.cmd` does not set `DOTNET_ROOT`, so the self-hosted preview-TFM apphosts look in `C:\Program Files\dotnet` (which lacks the preview runtime). Set `$env:DOTNET_ROOT = "$PWD\.dotnet"` before running — see "Running integration / smoke tests locally".
+- **`Toolset version <version> has not been restored.`:** `test.cmd` / `test.sh` do not restore. Build once (`./build.cmd -c Release`) first, or pass `-restore -build` to the test command.
+- **Tests fail instantly on Windows with "You must install or update .NET to run this application":** `test.cmd` does not set `DOTNET_ROOT`, so the preview-TFM apphosts look in `C:\Program Files\dotnet` (which lacks the preview runtime). Set `$env:DOTNET_ROOT = "$PWD\.dotnet"` before running — see "Running tests locally".
 - If build fails asking for .NET 4.6 targeting pack, install it from [Microsoft Downloads](https://www.microsoft.com/download/details.aspx?id=48136)
 - Enable verbose diagnostics: see `docs/diagnose.md`
 - For debugging, add `Debugger.Launch` at process entry points (testhost.exe, vstest.console.exe)

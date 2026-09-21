@@ -10,61 +10,60 @@ using Microsoft.Cci.Writers.Syntax;
 using Microsoft.Cci.Writers.CSharp;
 using Microsoft.Cci.Filters;
 
-namespace Microsoft.Cci.Differs.Rules
+namespace Microsoft.Cci.Differs.Rules;
+
+[ExportDifferenceRule]
+public class TokenListDiffer : DifferenceRule
 {
-    [ExportDifferenceRule]
-    public class TokenListDiffer : DifferenceRule
+    [Import(AllowDefault = true)]
+    public IDiffingService DiffingService { get; set; }
+
+    private CSDeclarationHelper _declHelper = null;
+
+    public override DifferenceType Diff(IDifferences differences, ITypeDefinitionMember item1, ITypeDefinitionMember item2)
     {
-        [Import(AllowDefault = true)]
-        public IDiffingService DiffingService { get; set; }
+        return Diff(differences, item1, item2);
+    }
 
-        private CSDeclarationHelper _declHelper = null;
+    public override DifferenceType Diff(IDifferences differences, ITypeDefinition item1, ITypeDefinition item2)
+    {
+        return Diff(differences, item1, item2);
+    }
 
-        public override DifferenceType Diff(IDifferences differences, ITypeDefinitionMember item1, ITypeDefinitionMember item2)
-        {
-            return Diff(differences, item1, item2);
-        }
+    public override DifferenceType Diff(IDifferences differences, INamespaceDefinition item1, INamespaceDefinition item2)
+    {
+        return Diff(differences, item1, item2);
+    }
 
-        public override DifferenceType Diff(IDifferences differences, ITypeDefinition item1, ITypeDefinition item2)
-        {
-            return Diff(differences, item1, item2);
-        }
+    private DifferenceType Diff(IDifferences differences, IDefinition item1, IDefinition item2)
+    {
+        if (item1 == null || item2 == null)
+            return DifferenceType.Unknown;
 
-        public override DifferenceType Diff(IDifferences differences, INamespaceDefinition item1, INamespaceDefinition item2)
-        {
-            return Diff(differences, item1, item2);
-        }
+        var tokens1 = GetTokenList(item1);
+        var tokens2 = GetTokenList(item2);
 
-        private DifferenceType Diff(IDifferences differences, IDefinition item1, IDefinition item2)
-        {
-            if (item1 == null || item2 == null)
-                return DifferenceType.Unknown;
+        // TODO: Add a difference to differences
+        if (!TokensAreEqual(tokens1, tokens2))
+            return DifferenceType.Changed;
 
-            var tokens1 = GetTokenList(item1);
-            var tokens2 = GetTokenList(item2);
+        return DifferenceType.Unchanged;
+    }
 
-            // TODO: Add a difference to differences
-            if (!TokensAreEqual(tokens1, tokens2))
-                return DifferenceType.Changed;
+    private IEnumerable<SyntaxToken> GetTokenList(IDefinition item)
+    {
+        // If we have a contextual based service use it otherwise fall back to the simple one
+        if (DiffingService != null)
+            return DiffingService.GetTokenList(item);
 
-            return DifferenceType.Unchanged;
-        }
+        if (_declHelper == null)
+            _declHelper = new CSDeclarationHelper(new PublicOnlyCciFilter());
 
-        private IEnumerable<SyntaxToken> GetTokenList(IDefinition item)
-        {
-            // If we have a contextual based service use it otherwise fall back to the simple one
-            if (DiffingService != null)
-                return DiffingService.GetTokenList(item);
+        return _declHelper.GetTokenList(item);
+    }
 
-            if (_declHelper == null)
-                _declHelper = new CSDeclarationHelper(new PublicOnlyCciFilter());
-
-            return _declHelper.GetTokenList(item);
-        }
-
-        private bool TokensAreEqual<T>(IEnumerable<T> list1, IEnumerable<T> list2)
-        {
-            return list1.SequenceEqual(list2);
-        }
+    private bool TokensAreEqual<T>(IEnumerable<T> list1, IEnumerable<T> list2)
+    {
+        return list1.SequenceEqual(list2);
     }
 }

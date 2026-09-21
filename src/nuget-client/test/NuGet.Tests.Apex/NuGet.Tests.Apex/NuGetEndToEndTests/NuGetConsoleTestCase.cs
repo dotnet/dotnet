@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Test.Apex.VisualStudio.Solution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NuGet.Packaging;
 using NuGet.Test.Utility;
 
 namespace NuGet.Tests.Apex
@@ -117,6 +118,62 @@ namespace NuGet.Tests.Apex
                 CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName1, packageVersion1, Logger);
                 CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName2, packageVersion2, Logger);
             }
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackagesFromPMCUsingPackagesConfigAsync()
+        {
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger);
+
+            var packageName1 = "TestPackage1";
+            var packageName2 = "TestPackage2";
+            var packageVersion = "1.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName1, packageVersion);
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName2, packageVersion);
+
+            var inputDirectory = Path.Combine(testContext.SolutionRoot, "Input");
+            Directory.CreateDirectory(inputDirectory);
+            var packagesConfigPath = Path.Combine(inputDirectory, "packages.config");
+            File.WriteAllText(
+                packagesConfigPath,
+                $@"<?xml version=""1.0"" encoding=""utf-8""?>
+<packages>
+  <package id=""{packageName1}"" version=""{packageVersion}"" targetFramework=""net48"" userInstalled=""true"" />
+  <package id=""{packageName2}"" version=""{packageVersion}"" targetFramework=""net48"" userInstalled=""true"" />
+</packages>");
+
+            var nugetConsole = GetConsole(testContext.Project);
+            var escapedPackagesConfigPath = packagesConfigPath.Replace("'", "''");
+
+            nugetConsole.Execute($"Install-Package '{escapedPackagesConfigPath}'");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName1, packageVersion, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName2, packageVersion, Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackageFromPMCPipelineInputAsync()
+        {
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger);
+
+            var packageName = "PipelineInputTestPackage";
+            var packageVersion = "1.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion);
+
+            var nugetConsole = GetConsole(testContext.Project);
+            var escapedSource = testContext.PackageSource.Replace("'", "''");
+
+            nugetConsole.Execute(
+                $"Get-Package -ListAvailable -Filter '{packageName}' -Source '{escapedSource}' | Install-Package");
+
+            CommonUtility.AssertPackageInPackagesConfig(
+                VisualStudio,
+                testContext.Project,
+                packageName,
+                packageVersion,
+                Logger);
         }
 
         [DataTestMethod]
@@ -955,6 +1012,35 @@ namespace NuGet.Tests.Apex
 
         [TestMethod]
         [Timeout(DefaultTimeout)]
+        public async Task InstallPackageFromPMCWhenMinClientVersionIsNotSatisfied_FailsAsync()
+        {
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger);
+
+            var packageName = "PackageA";
+            var packageVersion = "1.0.0";
+            var minClientVersion = "100.0.0";
+            var package = CommonUtility.CreatePackage(packageName, packageVersion);
+            package.MinClientVersion = minClientVersion;
+            await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, package);
+
+            var currentVersion = MinClientVersionUtility.GetNuGetClientVersion().ToNormalizedString();
+            var expectedMessage =
+                $"The '{packageName} {packageVersion}' package requires NuGet client version '{minClientVersion}' or above, " +
+                $"but the current NuGet version is '{currentVersion}'. To upgrade NuGet, " +
+                "go to https://docs.nuget.org/consume/installing-nuget";
+            var nugetConsole = GetConsole(testContext.Project);
+            var escapedSource = testContext.PackageSource.Replace("'", "''");
+
+            nugetConsole.Execute($"Install-Package {packageName} -Source '{escapedSource}'");
+
+            Assert.IsTrue(
+                nugetConsole.IsMessageFoundInPMC(expectedMessage),
+                $"Expected error message was not found in PMC output. Actual output: {nugetConsole.GetText()}");
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, packageName, Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task InstallPackageFromPMCWithWhatIf_DoesNotInstallPackageAsync()
         {
             using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger);
@@ -1023,6 +1109,56 @@ namespace NuGet.Tests.Apex
             Assert.IsTrue(
                 nugetConsole.IsMessageFoundInPMC(expectedMessage),
                 $"Expected error message was not found in PMC output. Actual output: {nugetConsole.GetText()}");
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task UpdatePackageFromPMCWhenMinClientVersionIsNotSatisfied_FailsAsync()
+        {
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger);
+
+            var packageName = "PackageA";
+            var installedVersion = "1.0.0";
+            var updateVersion = "2.0.0";
+            var minClientVersion = "100.0.0.1";
+            var installedPackage = CommonUtility.CreatePackage(packageName, installedVersion);
+            var updatePackage = CommonUtility.CreatePackage(packageName, updateVersion);
+            updatePackage.MinClientVersion = minClientVersion;
+            await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, installedPackage);
+
+            var nugetConsole = GetConsole(testContext.Project);
+            var escapedSource = testContext.PackageSource.Replace("'", "''");
+            var escapedProjectName = testContext.Project.Name.Replace("'", "''");
+            nugetConsole.Execute(
+                $"Install-Package {packageName} -ProjectName '{escapedProjectName}' " +
+                $"-Version {installedVersion} -Source '{escapedSource}'");
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, updatePackage);
+
+            var currentVersion = MinClientVersionUtility.GetNuGetClientVersion().ToNormalizedString();
+            var expectedMessage =
+                $"The '{packageName} {updateVersion}' package requires NuGet client version '{minClientVersion}' or above, " +
+                $"but the current NuGet version is '{currentVersion}'. To upgrade NuGet, " +
+                "go to https://docs.nuget.org/consume/installing-nuget";
+
+            nugetConsole.Execute(
+                $"Update-Package {packageName} -ProjectName '{escapedProjectName}' -Source '{escapedSource}'");
+
+            Assert.IsTrue(
+                nugetConsole.IsMessageFoundInPMC(expectedMessage),
+                $"Expected error message was not found in PMC output. Actual output: {nugetConsole.GetText()}");
+            CommonUtility.AssertPackageNotInPackagesConfig(
+                VisualStudio,
+                testContext.Project,
+                packageName,
+                updateVersion,
+                Logger);
+            CommonUtility.AssertPackageInPackagesConfig(
+                VisualStudio,
+                testContext.Project,
+                packageName,
+                installedVersion,
+                Logger);
         }
 
         [TestMethod]
@@ -1252,6 +1388,75 @@ namespace NuGet.Tests.Apex
             CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project2, packageName, packageVersion, Logger);
         }
 
+        [DataTestMethod]
+        [DataRow("HighestPatch", "", "1.0.1")]
+        [DataRow("HighestMinor", "", "1.2.1")]
+        [DataRow("Highest", "", "2.0.1")]
+        [DataRow("Lowest", "", "1.0.0")]
+        [DataRow("", "", "1.0.0")]
+        [DataRow("", "HighestPatch", "1.0.1")]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackageFromPMCWithDependencyVersion_SelectsExpectedDependencyAsync(
+            string dependencyVersion,
+            string configuredDependencyVersion,
+            string expectedDependencyVersion)
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            if (!string.IsNullOrEmpty(configuredDependencyVersion))
+            {
+                simpleTestPathContext.Settings.SetDependencyVersion(configuredDependencyVersion);
+            }
+
+            using var testContext = new ApexTestContext(
+                VisualStudio,
+                ProjectTemplate.ClassLibrary,
+                Logger,
+                simpleTestPathContext: simpleTestPathContext);
+
+            var packageName = "DependencyVersion.A";
+            var packageVersion = "1.0.0";
+            var dependencyName = "DependencyVersion.B";
+            var package = CommonUtility.CreatePackage(packageName, packageVersion);
+            package.Dependencies.Add(CommonUtility.CreatePackage(dependencyName, "[1.0.0,)"));
+
+            await SimpleTestPackageUtility.CreatePackagesWithoutDependenciesAsync(testContext.PackageSource, package);
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                testContext.PackageSource,
+                CommonUtility.CreatePackage(dependencyName, "1.0.0"),
+                CommonUtility.CreatePackage(dependencyName, "1.0.1"),
+                CommonUtility.CreatePackage(dependencyName, "1.2.0"),
+                CommonUtility.CreatePackage(dependencyName, "1.2.1"),
+                CommonUtility.CreatePackage(dependencyName, "2.0.0"),
+                CommonUtility.CreatePackage(dependencyName, "2.0.1"));
+
+            var nugetConsole = GetConsole(testContext.Project);
+            var escapedSource = testContext.PackageSource.Replace("'", "''");
+            var dependencyVersionArgument = string.IsNullOrEmpty(dependencyVersion)
+                ? string.Empty
+                : $" -DependencyVersion {dependencyVersion}";
+
+            nugetConsole.Execute(
+                $"Install-Package {packageName} -Source '{escapedSource}'{dependencyVersionArgument}");
+
+            var consoleText = nugetConsole.GetText();
+            consoleText.Should().NotContain("FullyQualifiedErrorId", because: consoleText);
+            CommonUtility.AssertPackageInPackagesConfig(
+                VisualStudio,
+                testContext.Project,
+                packageName,
+                packageVersion,
+                Logger);
+
+            testContext.NuGetApexTestService
+                .IsPackageInstalledIncludingTransitive(
+                    testContext.Project.UniqueName,
+                    dependencyName,
+                    expectedDependencyVersion)
+                .Should()
+                .BeTrue(because: consoleText);
+        }
+
         [TestMethod]
         [Timeout(DefaultTimeout)]
         public void GetProject_CanAccessProjectName()
@@ -1266,6 +1471,491 @@ namespace NuGet.Tests.Apex
             string pmcText = nugetConsole.GetText();
             pmcText.Should().Contain(testContext.Project.Name, because: pmcText);
             pmcText.Should().NotContain("FullyQualifiedErrorId", because: pmcText);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public void GetProjectFromPMCWithAmbiguousProjectNames_UsesStartupProjectAfterSolutionReload()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            var solutionService = VisualStudio.Get<SolutionService>();
+            solutionService.CreateEmptySolution("TestSolution", pathContext.SolutionRoot);
+
+            var nugetTestService = GetNuGetTestService();
+            var nestedProjectUniqueName = nugetTestService.CreateProjectsWithAmbiguousNames("foo", "A");
+            solutionService.SaveAll();
+
+            var nestedProject = solutionService.GetProjectExtension<ProjectTestExtension>(nestedProjectUniqueName);
+            var nugetConsole = GetConsole(nestedProject);
+            nugetConsole.Clear();
+            nugetConsole.Execute("(Get-Project).UniqueName");
+            Assert.IsTrue(
+                nugetConsole.IsMessageFoundInPMC(nestedProjectUniqueName),
+                $"Expected '{nestedProjectUniqueName}' to be the default project. Actual output: {nugetConsole.GetText()}");
+
+            nugetTestService.SetStartupProject(nestedProjectUniqueName);
+            var solutionPath = solutionService.FilePath!;
+            solutionService.Close();
+            solutionService.WaitForFullyLoadedOnOpen = true;
+            solutionService.Open(solutionPath);
+            solutionService.Verify.HasProject();
+
+            var reloadedNestedProject = solutionService.GetProjectExtension<ProjectTestExtension>(nestedProjectUniqueName);
+            nugetConsole = GetConsole(reloadedNestedProject);
+            nugetConsole.Clear();
+            nugetConsole.Execute("(Get-Project).UniqueName");
+
+            Assert.IsTrue(
+                nugetConsole.IsMessageFoundInPMC(nestedProjectUniqueName),
+                $"Expected '{nestedProjectUniqueName}' to be the default project after reopening the solution. " +
+                $"Actual output: {nugetConsole.GetText()}");
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public void Console_WhenBackspacingSupplementaryCharacter_PreservesRemainingText()
+        {
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreConsoleApp, Logger);
+
+            var nugetConsole = GetConsole(testContext.Project);
+            nugetConsole.Clear();
+
+            string supplementaryCharacter = char.ConvertFromUtf32(0x20000);
+            string input = "A" + supplementaryCharacter;
+
+            nugetConsole.ExecuteWithInputAndBackspace(
+                "$value = Read-Host; Write-Host \"Result=[$value]\"",
+                input);
+
+            string pmcText = nugetConsole.GetText();
+            pmcText.Should().Contain("Result=[A]", because: pmcText);
+            pmcText.Should().NotContain(supplementaryCharacter[0].ToString(), because: pmcText);
+            pmcText.Should().NotContain("FullyQualifiedErrorId", because: pmcText);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackageFromPMCWithPrereleaseWhenLatestIsStable_InstallsStableAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageName = "TestPackage";
+            var prereleaseVersion = "1.0.0-a";
+            var latestStableVersion = "1.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, prereleaseVersion);
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, latestStableVersion);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {testContext.Project.Name} -Source {testContext.PackageSource} -IncludePrerelease");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, latestStableVersion, Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackageFromPMCWithNonNormalizedVersion_InstallsPackageAndDependencyAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageName = "TestPackage";
+            var packageVersion = "1.0.0";
+            var dependencyName = "TestDependency";
+            var dependencyVersion = "1.0.0";
+            await CommonUtility.CreateDependenciesPackageInSourceAsync(testContext.PackageSource, packageName, packageVersion, dependencyName, dependencyVersion);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            // The requested version has four parts while the package on the source has three.
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {testContext.Project.Name} -Source {testContext.PackageSource} -Version 1.0.0.0");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, dependencyName, dependencyVersion, Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackageFromPMCWithDiamondDependencies_InstallsHighestRequiredVersionAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            // D 1.0.0 depends on B 1.0.0 and C 1.0.0, B 1.0.0 depends on A 1.0.0 and C 1.0.0 depends on A 2.0.0.
+            var packageAName = "Diamond.A";
+            var packageBName = "Diamond.B";
+            var packageCName = "Diamond.C";
+            var packageDName = "Diamond.D";
+            var packageA1 = CommonUtility.CreatePackage(packageAName, "1.0.0");
+            var packageA2 = CommonUtility.CreatePackage(packageAName, "2.0.0");
+            var packageB = CommonUtility.CreatePackage(packageBName, "1.0.0");
+            packageB.Dependencies.Add(packageA1);
+            var packageC = CommonUtility.CreatePackage(packageCName, "1.0.0");
+            packageC.Dependencies.Add(packageA2);
+            var packageD = CommonUtility.CreatePackage(packageDName, "1.0.0");
+            packageD.Dependencies.Add(packageB);
+            packageD.Dependencies.Add(packageC);
+            await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, packageD);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package {packageDName} -ProjectName {testContext.Project.Name} -Source {testContext.PackageSource}");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageDName, "1.0.0", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageBName, "1.0.0", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageCName, "1.0.0", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageAName, "2.0.0", Logger);
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, packageAName, "1.0.0", Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackageFromPMCWithSourceName_InstallsPackageAndDependencyAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageName = "TestPackage";
+            var packageVersion = "1.8.0";
+            var dependencyName = "TestDependency";
+            var dependencyVersion = "1.0.0";
+            await CommonUtility.CreateDependenciesPackageInSourceAsync(testContext.PackageSource, packageName, packageVersion, dependencyName, dependencyVersion);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            // The source is referenced by its configured name rather than by its path.
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {testContext.Project.Name} -Source {SimpleTestSettingsContext.DefaultPackageSourceName} -Version {packageVersion}");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, dependencyName, dependencyVersion, Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task InstallPackageFromPMCWithLocalNupkgPath_InstallsPackageAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageName = "TestPackage";
+            var packageVersion = "1.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion);
+            var nupkgPath = Path.Combine(testContext.PackageSource, $"{packageName}.{packageVersion}.nupkg");
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package '{nupkgPath}' -ProjectName {testContext.Project.Name}");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion, Logger);
+        }
+
+        [DataTestMethod]
+        [DataRow("1.0.0-a", "", "1.0.0")]
+        [DataRow("1.0.0-a", " -IncludePrerelease", "1.0.1-a")]
+        [DataRow("1.0.1-a", "", "1.0.1-a")]
+        [DataRow("1.0.1-a", " -Version 1.0.0", "1.0.0")]
+        [Timeout(DefaultTimeout)]
+        public async Task UpdatePackageFromPMCWithPrereleaseVersions_UpdatesToExpectedVersionAsync(
+            string installedVersion,
+            string updateArguments,
+            string expectedVersion)
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageName = "TestPackage";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, "1.0.0-a");
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, "1.0.0");
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, "1.0.1-a");
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {testContext.Project.Name} -Source {testContext.PackageSource} -Version {installedVersion} -IncludePrerelease");
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, installedVersion, Logger);
+
+            nugetConsole.Execute($"Update-Package {packageName} -ProjectName {testContext.Project.Name} -Source {testContext.PackageSource}{updateArguments}");
+            var consoleText = nugetConsole.GetText();
+
+            consoleText.Should().NotContain("FullyQualifiedErrorId", because: consoleText);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, expectedVersion, Logger);
+        }
+
+        [DataTestMethod]
+        [DataRow("-Safe")]
+        [DataRow("-ToHighestPatch")]
+        [Timeout(DefaultTimeout)]
+        public async Task UpdatePackageFromPMCWithSafeFlag_UpdatesOnlySpecifiedPackageToHighestPatchAsync(string safeFlag)
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageAName = "SafeUpdate.A";
+            var packageBName = "SafeUpdate.B";
+            var packageCName = "SafeUpdate.C";
+            await CreateSafeUpdatePackagesAsync(testContext.PackageSource, packageAName, packageBName, packageCName);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package {packageAName} -ProjectName {testContext.Project.Name} -Version 1.0.0 -Source {testContext.PackageSource} -IgnoreDependencies");
+            nugetConsole.Execute($"Install-Package {packageBName} -ProjectName {testContext.Project.Name} -Version 1.0.0 -Source {testContext.PackageSource} -IgnoreDependencies");
+            nugetConsole.Execute($"Install-Package {packageCName} -ProjectName {testContext.Project.Name} -Version 1.0.0 -Source {testContext.PackageSource} -IgnoreDependencies");
+
+            nugetConsole.Execute($"Update-Package {packageAName} -ProjectName {testContext.Project.Name} -Source {testContext.PackageSource} {safeFlag}");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageAName, "1.0.3", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageBName, "1.0.0", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageCName, "1.0.0", Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task UpdateAllPackagesFromPMCWithSafeFlag_UpdatesEveryPackageToHighestPatchAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageAName = "SafeUpdateAll.A";
+            var packageBName = "SafeUpdateAll.B";
+            var packageCName = "SafeUpdateAll.C";
+            await CreateSafeUpdatePackagesAsync(testContext.PackageSource, packageAName, packageBName, packageCName);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package {packageAName} -ProjectName {testContext.Project.Name} -Version 1.0.0 -Source {testContext.PackageSource} -IgnoreDependencies");
+            nugetConsole.Execute($"Install-Package {packageBName} -ProjectName {testContext.Project.Name} -Version 1.0.0 -Source {testContext.PackageSource} -IgnoreDependencies");
+            nugetConsole.Execute($"Install-Package {packageCName} -ProjectName {testContext.Project.Name} -Version 1.0.0 -Source {testContext.PackageSource} -IgnoreDependencies");
+
+            nugetConsole.Execute($"Update-Package -Source {testContext.PackageSource} -Safe");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageAName, "1.0.3", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageBName, "1.0.3", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageCName, "1.0.0.1", Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task UpdatePackageFromPMCWithToHighestMinor_UpdatesPackageAndDependenciesAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageAName = "MinorUpdate.A";
+            var packageBName = "MinorUpdate.B";
+            var packageCName = "MinorUpdate.C";
+            var packageB100 = CommonUtility.CreatePackage(packageBName, "1.0.0");
+            packageB100.Dependencies.Add(CommonUtility.CreatePackage(packageCName, "1.0.0"));
+            var packageA100 = CommonUtility.CreatePackage(packageAName, "1.0.0");
+            packageA100.Dependencies.Add(packageB100);
+            var packageB120 = CommonUtility.CreatePackage(packageBName, "1.2.0");
+            packageB120.Dependencies.Add(CommonUtility.CreatePackage(packageCName, "1.2.0"));
+            var packageA120 = CommonUtility.CreatePackage(packageAName, "1.2.0");
+            packageA120.Dependencies.Add(packageB120);
+            var packageB200 = CommonUtility.CreatePackage(packageBName, "2.0.0");
+            packageB200.Dependencies.Add(CommonUtility.CreatePackage(packageCName, "2.0.0"));
+            var packageA200 = CommonUtility.CreatePackage(packageAName, "2.0.0");
+            packageA200.Dependencies.Add(packageB200);
+            await SimpleTestPackageUtility.CreatePackagesAsync(testContext.PackageSource, packageA100, packageA120, packageA200);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package {packageAName} -ProjectName {testContext.Project.Name} -Version 1.0.0 -Source {testContext.PackageSource}");
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageAName, "1.0.0", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageBName, "1.0.0", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageCName, "1.0.0", Logger);
+
+            nugetConsole.Execute($"Update-Package {packageAName} -ProjectName {testContext.Project.Name} -Source {testContext.PackageSource} -ToHighestMinor");
+
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageAName, "1.2.0", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageBName, "1.2.0", Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageCName, "1.2.0", Logger);
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, packageAName, "1.0.0", Logger);
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, packageBName, "1.0.0", Logger);
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, packageCName, "1.0.0", Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task UpdatePackageFromPMCWithWhatIfDowngrade_DoesNotDowngradeAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageName = "TestPackage";
+            var packageVersion1 = "1.0.0";
+            var packageVersion2 = "2.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion1);
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion2);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.InstallPackageFromPMC(packageName, packageVersion2);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion2, Logger);
+
+            nugetConsole.Execute($"Update-Package {packageName} -ProjectName {testContext.Project.Name} -Version {packageVersion1} -Source {testContext.PackageSource} -WhatIf");
+            var consoleText = nugetConsole.GetText();
+
+            consoleText.Should().NotContain("FullyQualifiedErrorId", because: consoleText);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion2, Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task UpdatePackageFromPMCWithWhatIfInMultipleProjects_DoesNotUpdateAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ConsoleApplication, CommonUtility.DefaultTargetFramework, "TestProject2");
+            testContext.SolutionService.SaveAll();
+
+            var packageName = "TestPackage";
+            var packageVersion1 = "1.0.0";
+            var packageVersion2 = "2.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion1);
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion2);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {testContext.Project.Name} -Version {packageVersion1} -Source {testContext.PackageSource}");
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {project2.Name} -Version {packageVersion1} -Source {testContext.PackageSource}");
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion1, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project2, packageName, packageVersion1, Logger);
+
+            nugetConsole.Execute($"Update-Package {packageName} -Source {testContext.PackageSource} -WhatIf");
+            var consoleText = nugetConsole.GetText();
+
+            consoleText.Should().NotContain("FullyQualifiedErrorId", because: consoleText);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion1, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project2, packageName, packageVersion1, Logger);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task UninstallPackageFromPMCWithSpecificVersion_RemovesOnlyThatVersionAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject2");
+            testContext.SolutionService.SaveAll();
+
+            var packageName = "TestPackage";
+            var packageVersion1 = "1.0.0";
+            var packageVersion2 = "2.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion1);
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion2);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {testContext.Project.Name} -Version {packageVersion1} -Source {testContext.PackageSource}");
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {project2.Name} -Version {packageVersion2} -Source {testContext.PackageSource}");
+
+            nugetConsole.Execute($"Uninstall-Package {packageName} -ProjectName {testContext.Project.Name} -Version {packageVersion1}");
+
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion1, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project2, packageName, packageVersion2, Logger);
+            CommonUtility.WaitForDirectoryNotExists(Path.Combine(simpleTestPathContext.PackagesV2, $"{packageName}.{packageVersion1}"));
+            CommonUtility.WaitForDirectoryExists(Path.Combine(simpleTestPathContext.PackagesV2, $"{packageName}.{packageVersion2}"));
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task UninstallPackageFromPMCWhenUsedByAnotherProject_KeepsPackageInSolutionAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var project2 = testContext.SolutionService.AddProject(ProjectLanguage.CSharp, ProjectTemplate.ClassLibrary, CommonUtility.DefaultTargetFramework, "TestProject2");
+            testContext.SolutionService.SaveAll();
+
+            var packageName = "TestPackage";
+            var packageVersion = "1.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {testContext.Project.Name} -Version {packageVersion} -Source {testContext.PackageSource}");
+            nugetConsole.Execute($"Install-Package {packageName} -ProjectName {project2.Name} -Version {packageVersion} -Source {testContext.PackageSource}");
+
+            nugetConsole.Execute($"Uninstall-Package {packageName} -ProjectName {testContext.Project.Name}");
+
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion, Logger);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, project2, packageName, packageVersion, Logger);
+            CommonUtility.WaitForDirectoryExists(Path.Combine(simpleTestPathContext.PackagesV2, $"{packageName}.{packageVersion}"));
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
+        public async Task UninstallPackageFromPMCWhenNotUsedElsewhere_RemovesPackageFromSolutionAsync()
+        {
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            simpleTestPathContext.Settings.SetPackageFormatToPackagesConfig();
+            using var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ConsoleApplication, Logger, simpleTestPathContext: simpleTestPathContext);
+
+            var packageName = "TestPackage";
+            var packageVersion = "1.0.0";
+            await CommonUtility.CreatePackageInSourceAsync(testContext.PackageSource, packageName, packageVersion);
+
+            var nugetConsole = GetConsole(testContext.Project);
+
+            nugetConsole.InstallPackageFromPMC(packageName, packageVersion);
+            CommonUtility.AssertPackageInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion, Logger);
+            CommonUtility.WaitForDirectoryExists(Path.Combine(simpleTestPathContext.PackagesV2, $"{packageName}.{packageVersion}"));
+
+            nugetConsole.UninstallPackageFromPMC(packageName);
+
+            CommonUtility.AssertPackageNotInPackagesConfig(VisualStudio, testContext.Project, packageName, packageVersion, Logger);
+            CommonUtility.WaitForDirectoryNotExists(Path.Combine(simpleTestPathContext.PackagesV2, $"{packageName}.{packageVersion}"));
+        }
+
+        private static async Task CreateSafeUpdatePackagesAsync(string packageSource, string packageAName, string packageBName, string packageCName)
+        {
+            var packageC100 = CommonUtility.CreatePackage(packageCName, "1.0.0");
+            var packageC10001 = CommonUtility.CreatePackage(packageCName, "1.0.0.1");
+            var packageC200 = CommonUtility.CreatePackage(packageCName, "2.0.0");
+            var packageB100 = CommonUtility.CreatePackage(packageBName, "1.0.0");
+            packageB100.Dependencies.Add(packageC100);
+            var packageB10112 = CommonUtility.CreatePackage(packageBName, "1.0.1.12");
+            var packageB103 = CommonUtility.CreatePackage(packageBName, "1.0.3");
+            packageB103.Dependencies.Add(packageC10001);
+            var packageB200 = CommonUtility.CreatePackage(packageBName, "2.0.0");
+            var packageB201 = CommonUtility.CreatePackage(packageBName, "2.0.1");
+            packageB201.Dependencies.Add(packageC200);
+            var packageA100 = CommonUtility.CreatePackage(packageAName, "1.0.0");
+            packageA100.Dependencies.Add(packageB100);
+            var packageA101 = CommonUtility.CreatePackage(packageAName, "1.0.1");
+            packageA101.Dependencies.Add(packageB100);
+            var packageA103 = CommonUtility.CreatePackage(packageAName, "1.0.3");
+            packageA103.Dependencies.Add(packageB100);
+            var packageA107 = CommonUtility.CreatePackage(packageAName, "1.07");
+            packageA107.Dependencies.Add(packageB100);
+            var packageA200 = CommonUtility.CreatePackage(packageAName, "2.0.0");
+            packageA200.Dependencies.Add(packageB200);
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                packageSource,
+                packageA100,
+                packageA101,
+                packageA103,
+                packageA107,
+                packageA200,
+                packageB10112,
+                packageB103,
+                packageB201);
         }
 
         public static IEnumerable<object[]> GetNetCoreTemplates()

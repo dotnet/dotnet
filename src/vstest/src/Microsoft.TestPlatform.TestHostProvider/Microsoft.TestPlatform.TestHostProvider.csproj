@@ -32,6 +32,11 @@
     -->
     <ProjectReference Include="..\Microsoft.TestPlatform.CrossPlatEngine\Microsoft.TestPlatform.CrossPlatEngine.csproj" />
   </ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <!-- The MTP proxy managers this provider drives are compiled out of source-only builds, so the provider
+         goes with them. Temporary, see dotnet/dotnet#8349 and CrossPlatEngine.csproj. -->
+    <Compile Remove="Hosting\MtpTestRuntimeProvider.cs" />
+  </ItemGroup>
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelPackageVersion)" />
   </ItemGroup>

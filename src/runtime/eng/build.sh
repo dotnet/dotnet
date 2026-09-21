@@ -165,7 +165,7 @@ portableBuild=1
 bootstrap=0
 dynamiccodecompiled=""
 
-source $scriptroot/common/native/init-os-and-arch.sh
+source "$scriptroot"/common/native/init-os-and-arch.sh
 
 hostArch=$arch
 

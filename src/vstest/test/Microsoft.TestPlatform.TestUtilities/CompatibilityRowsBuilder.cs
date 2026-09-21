@@ -116,9 +116,9 @@ public class CompatibilityRowsBuilder
             afterAdapterVersion = ParseAndPatchSemanticVersion(feature.Version);
         }
 
-        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win");
+        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal);
         // Run .NET Framework tests only on Windows.
-        Func<string, bool> filter = tfm => isWindows || !tfm.StartsWith("net4");
+        Func<string, bool> filter = tfm => isWindows || !tfm.StartsWith("net4", StringComparison.Ordinal);
 
         // TODO: maybe we should throw if we don't end up generating any data
         // because none of the versions match, or some other way to identify tests that will never run because they are very outdated.
@@ -209,7 +209,7 @@ public class CompatibilityRowsBuilder
     {
         // Our developer version is 17.2.0-dev, but we release few preview, that are named 17.2.0-preview or 17.2.0-release, yet we still
         // want 17.2.0-dev to be considered the latest version. So we patch it.
-        var v = version != null && version.EndsWith("-dev") ? version?.Substring(0, version.Length - 4) + "-ZZZZZZZZZZ" : version;
+        var v = version != null && version.EndsWith("-dev", StringComparison.Ordinal) ? version?.Substring(0, version.Length - 4) + "-ZZZZZZZZZZ" : version;
         return SemanticVersion.Parse(v?.TrimStart('v'));
     }
 
@@ -221,7 +221,7 @@ public class CompatibilityRowsBuilder
             {
                 foreach (var hostFramework in _hostFrameworks)
                 {
-                    var isNetFramework = hostFramework.StartsWith("net4");
+                    var isNetFramework = hostFramework.StartsWith("net4", StringComparison.Ordinal);
 
                     foreach (var hostVersion in _hostVersions)
                     {
@@ -249,7 +249,7 @@ public class CompatibilityRowsBuilder
     {
         foreach (var runnerFramework in _runnerFrameworks)
         {
-            if (!runnerFramework.StartsWith("net4"))
+            if (!runnerFramework.StartsWith("net4", StringComparison.Ordinal))
             {
                 continue;
             }
@@ -381,7 +381,7 @@ public class CompatibilityRowsBuilder
             true when NuGetVersion.TryParse(version, out var v)
                 && new NuGetVersion(v.Major, v.Minor, v.Patch) < new NuGetVersion("17.3.0") => GetToolsPath("net451"),
             true => GetToolsPath("net462"),
-            false when version.StartsWith("15.") => GetContentFilesPath("netcoreapp2.0"),
+            false when version.StartsWith("15.", StringComparison.Ordinal) => GetContentFilesPath("netcoreapp2.0"),
             false when NuGetVersion.TryParse(version, out var v)
                 && new NuGetVersion(v.Major, v.Minor, v.Patch) < new NuGetVersion("17.4.0") => GetContentFilesPath("netcoreapp2.1"),
             false when NuGetVersion.TryParse(version, out var v)

@@ -25,7 +25,7 @@ Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHangDumpType.get -> str
 Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHangDumpType.set -> void
 Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHangTimeout.get -> string?
 Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestBlameHangTimeout.set -> void
-Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestCLIRunSettings.get -> string![]?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestCLIRunSettings.get -> string?
 Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestCLIRunSettings.set -> void
 Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestCollect.get -> string![]?
 Microsoft.TestPlatform.Build.Tasks.VSTestTask.VSTestCollect.set -> void
@@ -77,7 +77,7 @@ Microsoft.TestPlatform.Build.Tasks.VSTestTask2.VSTestBlameHangDumpType.get -> st
 Microsoft.TestPlatform.Build.Tasks.VSTestTask2.VSTestBlameHangDumpType.set -> void
 Microsoft.TestPlatform.Build.Tasks.VSTestTask2.VSTestBlameHangTimeout.get -> string?
 Microsoft.TestPlatform.Build.Tasks.VSTestTask2.VSTestBlameHangTimeout.set -> void
-Microsoft.TestPlatform.Build.Tasks.VSTestTask2.VSTestCLIRunSettings.get -> string![]?
+Microsoft.TestPlatform.Build.Tasks.VSTestTask2.VSTestCLIRunSettings.get -> string?
 Microsoft.TestPlatform.Build.Tasks.VSTestTask2.VSTestCLIRunSettings.set -> void
 Microsoft.TestPlatform.Build.Tasks.VSTestTask2.VSTestCollect.get -> string![]?
 Microsoft.TestPlatform.Build.Tasks.VSTestTask2.VSTestCollect.set -> void

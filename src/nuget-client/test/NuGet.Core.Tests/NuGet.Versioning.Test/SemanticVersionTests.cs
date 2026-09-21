@@ -7,6 +7,26 @@ namespace NuGet.Versioning.Test
 {
     public class SemanticVersionTests
     {
+        [Fact]
+        public void RelationalOperators_WithNullVersions_UseComparerOrdering()
+        {
+            SemanticVersion? version = SemanticVersion.Parse("1.0.0");
+            SemanticVersion? nullVersion = null;
+
+            Assert.True(nullVersion < version);
+            Assert.True(nullVersion <= version);
+            Assert.False(nullVersion > version);
+            Assert.False(nullVersion >= version);
+            Assert.False(version < nullVersion);
+            Assert.False(version <= nullVersion);
+            Assert.True(version > nullVersion);
+            Assert.True(version >= nullVersion);
+            Assert.False(nullVersion < null);
+            Assert.True(nullVersion <= null);
+            Assert.False(nullVersion > null);
+            Assert.True(nullVersion >= null);
+        }
+
         [Theory]
         [InlineData("1.0.0")]
         [InlineData("0.0.1")]

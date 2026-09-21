@@ -1057,12 +1057,12 @@ public abstract class UdfDbFunctionTestBase<TFixture>(TFixture fixture) : IClass
         Assert.Equal(4, query.Count);
     }
 
-#if RELEASE
     [Fact]
     public virtual void Scalar_Function_with_nullable_value_return_type_throws()
     {
         using var context = CreateContext();
 
+#if RELEASE
         var exception = Assert.Throws<InvalidOperationException>(
             () => context.Customers.Where(c => c.Id == UDFSqlContext.NullableValueReturnType()).ToList());
 
@@ -1071,8 +1071,11 @@ public abstract class UdfDbFunctionTestBase<TFixture>(TFixture fixture) : IClass
                 context.Model.FindDbFunction(typeof(UDFSqlContext).GetMethod(nameof(UDFSqlContext.NullableValueReturnType))!)!.ModelName,
                 "int?"),
             exception.Message);
-    }
+#else
+        Assert.Throws<UnreachableException>(
+            () => context.Customers.Where(c => c.Id == UDFSqlContext.NullableValueReturnType()).ToList());
 #endif
+    }
 
     #endregion
 

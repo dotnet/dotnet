@@ -396,7 +396,15 @@ namespace NuGetConsole.Host.PowerShell.Implementation
                         {
                             if (builder.Length > 0)
                             {
-                                builder.Remove(builder.Length - 1, 1);
+                                int removeCount = 1;
+                                if (builder.Length >= 2
+                                    && char.IsLowSurrogate(builder[builder.Length - 1])
+                                    && char.IsHighSurrogate(builder[builder.Length - 2]))
+                                {
+                                    removeCount = 2;
+                                }
+
+                                builder.Remove(builder.Length - removeCount, removeCount);
                                 NuGetUIThreadHelper.JoinableTaskFactory.Run(() => Console.WriteBackspaceAsync());
                             }
                         }

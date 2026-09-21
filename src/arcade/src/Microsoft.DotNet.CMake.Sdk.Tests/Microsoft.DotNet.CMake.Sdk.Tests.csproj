@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(BundledNETCoreAppTargetFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.DotNet.CMake.Sdk\Microsoft.DotNet.CMake.Sdk.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\Microsoft.DotNet.CMake.Sdk\build\Microsoft.DotNet.CMake.Sdk.targets"
+             Link="testassets\CMakeSdkBuild\Microsoft.DotNet.CMake.Sdk.targets"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

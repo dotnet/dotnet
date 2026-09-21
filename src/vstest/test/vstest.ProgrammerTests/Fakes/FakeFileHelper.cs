@@ -45,7 +45,7 @@ internal class FakeFileHelper : IFileHelper
     {
         TPDebug.Assert(path is not null, "path is null");
         // TODO: Check if any file has the directory in name. This will improve.
-        var directoryExists = Files.Select(f => Path.GetDirectoryName(f.Path)).Any(p => p != null && p.StartsWith(path!));
+        var directoryExists = Files.Select(f => Path.GetDirectoryName(f.Path)).Any(p => p != null && p.StartsWith(path!, StringComparison.Ordinal));
         return directoryExists;
     }
 

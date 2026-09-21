@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using NuGet.LibraryModel;
@@ -19,19 +17,19 @@ namespace NuGet.DependencyResolver
         }
 
         public LibraryIdentity Key { get; set; }
-        public TItem Data { get; set; }
+        public TItem Data { get; set; } = default!;
 
         /// <summary>
         /// If set it will indicate that the graph node was created due to a transitive dependency for a package that was also defined in the central packages management file. 
         /// </summary>
         public bool IsCentralTransitive { get; set; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as GraphItem<TItem>);
         }
 
-        public bool Equals(GraphItem<TItem> other)
+        public bool Equals(GraphItem<TItem>? other)
         {
             return other != null &&
                 KeyCompare(other) &&
@@ -49,11 +47,7 @@ namespace NuGet.DependencyResolver
 
         private bool KeyCompare(GraphItem<TItem> other)
         {
-            if (Key == null)
-            {
-                return other.Key == null;
-            }
-            return Key.Equals(other.Key);
+            return Key?.Equals(other.Key) ?? other.Key == null;
         }
     }
 }

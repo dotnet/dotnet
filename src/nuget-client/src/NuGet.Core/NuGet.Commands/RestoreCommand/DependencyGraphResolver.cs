@@ -425,7 +425,9 @@ namespace NuGet.Commands
                         }
 
                         // Verify downgrades only if the resolved dependency has a lower version than what was defined
-                        if (!RemoteDependencyWalker.IsGreaterThanOrEqualTo(childResolvedLibraryDependency.LibraryRange.VersionRange, childLibraryDependency.LibraryRange.VersionRange))
+                        if (!RemoteDependencyWalker.IsGreaterThanOrEqualTo(
+                            childResolvedLibraryDependency.LibraryRange.VersionRange!,
+                            childLibraryDependency.LibraryRange.VersionRange!))
                         {
                             // It is not a downgrade if: the dependency is transitive and is suppressed its parent or any of those parents' parent because the suppressions is an aggregate of everything suppressed above.
                             // For example, A -> B (PrivateAssets=All) -> C
@@ -540,6 +542,7 @@ namespace NuGet.Commands
                         Item = childResolvedDependencyGraphItem.Item
                     };
 
+                    GraphNode<RemoteResolveResult> parentGraphNode;
                     if (childResolvedDependencyGraphItem.IsCentrallyPinnedTransitivePackage && !childResolvedDependencyGraphItem.IsRootPackageReference)
                     {
                         // If this child is transitively pinned, the GraphNode needs to have certain properties set
@@ -547,22 +550,25 @@ namespace NuGet.Commands
                         newGraphNode.Item.IsCentralTransitive = true;
 
                         // Treat the transitively pinned dependency as a child of the root node
-                        newGraphNode.OuterNode = rootGraphNode;
-                        rootGraphNode.InnerNodes.Add(newGraphNode);
+                        parentGraphNode = rootGraphNode;
                     }
                     else
                     {
                         // Set properties for the node to represent a parent/child relationship
-                        newGraphNode.OuterNode = currentGraphNode;
-                        currentGraphNode.InnerNodes.Add(newGraphNode);
+                        parentGraphNode = currentGraphNode;
                     }
+
+                    newGraphNode.OuterNode = parentGraphNode;
+                    parentGraphNode.InnerNodes.Add(newGraphNode);
 
                     if (!childResolvedDependencyGraphItem.IsRootPackageReference
                         && isCentralPackageTransitivePinningEnabled
                         && childLibraryDependency.SuppressParent != LibraryIncludeFlags.All
                         && !downgrades.ContainsKey(childResolvedLibraryRangeIndex)
                         && childLibraryDependency.LibraryRange.VersionRange != VersionRange.All
-                        && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(childResolvedDependencyGraphItem.LibraryDependency.LibraryRange.VersionRange, childLibraryDependency.LibraryRange.VersionRange))
+                        && !RemoteDependencyWalker.IsGreaterThanOrEqualTo(
+                            childResolvedDependencyGraphItem.LibraryDependency.LibraryRange.VersionRange!,
+                            childLibraryDependency.LibraryRange.VersionRange!))
                     {
                         // This is a downgrade if:
                         // 1. This is not a direct dependency
@@ -638,7 +644,7 @@ namespace NuGet.Commands
                     {
                         // Keep track of the resolved packages
                         resolvedPackages.Add(new ResolvedDependencyKey(
-                            parent: newGraphNode.OuterNode.Item.Key,
+                            parent: parentGraphNode.Item!.Key,
                             range: newGraphNode.Key.VersionRange,
                             child: newGraphNode.Item.Key));
                     }
@@ -758,7 +764,11 @@ namespace NuGet.Commands
         {
             LibraryRange libraryRange = libraryDependency.LibraryRange;
 
-            if (runtimeGraph == null || string.IsNullOrEmpty(runtimeIdentifier) || !RemoteDependencyWalker.EvaluateRuntimeDependencies(ref libraryRange, runtimeIdentifier, runtimeGraph, ref runtimeDependencies))
+            if (runtimeGraph == null || runtimeIdentifier is not string runtimeName || runtimeName.Length == 0)
+            {
+                return false;
+            }
+            if (!RemoteDependencyWalker.EvaluateRuntimeDependencies(ref libraryRange, runtimeName, runtimeGraph, ref runtimeDependencies))
             {
                 return false;
             }

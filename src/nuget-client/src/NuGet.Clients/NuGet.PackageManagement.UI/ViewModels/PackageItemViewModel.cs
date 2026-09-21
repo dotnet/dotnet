@@ -518,6 +518,8 @@ namespace NuGet.PackageManagement.UI
 
         public IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo> Vulnerabilities => (_packageModel as IVulnerableCapable)?.Vulnerabilities ?? [];
 
+        public bool IsAuditSourceConfigured => _vulnerabilityService?.IsAuditSourceConfigured ?? false;
+
         public void UpdateTransitiveInfo(PackageSearchMetadataContextInfo metadataContextInfo)
         {
             if (metadataContextInfo.TransitiveOrigins == null)
@@ -818,6 +820,35 @@ namespace NuGet.PackageManagement.UI
             NuGetUIThreadHelper.JoinableTaskFactory
                 .RunAsync(() => UpdatePackageMaxVulnerabilityAsync(packageIdentity, _cancellationToken))
                 .PostOnFailure(nameof(PackageItemViewModel), nameof(UpdatePackageMaxVulnerabilityAsync));
+        }
+
+        public async Task<IReadOnlyDictionary<NuGetVersion, int>> GetVulnerableVersionsAsync(
+            IReadOnlyCollection<NuGetVersion> versions,
+            CancellationToken cancellationToken)
+        {
+            if (_vulnerabilityService is null || versions is null || versions.Count == 0)
+            {
+                return ImmutableDictionary<NuGetVersion, int>.Empty;
+            }
+
+            return await _vulnerabilityService.GetVulnerableVersionsAsync(Id, versions, cancellationToken);
+        }
+
+        public async Task<IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo>> GetVulnerabilityInfoAsync(
+            NuGetVersion version,
+            CancellationToken cancellationToken)
+        {
+            if (_vulnerabilityService is null)
+            {
+                return Array.Empty<PackageVulnerabilityMetadataContextInfo>();
+            }
+
+            List<PackageVulnerabilityMetadataContextInfo> vulnerabilities =
+                await _vulnerabilityService.GetVulnerabilityInfoAsync(
+                    new PackageIdentity(Id, version),
+                    cancellationToken);
+
+            return vulnerabilities ?? (IReadOnlyCollection<PackageVulnerabilityMetadataContextInfo>)Array.Empty<PackageVulnerabilityMetadataContextInfo>();
         }
 
         public async Task UpdatePackageStatusAsync(IEnumerable<PackageCollectionItem> installedPackages, CancellationToken cancellationToken, bool clearCache = false)

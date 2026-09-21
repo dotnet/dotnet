@@ -13,15 +13,25 @@ namespace NuGet.Protocol.Core.Types
 
         static NuGetTestMode()
         {
-            // cached for the life-time of the app domain
-            Enabled = FromEnvironmentVariable();
-            StaticState.StartMSBuildRestoreTasks += ResetCache;
+            StaticState.BuildEnded += ResetCache;
         }
 
-        public static bool Enabled { get; private set; }
+        private static bool? s_enabled;
 
-        /// <summary>Re-reads <c>NuGetTestModeEnabled</c> from the current environment.</summary>
-        internal static void ResetCache() => Enabled = FromEnvironmentVariable();
+        public static bool Enabled
+        {
+            get
+            {
+                // Computed on first use rather than in the reset, so a process reused across builds reads
+                // NuGetTestModeEnabled from the environment of the build that uses it.
+                s_enabled ??= FromEnvironmentVariable();
+                return s_enabled.Value;
+            }
+            private set => s_enabled = value;
+        }
+
+        /// <summary>Discards the cached <c>NuGetTestModeEnabled</c> value so it is re-read on next use.</summary>
+        internal static void ResetCache() => s_enabled = null;
 
         private static bool FromEnvironmentVariable()
         {

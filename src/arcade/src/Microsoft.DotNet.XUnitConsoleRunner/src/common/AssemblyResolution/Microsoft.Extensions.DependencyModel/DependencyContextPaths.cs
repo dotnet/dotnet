@@ -5,56 +5,55 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Internal.Microsoft.Extensions.DependencyModel
+namespace Internal.Microsoft.Extensions.DependencyModel;
+
+internal class DependencyContextPaths
 {
-    internal class DependencyContextPaths
+    private static readonly string DepsFilesProperty = "APP_CONTEXT_DEPS_FILES";
+    private static readonly string FxDepsFileProperty = "FX_DEPS_FILE";
+
+    public static DependencyContextPaths Current { get; } = GetCurrent();
+
+    public string Application { get; }
+
+    public string SharedRuntime { get; }
+
+    public IEnumerable<string> NonApplicationPaths { get; }
+
+    public DependencyContextPaths(
+        string application,
+        string sharedRuntime,
+        IEnumerable<string> nonApplicationPaths)
     {
-        private static readonly string DepsFilesProperty = "APP_CONTEXT_DEPS_FILES";
-        private static readonly string FxDepsFileProperty = "FX_DEPS_FILE";
+        Application = application;
+        SharedRuntime = sharedRuntime;
+        NonApplicationPaths = nonApplicationPaths ?? Enumerable.Empty<string>();
+    }
 
-        public static DependencyContextPaths Current { get; } = GetCurrent();
-
-        public string Application { get; }
-
-        public string SharedRuntime { get; }
-
-        public IEnumerable<string> NonApplicationPaths { get; }
-
-        public DependencyContextPaths(
-            string application,
-            string sharedRuntime,
-            IEnumerable<string> nonApplicationPaths)
-        {
-            Application = application;
-            SharedRuntime = sharedRuntime;
-            NonApplicationPaths = nonApplicationPaths ?? Enumerable.Empty<string>();
-        }
-
-        private static DependencyContextPaths GetCurrent()
-        {
+    private static DependencyContextPaths GetCurrent()
+    {
 #if NETCOREAPP
-            var deps = AppContext.GetData(DepsFilesProperty);
-            var fxDeps = AppContext.GetData(FxDepsFileProperty);
+        var deps = AppContext.GetData(DepsFilesProperty);
+        var fxDeps = AppContext.GetData(FxDepsFileProperty);
 #else
-            var deps = AppDomain.CurrentDomain.GetData(DepsFilesProperty);
-            var fxDeps = AppDomain.CurrentDomain.GetData(FxDepsFileProperty);
+        var deps = AppDomain.CurrentDomain.GetData(DepsFilesProperty);
+        var fxDeps = AppDomain.CurrentDomain.GetData(FxDepsFileProperty);
 #endif
-            return Create(deps as string, fxDeps as string);
-        }
+        return Create(deps as string, fxDeps as string);
+    }
 
-        internal static DependencyContextPaths Create(string depsFiles, string sharedRuntime)
-        {
-            var files = depsFiles?.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            var application = files != null && files.Length > 0 ? files[0] : null;
+    internal static DependencyContextPaths Create(string depsFiles, string sharedRuntime)
+    {
+        var files = depsFiles?.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+        var application = files != null && files.Length > 0 ? files[0] : null;
 
-            var nonApplicationPaths = files?
-                .Skip(1) // the application path
-                .ToArray();
+        var nonApplicationPaths = files?
+            .Skip(1) // the application path
+            .ToArray();
 
-            return new DependencyContextPaths(
-                application,
-                sharedRuntime,
-                nonApplicationPaths);
-        }
+        return new DependencyContextPaths(
+            application,
+            sharedRuntime,
+            nonApplicationPaths);
     }
 }

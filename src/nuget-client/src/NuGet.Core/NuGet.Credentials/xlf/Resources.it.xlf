@@ -57,6 +57,11 @@
         <target state="translated">Il provider di credenziali ha restituito una risposta non valida.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SecurePluginException_ConnectionClosed">
+        <source>The connection to credential plugin '{0}' was closed before it answered the credential request. The plugin process may have exited or been shut down while the request was in flight.</source>
+        <target state="translated">La connessione al plug-in delle credenziali ''{0}'' è stata chiusa prima che rispondesse alla richiesta di credenziali. Il processo del plug-in potrebbe essere stato chiuso o arrestato mentre la richiesta era in esecuzione.</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
       <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
         <source>Using {0} as a credential provider plugin.</source>
         <target state="translated">{0} verrà usato come plug-in del provider di credenziali.</target>

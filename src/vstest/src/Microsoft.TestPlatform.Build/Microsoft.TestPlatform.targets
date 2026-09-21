@@ -12,8 +12,8 @@ Copyright (c) .NET Foundation. All rights reserved.
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Load Microsoft.TestPlatform.Build.Tasks.dll, this can be overridden to use a different version with $(VSTestTaskAssemblyFile) -->
   <PropertyGroup>
-    <VSTestTaskAssemblyFile Condition="$(VSTestTaskAssemblyFile) == ''">Microsoft.TestPlatform.Build.dll</VSTestTaskAssemblyFile>
-    <VSTestConsolePath Condition="$(VSTestConsolePath) == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),"vstest.console.dll"))</VSTestConsolePath>
+    <VSTestTaskAssemblyFile Condition="'$(VSTestTaskAssemblyFile)' == ''">Microsoft.TestPlatform.Build.dll</VSTestTaskAssemblyFile>
+    <VSTestConsolePath Condition="'$(VSTestConsolePath)' == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory),"vstest.console.dll"))</VSTestConsolePath>
     <VSTestNoBuild Condition="'$(VSTestNoBuild)' == ''">False</VSTestNoBuild>
     <VsTestUseMSBuildOutput Condition="'$(VsTestUseMSBuildOutput)' == ''">False</VsTestUseMSBuildOutput>
   </PropertyGroup>
@@ -30,10 +30,10 @@ Copyright (c) .NET Foundation. All rights reserved.
   <Target Name="VSTest" DependsOnTargets="ShowInfoMessageIfProjectHasNoIsTestProjectProperty">
     <!-- Unloggable colorized output (cf. https://github.com/microsoft/vstest/issues/680) -->
     <!-- Fallback to this old view when terminal logger is not enabled (_MSBUILDTLENABLED==0) , or when user explicitly opts out (VsTestUseMSBuildOutput != true) -->
-    <CallTarget Targets="_VSTestConsole" Condition="$(_MSBUILDTLENABLED) == '0' OR !$(VsTestUseMSBuildOutput) OR $(MSBUILDENSURESTDOUTFORTASKPROCESSES) == '1'" />
+    <CallTarget Targets="_VSTestConsole" Condition="'$(_MSBUILDTLENABLED)' == '0' OR '$(VsTestUseMSBuildOutput)' != 'true' OR '$(MSBUILDENSURESTDOUTFORTASKPROCESSES)' == '1'" />
     <!-- Proper MSBuild integration, but no custom colorization -->
-    <!-- Use the new view whe terminal logger is enabled (_MSBUILDTLENABLED==0), and user did not opt out (VsTestUseMSBuildOutput == true) -->
-    <CallTarget Targets="_VSTestMSBuild" Condition="$(_MSBUILDTLENABLED) == '1' AND $(VsTestUseMSBuildOutput)" />
+    <!-- Use the new view when terminal logger is enabled (_MSBUILDTLENABLED==1), and user did not opt out (VsTestUseMSBuildOutput == true) -->
+    <CallTarget Targets="_VSTestMSBuild" Condition="'$(_MSBUILDTLENABLED)' == '1' AND '$(VsTestUseMSBuildOutput)' == 'true'" />
   </Target>
 
   <!--
@@ -42,7 +42,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     the test running. This is used in MSBuild Terminal Logger to detect that the current project will run some tests.
   -->
   <Target Name="_VSTestMSBuild" Condition="'$(IsTestProject)' == 'true'">
-    <CallTarget Condition="!$(VSTestNoBuild)" Targets="BuildProject" />
+    <CallTarget Condition="'$(VSTestNoBuild)' != 'true'" Targets="BuildProject" />
     <CallTarget Targets="_TestRunStart" />
 
     <VSTestTask2

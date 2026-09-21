@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text;
 
 namespace NuGet.Configuration
@@ -46,7 +45,7 @@ namespace NuGet.Configuration
             }
 
             packageSourceKey = packageSourceKey.Trim();
-            packagePattern = packagePattern.ToLower(CultureInfo.CurrentCulture).Trim();
+            packagePattern = packagePattern.ToLowerInvariant().Trim();
 
             for (int i = 0; i < packagePattern.Length; i++)
             {
@@ -110,7 +109,7 @@ namespace NuGet.Configuration
                 throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Empty_Or_WhiteSpaceOnly, nameof(term));
             }
 
-            term = term.ToLower(CultureInfo.CurrentCulture).Trim();
+            term = term.ToLowerInvariant().Trim();
 
             SearchNode currentNode = _root;
             SearchNode? longestMatchingPrefixNode = null;
@@ -154,7 +153,7 @@ namespace NuGet.Configuration
                 throw new ArgumentException(Resources.Argument_Cannot_Be_Null_Empty_Or_WhiteSpaceOnly, nameof(term));
             }
 
-            term = term.ToLower(CultureInfo.CurrentCulture).Trim();
+            term = term.ToLowerInvariant().Trim();
 
             StringBuilder sb = new StringBuilder();
             SearchNode currentNode = _root;

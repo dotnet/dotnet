@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <Description>NuGet's Visual Studio Solution Restore Manager.</Description>
+    <VSSDKBuildToolsAutoSetup>true</VSSDKBuildToolsAutoSetup>
+    <UseCodebase>false</UseCodebase>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
-    <ImportVSSDKTargets>true</ImportVSSDKTargets>
     <CreateVsixContainer>false</CreateVsixContainer>
     <DeployExtension>false</DeployExtension>
     <IncludeInVSIX>true</IncludeInVSIX>
@@ -20,7 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
   </ItemGroup>
 

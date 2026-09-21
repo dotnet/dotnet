@@ -1228,6 +1228,9 @@ namespace Microsoft.Build.Execution
 
                             _buildTelemetry.BuildCheckEnabled = _buildParameters!.IsBuildCheckEnabled;
                             _buildTelemetry.MultiThreadedModeEnabled = _buildParameters!.MultiThreaded;
+                            _buildTelemetry.TaskHostConsoleOutputForwarded = ((IBuildComponentHost)this)
+                                .GetComponent<NodeProviderOutOfProcTaskHost>(BuildComponentType.OutOfProcTaskHostNodeProvider)
+                                .ConsoleOutputForwarded;
                             var sacState = NativeMethodsShared.GetSACState();
                             // The Enforcement would lead to build crash - but let's have the check for completeness sake.
                             _buildTelemetry.SACEnabled = sacState == NativeMethodsShared.SAC_State.Evaluation || sacState == NativeMethodsShared.SAC_State.Enforcement;
@@ -1247,6 +1250,9 @@ namespace Microsoft.Build.Execution
                             }
 
                             EndBuildTelemetry();
+
+                            // Telemetry is logged after BuildFinished; drain it before forwarding loggers shut down.
+                            WaitForAllLoggingServiceEventsToBeProcessed();
 
                             // Clean telemetry to make it ready for next build submission.
                             _buildTelemetry = null;
@@ -1514,6 +1520,13 @@ namespace Microsoft.Build.Execution
 
             _nodeManager ??= (INodeManager)((IBuildComponentHost)this).GetComponent(BuildComponentType.NodeManager);
             _nodeManager.ShutdownAllNodes();
+            lock (_syncLock)
+            {
+                if (_buildManagerState == BuildManagerState.Idle)
+                {
+                    _taskHostNodeManager?.ShutdownConnectedNodes(enableReuse: false);
+                }
+            }
         }
 
         /// <summary>
@@ -1789,9 +1802,9 @@ namespace Microsoft.Build.Execution
                             {
                                 ExecuteGraphBuildScheduler(submission);
                             }
-                            catch (Exception ex) when (!ExceptionHandling.IsCriticalException(ex))
+                            catch (Exception ex)
                             {
-                                HandleSubmissionException(submission, ex);
+                                HandleGraphSubmissionException(submission, ex);
                             }
                         },
                         _executionCancellationTokenSource!.Token,
@@ -1800,10 +1813,22 @@ namespace Microsoft.Build.Execution
                 }
             }
             // The handling of submission exception needs to be done outside of the lock
-            catch (Exception ex) when (!ExceptionHandling.IsCriticalException(ex))
+            catch (Exception ex)
+            {
+                HandleGraphSubmissionException(submission, ex);
+                throw;
+            }
+        }
+
+        private void HandleGraphSubmissionException(GraphBuildSubmission submission, Exception ex)
+        {
+            if (ExceptionHandling.IsCriticalException(ex))
+            {
+                OnThreadException(ex);
+            }
+            else
             {
                 HandleSubmissionException(submission, ex);
-                throw;
             }
         }
 
@@ -2503,6 +2528,7 @@ namespace Microsoft.Build.Execution
 
             _nodeManager?.ClearPerBuildState();
             _nodeManager = null;
+            _taskHostNodeManager?.ClearPerBuildState();
 
             _shuttingDown = false;
             _executionCancellationTokenSource?.Dispose();
@@ -3569,7 +3595,10 @@ namespace Microsoft.Build.Execution
                         s_singletonInstance = null;
                     }
 
-                    TelemetryManager.Instance.Dispose();
+                    // The telemetry session is process wide and is owned by whoever initialized it (the MSBuild
+                    // entry point, or the host such as Visual Studio). A BuildManager is not its owner, so it must
+                    // not tear it down here - doing so would kill telemetry (including crash telemetry) for the
+                    // rest of the process, which still runs after the build manager is disposed.
 
                     _disposed = true;
                 }

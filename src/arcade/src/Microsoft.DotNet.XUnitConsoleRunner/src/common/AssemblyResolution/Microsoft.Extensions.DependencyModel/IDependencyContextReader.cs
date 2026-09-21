@@ -4,10 +4,9 @@
 using System;
 using System.IO;
 
-namespace Internal.Microsoft.Extensions.DependencyModel
+namespace Internal.Microsoft.Extensions.DependencyModel;
+
+internal interface IDependencyContextReader: IDisposable
 {
-    internal interface IDependencyContextReader: IDisposable
-    {
-        DependencyContext Read(Stream stream);
-    }
+    DependencyContext Read(Stream stream);
 }

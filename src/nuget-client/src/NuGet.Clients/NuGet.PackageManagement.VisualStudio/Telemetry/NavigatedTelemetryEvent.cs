@@ -96,11 +96,13 @@ namespace NuGet.PackageManagement.Telemetry
         }
 
         /// <summary>
-        /// Navigating from the Package Source Mapping VS Options page using the button for the command to Review current or potential use of the feature.
+        /// Navigating to resolve supply chain security with GitHub Copilot from a specific origin.
         /// </summary>
-        public static NavigatedTelemetryEvent CreateWithReviewPackageSourceMappingCommand(CopilotToolSessionError errorType)
+        public static NavigatedTelemetryEvent CreateWithResolveSupplyChainSecurity(
+            NavigationOrigin navigationOrigin,
+            CopilotToolSessionError errorType)
         {
-            NavigatedTelemetryEvent navigatedTelemetryEvent = new(NavigationType.Button, NavigationOrigin.Options_PackageSourceMapping_Review);
+            NavigatedTelemetryEvent navigatedTelemetryEvent = new(NavigationType.Button, navigationOrigin);
             navigatedTelemetryEvent[ErrorTypePropertyName] = errorType;
             return navigatedTelemetryEvent;
         }

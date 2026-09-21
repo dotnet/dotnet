@@ -457,6 +457,11 @@
         <target state="translated">ヘルプ アイコン</target>
         <note />
       </trans-unit>
+      <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="translated">GitHub Copilot を使用して修正する</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Label_Action">
         <source>Action:</source>
         <target state="translated">アクション:</target>
@@ -580,7 +585,12 @@
       <trans-unit id="Label_Installed_VulnerableWarning">
         <source>You have {0} vulnerable package versions installed.</source>
         <target state="translated">脆弱性のあるパッケージが {0} 個インストールされています。</target>
-        <note>{0} is the number of installed package versions</note>
+        <note>{0} is the number of installed package versions (always more than 1)</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableWarning_Single">
+        <source>You have 1 vulnerable package version installed.</source>
+        <target state="translated">脆弱性のあるパッケージが 1 個インストールされています。</target>
+        <note />
       </trans-unit>
       <trans-unit id="Label_License">
         <source>License:</source>
@@ -1277,8 +1287,8 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
-        <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">この操作は開始した後に取り消すことはできません。</target>
+        <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
+        <target state="translated">この操作は一旦開始すると取り消すことはできません。続行するには [OK] を選択します。</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

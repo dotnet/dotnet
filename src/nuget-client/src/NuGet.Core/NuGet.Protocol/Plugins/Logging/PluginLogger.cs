@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using NuGet.Common;
 
 namespace NuGet.Protocol.Plugins
@@ -20,26 +19,46 @@ namespace NuGet.Protocol.Plugins
 
         static PluginLogger()
         {
-            // Plugin logging is configured from NUGET_PLUGIN_ENABLE_LOG / NUGET_PLUGIN_LOG_DIRECTORY_PATH, which are
-            // read once when an instance is created. In a process reused across builds, re-read them at the start of
-            // each restore so a toggled environment variable takes effect.
-            StaticState.StartMSBuildRestoreTasks += ResetDefaultInstance;
+            // The log file is a live OS resource written to by the plugins, so it is discarded together with them
+            // when the build ends.
+            StaticState.BuildEnded += ResetDefaultInstance;
         }
 
-        internal static PluginLogger DefaultInstance => s_defaultInstanceBackingField;
-
-        private static PluginLogger s_defaultInstanceBackingField = new PluginLogger(EnvironmentVariableWrapper.Instance);
+        private static readonly object s_defaultInstanceLock = new object();
+        private static PluginLogger? s_defaultInstance;
 
         /// <summary>
-        /// Recreates <see cref="DefaultInstance" /> from the current environment so a process reused across builds
-        /// observes the current plugin-logging configuration on the next restore, and disposes the previous instance
-        /// to close its log file. Safe because plugins (and their loggers) from the prior restore are already torn
-        /// down by the end-of-restore reset before this runs at the start of the next restore.
+        /// The process-wide logger, created on first use after each reset so that a process reused across builds
+        /// reads <c>NUGET_PLUGIN_ENABLE_LOG</c> and <c>NUGET_PLUGIN_LOG_DIRECTORY_PATH</c> from the environment of the
+        /// build that actually uses it.
+        /// </summary>
+        internal static PluginLogger DefaultInstance
+        {
+            get
+            {
+                lock (s_defaultInstanceLock)
+                {
+                    return s_defaultInstance ??= new PluginLogger(EnvironmentVariableWrapper.Instance);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Discards <see cref="DefaultInstance" />, closing its log file, so that the next build builds a new one from
+        /// its own environment. Subscribed to <see cref="StaticState.BuildEnded" />, which runs once the
+        /// plugins that write to the log are being torn down.
         /// </summary>
         internal static void ResetDefaultInstance()
         {
-            PluginLogger previous = Interlocked.Exchange(ref s_defaultInstanceBackingField, new PluginLogger(EnvironmentVariableWrapper.Instance));
-            previous.Dispose();
+            PluginLogger? previous;
+
+            lock (s_defaultInstanceLock)
+            {
+                previous = s_defaultInstance;
+                s_defaultInstance = null;
+            }
+
+            previous?.Dispose();
         }
 
         public bool IsEnabled { get; }
@@ -79,16 +98,22 @@ namespace NuGet.Protocol.Plugins
 
         public void Dispose()
         {
-            if (!_isDisposed)
+            lock (_streamWriterLock)
             {
+                if (_isDisposed)
+                {
+                    return;
+                }
+
                 if (_streamWriter.IsValueCreated)
                 {
                     _streamWriter.Value.Dispose();
                 }
 
-                GC.SuppressFinalize(this);
                 _isDisposed = true;
             }
+
+            GC.SuppressFinalize(this);
         }
 
         public void Write(IPluginLogMessage message)
@@ -98,11 +123,6 @@ namespace NuGet.Protocol.Plugins
                 return;
             }
 
-            if (_isDisposed)
-            {
-                throw new ObjectDisposedException(nameof(PluginLogger));
-            }
-
             if (message == null)
             {
                 throw new ArgumentException(Strings.ArgumentCannotBeNullOrEmpty, nameof(message));
@@ -110,6 +130,15 @@ namespace NuGet.Protocol.Plugins
 
             lock (_streamWriterLock)
             {
+                if (_isDisposed)
+                {
+                    // A plugin can outlive the logger it captured, and teardown itself logs, so writes race with
+                    // disposal. Diagnostics must never fail the operation being diagnosed, so drop the message rather
+                    // than writing to a closed stream. Checked under the same lock that disposal takes, so a write can
+                    // never slip past this and reach a disposed StreamWriter.
+                    return;
+                }
+
                 _streamWriter.Value.WriteLine(message.ToString());
             }
         }

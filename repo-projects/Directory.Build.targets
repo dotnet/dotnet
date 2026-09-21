@@ -8,9 +8,6 @@
     <DiskUsageCommand Condition="'$(BuildOS)' == 'windows'">powershell -NoProfile "Get-PSDrive -PSProvider FileSystem -Name (Get-Item "$(RepoRoot.TrimEnd('\'))").PSDrive.Name"</DiskUsageCommand>
     <DiskUsageCommand Condition="'$(BuildOS)' != 'windows'">df -h $(RepoRoot)</DiskUsageCommand>
 
-    <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
-    <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
-
     <!-- Pass down configuration properties -->
     <CommonArgs Condition="'$(SkipSetTargetArchitecture)' != 'true'">$(CommonArgs) /p:TargetArchitecture=$(TargetArchitecture)</CommonArgs>
     <CommonArgs Condition="'$(SkipSetTargetOS)' != 'true'">$(CommonArgs) /p:TargetOS=$(TargetOS)</CommonArgs>
@@ -44,6 +41,30 @@
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' != ''">$(BuildArgs) /p:EnableDefaultRidSpecificArtifacts=$(EnableDefaultRidSpecificArtifacts)</BuildArgs>
     <!-- If a repo has no RID-specific artifacts, then we expect the repo to not have any artifacts when only publishing RID-specific artifacts. -->
     <BuildArgs Condition="'$(EnableDefaultRidSpecificArtifacts)' == 'true'">$(BuildArgs) /p:AllowEmptySignList=true</BuildArgs>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
+    <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
+
+    <!-- MSBuild's multi-threaded mode is on by default for local builds and isn't run on CI.
+         Set DotNetBuildMT to explicitly opt in or out for all repo builds. Disable on VS msbuild for now. -->
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'true' and ('$(BuildOS)' != 'windows' or '$(ForceDotNetMSBuildEngine)' != 'false')">$(CommonArgs) $(FlagParameterPrefix)mt 1</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildMT)' == 'false' or ('$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' == 'false')">$(CommonArgs) $(FlagParameterPrefix)mt 0</CommonArgs>
+
+    <!-- MSBuild node reuse is on by default for local builds and isn't used on CI.
+         Set DotNetBuildNodeReuse to explicitly opt in or out for all repo builds.
+
+         Keep it off for repos that build with VS MSBuild, because both engines spawn their .NET task
+         hosts from the same bootstrapped SDK. The task host handshake is salted with the task host's
+         own tools directory, which is therefore identical either way, so a VS MSBuild parent can adopt
+         a pooled task host that an SDK MSBuild parent started. The adopted host keeps the packet
+         version of the parent that launched it and serializes its reply at that layout, which the new
+         parent then fails to deserialize and reports as MSB4217. Fixed on the task host side by
+         dotnet/msbuild#14584, so this carve-out can go once the bootstrapped SDK carries that fix.
+         See https://github.com/dotnet/msbuild/issues/15062. -->
+    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'true' and ('$(BuildOS)' != 'windows' or '$(ForceDotNetMSBuildEngine)' != 'false')">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 1</CommonArgs>
+    <CommonArgs Condition="'$(DotNetBuildNodeReuse)' == 'false'">$(CommonArgs) $(FlagParameterPrefix)nodeReuse 0</CommonArgs>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -221,7 +242,7 @@
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
                             SourcePath="$(SharedComponentsArtifactsPath)"
-                            Condition="'$(AddPrebuiltFeeds)' == 'true' and Exists('$(SharedComponentsArtifactsPath)')" />
+                            Condition="'$(AddPrebuiltFeeds)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true' and Exists('$(SharedComponentsArtifactsPath)')" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(ReferencePackagesNuGetSourceName)"
@@ -250,9 +271,11 @@
 
     <ItemGroup>
       <_BuildSources Include="$(PrebuiltNuGetSourceName);
-                              $(PreviouslySourceBuiltNuGetSourceName);
-                              $(PreviouslySourceBuiltSharedComponentsNuGetSourceName);
-                              $(ReferencePackagesNuGetSourceName)"
+                              $(PreviouslySourceBuiltNuGetSourceName)"
+                     Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
+      <_BuildSources Include="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
+                     Condition="'$(AddPrebuiltFeeds)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'" />
+      <_BuildSources Include="$(ReferencePackagesNuGetSourceName)"
                      Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
       <_BuildSources Include="@(_CommonBuildSources)" />
     </ItemGroup>
@@ -346,8 +369,7 @@
           SkipUnchangedFiles="true" />
   </Target>
 
-  <!-- Before a repository builds, set up the version property files that override the repo's defaults.
-       There are 3 files generated -->
+  <!-- Before a repository builds, set up the version property files that override the repo's defaults. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreateBuildInputProps"
@@ -370,7 +392,8 @@
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetFilteredSharedComponentPackages"
-             Properties="SharedComponentFilterMode=$(_SharedComponentFilterMode)">
+             Properties="SharedComponentFilterMode=$(_SharedComponentFilterMode)"
+             Condition="'$(_UseSharedComponentsInputs)' == 'true'">
       <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
     </MSBuild>
 
@@ -421,7 +444,7 @@
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)"
                                PropertySuffixes="@(PreviousPackageVersionPropertySuffixes)"
-                               Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'" />
+                               Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'" />
 
     <!-- Write a full package version props (unfiltered) that will be used to track which repo creates a package.
          Because not all repos implement the repo API (e.g. some are external), it's difficult to consistently gather
@@ -439,12 +462,20 @@
 
     <!-- Write a single file that contains imports for both the current and previously built packages -->
     <PropertyGroup>
-      <PackageVersionsPropsContents Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'">
+      <PackageVersionsPropsContents Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'">
         <![CDATA[
 <Project>
   <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
   <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
   <Import Project="$(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)" />
+</Project>
+]]>
+      </PackageVersionsPropsContents>
+      <PackageVersionsPropsContents Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' != 'true'">
+        <![CDATA[
+<Project>
+  <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
+  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
 </Project>
 ]]>
       </PackageVersionsPropsContents>
@@ -461,7 +492,9 @@
                       Overwrite="true" />
 
     <Message Text="$(RepositoryName) using package version properties saved at $(CurrentSourceBuiltPackageVersionPropsPath), $(PreviouslySourceBuiltPackageVersionPropsPath), and $(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)"
-             Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'" />
+             Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'" />
+    <Message Text="$(RepositoryName) using package version properties saved at $(CurrentSourceBuiltPackageVersionPropsPath) and $(PreviouslySourceBuiltPackageVersionPropsPath)"
+             Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' != 'true'" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)CreateBuildInputProps.complete" AlwaysCreate="true">
@@ -623,10 +656,19 @@
                           $(ArtifactsAssetsDir)" />
 
     <!-- Create directories for extra debugging. -->
-    <MakeDir Directories="$(MSBuildDebugPathTargetDir);
-                          $(RoslynDebugPathTargetDir);
+    <MakeDir Directories="$(RoslynDebugPathTargetDir);
                           $(AspNetRazorBuildServerLogDir)"
              Condition="'$(EnableExtraDebugging)' == 'true'" />
+
+    <!-- Cap how long a single repo build may run. Without a cap, a hung repo build lets the CI job
+         run into its own timeout, which cancels the job and skips the log collection steps, losing
+         every diagnostic. A timed-out Exec instead kills the whole build process tree and fails the
+         target, so the OnError targets below still move the repo's (partial) logs into the
+         published artifacts/log directory. Opt-in: no timeout unless RepoBuildTimeoutMinutes is set. -->
+    <PropertyGroup>
+      <_RepoBuildTimeoutMilliseconds>-1</_RepoBuildTimeoutMilliseconds>
+      <_RepoBuildTimeoutMilliseconds Condition="'$(RepoBuildTimeoutMinutes)' != ''">$([MSBuild]::Multiply($(RepoBuildTimeoutMinutes), 60000))</_RepoBuildTimeoutMilliseconds>
+    </PropertyGroup>
 
     <!-- Build the repository. When MinimalConsoleLogOutput is true the console output is redirected
          to $(RepoConsoleLogFile) instead of the console. -->
@@ -635,6 +677,7 @@
           EnvironmentVariables="@(EnvironmentVariables);@(BuildEnvironmentVariable)"
           YieldDuringToolExecution="true"
           IgnoreStandardErrorWarningFormat="true"
+          Timeout="$(_RepoBuildTimeoutMilliseconds)"
           StandardOutputImportance="$(RepoStandardOutputImportance)">
       <Output TaskParameter="ExitCode" PropertyName="RepoBuildExitCode" />
     </Exec>

@@ -229,6 +229,9 @@
   <data name="NoSuitableRuntimeProviderFound" xml:space="preserve">
     <value>No suitable test runtime provider was found:</value>
   </data>
+  <data name="MtpTestCaseMissingNodeUid" xml:space="preserve">
+    <value>Cannot run test '{0}' because it does not carry a Microsoft.Testing.Platform node identifier. The test case was not produced by a Microsoft.Testing.Platform discovery, or the identifier was lost in transit. Re-run discovery for this project, or run without a test selection.</value>
+  </data>
   <data name="SkippingSource" xml:space="preserve">
     <value>Skipping source:</value>
   </data>

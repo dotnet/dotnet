@@ -77,7 +77,7 @@ ci=false
 skip_analyzers=false
 skip_build=false
 prepare_machine=false
-# Empty means "not specified"; tools.sh leaves it off unless it's explicitly requested.
+# Empty means "not specified"; tools.sh applies the default.
 msbuild_multi_threaded=''
 source_build=false
 product_build=false
@@ -383,6 +383,9 @@ function TrapAndReportError {
 trap TrapAndReportError EXIT
 
 InitializeDotNetCli $restore
+
+# Apphosts (bootstrap fsc, testhost, etc.) resolve runtimes via DOTNET_ROOT, not PATH.
+export DOTNET_ROOT="$DOTNET_INSTALL_DIR"
 
 # Resolve product TFM from centralized source of truth if not overridden via --tfm
 if [[ "$tfm" == "" ]]; then

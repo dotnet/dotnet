@@ -140,6 +140,27 @@ namespace NuGet.Configuration
             }
         }
 
+        internal void AddEmptySection(string sectionName)
+        {
+            var outputSettingsFile = GetOutputSettingFileForSection(sectionName);
+            if (outputSettingsFile == null)
+            {
+                throw new InvalidOperationException(Resources.NoWritteableConfig);
+            }
+
+            outputSettingsFile.AddEmptySection(sectionName);
+
+            if (_computedSections.TryGetValue(sectionName, out _))
+            {
+                outputSettingsFile.TryGetSection(sectionName, out SettingSection? settingFileSection);
+                _computedSections[sectionName] = new VirtualSettingSection(settingFileSection!);
+            }
+            else if (outputSettingsFile.TryGetSection(sectionName, out SettingSection? settingFileSection))
+            {
+                _computedSections.Add(sectionName, new VirtualSettingSection(settingFileSection));
+            }
+        }
+
         public void Remove(string sectionName, SettingItem item)
         {
             if (string.IsNullOrEmpty(sectionName))

@@ -32,7 +32,7 @@ namespace NuGet.Protocol
 
         static HttpSourceResourceProvider()
         {
-            StaticState.StartMSBuildRestoreTasks += ResetThrottle;
+            StaticState.BuildEnded += ResetThrottle;
         }
 
         /// <summary>

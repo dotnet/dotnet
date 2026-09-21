@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <TargetFrameworks>test-tfm-a;test-tfm-b</TargetFrameworks>
+    <IsTestProject>true</IsTestProject>
+    <IsUnitTestProject>true</IsUnitTestProject>
+    <TestRunnerName>Parallel</TestRunnerName>
+    <RepositoryEngineeringDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', 'eng'))</RepositoryEngineeringDir>
+    <TestRuntime>Core</TestRuntime>
+    <TestArchitectures>x64</TestArchitectures>
+    <TargetPath>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '$(TargetFramework)', 'ParallelTestTfms.dll'))</TargetPath>
+    <ArtifactsTmpDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', 'artifacts', 'tmp'))</ArtifactsTmpDir>
+    <ArtifactsLogDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', 'artifacts', 'log'))</ArtifactsLogDir>
+    <ArtifactsTestResultsDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', 'artifacts', 'TestResults'))</ArtifactsTestResultsDir>
+  </PropertyGroup>
+  <Import Project="Tests.targets" />
+</Project>

@@ -15,6 +15,12 @@ namespace NuGet.CommandLine.XPlat
             return string.Format(CultureInfo.CurrentCulture, Strings.Error_NoVersionsAvailable, packageId);
         }
 
+        /// <inheritdoc cref="Strings.Error_PackagePublishDateMissing"/>
+        internal static string Error_PackagePublishDateMissing(string packageSource, string packageId, string packageVersion)
+        {
+            return string.Format(CultureInfo.CurrentCulture, Strings.Error_PackagePublishDateMissing, packageSource, packageId, packageVersion);
+        }
+
         /// <inheritdoc cref="Strings.Error_CouldNotFindPackageVersionForCpmPackage"/>
         internal static string Error_CouldNotFindPackageVersionForCpmPackage(string packageId)
         {

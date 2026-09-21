@@ -123,7 +123,7 @@ internal class DebuggerUtility
 
                 moniker[0].GetDisplayName(bindCtx, null, out string dn);
 
-                if (dn.StartsWith("!VisualStudio.DTE.") && dn.EndsWith(dteSuffix))
+                if (dn.StartsWith("!VisualStudio.DTE.", StringComparison.Ordinal) && dn.EndsWith(dteSuffix, StringComparison.Ordinal))
                 {
                     object dbg, lps;
                     runningObjectTable.GetObject(moniker[0], out object dte);

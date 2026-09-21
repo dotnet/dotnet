@@ -25,6 +25,8 @@
         x:Key="IntToVulnerabilitySeverityConverter" />
       <local:StringFormatConverter
         x:Key="StringFormatConverter" />
+      <local:InstalledVulnerablePackagesWarningConverter
+        x:Key="InstalledVulnerablePackagesWarningConverter" />
       <!-- style of the list view headers -->
       <Style x:Uid="Style_1" x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
         <Setter x:Uid="Setter_1" Property="Canvas.Right" Value="-8.5" />
@@ -311,14 +313,7 @@
                     Visibility="{Binding InstalledVulnerabilitiesCount, Converter={StaticResource GreaterThanThresholdToVisibilityConverter}, ConverterParameter=0}"
                     Moniker="{x:Static catalog:KnownMonikers.StatusWarning}">
                     <imaging:CrispImage.ToolTip>
-                      <TextBlock>
-                        <TextBlock.Text>
-                          <MultiBinding Converter="{StaticResource StringFormatConverter}">
-                            <Binding Source="{x:Static local:Resources.Label_Installed_VulnerableWarning}" />
-                            <Binding Path="InstalledVulnerabilitiesCount" />
-                          </MultiBinding>
-                        </TextBlock.Text>
-                      </TextBlock>
+                      <TextBlock Text="{Binding InstalledVulnerabilitiesCount, Converter={StaticResource InstalledVulnerablePackagesWarningConverter}}" />
                     </imaging:CrispImage.ToolTip>
                   </imaging:CrispImage>
                 </StackPanel>

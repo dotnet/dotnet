@@ -1,0 +1,17 @@
+# Vendored code. These files are kept byte-faithful to their upstream in dotnet/runtime so that
+# future syncs stay cheap, which means repo style and naming conventions deliberately do not apply.
+# See README.md in this folder.
+#
+# Scoped to the vendored files by name rather than to *.cs, so that the vstest-authored files
+# sharing this folder stay under normal repo style enforcement.
+
+[{XxHash128.cs,XxHashShared.cs,BitOperations.cs}]
+
+# IDE1006: upstream uses PascalCase locals in the hashing kernels to mirror the reference algorithm.
+dotnet_diagnostic.IDE1006.severity = none
+
+# IDE0005: unused usings differ per target framework because of the #if NET blocks.
+dotnet_diagnostic.IDE0005.severity = none
+
+# Formatting rules - do not reformat vendored code.
+dotnet_diagnostic.IDE0055.severity = none

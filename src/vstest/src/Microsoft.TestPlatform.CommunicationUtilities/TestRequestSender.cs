@@ -600,8 +600,8 @@ public class TestRequestSender : ITestRequestSender
                 case MessageType.AttachDebugger:
                     var testProcessAttachDebuggerPayload = _dataSerializer.DeserializePayload<TestProcessAttachDebuggerPayload>(message);
                     TPDebug.Assert(testProcessAttachDebuggerPayload is not null, "testProcessAttachDebuggerPayload is null");
-                    AttachDebuggerInfo attachDebugerInfo = MessageConverter.ConvertToAttachDebuggerInfo(testProcessAttachDebuggerPayload, message, _protocolVersion);
-                    bool result = testRunEventsHandler.AttachDebuggerToProcess(attachDebugerInfo);
+                    AttachDebuggerInfo attachDebuggerInfo = MessageConverter.ConvertToAttachDebuggerInfo(testProcessAttachDebuggerPayload);
+                    bool result = testRunEventsHandler.AttachDebuggerToProcess(attachDebuggerInfo);
 
                     var resultMessage = _dataSerializer.SerializePayload(
                         MessageType.AttachDebuggerCallback,
@@ -847,18 +847,12 @@ public class TestRequestSender : ITestRequestSender
 
 internal class MessageConverter
 {
-#pragma warning disable IDE0060 // Remove unused parameter // TODO: Use or remove this parameter and the associated method
-    internal static AttachDebuggerInfo ConvertToAttachDebuggerInfo(TestProcessAttachDebuggerPayload attachDebuggerPayload, Message message, int protocolVersion)
-#pragma warning restore IDE0060 // Remove unused parameter
+    internal static AttachDebuggerInfo ConvertToAttachDebuggerInfo(TestProcessAttachDebuggerPayload attachDebuggerPayload)
     {
-        // There is nothing to do differently based on those versions.
-        //var sourceVersion = GetVersion(message);
-        //var targetVersion = protocolVersion;
-
         return new AttachDebuggerInfo
         {
             ProcessId = attachDebuggerPayload.ProcessID,
-            TargetFramework = attachDebuggerPayload?.TargetFramework,
+            TargetFramework = attachDebuggerPayload.TargetFramework,
         };
     }
 }

@@ -5,18 +5,17 @@ using System;
 using System.Collections.Immutable;
 using Newtonsoft.Json;
 
-namespace Microsoft.DotNet.Helix.Client.Models
+namespace Microsoft.DotNet.Helix.Client.Models;
+
+public partial class FailureReason
 {
-    public partial class FailureReason
+    public FailureReason()
     {
-        public FailureReason()
-        {
-        }
-
-        [JsonProperty("Issue")]
-        public Models.FailureReasonPart Issue { get; set; }
-
-        [JsonProperty("Owner")]
-        public Models.FailureReasonPart Owner { get; set; }
     }
+
+    [JsonProperty("Issue")]
+    public Models.FailureReasonPart Issue { get; set; }
+
+    [JsonProperty("Owner")]
+    public Models.FailureReasonPart Owner { get; set; }
 }

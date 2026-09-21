@@ -62,7 +62,7 @@ public sealed class TestMatrixAttribute : Attribute, ITestDataSource
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
     {
         var dataRows = new List<object[]>();
-        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win");
+        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal);
 
         var wantNetFxConsole = _console is Target.Both or Target.NetFx;
         var wantNetConsole = _console is Target.Both or Target.Net;

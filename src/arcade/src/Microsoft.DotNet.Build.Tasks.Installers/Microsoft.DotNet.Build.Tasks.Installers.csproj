@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Common\Tasks\ExecWithRetries.cs" Link="ExecWithRetries.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.DotNet.SignCheckLibrary" />
     <InternalsVisibleTo Include="Microsoft.DotNet.SignTool" />
     <InternalsVisibleTo Include="Microsoft.DotNet.SignTool.Tests" />
@@ -40,8 +44,5 @@
           Pack="true" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Common\Internal\BuildTask.cs" />
-  </ItemGroup>
 
 </Project>

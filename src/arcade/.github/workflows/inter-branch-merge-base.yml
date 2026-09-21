@@ -67,7 +67,7 @@ jobs:
         env: 
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - run: Write-Host "Configuration required for running merge flow was not found or was not valid."
+      - run: Write-Host "No merge configuration was found for branch '$env:GITHUB_REF_NAME'."
         if: steps.extract-configuration-values.outputs.configurationFound != 'true'
         name: Read configuration status
 

@@ -37,19 +37,25 @@ How to run it:
 
 ```bash
 # Scan an explicit list of files (e.g. the changed docs) into a local output dir:
-OUT_DIR=./.md-link-check python3 .github/workflows/scripts/check-md-links.py path/to/a.md path/to/b.md
+OUT_DIR=eng/agentic-workflows/tmp python3 .github/workflows/scripts/check-md-links.py path/to/a.md path/to/b.md
 # Or scan the default scope (every *.md under docs/ plus README.md) by passing no files:
-OUT_DIR=./.md-link-check python3 .github/workflows/scripts/check-md-links.py
+OUT_DIR=eng/agentic-workflows/tmp python3 .github/workflows/scripts/check-md-links.py
 ```
 
 On Windows set the env var separately and use the Windows interpreter name, e.g. PowerShell:
-`$env:OUT_DIR='./.md-link-check'; python .github/workflows/scripts/check-md-links.py path/to/a.md`
+`$env:OUT_DIR='eng/agentic-workflows/tmp'; python .github/workflows/scripts/check-md-links.py path/to/a.md`
+
+`eng/agentic-workflows/tmp/` is gitignored, so a local run never leaves anything for you to
+accidentally commit.
 
 It writes `$OUT_DIR/broken-links.md` (the broken links to fix) and
 `$OUT_DIR/link-check-results.md` (the full report), and prints a
 `**Summary:** <working> working, <broken> broken` line. Read `broken-links.md` to drive
-your fixes. `OUT_DIR` defaults to `/tmp/gh-aw/agent` (the path the pipeline uses); set it
-to a repo-local or temp directory when running locally on Windows.
+your fixes. It also writes `$OUT_DIR/broken-links.txt`, the same broken set as sorted
+`source_file|link` lines — that one is the fingerprint the `md-link-check-probe` workflow
+compares against, not something you need for fixing. `OUT_DIR` defaults to
+`/tmp/gh-aw/agent` (the path the pipeline uses); set it to a repo-local or temp directory
+when running locally on Windows.
 
 The script applies these rules. Each `[text](url)` link is classified by its `url`:
 
@@ -105,8 +111,8 @@ don't silence an error by pointing at unrelated content.
 2. **Check** — run the shared script over the chosen files to produce the broken-links
    list, then read it:
    ```bash
-   OUT_DIR=./.md-link-check python3 .github/workflows/scripts/check-md-links.py <chosen files...>
-   cat ./.md-link-check/broken-links.md
+   OUT_DIR=eng/agentic-workflows/tmp python3 .github/workflows/scripts/check-md-links.py <chosen files...>
+   cat eng/agentic-workflows/tmp/broken-links.md
    ```
 3. **Fix** the links named in `broken-links.md` using the fixing rules above, editing the
    source `.md` files directly in the working tree. For broken anchors, extract the
@@ -117,7 +123,7 @@ don't silence an error by pointing at unrelated content.
    - **Unfixable:** each remaining broken link with a reason. These are exactly what
      would fail CI, so the developer can fix them before pushing.
    - **Result:** "All links OK", or the counts of fixed vs. still-broken.
-   Clean up the temporary `./.md-link-check` directory. Only commit if the user explicitly asks.
+   Clean up the temporary `eng/agentic-workflows/tmp` directory. Only commit if the user explicitly asks.
 
 ### Delegated (from the pipeline workflow)
 

@@ -77,7 +77,7 @@
   },
   {
     "issueType": "AssemblyVersionMismatch",
-    "descriptionMatch": "Microsoft\\.Build.*\\.CodeAnalysis\\.dll",
+    "descriptionMatch": "Microsoft\\.Build.*\\.CodeAnalysis(?:\\.Sdk)?\\.dll",
     "allowRevisionOnlyVariance": true,
     "justification": "CodeAnalysis dlls vary build to build with patch number."
   },
@@ -95,9 +95,9 @@
   },
   {
     "issueType": "AssemblyVersionMismatch",
-    "descriptionMatch": "NuGet\\..*\\.dll",
+    "descriptionMatch": "(?:NuGet\\..*\\.dll|NuGet\\.Build\\.Tasks\\.Console\\.exe|Microsoft\\.Build\\.NuGetSdkResolver\\.dll)",
     "allowRevisionOnlyVariance": true,
-    "justification": "Nuget DLLs vary build to build."
+    "justification": "NuGet assemblies use build-derived revisions that vary between constituent and VMR builds."
   },
   {
     "issueType": "AssemblyVersionMismatch",
@@ -471,15 +471,55 @@
     "justification": "Effect of better package pruning in net10"
   },
   {
+    "issueType": "MissingPackageContent",
+    "idMatch": "^roslyn-language-server$",
+    "descriptionMatch": "^tools/.*/DotnetToolSettings\\.xml$",
+    "justification": "The VMR's newer in-tree SDK places the settings file for a RID-specific top-level tool package in its TFM-agnostic location."
+  },
+  {
+    "issueType": "ExtraPackageContent",
+    "idMatch": "^roslyn-language-server$",
+    "descriptionMatch": "^tools/.*/DotnetToolSettings\\.xml$",
+    "justification": "The VMR's newer in-tree SDK places the settings file for a RID-specific top-level tool package in its TFM-agnostic location."
+  },
+  {
+    "issueType": "PackageDependencies",
+    "idMatch": "^Microsoft\\.VisualStudio\\.LanguageServer\\.ContainedLanguage$",
+    "descriptionMatch": "Microsoft\\.CodeAnalysis\\.Analyzers",
+    "justification": "Roslyn excludes its analyzer references when building from the VMR, which changes this non-shipping package's dependency graph."
+  },
+  {
     "issueType": "MissingNonShipping",
-    "idMatch": "assets/symbols/Microsoft.CodeAnalysis.Remote.ServiceHub.CoreComponents",
+    "idMatch": "assets/symbols/.*/Microsoft.CodeAnalysis.Remote.ServiceHub.CoreComponents",
     "justification": "These are a dependency of roslyn's VS insertion packages and not interesting to the VMR build"
+  },
+  {
+    "issueType": "AssemblyVersionMismatch",
+    "idMatch": "^Microsoft\\.Diagnostics\\.NETCore\\.Client$",
+    "allowRevisionOnlyVariance": true,
+    "justification": "Diagnostics assembly revisions are derived from the build ID and vary between constituent and VMR builds."
+  },
+  {
+    "issueType": "PackageMetadataDifference",
+    "idMatch": "^Microsoft\\.Diagnostics\\.NETCore\\.Client$",
+    "descriptionMatch": "ProjectUrl",
+    "justification": "VMR packages use the dotnet/dotnet repository URL to identify where they were built."
   },
   {
     "issueType": "AssemblyVersionMismatch",
     "idMatch": "Microsoft.TestPlatform.CLI",
     "allowRevisionOnlyVariance": true,
     "justification": "Testplatform varies build to build."
+  },
+  {
+    "issueType": "MissingShipping",
+    "idMatch": "^Microsoft\\.TestPlatform(?:\\.Portable)?$",
+    "justification": "The VSTest aggregate packages rely on a Visual Studio license and contain Windows-only executables, so they are not produced when DotNetBuild is true."
+  },
+  {
+    "issueType": "MissingShipping",
+    "idMatch": "assets/symbols/.*/Microsoft\\.TestPlatform(?:\\.Portable)?",
+    "justification": "Symbol packages are not produced for the VSTest aggregate packages that are excluded when DotNetBuild is true."
   },
   {
     "issueType": "PackageMetadataDifference",

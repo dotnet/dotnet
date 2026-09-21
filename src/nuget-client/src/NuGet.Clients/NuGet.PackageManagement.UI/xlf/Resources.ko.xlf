@@ -457,6 +457,11 @@
         <target state="translated">도움말 아이콘</target>
         <note />
       </trans-unit>
+      <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="translated">GitHub Copilot으로 수정</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Label_Action">
         <source>Action:</source>
         <target state="translated">작업:</target>
@@ -580,7 +585,12 @@
       <trans-unit id="Label_Installed_VulnerableWarning">
         <source>You have {0} vulnerable package versions installed.</source>
         <target state="translated">취약한 패키지 버전 {0}개가 설치되어 있습니다.</target>
-        <note>{0} is the number of installed package versions</note>
+        <note>{0} is the number of installed package versions (always more than 1)</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableWarning_Single">
+        <source>You have 1 vulnerable package version installed.</source>
+        <target state="translated">취약한 패키지 버전 1개가 설치되어 있습니다.</target>
+        <note />
       </trans-unit>
       <trans-unit id="Label_License">
         <source>License:</source>
@@ -1277,8 +1287,8 @@ Error: {1}</source>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
-        <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">일단 시작하면 이 작업은 취소할 수 없습니다.</target>
+        <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
+        <target state="translated">이 작업은 일단 시작되면 취소할 수 없습니다. 계속하려면 확인을 선택하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

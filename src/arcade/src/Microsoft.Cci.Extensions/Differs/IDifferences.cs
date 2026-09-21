@@ -4,47 +4,46 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.Cci.Differs
+namespace Microsoft.Cci.Differs;
+
+public interface IDifferences : IEnumerable<Difference>
 {
-    public interface IDifferences : IEnumerable<Difference>
+    DifferenceType DifferenceType { get; }
+    void Add(Difference difference);
+}
+
+public static class DifferencesExtensions
+{
+    public static bool ContainsIncompatibleDifferences(this IDifferences differences)
     {
-        DifferenceType DifferenceType { get; }
-        void Add(Difference difference);
+        if (differences.DifferenceType == DifferenceType.Changed)
+        {
+            return !differences.OfType<IncompatibleDifference>().Any();
+        }
+        return true;
     }
 
-    public static class DifferencesExtensions
+    public static void AddIncompatibleDifference(this IDifferences differences, object id, string format, params object[] args)
     {
-        public static bool ContainsIncompatibleDifferences(this IDifferences differences)
+        if (args.Length == 0)
         {
-            if (differences.DifferenceType == DifferenceType.Changed)
-            {
-                return !differences.OfType<IncompatibleDifference>().Any();
-            }
-            return true;
+            differences.Add(new IncompatibleDifference(id, format));
         }
-
-        public static void AddIncompatibleDifference(this IDifferences differences, object id, string format, params object[] args)
+        else
         {
-            if (args.Length == 0)
-            {
-                differences.Add(new IncompatibleDifference(id, format));
-            }
-            else
-            {
-                differences.Add(new IncompatibleDifference(id, string.Format(format, args)));
-            }
+            differences.Add(new IncompatibleDifference(id, string.Format(format, args)));
         }
+    }
 
-        public static void AddTypeMismatchDifference(this IDifferences differences, object id, ITypeReference type1, ITypeReference type2, string format, params object[] args)
+    public static void AddTypeMismatchDifference(this IDifferences differences, object id, ITypeReference type1, ITypeReference type2, string format, params object[] args)
+    {
+        if (args.Length == 0)
         {
-            if (args.Length == 0)
-            {
-                differences.Add(new TypeMismatchInCompatibleDifference(id, format, type1, type2));
-            }
-            else
-            {
-                differences.Add(new TypeMismatchInCompatibleDifference(id, string.Format(format, args), type1, type2));
-            }
+            differences.Add(new TypeMismatchInCompatibleDifference(id, format, type1, type2));
+        }
+        else
+        {
+            differences.Add(new TypeMismatchInCompatibleDifference(id, string.Format(format, args), type1, type2));
         }
     }
 }

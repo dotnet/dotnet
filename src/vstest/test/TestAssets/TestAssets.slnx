@@ -33,6 +33,7 @@
   <Project Path="AppDomainGetAssembliesTestProject/AppDomainGetAssembliesTestProject.csproj" />
   <Project Path="ArchitectureSwitch/ArchitectureSwitch.csproj" />
   <Project Path="AttachmentProcessorDataCollector/AttachmentProcessorDataCollector.csproj" />
+  <Project Path="BackslashParameterTestProject/BackslashParameterTestProject.csproj" />
   <Project Path="BlameUnitTestProject/BlameUnitTestProject.csproj" />
   <Project Path="child-crash/child-crash.csproj" />
   <Project Path="child-hang/child-hang.csproj" />

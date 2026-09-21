@@ -32,7 +32,7 @@ param
 
 try {
     $licenseListDirectory = $([System.IO.Path]::Combine($env:TEMP, "NuGet", "licenseList"))
-    $licenseListBaseUrl = "https://raw.githubusercontent.com/spdx/license-list-data/master/json/"
+    $licenseListBaseUrl = "https://raw.githubusercontent.com/spdx/license-list-data/main/json/"
     $licenseFileName = "licenses.json"
     $exceptionsFileName = "exceptions.json"
 
@@ -59,4 +59,3 @@ finally
     Write-Host "Removing $licenseListDirectory"
     Remove-Item -Force -Recurse $licenseListDirectory
 }
-

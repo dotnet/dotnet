@@ -6,81 +6,80 @@ using System.Net;
 using AwesomeAssertions;
 using Xunit;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
+namespace Microsoft.DotNet.Build.Tasks.Feed.Tests;
+
+public class PublishBuildToMaestroTests
 {
-    public class PublishBuildToMaestroTests
+    [Fact]
+    public void GetTimeToWait_ReadsGitHubRateLimitingHeaders()
     {
-        [Fact]
-        public void GetTimeToWait_ReadsGitHubRateLimitingHeaders()
+        // Unauthenticated requests to github that are rate limited don't use the Retry-After header,
+        // so we need to be able to handle their X-RateLimit-Reset header.
+
+        DateTime resetTime = DateTime.UtcNow.AddSeconds(5.0);
+        long unixTime = (long)(resetTime - DateTime.UnixEpoch).TotalSeconds;
+        var response = new System.Net.Http.HttpResponseMessage(HttpStatusCode.Forbidden)
         {
-            // Unauthenticated requests to github that are rate limited don't use the Retry-After header,
-            // so we need to be able to handle their X-RateLimit-Reset header.
-
-            DateTime resetTime = DateTime.UtcNow.AddSeconds(5.0);
-            long unixTime = (long)(resetTime - DateTime.UnixEpoch).TotalSeconds;
-            var response = new System.Net.Http.HttpResponseMessage(HttpStatusCode.Forbidden)
+            Headers =
             {
-                Headers =
-                {
-                    { "X-RateLimit-Remaining", "0" },
-                    { "X-RateLimit-Reset", unixTime.ToString() },
-                }
-            };
+                { "X-RateLimit-Remaining", "0" },
+                { "X-RateLimit-Reset", unixTime.ToString() },
+            }
+        };
 
-            TimeSpan? actual = PublishBuildToMaestro.GetTimeToWait(response);
+        TimeSpan? actual = PublishBuildToMaestro.GetTimeToWait(response);
 
-            actual.Should().NotBeNull();
-            actual.Should().BeCloseTo(resetTime - DateTime.UtcNow, TimeSpan.FromSeconds(1));
-        }
+        actual.Should().NotBeNull();
+        actual.Should().BeCloseTo(resetTime - DateTime.UtcNow, TimeSpan.FromSeconds(1));
+    }
 
-        [Fact]
-        public void GetTimeToWait_NotWaitWhenNotLimited()
+    [Fact]
+    public void GetTimeToWait_NotWaitWhenNotLimited()
+    {
+        DateTime resetTime = DateTime.UtcNow.AddSeconds(5.0);
+        long unixTime = (long)(resetTime - DateTime.UnixEpoch).TotalSeconds;
+        var response = new System.Net.Http.HttpResponseMessage(HttpStatusCode.Forbidden)
         {
-            DateTime resetTime = DateTime.UtcNow.AddSeconds(5.0);
-            long unixTime = (long)(resetTime - DateTime.UnixEpoch).TotalSeconds;
-            var response = new System.Net.Http.HttpResponseMessage(HttpStatusCode.Forbidden)
+            Headers =
             {
-                Headers =
-                {
-                    { "X-RateLimit-Remaining", "1" },
-                    { "X-RateLimit-Reset", unixTime.ToString() },
-                }
-            };
+                { "X-RateLimit-Remaining", "1" },
+                { "X-RateLimit-Reset", unixTime.ToString() },
+            }
+        };
 
-            TimeSpan? actual = PublishBuildToMaestro.GetTimeToWait(response);
+        TimeSpan? actual = PublishBuildToMaestro.GetTimeToWait(response);
 
-            actual.Should().BeNull();
-        }
+        actual.Should().BeNull();
+    }
 
-        [Fact]
-        public void GetTimeToWait_UsesRetryAfterDuration()
+    [Fact]
+    public void GetTimeToWait_UsesRetryAfterDuration()
+    {
+        var response = new System.Net.Http.HttpResponseMessage(HttpStatusCode.Forbidden)
         {
-            var response = new System.Net.Http.HttpResponseMessage(HttpStatusCode.Forbidden)
+            Headers =
             {
-                Headers =
-                {
-                    { "Retry-After", "5" },
-                }
-            };
-            TimeSpan? actual = PublishBuildToMaestro.GetTimeToWait(response);
-            actual.Should().NotBeNull();
-            actual.Should().BeCloseTo(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1));
-        }
+                { "Retry-After", "5" },
+            }
+        };
+        TimeSpan? actual = PublishBuildToMaestro.GetTimeToWait(response);
+        actual.Should().NotBeNull();
+        actual.Should().BeCloseTo(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(1));
+    }
 
-        [Fact]
-        public void GetTimeToWait_UsesRetryAfterDate()
+    [Fact]
+    public void GetTimeToWait_UsesRetryAfterDate()
+    {
+        DateTime resetTime = DateTime.UtcNow.AddSeconds(5.0);
+        var response = new System.Net.Http.HttpResponseMessage(HttpStatusCode.Forbidden)
         {
-            DateTime resetTime = DateTime.UtcNow.AddSeconds(5.0);
-            var response = new System.Net.Http.HttpResponseMessage(HttpStatusCode.Forbidden)
+            Headers =
             {
-                Headers =
-                {
-                    { "Retry-After", resetTime.ToString("R") },
-                }
-            };
-            TimeSpan? actual = PublishBuildToMaestro.GetTimeToWait(response);
-            actual.Should().NotBeNull();
-            actual.Should().BeCloseTo(resetTime - DateTime.UtcNow, TimeSpan.FromSeconds(1));
-        }
+                { "Retry-After", resetTime.ToString("R") },
+            }
+        };
+        TimeSpan? actual = PublishBuildToMaestro.GetTimeToWait(response);
+        actual.Should().NotBeNull();
+        actual.Should().BeCloseTo(resetTime - DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
 }

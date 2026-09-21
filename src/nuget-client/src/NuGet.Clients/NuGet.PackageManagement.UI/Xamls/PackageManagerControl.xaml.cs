@@ -24,6 +24,7 @@ using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.PackageManagement.Telemetry;
+using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
@@ -57,6 +58,7 @@ namespace NuGet.PackageManagement.UI
         private readonly Guid _sessionGuid = Guid.NewGuid();
         private Stopwatch _sinceLastRefresh;
         private CancellationTokenSource _refreshCts;
+        private CancellationTokenSource _refreshNominationCts;
         // used to prevent starting new search when we update the package sources
         // list in response to Package Sources changing events.
         private bool _dontStartNewSearch;
@@ -77,6 +79,8 @@ namespace NuGet.PackageManagement.UI
         private IPackageVulnerabilityService _packageVulnerabilityService;
         private INuGetPackageFileService _nugetPackageFileService;
         private bool _isReadmeTabEnabled;
+        private PackageManagerInfoBarService _infoBarService;
+        private PackageManagerVulnerabilitiesInfoBar _vulnerabilitiesInfoBar;
 
         private SearchControl SearchControl
         {
@@ -502,27 +506,68 @@ namespace NuGet.PackageManagement.UI
             }
             else
             {
-                await RunAndEmitRefreshAsync(async () => await RefreshAsync(), source, timeSpanSinceLastRefresh, Stopwatch.StartNew());
+                // Supersede the previous wait and refresh after pending nominations settle.
+                var nominationCts = new CancellationTokenSource();
+                Interlocked.Exchange(ref _refreshNominationCts, nominationCts)?.Cancel();
+
+                var solutionManager = Model.Context.SolutionManager;
+                TimeSpan? nominationWaitDuration = null;
+                if (solutionManager != null)
+                {
+                    try
+                    {
+                        string scopedProjectFullPath = null;
+                        if (!Model.IsSolution)
+                        {
+                            IProjectContextInfo project = Model.Context.Projects.First();
+                            IProjectMetadataContextInfo projectMetadata = await project.GetMetadataAsync(
+                                Model.Context.ServiceBroker,
+                                nominationCts.Token);
+                            scopedProjectFullPath = projectMetadata.FullPath;
+                        }
+
+                        var coordinator = new ProjectNominationCoordinator(solutionManager);
+                        nominationWaitDuration = await coordinator.WaitForNominationsToSettleAsync(scopedProjectFullPath, nominationCts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
+                }
+
+                await RunAndEmitRefreshAsync(
+                    async () => await RefreshAsync(),
+                    source,
+                    timeSpanSinceLastRefresh,
+                    Stopwatch.StartNew(),
+                    nominationWaitDuration: nominationWaitDuration);
             }
         }
 
-        private void EmitRefreshEvent(TimeSpan timeSpan, RefreshOperationSource refreshOperationSource, RefreshOperationStatus status, bool isUIFiltering = false, double? duration = null)
+        private void EmitRefreshEvent(
+            TimeSpan timeSpan,
+            RefreshOperationSource refreshOperationSource,
+            RefreshOperationStatus status,
+            bool isUIFiltering = false,
+            double? duration = null,
+            TimeSpan? nominationWaitDuration = null)
         {
+            PackageManagerUIRefreshEvent refreshEvent;
             if (Model.IsSolution)
             {
-                TelemetryActivity.EmitTelemetryEvent(PackageManagerUIRefreshEvent.ForSolution(
+                refreshEvent = PackageManagerUIRefreshEvent.ForSolution(
                     _sessionGuid,
                     refreshOperationSource,
                     status,
                     UIUtility.ToContractsItemFilter(_topPanel.Filter),
                     isUIFiltering,
                     timeSpan,
-                    duration));
+                    duration);
             }
             else
             {
                 IProjectContextInfo project = Model.Context.Projects.First();
-                TelemetryActivity.EmitTelemetryEvent(PackageManagerUIRefreshEvent.ForProject(
+                refreshEvent = PackageManagerUIRefreshEvent.ForProject(
                     _sessionGuid,
                     refreshOperationSource,
                     status,
@@ -531,8 +576,15 @@ namespace NuGet.PackageManagement.UI
                     timeSpan,
                     duration,
                     project.ProjectId,
-                    project.ProjectKind));
+                    project.ProjectKind);
             }
+
+            if (nominationWaitDuration.HasValue)
+            {
+                refreshEvent["NominationWaitDuration"] = nominationWaitDuration.Value.TotalMilliseconds;
+            }
+
+            TelemetryActivity.EmitTelemetryEvent(refreshEvent);
         }
 
         private void EmitPMUIClosingTelemetry()
@@ -850,6 +902,29 @@ namespace NuGet.PackageManagement.UI
             _missingPackageStatus = e.PackagesMissing;
         }
 
+        /// <summary>
+        /// Initializes the InfoBar service for this PM UI instance using the hosting window frame.
+        /// Must be called on the UI thread after the window frame is created.
+        /// </summary>
+        public async Task SetWindowFrameAsync(IVsWindowFrame windowFrame)
+        {
+            await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            var infoBarFactory = await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SVsInfoBarUIFactory, IVsInfoBarUIFactory>(throwOnFailure: false);
+            _infoBarService = PackageManagerInfoBarService.TryCreate(windowFrame, infoBarFactory);
+
+            if (_infoBarService != null)
+            {
+                var fixVulnerabilitiesService = await ServiceLocator.GetComponentModelServiceAsync<IFixVulnerabilitiesService>();
+                if (fixVulnerabilitiesService != null)
+                {
+                    _vulnerabilitiesInfoBar = new PackageManagerVulnerabilitiesInfoBar(
+                        _infoBarService,
+                        fixVulnerabilitiesService.LaunchFixVulnerabilitiesAsync);
+                }
+            }
+        }
+
         private async Task SetTitleAsync(IProjectMetadataContextInfo projectMetadata = null)
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -1075,6 +1150,12 @@ namespace NuGet.PackageManagement.UI
             (int vulnerablePackages, int deprecatedPackages) = await GetInstalledVulnerableAndDeprecatedPackagesCountAsync(loadContext, SelectedSource.PackageSources, _packageVulnerabilityService, refreshCts.Token);
             _topPanel.UpdateWarningStatusOnInstalledTab(vulnerablePackages, deprecatedPackages);
 
+            // Show/hide the vulnerabilities InfoBar based on the installed vulnerable package count.
+            if (_vulnerabilitiesInfoBar != null)
+            {
+                await _vulnerabilitiesInfoBar.UpdateAsync(vulnerablePackages);
+            }
+
             // Update updates tab count
             Model.CachedUpdates = new PackageSearchMetadataCache
             {
@@ -1098,33 +1179,44 @@ namespace NuGet.PackageManagement.UI
             IInstalledAndTransitivePackages installedAndTransitivePackages = await PackageCollection.GetInstalledAndTransitivePackagesAsync(loadContext.ServiceBroker, loadContext.Projects, includeTransitiveOrigins: true, token);
             installedPackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.InstalledPackages);
             PackageCollection transitivePackageCollection = PackageCollection.FromPackageReferences(installedAndTransitivePackages.TransitivePackages.Where(p => p.TransitiveOrigins.Any()));
-            //Use ShutdownToken to ensure the operation is canceled if it's still running when VS shuts down.
-            IEnumerable<PackageVulnerabilityMetadataContextInfo>[] transitivePackageVulnerabilities = await Task.WhenAll(transitivePackageCollection.Select(p => vulnerabilityService.GetVulnerabilityInfoAsync(p, VsShellUtilities.ShutdownToken)));
 
-            foreach (IEnumerable<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfo in transitivePackageVulnerabilities)
+            async Task<bool> IsVulnerableAsync(
+                PackageIdentity packageIdentity,
+                PackageSearchMetadataContextInfo packageMetadata)
             {
-                if (vulnerabilityInfo != null && vulnerabilityInfo.Any())
+                if (!vulnerabilityService.IsAuditSourceConfigured
+                    && packageMetadata?.Vulnerabilities != null
+                    && packageMetadata.Vulnerabilities.Any())
                 {
-                    vulnerablePackagesCount++;
+                    return true;
                 }
+
+                List<PackageVulnerabilityMetadataContextInfo> vulnerabilityInfo =
+                    await vulnerabilityService.GetVulnerabilityInfoAsync(packageIdentity, token);
+                return vulnerabilityInfo.Count > 0;
             }
+
+            bool[] transitivePackageVulnerabilities = await Task.WhenAll(transitivePackageCollection.Select(async package =>
+            {
+                PackageSearchMetadataContextInfo packageMetadata = null;
+                if (!vulnerabilityService.IsAuditSourceConfigured)
+                {
+                    (packageMetadata, _) = await GetPackageMetadataAsync(package, packageSources, token);
+                }
+
+                return await IsVulnerableAsync(package, packageMetadata);
+            }));
+            vulnerablePackagesCount += transitivePackageVulnerabilities.Count(isVulnerable => isVulnerable);
 
             var installedPackageMetadata = await Task.WhenAll(installedPackageCollection.Select(p => GetPackageMetadataAsync(p, packageSources, token)));
 
             foreach ((PackageSearchMetadataContextInfo s, PackageDeprecationMetadataContextInfo d) in installedPackageMetadata)
             {
-                if (s.Vulnerabilities != null && s.Vulnerabilities.Any())
+                if (await IsVulnerableAsync(s.Identity, s))
                 {
                     vulnerablePackagesCount++;
                 }
-                else // Fallback to checking audit sources.
-                {
-                    List<PackageVulnerabilityMetadataContextInfo> auditSourceVulnerabilityContextInfo = await _packageVulnerabilityService.GetVulnerabilityInfoAsync(s.Identity, token);
-                    if (auditSourceVulnerabilityContextInfo.Count > 0)
-                    {
-                        vulnerablePackagesCount++;
-                    }
-                }
+
                 if (d != null)
                 {
                     deprecatedPackagesCount++;
@@ -1418,7 +1510,13 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
-        private async Task RunAndEmitRefreshAsync(Func<Task> runner, RefreshOperationSource source, TimeSpan lastRefresh, Stopwatch sw, bool isUIFiltering = false)
+        private async Task RunAndEmitRefreshAsync(
+            Func<Task> runner,
+            RefreshOperationSource source,
+            TimeSpan lastRefresh,
+            Stopwatch sw,
+            bool isUIFiltering = false,
+            TimeSpan? nominationWaitDuration = null)
         {
             var refreshStatus = RefreshOperationStatus.NoOp;
             try
@@ -1434,7 +1532,13 @@ namespace NuGet.PackageManagement.UI
             finally
             {
                 sw.Stop();
-                EmitRefreshEvent(lastRefresh, source, refreshStatus, isUIFiltering, sw.Elapsed.TotalMilliseconds);
+                EmitRefreshEvent(
+                    lastRefresh,
+                    source,
+                    refreshStatus,
+                    isUIFiltering,
+                    sw.Elapsed.TotalMilliseconds,
+                    nominationWaitDuration);
             }
         }
 
@@ -1658,11 +1762,13 @@ namespace NuGet.PackageManagement.UI
             // make sure to cancel currently running load or refresh tasks
             _loadCts?.Cancel();
             _refreshCts?.Cancel();
+            _refreshNominationCts?.Cancel();
             _cancelSelectionChangedSource?.Cancel();
 
             // make sure to dispose cancellation token source
             _loadCts?.Dispose();
             _refreshCts?.Dispose();
+            _refreshNominationCts?.Dispose();
             _cancelSelectionChangedSource?.Dispose();
 
             _packageDetail.Cleanup();
@@ -1935,6 +2041,7 @@ namespace NuGet.PackageManagement.UI
 
             if (disposing)
             {
+                _infoBarService?.Dispose();
                 _nugetPackageFileService.Dispose();
                 CleanUp();
             }
@@ -1949,4 +2056,3 @@ namespace NuGet.PackageManagement.UI
         }
     }
 }
-

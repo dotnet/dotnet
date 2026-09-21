@@ -162,7 +162,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     /// <summary>
     /// Gets a value indicating whether the test host supports protocol version check
     /// </summary>
-    internal bool MakeRunsettingsCompatible => _hostPackageVersion.StartsWith("15.0.0-preview");
+    internal bool MakeRunsettingsCompatible => _hostPackageVersion.StartsWith("15.0.0-preview", StringComparison.Ordinal);
 
     /// <summary>
     /// Gets callback on process exit
@@ -1023,7 +1023,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                             testHostPath = Path.Combine(testhostPackage.Path, testHostPath);
                         }
                         _hostPackageVersion = testhostPackage.Version;
-                        IsVersionCheckRequired = !_hostPackageVersion.StartsWith("15.0.0");
+                        IsVersionCheckRequired = !_hostPackageVersion.StartsWith("15.0.0", StringComparison.Ordinal);
                         EqtTrace.Verbose("DotnetTestHostmanager: Relative path of testhost.dll with respect to package folder is {0}", testHostPath);
                     }
 #else
@@ -1040,7 +1040,7 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                         }
 
                         _hostPackageVersion = library.Version;
-                        IsVersionCheckRequired = !_hostPackageVersion.StartsWith("15.0.0");
+                        IsVersionCheckRequired = !_hostPackageVersion.StartsWith("15.0.0", StringComparison.Ordinal);
                         EqtTrace.Verbose("DotnetTestHostmanager: Relative path of testhost.dll with respect to package folder is {0}", testHostPath);
                     }
 #endif

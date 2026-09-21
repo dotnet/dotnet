@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -50,9 +48,9 @@ namespace NuGet.DependencyResolver
         /// Gets the package source.
         /// </summary>
         /// <remarks>Optional. This will be <see langword="null" /> for project providers.</remarks>
-        public PackageSource Source { get; private set; }
+        public PackageSource? Source { get; private set; }
 
-        public SourceRepository SourceRepository { get; private set; }
+        public SourceRepository? SourceRepository { get; private set; }
 
         /// <summary>
         /// Asynchronously discovers all versions of a package from a source and selects the best match.
@@ -70,7 +68,7 @@ namespace NuGet.DependencyResolver
         /// is either <see langword="null" /> or empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="targetFramework" />
         /// is either <see langword="null" /> or empty.</exception>
-        public Task<LibraryIdentity> FindLibraryAsync(
+        public Task<LibraryIdentity?> FindLibraryAsync(
             LibraryRange libraryRange,
             NuGetFramework targetFramework,
             SourceCacheContext cacheContext,
@@ -94,7 +92,7 @@ namespace NuGet.DependencyResolver
                 return TaskResult.Null<LibraryIdentity>();
             }
 
-            return Task.FromResult(library.Identity);
+            return Task.FromResult<LibraryIdentity?>(library.Identity);
         }
 
         /// <summary>
@@ -129,7 +127,8 @@ namespace NuGet.DependencyResolver
                 throw new ArgumentNullException(nameof(targetFramework));
             }
 
-            var library = _dependencyProvider.GetLibrary(libraryIdentity, targetFramework, alias: null);
+            var library = _dependencyProvider.GetLibrary(libraryIdentity, targetFramework, alias: null)
+                ?? throw new InvalidOperationException($"Library '{libraryIdentity}' was not found.");
 
             var dependencyInfo = LibraryDependencyInfo.Create(
                 library.Identity,
@@ -159,7 +158,7 @@ namespace NuGet.DependencyResolver
             throw new NotSupportedException();
         }
 
-        public Task<IEnumerable<NuGetVersion>> GetAllVersionsAsync(
+        public Task<IEnumerable<NuGetVersion>?> GetAllVersionsAsync(
             string id,
             SourceCacheContext cacheContext,
             ILogger logger,

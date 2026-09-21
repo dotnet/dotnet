@@ -7,119 +7,118 @@ using System.Threading.Tasks;
 using Microsoft.Arcade.Common;
 using Xunit;
 
-namespace Microsoft.DotNet.Arcade.Sdk.Tests
+namespace Microsoft.DotNet.Arcade.Sdk.Tests;
+
+public class ExponentialRetryTests
 {
-    public class ExponentialRetryTests
+    [Fact]
+    public async Task CancellationBeforeFirstAttemptDoesNotRunAction()
     {
-        [Fact]
-        public async Task CancellationBeforeFirstAttemptDoesNotRunAction()
-        {
-            using var cancellation = new CancellationTokenSource();
-            cancellation.Cancel();
-            var retry = new ExponentialRetry();
-            bool actionRan = false;
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        var retry = new ExponentialRetry();
+        bool actionRan = false;
 
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-                retry.RunAsync(
-                    _ =>
-                    {
-                        actionRan = true;
-                        return Task.FromResult(RetryResult.Success);
-                    },
-                    cancellation.Token));
-
-            Assert.False(actionRan);
-        }
-
-        [Fact]
-        public async Task CancellationDuringDelayIsPropagated()
-        {
-            using var cancellation = new CancellationTokenSource();
-            var retry = new ExponentialRetry
-            {
-                MaxAttempts = 2,
-                DelayBase = 60,
-                DelayConstant = 0,
-                MinRandomFactor = 1,
-                MaxRandomFactor = 1,
-            };
-
-            Task<bool> retryTask = retry.RunAsync(
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            retry.RunAsync(
                 _ =>
                 {
-                    cancellation.Cancel();
-                    return Task.FromResult(RetryResult.Retry());
+                    actionRan = true;
+                    return Task.FromResult(RetryResult.Success);
                 },
-                cancellation.Token);
+                cancellation.Token));
 
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => retryTask);
-        }
+        Assert.False(actionRan);
+    }
 
-        [Fact]
-        public async Task FinalFailedAttemptDoesNotDelay()
+    [Fact]
+    public async Task CancellationDuringDelayIsPropagated()
+    {
+        using var cancellation = new CancellationTokenSource();
+        var retry = new ExponentialRetry
         {
-            var retry = new ExponentialRetry
+            MaxAttempts = 2,
+            DelayBase = 60,
+            DelayConstant = 0,
+            MinRandomFactor = 1,
+            MaxRandomFactor = 1,
+        };
+
+        Task<bool> retryTask = retry.RunAsync(
+            _ =>
             {
-                MaxAttempts = 1,
-            };
+                cancellation.Cancel();
+                return Task.FromResult(RetryResult.Retry());
+            },
+            cancellation.Token);
 
-            bool succeeded = await retry.RunAsync(
-                _ => Task.FromResult(RetryResult.Retry(TimeSpan.FromHours(1))),
-                CancellationToken.None);
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => retryTask);
+    }
 
-            Assert.False(succeeded);
-        }
-
-        [Fact]
-        public async Task MaximumDelayCapsExponentialBackoff()
+    [Fact]
+    public async Task FinalFailedAttemptDoesNotDelay()
+    {
+        var retry = new ExponentialRetry
         {
-            var retry = new ExponentialRetry
-            {
-                MaxAttempts = 2,
-                DelayBase = 60,
-                DelayConstant = 0,
-                MinRandomFactor = 1,
-                MaxRandomFactor = 1,
-                MaximumDelay = TimeSpan.Zero,
-            };
-            int attempts = 0;
+            MaxAttempts = 1,
+        };
 
-            bool succeeded = await retry.RunAsync(
-                _ =>
-                {
-                    attempts++;
-                    return Task.FromResult(RetryResult.Retry());
-                },
-                CancellationToken.None);
+        bool succeeded = await retry.RunAsync(
+            _ => Task.FromResult(RetryResult.Retry(TimeSpan.FromHours(1))),
+            CancellationToken.None);
 
-            Assert.False(succeeded);
-            Assert.Equal(2, attempts);
-        }
+        Assert.False(succeeded);
+    }
 
-        [Fact]
-        public async Task RetryDelayCallbackReportsActualDelay()
+    [Fact]
+    public async Task MaximumDelayCapsExponentialBackoff()
+    {
+        var retry = new ExponentialRetry
         {
-            var retry = new ExponentialRetry
+            MaxAttempts = 2,
+            DelayBase = 60,
+            DelayConstant = 0,
+            MinRandomFactor = 1,
+            MaxRandomFactor = 1,
+            MaximumDelay = TimeSpan.Zero,
+        };
+        int attempts = 0;
+
+        bool succeeded = await retry.RunAsync(
+            _ =>
             {
-                MaxAttempts = 2,
-                DelayBase = 3,
-                DelayConstant = 0,
-                MinRandomFactor = 1,
-                MaxRandomFactor = 1,
-                RetryDelayCallback = (attempt, delay) =>
-                {
-                    Assert.Equal(1, attempt);
-                    Assert.Equal(TimeSpan.FromSeconds(1), delay);
-                },
-            };
+                attempts++;
+                return Task.FromResult(RetryResult.Retry());
+            },
+            CancellationToken.None);
 
-            int attempts = 0;
-            bool succeeded = await retry.RunAsync(
-                _ => Task.FromResult(++attempts == 1 ? RetryResult.Retry() : RetryResult.Success),
-                CancellationToken.None);
+        Assert.False(succeeded);
+        Assert.Equal(2, attempts);
+    }
 
-            Assert.True(succeeded);
-            Assert.Equal(2, attempts);
-        }
+    [Fact]
+    public async Task RetryDelayCallbackReportsActualDelay()
+    {
+        var retry = new ExponentialRetry
+        {
+            MaxAttempts = 2,
+            DelayBase = 3,
+            DelayConstant = 0,
+            MinRandomFactor = 1,
+            MaxRandomFactor = 1,
+            RetryDelayCallback = (attempt, delay) =>
+            {
+                Assert.Equal(1, attempt);
+                Assert.Equal(TimeSpan.FromSeconds(1), delay);
+            },
+        };
+
+        int attempts = 0;
+        bool succeeded = await retry.RunAsync(
+            _ => Task.FromResult(++attempts == 1 ? RetryResult.Retry() : RetryResult.Success),
+            CancellationToken.None);
+
+        Assert.True(succeeded);
+        Assert.Equal(2, attempts);
     }
 }

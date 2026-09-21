@@ -104,6 +104,8 @@
 #ifndef GOOGLETEST_INCLUDE_GTEST_GTEST_PRINTERS_H_
 #define GOOGLETEST_INCLUDE_GTEST_GTEST_PRINTERS_H_
 
+#include <stdint.h>
+
 #include <any>
 #include <functional>
 #include <memory>
@@ -279,15 +281,13 @@ struct ProtobufPrinter {
 
 struct ConvertibleToIntegerPrinter {
   // Since T has no << operator or PrintTo() but can be implicitly
-  // converted to BiggestInt, we print it as a BiggestInt.
+  // converted to intmax_t, we print it as an intmax_t.
   //
   // Most likely T is an enum type (either named or unnamed), in which
   // case printing it as an integer is the desired behavior.  In case
   // T is not an enum, printing it as an integer is the best we can do
   // given that it has no user-defined printer.
-  static void PrintValue(internal::BiggestInt value, ::std::ostream* os) {
-    *os << value;
-  }
+  static void PrintValue(intmax_t value, ::std::ostream* os) { *os << value; }
 };
 
 struct ConvertibleToStringViewPrinter {
@@ -347,7 +347,7 @@ struct FindFirstPrinter<
 //  - Print object pointers.
 //  - Print protocol buffers.
 //  - Use the stream operator, if available.
-//  - Print types convertible to BiggestInt.
+//  - Print types convertible to intmax_t.
 //  - Print types convertible to StringView, if available.
 //  - Fallback to printing the raw bytes of the object.
 template <typename T>
@@ -522,17 +522,14 @@ inline void PrintTo(bool x, ::std::ostream* os) {
 GTEST_API_ void PrintTo(wchar_t wc, ::std::ostream* os);
 
 GTEST_API_ void PrintTo(char32_t c, ::std::ostream* os);
-inline void PrintTo(char16_t c, ::std::ostream* os) {
-  // TODO(b/418738869): Incorrect for values not representing valid codepoints.
-  // Also see https://github.com/google/googletest/issues/4762.
-  PrintTo(static_cast<char32_t>(c), os);
-}
+
+// Overloads for the UTF-8 and UTF-16 code unit types.  A code unit that
+// encodes a code point all by itself is printed with the U+XXXX notation;
+// one that does not (any non-ASCII char8_t, and the UTF-16 surrogates) is
+// printed as a code unit instead, the way wchar_t is.
+GTEST_API_ void PrintTo(char16_t c, ::std::ostream* os);
 #ifdef __cpp_lib_char8_t
-inline void PrintTo(char8_t c, ::std::ostream* os) {
-  // TODO(b/418738869): Incorrect for values not representing valid codepoints.
-  // Also see https://github.com/google/googletest/issues/4762.
-  PrintTo(static_cast<char32_t>(c), os);
-}
+GTEST_API_ void PrintTo(char8_t c, ::std::ostream* os);
 #endif
 
 // gcc/clang __{u,}int128_t
@@ -674,12 +671,12 @@ inline void PrintTo(char32_t* s, ::std::ostream* os) {
   PrintTo(ImplicitCast_<const char32_t*>(s), os);
 }
 
-// MSVC can be configured to define wchar_t as a typedef of unsigned
-// short.  It defines _NATIVE_WCHAR_T_DEFINED when wchar_t is a native
-// type.  When wchar_t is a typedef, defining an overload for const
-// wchar_t* would cause unsigned short* be printed as a wide string,
-// possibly causing invalid memory accesses.
-#if !defined(_MSC_VER) || defined(_NATIVE_WCHAR_T_DEFINED)
+// Only add an overload for printing wchar_t* if:
+// 1. Wide string support is enabled.
+// 2. wchar_t is a distinct native type. (If it's a typedef, the overload could
+//    cause a pointer to the underlying type to be mistakenly treated as a
+//    string.)
+#if GTEST_HAS_STD_WSTRING && GTEST_HAS_NATIVE_WCHAR
 // Overloads for wide C strings
 GTEST_API_ void PrintTo(const wchar_t* s, ::std::ostream* os);
 inline void PrintTo(wchar_t* s, ::std::ostream* os) {
@@ -1173,15 +1170,12 @@ class [[nodiscard]] UniversalTersePrinter<const wchar_t*> {
     }
   }
 };
-#endif
 
 template <>
-class [[nodiscard]] UniversalTersePrinter<wchar_t*> {
- public:
-  static void Print(wchar_t* str, ::std::ostream* os) {
-    UniversalTersePrinter<const wchar_t*>::Print(str, os);
-  }
-};
+class [[nodiscard]] UniversalTersePrinter<wchar_t*>
+    : public UniversalTersePrinter<const wchar_t*> {};
+
+#endif  // GTEST_HAS_STD_WSTRING
 
 template <typename T>
 void UniversalTersePrint(const T& value, ::std::ostream* os) {

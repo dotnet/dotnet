@@ -7,122 +7,121 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
-namespace Internal.Microsoft.Extensions.DependencyModel
+namespace Internal.Microsoft.Extensions.DependencyModel;
+
+internal class DependencyContextLoader
 {
-    internal class DependencyContextLoader
+    private const string DepsJsonExtension = ".deps.json";
+
+    private readonly string _entryPointDepsLocation;
+    private readonly IEnumerable<string> _nonEntryPointDepsPaths;
+    private readonly IFileSystem _fileSystem;
+    private readonly Func<IDependencyContextReader> _jsonReaderFactory;
+
+    public DependencyContextLoader() : this(
+        DependencyContextPaths.Current.Application,
+        DependencyContextPaths.Current.NonApplicationPaths,
+        FileSystemWrapper.Default,
+        () => new DependencyContextJsonReader())
     {
-        private const string DepsJsonExtension = ".deps.json";
+    }
 
-        private readonly string _entryPointDepsLocation;
-        private readonly IEnumerable<string> _nonEntryPointDepsPaths;
-        private readonly IFileSystem _fileSystem;
-        private readonly Func<IDependencyContextReader> _jsonReaderFactory;
+    internal DependencyContextLoader(
+        string entryPointDepsLocation,
+        IEnumerable<string> nonEntryPointDepsPaths,
+        IFileSystem fileSystem,
+        Func<IDependencyContextReader> jsonReaderFactory)
+    {
+        _entryPointDepsLocation = entryPointDepsLocation;
+        _nonEntryPointDepsPaths = nonEntryPointDepsPaths;
+        _fileSystem = fileSystem;
+        _jsonReaderFactory = jsonReaderFactory;
+    }
 
-        public DependencyContextLoader() : this(
-            DependencyContextPaths.Current.Application,
-            DependencyContextPaths.Current.NonApplicationPaths,
-            FileSystemWrapper.Default,
-            () => new DependencyContextJsonReader())
+    public static DependencyContextLoader Default { get; } = new DependencyContextLoader();
+
+    private static bool IsEntryAssembly(Assembly assembly)
+    {
+        return assembly.Equals(Assembly.GetEntryAssembly());
+    }
+
+    private static Stream GetResourceStream(Assembly assembly, string name)
+    {
+        return assembly.GetManifestResourceStream(name);
+    }
+
+    public DependencyContext Load(Assembly assembly)
+    {
+        if (assembly == null)
         {
+            throw new ArgumentNullException(nameof(assembly));
         }
 
-        internal DependencyContextLoader(
-            string entryPointDepsLocation,
-            IEnumerable<string> nonEntryPointDepsPaths,
-            IFileSystem fileSystem,
-            Func<IDependencyContextReader> jsonReaderFactory)
+        DependencyContext context = null;
+        using (var reader = _jsonReaderFactory())
         {
-            _entryPointDepsLocation = entryPointDepsLocation;
-            _nonEntryPointDepsPaths = nonEntryPointDepsPaths;
-            _fileSystem = fileSystem;
-            _jsonReaderFactory = jsonReaderFactory;
-        }
-
-        public static DependencyContextLoader Default { get; } = new DependencyContextLoader();
-
-        private static bool IsEntryAssembly(Assembly assembly)
-        {
-            return assembly.Equals(Assembly.GetEntryAssembly());
-        }
-
-        private static Stream GetResourceStream(Assembly assembly, string name)
-        {
-            return assembly.GetManifestResourceStream(name);
-        }
-
-        public DependencyContext Load(Assembly assembly)
-        {
-            if (assembly == null)
+            if (IsEntryAssembly(assembly))
             {
-                throw new ArgumentNullException(nameof(assembly));
+                context = LoadEntryAssemblyContext(reader);
             }
 
-            DependencyContext context = null;
-            using (var reader = _jsonReaderFactory())
+            if (context == null)
             {
-                if (IsEntryAssembly(assembly))
-                {
-                    context = LoadEntryAssemblyContext(reader);
-                }
+                context = LoadAssemblyContext(assembly, reader);
+            }
 
-                if (context == null)
+            if (context != null)
+            {
+                foreach (var extraPath in _nonEntryPointDepsPaths)
                 {
-                    context = LoadAssemblyContext(assembly, reader);
-                }
-
-                if (context != null)
-                {
-                    foreach (var extraPath in _nonEntryPointDepsPaths)
+                    var extraContext = LoadContext(reader, extraPath);
+                    if (extraContext != null)
                     {
-                        var extraContext = LoadContext(reader, extraPath);
-                        if (extraContext != null)
-                        {
-                            context = context.Merge(extraContext);
-                        }
+                        context = context.Merge(extraContext);
                     }
                 }
             }
-            return context;
         }
+        return context;
+    }
 
-        private DependencyContext LoadEntryAssemblyContext(IDependencyContextReader reader)
+    private DependencyContext LoadEntryAssemblyContext(IDependencyContextReader reader)
+    {
+        return LoadContext(reader, _entryPointDepsLocation);
+    }
+
+    private DependencyContext LoadContext(IDependencyContextReader reader, string location)
+    {
+        if (!string.IsNullOrEmpty(location))
         {
-            return LoadContext(reader, _entryPointDepsLocation);
+            Debug.Assert(_fileSystem.File.Exists(location));
+            using (var stream = _fileSystem.File.OpenRead(location))
+            {
+                return reader.Read(stream);
+            }
         }
+        return null;
+    }
 
-        private DependencyContext LoadContext(IDependencyContextReader reader, string location)
+    private DependencyContext LoadAssemblyContext(Assembly assembly, IDependencyContextReader reader)
+    {
+        using (var stream = GetResourceStream(assembly, assembly.GetName().Name + DepsJsonExtension))
         {
-            if (!string.IsNullOrEmpty(location))
+            if (stream != null)
             {
-                Debug.Assert(_fileSystem.File.Exists(location));
-                using (var stream = _fileSystem.File.OpenRead(location))
-                {
-                    return reader.Read(stream);
-                }
+                return reader.Read(stream);
             }
-            return null;
         }
 
-        private DependencyContext LoadAssemblyContext(Assembly assembly, IDependencyContextReader reader)
+        var depsJsonFile = Path.ChangeExtension(assembly.Location, DepsJsonExtension);
+        if (_fileSystem.File.Exists(depsJsonFile))
         {
-            using (var stream = GetResourceStream(assembly, assembly.GetName().Name + DepsJsonExtension))
+            using (var stream = _fileSystem.File.OpenRead(depsJsonFile))
             {
-                if (stream != null)
-                {
-                    return reader.Read(stream);
-                }
+                return reader.Read(stream);
             }
-
-            var depsJsonFile = Path.ChangeExtension(assembly.Location, DepsJsonExtension);
-            if (_fileSystem.File.Exists(depsJsonFile))
-            {
-                using (var stream = _fileSystem.File.OpenRead(depsJsonFile))
-                {
-                    return reader.Read(stream);
-                }
-            }
-
-            return null;
         }
+
+        return null;
     }
 }

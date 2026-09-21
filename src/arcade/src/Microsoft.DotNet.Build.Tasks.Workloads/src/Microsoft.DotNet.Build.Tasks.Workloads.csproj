@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>$(NetMinimum)</TargetFramework>
@@ -55,7 +55,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <!--<Compile Include="..\..\Common\Internal\BuildTask.cs" />-->
     <ProjectReference Include="..\..\Microsoft.DotNet.Build.Tasks.Installers\Microsoft.DotNet.Build.Tasks.Installers.csproj" />
     <Compile Update="Strings.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Strings.resx" />
   </ItemGroup>

@@ -3,14 +3,15 @@
   <PropertyGroup>
     <Shipping>true</Shipping>
     <RootNamespace>NuGet.VisualStudio.Client</RootNamespace>
+    <DebuggerFlavor>VsixDebugger</DebuggerFlavor>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeAssemblyFromOutputFolderInVSIXContainer>false</IncludeAssemblyFromOutputFolderInVSIXContainer>
     <IncludeCopyLocalReferencesInVSIXContainer>true</IncludeCopyLocalReferencesInVSIXContainer>
     <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
     <IncludeDebugSymbolsInLocalVSIXDeployment>true</IncludeDebugSymbolsInLocalVSIXDeployment>
     <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
     <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
-    <DeployExtension>false</DeployExtension>
     <Description>Visual Studio Extensibility Package (vsix)</Description>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <TargetVsixContainerName>NuGet.Tools.vsix</TargetVsixContainerName>
@@ -21,15 +22,6 @@
     <NgenApplicationDefault>[INSTALLDIR]\Common7\IDE\vsn.exe</NgenApplicationDefault>
     <NgenPriorityDefault>3</NgenPriorityDefault>
     <VssdkCompatibleExtension>true</VssdkCompatibleExtension>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' == 'True'">
-    <StartAction>Program</StartAction>
-    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
-    <StartArguments>/rootsuffix Exp /log</StartArguments>
-    <CreateVsixContainer>True</CreateVsixContainer>
-    <DeployExtension>True</DeployExtension>
-    <VsixDeployOnDebug>True</VsixDeployOnDebug>
   </PropertyGroup>
 
   <ItemGroup>
@@ -105,15 +97,7 @@
          These aren't automatically included by the VSSDK in the correct spot.
         Work around https://dev.azure.com/devdiv/DevDiv/_workitems/edit/2523215
     -->
-    <Content Include="$(OutputPath)**/Microsoft.Web.XmlTransform.resources.dll">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <!-- Explicitly include the XmlTransform resource packages.
-         These aren't automatically included by the VSSDK in the correct spot.
-         Work around https://dev.azure.com/devdiv/DevDiv/_workitems/edit/2523215
-    -->
-    <Content Include="$(OutputPath)**/Microsoft.Web.XmlTransform.resources.dll">
+    <Content Include="$(PkgMicrosoft_Web_Xdt)\lib\netstandard2.0\**\Microsoft.Web.XmlTransform.resources.dll">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -297,7 +281,11 @@
     <PackageReference Include="Newtonsoft.Json" ExcludeAssets="all" GeneratePathProperty="true" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.Web.Xdt" ExcludeAssets="all" GeneratePathProperty="true" />
 
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectCapability Include="CreateVsixContainer" />
   </ItemGroup>
 
   <ItemGroup>

@@ -35,9 +35,9 @@ jobs:
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
   steps:
   - script: |
-      # Pre-install the Azure DevOps extension using the dnceng PyPI feed for dependency resolution under network isolation
-      az extension add --name azure-devops \
-        --pip-extra-index-urls https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public-pypi/pypi/simple/
+      # Pre-install the Azure DevOps extension using the dnceng PyPI feed under network isolation
+      export PIP_INDEX_URL=https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-public-pypi/pypi/simple/
+      az extension add --name azure-devops
 
       dotnet_dotnet_build='${{ replace(parameters.dotnetDotnetRunId, ' ', '') }}'
       dotnet_dotnet_sha=''
@@ -147,7 +147,6 @@ jobs:
       --filter-trait "Category=SdkContent"
       -c Release
       -bl:$(Build.SourcesDirectory)/artifacts/log/Debug/BuildTests_$(date +"%m%d%H%M%S").binlog 
-      -flp:LogFile=$(Build.SourcesDirectory)/artifacts/logs/BuildTests_$(date +"%m%d%H%M%S").log
       -clp:v=m
       /p:MsftSdkTarballPath=$(MsftSdkTarballPath)
       /p:SdkTarballPath=$(SdkTarballPath)

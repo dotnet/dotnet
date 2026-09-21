@@ -41,6 +41,29 @@ public class UnitTests
         Assert.Fail("should never run");
     }
 
+    // A test whose display name has a UTF-8 byte count greater than its character count: German
+    // umlauts (2 bytes each), Japanese (3 bytes each) and a Czech caron (2 bytes).
+    //
+    // MTP frames declare Content-Length in bytes, so a client that consumes that number of
+    // characters instead under-reads the frame and desynchronizes the connection from the next
+    // message onward. Test names are user-authored and travel server-to-client on every node update,
+    // which makes them the realistic trigger.
+    //
+    // Note this is a name-integrity guard, not a full reproduction of that framing bug: the .NET MTP
+    // server serializes with System.Text.Json, whose default encoder escapes non-ASCII to \uXXXX, so
+    // the bytes actually on the wire are ASCII and byte count happens to equal character count. The
+    // framing bug is proved at the unit level in testfx, against the transport directly. What this
+    // does guard is that the name survives escaping, transport and decoding unchanged.
+    //
+    // Deliberately no astral-plane character (emoji): those are escaped by System.Text.Json as a
+    // surrogate pair (\ud83c\udf89) and currently arrive in the TRX as that literal text rather than
+    // the character, which is a separate decoding defect being tracked on its own.
+    [TestMethod(DisplayName = "TestGrüße日本語Čau")]
+    public void TestNonAsciiDisplayName()
+    {
+        Assert.AreEqual(2, Add(1, 1));
+    }
+
     // Verifies that environment variables declared in a runsettings RunConfiguration/EnvironmentVariables
     // block are injected into the self-hosted MTP process. The check is opted into by the
     // CHECK_RUNSETTINGS_VAR control variable, which the env-var acceptance test passes as a *process*

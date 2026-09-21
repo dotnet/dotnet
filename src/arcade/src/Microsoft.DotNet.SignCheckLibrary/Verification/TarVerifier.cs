@@ -8,83 +8,82 @@ using System.Collections.Generic;
 using System.Formats.Tar;
 using Microsoft.SignCheck.Logging;
 
-namespace Microsoft.SignCheck.Verification
+namespace Microsoft.SignCheck.Verification;
+
+public class TarVerifier : PgpVerifier
 {
-    public class TarVerifier : PgpVerifier
+    public TarVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension) : base(log, exclusions, options, fileExtension)
     {
-        public TarVerifier(Log log, Exclusions exclusions, SignatureVerificationOptions options, string fileExtension) : base(log, exclusions, options, fileExtension)
+        if (fileExtension != ".tar" && fileExtension != ".gz" && fileExtension != ".tgz")
         {
-            if (fileExtension != ".tar" && fileExtension != ".gz" && fileExtension != ".tgz")
-            {
-                throw new ArgumentException("fileExtension must be .tar, .gz, or .tgz");
-            }
+            throw new ArgumentException("fileExtension must be .tar, .gz, or .tgz");
         }
+    }
 
-        public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
-            => VerifyDetachedSignature(path, parent, virtualPath);
+    public override SignatureVerificationResult VerifySignature(string path, string parent, string virtualPath)
+        => VerifyDetachedSignature(path, parent, virtualPath);
 
-        protected override (string signatureDocument, string signableContent) GetSignatureDocumentAndSignableContent(string path, string tempDir)
-            => GetDetachedSignatureDocumentAndSignableContent(path, tempDir);
+    protected override (string signatureDocument, string signableContent) GetSignatureDocumentAndSignableContent(string path, string tempDir)
+        => GetDetachedSignatureDocumentAndSignableContent(path, tempDir);
 
-        protected override IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath)
+    protected override IEnumerable<ArchiveEntry> ReadArchiveEntries(string archivePath)
+    {
+        using (var fileStream = File.Open(archivePath, FileMode.Open))
         {
-            using (var fileStream = File.Open(archivePath, FileMode.Open))
+            TarReader reader = null;
+            GZipStream gzipStream = null;
+
+            try
             {
-                TarReader reader = null;
-                GZipStream gzipStream = null;
-
-                try
+                if (FileExtension == ".tar")
                 {
-                    if (FileExtension == ".tar")
+                    reader = new TarReader(fileStream);
+                }
+                else
+                {
+                    gzipStream = new GZipStream(fileStream, CompressionMode.Decompress);
+                    reader = new TarReader(gzipStream);
+                }
+
+                while (true)
+                {
+                    TarEntry entry;
+                    try
                     {
-                        reader = new TarReader(fileStream);
+                        entry = reader.TryGetNextTarEntry();
                     }
-                    else
+                    catch (InvalidDataException) when (FileExtension == ".gz")
                     {
-                        gzipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                        reader = new TarReader(gzipStream);
+                        // A bare .gz file is not necessarily a tarball — it can also be a
+                        // single gzipped payload (e.g. HTTP-precompressed static web assets
+                        // like blazor.server.js.gz). In that case TarReader throws when it
+                        // tries to parse the decompressed bytes as tar headers. Treat as
+                        // "no nested entries" instead of failing; the file itself still gets
+                        // its detached PGP signature checked by the base class.
+                        yield break;
                     }
 
-                    while (true)
+                    if (entry == null)
                     {
-                        TarEntry entry;
-                        try
-                        {
-                            entry = reader.TryGetNextTarEntry();
-                        }
-                        catch (InvalidDataException) when (FileExtension == ".gz")
-                        {
-                            // A bare .gz file is not necessarily a tarball — it can also be a
-                            // single gzipped payload (e.g. HTTP-precompressed static web assets
-                            // like blazor.server.js.gz). In that case TarReader throws when it
-                            // tries to parse the decompressed bytes as tar headers. Treat as
-                            // "no nested entries" instead of failing; the file itself still gets
-                            // its detached PGP signature checked by the base class.
-                            yield break;
-                        }
+                        yield break;
+                    }
 
-                        if (entry == null)
+                    // Skip directories
+                    if (!entry.Name.EndsWith("/"))
+                    {
+                        yield return new ArchiveEntry()
                         {
-                            yield break;
-                        }
-
-                        // Skip directories
-                        if (!entry.Name.EndsWith("/"))
-                        {
-                            yield return new ArchiveEntry()
-                            {
-                                RelativePath = entry.Name,
-                                ContentStream = entry.DataStream,
-                                ContentSize = entry.Length
-                            };
-                        }
+                            RelativePath = entry.Name,
+                            ContentStream = entry.DataStream,
+                            ContentSize = entry.Length
+                        };
                     }
                 }
-                finally
-                {
-                    reader?.Dispose();
-                    gzipStream?.Dispose();
-                }
+            }
+            finally
+            {
+                reader?.Dispose();
+                gzipStream?.Dispose();
             }
         }
     }

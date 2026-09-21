@@ -28,6 +28,7 @@
 
     <ItemGroup>
       <TestEnvironmentVariable Include="RestoreConfigFile=$(TestRestoreConfigFile)" Condition="'$(TestRestoreConfigFile)' != ''" />
+      <TestEnvironmentVariable Include="RuntimeFrameworkVersion=$(TestFxVersion)" Condition="'$(TestFxVersion)' != ''" />
     </ItemGroup>
 
     <!-- Clean the test root to avoid dirty content from a previous run -->

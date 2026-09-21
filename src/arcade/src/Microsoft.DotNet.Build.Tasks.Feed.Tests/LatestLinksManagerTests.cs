@@ -14,304 +14,303 @@ using Microsoft.DotNet.Build.Tasks.Feed.Tests.TestDoubles;
 using Microsoft.DotNet.Deployment.Tasks.Links;
 using Xunit;
 
-namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
+namespace Microsoft.DotNet.Build.Tasks.Feed.Tests;
+
+public class LatestLinksManagerTests
 {
-    public class LatestLinksManagerTests
+    [Theory]
+    [InlineData("https://dotnetcli.blob.core.windows.net/test", "https://builds.dotnet.microsoft.com/test/")]
+    [InlineData("https://dotnetbuilds.blob.core.windows.net/test/", "https://ci.dot.net/test/")]
+    public void ComputeLatestLinkBase_WithValidFeedConfig_ReturnsExpectedBaseUrl(string safeTargetUrl, string expectedTargetUrl)
     {
-        [Theory]
-        [InlineData("https://dotnetcli.blob.core.windows.net/test", "https://builds.dotnet.microsoft.com/test/")]
-        [InlineData("https://dotnetbuilds.blob.core.windows.net/test/", "https://ci.dot.net/test/")]
-        public void ComputeLatestLinkBase_WithValidFeedConfig_ReturnsExpectedBaseUrl(string safeTargetUrl, string expectedTargetUrl)
+        // Arrange
+        var feedConfig = new TargetFeedConfig(
+            contentType: TargetFeedContentType.Installer,
+            targetURL: safeTargetUrl,
+            type: FeedType.AzureStorageContainer,
+            token: "dummyToken",
+            latestLinkShortUrlPrefixes: ["prefix"],
+            akaMSCreateLinkPatterns: [],
+            akaMSDoNotCreateLinkPatterns: []
+        );
+
+        // Act
+        LatestLinksManager.ComputeLatestLinkBase(feedConfig).Should().Be(expectedTargetUrl);
+    }
+
+    [Fact]
+    public void ComputeLatestLinkBase_WithTrailingSlash_ReturnsExpectedBaseUrl()
+    {
+        // Arrange
+        var feedConfig = new TargetFeedConfig(
+            contentType: TargetFeedContentType.Installer,
+            targetURL: "https://dotnetcli.blob.core.windows.net/test/",
+            type: FeedType.AzureStorageContainer,
+            token: "dummyToken",
+            latestLinkShortUrlPrefixes: ["prefix"],
+            akaMSCreateLinkPatterns: [],    
+            akaMSDoNotCreateLinkPatterns: ImmutableList<Regex>.Empty
+        );
+
+        // Act
+        LatestLinksManager.ComputeLatestLinkBase(feedConfig).Should().Be("https://builds.dotnet.microsoft.com/test/");
+    }
+
+    [Fact]
+    public void ComputeLatestLinkBase_WithUnknownAuthority_ReturnsOriginalBaseUrl()
+    {
+        // Arrange
+        var feedConfig = new TargetFeedConfig(
+            contentType: TargetFeedContentType.Installer,
+            targetURL: "https://unknown.blob.core.windows.net/test",
+            type: FeedType.AzureStorageContainer,
+            token: "dummyToken",
+            latestLinkShortUrlPrefixes: [ "prefix" ],
+            akaMSCreateLinkPatterns: [],
+            akaMSDoNotCreateLinkPatterns: []
+        );
+
+        // Act
+        LatestLinksManager.ComputeLatestLinkBase(feedConfig).Should().Be("https://unknown.blob.core.windows.net/test/");
+    }
+
+    [Fact]
+    public void GetLatestLinksToCreate_Patterns()
+    {
+        var taskLoggingHelper = new Microsoft.Build.Utilities.TaskLoggingHelper(new StubTask());
+        // Arrange
+        var assetsToPublish = new HashSet<string>
         {
-            // Arrange
-            var feedConfig = new TargetFeedConfig(
-                contentType: TargetFeedContentType.Installer,
-                targetURL: safeTargetUrl,
-                type: FeedType.AzureStorageContainer,
-                token: "dummyToken",
-                latestLinkShortUrlPrefixes: ["prefix"],
-                akaMSCreateLinkPatterns: [],
-                akaMSDoNotCreateLinkPatterns: []
-            );
+            "assets/symbols/Microsoft.stuff.symbols.nupkg",
+            "assets/Microsoft.stuff.zip",
+            "assets/Microsoft.stuff.zip.sha512",
+            "assets/Microsoft.stuff.json",
+            "assets/Microsoft.stuff.json.zip",
+            "assets/Microsoft.stuff.sha512"
+        };
+        var feedConfig = new TargetFeedConfig(
+            contentType: TargetFeedContentType.Other,
+            targetURL: "https://example.com/feed",
+            type: FeedType.AzureStorageContainer,
+            token: "",
+            latestLinkShortUrlPrefixes: ImmutableList.Create("prefix1", "prefix2"),
+            akaMSCreateLinkPatterns: [new Regex(@"\.zip(\.sha512)?")],
+            akaMSDoNotCreateLinkPatterns: [new Regex("json")],
+            assetSelection: AssetSelection.All,
+            isolated: false,
+            @internal: false,
+            allowOverwrite: false,
+            symbolPublishVisibility: SymbolPublishVisibility.None,
+            flatten: true
+        );
 
-            // Act
-            LatestLinksManager.ComputeLatestLinkBase(feedConfig).Should().Be(expectedTargetUrl);
-        }
+        var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
 
-        [Fact]
-        public void ComputeLatestLinkBase_WithTrailingSlash_ReturnsExpectedBaseUrl()
+        var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
+
+        // Flattenned links should remove the path elements
+        links.Should().BeEquivalentTo(new List<AkaMSLink>
         {
-            // Arrange
-            var feedConfig = new TargetFeedConfig(
-                contentType: TargetFeedContentType.Installer,
-                targetURL: "https://dotnetcli.blob.core.windows.net/test/",
-                type: FeedType.AzureStorageContainer,
-                token: "dummyToken",
-                latestLinkShortUrlPrefixes: ["prefix"],
-                akaMSCreateLinkPatterns: [],    
-                akaMSDoNotCreateLinkPatterns: ImmutableList<Regex>.Empty
-            );
+            new AkaMSLink("prefix1/Microsoft.stuff.zip", "https://example.com/feed/assets/Microsoft.stuff.zip"),
+            new AkaMSLink("prefix2/Microsoft.stuff.zip", "https://example.com/feed/assets/Microsoft.stuff.zip"),
+            new AkaMSLink("prefix1/Microsoft.stuff.zip.sha512", "https://example.com/feed/assets/Microsoft.stuff.zip.sha512"),
+            new AkaMSLink("prefix2/Microsoft.stuff.zip.sha512", "https://example.com/feed/assets/Microsoft.stuff.zip.sha512")
+        });
+    }
 
-            // Act
-            LatestLinksManager.ComputeLatestLinkBase(feedConfig).Should().Be("https://builds.dotnet.microsoft.com/test/");
-        }
+    [Fact]
+    public void GetLatestLinksToCreate_EmptyPatternsShouldCreateNoLinks()
+    {
+        var taskLoggingHelper = new Microsoft.Build.Utilities.TaskLoggingHelper(new StubTask());
+        // Arrange
+        var assetsToPublish = new HashSet<string> { "assets/symbols/Microsoft.stuff.symbols.nupkg", "assets/Microsoft.stuff.zip", "assets/Microsoft.stuff.json", "assets/Microsoft.stuff.json.zip" };
+        var feedConfig = new TargetFeedConfig(
+            contentType: TargetFeedContentType.Other,
+            targetURL: "https://example.com/feed",
+            type: FeedType.AzureStorageContainer,
+            token: "",
+            latestLinkShortUrlPrefixes: ImmutableList.Create("prefix1", "prefix2"),
+            akaMSCreateLinkPatterns: [],
+            akaMSDoNotCreateLinkPatterns: null,
+            assetSelection: AssetSelection.All,
+            isolated: false,
+            @internal: false,
+            allowOverwrite: false,
+            symbolPublishVisibility: SymbolPublishVisibility.None,
+            flatten: true
+        );
 
-        [Fact]
-        public void ComputeLatestLinkBase_WithUnknownAuthority_ReturnsOriginalBaseUrl()
+        var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+
+        var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
+
+        // Flattenned links should remove the path elements
+        links.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetLatestLinksToCreate_OnlyIncludeShouldWork()
+    {
+        var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
+        // Arrange
+        var assetsToPublish = new HashSet<string> { "assets/symbols/Microsoft.stuff.symbols.nupkg", "assets/Microsoft.stuff.zip", "assets/Microsoft.stuff.json", "assets/Microsoft.stuff.json.zip" };
+        var feedConfig = new TargetFeedConfig(
+            contentType: TargetFeedContentType.Other,
+            targetURL: "https://example.com/feed",
+            type: FeedType.AzureStorageContainer,
+            token: "",
+            latestLinkShortUrlPrefixes: ImmutableList.Create("prefix1", "prefix2"),
+            akaMSCreateLinkPatterns: [new Regex(@"\.zip")],
+            akaMSDoNotCreateLinkPatterns: [],
+            assetSelection: AssetSelection.All,
+            isolated: false,
+            @internal: false,
+            allowOverwrite: false,
+            symbolPublishVisibility: SymbolPublishVisibility.None,
+            flatten: true
+        );
+
+        var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+
+        var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
+
+        // Flattenned links should remove the path elements
+        // Flattenned links should remove the path elements
+        links.Should().BeEquivalentTo(new List<AkaMSLink>
         {
-            // Arrange
-            var feedConfig = new TargetFeedConfig(
-                contentType: TargetFeedContentType.Installer,
-                targetURL: "https://unknown.blob.core.windows.net/test",
-                type: FeedType.AzureStorageContainer,
-                token: "dummyToken",
-                latestLinkShortUrlPrefixes: [ "prefix" ],
-                akaMSCreateLinkPatterns: [],
-                akaMSDoNotCreateLinkPatterns: []
-            );
+            new AkaMSLink("prefix1/Microsoft.stuff.zip", "https://example.com/feed/assets/Microsoft.stuff.zip"),
+            new AkaMSLink("prefix2/Microsoft.stuff.zip", "https://example.com/feed/assets/Microsoft.stuff.zip"),
+            new AkaMSLink("prefix1/Microsoft.stuff.json.zip", "https://example.com/feed/assets/Microsoft.stuff.json.zip"),
+            new AkaMSLink("prefix2/Microsoft.stuff.json.zip", "https://example.com/feed/assets/Microsoft.stuff.json.zip")
+        });
+    }
 
-            // Act
-            LatestLinksManager.ComputeLatestLinkBase(feedConfig).Should().Be("https://unknown.blob.core.windows.net/test/");
-        }
+    [Fact]
+    public void GetLatestLinksToCreate_NonFlattenedShouldNotFlatten()
+    {
+        var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
+        // Arrange
+        var assetsToPublish = new HashSet<string> { "assets/symbols/Microsoft.stuff.symbols.nupkg", "bar/Microsoft.stuff.zip", "assets/Microsoft.stuff.json", "assets/plop/Microsoft.stuff.json.zip" };
+        var feedConfig = new TargetFeedConfig(
+            contentType: TargetFeedContentType.Other,
+            targetURL: "https://example.com/feed",
+            type: FeedType.AzureStorageContainer,
+            token: "",
+            latestLinkShortUrlPrefixes: ImmutableList.Create("prefix1", "prefix2"),
+            akaMSCreateLinkPatterns: [new Regex(@"\.zip")],
+            akaMSDoNotCreateLinkPatterns: [],
+            assetSelection: AssetSelection.All,
+            isolated: false,
+            @internal: false,
+            allowOverwrite: false,
+            symbolPublishVisibility: SymbolPublishVisibility.None,
+            flatten: false
+        );
 
-        [Fact]
-        public void GetLatestLinksToCreate_Patterns()
+        var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+
+        var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
+
+        // Flattenned links should remove the path elements
+        // Flattenned links should remove the path elements
+        links.Should().BeEquivalentTo(new List<AkaMSLink>
         {
-            var taskLoggingHelper = new Microsoft.Build.Utilities.TaskLoggingHelper(new StubTask());
-            // Arrange
-            var assetsToPublish = new HashSet<string>
-            {
-                "assets/symbols/Microsoft.stuff.symbols.nupkg",
-                "assets/Microsoft.stuff.zip",
-                "assets/Microsoft.stuff.zip.sha512",
-                "assets/Microsoft.stuff.json",
-                "assets/Microsoft.stuff.json.zip",
-                "assets/Microsoft.stuff.sha512"
-            };
-            var feedConfig = new TargetFeedConfig(
-                contentType: TargetFeedContentType.Other,
-                targetURL: "https://example.com/feed",
-                type: FeedType.AzureStorageContainer,
-                token: "",
-                latestLinkShortUrlPrefixes: ImmutableList.Create("prefix1", "prefix2"),
-                akaMSCreateLinkPatterns: [new Regex(@"\.zip(\.sha512)?")],
-                akaMSDoNotCreateLinkPatterns: [new Regex("json")],
-                assetSelection: AssetSelection.All,
-                isolated: false,
-                @internal: false,
-                allowOverwrite: false,
-                symbolPublishVisibility: SymbolPublishVisibility.None,
-                flatten: true
-            );
+            new AkaMSLink("prefix1/bar/Microsoft.stuff.zip", "https://example.com/feed/bar/Microsoft.stuff.zip"),
+            new AkaMSLink("prefix2/bar/Microsoft.stuff.zip", "https://example.com/feed/bar/Microsoft.stuff.zip"),
+            new AkaMSLink("prefix1/assets/plop/Microsoft.stuff.json.zip", "https://example.com/feed/assets/plop/Microsoft.stuff.json.zip"),
+            new AkaMSLink("prefix2/assets/plop/Microsoft.stuff.json.zip", "https://example.com/feed/assets/plop/Microsoft.stuff.json.zip")
+        });
+    }
 
-            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
-
-            var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
-
-            // Flattenned links should remove the path elements
-            links.Should().BeEquivalentTo(new List<AkaMSLink>
-            {
-                new AkaMSLink("prefix1/Microsoft.stuff.zip", "https://example.com/feed/assets/Microsoft.stuff.zip"),
-                new AkaMSLink("prefix2/Microsoft.stuff.zip", "https://example.com/feed/assets/Microsoft.stuff.zip"),
-                new AkaMSLink("prefix1/Microsoft.stuff.zip.sha512", "https://example.com/feed/assets/Microsoft.stuff.zip.sha512"),
-                new AkaMSLink("prefix2/Microsoft.stuff.zip.sha512", "https://example.com/feed/assets/Microsoft.stuff.zip.sha512")
-            });
-        }
-
-        [Fact]
-        public void GetLatestLinksToCreate_EmptyPatternsShouldCreateNoLinks()
+    [Fact]
+    public void GetLatestLinksToCreate_RestrictedInstallScriptPatternShouldOnlyIncludeGetAspireCli()
+    {
+        var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
+        var assetsToPublish = new HashSet<string>
         {
-            var taskLoggingHelper = new Microsoft.Build.Utilities.TaskLoggingHelper(new StubTask());
-            // Arrange
-            var assetsToPublish = new HashSet<string> { "assets/symbols/Microsoft.stuff.symbols.nupkg", "assets/Microsoft.stuff.zip", "assets/Microsoft.stuff.json", "assets/Microsoft.stuff.json.zip" };
-            var feedConfig = new TargetFeedConfig(
-                contentType: TargetFeedContentType.Other,
-                targetURL: "https://example.com/feed",
-                type: FeedType.AzureStorageContainer,
-                token: "",
-                latestLinkShortUrlPrefixes: ImmutableList.Create("prefix1", "prefix2"),
-                akaMSCreateLinkPatterns: [],
-                akaMSDoNotCreateLinkPatterns: null,
-                assetSelection: AssetSelection.All,
-                isolated: false,
-                @internal: false,
-                allowOverwrite: false,
-                symbolPublishVisibility: SymbolPublishVisibility.None,
-                flatten: true
-            );
+            "assets/installers/get-aspire-cli.ps1",
+            "assets/installers/get-aspire-cli.ps1.sha512",
+            "assets/installers/get-aspire-cli.sh",
+            "assets/installers/get-aspire-cli.sh.sha512",
+            "assets/installers/install-other-tool.ps1",
+            "assets/installers/install-other-tool.sh",
+        };
+        var feedConfig = new TargetFeedConfig(
+            contentType: TargetFeedContentType.Other,
+            targetURL: "https://example.com/feed",
+            type: FeedType.AzureStorageContainer,
+            token: "",
+            latestLinkShortUrlPrefixes: ImmutableList.Create("dotnet/9/aspire/rc/daily"),
+            akaMSCreateLinkPatterns: PublishingConstants.AspireAkaMSCreateLinkPatterns,
+            akaMSDoNotCreateLinkPatterns: [],
+            assetSelection: AssetSelection.All,
+            isolated: false,
+            @internal: false,
+            allowOverwrite: false,
+            symbolPublishVisibility: SymbolPublishVisibility.None,
+            flatten: true
+        );
 
-            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+        var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
 
-            var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
+        var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
 
-            // Flattenned links should remove the path elements
-            links.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void GetLatestLinksToCreate_OnlyIncludeShouldWork()
+        links.Should().BeEquivalentTo(new List<AkaMSLink>
         {
-            var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
-            // Arrange
-            var assetsToPublish = new HashSet<string> { "assets/symbols/Microsoft.stuff.symbols.nupkg", "assets/Microsoft.stuff.zip", "assets/Microsoft.stuff.json", "assets/Microsoft.stuff.json.zip" };
-            var feedConfig = new TargetFeedConfig(
-                contentType: TargetFeedContentType.Other,
-                targetURL: "https://example.com/feed",
-                type: FeedType.AzureStorageContainer,
-                token: "",
-                latestLinkShortUrlPrefixes: ImmutableList.Create("prefix1", "prefix2"),
-                akaMSCreateLinkPatterns: [new Regex(@"\.zip")],
-                akaMSDoNotCreateLinkPatterns: [],
-                assetSelection: AssetSelection.All,
-                isolated: false,
-                @internal: false,
-                allowOverwrite: false,
-                symbolPublishVisibility: SymbolPublishVisibility.None,
-                flatten: true
-            );
+            new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.ps1", "https://example.com/feed/assets/installers/get-aspire-cli.ps1"),
+            new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.ps1.sha512", "https://example.com/feed/assets/installers/get-aspire-cli.ps1.sha512"),
+            new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.sh", "https://example.com/feed/assets/installers/get-aspire-cli.sh"),
+            new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.sh.sha512", "https://example.com/feed/assets/installers/get-aspire-cli.sh.sha512"),
+        });
+    }
 
-            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
-
-            var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
-
-            // Flattenned links should remove the path elements
-            // Flattenned links should remove the path elements
-            links.Should().BeEquivalentTo(new List<AkaMSLink>
-            {
-                new AkaMSLink("prefix1/Microsoft.stuff.zip", "https://example.com/feed/assets/Microsoft.stuff.zip"),
-                new AkaMSLink("prefix2/Microsoft.stuff.zip", "https://example.com/feed/assets/Microsoft.stuff.zip"),
-                new AkaMSLink("prefix1/Microsoft.stuff.json.zip", "https://example.com/feed/assets/Microsoft.stuff.json.zip"),
-                new AkaMSLink("prefix2/Microsoft.stuff.json.zip", "https://example.com/feed/assets/Microsoft.stuff.json.zip")
-            });
-        }
-
-        [Fact]
-        public void GetLatestLinksToCreate_NonFlattenedShouldNotFlatten()
+    [Fact]
+    public void GetLatestLinksToCreate_DotnetupPatternIncludesBinariesAndGetDotnetupScripts()
+    {
+        var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
+        var assetsToPublish = new HashSet<string>
         {
-            var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
-            // Arrange
-            var assetsToPublish = new HashSet<string> { "assets/symbols/Microsoft.stuff.symbols.nupkg", "bar/Microsoft.stuff.zip", "assets/Microsoft.stuff.json", "assets/plop/Microsoft.stuff.json.zip" };
-            var feedConfig = new TargetFeedConfig(
-                contentType: TargetFeedContentType.Other,
-                targetURL: "https://example.com/feed",
-                type: FeedType.AzureStorageContainer,
-                token: "",
-                latestLinkShortUrlPrefixes: ImmutableList.Create("prefix1", "prefix2"),
-                akaMSCreateLinkPatterns: [new Regex(@"\.zip")],
-                akaMSDoNotCreateLinkPatterns: [],
-                assetSelection: AssetSelection.All,
-                isolated: false,
-                @internal: false,
-                allowOverwrite: false,
-                symbolPublishVisibility: SymbolPublishVisibility.None,
-                flatten: false
-            );
+            "dotnetup/1.2.3/dotnetup-win-x64.exe",
+            "dotnetup/1.2.3/dotnetup-win-x64.exe.sha512",
+            "dotnetup/1.2.3/dotnetup-linux-x64",
+            "dotnetup/1.2.3/dotnetup-linux-x64.sha512",
+            "dotnetup/1.2.3/get-dotnetup.ps1",
+            "dotnetup/1.2.3/get-dotnetup.ps1.sha512",
+            "dotnetup/1.2.3/get-dotnetup.sh",
+            "dotnetup/1.2.3/get-dotnetup.sh.sha512",
+            "dotnetup/1.2.3/install-other-tool.ps1",
+            "dotnetup/1.2.3/install-other-tool.sh",
+        };
+        var feedConfig = new TargetFeedConfig(
+            contentType: TargetFeedContentType.Other,
+            targetURL: "https://example.com/feed",
+            type: FeedType.AzureStorageContainer,
+            token: "",
+            latestLinkShortUrlPrefixes: ImmutableList.Create("dotnet/dotnetup/daily"),
+            akaMSCreateLinkPatterns: PublishingConstants.DotnetupAkaMSCreateLinkPatterns,
+            akaMSDoNotCreateLinkPatterns: [],
+            assetSelection: AssetSelection.All,
+            isolated: false,
+            @internal: false,
+            allowOverwrite: false,
+            symbolPublishVisibility: SymbolPublishVisibility.None,
+            flatten: true
+        );
 
-            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
+        var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
 
-            var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
+        var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
 
-            // Flattenned links should remove the path elements
-            // Flattenned links should remove the path elements
-            links.Should().BeEquivalentTo(new List<AkaMSLink>
-            {
-                new AkaMSLink("prefix1/bar/Microsoft.stuff.zip", "https://example.com/feed/bar/Microsoft.stuff.zip"),
-                new AkaMSLink("prefix2/bar/Microsoft.stuff.zip", "https://example.com/feed/bar/Microsoft.stuff.zip"),
-                new AkaMSLink("prefix1/assets/plop/Microsoft.stuff.json.zip", "https://example.com/feed/assets/plop/Microsoft.stuff.json.zip"),
-                new AkaMSLink("prefix2/assets/plop/Microsoft.stuff.json.zip", "https://example.com/feed/assets/plop/Microsoft.stuff.json.zip")
-            });
-        }
-
-        [Fact]
-        public void GetLatestLinksToCreate_RestrictedInstallScriptPatternShouldOnlyIncludeGetAspireCli()
+        links.Should().BeEquivalentTo(new List<AkaMSLink>
         {
-            var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
-            var assetsToPublish = new HashSet<string>
-            {
-                "assets/installers/get-aspire-cli.ps1",
-                "assets/installers/get-aspire-cli.ps1.sha512",
-                "assets/installers/get-aspire-cli.sh",
-                "assets/installers/get-aspire-cli.sh.sha512",
-                "assets/installers/install-other-tool.ps1",
-                "assets/installers/install-other-tool.sh",
-            };
-            var feedConfig = new TargetFeedConfig(
-                contentType: TargetFeedContentType.Other,
-                targetURL: "https://example.com/feed",
-                type: FeedType.AzureStorageContainer,
-                token: "",
-                latestLinkShortUrlPrefixes: ImmutableList.Create("dotnet/9/aspire/rc/daily"),
-                akaMSCreateLinkPatterns: PublishingConstants.AspireAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: [],
-                assetSelection: AssetSelection.All,
-                isolated: false,
-                @internal: false,
-                allowOverwrite: false,
-                symbolPublishVisibility: SymbolPublishVisibility.None,
-                flatten: true
-            );
-
-            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
-
-            var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
-
-            links.Should().BeEquivalentTo(new List<AkaMSLink>
-            {
-                new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.ps1", "https://example.com/feed/assets/installers/get-aspire-cli.ps1"),
-                new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.ps1.sha512", "https://example.com/feed/assets/installers/get-aspire-cli.ps1.sha512"),
-                new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.sh", "https://example.com/feed/assets/installers/get-aspire-cli.sh"),
-                new AkaMSLink("dotnet/9/aspire/rc/daily/get-aspire-cli.sh.sha512", "https://example.com/feed/assets/installers/get-aspire-cli.sh.sha512"),
-            });
-        }
-
-        [Fact]
-        public void GetLatestLinksToCreate_DotnetupPatternIncludesBinariesAndGetDotnetupScripts()
-        {
-            var taskLoggingHelper = new TaskLoggingHelper(new StubTask());
-            var assetsToPublish = new HashSet<string>
-            {
-                "dotnetup/1.2.3/dotnetup-win-x64.exe",
-                "dotnetup/1.2.3/dotnetup-win-x64.exe.sha512",
-                "dotnetup/1.2.3/dotnetup-linux-x64",
-                "dotnetup/1.2.3/dotnetup-linux-x64.sha512",
-                "dotnetup/1.2.3/get-dotnetup.ps1",
-                "dotnetup/1.2.3/get-dotnetup.ps1.sha512",
-                "dotnetup/1.2.3/get-dotnetup.sh",
-                "dotnetup/1.2.3/get-dotnetup.sh.sha512",
-                "dotnetup/1.2.3/install-other-tool.ps1",
-                "dotnetup/1.2.3/install-other-tool.sh",
-            };
-            var feedConfig = new TargetFeedConfig(
-                contentType: TargetFeedContentType.Other,
-                targetURL: "https://example.com/feed",
-                type: FeedType.AzureStorageContainer,
-                token: "",
-                latestLinkShortUrlPrefixes: ImmutableList.Create("dotnet/dotnetup/daily"),
-                akaMSCreateLinkPatterns: PublishingConstants.DotnetupAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: [],
-                assetSelection: AssetSelection.All,
-                isolated: false,
-                @internal: false,
-                allowOverwrite: false,
-                symbolPublishVisibility: SymbolPublishVisibility.None,
-                flatten: true
-            );
-
-            var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
-
-            var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
-
-            links.Should().BeEquivalentTo(new List<AkaMSLink>
-            {
-                new AkaMSLink("dotnet/dotnetup/daily/dotnetup-win-x64.exe", "https://example.com/feed/dotnetup/1.2.3/dotnetup-win-x64.exe"),
-                new AkaMSLink("dotnet/dotnetup/daily/dotnetup-win-x64.exe.sha512", "https://example.com/feed/dotnetup/1.2.3/dotnetup-win-x64.exe.sha512"),
-                new AkaMSLink("dotnet/dotnetup/daily/dotnetup-linux-x64", "https://example.com/feed/dotnetup/1.2.3/dotnetup-linux-x64"),
-                new AkaMSLink("dotnet/dotnetup/daily/dotnetup-linux-x64.sha512", "https://example.com/feed/dotnetup/1.2.3/dotnetup-linux-x64.sha512"),
-                new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.ps1", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.ps1"),
-                new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.ps1.sha512", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.ps1.sha512"),
-                new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.sh", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.sh"),
-                new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.sh.sha512", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.sh.sha512"),
-            });
-        }
+            new AkaMSLink("dotnet/dotnetup/daily/dotnetup-win-x64.exe", "https://example.com/feed/dotnetup/1.2.3/dotnetup-win-x64.exe"),
+            new AkaMSLink("dotnet/dotnetup/daily/dotnetup-win-x64.exe.sha512", "https://example.com/feed/dotnetup/1.2.3/dotnetup-win-x64.exe.sha512"),
+            new AkaMSLink("dotnet/dotnetup/daily/dotnetup-linux-x64", "https://example.com/feed/dotnetup/1.2.3/dotnetup-linux-x64"),
+            new AkaMSLink("dotnet/dotnetup/daily/dotnetup-linux-x64.sha512", "https://example.com/feed/dotnetup/1.2.3/dotnetup-linux-x64.sha512"),
+            new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.ps1", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.ps1"),
+            new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.ps1.sha512", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.ps1.sha512"),
+            new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.sh", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.sh"),
+            new AkaMSLink("dotnet/dotnetup/daily/get-dotnetup.sh.sha512", "https://example.com/feed/dotnetup/1.2.3/get-dotnetup.sh.sha512"),
+        });
     }
 }

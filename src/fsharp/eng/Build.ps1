@@ -45,7 +45,7 @@ param (
     [switch]$procdump,
     [switch]$deployExtensions,
     [switch]$prepareMachine,
-    [bool][Alias('mt')]$msbuildMultiThreaded = $false,
+    [bool][Alias('mt')]$msbuildMultiThreaded = $true,
     [bool]$nodeReuse = $false,
     [switch]$useGlobalNuGetCache = $true,
     [switch]$dontUseGlobalNuGetCache = $false,
@@ -81,6 +81,11 @@ param (
 Set-StrictMode -version 2.0
 $ErrorActionPreference = "Stop"
 
+# MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
+# tools.ps1 reads $msbuildMultiThreaded, so this has to be settled before Arcade is imported.
+if ($ci -and -not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
+    $msbuildMultiThreaded = $false
+}
 $BuildCategory = ""
 $BuildMessage = ""
 
@@ -377,15 +382,15 @@ function TestUsingMSBuild([string] $testProject, [string] $targetFramework, [str
 
     $testResultsDir = "$ArtifactsDir\TestResults\$configuration"
     $testBinLogPath = "$LogDir\${projectName}_$targetFramework.binlog"
-    
+
     # MTP requires --solution flag for .sln/.slnx files
     $testTarget = if ($testProject.EndsWith('.sln') -or $testProject.EndsWith('.slnx')) { "--solution ""$testProject""" } else { "--project ""$testProject""" }
-    
+
     # Xunit XML report via XunitXml.TestLogger with CI-friendly filenames
     $jobName = if ($env:SYSTEM_JOBNAME) { $env:SYSTEM_JOBNAME } else { "local" }
     $xunitLogFileName = "{assembly}.{framework}.${jobName}.xml"
     $reportArgs = "--report-spekt-xunit --report-spekt-xunit-filename ""$xunitLogFileName"""
-    
+
     $test_args = "test $testTarget -c $configuration -f $targetFramework $reportArgs --results-directory ""$testResultsDir"" /bl:$testBinLogPath"
     # MTP HangDump extension replaces VSTest --blame-hang-timeout
     $test_args += " --hangdump --hangdump-timeout 5m --hangdump-type Full"
@@ -401,7 +406,7 @@ function TestUsingMSBuild([string] $testProject, [string] $targetFramework, [str
     $test_args += " $settings"
 
     Write-Host("$test_args")
-    
+
     Exec-Console $dotnetExe $test_args
 }
 

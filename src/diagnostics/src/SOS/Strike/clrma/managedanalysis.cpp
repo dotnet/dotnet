@@ -282,9 +282,10 @@ ClrmaManagedAnalysis::AssociateClient(
                     TraceError("AssociateClient GetRuntime FAILED %08x\n", hr);
                     return hr;
                 }
-                if (FAILED(hr = runtime->GetClrDataProcess(IRuntime::ClrDataProcessFlags::UseCDac, &m_clrData)))
+                CDacLoadPolicy policy = runtime->GetCDacLoadPolicy();
+                if (FAILED(hr = runtime->GetClrDataProcess(policy, &m_clrData)))
                 {
-                    if (Runtime::GetCDacLoadPolicy() == CDacLoadPolicy::UseCDac)
+                    if (policy == CDacLoadPolicy::OnlyUseCDac || hr == CORDBG_E_UNSUPPORTED_DEBUGGING_MODEL)
                     {
                         TraceError("AssociateClient forced cDAC retrieval failed with code %08x\n", hr);
                         return hr;
@@ -410,6 +411,12 @@ ClrmaManagedAnalysis::GetThread(
         TraceError("GetThread last-event thread (osThreadId == -1) is not supported on this host\n");
         return E_NOTIMPL;
 #endif
+    }
+
+    if (osThreadId == 0 || osThreadId == (ULONG)-1)
+    {
+        TraceError("GetThread resolved an invalid OS thread ID %08x\n", osThreadId);
+        return E_UNEXPECTED;
     }
 
     if (m_clrmaService != nullptr)

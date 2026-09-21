@@ -4,6 +4,8 @@
     <Shipping>true</Shipping>
     <IncludeInVSIX>true</IncludeInVSIX>
     <RootNamespace>NuGetVSExtension</RootNamespace>
+    <VSSDKBuildToolsAutoSetup>true</VSSDKBuildToolsAutoSetup>
+    <UseCodebase>false</UseCodebase>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <CreateVsixContainer>false</CreateVsixContainer>
@@ -24,7 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" NoWarn="NU1605" />
   </ItemGroup>
 

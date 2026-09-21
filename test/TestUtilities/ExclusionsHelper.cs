@@ -25,7 +25,7 @@ public class ExclusionsHelper
     // "src/vstest/exclusions.txt" but not "src/arcade/exclusions.txt".
     private readonly Regex? _exclusionRegex;
 
-    private readonly Dictionary<string, HashSet<string>> _suffixToExclusions;
+    private readonly ExclusionFileEntry[] _exclusions;
 
     private readonly Dictionary<string, HashSet<string>> _suffixToUnusedExclusions;
 
@@ -40,9 +40,19 @@ public class ExclusionsHelper
         _logsDirectory = logsDirectory;
         _baselineSubDir = baselineSubDir;
         _exclusionRegex = string.IsNullOrWhiteSpace(exclusionRegexString) ? null : new Regex(exclusionRegexString);
-        _suffixToExclusions = ParseExclusionsFile();
+        string exclusionsFilePath = BaselineHelper.GetBaselineFilePath(_exclusionsFileName, _baselineSubDir);
+        _exclusions = ParseExclusions(File.ReadAllText(exclusionsFilePath))
+            .Where(entry => _exclusionRegex is null || _exclusionRegex.IsMatch(entry.Pattern))
+            .ToArray();
         _suffixToUnusedExclusions = new Dictionary<string, HashSet<string>>(
-            _suffixToExclusions.ToDictionary(pair => pair.Key, pair => new HashSet<string>(pair.Value)));
+            _exclusions
+                .SelectMany(entry => entry.Suffixes.Count == 0
+                    ? new[] { new { entry.Pattern, Suffix = NullSuffix } }
+                    : entry.Suffixes.Select(suffix => new { entry.Pattern, Suffix = suffix }))
+                .GroupBy(entry => entry.Suffix, entry => entry.Pattern)
+                .ToDictionary(
+                    group => group.Key,
+                    group => new HashSet<string>(group)));
     }
 
     public bool IsFileExcluded(string filePath, string suffix = NullSuffix)
@@ -52,9 +62,19 @@ public class ExclusionsHelper
             throw new ArgumentNullException(nameof(suffix));
         }
 
-        // If a specific suffix is provided, check that first. If it is not found, check the default suffix.
-        return CheckAndRemoveIfExcluded(filePath, suffix) ||
-            (suffix != NullSuffix && CheckAndRemoveIfExcluded(filePath, NullSuffix));
+        ExclusionFileMatch? match = FindMatchingExclusion(
+            _exclusions,
+            filePath,
+            suffix == NullSuffix ? null : suffix);
+        if (match is null)
+        {
+            return false;
+        }
+
+        RemoveUsedExclusion(
+            match.Entry.Pattern,
+            match.Suffix ?? NullSuffix);
+        return true;
     }
 
     /// <summary>
@@ -84,55 +104,80 @@ public class ExclusionsHelper
         File.WriteAllLines(actualFilePath, newLines!);
     }
 
-    private bool CheckAndRemoveIfExcluded(string filePath, string suffix = NullSuffix)
+    public static ExclusionFileEntry[] ParseExclusions(string content)
     {
-        if (_suffixToExclusions.TryGetValue(suffix, out HashSet<string>? suffixExclusionList))
+        List<ExclusionFileEntry> exclusions = [];
+        foreach (string rawLine in content.Split(["\r\n", "\n"], StringSplitOptions.None))
         {
-            foreach (string exclusion in suffixExclusionList)
+            string line = rawLine.Trim();
+            if (line.Length == 0 || line.StartsWith('#'))
             {
-                Matcher matcher = new();
-                matcher.AddInclude(exclusion);
-                if (matcher.Match(filePath).HasMatches)
-                {
-                    RemoveUsedExclusion(exclusion, suffix);
-                    return true;
-                }
+                continue;
             }
+
+            int separator = line.IndexOf('|');
+            if (separator == 0 ||
+                (separator >= 0 && line.IndexOf('|', separator + 1) >= 0))
+            {
+                throw new FormatException(
+                    $"Invalid exclusion: '{line}'. Expected a nonempty pattern " +
+                    "followed by at most one pipe.");
+            }
+
+            string[] suffixes = separator < 0
+                ? []
+                : line[(separator + 1)..]
+                    .Split(',', StringSplitOptions.TrimEntries);
+            if (suffixes.Any(string.IsNullOrEmpty))
+            {
+                throw new FormatException(
+                    $"Invalid exclusion: '{line}'. Suffixes must be nonempty.");
+            }
+
+            exclusions.Add(new ExclusionFileEntry(
+                separator < 0 ? line : line[..separator].Trim(),
+                suffixes));
         }
-        return false;
+
+        return exclusions.ToArray();
     }
 
-    private Dictionary<string, HashSet<string>> ParseExclusionsFile()
+    public static bool PathMatches(string pattern, string path)
     {
-        string exclusionsFilePath = BaselineHelper.GetBaselineFilePath(_exclusionsFileName, _baselineSubDir);
-        return File.ReadAllLines(exclusionsFilePath)
-            .Select(line =>
+        Matcher matcher = new();
+        matcher.AddInclude(pattern);
+        return matcher.Match(path).HasMatches;
+    }
+
+    public static ExclusionFileMatch? FindMatchingExclusion(
+        IEnumerable<ExclusionFileEntry> exclusions,
+        string path,
+        string? suffix)
+    {
+        ExclusionFileEntry? wholeFileMatch = null;
+        foreach (ExclusionFileEntry exclusion in exclusions)
+        {
+            if (!PathMatches(exclusion.Pattern, path))
             {
-                // Ignore full-line comments
-                return line.TrimStart().StartsWith('#') ? string.Empty : line;
-            })
-            .Where(line => !string.IsNullOrEmpty(line))
-            .Select(line => line.Split('|'))
-            .Where(parts =>
+                continue;
+            }
+
+            string? matchingSuffix = exclusion.Suffixes.FirstOrDefault(candidate =>
+                string.Equals(candidate, suffix, StringComparison.Ordinal));
+            if (matchingSuffix is not null)
             {
-                // Only include exclusions that match the exclusion regex
-                return _exclusionRegex is null || _exclusionRegex.IsMatch(parts[0]);
-            })
-            .SelectMany(parts =>
+                return new ExclusionFileMatch(exclusion, matchingSuffix);
+            }
+
+            if (exclusion.Suffixes.Count == 0)
             {
-                // Create a new object for each suffix
-                return parts.Length == 1
-                    ? new[] { new { Exclusion = parts[0], Suffix = NullSuffix } }
-                    : parts[1].Split(',').Select(suffix => new { Exclusion = parts[0], Suffix = suffix.Trim() });
-            })
-            .GroupBy(
-                parts => parts.Suffix,
-                parts => parts.Exclusion
-            )
-            .ToDictionary(
-                group => group.Key,
-                group => new HashSet<string>(group)
-            );
+                wholeFileMatch ??= exclusion;
+            }
+        }
+
+        return wholeFileMatch is null
+            ? null
+            : new ExclusionFileMatch(wholeFileMatch, Suffix: null);
     }
 
     private void RemoveUsedExclusion(string exclusion, string suffix)
@@ -179,3 +224,11 @@ public class ExclusionsHelper
         return line.Replace(suffixString, string.Join(",", newSuffixes));
     }
 }
+
+public sealed record ExclusionFileEntry(
+    string Pattern,
+    IReadOnlyList<string> Suffixes);
+
+public sealed record ExclusionFileMatch(
+    ExclusionFileEntry Entry,
+    string? Suffix);

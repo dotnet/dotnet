@@ -154,6 +154,11 @@ namespace NuGet.Configuration
             _rootElement.AddOrUpdate(sectionName, item);
         }
 
+        internal void AddEmptySection(string sectionName)
+        {
+            _rootElement.AddEmptySection(sectionName, this);
+        }
+
         /// <summary>
         /// Removes the given <paramref name="item"/> from the settings.
         /// If the <paramref name="item"/> is the last item in the section, the section will also be removed.

@@ -29,6 +29,75 @@ namespace NuGet.Commands.Test
     public class SourceRepositoryDependencyProviderTests
     {
         [Fact]
+        public async Task FindLibraryAsync_WhenRestoreStateIsRefreshedMidRequest_StillReleasesTheThrottleItAcquired()
+        {
+            // The concurrency throttle is process-wide and every call site reads the static field twice - once to
+            // wait, once to release in a finally. Swapping the field between those two reads releases a different,
+            // already-full semaphore (SemaphoreFullException), and disposing the previous one faults the waiters.
+            // So the throttle must keep its identity for the lifetime of the operations it gates.
+            // Regression test for NuGet/Home#15045.
+            //
+            // The throttle is only non-null where a concurrency limit applies - macOS by default, or when
+            // NUGET_CONCURRENCY_LIMIT is set - so this exercises the race there and passes trivially elsewhere.
+            var requestStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var releaseRequest = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            var findResource = new Mock<FindPackageByIdResource>();
+            findResource.Setup(s => s.DoesPackageExistAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<NuGetVersion>(),
+                    It.IsAny<SourceCacheContext>(),
+                    It.IsAny<ILogger>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(async () =>
+                {
+                    // The throttle has been acquired by now; hold it until the test says otherwise.
+                    requestStarted.SetResult(true);
+                    await releaseRequest.Task;
+                    return true;
+                });
+
+            var source = new Mock<SourceRepository>();
+            source.Setup(s => s.GetResourceAsync<FindPackageByIdResource>(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(findResource.Object);
+            source.SetupGet(s => s.PackageSource)
+                .Returns(new PackageSource("http://test/index.json"));
+
+            using (var cacheContext = new SourceCacheContext())
+            {
+                var provider = new SourceRepositoryDependencyProvider(
+                    source.Object,
+                    new TestLogger(),
+                    cacheContext,
+                    ignoreFailedSources: true,
+                    ignoreWarning: true);
+
+                var libraryRange = new LibraryRange(
+                    "a",
+                    new VersionRange(new NuGetVersion(1, 0, 0)),
+                    LibraryDependencyTarget.Package);
+
+                Task<LibraryIdentity> find = provider.FindLibraryAsync(
+                    libraryRange,
+                    NuGetFramework.Parse("net5.0"),
+                    cacheContext,
+                    NullLogger.Instance,
+                    CancellationToken.None);
+
+                await requestStarted.Task;
+
+                // A restore starting elsewhere in this process must not invalidate the throttle this request holds.
+                StaticState.RaiseBuildEnded();
+
+                releaseRequest.SetResult(true);
+
+                LibraryIdentity result = await find;
+
+                Assert.Equal("a", result.Name);
+            }
+        }
+
+        [Fact]
         public void Constructor_ThrowsForNullSourceRepository()
         {
             using (var sourceCacheContext = new SourceCacheContext())

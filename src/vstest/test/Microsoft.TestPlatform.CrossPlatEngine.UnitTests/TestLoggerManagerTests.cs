@@ -85,7 +85,7 @@ public class TestLoggerManagerTests
     </RunSettings> ";
 
         var result = TestLoggerManager.GetResultsDirectory(runSettingsXml);
-        Assert.AreEqual(0, string.Compare("DummyTestResultsFolder", result));
+        Assert.AreEqual(0, string.Compare("DummyTestResultsFolder", result, StringComparison.Ordinal));
     }
 
     [TestMethod]
@@ -102,7 +102,7 @@ public class TestLoggerManagerTests
 
         var result = TestLoggerManager.GetResultsDirectory(runSettingsXml);
 
-        Assert.AreEqual(0, string.Compare(Constants.DefaultResultsDirectory, result));
+        Assert.AreEqual(0, string.Compare(Constants.DefaultResultsDirectory, result, StringComparison.Ordinal));
     }
 
     [TestMethod]

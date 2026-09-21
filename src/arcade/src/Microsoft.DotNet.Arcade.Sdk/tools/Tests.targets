@@ -4,8 +4,13 @@
   <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
     <AutoGenerateBindingRedirects Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">true</AutoGenerateBindingRedirects>
 
-    <_GetTestsToRunTarget Condition="'$(TargetFrameworks)' == ''">_InnerGetTestsToRun</_GetTestsToRunTarget>
-    <_GetTestsToRunTarget Condition="'$(TargetFrameworks)' != ''">_OuterGetTestsToRun</_GetTestsToRunTarget>
+    <!--
+      Only dispatch to the outer (multi-targeting) build when no specific target framework has been
+      selected. Inner builds keep TargetFrameworks set, so relying on it alone would re-enter the
+      outer path and run every target framework instead of the requested one.
+    -->
+    <_RunTestsTarget>_InnerRunTests</_RunTestsTarget>
+    <_RunTestsTarget Condition="'$(TargetFramework)' == '' and '$(TargetFrameworks)' != ''">_OuterRunTests</_RunTestsTarget>
 
     <!-- The runtime to run tests on: 'Core', 'Mono', 'Full' (desktop FX). -->
     <TestRuntime Condition="'$(TestRuntime)' == '' and '$(TargetFrameworkIdentifier)' == '.NETCoreApp'">Core</TestRuntime>
@@ -27,8 +32,8 @@
     <Error Condition="!Exists($(TestRunnerTargets))" Text="Test runner $(TestRunnerName) is invalid."/>
   </Target>
 
-  <Target Name="Test" DependsOnTargets="ErrorForMissingTestRunner;$(_GetTestsToRunTarget);_ValidateTestArchitectures;RunTests" Condition="'$(IsUnitTestProject)' == 'true' or '$(IsPerformanceTestProject)' == 'true'" />
-  <Target Name="IntegrationTest" DependsOnTargets="ErrorForMissingTestRunner;$(_GetTestsToRunTarget);_ValidateTestArchitectures;RunTests" Condition="'$(IsIntegrationTestProject)' == 'true'" />
+  <Target Name="Test" DependsOnTargets="ErrorForMissingTestRunner;$(_RunTestsTarget)" Condition="'$(IsUnitTestProject)' == 'true' or '$(IsPerformanceTestProject)' == 'true'" />
+  <Target Name="IntegrationTest" DependsOnTargets="ErrorForMissingTestRunner;$(_RunTestsTarget)" Condition="'$(IsIntegrationTestProject)' == 'true'" />
 
   <PropertyGroup>
     <_InitializeTestArchitecturesDependsOn Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
@@ -144,15 +149,20 @@
            Text="Test architecture '%(_MismatchedTestArchitecture.Architecture)' cannot use the '%(_MismatchedTestArchitecture.BuiltTestArchitecture)' test host for '%(_MismatchedTestArchitecture.Identity)'. Build an architecture-specific test output or set TestArchitectures to match the architecture selected by PlatformTarget, Prefer32Bit, or RuntimeIdentifier." />
   </Target>
 
-  <Target Name="_OuterGetTestsToRun" Returns="@(TestToRun)">
+  <Target Name="_InnerRunTests"
+          DependsOnTargets="_InnerGetTestsToRun;_ValidateTestArchitectures;RunTests"
+          Returns="@(FileWrites)" />
+
+  <Target Name="_OuterRunTests" Returns="@(FileWrites)">
     <ItemGroup>
       <_TargetFramework Include="$(TargetFrameworks)" />
+      <_InnerTestBuild Include="$(MSBuildProjectFile)"
+                       AdditionalProperties="TargetFramework=%(_TargetFramework.Identity)" />
     </ItemGroup>
-    <MSBuild Projects="$(MSBuildProjectFile)"
-             Condition="'$(TargetFrameworks)' != ''"
-             Targets="_InnerGetTestsToRun"
-             Properties="TargetFramework=%(_TargetFramework.Identity)">
-      <Output ItemName="TestToRun" TaskParameter="TargetOutputs" />
+    <MSBuild Projects="@(_InnerTestBuild)"
+             Targets="_InnerRunTests"
+             BuildInParallel="true">
+      <Output ItemName="FileWrites" TaskParameter="TargetOutputs" />
     </MSBuild>
   </Target>
 

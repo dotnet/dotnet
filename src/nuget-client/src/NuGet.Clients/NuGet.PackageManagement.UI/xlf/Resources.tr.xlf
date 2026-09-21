@@ -457,6 +457,11 @@
         <target state="translated">Yardım simgesi</target>
         <note />
       </trans-unit>
+      <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="translated">GitHub Copilot ile düzelt</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Label_Action">
         <source>Action:</source>
         <target state="translated">Eylem:</target>
@@ -580,7 +585,12 @@
       <trans-unit id="Label_Installed_VulnerableWarning">
         <source>You have {0} vulnerable package versions installed.</source>
         <target state="translated">Güvenlik açığı bulunan {0} yüklü paket sürümünüz var.</target>
-        <note>{0} is the number of installed package versions</note>
+        <note>{0} is the number of installed package versions (always more than 1)</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableWarning_Single">
+        <source>You have 1 vulnerable package version installed.</source>
+        <target state="translated">Güvenlik açığı bulunan 1 yüklü paket sürümünüz var.</target>
+        <note />
       </trans-unit>
       <trans-unit id="Label_License">
         <source>License:</source>
@@ -1277,8 +1287,8 @@ Hata: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
-        <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">Başlatıldıktan sonra bu eylem iptal edilemez.</target>
+        <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
+        <target state="translated">Bu eylem başlatıldıktan sonra iptal edilemez. Devam etmek için Tamam'ı seçin.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

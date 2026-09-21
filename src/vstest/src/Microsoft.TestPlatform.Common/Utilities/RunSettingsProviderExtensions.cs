@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -130,7 +131,7 @@ internal static class RunSettingsProviderExtensions
     {
         foreach (XmlNode node in xmlNode.ChildNodes)
         {
-            if (string.Compare(node.Attributes![NameString]!.Value, attrName) == 0)
+            if (string.Equals(node.Attributes![NameString]!.Value, attrName, StringComparison.Ordinal))
             {
                 node.Attributes[ValueString]!.Value = attrValue;
                 return true;

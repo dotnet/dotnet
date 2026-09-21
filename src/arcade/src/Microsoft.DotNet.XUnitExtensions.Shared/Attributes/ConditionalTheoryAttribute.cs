@@ -6,38 +6,37 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.DotNet.XUnitExtensions;
 using Xunit.Sdk;
 
-namespace Xunit
-{
+namespace Xunit;
+
 #if !USES_XUNIT_3
-    [XunitTestCaseDiscoverer("Microsoft.DotNet.XUnitExtensions.ConditionalTheoryDiscoverer", "Microsoft.DotNet.XUnitExtensions")]
+[XunitTestCaseDiscoverer("Microsoft.DotNet.XUnitExtensions.ConditionalTheoryDiscoverer", "Microsoft.DotNet.XUnitExtensions")]
 #endif
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public sealed class ConditionalTheoryAttribute : TheoryAttribute
-    {
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+public sealed class ConditionalTheoryAttribute : TheoryAttribute
+{
+    [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
+    public Type CalleeType { get; private set; }
+    public string[] ConditionMemberNames { get; private set; }
+
+    public ConditionalTheoryAttribute(
         [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
-        public Type CalleeType { get; private set; }
-        public string[] ConditionMemberNames { get; private set; }
-
-        public ConditionalTheoryAttribute(
-            [DynamicallyAccessedMembers(StaticReflectionConstants.ConditionalMemberKinds)]
-            Type calleeType,
-            params string[] conditionMemberNames)
-        {
-            CalleeType = calleeType;
-            ConditionMemberNames = conditionMemberNames;
+        Type calleeType,
+        params string[] conditionMemberNames)
+    {
+        CalleeType = calleeType;
+        ConditionMemberNames = conditionMemberNames;
 #if USES_XUNIT_3
-            string skipReason = ConditionalTestDiscoverer.EvaluateSkipConditions(calleeType, conditionMemberNames);
-            if (skipReason != null)
-                Skip = skipReason;
+        string skipReason = ConditionalTestDiscoverer.EvaluateSkipConditions(calleeType, conditionMemberNames);
+        if (skipReason != null)
+            Skip = skipReason;
 #endif
-        }
+    }
 
 #if USES_XUNIT_3
-        [Obsolete("Use the overload that takes a Type parameter: ConditionalTheory(typeof(MyClass), nameof(MyCondition)).")]
+    [Obsolete("Use the overload that takes a Type parameter: ConditionalTheory(typeof(MyClass), nameof(MyCondition)).")]
 #endif
-        public ConditionalTheoryAttribute(params string[] conditionMemberNames)
-        {
-            ConditionMemberNames = conditionMemberNames;
-        }
+    public ConditionalTheoryAttribute(params string[] conditionMemberNames)
+    {
+        ConditionMemberNames = conditionMemberNames;
     }
 }

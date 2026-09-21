@@ -9,4 +9,8 @@
     <ProjectReference Include="..\Microsoft.DotNet.XUnitExtensions\src\Microsoft.DotNet.XUnitExtensions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Resources\**" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
 </Project>

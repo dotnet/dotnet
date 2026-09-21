@@ -5,72 +5,75 @@ using Microsoft.Build.Framework;
 using System.IO;
 using XliffTasks.Model;
 
-namespace XliffTasks.Tasks
+namespace XliffTasks.Tasks;
+
+[MSBuildMultiThreadableTask]
+public sealed class UpdateXlf : XlfTask
 {
-    public sealed class UpdateXlf : XlfTask
+    [Required]
+    public ITaskItem[] Sources { get; set; }
+
+    [Required]
+    public string[] Languages { get; set; }
+
+    [Required]
+    public bool AllowModification { get; set; }
+
+    private const string HowToUpdate =
+        "Run `msbuild /t:UpdateXlf` to update .xlf files or set UpdateXlfOnBuild=true"
+        + " to update them on every build, but note that it is strongly discouraged to set"
+        + " UpdateXlfOnBuild=true in official/CI build environments as they should not"
+        + " modify source code during the build.";
+
+    protected override void ExecuteCore()
     {
-        [Required]
-        public ITaskItem[] Sources { get; set; }
-
-        [Required]
-        public string[] Languages { get; set; }
-
-        [Required]
-        public bool AllowModification { get; set; }
-
-        private const string HowToUpdate =
-            "Run `msbuild /t:UpdateXlf` to update .xlf files or set UpdateXlfOnBuild=true"
-            + " to update them on every build, but note that it is strongly discouraged to set"
-            + " UpdateXlfOnBuild=true in official/CI build environments as they should not"
-            + " modify source code during the build.";
-
-        protected override void ExecuteCore()
+        foreach (ITaskItem item in Sources)
         {
-            foreach (ITaskItem item in Sources)
+            string sourcePath = item.ItemSpec;
+            string sourceDocumentPath = item.GetMetadataOrDefault(MetadataKey.SourceDocumentPath, item.ItemSpec);
+            string sourceFormat = item.GetMetadataOrThrow(MetadataKey.XlfSourceFormat);
+            TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(TaskEnvironment.GetAbsolutePath(sourcePath), sourceFormat);
+            string sourceDocumentId = XlfTask.GetSourceDocumentId(sourcePath);
+
+            foreach (string language in Languages)
             {
-                string sourcePath = item.ItemSpec;
-                string sourceDocumentPath = item.GetMetadataOrDefault(MetadataKey.SourceDocumentPath, item.ItemSpec);
-                string sourceFormat = item.GetMetadataOrThrow(MetadataKey.XlfSourceFormat);
-                TranslatableDocument sourceDocument = XlfTask.LoadSourceDocument(sourcePath, sourceFormat);
-                string sourceDocumentId = XlfTask.GetSourceDocumentId(sourcePath);
+                string xlfPath = XlfTask.GetXlfPath(sourceDocumentPath, language);
+                AbsolutePath absoluteXlfPath = TaskEnvironment.GetAbsolutePath(xlfPath);
+                XlfDocument xlfDocument;
 
-                foreach (string language in Languages)
+                try
                 {
-                    string xlfPath = XlfTask.GetXlfPath(sourceDocumentPath, language);
-                    XlfDocument xlfDocument;
-
-                    try
-                    {
-                        xlfDocument = XlfTask.LoadXlfDocument(xlfPath, language, createIfNonExistent: AllowModification);
-                    }
-                    catch (FileNotFoundException fileNotFoundEx) when (fileNotFoundEx.FileName == xlfPath)
-                    {
-                        Release.Assert(!AllowModification);
-                        throw new BuildErrorException($"'{xlfPath}' for '{sourcePath}' does not exist. {HowToUpdate}");
-                    }
-                    catch (System.Xml.XmlException xmlEx)
-                    {
-                        throw new BuildErrorException($"Unable to load file: {xmlEx.Message}")
-                        {
-                            RelatedFile = xlfPath
-                        };
-                    }
-
-                    bool updated = xlfDocument.Update(sourceDocument, sourceDocumentId);
-
-                    if (!updated)
-                    {
-                        continue; // no changes
-                    }
-
-                    if (!AllowModification)
-                    {
-                        throw new BuildErrorException($"'{xlfPath}' is out-of-date with '{sourcePath}'. {HowToUpdate}");
-                    }
-
-                    Directory.CreateDirectory(Path.GetDirectoryName(xlfPath));
-                    xlfDocument.Save(xlfPath);
+                    xlfDocument = XlfTask.LoadXlfDocument(absoluteXlfPath, language, createIfNonExistent: AllowModification);
                 }
+                // Document.Load opens the file through FileInfo.FullName, which canonicalizes it,
+                // so compare against the canonical form rather than the raw absolute path.
+                catch (FileNotFoundException fileNotFoundEx) when (fileNotFoundEx.FileName == absoluteXlfPath.GetCanonicalForm().Value)
+                {
+                    Release.Assert(!AllowModification);
+                    throw new BuildErrorException($"'{xlfPath}' for '{sourcePath}' does not exist. {HowToUpdate}");
+                }
+                catch (System.Xml.XmlException xmlEx)
+                {
+                    throw new BuildErrorException($"Unable to load file: {xmlEx.Message}")
+                    {
+                        RelatedFile = xlfPath
+                    };
+                }
+
+                bool updated = xlfDocument.Update(sourceDocument, sourceDocumentId);
+
+                if (!updated)
+                {
+                    continue; // no changes
+                }
+
+                if (!AllowModification)
+                {
+                    throw new BuildErrorException($"'{xlfPath}' is out-of-date with '{sourcePath}'. {HowToUpdate}");
+                }
+
+                Directory.CreateDirectory(Path.GetDirectoryName(absoluteXlfPath));
+                xlfDocument.Save(new FileInfo(absoluteXlfPath));
             }
         }
     }

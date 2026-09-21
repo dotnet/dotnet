@@ -394,14 +394,21 @@ O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicita
         <note>{0} - PackageID</note>
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
-        <source>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</source>
-        <target state="translated">O projeto '{0}' usa package.config para pacotes do NuGet, enquanto o comando funciona somente com projetos de referência do pacote.</target>
-        <note />
+        <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
+        <target state="needs-review-translation">O projeto '{0}' usa package.config para pacotes do NuGet, enquanto o comando funciona somente com projetos de referência do pacote.</target>
+        <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
         <source>Unable to find a valid package version</source>
         <target state="translated">Não é possível localizar uma versão de pacote válida</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_PackagePublishDateMissing">
+        <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
+        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <note>{0} - package source name
+{1} - package ID
+{2} - package version</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
@@ -1032,6 +1039,11 @@ Para obter mais informações, visite https://docs.nuget.org/docs/reference/comm
         <target state="translated">Referência do pacote na forma de um identificador de pacote como 'Newtonsoft.Json' ou identificador e versão do pacote separados por '@', como 'Newtonsoft.Json\@13.0.3'.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
+        <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
+        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
+      </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
         <target state="translated">Executando a restauração de visualização para verificar a compatibilidade do pacote.</target>
@@ -1447,6 +1459,11 @@ A pesquisa é uma comparação de cadeia de caracteres que não faz distinção 
         <source>Specify the path to the package</source>
         <target state="translated">Especificar o caminho para o pacote</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warn_AddPkgNonCompliantPackageId">
+        <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
+        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">
         <source>--no-restore|-n flag was used. No compatibility check will be done and the added package reference will be unconditional.</source>

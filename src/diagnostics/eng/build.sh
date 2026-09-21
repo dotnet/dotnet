@@ -40,8 +40,8 @@ usage_list+=("-skipnative: do not build native components.")
 usage_list+=("-test: run xunit tests")
 usage_list+=("-methodfilter: pass method filter to xunit runner (Namespace.ClassName.MethodName)")
 usage_list+=("-classfilter: pass class filter to xunit runner (Namespace.ClassName)")
-usage_list+=("-dacmode: which DAC/cDAC the SOS tests load: cdac, cdacfallback, cdacverify, or dac.")
-usage_list+=("-cdacpath: path to an mscordaccore_universal to overlay next to sos.dll (only with -dacmode cdac).")
+usage_list+=("-dacmode: which DAC/cDAC the SOS tests load: cdac, cdacverify, or dac.")
+usage_list+=("-cdacpath: path to an mscordaccore_universal to overlay next to SOS. This option also copies the universal DBI found next to the cdac).")
 
 handle_arguments() {
     lowerI="$(echo "${1/--/-}" | tr "[:upper:]" "[:lower:]")"
@@ -145,12 +145,16 @@ handle_arguments() {
 source "$__RepoRootDir"/eng/native/build-commons.sh
 
 case "$__DacMode" in
-    ""|cdac|cdacfallback|cdacverify|dac) ;;
-    *) echo "Invalid -dacmode '$__DacMode'. Expected cdac, cdacfallback, cdacverify, or dac."; exit 1 ;;
+    ""|cdac|cdacverify|dac) ;;
+    *) echo "Invalid -dacmode '$__DacMode'. Expected cdac, cdacverify, or dac."; exit 1 ;;
 esac
 if [[ -n "$__CDacPath" && "$__DacMode" != "cdac" ]]; then
     echo "-cdacpath is only valid with -dacmode cdac."
     exit 1
+fi
+
+if [[ "$__TestInterpreter" == 1 ]]; then
+    export SOS_TEST_INTERPRETER="true"
 fi
 
 __LogsDir="$__RootBinDir/log/$__BuildType"
@@ -243,9 +247,9 @@ if [[ "$__NativeBuild" == 1 ]]; then
 fi
 
 #
-# Overlay an externally-provided cDAC (libmscordaccore_universal) next to the freshly built sos so
-# SOS resolves it from its own native binaries directory. Used by the cdac DacMode to exercise the
-# runtime-under-test's own cDAC instead of the copy restored from a referenced runtime package.
+# Overlay an externally-provided cDAC next to the freshly built sos. SOS resolves the cDAC
+# and universal DBI from its own native binaries directory, so both files must come from the runtime
+# under test instead of mixing one with the copy restored from a referenced runtime package.
 #
 if [[ -n "$__CDacPath" ]]; then
     if [[ ! -f "$__CDacPath" ]]; then
@@ -254,12 +258,21 @@ if [[ -n "$__CDacPath" ]]; then
     fi
     if [[ "$__TargetOS" == "osx" ]]; then
         __CDacDestName="libmscordaccore_universal.dylib"
+        __DbiName="libmscordbi_universal.dylib"
     else
         __CDacDestName="libmscordaccore_universal.so"
+        __DbiName="libmscordbi_universal.so"
+    fi
+    __DbiPath="$(dirname "$__CDacPath")/$__DbiName"
+    if [[ ! -f "$__DbiPath" ]]; then
+        echo "-cdacpath requires the matching universal DBI at '$__DbiPath'."
+        exit 1
     fi
     mkdir -p "$__BinDir"
     echo "Overlaying cDAC: $__CDacPath -> $__BinDir/$__CDacDestName"
     cp -f "$__CDacPath" "$__BinDir/$__CDacDestName"
+    echo "Overlaying universal DBI: $__DbiPath -> $__BinDir/$__DbiName"
+    cp -f "$__DbiPath" "$__BinDir/$__DbiName"
 fi
 
 #
@@ -343,10 +356,6 @@ if [[ "$__Test" == 1 ]]; then
           export SOS_TEST_DAC_MODE="$__DacMode"
       fi
 
-      if [[ "$__TestInterpreter" == 1 ]]; then
-          export SOS_TEST_INTERPRETER="true"
-      fi
-
       # Build the test filter argument if provided
       __TestFilterArg=
       if [[ -n "$__TestFilter" ]]; then
@@ -392,7 +401,8 @@ if [[ "$__Test" == 1 ]]; then
         /p:RuntimeSourceFeedKey="$__RuntimeSourceFeedKey" \
         /p:LiveRuntimeDir="$__LiveRuntimeDir" \
         "$__TestFilterArg" \
-        $__CommonMSBuildArgs
+        $__CommonMSBuildArgs \
+        $__UnprocessedBuildArgs
 
       if [ $? != 0 ]; then
           exit 1

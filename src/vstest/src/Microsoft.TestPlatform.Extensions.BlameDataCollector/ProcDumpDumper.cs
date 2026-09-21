@@ -261,7 +261,7 @@ public class ProcDumpDumper : ICrashDumper, IHangDumper
         // There can be more dumps in the crash folder from the child processes that were .NET5 or newer and crashed
         // get only the ones that match the path we provide to procdump. And get the last one created.
         var allTargetProcessDumps = allDumps
-            .Where(dump => Path.GetFileNameWithoutExtension(dump).StartsWith(_outputFilePrefix ?? string.Empty))
+            .Where(dump => Path.GetFileNameWithoutExtension(dump).StartsWith(_outputFilePrefix ?? string.Empty, StringComparison.Ordinal))
             .Select(dump => new FileInfo(dump))
             .OrderBy(dump => dump.LastWriteTime).ThenBy(dump => dump.Name)
             .ToList();

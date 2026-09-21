@@ -44,9 +44,7 @@ jobs:
       condition: eq(variables['Agent.OS'], 'Windows_NT')
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/common/SetupNugetSources.ps1
-        arguments: -ConfigFile $(Build.SourcesDirectory)/NuGet.config -Password $Env:Token
-      env:
-        Token: $(dn-bot-dnceng-artifact-feeds-rw)
+        arguments: -ConfigFile $(Build.SourcesDirectory)/NuGet.config
     - task: NuGetAuthenticate@1
   - script: >-
       eng\common\cibuild.cmd $(CommonMSBuildArgs) $(InternalMSBuildArgs)

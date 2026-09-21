@@ -136,7 +136,7 @@ public class EventLogCollectorTests : AcceptanceTestBase
         for (int i = 0; i < eventIds.Length; i++)
         {
             int currentIndex = 0;
-            currentIndex = content.IndexOf(eventIds[i], currentIndex);
+            currentIndex = content.IndexOf(eventIds[i], currentIndex, StringComparison.Ordinal);
             if (currentIndex == -1)
             {
                 return false;

@@ -23,9 +23,9 @@ namespace NuGet.PackageManagement.VisualStudio {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Strings {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -96,6 +96,24 @@ namespace NuGet.PackageManagement.VisualStudio {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to NuGet Package Source Authentication.
+        /// </summary>
+        public static string CredentialPrompt_PackageSourceCaption {
+            get {
+                return ResourceManager.GetString("CredentialPrompt_PackageSourceCaption", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Enter credentials for the package source &apos;{0}&apos;..
+        /// </summary>
+        public static string CredentialPrompt_PackageSourceMessage {
+            get {
+                return ResourceManager.GetString("CredentialPrompt_PackageSourceMessage", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to The default credentials credential provider failed to load..
         /// </summary>

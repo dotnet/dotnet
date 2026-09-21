@@ -2303,12 +2303,6 @@ public class VsTestConsoleRequestSenderTests
 
     #endregion
 
-    #region Sessions API
-    private const int MinimumProtocolVersionWithTestSessionSupport = 5;
-    private const int TesthostPid = 5000;
-
-    #endregion
-
     #region Private Methods
 
     /// <summary>

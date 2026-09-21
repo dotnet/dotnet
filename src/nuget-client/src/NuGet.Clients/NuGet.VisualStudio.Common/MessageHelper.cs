@@ -70,6 +70,19 @@ namespace NuGet.VisualStudio
             return (result == NativeMethods.IDYES);
         }
 
+        public static bool ShowOkCancelMessage(string message, string title, OLEMSGDEFBUTTON defaultButton)
+        {
+            int result = VsShellUtilities.ShowMessageBox(
+                GetServiceProvider(),
+                message,
+                title,
+                OLEMSGICON.OLEMSGICON_QUERY,
+                OLEMSGBUTTON.OLEMSGBUTTON_OKCANCEL,
+                defaultButton);
+
+            return result == NativeMethods.IDOK;
+        }
+
         public static void ShowError(ErrorListProvider errorListProvider, TaskErrorCategory errorCategory, TaskPriority priority, string errorText, IVsHierarchy hierarchyItem)
         {
             ErrorTask errorTask = new ErrorTask();
@@ -90,6 +103,7 @@ namespace NuGet.VisualStudio
 
         internal static class NativeMethods
         {
+            public const int IDOK = 1;
             public const int IDCANCEL = 2;
             public const int IDYES = 6;
             public const int IDNO = 7;

@@ -149,6 +149,8 @@ public class SOSRunner : IDisposable
 
         public bool EnableStressLog { get; set; }
 
+        public bool DisableDacSignatureVerification { get; set; }
+
         public bool TestCrashReport
         {
             get { return _testCrashReport && DumpGenerator == DumpGenerator.CreateDump && OS.Kind != OSKind.Windows; }
@@ -587,6 +589,8 @@ public class SOSRunner : IDisposable
 
                     bool shouldVerifyDacSignature = !config.IsPrivateBuildTesting()
                                                     && !config.IsNightlyBuild()
+                                                    && !config.IsDesktop
+                                                    && !information.DisableDacSignatureVerification
                                                     && !"-none".Equals(config.SetHostRuntime(), StringComparison.OrdinalIgnoreCase);
                     initialCommands.Add($"dx @Debugger.Settings.EngineInitialization.SecureLoadDotNetExtensions={(shouldVerifyDacSignature ? "true" : "false")}");
                     break;
@@ -599,7 +603,7 @@ public class SOSRunner : IDisposable
                     {
                         throw new ArgumentException("LLDB helper script path not set or does not exist: " + lldbHelperScript);
                     }
-                    arguments.Append(@"--no-lldbinit -o ""settings set target.disable-aslr false"" -o ""settings set interpreter.prompt-on-quit false""");
+                    arguments.Append(@"--no-lldbinit -o ""settings set target.disable-aslr false"" -o ""settings set interpreter.prompt-on-quit false"" -o ""settings set symbols.enable-external-lookup false""");
                     arguments.AppendFormat(@" -o ""command script import {0}"" -o ""version""", lldbHelperScript);
 
                     string debuggeeTarget = config.HostExe;
@@ -704,7 +708,9 @@ public class SOSRunner : IDisposable
                     initialCommands.Add("setsymbolserver -directory %DEBUG_ROOT%");
                     shouldVerifyDacSignature = OS.Kind == OSKind.Windows
                         && !config.IsPrivateBuildTesting()
-                        && !config.IsNightlyBuild();
+                        && !config.IsNightlyBuild()
+                        && !config.IsDesktop
+                        && !information.DisableDacSignatureVerification;
                     initialCommands.Add($"runtimes --DacSignatureVerification:{(shouldVerifyDacSignature ? "true" : "false")}");
                     arguments.Append(debuggerPath);
                     arguments.Append(@" analyze %DUMP_NAME%");
@@ -729,10 +735,6 @@ public class SOSRunner : IDisposable
             //    it cannot be issued as a pre-SOS initial debugger command.
             switch (config.DacMode)
             {
-                case DacMode.CDacFallback:
-                    // cDAC hosted by the in-box DAC, with per-API fallback to the legacy DAC.
-                    processRunner.WithEnvironmentVariable("DOTNET_ENABLE_CDAC", "1");
-                    break;
                 case DacMode.CDacVerify:
                     // cDAC hosted by the in-box DAC, with no fallback to the legacy DAC.
                     processRunner.WithEnvironmentVariable("DOTNET_ENABLE_CDAC", "1");
@@ -1153,13 +1155,12 @@ public class SOSRunner : IDisposable
 
         // Apply the cDAC load policy selected by the test's DacMode now that SOS is loaded (the
         // "runtimes" command is unavailable before this) and before any runtime is accessed, so SOS
-        // uses the requested DAC/cDAC the first time it resolves the runtime. CDacFallback/CDacVerify
-        // instead rely on the in-box DAC via env vars set in StartDebugger and keep SOS's default
-        // policy (which does not load the standalone cDAC when DOTNET_ENABLE_CDAC is set).
+        // uses the requested DAC/cDAC the first time it resolves the runtime. CDacVerify explicitly
+        // selects the legacy DAC so DOTNET_ENABLE_CDAC affects only the DAC-hosted contract reader.
         string cdacPolicyCommand = _config.DacMode switch
         {
             DacMode.CDac => "runtimes --usecdac true",    // Force the standalone cDAC next to sos.dll.
-            DacMode.Dac => "runtimes --usecdac false",     // Force the legacy in-box DAC.
+            DacMode.CDacVerify or DacMode.Dac => "runtimes --usecdac false", // Force the legacy in-box DAC.
             _ => null,
         };
         if (cdacPolicyCommand is not null && Debugger != NativeDebugger.Gdb)
@@ -1618,6 +1619,10 @@ public class SOSRunner : IDisposable
         {
             defines.Add("ALPINE");
         }
+        if (_config.IsDesktop)
+        {
+            defines.Add("DESKTOP");
+        }
         // This is a special "OR" of two conditions. Add this is easier than changing the parser to support "OR".
         if (_config.IsNETCore || Debugger == NativeDebugger.DotNetDump)
         {
@@ -1631,14 +1636,14 @@ public class SOSRunner : IDisposable
                 defines.Add("UNIX_SINGLE_FILE_APP");
             }
         }
+        if (_config.DacMode == DacMode.CDac)
+        {
+            defines.Add("CDAC_ONLY");
+        }
         string setHostRuntime = _config.SetHostRuntime();
         if (!string.IsNullOrEmpty(setHostRuntime) && setHostRuntime == "-none")
         {
             defines.Add("HOST_RUNTIME_NONE");
-        }
-        if (_config.DacMode == DacMode.CDacVerify)
-        {
-            defines.Add("CDAC_NO_FALLBACK_TESTING");
         }
         return defines;
     }

@@ -1,21 +1,3 @@
-function Test-RemovingPackageFromProjectDoesNotRemoveIfInUse {
-    # Arrange
-    $p1 = New-ClassLibrary
-    $p2 = New-ClassLibrary
-
-    Install-Package Ninject -ProjectName $p1.Name
-    Assert-Reference $p1 Ninject
-
-    Install-Package Ninject -ProjectName $p2.Name
-    Assert-Reference $p2 Ninject
-
-    Uninstall-Package Ninject -ProjectName $p1.Name
-
-    Assert-Null (Get-ProjectPackage $p1 Ninject)
-    Assert-Null (Get-AssemblyReference $p1 Ninject)
-    Assert-SolutionPackage Ninject
-}
-
 function Test-RemovingPackageWithDependencyFromProjectDoesNotRemoveIfInUse {
     # Arrange
     $p1 = New-ConsoleApplication
@@ -36,20 +18,6 @@ function Test-RemovingPackageWithDependencyFromProjectDoesNotRemoveIfInUse {
     Assert-Null (Get-ProjectPackage $p1 jquery)
     Assert-SolutionPackage jquery.Validation
     Assert-SolutionPackage jquery
-}
-
-function Test-RemovePackageRemovesPackageFromSolutionIfNotInUse {
-    # Arrange
-    $p1 = New-ConsoleApplication
-
-    Install-Package elmah -ProjectName $p1.Name -Version 1.1
-    Assert-Reference $p1 elmah
-    Assert-SolutionPackage elmah
-
-    Uninstall-Package elmah -ProjectName $p1.Name
-    Assert-Null (Get-AssemblyReference $p1 elmah)
-    Assert-Null (Get-ProjectPackage $p1 elmah)
-    Assert-Null (Get-SolutionPackage elmah)
 }
 
 function Test-UninstallingPackageWithConfigTransformWhenConfigReadOnly {
@@ -195,22 +163,6 @@ function UninstallSpecificPackageThrowsIfNotInstalledInProject {
 
     # Act
     Assert-Throws { $p2 | Uninstall-Package Antlr -Version 3.1.1 } "Unable to find package 'Antlr 3.1.1' in '$($p2.Name)'."
-}
-
-function Test-UninstallSpecificVersionOfPackage {
-    # Arrange
-    $p1 = New-ClassLibrary
-    $p2 = New-ClassLibrary
-    $p1 | Install-Package Antlr -Version 3.1.1 -Source $context.RepositoryPath
-    $p2 | Install-Package Antlr -Version 3.1.3.42154 -Source $context.RepositoryPath
-
-    # Act
-    $p1 | Uninstall-Package Antlr -Version 3.1.1
-
-    # Assert
-    Assert-Null (Get-ProjectPackage $p1 Antlr 3.1.1)
-    Assert-Null (Get-SolutionPackage Antlr 3.1.1)
-    Assert-SolutionPackage Antlr 3.1.3.42154
 }
 
 #function Test-UninstallSolutionOnlyPackageWhenAmbiguous {

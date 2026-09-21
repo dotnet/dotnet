@@ -38,7 +38,7 @@ public class NetFrameworkRunnerAttribute : Attribute, ITestDataSource
     public IEnumerable<object[]> GetData(MethodInfo methodInfo)
     {
         var dataRows = new List<object[]>();
-        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win");
+        var isWindows = Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal);
         if (!isWindows)
         {
             return dataRows;

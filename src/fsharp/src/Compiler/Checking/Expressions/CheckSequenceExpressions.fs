@@ -7,7 +7,6 @@ open FSharp.Compiler.CheckBasics
 open FSharp.Compiler.CheckExpressions
 open FSharp.Compiler.CheckExpressionsOps
 open FSharp.Compiler.ConstraintSolver
-open FSharp.Compiler.Features
 open FSharp.Compiler.NameResolution
 open FSharp.Compiler.PatternMatchCompilation
 open FSharp.Compiler.Syntax
@@ -308,9 +307,6 @@ let TcSequenceExpression (cenv: TcFileState) env tpenv comp (overallTy: OverallT
             Some(mkLet spMatch inputExprMark matchv inputExpr matchExpr, tpenv)
 
         | SynExpr.TryWith(innerTry, withList, mTryToWith, _spTry, _spWith, trivia) ->
-            if not (g.langVersion.SupportsFeature(LanguageFeature.TryWithInSeqExpression)) then
-                error (Error(FSComp.SR.tcTryIllegalInSequenceExpression (), mTryToWith))
-
             let env = { env with eIsControlFlow = true }
 
             let tryExpr, tpenv =
@@ -416,45 +412,46 @@ let TcSequenceExpression (cenv: TcFileState) env tpenv comp (overallTy: OverallT
             resExpr, tpenv
 
     and tcSequenceExprBodyAsSequenceOrStatement env genOuterTy tpenv comp =
-        match tryTcSequenceExprBody env genOuterTy tpenv comp with
-        | Some(expr, tpenv) -> Choice1Of2 expr, tpenv
-        | None ->
+        cenv.stackGuard.Guard(fun () ->
+            match tryTcSequenceExprBody env genOuterTy tpenv comp with
+            | Some(expr, tpenv) -> Choice1Of2 expr, tpenv
+            | None ->
 
-            let env =
-                { env with
-                    eContextInfo = ContextInfo.SequenceExpression genOuterTy
-                }
+                let env =
+                    { env with
+                        eContextInfo = ContextInfo.SequenceExpression genOuterTy
+                    }
 
-            if enableImplicitYield then
-                // The body is speculatively type-checked once to classify it as a statement or a yielded
-                // element. Reporting is buffered so the kept interpretation reports exactly once (else
-                // format-specifier locations and diagnostics double - #16419): a unit statement keeps the
-                // probe result and its buffered reporting is committed; a yielded element drops it and
-                // TcExprFlex re-checks with the element's target type.
-                let hasTypeUnit, _ty, expr, tpenv =
-                    RunWithBufferedReporting
-                        cenv.tcSink
-                        "SeqImplicitYieldProbe"
-                        (fun () -> TryTcStmt cenv env tpenv comp)
-                        (fun (hasTypeUnit, _, _, _) -> hasTypeUnit)
+                if enableImplicitYield then
+                    // The body is speculatively type-checked once to classify it as a statement or a yielded
+                    // element. Reporting is buffered so the kept interpretation reports exactly once (else
+                    // format-specifier locations and diagnostics double - #16419): a unit statement keeps the
+                    // probe result and its buffered reporting is committed; a yielded element drops it and
+                    // TcExprFlex re-checks with the element's target type.
+                    let hasTypeUnit, _ty, expr, tpenv =
+                        RunWithBufferedReporting
+                            cenv.tcSink
+                            "SeqImplicitYieldProbe"
+                            (fun () -> TryTcStmt cenv env tpenv comp)
+                            (fun (hasTypeUnit, _, _, _) -> hasTypeUnit)
 
-                if hasTypeUnit then
-                    Choice2Of2 expr, tpenv
+                    if hasTypeUnit then
+                        Choice2Of2 expr, tpenv
+                    else
+                        let genResultTy = NewInferenceType g
+                        let mExpr = expr.Range
+                        UnifyTypes cenv env mExpr genOuterTy (mkSeqTy cenv.g genResultTy)
+                        let expr, tpenv = TcExprFlex cenv flex true genResultTy env tpenv comp
+                        let exprTy = tyOfExpr cenv.g expr
+                        AddCxTypeMustSubsumeType env.eContextInfo env.DisplayEnv cenv.css mExpr NoTrace genResultTy exprTy
+
+                        let resExpr =
+                            mkCallSeqSingleton cenv.g mExpr genResultTy (mkCoerceExpr (expr, genResultTy, mExpr, exprTy))
+
+                        Choice1Of2 resExpr, tpenv
                 else
-                    let genResultTy = NewInferenceType g
-                    let mExpr = expr.Range
-                    UnifyTypes cenv env mExpr genOuterTy (mkSeqTy cenv.g genResultTy)
-                    let expr, tpenv = TcExprFlex cenv flex true genResultTy env tpenv comp
-                    let exprTy = tyOfExpr cenv.g expr
-                    AddCxTypeMustSubsumeType env.eContextInfo env.DisplayEnv cenv.css mExpr NoTrace genResultTy exprTy
-
-                    let resExpr =
-                        mkCallSeqSingleton cenv.g mExpr genResultTy (mkCoerceExpr (expr, genResultTy, mExpr, exprTy))
-
-                    Choice1Of2 resExpr, tpenv
-            else
-                let stmt, tpenv = TcStmtThatCantBeCtorBody cenv env tpenv comp
-                Choice2Of2 stmt, tpenv
+                    let stmt, tpenv = TcStmtThatCantBeCtorBody cenv env tpenv comp
+                    Choice2Of2 stmt, tpenv)
 
     let coreExpr, tpenv = tcSequenceExprBody env overallTy.Commit tpenv comp
     let delayedExpr = mkSeqDelayedExpr coreExpr.Range coreExpr

@@ -835,7 +835,7 @@ public class DiscovererEnumeratorTests
             var shouldTestDiscovered = false;
             foreach (var source in sources)
             {
-                if (source.Equals("native.dll") || source.Equals("managed.dll") || source.EndsWith("CrossPlatEngine.UnitTests.dll") || source.EndsWith("CrossPlatEngine.UnitTests.exe"))
+                if (source.Equals("native.dll") || source.Equals("managed.dll") || source.EndsWith("CrossPlatEngine.UnitTests.dll", StringComparison.Ordinal) || source.EndsWith("CrossPlatEngine.UnitTests.exe", StringComparison.Ordinal))
                 {
                     shouldTestDiscovered = true;
                     break;

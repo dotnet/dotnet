@@ -57,6 +57,11 @@
         <target state="translated">資格情報プロバイダーの応答が正しくありません。</target>
         <note />
       </trans-unit>
+      <trans-unit id="SecurePluginException_ConnectionClosed">
+        <source>The connection to credential plugin '{0}' was closed before it answered the credential request. The plugin process may have exited or been shut down while the request was in flight.</source>
+        <target state="translated">資格情報プラグイン '{0}' への接続は、資格情報の要求に応答する前に閉じられました。プラグイン プロセスは、この要求の処理中に終了したか、シャットダウンされた可能性があります。</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
       <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
         <source>Using {0} as a credential provider plugin.</source>
         <target state="translated">資格情報プロバイダーのプラグインとして {0} を使用しています。</target>

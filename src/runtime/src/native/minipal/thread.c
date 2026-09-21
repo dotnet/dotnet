@@ -4,12 +4,9 @@
 #if defined(__linux__) && !defined(_GNU_SOURCE)
 // glibc declares pthread_setname_np only when _GNU_SOURCE is defined before <pthread.h>.
 #define _GNU_SOURCE
-#endif
-
-#if defined(__APPLE__) && !defined(_DARWIN_C_SOURCE)
-// Apple's <pthread.h> hides the non-portable pthread_threadid_np/pthread_setname_np
-// declarations when _XOPEN_SOURCE/_POSIX_C_SOURCE is defined (as the Mono build does),
-// unless _DARWIN_C_SOURCE is defined before including it.
+#elif defined(__APPLE__) && !defined(_DARWIN_C_SOURCE)
+// pthread_threadid_np and pthread_setname_np are hidden by _XOPEN_SOURCE unless
+// _DARWIN_C_SOURCE is defined before <pthread.h>.
 #define _DARWIN_C_SOURCE
 #endif
 

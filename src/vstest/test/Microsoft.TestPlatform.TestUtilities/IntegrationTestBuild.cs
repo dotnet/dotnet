@@ -597,7 +597,7 @@ public class IntegrationTestBuild : IntegrationTestBase
             {
                 foreach (var versionDir in Directory.GetDirectories(packageDir))
                 {
-                    if (versionDir.EndsWith("-dev") || versionDir.EndsWith("-ci"))
+                    if (versionDir.EndsWith("-dev", StringComparison.Ordinal) || versionDir.EndsWith("-ci", StringComparison.Ordinal))
                     {
                         Directory.Delete(versionDir, recursive: true);
                     }

@@ -57,6 +57,11 @@
         <target state="translated">凭据提供程序给出了无效的响应。</target>
         <note />
       </trans-unit>
+      <trans-unit id="SecurePluginException_ConnectionClosed">
+        <source>The connection to credential plugin '{0}' was closed before it answered the credential request. The plugin process may have exited or been shut down while the request was in flight.</source>
+        <target state="translated">在响应凭据请求之前，与凭据插件“{0}”的连接已关闭。插件进程可能在请求处理期间已退出或关闭。</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
       <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
         <source>Using {0} as a credential provider plugin.</source>
         <target state="translated">使用 {0} 作为凭据提供程序插件。</target>

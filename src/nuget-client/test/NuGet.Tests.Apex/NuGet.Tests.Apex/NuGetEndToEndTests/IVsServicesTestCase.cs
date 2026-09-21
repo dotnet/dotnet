@@ -83,6 +83,50 @@ namespace NuGet.Tests.Apex
 
         [TestMethod]
         [Timeout(DefaultTimeout)]
+        public async Task IVsPathContextProvider_WithAssetsFile_UsesRestoredGlobalPackagesFolderAsync()
+        {
+            using var pathContext = new SimpleTestPathContext();
+            using var testContext = new ApexTestContext(
+                VisualStudio,
+                ProjectTemplate.NetStandardClassLib,
+                Logger,
+                addNetStandardFeeds: true,
+                simpleTestPathContext: pathContext);
+            await CommonUtility.CreatePackageInSourceAsync(pathContext.PackageSource, TestPackageName, TestPackageVersionV1);
+
+            var nugetConsole = GetConsole(testContext.Project);
+            nugetConsole.InstallPackageFromPMC(TestPackageName, TestPackageVersionV1);
+            CommonUtility.AssertPackageInAssetsFile(
+                VisualStudio,
+                testContext.Project,
+                TestPackageName,
+                TestPackageVersionV1,
+                Logger);
+            testContext.SolutionService.SaveAll();
+
+            var projectPath = testContext.Project.FullPath;
+            var solutionPath = testContext.SolutionService.FilePath!;
+            var alternateGlobalPackagesFolder = Path.Combine(pathContext.WorkingDirectory.Path, "alternateGlobalPackages");
+            pathContext.Settings.DisableAutoRestore();
+            SimpleTestSettingsContext.AddSetting(
+                pathContext.Settings.XML,
+                "globalPackagesFolder",
+                alternateGlobalPackagesFolder);
+            pathContext.Settings.Save();
+
+            VisualStudio.ObjectModel.Solution.Close();
+            VisualStudio.ObjectModel.Solution.WaitForFullyLoadedOnOpen = true;
+            VisualStudio.ObjectModel.Solution.Open(solutionPath);
+            VisualStudio.ObjectModel.Solution.Verify.HasProject();
+            testContext.NuGetApexTestService.WaitForAutoRestore();
+
+            var userPackagesFolder = testContext.NuGetApexTestService.GetUserPackagesFolderFromProjectContext(projectPath);
+
+            userPackagesFolder.Should().Be(pathContext.UserPackagesFolder);
+        }
+
+        [TestMethod]
+        [Timeout(DefaultTimeout)]
         public async Task SimpleInstallFromIVsInstaller_PackageSourceMapping_WithSingleFeed()
         {
             // Arrange

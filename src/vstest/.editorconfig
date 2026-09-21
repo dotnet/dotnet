@@ -257,6 +257,15 @@ dotnet_diagnostic.CA1304.severity = warning # not default, increased severity to
 # CA1305: Specify IFormatProvider
 dotnet_diagnostic.CA1305.severity = warning # not default, increased severity to ensure it is applied
 
+# CA1310: Specify StringComparison for correctness
+dotnet_diagnostic.CA1310.severity = warning # not default, increased severity to ensure it is applied
+
+# CA1307 (Specify StringComparison for clarity) is deliberately not enabled: it fires at 293 call
+# sites, 166 of them string.Contains(string) and string.Replace(string, string), whose
+# StringComparison overloads do not exist on net462 / netstandard2.0, so the suggested fix does not
+# compile there.
+# CA1309 (Use ordinal string comparison) is a separate 128-site change, tracked apart from this one.
+
 # CA1822: Mark members as static
 dotnet_diagnostic.CA1822.severity = warning # not default, increased severity to ensure it is applied
 

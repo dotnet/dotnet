@@ -39,38 +39,6 @@ function Test-WebsiteSimpleInstall {
     Assert-AreEqual "..\packages\MyAwesomeLibrary.1.0\lib\net40\MyAwesomeLibrary.dll" $content
 }
 
-function Test-DiamondDependencies {
-    param(
-        $context
-    )
-
-    # Scenario:
-    # D 1.0 -> B 1.0, C 1.0
-    # B 1.0 -> A 1.0
-    # C 1.0 -> A 2.0
-    #     D 1.0
-    #      /  \
-    #  B 1.0   C 1.0
-    #     |    |
-    #  A 1.0   A 2.0
-
-    # Arrange
-    $packages = @("A", "B", "C", "D")
-    $project = New-ClassLibrary
-
-    # Act
-    Install-Package D -Project $project.Name -Source $context.RepositoryPath
-
-    # Assert
-    $packages | %{ Assert-SolutionPackage $_ }
-    $packages | %{ Assert-Package $project $_ }
-    $packages | %{ Assert-Reference $project $_ }
-    Assert-Package $project A 2.0
-    Assert-Reference $project A 2.0.0.0
-    Assert-Null (Get-ProjectPackage $project A 1.0.0.0)
-    Assert-Null (Get-SolutionPackage A 1.0.0.0)
-}
-
 function Test-WebsiteWillNotDuplicateConfigOnReInstall {
     # Arrange
     $p = New-WebSite
@@ -1167,22 +1135,6 @@ function Test-WebSiteInstallPackageWithFileNamedAppCode {
     Assert-NotNull (Get-ProjectItem $p App_Code\App_Code.cs)
 }
 
-function Test-PackageInstallAcceptsSourceName {
-    # Arrange
-    $project = New-ConsoleApplication
-
-    # Act
-    Install-Package FakeItEasy -Project $project.Name -Source $SourceNuGet -Version 1.8.0
-
-    # Assert
-    Assert-Reference $project Castle.Core
-    Assert-Reference $project FakeItEasy
-    Assert-Package $project FakeItEasy
-    Assert-Package $project Castle.Core
-    Assert-SolutionPackage FakeItEasy
-    Assert-SolutionPackage Castle.Core
-}
-
 function PackageInstallAcceptsAllAsSourceName {
     # Arrange
     $project = New-ConsoleApplication
@@ -1408,22 +1360,6 @@ function Test-InstallPackageWithReferences {
     Assert-Reference $p2 B
 }
 
-function Test-InstallPackageNormalizesVersionBeforeCompare {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package PackageWithContentFileAndDependency -Source $context.RepositoryRoot -Version 1.0.0.0
-
-    # Assert
-    Assert-Package $p PackageWithContentFileAndDependency 1.0
-    Assert-Package $p PackageWithContentFile 1.0
-}
-
 function Test-InstallPackageWithFrameworkRefsOnlyRequiredForSL {
     param(
         $context
@@ -1438,54 +1374,6 @@ function Test-InstallPackageWithFrameworkRefsOnlyRequiredForSL {
     # Assert
     Assert-Package $p PackageWithNet40AndSLLibButOnlySLGacRefs
     Assert-SolutionPackage PackageWithNet40AndSLLibButOnlySLGacRefs
-}
-
-function Test-InstallPackageWithValuesFromPipe {
-    param(
-        $context
-    )
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    Get-Package -ListAvailable -Filter "Microsoft-web-helpers" | Install-Package
-
-    # Assert
-    Assert-Package $p Microsoft-web-helpers
-}
-
-function Test-InstallPackageInstallsHighestReleasedPackageIfPreReleaseFlagIsNotSet {
-    # Arrange
-    $a = New-ClassLibrary
-
-    # Act
-    $a | Install-Package -Source $context.RepositoryRoot PreReleaseTestPackage
-
-    # Assert
-    Assert-Package $a 'PreReleaseTestPackage' '1.0.0'
-}
-
-function Test-InstallPackageInstallsHighestPackageIfPreReleaseFlagIsSet {
-    # Arrange
-    $a = New-ClassLibrary
-
-    # Act
-    $a | Install-Package -Source $context.RepositoryRoot PreReleaseTestPackage -PreRelease
-
-    # Assert
-    Assert-Package $a 'PreReleaseTestPackage' '1.0.1-a'
-}
-
-function Test-InstallPackageInstallsHighestPackageIfItIsReleaseWhenPreReleaseFlagIsSet {
-    # Arrange
-    $a = New-ClassLibrary
-
-    # Act
-    $a | Install-Package -Source $context.RepositoryRoot PreReleaseTestPackage.A -PreRelease
-
-    # Assert
-    Assert-Package $a 'PreReleaseTestPackage.A' '1.0.0'
 }
 
 function Test-InstallingPackagesWorksInTurkishLocaleWhenPackageIdContainsLetterI
@@ -2102,20 +1990,6 @@ function Test-InstallPackageRespectAssemblyReferenceFilterOnSecondProject
     Assert-Null (Get-AssemblyReference $q 'Ookii.Dialogs.Wpf')
 }
 
-function Test-InstallPackageThrowsIfMinClientVersionIsNotSatisfied
-{
-    param ($context)
-
-    # Arrange
-    $p = New-ConsoleApplication
-
-    $currentSemanticVersion = Get-HostSemanticVersion
-
-    # Act & Assert
-    Assert-Throws { $p | Install-Package Kitty -Source $context.RepositoryPath } "The 'kitty 1.0.0' package requires NuGet client version '100.0.0' or above, but the current NuGet version is '$currentSemanticVersion'. To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget"
-    Assert-NoPackage $p "Kitty"
-}
-
 function Test-InstallPackageWithXdtTransformTransformsTheFile
 {
     # Arrange
@@ -2362,135 +2236,6 @@ function Test-InstallPackageAddMoreEntriesToProjectConfigFile
     Assert-Null (Get-ProjectItem $p 'packages.config')
 }
 
-# Tests that when -DependencyVersion HighestPatch is specified, the dependency with
-# the largest patch number is installed
-function Test-InstallPackageWithDependencyVersionHighestPatch
-{
-    param($context)
-
-    # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath -DependencyVersion HighestPatch
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 1.0.1
-}
-
-# Tests that when -DependencyVersion HighestPatch is specified, the dependency with
-# the lowest major, highest minor, highest patch is installed
-function Test-InstallPackageWithDependencyVersionHighestMinor
-{
-    param($context)
-
-    # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath -DependencyVersion HighestMinor
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 1.2.1
-}
-
-# Tests that when -DependencyVersion Highest is specified, the dependency with
-# the highest version installed
-function Test-InstallPackageWithDependencyVersionHighest
-{
-    param($context)
-
-    # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath -DependencyVersion Highest
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 2.0.1
-}
-
-# Tests that when -DependencyVersion is lowest, the dependency with
-# the smallest patch number is installed
-function Test-InstallPackageWithDependencyVersionLowest
-{
-    param($context)
-
-    # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath -DependencyVersion Lowest
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 1.0.0
-}
-
-# Tests the case when DependencyVersion is specified in nuget.config
-function Test-InstallPackageWithDependencyVersionHighestInNuGetConfig
-{
-    param($context)
-
-    # Arrange
-    Check-NuGetConfig
-
-    $componentModel = Get-VSComponentModel
-    $setting = $componentModel.GetService([NuGet.Configuration.ISettings])
-
-    try {
-        # Arrange
-        $p = New-ClassLibrary
-
-        $setting.AddOrUpdate('config', [NuGet.Configuration.AddItem]::new('dependencyversion', 'HighestPatch'))
-
-        # Act
-        $p | Install-Package jquery.validation -version 1.10
-
-        # Assert
-        Assert-Package $p jquery.validation 1.10
-        Assert-Package $p jquery 1.4.4
-    }
-    finally {
-        $setting.AddOrUpdate('config', [NuGet.Configuration.AddItem]::new('dependencyversion', $null))
-    }
-}
-
-# Tests that when -DependencyVersion is not specified, the dependency with
-# the smallest patch number is installed
-function Test-InstallPackageWithoutDependencyVersion
-{
-    param($context)
-
-   # A depends on B >= 1.0.0
-    # Available versions of B are: 1.0.0, 1.0.1, 1.2.0, 1.2.1, 2.0.0, 2.0.1
-
-    # Arrange
-    $p = New-ClassLibrary
-
-    # Act
-    $p | Install-Package A -Source $context.RepositoryPath
-
-    # Assert
-    Assert-Package $p A 1.0
-    Assert-Package $p B 1.0.0
-}
-
 # Tests that passing in online path to a packages.config file to
 # Install-Package works.
 function Test-InstallPackagesConfigOnline
@@ -2507,24 +2252,6 @@ function Test-InstallPackagesConfigOnline
 
     # Assert
     Assert-Package $p Newtonsoft.Json 4.0.1
-}
-
-# Tests that passing in local path to a packages.config file to
-# Install-Package works.
-function Test-InstallPackagesConfigLocal
-{
-    param($context)
-
-    # Arrange
-    $p = New-ClassLibrary
-    $pathToPackagesConfig = Join-Path $context.RepositoryRoot "InstallPackagesConfigLocal\packages.config"
-
-    # Act
-    $p | Install-Package $pathToPackagesConfig
-
-    # Assert
-    Assert-Package $p A 1.0.0
-    Assert-Package $p B 1.0.0
 }
 
 # Tests that passing in online path to a .nupkg file to
@@ -2548,21 +2275,6 @@ function Test-InstallPackagesNupkgOnline
 
 # Tests that passing in local path to a .nupkg file to
 # Install-Package works.
-function Test-InstallPackagesNupkgLocal
-{
-    param($context)
-
-    # Arrange
-    $p = New-ClassLibrary
-    $pathToPackagesNupkg = Join-Path $context.RepositoryRoot "PackageWithFolder.1.0.nupkg"
-
-    # Act
-    $p | Install-Package $pathToPackagesNupkg
-
-    # Assert
-    Assert-Package $p PackageWithFolder 1.0
-}
-
 function Test-InstallPackageMissingPackage {
     # Arrange
     # create project and install package

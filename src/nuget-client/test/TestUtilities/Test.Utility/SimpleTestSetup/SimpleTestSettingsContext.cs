@@ -92,6 +92,26 @@ namespace NuGet.Test.Utility
             Save();
         }
 
+        /// <summary>
+        /// Set default package management format to packages.config.
+        /// </summary>
+        public void SetPackageFormatToPackagesConfig()
+        {
+            var section = GetOrAddSection(XML, "packageManagement");
+
+            AddEntry(section, "format", "0");
+            AddEntry(section, "disabled", "False");
+            Save();
+        }
+
+        public void SetDependencyVersion(string dependencyVersion)
+        {
+            var section = GetOrAddSection(XML, "config");
+
+            AddEntry(section, "dependencyVersion", dependencyVersion);
+            Save();
+        }
+
         private static XDocument GetDefault(string userPackagesFolder, string packagesV2, string fallbackFolder, string packageSource)
         {
             var doc = GetEmptyConfig();

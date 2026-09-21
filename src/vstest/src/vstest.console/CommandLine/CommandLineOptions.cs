@@ -274,7 +274,7 @@ internal class CommandLineOptions
             // Get matching files from file pattern parser
             matchingFiles = FilePatternParser.GetMatchingFiles(source);
         }
-        catch (TestSourceException ex) when (source.StartsWith("-") || source.StartsWith("/"))
+        catch (TestSourceException ex) when (source.StartsWith("-", StringComparison.Ordinal) || source.StartsWith("/", StringComparison.Ordinal))
         {
             throw new TestSourceException(
                 string.Format(CultureInfo.CurrentCulture, CommandLineResources.InvalidArgument, source), ex);

@@ -772,6 +772,15 @@ $ code --diff {outFile} {expectedFile}
         | CS cs -> CS { cs with TargetFramework = TargetFramework.NetStandard20 }
         | IL _ ->  failwith "References are not supported in IL"
 
+    /// Compile against the current BCL but reference the shipped .NETCoreApp FSharp.Core (e.g. net10.0)
+    /// instead of the netstandard2.1 build, so tests can exercise its .NETCoreApp-only surface.
+    /// Execution runs in a new process (dotnet app.dll) with that FSharp.Core copied beside the app;
+    /// external file references (withReferences) are not copied, so keep such snippets self-contained.
+    let withFSharpCoreShippedNet (cUnit: CompilationUnit) : CompilationUnit =
+        match cUnit with
+        | FS fs -> FS { fs with TargetFramework = TargetFramework.FSharpCoreShippedNet }
+        | CS _ | IL _ -> failwith "withFSharpCoreShippedNet is only supported for F# compilations"
+
     let withPlatform (platform:ExecutionPlatform) (cUnit: CompilationUnit) : CompilationUnit =
         match cUnit with
         | FS _ ->
@@ -1130,10 +1139,18 @@ $ code --diff {outFile} {expectedFile}
                         | SourceCodeFileKind.Fsx _ -> true
                         | _ -> false
                     | _ -> false
-                let output = CompilerAssert.ExecuteAndReturnResult (p, isFsx, s.Dependencies, false)
+                let useShippedNetFSharpCore =
+                    match s.Compilation with
+                    | FS fs -> fs.TargetFramework = TargetFramework.FSharpCoreShippedNet
+                    | _ -> false
+                if useShippedNetFSharpCore then
+                    File.Copy(TargetFrameworkUtil.shippedNetFSharpCorePath.Value, Path.Combine(Path.GetDirectoryName p, "FSharp.Core.dll"), overwrite = true)
+                let output = CompilerAssert.ExecuteAndReturnResult (p, isFsx, s.Dependencies, useShippedNetFSharpCore)
                 let executionResult = { s with Output = Some (ExecutionOutput output) }
                 match output.Outcome with
                 | Failure _ -> CompilationResult.Failure executionResult
+                // Shipped-net runs execute a new process, so surface a non-zero exit code as failure (in-process runs keep prior behaviour).
+                | ExitCode n when n <> 0 && useShippedNetFSharpCore -> CompilationResult.Failure executionResult
                 | _  -> CompilationResult.Success executionResult
 
     let compileAndRun = compile >> run
@@ -1188,7 +1205,7 @@ $ code --diff {outFile} {expectedFile}
             evalFSharp fs script
         | _ -> failwith "Script evaluation is only supported for F#."
 
-    let internal sessionCache = 
+    let internal sessionCache =
         Collections.Concurrent.ConcurrentDictionary<Set<string> * LangVersion, FSharpScript>()
 
     let internal createSessionWithShadowedExit args version =
@@ -1198,12 +1215,12 @@ $ code --diff {outFile} {expectedFile}
 
     let getIsolatedSessionForEval args version =
         createSessionWithShadowedExit args version
-    
+
     let getSessionForEval args version =
         let key = Set args, version
         match sessionCache.TryGetValue(key) with
         | true, script -> script
-        | _ -> 
+        | _ ->
             let script = createSessionWithShadowedExit args version
             sessionCache.TryAdd(key, script) |> ignore
             script
@@ -1494,6 +1511,7 @@ $ code --diff {outFile} {expectedFile}
     | VerifyDocuments of string list
     | VerifySequencePointsInSameMethod of lines: Line list
     | VerifyNoDebuggerHiddenOnMethodWithLine of line: Line
+    | VerifyRuntimeAsyncMethodSequencePointsInSource of sourceFileName: string * startLine: int * endLine: int
     | Dummy of unit
 
     let private verifyPdbFormat (reader: MetadataReader) compilationType =
@@ -1591,6 +1609,73 @@ $ code --diff {outFile} {expectedFile}
             failwith (sprintf "Method '%s' has sequence points outside range [%d-%d]:\n%A\nAll points: %A" methodName startLine endLine outOfRange actualPoints)
         if actualPoints.IsEmpty then
             failwith (sprintf "Method '%s' has no non-hidden sequence points" methodName)
+
+    let private verifyRuntimeAsyncMethodSequencePointsInSource
+        (assemblyPath: string)
+        (pdbReader: MetadataReader)
+        (sourceFileName: string)
+        (startLine: int)
+        (endLine: int)
+        =
+        use peStream = File.OpenRead(assemblyPath)
+        use peReader = new PEReader(peStream)
+        let assemblyReader = peReader.GetMetadataReader()
+        let asyncBit = 0x2000
+
+        let methods =
+            getMethodDebugInfos assemblyReader pdbReader
+            |> List.choose (fun (typeName, methodName, methodHandle, debugInfo) ->
+                let method = assemblyReader.GetMethodDefinition methodHandle
+                let isRuntimeAsync = (int method.ImplAttributes &&& asyncBit) <> 0
+
+                let points =
+                    debugInfo.GetSequencePoints()
+                    |> Seq.filter (fun point -> not point.IsHidden)
+                    |> Seq.toList
+
+                let hasSourcePoint =
+                    points
+                    |> List.exists (fun point ->
+                        let document = pdbReader.GetDocument point.Document
+                        let documentName = pdbReader.GetString document.Name
+                        String.Equals(Path.GetFileName(documentName), sourceFileName, StringComparison.OrdinalIgnoreCase)
+                        && point.StartLine >= startLine
+                        && point.EndLine <= endLine)
+
+                if isRuntimeAsync && hasSourcePoint then
+                    Some(typeName, methodName, points)
+                else
+                    None)
+
+        if methods.Length <> 1 then
+            let names = methods |> List.map (fun (typeName, methodName, _) -> $"{typeName}.{methodName}")
+            failwith $"Expected exactly one runtime-async method with a point in {sourceFileName}:{startLine}-{endLine}, found {methods.Length}: {names}"
+
+        let typeName, methodName, points = methods.Head
+
+        let invalidPoints =
+            points
+            |> List.filter (fun point ->
+                let document = pdbReader.GetDocument point.Document
+                let documentName = pdbReader.GetString document.Name
+
+                not (
+                    String.Equals(Path.GetFileName(documentName), sourceFileName, StringComparison.OrdinalIgnoreCase)
+                    && point.StartLine >= startLine
+                    && point.EndLine <= endLine
+                ))
+
+        if not invalidPoints.IsEmpty then
+            let actual =
+                invalidPoints
+                |> List.map (fun point ->
+                    let document = pdbReader.GetDocument point.Document
+                    let documentName = pdbReader.GetString document.Name
+                    $"{Path.GetFileName(documentName)}:{point.StartLine},{point.StartColumn}-{point.EndLine},{point.EndColumn}")
+                |> String.concat "; "
+
+            failwith
+                $"Runtime-async method {typeName}.{methodName} has sequence points outside {sourceFileName}:{startLine}-{endLine}: {actual}"
 
     let private verifySequencePoints (reader: MetadataReader) expectedSequencePoints =
         let sequencePoints =
@@ -1762,6 +1847,13 @@ $ code --diff {outFile} {expectedFile}
                 verifySequencePointsInSameMethod (optOutputPath |> Option.defaultValue "") reader lines
             | VerifyNoDebuggerHiddenOnMethodWithLine line ->
                 verifyNoDebuggerHiddenOnMethodWithLine (optOutputPath |> Option.defaultValue "") reader line
+            | VerifyRuntimeAsyncMethodSequencePointsInSource(sourceFileName, startLine, endLine) ->
+                verifyRuntimeAsyncMethodSequencePointsInSource
+                    (optOutputPath |> Option.defaultValue "")
+                    reader
+                    sourceFileName
+                    startLine
+                    endLine
             | _ -> failwith $"Unknown verification option: {option.ToString()}"
 
     module private Il =
@@ -2019,7 +2111,7 @@ $ code --diff {outFile} {expectedFile}
                 | Some (ExecutionOutput {Outcome = Failure ex }) ->
                     failwithf $"Eval or Execution has failed (expected to succeed): %A{ex}\n{diagnostics}"
                 | _ ->
-                    
+
                     failwithf $"Operation failed (expected to succeed).\n{diagnostics} \n OUTPUTs: %A{r.Output}"
 
         let shouldFail (result: CompilationResult) : CompilationResult =
@@ -2244,10 +2336,10 @@ $ code --diff {outFile} {expectedFile}
                 let m = Regex(pattern, RegexOptions.Multiline).Match(input)
                 if m.Success then
                     m.Index
-                else 
+                else
                     -1
             | MatchStyle.Standard ->
-                input.IndexOf(pattern) 
+                input.IndexOf(pattern)
 
         let private checkOutputInOrderCore matchStyle (category: string) (substrings: string list) (selector: ExecutionOutput -> string) (result: CompilationResult) : CompilationResult =
             match result.RunOutput with
@@ -2414,3 +2506,19 @@ $ code --diff {outFile} {expectedFile}
     /// Run FSC as a subprocess with the given arguments. For CLI-level tests only (missing files, exit codes, etc.).
     let runFscProcess (args: string list) : ProcessResult =
         runToolProcess TestFramework.initialConfig.FSC args
+
+    /// Compile-and-run a compilation unit that depends on a FSharp.Core attribute
+    /// which may not yet be shipped in the SDK's NuGet package.
+    /// When the attribute is present, compiles and runs expecting success.
+    /// When absent, expects compilation failure with error 39 (undefined type).
+    let compileAndRunOrExpectMissingAttribute (fsharpCoreTypeName: string) (cu: CompilationUnit) =
+        if
+            not (
+                isNull (
+                    typeof<RequireQualifiedAccessAttribute>.Assembly.GetType(fsharpCoreTypeName)
+                )
+            )
+        then
+            cu |> compileAndRun |> shouldSucceed |> ignore
+        else
+            cu |> compile |> shouldFail |> withErrorCode 39 |> ignore

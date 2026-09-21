@@ -240,6 +240,27 @@ public class TestExtensionsTests
     }
 
     [TestMethod]
+    public void GetExtensionsDiscoveredFromAssemblyShouldIgnorePluginWithoutAssemblyQualifiedName()
+    {
+        var extensions = TestExtensions.GetExtensionsDiscoveredFromAssembly(
+            new Dictionary<string, TestPluginInformation>
+            {
+                ["invalid"] = new TestPluginInformationWithoutType(),
+            },
+            typeof(TestExtensionsTests).Assembly.Location);
+
+        Assert.IsEmpty(extensions);
+    }
+
+    private sealed class TestPluginInformationWithoutType : TestPluginInformation
+    {
+        public TestPluginInformationWithoutType()
+            : base(null)
+        {
+        }
+    }
+
+    [TestMethod]
     public void MergedDictionaryOfEmptyDictionariesShouldBeAnEmptyDictionary()
     {
         var first = new Dictionary<string, HashSet<string>>();

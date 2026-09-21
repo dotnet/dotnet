@@ -505,7 +505,7 @@ public class ExecutionTests : AcceptanceTestBase
         SetTestEnvironment(_testEnvironment, runnerInfo);
 
         var testAssemblyPath = _testEnvironment.GetTestAsset("SimpleTestProject.dll");
-        var allDllsMatchingTestPattern = Directory.GetFiles(Path.GetDirectoryName(testAssemblyPath)!, "*test*.dll").Where(f => !f.EndsWith("SimpleTestProject.dll"));
+        var allDllsMatchingTestPattern = Directory.GetFiles(Path.GetDirectoryName(testAssemblyPath)!, "*test*.dll").Where(f => !f.EndsWith("SimpleTestProject.dll", StringComparison.Ordinal));
 
         string assemblyPaths = string.Join(" ", allDllsMatchingTestPattern.Select(s => s.AddDoubleQuote()));
         InvokeVsTestForExecution(assemblyPaths, testAdapterPath: string.Empty, FrameworkArgValue, string.Empty);

@@ -202,6 +202,15 @@ extends:
                 env:
                   DOTNET_ROOT: $(Build.SourcesDirectory)/.dotnet
 
+              # The test results folder is not produced when the job fails before any test runs,
+              # and publishing a missing path would report a second, misleading failure.
+              - pwsh: |
+                  $dir = "$(Build.SourcesDirectory)/artifacts/TestResults/Release"
+                  $hasFiles = (Test-Path -LiteralPath $dir) -and (@(Get-ChildItem -LiteralPath $dir -File -Recurse -ErrorAction SilentlyContinue).Count -gt 0)
+                  Write-Host "##vso[task.setvariable variable=HasTestResults]$($hasFiles.ToString().ToLowerInvariant())"
+                displayName: 'Check for Test Results folders'
+                condition: failed()
+
               # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
               # through the console or trx
               - task: 1ES.PublishBuildArtifacts@1
@@ -209,7 +218,7 @@ extends:
                 inputs:
                   PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
                   ArtifactName: TestResults
-                condition: failed()
+                condition: and(failed(), eq(variables['HasTestResults'], 'true'))
               
               # Remove generated test projects from the compatibility matrix because they use older versions of our packages
               # and some of them use dependencies that are now vulnerable.
@@ -277,6 +286,15 @@ extends:
                     }
                   displayName: Remove artifacts/tmp/GeneratedTestAssets
 
+                # The test results folder is not produced when the job fails before any test runs,
+                # and publishing a missing path would report a second, misleading failure.
+                - pwsh: |
+                    $dir = "$(Build.SourcesDirectory)/artifacts/TestResults/Release"
+                    $hasFiles = (Test-Path -LiteralPath $dir) -and (@(Get-ChildItem -LiteralPath $dir -File -Recurse -ErrorAction SilentlyContinue).Count -gt 0)
+                    Write-Host "##vso[task.setvariable variable=HasTestResults]$($hasFiles.ToString().ToLowerInvariant())"
+                  displayName: 'Check for Test Results folders'
+                  condition: failed()
+
                 # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
                 # through the console or trx
                 - task: 1ES.PublishBuildArtifacts@1
@@ -284,7 +302,7 @@ extends:
                   inputs:
                     PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
                     ArtifactName: TestResults
-                  condition: failed()
+                  condition: and(failed(), eq(variables['HasTestResults'], 'true'))
           
           - job: Publish
             dependsOn:
@@ -367,5 +385,4 @@ extends:
 
     - template: eng/common/templates-official/post-build/post-build.yml@self
       parameters:
-        # Temporarily skip validation until infra issues are resolved, based on advice from Arcade.
-        enableSigningValidation: false
+        enableSigningValidation: true

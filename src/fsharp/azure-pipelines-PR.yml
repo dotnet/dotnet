@@ -298,46 +298,29 @@ stages:
             name: $(DncEngPublicBuildPool)
             demands: ImageOverride -equals $(_WindowsMachineQueueName)
           timeoutInMinutes: 120
+          strategy:
+            matrix:
+              Batch1:
+                batchNumber: 1
+              Batch2:
+                batchNumber: 2
+              Batch3:
+                batchNumber: 3
           steps:
-          - checkout: self
-            clean: true
-
-          - script: eng\CIBuildNoPublish.cmd -compressallmetadata -buildnorealsig -testDesktop -configuration Release
-            env:
-              FSharp_CacheEvictionImmediate: true
-              DOTNET_DbgEnableMiniDump: 1
-              DOTNET_DbgMiniDumpType: 2 # 1=mini, 2=heap, 3=triage, 4=full. Heap dumps include managed object data for debugging.
-              DOTNET_DbgMiniDumpName: $(Build.SourcesDirectory)\artifacts\log\Release\$(Build.BuildId)-%e-%p-%t.dmp
-              NativeToolsOnMachine: true
-            displayName: Build
-
-          - task: PublishTestResults@2
-            displayName: Publish Test Results
-            inputs:
-              testResultsFormat: 'XUnit'
-              testRunTitle: WindowsNoRealsig_testDesktop
-              mergeTestResults: true
-              testResultsFiles: '*.xml'
-              searchFolder: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
-            condition: succeededOrFailed()
-            continueOnError: true
-          - task: PublishBuildArtifacts@1
-            displayName: Publish Build BinLog
-            continueOnError: true
-            inputs:
-                PathToPublish: '$(Build.SourcesDirectory)\artifacts\log/Release\Build.VisualFSharp.slnx.binlog'
-                ArtifactName: 'Windows Release build binlogs'
-                ArtifactType: Container
-                parallel: true
-          - task: PublishBuildArtifacts@1
-            displayName: Publish Dumps
-            condition: failed()
-            continueOnError: true
-            inputs:
-                PathToPublish: '$(Build.SourcesDirectory)\artifacts\log\Release'
-                ArtifactName: 'Windows Release WindowsNoRealsig_testDesktop process dumps'
-                ArtifactType: Container
-                parallel: true
+          - template: /eng/templates/batched-test-steps.yml
+            parameters:
+              buildCommand: eng\CIBuildNoPublish.cmd -compressallmetadata -buildnorealsig -testDesktopBatch $(batchNumber) -configuration Release
+              buildEnv:
+                FSharp_CacheEvictionImmediate: true
+                DOTNET_DbgEnableMiniDump: 1
+                DOTNET_DbgMiniDumpType: 2
+                DOTNET_DbgMiniDumpName: $(Build.SourcesDirectory)\artifacts\log\Release\$(Build.BuildId)-%e-%p-%t.dmp
+                NativeToolsOnMachine: true
+              testRunTitlePrefix: 'WindowsNoRealsig_testDesktop'
+              artifactNamePrefix: 'WindowsNoRealsig testDesktop'
+              publishBinLog: true
+              binLogPath: '$(Build.SourcesDirectory)\artifacts\log/Release\Build.VisualFSharp.slnx.binlog'
+              publishDumps: true
 
         # Windows With Compressed Metadata
         - job: WindowsCompressedMetadata
@@ -559,9 +542,11 @@ stages:
           steps:
           - checkout: self
             clean: true
-          - script: .\Build.cmd -c Release -pack
+          - script: .\Build.cmd -ci -c Release -pack
             env:
               NativeToolsOnMachine: true
+          - script: .\eng\common\dotnet.cmd fsi .\tests\AheadOfTime\NetPackage\VerifyNetPackage.fsx -- .\artifacts\packages\Release
+            displayName: Verify FSharp.Core package assets
           - script: .\tests\EndToEndBuildTests\EndToEndBuildTests.cmd -c Release
             displayName: End to end build tests
           
@@ -757,35 +742,34 @@ stages:
           displayName: UMX_Slow_Repro        
           expectLocalCore: true
         - repo: fsprojects/FSharpPlus
-          commit: f614035b75922aba41ed6a36c2fc986a2171d2b8
+          commit: f42f81885111c652b08218e0880c264447ae56e4
           buildScript: build.cmd
           displayName: FSharpPlus_Windows
         - repo: fsprojects/FSharpPlus
-          commit: f614035b75922aba41ed6a36c2fc986a2171d2b8
+          commit: f42f81885111c652b08218e0880c264447ae56e4
           buildScript: build.sh
           displayName: FSharpPlus_Linux
           useVmImage: $(LinuxMachineQueueName)
           usePool: $(DncEngPublicBuildPool)
         - repo: fsprojects/FSharpPlus
-          commit: 2648efe
+          commit: f42f81885111c652b08218e0880c264447ae56e4
           buildScript: dotnet build tests/FSharpPlus.Tests/FSharpPlus.Tests.fsproj -c Release -bl
           displayName: FsharpPlus_NET10_Build_Lib_Tests
           expectLocalCore: true
-         # remove this before merging
         - repo: fsprojects/FSharpPlus
-          commit: 2648efe
+          commit: f42f81885111c652b08218e0880c264447ae56e4
           buildScript: dotnet msbuild build.proj -t:Build;Test -bl
           displayName: FsharpPlus_NET10_Test_Debug
         - repo: fsprojects/FSharpPlus
-          commit: 2648efe
+          commit: f42f81885111c652b08218e0880c264447ae56e4
           buildScript: dotnet msbuild build.proj -t:Build;Test -p:Configuration=Release -bl
           displayName: FsharpPlus_NET10_Test_Release
         - repo: fsprojects/FSharpPlus
-          commit: 2648efe
+          commit: f42f81885111c652b08218e0880c264447ae56e4
           buildScript: dotnet msbuild build.proj -t:Build;AllDocs -bl
           displayName: FsharpPlus_NET10_Docs
         - repo: fsprojects/FSharpPlus
-          commit: 2648efe
+          commit: f42f81885111c652b08218e0880c264447ae56e4
           buildScript: build.sh
           displayName: FsharpPlus_Net10_Linux
           useVmImage: $(LinuxMachineQueueName)
@@ -834,6 +818,11 @@ stages:
           buildScript: dotnet build Oxpecker.slnx -c Release
           displayName: Oxpecker_Build
           expectLocalCore: true
+        - repo: Lanayx/Oxpecker
+          commit: cb7e4b83e3f2aba7ded46b17a36d1aea8c13c292
+          buildScript: dotnet build Oxpecker.Solid.slnx -c Release
+          displayName: Oxpecker_Solid_Build
+          expectLocalCore: true
         # Design-time provider packaging oracle. Pin d8aba70 (pre-workaround base of FSharp.Data.GraphQL#583):
         # it uses the bare IsFSharpDesignTimeProvider gesture, so the client pack drops the provider without this fix.
         # Linux-only: the $PWD local feed and the grep content assertion need bash. (nupkg entry names are stored
@@ -844,3 +833,14 @@ stages:
           displayName: FSharpDataGraphQL_DesignTimeProvider_Packaging
           useVmImage: $(LinuxMachineQueueName)
           usePool: $(DncEngPublicBuildPool)
+        # Chiron (chiron-6) exercises Aether 8.2.0 inline SRTP optics, reproducing the SDK 10.0.400 legacy inline-metadata
+        # regression (#20253, fixed by #20260): the miscompile throws NotSupportedException at run time, so run the tests.
+        - repo: xyncro/chiron
+          commit: 94cf9db1793a1bd0e6e0b69efadcfb37368a6428
+          buildScript: dotnet test tests/Chiron.Tests/Chiron.Tests.fsproj -c Release -p:AssetTargetFallback=net461 -p:RollForward=Major --filter FullyQualifiedName~Optic
+          displayName: Chiron_Aether_Inline_SRTP
+        - repo: Thorium/Linq.Expression.Optimizer
+          commit: 075e20da2712ede54b3314d5b69d6789ee68eb3d
+          buildScript: dotnet test Linq.Expression.Optimizer.sln -c Release -bl
+          displayName: LinqExpressionOptimizer_Test_Release
+          expectLocalCore: true

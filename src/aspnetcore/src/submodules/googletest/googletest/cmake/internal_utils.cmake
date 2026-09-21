@@ -113,39 +113,12 @@ macro(config_compiler_and_linker)
       endif()
     endif()
   elseif (CMAKE_COMPILER_IS_GNUCXX)
-    set(cxx_base_flags "-Wall -Wshadow -Wundef")
-    if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7.0.0)
-      set(cxx_base_flags "${cxx_base_flags} -Wno-error=dangling-else")
-    endif()
+    set(cxx_base_flags "-Wall -Wshadow -Wundef -Wno-error=dangling-else")
     set(cxx_exception_flags "-fexceptions")
     set(cxx_no_exception_flags "-fno-exceptions")
-    # Until version 4.3.2, GCC doesn't define a macro to indicate
-    # whether RTTI is enabled. Therefore we define GTEST_HAS_RTTI
-    # explicitly.
-    set(cxx_no_rtti_flags "-fno-rtti -DGTEST_HAS_RTTI=0")
+    set(cxx_no_rtti_flags "-fno-rtti")
     set(cxx_strict_flags
       "-Wextra -Wno-unused-parameter -Wno-missing-field-initializers")
-  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "SunPro")
-    set(cxx_exception_flags "-features=except")
-    # Sun Pro doesn't provide macros to indicate whether exceptions and
-    # RTTI are enabled, so we define GTEST_HAS_* explicitly.
-    set(cxx_no_exception_flags "-features=no%except -DGTEST_HAS_EXCEPTIONS=0")
-    set(cxx_no_rtti_flags "-features=no%rtti -DGTEST_HAS_RTTI=0")
-  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "VisualAge" OR
-      CMAKE_CXX_COMPILER_ID STREQUAL "XL")
-    # CMake 2.8 changes Visual Age's compiler ID to "XL".
-    set(cxx_exception_flags "-qeh")
-    set(cxx_no_exception_flags "-qnoeh")
-    # Until version 9.0, Visual Age doesn't define a macro to indicate
-    # whether RTTI is enabled. Therefore we define GTEST_HAS_RTTI
-    # explicitly.
-    set(cxx_no_rtti_flags "-qnortti -DGTEST_HAS_RTTI=0")
-  elseif (CMAKE_CXX_COMPILER_ID STREQUAL "HP")
-    set(cxx_base_flags "-AA -mt")
-    set(cxx_exception_flags "-DGTEST_HAS_EXCEPTIONS=1")
-    set(cxx_no_exception_flags "+noeh -DGTEST_HAS_EXCEPTIONS=0")
-    # RTTI can not be disabled in HP aCC compiler.
-    set(cxx_no_rtti_flags "")
   endif()
 
   # The pthreads library is available and allowed?

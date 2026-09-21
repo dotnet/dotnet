@@ -146,7 +146,7 @@ public class ResultsDirectoryArgumentProcessorTests
     private static string TranslatePath(string path)
     {
         // RuntimeInformation has conflict when used
-        if (Environment.OSVersion.Platform.ToString().StartsWith("Win"))
+        if (Environment.OSVersion.Platform.ToString().StartsWith("Win", StringComparison.Ordinal))
             return path;
 
         var prefix = Path.GetTempPath();

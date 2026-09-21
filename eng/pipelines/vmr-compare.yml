@@ -36,15 +36,6 @@ parameters:
   type: string
   default: ' '
 
-- name: comparisonType
-  displayName: 'Specific comparison type to run'
-  type: string
-  default: 'all'
-  values:
-    - assets
-    - signing
-    - all
-
 variables:
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
 - template: /eng/pipelines/templates/variables/vmr-build.yml@self
@@ -70,4 +61,3 @@ extends:
       parameters:
         unifiedBuildRunId: ${{ parameters.unifiedBuildRunId }}
         sourceManifestCommit: ${{ parameters.sourceManifestCommit }}
-        comparisonType: ${{ parameters.comparisonType }}

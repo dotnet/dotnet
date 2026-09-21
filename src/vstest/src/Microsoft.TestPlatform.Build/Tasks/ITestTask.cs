@@ -17,7 +17,7 @@ internal interface ITestTask : ITask, ICancelableTask
     string[]? VSTestLogger { get; set; }
     bool VSTestListTests { get; set; }
     string? VSTestDiag { get; set; }
-    string[]? VSTestCLIRunSettings { get; set; }
+    string? VSTestCLIRunSettings { get; set; }
     ITaskItem? VSTestConsolePath { get; set; }
     ITaskItem? VSTestResultsDirectory { get; set; }
     string? VSTestVerbosity { get; set; }

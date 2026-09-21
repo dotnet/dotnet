@@ -457,6 +457,11 @@
         <target state="translated">Ikona nápovědy</target>
         <note />
       </trans-unit>
+      <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="translated">Opravit pomocí GitHub Copilota</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Label_Action">
         <source>Action:</source>
         <target state="translated">Akce:</target>
@@ -580,7 +585,12 @@
       <trans-unit id="Label_Installed_VulnerableWarning">
         <source>You have {0} vulnerable package versions installed.</source>
         <target state="translated">Máte nainstalovaný tento počet zranitelných verzí balíčků: {0}</target>
-        <note>{0} is the number of installed package versions</note>
+        <note>{0} is the number of installed package versions (always more than 1)</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableWarning_Single">
+        <source>You have 1 vulnerable package version installed.</source>
+        <target state="translated">Máte nainstalovanou 1 zranitelnou verzi balíčku.</target>
+        <note />
       </trans-unit>
       <trans-unit id="Label_License">
         <source>License:</source>
@@ -1277,8 +1287,8 @@ Chyba: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
-        <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">Po zahájení se tato akce nedá zrušit.</target>
+        <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
+        <target state="translated">Po spuštění se tato akce nedá zrušit. Pokračujte výběrem OK.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

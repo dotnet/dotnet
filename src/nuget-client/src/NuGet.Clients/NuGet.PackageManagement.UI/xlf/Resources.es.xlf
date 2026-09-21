@@ -457,6 +457,11 @@
         <target state="translated">Icono de ayuda</target>
         <note />
       </trans-unit>
+      <trans-unit id="InfoBar_FixVulnerabilitiesWithCopilot">
+        <source>Fix with GitHub Copilot</source>
+        <target state="translated">Corrección con GitHub Copilot</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Label_Action">
         <source>Action:</source>
         <target state="translated">Acción:</target>
@@ -580,7 +585,12 @@
       <trans-unit id="Label_Installed_VulnerableWarning">
         <source>You have {0} vulnerable package versions installed.</source>
         <target state="translated">Tiene instaladas {0} versiones de paquetes vulnerables.</target>
-        <note>{0} is the number of installed package versions</note>
+        <note>{0} is the number of installed package versions (always more than 1)</note>
+      </trans-unit>
+      <trans-unit id="Label_Installed_VulnerableWarning_Single">
+        <source>You have 1 vulnerable package version installed.</source>
+        <target state="translated">Tiene 1 versión de paquete vulnerable instalada.</target>
+        <note />
       </trans-unit>
       <trans-unit id="Label_License">
         <source>License:</source>
@@ -1277,8 +1287,8 @@ Error: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
-        <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">Una vez iniciada, esta acción no se puede cancelar.</target>
+        <source>Once started, this action cannot be cancelled. Select OK to continue.</source>
+        <target state="translated">Una vez iniciada, esta acción no se puede cancelar. Seleccione Aceptar para continuar.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

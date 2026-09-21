@@ -3,70 +3,69 @@
 
 using System;
 
-namespace Microsoft.SignCheck.Verification
+namespace Microsoft.SignCheck.Verification;
+
+public class Timestamp
 {
-    public class Timestamp
+    public DateTime EffectiveDate
     {
-        public DateTime EffectiveDate
-        {
-            get;
-            set;
-        }
+        get;
+        set;
+    }
 
-        public DateTime ExpiryDate
-        {
-            get;
-            set;
-        }
+    public DateTime ExpiryDate
+    {
+        get;
+        set;
+    }
 
-        /// <summary>
-        /// True if the file was signed on or after the <see cref="EffectiveDate"/> and on or prior to the <see cref="ExpiryDate"./>
-        /// </summary>
-        public bool IsValid
+    /// <summary>
+    /// True if the file was signed on or after the <see cref="EffectiveDate"/> and on or prior to the <see cref="ExpiryDate"./>
+    /// </summary>
+    public bool IsValid
+    {
+        get
         {
-            get
+            return (SignedOn >= EffectiveDate) && (SignedOn <= ExpiryDate);
+        }
+    }
+
+    /// <summary>
+    /// The algorithm of the signature, e.g. SHA1
+    /// </summary>
+    public string SignatureAlgorithm
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// The local date and time of the signature.
+    /// </summary>
+    public DateTime SignedOn
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Adds a timestamp detail to the <see cref="SignatureVerificationResult"/>.
+    /// </summary>
+    public void AddToSignatureVerificationResult(SignatureVerificationResult svr)
+    {
+        if (IsValid)
+        {
+            svr.AddDetail(DetailKeys.Misc, SignCheckResources.DetailTimestamp, SignedOn, SignatureAlgorithm);
+        }
+        else
+        {
+            if (SignedOn == DateTime.MaxValue || ExpiryDate == DateTime.MinValue || EffectiveDate == DateTime.MaxValue)
             {
-                return (SignedOn >= EffectiveDate) && (SignedOn <= ExpiryDate);
-            }
-        }
-
-        /// <summary>
-        /// The algorithm of the signature, e.g. SHA1
-        /// </summary>
-        public string SignatureAlgorithm
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The local date and time of the signature.
-        /// </summary>
-        public DateTime SignedOn
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Adds a timestamp detail to the <see cref="SignatureVerificationResult"/>.
-        /// </summary>
-        public void AddToSignatureVerificationResult(SignatureVerificationResult svr)
-        {
-            if (IsValid)
-            {
-                svr.AddDetail(DetailKeys.Misc, SignCheckResources.DetailTimestamp, SignedOn, SignatureAlgorithm);
+                svr.AddDetail(DetailKeys.Error, SignCheckResources.ErrorInvalidOrMissingTimestamp);
             }
             else
             {
-                if (SignedOn == DateTime.MaxValue || ExpiryDate == DateTime.MinValue || EffectiveDate == DateTime.MaxValue)
-                {
-                    svr.AddDetail(DetailKeys.Error, SignCheckResources.ErrorInvalidOrMissingTimestamp);
-                }
-                else
-                {
-                    svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailTimestampOutisdeCertValidity, SignedOn, EffectiveDate, ExpiryDate);
-                }
+                svr.AddDetail(DetailKeys.Error, SignCheckResources.DetailTimestampOutisdeCertValidity, SignedOn, EffectiveDate, ExpiryDate);
             }
         }
     }

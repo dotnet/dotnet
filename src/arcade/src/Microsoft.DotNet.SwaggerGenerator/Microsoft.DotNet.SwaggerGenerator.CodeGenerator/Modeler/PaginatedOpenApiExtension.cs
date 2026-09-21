@@ -5,41 +5,40 @@ using System;
 using System.Text.Json.Nodes;
 using Microsoft.OpenApi;
 
-namespace Microsoft.DotNet.SwaggerGenerator.Modeler
+namespace Microsoft.DotNet.SwaggerGenerator.Modeler;
+
+public class PaginatedOpenApiExtension : IOpenApiExtension
 {
-    public class PaginatedOpenApiExtension : IOpenApiExtension
+    private JsonObject _value;
+
+    public PaginatedOpenApiExtension(JsonObject value)
     {
-        private JsonObject _value;
+        _value = value;
+    }
 
-        public PaginatedOpenApiExtension(JsonObject value)
-        {
-            _value = value;
-        }
+    public string PageParameterName
+    {
+        get => _value["page"]?.GetValue<string>();
+        set => _value["page"] = JsonValue.Create(value);
+    }
 
-        public string PageParameterName
-        {
-            get => _value["page"]?.GetValue<string>();
-            set => _value["page"] = JsonValue.Create(value);
-        }
+    public string PageSizeParameterName
+    {
+        get => _value["pageSize"]?.GetValue<string>();
+        set => _value["pageSize"] = JsonValue.Create(value);
+    }
 
-        public string PageSizeParameterName
+    public static IOpenApiExtension Parse(JsonNode value, OpenApiSpecVersion version)
+    {
+        if (value is not JsonObject obj)
         {
-            get => _value["pageSize"]?.GetValue<string>();
-            set => _value["pageSize"] = JsonValue.Create(value);
+            throw new ArgumentException("x-ms-paginated extension only accepts an object");
         }
+        return new PaginatedOpenApiExtension(obj);
+    }
 
-        public static IOpenApiExtension Parse(JsonNode value, OpenApiSpecVersion version)
-        {
-            if (value is not JsonObject obj)
-            {
-                throw new ArgumentException("x-ms-paginated extension only accepts an object");
-            }
-            return new PaginatedOpenApiExtension(obj);
-        }
-
-        public void Write(IOpenApiWriter writer, OpenApiSpecVersion specVersion)
-        {
-            writer.WriteAny(_value);
-        }
+    public void Write(IOpenApiWriter writer, OpenApiSpecVersion specVersion)
+    {
+        writer.WriteAny(_value);
     }
 }

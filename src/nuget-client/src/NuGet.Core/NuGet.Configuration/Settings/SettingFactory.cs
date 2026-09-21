@@ -57,6 +57,13 @@ namespace NuGet.Configuration
                         }
                         break;
 
+                    case SettingElementType.MinPublishAgeExceptions:
+                        if (elementType == SettingElementType.Package)
+                        {
+                            return new MinPublishAgeExceptionItem(element, origin);
+                        }
+                        break;
+
                     case SettingElementType.PackageSource:
                         if (elementType == SettingElementType.Package)
                         {

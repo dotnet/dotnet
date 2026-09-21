@@ -19,7 +19,7 @@ namespace TestProjectNetcore
         {
             foreach (DictionaryEntry envVar in Environment.GetEnvironmentVariables())
             {
-                if (envVar.Key.ToString().StartsWith("DOTNET_ROOT"))
+                if (envVar.Key.ToString().StartsWith("DOTNET_ROOT", StringComparison.Ordinal))
                 {
                     Console.WriteLine($"{envVar.Key}: {envVar.Value}");
                 }

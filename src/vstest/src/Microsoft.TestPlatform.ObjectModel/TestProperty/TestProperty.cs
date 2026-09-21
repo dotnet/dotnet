@@ -193,28 +193,28 @@ public class TestProperty : IEquatable<TestProperty>
             type ??= Type.GetType(typeName.Replace("Version=4.0.0.0", "Version=2.0.0.0"));
 
             // For UAP the type namespace for System.Uri,System.TimeSpan and System.DateTimeOffset differs from the desktop version.
-            if (type == null && typeName.StartsWith("System.Uri"))
+            if (type == null && typeName.StartsWith("System.Uri", StringComparison.Ordinal))
             {
                 type = typeof(Uri);
             }
-            else if (type == null && typeName.StartsWith("System.TimeSpan"))
+            else if (type == null && typeName.StartsWith("System.TimeSpan", StringComparison.Ordinal))
             {
                 type = typeof(TimeSpan);
             }
-            else if (type == null && typeName.StartsWith("System.DateTimeOffset"))
+            else if (type == null && typeName.StartsWith("System.DateTimeOffset", StringComparison.Ordinal))
             {
                 type = typeof(DateTimeOffset);
             }
-            else if (type == null && typeName.StartsWith("System.Int16"))
+            else if (type == null && typeName.StartsWith("System.Int16", StringComparison.Ordinal))
             {
                 // For LineNumber property - Int is required
                 type = typeof(Int16);
             }
-            else if (type == null && typeName.StartsWith("System.Int32"))
+            else if (type == null && typeName.StartsWith("System.Int32", StringComparison.Ordinal))
             {
                 type = typeof(Int32);
             }
-            else if (type == null && typeName.StartsWith("System.Int64"))
+            else if (type == null && typeName.StartsWith("System.Int64", StringComparison.Ordinal))
             {
                 type = typeof(Int64);
             }

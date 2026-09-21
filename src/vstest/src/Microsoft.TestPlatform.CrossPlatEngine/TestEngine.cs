@@ -118,9 +118,14 @@ public class TestEngine : ITestEngine
         // discovery manager to publish its current state. But doing so we are losing the collected state of all the
         // other managers.
         var discoveryDataAggregator = new DiscoveryDataAggregator();
-        Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> proxyDiscoveryManagerCreator = (runtimeProviderInfo, discoveryCriteria) =>
+
+        // The criteria handed to this creator is not the same as the discoveryCriteria this method received.
+        // ParallelProxyDiscoveryManager splits the overall criteria into per-workload pieces (SplitToWorkloads),
+        // normally a single source each, and passes that piece here. Read the sources from the criteria we are
+        // given, not from the overall one.
+        Func<TestRuntimeProviderInfo, DiscoveryCriteria, IProxyDiscoveryManager> proxyDiscoveryManagerCreator = (runtimeProviderInfo, workloadCriteria) =>
         {
-            var sources = discoveryCriteria.Sources.ToList();
+            var sources = workloadCriteria.Sources.ToList();
             var hostManager = _testHostProviderManager.GetTestHostManagerByRunConfiguration(runtimeProviderInfo.RunSettings, sources);
 
             // A runtime provider may host the run over its own protocol (e.g. Microsoft.Testing.Platform's

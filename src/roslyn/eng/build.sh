@@ -84,7 +84,7 @@ bootstrap=false
 run_analyzers=false
 skip_documentation=false
 prepare_machine=false
-# Empty means "not specified"; tools.sh leaves it off unless it's explicitly requested.
+# Empty means "not specified"; tools.sh applies the default.
 msbuild_multi_threaded=''
 warn_as_error=false
 warn_not_as_error=""

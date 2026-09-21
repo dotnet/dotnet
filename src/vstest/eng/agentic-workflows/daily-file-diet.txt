@@ -1,0 +1,9 @@
+# Daily File Diet state.
+#
+# One record per line:
+# status|date|repository-relative file path|issue reference or exclusion reason
+#
+# Records are sorted by file path. The workflow verifies existing open and closed
+# [file-diet] issues before adding proposed records.
+proposed|2026-06-29|src/Microsoft.TestPlatform.CommunicationUtilities/Json/Jsonite/Jsonite.cs|#16194
+proposed|2026-08-24|src/vstest.console/TestPlatformHelpers/TestRequestManager.cs|#16405

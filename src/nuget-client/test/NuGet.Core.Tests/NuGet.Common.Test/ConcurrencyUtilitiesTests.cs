@@ -147,7 +147,7 @@ namespace NuGet.Core.FuncTest
             {
                 while (!resetCancellationTokenSource.IsCancellationRequested)
                 {
-                    StaticState.RaiseStartMSBuildRestoreTasks();
+                    StaticState.RaiseBuildEnded();
                 }
             });
 

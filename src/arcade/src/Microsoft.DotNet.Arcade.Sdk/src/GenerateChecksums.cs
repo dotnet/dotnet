@@ -7,56 +7,68 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Microsoft.DotNet.Arcade.Sdk
+namespace Microsoft.DotNet.Arcade.Sdk;
+
+[MSBuildMultiThreadableTask]
+public class GenerateChecksums : Task, IMultiThreadableTask
 {
-    public class GenerateChecksums : Microsoft.Build.Utilities.Task
+    /// <summary>Injected by MSBuild so paths resolve against the project directory in multithreaded builds.</summary>
+    public TaskEnvironment TaskEnvironment { get; set; } = TaskEnvironment.Fallback;
+
+    /// <summary>
+    /// An item collection of files for which to generate checksums.  Each item must have metadata
+    /// 'DestinationPath' that specifies the path of the checksum file to create.
+    /// </summary>
+    [Required]
+    public ITaskItem[] Items { get; set; }
+
+    public override bool Execute()
     {
-        /// <summary>
-        /// An item collection of files for which to generate checksums.  Each item must have metadata
-        /// 'DestinationPath' that specifies the path of the checksum file to create.
-        /// </summary>
-        [Required]
-        public ITaskItem[] Items { get; set; }
-
-        public override bool Execute()
+        foreach (ITaskItem item in Items)
         {
-            foreach (ITaskItem item in Items)
+            try
             {
-                try
+                string destinationPath = item.GetMetadata("DestinationPath");
+                if (string.IsNullOrEmpty(destinationPath))
                 {
-                    string destinationPath = item.GetMetadata("DestinationPath");
-                    if (string.IsNullOrEmpty(destinationPath))
-                    {
-                        Log.LogError($"Metadata 'DestinationPath' is missing for item '{item.ItemSpec}'.");
-                        return !Log.HasLoggedErrors;
-                    }
-
-                    if (!File.Exists(item.ItemSpec))
-                    {
-                        Log.LogError($"The file '{item.ItemSpec}' does not exist.");
-                        return !Log.HasLoggedErrors;
-                    }
-
-                    Log.LogMessage(MessageImportance.High, $"Generating checksum for '{item.ItemSpec}' into '{destinationPath}'...");
-
-                    using (FileStream stream = File.OpenRead(item.ItemSpec))
-                    {
-                        using(HashAlgorithm hashAlgorithm = SHA512.Create())
-                        {
-                            byte[] hash = hashAlgorithm.ComputeHash(stream);
-                            string checksum = BitConverter.ToString(hash).Replace("-", string.Empty);
-                            File.WriteAllText(destinationPath, checksum);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.LogErrorFromException(e);
+                    Log.LogError($"Metadata 'DestinationPath' is missing for item '{item.ItemSpec}'.");
                     return !Log.HasLoggedErrors;
                 }
-            }
 
-            return !Log.HasLoggedErrors;
+                // GetAbsolutePath rejects an empty item spec, whereas the File.Exists probe it feeds
+                // used to simply report the file as missing.
+                if (string.IsNullOrEmpty(item.ItemSpec))
+                {
+                    Log.LogError($"The file '{item.ItemSpec}' does not exist.");
+                    return !Log.HasLoggedErrors;
+                }
+
+                AbsolutePath itemPath = TaskEnvironment.GetAbsolutePath(item.ItemSpec);
+                if (!File.Exists(itemPath))
+                {
+                    Log.LogError($"The file '{item.ItemSpec}' does not exist.");
+                    return !Log.HasLoggedErrors;
+                }
+
+                Log.LogMessage(MessageImportance.High, $"Generating checksum for '{item.ItemSpec}' into '{destinationPath}'...");
+
+                using (FileStream stream = File.OpenRead(itemPath))
+                {
+                    using(HashAlgorithm hashAlgorithm = SHA512.Create())
+                    {
+                        byte[] hash = hashAlgorithm.ComputeHash(stream);
+                        string checksum = BitConverter.ToString(hash).Replace("-", string.Empty);
+                        File.WriteAllText(TaskEnvironment.GetAbsolutePath(destinationPath), checksum);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.LogErrorFromException(e);
+                return !Log.HasLoggedErrors;
+            }
         }
+
+        return !Log.HasLoggedErrors;
     }
 }

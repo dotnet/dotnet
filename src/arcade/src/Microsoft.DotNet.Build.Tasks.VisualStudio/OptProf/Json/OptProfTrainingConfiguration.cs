@@ -4,17 +4,16 @@
 using Newtonsoft.Json;
 using System.IO;
 
-namespace Microsoft.DotNet.Build.Tasks.VisualStudio
+namespace Microsoft.DotNet.Build.Tasks.VisualStudio;
+
+internal sealed class OptProfTrainingConfiguration
 {
-    internal sealed class OptProfTrainingConfiguration
-    {
-        [JsonProperty(PropertyName = "products")]
-        public ProductOptProfTraining[] Products { get; set; }
+    [JsonProperty(PropertyName = "products")]
+    public ProductOptProfTraining[] Products { get; set; }
 
-        [JsonProperty(PropertyName = "assemblies")]
-        public AssemblyOptProfTraining[] Assemblies { get; set; }
+    [JsonProperty(PropertyName = "assemblies")]
+    public AssemblyOptProfTraining[] Assemblies { get; set; }
 
-        public static OptProfTrainingConfiguration Deserialize(string json)
-            => JsonSerializer.CreateDefault().Deserialize<OptProfTrainingConfiguration>(new StringReader(json));
-    }
+    public static OptProfTrainingConfiguration Deserialize(string json)
+        => JsonSerializer.CreateDefault().Deserialize<OptProfTrainingConfiguration>(new StringReader(json));
 }

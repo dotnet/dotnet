@@ -35,7 +35,7 @@ namespace NuGet.DependencyResolver.Core.Tests
         public void GraphOperations_GetVersionVerifyResult()
         {
             var node = GetPackageNode("a", "1.0.0", "2.0.0");
-            node.GetVersionOrDefault().ToNormalizedString().Should().Be("2.0.0");
+            node.GetVersionOrDefault()!.ToNormalizedString().Should().Be("2.0.0");
         }
 
         [Fact]
@@ -189,10 +189,10 @@ namespace NuGet.DependencyResolver.Core.Tests
         {
             var libraryIdentity = nullIdentity ? null : new LibraryIdentity("a", new NuGetVersion("2.0.0"), LibraryType.Package);
 
-            var graphItem = new GraphItem<RemoteResolveResult>(libraryIdentity);
+            var graphItem = new GraphItem<RemoteResolveResult>(libraryIdentity!);
             graphItem.IsCentralTransitive = isCentralTransitive;
 
-            var graphItem2 = new GraphItem<RemoteResolveResult>(libraryIdentity);
+            var graphItem2 = new GraphItem<RemoteResolveResult>(libraryIdentity!);
             graphItem2.IsCentralTransitive = isCentralTransitive;
 
             Assert.True(graphItem.Equals(graphItem));
@@ -220,10 +220,10 @@ namespace NuGet.DependencyResolver.Core.Tests
             graphItem_2_2.IsCentralTransitive = false;
 
 
-            var graphItem_null_1 = new GraphItem<RemoteResolveResult>(null);
+            var graphItem_null_1 = new GraphItem<RemoteResolveResult>(null!);
             graphItem_null_1.IsCentralTransitive = true;
 
-            var graphItem_null_2 = new GraphItem<RemoteResolveResult>(null);
+            var graphItem_null_2 = new GraphItem<RemoteResolveResult>(null!);
             graphItem_null_2.IsCentralTransitive = false;
 
             Assert.False(graphItem_1_1.Equals(graphItem_1_2));

@@ -4,7 +4,7 @@
 
   <Fragment>
     <ComponentGroup Id="AuthoredRegistryKeys">
-      <Component Id="SetupRegistry_x86" Directory="TARGETDIR" Bitness="always32" Guid="f1dc3d97-93c5-4f3b-baa3-24e6a84a2e15" >
+      <Component Id="SetupRegistry_x86" Directory="TARGETDIR" Bitness="always32" >
         <RegistryKey Root="HKLM" Key="SOFTWARE\dotnet\Setup\InstalledVersions\$(var.Platform)\$(var.RegKeyProductName)">
 
           <?ifdef RegKeyNugetVersionExistence?>

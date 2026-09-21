@@ -156,7 +156,7 @@ namespace NuGet.PackageManagement.Test.Telemetry
         }
 
         [Fact]
-        public void CreateWithReviewPackageSourceMappingCommand_WithValidProperties_CreatedWithoutPiiData()
+        public void CreateWithResolveSupplyChainSecurity_WithValidProperties_CreatedWithoutPiiData()
         {
             // Arrange
             var nuGetTelemetryService = SetupTelemetryListener();
@@ -164,7 +164,7 @@ namespace NuGet.PackageManagement.Test.Telemetry
             var navigationType = NavigationType.Button;
             var navigationOrigin = NavigationOrigin.Options_PackageSourceMapping_Review;
 
-            var evt = NavigatedTelemetryEvent.CreateWithReviewPackageSourceMappingCommand(CopilotToolSessionError.None);
+            var evt = NavigatedTelemetryEvent.CreateWithResolveSupplyChainSecurity(navigationOrigin, CopilotToolSessionError.None);
 
             // Act
             nuGetTelemetryService.EmitTelemetryEvent(evt);
@@ -189,13 +189,13 @@ namespace NuGet.PackageManagement.Test.Telemetry
 
         [Theory]
         [MemberData(nameof(CopilotToolSessionErrorTypes))]
-        public void CreateWithReviewPackageSourceMappingCommand_WithAllErrorTypes_CreatesEventWithCorrectProperties(CopilotToolSessionError errorType)
+        public void CreateWithResolveSupplyChainSecurity_WithAllErrorTypes_CreatesEventWithCorrectProperties(CopilotToolSessionError errorType)
         {
             // Arrange
             var nuGetTelemetryService = SetupTelemetryListener();
 
             // Act
-            var evt = NavigatedTelemetryEvent.CreateWithReviewPackageSourceMappingCommand(errorType);
+            var evt = NavigatedTelemetryEvent.CreateWithResolveSupplyChainSecurity(NavigationOrigin.Options_PackageSourceMapping_Review, errorType);
             nuGetTelemetryService.EmitTelemetryEvent(evt);
 
             // Assert
@@ -204,6 +204,28 @@ namespace NuGet.PackageManagement.Test.Telemetry
             Assert.Equal(NavigationType.Button, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
             Assert.Equal(NavigationOrigin.Options_PackageSourceMapping_Review, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
             Assert.Equal(errorType, _lastTelemetryEvent[NavigatedTelemetryEvent.ErrorTypePropertyName]);
+        }
+
+        [Theory]
+        [InlineData(NavigationOrigin.Options_PackageSourceMapping_Review)]
+        [InlineData(NavigationOrigin.ErrorList_ResolveSupplyChainSecurity)]
+        public void CreateWithResolveSupplyChainSecurity_WithOrigin_CreatesEventWithCorrectProperties(NavigationOrigin navigationOrigin)
+        {
+            // Arrange
+            var nuGetTelemetryService = SetupTelemetryListener();
+
+            // Act
+            var evt = NavigatedTelemetryEvent.CreateWithResolveSupplyChainSecurity(
+                navigationOrigin,
+                CopilotToolSessionError.None);
+            nuGetTelemetryService.EmitTelemetryEvent(evt);
+
+            // Assert
+            Assert.NotNull(_lastTelemetryEvent);
+            Assert.Equal(3, _lastTelemetryEvent.Count);
+            Assert.Equal(NavigationType.Button, _lastTelemetryEvent[NavigatedTelemetryEvent.NavigationTypePropertyName]);
+            Assert.Equal(navigationOrigin, _lastTelemetryEvent[NavigatedTelemetryEvent.OriginPropertyName]);
+            Assert.Equal(CopilotToolSessionError.None, _lastTelemetryEvent[NavigatedTelemetryEvent.ErrorTypePropertyName]);
         }
 
         [Fact]

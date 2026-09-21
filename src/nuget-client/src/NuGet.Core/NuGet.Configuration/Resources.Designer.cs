@@ -158,6 +158,24 @@ namespace NuGet.Configuration {
                 return ResourceManager.GetString("Error_DuplicatePackageSource", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The minimum publish age cannot be negative. Value: &apos;{0}&apos;..
+        /// </summary>
+        internal static string PackageSource_MinPublishAgeCannotBeNegative {
+            get {
+                return ResourceManager.GetString("PackageSource_MinPublishAgeCannotBeNegative", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The minimum publish age must be specified in whole hours. Value: &apos;{0}&apos;..
+        /// </summary>
+        internal static string PackageSource_MinPublishAgeMustBeWholeHours {
+            get {
+                return ResourceManager.GetString("PackageSource_MinPublishAgeMustBeWholeHours", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Encryption is not supported on non-Windows platforms..
@@ -174,6 +192,15 @@ namespace NuGet.Configuration {
         internal static string Error_InvalidAttribute {
             get {
                 return ResourceManager.GetString("Error_InvalidAttribute", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum publish age exception pattern '{0}' is invalid..
+        /// </summary>
+        internal static string Error_InvalidMinPublishAgeExceptionPattern {
+            get {
+                return ResourceManager.GetString("Error_InvalidMinPublishAgeExceptionPattern", resourceCulture);
             }
         }
         

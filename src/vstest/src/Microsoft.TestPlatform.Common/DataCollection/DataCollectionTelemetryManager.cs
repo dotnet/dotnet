@@ -73,8 +73,8 @@ internal class DataCollectionTelemetryManager : IDataCollectionTelemetryManager
         if (ClrIeProfilerGuid == existingProfilerGuid)
         {
             if (dataCollectorInformation.TestExecutionEnvironmentVariables != null &&
-                dataCollectorInformation.TestExecutionEnvironmentVariables.Any(pair => pair.Key.StartsWith(ClrIeInstrumentationMethodConfigurationPrefix32Variable)) &&
-                dataCollectorInformation.TestExecutionEnvironmentVariables.Any(pair => pair.Key.StartsWith(ClrIeInstrumentationMethodConfigurationPrefix64Variable)))
+                dataCollectorInformation.TestExecutionEnvironmentVariables.Any(pair => pair.Key.StartsWith(ClrIeInstrumentationMethodConfigurationPrefix32Variable, StringComparison.Ordinal)) &&
+                dataCollectorInformation.TestExecutionEnvironmentVariables.Any(pair => pair.Key.StartsWith(ClrIeInstrumentationMethodConfigurationPrefix64Variable, StringComparison.Ordinal)))
             {
                 _requestData.MetricsCollection.Add(GetTelemetryKey(telemetryPrefix, dataCollectorInformation), ClrIeProfilerGuid.ToString());
                 return;

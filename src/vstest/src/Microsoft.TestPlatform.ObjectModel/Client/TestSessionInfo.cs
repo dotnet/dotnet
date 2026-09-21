@@ -21,6 +21,11 @@ public class TestSessionInfo : IEquatable<TestSessionInfo>
         Id = Guid.NewGuid();
     }
 
+    internal TestSessionInfo(Guid id)
+    {
+        Id = id;
+    }
+
     /// <summary>
     /// Gets the session id.
     /// </summary>

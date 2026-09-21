@@ -1,1 +1,7 @@
 #nullable enable
+Microsoft.TestPlatform.AdapterUtilities.TestIdProviderXxHash128
+Microsoft.TestPlatform.AdapterUtilities.TestIdProviderXxHash128.AppendBytes(byte[]! bytes) -> void
+Microsoft.TestPlatform.AdapterUtilities.TestIdProviderXxHash128.AppendString(string! str) -> void
+Microsoft.TestPlatform.AdapterUtilities.TestIdProviderXxHash128.GetHash() -> byte[]!
+Microsoft.TestPlatform.AdapterUtilities.TestIdProviderXxHash128.GetId() -> System.Guid
+Microsoft.TestPlatform.AdapterUtilities.TestIdProviderXxHash128.TestIdProviderXxHash128() -> void

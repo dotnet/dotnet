@@ -4,21 +4,20 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Validation.Tests
+namespace Validation.Tests;
+
+public class CommonRepoResourcesFixture : IAsyncLifetime
 {
-    public class CommonRepoResourcesFixture : IAsyncLifetime
+    public RepoResources CommonResources { get; private set; }
+
+    public async Task InitializeAsync()
     {
-        public RepoResources CommonResources { get; private set; }
+        CommonResources = await RepoResources.Create(useIsolatedRoots: false);
+    }
 
-        public async Task InitializeAsync()
-        {
-            CommonResources = await RepoResources.Create(useIsolatedRoots: false);
-        }
-
-        public Task DisposeAsync()
-        {
-            CommonResources?.Dispose();
-            return Task.CompletedTask;
-        }
+    public Task DisposeAsync()
+    {
+        CommonResources?.Dispose();
+        return Task.CompletedTask;
     }
 }

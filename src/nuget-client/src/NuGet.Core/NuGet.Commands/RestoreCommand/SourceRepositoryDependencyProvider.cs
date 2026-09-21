@@ -27,11 +27,6 @@ namespace NuGet.Commands
     /// </summary>
     public class SourceRepositoryDependencyProvider : IRemoteDependencyProvider
     {
-        static SourceRepositoryDependencyProvider()
-        {
-            StaticState.StartMSBuildRestoreTasks += ResetCache;
-        }
-
         private readonly object _lock = new object();
         private readonly SourceRepository _sourceRepository;
         private readonly ILogger _logger;
@@ -48,17 +43,12 @@ namespace NuGet.Commands
         private readonly TaskResultCache<LibraryRange, LibraryIdentity> _libraryMatchCache = new();
 
         // Limiting concurrent requests to limit the amount of files open at a time.
-        private static SemaphoreSlim _throttle = GetThrottleSemaphoreSlim(EnvironmentVariableWrapper.Instance);
-
-        /// <summary>
-        /// Recreates the shared concurrency throttle from the current environment (<c>NUGET_CONCURRENCY_LIMIT</c>),
-        /// disposing the previous one. The caller must ensure no restore is in flight.
-        /// </summary>
-        internal static void ResetCache()
-        {
-            SemaphoreSlim previous = Interlocked.Exchange(ref _throttle, GetThrottleSemaphoreSlim(EnvironmentVariableWrapper.Instance));
-            previous?.Dispose();
-        }
+        // Deliberately readonly: this gate is only meaningful if it is the same instance for the lifetime of every
+        // operation it gates. Swapping it - even without disposing the previous one - lets requests already holding a
+        // permit on the old semaphore run alongside requests acquiring on the new one, so the limit is not enforced
+        // across the swap. NUGET_CONCURRENCY_LIMIT is therefore fixed for the process; making it per-build means
+        // scoping the throttle to the restore rather than sharing one static (NuGet/Home#15045).
+        private static readonly SemaphoreSlim _throttle = GetThrottleSemaphoreSlim(EnvironmentVariableWrapper.Instance);
 
         internal static SemaphoreSlim GetThrottleSemaphoreSlim(IEnvironmentVariableReader env)
         {

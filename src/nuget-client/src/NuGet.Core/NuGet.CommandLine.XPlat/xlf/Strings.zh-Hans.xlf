@@ -394,14 +394,21 @@ NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中�
         <note>{0} - PackageID</note>
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
-        <source>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</source>
-        <target state="translated">项目“{0}”对 NuGet 包使用 package.config，但该命令仅适用于包引用项目。</target>
-        <note />
+        <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
+        <target state="needs-review-translation">项目“{0}”对 NuGet 包使用 package.config，但该命令仅适用于包引用项目。</target>
+        <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
         <source>Unable to find a valid package version</source>
         <target state="translated">找不到有效的包版本</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_PackagePublishDateMissing">
+        <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
+        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <note>{0} - package source name
+{1} - package ID
+{2} - package version</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
@@ -1032,6 +1039,11 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">包引用采用包标识符形式，如 'Newtonsoft.Json'，或采用以 ‘@’ 分隔包标识符和版本的形式，如 ‘Newtonsoft.Json@13.0.3’。</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
+        <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
+        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
+      </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
         <target state="translated">正在运行预览还原以检查包兼容性。</target>
@@ -1447,6 +1459,11 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <source>Specify the path to the package</source>
         <target state="translated">指定包路径</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warn_AddPkgNonCompliantPackageId">
+        <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
+        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">
         <source>--no-restore|-n flag was used. No compatibility check will be done and the added package reference will be unconditional.</source>

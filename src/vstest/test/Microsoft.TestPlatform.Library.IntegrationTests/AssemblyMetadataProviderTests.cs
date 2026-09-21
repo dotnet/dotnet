@@ -119,7 +119,7 @@ public class AssemblyMetadataProviderTests : AcceptanceTestBase
         var actualFx = _assemblyMetadataProvider.GetFrameworkName(assemblyPath);
         stopWatch.Stop();
 
-        if (framework.StartsWith("net4"))
+        if (framework.StartsWith("net4", StringComparison.Ordinal))
         {
             // Reason is unknown for why full framework it is taking more time. Need to investigate.
             expectedElapsedTime = 100;

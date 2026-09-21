@@ -8,16 +8,23 @@ using System.IO.Pipes;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Contracts.Telemetry;
+using Microsoft.CodeAnalysis.Common;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.LanguageServer;
+using Microsoft.CodeAnalysis.LanguageServer.Daemon;
 using Microsoft.CodeAnalysis.LanguageServer.Logging;
 using Microsoft.CodeAnalysis.LanguageServer.Services;
+using Microsoft.CodeAnalysis.LanguageServer.Telemetry;
+using Microsoft.CodeAnalysis.Shared.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using RoslynLog = Microsoft.CodeAnalysis.Internal.Log;
 
 WindowsErrorReporting.SetErrorModeOnWindows();
+
+// Child processes receive their own redirected standard handles. Do not also let them inherit the server's standard
+// handles, since a long-lived descendant could keep the thin client's pipes open after the server exits.
+StandardHandleInheritance.SetStandardHandlesInheritable(false);
 
 var command = LanguageServerCommandLine.CreateCommand(RunAsync);
 var invocationConfiguration = new InvocationConfiguration()
@@ -45,6 +52,11 @@ static async Task<int> RunAsync(ServerConfiguration serverConfiguration, Cancell
     {
         Contract.ThrowIfNull(serverConfiguration.ServerPipeName, "Server must be started with either --stdio or --pipe option.");
     }
+
+    serverConfiguration = serverConfiguration with
+    {
+        TelemetryLevel = TelemetryLevelResolver.Resolve(serverConfiguration.TelemetryLevel),
+    };
 
     if (serverConfiguration.UseStdIo)
     {
@@ -128,9 +140,12 @@ static async Task<int> RunAsync(ServerConfiguration serverConfiguration, Cancell
         Directory.CreateDirectory(serverConfiguration.ExtensionLogDirectory);
     }
 
-    // Initialize the fault handler if it's available
-    var telemetryReporter = exportProvider.GetExports<ITelemetryReporter>().SingleOrDefault()?.Value;
-    RoslynLogger.Initialize(telemetryReporter, serverConfiguration.TelemetryLevel, serverConfiguration.SessionId);
+    using var telemetryService = LanguageServerTelemetry.CreateSession(
+        serverConfiguration,
+        loggerFactory,
+        RoslynLog.RoslynTelemetry.Current,
+        serverConfiguration.SessionId,
+        isDefaultSession: true);
 
     // Build the connection source for the configured mode. Single-server mode (stdio / connect-out pipe) yields
     // exactly one connection; daemon mode accepts many and manages its own idle timeout. Both run through the same
@@ -191,13 +206,13 @@ static async Task<int> RunAsync(ServerConfiguration serverConfiguration, Cancell
     {
         using (connectionSource as IDisposable)
         {
-            await connectionManager.RunAsync(connectionSource, exportProvider, typeRefResolver, logger, cancellationToken);
+            await connectionManager.RunAsync(
+                connectionSource, exportProvider, typeRefResolver, logger, telemetryService?.SessionId, cancellationToken);
         }
     }
     finally
     {
-        // After the LSP server shutdown, report session wide telemetry
-        RoslynLogger.ShutdownAndReportSessionTelemetry();
+        FeaturesSessionTelemetry.Report();
     }
 
     return ServerExitCodes.Success;
