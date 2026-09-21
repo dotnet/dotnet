@@ -94,7 +94,7 @@
   <PropertyGroup>
     <BootstrapSubsets>host.native+libs.sfx+libs.pretest</BootstrapSubsets>
     <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' != 'true'">$(BootstrapSubsets)+clr.runtime+clr.corelib</BootstrapSubsets>
-    <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' == 'true'">$(BootstrapSubsets)+clr.alljits+clr.nativeaotlibs+clr.nativeaotruntime+libs.native</BootstrapSubsets>
+    <BootstrapSubsets Condition="'$(UseNativeAotForComponents)' == 'true'">$(BootstrapSubsets)+clr.nativeaotlibs+clr.nativeaotruntime+libs.native</BootstrapSubsets>
   </PropertyGroup>
 
   <!-- Init _subset here to allow RuntimeFlavor to be set as early as possible -->
@@ -190,6 +190,8 @@
     <_subset>$(_subset.Replace('+host+', '+$(DefaultHostSubsets)+'))</_subset>
     <_subset>$(_subset.Replace('+packs+', '+$(DefaultPacksSubsets)+'))</_subset>
     <_subset>$(_subset.Replace('+bootstrap+', '+bootstrap+$(BootstrapSubsets)+'))</_subset>
+    <_subset Condition="'$(EnableBootstrap)' == 'true' or '$(BootstrapMainBuild)' == 'true'">$(_subset)+$(BootstrapSubsets)+</_subset>
+    <_subset Condition="('$(EnableBootstrap)' == 'true' or '$(BootstrapMainBuild)' == 'true') and '$(UseNativeAotForComponents)' == 'true'">$(_subset)+clr.jit+clr.crossarchtools+</_subset>
     <_subset Condition="'$(TargetOS)' == 'browser'">$(_subset.Replace('+clr.runtime+', '+provision.emsdk+clr.corelib+clr.runtime+'))</_subset>
 
     <!-- Surround _subset in dashes to simplify checks below -->
@@ -314,6 +316,14 @@
 
   <ItemGroup Condition="$(_subset.Contains('+clean.wasmtools+'))">
     <ProjectToBuild Include="$(RepositoryEngineeringDir)wasm\PruneWasmToolCache.proj" Category="provision" />
+  </ItemGroup>
+
+  <!-- Build integration must exist before evaluating live NativeAOT consumers. -->
+  <ItemGroup Condition="($(_subset.Contains('+clr.tools+')) or '$(EnableBootstrap)' == 'true' or '$(BootstrapMainBuild)' == 'true') and ('$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true')">
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj"
+                    Category="clr" BootstrapProducer="true" BootstrapPrerequisite="true" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj"
+                    Category="clr" BootstrapProducer="true" BootstrapPrerequisite="true" />
   </ItemGroup>
 
   <!-- CoreClr sets -->
@@ -487,6 +497,10 @@
     <ProjectToBuild Include="$(CoreClrProjectRoot).nuget\Microsoft.CrossOsDiag.Private.CoreCLR\Microsoft.CrossOsDiag.Private.CoreCLR.proj" Category="clr" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(_subset.Contains('+clr.tools+')) or (('$(EnableBootstrap)' == 'true' or '$(BootstrapMainBuild)' == 'true') and '$(UseNativeAotForComponents)' == 'true')">
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_inbuild.csproj" Category="clr" BootstrapProducer="true" />
+  </ItemGroup>
+
   <ItemGroup Condition="$(_subset.Contains('+clr.tools+'))">
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\runincontext\runincontext.csproj;
                              $(CoreClrProjectRoot)tools\tieringtest\tieringtest.csproj;
@@ -503,16 +517,11 @@
     <!--
       Always build the in-build variants of these tools. They run on the host machine, which we always have LKG packs for.
     -->
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_inbuild.csproj" Category="clr" />
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_inbuild.csproj" Category="clr" />
 
-    <!-- We may use these targets with the in-build ILCompiler or with the shipping ILCompiler. Produce them whenever we may use them. -->
-    <ProjectToBuild Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj" Category="clr" Condition="'$(EnableBootstrap)' != 'true' and ('$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true')" />
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj" Category="clr" Condition="'$(EnableBootstrap)' != 'true' and ('$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true')" />
-
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(BootstrapMainBuild)' != 'true'" Category="clr" />
-    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(BootstrapMainBuild)' != 'true'" Category="clr" />
-    <ProjectToBuild Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj" Condition="'$(SdkToolsSupported)' == 'true' and '$(BootstrapMainBuild)' != 'true'" Category="clr" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" BootstrapConsumer="true" />
+    <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2_publish.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" BootstrapConsumer="true" />
+    <ProjectToBuild Include="$(ToolsProjectRoot)ilasm\src\ilasm\ilasm.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" BootstrapConsumer="true" />
 
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\ILCompiler\ILCompiler.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" />
     <ProjectToBuild Include="$(CoreClrProjectRoot)tools\aot\crossgen2\crossgen2.csproj" Condition="'$(SdkToolsSupported)' == 'true'" Category="clr" />
@@ -546,7 +555,7 @@
 
   <ItemGroup Condition="$(_subset.Contains('+tools.cdac+'))">
     <ProjectToBuild Include="$(SharedNativeRoot)managed\compile-native.proj"
-                    Condition="'$(BootstrapMainBuild)' != 'true'"
+                    BootstrapConsumer="true"
                     Category="tools" />
 
     <!-- Direct references to cDAC projects for packing -->
@@ -707,7 +716,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(_subset.Contains('+libs.tests+'))">
-    <ProjectToBuild Include="$(LibrariesProjectRoot)tests.proj" Category="libs" Test="true" />
+    <ProjectToBuild Include="$(LibrariesProjectRoot)tests.proj" Category="libs" Test="true" BootstrapTest="true" />
   </ItemGroup>
 
   <!-- Host.pretest subset (consumes live built libraries assets so needs to come after libraries) -->
@@ -764,29 +773,29 @@
             <SharedFrameworkProjectToBuild Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Ref.sfxproj" />
           </ItemGroup>
           <ItemGroup>
-            <SharedFrameworkProjectToBuild Condition="'$(BootstrapMainBuild)' != 'true' and '$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true')" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj" />
+            <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true')" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj" BootstrapPackage="true" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-host.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-hostfxr.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-runtime-deps\*.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(MonoCrossAOTTargetOS)' != '' and '$(DotNetBuildSourceOnly)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\monocrossaot.proj" />
           </ItemGroup>
           <ItemGroup>
-            <ProjectToBuild Condition="'$(BootstrapMainBuild)' != 'true' and '$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" Include="$(InstallerProjectRoot)\pkg\projects\nativeaot-packages.proj" Category="packs" />
-            <ProjectToBuild Condition="'$(BootstrapMainBuild)' != 'true' and '$(_BuildCdacPack)' == 'true'" Include="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj" Category="packs" />
+            <ProjectToBuild Condition="'$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" Include="$(InstallerProjectRoot)\pkg\projects\nativeaot-packages.proj" Category="packs" BootstrapPackage="true" />
+            <ProjectToBuild Condition="'$(_BuildCdacPack)' == 'true'" Include="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj" Category="packs" BootstrapCdacPackage="true" />
           </ItemGroup>
           <ItemGroup>
             <!--
               When BuildHostTools is enabled, we need to provide a crossgen2 that runs on the host machine for downstream repos to use to R2R their code.
               Non-VMR builds normally use the crossgen2 built for the target host SDK from another build leg, but builds without one can opt in.
             -->
-            <ProjectToBuild Condition="'$(BootstrapMainBuild)' != 'true' and '$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' or '$(TargetOS)' == 'browser') and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" />
+            <ProjectToBuild Condition="'$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' or '$(TargetOS)' == 'browser') and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" BootstrapPackage="true" />
 
             <!--
               CoreCLR wasm workload tests need the host crossgen2 package in their local feed.
               These legs do not set BuildHostTools, so opt in here. Keeping this opt-in avoids
               duplicating packages produced by official host builds.
             -->
-            <ProjectToBuild Condition="'$(BuildCrossgen2HostPackForWorkloadTesting)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(BuildHostTools)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" />
+            <ProjectToBuild Condition="'$(BuildCrossgen2HostPackForWorkloadTesting)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(BuildHostTools)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" BootstrapPackage="true" />
           </ItemGroup>
           <ItemGroup>
             <SharedFrameworkProjectToBuild Condition="'$(_BuildHostPack)' == 'true'" Include="$(InstallerProjectRoot)pkg\archives\dotnet-nethost.proj" />
@@ -824,8 +833,8 @@
   </ItemGroup>
 
   <!-- Bootstrap -->
-  <ItemGroup Condition="$(_subset.Contains('+bootstrap+'))">
-    <ProjectToBuild Include="$(LibrariesProjectRoot)Microsoft.NETCore.Platforms\src\Microsoft.NETCore.Platforms.csproj" Category="libraries" />
+  <ItemGroup Condition="$(_subset.Contains('+bootstrap+')) or '$(EnableBootstrap)' == 'true' or '$(BootstrapMainBuild)' == 'true'">
+    <ProjectToBuild Include="$(LibrariesProjectRoot)Microsoft.NETCore.Platforms\src\Microsoft.NETCore.Platforms.csproj" Category="libs" BootstrapProducer="true" />
   </ItemGroup>
 
   <!-- Set default configurations. -->
@@ -845,6 +854,17 @@
       <AdditionalProperties>%(AdditionalProperties);TasksConfiguration=$(TasksConfiguration)</AdditionalProperties>
       <AdditionalProperties>%(AdditionalProperties);ToolsConfiguration=$(ToolsConfiguration)</AdditionalProperties>
     </ProjectToBuild>
+  </ItemGroup>
+
+  <ItemGroup>
+    <BootstrapConsumer Include="@(ProjectToBuild->WithMetadataValue('BootstrapConsumer', 'true'))" />
+    <BootstrapPackageProject Include="@(ProjectToBuild->WithMetadataValue('BootstrapPackage', 'true'))" />
+    <BootstrapCdacPackageProject Include="@(ProjectToBuild->WithMetadataValue('BootstrapCdacPackage', 'true'))" />
+    <BootstrapTestProject Include="@(ProjectToBuild->WithMetadataValue('BootstrapTest', 'true'))" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(EnableBootstrap)' == 'true' or '$(BootstrapMainBuild)' == 'true'">
+    <ProjectToBuild Remove="@(BootstrapConsumer);@(BootstrapPackageProject);@(BootstrapCdacPackageProject);@(BootstrapTestProject)" />
   </ItemGroup>
 
 </Project>

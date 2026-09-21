@@ -1,15 +1,13 @@
 <Project Sdk="Microsoft.Build.Traversal">
 
+  <Import Project="bootstrap.props" />
+
   <ItemGroup>
     <ProjectReference Include="$(RepoTasksDir)tasks.proj"
                       BuildInParallel="false" />
-    <ProjectReference Include="$(CoreClrProjectRoot)tools\aot\ILCompiler.Build.Tasks\ILCompiler.Build.Tasks.csproj"
-                      Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'"
-                      BuildInParallel="false" />
-    <ProjectReference Include="$(CoreClrProjectRoot)nativeaot\BuildIntegration\BuildIntegration.proj"
-                      Condition="'$(SdkToolsSupported)' == 'true' or '$(NativeAotSupported)' == 'true'"
-                      BuildInParallel="false" />
     <ProjectReference Include="@(ProjectToBuild->WithMetadataValue('BootstrapProducer', 'true'))" />
   </ItemGroup>
+
+  <Import Project="bootstrap-layout.targets" />
 
 </Project>
