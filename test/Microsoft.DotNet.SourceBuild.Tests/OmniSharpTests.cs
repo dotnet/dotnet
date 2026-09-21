@@ -67,7 +67,11 @@ public class OmniSharpTests : SdkTests
         if (!Directory.Exists(OmniSharpDirectory))
         {
             using HttpClient client = new();
-            string omniSharpTarballFile = $"omnisharp-linux-{Config.TargetArchitecture}-net6.0.tar.gz";
+            string targetRid = Config.TargetRid;
+            string architecture = targetRid[(targetRid.LastIndexOf('-') + 1)..];
+            string omniSharpTarballFile = targetRid.Contains("-musl-", StringComparison.OrdinalIgnoreCase)
+                ? $"omnisharp-linux-musl-{architecture}.tar.gz"
+                : $"omnisharp-linux-{architecture}.tar.gz";
             Uri omniSharpTarballUrl = new($"https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{OmniSharpReleaseVersion}/{omniSharpTarballFile}");
             await client.DownloadFileAsync(omniSharpTarballUrl, omniSharpTarballFile, OutputHelper);
 
