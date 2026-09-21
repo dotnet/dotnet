@@ -11,8 +11,8 @@
   <!-- Version -->
   <PropertyGroup>
     <!-- **  Change for each new version -->
-    <MajorNuGetVersion Condition="'$(MajorNuGetVersion)' == ''">7</MajorNuGetVersion>
-    <MinorNuGetVersion Condition="'$(MinorNuGetVersion)' == ''">12</MinorNuGetVersion>
+    <MajorNuGetVersion Condition="'$(MajorNuGetVersion)' == ''">8</MajorNuGetVersion>
+    <MinorNuGetVersion Condition="'$(MinorNuGetVersion)' == ''">0</MinorNuGetVersion>
     <PatchNuGetVersion Condition="'$(PatchNuGetVersion)' == ''">0</PatchNuGetVersion>
     <SemanticVersion Condition=" '$(SemanticVersion)' == '' ">$(MajorNuGetVersion).$(MinorNuGetVersion).$(PatchNuGetVersion)</SemanticVersion>
 
@@ -26,8 +26,9 @@
     <VsTargetChannel Condition="'$(VsTargetChannel)' == '' And '$(IsEscrowMode)' != 'true'">int.main</VsTargetChannel>
 
     <!-- NuGet SDK VS package Semantic Version -->
-    <VsTargetMajorVersion Condition="'$(VsTargetMajorVersion)' == ''">$([MSBuild]::Add(11, $(MajorNuGetVersion)))</VsTargetMajorVersion>
-    <NuGetSdkVsSemanticVersion>$(VsTargetMajorVersion).$(MinorNuGetVersion).$(PatchNuGetVersion)</NuGetSdkVsSemanticVersion>
+    <VsTargetMajorVersion Condition="'$(VsTargetMajorVersion)' == ''">18</VsTargetMajorVersion>
+    <VsTargetMinorVersion Condition="'$(VsTargetMinorVersion)' == ''">$([MSBuild]::Add($([MSBuild]::Multiply($([MSBuild]::Subtract($(MajorNuGetVersion), 7)), 12)), $(MinorNuGetVersion)))</VsTargetMinorVersion>
+    <NuGetSdkVsSemanticVersion>$(VsTargetMajorVersion).$(VsTargetMinorVersion).$(PatchNuGetVersion)</NuGetSdkVsSemanticVersion>
 
     <!-- These branches are used for creating insertion PRs -->
     <VsTargetBranch Condition="'$(VsTargetBranch)' == '' And '$(IsEscrowMode)' == 'true'">rel/insiders</VsTargetBranch>
@@ -46,6 +47,16 @@
   <!--Setting the Pre-release/Build meta-data from CI if Version is set-->
   <PropertyGroup Condition="'$(BuildNumber)' != ''">
     <PreReleaseVersion>$(BuildNumber)</PreReleaseVersion>
+  </PropertyGroup>
+
+  <!-- Offset the CI build number by 100 for the 18.12 line only, so that the produced package versions
+       don't collide with packages already published to immutable feeds after the build revision counter
+       was reset (7.12 and 8.0 both map to VS 18.12). The offset is only applied when the result still fits
+       in the UInt16 assembly/file-version field (<= 65535). That guard skips the local/default sentinel
+       (65534, which some pipelines feed back in as BuildNumber) since 65534 + 100 would overflow, while
+       still offsetting the small revision counters used by the official build. -->
+  <PropertyGroup Condition="'$(BuildNumber)' != '' and '$(VsTargetMajorVersion).$(VsTargetMinorVersion)' == '18.12' and $([MSBuild]::Add($(BuildNumber), 100)) &lt;= 65535">
+    <PreReleaseVersion>$([MSBuild]::Add($(BuildNumber), 100))</PreReleaseVersion>
   </PropertyGroup>
 
   <!--Setting the product information for Beta builds-->

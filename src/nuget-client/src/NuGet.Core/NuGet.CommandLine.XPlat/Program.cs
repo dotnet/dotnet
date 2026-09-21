@@ -13,6 +13,7 @@ using NuGet.CommandLine.XPlat.Commands.NuGet.Enable;
 using NuGet.CommandLine.XPlat.Commands.NuGet.List;
 using NuGet.CommandLine.XPlat.Commands.NuGet.Remove;
 using NuGet.CommandLine.XPlat.Commands.NuGet.Update;
+using NuGet.CommandLine.XPlat.Commands.Package.Stage;
 using NuGet.CommandLine.XPlat.Commands.Why;
 using NuGet.Commands;
 using NuGet.Common;
@@ -121,6 +122,7 @@ namespace NuGet.CommandLine.XPlat
 
                 var msbuild = new MSBuildAPIUtility(log, virtualProjectBuilder);
 
+                StageCommand.Register(packageCommand, interactiveOption, getHidePrefixLogger);
                 PackageSearchCommand.Register(packageCommand, getHidePrefixLogger);
                 AddPackageReferenceCommand.Register(packageCommand, () => log, () => new AddPackageReferenceCommandRunner(), () => msbuild.VirtualProjectBuilder);
                 RemovePackageReferenceCommand.Register(packageCommand, () => log, () => new RemovePackageReferenceCommandRunner(), () => msbuild.VirtualProjectBuilder);
