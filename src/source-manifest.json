@@ -67,10 +67,10 @@
       "commitSha": "fa2dec964199e620ce7acf82a70ba4060862767d"
     },
     {
-      "barId": 332809,
+      "barId": 332962,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "c254bc93afea040918c9f4c4431587673beb37d4"
+      "commitSha": "05a008a7dbf61283e0afea7ec15c856546f8562d"
     },
     {
       "barId": 331876,
@@ -139,10 +139,10 @@
       "commitSha": "1963bf90863a03fcacb0dee514f01adfd5f92952"
     },
     {
-      "barId": 332666,
+      "barId": 332963,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "09aa0cd2b7aa96177498519f41d3b7c44d86d21a"
+      "commitSha": "4726a1a94599e1c2aa090f5326e2ca930f016c7d"
     },
     {
       "barId": 327376,
