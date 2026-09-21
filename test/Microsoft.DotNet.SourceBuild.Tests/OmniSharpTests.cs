@@ -18,7 +18,7 @@ namespace Microsoft.DotNet.SourceBuild.Tests;
 public class OmniSharpTests : SdkTests
 {
     // Update version as new releases become available: https://github.com/OmniSharp/omnisharp-roslyn/releases
-    private const string OmniSharpReleaseVersion = "1.39.15";
+    private const string OmniSharpReleaseVersion = "2.0.0";
 
     private string OmniSharpDirectory { get; } = Path.Combine(DotNetHelper.ProjectsDirectory, nameof(OmniSharpTests));
 
