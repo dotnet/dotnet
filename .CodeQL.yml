@@ -1,0 +1,90 @@
+# This file is auto-generated from .CodeQL.yml and CodeQL.yml files in src/.
+# Manual changes will be overwritten.
+
+path_classifiers:
+  cmake_internal:
+    # --- dotnet/runtime ---
+    # exclude artifacts/obj/**/CMakeFiles/**/CheckFunctionExists.c since CMake
+    # generates random directory names causing creation of duplicate issues
+    # related to obsolete encryption algorithm used. Note that CheckFuntionExists
+    # files are generated as part of build-time checks in CMake and are not compiled
+    # or linked into any product binaries.
+    - src/runtime/artifacts/obj/**/CMakeFiles/**/CheckFunctionExists.c
+
+  library:
+    # --- dotnet/source-build-assets ---
+    - "src/source-build-assets/src/externalPackages/**"
+    - "src/source-build-assets/src/referencePackages/**"
+
+  refs:
+    # --- dotnet/aspnetcore ---
+    # The test/ directories don't contain shipping implementations of code, so they should
+    # be excluded from analysis.
+    - src/aspnetcore/src/**/test/*
+
+    # --- dotnet/runtime ---
+    # The ref/ directories don't contain shipping implementations of code, so they should
+    # be excluded from analysis. If there is a problem at the API layer, the analysis
+    # engine will detect the problem in the src/ implementations anyway.
+    - src/runtime/src/libraries/**/ref/*
+
+queries:
+  # --- dotnet/runtime ---
+  #
+  # REPO-WIDE RULE EXCLUSIONS
+  #
+  # [Serializable] doesn't imply that a type is *safe* to [de]serialize; only that it is
+  # *possible* to do so. The rules below incorrectly assume we're trying to make a safety
+  # guarantee.
+  # We already have CodeQL + Roslyn rules running to detect usage of dangerous deserialization
+  # APIs. Those call sites are well-reviewed and don't benefit from extra alerts regarding
+  # the possibility of loading malicious code.
+  - exclude:
+      queryid:
+      - "cs/dangerous-deserialization-routine"
+      - "cs/deserialization-of-pointer-type"
+      - "cs/deserialization-unexpected-subtypes"
+      path:
+      - src/runtime
+  #
+  # Don't warn about usage of non-compliant crypto within our own implementations or interop code,
+  # since the rule would noisily try to warn us about *ourselves*. These exclusions are scoped
+  # to just the crypto code itself. We still want alerts when consumers of crypto (even within this
+  # repo) try to use non-compliant primitives; those call sites must be manually inspected
+  # and suppressed if appropriate.
+  #
+  - exclude:
+      queryid:
+      - "cs/ecb-encryption"
+      - "cs/encryption-with-vulnerable-cipher-mode"
+      - "cs/weak-symmetric-algorithm"
+      - "cs/obsolete-password-key-derivation"
+      - "cs/cryptography/unapproved-usage-of-dsa"
+      - "cs/weak-crypto"
+      - "cs/weak-hmacs"
+      - "java/weak-crypto-algorithm-or-hash"
+      path:
+      - "src/runtime/src/libraries/Common/src/Interop/Windows/BCrypt/**"
+      - "src/runtime/src/libraries/Common/src/System/Security/Cryptography/**"
+      - "src/runtime/src/libraries/Microsoft.Bcl.Cryptography/**"
+      - "src/runtime/src/libraries/System.Security.Cryptography/**"
+      - "src/runtime/src/libraries/System.Security.Cryptography.*/**"
+      - "src/runtime/src/native/libs/System.Security.Cryptography.*/**"
+
+  # --- dotnet/winforms ---
+  #
+  # REPO-WIDE RULE EXCLUSIONS
+  #
+  # [Serializable] doesn't imply that a type is *safe* to [de]serialize; only that it is
+  # *possible* to do so. The rules below incorrectly assume we're trying to make a safety
+  # guarantee.
+  # We already have CodeQL + Roslyn rules running to detect usage of dangerous deserialization
+  # APIs. Those call sites are well-reviewed and don't benefit from extra alerts regarding
+  # the possibility of loading malicious code.
+  - exclude:
+      queryid:
+      - "cs/dangerous-deserialization-routine"
+      - "cs/deserialization-of-pointer-type"
+      - "cs/deserialization-unexpected-subtypes"
+      path:
+      - src/winforms
