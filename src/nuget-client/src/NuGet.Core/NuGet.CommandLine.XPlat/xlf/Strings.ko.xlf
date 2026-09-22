@@ -1305,6 +1305,76 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <target state="translated">올바른 명령은 '{0}'입니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="StageCommand_Description">
+        <source>Manages packages in a staging environment.</source>
+        <target state="new">Manages packages in a staging environment.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Description">
+        <source>Stages a package on the server without publishing it.</source>
+        <target state="new">Stages a package on the server without publishing it.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_InvalidGroup">
+        <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
+        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_MissingSource">
+        <source>No package source was provided and DefaultPushSource is not configured.</source>
+        <target state="new">No package source was provided and DefaultPushSource is not configured.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_PackageNotFound">
+        <source>The package file '{0}' does not exist.</source>
+        <target state="new">The package file '{0}' does not exist.</target>
+        <note>0 - package path</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_PackagePathRequired">
+        <source>A package path is required.</source>
+        <target state="new">A package path is required.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_ResourceNotFound">
+        <source>The source '{0}' does not advertise a supported package staging resource.</source>
+        <target state="new">The source '{0}' does not advertise a supported package staging resource.</target>
+        <note>0 - package source</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
+        <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
+        <target state="new">The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</target>
+        <note>0 - package path</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_GroupOption_Description">
+        <source>Uploads the package into the specified staging group.</source>
+        <target state="new">Uploads the package into the specified staging group.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
+        <source>Prevents automatic discovery and staging of a sibling symbols package.</source>
+        <target state="new">Prevents automatic discovery and staging of a sibling symbols package.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_PackagePathArgument_Description">
+        <source>The path to the package to stage.</source>
+        <target state="new">The path to the package to stage.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_PackageStaged">
+        <source>Staged package '{0}'.</source>
+        <target state="new">Staged package '{0}'.</target>
+        <note>0 - package path</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_SymbolsFailed">
+        <source>Failed to stage symbols package '{0}': {1}</source>
+        <target state="new">Failed to stage symbols package '{0}': {1}</target>
+        <note>0 - symbols package path; 1 - error message</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_SymbolsStaged">
+        <source>Staged symbols package '{0}'.</source>
+        <target state="new">Staged symbols package '{0}'.</target>
+        <note>0 - symbols package path</note>
+      </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
         <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
         <target state="translated">기호 서버의 API 키입니다. 설정하지 않으면 NUGET_SYMBOL_API_KEY 환경 변수를 사용합니다.</target>
