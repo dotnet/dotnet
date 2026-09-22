@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Configuration;
+using NuGet.Commands;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
@@ -25,10 +26,17 @@ namespace NuGet.CommandLine.XPlat.Utility
         /// <param name="logger">Logger</param>
         /// <param name="packageId">Package to look for</param>
         /// <param name="prerelease">Whether to include prerelease versions</param>
+        /// <param name="ignoreMinPublishAge">Whether to ignore the minimum publish age configured on package sources</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Return the latest version available from multiple sources and if no version is found returns null.</returns>
 
-        public static async Task<NuGetVersion> GetLatestVersionFromSourcesAsync(IList<PackageSource> sources, ILogger logger, string packageId, bool prerelease, CancellationToken cancellationToken)
+        public static async Task<NuGetVersion> GetLatestVersionFromSourcesAsync(
+            IList<PackageSource> sources,
+            ILogger logger,
+            string packageId,
+            bool prerelease,
+            bool ignoreMinPublishAge,
+            CancellationToken cancellationToken)
         {
             var maxTasks = Environment.ProcessorCount;
             var tasks = new List<Task<NuGetVersion>>();
@@ -36,7 +44,7 @@ namespace NuGet.CommandLine.XPlat.Utility
 
             foreach (var source in sources)
             {
-                tasks.Add(Task.Run(() => GetLatestVersionFromSourceAsync(source, logger, packageId, prerelease, cancellationToken)));
+                tasks.Add(Task.Run(() => GetLatestVersionFromSourceAsync(source, logger, packageId, prerelease, ignoreMinPublishAge, cancellationToken)));
                 if (maxTasks <= tasks.Count)
                 {
                     var finishedTask = await Task.WhenAny(tasks);
@@ -66,9 +74,16 @@ namespace NuGet.CommandLine.XPlat.Utility
         /// <param name="logger">Logger</param>
         /// <param name="packageId">Package to look for</param>
         /// <param name="prerelease">Whether to include prerelease versions</param>
+        /// <param name="ignoreMinPublishAge">Whether to ignore the minimum publish age configured on the package source</param>
         /// <param name="cancellationToken"></param>
         /// <returns>Returns the latest version available from a source or a null if non is found.</returns>
-        public static async Task<NuGetVersion> GetLatestVersionFromSourceAsync(PackageSource source, ILogger logger, string packageId, bool prerelease, CancellationToken cancellationToken)
+        public static async Task<NuGetVersion> GetLatestVersionFromSourceAsync(
+            PackageSource source,
+            ILogger logger,
+            string packageId,
+            bool prerelease,
+            bool ignoreMinPublishAge,
+            CancellationToken cancellationToken)
         {
             SourceRepository repository = Repository.Factory.GetCoreV3(source);
             PackageMetadataResource resource = await repository.GetResourceAsync<PackageMetadataResource>(cancellationToken);
@@ -81,10 +96,26 @@ namespace NuGet.CommandLine.XPlat.Utility
                     includeUnlisted: false,
                     cache,
                     logger,
-                    CancellationToken.None
+                    cancellationToken
                 );
 
-                return packages?.Max(x => x.Identity.Version);
+                if (!ignoreMinPublishAge && source.MinPublishAge > TimeSpan.Zero && packages != null)
+                {
+                    var packagesWithPublishDates = packages.ToList();
+                    IPackageSearchMetadata packageWithoutPublishDate = packagesWithPublishDates.FirstOrDefault(package => package.Published == null);
+                    if (packageWithoutPublishDate != null)
+                    {
+                        throw new CommandException(Messages.Error_PackagePublishDateMissing(
+                            source.Name,
+                            packageId,
+                            packageWithoutPublishDate.Identity.Version.ToNormalizedString()));
+                    }
+
+                    DateTimeOffset publishCutoff = DateTimeOffset.UtcNow - source.MinPublishAge;
+                    packages = packagesWithPublishDates.Where(package => package.Published <= publishCutoff);
+                }
+
+                return packages?.Max(package => package.Identity.Version);
             }
         }
 
@@ -99,26 +130,37 @@ namespace NuGet.CommandLine.XPlat.Utility
             using (var settingsLoadingContext = new SettingsLoadingContext())
             {
                 ISettings settings = Settings.LoadImmutableSettingsGivenConfigPaths(configFilePaths, settingsLoadingContext);
-                var packageSources = new List<PackageSource>();
-
-                var packageSourceProvider = new PackageSourceProvider(settings);
-                IEnumerable<PackageSource> packageProviderSources = packageSourceProvider.LoadPackageSources();
-
-                for (int i = 0; i < requestedSources.Count; i++)
-                {
-                    PackageSource matchedSource = packageProviderSources.FirstOrDefault(e => e.Source == requestedSources[i].Source);
-                    if (matchedSource == null)
-                    {
-                        packageSources.Add(requestedSources[i]);
-                    }
-                    else
-                    {
-                        packageSources.Add(matchedSource);
-                    }
-                }
-
-                return packageSources;
+                return EvaluateSources(requestedSources, settings);
             }
+        }
+
+        /// <summary>
+        /// Returns package sources with their configured settings, including credentials and minimum publish age.
+        /// </summary>
+        /// <param name="requestedSources">Sources to match</param>
+        /// <param name="settings">Settings containing the source configuration</param>
+        /// <returns>Return a list of configured package sources</returns>
+        public static List<PackageSource> EvaluateSources(IList<PackageSource> requestedSources, ISettings settings)
+        {
+            var packageSources = new List<PackageSource>();
+
+            var packageSourceProvider = new PackageSourceProvider(settings);
+            IEnumerable<PackageSource> packageProviderSources = packageSourceProvider.LoadPackageSources();
+
+            for (int i = 0; i < requestedSources.Count; i++)
+            {
+                PackageSource matchedSource = packageProviderSources.FirstOrDefault(e => e.Source == requestedSources[i].Source);
+                if (matchedSource == null)
+                {
+                    packageSources.Add(requestedSources[i]);
+                }
+                else
+                {
+                    packageSources.Add(matchedSource);
+                }
+            }
+
+            return packageSources;
         }
     }
 }

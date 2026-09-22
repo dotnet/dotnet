@@ -208,6 +208,13 @@
   <data name="CredentialProviderFailed_VisualStudioCredentialProvider" xml:space="preserve">
     <value>The Visual Studio credential provider failed to load.</value>
   </data>
+  <data name="CredentialPrompt_PackageSourceCaption" xml:space="preserve">
+    <value>NuGet Package Source Authentication</value>
+  </data>
+  <data name="CredentialPrompt_PackageSourceMessage" xml:space="preserve">
+    <value>Enter credentials for the package source '{0}'.</value>
+    <comment>{0} is the package source URI.</comment>
+  </data>
   <data name="CredentialProviderFailed_VisualStudioAccountProvider" xml:space="preserve">
     <value>The Visual Studio or VSTS account provider failed to load.</value>
   </data>

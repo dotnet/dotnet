@@ -13,25 +13,20 @@ namespace SOS.TestHarness;
 ///
 /// Host lifetime differs by backend:
 /// <list type="bullet">
-///   <item><b>cdb</b> runs dbgeng in its own <see cref="ChildEngineClient"/> child process.
-///   Each child is independent and blocks on stdin when idle, so many can be alive at once — the
-///   single-instance limit that in-process dbgeng imposed is gone. The host is created once and
-///   kept. Because one session may be reused by several tests at once, concurrent commands
-///   on its single child are serialized on a per-session gate.</item>
-///   <item><b>dotnet-dump</b> children busy-wait on stdin at ~100% CPU, so keeping many alive would
-///   saturate the machine. They route through a capacity-1 <see cref="HostSlot"/> (most-recently-used
-///   stays open, reopened on demand).</item>
-///   <item><b>lldb</b> children retain their loaded core and hosted SOS runtime. They use a separate
-///   capacity-1 slot so memoized sessions cannot accumulate enough processes to exhaust memory.</item>
+///   <item><b>cdb</b> runs dbgeng in a <see cref="ChildEngineClient"/> child process. Dump sessions
+///   are distributed across two capacity-1 slots, bounding retained dump mappings while allowing
+///   two independent sessions to execute concurrently.</item>
+///   <item><b>dotnet-dump</b> sessions are distributed across two capacity-1 slots. This materially
+///   reduces analyzer queueing and host churn while keeping retained dump mappings bounded.</item>
+///   <item><b>lldb</b> children retain their loaded core and hosted SOS runtime. Like cdb, they are
+///   distributed across two capacity-1 slots to preserve limited concurrency while bounding memory.</item>
 /// </list>
 /// </summary>
-internal sealed class DumpSession : IPooledHost, IDisposable
+internal sealed class DumpSession : IPooledHost
 {
     private readonly Host _hostKind;
-    private readonly bool _pooled;
-    private readonly HostSlot? _slot;
-    private readonly object _gate = new(); // serializes concurrent commands on this shared child
-    private IDebuggerHost? _host;        // kept-alive host for non-pooled (cdb child) targets
+    private readonly HostSlot _slot;
+    private IDebuggerHost? _host;
 
     // One diagnostics collector for the life of this session (survives a pooled host being closed and
     // reopened), for the child-process hosts that support capture. Null for the cdb child host.
@@ -61,21 +56,14 @@ internal sealed class DumpSession : IPooledHost, IDisposable
         CoreVersion = coreVersion;
         Dac = dac;
 
-        // Bound resource-heavy LLDB and dotnet-dump children independently. cdb children block when
-        // idle and remain cheap enough to keep per session.
-        _slot = HostSlotFor(hostKind);
-        _pooled = _slot is not null;
+        // Bound resource-heavy dump hosts independently. Cdb uses two slots to retain the suite's
+        // observed two-test concurrency without allowing one EngineHost process per memoized session.
+        _slot = HostSlotPool.HostSlotFor(hostKind);
 
         // The child-process hosts (lldb, dotnet-dump) capture their stdout/stderr and crash dumps; the cdb
         // child host runs dbgeng out-of-process and is not wired for capture.
         _diagnostics = hostKind is Host.Lldb or Host.DotnetDump ? new HostDiagnostics(hostKind.ToString().ToLowerInvariant()) : null;
 
-        if (!_pooled)
-        {
-            _host = HostFactory.CreateDumpHost(hostKind, flavor, dumpPath, dac, coreVersion,
-                SnapshotStore.TargetExe(flavor, targetName, coreVersion), _diagnostics);
-            _host.LoadSos();
-        }
     }
 
     /// <summary>
@@ -92,11 +80,16 @@ internal sealed class DumpSession : IPooledHost, IDisposable
     public SosOutput Execute(string command) =>
         RunCommand("Execute", command, h => h.Execute(command));
 
+    public IDisposable AcquireDebuggerSession() => _slot.Acquire(this);
+
     private SosOutput RunCommand(string kind, string command, Func<IDebuggerHost, SosOutput> action)
     {
         try
         {
-            return _pooled ? _slot!.Run(this, action) : RunGuarded(action);
+            using (_slot.Acquire(this))
+            {
+                return action(_host!);
+            }
         }
         catch (Exception ex) when (ex is IOException or ObjectDisposedException or InvalidOperationException or TimeoutException)
         {
@@ -115,23 +108,6 @@ internal sealed class DumpSession : IPooledHost, IDisposable
         }
     }
 
-    private SosOutput RunGuarded(Func<IDebuggerHost, SosOutput> action)
-    {
-        lock (_gate)
-        {
-            return action(_host!);
-        }
-    }
-
-    internal static HostSlot? HostSlotFor(Host hostKind) => hostKind switch
-    {
-        Host.Lldb => HostSlot.Lldb,
-        Host.DotnetDump => HostSlot.DotNetDump,
-        _ => null,
-    };
-
-    // IPooledHost — used only for the pooled LLDB and dotnet-dump paths.
-
     IDebuggerHost IPooledHost.Host => _host!;
 
     void IPooledHost.OpenHost()
@@ -147,15 +123,4 @@ internal sealed class DumpSession : IPooledHost, IDisposable
         _host = null;
     }
 
-    public void Dispose()
-    {
-        if (_pooled)
-        {
-            // The slot owns the pooled host's lifetime; closed at teardown via the slot.
-            return;
-        }
-
-        _host?.Dispose();
-        _host = null;
-    }
 }

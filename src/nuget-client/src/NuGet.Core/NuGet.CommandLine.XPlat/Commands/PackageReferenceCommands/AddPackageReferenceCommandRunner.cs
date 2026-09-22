@@ -325,9 +325,23 @@ namespace NuGet.CommandLine.XPlat
 
         public static async Task<NuGetVersion> GetLatestVersionAsync(PackageSpec originalPackageSpec, string packageId, ILogger logger, bool prerelease)
         {
-            IList<PackageSource> sources = AddPackageCommandUtility.EvaluateSources(originalPackageSpec.RestoreMetadata.Sources, originalPackageSpec.RestoreMetadata.ConfigFilePaths);
+            using var settingsLoadingContext = new SettingsLoadingContext();
+            ISettings settings = Settings.LoadImmutableSettingsGivenConfigPaths(
+                originalPackageSpec.RestoreMetadata.ConfigFilePaths,
+                settingsLoadingContext);
+            IList<PackageSource> sources = AddPackageCommandUtility.EvaluateSources(
+                originalPackageSpec.RestoreMetadata.Sources,
+                settings);
+            var minPublishAgeExceptions = MinPublishAgeExceptions.GetMinPublishAgeExceptions(settings);
+            bool ignoreMinPublishAge = minPublishAgeExceptions.FindException(packageId) != null;
 
-            return await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(sources, logger, packageId, prerelease, CancellationToken.None);
+            return await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(
+                sources,
+                logger,
+                packageId,
+                prerelease,
+                ignoreMinPublishAge,
+                CancellationToken.None);
         }
 
         /// <summary>

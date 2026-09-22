@@ -64,27 +64,6 @@ namespace NuGet.Protocol
             string? apiKey,
             string? groupId,
             TimeSpan requestTimeout,
-            ILogger logger,
-            CancellationToken cancellationToken)
-        {
-            return PushSymbolsAsync(
-                packagePath: packagePath,
-                apiKey: apiKey,
-                groupId: groupId,
-                requestTimeout: requestTimeout,
-                allowInsecureConnections: false,
-                logger: logger,
-                cancellationToken: cancellationToken);
-        }
-
-        /// <summary>
-        /// Uploads a symbol package to the staging service.
-        /// </summary>
-        public Task PushSymbolsAsync(
-            string packagePath,
-            string? apiKey,
-            string? groupId,
-            TimeSpan requestTimeout,
             bool allowInsecureConnections,
             ILogger logger,
             CancellationToken cancellationToken)

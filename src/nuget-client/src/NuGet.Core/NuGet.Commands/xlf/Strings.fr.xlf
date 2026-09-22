@@ -218,6 +218,14 @@
         <target state="translated">Le répertoire du projet pour le fichier source '{0}' est introuvable.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown">
+        <source>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</source>
+        <target state="new">The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</target>
+        <note>
+      0 - The comma delimited list of package names that specified a floating version.
+      Do not localize `PackageReference`
+    </note>
+      </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
         <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">Vous exécutez l’opération « {0} » avec une source « HTTP » : {1}. NuGet exige des sources HTTPS. Pour utiliser une source HTTP, vous devez explicitement définir « allowInsecureConnections » sur la valeur true dans votre fichier NuGet.Config. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
@@ -1228,6 +1236,11 @@ Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez Re
         <source>The source specified is invalid. Provide a valid source.</source>
         <target state="translated">La source spécifiée est non valide. Indiquez une source valide.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
+        <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">
         <source>Unable to find any package source(s) matching name: {0}.</source>

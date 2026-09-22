@@ -41,7 +41,7 @@ namespace NuGet.Commands
             await packageUpdateResource.Delete(
                 packageId,
                 packageVersion,
-                endpoint => apiKey ?? CommandRunnerUtility.GetApiKey(settings, endpoint, source),
+                endpoint => apiKey ?? SettingsUtility.GetApiKey(settings, endpoint, source),
                 desc => nonInteractive || confirmFunc(desc),
                 noServiceEndpoint,
                 packageSource.AllowInsecureConnections,

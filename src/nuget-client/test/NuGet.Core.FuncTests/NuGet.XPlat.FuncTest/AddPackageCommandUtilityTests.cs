@@ -7,10 +7,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.CommandLine.XPlat;
 using NuGet.CommandLine.XPlat.Utility;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Configuration.Test;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.ProjectModel;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using Xunit;
@@ -81,7 +85,7 @@ namespace NuGet.XPlat.FuncTest
 
                 // Act
                 var logger = NullLogger.Instance;
-                var result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(sources, logger, package, prerelease, CancellationToken.None);
+                var result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(sources, logger, package, prerelease, ignoreMinPublishAge: false, CancellationToken.None);
 
                 //Asert
                 Assert.Equal(new NuGetVersion(expectedVersion), result);
@@ -109,7 +113,7 @@ namespace NuGet.XPlat.FuncTest
 
                 // Act
                 var logger = NullLogger.Instance;
-                var result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(sources, logger, package, prerelease, CancellationToken.None);
+                var result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(sources, logger, package, prerelease, ignoreMinPublishAge: false, CancellationToken.None);
 
                 // Assert
                 Assert.Null(result);
@@ -153,11 +157,150 @@ namespace NuGet.XPlat.FuncTest
 
                 // Act
                 var logger = NullLogger.Instance;
-                var result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(sources, logger, packages.Last().Id, false, CancellationToken.None);
+                var result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(sources, logger, packages.Last().Id, false, ignoreMinPublishAge: false, CancellationToken.None);
 
                 // Assert
                 Assert.Equal(packages.Last().Identity.Version, result);
             }
+        }
+
+        [Fact]
+        public async Task GetLatestVersionFromSources_WithMinPublishAge_ReturnsLatestEligibleVersion()
+        {
+            using var testDirectory = TestDirectory.Create();
+            const string packageId = "PackageX";
+            var oldPackage = new PackageIdentity(packageId, new NuGetVersion("1.0.0"));
+            var newPackage = new PackageIdentity(packageId, new NuGetVersion("2.0.0"));
+            string sourcePath = Path.Combine(testDirectory.Path, "Source");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(sourcePath, oldPackage, newPackage);
+            SetPackagePublishedDate(sourcePath, oldPackage, DateTimeOffset.UtcNow.AddDays(-2));
+            SetPackagePublishedDate(sourcePath, newPackage, DateTimeOffset.UtcNow);
+            var sources = new[]
+            {
+                new PackageSource(sourcePath) { MinPublishAge = TimeSpan.FromDays(1) }
+            };
+
+            NuGetVersion result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(
+                sources,
+                NullLogger.Instance,
+                packageId,
+                prerelease: false,
+                ignoreMinPublishAge: false,
+                CancellationToken.None);
+
+            Assert.Equal(oldPackage.Version, result);
+        }
+
+        [Fact]
+        public async Task GetLatestVersionFromSources_WhenVersionIsEligibleFromAnySource_ReturnsVersion()
+        {
+            using var testDirectory = TestDirectory.Create();
+            var package = new PackageIdentity("PackageX", new NuGetVersion("2.0.0"));
+            string coolingSourcePath = Path.Combine(testDirectory.Path, "CoolingSource");
+            string eligibleSourcePath = Path.Combine(testDirectory.Path, "EligibleSource");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(coolingSourcePath, package);
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(eligibleSourcePath, package);
+            SetPackagePublishedDate(coolingSourcePath, package, DateTimeOffset.UtcNow);
+            SetPackagePublishedDate(eligibleSourcePath, package, DateTimeOffset.UtcNow.AddDays(-2));
+            var sources = new[]
+            {
+                new PackageSource(coolingSourcePath) { MinPublishAge = TimeSpan.FromDays(1) },
+                new PackageSource(eligibleSourcePath) { MinPublishAge = TimeSpan.FromDays(1) }
+            };
+
+            NuGetVersion result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(
+                sources,
+                NullLogger.Instance,
+                package.Id,
+                prerelease: false,
+                ignoreMinPublishAge: false,
+                CancellationToken.None);
+
+            Assert.Equal(package.Version, result);
+        }
+
+        [Fact]
+        public async Task GetLatestVersionFromSources_WhenAllVersionsAreWithinMinPublishAge_ReturnsNull()
+        {
+            using var testDirectory = TestDirectory.Create();
+            var package = new PackageIdentity("PackageX", new NuGetVersion("1.0.0"));
+            string sourcePath = Path.Combine(testDirectory.Path, "Source");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(sourcePath, package);
+            SetPackagePublishedDate(sourcePath, package, DateTimeOffset.UtcNow);
+            var sources = new[]
+            {
+                new PackageSource(sourcePath) { MinPublishAge = TimeSpan.FromDays(1) }
+            };
+
+            NuGetVersion result = await AddPackageCommandUtility.GetLatestVersionFromSourcesAsync(
+                sources,
+                NullLogger.Instance,
+                package.Id,
+                prerelease: false,
+                ignoreMinPublishAge: false,
+                CancellationToken.None);
+
+            Assert.Null(result);
+        }
+
+        [Theory]
+        [InlineData(false, "1.0.0")]
+        [InlineData(true, "2.0.0")]
+        public async Task GetLatestVersionAsync_WithConfiguredMinPublishAge_ReturnsExpectedVersion(
+            bool addPackageException,
+            string expectedVersion)
+        {
+            using var testDirectory = TestDirectory.Create();
+            const string packageId = "PackageX";
+            var oldPackage = new PackageIdentity(packageId, new NuGetVersion("1.0.0"));
+            var newPackage = new PackageIdentity(packageId, new NuGetVersion("2.0.0"));
+            string sourcePath = Path.Combine(testDirectory.Path, "Source");
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(sourcePath, oldPackage, newPackage);
+            SetPackagePublishedDate(sourcePath, oldPackage, DateTimeOffset.UtcNow.AddDays(-2));
+            SetPackagePublishedDate(sourcePath, newPackage, DateTimeOffset.UtcNow);
+            const string configFileName = "NuGet.Config";
+            string configPath = Path.Combine(testDirectory.Path, configFileName);
+            string exceptionSection = addPackageException
+                ? $"""
+                  <minPublishAgeExceptions>
+                    <package pattern="{packageId}" />
+                  </minPublishAgeExceptions>
+                  """
+                : string.Empty;
+            SettingsTestUtils.CreateConfigurationFile(
+                configFileName,
+                testDirectory,
+                $"""
+                <configuration>
+                  <packageSources>
+                    <clear />
+                    <add key="Source" value="{sourcePath}" minPublishAgeHours="24" />
+                  </packageSources>
+                  {exceptionSection}
+                </configuration>
+                """);
+            var packageSpec = new PackageSpec
+            {
+                RestoreMetadata = new ProjectRestoreMetadata
+                {
+                    Sources = new[] { new PackageSource(sourcePath) },
+                    ConfigFilePaths = new[] { configPath }
+                }
+            };
+
+            NuGetVersion result = await AddPackageReferenceCommandRunner.GetLatestVersionAsync(
+                packageSpec,
+                packageId,
+                NullLogger.Instance,
+                prerelease: false);
+
+            Assert.Equal(new NuGetVersion(expectedVersion), result);
+        }
+
+        private static void SetPackagePublishedDate(string sourcePath, PackageIdentity package, DateTimeOffset published)
+        {
+            var pathResolver = new VersionFolderPathResolver(sourcePath);
+            File.SetLastWriteTimeUtc(pathResolver.GetPackageFilePath(package.Id, package.Version), published.UtcDateTime);
         }
     }
 }

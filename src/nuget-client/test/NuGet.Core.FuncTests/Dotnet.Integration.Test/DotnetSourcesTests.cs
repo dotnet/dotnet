@@ -99,6 +99,105 @@ namespace Dotnet.Integration.Test
         }
 
         [PlatformFact(Platform.Windows)]
+        public void Sources_WhenAddingSourceWithMinPublishAge_GotAdded()
+        {
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
+            {
+                var workingPath = pathContext.WorkingDirectory;
+                var settings = pathContext.Settings;
+
+                var args = new string[]
+                {
+                    "nuget",
+                    "add",
+                    "source",
+                    "https://source.test",
+                    "--name",
+                    "test_source",
+                    "--configfile",
+                    $"\"{settings.ConfigPath}\"",
+                    "--min-publish-age-hours",
+                    "72"
+                };
+
+                _fixture.RunDotnetExpectSuccess(workingPath, string.Join(" ", args), testOutputHelper: _testOutputHelper);
+
+                var loadedSettings = Settings.LoadDefaultSettings(root: workingPath, configFileName: null, machineWideSettings: null);
+                var packageSourcesSection = loadedSettings.GetSection("packageSources");
+                var sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
+                Assert.Equal("72", sourceItem.MinPublishAgeHours);
+            }
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void Sources_WhenAddingSourceWithNegativeMinPublishAge_Fails()
+        {
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
+            {
+                var workingPath = pathContext.WorkingDirectory;
+                var settings = pathContext.Settings;
+
+                var args = new string[]
+                {
+                    "nuget",
+                    "add",
+                    "source",
+                    "https://source.test",
+                    "--name",
+                    "test_source",
+                    "--configfile",
+                    $"\"{settings.ConfigPath}\"",
+                    "--min-publish-age-hours",
+                    "-1"
+                };
+
+                CommandRunnerResult result = _fixture.RunDotnetExpectFailure(workingPath, string.Join(" ", args));
+
+                Assert.Contains("--min-publish-age-hours", result.AllOutput);
+                Assert.Contains("-1", result.AllOutput);
+
+                var loadedSettings = Settings.LoadDefaultSettings(root: workingPath, configFileName: null, machineWideSettings: null);
+                var packageSourcesSection = loadedSettings.GetSection("packageSources");
+                var sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
+                Assert.Null(sourceItem);
+            }
+        }
+
+        [PlatformFact(Platform.Windows)]
+        public void Sources_WhenAddingSourceWithMinPublishAgeLargerThanTimeSpan_Fails()
+        {
+            using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
+            {
+                var workingPath = pathContext.WorkingDirectory;
+                var settings = pathContext.Settings;
+                string minPublishAgeHours = uint.MaxValue.ToString(CultureInfo.InvariantCulture);
+
+                var args = new string[]
+                {
+                    "nuget",
+                    "add",
+                    "source",
+                    "https://source.test",
+                    "--name",
+                    "test_source",
+                    "--configfile",
+                    $"\"{settings.ConfigPath}\"",
+                    "--min-publish-age-hours",
+                    minPublishAgeHours
+                };
+
+                CommandRunnerResult result = _fixture.RunDotnetExpectFailure(workingPath, string.Join(" ", args));
+
+                string expectedError = string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.SourcesCommandMinPublishAgeHoursOutOfRange,
+                    minPublishAgeHours,
+                    (uint)TimeSpan.MaxValue.TotalHours);
+                Assert.Contains(expectedError, result.AllOutput);
+            }
+        }
+
+        [PlatformFact(Platform.Windows)]
         public void Sources_WhenAddingSourceWithCredentials_CredentialsWereAddedAndEncrypted()
         {
             using (SimpleTestPathContext pathContext = _fixture.CreateSimpleTestPathContext())
@@ -314,6 +413,45 @@ namespace Dotnet.Integration.Test
                 SettingSection packageSourcesSection = loadedSettings.GetSection("packageSources");
                 SourceItem sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
                 Assert.Equal(updateSource, sourceItem.GetValueAsPath());
+            }
+        }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData("72", "72")]
+        [InlineData("0", null)]
+        public void Sources_WhenUpdatingMinPublishAge_UpdatesAttribute(string minPublishAgeHours, string expectedValue)
+        {
+            using (TestDirectory configFileDirectory = _fixture.CreateTestDirectory())
+            {
+                string configFileName = "nuget.config";
+                string configFilePath = Path.Combine(configFileDirectory, configFileName);
+                var nugetConfig =
+                    @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""test_source"" value=""https://source.test"" minPublishAgeHours=""48"" />
+  </packageSources>
+</configuration>";
+                CreateXmlFile(configFilePath, nugetConfig);
+
+                var args = new string[]
+                {
+                    "nuget",
+                    "update",
+                    "source",
+                    "test_source",
+                    "--configfile",
+                    $"\"{configFilePath}\"",
+                    "--min-publish-age-hours",
+                    minPublishAgeHours
+                };
+
+                _fixture.RunDotnetExpectSuccess(configFileDirectory, string.Join(" ", args), testOutputHelper: _testOutputHelper);
+
+                ISettings loadedSettings = Settings.LoadDefaultSettings(root: configFileDirectory, configFileName: null, machineWideSettings: null);
+                SettingSection packageSourcesSection = loadedSettings.GetSection("packageSources");
+                SourceItem sourceItem = packageSourcesSection?.GetFirstItemWithAttribute<SourceItem>("key", "test_source");
+                Assert.Equal(expectedValue, sourceItem.MinPublishAgeHours);
             }
         }
 

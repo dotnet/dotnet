@@ -833,6 +833,13 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       Do not localize `PackageVersion`
   </comment>
   </data>
+  <data name="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown" xml:space="preserve">
+    <value>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</value>
+    <comment>
+      0 - The comma delimited list of package names that specified a floating version.
+      Do not localize `PackageReference`
+    </comment>
+  </data>
   <data name="Error_CentralPackageManagement_VersionOverrideNotAllowed" xml:space="preserve">
     <value>The following PackageReference items cannot specify a value for VersionOverride: {0}.  Projects using Central Package Management are currently configured to disable this functionality. For more information, visit https://aka.ms/nuget/cpm/versionoverride</value>
     <comment>
@@ -1125,6 +1132,10 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   </data>
   <data name="SourcesCommandValidProtocolVersion" xml:space="preserve">
     <value>The protocol version specified is invalid. Valid protocol versions are from {0} to {1}.</value>
+  </data>
+  <data name="SourcesCommandMinPublishAgeHoursOutOfRange" xml:space="preserve">
+    <value>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</value>
+    <comment>0 - the invalid number of hours. 1 - the maximum supported number of hours.</comment>
   </data>
   <data name="Error_HttpSources_Multiple" xml:space="preserve">
     <value>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</value>

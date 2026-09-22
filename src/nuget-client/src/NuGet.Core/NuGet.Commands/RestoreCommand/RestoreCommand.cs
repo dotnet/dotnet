@@ -380,6 +380,7 @@ namespace NuGet.Commands
             success &= EvaluateHttpSourceUsage(auditEnabled);
             success &= HasValidPlatformVersions();
             success &= PackageReferencesHaveVersions();
+            success &= AreFloatingVersionsCompatibleWithPackageSourceCooldown(_request, _logger);
             success &= EnsureNoAliasesWithDisallowedCharacters();
 
             return success;
@@ -1131,6 +1132,56 @@ namespace NuGet.Commands
             }
 
             return packagesWithFloatingVersion?.Count ?? 0;
+        }
+
+        internal static bool AreFloatingVersionsCompatibleWithPackageSourceCooldown(RestoreRequest request, ILogger logger)
+        {
+            HashSet<string> packagesBlockedByCooldown = null;
+            IReadOnlyList<IRemoteDependencyProvider> packageSources = request.DependencyProviders.RemoteProviders;
+
+            foreach (TargetFrameworkInformation framework in request.Project.TargetFrameworks)
+            {
+                foreach (LibraryDependency dependency in framework.Dependencies)
+                {
+                    if (!dependency.LibraryRange.TypeConstraintAllows(LibraryDependencyTarget.Package)
+                        || dependency.LibraryRange.VersionRange?.IsFloating != true
+                        || request.MinPublishAgeExceptions?.FindException(dependency.Name) != null)
+                    {
+                        continue;
+                    }
+
+                    IReadOnlyList<string> mappedSourceNames = request.PackageSourceMapping.IsEnabled
+                        ? request.PackageSourceMapping.GetConfiguredPackageSources(dependency.Name)
+                        : null;
+
+                    foreach (IRemoteDependencyProvider packageSource in packageSources)
+                    {
+                        if (packageSource.Source?.MinPublishAge > TimeSpan.Zero
+                            && (mappedSourceNames == null || mappedSourceNames.Contains(packageSource.Source.Name, StringComparer.OrdinalIgnoreCase)))
+                        {
+                            packagesBlockedByCooldown ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                            packagesBlockedByCooldown.Add(dependency.Name);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (packagesBlockedByCooldown == null)
+            {
+                return true;
+            }
+
+            var packagesList = new List<string>(packagesBlockedByCooldown);
+            packagesList.Sort(StringComparer.OrdinalIgnoreCase);
+            logger.Log(RestoreLogMessage.CreateError(
+                NuGetLogCode.NU1020,
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    Strings.Error_FloatingVersionsNotAllowedWithPackageSourceCooldown,
+                    string.Join(", ", packagesList))));
+
+            return false;
         }
 
         internal static void AnalyzePruningResults(PackageSpec project, TelemetryEvent telemetryEvent, ILogger logger)

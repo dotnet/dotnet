@@ -603,7 +603,7 @@ public class SOSRunner : IDisposable
                     {
                         throw new ArgumentException("LLDB helper script path not set or does not exist: " + lldbHelperScript);
                     }
-                    arguments.Append(@"--no-lldbinit -o ""settings set target.disable-aslr false"" -o ""settings set interpreter.prompt-on-quit false""");
+                    arguments.Append(@"--no-lldbinit -o ""settings set target.disable-aslr false"" -o ""settings set interpreter.prompt-on-quit false"" -o ""settings set symbols.enable-external-lookup false""");
                     arguments.AppendFormat(@" -o ""command script import {0}"" -o ""version""", lldbHelperScript);
 
                     string debuggeeTarget = config.HostExe;
@@ -1635,6 +1635,10 @@ public class SOSRunner : IDisposable
             {
                 defines.Add("UNIX_SINGLE_FILE_APP");
             }
+        }
+        if (_config.DacMode == DacMode.CDac)
+        {
+            defines.Add("CDAC_ONLY");
         }
         string setHostRuntime = _config.SetHostRuntime();
         if (!string.IsNullOrEmpty(setHostRuntime) && setHostRuntime == "-none")

@@ -43,6 +43,7 @@ namespace NuGet.PackageManagement.VisualStudio
             // Initialize the credential providers.
             var credentialProviders = new List<ICredentialProvider>();
             var webProxy = await _asyncServiceProvider.GetServiceAsync<SVsWebProxy, IVsWebProxy>();
+            var uiShell = await _asyncServiceProvider.GetServiceAsync<SVsUIShell, IVsUIShell>();
 
             await TryAddCredentialProvidersAsync(
                 credentialProviders,
@@ -63,7 +64,9 @@ namespace NuGet.PackageManagement.VisualStudio
                     Debug.Assert(webProxy != null);
 
                     return new ICredentialProvider[] {
-                        new VisualStudioCredentialProvider(webProxy)
+                        new VisualStudioCredentialProvider(
+                            webProxy,
+                            uiShell)
                     };
                 });
 
