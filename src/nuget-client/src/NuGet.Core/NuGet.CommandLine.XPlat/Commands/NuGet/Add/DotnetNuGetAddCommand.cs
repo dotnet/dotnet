@@ -33,6 +33,7 @@ namespace NuGet.CommandLine.XPlat.Commands.NuGet.Add
             var protocolVersion = new Option<string>("--protocol-version") { Description = Strings.SourcesCommandProtocolVersionDescription };
             var configfile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile };
             var allowInsecureConnections = new Option<bool>("--allow-insecure-connections") { Description = Strings.SourcesCommandAllowInsecureConnectionsDescription };
+            var minPublishAgeHours = new Option<uint?>("--min-publish-age-hours") { Description = Strings.SourcesCommandMinPublishAgeHoursDescription };
 
             sourceCmd.Arguments.Add(sourceArg);
             sourceCmd.Options.Add(name);
@@ -43,6 +44,7 @@ namespace NuGet.CommandLine.XPlat.Commands.NuGet.Add
             sourceCmd.Options.Add(protocolVersion);
             sourceCmd.Options.Add(configfile);
             sourceCmd.Options.Add(allowInsecureConnections);
+            sourceCmd.Options.Add(minPublishAgeHours);
 
             sourceCmd.SetAction((parseResult, cancellationToken) =>
             {
@@ -57,6 +59,7 @@ namespace NuGet.CommandLine.XPlat.Commands.NuGet.Add
                     ProtocolVersion = parseResult.GetValue(protocolVersion),
                     Configfile = parseResult.GetValue(configfile),
                     AllowInsecureConnections = parseResult.GetValue(allowInsecureConnections),
+                    MinPublishAgeHours = parseResult.GetValue(minPublishAgeHours),
                 };
 
                 AddSourceRunner.Run(args, () => getLogger());
