@@ -1,11 +1,11 @@
 ---
 name: source-build-investigation
-description: Investigate source-build failures in dotnet/dotnet VMR CI builds. USE FOR any mention of "prebuilt", "source-build/source-only failure", "source-build-assets (SBRP)", "poison", source-build repo build ordering problems, binary detection/removal, or any build leg failures that only occur in `SB_*` job names. DO NOT USE FOR regular CI test failures, codeflow staleness, dependency flow tracing, crash dumps, or general NuGet package management unrelated to source-build.
+description: Investigate source-build failures in local dotnet/dotnet VMR builds and `SB_*` CI legs. USE FOR VMR source-build issues involving prebuilt packages, source-build/source-only failures, source-build-assets (SBRP), package poisoning, repo build ordering, binary detection/removal, or failures limited to `SB_*` jobs. DO NOT USE FOR regular CI test failures, codeflow staleness, dependency flow tracing, crash dumps, or general NuGet package management unrelated to source-build.
 ---
 
 # Source-Build Investigation
 
-Reference for investigating source-build failures in the dotnet/dotnet VMR (Virtual Monolithic Repository). Linux distributions build .NET entirely from source — the source-only build (SB) legs in CI validate this. SB leg names start with `SB_` (e.g., `SB_CentOSStream10_Online_MsftSdk_x64`).
+Reference for investigating local and CI source-build failures in the dotnet/dotnet VMR (Virtual Monolithic Repository). Linux distributions build .NET entirely from source — the source-only build (SB) legs in CI validate this. SB leg names start with `SB_` (e.g., `SB_CentOSStream10_Online_MsftSdk_x64`). Local investigations use local inputs and diagnostics; CI access is not required.
 
 For foundational source-build concepts, see [Understanding .NET Source-Build](https://github.com/dotnet/source-build/blob/main/Documentation/understanding-source-build.md).
 
@@ -25,11 +25,14 @@ Find pipeline artifacts, then download individual files from the `downloadUrl` u
 <downloadUrl>?format=file&subPath=%2Fpackages%2FRelease%2FNonShipping%2Farcade%2FMicrosoft.DotNet.Arcade.Sdk.11.0.0-ci.nupkg
 ```
 
+These examples assume a URL without query parameters. If the returned URL already has a query string, set the format value to `file` and update `subPath` in that query rather than appending another `?`. Preserve all other parameters and the endpoint's `format` or `$format` spelling.
+
 ### Key files
 
 **In BuildLogs:**
 | Path | Description |
 |---|---|
+| `artifacts/log/Release/Build.binlog` | Outer VMR orchestration binlog |
 | `artifacts/log/Release/prebuilt-usage.xml` | Prebuilt package usages across all repos |
 | `artifacts/log/Release/<repo>/prebuilt-usage.xml` | Per-repo prebuilt usage |
 | `artifacts/log/Release/<repo>/Build.binlog` | Per-repo MSBuild binlog |
@@ -49,7 +52,7 @@ For builds targeting different SDK feature bands (e.g., 10.0.2xx, 10.0.3xx), see
 The high-level flow:
 1. **Prep the Build** — downloads previously-source-built (PSB) artifacts and sets up package feeds
 2. **Build repos in order** — each repo restores from SBRP, PSB, and source-built packages from earlier repos, then builds and publishes its own intermediates
-3. **Finish** (`eng/finish-source-only.proj`) — validates no prebuilt or poisoned packages leaked into the final output
+3. **Finish** (`eng/finish-source-only.proj`) — reports prebuilt usage; when poisoning is enabled, publishing also checks completed outputs via `eng/PublishSourceBuild.props`
 
 Repo build order is determined by `<RepositoryReference>` items in each repo's `.proj` file under `repo-projects/`. These declare dependencies between repos — MSBuild uses them to compute the build graph. If a repo needs a package produced by another repo, the producing repo must build first. When a package isn't available from any source-build feed, it becomes a **prebuilt**.
 
@@ -60,10 +63,11 @@ To see the actual build order, look at the `repo-projects/` directory in the VMR
 A **stage 2 build** (also called bootstrapping) is when you take the SDK and packages produced by a source-build (stage 1) and use them to rebuild the entire product again. This validates that the source-built product is fully self-hosting — it can build itself without any Microsoft-built inputs.
 
 **CI leg naming:**
-- Stage 1 legs: `SB_<distro>_Online_MsftSdk_x64` — builds using the Microsoft SDK
-- Stage 2 legs: `SB_<distro>_Offline_CurrentSourceBuiltSdk` — rebuilds using the SDK from stage 1
+- Microsoft-SDK legs: names containing `_MsftSdk` — build using the Microsoft SDK
+- Previous-source-built SDK legs: `SB_<distro>_<mode>_PreviousSourceBuiltSdk` — use the previously published SDK and PSB.
+- Current-source-built SDK legs: names containing `_CurrentSourceBuiltSdk` — rebuild using another leg's source-built SDK and packages
 
-Stage 2 legs have `reuseBuildArtifactsFrom` set to their corresponding stage 1 leg (e.g., `SB_CentOSStream10_Offline_CurrentSourceBuiltSdk` depends on `SB_CentOSStream10_Online_MsftSdk_x64`).
+For each current-source-built SDK leg, `reuseBuildArtifactsFrom` identifies the exact Microsoft-SDK leg that supplies its SDK and packages.
 
 When a failure occurs only in stage 2 but not stage 1, the issue is likely:
 - A dependency that works when Microsoft-built but not when source-built
@@ -94,6 +98,35 @@ Downloading previously source-built artifacts from
 
 Packages produced by earlier repos in the current build (e.g., `nuget-client` produces NuGet packages consumed by later repos).
 
+## Package-version precedence and bootstrap mismatches
+
+Follow this process when restore or build diagnostics, or a prebuilt report, point to unexpected package-version selection or incompatible bootstrap inputs. Examples include a requested version missing from source-build feeds despite an available alternative, or an assembly or tool failure that implicates mismatched PSB, current, or shared-component dependencies. Trace only the affected repo and property families. Skip this analysis for unrelated test, network, signing, or checked-in binary failures.
+
+For general package flow, see [Package Dependency Flow](https://github.com/dotnet/source-build/blob/main/Documentation/package-dependency-flow.md). For VMR-specific version selection:
+
+1. Inspect both the outer VMR `Build.binlog` and the affected repo's `artifacts/log/Release/<repo>/Build.binlog`. The outer log records orchestration inputs and the launched command. The inner restore or build runs in a separate process, so use per-repo diagnostics to inspect its evaluated properties.
+2. Read the aggregate `artifacts/obj/PackageVersions/PackageVersions.<repo>.props` and every file it imports. Neither checked-in versions such as `Version.Details.props` nor a single generated file establish the consumed value.
+3. Record every assignment to the affected `*Version`, `*PackageVersion`, and `*PreviousVersion` properties in **Previous -> Current -> SharedComponents** import order. Shared-component imports are conditional: follow the actual aggregate, including assignments that appear irrelevant to the consumer. Across these generated imports, the last assignment wins. Shared-components props also emit and can overwrite `*PreviousVersion`, so that suffix does not guarantee PSB provenance.
+4. Trace the resulting values through repo-specific orchestration into the inner restore or build. Record the outer evaluation and exact inner command arguments, including overrides and the requested restore version. Confirm the consumed values in the affected repo's binlog.
+
+An unchanged PSB with updated current or shared-component inputs can indicate a bootstrap mismatch; it does not prove causation. Do not hardcode servicing versions, edit Maestro-generated files, or validate with property fixtures that omit an aggregate import.
+
+## Comparing passing and failing builds
+
+When using a passing build to investigate a failure, record the following for both builds:
+- Source revision and content identity.
+- PSB and shared-component archives, current SDK and runtime inputs, and effective package versions.
+- Exact commands, environment, image digest, RID, architecture, configuration, and behavior switches.
+
+Use verified content digests or authoritative write-once build or snapshot identities as immutable evidence. Versioned filenames alone are insufficient. Do not assume a passing PR build or older build is equivalent.
+
+Rule out a difference as a cause only when at least one of these conditions holds:
+- Evaluated data flow shows that the difference cannot affect the failure.
+- A controlled comparison changes only that input without changing the behavior.
+- The difference affects only steps after the observed failure.
+
+Otherwise, describe the comparison as suggestive, list evidence gaps, and lower confidence.
+
 ## Prebuilt reports
 
 The error from `eng/finish-source-only.proj` lists detected prebuilt packages. The `prebuilt-usage.xml` files provide details:
@@ -116,7 +149,7 @@ The error from `eng/finish-source-only.proj` lists detected prebuilt packages. T
 
 Common prebuilt causes:
 - Package version bumped to one not in SBRP or PSB
-- Older servicing version requested (e.g., 9.0.6) while source-build produces a newer one (e.g., 11.0.0-ci)
+- Older servicing version requested while source-build produces a newer one
 - New dependency introduced with no source-build equivalent
 - Transitive dependency pulled in by a top-level version change
 
@@ -130,9 +163,25 @@ The `deps.json` inside a task nupkg shows runtime dependency resolution — what
 
 ## Poisoning
 
-Source-build uses **package poisoning** (leak detection) to detect when Microsoft-built (non-source-built) binaries leak into the final output. PSB assemblies are marked with a poison payload; if any appear in the final build output, the `eng/finish-source-only.proj` step fails.
+Source-build uses **package poisoning** (leak detection) to detect disallowed binary inputs in final outputs. `eng/init-poison.proj` marks prebuilt and PSB packages, plus selected shared-component tooling packages. `eng/PublishSourceBuild.props` checks completed outputs.
 
 For full details on how poisoning and leak detection work, see [Leak Detection](https://github.com/dotnet/source-build/blob/main/Documentation/leak-detection.md). For understanding the format of poison reports, see [Poison Report Format](https://github.com/dotnet/source-build/blob/main/Documentation/poison-report-format.md).
+
+When poisoning is enabled:
+1. Verify that `PoisonPackages` executed and produced the intended catalogs and markers. Restoring or evaluating `eng/init-poison.proj` does not initialize poison.
+2. Verify that `ReportPoisonUsage` executed after the publishing `Execute` target. Confirm that it consumed the prebuilt, PSB, and shared-component catalogs and markers and produced `ReportPoisonUsage.complete`. Catalog generation alone does not prove that completed outputs were checked.
+3. Inspect produced nupkgs to distinguish a declared package dependency from a bundled implementation assembly. Dependency-only use can be valid; bundling a PSB implementation binary can be a leak.
+
+## Reproduction workflow
+
+1. **Read the target revision's contract.** Inspect that revision's `prep-source-build.sh`, `build.sh`, relevant sourced scripts, MSBuild imports, and pipeline templates. Read implementations and defaults, not just help text.
+2. **Recover the evidence.** Use known inputs for local builds. For CI, retain build metadata, logs for the exact job and attempt, the artifact inventory, and outer and per-repo binlogs. Reuse retained evidence when available. Recover the actual prep and build commands, command prefixes, environment, image, and input acquisition steps. Identify the synchronized VMR content; a constituent-repo pipeline revision alone does not identify that content. If exact source or inputs are unavailable, record the gap rather than substituting a similar PR or build.
+3. **Preserve build behavior.** Keep the original commands alongside the reproduction. Preserve offline restrictions, network isolation, and publishing behavior. For source-archive builds, follow the target revision's source-identity requirements. Trace whether prep consumes, replaces, or transforms bootstrap packages; copying an archive alone does not reproduce those transformations. Document path mappings and other deviations.
+4. **Handle masked values safely.** Never execute masked `***` values or expose credentials in recorded commands, URLs, or diagnostics. If required values cannot be recovered safely, stop or explicitly label a credential-redacted reproduction as lower-confidence.
+5. **Execute with isolated state.** Use isolated source, fresh caches, and fresh container volumes where applicable. Preserve the recorded inputs and environment without contaminating the working checkout. Retain executed commands, exit results, and outer and per-repo diagnostics. Treat private evidence as sensitive. Before retrying, inspect prep and build failures; they may be the behavior under investigation.
+6. **Check the result.** `Building <repo>...done` plus the expected packages establishes that repo's checkpoint, not full-build success. Before claiming end-to-end success, verify the full graph through `eng/finish-source-only.proj` and applicable publishing and poison checks. Report unrelated later failures, including known prebuilt-report failures, separately from the behavior under investigation.
+
+Report source and input provenance, the failing repo or checkpoint, effective package versions or arguments, evidence gaps, deviations, and root-cause confidence. Cite both outer and per-repo diagnostics. Distinguish an executed reproduction from commands that were only inspected.
 
 ## Binary detection
 
@@ -163,6 +212,11 @@ The source-build outer-loop pipeline (`eng/pipelines/source-build-outer-loop.yml
 | File | Purpose |
 |---|---|
 | `eng/finish-source-only.proj` | Prebuilt detection at end of SB build |
+| `eng/init-poison.proj` | Marks binary inputs and writes poison catalogs before the graph build |
+| `eng/PublishSourceBuild.props` | Checks completed source-build outputs for poison |
+| `repo-projects/Directory.Build.targets` | Generates and orders aggregate package-version imports |
+| `repo-projects/<repo>.proj` | Repo-specific orchestration and package-version inputs |
+| `artifacts/obj/PackageVersions/PackageVersions.<repo>*.props` | Generated aggregate and per-source package-version inputs |
 | `src/source-build-assets/src/referencePackages/src/` | SBRP reference package stubs |
 | `src/source-build-assets/src/externalPackages/` | External packages built from source |
 | `src/source-manifest.json` | Submodule commit SHAs for external packages |
