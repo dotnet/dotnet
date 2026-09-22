@@ -397,12 +397,10 @@ bool SharedMemoryHelpers::EnsureDirectoryExists(
     const char *path,
     const SharedMemoryId *id,
     bool isGlobalLockAcquired,
-    bool createIfNotExist,
-    bool isSystemDirectory)
+    bool createIfNotExist)
 {
     _ASSERTE(path != nullptr);
     _ASSERTE(id != nullptr);
-    _ASSERTE(!(isSystemDirectory && createIfNotExist)); // should not create or change permissions on system directories
     _ASSERTE(SharedMemoryManager::IsCreationDeletionProcessLockAcquired());
     _ASSERTE(!isGlobalLockAcquired || SharedMemoryManager::IsCreationDeletionFileLockAcquired());
 
@@ -559,42 +557,6 @@ bool SharedMemoryHelpers::EnsureDirectoryExists(
                 path,
                 statResult,
                 GetFriendlyErrorCodeString(errorCode));
-        }
-
-        throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
-    }
-
-    if (isSystemDirectory)
-    {
-        // For system directories (such as TEMP_DIRECTORY_PATH), require sufficient permissions only for the
-        // owner user. For instance, "docker run --mount ..." to mount /tmp to some directory on the host mounts the
-        // destination directory with the same permissions as the source directory, which may not include some permissions for
-        // other users. In the docker container, other user permissions are typically not relevant and relaxing the permissions
-        // requirement allows for that scenario to work without having to work around it by first giving sufficient permissions
-        // for all users.
-        //
-        // If the directory is being used for user-scoped shared memory data, also ensure that either it has the sticky bit or
-        // it's owned by the current user and without write access for other users.
-        permissionsMask = PermissionsMask_OwnerUser_ReadWriteExecute;
-        if ((statInfo.st_mode & permissionsMask) == permissionsMask &&
-            (
-                !id->IsUserScope() ||
-                statInfo.st_mode & PermissionsMask_Sticky ||
-                (statInfo.st_uid == id->GetUserScopeUid() && !(statInfo.st_mode & PermissionsMask_NonOwnerUsers_Write))
-            ))
-        {
-            return true;
-        }
-
-        if (errors != nullptr)
-        {
-            errors->Append(
-                "lstat(\"%s\", &info) == 0; info.st_mode == 0x%x; info.st_uid == %u; id == %u; euid = %u;",
-                path,
-                (int)statInfo.st_mode,
-                (int)statInfo.st_uid,
-                id->IsUserScope() ? (int)id->GetUserScopeUid() : 0,
-                (int)geteuid());
         }
 
         throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
@@ -2002,8 +1964,7 @@ void SharedMemoryManager::AcquireCreationDeletionFileLock(SharedMemorySystemCall
                 dirPath,
                 id,
                 false /* isGlobalLockAcquired */,
-                false /* createIfNotExist */,
-                true /* isSystemDirectory */))
+                false /* createIfNotExist */))
         {
             _ASSERTE(errno == ENOENT);
             if (errors != nullptr)

@@ -138,7 +138,6 @@ function source_only_toolset_init() {
   "$_InitializeBuildTool" build-server shutdown --msbuild
   MSBuild-Core "$repo_root/eng/init-source-only.proj" $initSourceOnlyBinaryLog "${properties[@]}"
   # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
-  echo "shutdown uid: real=$(id -ru) effective=$(id -u) pid=$$ home=$HOME tool=$_InitializeBuildTool"
   "$_InitializeBuildTool" build-server shutdown --msbuild
 
   local bootstrapArcadeDir=$(cat "$repo_root/artifacts/toolset/bootstrap-sdks.txt" | grep "microsoft.dotnet.arcade.sdk")
