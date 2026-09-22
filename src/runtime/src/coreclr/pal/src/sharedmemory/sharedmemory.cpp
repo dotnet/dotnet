@@ -589,10 +589,12 @@ bool SharedMemoryHelpers::EnsureDirectoryExists(
         if (errors != nullptr)
         {
             errors->Append(
-                "lstat(\"%s\", &info) == 0; info.st_mode == 0x%x; info.st_uid == %u; info.st_mode || info.st_uid;",
+                "lstat(\"%s\", &info) == 0; info.st_mode == 0x%x; info.st_uid == %u; id == %u; euid = %u;",
                 path,
                 (int)statInfo.st_mode,
-                (int)statInfo.st_uid);
+                (int)statInfo.st_uid,
+                id->IsUserScope() ? (int)id->GetUserScopeUid() : 0,
+                (int)geteuid());
         }
 
         throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
