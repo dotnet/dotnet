@@ -17,6 +17,13 @@
     <BuildArgs>$(BuildArgs) /p:TargetOS=$(BuildOS) /p:TargetArchitecture=$(BuildArchitecture) /p:TargetRid=$(_EmsdkHostRid) /p:PortableTargetRid=$(_EmsdkHostRid)</BuildArgs>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(VerticalName)' == 'Windows_x86' and '$(DotNetBuildSourceOnly)' != 'true' and '$(PgoInstrument)' != 'true'">
+    <!-- Only the inner toolchain build targets x64; changing the outer graph would duplicate Arcade.
+         Preserve the RID-agnostic version marker's publication along with the win-x64 packages. -->
+    <BuildArgs>$(BuildArgs) /p:TargetArchitecture=x64 /p:TargetRid=win-x64 /p:PortableTargetRid=win-x64</BuildArgs>
+    <EnableDefaultRidSpecificArtifacts>false</EnableDefaultRidSpecificArtifacts>
+  </PropertyGroup>
+
   <ItemGroup>
     <RepositoryReference Include="arcade" />
   </ItemGroup>
