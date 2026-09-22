@@ -1237,6 +1237,11 @@ Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby kor
         <target state="translated">Określone źródło jest nieprawidłowe. Podaj prawidłowe źródło.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
+        <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
+      </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">
         <source>Unable to find any package source(s) matching name: {0}.</source>
         <target state="translated">Nie można odnaleźć żadnych źródeł pakietów pasujących do nazwy {0}.</target>
