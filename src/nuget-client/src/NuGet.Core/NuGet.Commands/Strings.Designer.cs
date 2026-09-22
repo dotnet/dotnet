@@ -2194,6 +2194,15 @@ namespace NuGet.Commands {
                 return ResourceManager.GetString("SourcesCommandInvalidSource", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}..
+        /// </summary>
+        internal static string SourcesCommandMinPublishAgeHoursOutOfRange {
+            get {
+                return ResourceManager.GetString("SourcesCommandMinPublishAgeHoursOutOfRange", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Unable to find any package source(s) matching name: {0}..

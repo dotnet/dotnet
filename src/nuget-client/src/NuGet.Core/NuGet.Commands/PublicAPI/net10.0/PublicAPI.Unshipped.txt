@@ -1,3 +1,7 @@
 #nullable enable
+NuGet.Commands.AddSourceArgs.MinPublishAgeHours.get -> uint?
+NuGet.Commands.AddSourceArgs.MinPublishAgeHours.set -> void
+NuGet.Commands.UpdateSourceArgs.MinPublishAgeHours.get -> uint?
+NuGet.Commands.UpdateSourceArgs.MinPublishAgeHours.set -> void
 ~NuGet.Commands.RestoreRequest.MinPublishAgeExceptions.get -> NuGet.Configuration.MinPublishAgeExceptions
 ~NuGet.Commands.RestoreRequest.MinPublishAgeExceptions.init -> void
