@@ -20,7 +20,7 @@ Param(
   [Parameter(Mandatory=$true)][int]    $BuildId,     # BAR build id of the build being validated.
   [Parameter(Mandatory=$true)][string] $Commit,      # The commit that produced this build (Build.SourceVersion).
   [Parameter(Mandatory=$true)][string] $AzdoToken,   # AzDO OAuth/AAD access token (WIF), not a PAT; needs code read/write on the mirror.
-  [Parameter(Mandatory=$true)][string] $GitHubPat,   # GitHub credential for dependency metadata and common-script retrieval.
+  [Parameter(Mandatory=$true)][string] $GitHubToken, # Short-lived GitHub App installation token for dependency metadata and common scripts.
   [string] $AzdoOrg      = 'dnceng',
   [string] $AzdoProject  = 'internal',
   [string] $AzdoRepoName = 'dotnet-arcade',
@@ -95,7 +95,7 @@ try {
 
     # The --id form retrieves dependency metadata and common scripts from GitHub while applying
     # updates, so it requires a GitHub credential even when there are no coherent dependencies.
-    & $darc update-dependencies --id $BuildId --azdev-pat $AzdoToken --github-pat $GitHubPat --ci
+    & $darc update-dependencies --id $BuildId --azdev-pat $AzdoToken --github-pat $GitHubToken --ci
     if ($LASTEXITCODE -ne 0) { throw "darc update-dependencies failed." }
 
     # A no-op update means darc produced the same versions already pinned, which is unexpected for a
