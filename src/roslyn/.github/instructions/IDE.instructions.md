@@ -28,7 +28,7 @@ Partner APIs that depend on IDE layers are grouped into one ExternalAccess assem
 - `src/LanguageServer/ExternalAccess/Core/`
 - `src/VisualStudio/ExternalAccess/Core/`
 
-Partner-specific source remains organized in subdirectories of those projects. Compatibility assemblies remain for ASP.NET under `src/Features/ExternalAccess/AspNetCore/` and EditorConfigGenerator under `src/VisualStudio/ExternalAccess/EditorConfigGenerator/`; ExternalAccess projects for APIs that are not part of the unified layer assemblies remain separate.
+Partner-specific compatibility assembly for ASP.NET remains under `src/Features/ExternalAccess/AspNetCore/`; ExternalAccess projects for APIs that are not part of the unified layer assemblies remain separate.
 
 ### Service Resolution
 ```csharp
@@ -72,6 +72,7 @@ public MyService(IDependency dependency) { }
 ## Out-of-Process (OOP) Services
 
 - ServiceHub components live under `src/Workspaces/Remote/` and have special deployment considerations for .NET Core vs .NET Framework — keep both targets in mind when changing remote services
+- `src/Workspaces/Core/Portable/Utilities/StandardHandleInheritance.cs` prevents redirected Windows child processes from inheriting unrelated standard handles. The LanguageServer and MSBuild BuildHost disable inheritance for their lifetimes before launching descendants; dependency-light hosts may source-link this utility.
 
 ## Key Development Patterns
 

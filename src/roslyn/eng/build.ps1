@@ -41,7 +41,7 @@ param (
   [switch]$skipDocumentation = $false,
   [switch][Alias('d')]$deployExtensions,
   [switch]$prepareMachine,
-  [bool][Alias('mt')]$msbuildMultiThreaded = $false,
+  [bool][Alias('mt')]$msbuildMultiThreaded = $true,
   [bool]$nodeReuse = $true,
   [switch]$useGlobalNuGetCache = $true,
   [switch]$warnAsError = $false,
@@ -80,6 +80,12 @@ param (
 
 Set-StrictMode -version 2.0
 $ErrorActionPreference = "Stop"
+
+# MSBuild's multi-threaded mode isn't run on CI unless it was explicitly requested via -msbuildMultiThreaded.
+# tools.ps1 reads $msbuildMultiThreaded, so this has to be settled before Arcade is imported.
+if ($ci -and -not $PSBoundParameters.ContainsKey('msbuildMultiThreaded')) {
+  $msbuildMultiThreaded = $false
+}
 
 # Node reuse isn't used on CI unless it was explicitly requested via -nodeReuse.
 # tools.ps1 reads $nodeReuse, so this has to be settled before Arcade is imported.
@@ -808,7 +814,13 @@ try {
 
   Push-Location $RepoRoot
 
-  Subst-TempDir
+  # Substituting T: as the temp directory is process-wide state that outlives this build.
+  # In the VMR, MSBuild nodes are reused across concurrently building repos, so a node that
+  # picks up T: here keeps using it after this build removes the substitution, which then
+  # fails with MSB6003 for whichever repo reuses that node.
+  if (-not $fromVMR) {
+    Subst-TempDir
+  }
 
   if ($ci) {
     List-Processes
@@ -867,7 +879,7 @@ catch {
   ExitWithExitCode 1
 }
 finally {
-  if (Test-Path Function:\Unsubst-TempDir) {
+  if (-not $fromVMR -and (Test-Path Function:\Unsubst-TempDir)) {
     Unsubst-TempDir
   }
   Pop-Location

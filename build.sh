@@ -114,7 +114,7 @@ build_check=false
 ci=''
 exclude_ci_binary_log=''
 node_reuse=''
-# Empty means "not specified"; tools.sh leaves it off unless it's explicitly requested.
+# Empty means "not specified"; tools.sh applies the default.
 msbuild_multi_threaded=''
 prepare_machine=''
 warn_as_error=''

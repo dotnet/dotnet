@@ -162,6 +162,54 @@
   <data name="Source_Description" xml:space="preserve">
     <value>Package source (URL, UNC/folder path or package source name) to use. Defaults to DefaultPushSource if specified in NuGet.Config.</value>
   </data>
+  <data name="StageCommand_Description" xml:space="preserve">
+    <value>Manages packages in a staging environment.</value>
+  </data>
+  <data name="StagePushCommand_Description" xml:space="preserve">
+    <value>Stages a package on the server without publishing it.</value>
+  </data>
+  <data name="StagePushCommand_Error_InvalidGroup" xml:space="preserve">
+    <value>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</value>
+  </data>
+  <data name="StagePushCommand_Error_MissingSource" xml:space="preserve">
+    <value>No package source was provided and DefaultPushSource is not configured.</value>
+  </data>
+  <data name="StagePushCommand_Error_PackageNotFound" xml:space="preserve">
+    <value>The package file '{0}' does not exist.</value>
+    <comment>0 - package path</comment>
+  </data>
+  <data name="StagePushCommand_Error_PackagePathRequired" xml:space="preserve">
+    <value>A package path is required.</value>
+  </data>
+  <data name="StagePushCommand_Error_ResourceNotFound" xml:space="preserve">
+    <value>The source '{0}' does not advertise a supported package staging resource.</value>
+    <comment>0 - package source</comment>
+  </data>
+  <data name="StagePushCommand_Error_UnsupportedPackage" xml:space="preserve">
+    <value>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</value>
+    <comment>0 - package path</comment>
+  </data>
+  <data name="StagePushCommand_GroupOption_Description" xml:space="preserve">
+    <value>Uploads the package into the specified staging group.</value>
+  </data>
+  <data name="StagePushCommand_NoSymbolsOption_Description" xml:space="preserve">
+    <value>Prevents automatic discovery and staging of a sibling symbols package.</value>
+  </data>
+  <data name="StagePushCommand_PackagePathArgument_Description" xml:space="preserve">
+    <value>The path to the package to stage.</value>
+  </data>
+  <data name="StagePushCommand_PackageStaged" xml:space="preserve">
+    <value>Staged package '{0}'.</value>
+    <comment>0 - package path</comment>
+  </data>
+  <data name="StagePushCommand_SymbolsFailed" xml:space="preserve">
+    <value>Failed to stage symbols package '{0}': {1}</value>
+    <comment>0 - symbols package path; 1 - error message</comment>
+  </data>
+  <data name="StagePushCommand_SymbolsStaged" xml:space="preserve">
+    <value>Staged symbols package '{0}'.</value>
+    <comment>0 - symbols package path</comment>
+  </data>
   <data name="Push_InvalidTimeout" xml:space="preserve">
     <value>Invalid timeout parameter value.</value>
   </data>
@@ -237,6 +285,10 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   </data>
   <data name="Warn_AddPkgWithoutRestore" xml:space="preserve">
     <value>--no-restore|-n flag was used. No compatibility check will be done and the added package reference will be unconditional.</value>
+  </data>
+  <data name="Warn_AddPkgNonCompliantPackageId" xml:space="preserve">
+    <value>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</value>
+    <comment>{0} - Package Id</comment>
   </data>
   <data name="AddPkg_Description" xml:space="preserve">
     <value>Adds a package reference to a project.</value>
@@ -392,7 +444,8 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
     <value>Sources to lookup for latest versions. Works only with `--outdated`.</value>
   </data>
   <data name="Error_NotPRProject" xml:space="preserve">
-    <value>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</value>
+    <value>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</value>
+    <comment>{0} - Path to the project with the error, {Locked="PackageReference"}</comment>
   </data>
   <data name="ListPkg_ErrorReadingAssetsFile" xml:space="preserve">
     <value>Unable to read the assets file `{0}`. Make sure the file has the correct format.</value>
@@ -597,6 +650,12 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
   <data name="Error_NoVersionsAvailable" xml:space="preserve">
     <value>There are no versions available for the package '{0}'.</value>
     <comment>{0} - PackageID</comment>
+  </data>
+  <data name="Error_PackagePublishDateMissing" xml:space="preserve">
+    <value>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</value>
+    <comment>{0} - package source name
+{1} - package ID
+{2} - package version</comment>
   </data>
   <data name="PrereleaseVersionsAvailable" xml:space="preserve">
     <value>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</value>
@@ -815,6 +874,9 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
   </data>
   <data name="SourcesCommandProtocolVersionDescription" xml:space="preserve">
     <value>The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified.</value>
+  </data>
+  <data name="SourcesCommandMinPublishAgeHoursDescription" xml:space="preserve">
+    <value>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</value>
   </data>
   <data name="SourcesCommandValidProtocolVersion" xml:space="preserve">
     <value>The protocol version specified is invalid. Provide a valid protocol version.</value>
@@ -1056,6 +1118,10 @@ Do not translate "PackageVersion"</comment>
     <value>Updated {0} packages in {1} scanned packages.</value>
     <comment>{0}: Number of packages updated
 {1}: Package checked for updated versions</comment>
+  </data>
+  <data name="PackageUpdate_PackagesAwaitingCooldown" xml:space="preserve">
+    <value>Packages with newer versions that have not reached the configured minimum publish age: {0}.</value>
+    <comment>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</comment>
   </data>
   <data name="Error_AddPkgUnresolved" xml:space="preserve">
     <value>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</value>

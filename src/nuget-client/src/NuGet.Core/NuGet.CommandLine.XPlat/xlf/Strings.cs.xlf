@@ -394,14 +394,21 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
         <note>{0} - PackageID</note>
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
-        <source>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</source>
-        <target state="translated">Projekt {0} používá pro balíčky NuGet package.config, ale daný příkaz funguje jen s projekty odkazů na balíčky.</target>
-        <note />
+        <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
+        <target state="needs-review-translation">Projekt {0} používá pro balíčky NuGet package.config, ale daný příkaz funguje jen s projekty odkazů na balíčky.</target>
+        <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
         <source>Unable to find a valid package version</source>
         <target state="translated">Nepovedlo se najít platnou verzi balíčku.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Error_PackagePublishDateMissing">
+        <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
+        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <note>{0} - package source name
+{1} - package ID
+{2} - package version</note>
       </trans-unit>
       <trans-unit id="Error_PackageSourceMappingNotFound">
         <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
@@ -1032,6 +1039,11 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
         <target state="translated">Odkaz na balíček ve formě identifikátoru balíčku, jako je Newtonsoft.Json, nebo identifikátor balíčku a verze oddělené znakem @, například Newtonsoft.Json@13.0.3.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
+        <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
+        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
+      </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
         <target state="translated">Spouští se obnovení náhledu, aby se zkontrolovala kompatibilita balíčku.</target>
@@ -1247,6 +1259,11 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
         <target state="translated">Formát výstupu příkazu výpisu: Detailed (výchozí) a Short</target>
         <note />
       </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
+        <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
+        <target state="new">The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
         <source>Name of the source.</source>
         <target state="translated">Název zdroje</target>
@@ -1291,6 +1308,76 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
         <source>The proper command is '{0}'.</source>
         <target state="translated">Správný příkaz je {0}.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="StageCommand_Description">
+        <source>Manages packages in a staging environment.</source>
+        <target state="new">Manages packages in a staging environment.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Description">
+        <source>Stages a package on the server without publishing it.</source>
+        <target state="new">Stages a package on the server without publishing it.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_InvalidGroup">
+        <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
+        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_MissingSource">
+        <source>No package source was provided and DefaultPushSource is not configured.</source>
+        <target state="new">No package source was provided and DefaultPushSource is not configured.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_PackageNotFound">
+        <source>The package file '{0}' does not exist.</source>
+        <target state="new">The package file '{0}' does not exist.</target>
+        <note>0 - package path</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_PackagePathRequired">
+        <source>A package path is required.</source>
+        <target state="new">A package path is required.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_ResourceNotFound">
+        <source>The source '{0}' does not advertise a supported package staging resource.</source>
+        <target state="new">The source '{0}' does not advertise a supported package staging resource.</target>
+        <note>0 - package source</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
+        <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
+        <target state="new">The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</target>
+        <note>0 - package path</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_GroupOption_Description">
+        <source>Uploads the package into the specified staging group.</source>
+        <target state="new">Uploads the package into the specified staging group.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
+        <source>Prevents automatic discovery and staging of a sibling symbols package.</source>
+        <target state="new">Prevents automatic discovery and staging of a sibling symbols package.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_PackagePathArgument_Description">
+        <source>The path to the package to stage.</source>
+        <target state="new">The path to the package to stage.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_PackageStaged">
+        <source>Staged package '{0}'.</source>
+        <target state="new">Staged package '{0}'.</target>
+        <note>0 - package path</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_SymbolsFailed">
+        <source>Failed to stage symbols package '{0}': {1}</source>
+        <target state="new">Failed to stage symbols package '{0}': {1}</target>
+        <note>0 - symbols package path; 1 - error message</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_SymbolsStaged">
+        <source>Staged symbols package '{0}'.</source>
+        <target state="new">Staged symbols package '{0}'.</target>
+        <note>0 - symbols package path</note>
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
         <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
@@ -1447,6 +1534,11 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
         <source>Specify the path to the package</source>
         <target state="translated">Zadejte cestu k balíčku.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="Warn_AddPkgNonCompliantPackageId">
+        <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
+        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">
         <source>--no-restore|-n flag was used. No compatibility check will be done and the added package reference will be unconditional.</source>

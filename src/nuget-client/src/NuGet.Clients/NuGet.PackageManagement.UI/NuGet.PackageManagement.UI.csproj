@@ -42,6 +42,7 @@
 
   <ItemGroup Label="NuGet Shared">
     <Compile Include="$(SharedDirectory)\DeconstructionExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

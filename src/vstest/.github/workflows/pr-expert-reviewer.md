@@ -6,10 +6,23 @@ description: >
 
 engine:
   id: copilot
-  # With tools.bash disabled, permit only the MCP wrappers without implicit command grants.
+  # With tools.bash disabled, permit only the MCP wrappers without implicit command
+  # grants, plus jq.
+  #
+  # jq is required because a GitHub MCP response larger than
+  # MCP_GATEWAY_PAYLOAD_SIZE_THRESHOLD (512KB) is spilled to a payload file as a
+  # single line of escaped JSON rather than returned inline. The agent reads files
+  # by line range, so a one-line file is all-or-nothing and effectively unreadable.
+  # `jq -r` decodes the escaped newlines back into real lines, which is what makes
+  # the payload pageable. Without it the agent burns its whole budget retrying
+  # python3/node/sed/awk and never reaches the review.
+  #
+  # jq is not one of Copilot CLI's stem commands, so the bare `shell(jq)` form
+  # prefix-matches any invocation without a `:*` wildcard that would widen this.
   args:
     - --allow-tool=shell(github:*)
     - --allow-tool=shell(safeoutputs:*)
+    - --allow-tool=shell(jq)
 
 on:
   pull_request:
@@ -91,6 +104,62 @@ This workflow does not assess, discuss, or make recommendations about potential 
 - **Pull Request**: #${{ github.event.pull_request.number }}
 - **PR Title**: "${{ github.event.pull_request.title }}"
 - **Triggered by**: ${{ github.actor }}
+
+## Tools Available to You
+
+`tools.bash` is disabled for this workflow and the agent runs with `--no-ask-user`. **A denied
+command cannot be escalated — the denial is final.** Retrying the same idea with a different
+utility only burns the run budget; a previous run spent its entire 15-minute timeout doing
+exactly that and published no review.
+
+Work through the native MCP tools and the native file read/write tools. The `github` and
+`safeoutputs` CLI wrappers are a fallback for when native tool discovery fails; `safeoutputs`
+is your only way to write anything back to the PR. Use the native `write` tool for the
+cache-memory files in Step 6, not a shell redirect.
+
+Beyond those wrappers, `jq` is the one shell command this workflow grants, for reading MCP
+payload files. Treat every other shell utility as unavailable: `python3`, `node`, `sed`, `awk`,
+`perl`, `tr`, `find`, `xargs`, `curl` and `gh` were all denied in a previous run that then
+wasted its entire budget rediscovering that, one utility at a time. If a command is denied,
+do not look for another way to spell it. Do not invoke a shell interpreter or the MCP bridge
+scripts directly.
+
+### Reading large MCP responses
+
+A `github` response over 512KB is not returned inline. It is written to a payload file under
+`/tmp/gh-aw/mcp-payloads/`, and the path is reported in the tool output.
+
+That file is a **single line** of escaped JSON. Reading it directly is useless — you read files
+by line range, and a one-line file gives you all of it or none of it. `jq -r` is what makes it
+readable: it decodes the escaped newlines into real lines, so the result can be paged normally.
+
+Inspect the shape first, then extract. Do not assume a shape:
+
+```bash
+jq 'if type == "array" then .[0] else . end | keys' /tmp/gh-aw/mcp-payloads/<...>/payload.json
+```
+
+Responses are normally wrapped in an MCP result envelope, so this extracts every text part
+without dropping later array elements:
+
+```bash
+jq -r '(if type == "array" then .[] else . end) | .content[]?.text' /tmp/gh-aw/mcp-payloads/<...>/payload.json
+```
+
+If the envelope differs, this pulls every text node regardless of nesting:
+
+```bash
+jq -r '[.. | objects | select(.type == "text") | .text] | join("\n")' /tmp/gh-aw/mcp-payloads/<...>/payload.json
+```
+
+Do not try to unescape the JSON by hand — `jq` already returns the decoded text.
+
+A spilled payload is over 512KB by definition, and a large diff can exceed what you can hold
+in context even once it is readable. Do not try to swallow it whole. Narrow with `jq` instead:
+select a single file's entry from a `get_files` response and review the changes file by file,
+rather than printing the entire blob. If you still cannot obtain the changes, report it with
+the `missing_data` safe-output tool instead of guessing or silently reviewing less than the
+full change.
 
 ## Scope Boundaries
 
@@ -206,7 +275,7 @@ Skip this check for dependency update PRs (maestro) — their descriptions are a
 
 ### Step 6: Update Memory Cache
 
-After the review, update:
+After the review, use the native `write` tool (not a shell redirect) to update:
 
 - **`/tmp/gh-aw/cache-memory/architecture.json`**: Record new architectural patterns observed
 - **`/tmp/gh-aw/cache-memory/perf-hotspots.json`**: Add files/methods identified as performance-sensitive
@@ -245,4 +314,4 @@ For PRs titled `[main] Update dependencies from dotnet/...`:
 
 **Important**: Every run must produce a safe output. Use `noop` only for the explicit skip cases above; otherwise submit a review. Check the tool result. If a tool is missing or fails, report the failure rather than claiming the review or noop succeeded.
 
-Use native MCP tools when available. If native discovery fails, the same configured GitHub and safe-output tools are available through the `github` and `safeoutputs` CLI wrappers. Use their help/schema to invoke the intended tool, including `noop`, `create_pull_request_review_comment`, and `submit_pull_request_review`. These two wrappers are the only allowed shell commands; do not invoke a shell interpreter or the bridge script directly.
+Use native MCP tools when available. If native discovery fails, the same configured GitHub and safe-output tools are available through the `github` and `safeoutputs` CLI wrappers. Use their help/schema to invoke the intended tool, including `noop`, `create_pull_request_review_comment`, and `submit_pull_request_review`. These two wrappers and `jq` are the only allowed shell commands; do not invoke a shell interpreter or the bridge script directly.

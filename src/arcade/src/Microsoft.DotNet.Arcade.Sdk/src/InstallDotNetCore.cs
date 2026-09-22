@@ -104,7 +104,7 @@ public class InstallDotNetCore : Task, IMultiThreadableTask
                                 return !Log.HasLoggedErrors;
                             }
 
-                            var proj = Project.FromFile(versionsPropsPath, new Build.Definition.ProjectOptions() { ProjectCollection = new ProjectCollection() });
+                            var proj = Project.FromFile(versionsPropsPath, new Microsoft.Build.Definition.ProjectOptions() { ProjectCollection = new ProjectCollection() });
                             properties = proj.AllEvaluatedProperties.ToLookup(p => p.Name, StringComparer.OrdinalIgnoreCase);
                         }
 

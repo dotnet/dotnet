@@ -22,6 +22,16 @@
         <target state="translated">L'operazione NuGet non è riuscita</target>
         <note />
       </trans-unit>
+      <trans-unit id="CredentialPrompt_PackageSourceCaption">
+        <source>NuGet Package Source Authentication</source>
+        <target state="new">NuGet Package Source Authentication</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialPrompt_PackageSourceMessage">
+        <source>Enter credentials for the package source '{0}'.</source>
+        <target state="new">Enter credentials for the package source '{0}'.</target>
+        <note>{0} is the package source URI.</note>
+      </trans-unit>
       <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">
         <source>The default credentials credential provider failed to load.</source>
         <target state="translated">Il caricamento del provider di credenziali delle credenziali predefinite non è riuscito.</target>

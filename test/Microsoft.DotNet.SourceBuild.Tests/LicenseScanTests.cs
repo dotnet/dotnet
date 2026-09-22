@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using Microsoft.DotNet.SourceBuild.LicenseScanning;
 using TestUtilities;
 using Xunit;
 
@@ -69,6 +69,7 @@ public class LicenseScanTests : TestBase
         "cc-by-sa-4.0", // https://creativecommons.org/licenses/by-sa/4.0/legalcode
         "cc-pd", // https://creativecommons.org/publicdomain/mark/1.0/
         "cc-sa-1.0", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/cc-sa-1.0.LICENSE
+        "classpath-exception-2.0", // https://www.gnu.org/software/classpath/license.html
         "epl-1.0", // https://opensource.org/license/epl-1-0/
         "generic-cla", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/generic-cla.LICENSE
         "gpl-1.0-plus", // https://opensource.org/license/gpl-1-0/
@@ -98,6 +99,7 @@ public class LicenseScanTests : TestBase
         "nist-software", // https://github.com/aboutcode-org/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/nist-software.LICENSE
         "object-form-exception-to-mit", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/object-form-exception-to-mit.LICENSE
         "ofl-1.1", // https://opensource.org/license/ofl-1-1/
+        "oracle-openjdk-classpath-exception-2.0", // https://openjdk.org/legal/gplv2+ce.html
         "osf-1990", // https://fedoraproject.org/wiki/Licensing:MIT?rd=Licensing/MIT#HP_Variant
         "pcre2-exception", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/pcre2-exception.LICENSE
         "public-domain", // https://github.com/nexB/scancode-toolkit/blob/develop/src/licensedcode/data/licenses/public-domain.LICENSE
@@ -179,7 +181,7 @@ public class LicenseScanTests : TestBase
             OutputHelper);
 
         JsonDocument doc = JsonDocument.Parse(File.ReadAllText(scancodeResultsPath));
-        ScancodeResults? scancodeResults = doc.Deserialize<ScancodeResults>();
+        LicenseScanDocument? scancodeResults = doc.Deserialize<LicenseScanDocument>();
         Assert.NotNull(scancodeResults);
 
         FilterFiles(scancodeResults, additionalIgnorePatterns);
@@ -201,7 +203,7 @@ public class LicenseScanTests : TestBase
         else
         {
             // If there is no license baseline, generate a default empty one.
-            ScancodeResults defaultResults = new();
+            LicenseScanDocument defaultResults = new();
             string defaultResultsJson = JsonSerializer.Serialize(defaultResults, options);
             File.WriteAllText(expectedFilePath, defaultResultsJson);
         }
@@ -212,7 +214,9 @@ public class LicenseScanTests : TestBase
         BaselineHelper.CompareFiles(expectedFilePath, actualFilePath, OutputHelper);
     }
 
-    private void FilterFiles(ScancodeResults scancodeResults, string[]? additionalIgnorePatterns)
+    private void FilterFiles(
+        LicenseScanDocument scancodeResults,
+        string[]? additionalIgnorePatterns)
     {
         // This will filter out files that we don't want to include in the baseline.
         // Filtering can happen in two ways:
@@ -243,20 +247,12 @@ public class LicenseScanTests : TestBase
 
         for (int i = scancodeResults.Files.Count - 1; i >= 0; i--)
         {
-            ScancodeFileResult file = scancodeResults.Files[i];
+            LicenseScanFile file = scancodeResults.Files[i];
 
             // A license expression can be a logical expression, e.g. "(MIT OR Apache-2.0)"
             // For our purposes, we just care about the license involved, not the semantics of the expression.
             // Parse out all the expression syntax to just get the license names.
-            string[] licenses = file.LicenseExpression?
-                .Replace("(", string.Empty)
-                .Replace(")", string.Empty)
-                .Replace(" AND ", ",")
-                .Replace(" OR ", ",")
-                .Split(",", StringSplitOptions.RemoveEmptyEntries)
-                .Select(license => license.Trim())
-                .ToArray()
-                ?? Array.Empty<string>();
+            string[] licenses = LicenseScanPolicy.SplitExpression(file.LicenseExpression);
 
             // First check whether the file's licenses can all be matched with allowed expressions
             IEnumerable<string> disallowedLicenses = licenses
@@ -285,18 +281,4 @@ public class LicenseScanTests : TestBase
         exclusionsHelper.GenerateNewBaselineFile(_targetName);
     }
 
-    private class ScancodeResults
-    {
-        [JsonPropertyName("files")]
-        public List<ScancodeFileResult> Files { get; set; } = new();
-    }
-
-    private class ScancodeFileResult
-    {
-        [JsonPropertyName("path")]
-        public string Path { get; set; } = string.Empty;
-
-        [JsonPropertyName("detected_license_expression")]
-        public string? LicenseExpression { get; set; }
-    }
 }

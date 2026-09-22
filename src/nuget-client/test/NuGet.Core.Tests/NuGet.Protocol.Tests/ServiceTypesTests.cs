@@ -36,5 +36,12 @@ namespace NuGet.Protocol.Tests
             };
             ServiceTypes.RegistrationsBaseUrl.Should().ContainInOrder(expected);
         }
+
+        [Fact]
+        public void PackageStaging_WhenAccessed_ShouldReturnOnlyVersion100()
+        {
+            // Assert
+            Assert.Equal(new[] { "PackageStaging/1.0.0" }, ServiceTypes.PackageStaging);
+        }
     }
 }

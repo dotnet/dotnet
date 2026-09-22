@@ -45,8 +45,9 @@ Review the MSBuild authoring quality of this repository using the
 ## Instructions
 
 1. Launch the `msbuild-reviewer` agent in **`scan` mode** as a **background** task
-   (`task` tool, `agent_type: "general-purpose"`, `model: "claude-opus-4.6"`,
-   `mode: "background"`). In the sub-agent prompt include:
+   (`task` tool, `agent_type: "general-purpose"`, `mode: "background"`).
+   Omit the `model` override to use automatic model selection. In the sub-agent
+   prompt include:
    - The string `MODE: scan` on the first line so the agent picks the correct
      operating mode.
    - The repository owner/name and the current date.

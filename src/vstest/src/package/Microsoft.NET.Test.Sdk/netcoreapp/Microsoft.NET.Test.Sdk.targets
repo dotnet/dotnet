@@ -16,9 +16,10 @@
     Output type for .NET Core test projects should be exe.
     https://devdiv.visualstudio.com/DevDiv/_workitems?id=375688&_a=edit
     Note: we skip this for WinUI and UWP apps, as they must use 'WinExe'.
+    We also skip Android projects, which may need to remain libraries.
   -->
   <PropertyGroup>
-    <OutputType Condition="'$(UseWinUI)' != 'true' AND '$(UseUwpTools)' != 'true'">Exe</OutputType>
+    <OutputType Condition="'$(UseWinUI)' != 'true' AND '$(UseUwpTools)' != 'true' AND '$(TargetPlatformIdentifier)' != 'android'">Exe</OutputType>
   </PropertyGroup>
 
   <PropertyGroup>

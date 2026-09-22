@@ -764,6 +764,15 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Package source &apos;{0}&apos; did not provide a publish date for package &apos;{1}&apos; version &apos;{2}&apos;, which is required because the source has a minimum publish age configured..
+        /// </summary>
+        internal static string Error_PackagePublishDateMissing {
+            get {
+                return ResourceManager.GetString("Error_PackagePublishDateMissing", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information..
         /// </summary>
         internal static string Error_PackageSourceMappingNotFound {
@@ -1770,6 +1779,15 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Packages with newer versions that have not reached the configured minimum publish age: {0}..
+        /// </summary>
+        internal static string PackageUpdate_PackagesAwaitingCooldown {
+            get {
+                return ResourceManager.GetString("PackageUpdate_PackagesAwaitingCooldown", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Finding versions of packages to update..
         /// </summary>
         internal static string PackageUpdate_FindingUpdateVersions {
@@ -2276,7 +2294,133 @@ namespace NuGet.CommandLine.XPlat {
                 return ResourceManager.GetString("Source_Description", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Manages packages in a staging environment..
+        /// </summary>
+        internal static string StageCommand_Description {
+            get {
+                return ResourceManager.GetString("StageCommand_Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Stages a package on the server without publishing it..
+        /// </summary>
+        internal static string StagePushCommand_Description {
+            get {
+                return ResourceManager.GetString("StagePushCommand_Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit..
+        /// </summary>
+        internal static string StagePushCommand_Error_InvalidGroup {
+            get {
+                return ResourceManager.GetString("StagePushCommand_Error_InvalidGroup", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to No package source was provided and DefaultPushSource is not configured..
+        /// </summary>
+        internal static string StagePushCommand_Error_MissingSource {
+            get {
+                return ResourceManager.GetString("StagePushCommand_Error_MissingSource", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The package file '{0}' does not exist..
+        /// </summary>
+        internal static string StagePushCommand_Error_PackageNotFound {
+            get {
+                return ResourceManager.GetString("StagePushCommand_Error_PackageNotFound", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to A package path is required..
+        /// </summary>
+        internal static string StagePushCommand_Error_PackagePathRequired {
+            get {
+                return ResourceManager.GetString("StagePushCommand_Error_PackagePathRequired", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The source '{0}' does not advertise a supported package staging resource..
+        /// </summary>
+        internal static string StagePushCommand_Error_ResourceNotFound {
+            get {
+                return ResourceManager.GetString("StagePushCommand_Error_ResourceNotFound", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file..
+        /// </summary>
+        internal static string StagePushCommand_Error_UnsupportedPackage {
+            get {
+                return ResourceManager.GetString("StagePushCommand_Error_UnsupportedPackage", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Uploads the package into the specified staging group..
+        /// </summary>
+        internal static string StagePushCommand_GroupOption_Description {
+            get {
+                return ResourceManager.GetString("StagePushCommand_GroupOption_Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Prevents automatic discovery and staging of a sibling symbols package..
+        /// </summary>
+        internal static string StagePushCommand_NoSymbolsOption_Description {
+            get {
+                return ResourceManager.GetString("StagePushCommand_NoSymbolsOption_Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The path to the package to stage..
+        /// </summary>
+        internal static string StagePushCommand_PackagePathArgument_Description {
+            get {
+                return ResourceManager.GetString("StagePushCommand_PackagePathArgument_Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Staged package '{0}'..
+        /// </summary>
+        internal static string StagePushCommand_PackageStaged {
+            get {
+                return ResourceManager.GetString("StagePushCommand_PackageStaged", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to stage symbols package '{0}': {1}.
+        /// </summary>
+        internal static string StagePushCommand_SymbolsFailed {
+            get {
+                return ResourceManager.GetString("StagePushCommand_SymbolsFailed", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Staged symbols package '{0}'..
+        /// </summary>
+        internal static string StagePushCommand_SymbolsStaged {
+            get {
+                return ResourceManager.GetString("StagePushCommand_SymbolsStaged", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to The proper command is &apos;{0}&apos;..
         /// </summary>
@@ -2301,6 +2445,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string SourcesCommandFormatDescription {
             get {
                 return ResourceManager.GetString("SourcesCommandFormatDescription", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value..
+        /// </summary>
+        internal static string SourcesCommandMinPublishAgeHoursDescription {
+            get {
+                return ResourceManager.GetString("SourcesCommandMinPublishAgeHoursDescription", resourceCulture);
             }
         }
         
@@ -2661,6 +2814,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string Warn_AddPkgWithoutRestore {
             get {
                 return ResourceManager.GetString("Warn_AddPkgWithoutRestore", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The package ID &apos;{0}&apos; does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end..
+        /// </summary>
+        internal static string Warn_AddPkgNonCompliantPackageId {
+            get {
+                return ResourceManager.GetString("Warn_AddPkgNonCompliantPackageId", resourceCulture);
             }
         }
         
