@@ -57,6 +57,13 @@ secrets:
       hasWebhookSecret: false
       hasOAuthSecret: false
 
+  arcade-promotion-validation-app:
+    type: github-app-secret
+    parameters:
+      hasPrivateKey: true
+      hasWebhookSecret: false
+      hasOAuthSecret: false
+
   BotAccount-dotnet-maestro-bot:
     type: github-account
     parameters:
