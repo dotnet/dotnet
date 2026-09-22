@@ -55,18 +55,63 @@ public sealed class TestConfigValidityTests
     }
 
     [Fact]
-    public void Net8LinuxArm64CreatedumpPermissionFailureIsKnown()
+    public void PreNet10LinuxCreatedumpPermissionFailureSkips()
     {
         const string error = "open(/proc/123/mem) FAILED Permission denied (13)";
 
-        Assert.True(SnapshotStore.IsKnownCreatedumpPermissionFailure(
-            CoreVersion.Net8, Architecture.Arm64, isLinux: true, error, string.Empty));
-        Assert.False(SnapshotStore.IsKnownCreatedumpPermissionFailure(
-            CoreVersion.Net11, Architecture.Arm64, isLinux: true, error, string.Empty));
-        Assert.False(SnapshotStore.IsKnownCreatedumpPermissionFailure(
-            CoreVersion.Net8, Architecture.X64, isLinux: true, error, string.Empty));
-        Assert.False(SnapshotStore.IsKnownCreatedumpPermissionFailure(
-            CoreVersion.Net8, Architecture.Arm64, isLinux: true, "unrelated failure", string.Empty));
+        HarnessSkipException exception = Assert.Throws<HarnessSkipException>(
+            () => SnapshotStore.SkipKnownCreatedumpPermissionFailure(
+                CoreVersion.Net8, Architecture.X64, isLinux: true, string.Empty, error));
+
+        Assert.Contains("github.com/dotnet/runtime/pull/120000", exception.Message);
+
+        Assert.Throws<HarnessSkipException>(
+            () => SnapshotStore.SkipKnownCreatedumpPermissionFailure(
+                CoreVersion.Net8, Architecture.Arm64, isLinux: true, error, string.Empty));
+        Assert.Throws<HarnessSkipException>(
+            () => SnapshotStore.SkipKnownCreatedumpPermissionFailure(
+                CoreVersion.Net9, Architecture.X64, isLinux: true, error, string.Empty));
+
+        SnapshotStore.SkipKnownCreatedumpPermissionFailure(
+            CoreVersion.Net10, Architecture.X64, isLinux: true, error, string.Empty);
+        SnapshotStore.SkipKnownCreatedumpPermissionFailure(
+            CoreVersion.Net8, Architecture.X86, isLinux: true, error, string.Empty);
+        SnapshotStore.SkipKnownCreatedumpPermissionFailure(
+            CoreVersion.Net8, Architecture.X64, isLinux: false, error, string.Empty);
+        SnapshotStore.SkipKnownCreatedumpPermissionFailure(
+            CoreVersion.Net8, Architecture.X64, isLinux: true, "unrelated failure", string.Empty);
+    }
+
+    [Theory]
+    [InlineData(DumpKind.Heap, "2")]
+    [InlineData(DumpKind.Mini, "1")]
+    [InlineData(DumpKind.Full, "4")]
+    public void CreatedumpTypePreservesRequestedKind(DumpKind dumpKind, string expected)
+    {
+        Assert.Equal(expected, SnapshotStore.CreatedumpType(dumpKind));
+    }
+
+    [Theory]
+    [InlineData(Flavor.Core, DumpKind.Heap, false, "Heap")]
+    [InlineData(Flavor.SingleFile, DumpKind.Heap, false, "Heap")]
+    [InlineData(Flavor.SingleFile, DumpKind.Full, false, "Full")]
+    [InlineData(Flavor.SingleFile, DumpKind.Heap, true, "Full")]
+    public void CollectTypeUsesReducedSingleFileDumpsOnUnix(
+        Flavor flavor,
+        DumpKind dumpKind,
+        bool isWindows,
+        string expected)
+    {
+        Assert.Equal(expected, SnapshotStore.CollectType(flavor, dumpKind, isWindows));
+    }
+
+    [Fact]
+    public void CoreFrameworkConfigsUseHeapDumps()
+    {
+        TestConfig[] configs = TestMatrices.CoreFrameworkConfigs([TargetCatalog.Scenarios]).ToArray();
+
+        Assert.NotEmpty(configs);
+        Assert.All(configs, config => Assert.Equal(DumpKind.Heap, config.DumpKind));
     }
 
     [Theory]

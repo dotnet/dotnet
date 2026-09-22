@@ -34,6 +34,8 @@ namespace Dotnet.Integration.Test
     {
         private const string SignatureVerificationEnvironmentVariable = "DOTNET_NUGET_SIGNATURE_VERIFICATION";
         private const string SignatureVerificationEnvironmentVariableTypo = "DOTNET_NUGET_SIGNATURE_VERIFICATIOn";
+        private const string CooldownPackageId = "NuGet.Internal.Test.Cooldown";
+        private const string CooldownPackageVersion = "1.0.0";
 
         private readonly DotnetIntegrationTestFixture _dotnetFixture;
         private readonly SignCommandTestFixture _signFixture;
@@ -4836,6 +4838,78 @@ EndGlobal";
             // Assert
             AssertRestoredPackageVersion(projectA, packageId, "1.0.0");
             Directory.Exists(higherVersionGlobalPackageDirectory).Should().BeTrue($"expected {packageId} 2.0.0 to remain in the global packages folder");
+        }
+
+        [Fact]
+        public async Task DotnetRestore_WithFloatingVersionAndCooldownEnabled_Fails()
+        {
+            using SimpleTestPathContext pathContext = await CreateCooldownProjectAsync(addPackageException: false);
+
+            CommandRunnerResult result = _dotnetFixture.RestoreProjectExpectFailure(
+                pathContext.SolutionRoot,
+                projectName: "Project",
+                testOutputHelper: _testOutputHelper);
+
+            result.AllOutput.Should().Contain("error NU1020:");
+            result.AllOutput.Should().Contain(CooldownPackageId);
+        }
+
+        [Fact]
+        public async Task DotnetRestore_WithFloatingVersionAndCooldownException_Succeeds()
+        {
+            using SimpleTestPathContext pathContext = await CreateCooldownProjectAsync(addPackageException: true);
+
+            CommandRunnerResult result = _dotnetFixture.RestoreProjectExpectSuccess(
+                pathContext.SolutionRoot,
+                projectName: "Project",
+                testOutputHelper: _testOutputHelper);
+
+            result.AllOutput.Should().NotContain("NU1020");
+            Directory.Exists(Path.Combine(
+                pathContext.UserPackagesFolder,
+                CooldownPackageId.ToLowerInvariant(),
+                CooldownPackageVersion)).Should().BeTrue();
+        }
+
+        private async Task<SimpleTestPathContext> CreateCooldownProjectAsync(bool addPackageException)
+        {
+            SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext(addTemplateFeed: false);
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                new SimpleTestPackageContext(CooldownPackageId, CooldownPackageVersion));
+
+            XDocument config = XDocument.Load(pathContext.NuGetConfig);
+            XElement packageSource = config.Root!
+                .Element("packageSources")!
+                .Elements("add")
+                .Single(element => element.Attribute("key")!.Value == SimpleTestSettingsContext.DefaultPackageSourceName);
+            packageSource.SetAttributeValue("minPublishAgeHours", "24");
+
+            if (addPackageException)
+            {
+                config.Root.Add(
+                    new XElement(
+                        "minPublishAgeExceptions",
+                        new XElement("package", new XAttribute("pattern", CooldownPackageId))));
+            }
+
+            config.Save(pathContext.NuGetConfig);
+
+            File.WriteAllText(
+                Path.Combine(pathContext.SolutionRoot, "Project.csproj"),
+                $"""
+                <Project Sdk="Microsoft.NET.Sdk">
+                  <PropertyGroup>
+                    <TargetFramework>{TestConstants.ProjectTargetFramework}</TargetFramework>
+                  </PropertyGroup>
+                  <ItemGroup>
+                    <PackageReference Include="{CooldownPackageId}" Version="1.*" />
+                  </ItemGroup>
+                </Project>
+                """);
+
+            return pathContext;
         }
 
         private static string GetPackageVersionDirectory(string source, string packageId, string version)

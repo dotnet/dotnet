@@ -1,4 +1,5 @@
 #nullable enable
+static NuGet.Configuration.SettingsUtility.GetApiKey(NuGet.Configuration.ISettings! settings, string! endpoint, string! source) -> string?
 NuGet.Configuration.PackageSource.MinPublishAge.get -> System.TimeSpan
 NuGet.Configuration.PackageSource.MinPublishAge.set -> void
 NuGet.Configuration.SourceItem.MinPublishAgeHours.get -> string?

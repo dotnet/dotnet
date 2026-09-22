@@ -4286,6 +4286,162 @@ namespace NuGet.Commands.Test.RestoreCommandTests
         }
 
         [Fact]
+        public void AreFloatingVersionsCompatibleWithPackageSourceCooldown_WithoutSourceMappingAndCooldownEnabled_ReturnsFalse()
+        {
+            // Arrange
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec("TestProject", @"C:\", "net8.0", "packageA", "1.*");
+            var source = new PackageSource("https://source.test/v3/index.json", "source")
+            {
+                MinPublishAge = TimeSpan.FromHours(24)
+            };
+            var logger = new TestLogger();
+            var request = new TestRestoreRequest(packageSpec, [source], @"C:\packages", logger);
+
+            // Act
+            bool result = RestoreCommand.AreFloatingVersionsCompatibleWithPackageSourceCooldown(request, logger);
+
+            // Assert
+            result.Should().BeFalse();
+            logger.LogMessages.Should().ContainSingle(message => message.Code == NuGetLogCode.NU1020);
+        }
+
+        [Fact]
+        public void AreFloatingVersionsCompatibleWithPackageSourceCooldown_WithPackageMappedOnlyToSourceWithoutCooldown_ReturnsTrue()
+        {
+            // Arrange
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec("TestProject", @"C:\", "net8.0", "packageA", "1.*");
+            var sourceWithCooldown = new PackageSource("https://cooldown.test/v3/index.json", "cooldown")
+            {
+                MinPublishAge = TimeSpan.FromHours(24)
+            };
+            var sourceWithoutCooldown = new PackageSource("https://immediate.test/v3/index.json", "immediate");
+            var packageSourceMapping = new PackageSourceMapping(new Dictionary<string, IReadOnlyList<string>>
+            {
+                ["immediate"] = ["packageA"]
+            });
+            var logger = new TestLogger();
+            var request = new TestRestoreRequest(
+                packageSpec,
+                [sourceWithCooldown, sourceWithoutCooldown],
+                @"C:\packages",
+                new TestSourceCacheContext(),
+                packageSourceMapping,
+                logger);
+
+            // Act
+            bool result = RestoreCommand.AreFloatingVersionsCompatibleWithPackageSourceCooldown(request, logger);
+
+            // Assert
+            result.Should().BeTrue();
+            logger.LogMessages.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void AreFloatingVersionsCompatibleWithPackageSourceCooldown_WithPackageMappedToSourceWithCooldown_ReturnsFalse()
+        {
+            // Arrange
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec("TestProject", @"C:\", "net8.0", "packageA", "1.*");
+            var sourceWithCooldown = new PackageSource("https://cooldown.test/v3/index.json", "cooldown")
+            {
+                MinPublishAge = TimeSpan.FromHours(24)
+            };
+            var sourceWithoutCooldown = new PackageSource("https://immediate.test/v3/index.json", "immediate");
+            var packageSourceMapping = new PackageSourceMapping(new Dictionary<string, IReadOnlyList<string>>
+            {
+                ["COOLDOWN"] = ["packageA"]
+            });
+            var logger = new TestLogger();
+            var request = new TestRestoreRequest(
+                packageSpec,
+                [sourceWithCooldown, sourceWithoutCooldown],
+                @"C:\packages",
+                new TestSourceCacheContext(),
+                packageSourceMapping,
+                logger);
+
+            // Act
+            bool result = RestoreCommand.AreFloatingVersionsCompatibleWithPackageSourceCooldown(request, logger);
+
+            // Assert
+            result.Should().BeFalse();
+            logger.LogMessages.Should().ContainSingle(message => message.Code == NuGetLogCode.NU1020);
+        }
+
+        [Fact]
+        public void AreFloatingVersionsCompatibleWithPackageSourceCooldown_WithMatchingException_ReturnsTrue()
+        {
+            // Arrange
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec("TestProject", @"C:\", "net8.0", "packageA", "1.*");
+            var source = new PackageSource("https://source.test/v3/index.json", "source")
+            {
+                MinPublishAge = TimeSpan.FromHours(24)
+            };
+            var logger = new TestLogger();
+            var request = new TestRestoreRequest(packageSpec, [source], @"C:\packages", logger)
+            {
+                MinPublishAgeExceptions = new MinPublishAgeExceptions(
+                    [new MinPublishAgeExceptionItem { Pattern = "packageA" }])
+            };
+
+            // Act
+            bool result = RestoreCommand.AreFloatingVersionsCompatibleWithPackageSourceCooldown(request, logger);
+
+            // Assert
+            result.Should().BeTrue();
+            logger.LogMessages.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void AreFloatingVersionsCompatibleWithPackageSourceCooldown_WithFixedVersionAndCooldownEnabled_ReturnsTrue()
+        {
+            // Arrange
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec("TestProject", @"C:\", "net8.0", "packageA", "1.0.0");
+            var source = new PackageSource("https://source.test/v3/index.json", "source")
+            {
+                MinPublishAge = TimeSpan.FromHours(24)
+            };
+            var logger = new TestLogger();
+            var request = new TestRestoreRequest(packageSpec, [source], @"C:\packages", logger);
+
+            // Act
+            bool result = RestoreCommand.AreFloatingVersionsCompatibleWithPackageSourceCooldown(request, logger);
+
+            // Assert
+            result.Should().BeTrue();
+            logger.LogMessages.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task ExecuteAsync_WithFloatingVersionAndCooldownEnabled_FailsWithNU1020()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            PackageSpec packageSpec = ProjectTestHelpers.GetPackageSpec(
+                "TestProject",
+                pathContext.SolutionRoot,
+                "net8.0",
+                "packageA",
+                "1.*");
+            var source = new PackageSource(pathContext.PackageSource, "source")
+            {
+                MinPublishAge = TimeSpan.FromHours(24)
+            };
+            var logger = new TestLogger();
+            var request = new TestRestoreRequest(packageSpec, [source], pathContext.UserPackagesFolder, logger)
+            {
+                LockFilePath = Path.Combine(packageSpec.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName)
+            };
+            var command = new RestoreCommand(request);
+
+            // Act
+            RestoreResult result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeFalse();
+            logger.LogMessages.Should().ContainSingle(message => message.Code == NuGetLogCode.NU1020);
+        }
+
+        [Fact]
         public async Task ExecuteAsync_WithSuppressedWarning_PopulatesCorrectTelemetry()
         {
             // Arrange

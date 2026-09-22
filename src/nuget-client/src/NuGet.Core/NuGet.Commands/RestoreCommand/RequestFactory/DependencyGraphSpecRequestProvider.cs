@@ -173,6 +173,7 @@ namespace NuGet.Commands
             var auditSources = GetAuditSources(restoreArgs.CachingSourceProvider);
             var clientPolicyContext = ClientPolicyContext.GetClientPolicy(settings, restoreArgs.Log);
             var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
+            var minPublishAgeExceptions = MinPublishAgeExceptions.GetMinPublishAgeExceptions(settings);
             var updateLastAccess = SettingsUtility.GetUpdatePackageLastAccessTimeEnabledStatus(settings);
 
             var sharedCache = _providerCache.GetOrCreate(
@@ -206,6 +207,7 @@ namespace NuGet.Commands
                 DependencyGraphSpec = projectDgSpec,
                 MSBuildProjectExtensionsPath = projectPackageSpec.RestoreMetadata.OutputPath,
                 AdditionalMessages = projectAdditionalMessages,
+                MinPublishAgeExceptions = minPublishAgeExceptions,
                 UpdatePackageLastAccessTime = updateLastAccess,
             };
 

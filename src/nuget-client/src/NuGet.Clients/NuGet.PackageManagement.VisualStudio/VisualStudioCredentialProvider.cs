@@ -19,14 +19,38 @@ namespace NuGet.PackageManagement.VisualStudio
     public class VisualStudioCredentialProvider : ICredentialProvider
     {
         private readonly Lazy<JoinableTaskFactory> _joinableTaskFactory;
+        private readonly IPackageSourceCredentialPrompt _packageSourceCredentialPrompt;
+        private readonly IVsUIShell _uiShell;
         private readonly IVsWebProxy _webProxyService;
 
         public VisualStudioCredentialProvider(IVsWebProxy webProxyService)
-            : this(webProxyService, new Lazy<JoinableTaskFactory>(() => NuGetUIThreadHelper.JoinableTaskFactory))
+            : this(
+                  webProxyService,
+                  uiShell: null,
+                  new Lazy<JoinableTaskFactory>(() => NuGetUIThreadHelper.JoinableTaskFactory),
+                  new PackageSourceCredentialPrompt())
         {
         }
 
         internal VisualStudioCredentialProvider(IVsWebProxy webProxyService, Lazy<JoinableTaskFactory> joinableTaskFactory)
+            : this(webProxyService, uiShell: null, joinableTaskFactory, new PackageSourceCredentialPrompt())
+        {
+        }
+
+        internal VisualStudioCredentialProvider(IVsWebProxy webProxyService, IVsUIShell uiShell)
+            : this(
+                  webProxyService,
+                  uiShell,
+                  new Lazy<JoinableTaskFactory>(() => NuGetUIThreadHelper.JoinableTaskFactory),
+                  new PackageSourceCredentialPrompt())
+        {
+        }
+
+        internal VisualStudioCredentialProvider(
+            IVsWebProxy webProxyService,
+            IVsUIShell uiShell,
+            Lazy<JoinableTaskFactory> joinableTaskFactory,
+            IPackageSourceCredentialPrompt packageSourceCredentialPrompt)
         {
             if (webProxyService == null)
             {
@@ -38,8 +62,15 @@ namespace NuGet.PackageManagement.VisualStudio
                 throw new ArgumentNullException(nameof(joinableTaskFactory));
             }
 
+            if (packageSourceCredentialPrompt == null)
+            {
+                throw new ArgumentNullException(nameof(packageSourceCredentialPrompt));
+            }
+
             _webProxyService = webProxyService;
+            _uiShell = uiShell;
             _joinableTaskFactory = joinableTaskFactory;
+            _packageSourceCredentialPrompt = packageSourceCredentialPrompt;
             Id = $"{typeof(VisualStudioCredentialProvider).Name}_{Guid.NewGuid()}";
         }
 
@@ -67,6 +98,18 @@ namespace NuGet.PackageManagement.VisualStudio
                 throw new ArgumentNullException(nameof(uri));
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (nonInteractive)
+            {
+                return new CredentialResponse(CredentialStatus.ProviderNotApplicable);
+            }
+
+            if (type != CredentialRequestType.Proxy)
+            {
+                return await PromptForPackageSourceCredentialsAsync(uri, isRetry, cancellationToken);
+            }
+
             // Capture the original proxy before we do anything
             // so that we can re-set it once we get the credentials for the given Uri.
             IWebProxy originalProxy = null;
@@ -92,20 +135,13 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 // The cached credentials that we found are not valid so let's ask the user
                 // until they abort or give us valid credentials.
-                var uriToDisplay = uri;
-                if (type == CredentialRequestType.Proxy && proxy != null)
-                {
-                    // Display the proxy server's host name when asking for proxy credentials
-                    uriToDisplay = proxy.GetProxy(uri);
-                }
+                var uriToDisplay = proxy == null ? uri : proxy.GetProxy(uri);
 
                 // Set the static property WebRequest.DefaultWebProxy so that the right host name
-                // is displayed in the UI by IVsWebProxy. Note that this is just a UI thing, 
-                // so this is needed no matter wether we're prompting for proxy credentials 
-                // or request credentials. 
+                // is displayed in the UI by IVsWebProxy.
                 WebRequest.DefaultWebProxy = new WebProxy(uriToDisplay);
 
-                return await PromptForCredentialsAsync(uri, cancellationToken);
+                return await PromptForProxyCredentialsAsync(uri, cancellationToken);
             }
             finally
             {
@@ -119,7 +155,7 @@ namespace NuGet.PackageManagement.VisualStudio
         /// This method is responsible for retrieving either cached credentials
         /// or forcing a prompt if we need the user to give us new credentials.
         /// </summary>
-        private async Task<CredentialResponse> PromptForCredentialsAsync(Uri uri, CancellationToken cancellationToken)
+        private async Task<CredentialResponse> PromptForProxyCredentialsAsync(Uri uri, CancellationToken cancellationToken)
         {
             // This value will cause the web proxy service to first attempt to retrieve
             // credentials from its cache and fall back to prompting if necessary.
@@ -153,6 +189,33 @@ namespace NuGet.PackageManagement.VisualStudio
 
             // Get the new credentials from the proxy instance
             return new CredentialResponse(WebRequest.DefaultWebProxy.Credentials);
+        }
+
+        private async Task<CredentialResponse> PromptForPackageSourceCredentialsAsync(
+            Uri uri,
+            bool isRetry,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            NetworkCredential credentials = null;
+
+            await _joinableTaskFactory.Value.RunAsync(async () =>
+            {
+                await _joinableTaskFactory.Value.SwitchToMainThreadAsync(cancellationToken);
+
+                var parentWindow = IntPtr.Zero;
+                _uiShell?.GetDialogOwnerHwnd(out parentWindow);
+
+                credentials = _packageSourceCredentialPrompt.PromptForCredentials(
+                    uri,
+                    isRetry,
+                    parentWindow);
+            });
+
+            return credentials == null
+                ? new CredentialResponse(CredentialStatus.UserCanceled)
+                : new CredentialResponse(credentials);
         }
     }
 }

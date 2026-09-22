@@ -7,6 +7,7 @@ using System.CommandLine;
 using System.Linq;
 using NuGet.CommandLine.XPlat.Commands.Package.PackageDownload;
 using NuGet.CommandLine.XPlat.Commands.Package.Update;
+using NuGet.CommandLine.XPlat.Commands.Package.Stage;
 
 namespace NuGet.CommandLine.XPlat;
 
@@ -32,6 +33,7 @@ public static class NuGetCommands
             command.Subcommands.Add(packageCommand);
         }
 
+        StageCommand.Register(packageCommand, interactiveOption, () => CommandOutputLogger.Create());
         PackageUpdateCommand.Register(packageCommand, interactiveOption, virtualProjectBuilder);
         PackageDownloadCommand.Register(packageCommand, interactiveOption);
     }

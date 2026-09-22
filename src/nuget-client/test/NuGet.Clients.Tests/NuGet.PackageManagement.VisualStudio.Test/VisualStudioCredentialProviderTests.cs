@@ -22,6 +22,23 @@ namespace NuGet.PackageManagement.VisualStudio.Test
     {
         private static readonly Uri _uri = new Uri("http://unit.test");
 
+        private sealed class TestPackageSourceCredentialPrompt : IPackageSourceCredentialPrompt
+        {
+            internal required NetworkCredential? CredentialsToReturn { get; set; }
+            internal bool IsRetry { get; private set; }
+            internal IntPtr ParentWindow { get; private set; }
+            internal Uri? PackageSourceUri { get; private set; }
+
+            public NetworkCredential? PromptForCredentials(Uri packageSourceUri, bool isRetry, IntPtr parentWindow)
+            {
+                PackageSourceUri = packageSourceUri;
+                IsRetry = isRetry;
+                ParentWindow = parentWindow;
+
+                return CredentialsToReturn;
+            }
+        }
+
         public VisualStudioCredentialProviderTests(GlobalServiceProvider globalServiceProvider)
             : base(globalServiceProvider)
         {
@@ -95,6 +112,37 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     cancellationToken: new CancellationToken(canceled: true)));
         }
 
+        [Theory]
+        [InlineData(CredentialRequestType.Proxy)]
+        [InlineData(CredentialRequestType.Unauthorized)]
+        public async Task GetAsync_WhenNonInteractive_ReturnsProviderNotApplicableWithoutPrompting(
+            CredentialRequestType requestType)
+        {
+            var vsWebProxy = new Mock<IVsWebProxy>(MockBehavior.Strict);
+            var credentialPrompt = new TestPackageSourceCredentialPrompt
+            {
+                CredentialsToReturn = new NetworkCredential("user", "password"),
+            };
+            var provider = new VisualStudioCredentialProvider(
+                vsWebProxy.Object,
+                uiShell: null,
+                new Lazy<JoinableTaskFactory>(() => NuGetUIThreadHelper.JoinableTaskFactory),
+                credentialPrompt);
+
+            CredentialResponse response = await provider.GetAsync(
+                _uri,
+                proxy: null,
+                type: requestType,
+                message: null,
+                isRetry: false,
+                nonInteractive: true,
+                cancellationToken: CancellationToken.None);
+
+            Assert.Equal(CredentialStatus.ProviderNotApplicable, response.Status);
+            Assert.Null(credentialPrompt.PackageSourceUri);
+            vsWebProxy.VerifyNoOtherCalls();
+        }
+
         [Fact]
         public async Task GetAsync_CallsWebProxy_PassesDefaultCredentialsState()
         {
@@ -123,10 +171,10 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var response = await provider.GetAsync(
                 _uri,
                 proxy: null,
-                type: CredentialRequestType.Unauthorized,
+                type: CredentialRequestType.Proxy,
                 message: "a",
                 isRetry: false,
-                nonInteractive: true,
+                nonInteractive: false,
                 cancellationToken: CancellationToken.None);
 
             Assert.NotNull(response);
@@ -134,6 +182,74 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.Same(expectedCredentials, response.Credentials);
 
             vsWebProxy.Verify();
+        }
+
+        [Fact]
+        public async Task GetAsync_ForPackageSource_PromptsWithPackageSourceDetails()
+        {
+            var vsWebProxy = new Mock<IVsWebProxy>(MockBehavior.Strict);
+            var uiShell = new Mock<IVsUIShell>(MockBehavior.Strict);
+            var parentWindow = new IntPtr(42);
+            var expectedCredentials = new NetworkCredential("user", "password");
+            var credentialPrompt = new TestPackageSourceCredentialPrompt
+            {
+                CredentialsToReturn = expectedCredentials,
+            };
+            var uri = new Uri("https://user:secret@unit.test/v3/index.json?token=secret");
+
+            uiShell.Setup(x => x.GetDialogOwnerHwnd(out parentWindow))
+                .Returns(0);
+
+            var provider = new VisualStudioCredentialProvider(
+                vsWebProxy.Object,
+                uiShell.Object,
+                new Lazy<JoinableTaskFactory>(() => NuGetUIThreadHelper.JoinableTaskFactory),
+                credentialPrompt);
+
+            CredentialResponse response = await provider.GetAsync(
+                uri,
+                proxy: null,
+                type: CredentialRequestType.Unauthorized,
+                message: null,
+                isRetry: true,
+                nonInteractive: false,
+                cancellationToken: CancellationToken.None);
+
+            Assert.Equal(CredentialStatus.Success, response.Status);
+            Assert.Same(expectedCredentials, response.Credentials);
+            Assert.Same(uri, credentialPrompt.PackageSourceUri);
+            Assert.True(credentialPrompt.IsRetry);
+            Assert.Equal(parentWindow, credentialPrompt.ParentWindow);
+            vsWebProxy.VerifyNoOtherCalls();
+            uiShell.VerifyAll();
+        }
+
+        [Fact]
+        public async Task GetAsync_ForPackageSource_WhenUserCancels_ReturnsUserCanceled()
+        {
+            var credentialPrompt = new TestPackageSourceCredentialPrompt
+            {
+                CredentialsToReturn = null,
+            };
+            var provider = new VisualStudioCredentialProvider(
+                Mock.Of<IVsWebProxy>(),
+                uiShell: null,
+                new Lazy<JoinableTaskFactory>(() => NuGetUIThreadHelper.JoinableTaskFactory),
+                credentialPrompt);
+
+            CredentialResponse response = await provider.GetAsync(
+                _uri,
+                proxy: null,
+                type: CredentialRequestType.Forbidden,
+                message: null,
+                isRetry: false,
+                nonInteractive: false,
+                cancellationToken: CancellationToken.None);
+
+            Assert.Equal(CredentialStatus.UserCanceled, response.Status);
+            Assert.Same(_uri, credentialPrompt.PackageSourceUri);
+            Assert.False(credentialPrompt.IsRetry);
+            Assert.Equal(IntPtr.Zero, credentialPrompt.ParentWindow);
         }
     }
 }

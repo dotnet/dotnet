@@ -24,6 +24,7 @@ using Microsoft.VisualStudio.Threading;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.PackageManagement.Telemetry;
+using NuGet.PackageManagement.UI.Utility;
 using NuGet.PackageManagement.UI.ViewModels;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.Packaging.Core;
@@ -57,6 +58,7 @@ namespace NuGet.PackageManagement.UI
         private readonly Guid _sessionGuid = Guid.NewGuid();
         private Stopwatch _sinceLastRefresh;
         private CancellationTokenSource _refreshCts;
+        private CancellationTokenSource _refreshNominationCts;
         // used to prevent starting new search when we update the package sources
         // list in response to Package Sources changing events.
         private bool _dontStartNewSearch;
@@ -504,27 +506,68 @@ namespace NuGet.PackageManagement.UI
             }
             else
             {
-                await RunAndEmitRefreshAsync(async () => await RefreshAsync(), source, timeSpanSinceLastRefresh, Stopwatch.StartNew());
+                // Supersede the previous wait and refresh after pending nominations settle.
+                var nominationCts = new CancellationTokenSource();
+                Interlocked.Exchange(ref _refreshNominationCts, nominationCts)?.Cancel();
+
+                var solutionManager = Model.Context.SolutionManager;
+                TimeSpan? nominationWaitDuration = null;
+                if (solutionManager != null)
+                {
+                    try
+                    {
+                        string scopedProjectFullPath = null;
+                        if (!Model.IsSolution)
+                        {
+                            IProjectContextInfo project = Model.Context.Projects.First();
+                            IProjectMetadataContextInfo projectMetadata = await project.GetMetadataAsync(
+                                Model.Context.ServiceBroker,
+                                nominationCts.Token);
+                            scopedProjectFullPath = projectMetadata.FullPath;
+                        }
+
+                        var coordinator = new ProjectNominationCoordinator(solutionManager);
+                        nominationWaitDuration = await coordinator.WaitForNominationsToSettleAsync(scopedProjectFullPath, nominationCts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
+                }
+
+                await RunAndEmitRefreshAsync(
+                    async () => await RefreshAsync(),
+                    source,
+                    timeSpanSinceLastRefresh,
+                    Stopwatch.StartNew(),
+                    nominationWaitDuration: nominationWaitDuration);
             }
         }
 
-        private void EmitRefreshEvent(TimeSpan timeSpan, RefreshOperationSource refreshOperationSource, RefreshOperationStatus status, bool isUIFiltering = false, double? duration = null)
+        private void EmitRefreshEvent(
+            TimeSpan timeSpan,
+            RefreshOperationSource refreshOperationSource,
+            RefreshOperationStatus status,
+            bool isUIFiltering = false,
+            double? duration = null,
+            TimeSpan? nominationWaitDuration = null)
         {
+            PackageManagerUIRefreshEvent refreshEvent;
             if (Model.IsSolution)
             {
-                TelemetryActivity.EmitTelemetryEvent(PackageManagerUIRefreshEvent.ForSolution(
+                refreshEvent = PackageManagerUIRefreshEvent.ForSolution(
                     _sessionGuid,
                     refreshOperationSource,
                     status,
                     UIUtility.ToContractsItemFilter(_topPanel.Filter),
                     isUIFiltering,
                     timeSpan,
-                    duration));
+                    duration);
             }
             else
             {
                 IProjectContextInfo project = Model.Context.Projects.First();
-                TelemetryActivity.EmitTelemetryEvent(PackageManagerUIRefreshEvent.ForProject(
+                refreshEvent = PackageManagerUIRefreshEvent.ForProject(
                     _sessionGuid,
                     refreshOperationSource,
                     status,
@@ -533,8 +576,15 @@ namespace NuGet.PackageManagement.UI
                     timeSpan,
                     duration,
                     project.ProjectId,
-                    project.ProjectKind));
+                    project.ProjectKind);
             }
+
+            if (nominationWaitDuration.HasValue)
+            {
+                refreshEvent["NominationWaitDuration"] = nominationWaitDuration.Value.TotalMilliseconds;
+            }
+
+            TelemetryActivity.EmitTelemetryEvent(refreshEvent);
         }
 
         private void EmitPMUIClosingTelemetry()
@@ -1460,7 +1510,13 @@ namespace NuGet.PackageManagement.UI
             }
         }
 
-        private async Task RunAndEmitRefreshAsync(Func<Task> runner, RefreshOperationSource source, TimeSpan lastRefresh, Stopwatch sw, bool isUIFiltering = false)
+        private async Task RunAndEmitRefreshAsync(
+            Func<Task> runner,
+            RefreshOperationSource source,
+            TimeSpan lastRefresh,
+            Stopwatch sw,
+            bool isUIFiltering = false,
+            TimeSpan? nominationWaitDuration = null)
         {
             var refreshStatus = RefreshOperationStatus.NoOp;
             try
@@ -1476,7 +1532,13 @@ namespace NuGet.PackageManagement.UI
             finally
             {
                 sw.Stop();
-                EmitRefreshEvent(lastRefresh, source, refreshStatus, isUIFiltering, sw.Elapsed.TotalMilliseconds);
+                EmitRefreshEvent(
+                    lastRefresh,
+                    source,
+                    refreshStatus,
+                    isUIFiltering,
+                    sw.Elapsed.TotalMilliseconds,
+                    nominationWaitDuration);
             }
         }
 
@@ -1700,11 +1762,13 @@ namespace NuGet.PackageManagement.UI
             // make sure to cancel currently running load or refresh tasks
             _loadCts?.Cancel();
             _refreshCts?.Cancel();
+            _refreshNominationCts?.Cancel();
             _cancelSelectionChangedSource?.Cancel();
 
             // make sure to dispose cancellation token source
             _loadCts?.Dispose();
             _refreshCts?.Dispose();
+            _refreshNominationCts?.Dispose();
             _cancelSelectionChangedSource?.Dispose();
 
             _packageDetail.Cleanup();

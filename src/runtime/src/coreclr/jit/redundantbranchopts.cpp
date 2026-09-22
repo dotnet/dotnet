@@ -1054,6 +1054,19 @@ bool Compiler::optRedundantDominatingBranch(BasicBlock* const block)
 
             if (newRelopFunc != VNF_NONE)
             {
+                // Rewriting just the relop is only valid if the VN relop is over the
+                // actual tree operands. Liberal VN may look through a materialized
+                // predicate and expose a relop over different operands.
+                //
+                const ValueNum treeOp1VN = vnStore->VNNormalValue(tree->AsOp()->gtOp1->GetVN(VNK_Liberal));
+                const ValueNum treeOp2VN = vnStore->VNNormalValue(tree->AsOp()->gtOp2->GetVN(VNK_Liberal));
+
+                if ((pathApp.GetArg(0) != treeOp1VN) || (pathApp.GetArg(1) != treeOp2VN))
+                {
+                    JITDUMP("; relop operands do not match tree operands, cannot simplify\n");
+                    break;
+                }
+
                 newRelop = vnStore->VNRelopToGenTreeOp(newRelopFunc, &isUnsigned);
 
                 if (newRelop != GT_NONE)
@@ -1581,6 +1594,7 @@ static bool optGetThreadedSsaNumForBlock(JumpThreadInfo& jti, GenTreeLclVar* phi
     assert(jti.m_numAmbiguousPreds != 0);
 
     bool              foundReplacement = false;
+    BitVec            coveredPreds     = BitVecOps::MakeEmpty(&jti.traits);
     unsigned          replacementSsa   = SsaConfig::RESERVED_SSA_NUM;
     GenTreePhi* const phi              = phiDef->Data()->AsPhi();
 
@@ -1594,6 +1608,8 @@ static bool optGetThreadedSsaNumForBlock(JumpThreadInfo& jti, GenTreeLclVar* phi
             continue;
         }
 
+        BitVecOps::AddElemD(&jti.traits, coveredPreds, predBlock->bbPostorderNum);
+
         if (!foundReplacement)
         {
             replacementSsa   = phiArgNode->GetSsaNum();
@@ -1605,7 +1621,7 @@ static bool optGetThreadedSsaNumForBlock(JumpThreadInfo& jti, GenTreeLclVar* phi
         }
     }
 
-    if (!foundReplacement)
+    if (!foundReplacement || !BitVecOps::Equal(&jti.traits, coveredPreds, jti.m_ambiguousPreds))
     {
         return false;
     }
@@ -1639,7 +1655,34 @@ static bool optGetThreadedSsaNumForSuccessor(JumpThreadInfo& jti,
     *hasThreadedPreds  = false;
     *replacementSsaNum = SsaConfig::RESERVED_SSA_NUM;
 
+    BitVec expectedPreds = BitVecOps::MakeCopy(&jti.traits, jti.m_ambiguousPreds);
+    for (BasicBlock* const predBlock : jti.m_block->PredBlocks())
+    {
+        if (BitVecOps::IsMember(&jti.traits, jti.m_ambiguousPreds, predBlock->bbPostorderNum))
+        {
+            continue;
+        }
+
+        BasicBlock* predTarget = nullptr;
+        if (BitVecOps::IsMember(&jti.traits, jti.m_truePreds, predBlock->bbPostorderNum))
+        {
+            predTarget = jti.m_trueTarget;
+        }
+        else
+        {
+            assert(jti.m_numFalsePreds != 0);
+            predTarget = jti.m_falseTarget;
+        }
+
+        if (predTarget == successor)
+        {
+            BitVecOps::AddElemD(&jti.traits, expectedPreds, predBlock->bbPostorderNum);
+            *hasThreadedPreds = true;
+        }
+    }
+
     bool              foundReplacement = false;
+    BitVec            coveredPreds     = BitVecOps::MakeEmpty(&jti.traits);
     unsigned          replacementSsa   = SsaConfig::RESERVED_SSA_NUM;
     GenTreePhi* const phi              = phiDef->Data()->AsPhi();
 
@@ -1647,19 +1690,12 @@ static bool optGetThreadedSsaNumForSuccessor(JumpThreadInfo& jti,
     {
         GenTreePhiArg* const phiArgNode = use.GetNode()->AsPhiArg();
         BasicBlock* const    predBlock  = phiArgNode->gtPredBB;
-        bool const           isTruePred = BitVecOps::IsMember(&jti.traits, jti.m_truePreds, predBlock->bbPostorderNum);
-        bool const isAmbiguousPred = BitVecOps::IsMember(&jti.traits, jti.m_ambiguousPreds, predBlock->bbPostorderNum);
-
-        if (!isAmbiguousPred)
+        if (!BitVecOps::IsMember(&jti.traits, expectedPreds, predBlock->bbPostorderNum))
         {
-            BasicBlock* const predTarget = isTruePred ? jti.m_trueTarget : jti.m_falseTarget;
-            if (predTarget != successor)
-            {
-                continue;
-            }
-
-            *hasThreadedPreds = true;
+            continue;
         }
+
+        BitVecOps::AddElemD(&jti.traits, coveredPreds, predBlock->bbPostorderNum);
 
         if (!foundReplacement)
         {
@@ -1673,7 +1709,7 @@ static bool optGetThreadedSsaNumForSuccessor(JumpThreadInfo& jti,
     }
 
     *replacementSsaNum = replacementSsa;
-    return foundReplacement;
+    return foundReplacement && BitVecOps::Equal(&jti.traits, coveredPreds, expectedPreds);
 }
 
 //------------------------------------------------------------------------

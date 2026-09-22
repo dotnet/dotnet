@@ -16,51 +16,86 @@ internal interface IPooledHost
 }
 
 /// <summary>
-/// Governs how many live host instances of one kind may exist at once — here, exactly one.
+/// Distributes memoized dump sessions across a fixed number of independent <see cref="HostSlot"/>
+/// instances. Each session remains assigned to one slot, preserving that slot's most-recently-used
+/// host reuse while allowing sessions assigned to different slots to execute concurrently.
+/// </summary>
+internal sealed class HostSlotPool
+{
+    /// <summary>Two independent out-of-process cdb dump slots.</summary>
+    public static readonly HostSlotPool Cdb = new(capacity: 2);
+
+    /// <summary>Two independent dotnet-dump analyze slots.</summary>
+    public static readonly HostSlotPool DotNetDump = new(capacity: 2);
+
+    /// <summary>Two independent LLDB dump slots.</summary>
+    public static readonly HostSlotPool Lldb = new(capacity: 2);
+
+    private readonly HostSlot[] _slots;
+    private int _next = -1;
+
+    public int Capacity => _slots.Length;
+
+    public HostSlotPool(int capacity)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(capacity, 1);
+
+        _slots = new HostSlot[capacity];
+        for (int i = 0; i < capacity; i++)
+        {
+            _slots[i] = new HostSlot();
+        }
+    }
+
+    public static HostSlot HostSlotFor(Host hostKind) => hostKind switch
+    {
+        Host.Cdb => Cdb.Select(),
+        Host.Lldb => Lldb.Select(),
+        Host.DotnetDump => DotNetDump.Select(),
+        _ => throw new ArgumentOutOfRangeException(nameof(hostKind), hostKind, "Unsupported dump host."),
+    };
+
+    /// <summary>Assign the next session to a slot, distributing sessions round-robin.</summary>
+    public HostSlot Select()
+    {
+        int index = (int)((uint)Interlocked.Increment(ref _next) % (uint)_slots.Length);
+        return _slots[index];
+    }
+
+    /// <summary>Close the currently-open host in every slot.</summary>
+    public void CloseAll()
+    {
+        foreach (HostSlot slot in _slots)
+        {
+            slot.CloseCurrent();
+        }
+    }
+}
+
+/// <summary>
+/// Governs one live host instance within an individual slot. Pools provide bounded concurrency.
 ///
-/// Debugger backends need this for different reasons:
-/// <list type="bullet">
-///   <item><b>cdb (in-process dbgeng)</b> is genuinely one-instance-per-process (a second client
-///   throws).</item>
-///   <item><b>dotnet-dump</b> children each busy-wait on stdin at ~100% CPU; keeping many alive
-///   saturates the machine, so we keep at most one.</item>
-///   <item><b>lldb</b> children retain every loaded core and hosted SOS runtime. Keeping one per
-///   memoized dump session can exhaust memory during a large run, so dump sessions share one.</item>
-/// </list>
+/// <b>dotnet-dump</b>, <b>cdb</b>, and <b>lldb</b> retain loaded dump state, so small fixed pools
+/// preserve limited concurrency without unbounded memory growth.
 /// The most-recently-used host stays open and is evicted (disposed) only when a different target
 /// of the same kind is needed — so a run of assertions against one dump reuses the open host, and
-/// switching dumps reopens (cheap relative to the work). Live targets take an exclusive lease for
-/// their lifetime. This single-slot constraint is exactly what a subprocess-per-target backend
-/// would lift, without changing the test-facing API.
+/// switching dumps reopens (cheap relative to the work).
 /// </summary>
 internal sealed class HostSlot
 {
-    /// <summary>The in-process dbgeng slot (cdb dump hosts and live hosts).</summary>
-    public static readonly HostSlot DbgEng = new();
-
-    /// <summary>The dotnet-dump slot (one analyze child alive at a time).</summary>
-    public static readonly HostSlot DotNetDump = new();
-
-    /// <summary>The LLDB dump slot (one core-loaded child alive at a time).</summary>
-    public static readonly HostSlot Lldb = new();
-
     private readonly object _lock = new();
     private IPooledHost? _open;
-    private bool _exclusiveHeld;
 
     /// <summary>
-    /// Ensure <paramref name="owner"/>'s host is the one open host for this slot, then run
-    /// <paramref name="action"/> against it. Serializes all work on this slot.
+    /// Ensure <paramref name="owner"/>'s host is open and hold exclusive use of this slot until the
+    /// returned lease is disposed. The lease must be disposed on the acquiring thread.
     /// </summary>
-    public SosOutput Run(IPooledHost owner, Func<IDebuggerHost, SosOutput> action)
+    public IDisposable Acquire(IPooledHost owner)
     {
-        lock (_lock)
+        ArgumentNullException.ThrowIfNull(owner);
+        Monitor.Enter(_lock);
+        try
         {
-            while (_exclusiveHeld)
-            {
-                System.Threading.Monitor.Wait(_lock);
-            }
-
             if (!ReferenceEquals(_open, owner))
             {
                 IPooledHost? previous = _open;
@@ -90,30 +125,13 @@ internal sealed class HostSlot
                 _open = owner;
             }
 
-            return action(owner.Host);
+            return new Lease(_lock);
         }
-    }
-
-    /// <summary>
-    /// Acquire exclusive use of this slot for a live target's lifetime. Evicts any open host and
-    /// blocks other use until the returned lease is disposed.
-    /// </summary>
-    public IDisposable AcquireExclusive()
-    {
-        lock (_lock)
+        catch
         {
-            while (_exclusiveHeld)
-            {
-                System.Threading.Monitor.Wait(_lock);
-            }
-
-            IPooledHost? open = _open;
-            _open = null;
-            open?.CloseHost();
-            _exclusiveHeld = true;
+            Monitor.Exit(_lock);
+            throw;
         }
-
-        return new Lease(this);
     }
 
     /// <summary>Close the currently-open host, if any (teardown).</summary>
@@ -129,10 +147,10 @@ internal sealed class HostSlot
 
     private sealed class Lease : IDisposable
     {
-        private readonly HostSlot _slot;
+        private readonly object _gate;
         private bool _disposed;
 
-        public Lease(HostSlot slot) => _slot = slot;
+        public Lease(object gate) => _gate = gate;
 
         public void Dispose()
         {
@@ -142,11 +160,8 @@ internal sealed class HostSlot
             }
 
             _disposed = true;
-            lock (_slot._lock)
-            {
-                _slot._exclusiveHeld = false;
-                System.Threading.Monitor.PulseAll(_slot._lock);
-            }
+            Monitor.Exit(_gate);
         }
     }
+
 }

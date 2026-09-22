@@ -154,6 +154,11 @@ namespace NuGet.Common
         NU1019 = 1019,
 
         /// <summary>
+        /// Floating package versions are not allowed when package source cooldown is enabled.
+        /// </summary>
+        NU1020 = 1020,
+
+        /// <summary>
         /// Unable to resolve package, generic message for unknown type constraints.
         /// </summary>
         NU1100 = 1100,
