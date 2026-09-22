@@ -1,5 +1,0 @@
-paths:
-  evals:
-    - .github/workflows/evals/
-  evalFilenames:
-    - "*.eval.yaml"

@@ -1,4 +1,0 @@
-<Project>
-  <Import Project="..\..\..\Directory.Build.targets" />
-  <Import Project="$(RepositoryEngineeringDir)testing\hotreload-delta-gen.targets" />
-</Project>
