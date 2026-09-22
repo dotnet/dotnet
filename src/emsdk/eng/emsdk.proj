@@ -52,6 +52,11 @@
     <PackageReference Include="@(_PackageReferenceDeduplicated->Distinct())" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Provides the GenerateFileCatalog task used by the GenerateCatalogFiles target below. -->
+    <PackageReference Include="Microsoft.DotNet.Build.Tasks.FileCatalog" Version="$(MicrosoftDotNetBuildTasksFileCatalogVersion)" />
+  </ItemGroup>
+
   <Target Name="CopyBinaryen" BeforeTargets="ReallyBuild">
     <Message Importance="High" Text="** Copying $(TargetRid) Binaryen to $(BinaryenDir)" />
     <Message Importance="High" Text="** Copying $(BuildRid) Binaryen to $(BuildBinaryenDir)" Condition="'$(TargetRid)' != '$(BuildRid)'" />
@@ -363,21 +368,32 @@
   </Target>
 
   <!--
-    Generate a catalog (.cat) file covering all .js files in the SDK package.
-    The .js files are customer-modifiable Emscripten toolchain files that cannot be
-    directly Authenticode-signed. The .cat provides integrity verification without
-    preventing modification. Only runs on Windows (makecat.exe is a Windows SDK tool)
-    and only the Windows packs are inserted into VS.
+    Generate catalog (.cat) files covering all .js files in the SDK and Node packages.
+    The .js files are customer-modifiable toolchain files that cannot be
+    directly Authenticode-signed. The catalogs provide integrity verification without
+    preventing modification.
   -->
-  <Target Name="GenerateCatalogFiles" AfterTargets="ReallyBuild" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+  <Target Name="GenerateCatalogFiles" AfterTargets="ReallyBuild">
     <PropertyGroup>
-      <_CatOutputPath>$(ArtifactsObjDir)upstream\emscripten\emscripten-js.cat</_CatOutputPath>
-      <_ErrorIfMakecatNotFound Condition="'$(ContinuousIntegrationBuild)' == 'true' or '$(OfficialBuild)' == 'true'">-ErrorIfMakecatNotFound</_ErrorIfMakecatNotFound>
+      <_EmscriptenCatOutputPath>$(ArtifactsObjDir)upstream/emscripten/emscripten-js.cat</_EmscriptenCatOutputPath>
+      <_NodeCatOutputPath>$(ArtifactsObjDir)node/node-js.cat</_NodeCatOutputPath>
     </PropertyGroup>
 
-    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;&amp; '$(MSBuildThisFileDirectory)generate-catalog.ps1' -RootPath '$(ArtifactsObjDir)upstream' -CatOutputPath '$(_CatOutputPath)' -WindowsSdkDir '$(WindowsSdkDir)' $(_ErrorIfMakecatNotFound)&quot;" StandardOutputImportance="High" />
+    <!--
+      Glob inside the target (not a global item): the .js files are produced during
+      ReallyBuild, and a top-level wildcard item would be expanded at evaluation time,
+      before ReallyBuild runs, and would therefore miss them.
+    -->
+    <ItemGroup>
+      <_EmscriptenCatalogFile Include="$(ArtifactsObjDir)upstream/**/*.js" />
+      <_NodeCatalogFile Include="$(ArtifactsObjDir)node/**/*.js" />
+    </ItemGroup>
 
-    <Message Condition="Exists('$(_CatOutputPath)')" Importance="High" Text="Generated catalog file: $(_CatOutputPath)" />
+    <GenerateFileCatalog Files="@(_EmscriptenCatalogFile)" OutputPath="$(_EmscriptenCatOutputPath)" />
+    <GenerateFileCatalog Files="@(_NodeCatalogFile)" OutputPath="$(_NodeCatOutputPath)" Condition="'@(_NodeCatalogFile)' != ''" />
+
+    <Message Condition="Exists('$(_EmscriptenCatOutputPath)')" Importance="High" Text="Generated catalog file: $(_EmscriptenCatOutputPath)" />
+    <Message Condition="Exists('$(_NodeCatOutputPath)')" Importance="High" Text="Generated catalog file: $(_NodeCatOutputPath)" />
   </Target>
 
   <Target Name="ReallyPack" DependsOnTargets="Build" BeforeTargets="Pack">
