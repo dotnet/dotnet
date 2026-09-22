@@ -1237,6 +1237,11 @@ Upgradujte svou sadu .NET SDK nebo odeberte RestoreUseLegacyDependencyResolver, 
         <target state="translated">Zadaný zdroj není platný. Zadejte platný zdroj.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
+        <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
+      </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">
         <source>Unable to find any package source(s) matching name: {0}.</source>
         <target state="translated">Nepovedlo se najít žádné zdroje balíčků, které by odpovídaly názvu {0}.</target>
