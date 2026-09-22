@@ -25,16 +25,16 @@
                       Publish="false" />
   </ItemGroup>
 
-  <Target Name="BuildBootstrapPackages"
+  <Target Name="BuildBootstrapDependentPackages"
           AfterTargets="Build;Pack"
           Condition="'$(_OrchestrateBootstrap)' == 'true'">
-    <MSBuild Projects="@(BootstrapPackageProject)"
+    <MSBuild Projects="@(BootstrapDependentPackageProject)"
              Targets="Restore"
-             Properties="$(_BootstrapPackageProperties)"
+             Properties="$(_BootstrapDependentPackageProperties)"
              BuildInParallel="false"
              StopOnFirstFailure="true" />
-    <MSBuild Projects="@(BootstrapPackageProject)"
-             Properties="$(_BootstrapPackageProperties);ExcludeRestorePackageImports=false"
+    <MSBuild Projects="@(BootstrapDependentPackageProject)"
+             Properties="$(_BootstrapDependentPackageProperties);ExcludeRestorePackageImports=false"
              BuildInParallel="false"
              StopOnFirstFailure="true" />
     <MSBuild Projects="@(BootstrapCdacPackageProject)"

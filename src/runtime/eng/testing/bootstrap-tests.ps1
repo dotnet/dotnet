@@ -29,7 +29,7 @@ function Invoke-Evaluation([string]$Project, [string[]]$Properties, [string[]]$O
 function Get-Graph([string[]]$Properties, [string]$Project = $buildProject) {
   Invoke-Evaluation $Project $Properties @(
     '-getProperty:EnableBootstrap,SwapNativeForIL,BootstrapReadyFile,BootstrapLayoutDir,UseNativeAotForComponents'
-    '-getItem:ProjectReference,BootstrapConsumer,BootstrapPackageProject,BootstrapCdacPackageProject,BootstrapTestProject'
+    '-getItem:ProjectReference,BootstrapConsumer,BootstrapDependentPackageProject,BootstrapCdacPackageProject,BootstrapTestProject'
   )
 }
 
@@ -43,7 +43,7 @@ Assert-True ($hostCompilerIndex -ge 0 -and $hostCompilerIndex -lt [Array]::Index
 $integrated = Get-Graph @('Subset=clr+libs+host', 'EnableBootstrap=true')
 Assert-True (@($integrated.Items.ProjectReference).Count -eq 2) 'Integrated builds must have two post-producer traversals.'
 Assert-True (@($integrated.Items.BootstrapConsumer).Count -eq 3) 'The clr.tools subset must defer ILC, Crossgen2, and ILAsm.'
-Assert-True (@($integrated.Items.BootstrapPackageProject).Count -eq 0) 'A build without packs must not add bootstrap packages.'
+Assert-True (@($integrated.Items.BootstrapDependentPackageProject).Count -eq 0) 'A build without packs must not add bootstrap-dependent packages.'
 Assert-True ($integrated.Properties.BootstrapLayoutDir -eq [IO.Path]::Combine($repoRoot, 'artifacts', 'bootstrap', 'win-x64') + [IO.Path]::DirectorySeparatorChar -or
              $integrated.Properties.BootstrapLayoutDir -match '[/\\]artifacts[/\\]bootstrap[/\\][^/\\]+[/\\]$') 'The integrated snapshot must use the canonical bootstrap layout.'
 
@@ -54,7 +54,7 @@ Assert-True ($sharedProducer[0].UndefineProperties -match 'BootstrapBuildLane' -
 
 $narrow = Get-Graph @('Subset=host.native', 'EnableBootstrap=true')
 Assert-True (@($narrow.Items.BootstrapConsumer).Count -eq 0) 'A host-only subset must not publish SDK tools.'
-Assert-True (@($narrow.Items.BootstrapPackageProject).Count -eq 0) 'A host-only subset must not build SDK packages.'
+Assert-True (@($narrow.Items.BootstrapDependentPackageProject).Count -eq 0) 'A host-only subset must not build SDK packages.'
 
 $libraryTests = Get-Graph @('Subset=libs.tests', 'EnableBootstrap=true')
 Assert-True (@($libraryTests.Items.BootstrapTestProject).Count -eq 1) 'Library test restore must be deferred until the bootstrap snapshot exists.'
@@ -83,7 +83,7 @@ Assert-True (-not [string]::IsNullOrEmpty($legacy.Properties.BootstrapReadyFile)
 Assert-True (@($legacy.Items.BootstrapConsumer).Count -eq 0) 'Explicit bootstrap must not publish shipping consumers.'
 
 $packs = Get-Graph @('Subset=clr+libs+tools+host+packs', 'EnableBootstrap=true', 'BuildHostTools=true')
-Assert-True (@($packs.Items.BootstrapPackageProject).Count -ge 2) 'Requested tool packages must be deferred, not dropped.'
+Assert-True (@($packs.Items.BootstrapDependentPackageProject).Count -ge 2) 'Requested tool packages must be deferred, not dropped.'
 Assert-True (@($packs.Items.BootstrapCdacPackageProject).Count -eq 1) 'Requested cDAC packaging must remain after the traversal join.'
 
 foreach ($hostPackProperty in @('BuildHostTools=true', 'BuildCrossgen2HostPackForWorkloadTesting=true')) {

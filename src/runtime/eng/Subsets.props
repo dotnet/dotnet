@@ -773,14 +773,14 @@
             <SharedFrameworkProjectToBuild Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Ref.sfxproj" />
           </ItemGroup>
           <ItemGroup>
-            <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true')" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj" BootstrapPackage="true" />
+            <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true')" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.sfxproj" BootstrapDependentPackage="true" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-host.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-hostfxr.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-runtime-deps\*.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(MonoCrossAOTTargetOS)' != '' and '$(DotNetBuildSourceOnly)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\monocrossaot.proj" />
           </ItemGroup>
           <ItemGroup>
-            <ProjectToBuild Condition="'$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" Include="$(InstallerProjectRoot)\pkg\projects\nativeaot-packages.proj" Category="packs" BootstrapPackage="true" />
+            <ProjectToBuild Condition="'$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" Include="$(InstallerProjectRoot)\pkg\projects\nativeaot-packages.proj" Category="packs" BootstrapDependentPackage="true" />
             <ProjectToBuild Condition="'$(_BuildCdacPack)' == 'true'" Include="$(InstallerProjectRoot)pkg\projects\cdac-packages.proj" Category="packs" BootstrapCdacPackage="true" />
           </ItemGroup>
           <ItemGroup>
@@ -788,14 +788,14 @@
               When BuildHostTools is enabled, we need to provide a crossgen2 that runs on the host machine for downstream repos to use to R2R their code.
               Non-VMR builds normally use the crossgen2 built for the target host SDK from another build leg, but builds without one can opt in.
             -->
-            <ProjectToBuild Condition="'$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' or '$(TargetOS)' == 'browser') and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" BootstrapPackage="true" />
+            <ProjectToBuild Condition="'$(RuntimeFlavor)' != 'Mono' and ('$(TargetsMobile)' != 'true' or '$(TargetOS)' == 'browser') and '$(TargetsLinuxBionic)' != 'true' and '$(BuildHostTools)' == 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" BootstrapDependentPackage="true" />
 
             <!--
               CoreCLR wasm workload tests need the host crossgen2 package in their local feed.
               These legs do not set BuildHostTools, so opt in here. Keeping this opt-in avoids
               duplicating packages produced by official host builds.
             -->
-            <ProjectToBuild Condition="'$(BuildCrossgen2HostPackForWorkloadTesting)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(BuildHostTools)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" BootstrapPackage="true" />
+            <ProjectToBuild Condition="'$(BuildCrossgen2HostPackForWorkloadTesting)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(BuildHostTools)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Crossgen2.Host.sfxproj" Category="packs" BootstrapDependentPackage="true" />
           </ItemGroup>
           <ItemGroup>
             <SharedFrameworkProjectToBuild Condition="'$(_BuildHostPack)' == 'true'" Include="$(InstallerProjectRoot)pkg\archives\dotnet-nethost.proj" />
@@ -858,13 +858,13 @@
 
   <ItemGroup>
     <BootstrapConsumer Include="@(ProjectToBuild->WithMetadataValue('BootstrapConsumer', 'true'))" />
-    <BootstrapPackageProject Include="@(ProjectToBuild->WithMetadataValue('BootstrapPackage', 'true'))" />
+    <BootstrapDependentPackageProject Include="@(ProjectToBuild->WithMetadataValue('BootstrapDependentPackage', 'true'))" />
     <BootstrapCdacPackageProject Include="@(ProjectToBuild->WithMetadataValue('BootstrapCdacPackage', 'true'))" />
     <BootstrapTestProject Include="@(ProjectToBuild->WithMetadataValue('BootstrapTest', 'true'))" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableBootstrap)' == 'true' or '$(BootstrapMainBuild)' == 'true'">
-    <ProjectToBuild Remove="@(BootstrapConsumer);@(BootstrapPackageProject);@(BootstrapCdacPackageProject);@(BootstrapTestProject)" />
+    <ProjectToBuild Remove="@(BootstrapConsumer);@(BootstrapDependentPackageProject);@(BootstrapCdacPackageProject);@(BootstrapTestProject)" />
   </ItemGroup>
 
 </Project>
