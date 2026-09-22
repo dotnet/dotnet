@@ -56,6 +56,8 @@
       <ScenarioTestsResultsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsTestResultsDir)', 'scenario-tests'))</ScenarioTestsResultsDir>
       <TestXmlOutputPath>$(ScenarioTestsResultsDir)$([System.DateTime]::Now.ToString("yyyy-MM-dd_HH_mm_ss")).xml</TestXmlOutputPath>
       <ScenarioTestsAdditionalArgs>--xml $(TestXmlOutputPath) --target-rid $(TargetRid) --portable-rid $(PortableTargetRid) --no-cleanup --no-traits Category=MultiTFM</ScenarioTestsAdditionalArgs>
+      <!-- ASP.NET Core templates target net12.0 before runtime does. Remove this exclusion after https://github.com/dotnet/dotnet/issues/9637. -->
+      <ScenarioTestsAdditionalArgs>$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresNet12RuntimeTargetingPack</ScenarioTestsAdditionalArgs>
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresNonTargetRidPackages</ScenarioTestsAdditionalArgs>
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetSkipTestsRequiringMicrosoftArtifacts)' == 'true'">$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresPortableAssets</ScenarioTestsAdditionalArgs>
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'">$(ScenarioTestsAdditionalArgs) --no-traits SkipIfBuild=SourceOnlyUnofficialBuild</ScenarioTestsAdditionalArgs>
