@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@5fa9337](https://github.com/dotnet/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@3f36e49](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC3f36e491c625f3dba2f4c37c68446a7884bf7a7d)*
+*[_git/dotnet-aspnetcore@6df1c27](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC6df1c270c461c3c2e8715c0a9c7952bf415e9753)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@36ba75f](https://github.com/google/googletest/tree/36ba75f0ad5383a9759f17f3f72fd4661c72cb6d)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -26,7 +26,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@513150c](https://github.com/dotnet/diagnostics/tree/513150c2f25077b1fcb194407e53c433c975f39b)*
 - `src/efcore`  
-*[_git/dotnet-efcore@ff34401](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GCff344013a4d5a70f43a7eb5d5de8f6b82f62b7e5)*
+*[_git/dotnet-efcore@526e210](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GC526e210c5ffb20ee45ea496f0151fa7c93312fd5)*
 - `src/emsdk`  
 *[dotnet/emsdk@2b4c425](https://github.com/dotnet/emsdk/tree/2b4c425892386783f059f98bd2aa8d780b78617f)*
 - `src/fsharp`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@10b1153](https://github.com/dotnet/scenario-tests/tree/10b1153c42ff74bd58460cacc794f2e9b1f48918)*
 - `src/sdk`  
-*[dotnet/sdk@bea4c0d](https://github.com/dotnet/sdk/tree/bea4c0d001d20d56f03237b465d5adc99205fc24)*
+*[dotnet/sdk@973aa95](https://github.com/dotnet/sdk/tree/973aa95973ff691883733bb80658e217afab5623)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@eccb082](https://github.com/dotnet/source-build-assets/tree/eccb0828682858d8daa029ba29adce07fd70d9a7)*
 - `src/source-build-externals`  
