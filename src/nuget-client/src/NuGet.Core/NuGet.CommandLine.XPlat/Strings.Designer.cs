@@ -2447,6 +2447,15 @@ namespace NuGet.CommandLine.XPlat {
                 return ResourceManager.GetString("SourcesCommandFormatDescription", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value..
+        /// </summary>
+        internal static string SourcesCommandMinPublishAgeHoursDescription {
+            get {
+                return ResourceManager.GetString("SourcesCommandMinPublishAgeHoursDescription", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Name of the source..
