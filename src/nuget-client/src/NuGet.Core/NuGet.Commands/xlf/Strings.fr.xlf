@@ -1237,6 +1237,11 @@ Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez Re
         <target state="translated">La source spécifiée est non valide. Indiquez une source valide.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
+        <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
+      </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">
         <source>Unable to find any package source(s) matching name: {0}.</source>
         <target state="translated">Impossible de localiser la ou les sources de package correspondant au nom suivant : {0}.</target>

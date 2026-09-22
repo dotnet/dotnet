@@ -1260,6 +1260,11 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <target state="translated">목록 명령 출력 형식: `자세히`(기본) 및 `짧게`.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
+        <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
+        <target state="new">The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
         <source>Name of the source.</source>
         <target state="translated">소스 이름입니다.</target>
