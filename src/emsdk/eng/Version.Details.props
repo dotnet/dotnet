@@ -21,6 +21,7 @@ This file should be imported by eng/Versions.props
     <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>10.0.0-alpha.1.26457.2</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion>
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26461.103</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildTasksFileCatalogPackageVersion>10.0.0-beta.26461.103</MicrosoftDotNetBuildTasksFileCatalogPackageVersion>
     <MicrosoftDotNetBuildTasksPackagingPackageVersion>10.0.0-beta.26461.103</MicrosoftDotNetBuildTasksPackagingPackageVersion>
     <MicrosoftDotNetBuildTasksTemplatingPackageVersion>10.0.0-beta.26461.103</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
     <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.26461.103</MicrosoftDotNetHelixSdkPackageVersion>
@@ -93,6 +94,7 @@ This file should be imported by eng/Versions.props
     <runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>$(runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportPackageVersion)</runtimewinx64MicrosoftNETCoreRuntimeWasmPythonTransportVersion>
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <MicrosoftDotNetBuildTasksFileCatalogVersion>$(MicrosoftDotNetBuildTasksFileCatalogPackageVersion)</MicrosoftDotNetBuildTasksFileCatalogVersion>
     <MicrosoftDotNetBuildTasksPackagingVersion>$(MicrosoftDotNetBuildTasksPackagingPackageVersion)</MicrosoftDotNetBuildTasksPackagingVersion>
     <MicrosoftDotNetBuildTasksTemplatingVersion>$(MicrosoftDotNetBuildTasksTemplatingPackageVersion)</MicrosoftDotNetBuildTasksTemplatingVersion>
     <MicrosoftDotNetHelixSdkVersion>$(MicrosoftDotNetHelixSdkPackageVersion)</MicrosoftDotNetHelixSdkVersion>
