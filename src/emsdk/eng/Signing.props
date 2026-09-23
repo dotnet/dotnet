@@ -8,6 +8,13 @@
     <FileExtensionSignInfo Include=".pyd" CertificateName="MicrosoftDotNet500" />
     <FileExtensionSignInfo Include=".vbs" CertificateName="MicrosoftDotNet500" />
 
+    <!-- Third-party libraries need to be signed even if they're already signed. -->
+    <FileSignInfo Include="libffi-8.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="libssl-3-arm64.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="libssl-3.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="libcrypto-3-arm64.dll" CertificateName="3PartySHA2" />
+    <FileSignInfo Include="libcrypto-3.dll" CertificateName="3PartySHA2" />
+
     <!-- JS files are customer-modifiable toolchain files. They cannot be
          Authenticode-signed because modifying a signed file breaks the signature.
          Instead, catalog files (emscripten-js.cat and node-js.cat) are generated and signed to provide
