@@ -48,6 +48,8 @@ internal sealed class MonitorState
         = new(WorkItemOutcomeKeyComparer.Instance);
     private readonly HashSet<(string ChainKey, string WorkItemName)> _failedTestWorkItems
         = new(WorkItemOutcomeKeyComparer.Instance);
+    private readonly Dictionary<(string JobName, string WorkItemName), string> _workItemConsoleOutputUris
+        = new(WorkItemOutcomeKeyComparer.Instance);
 
     // Helix job names whose per-work-item outcomes have already been reconciled into
     // _workItemOutcomes. Prevents the second reconciliation pass from re-processing
@@ -303,11 +305,12 @@ internal sealed class MonitorState
                 // the same logical stream must be able to replace the failure with a pass.
                 _failedTestWorkItems.Remove(key);
                 _workItemOutcomes[key] = passed;
-                if (wi.IsFailed)
+                _workItemConsoleOutputUris[(helixJob.JobName, wi.Name)] = wi.ConsoleOutputUri;
+                if (!passed)
                 {
                     TrackFailedWorkItemConsoleInfoLocked(helixJob, chainKey, wi);
                 }
-                else if (passed)
+                else
                 {
                     _failedWorkItemConsoleInfo.Remove(key);
                 }
@@ -366,11 +369,12 @@ internal sealed class MonitorState
                 // Ensure the final failure report includes test-only failures too.
                 if (!_failedWorkItemConsoleInfo.ContainsKey(key))
                 {
+                    _workItemConsoleOutputUris.TryGetValue(entry.Key, out string consoleOutputUri);
                     _failedWorkItemConsoleInfo[key] = new FailedWorkItemConsoleInfo(
                         job.DisplayName,
                         entry.Key.WorkItemName,
                         "Failed (AzDO tests)",
-                        "see Azure DevOps test run results");
+                        GetConsoleOutputText(consoleOutputUri));
                 }
             }
 
@@ -646,18 +650,11 @@ internal sealed class MonitorState
     private void TrackFailedWorkItemConsoleInfoLocked(HelixJobInfo helixJob, string chainKey, WorkItemSummary workItem)
     {
         var key = (chainKey, workItem.Name);
-        if (workItem.IsFailed)
-        {
-            _failedWorkItemConsoleInfo[key] = new FailedWorkItemConsoleInfo(
-                helixJob.DisplayName,
-                workItem.Name,
-                workItem.FormattedState,
-                GetConsoleOutputText(workItem.ConsoleOutputUri));
-        }
-        else
-        {
-            _failedWorkItemConsoleInfo.Remove(key);
-        }
+        _failedWorkItemConsoleInfo[key] = new FailedWorkItemConsoleInfo(
+            helixJob.DisplayName,
+            workItem.Name,
+            workItem.IsFailed ? workItem.FormattedState : "Failed (AzDO tests)",
+            GetConsoleOutputText(workItem.ConsoleOutputUri));
     }
 
     public static string GetConsoleOutputText(string consoleOutputUri)
