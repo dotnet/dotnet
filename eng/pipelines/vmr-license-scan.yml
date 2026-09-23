@@ -64,7 +64,7 @@ extends:
       os: linux
     containers:
       azurelinuxSourceBuildTestContainer:
-        image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-source-build-test-amd64
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-source-build-test-amd64
     sdl:
       sourceAnalysisPool:
           name: NetCore1ESPool-Svc-Internal
