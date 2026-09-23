@@ -11,6 +11,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26425.128</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildManifestPackageVersion>11.0.0-beta.26425.128</MicrosoftDotNetBuildManifestPackageVersion>
     <MicrosoftDotNetSignCheckTaskPackageVersion>11.0.0-beta.26425.128</MicrosoftDotNetSignCheckTaskPackageVersion>
+    <MicrosoftNETSdkPackageVersion>11.0.100-rc.1.26425.128</MicrosoftNETSdkPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
@@ -20,5 +21,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
     <MicrosoftDotNetSignCheckTaskVersion>$(MicrosoftDotNetSignCheckTaskPackageVersion)</MicrosoftDotNetSignCheckTaskVersion>
+    <MicrosoftNETSdkVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETSdkVersion>
   </PropertyGroup>
 </Project>
