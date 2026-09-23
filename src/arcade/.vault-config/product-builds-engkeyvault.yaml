@@ -30,6 +30,13 @@ secrets:
       hasWebhookSecret: false
       hasOAuthSecret: false
 
+  dotnet-vscode-csharp-publishing:
+    type: github-app-secret
+    parameters:
+      hasPrivateKey: true
+      hasWebhookSecret: false
+      hasOAuthSecret: false
+
   oneloc-localization-app:
     type: github-app-secret
     parameters:
