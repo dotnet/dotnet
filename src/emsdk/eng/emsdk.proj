@@ -380,14 +380,15 @@
   </Target>
 
   <!--
-    Generate a catalog (.cat) file covering all .js files in the SDK package.
-    The .js files are customer-modifiable Emscripten toolchain files that cannot be
-    directly Authenticode-signed. The .cat provides integrity verification without
+    Generate catalog (.cat) files covering all .js files in the SDK and Node packages.
+    The .js files are customer-modifiable toolchain files that cannot be
+    directly Authenticode-signed. The catalogs provide integrity verification without
     preventing modification.
   -->
   <Target Name="GenerateCatalogFiles" AfterTargets="ReallyBuild">
     <PropertyGroup>
-      <_CatOutputPath>$(ArtifactsObjDir)upstream/emscripten/emscripten-js.cat</_CatOutputPath>
+      <_EmscriptenCatOutputPath>$(ArtifactsObjDir)upstream/emscripten/emscripten-js.cat</_EmscriptenCatOutputPath>
+      <_NodeCatOutputPath>$(ArtifactsObjDir)node/node-js.cat</_NodeCatOutputPath>
     </PropertyGroup>
 
     <!--
@@ -396,12 +397,15 @@
       before ReallyBuild runs, and would therefore miss them.
     -->
     <ItemGroup>
-      <_CatalogFile Include="$(ArtifactsObjDir)upstream/**/*.js" />
+      <_EmscriptenCatalogFile Include="$(ArtifactsObjDir)upstream/**/*.js" />
+      <_NodeCatalogFile Include="$(ArtifactsObjDir)node/**/*.js" />
     </ItemGroup>
 
-    <GenerateFileCatalog Files="@(_CatalogFile)" OutputPath="$(_CatOutputPath)" />
+    <GenerateFileCatalog Files="@(_EmscriptenCatalogFile)" OutputPath="$(_EmscriptenCatOutputPath)" />
+    <GenerateFileCatalog Files="@(_NodeCatalogFile)" OutputPath="$(_NodeCatOutputPath)" Condition="'@(_NodeCatalogFile)' != ''" />
 
-    <Message Condition="Exists('$(_CatOutputPath)')" Importance="High" Text="Generated catalog file: $(_CatOutputPath)" />
+    <Message Condition="Exists('$(_EmscriptenCatOutputPath)')" Importance="High" Text="Generated catalog file: $(_EmscriptenCatOutputPath)" />
+    <Message Condition="Exists('$(_NodeCatOutputPath)')" Importance="High" Text="Generated catalog file: $(_NodeCatOutputPath)" />
   </Target>
 
   <Target Name="ReallyPack" DependsOnTargets="Build" BeforeTargets="Pack">
