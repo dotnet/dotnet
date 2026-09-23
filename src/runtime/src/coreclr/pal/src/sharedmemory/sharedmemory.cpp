@@ -265,19 +265,19 @@ bool SharedMemoryHelpers::InitializeUserSpecificSharedFilesPath()
             return false;
         }
 
-        CreateDirectory(path, PermissionsMask_AllUsers_ReadWriteExecute);
+        CreateDirectory(path, PermissionsMask_OwnerUser_ReadWriteExecute);
         if (!AppendPathComponent(path, "corefx"))
         {
             return false;
         }
 
-        CreateDirectory(path, PermissionsMask_AllUsers_ReadWriteExecute);
+        CreateDirectory(path, PermissionsMask_OwnerUser_ReadWriteExecute);
         if (!AppendPathComponent(path, "Runtime"))
         {
             return false;
         }
 
-        CreateDirectory(path, PermissionsMask_AllUsers_ReadWriteExecute);
+        CreateDirectory(path, PermissionsMask_OwnerUser_ReadWriteExecute);
         if (!AppendPathComponent(path, "SharedMemory"))
         {
             return false;
