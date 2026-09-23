@@ -38,6 +38,7 @@ namespace NuGet.Build.Tasks.Pack.Test
             {
                 nuspecProps.Add($"id={testCase.IdNuspecProperties}");
             }
+            nuspecProps.AddRange(testCase.AdditionalNuspecProperties);
             if (nuspecProps.Count > 0)
             {
                 outputItemTask.NuspecProperties = nuspecProps.ToArray();
@@ -127,44 +128,6 @@ namespace NuGet.Build.Tasks.Pack.Test
                 .ToArray();
 
             actualPackageFiles.Should().BeEquivalentTo(new[] { "NuspecPackage.1.2.3.nupkg" });
-        }
-
-        [Fact]
-        public void GetPackOutputItemsTaskTests_Execute_EntireMetadataFromNuspecPropertiesToken_ResolvesIdAndVersion()
-        {
-            using var testDirectory = TestDirectory.Create();
-
-            var nuspecPath = Path.Combine(testDirectory.Path, "test-substitution.nuspec");
-            File.WriteAllText(nuspecPath, """
-                <?xml version="1.0" encoding="utf-8"?>
-                <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-                  <metadata>
-                    $CommonMetadata$
-                  </metadata>
-                </package>
-                """);
-
-            var outputItemTask = new GetPackOutputItemsTask
-            {
-                PackageId = "ProjectPackageId",
-                PackageVersion = "1.0.0",
-                PackageOutputPath = testDirectory.Path,
-                NuspecOutputPath = testDirectory.Path,
-                SymbolPackageFormat = "snupkg",
-                NuspecFile = nuspecPath,
-                // CommonMetadata expands to the full set of required metadata elements.
-                NuspecProperties = ["CommonMetadata=<id>CommonPackage</id><version>3.2.1</version><authors>Test</authors><description>desc</description>"],
-            };
-
-            Assert.True(outputItemTask.Execute());
-
-            string[] actualPackageFiles = outputItemTask.OutputPackItems
-                .Select(item => Path.GetFileName(item.ItemSpec))
-                .Where(name => name.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-
-            // The id and version must come from the expanded $CommonMetadata$ token.
-            actualPackageFiles.Should().BeEquivalentTo(new[] { "CommonPackage.3.2.1.nupkg" });
         }
     }
 }
