@@ -43,10 +43,10 @@
       "commitSha": "9d95fcfe7fb51f3f83437b901b68f93de09cb528"
     },
     {
-      "barId": 332479,
+      "barId": 333392,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "6045954ed1d5ee3d893ee36265aa0cb625309f6e"
+      "commitSha": "6fee0e853194d7dfced0983aed042e5e6ea158ac"
     },
     {
       "barId": 333093,
