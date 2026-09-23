@@ -397,12 +397,10 @@ bool SharedMemoryHelpers::EnsureDirectoryExists(
     const char *path,
     const SharedMemoryId *id,
     bool isGlobalLockAcquired,
-    bool createIfNotExist,
-    bool isSystemDirectory)
+    bool createIfNotExist)
 {
     _ASSERTE(path != nullptr);
     _ASSERTE(id != nullptr);
-    _ASSERTE(!(isSystemDirectory && createIfNotExist)); // should not create or change permissions on system directories
     _ASSERTE(SharedMemoryManager::IsCreationDeletionProcessLockAcquired());
     _ASSERTE(!isGlobalLockAcquired || SharedMemoryManager::IsCreationDeletionFileLockAcquired());
 
@@ -549,62 +547,20 @@ bool SharedMemoryHelpers::EnsureDirectoryExists(
         statResult = lstat(path, &statInfo);
     }
 
-    if (statResult != 0)
+    if (statResult == 0)
     {
-        int errorCode = errno;
-        if (errors != nullptr)
-        {
-            errors->Append(
-                "lstat(\"%s\", ...) == %d; errno == %s;",
-                path,
-                statResult,
-                GetFriendlyErrorCodeString(errorCode));
-        }
-
-        throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
-    }
-
-    if (isSystemDirectory)
-    {
-        // For system directories (such as TMPDIR), assume that permissions are correct as they are
-        // system defined.
-        //
-        // The subfolders under HOME are not technically defined by the system, but the only way for
-        // them to have invalid permissions is to manually run a process under one UID with another user's
-        // home directory set to HOME and for this to be the first access to the subfolder on the system.
+        // Directory exists, no need to create it
         return true;
     }
 
-    // For runtime-owned directories beneath the selected system directory,
-    // require sufficient permissions so that shared memory files may be shared according to their scope.
-
-    // For user-scoped directories, verify the owner UID
-    if (id->IsUserScope() && statInfo.st_uid != id->GetUserScopeUid())
-    {
-        if (errors != nullptr)
-        {
-            errors->Append(
-                "lstat(\"%s\", &info) == 0; info.st_uid == %u; info.st_uid != %u;",
-                path,
-                (int)statInfo.st_uid,
-                (int)id->GetUserScopeUid());
-        }
-
-        throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
-    }
-
-    if ((statInfo.st_mode & PermissionsMask_AllUsers_ReadWriteExecute) == permissionsMask)
-    {
-        return true;
-    }
-
+    int errorCode = errno;
     if (errors != nullptr)
     {
         errors->Append(
-            "lstat(\"%s\", &info) == 0; info.st_mode == 0x%x; (info.st_mode & AllUsers_ReadWriteExecute) != %s_ReadWriteExecute;",
+            "lstat(\"%s\", ...) == %d; errno == %s;",
             path,
-            (int)statInfo.st_mode,
-            id->IsUserScope() ? "OwnerUser" : "AllUsers");
+            statResult,
+            GetFriendlyErrorCodeString(errorCode));
     }
 
     throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
@@ -754,120 +710,71 @@ int SharedMemoryHelpers::EnsureDirectoryExistsAt(
 
     int directoryFileDescriptor =
         OpenAt(errors, parentDirectoryFileDescriptor, name, path, O_RDONLY | O_NOFOLLOW | O_DIRECTORY);
-    if (directoryFileDescriptor == -1)
+    if (directoryFileDescriptor != -1)
     {
-        _ASSERTE(errno == ENOENT);
-        if (!createIfNotExist)
-        {
-            return -1;
-        }
-
-        mode_t permissionsMask =
-            id->IsUserScope() ? PermissionsMask_OwnerUser_ReadWriteExecute : PermissionsMask_AllUsers_ReadWriteExecute;
-        int operationResult;
-        do
-        {
-            operationResult = mkdirat(parentDirectoryFileDescriptor, name, permissionsMask);
-        } while (operationResult != 0 && errno == EINTR);
-
-        if (operationResult != 0)
-        {
-            if (errors != nullptr)
-            {
-                int errorCode = errno;
-                errors->Append(
-                    "mkdirat(%d, \"%s\", %s_ReadWriteExecute) == -1; errno == %s;",
-                    parentDirectoryFileDescriptor,
-                    path,
-                    id->IsUserScope() ? "OwnerUser" : "AllUsers",
-                    GetFriendlyErrorCodeString(errorCode));
-            }
-
-            throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
-        }
-
-        try
-        {
-            directoryFileDescriptor =
-                OpenAt(errors, parentDirectoryFileDescriptor, name, path, O_RDONLY | O_NOFOLLOW | O_DIRECTORY);
-        }
-        catch (SharedMemoryException)
-        {
-            unlinkat(parentDirectoryFileDescriptor, name, AT_REMOVEDIR);
-            throw;
-        }
-
-        _ASSERTE(directoryFileDescriptor != -1);
-        do
-        {
-            operationResult = fchmod(directoryFileDescriptor, permissionsMask);
-        } while (operationResult != 0 && errno == EINTR);
-
-        if (operationResult != 0)
-        {
-            int errorCode = errno;
-            if (errors != nullptr)
-            {
-                errors->Append(
-                    "fchmod(directoryFileDescriptor, %s_ReadWriteExecute) == %d; errno == %s;",
-                    id->IsUserScope() ? "OwnerUser" : "AllUsers",
-                    operationResult,
-                    GetFriendlyErrorCodeString(errorCode));
-            }
-
-            CloseFile(directoryFileDescriptor);
-            unlinkat(parentDirectoryFileDescriptor, name, AT_REMOVEDIR);
-            throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
-        }
+        return directoryFileDescriptor;
     }
-
-    struct stat statInfo;
-    int statResult = fstat(directoryFileDescriptor, &statInfo);
-    if (statResult != 0)
+    _ASSERTE(errno == ENOENT);
+    if (!createIfNotExist)
     {
-        if (errors != nullptr)
-        {
-            int errorCode = errno;
-            errors->Append(
-                "fstat(\"%s\", ...) == %d; errno == %s;",
-                path,
-                statResult,
-                GetFriendlyErrorCodeString(errorCode));
-        }
-
-        CloseFile(directoryFileDescriptor);
-        throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
+        return -1;
     }
 
     mode_t permissionsMask =
         id->IsUserScope() ? PermissionsMask_OwnerUser_ReadWriteExecute : PermissionsMask_AllUsers_ReadWriteExecute;
-    if (id->IsUserScope() && statInfo.st_uid != id->GetUserScopeUid())
+    int operationResult;
+    do
+    {
+        operationResult = mkdirat(parentDirectoryFileDescriptor, name, permissionsMask);
+    } while (operationResult != 0 && errno == EINTR);
+
+    if (operationResult != 0)
     {
         if (errors != nullptr)
         {
+            int errorCode = errno;
             errors->Append(
-                "fstat(\"%s\", &info) == 0; info.st_uid == %u; info.st_uid != %u;",
+                "mkdirat(%d, \"%s\", %s_ReadWriteExecute) == -1; errno == %s;",
+                parentDirectoryFileDescriptor,
                 path,
-                (int)statInfo.st_uid,
-                (int)id->GetUserScopeUid());
+                id->IsUserScope() ? "OwnerUser" : "AllUsers",
+                GetFriendlyErrorCodeString(errorCode));
         }
 
-        CloseFile(directoryFileDescriptor);
         throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
     }
 
-    if ((statInfo.st_mode & PermissionsMask_AllUsers_ReadWriteExecute) != permissionsMask)
+    try
     {
+        directoryFileDescriptor =
+            OpenAt(errors, parentDirectoryFileDescriptor, name, path, O_RDONLY | O_NOFOLLOW | O_DIRECTORY);
+    }
+    catch (SharedMemoryException)
+    {
+        unlinkat(parentDirectoryFileDescriptor, name, AT_REMOVEDIR);
+        throw;
+    }
+
+    _ASSERTE(directoryFileDescriptor != -1);
+    do
+    {
+        operationResult = fchmod(directoryFileDescriptor, permissionsMask);
+    } while (operationResult != 0 && errno == EINTR);
+
+    if (operationResult != 0)
+    {
+        int errorCode = errno;
         if (errors != nullptr)
         {
             errors->Append(
-                "fstat(\"%s\", &info) == 0; info.st_mode == 0x%x; (info.st_mode & AllUsers_ReadWriteExecute) != %s_ReadWriteExecute;",
-                path,
-                (int)statInfo.st_mode,
-                id->IsUserScope() ? "OwnerUser" : "AllUsers");
+                "fchmod(directoryFileDescriptor, %s_ReadWriteExecute) == %d; errno == %s;",
+                id->IsUserScope() ? "OwnerUser" : "AllUsers",
+                operationResult,
+                GetFriendlyErrorCodeString(errorCode));
         }
 
         CloseFile(directoryFileDescriptor);
+        unlinkat(parentDirectoryFileDescriptor, name, AT_REMOVEDIR);
         throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
     }
 
@@ -1977,8 +1884,7 @@ void SharedMemoryManager::AcquireCreationDeletionFileLock(SharedMemorySystemCall
                 dirPath,
                 id,
                 false /* isGlobalLockAcquired */,
-                false /* createIfNotExist */,
-                true /* isSystemDirectory */))
+                false /* createIfNotExist */))
         {
             _ASSERTE(errno == ENOENT);
             if (errors != nullptr)
