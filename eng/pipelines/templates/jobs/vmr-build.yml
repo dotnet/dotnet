@@ -702,8 +702,10 @@ jobs:
         displayName: Tag build with SDK version
 
     - ${{ if eq(parameters.runTests, 'True') }}:
+      # Keep the test dependency graph consistent with the preceding product build.
       - script: build.cmd
           $(baseArguments)
+          /p:VerticalName=$(Agent.JobName)
           $(targetProperties)
           $(buildPassProperties)
           ${{ parameters.extraProperties }}
