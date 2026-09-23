@@ -116,28 +116,25 @@ steps:
     scriptType: pscore
     scriptLocation: inlineScript
     inlineScript: |
-      Import-Module '$(Build.SourcesDirectory)/eng/VmrGitHubAuthentication.psm1' -Force
-      $repositoriesByOwner = Get-VmrGitHubRepositoriesByOwner
-
-      & '$(Build.SourcesDirectory)/eng/get-github-app-token.ps1' `
+      & '$(Build.SourcesDirectory)/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
-        -AppSecretName vmr-artifact-reader-github-app `
+        -AppIdSecretName vmr-artifact-reader-github-app-app-id `
+        -AppPrivateKeySecretName vmr-artifact-reader-github-app-app-private-key `
         -InstallationOwner dotnet `
-        -RepositoryNames $repositoriesByOwner.dotnet `
         -OutputVariableName DotnetGitHubAppInstallationToken
 
-      & '$(Build.SourcesDirectory)/eng/get-github-app-token.ps1' `
+      & '$(Build.SourcesDirectory)/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
-        -AppSecretName vmr-artifact-reader-github-app `
+        -AppIdSecretName vmr-artifact-reader-github-app-app-id `
+        -AppPrivateKeySecretName vmr-artifact-reader-github-app-app-private-key `
         -InstallationOwner NuGet `
-        -RepositoryNames $repositoriesByOwner.nuget `
         -OutputVariableName NuGetGitHubAppInstallationToken
 
-      & '$(Build.SourcesDirectory)/eng/get-github-app-token.ps1' `
+      & '$(Build.SourcesDirectory)/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
-        -AppSecretName vmr-artifact-reader-github-app `
+        -AppIdSecretName vmr-artifact-reader-github-app-app-id `
+        -AppPrivateKeySecretName vmr-artifact-reader-github-app-app-private-key `
         -InstallationOwner microsoft `
-        -RepositoryNames $repositoriesByOwner.microsoft `
         -OutputVariableName MicrosoftGitHubAppInstallationToken
 
 - task: AzureCLI@2
