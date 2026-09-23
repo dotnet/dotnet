@@ -27,6 +27,14 @@
     <ProjectReference Include="$(RepositoryEngineeringDir)tools\tools.proj"
                       BuildInParallel="true" />
 
+    <!-- Finish runtime and its prerequisites before scheduling the remaining repositories.
+         Serializing this reference does not disable parallelism inside the runtime build. -->
+    <ProjectReference Include="$(RepoProjectsDir)runtime.proj"
+                      Condition="'$(DotNetBuildSharedComponents)' == 'true' and
+                                 '$(DotNetBuildSourceOnly)' != 'true' and
+                                 '$(ShortStack)' != 'true' and
+                                 ('$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1')"
+                      BuildInParallel="false" />
     <ProjectReference Include="$(RepoProjectsDir)dotnet.proj" />
 
     <!-- Post-build: Source-only validation -->
