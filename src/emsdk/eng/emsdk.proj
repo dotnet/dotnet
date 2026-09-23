@@ -228,7 +228,7 @@
     <Delete Files="$(EmscriptenDir)\node_modules\.bin\tabtab" />
     <Delete Files="$(EmscriptenDir)\node_modules\.bin\wscat" />
 
-    <!-- Build only the cache variants retained by the package layout below. -->
+    <!-- Build only the cache variants shipped in the .NET packages. -->
     <Exec WorkingDirectory="$(EmscriptenDir)"
       Command="&quot;$(PythonPath)&quot; &quot;$(_DotNetCacheBuilder)&quot; --emscripten-dir &quot;$(EmscriptenDir)&quot; --exclusions &quot;$(_DotNetCacheExclusionsFile)&quot;"
       EnvironmentVariables="EM_LLVM_ROOT=$(BuildLLVMDir)\bin;EM_BINARYEN_ROOT=$(BuildBinaryenDir);EM_NODE_JS=$(BuildNodeDir)\bin\node"/>
@@ -344,15 +344,6 @@
     <!-- move the emscripten cache to a separate directory -->
     <Move SourceFiles="@(CacheSdkFilesToMove)"
           DestinationFiles="$(CacheSdkFilesDir)emscripten\cache\%(RecursiveDir)%(Filename)%(Extension)" />
-
-    <ReadLinesFromFile File="$(_DotNetCacheExclusionsFile)">
-      <Output TaskParameter="Lines" ItemName="_DotNetCacheExclusion" />
-    </ReadLinesFromFile>
-    <!-- Expand wildcard patterns after reading the shared policy, including stale cached variants. -->
-    <CreateItem Include="@(_DotNetCacheExclusion->'$(CacheSdkFilesDir)emscripten\cache\sysroot\lib\wasm32-emscripten\%(Identity)')">
-      <Output TaskParameter="Include" ItemName="DeleteCacheFiles" />
-    </CreateItem>
-    <Delete Files="@(DeleteCacheFiles)" />
   </Target>
 
   <!--

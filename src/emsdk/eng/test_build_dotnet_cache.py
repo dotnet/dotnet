@@ -45,7 +45,7 @@ class DotNetCacheTests(unittest.TestCase):
     with self.assertRaisesRegex(ValueError, 'every'):
       select_targets({'libc': Library('libc.a')}, ['*.a'])
 
-  def test_reads_one_policy_for_build_and_packaging(self):
+  def test_reads_cache_exclusion_policy(self):
     with tempfile.TemporaryDirectory() as root:
       path = Path(root) / 'exclusions.txt'
       path.write_text('libc-asan.a\n\nlib*-ww.a\n', encoding='utf-8')

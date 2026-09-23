@@ -248,10 +248,10 @@ or branch from source" to get started.
 ## .NET packaged cache
 
 The .NET build uses `eng/build_dotnet_cache.py` to request the Emscripten system
-library variants retained by its packages. `eng/cache-exclusions.txt` is shared
-by target selection and package staging, so an excluded archive does not need
-to be compiled just to be discarded. Staging still prunes excluded variants
-left in a working cache by an earlier, broader build.
+library variants retained by its packages. `eng/cache-exclusions.txt` controls
+target selection, so excluded archives are not compiled or deleted afterward.
+Use a clean generated cache and package staging when switching from the previous
+`SYSTEM`-based build; existing broader caches are not migrated.
 
 The selector delegates compilation and common sysroot setup to the transported
 Emscripten builder. It replaces both `SYSTEM` and the redundant `MINIMAL` pass,
