@@ -32,6 +32,9 @@
     <PropertyGroup Condition="'$(TargetsWasi)' == 'true'">
       <_BuildNativeEnvironmentVariables>WASI_SDK_PATH=$(RuntimeBuildWasiSdkPath)</_BuildNativeEnvironmentVariables>
     </PropertyGroup>
+    <PropertyGroup>
+      <_BuildNativeEnvironmentVariables>$(_BuildNativeEnvironmentVariables);__RootBinDir=$(ArtifactsDir)</_BuildNativeEnvironmentVariables>
+    </PropertyGroup>
   </Target>
 
   <Target Name="BuildNativeUnix"
