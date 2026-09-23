@@ -106,6 +106,40 @@ steps:
   name: InstallDarc
   displayName: Install darc
 
+- pwsh: eng/tests/VmrGitHubAppToken.Tests.ps1
+  displayName: Validate GitHub App token flow
+
+- task: AzureCLI@2
+  displayName: Get GitHub App installation tokens
+  inputs:
+    azureSubscription: dnceng-vmr-artifact-reader-githubapp
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: |
+      Import-Module '$(Build.SourcesDirectory)/eng/VmrGitHubAuthentication.psm1' -Force
+      $repositoriesByOwner = Get-VmrGitHubRepositoriesByOwner
+
+      & '$(Build.SourcesDirectory)/eng/get-github-app-token.ps1' `
+        -KeyVaultName EngKeyVault `
+        -AppSecretName vmr-artifact-reader-github-app `
+        -InstallationOwner dotnet `
+        -RepositoryNames $repositoriesByOwner.dotnet `
+        -OutputVariableName DotnetGitHubAppInstallationToken
+
+      & '$(Build.SourcesDirectory)/eng/get-github-app-token.ps1' `
+        -KeyVaultName EngKeyVault `
+        -AppSecretName vmr-artifact-reader-github-app `
+        -InstallationOwner NuGet `
+        -RepositoryNames $repositoriesByOwner.nuget `
+        -OutputVariableName NuGetGitHubAppInstallationToken
+
+      & '$(Build.SourcesDirectory)/eng/get-github-app-token.ps1' `
+        -KeyVaultName EngKeyVault `
+        -AppSecretName vmr-artifact-reader-github-app `
+        -InstallationOwner microsoft `
+        -RepositoryNames $repositoriesByOwner.microsoft `
+        -OutputVariableName MicrosoftGitHubAppInstallationToken
+
 - task: AzureCLI@2
   displayName: 'Gather Drop'
   continueOnError: ${{ parameters.continueOnError }}
@@ -117,16 +151,17 @@ steps:
       $filePath = "$(GetSourceManifest.SourceManifestPath)"
       $outputPath = "$(Build.ArtifactStagingDirectory)/base-assets/"
       $darcPath = "$(InstallDarc.darcPath)"
-      $githubPat = "$(BotAccount-dotnet-bot-repo-PAT)"
       $azdevPat = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
 
-      $assetFilter = "`".*`""
+      $assetFilter = ".*"
 
       $(Build.SourcesDirectory)/eng/GatherDrops.ps1 `
         -filePath $filePath `
         -outputPath $outputPath `
         -darcPath $darcPath `
-        -githubPat $githubPat `
+        -dotnetGitHubToken "$(DotnetGitHubAppInstallationToken)" `
+        -nugetGitHubToken "$(NuGetGitHubAppInstallationToken)" `
+        -microsoftGitHubToken "$(MicrosoftGitHubAppInstallationToken)" `
         -azdevPat $azdevPat `
         -includedRepositories ${{ parameters.includedRepositories }} `
         -assetFilter $assetFilter `

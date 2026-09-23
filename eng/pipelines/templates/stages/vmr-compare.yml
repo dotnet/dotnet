@@ -23,8 +23,6 @@ parameters:
 stages:
 - stage: VMR_Comparison
   displayName: VMR Comparison
-  variables:
-  - group: DotNetBot-GitHub-AllBranches
   jobs:
   - job: CompareAssets
     displayName: Compare Assets
