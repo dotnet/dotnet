@@ -13,7 +13,7 @@ using NuGet.Test.Utility;
 namespace NuGet.Tests.Apex
 {
     [TestClass]
-    public class NuGetConsoleTestCase : SharedVisualStudioHostTestClass
+    public partial class NuGetConsoleTestCase : SharedVisualStudioHostTestClass
     {
         [DataTestMethod]
         [DynamicData(nameof(GetPackageReferenceTemplates), DynamicDataSourceType.Method)]
