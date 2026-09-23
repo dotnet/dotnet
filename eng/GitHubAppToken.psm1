@@ -76,12 +76,13 @@ function Get-GitHubAppInstallationToken {
   $installations = [Collections.Generic.List[object]]::new()
   $page = 1
   do {
-    $pageResponse = @(& $RequestInvoker 'GET' "$GitHubApiUrl/app/installations?per_page=100&page=$page" $headers $null)
-    foreach ($installation in $pageResponse) {
+    $pageResponse = & $RequestInvoker 'GET' "$GitHubApiUrl/app/installations?per_page=100&page=$page" $headers $null
+    $pageInstallations = @($pageResponse)
+    foreach ($installation in $pageInstallations) {
       $installations.Add($installation)
     }
     $page++
-  } while ($pageResponse.Count -eq 100)
+  } while ($pageInstallations.Count -eq 100)
 
   $matches = @($installations | Where-Object { $_.account.login -ieq $InstallationOwner })
   if ($matches.Count -eq 0) {

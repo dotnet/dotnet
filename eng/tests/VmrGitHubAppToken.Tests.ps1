@@ -68,11 +68,21 @@ $requestInvoker = {
     Uri = $Uri
     Body = $Body
   })
-  if ($Method -eq 'GET') {
-    return @([pscustomobject]@{
-      id = 42
-      account = [pscustomobject]@{ login = 'dotnet' }
-    })
+  if ($Method -eq 'GET' -and $Uri -match '/app/installations\?') {
+    return @(
+      [pscustomobject]@{
+        id = 40
+        account = [pscustomobject]@{ login = 'NuGet' }
+      }
+      [pscustomobject]@{
+        id = 41
+        account = [pscustomobject]@{ login = 'microsoft' }
+      }
+      [pscustomobject]@{
+        id = 42
+        account = [pscustomobject]@{ login = 'dotnet' }
+      }
+    )
   }
   [pscustomobject]@{
     token = 'test-installation-token'
@@ -89,6 +99,7 @@ $response = Get-GitHubAppInstallationToken `
 
 Assert-Equal 'test-installation-token' $response.token 'Installation token was not returned.'
 Assert-Equal 2 $requests.Count 'Unexpected number of GitHub API requests.'
+Assert-Equal 'https://example.invalid/app/installations/42/access_tokens' $requests[1].Uri 'The wrong installation was selected.'
 $tokenRequest = $requests[1].Body | ConvertFrom-Json
 Assert-Equal 'read' $tokenRequest.permissions.contents 'Token permissions were not downscoped.'
 Assert-Equal 'arcade' $tokenRequest.repositories[0] 'First repository restriction is incorrect.'

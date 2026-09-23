@@ -55,6 +55,7 @@ $appId = Get-KeyVaultSecretValue "$AppSecretName-app-id"
 $privateKey = Get-KeyVaultSecretValue "$AppSecretName-app-private-key"
 
 try {
+  Write-Host "Requesting a GitHub App installation token for '$InstallationOwner' with repository access validated against: $($RepositoryNames -join ', ')."
   $jwt = New-GitHubAppJwt -AppId $appId -PrivateKeyPem $privateKey
   $tokenResponse = Get-GitHubAppInstallationToken `
     -Jwt $jwt `
