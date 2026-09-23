@@ -127,7 +127,7 @@ public:
     static bool BuildSharedMemoryLockFilesDirectoryPath(PathCharString& path, const SharedMemoryId *id);
     static bool BuildSharedMemoryLockFilesSessionDirectoryPath(PathCharString& path, const SharedMemoryId *id);
 
-    static bool EnsureDirectoryExists(SharedMemorySystemCallErrors *errors, const char *path, const SharedMemoryId *id, bool isGlobalLockAcquired, bool createIfNotExist = true);
+    static bool EnsureDirectoryExists(SharedMemorySystemCallErrors *errors, const char *path, const SharedMemoryId *id, bool isGlobalLockAcquired, bool createIfNotExist = true, bool isSystemDirectory = false);
 private:
     static int Open(SharedMemorySystemCallErrors *errors, LPCSTR path, int flags, mode_t mode = static_cast<mode_t>(0));
     static int OpenAt(SharedMemorySystemCallErrors *errors, int directoryFileDescriptor, LPCSTR name, LPCSTR path, int flags, mode_t mode = static_cast<mode_t>(0));

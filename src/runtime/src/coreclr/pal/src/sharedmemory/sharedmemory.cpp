@@ -397,10 +397,12 @@ bool SharedMemoryHelpers::EnsureDirectoryExists(
     const char *path,
     const SharedMemoryId *id,
     bool isGlobalLockAcquired,
-    bool createIfNotExist)
+    bool createIfNotExist,
+    bool isSystemDirectory)
 {
     _ASSERTE(path != nullptr);
     _ASSERTE(id != nullptr);
+    _ASSERTE(!(isSystemDirectory && createIfNotExist)); // should not create or change permissions on system directories
     _ASSERTE(SharedMemoryManager::IsCreationDeletionProcessLockAcquired());
     _ASSERTE(!isGlobalLockAcquired || SharedMemoryManager::IsCreationDeletionFileLockAcquired());
 
@@ -560,6 +562,17 @@ bool SharedMemoryHelpers::EnsureDirectoryExists(
         }
 
         throw SharedMemoryException(static_cast<DWORD>(SharedMemoryError::IO));
+    }
+
+    if (isSystemDirectory)
+    {
+        // For system directories (such as TMPDIR), assume that permissions are correct as they are
+        // system defined.
+        //
+        // The subfolders under HOME are not technically defined by the system, but the only way for
+        // them to have invalid permissions is to manually run a process under one UID with another user's
+        // home directory set to HOME and for this to be the first access to the subfolder on the system.
+        return true;
     }
 
     // For runtime-owned directories beneath the selected system directory,
@@ -1964,7 +1977,8 @@ void SharedMemoryManager::AcquireCreationDeletionFileLock(SharedMemorySystemCall
                 dirPath,
                 id,
                 false /* isGlobalLockAcquired */,
-                false /* createIfNotExist */))
+                false /* createIfNotExist */,
+                true /* isSystemDirectory */))
         {
             _ASSERTE(errno == ENOENT);
             if (errors != nullptr)
