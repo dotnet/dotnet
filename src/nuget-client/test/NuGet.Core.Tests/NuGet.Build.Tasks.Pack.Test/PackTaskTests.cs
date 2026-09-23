@@ -499,6 +499,7 @@ namespace NuGet.Build.Tasks.Pack.Test
             {
                 nuspecProps.Add("id=" + testCase.IdNuspecProperties);
             }
+            nuspecProps.AddRange(testCase.AdditionalNuspecProperties);
 
             var packTask = new PackTask()
             {
