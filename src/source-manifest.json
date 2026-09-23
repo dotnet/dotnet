@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "973aa95973ff691883733bb80658e217afab5623"
+      "commitSha": "70d63c80d83f29bf5bf1ad1a47e1fec76b8444b8"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26451.2",
@@ -139,10 +139,10 @@
       "commitSha": "0710a7892d89999956e8808c28e9dd0512bd53f3"
     },
     {
-      "packageVersion": "9.0.122-servicing.26467.7",
+      "packageVersion": "9.0.122-servicing.26472.7",
       "path": "templating",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-templating",
-      "commitSha": "5e8b497306ef22a88cd18b45ce28da2290a534df"
+      "commitSha": "77d8aa344b9c00a182487b430cd3ad539191ba8e"
     },
     {
       "packageVersion": "1.1.0-rtm.25262.1",
