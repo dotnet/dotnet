@@ -47,6 +47,7 @@ namespace NuGet.Build.Tasks.Pack.Test
                         // Pinned regression case: PackTask treats NuspecProperties=id=... as $id$ substitution only;
                         // a literal <id> in the nuspec wins. GetPackOutputItemsTask must agree with that.
                         new() { Scenario = "WithNuspec_IdInNuspecPropertiesDoesNotOverrideLiteralId", OutputNupkgNames = ["nusp.4.0.0.nupkg"], VersionProjProp = "2.0.0.0", UseNuspecFile = true, IdNuspecProperties = "shouldBeIgnored", VersionNuspecProperties = "       ", VersionNuspecMeta = "4.0.0.0" },
+                        new() { Scenario = "WithNuspec_ResolvesMetadataToken", OutputNupkgNames = ["CommonPackage.3.2.1.nupkg"], VersionProjProp = "1.0.0", UseNuspecFile = true, NuspecMetadata = "$CommonMetadata$", AdditionalNuspecProperties = ["CommonMetadata=<id>CommonPackage</id><version>3.2.1</version><authors>Test</authors><description>desc</description>"] },
 
                         // has symbol
                         new() { Scenario = "NoNuspec_SnupkgUsesNormalizedVersion", OutputNupkgNames = ["proj.2.1.0.nupkg", "proj.2.1.0.snupkg"], VersionProjProp = "2.1.0.0", UseNuspecFile = false, IncludeSymbols = true, SymbolPackageFormat = SymbolPackageFormat.Snupkg },
@@ -69,7 +70,11 @@ namespace NuGet.Build.Tasks.Pack.Test
 
         public string[] OutputNupkgNames { get; set; } = Array.Empty<string>();
 
+        public string[] AdditionalNuspecProperties { get; set; } = Array.Empty<string>();
+
         public string IdNuspecProperties { get; set; } = string.Empty;
+
+        public string NuspecMetadata { get; set; } = string.Empty;
 
         public string VersionProjProp { get; set; } = string.Empty;
 
@@ -94,7 +99,9 @@ namespace NuGet.Build.Tasks.Pack.Test
         {
             info.AddValue(nameof(Scenario), Scenario);
             info.AddValue(nameof(OutputNupkgNames), OutputNupkgNames);
+            info.AddValue(nameof(AdditionalNuspecProperties), AdditionalNuspecProperties);
             info.AddValue(nameof(IdNuspecProperties), IdNuspecProperties);
+            info.AddValue(nameof(NuspecMetadata), NuspecMetadata);
             info.AddValue(nameof(VersionProjProp), VersionProjProp);
             info.AddValue(nameof(VersionNuspecProperties), VersionNuspecProperties);
             info.AddValue(nameof(VersionNuspecMeta), VersionNuspecMeta);
@@ -107,7 +114,9 @@ namespace NuGet.Build.Tasks.Pack.Test
         {
             Scenario = (string)info.GetValue(nameof(Scenario), typeof(string));
             OutputNupkgNames = (string[])info.GetValue(nameof(OutputNupkgNames), typeof(string[]));
+            AdditionalNuspecProperties = (string[])info.GetValue(nameof(AdditionalNuspecProperties), typeof(string[]));
             IdNuspecProperties = (string)info.GetValue(nameof(IdNuspecProperties), typeof(string));
+            NuspecMetadata = (string)info.GetValue(nameof(NuspecMetadata), typeof(string));
             VersionProjProp = (string)info.GetValue(nameof(VersionProjProp), typeof(string));
             VersionNuspecProperties = (string)info.GetValue(nameof(VersionNuspecProperties), typeof(string));
             VersionNuspecMeta = (string)info.GetValue(nameof(VersionNuspecMeta), typeof(string));
@@ -131,15 +140,20 @@ namespace NuGet.Build.Tasks.Pack.Test
             }
 
             var nuspecPath = Path.Combine(testDirectory, FILENAME_NUSPEC_FILE);
-            var nuspecContent = $"""
-<?xml version="1.0" encoding="utf-8"?>
-    <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <metadata>
+            string metadata = string.IsNullOrEmpty(testCase.NuspecMetadata)
+                ? $"""
         <id>{PackageFileNameTestCase.IdNuspecMeta}</id>
         <version>{testCase.VersionNuspecMeta?.Trim()}</version>
         <authors>Unit Test</authors>
         <description>Sample Description</description>
         <language>en-US</language>
+"""
+                : testCase.NuspecMetadata;
+            var nuspecContent = $"""
+<?xml version="1.0" encoding="utf-8"?>
+    <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+{metadata}
     </metadata>
 </package>
 """;
