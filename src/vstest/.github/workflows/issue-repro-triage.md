@@ -46,6 +46,7 @@ safe-outputs:
     max: 15
   create-pull-request:
     draft: false
+    github-token-for-extra-empty-commit: app
     title-prefix: "[fix] "
     max: 3
     allowed-base-branches: ["main", "rel/*"]

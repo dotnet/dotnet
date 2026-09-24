@@ -73,7 +73,7 @@
     <SystemMemoryVersion>4.6.3</SystemMemoryVersion>
     <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
     <TestPlatformExternalsVersion>18.2.0-preview-1-11429-120</TestPlatformExternalsVersion>
-    <MicrosoftInternalTestPlatformExtensions>18.3.11611.365</MicrosoftInternalTestPlatformExtensions>
+    <MicrosoftInternalTestPlatformExtensions>18.9.0-preview-1-12127-198</MicrosoftInternalTestPlatformExtensions>
     <TestPlatformMSDiaVersion>18.7.0-preview-1-11715-406</TestPlatformMSDiaVersion>
     <SystemDiagnosticsDiagnosticSourceVersion>8.0.1</SystemDiagnosticsDiagnosticSourceVersion>
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>

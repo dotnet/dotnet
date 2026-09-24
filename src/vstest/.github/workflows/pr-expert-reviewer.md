@@ -63,6 +63,10 @@ tools:
     min-integrity: none
 
 safe-outputs:
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   noop:
     report-as-issue: false
   create-pull-request-review-comment:
