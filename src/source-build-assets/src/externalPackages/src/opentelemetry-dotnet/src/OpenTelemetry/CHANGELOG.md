@@ -6,6 +6,82 @@ Notes](../../RELEASENOTES.md).
 
 ## Unreleased
 
+## 1.18.0
+
+Released 2026-Aug-21
+
+## 1.18.0-rc.1
+
+Released 2026-Aug-21
+
+* Fixed self-diagnostics log lines being silently dropped when an event message
+  or parameter contained enough 3-byte UTF-8 characters to overflow the internal
+  buffer estimate. Such content is now truncated.
+  ([#7543](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7543))
+
+* Fixed activity creation throwing when multiple tracer providers return a
+  sampler attribute with the same key.
+  ([#7558](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7558))
+
+* Added the `otel.sdk.processor.log.processed` SDK self-observability metric.
+  ([#7486](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7486))
+
+* Added the `otel.sdk.processor.span.processed` SDK self-observability metric.
+  ([#7598](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7598))
+
+* `BatchActivityExportProcessor` and `SimpleActivityExportProcessor` no longer
+  forward spans to the exporter once `Shutdown` has been called, and
+  `BatchActivityExportProcessor.Shutdown` now waits for in-flight `OnEnd` calls
+  to finish enqueueing before flushing.
+  ([#7598](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7598))
+
+* Fix logger, meter and tracer providers leaking background threads if an
+  exception is thrown by their constructor after resource creation.
+  ([#7615](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7615))
+
+* `CircularBufferBuckets.Copy` optimized to use bulk array copies.
+  ([#7670](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7670))
+
+* Restored configured `MaxScale` after delta exponential histogram collection.
+  ([#7671](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7671))
+
+## 1.17.0
+
+Released 2026-Jul-16
+
+## 1.17.0-rc.1
+
+Released 2026-Jul-16
+
+* Fixed a metric point reclaim data race on CPU ARM architectures.
+  ([#7401](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7401))
+
+* The library is now marked as trim and AOT compatible.
+  ([#7441](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7441))
+
+* Replaced the vendored copy of
+  `EnvironmentVariablesConfigurationProvider` with a direct
+  `Microsoft.Extensions.Configuration.EnvironmentVariables` package dependency.
+  Consumers gain automatic pickup of upstream bug fixes and security patches;
+  no public API or behavioural change.
+  ([#7146](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7146))
+
+* Added a verbose `OpenTelemetry-Sdk` self-diagnostics event that is emitted
+  when an activity is dropped because its local (in-process) parent is not
+  recorded.
+  ([#7427](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7427))
+
+* Added support for a Schema URL on `Resource` instances.
+  ([#7472](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7472))
+
+* Fixed a metric storage leak that occurred when meters and instruments were
+  repeatedly created and disposed.
+  ([#7466](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7466))
+
+* Added `ExcludedTagKeys` property to `MetricStreamConfiguration` to support
+  excluding specific tag keys from metric streams.
+  ([#7373](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7373))
+
 ## 1.16.0
 
 Released 2026-Jun-10
