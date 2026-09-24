@@ -245,7 +245,7 @@ function PushPackagesPublishReleaseUnlockAndPostNoticeOnPrepareReleasePullReques
       --body "I am uploading the packages for ``$tag`` to NuGet and then I will publish the release."
     gh pr lock $pullRequestNumber
 
-    dotnet nuget push "$artifactDownloadPath/**/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key "$env:NUGET_TOKEN" --symbol-api-key "$env:NUGET_TOKEN"
+    dotnet nuget push "$artifactDownloadPath/**/*.nupkg" --source https://api.nuget.org/v3/index.json
 
     if ($LASTEXITCODE -gt 0)
     {
@@ -500,7 +500,7 @@ function GetCoreDependenciesForProjects {
     foreach ($project in $projects)
     {
         # Note: dotnet restore may fail if the core packages aren't available yet but that is fine, we just want to generate project.assets.json for these projects.
-        dotnet restore $project -p:RunningDotNetPack=true
+        dotnet restore $project -p:RunningDotNetPack=true | Out-Null
 
         $projectDir = $project | Split-Path -Parent
         $projectDirName = $projectDir | Split-Path -Leaf
@@ -570,7 +570,7 @@ function TryPostReleasePublishedNoticeOnPrepareReleasePullRequest {
   if ($prListResponse.Length -eq 0)
   {
     Write-Information 'No prepare release PR found for tag & commit skipping post notice'
-    return
+    return $null
   }
 
   foreach ($pr in $prListResponse)
@@ -604,11 +604,12 @@ Have a nice day!
 
     $pullRequestNumber = $pr.number
 
-    gh pr comment $pullRequestNumber --body $body
-    return
+    gh pr comment $pullRequestNumber --body $body | Out-Null
+    return $pullRequestNumber
   }
 
   Write-Information 'No prepare release PR found matched author and title with a valid comment'
+  return $null
 }
 
 Export-ModuleMember -Function TryPostReleasePublishedNoticeOnPrepareReleasePullRequest

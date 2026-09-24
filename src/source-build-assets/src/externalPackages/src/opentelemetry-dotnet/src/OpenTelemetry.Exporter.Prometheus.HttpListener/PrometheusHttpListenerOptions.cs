@@ -49,6 +49,7 @@ public class PrometheusHttpListenerOptions
         this.Host = host;
         this.Port = port;
         this.ScrapeResponseCacheDurationMilliseconds = 300;
+        this.MaxScrapeResponseSizeBytes = PrometheusExporterOptions.DefaultMaxScrapeResponseSizeBytes;
     }
 
     /// <summary>
@@ -72,6 +73,18 @@ public class PrometheusHttpListenerOptions
     public bool DisableTotalNameSuffixForCounters { get; set; }
 
     /// <summary>
+    /// Gets or sets the strategy used to translate OpenTelemetry metric and label names into
+    /// Prometheus names. Default value: <see cref="PrometheusTranslationStrategy.UnderscoreEscapingWithSuffixes"/>.
+    /// </summary>
+    public PrometheusTranslationStrategy TranslationStrategy { get; set; } = PrometheusTranslationStrategy.UnderscoreEscapingWithSuffixes;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the scope information (name, version, schema URL) is added to the scrape response.
+    /// Default value: <see langword="true"/>.
+    /// </summary>
+    public bool ScopeInfoEnabled { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets the cache duration in milliseconds for scrape responses. Default value: 300.
     /// </summary>
     /// <remarks>
@@ -88,25 +101,46 @@ public class PrometheusHttpListenerOptions
     }
 
     /// <summary>
-    /// Gets or sets the URI (Uniform Resource Identifier) prefixes to use for the http listener.
-    /// Default value: <c>["http://localhost:9464/"]</c>.
+    /// Gets or sets a value indicating whether to include a <c>target_info</c> metric in the scrape response.
+    /// Default value: <see langword="true"/>.
     /// </summary>
-    [Obsolete("UriPrefixes is deprecated. Use Host and Port. This will be removed in a future stable release.")]
-    public IReadOnlyCollection<string> UriPrefixes
+    public bool TargetInfoEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a predicate used to select which resource attributes are added to each metric as constant labels.
+    /// The predicate is invoked with the resource attribute key and should return <see langword="true"/> to include the
+    /// attribute. Default value: <see langword="null"/> (no resource attributes are added as metric labels).
+    /// </summary>
+    /// <remarks>
+    /// Note: Resource attributes copied as metric labels are always included in the <c>target_info</c> metric
+    /// regardless of this predicate.
+    /// </remarks>
+    public Func<string, bool>? ResourceConstantLabels { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum size in bytes that a single scrape response is allowed to grow to. Default value: ~166 MiB.
+    /// </summary>
+    /// <remarks>
+    /// Increase this value when exposing a very large number of time series.
+    /// </remarks>
+    public int MaxScrapeResponseSizeBytes
     {
-        get => field ?? ["http://localhost:9464/"];
+        get;
         set
         {
-            Guard.ThrowIfNull(value);
-            if (value.Count == 0)
-            {
-                throw new ArgumentException("Empty list provided.", nameof(value));
-            }
-
+            Guard.ThrowIfOutOfRange(value, min: PrometheusExporterOptions.InitialScrapeResponseSizeBytes);
             field = value;
-            this.UriPrefixesExplicitlySet = true;
         }
     }
 
-    internal bool UriPrefixesExplicitlySet { get; private set; }
+    /// <summary>
+    /// Gets or sets an optional callback to apply custom configuration for the
+    /// <see cref="System.Net.HttpListener"/> instance used by the exporter.
+    /// </summary>
+    /// <remarks>
+    /// This callback is invoked after an <see cref="System.Net.HttpListener"/>
+    /// instance has been created and other configuration options have already
+    /// been applied to it.
+    /// </remarks>
+    public Action<PrometheusHttpListenerOptions, System.Net.HttpListener>? ConfigureHttpListener { get; set; }
 }

@@ -7,6 +7,117 @@ Notes](../../RELEASENOTES.md).
 
 ## Unreleased
 
+* Fix concurrent scrapes returning an empty response under contention.
+  Now the exporter will return an HTTP 500 error instead.
+  ([#7571](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7571))
+
+* Waiting for concurrent scrapes to finish before collecting no longer
+  blocks, which could stall concurrent scrapes being waited on.
+  ([#7571](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7571))
+
+* A scrape which is still collecting when the listener is disposed now returns
+  an HTTP 503 response.
+  ([#7587](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7587))
+
+* Shutting down the listener no longer waits indefinitely for its request
+  processing loop to stop, and no longer throws if the loop faulted.
+  ([#7587](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7587))
+
+* Fixed the interaction between `PrometheusHttpListenerOptions.TranslationStrategy`
+  and content negotiation. The configured strategy is now applied before content
+  negotiation, instead of the negotiated escaping scheme replacing the strategy's,
+  and the `Content-Type` header now reports the escaping scheme that was applied
+  rather than the one that was negotiated.
+  ([#7610](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7610))
+
+* Fixed metric values and histogram bucket bounds being written with 17
+  significant digits instead of their shortest round-trippable representation.
+  ([#7589](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7589))
+
+* Fixed the canonical representation used for histogram `le` and summary
+  `quantile` label values falling back to 17 significant digits incorrectly.
+  ([#7589](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7589))
+
+* Fixed a race where a slow scrape could return an HTTP 200 instead of 408.
+  ([#7615](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7615))
+
+## 1.17.0-beta.1
+
+Released 2026-Jul-16
+
+* Added a verbose-level diagnostic event for ignored metrics.
+  ([#7429](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7429))
+
+* The library is now marked as trim and AOT compatible.
+  ([#7441](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7441))
+
+* Removed the `PrometheusHttpListenerOptions.UriPrefixes` option.
+  ([#7435](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7435))
+
+* Fix double unit suffixes in metric names when using OpenMetrics.
+  ([#7454](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7454))
+
+* Fix incorrect handling of leading digits in metric names for OpenMetrics.
+  ([#7454](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7454))
+
+* Add `PrometheusHttpListenerOptions.ScopeInfoEnabled` property to enable or
+  disable scope labels in Prometheus metrics. Defaults to `true`.
+  ([#7436](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7436))
+
+* Added support for the `dots` and `values` Prometheus UTF-8 name escaping
+  schemes when negotiated via the `Accept` header.
+  ([#7439](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7439))
+
+* Add `PrometheusHttpListenerOptions.TargetInfoEnabled` property to enable or
+  disable the `target_info` metric in Prometheus metrics. Defaults to `true`.
+  ([#7438](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7438))
+
+* Added the `PrometheusHttpListenerOptions.ConfigureHttpListener` option.
+  ([#7448](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7448))
+
+* Added support for the `allow-utf-8` Prometheus UTF-8 name escaping scheme
+  when negotiated via the `Accept` header.
+  ([#7440](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7440))
+
+* Add `PrometheusHttpListenerOptions.ResourceConstantLabels` property to select
+  resource attributes to add to each metric as constant labels. Defaults to
+  `null` (no resource attributes are added as metric labels).
+  ([#7471](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7471))
+
+* Add `PrometheusHttpListenerOptions.MaxScrapeResponseSizeBytes` to configure
+  the maximum size of a scrape response. The default is now ~166 MiB.
+  ([#7487](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7487))
+
+* A scrape whose serialized output exceeds the maximum scrape response size
+  limit now responds with HTTP 500.
+  ([#7487](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7487))
+
+* Fixed the Prometheus text exposition format emitting redundant comments.
+  ([#7491](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7491))
+
+* Fixed `# HELP` metadata not escaping double-quote characters for the
+  OpenMetrics text format.
+  ([#7491](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7491))
+
+* Fixed content negotiation defaulting to OpenMetrics 0.0.1 instead of 1.0.0
+  when an `application/openmetrics-text` `Accept` header entry does not
+  specify a `version` parameter.
+  ([#7491](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7491))
+
+* Added `PrometheusHttpListenerOptions.TranslationStrategy` to control how
+  OpenTelemetry metric and label names are translated into Prometheus names.
+  ([#7507](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7507))
+
+* Fix stack overflow during metric collection when under load.
+  ([#7524](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7524))
+
+* Updated OpenTelemetry core component version(s) to `1.17.0`.
+  ([#7530](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7530))
+
+## 1.16.0-beta.1
+
+Released 2026-Jun-10
+
 * Fixed scrape response cache freshness using monotonic time so it is not
   affected by NTP system clock adjustments.
   ([#7253](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7253))
@@ -102,6 +213,9 @@ Notes](../../RELEASENOTES.md).
 
 * Drop conflicting scope attributes named `name`, `version`, and `schema_url`.
   ([#7237](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7237))
+
+* Updated OpenTelemetry core component version(s) to `1.16.0`.
+  ([#52](https://github.com/open-telemetry/opentelemetry-dotnet/pull/52))
 
 ## 1.15.3-beta.1
 
