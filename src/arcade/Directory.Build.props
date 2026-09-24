@@ -18,6 +18,11 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <RepositoryUrl>https://github.com/dotnet/arcade</RepositoryUrl>
+
+    <!-- TODO: Remove when the bootstrap SDK supports net12.0. Keep a downlevel baseline when source-only defaults all target net12.0. -->
+    <TargetingPackBaselineTargetFramework Condition="'$(TargetingPackBaselineTargetFramework)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">net11.0</TargetingPackBaselineTargetFramework>
+    <NETCoreAppMaximumVersion>12.0</NETCoreAppMaximumVersion>
+    <LoadPrunePackageDataFromNearestFramework>true</LoadPrunePackageDataFromNearestFramework>
   </PropertyGroup>
 
 </Project>
