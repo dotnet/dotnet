@@ -220,7 +220,7 @@
       </trans-unit>
       <trans-unit id="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown">
         <source>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</source>
-        <target state="new">The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</target>
+        <target state="translated">下列 PackageReference 項目無法指定浮動版本，因為已啟用套件來源冷卻功能： {0}。</target>
         <note>
       0 - The comma delimited list of package names that specified a floating version.
       Do not localize `PackageReference`
