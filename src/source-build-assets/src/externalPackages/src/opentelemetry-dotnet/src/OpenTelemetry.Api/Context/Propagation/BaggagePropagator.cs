@@ -3,6 +3,7 @@
 
 #if NET
 using System.Buffers;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 #endif
 using System.Text;
@@ -56,8 +57,17 @@ public class BaggagePropagator : TextMapPropagator
     ];
 #endif
 
+#if NET
+    private static readonly ImmutableHashSet<string> AllFields = [BaggageHeaderName];
+#else
+    private static readonly HashSet<string> AllFields = [BaggageHeaderName];
+#endif
+
     /// <inheritdoc/>
-    public override ISet<string> Fields => new HashSet<string> { BaggageHeaderName };
+    /// <remarks>
+    /// Callers should not modify the returned set.
+    /// </remarks>
+    public override ISet<string> Fields => AllFields;
 
     /// <inheritdoc/>
     public override PropagationContext Extract<T>(PropagationContext context, T carrier, Func<T, string, IEnumerable<string>?> getter)
@@ -267,8 +277,6 @@ public class BaggagePropagator : TextMapPropagator
         return result;
     }
 
-    private static string EncodeKey(ReadOnlySpan<char> key) => Encode(key, isKey: true);
-
     private static string EncodeValue(ReadOnlySpan<char> value) => Encode(value, isKey: false);
 
     private static string Encode(ReadOnlySpan<char> value, bool isKey)
@@ -337,7 +345,7 @@ public class BaggagePropagator : TextMapPropagator
                 // Non-BMP pair: encode both chars as one UTF-8 sequence.
                 // Passing the pair to Encoding.UTF8 produces the correct 4-byte result
                 // rather than two replacement characters.
-                foreach (var b in Encoding.UTF8.GetBytes(new string(new[] { c, value[i + 1] })))
+                foreach (var b in Encoding.UTF8.GetBytes(new string([c, value[i + 1]])))
                 {
                     AppendPercentEncoded(sb, b);
                 }

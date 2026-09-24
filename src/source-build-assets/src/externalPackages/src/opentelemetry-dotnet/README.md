@@ -204,7 +204,7 @@ To verify the integrity of a DLL inside a NuGet package use the
 These versions are using bundle format known from cosign 3.0+.
 
 ```bash
-$TAG="core-1.14.0"
+TAG="core-1.16.0"
 cosign verify-blob \
     --bundle OpenTelemetry.dll.sigstore.json \
     --certificate-identity "https://github.com/open-telemetry/opentelemetry-dotnet/.github/workflows/publish-packages-1.0.yml@refs/tags/$TAG" \
@@ -213,13 +213,16 @@ cosign verify-blob \
     OpenTelemetry.dll
 ```
 
+> [!NOTE]
+> A successful verification outputs `Verified OK`.
+
 #### Versions 1.10.0 - 1.14.0-rc.1
 
 These versions are using separate signature and certificate files format known
 from cosign 2.x.
 
 ```bash
-$TAG="core-1.12.0"
+TAG="core-1.12.0"
 cosign verify-blob \
     --signature OpenTelemetry.dll-keyless.sig \
     --certificate OpenTelemetry.dll-keyless.pem \
@@ -264,8 +267,10 @@ for specific dates and for Zoom meeting links.
 
 Meeting notes are available as a public [Google
 doc](https://docs.google.com/document/d/1yjjD6aBcLxlRazYrawukDgrhZMObwHARJbB9glWdHj8/edit?usp=sharing).
-If you have trouble accessing the doc, please get in touch on
-[Slack](https://cloud-native.slack.com/archives/C01N3BC2W7Q).
+If you have trouble accessing the doc, please get in touch on the
+[#otel-dotnet](https://cloud-native.slack.com/archives/C01N3BC2W7Q)
+channel on CNCF Slack. If you are new to the CNCF Slack community,
+you can [create an account](https://slack.cncf.io/).
 
 The meeting is open for all to join. We invite everyone to join our meeting,
 regardless of your experience level. Whether you're a seasoned OpenTelemetry
