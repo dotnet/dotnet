@@ -17,5 +17,6 @@ namespace NuGet.PackageManagement.Telemetry
         ToolNotAvailable,
         McpServerInfoServiceNotAvailable,
         McpServerNotActive,
+        CopilotRequestFailed,
     }
 }

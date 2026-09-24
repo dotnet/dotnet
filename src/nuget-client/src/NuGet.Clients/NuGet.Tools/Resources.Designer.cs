@@ -124,6 +124,15 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to GitHub Copilot was unable to complete the request. See the Activity Log for details..
+        /// </summary>
+        internal static string Error_CopilotRequestFailed {
+            get {
+                return ResourceManager.GetString("Error_CopilotRequestFailed", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in..
         /// </summary>
         internal static string Error_CopilotServiceNotAvailable {
