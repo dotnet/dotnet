@@ -292,6 +292,10 @@
     <value>Access denied. Ensure you are signed in to GitHub Copilot.</value>
     <comment>Do not translate GitHub or Copilot</comment>
   </data>
+  <data name="Error_CopilotRequestFailed" xml:space="preserve">
+    <value>GitHub Copilot was unable to complete the request. See the Activity Log for details.</value>
+    <comment>Do not translate GitHub or Copilot</comment>
+  </data>
   <data name="Error_NuGetSolverNotAvailable" xml:space="preserve">
     <value>The NuGet Solver tool is unavailable. Enable the NuGet MCP Server in the GitHub Copilot chat window and try again.</value>
     <comment>Do not translate GitHub or Copilot</comment>
