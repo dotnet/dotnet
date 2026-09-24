@@ -1,48 +1,85 @@
 <Project Sdk="Microsoft.Build.Traversal">
 
-  <ItemGroup>
+  <PropertyGroup>
+    <_OrchestrateBootstrap Condition="'$(EnableBootstrap)' == 'true' and '$(BootstrapBuildLane)' != 'true'">true</_OrchestrateBootstrap>
+  </PropertyGroup>
+
+  <Import Project="$(RepositoryEngineeringDir)bootstrap.props" Condition="'$(_OrchestrateBootstrap)' == 'true'" />
+
+  <ItemGroup Condition="'$(_OrchestrateBootstrap)' != 'true'">
     <ProjectReference Include="$(RepoTasksDir)tasks.proj" BuildInParallel="false" />
     <!-- Subsets.props which defines @(ProjectToBuild) is already imported in Directory.Build.props. -->
     <ProjectReference Include="@(ProjectToBuild)" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(_OrchestrateBootstrap)' == 'true'">
+    <ProjectReference Include="$(RepositoryEngineeringDir)main-build.proj"
+                      AdditionalProperties="EnableBootstrap=false;BootstrapMainBuild=true"
+                      GlobalPropertiesToRemove="BootstrapBuildLane;BootstrapBuildArtifactsDir"
+                      UndefineProperties="BootstrapBuildLane;BootstrapBuildArtifactsDir"
+                      BuildInParallel="true" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)bootstrap.proj"
+                      AdditionalProperties="BootstrapBuildLane=true;BootstrapBuildArtifactsDir=$(BootstrapBuildArtifactsDir)"
+                      BuildInParallel="true"
+                      Pack="false"
+                      Publish="false" />
+  </ItemGroup>
+
+  <Target Name="BuildBootstrapDependentPackages"
+          AfterTargets="Build;Pack"
+          Condition="'$(_OrchestrateBootstrap)' == 'true'">
+    <MSBuild Projects="@(BootstrapDependentPackageProject)"
+             Targets="Restore"
+             Properties="$(_BootstrapDependentPackageProperties)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapDependentPackageProject)"
+             Properties="$(_BootstrapDependentPackageProperties);ExcludeRestorePackageImports=false"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapCdacPackageProject)"
+             Targets="Restore"
+             Properties="CdacReaderArtifactsPath=$(BootstrapConsumerCoreCLRArtifactsPath)" />
+    <MSBuild Projects="@(BootstrapCdacPackageProject)"
+             Properties="CdacReaderArtifactsPath=$(BootstrapConsumerCoreCLRArtifactsPath);ExcludeRestorePackageImports=false" />
+  </Target>
+
+  <Target Name="BuildBootstrapTests"
+          AfterTargets="Build"
+          Condition="'$(_OrchestrateBootstrap)' == 'true' and '@(BootstrapTestProject)' != ''">
+    <MSBuild Projects="@(BootstrapTestProject)"
+             Targets="Restore"
+             Properties="UseBootstrap=true"
+             RemoveProperties="$(BootstrapPropertiesToRemove)"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapTestProject)"
+             Properties="UseBootstrap=true;ExcludeRestorePackageImports=false"
+             RemoveProperties="$(BootstrapPropertiesToRemove)"
+             StopOnFirstFailure="true" />
+  </Target>
+
+  <Target Name="TestBootstrapTests"
+          AfterTargets="Test"
+          Condition="'$(_OrchestrateBootstrap)' == 'true' and '@(BootstrapTestProject)' != ''">
+    <MSBuild Projects="@(BootstrapTestProject)"
+             Targets="Test"
+             Properties="UseBootstrap=true;ExcludeRestorePackageImports=false"
+             RemoveProperties="$(BootstrapPropertiesToRemove)"
+             StopOnFirstFailure="true" />
+  </Target>
+
+  <Target Name="VSTestBootstrapTests"
+          AfterTargets="VSTest"
+          Condition="'$(_OrchestrateBootstrap)' == 'true' and '@(BootstrapTestProject)' != ''">
+    <MSBuild Projects="@(BootstrapTestProject)"
+             Targets="VSTest"
+             Properties="UseBootstrap=true;ExcludeRestorePackageImports=false"
+             RemoveProperties="$(BootstrapPropertiesToRemove)"
+             StopOnFirstFailure="true" />
+  </Target>
+
   <Import Project="$(RepositoryEngineeringDir)SubsetValidation.targets" />
   <Import Project="$(RepositoryEngineeringDir)restore\optimizationData.targets" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-
-  <Target Name="SetupBootstrapLayout"
-          AfterTargets="Build"
-          Condition="'$(Subset)' == 'bootstrap'">
-    <ItemGroup>
-      <AotSdkFile
-        Include="$(CoreCLRAotSdkDir)/*"
-        Condition="'$(UseNativeAotForComponents)' == 'true'" />
-      <AppHostFile
-        Include="$([MSBuild]::NormalizePath('$(DotNetHostBinDir)', 'apphost$(ExeSuffix)'))" />
-      <AppHostFile
-        Include="$([MSBuild]::NormalizePath('$(CoreCLRArtifactsPath)', 'corehost', 'singlefilehost$(ExeSuffix)'))"
-        Condition="'$(UseNativeAotForComponents)' != 'true'" />
-      <RefPackFile Include="$(MicrosoftNetCoreAppRefPackDir)/**/*" />
-      <RuntimePackFile Include="$(MicrosoftNetCoreAppRuntimePackDir)/**/*" />
-      <RidGraphFile Include="$(ArtifactsBinDir)Microsoft.NETCore.Platforms/*.json" />
-
-      <AotSdkFile
-        DestinationPath="$(BootstrapAotSdkDir)/%(Filename)%(Extension)" />
-      <AppHostFile
-        DestinationPath="$(BootstrapHostDir)/%(Filename)%(Extension)" />
-      <RefPackFile
-        DestinationPath="$(BootstrapRefPackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
-      <RuntimePackFile
-        DestinationPath="$(BootstrapRuntimePackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
-      <RidGraphFile
-        DestinationPath="$(BootstrapRidGraphDir)/%(RecursiveDir)%(Filename)%(Extension)" />
-      <BootstrapFile Include="@(AotSdkFile);@(AppHostFile);@(RefPackFile);@(RuntimePackFile);@(RidGraphFile)" />
-    </ItemGroup>
-
-    <Copy
-      SourceFiles="@(BootstrapFile)"
-      DestinationFiles="@(BootstrapFile->Metadata('DestinationPath'))"
-      SkipUnchangedFiles="true" />
-    <Message Importance="high" Text="Bootstrap files copied to $(ArtifactsDir)bootstrap" />
-  </Target>
+  <Import Project="$(RepositoryEngineeringDir)bootstrap-layout.targets" Condition="'$(Subset)' == 'bootstrap' and '$(_OrchestrateBootstrap)' != 'true'" />
 
 </Project>
