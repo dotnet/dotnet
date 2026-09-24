@@ -60,11 +60,20 @@ variables.
 
 * `Host`: The host used by the Prometheus exporter (default `localhost`).
 * `Port`: The port used by the Prometheus exporter (default `9464`).
+* `ScopeInfoEnabled`: Whether to include scope labels in metrics (default `true`).
 * `ScrapeEndpointPath`: Defines the Prometheus scrape endpoint path.
   (default `"/metrics"`).
+* `TargetInfoEnabled`: Whether to produce a `target_info` metric (default `true`).
+* `ResourceConstantLabels`: A predicate selecting which resource attributes are
+  added to each metric as constant labels (default `null`).
 * `DisableTotalNameSuffixForCounters`: Whether to disable the `_total` suffix for
   counter metrics (default `false`).
+* `TranslationStrategy`: Controls how OpenTelemetry metric and label names are
+  translated into Prometheus names (default `UnderscoreEscapingWithSuffixes`).
+  See [TranslationStrategy](#translationstrategy) below.
 * `DisableTimestamp`: Whether to disable the timestamp for metrics (default `false`).
+* `ConfigureHttpListener`: A delegate that can be used to apply custom configuration
+  to the `HttpListener` instance used by the exporter before use.
 
 ### Configuration using Dependency Injection
 
@@ -95,11 +104,77 @@ values of the `PrometheusHttpListenerOptions`.
 | `OTEL_EXPORTER_PROMETHEUS_HOST` | `Host`                                   |
 | `OTEL_EXPORTER_PROMETHEUS_PORT` | `Port`                                   |
 
+### ScopeInfoEnabled
+
+Specifies whether metrics include
+[scope labels](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/compatibility/prometheus_and_openmetrics.md#instrumentation-scope-1).
+Default value: `true`. Set to `false` to disable scope labels.
+
 ### ScrapeResponseCacheDurationMilliseconds
 
 Configures scrape endpoint response caching. Multiple scrape requests within the
 cache duration time period will receive the same previously generated response.
 The default value is `300`. Set to `0` to disable response caching.
+
+### TargetInfoEnabled
+
+Specifies whether to produce a
+[`target_info`](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/compatibility/prometheus_and_openmetrics.md#resource-attributes-1)
+metric. Default value: `true`. Set to `false` to disable the `target_info` metric.
+
+### ResourceConstantLabels
+
+A predicate used to select which
+[resource attributes](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk_exporters/prometheus.md#resource-attributes-as-metric-labels)
+are added to each metric as constant labels. The predicate is invoked with the
+resource attribute key and should return `true` to include the attribute.
+Default value: `null` (no resource attributes are added as metric labels).
+Resource attributes copied as metric labels are always included in the
+`target_info` metric regardless of this predicate.
+
+```csharp
+var meterProvider = Sdk.CreateMeterProviderBuilder()
+    .AddMeter(MyMeter.Name)
+    .AddPrometheusHttpListener(options =>
+    {
+        // Add all resource attributes as metric labels.
+        options.ResourceConstantLabels = static _ => true;
+    })
+    .Build();
+```
+
+### TranslationStrategy
+
+Controls how OpenTelemetry metric and label names are translated into Prometheus
+names, following the OpenTelemetry specification's `translation_strategy` option.
+The strategy combines two independent choices: whether discouraged characters are
+escaped to `_` or UTF-8 names are passed through unaltered, and whether unit and
+type (e.g. `_total`) suffixes are appended.
+
+| Strategy | Escaping | Suffixes |
+| -------- | -------- | -------- |
+| `UnderscoreEscapingWithSuffixes` (default) | Escape to `_` | Appended |
+| `UnderscoreEscapingWithoutSuffixes` | Escape to `_` | Not appended |
+| `NoUTF8EscapingWithSuffixes` | UTF-8 passthrough | Appended |
+| `NoTranslation` | UTF-8 passthrough | Not appended |
+
+The strategy is applied first, when names are constructed. Content negotiation is
+then applied on top of the result, using the scheme requested by the `escaping`
+parameter of the `Accept` header (supported by the version 1.0.0 and later text
+formats). Negotiation can never revert escaping the strategy has already applied,
+and a request which does not negotiate an escaping scheme is treated the same as
+one requesting `underscores`. For a counter named `foo.bar` with unit `By`:
+
+| Strategy | No `escaping` parameter, or `escaping=underscores` | `escaping=allow-utf-8` |
+| -------- | -------- | -------- |
+| `UnderscoreEscapingWithSuffixes` | `foo_bar_bytes_total` | `foo_bar_bytes_total` |
+| `UnderscoreEscapingWithoutSuffixes` | `foo_bar` | `foo_bar` |
+| `NoUTF8EscapingWithSuffixes` | `foo_bar_bytes_total` | `foo.bar_bytes_total` |
+| `NoTranslation` | `foo_bar` | `foo.bar` |
+
+The classic (pre-1.0.0) text formats do not support escaping negotiation and are
+always emitted using underscore escaping; the suffix choice applies to every
+format.
 
 ## Troubleshooting
 

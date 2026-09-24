@@ -18,7 +18,9 @@ namespace OpenTelemetry.Exporter.Prometheus;
 internal readonly struct PrometheusProtocol : IEquatable<PrometheusProtocol>
 {
     public const string AllowUtf8Escaping = "allow-utf-8";
+    public const string DotsEscaping = "dots";
     public const string UnderscoresEscaping = "underscores";
+    public const string ValuesEscaping = "values";
 
     public const string OpenMetricsMediaType = "application/openmetrics-text";
     public const string PrometheusTextMediaType = "text/plain";
@@ -30,11 +32,12 @@ internal readonly struct PrometheusProtocol : IEquatable<PrometheusProtocol>
 
     public static readonly PrometheusProtocol Fallback = new(PrometheusTextMediaType, null, PrometheusV0, false);
 
-    // TODO Support other escaping schemes, including at least "allow-utf-8".
-    // See https://github.com/open-telemetry/opentelemetry-dotnet/issues/7246.
     internal static readonly SupportedEscapingSchemes SupportedEscapingSchemes =
     [
+        AllowUtf8Escaping,
+        DotsEscaping,
         UnderscoresEscaping,
+        ValuesEscaping,
     ];
 
     internal static readonly SupportedVersions SupportedOpenMetricsVersions =
@@ -53,6 +56,7 @@ internal readonly struct PrometheusProtocol : IEquatable<PrometheusProtocol>
     {
         this.MediaType = mediaType;
         this.Escaping = escaping;
+        this.EscapingScheme = PrometheusEscaping.FromString(escaping);
         this.IsOpenMetrics = isOpenMetrics;
         this.Version = version;
     }
@@ -61,11 +65,43 @@ internal readonly struct PrometheusProtocol : IEquatable<PrometheusProtocol>
 
     public readonly string? Escaping { get; }
 
+    public readonly EscapingScheme EscapingScheme { get; }
+
     public readonly bool IsOpenMetrics { get; }
 
     public readonly Version Version { get; }
 
-    public static string GetContentType(PrometheusProtocol protocol)
+    /// <summary>
+    /// Returns the protocol describing the response the exporter actually produces for
+    /// <paramref name="protocol"/>, which is the negotiated protocol with its escaping scheme
+    /// replaced by the one <paramref name="strategy"/> leaves it able to apply.
+    /// </summary>
+    /// <param name="protocol">The negotiated protocol.</param>
+    /// <param name="strategy">The configured translation strategy.</param>
+    /// <returns>The protocol the response is written with.</returns>
+    /// <remarks>
+    /// The escaping scheme reported by the <c>Content-Type</c> header MUST describe the names that
+    /// were written, so it is resolved once here rather than letting the negotiated and rendered
+    /// schemes diverge. Everything downstream (the buffer cache key, the serializer and the
+    /// response header) then agrees. Requests which negotiate different schemes but produce the
+    /// same names consequently share a single cached response.
+    /// </remarks>
+    public static PrometheusProtocol ApplyTranslationStrategy(in PrometheusProtocol protocol, PrometheusTranslationStrategy strategy)
+    {
+        // The classic (pre-1.0.0) text formats do not negotiate an escaping scheme at all.
+        if (protocol.Escaping is null)
+        {
+            return protocol;
+        }
+
+        var escaping = strategy.GetEffectiveEscapingScheme(protocol.EscapingScheme);
+
+        return escaping == protocol.EscapingScheme
+            ? protocol
+            : new(protocol.MediaType, PrometheusEscaping.GetName(escaping), protocol.Version, protocol.IsOpenMetrics);
+    }
+
+    public static string GetContentType(in PrometheusProtocol protocol)
     {
         var builder = new StringBuilder()
             .Append(protocol.MediaType)
@@ -73,7 +109,7 @@ internal readonly struct PrometheusProtocol : IEquatable<PrometheusProtocol>
             .Append(protocol.Version.ToString(3))
             .Append("; charset=utf-8");
 
-        if (protocol.Escaping is not null)
+        if (protocol.Escaping is { Length: > 0 })
         {
             builder.Append("; escaping=")
                    .Append(protocol.Escaping);
@@ -84,6 +120,7 @@ internal readonly struct PrometheusProtocol : IEquatable<PrometheusProtocol>
 
     public bool Equals(PrometheusProtocol other)
         => this.IsOpenMetrics == other.IsOpenMetrics &&
+           this.EscapingScheme == other.EscapingScheme &&
            this.MediaType == other.MediaType &&
            this.Escaping == other.Escaping &&
            this.Version == other.Version;
@@ -94,10 +131,11 @@ internal readonly struct PrometheusProtocol : IEquatable<PrometheusProtocol>
     public override int GetHashCode()
     {
 #if NET
-        return HashCode.Combine(this.MediaType, this.Escaping, this.IsOpenMetrics, this.Version);
+        return HashCode.Combine(this.MediaType, this.EscapingScheme, this.Escaping, this.IsOpenMetrics, this.Version);
 #else
         var hashCode = this.MediaType.GetHashCode();
 
+        hashCode = (hashCode * 397) ^ (int)this.EscapingScheme;
         hashCode = (hashCode * 397) ^ (this.Escaping?.GetHashCode() ?? 0);
         hashCode = (hashCode * 397) ^ this.IsOpenMetrics.GetHashCode();
         hashCode = (hashCode * 397) ^ this.Version.GetHashCode();
