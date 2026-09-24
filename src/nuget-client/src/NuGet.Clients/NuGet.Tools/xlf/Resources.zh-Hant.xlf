@@ -32,6 +32,11 @@
         <target state="translated">GitHub Copilot 尚未就緒。確保已安裝並登入 GitHub Copilot。</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
+      <trans-unit id="Error_CopilotRequestFailed">
+        <source>GitHub Copilot was unable to complete the request. See the Activity Log for details.</source>
+        <target state="new">GitHub Copilot was unable to complete the request. See the Activity Log for details.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
         <source>GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
         <target state="translated">GitHub Copilot 服務無法使用。確保已安裝並登入 GitHub Copilot。</target>
