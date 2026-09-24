@@ -63,6 +63,10 @@ network:
   - dotnet
 
 safe-outputs:
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   report-failure-as-issue: false
   noop:
     report-as-issue: false
@@ -73,10 +77,12 @@ safe-outputs:
   create-pull-request:
     max: 1
     draft: true
+    github-token-for-extra-empty-commit: app
     title-prefix: "[efficiency-improver] "
     labels: ["Area: Performance", "agentic-workflows"]
   push-to-pull-request-branch:
     target: "*"
+    github-token-for-extra-empty-commit: app
     required-title-prefix: "[efficiency-improver] "
   create-issue:
     title-prefix: "[efficiency-improver] "
