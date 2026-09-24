@@ -32,6 +32,11 @@
         <target state="translated">Narzędzie GitHub Copilot nie jest gotowe. Upewnij się, że narzędzie GitHub Copilot jest zainstalowane i zalogowano się.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
+      <trans-unit id="Error_CopilotRequestFailed">
+        <source>GitHub Copilot was unable to complete the request. See the Activity Log for details.</source>
+        <target state="new">GitHub Copilot was unable to complete the request. See the Activity Log for details.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
         <source>GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
         <target state="translated">Narzędzie GitHub Copilot jest niedostępne. Upewnij się, że narzędzie GitHub Copilot jest zainstalowane i zalogowano się.</target>
