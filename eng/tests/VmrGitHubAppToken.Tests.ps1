@@ -44,9 +44,9 @@ $comparisonSteps = Get-Content "$PSScriptRoot/../pipelines/templates/steps/vmr-c
 $gatherDrops = Get-Content "$PSScriptRoot/../GatherDrops.ps1" -Raw
 if ($comparisonStage -match 'DotNetBot-GitHub-AllBranches' -or
     $comparisonSteps -match 'BotAccount-dotnet-bot-repo-PAT' -or
-    $comparisonSteps -notmatch 'eng/common/Get-GitHubAppToken.ps1' -or
+    $comparisonSteps -notmatch 'src/arcade/eng/common/Get-GitHubAppToken.ps1' -or
     $gatherDrops -match 'githubPat|--continue-on-error') {
-  throw 'The VMR comparison pipeline must use the Arcade GitHub App helper without retaining the classic PAT or continuing after an individual gather failure.'
+  throw 'The VMR comparison pipeline must use the flowed Arcade GitHub App helper without retaining the classic PAT or continuing after an individual gather failure.'
 }
 
 Write-Host 'VMR GitHub App token tests passed.'

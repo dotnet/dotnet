@@ -116,21 +116,21 @@ steps:
     scriptType: pscore
     scriptLocation: inlineScript
     inlineScript: |
-      & '$(Build.SourcesDirectory)/eng/common/Get-GitHubAppToken.ps1' `
+      & '$(Build.SourcesDirectory)/src/arcade/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
         -AppIdSecretName vmr-artifact-reader-github-app-app-id `
         -AppPrivateKeySecretName vmr-artifact-reader-github-app-app-private-key `
         -InstallationOwner dotnet `
         -OutputVariableName DotnetGitHubAppInstallationToken
 
-      & '$(Build.SourcesDirectory)/eng/common/Get-GitHubAppToken.ps1' `
+      & '$(Build.SourcesDirectory)/src/arcade/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
         -AppIdSecretName vmr-artifact-reader-github-app-app-id `
         -AppPrivateKeySecretName vmr-artifact-reader-github-app-app-private-key `
         -InstallationOwner NuGet `
         -OutputVariableName NuGetGitHubAppInstallationToken
 
-      & '$(Build.SourcesDirectory)/eng/common/Get-GitHubAppToken.ps1' `
+      & '$(Build.SourcesDirectory)/src/arcade/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
         -AppIdSecretName vmr-artifact-reader-github-app-app-id `
         -AppPrivateKeySecretName vmr-artifact-reader-github-app-app-private-key `
