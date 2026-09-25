@@ -395,7 +395,7 @@ NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecur
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
         <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
-        <target state="needs-review-translation">專案 `{0}` 會使用 NuGet 套件的 package.config，且命令僅能搭配套件參考專案使用。</target>
+        <target state="translated">專案 '{0}' 不是 PackageReference 專案。此命令僅支援 NuGet PackageReference 專案。</target>
         <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
@@ -405,7 +405,7 @@ NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecur
       </trans-unit>
       <trans-unit id="Error_PackagePublishDateMissing">
         <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
-        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <target state="translated">套件來源 '{0}' 未提供套件 '{1}' 版本 '{2}' 的發佈日期。由於該來源已設定最低發佈時間，因此這項資訊是必要的。</target>
         <note>{0} - package source name
 {1} - package ID
 {2} - package version</note>
@@ -1041,7 +1041,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
         <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
-        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <target state="translated">尚未達到所設定最低發佈時間的較新版本套件: {0}。</target>
         <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -1537,7 +1537,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="Warn_AddPkgNonCompliantPackageId">
         <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
-        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <target state="translated">套件 ID '{0}' 不符合 NuGet 套件識別碼標準。套件識別碼不得超過 100 個字元，並以字母、數字或底線開頭，且只包含 ASCII 字母、數字、點 (.)、連字號 (-) 和底線 (_)。句點和連字號不得連續出現，也不得出現在結尾。</target>
         <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">
