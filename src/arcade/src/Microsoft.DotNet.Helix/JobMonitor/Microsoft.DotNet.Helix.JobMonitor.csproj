@@ -12,6 +12,10 @@
     <Description>Standalone Helix Job Monitor tool for Azure DevOps pipelines</Description>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <DefineConstants>$(DefineConstants);DOTNET_BUILD_SOURCE_ONLY</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.DotNet.Helix.Sdk.Tests" />
   </ItemGroup>
@@ -26,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Microsoft.Arcade.Common\Microsoft.Arcade.Common.csproj" />
+    <ProjectReference Include="..\..\Microsoft.DotNet.ArcadeAzureIntegration\Microsoft.DotNet.ArcadeAzureIntegration.csproj" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <ProjectReference Include="..\Client\CSharp\Microsoft.DotNet.Helix.Client.csproj" />
   </ItemGroup>
 

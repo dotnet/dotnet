@@ -25,7 +25,7 @@
     <EnableAzurePipelinesReporter>false</EnableAzurePipelinesReporter>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(HelixAccessToken)' == '' ">
+  <PropertyGroup Condition=" '$(HelixAccessToken)' == '' And '$(HelixUseEntraAuthentication)' != 'true' ">
     <IsExternal>true</IsExternal>
     <Creator>$(BUILD_SOURCEVERSIONAUTHOR)</Creator>
     <Creator Condition=" '$(Creator)' == ''">anon</Creator>

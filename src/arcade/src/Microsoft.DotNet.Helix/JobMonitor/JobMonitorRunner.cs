@@ -7,6 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+#if !DOTNET_BUILD_SOURCE_ONLY
+using Microsoft.DotNet.ArcadeAzureIntegration;
+#endif
 using Microsoft.DotNet.Helix.AzureDevOpsTestPublisher;
 using Microsoft.DotNet.Helix.Client;
 using Microsoft.DotNet.Helix.Client.Models;
@@ -779,10 +782,14 @@ internal sealed class JobMonitorRunner : IJobMonitorRunner, IDisposable
             options.UseFullyQualifiedTestName,
             azureDevOps,
             metrics);
+        if (options.UseEntraAuthentication && !string.IsNullOrEmpty(options.HelixAccessToken))
+        {
+            logger.LogWarning(
+                "{Prefix}HELIX_ACCESSTOKEN is set but ignored because Entra authentication is enabled.",
+                AzdoWarningPrefix);
+        }
         var helix = new HelixService(
-            string.IsNullOrEmpty(options.HelixAccessToken)
-                ? ApiFactory.GetAnonymous(options.HelixBaseUri)
-                : ApiFactory.GetAuthenticated(options.HelixBaseUri, options.HelixAccessToken),
+            CreateHelixApi(options, () => CreateEntraHelixApi(options.HelixBaseUri, options.HelixEntraScope)),
             logger,
             metrics);
         return new ProductionDependencies(
@@ -791,6 +798,33 @@ internal sealed class JobMonitorRunner : IJobMonitorRunner, IDisposable
             resultPublisher,
             helix,
             metrics);
+    }
+
+    internal static IHelixApi CreateHelixApi(
+        JobMonitorOptions options,
+        Func<IHelixApi> entraApiFactory)
+    {
+        if (options.UseEntraAuthentication)
+        {
+            return entraApiFactory();
+        }
+
+        return string.IsNullOrEmpty(options.HelixAccessToken)
+            ? ApiFactory.GetAnonymous(options.HelixBaseUri)
+            : ApiFactory.GetAuthenticated(options.HelixBaseUri, options.HelixAccessToken);
+    }
+
+    internal static IHelixApi CreateEntraHelixApi(string baseUri, string entraScope)
+    {
+#if DOTNET_BUILD_SOURCE_ONLY
+        throw new PlatformNotSupportedException(
+            "Helix Entra authentication is not available in source-build.");
+#else
+        var credential = new DefaultIdentityTokenCredential();
+        return string.IsNullOrWhiteSpace(entraScope)
+            ? ApiFactory.GetAuthenticatedWithEntra(baseUri, credential)
+            : ApiFactory.GetAuthenticatedWithEntra(baseUri, credential, entraScope);
+#endif
     }
 
     public void Dispose()

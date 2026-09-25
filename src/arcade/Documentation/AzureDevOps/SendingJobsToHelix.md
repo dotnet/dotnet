@@ -57,9 +57,50 @@ steps:
 
 ### Internal builds
 
-In the dev.azure.com/dnceng/internal project, you can use the `DotNet-HelixApi-Access` variable group to provide this secret to your build and then specify the `HelixApiAccessToken` secret for the `HelixAccessToken` parameter.
+Internal builds can authenticate with Entra ID through an Azure service connection or with a legacy Helix access token.
 
 Please note that authorized jobs *cannot* be submitted to queues with `IsInternalOnly` set to false. To determine this value for a particular queue, see the list of available queues [here](https://helix.dot.net/api/2018-03-14/info/queues).
+
+#### Entra ID authentication
+
+Set `HelixUseEntraAuthentication` to `true` and pass an Azure service connection authorized for Helix through `HelixAzureSubscription`. These parameters configure the `send-to-helix.yml` steps template and the SDK tasks that submit jobs.
+
+When Entra authentication is enabled, the template does not forward `HelixAccessToken` to the Helix processes. If a legacy token is still injected by a variable group, explicit Entra opt-in takes precedence and the task ignores the token with a warning.
+
+The production and staging Entra scopes are inferred for `https://helix.dot.net/`
+and `https://helix.int-dot.net/`. When `HelixBaseUri` targets another HTTPS
+host, set its scope through `HelixEntraScope`.
+
+```yaml
+steps:
+- template: /eng/common/templates/steps/send-to-helix.yml
+  displayName: Send to Helix
+  parameters:
+    HelixUseEntraAuthentication: true
+    HelixAzureSubscription: <Azure service connection ID authorized for Helix>
+    # HelixEntraScope: <required for a custom HelixBaseUri host>
+    # other parameters here
+```
+
+If the pipeline also uses the standalone Helix Job Monitor, configure its
+separate job template with `useEntraAuthentication` and `azureSubscription`.
+For a custom `helixBaseUri`, also pass the same scope through `helixEntraScope`.
+Enabling Entra authentication on `send-to-helix.yml` does not automatically
+configure the monitor job.
+
+```yaml
+jobs:
+- template: /eng/common/core-templates/job/helix-job-monitor.yml
+  parameters:
+    useEntraAuthentication: true
+    azureSubscription: <Azure service connection ID authorized for Helix>
+    # helixEntraScope: <required for a custom helixBaseUri host>
+    # other parameters here
+```
+
+#### Legacy access-token authentication
+
+In the dev.azure.com/dnceng/internal project, you can use the `DotNet-HelixApi-Access` variable group to provide this secret to your build and then specify the `HelixApiAccessToken` secret for the `HelixAccessToken` parameter.
 
 Example:
 
