@@ -97,8 +97,9 @@ internal static class Signing
             }
             return true;
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Console.Error.WriteLine($"Strong-name signing '{file}' failed: {e}");
             if (!string.IsNullOrEmpty(snPath))
             {
                 // Fall back to the old method of checking for a strong name signature, but only on Windows.
