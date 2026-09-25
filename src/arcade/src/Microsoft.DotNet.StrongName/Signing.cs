@@ -99,15 +99,12 @@ internal static class Signing
         }
         catch (Exception)
         {
+            if (string.IsNullOrEmpty(snPath)) throw;
             if (!string.IsNullOrEmpty(snPath))
             {
                 // Fall back to the old method of checking for a strong name signature, but only on Windows.
                 // Otherwise, return false:
                 return Sign_Legacy(file, keyFile, snPath);
-            }
-            else
-            {
-                throw;
             }
         }
 
