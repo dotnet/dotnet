@@ -12,7 +12,11 @@ internal static class ProtobufOtlpResourceSerializer
     private const int ReserveSizeForLength = 4;
     private const int InitialBufferSize = 2048;
 
+#if NETFRAMEWORK || NETSTANDARD2_0
     private static readonly ConditionalWeakTable<Resource, byte[]> CachedResourceBytes = new();
+#else
+    private static readonly ConditionalWeakTable<Resource, byte[]> CachedResourceBytes = [];
+#endif
 
     private static ReadOnlySpan<byte> EmptyResourceBytes => [0x0A, 0x80, 0x80, 0x80, 0x00];
 
@@ -24,12 +28,7 @@ internal static class ProtobufOtlpResourceSerializer
             return writePosition + EmptyResourceBytes.Length;
         }
 
-#if NET10_0_OR_GREATER
         var cached = CachedResourceBytes.GetOrAdd(resource, SerializeResourceToBytes);
-#else
-        var cached = CachedResourceBytes.GetValue(resource, SerializeResourceToBytes);
-#endif
-
         Buffer.BlockCopy(cached, 0, buffer, writePosition, cached.Length);
         return writePosition + cached.Length;
     }
@@ -50,14 +49,14 @@ internal static class ProtobufOtlpResourceSerializer
                 }
                 catch (Exception ex) when (ex is IndexOutOfRangeException or ArgumentException)
                 {
-                    pool.Return(buffer);
+                    ProtobufSerializer.ReturnBuffer(pool, buffer);
                     buffer = pool.Rent(buffer.Length * 2);
                 }
             }
         }
         finally
         {
-            pool.Return(buffer);
+            ProtobufSerializer.ReturnBuffer(pool, buffer);
         }
     }
 
@@ -94,15 +93,10 @@ internal static class ProtobufOtlpResourceSerializer
         return otlpTagWriterState.WritePosition;
     }
 
-    private static void ProcessResourceAttribute(ref ProtobufOtlpTagWriter.OtlpTagWriterState otlpTagWriterState, KeyValuePair<string, object> attribute)
-    {
-        otlpTagWriterState.WritePosition = ProtobufSerializer.WriteTag(otlpTagWriterState.Buffer, otlpTagWriterState.WritePosition, ProtobufOtlpTraceFieldNumberConstants.Resource_Attributes, ProtobufWireType.LEN);
-        var resourceAttributesLengthPosition = otlpTagWriterState.WritePosition;
-        otlpTagWriterState.WritePosition += ReserveSizeForLength;
-
-        ProtobufOtlpTagWriter.Instance.TryWriteTag(ref otlpTagWriterState, attribute.Key, attribute.Value);
-
-        var resourceAttributesLength = otlpTagWriterState.WritePosition - (resourceAttributesLengthPosition + ReserveSizeForLength);
-        ProtobufSerializer.WriteReservedLength(otlpTagWriterState.Buffer, resourceAttributesLengthPosition, resourceAttributesLength);
-    }
+    private static void ProcessResourceAttribute(ref ProtobufOtlpTagWriter.OtlpTagWriterState otlpTagWriterState, KeyValuePair<string, object> attribute) =>
+        ProtobufOtlpTagWriter.WriteKeyValue(
+            ref otlpTagWriterState,
+            ProtobufOtlpTraceFieldNumberConstants.Resource_Attributes,
+            attribute.Key,
+            attribute.Value);
 }
