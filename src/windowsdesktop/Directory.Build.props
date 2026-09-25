@@ -32,6 +32,10 @@
     <TargetArchitecture Condition="'$(TargetArchitecture)' == '' AND '$(Platform)' != '' AND '$(Platform)' != 'AnyCPU'">$(Platform)</TargetArchitecture>
     <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
 
+    <!-- Temporary, remove when Arcade updates its Net* properties for net12.0. -->
+    <NetCurrent>net12.0</NetCurrent>
+    <NetPrevious>net11.0</NetPrevious>
+
     <!-- Builds are portable by default -->
     <PortableBuild Condition="'$(PortableBuild)' != 'false'">true</PortableBuild>
   </PropertyGroup>
