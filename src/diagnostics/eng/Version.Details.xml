@@ -19,17 +19,17 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26468.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26472.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>ad80d0623f6532c4864d1e5e2e6dcab26b81a658</Sha>
+      <Sha>614293a9b3aa17dda9dc7e69c4dfcd576f59741a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CodeAnalysis" Version="10.0.0-beta.26468.2">
+    <Dependency Name="Microsoft.DotNet.CodeAnalysis" Version="10.0.0-beta.26472.2">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>ad80d0623f6532c4864d1e5e2e6dcab26b81a658</Sha>
+      <Sha>614293a9b3aa17dda9dc7e69c4dfcd576f59741a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.RemoteExecutor" Version="10.0.0-beta.26468.2" Pinned="true">
+    <Dependency Name="Microsoft.DotNet.RemoteExecutor" Version="10.0.0-beta.26472.2" Pinned="true">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>ad80d0623f6532c4864d1e5e2e6dcab26b81a658</Sha>
+      <Sha>614293a9b3aa17dda9dc7e69c4dfcd576f59741a</Sha>
     </Dependency>
     <!-- dotnet/installer: Testing version of the SDK. Needed for the signed & entitled host. -->
     <Dependency Name="Microsoft.NET.Sdk" Version="11.0.100-rc.2.26465.113">
@@ -57,29 +57,29 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>3d2a4811a58d8ba08bc2162cced36034f98c6b5d</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26470.102">
+    <Dependency Name="runtime.win-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26471.108">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>66551619c00bee615342142059fbd8b9cad2e1af</Sha>
+      <Sha>d1920aa3fa8523a7b8d04d6e442faccb0b0bb68e</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26470.102">
+    <Dependency Name="runtime.win-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26471.108">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>66551619c00bee615342142059fbd8b9cad2e1af</Sha>
+      <Sha>d1920aa3fa8523a7b8d04d6e442faccb0b0bb68e</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26470.102">
+    <Dependency Name="runtime.linux-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26471.108">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>66551619c00bee615342142059fbd8b9cad2e1af</Sha>
+      <Sha>d1920aa3fa8523a7b8d04d6e442faccb0b0bb68e</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26470.102">
+    <Dependency Name="runtime.linux-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26471.108">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>66551619c00bee615342142059fbd8b9cad2e1af</Sha>
+      <Sha>d1920aa3fa8523a7b8d04d6e442faccb0b0bb68e</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26470.102">
+    <Dependency Name="runtime.osx-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26471.108">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>66551619c00bee615342142059fbd8b9cad2e1af</Sha>
+      <Sha>d1920aa3fa8523a7b8d04d6e442faccb0b0bb68e</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26470.102">
+    <Dependency Name="runtime.osx-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26471.108">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>66551619c00bee615342142059fbd8b9cad2e1af</Sha>
+      <Sha>d1920aa3fa8523a7b8d04d6e442faccb0b0bb68e</Sha>
     </Dependency>
     <!--
       These versions should not be used by any project that contributes to the design-time experience in VS, such as an analyzer, code-fix, or generator assembly.
