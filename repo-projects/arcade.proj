@@ -4,6 +4,13 @@
     <DisallowDotNetFinalVersionKindOverride>true</DisallowDotNetFinalVersionKindOverride>
   </PropertyGroup>
 
+  <!-- TODO: Remove after rebootstrap includes Arcade's newer-TFM compatibility support. -->
+  <PropertyGroup Condition="$([MSBuild]::VersionLessThan('$(NETCoreAppMaximumVersion)', '12.0'))">
+    <CommonArgs>$(CommonArgs) /p:NETCoreAppMaximumVersion=12.0</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:TargetingPackBaselineTargetFramework=$(BundledNETCoreAppTargetFramework)</CommonArgs>
+    <CommonArgs>$(CommonArgs) /p:LoadPrunePackageDataFromNearestFramework=true</CommonArgs>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetOS)' == 'linux' and '$(TargetArchitecture)' == 'x64' and '$(EnableDefaultRidSpecificArtifacts)' == 'true'">
     <!--
       We have a BuildPass2 leg that has no dependencies on Windows artifacts except for Arcade.
