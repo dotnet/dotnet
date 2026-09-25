@@ -46,6 +46,9 @@ internal static class OtlpRetry
     public const int InitialBackoffMilliseconds = 1000;
     private const int MaxBackoffMilliseconds = 5000;
     private const double BackoffMultiplier = 1.5;
+    private const int MinThrottleDelayMilliseconds = 100;
+
+    private static readonly TimeSpan MinThrottleDelay = TimeSpan.FromMilliseconds(MinThrottleDelayMilliseconds);
 
 #if !NET
     private static readonly Random Random = new();
@@ -59,14 +62,26 @@ internal static class OtlpRetry
         }
         else
         {
-            if (ShouldHandleHttpRequestException(response.Exception))
+            if (!IsHttpRequestExceptionRetryable(response.Exception))
             {
-                var delay = TimeSpan.FromMilliseconds(GetRandomNumber(0, retryDelayInMilliSeconds));
-                if (!WouldExceedDeadline(response.DeadlineUtc, delay))
-                {
-                    retryResult = new RetryResult(false, delay, CalculateNextRetryDelay(retryDelayInMilliSeconds));
-                    return true;
-                }
+                retryResult = default;
+                return false;
+            }
+
+            // No HTTP status code means the request failed without a response
+            // (e.g. a timeout or network failure). Honor the deadline so that
+            // total batch export time does not exceed the configured timeout.
+            if (IsDeadlineExceeded(response.DeadlineUtc))
+            {
+                retryResult = default;
+                return false;
+            }
+
+            var delay = TimeSpan.FromMilliseconds(GetRandomNumber(0, retryDelayInMilliSeconds));
+            if (!WouldExceedDeadline(response.DeadlineUtc, delay))
+            {
+                retryResult = new RetryResult(false, delay, CalculateNextRetryDelay(retryDelayInMilliSeconds));
+                return true;
             }
 
             retryResult = default;
@@ -74,9 +89,43 @@ internal static class OtlpRetry
         }
     }
 
-#pragma warning disable IDE0060 // Remove unused parameter
-    public static bool ShouldHandleHttpRequestException(Exception? exception) => true; // TODO: Handle specific exceptions.
-#pragma warning restore IDE0060 // Remove unused parameter
+    /// <summary>
+    /// Determines whether a failed gRPC export response represents a transient
+    /// failure that is eligible to be retried, ignoring any deadline.
+    /// </summary>
+    /// <param name="response">The <see cref="ExportClientGrpcResponse" /> to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if the failure is retryable; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsRetryable(ExportClientGrpcResponse response)
+    {
+        if (response.Status == null)
+        {
+            return false;
+        }
+
+        var throttleDelay = GrpcStatusDeserializer.TryGetGrpcRetryDelay(response.GrpcStatusDetailsHeader);
+        return IsGrpcStatusCodeRetryable(response.Status.Value.StatusCode, throttleDelay.HasValue);
+    }
+
+    /// <summary>
+    /// Determines whether a failed HTTP export response represents a transient
+    /// failure that is eligible to be retried, ignoring any deadline.
+    /// </summary>
+    /// <param name="response">The <see cref="ExportClientHttpResponse"/> to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if the failure is retryable; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsRetryable(ExportClientHttpResponse response)
+    {
+        if (response.StatusCode is { } statusCode)
+        {
+            var throttleDelay = TryGetHttpRetryDelay(statusCode, response.Headers);
+            return IsHttpStatusCodeRetryable(statusCode, throttleDelay.HasValue);
+        }
+
+        return IsHttpRequestExceptionRetryable(response.Exception);
+    }
 
     public static bool TryGetGrpcRetryResult(ExportClientGrpcResponse response, int retryDelayMilliseconds, out RetryResult retryResult)
     {
@@ -91,7 +140,7 @@ internal static class OtlpRetry
                 return false;
             }
 
-            var throttleDelay = GrpcStatusDeserializer.TryGetGrpcRetryDelay(response.GrpcStatusDetailsHeader);
+            var throttleDelay = ClampThrottleDelay(GrpcStatusDeserializer.TryGetGrpcRetryDelay(response.GrpcStatusDetailsHeader));
             var retryable = IsGrpcStatusCodeRetryable(response.Status.Value.StatusCode, throttleDelay.HasValue);
 
             if (!retryable)
@@ -149,7 +198,7 @@ internal static class OtlpRetry
             return false;
         }
 
-        var throttleDelay = throttleGetter(statusCode, carrier);
+        var throttleDelay = ClampThrottleDelay(throttleGetter(statusCode, carrier));
         var retryable = isRetryable(statusCode, throttleDelay.HasValue);
         if (!retryable)
         {
@@ -197,11 +246,23 @@ internal static class OtlpRetry
     private static bool WouldExceedDeadline(DateTime? deadline, TimeSpan delay)
         => deadline is { } value && delay >= value - DateTime.UtcNow;
 
+    /// <summary>
+    /// Applies <see cref="MinThrottleDelayMilliseconds"/> as a lower bound to a throttle delay
+    /// supplied by the server so that a misbehaving endpoint cannot switch throttling off
+    /// entirely by asking for a zero-length delay.
+    /// </summary>
+    /// <param name="throttleDelay">The delay requested by the server, if any.</param>
+    /// <returns>The clamped delay, or <see langword="null"/> if the server did not request one.</returns>
+    private static TimeSpan? ClampThrottleDelay(TimeSpan? throttleDelay)
+        => throttleDelay is { } delay && delay < MinThrottleDelay ? MinThrottleDelay : throttleDelay;
+
     private static int CalculateNextRetryDelay(int nextRetryDelayMilliseconds)
     {
         var nextMilliseconds = nextRetryDelayMilliseconds * BackoffMultiplier;
         nextMilliseconds = Math.Min(nextMilliseconds, MaxBackoffMilliseconds);
-        return Convert.ToInt32(nextMilliseconds);
+
+        // Clamp to a non-zero minimum so the backoff cannot collapse to zero
+        return Math.Max(Convert.ToInt32(nextMilliseconds), MinThrottleDelayMilliseconds);
     }
 
     private static TimeSpan? TryGetHttpRetryDelay(HttpStatusCode statusCode, HttpResponseHeaders? responseHeaders)
@@ -260,8 +321,50 @@ internal static class OtlpRetry
         _ => false,
     };
 
+    private static bool IsHttpRequestExceptionRetryable(Exception? exception)
+    {
+        if (exception is ResponseSizeLimitExceededException)
+        {
+            // Requests with responses that are too large must not be retried
+            return false;
+        }
+
+#if NET
+        if (exception is not HttpRequestException httpRequestException)
+        {
+            return true;
+        }
+
+        if (httpRequestException.StatusCode is { } statusCode)
+        {
+            return IsHttpStatusCodeRetryable(statusCode, false);
+        }
+
+        var httpRequestError = httpRequestException.HttpRequestError;
+        if (httpRequestError == HttpRequestError.InvalidResponse)
+        {
+            var baseException = httpRequestException.GetBaseException();
+            return baseException is HttpIOException { HttpRequestError: HttpRequestError.ResponseEnded };
+        }
+
+        return httpRequestError is not (
+            HttpRequestError.ConfigurationLimitExceeded or
+            HttpRequestError.ExtendedConnectNotSupported or
+            HttpRequestError.UserAuthenticationError or
+            HttpRequestError.VersionNegotiationError);
+#else
+        return true;
+#endif
+    }
+
     private static int GetRandomNumber(int min, int max)
     {
+        if (max <= min)
+        {
+            // Avoid an invalid range causing an exception
+            return min;
+        }
+
 #if NET
         return RandomNumberGenerator.GetInt32(min, max);
 #else

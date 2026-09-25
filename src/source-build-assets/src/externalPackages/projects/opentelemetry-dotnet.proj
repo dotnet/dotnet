@@ -9,7 +9,7 @@
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)pack</PackagesOutput>
     <CustomRepoBuild>true</CustomRepoBuild>
-    <SourceRevisionId>611868a27afda59761da60b98610f8d3b85497dc</SourceRevisionId>
+    <SourceRevisionId>9db92a4e978b4ae432183c790259be48a475578f</SourceRevisionId>
     <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
   </PropertyGroup>
 
@@ -45,6 +45,8 @@
       <CommonBuildArgs>$(CommonBuildArgs) /p:MSBuildTreatWarningsAsErrors=false</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:DisablePackageBaselineValidation=true</CommonBuildArgs>
       <CommonBuildArgs>$(CommonBuildArgs) /p:EnableConfigurationBindingGenerator=false</CommonBuildArgs>
+      <!-- Avoid restoring Microsoft.NET.ILLink.Tasks, which is not available at this bootstrap layer. -->
+      <CommonBuildArgs>$(CommonBuildArgs) /p:IsAotCompatible=false</CommonBuildArgs>
 
       <PackArgs>$(CommonBuildArgs) --output $(ProjectDirectory)pack</PackArgs>
     </PropertyGroup>
