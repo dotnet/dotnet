@@ -14,7 +14,7 @@
     <!-- Arcade features -->
     <UsingToolXliff>false</UsingToolXliff>
 
-    <ShouldUseLiveRoslyn Condition="'$(PreReleaseVersionLabel)' == 'servicing' And !$(VersionPrefix.EndsWith('.0')) And !$(VersionPrefix.EndsWith('.1'))">true</ShouldUseLiveRoslyn>
+    <ShouldUseLiveRoslyn Condition="('$(PreReleaseVersionLabel)' == 'servicing' Or '$(PreReleaseVersionLabel)' == 'hotfix') And !$(VersionPrefix.EndsWith('.0')) And !$(VersionPrefix.EndsWith('.1'))">true</ShouldUseLiveRoslyn>
 
     <!--
       Upper bound for NuGet dependency version ranges on packages built from this repo.
