@@ -934,12 +934,16 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
-        ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
+        ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true'), ne(parameters.buildSourceOnly, true)) }}:
           env:
             ${{ if eq(parameters.setSourceDateEpoch, true) }}:
               SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
             ${{ if eq(parameters.sign, 'true') }}:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+            # Strong-name signing needs SHA-1 RSA signatures, which newer distro crypto policies disable
+            # (e.g. Azure Linux 4.0). Source-only builds skip full signing, so keep SHA-1 off there. See dotnet/dotnet#1439.
+            ${{ if ne(parameters.buildSourceOnly, true) }}:
+              OPENSSL_ENABLE_SHA1_SIGNATURES: 1
 
     - ${{ if ne(parameters.runOnline, 'True' )}}:
       - script: |
