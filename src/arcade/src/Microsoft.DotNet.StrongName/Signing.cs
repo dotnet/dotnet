@@ -97,18 +97,12 @@ internal static class Signing
             }
             return true;
         }
-        catch (Exception)
+        catch (Exception) when (!string.IsNullOrEmpty(snPath))
         {
-            if (string.IsNullOrEmpty(snPath)) throw;
-            if (!string.IsNullOrEmpty(snPath))
-            {
-                // Fall back to the old method of checking for a strong name signature, but only on Windows.
-                // Otherwise, return false:
-                return Sign_Legacy(file, keyFile, snPath);
-            }
+            // Fall back to the old method of checking for a strong name signature, but only on Windows.
+            // Otherwise, let the exception surface so the caller sees the real failure.
+            return Sign_Legacy(file, keyFile, snPath);
         }
-
-        return false;
     }
 
     internal static bool Sign_Legacy(string file, string keyfile,  string snPath)
