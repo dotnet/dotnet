@@ -14,18 +14,21 @@
          IMPORTANT: To target the SDK bundled TFM, use the `$(BundledNETCoreAppTargetFramework)`
                     property instead which is defined by the SDK and works outside of arcadified repos. 
                     The use of `$(NetCurrent)` is only necessary for a small set of repos. -->
-    <NetCurrent>net11.0</NetCurrent>
+    <NetCurrent>net12.0</NetCurrent>
 
     <!-- The previously released version of .NET.
          Undefined when NetMinimum and NetPrevious are identical, otherwise identical with
          NetCurrent when building from source. -->
-    <NetPrevious/>
+    <NetPrevious>net11.0</NetPrevious>
     <NetPrevious Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(NetPrevious)' != ''">$(NetCurrent)</NetPrevious>
 
     <!-- Lowest supported version of .NET at the time of the release of NetCurrent.
          Identical with NetCurrent when building from source. -->
     <NetMinimum>net10.0</NetMinimum>
     <NetMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NetMinimum>
+
+    <!-- Use net11.0 pack metadata when synthesizing net12.0 pack entries with a bootstrap SDK. -->
+    <TargetingPackBaselineTargetFramework>net11.0</TargetingPackBaselineTargetFramework>
 
     <!-- The TFM of the latest version of .NET Framework. -->
     <NetFrameworkCurrent>net481</NetFrameworkCurrent>
