@@ -2,6 +2,9 @@
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
+  <!-- TODO: Remove when the bootstrap Arcade SDK includes the .NET 12 framework defaults. -->
+  <Import Project="src/Microsoft.DotNet.Arcade.Sdk/tools/TargetFrameworkDefaults.props" />
+
   <PropertyGroup>
     <Copyright>$(CopyrightNetFoundation)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
