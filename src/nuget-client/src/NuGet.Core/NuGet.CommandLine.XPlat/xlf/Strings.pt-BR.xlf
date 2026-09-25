@@ -395,7 +395,7 @@ O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicita
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
         <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
-        <target state="needs-review-translation">O projeto '{0}' usa package.config para pacotes do NuGet, enquanto o comando funciona somente com projetos de referência do pacote.</target>
+        <target state="translated">O projeto '{0}' não é um projeto PackageReference. Este comando só dá suporte a projetos PackageReference NuGet.</target>
         <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
@@ -405,7 +405,7 @@ O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicita
       </trans-unit>
       <trans-unit id="Error_PackagePublishDateMissing">
         <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
-        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <target state="translated">A '{0}' de origem do pacote não forneceu uma data de publicação para o pacote '{1}' versão '{2}', o que é necessário porque a origem tem um tempo de publicação mínimo configurado.</target>
         <note>{0} - package source name
 {1} - package ID
 {2} - package version</note>
@@ -1041,7 +1041,7 @@ Para obter mais informações, visite https://docs.nuget.org/docs/reference/comm
       </trans-unit>
       <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
         <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
-        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <target state="translated">Pacotes com versões mais recentes que não atingiram o tempo mínimo de publicação configurado: {0}.</target>
         <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -1537,7 +1537,7 @@ A pesquisa é uma comparação de cadeia de caracteres que não faz distinção 
       </trans-unit>
       <trans-unit id="Warn_AddPkgNonCompliantPackageId">
         <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
-        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <target state="translated">A ID do pacote '{0}' não atende aos padrões de ID do pacote NuGet. As IDs de pacote não devem ter mais de 100 caracteres, começar com uma letra, dígito ou sublinhado e conter apenas letras ASCII, dígitos, pontos (.), traços (-) e sublinhados (_). Pontos e traços não podem aparecer consecutivamente ou no final.</target>
         <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">
