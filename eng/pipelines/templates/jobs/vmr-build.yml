@@ -854,6 +854,9 @@ jobs:
             extraBuildProperties="$extraBuildProperties $(signProperties)"
           else
             customBuildArgs="$customBuildArgs --source-only"
+            # Keep source-only builds free of SHA-1 signature dependencies even if the container enables them.
+            # OpenSSL checks presence, not value, so the variable must be unset rather than set to 0 (dotnet/dotnet#1439).
+            unset OPENSSL_ENABLE_SHA1_SIGNATURES
             extraBuildProperties="$extraBuildProperties /p:ReportSbaUsage=true"
             if [[ '${{ parameters.sign }}' == 'True' ]]; then
               # Set up for signing source-built artifacts post-build.
@@ -934,16 +937,12 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
-        ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true'), ne(parameters.buildSourceOnly, true)) }}:
+        ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
           env:
             ${{ if eq(parameters.setSourceDateEpoch, true) }}:
               SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
             ${{ if eq(parameters.sign, 'true') }}:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-            # Strong-name signing needs SHA-1 RSA signatures, which newer distro crypto policies disable
-            # (e.g. Azure Linux 4.0). Source-only builds skip full signing, so keep SHA-1 off there. See dotnet/dotnet#1439.
-            ${{ if ne(parameters.buildSourceOnly, true) }}:
-              OPENSSL_ENABLE_SHA1_SIGNATURES: 1
 
     - ${{ if ne(parameters.runOnline, 'True' )}}:
       - script: |
