@@ -395,7 +395,7 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
         <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
-        <target state="needs-review-translation">`{0}` projesi, NuGuet paketleri için package.config dosyasını kullanıyor fakat komut yalnızca paket başvurusu projeleriyle çalışır.</target>
+        <target state="translated">Proje '{0}' PackageReference bir proje değil. Bu komut yalnızca NuGet PackageReference projelerini destekler.</target>
         <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
@@ -405,7 +405,7 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
       </trans-unit>
       <trans-unit id="Error_PackagePublishDateMissing">
         <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
-        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <target state="translated">'{0}' paket kaynağı '{1}' paketi '{2}' sürümü için yayımlama tarihi sağlamadı; kaynağın minimum yayımlama yaşı yapılandırıldığından yayımlama tarihi gereklidir.</target>
         <note>{0} - package source name
 {1} - package ID
 {2} - package version</note>
@@ -1041,7 +1041,7 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
         <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
-        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <target state="translated">Yapılandırılmış minimum yayımlama süresine ulaşmamış daha yeni sürümlere sahip paketler: {0}.</target>
         <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -1537,7 +1537,7 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
       </trans-unit>
       <trans-unit id="Warn_AddPkgNonCompliantPackageId">
         <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
-        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <target state="translated">Paket kimliği '{0}', NuGet paket kimliği standartlarını karşılamıyor. Paket kimlikleri 100 karakterden uzun olmamalı, harf, rakam veya alt çizgiyle başlamalı ve yalnızca ASCII harfleri, rakamlar, noktalar (.), kısa çizgiler (-) ve alt çizgiler (_) içermelidir. Noktalar ve tireler art arda veya sonda görünemez.</target>
         <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">
