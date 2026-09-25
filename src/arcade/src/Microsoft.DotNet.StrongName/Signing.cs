@@ -105,8 +105,10 @@ internal static class Signing
                 // Otherwise, return false:
                 return Sign_Legacy(file, keyFile, snPath);
             }
-
-            throw;
+            else
+            {
+                throw;
+            }
         }
 
         return false;
