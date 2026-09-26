@@ -491,7 +491,7 @@ jobs:
     # Authenticate with service connections to be able to pull packages to external nuget feeds.
     - task: NuGetAuthenticate@1
       inputs:
-        nuGetServiceConnections: devdiv/engineering, devdiv/dotnet-core-internal-tooling
+        nuGetServiceConnections: devdiv-engineering-feed-r-wif, devdiv/dotnet-core-internal-tooling
 
   # https://github.com/dotnet/dotnet/issues/1758
   # After a re-boostrap:
