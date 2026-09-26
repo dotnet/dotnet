@@ -12,7 +12,7 @@ jobs:
     displayName: "Backup Build Artifacts"
     timeoutInMinutes: 10
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
+      name: VSEng-MicroBuildVSStable
 
     steps:
       - checkout: none
