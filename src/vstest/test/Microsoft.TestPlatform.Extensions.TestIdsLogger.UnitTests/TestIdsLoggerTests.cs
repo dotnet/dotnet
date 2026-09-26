@@ -760,5 +760,27 @@ public class TestIdsLoggerTests
         }
     }
 
+    /// <summary>
+    /// Pins the <c>[Experimental]</c> annotation, which is the only thing stopping this logger from
+    /// being treated as supported once it ships in an LTS release.
+    /// </summary>
+    /// <remarks>
+    /// Nothing else catches its loss: the PublicAPI analyzer records signatures rather than
+    /// attributes, and running the logger is unaffected either way because the extension framework
+    /// instantiates it by name. The attribute is matched by full name because it is the framework
+    /// type on .NET 8 and newer and a down-level polyfill everywhere else.
+    /// </remarks>
+    [TestMethod]
+    public void TestIdsLogger_IsMarkedExperimental()
+    {
+        var experimental = typeof(VisualStudio.TestPlatform.Extensions.TestIdsLogger.TestIdsLogger).GetCustomAttributesData()
+            .SingleOrDefault(a => a.AttributeType.FullName == "System.Diagnostics.CodeAnalysis.ExperimentalAttribute");
+
+        Assert.IsNotNull(
+            experimental,
+            "TestIdsLogger is no longer marked experimental. Remove the annotation only once this logger is supported.");
+        Assert.AreEqual("VSTEST001", experimental.ConstructorArguments[0].Value);
+    }
+
     #endregion
 }
