@@ -43,6 +43,8 @@
     <!-- Avoid warnings-as-errors on NuGet audit for a repro asset. -->
     <NuGetAudit>false</NuGetAudit>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- VSTEST001: this host exists to exercise the experimental xxHash128 id path on purpose. -->
+    <NoWarn>$(NoWarn);VSTEST001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TestPlatformToolsDirOverride)' == ''">

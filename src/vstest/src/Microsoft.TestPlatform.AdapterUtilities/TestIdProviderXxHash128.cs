@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 using Microsoft.TestPlatform.Hashing;
@@ -12,13 +13,23 @@ namespace Microsoft.TestPlatform.AdapterUtilities;
 /// Used to generate id for tests, using xxHash128.
 /// </summary>
 /// <remarks>
+/// <para>
 /// This is the intended successor to <see cref="TestIdProvider"/>, which uses SHA1. SHA1 is a
 /// cryptographic hash being used for a non-cryptographic purpose; it is slower than necessary and
 /// its presence trips security tooling. The ids produced here are RFC 9562 version 8 UUIDs that
 /// carry the version of the hashing scheme, so a future change to the algorithm is detectable
 /// from the id itself. It ships available but not default: <see cref="TestIdProvider"/> is still
 /// what test ids are computed with unless a run selects otherwise.
+/// </para>
+/// <para>
+/// This type is experimental and not supported. It ships to gather feedback while xxHash128 is not
+/// the default, and it may change or be removed in a future release. Using it requires suppressing
+/// VSTEST001.
+/// </para>
 /// </remarks>
+// The fragment is hardcoded lowercase rather than composed from {0}: the diagnostic id is uppercase,
+// and GitHub generates lowercase heading anchors, so "#{0}" would never resolve.
+[Experimental("VSTEST001", UrlFormat = "https://github.com/microsoft/vstest/blob/main/docs/experimental-apis.md#vstest001")]
 public class TestIdProviderXxHash128
 {
     private Guid _id = Guid.Empty;

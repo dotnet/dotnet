@@ -245,7 +245,11 @@ public sealed class TestCase : TestObject
 
         return algorithm switch
         {
+            // GuidFromStringXxHash128 is experimental. This call is deliberate: it is how the flag
+            // opts a run into the algorithm, and it is in the same assembly that declares it.
+#pragma warning disable VSTEST001
             TestCaseIdAlgorithm.XxHash128 => EqtHash.GuidFromStringXxHash128(testcaseFullName),
+#pragma warning restore VSTEST001
             TestCaseIdAlgorithm.Sha1 => EqtHash.GuidFromString(testcaseFullName),
 
             // Naming both members above means adding a third one surfaces here as a deliberate
