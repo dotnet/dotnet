@@ -65,16 +65,16 @@ if: needs.fetch-binlog.outputs.binlog-found == 'true'
 # agent job stays least-privilege — do NOT raise it to `write`, that would
 # hand PR-write scope to the agent job unnecessarily.
 #
-# Do NOT add `copilot-requests: write` here. That permission switches gh-aw's
-# generated lock from `COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}`
-# to `${{ github.token }}`, and the ephemeral Actions token is not entitled for
-# inference against api.githubcopilot.com in this org — every agent run then
-# dies in ~2s with "Authentication failed with provider ... (HTTP 403)" on both
-# /models and /chat/completions, before it reads the prompt or opens a binlog.
-# `update-default-versions.md` omits it and works; keep this consistent.
+# Do NOT add `copilot-requests: write` here. The ephemeral Actions token
+# previously failed inference with HTTP 403 in this org (see #17301).
+# Copilot authentication comes from the PAT pool in the shared import, using
+# the protected copilot-pat-pool environment, not the legacy repository token.
 permissions:
   contents: read
   pull-requests: read
+
+# Must match the selector's environment in the shared authentication import.
+environment: copilot-pat-pool
 
 concurrency:
   # Only real `arcade-pr` check_run events (and manual dispatch for a PR) use a
@@ -100,21 +100,8 @@ imports:
 # artifact, downloaded by the agent job to `/tmp/binlogs`, and mounted
 # read-only into this container at `/data/binlogs` by the gh-aw MCP gateway.
 #
-# NOT pinned by digest, and that is a gh-aw v0.77.5 limitation, not a choice.
-# This container is handed the binlogs of an unmerged, possibly external PR and
-# its output is what the agent reports back, so "whatever this tag points at
-# today" is a supply-chain decision made by whoever last pushed the tag — and
-# the tag does move: it resolved to sha256:9f1e2c3e8281... from 2026-07-16
-# until 2026-08-03, when it became
-# sha256:ee7b7e5c6e162f3f0061822aa7183260626f1a1e986d04ba9915ab197a37932c.
-# v0.77.5 validates `container` against `^[a-zA-Z0-9][a-zA-Z0-9/:_.-]*$`, which
-# has no `@`, so `image@sha256:...` is rejected at compile time and the
-# generated `download_docker_images.sh` pulls this image by bare tag while every
-# other image in the lock is digest-pinned. gh-aw >= v0.83.x resolves and pins
-# the digest automatically (verified: microsoft/testfx on v0.83.4 emits
-# `digest` + `pinned_image` in its `gh-aw-manifest` and pulls by `@sha256:`), so
-# this is fixed by bumping the compiler this repo pins rather than by editing
-# this line.
+# This binlog container remains tag-based in the generated lock. The
+# authentication migration leaves the image and its read-only mount unchanged.
 # Refresh/inspect the current digest with:
 #   docker buildx imagetools inspect \
 #     mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-binlog-mcp-amd64
