@@ -1,0 +1,93 @@
+<Project>
+  <PropertyGroup>
+    <BootstrapLayoutDir Condition="'$(BootstrapLayoutDir)' == ''">$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bootstrap', '$(TargetRid)'))</BootstrapLayoutDir>
+    <!-- The reusable layout and its input manifest must both be shared across configurations. -->
+    <BootstrapIntermediateDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'bootstrap', '$(TargetRid)'))</BootstrapIntermediateDir>
+    <BootstrapInputManifest>$(BootstrapIntermediateDir)inputs.txt</BootstrapInputManifest>
+    <BootstrapReadyFile>$(BootstrapLayoutDir).complete</BootstrapReadyFile>
+  </PropertyGroup>
+
+  <Target Name="_CollectBootstrapFiles">
+    <PropertyGroup>
+      <_UseGeneratedBootstrapRidGraph Condition="'$(DotNetBuildSourceOnly)' == 'true' and ('$(TargetRid)' != '$(PortableTargetRid)' or '$(NETCoreSdkRuntimeIdentifier)' != '$(NETCoreSdkPortableRuntimeIdentifier)')">true</_UseGeneratedBootstrapRidGraph>
+    </PropertyGroup>
+    <ItemGroup>
+      <AotSdkFile Include="$(CoreCLRAotSdkDir)/*" Condition="'$(UseNativeAotForComponents)' == 'true'" />
+      <AppHostFile Include="$(DotNetHostBinDir)apphost$(ExeSuffix)" />
+      <AppHostFile Include="$(CoreCLRArtifactsPath)corehost/singlefilehost$(ExeSuffix)"
+                   Condition="'$(UseNativeAotForComponents)' != 'true'" />
+      <RefPackFile Include="$(MicrosoftNetCoreAppRefPackDir)/**/*" />
+      <RuntimePackFile Include="$(MicrosoftNetCoreAppRuntimePackDir)/**/*" />
+      <PortableRuntimePackFile
+        Include="$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)/**/*"
+        Condition="'$(PortableTargetRid)' != '' and
+                   '$(PortableTargetRid)' != '$(TargetRid)' and
+                   !Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)') and
+                   Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)')" />
+      <TargetRuntimePackAliasFile
+        Include="$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)/**/*"
+        Condition="'$(PortableTargetRid)' != '' and
+                   '$(PortableTargetRid)' != '$(TargetRid)' and
+                   !Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(TargetRid)') and
+                   Exists('$(MicrosoftNetCoreAppRuntimePackDir)/runtimes/$(PortableTargetRid)')" />
+      <RidGraphFile Include="$(ArtifactsBinDir)Microsoft.NETCore.Platforms/*.json"
+                    Condition="'$(_UseGeneratedBootstrapRidGraph)' == 'true'" />
+      <RidGraphFile Include="$(LibrariesProjectRoot)Microsoft.NETCore.Platforms/src/runtime.json;$(LibrariesProjectRoot)Microsoft.NETCore.Platforms/src/PortableRuntimeIdentifierGraph.json"
+                    Condition="'$(_UseGeneratedBootstrapRidGraph)' != 'true'" />
+
+      <AotSdkFile DestinationPath="$(BootstrapAotSdkDir)/%(Filename)%(Extension)" />
+      <AppHostFile DestinationPath="$(BootstrapHostDir)/%(Filename)%(Extension)" />
+      <RefPackFile DestinationPath="$(BootstrapRefPackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <RuntimePackFile DestinationPath="$(BootstrapRuntimePackDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <PortableRuntimePackFile DestinationPath="$(BootstrapRuntimePackDir)/runtimes/$(PortableTargetRid)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <TargetRuntimePackAliasFile DestinationPath="$(BootstrapRuntimePackDir)/runtimes/$(TargetRid)/%(RecursiveDir)%(Filename)%(Extension)" />
+      <RidGraphFile DestinationPath="$(BootstrapRidGraphDir)/%(RecursiveDir)%(Filename)%(Extension)" />
+
+      <BootstrapFile Include="@(AotSdkFile);@(AppHostFile);@(RefPackFile);@(RuntimePackFile);@(PortableRuntimePackFile);@(TargetRuntimePackAliasFile);@(RidGraphFile)" />
+    </ItemGroup>
+
+    <Error Text="The bootstrap AOT SDK was not produced."
+           Condition="'$(UseNativeAotForComponents)' == 'true' and '@(AotSdkFile)' == ''" />
+    <Error Text="The bootstrap apphost was not produced." Condition="'@(AppHostFile)' == ''" />
+    <Error Text="The bootstrap reference pack was not produced." Condition="'@(RefPackFile)' == ''" />
+    <Error Text="The bootstrap runtime pack was not produced." Condition="'@(RuntimePackFile)' == ''" />
+    <Error Text="The bootstrap RID graph was not produced." Condition="'@(RidGraphFile)' == ''" />
+  </Target>
+
+  <Target Name="_WriteBootstrapInputManifest" DependsOnTargets="_CollectBootstrapFiles">
+    <GetFileHash Files="@(BootstrapFile)" Algorithm="SHA256">
+      <Output TaskParameter="Items" ItemName="BootstrapFileWithHash" />
+    </GetFileHash>
+    <ItemGroup>
+      <BootstrapInputManifestLine Include="@(BootstrapFileWithHash)">
+        <Value>%(FullPath)|%(DestinationPath)|%(FileHash)</Value>
+      </BootstrapInputManifestLine>
+    </ItemGroup>
+    <MakeDir Directories="$(BootstrapIntermediateDir)" />
+    <WriteLinesToFile File="$(BootstrapInputManifest)"
+                      Lines="@(BootstrapInputManifestLine->'%(Value)')"
+                      Overwrite="true"
+                      WriteOnlyWhenDifferent="true" />
+  </Target>
+
+  <Target Name="_ValidateBootstrapLayout" DependsOnTargets="_WriteBootstrapInputManifest">
+    <ItemGroup>
+      <MissingBootstrapFile Include="@(BootstrapFile)" Condition="!Exists('%(DestinationPath)')" />
+      <FileWrites Include="$(BootstrapInputManifest);@(BootstrapFile->Metadata('DestinationPath'));$(BootstrapReadyFile)" />
+    </ItemGroup>
+    <Delete Files="$(BootstrapReadyFile)" Condition="'@(MissingBootstrapFile)' != ''" />
+  </Target>
+
+  <Target Name="CreateBootstrapLayout"
+          AfterTargets="Build"
+          DependsOnTargets="_ValidateBootstrapLayout"
+          Inputs="$(BootstrapInputManifest)"
+          Outputs="$(BootstrapReadyFile)">
+    <RemoveDir Directories="$(BootstrapLayoutDir)" />
+    <Copy SourceFiles="@(BootstrapFile)" DestinationFiles="@(BootstrapFile->Metadata('DestinationPath'))" />
+    <WriteLinesToFile File="$(BootstrapReadyFile)"
+                      Lines="$(GitCommitHash);$(TargetRid);$(Configuration)"
+                      Overwrite="true" />
+    <Message Importance="high" Text="Bootstrap layout created at $(BootstrapLayoutDir)" />
+  </Target>
+</Project>

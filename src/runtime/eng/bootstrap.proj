@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <Import Project="bootstrap.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepositoryEngineeringDir)bootstrap-producers.proj"
+                      AdditionalProperties="EnableBootstrap=false;BootstrapMainBuild=true"
+                      GlobalPropertiesToRemove="BootstrapBuildLane;BootstrapBuildArtifactsDir"
+                      UndefineProperties="BootstrapBuildLane;BootstrapBuildArtifactsDir"
+                      BuildInParallel="false" />
+  </ItemGroup>
+
+  <Target Name="_BuildBootstrapProducersBeforeBootstrap" BeforeTargets="Build">
+    <MSBuild Projects="$(RepositoryEngineeringDir)bootstrap-producers.proj"
+             Properties="EnableBootstrap=false;BootstrapMainBuild=true"
+             RemoveProperties="BootstrapBuildLane;BootstrapBuildArtifactsDir"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+  </Target>
+
+  <Target Name="BuildBootstrapConsumers" AfterTargets="Build" Condition="'@(BootstrapConsumer)' != ''">
+    <ItemGroup>
+      <BootstrapConsumerPrerequisite Include="@(ProjectToBuild->WithMetadataValue('BootstrapPrerequisite', 'true'))" />
+    </ItemGroup>
+    <MSBuild Projects="@(BootstrapConsumerPrerequisite)"
+             Targets="Restore"
+             Properties="$(_BootstrapConsumerProperties)"
+             RemoveProperties="$(BootstrapPropertiesToRemove)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapConsumerPrerequisite)"
+             Properties="$(_BootstrapConsumerProperties);ExcludeRestorePackageImports=false"
+             RemoveProperties="$(BootstrapPropertiesToRemove)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapConsumer)"
+             Targets="Restore"
+             Properties="$(_BootstrapConsumerProperties)"
+             RemoveProperties="$(BootstrapPropertiesToRemove)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+    <MSBuild Projects="@(BootstrapConsumer)"
+             Properties="$(_BootstrapConsumerProperties);ExcludeRestorePackageImports=false"
+             RemoveProperties="$(BootstrapPropertiesToRemove)"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+  </Target>
+
+</Project>

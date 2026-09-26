@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <Import Project="bootstrap.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoTasksDir)tasks.proj"
+                      BuildInParallel="false" />
+    <ProjectReference Include="@(ProjectToBuild->WithMetadataValue('BootstrapProducer', 'true'))" />
+  </ItemGroup>
+
+  <Import Project="bootstrap-layout.targets" />
+
+</Project>
