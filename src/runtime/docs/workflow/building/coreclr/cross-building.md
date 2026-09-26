@@ -178,13 +178,23 @@ docker run --rm \
 
 CoreCLR builds a few tools, including NativeAOT compiler itself, using NativeAOT (or single file where NativeAOT is not supported). The build defaults to using a "Last Known Good" version of NativeAOT to build the tools. This "Last Known Good" version comes from the .NET SDK referenced in the global.json file. This default was chosen for a good local build experience of most repo contributors. Building with live NativeAOT version would make the local build longer and it would make debugging local changes that impact NativeAOT compiler complicated.
 
-The runtime's build scripts provide an additional set of options to build with the live NativeAOT version instead of the "Last Known Good" version. This is useful for testing changes to NativeAOT or the tools that are built with it, and is required for building those tools for target platforms that are not known to the "Last Known Good" version of NativeAOT, such as FreeBSD, community architectures, or non-portable builds of .NET. This is not yet implemented for Windows.
+The runtime's build scripts provide an additional set of options to build with the live NativeAOT version instead of the "Last Known Good" version. This is useful for testing changes to NativeAOT or the tools that are built with it, and is required for building those tools for target platforms that are not known to the "Last Known Good" version of NativeAOT, such as FreeBSD, community architectures, or non-portable builds of .NET.
 
 To build the bootstrap subset of the runtime repo, you can build the `bootstrap` subset. To use the bootstrap components in the runtime repo build, you can pass the `--use-bootstrap` argument to the build script. This will use the bootstrap components instead of the "Last Known Good" version of NativeAOT.
 
-For simplicity, a `--bootstrap` option is also provided. This option will build the `bootstrap` subset, clean up the artifacts directory, and then build the runtime repo with the `--use-bootstrap` option. This is useful for building the runtime repo with the live NativeAOT version without having to run two separate commands.
+For simplicity, a `--bootstrap` option (`-bootstrap` on Windows) is also provided. It enables bootstrapping within the main MSBuild invocation using `EnableBootstrap=true`. Shared runtime, library, and host producers build once, then a snapshot of their outputs is created in `artifacts/bootstrap/<rid>/`. Shipping tools consume that snapshot in a separate intermediate/output directory while the remaining product build proceeds. Packages that consume those tools are built after both finish. The build does not delete the product's `artifacts/bin` or `artifacts/obj` directories.
+
+The snapshot is refreshed when its input file set or content changes, and missing snapshot files are restored on the next bootstrap build. Subsequent `--use-bootstrap` builds and test builds reuse the same snapshot. Explicitly building `bootstrap` retains the legacy producer settings and layout-only behavior without publishing shipping tools.
 
 The `--bootstrap` option is automatically specified when building the runtime repo for .NET Source Build, as the vast majority of Source Build scenarios use non-portable RIDs.
+
+The bootstrap graph and snapshot regression checks can be run without compiling the runtime:
+
+```powershell
+pwsh -File eng\testing\bootstrap-tests.ps1 -DotNet .dotnet\dotnet.exe
+```
+
+On Unix, use `.dotnet/dotnet` for `-DotNet`. These checks cover project selection and snapshot invalidation; they do not replace clean product and cross-platform builds.
 
 ### Building Tests with Bootstrapping
 
