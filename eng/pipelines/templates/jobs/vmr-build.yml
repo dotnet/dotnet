@@ -854,9 +854,6 @@ jobs:
             extraBuildProperties="$extraBuildProperties $(signProperties)"
           else
             customBuildArgs="$customBuildArgs --source-only"
-            # Keep source-only builds free of SHA-1 signature dependencies even if the container enables them.
-            # OpenSSL checks presence, not value, so the variable must be unset rather than set to 0 (dotnet/dotnet#1439).
-            unset OPENSSL_ENABLE_SHA1_SIGNATURES
             extraBuildProperties="$extraBuildProperties /p:ReportSbaUsage=true"
             if [[ '${{ parameters.sign }}' == 'True' ]]; then
               # Set up for signing source-built artifacts post-build.
