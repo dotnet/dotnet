@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="nuget-client" Sha="a77d816af9c66185131aa33e151182d588913877" BarId="328170" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="nuget-client" Sha="020981915109c9f72932073fede9844accc9ded3" BarId="332543" />
   <!--
     Currently this file is required to publish builds to .NET build asset registry.
     See https://github.com/dotnet/arcade/issues/2396 for details.
@@ -61,13 +61,13 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26421.115">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26467.109">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>a77d816af9c66185131aa33e151182d588913877</Sha>
+      <Sha>020981915109c9f72932073fede9844accc9ded3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.26421.115">
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.26467.109">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>a77d816af9c66185131aa33e151182d588913877</Sha>
+      <Sha>020981915109c9f72932073fede9844accc9ded3</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
