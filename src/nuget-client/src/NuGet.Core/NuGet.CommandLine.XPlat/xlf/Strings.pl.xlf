@@ -1341,7 +1341,7 @@ Wyszukiwanie polega na porównywaniu łańcuchów bez rozróżniania wielkości 
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_ResourceNotFound">
         <source>The source '{0}' does not advertise a supported package staging resource.</source>
-        <target state="new">The source '{0}' does not advertise a supported package staging resource.</target>
+        <target state="translated">Źródłowy '{0}' nie anonsuje obsługiwanego zasobu przemieszczania pakietu.</target>
         <note>0 - package source</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
