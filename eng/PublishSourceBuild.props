@@ -101,6 +101,7 @@
 
   <!-- Create the SourceBuilt.Private.Artifacts archive when building source-only. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateCompressedTar" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreatePrivateSourceBuiltArtifactsArchive"
           AfterTargets="Execute"
           DependsOnTargets="$(CreatePrivateSourceBuiltArtifactsArchiveDependsOn)"
@@ -148,13 +149,20 @@
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
                                VersionPropsFlowType="AllPackages"
                                OutputPath="$(AllPackageVersionsPropsName)"
-                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)" />
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
+                               Deterministic="$(Deterministic)"
+                               DeterministicTimestamp="$(DeterministicTimestamp)" />
 
     <!-- Ensure the target parent dir has been created. -->
     <MakeDir Directories="$(SourceBuiltAssetsDir)" />
 
-    <Exec Command="tar --numeric-owner -czhf $(SourceBuiltTarballName) $([System.IO.Path]::GetFileName('$(SourceBuiltVersionName)')) *"
-          WorkingDirectory="$(SourceBuiltLayoutDir)" />
+    <CreateCompressedTar SourceDir="$(SourceBuiltLayoutDir)"
+                         DestinationFile="$(SourceBuiltTarballName)"
+                         CompressionType="gz"
+                         Format="gnu"
+                         DereferenceSymlinks="true"
+                         Deterministic="$(Deterministic)"
+                         DeterministicTimestamp="$(DeterministicTimestamp)" />
 
     <Message Importance="High" Text="Packaged source-built artifacts to $(SourceBuiltTarballName)" />
 
