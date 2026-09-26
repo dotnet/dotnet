@@ -649,7 +649,7 @@ $ code --diff {outFile} {expectedFile}
 
     let withLangVersion10 (cUnit: CompilationUnit) : CompilationUnit =
         withOptionsHelper [ "--langversion:10.0" ] "withLangVersion10 is only supported on F#" cUnit
-        
+
     let withLangVersion11 (cUnit: CompilationUnit) : CompilationUnit =
         withOptionsHelper [ "--langversion:11.0" ] "withLangVersion11 is only supported on F#" cUnit
 
