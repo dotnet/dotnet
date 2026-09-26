@@ -963,10 +963,12 @@ Set to `partial` or `full` in a shipping project to require IBC optimization dat
 
 Properties that define TargetFramework for use by projects so their targeting easily aligns with the current .NET version in development as well as those that are supported. Arcade will update these properties to match the current supported .NET versions, as well as the release being currently developed.
 
-- NetCurrent - The TFM of the major release of .NET that the Arcade SDK aligns with.
-- NetPrevious - The previously released version of .NET (e.g. this would be net7 if NetCurrent is net8)
-- NetMinimum - Lowest supported version of .NET the time of the release of NetCurrent. E.g. if NetCurrent is net8, then NetMinimum is net6
+- NetCurrent - The TFM of the major release of .NET that the Arcade SDK aligns with (`net12.0`).
+- NetPrevious - The previously released version of .NET (`net11.0`). Undefined when it is the same as NetMinimum.
+- NetMinimum - Lowest supported version of .NET at the time of the release of NetCurrent (`net10.0`).
 - NetFrameworkMinimum - Lowest supported version of .NET Framework the time of the release of NetCurrent. E.g. if NetCurrent is net8, then NetFrameworkMinimum is net462
+
+When building source-only, NetMinimum and a non-empty NetPrevious are set to NetCurrent.
 
 ### `IsTestUtilityProject` (bool)
 

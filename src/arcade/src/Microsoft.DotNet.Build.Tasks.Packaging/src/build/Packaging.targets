@@ -958,7 +958,11 @@
     <DefaultValidateFramework Include="net10.0">
       <RuntimeIDs>@(NETCoreApp100RIDs)</RuntimeIDs>
     </DefaultValidateFramework>
-    <NETCoreAppCurrentRIDs Condition="'@(NETCoreAppCurrentRIDs)' == ''" Include="@(NETCoreApp100RIDs)" />
+    <NETCoreApp110RIDs Condition="'@(NETCoreApp110RIDs)' == ''" Include="@(NETCoreApp100RIDs)" />
+    <DefaultValidateFramework Include="net11.0">
+      <RuntimeIDs>@(NETCoreApp110RIDs)</RuntimeIDs>
+    </DefaultValidateFramework>
+    <NETCoreAppCurrentRIDs Condition="'@(NETCoreAppCurrentRIDs)' == ''" Include="@(NETCoreApp110RIDs)" />
     <DefaultValidateFramework Include="$(NetCurrent)">
       <RuntimeIDs>@(NETCoreAppCurrentRIDs)</RuntimeIDs>
     </DefaultValidateFramework>
