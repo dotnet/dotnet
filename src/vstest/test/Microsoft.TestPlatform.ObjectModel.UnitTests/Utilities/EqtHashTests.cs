@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
@@ -123,5 +124,30 @@ public class EqtHashTests
         Guid expected = EqtHash.GuidFromStringXxHash128("executor://mstestadapter/v2MyTest.dllMyNamespace.MyClass.MyMethod");
 
         Assert.AreEqual(expected, testCase.Id);
+    }
+
+    /// <summary>
+    /// Pins the <c>[Experimental]</c> annotation, which is the only thing stopping this API from
+    /// being treated as supported once it ships in an LTS release.
+    /// </summary>
+    /// <remarks>
+    /// Nothing else catches its loss: the PublicAPI analyzer records signatures rather than
+    /// attributes, and the NoWarn entries that let this assembly's own callers compile keep passing
+    /// whether the annotation is there or not. The attribute is matched by full name because it is
+    /// the framework type on .NET 8 and newer and a down-level polyfill everywhere else.
+    /// </remarks>
+    [TestMethod]
+    public void GuidFromStringXxHash128_IsMarkedExperimental()
+    {
+        var method = typeof(EqtHash).GetMethod(nameof(EqtHash.GuidFromStringXxHash128));
+        Assert.IsNotNull(method);
+
+        var experimental = method.GetCustomAttributesData()
+            .SingleOrDefault(a => a.AttributeType.FullName == "System.Diagnostics.CodeAnalysis.ExperimentalAttribute");
+
+        Assert.IsNotNull(
+            experimental,
+            $"{nameof(EqtHash.GuidFromStringXxHash128)} is no longer marked experimental. Remove the annotation only once this API is supported.");
+        Assert.AreEqual("VSTEST001", experimental.ConstructorArguments[0].Value);
     }
 }

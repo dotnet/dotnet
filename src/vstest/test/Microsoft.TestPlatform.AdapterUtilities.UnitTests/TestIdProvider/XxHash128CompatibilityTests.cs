@@ -137,4 +137,26 @@ public class XxHash128CompatibilityTests
         // Assert
         Assert.AreEqual(expected, id, $"Test id generation for vector '{input}'*{repetition} failed! (normal path)");
     }
+
+    /// <summary>
+    /// Pins the <c>[Experimental]</c> annotation, which is the only thing stopping this API from
+    /// being treated as supported once it ships in an LTS release.
+    /// </summary>
+    /// <remarks>
+    /// Nothing else catches its loss: the PublicAPI analyzer records signatures rather than
+    /// attributes, and the NoWarn entry that lets this test project compile keeps passing whether
+    /// the annotation is there or not. The attribute is matched by full name because it is the
+    /// framework type on .NET 8 and newer and a down-level polyfill everywhere else.
+    /// </remarks>
+    [TestMethod]
+    public void TestIdProviderXxHash128_IsMarkedExperimental()
+    {
+        var experimental = typeof(AdapterUtilities.TestIdProviderXxHash128).GetCustomAttributesData()
+            .SingleOrDefault(a => a.AttributeType.FullName == "System.Diagnostics.CodeAnalysis.ExperimentalAttribute");
+
+        Assert.IsNotNull(
+            experimental,
+            $"{nameof(AdapterUtilities.TestIdProviderXxHash128)} is no longer marked experimental. Remove the annotation only once this API is supported.");
+        Assert.AreEqual("VSTEST001", experimental.ConstructorArguments[0].Value);
+    }
 }
