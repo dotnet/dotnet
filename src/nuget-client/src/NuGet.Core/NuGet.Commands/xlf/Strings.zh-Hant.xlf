@@ -1239,7 +1239,7 @@ Upgrade your .NET SDK or remove RestoreUseLegacyDependencyResolver to use this f
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
         <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
-        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <target state="translated">最短發佈保留時間 {0} 小時無效。值必須介於 0 到 {1} 之間。</target>
         <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">

@@ -1261,7 +1261,7 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
         <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
-        <target state="new">The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</target>
+        <target state="translated">Numero minimo di ore dopo la pubblicazione di un pacchetto prima che sia possibile selezionarlo per l'aggiornamento. Impostare su 0 per rimuovere il valore.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
@@ -1346,12 +1346,12 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
         <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
-        <target state="new">The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</target>
+        <target state="translated">Il file '{0}' non è un pacchetto supportato. Specificare un file con estensione nupkg, snupkg o symbols.nupkg.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="new">Uploads the package into the specified staging group.</target>
+        <target state="translated">Carica il pacchetto nel gruppo di gestione temporanea specificato.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">

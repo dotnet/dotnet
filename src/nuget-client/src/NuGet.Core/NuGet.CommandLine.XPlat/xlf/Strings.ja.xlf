@@ -1261,7 +1261,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
         <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
-        <target state="new">The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</target>
+        <target state="translated">パッケージが公開されてから更新用に選択できるようになるまでの最小時間数。値を削除するには 0 に設定します。</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
@@ -1311,72 +1311,72 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="StageCommand_Description">
         <source>Manages packages in a staging environment.</source>
-        <target state="new">Manages packages in a staging environment.</target>
+        <target state="translated">ステージング環境でパッケージを管理します。</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Description">
         <source>Stages a package on the server without publishing it.</source>
-        <target state="new">Stages a package on the server without publishing it.</target>
+        <target state="translated">パッケージを公開せずにサーバー上にステージングします。</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_InvalidGroup">
         <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
-        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
+        <target state="translated">グループ ID は 1 から 64 文字で、A から Z、a から z、0 から 9、'.'、'_'、または '-' のみを使用し、先頭と末尾は英字または数字にする必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_MissingSource">
         <source>No package source was provided and DefaultPushSource is not configured.</source>
-        <target state="new">No package source was provided and DefaultPushSource is not configured.</target>
+        <target state="translated">パッケージ ソースが指定されておらず、DefaultPushSource が構成されていません。</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackageNotFound">
         <source>The package file '{0}' does not exist.</source>
-        <target state="new">The package file '{0}' does not exist.</target>
+        <target state="translated">パッケージ ファイル '{0}' は存在しません。</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackagePathRequired">
         <source>A package path is required.</source>
-        <target state="new">A package path is required.</target>
+        <target state="translated">パッケージのパスが必要です。</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_ResourceNotFound">
         <source>The source '{0}' does not advertise a supported package staging resource.</source>
-        <target state="new">The source '{0}' does not advertise a supported package staging resource.</target>
+        <target state="translated">ソース '{0}' は、サポートされているパッケージ ステージング リソースをアドバタイズしていません。</target>
         <note>0 - package source</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
         <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
-        <target state="new">The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</target>
+        <target state="translated">ファイル '{0}' はサポートされているパッケージではありません。.nupkg、.snupkg、または .symbols.nupkg ファイルを指定してください。</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="new">Uploads the package into the specified staging group.</target>
+        <target state="translated">指定されたステージング グループにパッケージをアップロードします。</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
         <source>Prevents automatic discovery and staging of a sibling symbols package.</source>
-        <target state="new">Prevents automatic discovery and staging of a sibling symbols package.</target>
+        <target state="translated">兄弟シンボル パッケージの自動検出とステージングを防止します。</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackagePathArgument_Description">
         <source>The path to the package to stage.</source>
-        <target state="new">The path to the package to stage.</target>
+        <target state="translated">ステージングするパッケージへのパス。</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackageStaged">
         <source>Staged package '{0}'.</source>
-        <target state="new">Staged package '{0}'.</target>
+        <target state="translated">パッケージ '{0}' がステージングされました。</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsFailed">
         <source>Failed to stage symbols package '{0}': {1}</source>
-        <target state="new">Failed to stage symbols package '{0}': {1}</target>
+        <target state="translated">シンボル パッケージ '{0}' のステージングに失敗しました: {1}</target>
         <note>0 - symbols package path; 1 - error message</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsStaged">
         <source>Staged symbols package '{0}'.</source>
-        <target state="new">Staged symbols package '{0}'.</target>
+        <target state="translated">シンボル パッケージ '{0}' がステージングされました。</target>
         <note>0 - symbols package path</note>
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">

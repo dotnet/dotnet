@@ -1261,7 +1261,7 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
         <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
-        <target state="new">The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</target>
+        <target state="translated">El número mínimo de horas después de publicar un paquete antes de que se pueda seleccionar para la actualización. Establézcalo en 0 para quitar el valor.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
@@ -1311,72 +1311,72 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
       </trans-unit>
       <trans-unit id="StageCommand_Description">
         <source>Manages packages in a staging environment.</source>
-        <target state="new">Manages packages in a staging environment.</target>
+        <target state="translated">Administra paquetes en un entorno de ensayo.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Description">
         <source>Stages a package on the server without publishing it.</source>
-        <target state="new">Stages a package on the server without publishing it.</target>
+        <target state="translated">Crea un paquete en el servidor sin publicarlo.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_InvalidGroup">
         <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
-        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
+        <target state="translated">El id. de grupo debe tener entre 1 y 64 caracteres, usar solo A-Z, a-z, 0-9, ".", "_" o "-", y empezar y terminar con una letra o un dígito.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_MissingSource">
         <source>No package source was provided and DefaultPushSource is not configured.</source>
-        <target state="new">No package source was provided and DefaultPushSource is not configured.</target>
+        <target state="translated">No se proporcionó ningún origen de paquete y DefaultPushSource no está configurado.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackageNotFound">
         <source>The package file '{0}' does not exist.</source>
-        <target state="new">The package file '{0}' does not exist.</target>
+        <target state="translated">El archivo de paquete "{0}" no existe.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackagePathRequired">
         <source>A package path is required.</source>
-        <target state="new">A package path is required.</target>
+        <target state="translated">Se requiere una ruta de acceso de paquete.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_ResourceNotFound">
         <source>The source '{0}' does not advertise a supported package staging resource.</source>
-        <target state="new">The source '{0}' does not advertise a supported package staging resource.</target>
+        <target state="translated">El '{0}' de origen no anuncia un recurso de almacenamiento provisional de paquete admitido.</target>
         <note>0 - package source</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
         <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
-        <target state="new">The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</target>
+        <target state="translated">El archivo '{0}' no es un paquete compatible. Especifique un archivo .nupkg, .snupkg o .symbols.nupkg.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="new">Uploads the package into the specified staging group.</target>
+        <target state="translated">Carga el paquete en el grupo de almacenamiento provisional especificado.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
         <source>Prevents automatic discovery and staging of a sibling symbols package.</source>
-        <target state="new">Prevents automatic discovery and staging of a sibling symbols package.</target>
+        <target state="translated">Impide la detección automática y el almacenamiento provisional de un paquete de símbolos del mismo nivel.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackagePathArgument_Description">
         <source>The path to the package to stage.</source>
-        <target state="new">The path to the package to stage.</target>
+        <target state="translated">Ruta de acceso al paquete que se va a almacenar provisionalmente.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackageStaged">
         <source>Staged package '{0}'.</source>
-        <target state="new">Staged package '{0}'.</target>
+        <target state="translated">Paquete preconfigurado "{0}".</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsFailed">
         <source>Failed to stage symbols package '{0}': {1}</source>
-        <target state="new">Failed to stage symbols package '{0}': {1}</target>
+        <target state="translated">No se pudo preparar el paquete de símbolos "{0}": {1}</target>
         <note>0 - symbols package path; 1 - error message</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsStaged">
         <source>Staged symbols package '{0}'.</source>
-        <target state="new">Staged symbols package '{0}'.</target>
+        <target state="translated">Paquete de símbolos preparado "{0}".</target>
         <note>0 - symbols package path</note>
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
