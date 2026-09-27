@@ -1321,7 +1321,7 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_InvalidGroup">
         <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
-        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
+        <target state="translated">ID skupiny musí mít 1–64 znaků, musí obsahovat pouze znaky A–Z, a–z, 0–9, ., _ nebo - a musí začínat a končit písmenem nebo číslicí.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_MissingSource">
@@ -1351,7 +1351,7 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="new">Uploads the package into the specified staging group.</target>
+        <target state="translated">Nahraje balíček do zadané pracovní skupiny.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">

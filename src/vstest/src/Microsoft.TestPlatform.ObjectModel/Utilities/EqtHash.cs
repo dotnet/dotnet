@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -73,7 +74,15 @@ public static class EqtHash
     /// The bytes are laid out exactly as MSTest lays them out, so the same input produces the same
     /// id in both, and an id produced by either is legible to the other.
     /// </para>
+    /// <para>
+    /// This API is experimental and not supported. It ships to gather feedback while xxHash128 is
+    /// not the default, and it may change or be removed in a future release. Calling it requires
+    /// suppressing VSTEST001.
+    /// </para>
     /// </remarks>
+    // The fragment is hardcoded lowercase rather than composed from {0}: the diagnostic id is
+    // uppercase, and GitHub generates lowercase heading anchors, so "#{0}" would never resolve.
+    [Experimental("VSTEST001", UrlFormat = "https://github.com/microsoft/vstest/blob/main/docs/experimental-apis.md#vstest001")]
     public static Guid GuidFromStringXxHash128(string data)
     {
         TPDebug.Assert(data != null);

@@ -136,7 +136,11 @@ internal static class MtpTestNodeConverter
             string seed = TestIdSeed.Compose(testCase.ExecutorUri.ToString(), testCase.Source, testCase.GetFullyQualifiedName());
             testCase.Id = algorithm switch
             {
+                // GuidFromStringXxHash128 is experimental. This call is deliberate: it mirrors what
+                // TestCase does when a run opts into the algorithm.
+#pragma warning disable VSTEST001
                 TestCaseIdAlgorithm.XxHash128 => EqtHash.GuidFromStringXxHash128(seed),
+#pragma warning restore VSTEST001
                 TestCaseIdAlgorithm.Sha1 => EqtHash.GuidFromString(seed),
 
                 // Naming both members above means adding a third one surfaces here as a deliberate
