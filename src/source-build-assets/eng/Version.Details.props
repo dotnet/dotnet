@@ -6,13 +6,13 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftBclCryptographyPackageVersion>10.0.13</MicrosoftBclCryptographyPackageVersion>
+    <MicrosoftBclCryptographyPackageVersion>10.0.14</MicrosoftBclCryptographyPackageVersion>
     <MicrosoftBuildPackageVersion>18.0.36</MicrosoftBuildPackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>18.0.36</MicrosoftBuildUtilitiesCorePackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26469.112</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.113-servicing.26469.112</MicrosoftDotNetGenAPITaskPackageVersion>
-    <MicrosoftNETCoreILAsmPackageVersion>10.0.13</MicrosoftNETCoreILAsmPackageVersion>
-    <MicrosoftNETCoreILDAsmPackageVersion>10.0.13</MicrosoftNETCoreILDAsmPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26473.102</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.114-servicing.26473.102</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftNETCoreILAsmPackageVersion>10.0.14</MicrosoftNETCoreILAsmPackageVersion>
+    <MicrosoftNETCoreILDAsmPackageVersion>10.0.14</MicrosoftNETCoreILDAsmPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
