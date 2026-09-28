@@ -344,7 +344,7 @@ jobs:
   # Cap how long a single repo build may run. A hung repo build would otherwise run into the job
   # timeout below, and a canceled job skips the log collection steps, losing every diagnostic.
   - name: repoBuildTimeoutMinutes
-    value: 150
+    value: 240
 
   - name: baseArguments
     value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine $(commandPrefix)nodeReuse 1 -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument) /p:RepoBuildTimeoutMinutes=$(repoBuildTimeoutMinutes)
