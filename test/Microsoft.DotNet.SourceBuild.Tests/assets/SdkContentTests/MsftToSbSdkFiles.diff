@@ -44,3 +44,11 @@ index ------------
  ./packs/Microsoft.NETCore.App.Ref/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/
  ./packs/Microsoft.NETCore.App.Ref/x.y.z/analyzers/
+@@ ------------ @@
+ ./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/dotnet-user-jwts.dll
+ ./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/dotnet-user-jwts.runtimeconfig.json
+ ./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/DotnetToolSettings.xml
+-./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Bcl.Cryptography.dll
+ ./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Extensions.Configuration.Abstractions.dll
+ ./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Extensions.Configuration.Binder.dll
+ ./sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.Extensions.Configuration.dll
