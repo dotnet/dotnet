@@ -30,8 +30,10 @@ variables:
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
+    settings:
+      networkIsolationPolicy: Permissive,CFSClean
     sdl:
-      sourceAnalysisPool: VSEngSS-MicroBuild2022-1ES
+      sourceAnalysisPool: VSEng-MicroBuildVSStable
       binskim:
         enabled: true
         scanOutputDirectoryOnly: true
@@ -39,8 +41,6 @@ extends:
         enabled: true
       credscan:
         enabled: false
-      suppression:
-        suppressionFile: $(Build.SourcesDirectory)\.gdn\.gdnsuppress
     pool:
       name: AzurePipelines-EO
       image: 1ESPT-Windows2022
@@ -53,7 +53,7 @@ extends:
     - template: /eng/pipelines/templates/pipeline.yml@self
       parameters:
         isOfficialBuild: true
-        ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+        ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/dev'), eq(variables['Build.SourceBranch'], format('refs/heads/{0}', variables['OneLocReleaseBranch']))) }}:
           RunOneLocBuild: true
         RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
         SigningType: ${{ parameters.SigningType }}
