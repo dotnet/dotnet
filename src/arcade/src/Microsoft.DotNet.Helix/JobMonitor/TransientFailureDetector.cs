@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Azure;
+using Microsoft.DotNet.Helix.Client;
 
 namespace Microsoft.DotNet.Helix.JobMonitor;
 
@@ -24,6 +25,7 @@ internal static class TransientFailureDetector
             HttpRequestException { StatusCode: null } => true,
             HttpRequestException httpException => IsTransientStatusCode((int)httpException.StatusCode.Value),
             RequestFailedException requestFailedException => IsTransientStatusCode(requestFailedException.Status),
+            RestApiException restApiException => IsTransientStatusCode(restApiException.Response.Status),
             _ => false,
         };
     }
