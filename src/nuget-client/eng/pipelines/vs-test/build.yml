@@ -113,8 +113,18 @@ steps:
       configuration: "$(BuildConfiguration)"
       msbuildArguments: "/restore:false /target:BuildVSIX /property:ExcludeTestProjects=false /property:IsCIBuild=true /binarylogger:$(Build.StagingDirectory)\\binlog\\07.PackVSIX.binlog"
 
-  - template: /eng/common/templates/steps/generate-sbom.yml@self
-    parameters:
+  - task: PowerShell@1
+    displayName: "Prepare for SBOM generation"
+    inputs:
+      scriptType: "inlineScript"
+      inlineScript: |
+        mkdir $(Build.ArtifactStagingDirectory)/sbom
+
+  - task: ManifestGeneratorTask@0
+    displayName: 'Generate SBOM'
+    inputs:
+      BuildDropPath: '$(System.DefaultWorkingDirectory)/artifacts'
+      ManifestDirPath: '$(Build.ArtifactStagingDirectory)/sbom'
       PackageName: "NuGet.Client"
       PackageVersion: "$(NuGetVersion)"
 
