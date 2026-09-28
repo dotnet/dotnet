@@ -7,10 +7,10 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26414.104</MicrosoftDotNetArcadeSdkPackageVersion>
-    <SystemCommandLinePackageVersion>2.0.14</SystemCommandLinePackageVersion>
-    <SystemIOHashingPackageVersion>10.0.14</SystemIOHashingPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>10.0.14</SystemSecurityCryptographyXmlPackageVersion>
-    <SystemTextJsonPackageVersion>10.0.14</SystemTextJsonPackageVersion>
+    <SystemCommandLinePackageVersion>2.0.13</SystemCommandLinePackageVersion>
+    <SystemIOHashingPackageVersion>10.0.13</SystemIOHashingPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>10.0.13</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemTextJsonPackageVersion>10.0.13</SystemTextJsonPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
