@@ -19,6 +19,10 @@
 
   <ItemGroup>
     <None Include="$(RepoRoot)LICENSE.TXT;$(RepoRoot)THIRD-PARTY-NOTICES.TXT" Pack="true" PackagePath="%(Filename)%(Extension)" />
+    <None Include="buildTransitive\Microsoft.DotNet.Helix.JobSender.targets" Pack="true" PackagePath="buildTransitive\Microsoft.DotNet.Helix.JobSender.targets" />
+    <None Include="legacy-runner\README.md" Pack="true" PackagePath="tools\legacy-runner\README.md" />
+    <None Include="legacy-runner\helix\*.py" Pack="true" PackagePath="tools\legacy-runner\helix\%(Filename)%(Extension)" />
+    <None Include="legacy-runner\helix_test_execution.py" Pack="true" PackagePath="tools\legacy-runner\helix_test_execution.py" />
   </ItemGroup>
 
 </Project>
