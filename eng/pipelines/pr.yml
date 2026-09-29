@@ -64,10 +64,6 @@ variables:
 stages:
 - template: /eng/pipelines/templates/stages/vmr-build.yml
   parameters:
-    pool_Mac:
-      name: AcesShared
-      demands: ImageOverride -equals ACES_VM_SharedPool_Tahoe
-      os: macOS
     ${{ if eq(parameters.buildScope, 'auto') }}:
       ${{ if or(eq(variables.isScheduleTrigger, 'true'), contains(variables['Build.DefinitionName'], '-full')) }}:
         scope: full

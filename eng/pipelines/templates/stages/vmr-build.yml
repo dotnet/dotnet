@@ -76,8 +76,11 @@ parameters:
 - name: pool_Mac
   type: object
   default:
-    name: Azure Pipelines
-    vmImage: $(poolImage_Mac)
+    name: $(poolName_Mac)
+    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      demands: $(poolDemand_Mac)
+    ${{ else }}:
+      vmImage: $(poolImage_Mac)
     os: macOS
 
 
