@@ -1,13 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+
+  <PropertyGroup>
+    <SkipCurrentVersionOverrides Condition="'$(DotNetBuild)' == 'true'">true</SkipCurrentVersionOverrides>
+  </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
     <TargetFramework>$(DefaultNetCoreTargetFramework)</TargetFramework>
+    <TargetFramework Condition="'$(DotNetBuild)' == 'true'">$(BundledNETCoreAppTargetFramework)</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <!-- Need to build this project in source build -->
     <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>
     <!-- No need to track public APIs of these MSBuild tasks. -->
     <AddPublicApiAnalyzers>false</AddPublicApiAnalyzers>
+    <EnableKnownPackVersionUpdatesForCurrentTargetFramework Condition="'$(DotNetBuild)' == 'true'">false</EnableKnownPackVersionUpdatesForCurrentTargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,5 +25,7 @@
   <ItemGroup>
     <Compile Include="$(SharedSourceRoot)CertificateGeneration\**\*.cs" LinkBase="shared\CertificateGeneration" />
   </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
 </Project>

@@ -466,7 +466,7 @@
         <![CDATA[
 <Project>
   <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
-  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
+  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" Condition="'%24(SkipCurrentVersionOverrides)' != 'true'" />
   <Import Project="$(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)" />
 </Project>
 ]]>
@@ -475,7 +475,7 @@
         <![CDATA[
 <Project>
   <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
-  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
+  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" Condition="'%24(SkipCurrentVersionOverrides)' != 'true'" />
 </Project>
 ]]>
       </PackageVersionsPropsContents>
