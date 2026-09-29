@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 334050,
+      "barId": 334368,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "89377f40f28510cc68d5e84e0ac66d7e564ac006"
+      "commitSha": "2e48b7dec08004636dc4dd0c58ca40711d5d5834"
     },
     {
       "barId": 333682,
@@ -55,10 +55,10 @@
       "commitSha": "9cd6167a7265ce7264b22719503b7dfa9eb8f83c"
     },
     {
-      "barId": 333147,
+      "barId": 334353,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "d8a38703ae6829dcb9dc500e89908c9927865492"
+      "commitSha": "e26978eb6fdf3aac67a58520bbe6c159d71b5509"
     },
     {
       "barId": 334048,
@@ -67,16 +67,16 @@
       "commitSha": "684427012e25096073d04a7643a9d43dc1f2091d"
     },
     {
-      "barId": 334078,
+      "barId": 334297,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "90083ecf59c688110a69cbf3871e5edb2693aadc"
+      "commitSha": "b2305335edac8f268aa47f63fc89ca542cf2a1b5"
     },
     {
-      "barId": 334170,
+      "barId": 334313,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "6f987f5f30549be46ed3b52240f567ca7cce686e"
+      "commitSha": "f7b870f14406c3988b171eee3765fa888110b7f6"
     },
     {
       "barId": 330769,
@@ -85,16 +85,16 @@
       "commitSha": "1074263f228f1f3b057d9e49c90fb47dd608dbad"
     },
     {
-      "barId": 334026,
+      "barId": 334247,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "3b1d59fe28a146e203859d99925810e77cbffb9c"
+      "commitSha": "00d4242de9ef89fae85954daa8ce35c19898441c"
     },
     {
-      "barId": 330498,
+      "barId": 334224,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "5a9ef7630670fd7721407ebf0b37a6839d5ede26"
+      "commitSha": "04ac395b5b9c92b731b8b96a3f902c98ef98d81d"
     },
     {
       "barId": 324879,
@@ -109,10 +109,10 @@
       "commitSha": "260aefcbf91e84ea4a4941336a0210656edd55d7"
     },
     {
-      "barId": 333911,
+      "barId": 334237,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "8c8561a58644a504b2b8a0a6e60142e7761b0cd7"
+      "commitSha": "92dee78a8494c9116cae9e56586a57fca4cfcc98"
     },
     {
       "barId": 333322,
