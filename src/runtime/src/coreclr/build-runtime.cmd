@@ -36,7 +36,7 @@ set "__RepoRootDir=%__ProjectDir%\..\.."
 for %%i in ("%__RepoRootDir%") do set "__RepoRootDir=%%~fi"
 
 set "__ProjectFilesDir=%__ProjectDir%"
-set "__RootBinDir=%__RepoRootDir%\artifacts"
+if not defined __RootBinDir set "__RootBinDir=%__RepoRootDir%\artifacts"
 
 set __BuildAll=
 
@@ -232,7 +232,7 @@ set "__BinDir=%__RootBinDir%\bin\coreclr\%__TargetOSDirName%.%__TargetArch%.%__B
 set "__IntermediatesDir=%__RootBinDir%\obj\coreclr\%__TargetOSDirName%.%__TargetArch%.%__BuildType%"
 set "__LogsDir=%__RootBinDir%\log\!__BuildType!"
 set "__MsbuildDebugLogsDir=%__LogsDir%\MsbuildDebugLogs"
-set "__ArtifactsIntermediatesDir=%__RepoRootDir%\artifacts\obj\coreclr\"
+set "__ArtifactsIntermediatesDir=%__RootBinDir%\obj\coreclr\"
 if "%__Ninja%"=="0" (set "__IntermediatesDir=%__IntermediatesDir%\ide")
 set "__PackagesBinDir=%__BinDir%\.nuget"
 

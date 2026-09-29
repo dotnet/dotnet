@@ -59,11 +59,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BootstrapRefPackDir>$(ArtifactsDir)bootstrap/$(TargetRid)/microsoft.netcore.app/ref</BootstrapRefPackDir>
-    <BootstrapRuntimePackDir>$(ArtifactsDir)bootstrap/$(TargetRid)/microsoft.netcore.app/lib</BootstrapRuntimePackDir>
-    <BootstrapAotSdkDir>$(ArtifactsDir)bootstrap/$(TargetRid)/aotsdk</BootstrapAotSdkDir>
-    <BootstrapHostDir>$(ArtifactsDir)bootstrap/$(TargetRid)/host</BootstrapHostDir>
-    <BootstrapRidGraphDir>$(ArtifactsDir)bootstrap/$(TargetRid)/ridgraph</BootstrapRidGraphDir>
+    <BootstrapRefPackDir Condition="'$(BootstrapRefPackDir)' == ''">$(ArtifactsDir)bootstrap/$(TargetRid)/microsoft.netcore.app/ref</BootstrapRefPackDir>
+    <BootstrapRuntimePackDir Condition="'$(BootstrapRuntimePackDir)' == ''">$(ArtifactsDir)bootstrap/$(TargetRid)/microsoft.netcore.app/lib</BootstrapRuntimePackDir>
+    <BootstrapAotSdkDir Condition="'$(BootstrapAotSdkDir)' == ''">$(ArtifactsDir)bootstrap/$(TargetRid)/aotsdk</BootstrapAotSdkDir>
+    <BootstrapHostDir Condition="'$(BootstrapHostDir)' == ''">$(ArtifactsDir)bootstrap/$(TargetRid)/host</BootstrapHostDir>
+    <BootstrapRidGraphDir Condition="'$(BootstrapRidGraphDir)' == ''">$(ArtifactsDir)bootstrap/$(TargetRid)/ridgraph</BootstrapRidGraphDir>
   </PropertyGroup>
 
   <PropertyGroup>
