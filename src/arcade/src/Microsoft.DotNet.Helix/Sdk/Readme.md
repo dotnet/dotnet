@@ -87,11 +87,11 @@ Useful parameters:
 - `helixBaseUri`: base URI for the Helix service. Defaults to `https://helix.dot.net/`.
 - `helixAccessToken`: optional token for authenticated Helix access on internal builds; ignored with a warning when `useEntraAuthentication` is enabled.
 - `useEntraAuthentication`: use a refreshable Entra credential for authenticated Helix access.
-- `azureSubscription`: Azure service connection ID authorized for Helix; required when `useEntraAuthentication` is enabled.
+- `azureSubscription`: workload identity federation service connection name authorized for Helix; required when `useEntraAuthentication` is enabled.
 - `pollingIntervalSeconds`: how often the job monitor checks for new completed jobs.
 - `timeoutInMinutes`: overall timeout for the job monitor.
 - `continueOnError`: allow the pipeline to continue when the monitor job fails. Defaults to `false`.
-- `useFullyQualifiedTestName`: report fully qualified test names to Azure DevOps (see [Fully qualified test names](#fully-qualified-test-names)). Defaults to `false`.
+- `useFullyQualifiedTestName`: report fully qualified test names to Azure DevOps (see [Fully qualified test names](#fully-qualified-test-names)). Defaults to `true`.
 
 Implementation and semantic design documents are indexed at
 [JobMonitor/Design/README.md](../JobMonitor/Design/README.md).
@@ -99,6 +99,7 @@ Implementation and semantic design documents are indexed at
 Behavior notes:
 
 - The reporter uses its own `SYSTEM_ACCESSTOKEN`, so it does not depend on the shorter-lived token from the job that originally submitted the Helix work.
+- Entra-authenticated monitoring runs inside `AzureCLI@2` with `keepAzSessionActive` enabled. The task renews its workload identity session while the monitor runs, so the timeout does not require a single long-lived access token.
 - If parseable xUnit, JUnit, or TRX result files are available, those are uploaded.
 - Result processing uses globally bounded work-item parallelism and streams XML
   instead of loading complete result documents. Status polling remains
@@ -168,22 +169,13 @@ monitor template. The equivalent tool switch is `--allow-no-helix-jobs`.
 
 #### Fully qualified test names
 
-By default the monitor reports each test to Azure DevOps using the framework-provided display name
-as both the visible title and the stable `automatedTestName`. That is a problem for some frameworks:
-MSTest reports only the method name (so `Tests.ClassA.MyTest` and `Tests.ClassB.MyTest` both show up
-as `MyTest`), and xUnit tests using a custom `[Fact(DisplayName = "...")]` get an arbitrary,
-non-unique name that is unstable over time.
+By default, the pipeline template configures the monitor to report fully qualified test names to
+Azure DevOps. This avoids problems with framework-provided display names: MSTest reports only the
+method name (so `Tests.ClassA.MyTest` and `Tests.ClassB.MyTest` would both show up as `MyTest`), and
+xUnit tests using a custom `[Fact(DisplayName = "...")]` can have an arbitrary, non-unique name
+that is unstable over time.
 
-Set the `useFullyQualifiedTestName` parameter to opt in to fully qualified reporting:
-
-```yaml
-jobs:
-- template: /eng/common/core-templates/job/helix-job-monitor.yml@self
-  parameters:
-    useFullyQualifiedTestName: true
-```
-
-When enabled, the monitor:
+The monitor:
 
 - uses the fully qualified name (`Namespace.Type.Method`) as the stable `automatedTestName`, so a test
   keeps a consistent identity in the AzDO **Tests** tab and history even when its display name changes,
@@ -195,9 +187,9 @@ When enabled, the monitor:
     duplicating the method name,
   - `Namespace.Type.Method (My custom name)` when a custom display name adds information.
 
-This is opt-in because switching an existing pipeline changes AzDO test identity and how titles are
-displayed. The equivalent tool flag is `--use-fully-qualified-test-name`, and it can also be enabled
-by setting the `HELIX_USE_FULLY_QUALIFIED_TEST_NAME` environment variable to `true`.
+Set `useFullyQualifiedTestName: false` on the template to preserve framework-provided display names.
+For direct tool invocation, use `--use-fully-qualified-test-name` or set the
+`HELIX_USE_FULLY_QUALIFIED_TEST_NAME` environment variable to `true`.
 
 #### Adding the `microsoft.dotnet.helix.jobmonitor` package
 
@@ -571,7 +563,7 @@ You may assume that all the following variables are set on any given Helix clien
 
 - **HELIX_CORRELATION_ID** : GUID identifier for a helix run (include this if sending mail to or tagging dnceng)
 - **HELIX_CORRELATION_PAYLOAD** : Correlation payload folder;  root of where all correlation payloads are unzipped.
-- **HELIX_PYTHONPATH** : Path to a python 3.x executable (Due to OS constraints, this is only guaranteed to be >= 3.4)
+- **HELIX_PYTHONPATH** : Path to a python 3.x executable (Due to OS constraints, this is only guaranteed to be >= 3.9)
 - **HELIX_WORKITEM_FRIENDLYNAME** - "Friendly" name of work item as provided at queue time (include this if relevant when sending mail to or tagging dnceng)
 - **HELIX_WORKITEM_ID** : GUID identifier for a helix work item 
 - **HELIX_WORKITEM_PAYLOAD** : "Unzip" folder of helix workitem, where its payload was unpacked

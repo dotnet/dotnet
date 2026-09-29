@@ -50,6 +50,32 @@ var job = await api.Job.Define()
 Console.WriteLine($"Job '{job.CorrelationId}' created.");
 ```
 
+## Legacy Python runner compatibility
+
+> This is a temporary legacy-compatibility shim, not a supported API for new
+> work-item implementations. It can be removed after legacy Python runner
+> payloads and installed `helix` package dependencies have been retired.
+
+The package copies compatibility modules to
+`RunnerScripts/scriptrunner/helix` in the consuming project's output. The
+directory intentionally does not contain `helix/__init__.py`: legacy machines
+continue to use their installed `helix` package, while clients that do not
+install Helix Python scripts can resolve the compatibility modules as a
+namespace package.
+
+The compatibility `helix.azure_storage` implementation does not receive or use
+result-container credentials. It stages files under
+`HELIX_WORKITEM_UPLOAD_ROOT`; the Helix client owns storage authentication,
+upload, retry, and result-file telemetry.
+
+Set the `HelixLegacyRunnerCompatibilityEnabled` MSBuild property to `false` if
+the consuming project supplies its own `RunnerScripts/scriptrunner/helix`
+implementation.
+
+The compatibility surface supports the legacy `scriptrunner.py` execution and
+result-upload path. It does not support `continuationrunner.py`, which directly
+creates secondary work items and requires queue and storage credentials.
+
 ### Using A Payload
 Given a local text file `stuff.txt` this will print out the contents of that file in the work item's console log.
 

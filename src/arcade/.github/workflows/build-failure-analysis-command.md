@@ -14,6 +14,8 @@ description: >-
   check out the repository (and, for the slash-command event, the PR branch)
   for agent tooling only — the PR's code is never built or executed.
 
+# With gh-aw v0.86.2, post /analyze-build-failure as the first line by itself,
+# without indentation: activation also checks the literal command prefix.
 on:
   slash_command:
     name: analyze-build-failure
@@ -39,16 +41,16 @@ if: needs.fetch-binlog.outputs.binlog-found == 'true'
 # least-privilege — do NOT raise it to `write`, that would hand PR-write scope
 # to the agent job unnecessarily.
 #
-# Do NOT add `copilot-requests: write` here. That permission switches gh-aw's
-# generated lock from `COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}`
-# to `${{ github.token }}`, and the ephemeral Actions token is not entitled for
-# inference against api.githubcopilot.com in this org — every agent run then
-# dies in ~2s with "Authentication failed with provider ... (HTTP 403)" on both
-# /models and /chat/completions, before it reads the prompt or opens a binlog.
-# `update-default-versions.md` omits it and works; keep this consistent.
+# Do NOT add `copilot-requests: write` here. The ephemeral Actions token
+# previously failed inference with HTTP 403 in this org (see #17301).
+# Copilot authentication comes from the PAT pool in the shared import, using
+# the protected copilot-pat-pool environment, not the legacy repository token.
 permissions:
   contents: read
   pull-requests: read
+
+# Must match the selector's environment in the shared authentication import.
+environment: copilot-pat-pool
 
 concurrency:
   # Distinct from the automatic workflow's group (`build-failure-analysis-<pr>`).
@@ -75,21 +77,8 @@ imports:
 # `/tmp/binlogs` and the gh-aw MCP gateway mounts it read-only at
 # `/data/binlogs`.
 #
-# NOT pinned by digest, and that is a gh-aw v0.77.5 limitation, not a choice.
-# This container is handed the binlogs of an unmerged, possibly external PR and
-# its output is what the agent reports back, so "whatever this tag points at
-# today" is a supply-chain decision made by whoever last pushed the tag — and
-# the tag does move: it resolved to sha256:9f1e2c3e8281... from 2026-07-16
-# until 2026-08-03, when it became
-# sha256:ee7b7e5c6e162f3f0061822aa7183260626f1a1e986d04ba9915ab197a37932c.
-# v0.77.5 validates `container` against `^[a-zA-Z0-9][a-zA-Z0-9/:_.-]*$`, which
-# has no `@`, so `image@sha256:...` is rejected at compile time and the
-# generated `download_docker_images.sh` pulls this image by bare tag while every
-# other image in the lock is digest-pinned. gh-aw >= v0.83.x resolves and pins
-# the digest automatically (verified: microsoft/testfx on v0.83.4 emits
-# `digest` + `pinned_image` in its `gh-aw-manifest` and pulls by `@sha256:`), so
-# this is fixed by bumping the compiler this repo pins rather than by editing
-# this line.
+# This binlog container remains tag-based in the generated lock. The
+# authentication migration leaves the image and its read-only mount unchanged.
 # Refresh/inspect the current digest with:
 #   docker buildx imagetools inspect \
 #     mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-binlog-mcp-amd64
@@ -134,11 +123,10 @@ jobs:
     # the body, whereas the authoritative `check_command_position` requires the
     # command to be in a valid position. So a write-access user merely mentioning
     # the command, or editing an old comment that quotes it (`types:` includes
-    # `edited`), still starts this job. Workflow `if:` expressions have no
-    # regex, and `startsWith` would reject the leading whitespace/newlines gh-aw
-    # accepts, so this stays a deliberate over-approximation — but it is now
-    # only a cheap pre-filter: the first step of the job reproduces gh-aw's real
-    # first-token check and bails out before anything is downloaded.
+    # `edited`), still starts this job. This remains a cheap over-approximation:
+    # the first step reproduces gh-aw's first-token check before downloading.
+    # That tokenizer accepts leading whitespace, but the generated activation
+    # gate also requires a literal command prefix (see the trigger above).
     if: >-
       github.event.repository.fork == false &&
       github.event.issue.pull_request &&

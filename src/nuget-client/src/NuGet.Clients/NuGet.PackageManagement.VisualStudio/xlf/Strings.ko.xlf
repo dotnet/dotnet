@@ -24,12 +24,12 @@
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceCaption">
         <source>NuGet Package Source Authentication</source>
-        <target state="new">NuGet Package Source Authentication</target>
+        <target state="translated">NuGet 패키지 원본 인증</target>
         <note />
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceMessage">
         <source>Enter credentials for the package source '{0}'.</source>
-        <target state="new">Enter credentials for the package source '{0}'.</target>
+        <target state="translated">패키지 원본 '{0}'의 자격 증명을 입력하세요.</target>
         <note>{0} is the package source URI.</note>
       </trans-unit>
       <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">

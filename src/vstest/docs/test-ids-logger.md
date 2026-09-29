@@ -3,11 +3,15 @@
 > [!WARNING]
 > **This logger is temporary and will be removed.**
 >
-> It exists for one purpose: to let you build a mapping from the test case ids you have already
-> stored to the ids that will replace them when vstest changes the algorithm it hashes test case ids
-> with. It will be deleted at the same time as the SHA1 implementation it reports on, and there will
-> be no replacement, because once SHA1 is gone there is nothing left to map from. Do not build a
-> permanent pipeline on it.
+> It is not supported. It exists for one purpose: to let you build a mapping from the test case ids
+> you have already stored to the ids that will replace them when vstest changes the algorithm it
+> hashes test case ids with. It will be deleted at the same time as the SHA1 implementation it
+> reports on, and there will be no replacement, because once SHA1 is gone there is nothing left to
+> map from. Do not build a permanent pipeline on it.
+>
+> The `TestIdsLogger` type is marked `[Experimental("VSTEST001")]`, so referencing it from code is a
+> compile error unless you suppress that diagnostic. Running the logger with `/logger:testids` is
+> unaffected.
 
 ## What this is for
 
@@ -242,4 +246,5 @@ for a test that no longer exists, and such records need deciding on separately.
 ## Related
 
 - [Environment variables](environment-variables.md) - `VSTEST_DISABLE_XXHASH128_TESTCASE_ID`
+- [Experimental APIs](experimental-apis.md#vstest001) - what VSTEST001 covers and how to suppress it
 - [Reporting test results](report.md) - test loggers in general

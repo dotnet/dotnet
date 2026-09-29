@@ -8,7 +8,6 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;
-using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Copilot;
 using NuGet.Common;
 using NuGet.PackageManagement.Telemetry;
@@ -22,19 +21,9 @@ namespace NuGetVSExtension
     internal class FixVulnerabilitiesService : IFixVulnerabilitiesService
     {
         private const string AgentModeResponderServiceMoniker = "Microsoft.VisualStudio.Copilot.AgentModeResponder";
-        private const string ServiceName = "Microsoft.VisualStudio.Copilot.SolutionContextProvider";
-
-        private static readonly ServiceRpcDescriptor ProviderDescriptor = CopilotDescriptors.CreateContextProviderDescriptor(ServiceName);
-        private static readonly CopilotContextDescriptor ContextDescriptor = new CopilotContextDescriptor(
-                    "SolutionFile",
-                    "solution file context",
-                    CopilotDefaultTypes.StringName);
 
         [Import(typeof(ICopilotToolInvocationService))]
         public ICopilotToolInvocationService ToolInvocationService { get; set; } = null!;
-
-        [Import(typeof(IVsSolutionManager), AllowDefault = true)]
-        public IVsSolutionManager? SolutionManager { get; set; }
 
         [Import(typeof(VisualStudioActivityLogger), AllowDefault = true)]
         public ILogger? ActivityLogger { get; set; }
@@ -79,14 +68,17 @@ namespace NuGetVSExtension
 
             await using CopilotToolSession session = result.Session!;
 
-            // Attach solution context and available functions to the request
-            string solutionPathContext = $"The current solution file path is: {GetSolutionPath()}.";
-            CopilotContext context = new CopilotContext(ProviderDescriptor.Moniker, ContextDescriptor, request.CorrelationId, solutionPathContext);
-            CopilotRequest requestWithFunctionsAndContext = request.WithFunctions(session.Functions).WithContext(context);
+            CopilotRequest requestWithFunctions = request.WithFunctions(session.Functions);
+            CopilotUserMessage harnessRequest = new()
+            {
+                DisplayPrompt = Resources.Prompt_FixNuGetPackageVulnerabilities,
+                Prompt = Resources.Prompt_FixNuGetPackageVulnerabilities,
+                Agent = NuGetSdkAgent.AgentName,
+            };
 
             try
             {
-                _ = await session.Thread.Session.SendRequestAsync(requestWithFunctionsAndContext, cancellationToken);
+                await session.SendRequestAsync(requestWithFunctions, harnessRequest, cancellationToken);
                 SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.None, navigationOrigin);
             }
             catch (UnauthorizedAccessException ex)
@@ -94,6 +86,12 @@ namespace NuGetVSExtension
                 SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.CopilotAccessDenied, navigationOrigin);
                 ActivityLogger?.LogError(ex.Message);
                 MessageHelper.ShowWarningMessage(Resources.Error_CopilotAccessDenied, Resources.Title_FixVulnerabilitiesWithCopilot);
+            }
+            catch (CopilotRequestException ex)
+            {
+                SendTelemetryEvent(FixVulnerabilitiesWithCopilotErrorType.CopilotRequestFailed, navigationOrigin);
+                ActivityLogger?.LogError(ex.ToString());
+                MessageHelper.ShowWarningMessage(Resources.Error_CopilotRequestFailed, Resources.Title_FixVulnerabilitiesWithCopilot);
             }
         }
 
@@ -116,10 +114,9 @@ namespace NuGetVSExtension
                 CopilotToolSessionError.ToolNotAvailable => FixVulnerabilitiesWithCopilotErrorType.NuGetSolverNotAvailable,
                 CopilotToolSessionError.McpServerInfoServiceNotAvailable => FixVulnerabilitiesWithCopilotErrorType.McpServerInfoServiceNotAvailable,
                 CopilotToolSessionError.McpServerNotActive => FixVulnerabilitiesWithCopilotErrorType.McpServerNotActive,
+                CopilotToolSessionError.CopilotRequestFailed => FixVulnerabilitiesWithCopilotErrorType.CopilotRequestFailed,
                 _ => throw new ArgumentOutOfRangeException(nameof(error), error, null),
             };
         }
-
-        private string GetSolutionPath() => SolutionManager?.SolutionDirectory ?? string.Empty;
     }
 }
