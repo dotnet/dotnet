@@ -58,4 +58,9 @@
     </Otherwise>
   </Choose>
 
+  <PropertyGroup>
+    <!-- Build tools execute on the SDK used to build Roslyn. -->
+    <NetRoslynBuildTool>$(BundledNETCoreAppTargetFramework)</NetRoslynBuildTool>
+  </PropertyGroup>
+
 </Project>

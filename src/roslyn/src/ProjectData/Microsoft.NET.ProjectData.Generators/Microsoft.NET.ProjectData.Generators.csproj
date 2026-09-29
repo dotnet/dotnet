@@ -27,7 +27,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="all" />
-    <PackageReference Include="System.Text.Json" PrivateAssets="all" />
+    <PackageReference Include="System.Collections.Immutable" VersionOverride="$(BundledNETCoreAppPackageVersion)" PrivateAssets="all" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <PackageReference Include="System.IO.Pipelines" VersionOverride="$(BundledNETCoreAppPackageVersion)" PrivateAssets="all" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <PackageReference Include="System.Text.Json" VersionOverride="$(BundledNETCoreAppPackageVersion)" PrivateAssets="all" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <PackageReference Include="System.Text.Json" PrivateAssets="all" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
 </Project>

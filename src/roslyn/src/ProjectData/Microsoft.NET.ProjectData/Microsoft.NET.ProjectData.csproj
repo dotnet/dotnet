@@ -13,12 +13,16 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.NET.ProjectData.Generators\Microsoft.NET.ProjectData.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
 
-    <!-- The generator depends on System.Text.Json, so pass its runtime dependency closure as /analyzer inputs to the compiler. This is needed for
-         us to build under net472 compilers which we do in our test-rebuild validation in CI. -->
+    <!-- Pass the generator's runtime dependency closure as /analyzer inputs to the compiler. This is needed for
+         us to build under net472 compilers which we do in our test-rebuild validation in CI. Source-build uses
+         the bootstrap SDK's versions because generators execute inside the bootstrap compiler process. -->
     <PackageReference Include="System.IO.Pipelines" GeneratePathProperty="true" ExcludeAssets="all" PrivateAssets="all" />
     <PackageReference Include="System.Text.Json" GeneratePathProperty="true" ExcludeAssets="all" PrivateAssets="all" />
-    <Analyzer Include="$(PkgSystem_IO_Pipelines)\lib\netstandard2.0\System.IO.Pipelines.dll" />
-    <Analyzer Include="$(PkgSystem_Text_Json)\lib\netstandard2.0\System.Text.Json.dll" />
+    <Analyzer Include="$(NuGetPackageRoot)system.collections.immutable\$(BundledNETCoreAppPackageVersion)\lib\netstandard2.0\System.Collections.Immutable.dll" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <Analyzer Include="$(NuGetPackageRoot)system.io.pipelines\$(BundledNETCoreAppPackageVersion)\lib\netstandard2.0\System.IO.Pipelines.dll" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <Analyzer Include="$(NuGetPackageRoot)system.text.json\$(BundledNETCoreAppPackageVersion)\lib\netstandard2.0\System.Text.Json.dll" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <Analyzer Include="$(PkgSystem_IO_Pipelines)\lib\netstandard2.0\System.IO.Pipelines.dll" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
+    <Analyzer Include="$(PkgSystem_Text_Json)\lib\netstandard2.0\System.Text.Json.dll" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
 
     <AdditionalFiles Include="..\Microsoft.NET.ProjectData.Generators\project-data-schema.json" />
     <InternalsVisibleTo Include="Microsoft.NET.ProjectData.UnitTests" Key="$(VsPublicKey)" />

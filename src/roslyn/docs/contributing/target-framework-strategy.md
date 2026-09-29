@@ -31,6 +31,7 @@ Projects in our repository should include the following values in `<TargetFramew
 8. `$(NetRoslynBuildHostNetCoreVersion)`: the target used for the .NET Core BuildHost process used by MSBuildWorkspace. This may lag behind other properties as it must target the lowest supported .NET SDK (presently `net8.0` until .NET 8 EOL in November 2026).
 9. `$(NetRoslynNext)`: code that needs to run on the next .NET Core version. This is used during the transition to a new .NET Core version where we need to move forward but don't want to hard code a .NET Core TFM into the build files.
 10. `$(NetRoslynTools)`: the target used by the `Microsoft.RoslynTools` infrastructure tool. This may lag behind `$(NetRoslyn)` so build and insertion automation can run the tool on older supported machines.
+11. `$(NetRoslynBuildTool)`: code that executes during the build. This targets the runtime bundled with the SDK used to build Roslyn.
 
 This properties `$(NetCurrent)`, `$(NetPrevious)` and `$(NetMinimum)` are not used in our project files because they change in ways that make it hard for us to maintain correct product deployments. Our product ships on VS and VS Code which are not captured by arcade `$(Net...)` macros. Further as the arcade properties change it's very easy for us to end up with duplicate entries in a `<TargetFrameworks>` setting. Instead our repo uses the above values and when inside source build or VMR our properties are initialized with arcade properties.
 
