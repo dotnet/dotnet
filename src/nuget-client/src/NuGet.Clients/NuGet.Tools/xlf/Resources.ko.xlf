@@ -242,6 +242,21 @@
         <target state="translated">컴퓨터 전체 패키지 원본은 Visual Studio 워크로드를 통해 프로비전되며, 활성화하거나 비활성화할 수만 있습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MinPublishAgeExceptions_Description">
+        <source>Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</source>
+        <target state="new">Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MinPublishAgeExceptions_Title">
+        <source>Minimum publish age exceptions</source>
+        <target state="new">Minimum publish age exceptions</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MinPublishAgeHours_Header">
+        <source>Minimum publish age (hours)</source>
+        <target state="new">Minimum publish age (hours)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">사용</target>
