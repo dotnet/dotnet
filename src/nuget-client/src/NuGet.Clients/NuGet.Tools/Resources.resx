@@ -249,6 +249,15 @@
   <data name="Text_AllowInsecureConnections_Header" xml:space="preserve">
     <value>Allow Insecure Connections</value>
   </data>
+  <data name="Text_MinPublishAgeHours_Header" xml:space="preserve">
+    <value>Minimum publish age (hours)</value>
+  </data>
+  <data name="Text_MinPublishAgeExceptions_Title" xml:space="preserve">
+    <value>Minimum publish age exceptions</value>
+  </data>
+  <data name="Text_MinPublishAgeExceptions_Description" xml:space="preserve">
+    <value>Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</value>
+  </data>
   <data name="Text_PackageSources_Description" xml:space="preserve">
     <value>Package sources define where NuGet retrieves packages for install, restore, audit, and update operations. [Learn more about package sources](https://learn.microsoft.com/nuget/reference/nuget-config-file#packagesources)</value>
   </data>
