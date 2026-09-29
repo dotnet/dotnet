@@ -69,6 +69,16 @@ parameters:
     vmImage: $(poolImage_Mac)
     os: macOS
 
+- name: pool_Mac_Full
+  type: object
+  default:
+    name: $(poolName_Mac_Full)
+    ${{ if eq(variables['System.TeamProject'], 'public') }}:
+      demands: $(poolDemand_Mac_Full)
+    ${{ else }}:
+      vmImage: $(poolImage_Mac)
+    os: macOS
+
 
 - name: pool_Linux_Shortstack
   type: object
@@ -433,7 +443,7 @@ stages:
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
+          pool: ${{ parameters.pool_Mac_Full }}
           targetOS: osx
           targetArchitecture: x64
           brandingType: ${{ variables.brandingType }}
@@ -619,7 +629,7 @@ stages:
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
+          pool: ${{ parameters.pool_Mac_Full }}
           targetOS: osx
           targetArchitecture: arm64
           brandingType: ${{ variables.brandingType }}

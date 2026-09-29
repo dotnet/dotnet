@@ -76,9 +76,16 @@ parameters:
 - name: pool_Mac
   type: object
   default:
-    name: $(poolName_Mac)
-    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-      demands: $(poolDemand_Mac)
+    name: Azure Pipelines
+    vmImage: $(poolImage_Mac)
+    os: macOS
+
+- name: pool_Mac_Full
+  type: object
+  default:
+    name: $(poolName_Mac_Full)
+    ${{ if eq(variables['System.TeamProject'], 'public') }}:
+      demands: $(poolDemand_Mac_Full)
     ${{ else }}:
       vmImage: $(poolImage_Mac)
     os: macOS
@@ -115,7 +122,7 @@ stages:
       scope: ${{ parameters.scope }}
       verifications: ${{ parameters.verifications }}
       excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
-      pool_Mac: ${{ parameters.pool_Mac }}
+      pool_Mac_Full: ${{ parameters.pool_Mac_Full }}
 
 - ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
   - stage: Publish_Build_Assets
@@ -141,7 +148,6 @@ stages:
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
       isOfficialBuild: ${{ parameters.isOfficialBuild }}
-      pool_Mac: ${{ parameters.pool_Mac }}
 
 - ${{ if notin(parameters.scope, 'scout') }}:
   - template: source-build-stages.yml
