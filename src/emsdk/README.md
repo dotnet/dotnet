@@ -244,3 +244,24 @@ Emscripten SDK releases are no longer packaged or maintained for 32-bit systems.
 If you want to run Emscripten on a 32-bit system, you can try manually building
 the compiler. Follow the steps in the above section "Building an Emscripten tag
 or branch from source" to get started.
+
+## .NET packaged cache
+
+The .NET build uses `eng/build_dotnet_cache.py` to request the Emscripten system
+library variants retained by its packages. `eng/cache-exclusions.txt` controls
+target selection, so excluded archives are not compiled or deleted afterward.
+Use a clean generated cache and package staging when switching from the previous
+`SYSTEM`-based build; existing broader caches are not migrated.
+
+The selector delegates compilation and common sysroot setup to the transported
+Emscripten builder. It replaces both `SYSTEM` and the redundant `MINIMAL` pass,
+and fails if a future `MINIMAL` set contains non-system targets requiring
+explicit handling. The policy does not exclude all worker, pthread, or sanitizer
+libraries; only the listed archive patterns are excluded.
+
+After restoring the toolchain, inspect the selection on Windows with:
+
+```powershell
+python eng\build_dotnet_cache.py --emscripten-dir emscripten\dotnet --exclusions eng\cache-exclusions.txt --list
+python -m unittest discover -s eng -p test_build_dotnet_cache.py
+```

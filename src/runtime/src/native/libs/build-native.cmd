@@ -10,7 +10,8 @@ set "__repoRoot=%__sourceRootDir%\..\..\.."
 :: normalize
 for %%i in ("%__repoRoot%") do set "__repoRoot=%%~fi"
 set "__engNativeDir=%__repoRoot%\eng\native"
-set "__artifactsDir=%__repoRoot%\artifacts"
+if not defined __RootBinDir set "__RootBinDir=%__repoRoot%\artifacts"
+set "__artifactsDir=%__RootBinDir%"
 set __CMakeBinDir=""
 set __IntermediatesDir=""
 set __BuildArch=x64

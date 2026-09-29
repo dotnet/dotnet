@@ -64,8 +64,9 @@ if [%__rootDir%] == [] (
     exit /b 1
 )
 
-set __binDir=%__rootDir%\artifacts\bin
-set __objDir=%__rootDir%\artifacts\obj
+if not defined __RootBinDir set "__RootBinDir=%__rootDir%\artifacts"
+set __binDir=%__RootBinDir%\bin
+set __objDir=%__RootBinDir%\obj
 
 :: Setup to cmake the native components
 echo Configuring corehost native components

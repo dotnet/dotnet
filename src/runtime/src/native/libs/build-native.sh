@@ -6,7 +6,7 @@ usage_list+=("-staticLibLink: Optional argument to statically link any native li
 __scriptpath="$(cd "$(dirname "$0")"; pwd -P)"
 __nativeroot="$__scriptpath"
 __RepoRootDir="$(cd "$__scriptpath"/../../..; pwd -P)"
-__artifactsDir="$__RepoRootDir/artifacts"
+__artifactsDir="${__RootBinDir:-"$__RepoRootDir/artifacts"}"
 
 handle_arguments() {
 
@@ -33,7 +33,7 @@ __CMakeArgs=""
 __Compiler=clang
 __CrossBuild=0
 __PortableBuild=1
-__RootBinDir="$__RepoRootDir/artifacts"
+__RootBinDir="${__RootBinDir:-"$__RepoRootDir/artifacts"}"
 __SkipConfigure=0
 __StaticLibLink=0
 __UnprocessedBuildArgs=
