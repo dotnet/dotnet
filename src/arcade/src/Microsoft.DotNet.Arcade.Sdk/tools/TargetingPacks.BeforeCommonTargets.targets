@@ -25,20 +25,20 @@
 
   <ItemGroup Condition="'$(UpdateDownlevelKnownPacks)' == 'true'">
     <!-- Downgrade targeting pack versions to X.0.0 as only those are provided by SBRP. -->
-    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App'))">
+    <KnownFrameworkReference Update="Microsoft.NETCore.App">
       <TargetingPackVersion Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(TargetFramework)', '^net\d+\.0$'))">$([System.Text.RegularExpressions.Regex]::Match('%(TargetFramework)', '\d+').Value).0.0</TargetingPackVersion>
     </KnownFrameworkReference>
-    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App'))">
+    <KnownFrameworkReference Update="Microsoft.AspNetCore.App">
       <TargetingPackVersion Condition="'%(TargetFramework)' == 'net6.0'">6.0.2</TargetingPackVersion>
     </KnownFrameworkReference>
 
     <!-- This is a bit hacky as it uses the newer host pack from the current framework for downlevel TFMs. But given that the host interface is stable, this should be fine. -->
-    <KnownAppHostPack Update="@(KnownAppHostPack)"
+    <KnownAppHostPack Update="Microsoft.NETCore.App"
       AppHostPackVersion="@(KnownAppHostPack->WithMetadataValue('TargetFramework', '$(BundledNETCoreAppTargetFramework)')->Metadata('AppHostPackVersion'))"
       AppHostRuntimeIdentifiers="@(KnownAppHostPack->WithMetadataValue('TargetFramework', '$(BundledNETCoreAppTargetFramework)')->Metadata('AppHostRuntimeIdentifiers'))" />
 
     <!-- This is a bit hacky as it uses the newer ILLinkPack from the current framework for downlevel TFMs. -->
-    <KnownILLinkPack Update="@(KnownILLinkPack)" ILLinkPackVersion="@(KnownILLinkPack->WithMetadataValue('TargetFramework', '$(BundledNETCoreAppTargetFramework)')->Metadata('ILLinkPackVersion'))" />
+    <KnownILLinkPack Update="Microsoft.NET.ILLink.Tasks" ILLinkPackVersion="@(KnownILLinkPack->WithMetadataValue('TargetFramework', '$(BundledNETCoreAppTargetFramework)')->Metadata('ILLinkPackVersion'))" />
   </ItemGroup>
 
   <!-- This is a bit hacky as it uses newer analyzers from the current framework for downlevel TFMs.
@@ -79,6 +79,21 @@
       TargetFramework="$(TargetingPackCurrentTargetFramework)"
       Condition="'@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App')->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
 
+    <KnownFrameworkReference
+      Include="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.WindowsDesktop.App')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
+      TargetFramework="$(TargetingPackCurrentTargetFramework)"
+      Condition="'@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.WindowsDesktop.App')->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
+
+    <KnownFrameworkReference
+      Include="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.WindowsDesktop.App.WPF')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
+      TargetFramework="$(TargetingPackCurrentTargetFramework)"
+      Condition="'@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.WindowsDesktop.App.WPF')->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
+
+    <KnownFrameworkReference
+      Include="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.WindowsDesktop.App.WindowsForms')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
+      TargetFramework="$(TargetingPackCurrentTargetFramework)"
+      Condition="'@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.WindowsDesktop.App.WindowsForms')->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
+
     <KnownRuntimePack
       Include="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)')->WithMetadataValue('RuntimePackLabels', 'Mono'))"
       TargetFramework="$(TargetingPackCurrentTargetFramework)"
@@ -108,6 +123,16 @@
       Include="@(KnownILLinkPack->WithMetadataValue('Identity', 'Microsoft.NET.ILLink.Tasks')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
       TargetFramework="$(TargetingPackCurrentTargetFramework)"
       Condition="'@(KnownILLinkPack->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
+
+    <KnownWebAssemblySdkPack
+      Include="@(KnownWebAssemblySdkPack->WithMetadataValue('Identity', 'Microsoft.NET.Sdk.WebAssembly.Pack')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
+      TargetFramework="$(TargetingPackCurrentTargetFramework)"
+      Condition="'@(KnownWebAssemblySdkPack->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
+
+    <KnownAspNetCorePack
+      Include="@(KnownAspNetCorePack->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App.Internal.Assets')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
+      TargetFramework="$(TargetingPackCurrentTargetFramework)"
+      Condition="'@(KnownAspNetCorePack->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
   </ItemGroup>
 
   <!--
@@ -153,43 +178,71 @@
     - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion
     - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion
     - KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion
+    - KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion
+    - KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion
+    - KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentTargetingPackVersion
+    - KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentDefaultRuntimeFrameworkVersion
+    - KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentLatestRuntimeFrameworkVersion
+    - KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentTargetingPackVersion
     - KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion
     - KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion
     - KnownILCompilerPackCurrentVersion
     - KnownCrossgen2PackCurrentVersion
     - KnownAppHostPackCurrentVersion
     - KnownILLinkPackCurrentVersion
+    - KnownWebAssemblySdkPackCurrentVersion
+    - KnownAspNetCorePackCurrentVersion
   -->
   <ItemGroup Condition="'$(EnableKnownPackVersionUpdatesForCurrentTargetFramework)' == 'true'">
-    <KnownFrameworkReference Update="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
-      <DefaultRuntimeFrameworkVersion Condition="'$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion)</DefaultRuntimeFrameworkVersion>
-      <LatestRuntimeFrameworkVersion Condition="'$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
-      <TargetingPackVersion Condition="'$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)</TargetingPackVersion>
+    <KnownFrameworkReference Update="Microsoft.NETCore.App">
+      <DefaultRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion)</DefaultRuntimeFrameworkVersion>
+      <LatestRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
+      <TargetingPackVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)' != ''">$(KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion)</TargetingPackVersion>
     </KnownFrameworkReference>
 
-    <KnownRuntimePack Update="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)')->WithMetadataValue('RuntimePackLabels', 'Mono'))">
-      <LatestRuntimeFrameworkVersion Condition="'$(KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion)' != ''">$(KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
+    <KnownFrameworkReference Update="Microsoft.AspNetCore.App">
+      <DefaultRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion)</DefaultRuntimeFrameworkVersion>
+      <LatestRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
+      <TargetingPackVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentTargetingPackVersion)' != ''">$(KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentTargetingPackVersion)</TargetingPackVersion>
+    </KnownFrameworkReference>
+
+    <KnownFrameworkReference Update="Microsoft.WindowsDesktop.App;Microsoft.WindowsDesktop.App.WPF;Microsoft.WindowsDesktop.App.WindowsForms">
+      <DefaultRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentDefaultRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentDefaultRuntimeFrameworkVersion)</DefaultRuntimeFrameworkVersion>
+      <LatestRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentLatestRuntimeFrameworkVersion)' != ''">$(KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
+      <TargetingPackVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentTargetingPackVersion)' != ''">$(KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentTargetingPackVersion)</TargetingPackVersion>
+    </KnownFrameworkReference>
+
+    <KnownRuntimePack Update="Microsoft.NETCore.App">
+      <LatestRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '%(RuntimePackLabels)' == 'Mono' and '$(KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion)' != ''">$(KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
     </KnownRuntimePack>
 
-    <KnownRuntimePack Update="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)')->WithMetadataValue('RuntimePackLabels', 'NativeAOT'))">
-      <LatestRuntimeFrameworkVersion Condition="'$(KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion)' != ''">$(KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
+    <KnownRuntimePack Update="Microsoft.NETCore.App">
+      <LatestRuntimeFrameworkVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '%(RuntimePackLabels)' == 'NativeAOT' and '$(KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion)' != ''">$(KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion)</LatestRuntimeFrameworkVersion>
     </KnownRuntimePack>
 
-    <KnownILCompilerPack Update="@(KnownILCompilerPack->WithMetadataValue('Identity', 'Microsoft.DotNet.ILCompiler')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
-      <ILCompilerPackVersion Condition="'$(KnownILCompilerPackCurrentVersion)' != ''">$(KnownILCompilerPackCurrentVersion)</ILCompilerPackVersion>
+    <KnownILCompilerPack Update="Microsoft.DotNet.ILCompiler">
+      <ILCompilerPackVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownILCompilerPackCurrentVersion)' != ''">$(KnownILCompilerPackCurrentVersion)</ILCompilerPackVersion>
     </KnownILCompilerPack>
 
-    <KnownCrossgen2Pack Update="@(KnownCrossgen2Pack->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Crossgen2')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
-      <Crossgen2PackVersion Condition="'$(KnownCrossgen2PackCurrentVersion)' != ''">$(KnownCrossgen2PackCurrentVersion)</Crossgen2PackVersion>
+    <KnownCrossgen2Pack Update="Microsoft.NETCore.App.Crossgen2">
+      <Crossgen2PackVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownCrossgen2PackCurrentVersion)' != ''">$(KnownCrossgen2PackCurrentVersion)</Crossgen2PackVersion>
     </KnownCrossgen2Pack>
 
-    <KnownAppHostPack Update="@(KnownAppHostPack->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
-      <AppHostPackVersion Condition="'$(KnownAppHostPackCurrentVersion)' != ''">$(KnownAppHostPackCurrentVersion)</AppHostPackVersion>
+    <KnownAppHostPack Update="Microsoft.NETCore.App">
+      <AppHostPackVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownAppHostPackCurrentVersion)' != ''">$(KnownAppHostPackCurrentVersion)</AppHostPackVersion>
     </KnownAppHostPack>
 
-    <KnownILLinkPack Update="@(KnownILLinkPack->WithMetadataValue('Identity', 'Microsoft.NET.ILLink.Tasks')->WithMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))">
-      <ILLinkPackVersion Condition="'$(KnownILLinkPackCurrentVersion)' != ''">$(KnownILLinkPackCurrentVersion)</ILLinkPackVersion>
+    <KnownILLinkPack Update="Microsoft.NET.ILLink.Tasks">
+      <ILLinkPackVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownILLinkPackCurrentVersion)' != ''">$(KnownILLinkPackCurrentVersion)</ILLinkPackVersion>
     </KnownILLinkPack>
+
+    <KnownWebAssemblySdkPack Update="Microsoft.NET.Sdk.WebAssembly.Pack">
+      <WebAssemblySdkPackVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownWebAssemblySdkPackCurrentVersion)' != ''">$(KnownWebAssemblySdkPackCurrentVersion)</WebAssemblySdkPackVersion>
+    </KnownWebAssemblySdkPack>
+
+    <KnownAspNetCorePack Update="Microsoft.AspNetCore.App.Internal.Assets">
+      <AspNetCorePackVersion Condition="'%(TargetFramework)' == '$(TargetingPackCurrentTargetFramework)' and '$(KnownAspNetCorePackCurrentVersion)' != ''">$(KnownAspNetCorePackCurrentVersion)</AspNetCorePackVersion>
+    </KnownAspNetCorePack>
   </ItemGroup>
 
 </Project>
