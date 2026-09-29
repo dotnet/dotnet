@@ -242,6 +242,21 @@
         <target state="translated">Il provisioning delle origini pacchetto a livello di computer, che possono essere abilitate o disabilitate, viene effettuato dai carichi di lavoro di Visual Studio.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Text_MinPublishAgeExceptions_Description">
+        <source>Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</source>
+        <target state="new">Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MinPublishAgeExceptions_Title">
+        <source>Minimum publish age exceptions</source>
+        <target state="new">Minimum publish age exceptions</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MinPublishAgeHours_Header">
+        <source>Minimum publish age (hours)</source>
+        <target state="new">Minimum publish age (hours)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">
         <source>Enabled</source>
         <target state="translated">Abilitato</target>
