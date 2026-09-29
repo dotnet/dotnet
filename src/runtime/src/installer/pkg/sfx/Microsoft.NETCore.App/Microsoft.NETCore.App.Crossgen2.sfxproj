@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <CrossgenPublishProject>$(RepoRoot)src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj</CrossgenPublishProject>
+    <CrossgenSmokeTestCoreLibPath Condition="'$(CrossgenSmokeTestCoreLibPath)' == ''">$(CoreCLRArtifactsPath)IL/System.Private.CoreLib.dll</CrossgenSmokeTestCoreLibPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +15,7 @@
   <Target Name="RunPublishedCrossgen" AfterTargets="PublishCrossgen"
           Condition="'$(TargetOS)' == '$(HostOS)' and '$(TargetArchitecture)' == '$(BuildArchitecture)' and '$(CrossBuild)' != 'true'">
     <!-- Run the published crossgen if we're not cross-compiling -->
-    <Exec Command="@(FilesToPackage) $(CoreCLRArtifactsPath)IL/System.Private.CoreLib.dll --out $(IntermediateOutputPath)S.P.C.tmp" Condition="'%(FileName)%(Extension)' == 'crossgen2$(ExeSuffix)'">
+    <Exec Command="@(FilesToPackage) $(CrossgenSmokeTestCoreLibPath) --out $(IntermediateOutputPath)S.P.C.tmp" Condition="'%(FileName)%(Extension)' == 'crossgen2$(ExeSuffix)'">
       <Output TaskParameter="ExitCode" PropertyName="CrossgenExitCode" />
     </Exec>
   </Target>

@@ -13,6 +13,8 @@
     <ShouldVerifyClosure>false</ShouldVerifyClosure>
   </PropertyGroup>
 
+  <Import Project="$(RepositoryEngineeringDir)bootstrap.props" Condition="'$(BootstrapBuildArtifactsDir)' != ''" />
+
   <ItemGroup>
     <!-- Private=false stops MSBuild from pulling the referenced project's copy-to-output-directory
          items into this project's output. The crossgen2 publish projects only run Publish (see their
@@ -23,7 +25,10 @@
       Include="$(CrossgenPublishProject)"
       OutputItemType="_RawCrossgenPublishFiles"
       ReferenceOutputAssembly="false"
-      Private="false" />
+      Private="false">
+      <AdditionalProperties Condition="'$(BootstrapBuildArtifactsDir)' != ''">$(_BootstrapConsumerProperties)</AdditionalProperties>
+      <GlobalPropertiesToRemove Condition="'$(BootstrapBuildArtifactsDir)' != ''">$(BootstrapPropertiesToRemove)</GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 
   <Target Name="PublishCrossgen"

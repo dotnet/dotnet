@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepositoryEngineeringDir)bootstrap-producers.proj"
+                      AdditionalProperties="EnableBootstrap=false;BootstrapMainBuild=true"
+                      BuildInParallel="false" />
+    <ProjectReference Include="$(RepoRoot)Build.proj"
+                      BuildInParallel="false" />
+  </ItemGroup>
+
+  <Target Name="_BuildBootstrapProducersBeforeMainBuild"
+          BeforeTargets="Build">
+    <MSBuild Projects="$(RepositoryEngineeringDir)bootstrap-producers.proj"
+             Properties="EnableBootstrap=false;BootstrapMainBuild=true"
+             BuildInParallel="false"
+             StopOnFirstFailure="true" />
+  </Target>
+
+</Project>

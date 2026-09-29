@@ -59,6 +59,7 @@
     <PropertyGroup>
       <CMakeBuildDir>$(IntermediateOutputRootPath)corehost\cmake\</CMakeBuildDir>
       <BuildScript>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'build.sh'))</BuildScript>
+      <_CoreHostBuildEnvironmentVariables>__RootBinDir=$(ArtifactsDir)</_CoreHostBuildEnvironmentVariables>
 
       <_CoreHostUnixTargetOS>$(TargetOS)</_CoreHostUnixTargetOS>
       <_CoreHostUnixTargetOS Condition="'$(TargetsLinuxBionic)' == 'true'">linux-bionic</_CoreHostUnixTargetOS>
@@ -96,7 +97,7 @@
 
     <!-- WASI: pass the acquired wasi-sdk to the native build. -->
     <PropertyGroup Condition="'$(TargetsWasi)' == 'true'">
-      <_CoreHostBuildEnvironmentVariables>WASI_SDK_PATH=$(RuntimeBuildWasiSdkPath)</_CoreHostBuildEnvironmentVariables>
+      <_CoreHostBuildEnvironmentVariables>$(_CoreHostBuildEnvironmentVariables);WASI_SDK_PATH=$(RuntimeBuildWasiSdkPath)</_CoreHostBuildEnvironmentVariables>
     </PropertyGroup>
 
     <!--
@@ -162,6 +163,7 @@
 
     <PropertyGroup>
       <BuildScript>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', 'build.cmd'))</BuildScript>
+      <_CoreHostBuildEnvironmentVariables>__RootBinDir=$(ArtifactsDir)</_CoreHostBuildEnvironmentVariables>
 
       <BuildArgs>$(Configuration) $(TargetArchitecture) -os $(TargetOS) commit $([MSBuild]::ValueOrDefault('$(SourceRevisionId)', 'N/A')) targetrid $(TargetRid)</BuildArgs>
       <BuildArgs Condition="'$(ConfigureOnly)' == 'true'">$(BuildArgs) configureonly</BuildArgs>
@@ -178,7 +180,7 @@
 
     <!-- WASI: gen-buildsys.cmd needs WASI_SDK_PATH (set by the AcquireWasiSdk dependency above). -->
     <PropertyGroup Condition="'$(TargetsWasi)' == 'true'">
-      <_CoreHostBuildEnvironmentVariables>WASI_SDK_PATH=$(RuntimeBuildWasiSdkPath)</_CoreHostBuildEnvironmentVariables>
+      <_CoreHostBuildEnvironmentVariables>$(_CoreHostBuildEnvironmentVariables);WASI_SDK_PATH=$(RuntimeBuildWasiSdkPath)</_CoreHostBuildEnvironmentVariables>
     </PropertyGroup>
 
     <!--
