@@ -243,9 +243,9 @@ variables:
 - name: ubuntuArm64Rid
   value: ubuntu.24.04-arm64
 
-- name: poolName_Mac
+- name: poolName_AcesMac
   value: AcesShared
-- name: poolDemand_Mac
+- name: poolDemand_AcesMac
   value: ImageOverride -equals ACES_VM_SharedPool_Tahoe
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:

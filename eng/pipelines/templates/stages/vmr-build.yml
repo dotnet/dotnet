@@ -76,8 +76,8 @@ parameters:
 - name: pool_Mac
   type: object
   default:
-    name: $(poolName_Mac)
-    demands: $(poolDemand_Mac)
+    name: $(poolName_AcesMac)
+    demands: $(poolDemand_AcesMac)
     os: macOS
 
 - name: pool_Mac_ShortStack
