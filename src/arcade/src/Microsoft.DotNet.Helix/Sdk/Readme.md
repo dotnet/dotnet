@@ -87,7 +87,7 @@ Useful parameters:
 - `helixBaseUri`: base URI for the Helix service. Defaults to `https://helix.dot.net/`.
 - `helixAccessToken`: optional token for authenticated Helix access on internal builds; ignored with a warning when `useEntraAuthentication` is enabled.
 - `useEntraAuthentication`: use a refreshable Entra credential for authenticated Helix access.
-- `azureSubscription`: Azure service connection ID authorized for Helix; required when `useEntraAuthentication` is enabled.
+- `azureSubscription`: workload identity federation service connection name authorized for Helix; required when `useEntraAuthentication` is enabled.
 - `pollingIntervalSeconds`: how often the job monitor checks for new completed jobs.
 - `timeoutInMinutes`: overall timeout for the job monitor.
 - `continueOnError`: allow the pipeline to continue when the monitor job fails. Defaults to `false`.
@@ -99,6 +99,7 @@ Implementation and semantic design documents are indexed at
 Behavior notes:
 
 - The reporter uses its own `SYSTEM_ACCESSTOKEN`, so it does not depend on the shorter-lived token from the job that originally submitted the Helix work.
+- Entra-authenticated monitoring runs inside `AzureCLI@2` with `keepAzSessionActive` enabled. The task renews its workload identity session while the monitor runs, so the timeout does not require a single long-lived access token.
 - If parseable xUnit, JUnit, or TRX result files are available, those are uploaded.
 - Result processing uses globally bounded work-item parallelism and streams XML
   instead of loading complete result documents. Status polling remains
@@ -562,7 +563,7 @@ You may assume that all the following variables are set on any given Helix clien
 
 - **HELIX_CORRELATION_ID** : GUID identifier for a helix run (include this if sending mail to or tagging dnceng)
 - **HELIX_CORRELATION_PAYLOAD** : Correlation payload folder;  root of where all correlation payloads are unzipped.
-- **HELIX_PYTHONPATH** : Path to a python 3.x executable (Due to OS constraints, this is only guaranteed to be >= 3.4)
+- **HELIX_PYTHONPATH** : Path to a python 3.x executable (Due to OS constraints, this is only guaranteed to be >= 3.9)
 - **HELIX_WORKITEM_FRIENDLYNAME** - "Friendly" name of work item as provided at queue time (include this if relevant when sending mail to or tagging dnceng)
 - **HELIX_WORKITEM_ID** : GUID identifier for a helix work item 
 - **HELIX_WORKITEM_PAYLOAD** : "Unzip" folder of helix workitem, where its payload was unpacked

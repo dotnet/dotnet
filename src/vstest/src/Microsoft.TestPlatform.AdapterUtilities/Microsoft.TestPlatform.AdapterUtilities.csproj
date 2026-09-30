@@ -46,6 +46,9 @@
 
   <ItemGroup>
     <Compile Include="..\..\shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
+    <!-- Down-level ExperimentalAttribute. This assembly applies [Experimental] on target frameworks
+         that predate it. -->
+    <Compile Include="..\..\shared\ExperimentalAttribute.cs" Link="ExperimentalAttribute.cs" />
   </ItemGroup>
 
   <PropertyGroup>

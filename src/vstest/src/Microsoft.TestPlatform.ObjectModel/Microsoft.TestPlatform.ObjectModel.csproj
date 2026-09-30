@@ -66,6 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(RepoRoot)src/Microsoft.TestPlatform.Filter.Source/FilterHelper.cs" />
+    <!-- Down-level ExperimentalAttribute. This assembly applies [Experimental] on target frameworks
+         that predate it. -->
+    <Compile Include="$(RepoRoot)shared/ExperimentalAttribute.cs" Link="ExperimentalAttribute.cs" />
   </ItemGroup>
   <PropertyGroup>
     <!-- Required by the vendored xxHash128 implementation. -->
