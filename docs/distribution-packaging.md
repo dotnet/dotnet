@@ -1,7 +1,5 @@
 # .NET distribution packaging
 
-Originally written by [tmds](https://github.com/tmds) and published in [dotnet/docs](https://github.com/dotnet/docs/blob/33797fd40ff9e1409face480e4d65164031552a4/docs/core/distribution-packaging.md). Copyright (c) .NET Foundation and Contributors. Licensed under the [MIT License](../LICENSE.TXT).
-
 As .NET 5 (and .NET Core) and later versions become available on more and more platforms, it's useful to learn how to package, name, and version apps and libraries that use it. This way, package maintainers can help ensure a consistent experience no matter where users choose to run .NET. This article is useful for users that are:
 
 - Attempting to build .NET from source.
