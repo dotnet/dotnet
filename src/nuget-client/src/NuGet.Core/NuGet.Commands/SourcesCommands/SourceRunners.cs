@@ -265,11 +265,12 @@ namespace NuGet.Commands
             var sourceProvider = RunnerHelper.GetSourceProvider(settings);
 
             var existingSource = sourceProvider.GetPackageSourceByName(args.Name);
-            existingSource.AllowInsecureConnections = args.AllowInsecureConnections;
             if (existingSource == null)
             {
                 throw new CommandException(Strings.SourcesCommandNoMatchingSourcesFound, args.Name);
             }
+
+            existingSource.AllowInsecureConnections = args.AllowInsecureConnections;
 
             if (!string.IsNullOrEmpty(args.Source) && !existingSource.Source.Equals(args.Source, StringComparison.OrdinalIgnoreCase))
             {
