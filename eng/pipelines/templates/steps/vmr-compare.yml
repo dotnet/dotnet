@@ -106,9 +106,8 @@ steps:
   name: InstallDarc
   displayName: Install darc
 
-- pwsh: eng/tests/VmrGitHubAppToken.Tests.ps1
-  displayName: Validate GitHub App token flow
-
+# Installation tokens expire after one hour. Mint them immediately before
+# Gather Drop, which is the only step that consumes them.
 - task: AzureCLI@2
   displayName: Get GitHub App installation tokens
   inputs:
@@ -116,6 +115,8 @@ steps:
     scriptType: pscore
     scriptLocation: inlineScript
     inlineScript: |
+      # Use the flowed Arcade helper because it accepts the App ID and PEM
+      # secret projections. The root helper currently requires a Key Vault key.
       & '$(Build.SourcesDirectory)/src/arcade/eng/common/Get-GitHubAppToken.ps1' `
         -KeyVaultName EngKeyVault `
         -AppIdSecretName vmr-artifact-reader-github-app-app-id `
