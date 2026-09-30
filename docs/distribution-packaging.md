@@ -58,16 +58,16 @@ When installed, .NET consists of several components that are laid out as follows
 │   └── Microsoft.WindowsDesktop.App              (*)
 │       └── <desktop app version> (7)
 └── templates                                     (*)
-│   └── <templates version>      (17)
+    └── <templates version>      (17)
 
 /
 ├── etc/dotnet
-│       └── install_location     (16)
+│   └── install_location         (16)
 ├── usr/share/man/man1
-│       └── dotnet.1.gz          (9)
+│   └── dotnet.1.gz              (9)
 └── usr/bin
-        └── dotnet               (10)
-        └── dnx                  (23)
+    ├── dotnet                   (10)
+    └── dnx                      (23)
 ```
 
 The numbers identify layout items in the descriptions and package lists below; they aren't necessarily in directory order.
