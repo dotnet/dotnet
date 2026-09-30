@@ -72,7 +72,12 @@
     <KnownFrameworkReference
       Include="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
       TargetFramework="$(TargetingPackCurrentTargetFramework)"
-      Condition="'@(KnownFrameworkReference->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
+      Condition="'@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
+
+    <KnownFrameworkReference
+      Include="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
+      TargetFramework="$(TargetingPackCurrentTargetFramework)"
+      Condition="'@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App')->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
 
     <KnownRuntimePack
       Include="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)')->WithMetadataValue('RuntimePackLabels', 'Mono'))"
