@@ -84,10 +84,7 @@ parameters:
   type: object
   default:
     name: $(poolName_Mac_Full)
-    ${{ if eq(variables['System.TeamProject'], 'public') }}:
-      demands: $(poolDemand_Mac_Full)
-    ${{ else }}:
-      vmImage: $(poolImage_Mac)
+    demands: $(poolDemand_Mac_Full)
     os: macOS
 
 
