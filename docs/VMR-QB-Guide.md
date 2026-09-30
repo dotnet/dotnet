@@ -25,7 +25,7 @@ Each morning:
 
 ### Using the Pipeline Investigation Skill
 
-The [pipeline-investigation skill](https://github.com/dotnet/arcade-skills/tree/main/plugins/dotnet-dnceng/skills/pipeline-investigation) can generate a daily build health report. Use this Copilot prompt:
+The [pipeline-investigation skill](https://github.com/dotnet/arcade-skills/tree/main/plugins/dotnet-helix/skills/pipeline-investigation) can generate a daily build health report. Use this Copilot prompt:
 
 > *"I'd like to understand the health of the public and internal dotnet-unified-build pipelines in the last 24 hours. Make sure to use the pipeline-investigation skill."*
 
@@ -79,7 +79,7 @@ This pattern — health report → identify failure → drill into details → r
 
 ### Using the Flow Analysis Skill
 
-The [flow-analysis skill](https://github.com/dotnet/arcade-skills/tree/main/plugins/dotnet-dnceng/skills/flow-analysis) can generate a dependency flow health report. Use this Copilot prompt:
+The [flow-analysis skill](https://github.com/dotnet/arcade-skills/tree/main/plugins/dotnet-codeflow/skills/flow-analysis) can generate a dependency flow health report. Use this Copilot prompt:
 
 > *"I'd like to understand the health of dependency flow into the dotnet/dotnet repo. Make sure to use the flow-analysis skill."*
 
