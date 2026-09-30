@@ -65,15 +65,15 @@ parameters:
 - name: pool_Mac
   type: object
   default:
-    name: Azure Pipelines
-    vmImage: $(poolImage_Mac)
+    name: $(poolName_Mac)
+    demands: $(poolDemand_Mac)
     os: macOS
 
-- name: pool_Mac_Full
+- name: pool_Mac_ShortStack
   type: object
   default:
-    name: $(poolName_Mac_Full)
-    demands: $(poolDemand_Mac_Full)
+    name: Azure Pipelines
+    vmImage: $(poolImage_Mac_ShortStack)
     os: macOS
 
 
@@ -216,7 +216,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
+            pool: ${{ parameters.pool_Mac_ShortStack }}
             targetOS: iossimulator
             targetArchitecture: arm64
             brandingType: ${{ variables.brandingType }}
@@ -348,7 +348,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
+            pool: ${{ parameters.pool_Mac_ShortStack }}
             targetOS: ios
             targetArchitecture: arm64
             brandingType: ${{ variables.brandingType }}
@@ -359,7 +359,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
+            pool: ${{ parameters.pool_Mac_ShortStack }}
             targetOS: iossimulator
             targetArchitecture: x64
             brandingType: ${{ variables.brandingType }}
@@ -370,7 +370,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
+            pool: ${{ parameters.pool_Mac_ShortStack }}
             targetOS: maccatalyst
             targetArchitecture: arm64
             brandingType: ${{ variables.brandingType }}
@@ -381,7 +381,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
+            pool: ${{ parameters.pool_Mac_ShortStack }}
             targetOS: maccatalyst
             targetArchitecture: x64
             brandingType: ${{ variables.brandingType }}
@@ -392,7 +392,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
+            pool: ${{ parameters.pool_Mac_ShortStack }}
             targetOS: tvos
             targetArchitecture: arm64
             brandingType: ${{ variables.brandingType }}
@@ -403,7 +403,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
+            pool: ${{ parameters.pool_Mac_ShortStack }}
             targetOS: tvossimulator
             targetArchitecture: arm64
             brandingType: ${{ variables.brandingType }}
@@ -414,7 +414,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
+            pool: ${{ parameters.pool_Mac_ShortStack }}
             targetOS: tvossimulator
             targetArchitecture: x64
             brandingType: ${{ variables.brandingType }}
@@ -441,9 +441,9 @@ stages:
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            pool: ${{ parameters.pool_Mac_Full }}
-          ${{ else }}:
             pool: ${{ parameters.pool_Mac }}
+          ${{ else }}:
+            pool: ${{ parameters.pool_Mac_ShortStack }}
           targetOS: osx
           targetArchitecture: x64
           brandingType: ${{ variables.brandingType }}
@@ -456,7 +456,7 @@ stages:
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
+            pool: ${{ parameters.pool_Mac_ShortStack }}
             useMonoRuntime: true
             targetOS: osx
             targetArchitecture: x64
@@ -630,9 +630,9 @@ stages:
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
           ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            pool: ${{ parameters.pool_Mac_Full }}
-          ${{ else }}:
             pool: ${{ parameters.pool_Mac }}
+          ${{ else }}:
+            pool: ${{ parameters.pool_Mac_ShortStack }}
           targetOS: osx
           targetArchitecture: arm64
           brandingType: ${{ variables.brandingType }}

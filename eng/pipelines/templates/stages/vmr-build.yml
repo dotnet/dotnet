@@ -76,15 +76,15 @@ parameters:
 - name: pool_Mac
   type: object
   default:
-    name: Azure Pipelines
-    vmImage: $(poolImage_Mac)
+    name: $(poolName_Mac)
+    demands: $(poolDemand_Mac)
     os: macOS
 
-- name: pool_Mac_Full
+- name: pool_Mac_ShortStack
   type: object
   default:
-    name: $(poolName_Mac_Full)
-    demands: $(poolDemand_Mac_Full)
+    name: Azure Pipelines
+    vmImage: $(poolImage_Mac_ShortStack)
     os: macOS
 
 
@@ -119,7 +119,8 @@ stages:
       scope: ${{ parameters.scope }}
       verifications: ${{ parameters.verifications }}
       excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
-      pool_Mac_Full: ${{ parameters.pool_Mac_Full }}
+      pool_Mac: ${{ parameters.pool_Mac }}
+      pool_Mac_ShortStack: ${{ parameters.pool_Mac_ShortStack }}
 
 - ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
   - stage: Publish_Build_Assets
