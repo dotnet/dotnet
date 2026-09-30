@@ -73,7 +73,7 @@ When installed, .NET consists of several components that are laid out as follows
 
 - (1) **dotnet** The host (also known as the "muxer") has two distinct roles: activate a runtime to launch an application, and activate an SDK to dispatch commands to it. The host is a native executable (`dotnet.exe`).
 
-- (22) **dnx** The `dnx` script is an executable shell script whose purpose is to foward along user commands to the `dotnet dnx` command inside an SDK. This functionality primarily exists to make acquiring and launching various kinds of .NET applications, like .NET Tools, easier for end-users. Think of it similarly to the `npx` command from Node. It is version-independent since most of the actual functionality of the `dnx` one-shot execution process is handled in the `dotnet` CLI implementation in the versioned SDK directory.
+- (22) **dnx** The `dnx` script is an executable shell script whose purpose is to forward along user commands to the `dotnet dnx` command inside an SDK. This functionality primarily exists to make acquiring and launching various kinds of .NET applications, like .NET Tools, easier for end-users. Think of it similarly to the `npx` command from Node. It is version-independent since most of the actual functionality of the `dnx` one-shot execution process is handled in the `dotnet` CLI implementation in the versioned SDK directory.
 
 While there's a single host, most of the other components are in versioned directories (2,3,5,6). This means multiple versions can be present on the system since they're installed side by side.
 
@@ -235,7 +235,7 @@ In the `{dotnet_root}/shared/Microsoft.NETCore.App/<runtime version>` directory,
 - `System.Text.Json.dll` - installed with `dotnet-runtime-[major].[minor]` package
 - `System.Text.Json.pdb` - installed with `dotnet-runtime-dbg-[major].[minor]` package
 
-In the `{dotnet_root/shared/Microsoft.AspNetCore.App/<aspnetcore version>` directory, the following two files are expected:
+In the `{dotnet_root}/shared/Microsoft.AspNetCore.App/<aspnetcore version>` directory, the following two files are expected:
 
 - `Microsoft.AspNetCore.Routing.dll` - installed with `aspnetcore-runtime-[major].[minor]` packages
 - `Microsoft.AspNetCore.Routing.pdb` - installed with `aspnetcore-runtime-dbg-[major].[minor]` packages
