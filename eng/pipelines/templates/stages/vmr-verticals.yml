@@ -73,7 +73,7 @@ parameters:
   type: object
   default:
     name: Azure Pipelines
-    vmImage: $(poolImage_Mac_ShortStack)
+    vmImage: $(poolImage_Mac_Hosted)
     os: macOS
 
 
@@ -440,10 +440,7 @@ stages:
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
-          ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            pool: ${{ parameters.pool_Mac }}
-          ${{ else }}:
-            pool: ${{ parameters.pool_Mac_ShortStack }}
+          pool: ${{ parameters.pool_Mac }}
           targetOS: osx
           targetArchitecture: x64
           brandingType: ${{ variables.brandingType }}
@@ -629,10 +626,7 @@ stages:
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
-          ${{ if eq(variables['System.TeamProject'], 'public') }}:
-            pool: ${{ parameters.pool_Mac }}
-          ${{ else }}:
-            pool: ${{ parameters.pool_Mac_ShortStack }}
+          pool: ${{ parameters.pool_Mac }}
           targetOS: osx
           targetArchitecture: arm64
           brandingType: ${{ variables.brandingType }}
