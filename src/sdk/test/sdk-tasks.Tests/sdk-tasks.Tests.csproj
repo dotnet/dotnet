@@ -9,6 +9,18 @@
   <ItemGroup>
     <ProjectReference Include="$(RepoRoot)src\Tasks\sdk-tasks\sdk-tasks.csproj" />
     <ProjectReference Include="..\Microsoft.NET.TestFramework.MSTest\Microsoft.NET.TestFramework.MSTest.csproj" />
+    <!-- sdk-tasks excludes MSBuild runtime assets because its tasks run inside the host MSBuild.
+         The tests instantiate MSBuild APIs directly, so provide those runtime assemblies here. -->
+    <PackageReference Include="Microsoft.Build" />
+    <PackageReference Include="Microsoft.Build.Framework" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <!-- sdk-tasks runs in the bootstrap SDK and therefore skips current VMR package overrides.
+         Use the SDK-declared version here as well so central transitive pinning does not downgrade
+         its Microsoft.Deployment.DotNet.Releases dependency to the current VMR package version. -->
+    <PackageReference Include="Microsoft.Deployment.DotNet.Releases"
+                      VersionOverride="$(MicrosoftDeploymentDotNetReleasesBootstrapPackageVersion)"
+                      Condition="'$(DotNetBuildFromVMR)' == 'true'" />
     <PackageReference Include="Microsoft.WixToolset.Dtf.WindowsInstaller" />
   </ItemGroup>
 

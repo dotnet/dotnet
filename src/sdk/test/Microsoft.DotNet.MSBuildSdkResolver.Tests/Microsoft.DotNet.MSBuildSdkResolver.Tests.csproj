@@ -39,6 +39,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" />
+    <!-- Match the version used by the net472 resolver, which must remain compatible with the
+         minimum supported Visual Studio MSBuild rather than use the current VMR package. -->
+    <PackageReference Include="Microsoft.Deployment.DotNet.Releases"
+                      VersionOverride="$(MicrosoftDeploymentDotNetReleasesToolsetPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup>

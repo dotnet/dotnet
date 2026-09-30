@@ -96,6 +96,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!-- Preserve the SDK-declared version before VMR package props replace it with the current
+         package version so bootstrap-hosted tasks and their tests can use the same dependency. -->
+    <MicrosoftDeploymentDotNetReleasesBootstrapPackageVersion>$(MicrosoftDeploymentDotNetReleasesPackageVersion)</MicrosoftDeploymentDotNetReleasesBootstrapPackageVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <!-- Dependencies from https://github.com/Microsoft/msbuild -->
     <!-- In VMR modes, MicrosoftBuildVersion and MicrosoftBuildLocalizationVersion will end
          up overwritten by properties flowing the newest version that are imported after this file.
