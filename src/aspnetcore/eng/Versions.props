@@ -68,6 +68,8 @@
     <UsingToolVSSDK>true</UsingToolVSSDK>
     <!-- Disable XLIFF tasks -->
     <UsingToolXliff>false</UsingToolXliff>
+    <!-- Targetingpack support -->
+    <TargetingPackCurrentTargetFramework>$(DefaultNetCoreTargetFramework)</TargetingPackCurrentTargetFramework>
   </PropertyGroup>
 
   <!--
