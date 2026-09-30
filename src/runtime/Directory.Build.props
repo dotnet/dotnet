@@ -92,6 +92,7 @@
     <NetMinimum>$(NetCoreAppMinimum)</NetMinimum>
 
     <NetCoreAppToolCurrentVersion>11.0</NetCoreAppToolCurrentVersion>
+    <NetCoreAppToolCurrentVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'">$([MSBuild]::GetTargetFrameworkVersion('$(BundledNETCoreAppTargetFramework)'))</NetCoreAppToolCurrentVersion>
     <NetCoreAppToolCurrent>net$(NetCoreAppToolCurrentVersion)</NetCoreAppToolCurrent>
     <NetCoreAppCurrentToolTargetFrameworkMoniker>$(NetCoreAppCurrentIdentifier),Version=v$(NetCoreAppToolCurrentVersion)</NetCoreAppCurrentToolTargetFrameworkMoniker>
     <!-- TODO: Replace NetCoreAppToolCurrent with BundledNETCoreAppTargetFramework in this repo -->
