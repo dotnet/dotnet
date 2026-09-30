@@ -272,4 +272,4 @@ The debug tarball also contains some debug content under `packs`, which represen
 
 ## Building packages
 
-The [dotnet/source-build](https://github.com/dotnet/source-build) repository provides instructions on how to build a source tarball of the .NET SDK and all its components. The output of the source-build repository matches the layout described in the first section of this article.
+Follow this repository's [building from source instructions](../README.md#building) to build the .NET SDK and its components. The resulting SDK archive has the layout described in the [Disk layout](#disk-layout) section.
