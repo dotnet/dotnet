@@ -16,6 +16,7 @@ namespace NuGet.Commands
         public string ProtocolVersion { get; set; }
         public string Configfile { get; set; }
         public bool AllowInsecureConnections { get; set; }
+        public uint? MinPublishAgeHours { get; set; }
     }
 
     public partial class AddClientCertArgs
@@ -78,6 +79,7 @@ namespace NuGet.Commands
         public string ProtocolVersion { get; set; }
         public string Configfile { get; set; }
         public bool AllowInsecureConnections { get; set; }
+        public uint? MinPublishAgeHours { get; set; }
     }
 
     public partial class UpdateClientCertArgs

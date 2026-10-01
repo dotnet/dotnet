@@ -395,7 +395,7 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
         <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
-        <target state="needs-review-translation">`{0}` projesi, NuGuet paketleri için package.config dosyasını kullanıyor fakat komut yalnızca paket başvurusu projeleriyle çalışır.</target>
+        <target state="translated">Proje '{0}' PackageReference bir proje değil. Bu komut yalnızca NuGet PackageReference projelerini destekler.</target>
         <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
@@ -405,7 +405,7 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
       </trans-unit>
       <trans-unit id="Error_PackagePublishDateMissing">
         <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
-        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <target state="translated">'{0}' paket kaynağı '{1}' paketi '{2}' sürümü için yayımlama tarihi sağlamadı; kaynağın minimum yayımlama yaşı yapılandırıldığından yayımlama tarihi gereklidir.</target>
         <note>{0} - package source name
 {1} - package ID
 {2} - package version</note>
@@ -1041,7 +1041,7 @@ Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
         <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
-        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <target state="translated">Yapılandırılmış minimum yayımlama süresine ulaşmamış daha yeni sürümlere sahip paketler: {0}.</target>
         <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -1259,6 +1259,11 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <target state="translated">Liste komutu çıkışının biçimi: `Detailed` (varsayılan) ve `Short`.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
+        <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
+        <target state="translated">Bir paket yayımlandıktan sonra güncelleştirme için seçilene kadar geçecek minimum saat sayısı. Değeri kaldırmak için 0 olarak ayarlayın.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
         <source>Name of the source.</source>
         <target state="translated">Kaynağın adı.</target>
@@ -1303,6 +1308,76 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
         <source>The proper command is '{0}'.</source>
         <target state="translated">Uygun komut: '{0}'.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="StageCommand_Description">
+        <source>Manages packages in a staging environment.</source>
+        <target state="translated">Hazırlık ortamındaki paketleri yönetir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Description">
+        <source>Stages a package on the server without publishing it.</source>
+        <target state="translated">Bir paketi yayımlamadan sunucuda hazırlar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_InvalidGroup">
+        <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
+        <target state="translated">Grup kimliği 1 ile 64 karakter arasında olmalı, yalnızca A-Z, a-z, 0-9, '.', '_' veya '-' karakterlerini içermeli ve bir harf ya da rakamla başlayıp bitmelidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_MissingSource">
+        <source>No package source was provided and DefaultPushSource is not configured.</source>
+        <target state="translated">Paket kaynağı sağlanmadı ve DefaultPushSource yapılandırılmadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_PackageNotFound">
+        <source>The package file '{0}' does not exist.</source>
+        <target state="translated">'{0}' paketi yok.</target>
+        <note>0 - package path</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_PackagePathRequired">
+        <source>A package path is required.</source>
+        <target state="translated">Paket yolu gereklidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_ResourceNotFound">
+        <source>The source '{0}' does not advertise a supported package staging resource.</source>
+        <target state="translated">Kaynak '{0}' desteklenen bir paket hazırlama kaynağı belirtmiyor.</target>
+        <note>0 - package source</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
+        <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
+        <target state="translated">Dosya '{0}' desteklenen bir paket değil. Bir .nupkg, .snupkg veya .symbols.nupkg dosyası belirtin.</target>
+        <note>0 - package path</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_GroupOption_Description">
+        <source>Uploads the package into the specified staging group.</source>
+        <target state="translated">Paketi belirtilen hazırlama grubuna yükler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
+        <source>Prevents automatic discovery and staging of a sibling symbols package.</source>
+        <target state="translated">Eşdüzey semboller paketinin otomatik olarak bulunmasını ve hazırlanmasını önler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_PackagePathArgument_Description">
+        <source>The path to the package to stage.</source>
+        <target state="translated">Hazırlanacak paketin yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StagePushCommand_PackageStaged">
+        <source>Staged package '{0}'.</source>
+        <target state="translated">'{0}' paketi hazırlandı.</target>
+        <note>0 - package path</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_SymbolsFailed">
+        <source>Failed to stage symbols package '{0}': {1}</source>
+        <target state="translated">'{0}' semboller paketi hazırlanamadı: {1}</target>
+        <note>0 - symbols package path; 1 - error message</note>
+      </trans-unit>
+      <trans-unit id="StagePushCommand_SymbolsStaged">
+        <source>Staged symbols package '{0}'.</source>
+        <target state="translated">'{0}' semboller paketi hazırlandı.</target>
+        <note>0 - symbols package path</note>
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
         <source>The API key for the symbol server. If not set, the NUGET_SYMBOL_API_KEY environment variable is read.</source>
@@ -1462,7 +1537,7 @@ Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize kar�
       </trans-unit>
       <trans-unit id="Warn_AddPkgNonCompliantPackageId">
         <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
-        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <target state="translated">Paket kimliği '{0}', NuGet paket kimliği standartlarını karşılamıyor. Paket kimlikleri 100 karakterden uzun olmamalı, harf, rakam veya alt çizgiyle başlamalı ve yalnızca ASCII harfleri, rakamlar, noktalar (.), kısa çizgiler (-) ve alt çizgiler (_) içermelidir. Noktalar ve tireler art arda veya sonda görünemez.</target>
         <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">

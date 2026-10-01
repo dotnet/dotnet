@@ -44,13 +44,75 @@ namespace NuGetVSExtension
             }
 
             // 2. Verify service broker is available
-            if (ServiceBroker == null)
+            IServiceBroker? serviceBroker = ServiceBroker;
+            if (serviceBroker == null)
             {
                 return CopilotToolSessionResult.Failure(CopilotToolSessionError.ServiceBrokerNotAvailable);
             }
 
-            // 3. Verify the required MCP server is registered and active
-            IMcpServerInfoService? mcpServerInfoService = await ServiceBroker.GetProxyAsync<IMcpServerInfoService>(McpServiceIdentities.ServerInfoService.Descriptor, cancellationToken);
+            // 3. Acquire Copilot service. Ownership transfers to CopilotToolSession on success.
+#pragma warning disable ISB001 // Dispose objects before losing scope - ownership is transferred to CopilotToolSession on success
+            ICopilotService? copilotService = await serviceBroker.GetProxyAsync<ICopilotService>(CopilotDescriptors.CopilotService, cancellationToken);
+#pragma warning restore ISB001
+
+            bool ownershipTransferred = false;
+            try
+            {
+                if (copilotService is null)
+                {
+                    return CopilotToolSessionResult.Failure(CopilotToolSessionError.CopilotServiceNotAvailable);
+                }
+
+#pragma warning disable VSCOPILOT_BACKEND // Experimental SDK harness contracts.
+                if (await copilotService.IsBackendModeEnabledAsync(cancellationToken))
+                {
+                    CopilotSessionId sessionId = await copilotService.CreateSessionAsync(
+                        new CreateSessionOptions
+                        {
+                            Feature = new CopilotFeatureId(clientId.Id),
+                            DefaultAgent = NuGetSdkAgent.AgentName,
+                            IsEphemeral = false,
+                        },
+                        cancellationToken);
+
+                    CopilotToolSession harnessSession = CopilotToolSession.CreateHarness(copilotService, sessionId);
+                    ownershipTransferred = true;
+                    return CopilotToolSessionResult.Success(harnessSession);
+                }
+#pragma warning restore VSCOPILOT_BACKEND
+
+                CopilotToolSessionResult result = await TryCreateLegacyToolSessionAsync(
+                    serviceBroker,
+                    copilotService,
+                    clientId,
+                    correlationId,
+                    mcpToolName,
+                    acceptableMcpServerNames,
+                    cancellationToken);
+
+                ownershipTransferred = result.IsSuccess;
+                return result;
+            }
+            finally
+            {
+                if (!ownershipTransferred)
+                {
+                    (copilotService as IDisposable)?.Dispose();
+                }
+            }
+        }
+
+        private static async Task<CopilotToolSessionResult> TryCreateLegacyToolSessionAsync(
+            IServiceBroker serviceBroker,
+            ICopilotService copilotService,
+            CopilotClientId clientId,
+            CopilotCorrelationId correlationId,
+            string mcpToolName,
+            IReadOnlyCollection<string> acceptableMcpServerNames,
+            CancellationToken cancellationToken)
+        {
+            // Verify the required MCP server is registered and active.
+            IMcpServerInfoService? mcpServerInfoService = await serviceBroker.GetProxyAsync<IMcpServerInfoService>(McpServiceIdentities.ServerInfoService.Descriptor, cancellationToken);
             using (mcpServerInfoService as IDisposable)
             {
                 if (mcpServerInfoService is null)
@@ -67,55 +129,29 @@ namespace NuGetVSExtension
                 }
             }
 
-            // 4. Acquire Copilot service, ownership transfers to CopilotToolSession on success
-#pragma warning disable ISB001 // Dispose objects before losing scope - ownership is transferred to CopilotToolSession on success
-            ICopilotService? copilotService = await ServiceBroker.GetProxyAsync<ICopilotService>(CopilotDescriptors.CopilotService, cancellationToken);
-#pragma warning restore ISB001
-
-            bool ownershipTransferred = false;
-            try
+            // Acquire MCP tool function provider and get available functions.
+            ICopilotFunctionProvider? cfp = await serviceBroker.GetProxyAsync<ICopilotFunctionProvider>(CopilotDescriptors.McpToolService, cancellationToken);
+            using (cfp as IDisposable)
             {
-                if (copilotService is null)
+                if (cfp is null)
                 {
-                    return CopilotToolSessionResult.Failure(CopilotToolSessionError.CopilotServiceNotAvailable);
+                    return CopilotToolSessionResult.Failure(CopilotToolSessionError.McpToolServiceNotAvailable);
                 }
 
-                // 5. Acquire MCP tool function provider and get available functions
-                ICopilotFunctionProvider? cfp = await ServiceBroker.GetProxyAsync<ICopilotFunctionProvider>(CopilotDescriptors.McpToolService, cancellationToken);
-                using (cfp as IDisposable)
+                // Verify the required tool is available. We match on ServerNameOfFunction + Group
+                // (the same logical NuGet MCP tool can be exposed under different Group values
+                // depending on how it was installed - in-VS vs. Anthropic/GitHub MCP registry).
+                IReadOnlyList<CopilotFunctionDescriptor>? functions = await cfp.GetFunctionsAsync(correlationId, cancellationToken);
+                if (!IsToolAvailable(functions, mcpToolName, acceptableMcpServerNames))
                 {
-                    if (cfp is null)
-                    {
-                        return CopilotToolSessionResult.Failure(CopilotToolSessionError.McpToolServiceNotAvailable);
-                    }
-
-                    // 6. Verify the required tool is available. We match on ServerNameOfFunction + Group
-                    //    (the same logical NuGet MCP tool can be exposed under different Group values
-                    //    depending on how it was installed - in-VS vs. Anthropic/GitHub MCP registry).
-                    IReadOnlyList<CopilotFunctionDescriptor>? functions = await cfp.GetFunctionsAsync(correlationId, cancellationToken);
-                    if (!IsToolAvailable(functions, mcpToolName, acceptableMcpServerNames))
-                    {
-                        return CopilotToolSessionResult.Failure(CopilotToolSessionError.ToolNotAvailable);
-                    }
-
-                    // 7. Start Copilot thread
-                    CopilotThreadOptions options = new(clientId);
-                    CopilotThread thread = await copilotService.StartThreadAsync(options, cancellationToken);
-
-                    CopilotToolSession session = new(
-                        thread,
-                        functions,
-                        copilotServiceDisposable: copilotService as IDisposable);
-                    ownershipTransferred = true;
-                    return CopilotToolSessionResult.Success(session);
+                    return CopilotToolSessionResult.Failure(CopilotToolSessionError.ToolNotAvailable);
                 }
-            }
-            finally
-            {
-                if (!ownershipTransferred)
-                {
-                    (copilotService as IDisposable)?.Dispose();
-                }
+
+                CopilotThreadOptions options = new(clientId);
+                CopilotThread thread = await copilotService.StartThreadAsync(options, cancellationToken);
+
+                return CopilotToolSessionResult.Success(
+                    CopilotToolSession.CreateLegacy(copilotService, thread, functions));
             }
         }
 
@@ -141,6 +177,7 @@ namespace NuGetVSExtension
                 CopilotToolSessionError.McpServerInfoServiceNotAvailable => Resources.Error_McpServerInfoServiceNotAvailable,
                 CopilotToolSessionError.McpServerNotActive => Resources.Error_McpServerNotActive,
                 CopilotToolSessionError.ToolNotAvailable => toolNotAvailableMessage,
+                CopilotToolSessionError.CopilotRequestFailed => Resources.Error_CopilotRequestFailed,
                 _ => throw new ArgumentOutOfRangeException(nameof(error), error, null),
             };
 

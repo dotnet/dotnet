@@ -2,7 +2,6 @@
 NuGet.Protocol.PackageStagingResourceV3
 NuGet.Protocol.PackageStagingResourceV3.PushPackageAsync(string! packagePath, string? apiKey, string? groupId, System.TimeSpan requestTimeout, bool allowInsecureConnections, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 NuGet.Protocol.PackageStagingResourceV3.PushSymbolsAsync(string! packagePath, string? apiKey, string? groupId, System.TimeSpan requestTimeout, bool allowInsecureConnections, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
-NuGet.Protocol.PackageStagingResourceV3.PushSymbolsAsync(string! packagePath, string? apiKey, string? groupId, System.TimeSpan requestTimeout, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 NuGet.Protocol.PackageStagingResourceV3.SourceUri.get -> System.Uri!
 NuGet.Protocol.PackageStagingResourceV3Provider
 NuGet.Protocol.PackageStagingResourceV3Provider.PackageStagingResourceV3Provider() -> void
