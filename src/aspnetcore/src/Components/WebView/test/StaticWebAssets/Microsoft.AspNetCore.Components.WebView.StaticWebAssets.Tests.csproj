@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.AspNetCore.Components.WebView" />
+    <ProjectReference Include="$(RepoRoot)src\Components\WebView\WebView\src\Microsoft.AspNetCore.Components.WebView.csproj" />
   </ItemGroup>
 
   <!-- Surface the information the tests need to locate the built packages and the repo SDK. -->
