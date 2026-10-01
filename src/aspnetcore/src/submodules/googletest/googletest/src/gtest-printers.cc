@@ -50,6 +50,7 @@
 #include <iomanip>
 #include <ios>
 #include <ostream>  // NOLINT
+#include <string>
 #include <string_view>
 #include <type_traits>
 
@@ -285,6 +286,28 @@ void PrintTo(char32_t c, ::std::ostream* os) {
       << static_cast<uint32_t>(c);
 }
 
+// char8_t and char16_t hold code units, not code points, so the U+XXXX
+// notation only applies to the values that encode a code point on their own.
+// The rest -- non-ASCII char8_t, which are always part of a multi-unit UTF-8
+// sequence, and the UTF-16 surrogates -- are printed as code units.
+void PrintTo(char16_t c, ::std::ostream* os) {
+  if (c >= 0xD800 && c <= 0xDFFF) {
+    PrintCharAndCodeTo(c, os);
+  } else {
+    PrintTo(static_cast<char32_t>(c), os);
+  }
+}
+
+#ifdef __cpp_lib_char8_t
+void PrintTo(char8_t c, ::std::ostream* os) {
+  if (c >= 0x80) {
+    PrintCharAndCodeTo(c, os);
+  } else {
+    PrintTo(static_cast<char32_t>(c), os);
+  }
+}
+#endif
+
 // gcc/clang __{u,}int128_t
 #if defined(__SIZEOF_INT128__)
 void PrintTo(__uint128_t v, ::std::ostream* os) {
@@ -422,6 +445,28 @@ void UniversalPrintArray(const wchar_t* begin, size_t len, ostream* os) {
 
 namespace {
 
+template <typename Char>
+size_t GetLength(const Char* s) {
+  return std::char_traits<Char>::length(s);
+}
+
+#if !GTEST_HAS_STD_WSTRING
+
+// If GTEST_HAS_STD_WSTRING is unset because the standard library has disabled
+// wide character support, std::char_traits<wchar_t> won't be defined, which
+// will cause a compile error, even if user code never actually could print a
+// wide cstring. In that case, instead use `wcslen` directly.
+//
+// If `libc` _also_ lacks wide character support, this (and a bunch of other
+// calls to wc functions) will fail to link, but only if user code actually
+// uses them.
+template <>
+size_t GetLength<wchar_t>(const wchar_t* s) {
+  return wcslen(s);
+}
+
+#endif  // GTEST_HAS_STD_WSTRING
+
 // Prints a null-terminated C-style string to the ostream.
 template <typename Char>
 void PrintCStringTo(const Char* s, ostream* os) {
@@ -429,7 +474,7 @@ void PrintCStringTo(const Char* s, ostream* os) {
     *os << "NULL";
   } else {
     *os << ImplicitCast_<const void*>(s) << " pointing to ";
-    PrintCharsAsStringTo(s, std::char_traits<Char>::length(s), os);
+    PrintCharsAsStringTo(s, GetLength(s), os);
   }
 }
 
@@ -445,16 +490,9 @@ void PrintTo(const char16_t* s, ostream* os) { PrintCStringTo(s, os); }
 
 void PrintTo(const char32_t* s, ostream* os) { PrintCStringTo(s, os); }
 
-// MSVC compiler can be configured to define whar_t as a typedef
-// of unsigned short. Defining an overload for const wchar_t* in that case
-// would cause pointers to unsigned shorts be printed as wide strings,
-// possibly accessing more memory than intended and causing invalid
-// memory accesses. MSVC defines _NATIVE_WCHAR_T_DEFINED symbol when
-// wchar_t is implemented as a native type.
-#if !defined(_MSC_VER) || defined(_NATIVE_WCHAR_T_DEFINED)
-// Prints the given wide C string to the ostream.
+#if GTEST_HAS_STD_WSTRING && GTEST_HAS_NATIVE_WCHAR
 void PrintTo(const wchar_t* s, ostream* os) { PrintCStringTo(s, os); }
-#endif  // wchar_t is native
+#endif
 
 namespace {
 
