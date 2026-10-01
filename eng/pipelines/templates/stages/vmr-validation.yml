@@ -41,7 +41,7 @@ parameters:
   type: object
   default:
     name: Azure Pipelines
-    vmImage: $(poolImage_Mac)
+    vmImage: $(poolImage_Mac_Hosted)
     os: macOS
 
 stages:
