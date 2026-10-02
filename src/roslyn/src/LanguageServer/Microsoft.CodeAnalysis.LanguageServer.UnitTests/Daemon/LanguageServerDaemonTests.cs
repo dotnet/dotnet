@@ -5,6 +5,7 @@
 using System.IO.Pipes;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Microsoft.CodeAnalysis.ErrorReporting;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Internal.Log;
 using Microsoft.CodeAnalysis.LanguageServer.HostWorkspace;
@@ -91,17 +92,21 @@ public sealed class LanguageServerDaemonTests(ITestOutputHelper testOutputHelper
         });
         using var daemonEventRegistration = daemon.DaemonTelemetry.AddEventSink(daemonEvents);
 
-        var first = await daemon.CreateClientAsync();
-        await using var second = await daemon.CreateClientAsync();
+        var first = await daemon.CreateClientAsync(clientInfo: new ClientInfo { Name = "GitHub Copilot CLI" });
+        await using var second = await daemon.CreateClientAsync(clientInfo: new ClientInfo { Name = "Visual Studio Code" });
 
         var firstTelemetry = first.GetRequiredLspService<RoslynTelemetry>();
         var secondTelemetry = second.GetRequiredLspService<RoslynTelemetry>();
         var firstSession = Assert.IsType<TelemetrySession>(TelemetryReporterWrapper.GetSession(firstTelemetry));
         var secondSession = Assert.IsType<TelemetrySession>(TelemetryReporterWrapper.GetSession(secondTelemetry));
+        var rootSession = Assert.IsType<TelemetrySession>(TelemetryReporterWrapper.GetSession(daemon.DaemonTelemetry));
 
         // Each server has a distinct child session correlated to the shared daemon session.
         Assert.NotNull(daemon.DaemonSessionId);
         Assert.NotEqual(firstSession.SessionId, secondSession.SessionId);
+        Assert.False(rootSession.TryGetCommonPropertyValue(LanguageServerTelemetry.ClientNamePropertyName, out _));
+        Assert.Equal("GitHub Copilot CLI", GetClientName(firstSession));
+        Assert.Equal("Visual Studio Code", GetClientName(secondSession));
         Assert.Equal(
             daemon.DaemonSessionId,
             GetDaemonSessionId(firstSession));
@@ -112,7 +117,15 @@ public sealed class LanguageServerDaemonTests(ITestOutputHelper testOutputHelper
         var firstEvents = new RecordingEventSink();
         var secondEvents = new RecordingEventSink();
         var firstTelemetryFlushed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var firstMetrics = new RecordingMetricSink(onFlush: () => firstTelemetryFlushed.TrySetResult(true));
+        var firstFault = new InvalidOperationException("first request");
+        var reportedFirstFault = 0;
+        var firstMetrics = new RecordingMetricSink(
+            onMeasurement: () =>
+            {
+                if (Interlocked.Exchange(ref reportedFirstFault, 1) == 0)
+                    FaultReporter.ReportFault(firstFault, ErrorSeverity.General, forceDump: false);
+            },
+            onFlush: () => firstTelemetryFlushed.TrySetResult(true));
         var secondMetrics = new RecordingMetricSink();
         using var firstEventRegistration = firstTelemetry.AddEventSink(firstEvents);
         using var secondEventRegistration = secondTelemetry.AddEventSink(secondEvents);
@@ -135,6 +148,9 @@ public sealed class LanguageServerDaemonTests(ITestOutputHelper testOutputHelper
         Assert.NotNull(hover);
         Assert.True(firstMetrics.MeasurementCount > 0);
         Assert.Equal(0, secondMetrics.MeasurementCount);
+        Assert.Contains((firstFault, ErrorSeverity.General, false), firstEvents.Faults);
+        Assert.DoesNotContain(daemonEvents.Faults, fault => fault.Exception == firstFault);
+        Assert.DoesNotContain(secondEvents.Faults, fault => fault.Exception == firstFault);
 
         var daemonEventsBeforeDisconnect = daemonEvents.Events.Length;
         await first.DisposeAsync();
@@ -152,6 +168,12 @@ public sealed class LanguageServerDaemonTests(ITestOutputHelper testOutputHelper
         {
             Assert.True(telemetrySession.TryGetCommonPropertyValue(LanguageServerTelemetry.DaemonSessionIdPropertyName, out var daemonSessionId));
             return Assert.IsType<string>(daemonSessionId);
+        }
+
+        static string GetClientName(TelemetrySession telemetrySession)
+        {
+            Assert.True(telemetrySession.TryGetCommonPropertyValue(LanguageServerTelemetry.ClientNamePropertyName, out var clientName));
+            return Assert.IsType<string>(clientName);
         }
     }
 

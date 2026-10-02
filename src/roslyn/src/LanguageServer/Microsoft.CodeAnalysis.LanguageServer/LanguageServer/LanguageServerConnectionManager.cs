@@ -5,6 +5,7 @@
 using System.Collections.Immutable;
 using System.Threading;
 using Microsoft.CodeAnalysis.LanguageServer.LanguageServer;
+using Microsoft.CodeAnalysis.LanguageServer.Telemetry;
 using Microsoft.CommonLanguageServerProtocol.Framework;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Composition;
@@ -15,9 +16,26 @@ internal sealed class LanguageServerConnectionManager
 {
     private readonly object _gate = new();
     private ImmutableArray<ServerEntry> _servers = [];
+    private long _connectionsAccepted;
 
     // Test hook: invoked just before LanguageServerHost.Start(). Throw to simulate a startup failure.
     private Action? _onBeforeStartServer;
+
+    public long ConnectionsAccepted => Interlocked.Read(ref _connectionsAccepted);
+
+    /// <summary>
+    /// The number of servers currently registered (starting or running).
+    /// </summary>
+    public int ActiveConnections
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _servers.Length;
+            }
+        }
+    }
 
     /// <summary>
     /// Runs an independent language server for each connection yielded by <paramref name="connectionSource"/>.
@@ -25,12 +43,13 @@ internal sealed class LanguageServerConnectionManager
     /// this returns once that server exits. The daemon listener yields connections until its internally managed idle
     /// timeout elapses or <paramref name="cancellationToken"/> is signaled.
     /// </summary>
+    /// <param name="daemonTelemetry">The process-level session used by the dedicated server or to correlate daemon child sessions.</param>
     public async Task RunAsync(
         ILanguageServerConnectionSource connectionSource,
         ExportProvider exportProvider,
         AbstractTypeRefResolver typeRefResolver,
         ILogger logger,
-        string? daemonSessionId,
+        LanguageServerTelemetry? daemonTelemetry,
         CancellationToken cancellationToken)
     {
         // For a source that isolates faults (the daemon), a server fault is logged and confined to that one
@@ -46,6 +65,8 @@ internal sealed class LanguageServerConnectionManager
         {
             await foreach (var connection in connectionSource.AcceptConnectionsAsync(cancellationToken).ConfigureAwait(false))
             {
+                Interlocked.Increment(ref _connectionsAccepted);
+
                 if (isolateFaults)
                 {
                     // Daemon mode: start server construction and supervision in a background task so this
@@ -135,7 +156,7 @@ internal sealed class LanguageServerConnectionManager
                     connection.OutputStream,
                     exportProvider,
                     typeRefResolver,
-                    daemonSessionId);
+                    daemonTelemetry);
             }
             catch
             {
