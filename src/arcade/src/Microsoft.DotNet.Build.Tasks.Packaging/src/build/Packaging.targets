@@ -1276,6 +1276,7 @@
     <Message Condition="'$(_SkipCreatePackage)' == 'true'" Text="Skipping package creation for $(NuSpecPath) because the following files do not exist: @(_missingFiles)" />
 
     <PropertyGroup>
+      <Deterministic Condition="'$(Deterministic)' == ''">true</Deterministic>
       <DeterministicTimestamp Condition="'$(DeterministicTimestamp)' == '' AND '$(SOURCE_DATE_EPOCH)' != ''">$(SOURCE_DATE_EPOCH)</DeterministicTimestamp>
     </PropertyGroup>
 
