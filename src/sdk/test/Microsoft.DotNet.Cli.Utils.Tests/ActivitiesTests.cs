@@ -16,16 +16,15 @@ public sealed class ActivitiesTests : SdkTest
     [TestMethod]
     [DataRow(false)]
     [DataRow(true)]
-    public void StoppingAnActivityRecordsItsDurationInSeconds(bool stringParentId)
+    public void StoppingAnActivityRecordsItsDurationInSeconds(bool performanceSource)
     {
         using var metrics = new ActivityMeasurements();
-        using Activity? activity = stringParentId
-            ? Activities.Source.StartActivity("test-operation", ActivityKind.Internal, parentId: "parent.", startTime: s_startTime)
-            : Activities.Source.StartActivity(
-                "test-operation",
-                ActivityKind.Internal,
-                new ActivityContext(ActivityTraceId.CreateRandom(), ActivitySpanId.CreateRandom(), ActivityTraceFlags.None),
-                startTime: s_startTime);
+        ActivitySource source = performanceSource ? Activities.PerformanceSource : Activities.Source;
+        using Activity? activity = source.StartActivity(
+            "test-operation",
+            ActivityKind.Internal,
+            new ActivityContext(ActivityTraceId.CreateRandom(), ActivitySpanId.CreateRandom(), ActivityTraceFlags.None),
+            startTime: s_startTime);
 
         activity.Should().NotBeNull();
         activity!.IsAllDataRequested.Should().BeTrue();
@@ -39,7 +38,7 @@ public sealed class ActivitiesTests : SdkTest
 
         Measurement measurement = metrics.Measurements.Should().ContainSingle().Subject;
         measurement.Instrument.Should().BeOfType<Histogram<double>>();
-        measurement.Instrument.Meter.Name.Should().Be("dotnet-cli");
+        measurement.Instrument.Meter.Name.Should().Be("dotnet-cli-perf");
         measurement.Instrument.Name.Should().Be("dotnet.cli.activity.duration");
         measurement.Instrument.Unit.Should().Be("s");
         measurement.Duration.Should().Be(1.25);
@@ -49,15 +48,25 @@ public sealed class ActivitiesTests : SdkTest
     }
 
     [TestMethod]
-    [DataRow(false)]
-    [DataRow(true)]
-    public void DisabledMeasurementsDoNotForceActivities(bool stringParentId)
+    public void BuiltInTelemetryDoesNotEnablePerformanceActivities()
     {
-        using Activity? activity = stringParentId
-            ? Activities.Source.StartActivity("disabled", ActivityKind.Internal, parentId: "parent.")
-            : Activities.Source.StartActivity("disabled", ActivityKind.Internal, default(ActivityContext));
+        using var metrics = new ActivityMeasurements(meterName: "dotnet-cli");
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == "dotnet-cli",
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+        };
+        ActivitySource.AddActivityListener(listener);
+        using Activity? parent = Activities.Source.StartActivity("normal-telemetry");
+        parent.Should().NotBeNull();
+        parent!.Recorded.Should().BeTrue();
+
+        using Activity? activity = Activities.PerformanceSource.StartActivity("disabled", ActivityKind.Internal, parent.Context);
 
         activity.Should().BeNull();
+        Activity.Current.Should().BeSameAs(parent);
+        parent.Stop();
+        metrics.Measurements.Should().BeEmpty();
     }
 
     [TestMethod]
@@ -85,13 +94,13 @@ public sealed class ActivitiesTests : SdkTest
 
         public List<Measurement> Measurements { get; } = [];
 
-        public ActivityMeasurements()
+        public ActivityMeasurements(string meterName = "dotnet-cli-perf")
         {
             // Initialize the production source and its bridge before discovering instruments.
             _ = Activities.Source;
             _listener.InstrumentPublished = (instrument, listener) =>
             {
-                if (instrument.Meter.Name == "dotnet-cli" && instrument.Name == "dotnet.cli.activity.duration")
+                if (instrument.Meter.Name == meterName && instrument.Name == "dotnet.cli.activity.duration")
                 {
                     listener.EnableMeasurementEvents(instrument);
                 }
