@@ -131,6 +131,8 @@ git config --global core.longpaths true
         ./build.sh -sb --clean-while-building
         ```
 
+        For guidance on packaging the resulting build for a distribution, see [.NET distribution packaging](docs/distribution-packaging.md).
+
     The resulting SDK is placed at `artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].tar.gz` (for Unix) or `artifacts/assets/Release/dotnet-sdk-9.0.100-[your-RID].zip` (for Windows).
 
 1. *(Optional)* **Unpack and install the .NET SDK**
