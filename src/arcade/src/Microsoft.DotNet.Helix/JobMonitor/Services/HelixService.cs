@@ -452,6 +452,11 @@ internal sealed class HelixService : IHelixService
                 catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
                 {
                     _metrics.RecordHelixRequest(isRetry: currentAttempt > 0, failed: true);
+                    if (!TransientFailureDetector.IsTransient(ex))
+                    {
+                        throw;
+                    }
+
                     last = ex;
                     return RetryResult.Retry();
                 }
