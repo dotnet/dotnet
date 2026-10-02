@@ -7,10 +7,10 @@
       "commitSha": "1249e0a0957c31232d1fd43b5a36cabba1722062"
     },
     {
-      "barId": 334465,
+      "barId": 334818,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "f0433957fb5acd830e26ca86e53c59650d7611cb"
+      "commitSha": "96b1f9ffb024e0e648383c2c014de461d2591daa"
     },
     {
       "barId": 332483,
@@ -143,12 +143,12 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "8eff9e336692fc95961e096564f1044c600b881d"
+      "commitSha": "4267679b6887f349f17b01ccd70c9e3483689b25"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
       "remoteUri": "https://github.com/aspnet/MessagePack-CSharp.git",
-      "commitSha": "365965f0d8c13c40ff8fde25882066b90f569c7a"
+      "commitSha": "be938cda59c823ee4a672d45d1d7d642a3f34396"
     },
     {
       "path": "nuget-client/submodules/NuGet.Build.Localization",
