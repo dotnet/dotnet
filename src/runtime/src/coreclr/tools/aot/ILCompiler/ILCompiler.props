@@ -47,7 +47,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
+    <PackageReference Condition="'$(DotNetBuildSourceOnly)' != 'true'" Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
+    <!-- SourceBuild builds System.CommandLine for the current TFM, but ILCompiler runs on the bootstrap SDK, which can target an earlier framework. -->
+    <PackageReference Condition="'$(DotNetBuildSourceOnly)' == 'true'" Include="System.CommandLine" Version="$(SystemCommandLinePreviousVersion)" />
   </ItemGroup>
 
   <ItemGroup>
