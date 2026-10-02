@@ -189,7 +189,7 @@ stages:
       - ${{ if containsValue(parameters.verifications, 'unified-build-browser-wasm') }}:
         - template: ../jobs/vmr-build.yml
           parameters:
-            buildName: Browser_Shortstack
+            buildName: Browser_CoreCLR_Shortstack
             isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
             sign: ${{ variables.signEnabled }}
             signType: ${{ variables.signType }}
@@ -200,6 +200,7 @@ stages:
             crossRootFs: '/crossrootfs/x64'
             targetOS: browser
             targetArchitecture: wasm
+            extraProperties: /p:DotNetBuildUseMonoRuntime=false
             brandingType: ${{ variables.brandingType }}
 
       - ${{ if containsValue(parameters.verifications, 'unified-build-iossimulator-arm64') }}:
@@ -247,51 +248,8 @@ stages:
             targetArchitecture: x64
             brandingType: ${{ variables.brandingType }}
 
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Android_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Linux_Shortstack }}
-            container:
-              name: ${{ variables.androidCrossContainerName }}
-              image: ${{ variables.androidCrossContainerImage }}
-            targetOS: android
-            targetArchitecture: x86
-            brandingType: ${{ variables.brandingType }}
 
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Browser_Multithreaded_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Linux_Shortstack }}
-            container:
-              name: ${{ variables.browserCrossContainerName }}
-              image: ${{ variables.browserCrossContainerImage }}
-            crossRootFs: '/crossrootfs/x64'
-            targetOS: browser
-            targetArchitecture: wasm
-            extraProperties: /p:WasmEnableThreads=true
-            brandingType: ${{ variables.brandingType }}
 
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Browser_CoreCLR_Shortstack
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Linux_Shortstack }}
-            container:
-              name: ${{ variables.browserCrossContainerName }}
-              image: ${{ variables.browserCrossContainerImage }}
-            crossRootFs: '/crossrootfs/x64'
-            targetOS: browser
-            targetArchitecture: wasm
-            extraProperties: /p:DotNetBuildUseMonoRuntime=false
-            brandingType: ${{ variables.brandingType }}
 
         - template: ../jobs/vmr-build.yml
           parameters:
@@ -425,6 +383,7 @@ stages:
             crossRootFs: '/crossrootfs/x64'
             targetOS: wasi
             targetArchitecture: wasm
+            extraProperties: /p:DotNetBuildUseMonoRuntime=false
             brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
@@ -437,21 +396,6 @@ stages:
           targetOS: osx
           targetArchitecture: x64
           brandingType: ${{ variables.brandingType }}
-
-      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: OSX_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Mac }}
-            useMonoRuntime: true
-            targetOS: osx
-            targetArchitecture: x64
-            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
-            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -482,25 +426,6 @@ stages:
           targetArchitecture: x64
           extraProperties: /p:PgoInstrument=true
           brandingType: ${{ variables.brandingType }}
-
-      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Linux_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Linux_Shortstack }}
-            container:
-              name: ${{ variables.azurelinuxX64CrossContainerName }}
-              image: ${{ variables.azurelinuxX64CrossContainerImage }}
-            crossRootFs: '/crossrootfs/x64'
-            useMonoRuntime: true
-            targetOS: linux
-            targetArchitecture: x64
-            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
-            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -594,24 +519,6 @@ stages:
           targetArchitecture: arm64
           targetRid: ${{ variables.linuxMuslArm64Rid }}
           brandingType: ${{ variables.brandingType }}
-
-      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
-        - template: ../jobs/vmr-build.yml
-          parameters:
-            buildName: Linux_Shortstack_Mono_LLVMAOT
-            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-            sign: ${{ variables.signEnabled }}
-            signType: ${{ variables.signType }}
-            pool: ${{ parameters.pool_Linux_Shortstack }}
-            container:
-              name: ${{ variables.azurelinuxArm64CrossContainerName }}
-              image: ${{ variables.azurelinuxArm64CrossContainerImage }}
-            crossRootFs: '/crossrootfs/arm64'
-            useMonoRuntime: true
-            targetOS: linux
-            targetArchitecture: arm64
-            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
-            brandingType: ${{ variables.brandingType }}
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -730,13 +637,10 @@ stages:
           - Windows_arm64
           - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
             - Browser_CoreCLR_Shortstack_wasm
-            - Browser_Shortstack_wasm
-            - Browser_Multithreaded_Shortstack_wasm
             - Wasi_Shortstack_wasm
             - Android_Shortstack_arm64
             - Android_Shortstack_arm
             - Android_Shortstack_x64
-            - Android_Shortstack_x86
             - iOS_Shortstack_arm64
             - iOSSimulator_Shortstack_arm64
             - iOSSimulator_Shortstack_x64

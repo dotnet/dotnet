@@ -86,7 +86,7 @@
     <DefaultSubsets Condition="'$(DotNetBuildPass)' == '2' and '$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'x86'">crossdacpack</DefaultSubsets>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(BuildMonoAOTCrossCompilerOnly)' == 'true' or ('$(DotNetBuildAllRuntimePacks)' == 'true' and '$(MonoAOTCrossCompilerSupported)' == 'true')">
+  <PropertyGroup Condition="'$(DotNetBuildMonoRuntimePacks)' != 'false' and ('$(BuildMonoAOTCrossCompilerOnly)' == 'true' or ('$(DotNetBuildAllRuntimePacks)' == 'true' and '$(MonoAOTCrossCompilerSupported)' == 'true'))">
     <MonoCrossAOTTargetOS>android+browser+wasi</MonoCrossAOTTargetOS>
     <MonoCrossAOTTargetOS Condition="'$(TargetOS)' == 'osx'">$(MonoCrossAOTTargetOS)+tvos+ios+maccatalyst</MonoCrossAOTTargetOS>
   </PropertyGroup>
@@ -707,7 +707,7 @@
     <When Condition="$(_subset.Contains('+packs.product+'))">
       <Choose>
         <When Condition="'$(BuildMonoAOTCrossCompilerOnly)' == 'true'">
-          <ItemGroup Condition="'$(MonoCrossAOTTargetOS)' != ''">
+          <ItemGroup Condition="'$(MonoCrossAOTTargetOS)' != '' and '$(DotNetBuildMonoRuntimePacks)' != 'false'">
             <ProjectToBuild Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\monocrossaot.proj" Category="packs" />
           </ItemGroup>
         </When>
@@ -737,6 +737,11 @@
             <_BuildBundle Condition="'$(TargetsMobile)' != 'true' and !('$(TargetsLinuxBionic)' == 'true' and '$(TargetArchitecture)' == 'arm')">true</_BuildBundle>
           </PropertyGroup>
 
+          <!-- Keep shared SDK and debugger packages when excluding Mono runtime and cross-AOT packs. -->
+          <PropertyGroup Condition="'$(DotNetBuildMonoRuntimePacks)' == 'false'">
+            <_BuildMonoRuntimePack>false</_BuildMonoRuntimePack>
+          </PropertyGroup>
+
           <ItemGroup>
             <SharedFrameworkProjectToBuild Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\Microsoft.NETCore.App.Ref.sfxproj" />
           </ItemGroup>
@@ -745,7 +750,7 @@
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-host.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-hostfxr.proj" />
             <SharedFrameworkProjectToBuild Condition="'$(RuntimeFlavor)' == '$(PrimaryRuntimeFlavor)' and '$(TargetsMobile)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\installers\dotnet-runtime-deps\*.proj" />
-            <SharedFrameworkProjectToBuild Condition="'$(MonoCrossAOTTargetOS)' != '' and '$(DotNetBuildSourceOnly)' != 'true'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\monocrossaot.proj" />
+            <SharedFrameworkProjectToBuild Condition="'$(MonoCrossAOTTargetOS)' != '' and '$(DotNetBuildSourceOnly)' != 'true' and '$(DotNetBuildMonoRuntimePacks)' != 'false'" Include="$(InstallerProjectRoot)pkg\sfx\Microsoft.NETCore.App\monocrossaot.proj" />
           </ItemGroup>
           <ItemGroup>
             <ProjectToBuild Condition="'$(NativeAotSupported)' == 'true' and '$(RuntimeFlavor)' != 'Mono' and '$(TargetsMobile)' != 'true' and '$(TargetsLinuxBionic)' != 'true'" Include="$(InstallerProjectRoot)\pkg\projects\nativeaot-packages.proj" Category="packs" />
