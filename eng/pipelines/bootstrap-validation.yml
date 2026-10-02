@@ -1,0 +1,28 @@
+# This yml is used by this pipeline:
+# - dotnet-unified-build-bootstrap-validation (public)
+#
+# It can also be run on a pull request with:
+# /azp run dotnet-unified-build-bootstrap-validation
+
+trigger: none
+pr: none
+
+schedules:
+- cron: "0 5 * * *"
+  displayName: Daily bootstrap validation
+  branches:
+    include:
+    - main
+  always: true
+
+variables:
+- ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  - name: skipComponentGovernanceDetection
+    value: true
+  - name: Codeql.Enabled
+    value: false
+
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+
+stages:
+- template: /eng/pipelines/templates/stages/vmr-bootstrap-validation.yml
