@@ -104,17 +104,13 @@
       <Sha>
       </Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
-      <Uri>https://github.com/dotnet/roslyn-analyzers</Uri>
-      <Sha>f2384e61845314d0e8ad74cc0fe67d1bd4e9f102</Sha>
-    </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.14.0">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.12.0-3.24574.8">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>8edf7bcd4f1594c3d68a6a567469f41dbd33dd1b</Sha>
+      <Sha>dfa7fc6bdea31a858a402168384192b633c811fa</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0">
+    <Dependency Name="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0-3.24574.8">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>8edf7bcd4f1594c3d68a6a567469f41dbd33dd1b</Sha>
+      <Sha>dfa7fc6bdea31a858a402168384192b633c811fa</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>

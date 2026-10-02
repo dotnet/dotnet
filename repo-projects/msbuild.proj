@@ -25,7 +25,6 @@
     <!-- Use Roslyn from the previously source-built SDK instead of live Roslyn. -->
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
-    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisAnalyzersVersion" Version="%24(MicrosoftCodeAnalysisAnalyzersPreviousVersion)" />
   </ItemGroup>
 
 </Project>

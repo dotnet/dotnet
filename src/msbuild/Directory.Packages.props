@@ -24,8 +24,6 @@
     <PackageVersion Update="Microsoft.CodeAnalysis.CSharp" Condition="'$(Analyzer_MicrosoftCodeAnalysisCSharpVersion)' != ''" Version="$(Analyzer_MicrosoftCodeAnalysisCSharpVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion)" />
     <PackageVersion Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Condition="'$(Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion)' != ''" Version="$(Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="$(MicrosoftCodeAnalysisAnalyzersPackageVersion)" />
-    <PackageVersion Update="Microsoft.CodeAnalysis.Analyzers" Condition="'$(Analyzer_MicrosoftCodeAnalysisAnalyzersVersion)' != ''" Version="$(Analyzer_MicrosoftCodeAnalysisAnalyzersVersion)" />
 
     <PackageVersion Include="Microsoft.DotNet.XUnitV3Extensions" Version="$(MicrosoftDotNetXUnitV3ExtensionsVersion)" />
     <PackageVersion Include="Microsoft.IO.Redist" Version="$(MicrosoftIORedistVersion)" />
