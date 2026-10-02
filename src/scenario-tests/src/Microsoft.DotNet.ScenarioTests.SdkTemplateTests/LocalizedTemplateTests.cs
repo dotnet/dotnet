@@ -54,9 +54,19 @@ public class LocalizedTemplateTests : IClassFixture<ScenarioTestFixture>
     }
 
     [Theory]
-    [MemberData(nameof(GetLocaleAndTemplateData))]
+    [MemberData(nameof(GetCoreTemplateLocaleData))]
     [Trait("Category", "Offline")]
     public void VerifyTemplateInstantiationInLocale(string culture, DotNetSdkTemplate template, DotNetLanguage language)
+        => VerifyTemplateInstantiation(culture, template, language);
+
+    [Theory]
+    [MemberData(nameof(GetAspNetCoreTemplateLocaleData))]
+    [Trait("Category", "Offline")]
+    [Trait("Category", TestCategories.RequiresNet12RuntimeTargetingPack)]
+    public void VerifyAspNetCoreTemplateInstantiationInLocale(string culture, DotNetSdkTemplate template, DotNetLanguage language)
+        => VerifyTemplateInstantiation(culture, template, language);
+
+    private void VerifyTemplateInstantiation(string culture, DotNetSdkTemplate template, DotNetLanguage language)
     {
         // Don't use the cli language name in the project name because it may contain '#': https://github.com/dotnet/roslyn/issues/51692
         string projectName = $"{nameof(LocalizedTemplateTests)}_{template}_{language}_{SanitizeCultureName(culture)}";
@@ -104,16 +114,26 @@ public class LocalizedTemplateTests : IClassFixture<ScenarioTestFixture>
     }
 
     /// <summary>
-    /// Gets test data combining locales with core templates (console, classlib) and ASP.NET Core templates.
-    /// This provides broad coverage of template instantiation across different cultures.
-    /// ASP.NET Core templates (Web, Mvc, WebApi, Razor) are included as they don't come directly from the SDK.
+    /// Gets test data combining locales with core templates (console and classlib).
     /// </summary>
-    public static IEnumerable<object[]> GetLocaleAndTemplateData()
+    public static IEnumerable<object[]> GetCoreTemplateLocaleData()
     {
-        var coreTemplates = new List<DotNetSdkTemplate>
+        DotNetSdkTemplate[] coreTemplates =
         {
-            DotNetSdkTemplate.Console, 
+            DotNetSdkTemplate.Console,
             DotNetSdkTemplate.ClassLib,
+        };
+
+        return GetLocaleAndTemplateData(coreTemplates);
+    }
+
+    /// <summary>
+    /// Gets test data combining locales with ASP.NET Core templates.
+    /// </summary>
+    public static IEnumerable<object[]> GetAspNetCoreTemplateLocaleData()
+    {
+        var aspNetCoreTemplates = new List<DotNetSdkTemplate>
+        {
             DotNetSdkTemplate.Web,
             DotNetSdkTemplate.Mvc,
             DotNetSdkTemplate.Razor
@@ -122,14 +142,19 @@ public class LocalizedTemplateTests : IClassFixture<ScenarioTestFixture>
         // WebApi requires portable assets
         if (!ScenarioTestFixture.IsCategoryExcluded("RequiresPortableAssets"))
         {
-            coreTemplates.Add(DotNetSdkTemplate.WebApi);
+            aspNetCoreTemplates.Add(DotNetSdkTemplate.WebApi);
         }
 
+        return GetLocaleAndTemplateData(aspNetCoreTemplates);
+    }
+
+    private static IEnumerable<object[]> GetLocaleAndTemplateData(IEnumerable<DotNetSdkTemplate> templates)
+    {
         var languages = new[] { DotNetLanguage.CSharp }; // Start with C# for broad locale coverage
 
         foreach (var culture in SupportedCultures)
         {
-            foreach (var template in coreTemplates)
+            foreach (var template in templates)
             {
                 foreach (var language in languages)
                 {

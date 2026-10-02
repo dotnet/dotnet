@@ -81,7 +81,7 @@ public class Project : IDisposable
 
         var hiveArg = $"--debug:disable-sdk-templates --debug:custom-hive \"{TemplatePackageInstaller.CustomHivePath}\"";
         var argString = $"new {templateName} {hiveArg}";
-        environmentVariables ??= new Dictionary<string, string>();
+        environmentVariables = AddBootstrapSdkEnvironmentVariables(environmentVariables);
         if (!isItemTemplate)
         {
             argString += " --no-restore";
@@ -163,6 +163,7 @@ public class Project : IDisposable
     internal async Task RunDotNetPublishAsync(IDictionary<string, string> packageOptions = null, string additionalArgs = null, bool noRestore = true)
     {
         Output.WriteLine("Publishing ASP.NET Core application...");
+        packageOptions = AddBootstrapSdkEnvironmentVariables(packageOptions);
 
         // Avoid restoring as part of build or publish. These projects should have already restored as part of running dotnet new. Explicitly disabling restore
         // should avoid any global contention and we can execute a build or publish in a lock-free way
@@ -194,6 +195,7 @@ public class Project : IDisposable
     internal async Task RunDotNetBuildAsync(IDictionary<string, string> packageOptions = null, string additionalArgs = null, bool errorOnBuildWarning = true)
     {
         Output.WriteLine("Building ASP.NET Core application...");
+        packageOptions = AddBootstrapSdkEnvironmentVariables(packageOptions);
 
         // Avoid restoring as part of build or publish. These projects should have already restored as part of running dotnet new. Explicitly disabling restore
         // should avoid any global contention and we can execute a build or publish in a lock-free way
@@ -218,6 +220,18 @@ public class Project : IDisposable
         CaptureBinLogOnFailure(execution);
 
         Assert.True(0 == result.ExitCode, ErrorMessages.GetFailedProcessMessage("build", this, result));
+    }
+
+    private static IDictionary<string, string> AddBootstrapSdkEnvironmentVariables(IDictionary<string, string> environmentVariables)
+    {
+        environmentVariables ??= new Dictionary<string, string>();
+
+        // The Helix payload places Directory.Build.props outside the generated projects' parent
+        // directory hierarchy, so pass the bootstrap SDK pruning workarounds to child processes.
+        environmentVariables["LoadPrunePackageDataFromNearestFramework"] = "true";
+        environmentVariables["AllowMissingPrunePackageData"] = "true";
+
+        return environmentVariables;
     }
 
     internal AspNetProcess StartBuiltProjectAsync(bool hasListeningUri = true, ILogger logger = null, bool noHttps = false)
@@ -256,10 +270,8 @@ public class Project : IDisposable
         output.WriteLine("Running blazor-gateway on published output...");
 
         var gatewayAssemblyPath = ResolveGatewayAssemblyPath();
-        var runtimeManifestPath = Path.Combine(TemplatePublishDir, $"{ProjectName}.staticwebassets.runtime.json");
         var endpointsManifestPath = Path.Combine(TemplatePublishDir, $"{ProjectName}.staticwebassets.endpoints.json");
         Assert.True(File.Exists(gatewayAssemblyPath), $"Expected the gateway assembly to exist at '{gatewayAssemblyPath}'.");
-        Assert.True(File.Exists(runtimeManifestPath), $"Expected the static web assets runtime manifest to exist at '{runtimeManifestPath}'.");
         Assert.True(File.Exists(endpointsManifestPath), $"Expected the static web assets endpoints manifest to exist at '{endpointsManifestPath}'.");
 
         var args = string.Join(
@@ -268,7 +280,6 @@ public class Project : IDisposable
             "--urls http://127.0.0.1:0",
             "--environment Development",
             $"--contentRoot \"{TemplatePublishDir}\"",
-            $"--staticWebAssets \"{runtimeManifestPath}\"",
             $"--ClientApps:app:EndpointsManifest \"{endpointsManifestPath}\"",
             "--ClientApps:app:PathPrefix \"\"");
 
@@ -278,6 +289,7 @@ public class Project : IDisposable
 
         static string ResolveListeningUrl(ProcessEx process)
         {
+            const string listeningMessagePrefix = "Now listening on: ";
             var buffer = new List<string>();
             try
             {
@@ -286,10 +298,15 @@ public class Project : IDisposable
                     if (line != null)
                     {
                         buffer.Add(line);
-                        if (line.Trim().Contains("https://", StringComparison.Ordinal) ||
-                            line.Trim().Contains("http://", StringComparison.Ordinal))
+                        var trimmedLine = line.Trim();
+                        var prefixIndex = trimmedLine.IndexOf(listeningMessagePrefix, StringComparison.Ordinal);
+                        if (prefixIndex >= 0)
                         {
-                            return line.Trim();
+                            var listeningUri = trimmedLine[(prefixIndex + listeningMessagePrefix.Length)..];
+                            if (Uri.TryCreate(listeningUri, UriKind.Absolute, out _))
+                            {
+                                return listeningUri;
+                            }
                         }
                     }
                 }
@@ -305,11 +322,7 @@ public class Project : IDisposable
 
     private static string ResolveGatewayAssemblyPath()
     {
-        var packageRoot = Environment.GetEnvironmentVariable("NUGET_PACKAGES")
-            ?? typeof(Project).Assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
-                .FirstOrDefault(attribute => attribute.Key == "TestPackageRestorePath")?.Value
-            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nuget", "packages");
-
+        var packageRoot = ProcessEx.NuGetPackagesRestorePath;
         if (!string.IsNullOrEmpty(packageRoot))
         {
             var gatewayPackageRoot = Path.Combine(packageRoot, "microsoft.aspnetcore.components.gateway");

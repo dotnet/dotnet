@@ -16,12 +16,17 @@ permissions:
 tracker-id: daily-file-diet
 
 safe-outputs:
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   noop:
     report-as-issue: false
   create-pull-request:
     title-prefix: "[file-diet-state] "
     labels: [agentic-workflows]
     draft: false
+    github-token-for-extra-empty-commit: app
     protected-files: fallback-to-issue
     if-no-changes: "warn"
     allowed-files:

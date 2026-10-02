@@ -30,6 +30,20 @@ secrets:
       hasWebhookSecret: false
       hasOAuthSecret: false
 
+  dotnet-vscode-csharp-publishing:
+    type: github-app-secret
+    parameters:
+      hasPrivateKey: true
+      hasWebhookSecret: false
+      hasOAuthSecret: false
+
+  dotnet-vscode-csharp-release-tags:
+    type: github-app-secret
+    parameters:
+      hasPrivateKey: true
+      hasWebhookSecret: false
+      hasOAuthSecret: false
+
   oneloc-localization-app:
     type: github-app-secret
     parameters:
@@ -51,6 +65,13 @@ secrets:
       hasOAuthSecret: false
 
   ddfuse-pr-review-dashboard-app:
+    type: github-app-secret
+    parameters:
+      hasPrivateKey: true
+      hasWebhookSecret: false
+      hasOAuthSecret: false
+
+  arcade-promotion-validation-app:
     type: github-app-secret
     parameters:
       hasPrivateKey: true

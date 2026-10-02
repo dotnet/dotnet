@@ -34,7 +34,7 @@ jobs:
     permissions:
       contents: read
       issues: write
-      pull-requests: read
+      pull-requests: write
     outputs:
       base_sha: ${{ steps.pr.outputs.base_sha }}
       head_sha: ${{ steps.pr.outputs.target_sha }}
@@ -45,6 +45,7 @@ jobs:
       author: ${{ steps.pr.outputs.author }}
       matrix: ${{ steps.pr.outputs.matrix }}
       has_entries: ${{ steps.pr.outputs.has_entries }}
+      harness_exists: ${{ steps.pr.outputs.harness_exists }}
       components: ${{ steps.pr.outputs.components }}
     steps:
       - name: Resolve pull request and authorization
@@ -118,10 +119,28 @@ jobs:
             };
             const fromBranch = pull.head.repo?.id === pull.base.repo.id;
             const automatic = context.eventName === 'pull_request_target'
+              && !pull.draft
               && !['synchronize', 'closed'].includes(context.payload.action);
             const canUseSecrets = mergedIntoDefault || (isBot(author)
               ? fromBranch && (manual || automatic)
               : manual || (automatic && ['admin', 'maintain', 'write'].includes(permission)));
+
+            const evaluationRoot = 'eng/harness-evaluation';
+            try {
+              await github.rest.repos.getContent({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: evaluationRoot,
+                ref: mergedIntoDefault ? targetSha : pull.base.sha
+              });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              core.setOutput('matrix', JSON.stringify({ include: [] }));
+              core.setOutput('has_entries', 'false');
+              core.setOutput('harness_exists', 'false');
+              core.notice('Agent harness evaluation is not available on the target branch.');
+              return;
+            }
 
             const { data: trustedCommit } = await github.rest.repos.getCommit({
               owner: context.repo.owner,
@@ -143,7 +162,9 @@ jobs:
               throw new Error(`The repository tree for ${targetSha} was truncated.`);
             }
 
-            const evaluationRoot = 'eng/harness-evaluation';
+            const paths = tree.tree
+              .filter(entry => entry.type === 'blob')
+              .map(entry => entry.path);
             const componentPatterns = [
               { directory: '.github/instructions', suffixes: ['.instructions.md'], kind: 'instruction', evalDirectory: 'instructions' },
               { directory: '.github/agents', suffixes: ['.agent.md', '.md'], kind: 'agent', evalDirectory: 'agents' },
@@ -156,9 +177,6 @@ jobs:
               source: '.github/copilot-instructions.md',
               eval: `${evaluationRoot}/instructions/copilot-instructions/eval.yaml`
             }];
-            const paths = tree.tree
-              .filter(entry => entry.type === 'blob')
-              .map(entry => entry.path);
             for (const path of paths) {
               const skill = path.match(/^\.agents\/skills\/([^/]+)\/SKILL\.md$/);
               if (skill) {
@@ -283,6 +301,7 @@ jobs:
             core.setOutput('author', author);
             core.setOutput('matrix', JSON.stringify(matrix));
             core.setOutput('has_entries', String(selected.length > 0));
+            core.setOutput('harness_exists', 'true');
             core.setOutput('components', JSON.stringify(selected));
             await core.summary
               .addHeading('Agent Harness Evaluation')
@@ -292,9 +311,10 @@ jobs:
 
       - name: Update pull request metadata
         if: >-
-          github.event.action != 'closed' ||
-          (github.event.pull_request.merged == true &&
-           github.event.pull_request.base.ref == github.event.repository.default_branch)
+          steps.pr.outputs.harness_exists == 'true' &&
+          (github.event.action != 'closed' ||
+           (github.event.pull_request.merged == true &&
+            github.event.pull_request.base.ref == github.event.repository.default_branch))
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         env:
           CAN_USE_SECRETS: ${{ steps.pr.outputs.can_use_secrets }}
@@ -316,6 +336,7 @@ jobs:
               for (const comment of comments) {
                 const match = comment.body?.match(/^<!-- agent-harness-eval:([^ ]+) -->/);
                 if (comment.user?.login !== 'github-actions[bot]' || !match || selected.has(match[1])) continue;
+                core.info(`Marking component '${match[1]}' comment ${comment.id} as superseded.`);
                 await github.rest.issues.updateComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
@@ -334,10 +355,12 @@ jobs:
                 `Evaluation does not run automatically for new commits. A contributor with write access can comment ` +
                 `\`/eval\` to run all affected components or \`/eval component-name\` to run one component.`;
               if (rerunComment) {
+                core.info(`Updating stale evaluation comment ${rerunComment.id}.`);
                 await github.rest.issues.updateComment({
                   owner: context.repo.owner, repo: context.repo.repo, comment_id: rerunComment.id, body
                 });
               } else {
+                core.info(`Creating stale evaluation comment on PR #${issueNumber}.`);
                 await github.rest.issues.createComment({
                   owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber, body
                 });
@@ -359,6 +382,7 @@ jobs:
               }
               throw error;
             }
+            core.info(`Adding '${label}' label to PR #${issueNumber}.`);
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -373,11 +397,13 @@ jobs:
               comment.user?.login === 'github-actions[bot]' && comment.body?.startsWith(promptMarker));
             if (process.env.CAN_USE_SECRETS === 'true') {
               if (prompt && !process.env.COMPONENT_FILTER) {
+                core.info(`Deleting manual-evaluation comment ${prompt.id}.`);
                 await github.rest.issues.deleteComment({
                   owner: context.repo.owner, repo: context.repo.repo, comment_id: prompt.id
                 });
               }
-              if (rerunComment && !process.env.COMPONENT_FILTER) {
+              if (rerunComment) {
+                core.info(`Deleting stale evaluation comment ${rerunComment.id}.`);
                 await github.rest.issues.deleteComment({
                   owner: context.repo.owner, repo: context.repo.repo, comment_id: rerunComment.id
                 });
@@ -393,10 +419,12 @@ jobs:
               `\`/eval\` or \`/eval component-name\`, or ` +
               `[run the workflow manually](${manualUrl}) for pull request **#${issueNumber}**.`;
             if (prompt) {
+              core.info(`Updating manual-evaluation comment ${prompt.id}.`);
               await github.rest.issues.updateComment({
                 owner: context.repo.owner, repo: context.repo.repo, comment_id: prompt.id, body
               });
             } else {
+              core.info(`Creating manual-evaluation comment on PR #${issueNumber}.`);
               await github.rest.issues.createComment({
                 owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber, body
               });
@@ -416,7 +444,7 @@ jobs:
       contents: read
       copilot-requests: write
       issues: write
-      pull-requests: read
+      pull-requests: write
     env:
       COMPONENT: ${{ matrix.id }}
       CANDIDATE_ROOT: candidate
@@ -451,11 +479,8 @@ jobs:
           script: |
             const marker = `<!-- agent-harness-eval:${process.env.COMPONENT} -->`;
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const manualUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
-              '/actions/workflows/agent-harness-evaluation.yml';
             const body = `${marker}\n### Agent evaluation: \`${process.env.COMPONENT}\`\n\n` +
               `Status: **running** for \`${process.env.HEAD_SHA}\`\n\n` +
-              `PR updates do not rerun evaluations automatically. [Run again manually](${manualUrl}) after later commits.\n\n` +
               `[View workflow run](${runUrl})`;
             const issueNumber = Number(process.env.PULL_REQUEST);
             const comments = await github.paginate(github.rest.issues.listComments, {
@@ -464,10 +489,12 @@ jobs:
             const existing = comments.find(comment =>
               comment.user?.login === 'github-actions[bot]' && comment.body?.startsWith(marker));
             if (existing) {
+              core.info(`Updating running result comment ${existing.id} for '${process.env.COMPONENT}'.`);
               await github.rest.issues.updateComment({
                 owner: context.repo.owner, repo: context.repo.repo, comment_id: existing.id, body
               });
             } else {
+              core.info(`Creating running result comment for '${process.env.COMPONENT}' on PR #${issueNumber}.`);
               await github.rest.issues.createComment({
                 owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber, body
               });
@@ -498,6 +525,8 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets['COPILOT_CLI_TOKEN'] }}
+          GITHUB_COPILOT_API_TOKEN: ${{ secrets['COPILOT_CLI_TOKEN'] }}
         run: |
           timeout --signal=TERM --kill-after=30s "${{ matrix.watchdog_minutes }}m" \
             node "$TRUSTED_ROOT/eng/harness-evaluation/src/cli.mjs" eval "$COMPONENT" \
@@ -612,7 +641,9 @@ jobs:
             const marker = `<!-- agent-harness-eval:${process.env.COMPONENT} -->`;
             const passed = process.env.EVAL_OUTCOME === 'success';
             let details = '_No complete Vally comparison was produced._';
+            let gateDetails = '';
             let gradeBreakdown = '';
+            let model = '';
             let reportGenerationFailed = false;
 
             const readRecords = file => fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean).map(JSON.parse);
@@ -635,19 +666,19 @@ jobs:
                 }
                 const comparison = comparisons[0];
                 const summary = comparison?.summary;
-                const tokens = summary?.metricDeltas?.find(metric => metric.metric === 'totalTokens');
                 if (comparison?.type !== 'comparison' ||
                     !Number.isFinite(summary?.meanScore) ||
                     !Number.isFinite(summary?.wins) ||
                     !Number.isFinite(summary?.ties) ||
-                    !Number.isFinite(summary?.losses) ||
-                    !Number.isFinite(tokens?.mean)) {
-                  throw new Error('comparison summary or token metrics are incomplete');
+                    !Number.isFinite(summary?.losses)) {
+                  throw new Error('comparison summary is incomplete');
                 }
-                const tokenDelta = `${tokens.mean >= 0 ? '+' : ''}${Math.round(tokens.mean).toLocaleString()}`;
-                details = `Quality score (treatment relative to control): **${summary.meanScore.toFixed(2)}** ` +
-                  `(${summary.wins} wins, ${summary.ties} ties, ${summary.losses} losses)\n\n` +
-                  `Mean token delta: **${tokenDelta} tokens** per paired trial.`;
+                const qualityScore = summary.meanScore.toFixed(2);
+                const formattedQualityScore = summary.meanScore === 0
+                  ? `**${qualityScore}**`
+                  : `$\\color{${summary.meanScore > 0 ? 'green' : 'red'}}{\\mathbf{${qualityScore}}}$`;
+                details = `Quality score (treatment relative to control): ${formattedQualityScore} ` +
+                  `(${summary.wins} wins, ${summary.ties} ties, ${summary.losses} losses).`;
               }
             } catch (error) {
               reportGenerationFailed = true;
@@ -655,24 +686,66 @@ jobs:
             }
 
             try {
-              const treatmentFiles = findFiles(process.env.RESULT_ROOT, 'results.jsonl')
-                .filter(file => path.basename(path.dirname(file)) === 'treatment');
-              if (treatmentFiles.length !== 1) {
-                throw new Error(`expected one treatment results file, found ${treatmentFiles.length}`);
+              const validationPath = path.join(process.env.RESULT_ROOT, 'validation.json');
+              if (fs.existsSync(validationPath)) {
+                const validation = JSON.parse(fs.readFileSync(validationPath, 'utf8'));
+                if (validation?.type !== 'harness-validation' ||
+                    typeof validation?.quality?.passed !== 'boolean' ||
+                    typeof validation?.activation?.required !== 'boolean' ||
+                    typeof validation?.activation?.passed !== 'boolean') {
+                  throw new Error('validation summary is incomplete');
+                }
+
+                const formatGate = passed => passed ? '✅ passed' : '❌ failed';
+                const gates = [
+                  `Treatment quality threshold: **${formatGate(validation.quality.passed)}**`,
+                ];
+                if (validation.activation.required) {
+                  const skill = validation.activation.skill ? ` \`${validation.activation.skill}\`` : '';
+                  gates.push(`Required skill activation${skill}: **${formatGate(validation.activation.passed)}**` +
+                    (validation.activation.passed ? '' : ' — the target skill was not invoked in every treatment trial.'));
+                }
+                gateDetails = '\n' + gates.join('\n');
+              }
+            } catch (error) {
+              reportGenerationFailed = true;
+              core.warning(`Could not parse treatment validation: ${error.message}`);
+            }
+
+            try {
+              const resultFiles = findFiles(process.env.RESULT_ROOT, 'results.jsonl');
+              const treatmentFiles = resultFiles.filter(file => path.basename(path.dirname(file)) === 'treatment');
+              const controlFiles = resultFiles.filter(file => path.basename(path.dirname(file)) === 'control');
+              if (treatmentFiles.length !== 1 || controlFiles.length !== 1) {
+                throw new Error(
+                  `expected one control and one treatment results file, found ${controlFiles.length} control and ${treatmentFiles.length} treatment`);
               }
 
+              const treatmentTrials = readRecords(treatmentFiles[0])
+                .filter(record => record.type === 'trial-result');
+              const controlTrials = readRecords(controlFiles[0])
+                .filter(record => record.type === 'trial-result');
+              const models = [...new Set(treatmentTrials.map(trial => trial.model).filter(Boolean))];
+              if (treatmentTrials.length > 0 && models.length !== 1) {
+                throw new Error(`expected one treatment model, found ${models.length}`);
+              }
+              model = models[0] ?? '';
+
               const byStimulus = new Map();
-              for (const trial of readRecords(treatmentFiles[0]).filter(record => record.type === 'trial-result')) {
+              for (const trial of treatmentTrials) {
                 const stimulus = trial.stimulus ?? trial.gradeResult?.stimulusName ?? 'unknown';
                 const summary = byStimulus.get(stimulus) ?? {
                   trials: 0,
                   successful: 0,
                   scores: [],
+                  treatmentTokens: [],
                   graders: new Map(),
                 };
                 summary.trials++;
                 if (trial.status === 'success') summary.successful++;
                 if (Number.isFinite(trial.gradeResult?.score)) summary.scores.push(trial.gradeResult.score);
+                const totalTokens = trial.trajectory?.metrics?.tokenUsage?.totalTokens;
+                if (Number.isFinite(totalTokens)) summary.treatmentTokens.push(totalTokens);
                 for (const grade of trial.gradeResult?.details ?? []) {
                   const grader = grade.name ?? grade.graderType ?? 'unknown';
                   const count = summary.graders.get(grader) ?? { passed: 0, total: 0 };
@@ -684,18 +757,41 @@ jobs:
               }
 
               if (byStimulus.size > 0) {
+                const controlTokens = new Map();
+                for (const trial of controlTrials) {
+                  const stimulus = trial.stimulus ?? trial.gradeResult?.stimulusName ?? 'unknown';
+                  const totalTokens = trial.trajectory?.metrics?.tokenUsage?.totalTokens;
+                  if (!Number.isFinite(totalTokens)) continue;
+                  const values = controlTokens.get(stimulus) ?? [];
+                  values.push(totalTokens);
+                  controlTokens.set(stimulus, values);
+                }
+                const mean = values => values.length > 0
+                  ? values.reduce((sum, value) => sum + value, 0) / values.length
+                  : Number.NaN;
+                const formatTokenDelta = value => {
+                  if (!Number.isFinite(value)) return 'N/A';
+                  const tokenDelta = `${value >= 0 ? '+' : ''}${Math.round(value).toLocaleString()}`;
+                  if (value === 0) return `**${tokenDelta} tokens**`;
+                  const tokenDeltaValue = tokenDelta.replaceAll(',', '{,}');
+                  return `$\\color{${value < 0 ? 'green' : 'red'}}{\\mathbf{${tokenDeltaValue}\\ tokens}}$`;
+                };
                 const rows = [...byStimulus.entries()].map(([stimulus, summary]) => {
                   const meanScore = summary.scores.length > 0
                     ? (summary.scores.reduce((sum, score) => sum + score, 0) / summary.scores.length).toFixed(2)
                     : 'N/A';
+                  const meanTreatmentTokens = mean(summary.treatmentTokens);
+                  const meanControlTokens = mean(controlTokens.get(stimulus) ?? []);
+                  const tokenDelta = meanTreatmentTokens - meanControlTokens;
                   const graders = [...summary.graders.entries()]
                     .map(([grader, count]) => `${escapeCell(grader)}: ${count.passed}/${count.total}`)
                     .join('<br>');
-                  return `| ${escapeCell(stimulus)} | ${summary.successful}/${summary.trials} | ${meanScore} | ${graders} |`;
+                  return `| ${escapeCell(stimulus)} | ${summary.successful}/${summary.trials} | ${meanScore} | ` +
+                    `${formatTokenDelta(tokenDelta)} | ${graders} |`;
                 });
                 gradeBreakdown = '\n\n#### Treatment grades by stimulus\n\n' +
-                  '| Stimulus | Successful trials | Mean score | Grader passes |\n' +
-                  '| --- | ---: | ---: | --- |\n' + rows.join('\n');
+                  '| Stimulus | Successful trials | Mean score | Token delta | Grader passes |\n' +
+                  '| --- | ---: | ---: | ---: | --- |\n' + rows.join('\n');
               }
             } catch (error) {
               reportGenerationFailed = true;
@@ -735,7 +831,7 @@ jobs:
                   for (const comment of comments) {
                     if (comment.user?.login !== 'github-actions[bot]' ||
                         !comment.body?.startsWith(marker) ||
-                        !/Status: \*\*(passed|failed)\*\*/.test(comment.body)) continue;
+                        !/Status: \*\*(?:✅ passed|❌ failed)\*\*/.test(comment.body)) continue;
                     if (!previous || Date.parse(comment.updated_at) > Date.parse(previous.comment.updated_at)) {
                       previous = { comment, pullNumber: pull.number };
                     }
@@ -752,19 +848,17 @@ jobs:
             }
 
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const manualUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
-              '/actions/workflows/agent-harness-evaluation.yml';
             const artifactLink = process.env.ARTIFACT_URL
               ? `[Download Vally reports](${process.env.ARTIFACT_URL}) · `
               : '';
             const status = reportGenerationFailed ? 'error' : passed ? 'passed' : 'failed';
+            const formattedStatus = status === 'passed' ? '✅ passed' : status === 'failed' ? '❌ failed' : status;
             const report = reportGenerationFailed
               ? 'An error occurred while generating the evaluation report.'
-              : `${details}${gradeBreakdown}${baseline}`;
+              : `${model ? `Model: **\`${model}\`**\n\n` : ''}${details}${gradeBreakdown}${baseline}`;
             const body = `${marker}\n### Agent evaluation: \`${process.env.COMPONENT}\`\n\n` +
-              `Status: **${status}** for \`${process.env.HEAD_SHA}\`\n\n` +
-              `${report}\n\nPR updates do not rerun evaluations automatically. ` +
-              `[Run again manually](${manualUrl}) after later commits.\n\n` +
+              `Status: **${formattedStatus}** for \`${process.env.HEAD_SHA}\`${gateDetails}\n\n` +
+              `${report}\n\n` +
               `${artifactLink}[View workflow run](${runUrl})`;
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber, per_page: 100
@@ -772,10 +866,12 @@ jobs:
             const existing = comments.find(comment =>
               comment.user?.login === 'github-actions[bot]' && comment.body?.startsWith(marker));
             if (existing) {
+              core.info(`Updating result comment ${existing.id} for '${process.env.COMPONENT}' with status '${status}'.`);
               await github.rest.issues.updateComment({
                 owner: context.repo.owner, repo: context.repo.repo, comment_id: existing.id, body
               });
             } else {
+              core.info(`Creating result comment for '${process.env.COMPONENT}' with status '${status}' on PR #${issueNumber}.`);
               await github.rest.issues.createComment({
                 owner: context.repo.owner, repo: context.repo.repo, issue_number: issueNumber, body
               });

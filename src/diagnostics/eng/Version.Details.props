@@ -8,9 +8,9 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-android dependencies -->
     <XamarinAndroidToolsAndroidSdkPackageVersion>1.0.105-preview.225</XamarinAndroidToolsAndroidSdkPackageVersion>
     <!-- dotnet-arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26431.5</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetCodeAnalysisPackageVersion>10.0.0-beta.26431.5</MicrosoftDotNetCodeAnalysisPackageVersion>
-    <MicrosoftDotNetRemoteExecutorPackageVersion>10.0.0-beta.26431.5</MicrosoftDotNetRemoteExecutorPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26472.2</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetCodeAnalysisPackageVersion>10.0.0-beta.26472.2</MicrosoftDotNetCodeAnalysisPackageVersion>
+    <MicrosoftDotNetRemoteExecutorPackageVersion>10.0.0-beta.26472.2</MicrosoftDotNetRemoteExecutorPackageVersion>
     <!-- dotnet-command-line-api dependencies -->
     <SystemCommandLinePackageVersion>2.0.0-beta5.25210.1</SystemCommandLinePackageVersion>
     <!-- dotnet-dotnet dependencies -->
@@ -23,15 +23,15 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETSdkPackageVersion>11.0.100-rc.2.26465.113</MicrosoftNETSdkPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>11.0.0-rc.2.26465.113</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>11.0.0-rc.2.26465.113</MicrosoftNETCorePlatformsPackageVersion>
-    <runtimelinuxarm64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26461.114</runtimelinuxarm64MicrosoftDotNetCdacTransportPackageVersion>
-    <runtimelinuxx64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26461.114</runtimelinuxx64MicrosoftDotNetCdacTransportPackageVersion>
-    <runtimeosxarm64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26461.114</runtimeosxarm64MicrosoftDotNetCdacTransportPackageVersion>
-    <runtimeosxx64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26461.114</runtimeosxx64MicrosoftDotNetCdacTransportPackageVersion>
-    <runtimewinarm64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26461.114</runtimewinarm64MicrosoftDotNetCdacTransportPackageVersion>
-    <runtimewinx64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26461.114</runtimewinx64MicrosoftDotNetCdacTransportPackageVersion>
+    <runtimelinuxarm64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26473.114</runtimelinuxarm64MicrosoftDotNetCdacTransportPackageVersion>
+    <runtimelinuxx64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26473.114</runtimelinuxx64MicrosoftDotNetCdacTransportPackageVersion>
+    <runtimeosxarm64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26473.114</runtimeosxarm64MicrosoftDotNetCdacTransportPackageVersion>
+    <runtimeosxx64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26473.114</runtimeosxx64MicrosoftDotNetCdacTransportPackageVersion>
+    <runtimewinarm64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26473.114</runtimewinarm64MicrosoftDotNetCdacTransportPackageVersion>
+    <runtimewinx64MicrosoftDotNetCdacTransportPackageVersion>12.0.0-alpha.1.26473.114</runtimewinx64MicrosoftDotNetCdacTransportPackageVersion>
     <!-- microsoft-clrmd dependencies -->
-    <MicrosoftDiagnosticsRuntimePackageVersion>4.1.746102</MicrosoftDiagnosticsRuntimePackageVersion>
-    <MicrosoftDiagnosticsRuntimeUtilitiesPackageVersion>4.1.746102</MicrosoftDiagnosticsRuntimeUtilitiesPackageVersion>
+    <MicrosoftDiagnosticsRuntimePackageVersion>4.1.747802</MicrosoftDiagnosticsRuntimePackageVersion>
+    <MicrosoftDiagnosticsRuntimeUtilitiesPackageVersion>4.1.747802</MicrosoftDiagnosticsRuntimeUtilitiesPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>

@@ -11,6 +11,16 @@
 
     <!-- Disable restoring transitive aspnetcore and windowsdesktop targeting packs to avoid unnecessary dependencies. -->
     <DisableTransitiveFrameworkReferenceDownloads Condition="'$(UpdateDownlevelKnownPacks)' == 'true'">true</DisableTransitiveFrameworkReferenceDownloads>
+
+    <!-- These switches control whether known pack items and version updates are enabled for unknown target frameworks. On by default. -->
+    <EnableKnownPackItemsForUnknownTargetFramework Condition="'$(EnableKnownPackItemsForUnknownTargetFramework)' == ''">true</EnableKnownPackItemsForUnknownTargetFramework>
+    <TargetingPackCurrentTargetFramework Condition="'$(TargetingPackCurrentTargetFramework)' == ''">$(NetCurrent)</TargetingPackCurrentTargetFramework>
+    <TargetingPackBaselineTargetFramework Condition="'$(TargetingPackBaselineTargetFramework)' == ''">$(BundledNETCoreAppTargetFramework)</TargetingPackBaselineTargetFramework>
+    <_NeedsTargetingPackCurrentForUnknownTargetFramework Condition="'$(EnableKnownPackItemsForUnknownTargetFramework)' == 'true' and
+      '$(TargetFrameworkIdentifier)' == '.NETCoreApp' and
+      !$([MSBuild]::IsTargetFrameworkCompatible('$(TargetingPackBaselineTargetFramework)', '$(TargetingPackCurrentTargetFramework)'))">true</_NeedsTargetingPackCurrentForUnknownTargetFramework>
+
+    <EnableKnownPackVersionUpdatesForCurrentTargetFramework Condition="'$(EnableKnownPackVersionUpdatesForCurrentTargetFramework)' == ''">true</EnableKnownPackVersionUpdatesForCurrentTargetFramework>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(UpdateDownlevelKnownPacks)' == 'true'">
@@ -50,22 +60,24 @@
     </ItemGroup>
   </Target>
 
-  <PropertyGroup>
-    <!-- These switches control whether known pack items and version updates are enabled for unknown target frameworks. On by default. -->
-    <EnableKnownPackItemsForUnknownTargetFramework Condition="'$(EnableKnownPackItemsForUnknownTargetFramework)' == ''">true</EnableKnownPackItemsForUnknownTargetFramework>
-    <EnableKnownPackVersionUpdatesForCurrentTargetFramework Condition="'$(EnableKnownPackVersionUpdatesForCurrentTargetFramework)' == ''">true</EnableKnownPackVersionUpdatesForCurrentTargetFramework>
-
-    <TargetingPackCurrentTargetFramework Condition="'$(TargetingPackCurrentTargetFramework)' == ''">$(NetCurrent)</TargetingPackCurrentTargetFramework>
-    <TargetingPackBaselineTargetFramework Condition="'$(TargetingPackBaselineTargetFramework)' == ''">$(NetPrevious)</TargetingPackBaselineTargetFramework>
-    <TargetingPackBaselineTargetFramework Condition="'$(TargetingPackBaselineTargetFramework)' == ''">$(NetMinimum)</TargetingPackBaselineTargetFramework>
+  <PropertyGroup Condition="'$(_NeedsTargetingPackCurrentForUnknownTargetFramework)' == 'true'">
+    <!-- Allow targeting a higher Microsoft.NETCore.App version than what the SDK knows about -->
+    <NETCoreAppMaximumVersion>$([MSBuild]::Add('$(NETCoreAppMaximumVersion.Split('.')[0])', '1')).$(NETCoreAppMaximumVersion.Split('.')[1])</NETCoreAppMaximumVersion>
+    <!-- Allow missing prune package data and fallback to the previous TFM information -->
+    <LoadPrunePackageDataFromNearestFramework>true</LoadPrunePackageDataFromNearestFramework>
   </PropertyGroup>
 
   <!-- Add Known* items if the SDK doesn't support the TargetFramework yet. Uses the metadata from the `TargetingPackBaselineTargetFramework`, which includes versions. -->
-  <ItemGroup Condition="'$(EnableKnownPackItemsForUnknownTargetFramework)' == 'true'">
+  <ItemGroup Condition="'$(_NeedsTargetingPackCurrentForUnknownTargetFramework)' == 'true'">
     <KnownFrameworkReference
       Include="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
       TargetFramework="$(TargetingPackCurrentTargetFramework)"
-      Condition="'@(KnownFrameworkReference->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
+      Condition="'@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
+
+    <KnownFrameworkReference
+      Include="@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)'))"
+      TargetFramework="$(TargetingPackCurrentTargetFramework)"
+      Condition="'@(KnownFrameworkReference->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App')->AnyHaveMetadataValue('TargetFramework', '$(TargetingPackCurrentTargetFramework)'))' != 'true'" />
 
     <KnownRuntimePack
       Include="@(KnownRuntimePack->WithMetadataValue('Identity', 'Microsoft.NETCore.App')->WithMetadataValue('TargetFramework', '$(TargetingPackBaselineTargetFramework)')->WithMetadataValue('RuntimePackLabels', 'Mono'))"

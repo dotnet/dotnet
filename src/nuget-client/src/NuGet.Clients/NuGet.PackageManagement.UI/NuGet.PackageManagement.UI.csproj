@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Copilot" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.VisualStudio.Markdown.Platform" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.Styles" />

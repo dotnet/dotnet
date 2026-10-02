@@ -4,8 +4,8 @@ type: capability
 defaults:
   runs: ${RUNS=5}
   timeout: 25m
-  model: claude-sonnet-5
-  judge_model: gpt-5.6-terra
+  model: ${MODEL=gpt-5.6-sol}
+  judge_model: ${JUDGE_MODEL=gpt-5.6-terra}
   executor: copilot-sdk
 agent_environment:
   skills:
@@ -31,10 +31,6 @@ stimuli:
       - It correctly explains the existing ReadItem result for the matching constant and general-query results for incorrect and parameterized discriminator values.
       - It preserves all three base/override assertions and includes the focused Cosmos functional-test command and emulator constraints.
     graders:
-      - type: skill-invocation
-        config:
-          required:
-            - cosmos-provider
       - type: file-matches
         config:
           path: analysis.md
@@ -52,8 +48,7 @@ stimuli:
           max: 2000000
 scoring:
   weights:
-    skill-invocation: 0.27
     file-matches: 0.27
-    prompt: 0.36
+    prompt: 0.63
     token-budget: 0.1
   threshold: 0.75

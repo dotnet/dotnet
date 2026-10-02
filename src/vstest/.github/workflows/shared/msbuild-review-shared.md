@@ -18,6 +18,10 @@ tools:
   bash: ["git", "grep", "find", "cat", "head", "tail", "sed", "wc", "sort", "date"]
 
 safe-outputs:
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   # The scan-mode msbuild-reviewer agent self-posts. Provide a generous-enough
   # budget for a single weekly report plus an optional draft PR with safe fixes.
   create-issue:
@@ -27,6 +31,7 @@ safe-outputs:
     expires: 7d
   create-pull-request:
     draft: true
+    github-token-for-extra-empty-commit: app
     title-prefix: "[msbuild-quality] "
     labels: ["agentic-workflows", "Area: Engineering"]
     max: 1

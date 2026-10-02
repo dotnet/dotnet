@@ -661,6 +661,9 @@ internal enum FunctionId
     VSCode_LanguageServer_Daemon_Started = 863,
     VSCode_LanguageServer_Daemon_Client_Connected = 864,
     VSCode_LanguageServer_Daemon_Client_Disconnected = 865,
+    VSCode_LanguageServer_Process_Lifetime = 866,
+    VSCode_LanguageServer_Lifetime = 867,
+    VSCode_LanguageServer_Process_Memory = 868,
 
     GraphQuery_Calls = 870,
     GraphQuery_Contains = 871,

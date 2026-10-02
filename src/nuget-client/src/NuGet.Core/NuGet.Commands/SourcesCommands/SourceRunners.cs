@@ -65,6 +65,10 @@ namespace NuGet.Commands
 
             var newPackageSource = new Configuration.PackageSource(args.Source, args.Name);
             newPackageSource.AllowInsecureConnections = args.AllowInsecureConnections;
+            if (args.MinPublishAgeHours.HasValue)
+            {
+                newPackageSource.MinPublishAge = RunnerHelper.ParseMinPublishAge(args.MinPublishAgeHours.Value);
+            }
 
             if (newPackageSource.IsHttp && !newPackageSource.IsHttps && !newPackageSource.AllowInsecureConnections)
             {
@@ -261,11 +265,12 @@ namespace NuGet.Commands
             var sourceProvider = RunnerHelper.GetSourceProvider(settings);
 
             var existingSource = sourceProvider.GetPackageSourceByName(args.Name);
-            existingSource.AllowInsecureConnections = args.AllowInsecureConnections;
             if (existingSource == null)
             {
                 throw new CommandException(Strings.SourcesCommandNoMatchingSourcesFound, args.Name);
             }
+
+            existingSource.AllowInsecureConnections = args.AllowInsecureConnections;
 
             if (!string.IsNullOrEmpty(args.Source) && !existingSource.Source.Equals(args.Source, StringComparison.OrdinalIgnoreCase))
             {
@@ -281,7 +286,10 @@ namespace NuGet.Commands
                     throw new CommandException(Strings.SourcesCommandUniqueSource);
                 }
 
-                existingSource = new Configuration.PackageSource(args.Source, existingSource.Name);
+                existingSource = new Configuration.PackageSource(args.Source, existingSource.Name)
+                {
+                    MinPublishAge = existingSource.MinPublishAge
+                };
                 existingSource.AllowInsecureConnections = args.AllowInsecureConnections;
 
                 // If the new source is not http, throw an error
@@ -314,6 +322,11 @@ namespace NuGet.Commands
             if (!existingSource.IsLocal && !string.IsNullOrEmpty(args.ProtocolVersion))
             {
                 existingSource.ProtocolVersion = RunnerHelper.ParseProtocolVersion(args.ProtocolVersion);
+            }
+
+            if (args.MinPublishAgeHours.HasValue)
+            {
+                existingSource.MinPublishAge = RunnerHelper.ParseMinPublishAge(args.MinPublishAgeHours.Value);
             }
 
             sourceProvider.UpdatePackageSource(existingSource, updateCredentials: existingSource.Credentials != null, updateEnabled: false);
@@ -425,6 +438,21 @@ namespace NuGet.Commands
 
             // specified protocol version is invalid
             throw new CommandException(string.Format(Strings.SourcesCommandValidProtocolVersion, minSupportedProtocolVersion, maxSupportedProtocolVersion));
+        }
+
+        public static TimeSpan ParseMinPublishAge(uint minPublishAgeHours)
+        {
+            if (minPublishAgeHours > TimeSpan.MaxValue.TotalHours)
+            {
+                throw new CommandException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.SourcesCommandMinPublishAgeHoursOutOfRange,
+                        minPublishAgeHours,
+                        (uint)TimeSpan.MaxValue.TotalHours));
+            }
+
+            return TimeSpan.FromHours(minPublishAgeHours);
         }
     }
 }

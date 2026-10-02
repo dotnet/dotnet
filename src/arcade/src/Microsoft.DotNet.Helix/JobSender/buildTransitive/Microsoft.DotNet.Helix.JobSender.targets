@@ -1,0 +1,19 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+  <ItemGroup Condition="'$(HelixLegacyRunnerCompatibilityEnabled)' != 'false'">
+    <_HelixLegacyRunnerCompatibilityFile Include="$(MSBuildThisFileDirectory)..\tools\legacy-runner\helix\*.py" />
+    <_HelixLegacyRunnerExecutionFile Include="$(MSBuildThisFileDirectory)..\tools\legacy-runner\helix_test_execution.py" />
+    <Content Include="@(_HelixLegacyRunnerCompatibilityFile)"
+             Link="RunnerScripts\scriptrunner\helix\%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest"
+             Pack="false"
+             Visible="false" />
+    <Content Include="@(_HelixLegacyRunnerExecutionFile)"
+             Link="RunnerScripts\scriptrunner\helix_test_execution.py"
+             CopyToOutputDirectory="PreserveNewest"
+             CopyToPublishDirectory="PreserveNewest"
+             Pack="false"
+             Visible="false" />
+  </ItemGroup>
+</Project>

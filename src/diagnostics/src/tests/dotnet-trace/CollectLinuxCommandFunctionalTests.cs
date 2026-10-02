@@ -11,12 +11,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Diagnostics.TestHelpers;
 using Microsoft.Diagnostics.Tests.Common;
 using Microsoft.Diagnostics.Tools.Trace;
-using Microsoft.DotNet.XUnitExtensions;
 using Microsoft.Internal.Common.Utils;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.Diagnostics.Tools.Trace
 {
@@ -32,7 +31,7 @@ namespace Microsoft.Diagnostics.Tools.Trace
             _outputHelper = outputHelper;
         }
         private static CollectLinuxCommandHandler.CollectLinuxArgs TestArgs(
-            CancellationToken ct = default,
+            CancellationToken? ct = null,
             string[] providers = null,
             string clrEventLevel = "",
             string clrEvents = "",
@@ -42,9 +41,10 @@ namespace Microsoft.Diagnostics.Tools.Trace
             TimeSpan duration = default,
             string name = "",
             int processId = 0,
-            bool probe = false)
+            bool probe = false,
+            int maxMemory = 0)
         {
-            return new CollectLinuxCommandHandler.CollectLinuxArgs(ct,
+            return new CollectLinuxCommandHandler.CollectLinuxArgs(ct ?? TestContext.Current.CancellationToken,
                                                                    providers ?? Array.Empty<string>(),
                                                                    clrEventLevel,
                                                                    clrEvents,
@@ -54,7 +54,8 @@ namespace Microsoft.Diagnostics.Tools.Trace
                                                                    duration,
                                                                    name,
                                                                    processId,
-                                                                   probe);
+                                                                   probe,
+                                                                   maxMemory);
         }
 
         [ConditionalTheory(nameof(IsCollectLinuxSupported))]
@@ -381,6 +382,24 @@ namespace Microsoft.Diagnostics.Tools.Trace
             string[] lines = console.Lines;
             int statusLineCount = lines.Count(l => l.Contains("Recording trace", StringComparison.OrdinalIgnoreCase));
             Assert.Equal(1, statusLineCount);
+        }
+
+        [ConditionalFact(nameof(IsCollectLinuxSupported))]
+        public void CollectLinuxCommand_SetsMaxMemory_WhenPositive()
+        {
+            MockConsole console = new(200, 30, _outputHelper);
+
+            CollectLinuxCommandHandler handler = new(console);
+            string command = null;
+            handler.RecordTraceInvoker = (cmd, len, cb) => {
+                command = Encoding.UTF8.GetString(cmd, 0, (int)len);
+                return 0;
+            };
+
+            int exitCode = handler.CollectLinux(TestArgs(maxMemory: 1024));
+
+            Assert.Equal((int)ReturnCode.Ok, exitCode);
+            Assert.Contains("--max-memory 1024", command);
         }
 
         private static int Run(object args, MockConsole console)

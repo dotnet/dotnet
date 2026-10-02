@@ -4,8 +4,8 @@ type: capability
 defaults:
   runs: ${RUNS=5}
   timeout: 5m
-  model: claude-sonnet-5
-  judge_model: gpt-5.6-terra
+  model: ${MODEL=gpt-5.6-sol}
+  judge_model: ${JUDGE_MODEL=gpt-5.6-terra}
   executor: copilot-sdk
 agent_environment:
   skills:
@@ -33,9 +33,6 @@ stimuli:
       - The description has Fixes #41234 and every required customer impact, discovery, regression, testing, and risk section.
       - The text accurately describes the staged InternalEntityEntry/test scope and uses Issue41234 for any justified quirk.
     graders:
-      - type: skill-invocation
-        config:
-          required: [ servicing-pr ]
       - type: file-matches
         config:
           path: servicing-pr.md
@@ -51,8 +48,7 @@ stimuli:
           max: 750000
 scoring:
   weights:
-    skill-invocation: 0.27
     file-matches: 0.27
-    prompt: 0.36
+    prompt: 0.63
     token-budget: 0.1
   threshold: 0.75

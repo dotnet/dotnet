@@ -76,8 +76,15 @@ parameters:
 - name: pool_Mac
   type: object
   default:
+    name: $(poolName_AcesMac)
+    demands: $(poolDemand_AcesMac)
+    os: macOS
+
+- name: pool_Mac_ShortStack
+  type: object
+  default:
     name: Azure Pipelines
-    vmImage: $(poolImage_Mac)
+    vmImage: $(poolImage_Mac_Hosted)
     os: macOS
 
 
@@ -112,6 +119,14 @@ stages:
       scope: ${{ parameters.scope }}
       verifications: ${{ parameters.verifications }}
       excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
+      ${{ if eq(variables['System.TeamProject'], 'public') }}:
+        pool_Mac: ${{ parameters.pool_Mac }}
+      ${{ else }}:
+        pool_Mac:
+          name: Azure Pipelines
+          vmImage: $(poolImage_Mac_Hosted)
+          os: macOS
+      pool_Mac_ShortStack: ${{ parameters.pool_Mac_ShortStack }}
 
 - ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
   - stage: Publish_Build_Assets

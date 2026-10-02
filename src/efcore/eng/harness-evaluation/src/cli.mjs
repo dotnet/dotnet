@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFile, rm } from 'node:fs/promises';
+import { readFile, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { parse } from 'yaml';
 import {
@@ -11,18 +11,28 @@ import {
   validateComponentId,
   validateInventory,
   validateOutputRoot,
+  variantInvokedSkill,
   variantPassed,
 } from './harness.mjs';
 
 function valueAfter(args, name, fallback) {
   const index = args.indexOf(name);
-  return index === -1 ? fallback : args[index + 1];
+  if (index === -1) {
+    return fallback;
+  }
+
+  const value = args[index + 1];
+  if (value === undefined || value.startsWith('--')) {
+    throw new Error(`${name} requires a value.`);
+  }
+
+  return value;
 }
 
 function printUsage() {
   console.error(`Usage:
   node src/cli.mjs lint
-  node src/cli.mjs eval <component> [--repo-root <directory>] [--runs <n>] [--workers <n>] [--require-pass] [--output <directory>]`);
+  node src/cli.mjs eval <component> [--repo-root <directory>] [--model <model>] [--judge-model <model>] [--runs <n>] [--workers <n>] [--require-pass] [--output <directory>]`);
 }
 
 async function lint() {
@@ -54,6 +64,14 @@ async function evaluate(args) {
   validateComponentId(componentId);
   const repoRoot = resolve(valueAfter(args, '--repo-root', defaultRepoRoot));
   const component = await resolveComponent(componentId, repoRoot);
+  const model = valueAfter(args, '--model');
+  if (model !== undefined && (!model.trim() || model.includes('::'))) {
+    throw new Error(`--model must be a non-empty model name without '::': ${model}`);
+  }
+  const judgeModel = valueAfter(args, '--judge-model');
+  if (judgeModel !== undefined && (!judgeModel.trim() || judgeModel.includes('::'))) {
+    throw new Error(`--judge-model must be a non-empty model name without '::': ${judgeModel}`);
+  }
   const runsValue = valueAfter(args, '--runs');
   const runs = runsValue === undefined ? undefined : Number(runsValue);
   if (runs !== undefined && (!Number.isSafeInteger(runs) || runs <= 0)) {
@@ -80,6 +98,12 @@ async function evaluate(args) {
   if (runs !== undefined) {
     experimentArguments.push('--param', `RUNS=${runs}`);
   }
+  if (model !== undefined) {
+    experimentArguments.push('--param', `MODEL=${model}`);
+  }
+  if (judgeModel !== undefined) {
+    experimentArguments.push('--param', `JUDGE_MODEL=${judgeModel}`);
+  }
   const experimentResult = runVally(experimentArguments, { cwd: repoRoot, inherit: true });
   if (experimentResult.status !== 0) {
     process.exitCode = 1;
@@ -90,8 +114,24 @@ async function evaluate(args) {
   const treatmentResults = join(experimentDirectory, 'treatment', 'results.jsonl');
   const experimentPlan = join(experimentDirectory, 'plan-snapshot.json');
   const treatmentSpec = parse(await readFile(evalPath, 'utf8'));
-  const treatmentPass = !requirePass || await variantPassed(treatmentResults, evalPath, experimentPlan);
-  if (!treatmentPass) {
+  const qualityPass = await variantPassed(treatmentResults, evalPath, experimentPlan);
+  const activationPass = component.kind !== 'skill'
+    || await variantInvokedSkill(treatmentResults, component.id);
+  await writeFile(join(outputRoot, 'validation.json'), `${JSON.stringify({
+    type: 'harness-validation',
+    component: component.id,
+    quality: { passed: qualityPass },
+    activation: {
+      required: component.kind === 'skill',
+      skill: component.kind === 'skill' ? component.id : null,
+      passed: activationPass,
+    },
+  }, null, 2)}\n`);
+  const treatmentPass = !requirePass || (qualityPass && activationPass);
+  if (component.kind === 'skill' && !activationPass) {
+    console.error(`Treatment '${componentId}' did not invoke the target skill in every trial.`);
+  }
+  if (requirePass && !qualityPass) {
     console.error(`Treatment '${componentId}' did not meet its committed scoring threshold.`);
   }
 
@@ -101,8 +141,13 @@ async function evaluate(args) {
     '--verbose',
     '--fail-on-regression',
   ];
-  if (treatmentSpec.defaults?.judge_model) {
-    comparisonArguments.push('--judge-model', treatmentSpec.defaults.judge_model);
+  const configuredJudgeModel = treatmentSpec.defaults?.judge_model;
+  const defaultJudgeModel = typeof configuredJudgeModel === 'string'
+    ? configuredJudgeModel.match(/^\$\{JUDGE_MODEL=(.*)\}$/)?.[1] ?? configuredJudgeModel
+    : configuredJudgeModel;
+  const comparisonJudgeModel = judgeModel ?? defaultJudgeModel;
+  if (comparisonJudgeModel) {
+    comparisonArguments.push('--judge-model', comparisonJudgeModel);
   }
   const comparisonResult = runVally(comparisonArguments, { cwd: repoRoot, inherit: true });
   if (!treatmentPass || comparisonResult.status !== 0) {

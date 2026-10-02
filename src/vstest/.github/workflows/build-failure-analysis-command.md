@@ -33,7 +33,7 @@ permissions:
   copilot-requests: write
 
 concurrency:
-  group: build-failure-analysis-${{ github.event.issue.number }}
+  group: ${{ contains(github.actor, '[bot]') && github.run_id || format('build-failure-analysis-{0}', github.event.issue.number) }}
   cancel-in-progress: true
 
 env:
@@ -223,6 +223,10 @@ tools:
     - "NuGet.Mcp.Server"
 
 safe-outputs:
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   # The agent runs only when the build job reports failure (see top-level
   # `if:` above). On a failed build the agent normally emits at most one
   # `noop`, one summary comment, and a small set of inline review comments,

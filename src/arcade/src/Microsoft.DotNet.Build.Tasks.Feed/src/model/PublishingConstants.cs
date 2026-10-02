@@ -1428,6 +1428,17 @@ public class PublishingConstants
             targetFeeds: DotNet11InternalFeeds,
             symbolTargetType: SymbolPublishVisibility.Internal),
 
+        // .NET 11.0.2xx SDK,
+        new TargetChannelConfig(
+            id: 10960,
+            isInternal: false,
+            publishingInfraVersion: PublishingInfraVersion.Latest,
+            akaMSChannelNames: [ "11.0.2xx", "11.0" ],
+            akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+            akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+            targetFeeds: DotNet11Feeds,
+            symbolTargetType: SymbolPublishVisibility.Public),
+
         // .NET 11 Preview 1,
         new TargetChannelConfig(
             id: 9581,
@@ -2398,6 +2409,18 @@ public class PublishingConstants
         // 18.12
         new TargetChannelConfig(
             id: 10894,
+            isInternal: false,
+            publishingInfraVersion: PublishingInfraVersion.Latest,
+            akaMSChannelNames: [],
+            akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+            akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+            targetFeeds: DotNetToolsFeeds,
+            symbolTargetType: SymbolPublishVisibility.Public,
+            flatten: false),
+
+        // 18.13
+        new TargetChannelConfig(
+            id: 10961,
             isInternal: false,
             publishingInfraVersion: PublishingInfraVersion.Latest,
             akaMSChannelNames: [],

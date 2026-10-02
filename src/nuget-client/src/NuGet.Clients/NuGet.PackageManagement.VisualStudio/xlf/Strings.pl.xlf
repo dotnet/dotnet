@@ -24,12 +24,12 @@
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceCaption">
         <source>NuGet Package Source Authentication</source>
-        <target state="new">NuGet Package Source Authentication</target>
+        <target state="translated">Uwierzytelnianie źródła pakietu NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="CredentialPrompt_PackageSourceMessage">
         <source>Enter credentials for the package source '{0}'.</source>
-        <target state="new">Enter credentials for the package source '{0}'.</target>
+        <target state="translated">Wprowadź poświadczenia dla źródła pakietu „{0}”.</target>
         <note>{0} is the package source URI.</note>
       </trans-unit>
       <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">

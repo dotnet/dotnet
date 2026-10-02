@@ -121,13 +121,13 @@ namespace NuGet.Commands
 
             // Precedence for package API key: -ApiKey param, environment variable, config
             apiKey ??= environmentVariableReader.GetEnvironmentVariable(ApiKeyEnvironmentVariableName);
-            apiKey ??= CommandRunnerUtility.GetApiKey(settings, packageUpdateResource.SourceUri.AbsoluteUri, source);
+            apiKey ??= SettingsUtility.GetApiKey(settings, packageUpdateResource.SourceUri.AbsoluteUri, source);
 
             // Precedence for symbol package API key: -SymbolApiKey param, environment variable, config, package API key (Only for symbol source from SymbolPackagePublish service)
             if (!string.IsNullOrEmpty(symbolSource))
             {
                 symbolApiKey ??= environmentVariableReader.GetEnvironmentVariable(SymbolApiKeyEnvironmentVariableName);
-                symbolApiKey ??= CommandRunnerUtility.GetApiKey(settings, symbolSourceUri, symbolSource);
+                symbolApiKey ??= SettingsUtility.GetApiKey(settings, symbolSourceUri, symbolSource);
 
                 // Only allow falling back to API key when the symbol source was obtained from SymbolPackagePublish service
                 if (symbolPackageUpdateResource != null)

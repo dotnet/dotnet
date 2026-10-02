@@ -162,6 +162,54 @@
   <data name="Source_Description" xml:space="preserve">
     <value>Package source (URL, UNC/folder path or package source name) to use. Defaults to DefaultPushSource if specified in NuGet.Config.</value>
   </data>
+  <data name="StageCommand_Description" xml:space="preserve">
+    <value>Manages packages in a staging environment.</value>
+  </data>
+  <data name="StagePushCommand_Description" xml:space="preserve">
+    <value>Stages a package on the server without publishing it.</value>
+  </data>
+  <data name="StagePushCommand_Error_InvalidGroup" xml:space="preserve">
+    <value>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</value>
+  </data>
+  <data name="StagePushCommand_Error_MissingSource" xml:space="preserve">
+    <value>No package source was provided and DefaultPushSource is not configured.</value>
+  </data>
+  <data name="StagePushCommand_Error_PackageNotFound" xml:space="preserve">
+    <value>The package file '{0}' does not exist.</value>
+    <comment>0 - package path</comment>
+  </data>
+  <data name="StagePushCommand_Error_PackagePathRequired" xml:space="preserve">
+    <value>A package path is required.</value>
+  </data>
+  <data name="StagePushCommand_Error_ResourceNotFound" xml:space="preserve">
+    <value>The source '{0}' does not advertise a supported package staging resource.</value>
+    <comment>0 - package source</comment>
+  </data>
+  <data name="StagePushCommand_Error_UnsupportedPackage" xml:space="preserve">
+    <value>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</value>
+    <comment>0 - package path</comment>
+  </data>
+  <data name="StagePushCommand_GroupOption_Description" xml:space="preserve">
+    <value>Uploads the package into the specified staging group.</value>
+  </data>
+  <data name="StagePushCommand_NoSymbolsOption_Description" xml:space="preserve">
+    <value>Prevents automatic discovery and staging of a sibling symbols package.</value>
+  </data>
+  <data name="StagePushCommand_PackagePathArgument_Description" xml:space="preserve">
+    <value>The path to the package to stage.</value>
+  </data>
+  <data name="StagePushCommand_PackageStaged" xml:space="preserve">
+    <value>Staged package '{0}'.</value>
+    <comment>0 - package path</comment>
+  </data>
+  <data name="StagePushCommand_SymbolsFailed" xml:space="preserve">
+    <value>Failed to stage symbols package '{0}': {1}</value>
+    <comment>0 - symbols package path; 1 - error message</comment>
+  </data>
+  <data name="StagePushCommand_SymbolsStaged" xml:space="preserve">
+    <value>Staged symbols package '{0}'.</value>
+    <comment>0 - symbols package path</comment>
+  </data>
   <data name="Push_InvalidTimeout" xml:space="preserve">
     <value>Invalid timeout parameter value.</value>
   </data>
@@ -826,6 +874,9 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
   </data>
   <data name="SourcesCommandProtocolVersionDescription" xml:space="preserve">
     <value>The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified.</value>
+  </data>
+  <data name="SourcesCommandMinPublishAgeHoursDescription" xml:space="preserve">
+    <value>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</value>
   </data>
   <data name="SourcesCommandValidProtocolVersion" xml:space="preserve">
     <value>The protocol version specified is invalid. Provide a valid protocol version.</value>

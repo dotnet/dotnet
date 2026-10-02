@@ -8,6 +8,8 @@
   <PropertyGroup>
     <TargetFrameworks>net11.0;net481</TargetFrameworks>
     <OutputType>Exe</OutputType>
+    <!-- Tests cover the experimental test ids logger, so they use it on purpose. -->
+    <NoWarn>$(NoWarn);VSTEST001</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.TestPlatform.Extensions.TestIdsLogger\Microsoft.TestPlatform.Extensions.TestIdsLogger.csproj" />

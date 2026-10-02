@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -115,11 +113,26 @@ namespace NuGet.Resolver
         /// Used to provide partial solutions to be used for diagnostic messages.
         /// </param>
         /// <returns>The 'best' solution (if one exists). Null otherwise.</returns>
-        public static IEnumerable<T> FindSolution(IEnumerable<IEnumerable<T>> groupedItems,
+        public static IEnumerable<T>? FindSolution(IEnumerable<IEnumerable<T>> groupedItems,
             IComparer<T> itemSorter,
             Func<T, T, bool> shouldRejectPairFunc,
-            Action<IEnumerable<T>> diagnosticOutput)
+            Action<IEnumerable<T>>? diagnosticOutput)
         {
+            if (groupedItems == null)
+            {
+                throw new ArgumentNullException(nameof(groupedItems));
+            }
+
+            if (itemSorter == null)
+            {
+                throw new ArgumentNullException(nameof(itemSorter));
+            }
+
+            if (shouldRejectPairFunc == null)
+            {
+                throw new ArgumentNullException(nameof(shouldRejectPairFunc));
+            }
+
             var solver = new CombinationSolver<T>(groupedItems,
                     itemSorter,
                     shouldRejectPairFunc);
@@ -127,7 +140,7 @@ namespace NuGet.Resolver
             return solver.FindSolution(diagnosticOutput);
         }
 
-        private IEnumerable<T> FindSolution(Action<IEnumerable<T>> diagnosticOutput)
+        private IEnumerable<T>? FindSolution(Action<IEnumerable<T>>? diagnosticOutput)
         {
             var consistent = true;
             var i = 0;

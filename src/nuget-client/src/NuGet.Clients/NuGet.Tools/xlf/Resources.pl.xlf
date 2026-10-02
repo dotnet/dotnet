@@ -32,6 +32,11 @@
         <target state="translated">Narzędzie GitHub Copilot nie jest gotowe. Upewnij się, że narzędzie GitHub Copilot jest zainstalowane i zalogowano się.</target>
         <note>Do not translate GitHub or Copilot</note>
       </trans-unit>
+      <trans-unit id="Error_CopilotRequestFailed">
+        <source>GitHub Copilot was unable to complete the request. See the Activity Log for details.</source>
+        <target state="new">GitHub Copilot was unable to complete the request. See the Activity Log for details.</target>
+        <note>Do not translate GitHub or Copilot</note>
+      </trans-unit>
       <trans-unit id="Error_CopilotServiceNotAvailable">
         <source>GitHub Copilot Service is not available. Ensure GitHub Copilot is installed and signed in.</source>
         <target state="translated">Narzędzie GitHub Copilot jest niedostępne. Upewnij się, że narzędzie GitHub Copilot jest zainstalowane i zalogowano się.</target>
@@ -235,6 +240,21 @@
       <trans-unit id="Text_MachineWidePackageSource_Description">
         <source>Machine‑wide package sources are provisioned by Visual Studio workloads and can only be enabled or disabled.</source>
         <target state="translated">Źródła pakietów dla całej maszyny są aprowizowane przez obciążenia programu Visual Studio i można je tylko włączać lub wyłączać.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MinPublishAgeExceptions_Description">
+        <source>Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</source>
+        <target state="new">Package ID patterns exempt from minimum publish age checks. [Learn more](https://aka.ms/nuget/min-publish-age)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MinPublishAgeExceptions_Title">
+        <source>Minimum publish age exceptions</source>
+        <target state="new">Minimum publish age exceptions</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_MinPublishAgeHours_Header">
+        <source>Minimum publish age (hours)</source>
+        <target state="new">Minimum publish age (hours)</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_PackageSourceEnabled_Header">

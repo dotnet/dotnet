@@ -147,13 +147,7 @@ extends:
                 displayName: Test API Baselines
                 condition: succeeded()
               - powershell: |
-                  $files = Get-ChildItem -Path 'artifacts\coverage' -Filter '*.cobertura.xml' -ErrorAction SilentlyContinue
-                  if ($files) {
-                    $env:PATH += ";$env:USERPROFILE\.dotnet\tools"
-                    dotnet tool update --global dotnet-coverage
-                    if ($LASTEXITCODE -ne 0) { dotnet tool install --global dotnet-coverage }
-                    dotnet-coverage merge -o 'artifacts\coverage\coverage.cobertura.xml' -f cobertura $files.FullName
-                  }
+                  . ./eng/merge-coverage.ps1 -CoverageDirectory artifacts/coverage -OutputFile artifacts/coverage/coverage.cobertura.xml
                 displayName: Merge coverage reports
                 condition: always()
                 continueOnError: true
@@ -163,6 +157,14 @@ extends:
                   summaryFileLocation: artifacts/coverage/coverage.cobertura.xml
                 condition: always()
                 continueOnError: true
+            templateContext:
+              outputs:
+              - output: pipelineArtifact
+                displayName: Upload TestResults
+                condition: always()
+                continueOnError: true
+                targetPath: artifacts/TestResults/$(_BuildConfig)/
+                artifactName: $(Agent.Os)_$(Agent.JobName) TestResults_Attempt_$(System.JobAttempt)
 
           - job: Windows_SqlServer
             displayName: 'Windows SQL Server'
@@ -184,13 +186,7 @@ extends:
                   /p:Projects="$(Build.SourcesDirectory)/test/EFCore.SqlServer.FunctionalTests/EFCore.SqlServer.FunctionalTests.csproj;$(Build.SourcesDirectory)/test/EFCore.SqlServer.HierarchyId.Tests/EFCore.SqlServer.HierarchyId.Tests.csproj;$(Build.SourcesDirectory)/test/EFCore.CrossStore.FunctionalTests/EFCore.CrossStore.FunctionalTests.csproj;$(Build.SourcesDirectory)/test/EFCore.OData.FunctionalTests/EFCore.OData.FunctionalTests.csproj;$(Build.SourcesDirectory)/test/EFCore.AspNet.SqlServer.FunctionalTests/EFCore.AspNet.SqlServer.FunctionalTests.csproj;$(Build.SourcesDirectory)/test/EFCore.VisualBasic.FunctionalTests/EFCore.VisualBasic.FunctionalTests.vbproj;$(Build.SourcesDirectory)/test/EFCore.FSharp.FunctionalTests/EFCore.FSharp.FunctionalTests.fsproj"
                 displayName: Test SQL Server
               - powershell: |
-                  $files = Get-ChildItem -Path 'artifacts\coverage' -Filter '*.cobertura.xml' -ErrorAction SilentlyContinue
-                  if ($files) {
-                    $env:PATH += ";$env:USERPROFILE\.dotnet\tools"
-                    dotnet tool update --global dotnet-coverage
-                    if ($LASTEXITCODE -ne 0) { dotnet tool install --global dotnet-coverage }
-                    dotnet-coverage merge -o 'artifacts\coverage\coverage.cobertura.xml' -f cobertura $files.FullName
-                  }
+                  . ./eng/merge-coverage.ps1 -CoverageDirectory artifacts/coverage -OutputFile artifacts/coverage/coverage.cobertura.xml
                 displayName: Merge coverage reports
                 condition: always()
                 continueOnError: true
@@ -200,6 +196,14 @@ extends:
                   summaryFileLocation: artifacts/coverage/coverage.cobertura.xml
                 condition: always()
                 continueOnError: true
+            templateContext:
+              outputs:
+              - output: pipelineArtifact
+                displayName: Upload TestResults
+                condition: always()
+                continueOnError: true
+                targetPath: artifacts/TestResults/$(_BuildConfig)/
+                artifactName: $(Agent.Os)_$(Agent.JobName) TestResults_Attempt_$(System.JobAttempt)
 
           - job: macOS
             condition: ${{ or(eq(parameters.jobs, '[]'), contains(parameters.jobs, '"macOS"')) }}
@@ -219,15 +223,7 @@ extends:
                   # Work-around for https://github.com/dotnet/runtime/issues/70758
                   COMPlus_EnableWriteXorExecute: 0
                 displayName: Build
-              - bash: |
-                  shopt -s nullglob
-                  files=(artifacts/coverage/*.cobertura.xml)
-                  if [ ${#files[@]} -gt 0 ]; then
-                    export DOTNET_ROOT="$(Build.SourcesDirectory)/.dotnet"
-                    export PATH="$DOTNET_ROOT:$PATH:$HOME/.dotnet/tools"
-                    dotnet tool update --global dotnet-coverage || dotnet tool install --global dotnet-coverage
-                    dotnet-coverage merge -o artifacts/coverage/coverage.cobertura.xml -f cobertura "${files[@]}"
-                  fi
+              - pwsh: . ./eng/merge-coverage.ps1 -CoverageDirectory artifacts/coverage -OutputFile artifacts/coverage/coverage.cobertura.xml
                 displayName: Merge coverage reports
                 condition: always()
                 continueOnError: true
@@ -237,6 +233,14 @@ extends:
                   summaryFileLocation: artifacts/coverage/coverage.cobertura.xml
                 condition: always()
                 continueOnError: true
+            templateContext:
+              outputs:
+              - output: pipelineArtifact
+                displayName: Upload TestResults
+                condition: always()
+                continueOnError: true
+                targetPath: artifacts/TestResults/$(_BuildConfig)/
+                artifactName: $(Agent.Os)_$(Agent.JobName) TestResults_Attempt_$(System.JobAttempt)
           - job: Linux
             condition: ${{ or(eq(parameters.jobs, '[]'), contains(parameters.jobs, '"Linux"')) }}
             timeoutInMinutes: 180
@@ -254,14 +258,7 @@ extends:
                 env:
                   Test__Cosmos__DefaultConnection: $(_CosmosConnectionUrl)
                 displayName: Build
-              - bash: |
-                  shopt -s nullglob
-                  files=(artifacts/coverage/*.cobertura.xml)
-                  if [ ${#files[@]} -gt 0 ]; then
-                    export PATH="$PATH:$HOME/.dotnet/tools"
-                    dotnet tool update --global dotnet-coverage || dotnet tool install --global dotnet-coverage
-                    dotnet-coverage merge -o artifacts/coverage/coverage.cobertura.xml -f cobertura "${files[@]}"
-                  fi
+              - pwsh: . ./eng/merge-coverage.ps1 -CoverageDirectory artifacts/coverage -OutputFile artifacts/coverage/coverage.cobertura.xml
                 displayName: Merge coverage reports
                 condition: always()
                 continueOnError: true
@@ -275,6 +272,13 @@ extends:
               sdl:
                 binskim:
                   preReleaseVersion: ''
+              outputs:
+              - output: pipelineArtifact
+                displayName: Upload TestResults
+                condition: always()
+                continueOnError: true
+                targetPath: artifacts/TestResults/$(_BuildConfig)/
+                artifactName: $(Agent.Os)_$(Agent.JobName) TestResults_Attempt_$(System.JobAttempt)
 
           - job: Helix_Windows
             displayName: 'Helix Windows'
