@@ -4150,7 +4150,8 @@ class [[nodiscard]] UnorderedElementsAreMatcher {
   template <typename Container>
   operator Matcher<Container>() const {
     typedef GTEST_REMOVE_REFERENCE_AND_CONST_(Container) RawContainer;
-    typedef typename internal::RangeTraits<RawContainer>::value_type Element;
+    typedef typename internal::StlContainerView<RawContainer>::type View;
+    typedef typename internal::RangeTraits<View>::value_type Element;
     typedef ::std::vector<Matcher<const Element&>> MatcherVec;
     MatcherVec matchers;
     matchers.reserve(::std::tuple_size<MatcherTuple>::value);
