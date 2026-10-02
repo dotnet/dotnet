@@ -47,14 +47,14 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>11.0.100-rc.1.26420.103</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>11.0.100-rc.1.26420.103</PrivateSourceBuiltArtifactsVersion>
+    <PrivateSourceBuiltSdkVersion>12.0.100-alpha.1.26480.102</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>12.0.100-alpha.1.26480.102</PrivateSourceBuiltArtifactsVersion>
     <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
     <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.8</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
-    <MicrosoftBuildVersion>18.0.2</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion>18.8.2</MicrosoftBuildVersion>
     <!-- nuget dependencies -->
     <NuGetPackagingVersion>7.0.3</NuGetPackagingVersion>
     <NuGetProtocolVersion>7.0.3</NuGetProtocolVersion>
