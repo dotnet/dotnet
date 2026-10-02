@@ -179,13 +179,42 @@ abstraction rather than duplicating the assertion body.
 
 ## Legacy coverage migration
 
-Legacy retirement requires assertion and matrix equivalence, not command-name
-overlap. This layer retires `DivZero.script`, `NestedExceptionTest.script`, and
+Legacy retirement requires comparing assertions and matrices, not command-name
+overlap; intentional matrix reductions are documented in the coverage audit.
+Matching legacy live runs is not required for this migration; existing
+live-enabled matrices remain in place.
+This layer retires `DivZero.script`, `NestedExceptionTest.script`, and
 `SimpleThrow.script` after moving their exact exception, source-line, stack,
-thread, live/dump, and CLRMA behavior into focused tests. `Reflection.script`
-remains active because its reflected target-invocation boundary is still a
-specialized legacy scenario. [COVERAGE.md](COVERAGE.md) records the evidence and
-all remaining retained scenarios and gaps.
+thread, live/dump, and CLRMA behavior into focused tests.
+`ClrStackWithNumberOfFrames.script` and `LineNums.script` are also retired after
+adding dump-only ICorDebug frame-limit checks and focused LineNums source-line
+assertions for `clrstack` and `printexception -lines`. Generic exception and
+thread checks use existing targets. Frame-limit tests
+retain the original Heap-dump matrix; live and additional dump-kind coverage
+are deferred. Their shared debuggees remain.
+The ICorDebug frame-limit test excludes Framework, as the legacy test did.
+Temporary, narrowly scoped ICorDebug skips for .NET 10 Windows x86 NestedException
+and .NET 11 macOS ARM64 SingleFile/cDAC are defined in
+[SOSTestSkips.cs](SOSTestSkips.cs), with inline investigation notes and removal criteria.
+`ClrStackRuntimeFramesTests` adds dump-only checks for `FaultingExceptionFrame`
+on DivZero and `SoftwareExceptionFrame` on SimpleThrow. The latter runs on .NET 10+
+Core/SingleFile; both preserve the legacy Windows x86 exclusion.
+The DivZero faulting-frame check also skips ARM/ARM64 via `SOSTestSkips`: division by
+zero uses a software throw there, and the legacy test did not run on those platforms.
+The software-frame check remains enabled on ARM/ARM64.
+`StackTraceFaultingExceptionFrame.script` and `StackTraceSoftwareExceptionFrame.script`
+are retired; their shared debuggees remain.
+`GCTests.script` and `GCPOH.script` are retired using existing heap coverage plus
+known POH object location and roots, Core static reference fields, and native
+`dumpobj -refs` coverage using the existing Scenarios target. These additions use dump-only
+matrices. Framework shared-static field coverage is deferred. The reference
+test uses the standard matrix, including SingleFile,
+and checks identical reference oracles through `dumpobj -refs` in native hosts
+or `dumpobj` plus `dumpobjgcrefs` in dotnet-dump, which lacks the callback bridge.
+`Reflection.script` remains active because its reflected target-invocation
+boundary is still a specialized legacy scenario; `DumpGCData.script` retains
+its zero-to-one pinned-object transition. [COVERAGE.md](COVERAGE.md) records the
+evidence and all remaining retained scenarios and gaps.
 
 ## Controls
 
@@ -207,7 +236,7 @@ Comma-separated matrix allow-lists are case-insensitive enum names:
 | `SOSHARNESS_LLDB_LOAD_TIMEOUT` | Set the positive LLDB target-load timeout in seconds. |
 | `SOSHARNESS_LLDB_TRACE` | Write the LLDB command trace to the specified file. |
 | `SOSHARNESS_DAC_DIR` | Override the legacy DAC directory used by the dbgeng engine host. |
-| `SOSHARNESS_CDAC_DIR` | Override cDAC discovery with a directory containing the cDAC. |
+| `SOSHARNESS_CDAC_DIR` | Override cDAC discovery with a directory containing the matched universal cDAC and DBI binaries. |
 | `SOSHARNESS_USECDAC` | Local global DAC clamp; overrides the matrix DAC selection and is not set in CI. |
 | `LLDB_PATH` | Override LLDB discovery. Otherwise Xcode and then `PATH` are searched. |
 | `NUGET_PACKAGES` | Override the NuGet package root used to locate runtime packs and cDAC assets. |
@@ -277,6 +306,19 @@ platform-specific host selection, including .NET 11 on macOS.
 also prepares the runtime shards, creates the on-disk ZIP, and returns complete
 work items. To submit SOS alone, invoke `eng/helix/SendToHelix.proj` with
 `HelixTestProject` set to the absolute path of `SOS.Tests.csproj`.
+
+Private runtime validation passes `PrivateBuildTesting=true` and
+`LiveRuntimeDir` to the sender. The payload includes that complete runtime
+layout and overlays it onto the matching Helix-provisioned runtime before the
+test starts. Private runs submit only the configured runtime shard and select
+the `Core` flavor; self-contained and Framework targets continue to use product
+runtime packages and are therefore excluded.
+
+Private universal cDAC and DBI binaries are staged as a matched pair under
+`artifacts/cdac-override/<Configuration>`. Before creating a host, the harness
+installs that pair beside native SOS for CDB and LLDB or in dotnet-dump's
+`publish/<TargetRid>` native directory. The same path is used in Helix and local
+runs, with `SOSHARNESS_CDAC_DIR` available to select a different source locally.
 
 The payload includes a `.sos-test-payload` marker and preserves the repository
 artifact layout. `RepoLayout` discovers that root and derives all tool,

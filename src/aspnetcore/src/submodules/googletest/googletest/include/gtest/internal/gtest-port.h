@@ -176,7 +176,7 @@
 //   GTEST_USES_POSIX_RE    - enhanced POSIX regex is used. Do not confuse with
 //                            GTEST_HAS_POSIX_RE (see above) which users can
 //                            define themselves.
-//   GTEST_USES_SIMPLE_RE   - our own simple regex is used;
+//   GTEST_USES_STD_RE      - std::regex from the C++ standard library is used;
 //                            the above RE\b(s) are mutually exclusive.
 //   GTEST_HAS_ABSL         - Google Test is compiled with Abseil.
 
@@ -236,7 +236,6 @@
 // Integer types:
 //   TypeWithSize   - maps an integer to a int type.
 //   TimeInMillis   - integers of known sizes.
-//   BiggestInt     - the biggest signed integer type.
 //
 // Command-line utilities:
 //   GetInjectableArgvs() - returns the command line as a vector of strings.
@@ -342,13 +341,6 @@
 #define GTEST_INIT_GOOGLE_TEST_NAME_ "testing::InitGoogleTest"
 #endif  // !defined(GTEST_INIT_GOOGLE_TEST_NAME_)
 
-// Determines the version of gcc that is used to compile this.
-#ifdef __GNUC__
-// 40302 means version 4.3.2.
-#define GTEST_GCC_VER_ \
-  (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-#endif  // __GNUC__
-
 // Macros for disabling Microsoft Visual C++ warnings.
 //
 //   GTEST_DISABLE_MSC_WARNINGS_PUSH_(4800 4385)
@@ -446,8 +438,9 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 #include <regex.h>  // NOLINT
 #define GTEST_USES_POSIX_RE 1
 #else
-// Use our own simple regex implementation.
-#define GTEST_USES_SIMPLE_RE 1
+// Use std::regex from the C++ standard library.
+#include <regex>  // NOLINT
+#define GTEST_USES_STD_RE 1
 #endif
 
 #ifndef GTEST_HAS_EXCEPTIONS
@@ -456,14 +449,6 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 #if defined(_MSC_VER) && defined(_CPPUNWIND)
 // MSVC defines _CPPUNWIND to 1 if and only if exceptions are enabled.
 #define GTEST_HAS_EXCEPTIONS 1
-#elif defined(__BORLANDC__)
-// C++Builder's implementation of the STL uses the _HAS_EXCEPTIONS
-// macro to enable exceptions, so we'll do the same.
-// Assumes that exceptions are enabled by default.
-#ifndef _HAS_EXCEPTIONS
-#define _HAS_EXCEPTIONS 1
-#endif  // _HAS_EXCEPTIONS
-#define GTEST_HAS_EXCEPTIONS _HAS_EXCEPTIONS
 #elif defined(__clang__)
 // clang defines __EXCEPTIONS if and only if exceptions are enabled before clang
 // 220714, but if and only if cleanups are enabled after that. In Obj-C++ files,
@@ -481,41 +466,89 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 #elif defined(__GNUC__) && defined(__EXCEPTIONS) && __EXCEPTIONS
 // gcc defines __EXCEPTIONS to 1 if and only if exceptions are enabled.
 #define GTEST_HAS_EXCEPTIONS 1
-#elif defined(__SUNPRO_CC)
-// Sun Pro CC supports exceptions.  However, there is no compile-time way of
-// detecting whether they are enabled or not.  Therefore, we assume that
-// they are enabled unless the user tells us otherwise.
-#define GTEST_HAS_EXCEPTIONS 1
-#elif defined(__IBMCPP__) && defined(__EXCEPTIONS) && __EXCEPTIONS
-// xlC defines __EXCEPTIONS to 1 if and only if exceptions are enabled.
-#define GTEST_HAS_EXCEPTIONS 1
-#elif defined(__HP_aCC)
-// Exception handling is in effect by default in HP aCC compiler. It has to
-// be turned of by +noeh compiler option if desired.
-#define GTEST_HAS_EXCEPTIONS 1
 #else
 // For other compilers, we assume exceptions are disabled to be
 // conservative.
 #define GTEST_HAS_EXCEPTIONS 0
-#endif  // defined(_MSC_VER) || defined(__BORLANDC__)
+#endif  // defined(_MSC_VER) && defined(_CPPUNWIND)
 #endif  // GTEST_HAS_EXCEPTIONS
 
-#ifndef GTEST_HAS_STD_WSTRING
-// The user didn't tell us whether ::std::wstring is available, so we need
-// to figure it out.
-// Cygwin 1.7 and below doesn't support ::std::wstring.
-// Solaris' libc++ doesn't support it either.  Android has
-// no support for it at least as recent as Froyo (2.2).
-#if (!(defined(GTEST_OS_LINUX_ANDROID) || defined(GTEST_OS_CYGWIN) || \
-       defined(GTEST_OS_SOLARIS) || defined(GTEST_OS_HAIKU) ||        \
-       defined(GTEST_OS_ESP32) || defined(GTEST_OS_ESP8266) ||        \
-       defined(GTEST_OS_XTENSA) || defined(GTEST_OS_QURT) ||          \
-       defined(GTEST_OS_NXP_QN9090) || defined(GTEST_OS_NRF52)))
-#define GTEST_HAS_STD_WSTRING 1
+// MSVC either defines wchar_t as a typedef of unsigned short, or as a native
+// type (in which case, it defines _NATIVE_WCHAR_T_DEFINED). When wchar_t is a
+// typedef, defining an overload for const wchar_t* would cause unsigned short*
+// be printed as a wide string, possibly causing invalid memory accesses, so we
+// omit wchar_t overloads in that case.
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+#define GTEST_HAS_NATIVE_WCHAR 0
 #else
-#define GTEST_HAS_STD_WSTRING 0
+#define GTEST_HAS_NATIVE_WCHAR 1
 #endif
-#endif  // GTEST_HAS_STD_WSTRING
+
+// 1. Calculate default GTEST_HAS_STD_WSTRING values based on STL capabilities.
+#if defined(_MSVC_STL_VERSION)
+// Microsoft's STL implementation always supports ::std::wstring.
+#define GTEST_HAS_STD_WSTRING_DEFAULT 1
+
+#elif defined(_LIBCPP_VERSION)
+// Modern libc++ always defines _LIBCPP_HAS_WIDE_CHARACTERS; its value
+// determines whether wide characters are supported.
+// Older libc++ omits a definition for _LIBCPP_HAS_NO_WIDE_CHARACTERS when wide
+// characters are supported.
+#if (defined(_LIBCPP_HAS_WIDE_CHARACTERS) && !_LIBCPP_HAS_WIDE_CHARACTERS) || \
+    defined(_LIBCPP_HAS_NO_WIDE_CHARACTERS)
+#define GTEST_HAS_STD_WSTRING_DEFAULT 0
+#else
+#define GTEST_HAS_STD_WSTRING_DEFAULT 1
+#endif
+
+#elif defined(__GLIBCXX__)
+#if defined(_GLIBCXX_USE_WCHAR_T) && _GLIBCXX_USE_WCHAR_T
+#define GTEST_HAS_STD_WSTRING_DEFAULT 1
+#else
+#define GTEST_HAS_STD_WSTRING_DEFAULT 0
+#endif
+
+#else
+// Unknown standard library implementation; fall back looking at the OS.
+//
+// Always let the user override the defaults in this case; they might have more
+// information about what's supported than we do.
+#if defined(GTEST_OS_LINUX_ANDROID)
+// Android started supporting std::wstring with API Level 21 (Lollipop).
+#define GTEST_HAS_STD_WSTRING_DEFAULT (__ANDROID_API__ >= 21)
+// The following platforms are known not to support ::std::wstring; assume it's
+// supported on all others.
+//
+// Cygwin 1.7 and below doesn't support ::std::wstring.
+// Solaris' libc++ doesn't support it either.
+#elif defined(GTEST_OS_CYGWIN) || defined(GTEST_OS_SOLARIS) || \
+    defined(GTEST_OS_HAIKU) || defined(GTEST_OS_ESP32) ||      \
+    defined(GTEST_OS_ESP8266) || defined(GTEST_OS_XTENSA) ||   \
+    defined(GTEST_OS_QURT) || defined(GTEST_OS_NXP_QN9090) ||  \
+    defined(GTEST_OS_NRF52)
+#define GTEST_HAS_STD_WSTRING_DEFAULT 0
+#else
+#define GTEST_HAS_STD_WSTRING_DEFAULT 1
+#endif
+#endif
+
+// 2. Validate explicit user overrides (if user passed -DGTEST_HAS_*=1) against
+//    what the standard library implementation tells us it supports.
+#if defined(GTEST_HAS_STD_WSTRING) && GTEST_HAS_STD_WSTRING
+#if defined(_LIBCPP_VERSION) &&                                                \
+    ((defined(_LIBCPP_HAS_WIDE_CHARACTERS) && !_LIBCPP_HAS_WIDE_CHARACTERS) || \
+     defined(_LIBCPP_HAS_NO_WIDE_CHARACTERS))
+#error Cannot explicitly enable GTEST_HAS_STD_WSTRING without libc++ wide character support.
+#elif defined(__GLIBCXX__) && \
+    !(defined(_GLIBCXX_USE_WCHAR_T) && _GLIBCXX_USE_WCHAR_T)
+#error Cannot explicitly enable GTEST_HAS_STD_WSTRING without libstdc++ wide character support.
+#endif
+#endif
+
+// 3. Set final values if not explicitly overridden by user
+#if !defined(GTEST_HAS_STD_WSTRING)
+#define GTEST_HAS_STD_WSTRING GTEST_HAS_STD_WSTRING_DEFAULT
+#endif
 
 #ifndef GTEST_HAS_FILE_SYSTEM
 // Most platforms support a file system.
@@ -560,16 +593,6 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 #elif defined(__clang__)
 
 #define GTEST_HAS_RTTI __has_feature(cxx_rtti)
-
-// Starting with version 9.0 IBM Visual Age defines __RTTI_ALL__ to 1 if
-// both the typeid and dynamic_cast features are present.
-#elif defined(__IBMCPP__) && (__IBMCPP__ >= 900)
-
-#ifdef __RTTI_ALL__
-#define GTEST_HAS_RTTI 1
-#else
-#define GTEST_HAS_RTTI 0
-#endif
 
 #else
 
@@ -692,8 +715,7 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 
 // Typed tests need <typeinfo> and variadic macros, which GCC, VC++ 8.0,
 // Sun Pro CC, IBM Visual Age, and HP aCC support.
-#if defined(__GNUC__) || defined(_MSC_VER) || defined(__SUNPRO_CC) || \
-    defined(__IBMCPP__) || defined(__HP_aCC)
+#if defined(__GNUC__) || defined(_MSC_VER)
 #define GTEST_HAS_TYPED_TEST 1
 #define GTEST_HAS_TYPED_TEST_P 1
 #endif
@@ -807,8 +829,7 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 #ifndef GTEST_HAS_SEH
 // The user didn't tell us, so we need to figure it out.
 
-#if defined(_MSC_VER) || defined(__BORLANDC__)
-// These two compilers are known to support SEH.
+#ifdef _MSC_VER
 #define GTEST_HAS_SEH 1
 #else
 // Assume no SEH.
@@ -972,12 +993,11 @@ class GTEST_API_ [[nodiscard]] RE {
   RE2 regex_;
 };
 
-#elif defined(GTEST_USES_POSIX_RE) || defined(GTEST_USES_SIMPLE_RE)
+#elif defined(GTEST_USES_POSIX_RE) || defined(GTEST_USES_STD_RE)
 GTEST_DISABLE_MSC_WARNINGS_PUSH_(4251 \
 /* class A needs to have dll-interface to be used by clients of class B */)
 
-// A simple C++ wrapper for <regex.h>.  It uses the POSIX Extended
-// Regular Expression syntax.
+// A simple C++ wrapper for <regex.h> or <regex>.
 class GTEST_API_ [[nodiscard]] RE {
  public:
   // A copy constructor is required by the Standard to initialize object
@@ -1017,9 +1037,9 @@ class GTEST_API_ [[nodiscard]] RE {
   regex_t full_regex_;     // For FullMatch().
   regex_t partial_regex_;  // For PartialMatch().
 
-#else  // GTEST_USES_SIMPLE_RE
+#else  // GTEST_USES_STD_RE
 
-  std::string full_pattern_;  // For FullMatch();
+  std::regex regex_;
 
 #endif
 };
@@ -1735,14 +1755,16 @@ class [[nodiscard]] MutexBase {
 #define GTEST_DECLARE_STATIC_MUTEX_(mutex) \
   extern ::testing::internal::MutexBase mutex
 
+#if defined(PTHREAD_NULL)
+#define GTEST_INTERNAL_PTHREAD_NULL PTHREAD_NULL
+#else
+#define GTEST_INTERNAL_PTHREAD_NULL (pthread_t{})
+#endif
+
 // Defines and statically (i.e. at link time) initializes a static mutex.
-// The initialization list here does not explicitly initialize each field,
-// instead relying on default initialization for the unspecified fields. In
-// particular, the owner_ field (a pthread_t) is not explicitly initialized.
-// This allows initialization to work whether pthread_t is a scalar or struct.
-// The flag -Wmissing-field-initializers must not be specified for this to work.
-#define GTEST_DEFINE_STATIC_MUTEX_(mutex) \
-  ::testing::internal::MutexBase mutex = {PTHREAD_MUTEX_INITIALIZER, false, 0}
+#define GTEST_DEFINE_STATIC_MUTEX_(mutex)                                   \
+  ::testing::internal::MutexBase mutex = {PTHREAD_MUTEX_INITIALIZER, false, \
+                                          GTEST_INTERNAL_PTHREAD_NULL}
 
 // The Mutex class can only be used for mutexes created at runtime. It
 // shares its API with MutexBase otherwise.
@@ -2086,12 +2108,6 @@ inline bool IsDir(const StatStruct& st) { return S_ISDIR(st.st_mode); }
 
 #ifdef GTEST_OS_WINDOWS
 
-#ifdef __BORLANDC__
-inline int DoIsATTY(int fd) { return isatty(fd); }
-inline int StrCaseCmp(const char* s1, const char* s2) {
-  return stricmp(s1, s2);
-}
-#else  // !__BORLANDC__
 #if defined(GTEST_OS_WINDOWS_MOBILE) || defined(GTEST_OS_ZOS) || \
     defined(GTEST_OS_IOS) || defined(GTEST_OS_WINDOWS_PHONE) ||  \
     defined(GTEST_OS_WINDOWS_RT) || defined(ESP_PLATFORM)
@@ -2102,7 +2118,6 @@ inline int DoIsATTY(int fd) { return _isatty(fd); }
 inline int StrCaseCmp(const char* s1, const char* s2) {
   return _stricmp(s1, s2);
 }
-#endif  // __BORLANDC__
 
 #else
 
@@ -2136,7 +2151,13 @@ GTEST_DISABLE_DEPRECATED_PUSH_()
     !defined(GTEST_OS_WINDOWS_RT) && !defined(GTEST_OS_WINDOWS_GAMES) &&     \
     !defined(GTEST_OS_ESP8266) && !defined(GTEST_OS_XTENSA) &&               \
     !defined(GTEST_OS_QURT)
-inline int ChDir(const char* dir) { return chdir(dir); }
+inline int ChDir(const char* dir) {
+#ifdef GTEST_OS_WINDOWS
+  return _chdir(dir);
+#else
+  return chdir(dir);
+#endif
+}
 #endif
 inline FILE* FOpen(const char* path, const char* mode) {
 #if defined(GTEST_OS_WINDOWS) && !defined(GTEST_OS_WINDOWS_MINGW)
@@ -2153,17 +2174,37 @@ inline FILE* FOpen(const char* path, const char* mode) {
 inline FILE* FReopen(const char* path, const char* mode, FILE* stream) {
   return freopen(path, mode, stream);
 }
-inline FILE* FDOpen(int fd, const char* mode) { return fdopen(fd, mode); }
+inline FILE* FDOpen(int fd, const char* mode) {
+#ifdef GTEST_OS_WINDOWS
+  return _fdopen(fd, mode);
+#else
+  return fdopen(fd, mode);
+#endif
+}
 #endif  // !GTEST_OS_WINDOWS_MOBILE && !GTEST_OS_QURT
 inline int FClose(FILE* fp) { return fclose(fp); }
 #if !defined(GTEST_OS_WINDOWS_MOBILE) && !defined(GTEST_OS_QURT)
 inline int Read(int fd, void* buf, unsigned int count) {
+#ifdef GTEST_OS_WINDOWS
+  return static_cast<int>(_read(fd, buf, count));
+#else
   return static_cast<int>(read(fd, buf, count));
+#endif
 }
 inline int Write(int fd, const void* buf, unsigned int count) {
+#ifdef GTEST_OS_WINDOWS
+  return static_cast<int>(_write(fd, buf, count));
+#else
   return static_cast<int>(write(fd, buf, count));
+#endif
 }
-inline int Close(int fd) { return close(fd); }
+inline int Close(int fd) {
+#ifdef GTEST_OS_WINDOWS
+  return _close(fd);
+#else
+  return close(fd);
+#endif
+}
 #endif  // !GTEST_OS_WINDOWS_MOBILE && !GTEST_OS_QURT
 #endif  // GTEST_HAS_FILE_SYSTEM
 
@@ -2178,11 +2219,6 @@ inline const char* GetEnv(const char* name) {
   // We are on an embedded platform, which has no environment variables.
   static_cast<void>(name);  // To prevent 'unused argument' warning.
   return nullptr;
-#elif defined(__BORLANDC__) || defined(__SunOS_5_8) || defined(__SunOS_5_9)
-  // Environment variables which we programmatically clear will be set to the
-  // empty string rather than unset (NULL).  Handle that case.
-  const char* const env = getenv(name);
-  return (env != nullptr && env[0] != '\0') ? env : nullptr;
 #else
   return getenv(name);
 #endif
@@ -2216,14 +2252,6 @@ GTEST_DISABLE_DEPRECATED_POP_()
 #else
 #define GTEST_SNPRINTF_ snprintf
 #endif
-
-// The biggest signed integer type the compiler supports.
-//
-// long long is guaranteed to be at least 64-bits in C++11.
-using BiggestInt = long long;  // NOLINT
-
-// The maximum number a BiggestInt can represent.
-constexpr BiggestInt kMaxBiggestInt = (std::numeric_limits<BiggestInt>::max)();
 
 // This template class serves as a compile-time function from size to
 // type.  It maps a size in bytes to a primitive type with that
