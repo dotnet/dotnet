@@ -42,51 +42,6 @@ param
     [string]$BuildInfoDirectory
 )
 
-Function Get-Version {
-    param(
-        [string]$buildNumber
-    )
-        Write-Host "Evaluating the new VSIX Version : $buildNumber"
-        # The major version is NuGetMajorVersion + 11, to match VS's number.
-        # The new minor version is: 4.0.0 => 40000, 4.11.5 => 41105.
-        # This assumes we only get to NuGet major/minor/patch 99 at worst, otherwise the logic breaks.
-        # The final version for NuGet 4.0.0, build number 3128 would be 15.0.40000.3128
-        $parsedVersion = [System.Version]::Parse($buildNumber)
-        $major = $parsedVersion.Major + 11
-        $patchVersion = $parsedVersion.Major * 10000 + $parsedVersion.Minor * 100 + $parsedVersion.Build
-        $finalVersion = "$major.0.$patchVersion.$($parsedVersion.Revision)"
-
-        Write-Host "The new VSIX Version is: $finalVersion"
-        return $finalVersion
-}
-
-Function Update-VsixVersion {
-    param(
-        [string]$buildNumber,
-        [string]$manifestName,
-        [string]$repositoryPath
-    )
-    $vsixManifest = Join-Path "$repositoryPath\src\NuGet.Clients\NuGet.VisualStudio.Client" $manifestName
-
-    Write-Host "Updating the VSIX version in manifest $vsixManifest"
-
-    [xml]$xml = get-content $vsixManifest
-    $root = $xml.PackageManifest
-
-    # Reading the current version from the manifest
-    $oldVersion = $root.Metadata.Identity.Version
-    # Evaluate the new version
-    $newVersion = Get-Version $buildNumber
-    Write-Host "Updating the VSIX version [$oldVersion] => [$newVersion]"
-    Write-Host "##vso[task.setvariable variable=VsixBuildNumber;]$newVersion"
-    # setting the revision to the new version
-    $root.Metadata.Identity.Version = "$newVersion"
-
-    $xml.Save($vsixManifest)
-
-    Write-Host "Updated the VSIX version [$oldVersion] => [$($root.Metadata.Identity.Version)]"
-}
-
 Function Set-RtmLabel {
     param(
         [Parameter(Mandatory = $true)]
@@ -161,6 +116,4 @@ else
     New-Item $localBuildInfoJsonFilePath -Force | Out-Null
     $jsonRepresentation | ConvertTo-Json | Set-Content $localBuildInfoJsonFilePath
     Write-Host "Created $localBuildInfoJsonFilePath"
-
-    Update-VsixVersion -manifestName source.extension.vsixmanifest -buildNumber $BuildNumber -RepositoryPath $RepositoryPath
 }

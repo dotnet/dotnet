@@ -65,7 +65,9 @@ namespace NuGet.Configuration
 
                 if (exceptions.Count == 0)
                 {
-                    concreteSettings.AddEmptySection(ConfigurationConstants.MinPublishAgeExceptions);
+                    concreteSettings.AddEmptySection(
+                        outputSettingsFile,
+                        ConfigurationConstants.MinPublishAgeExceptions);
                 }
                 else
                 {
