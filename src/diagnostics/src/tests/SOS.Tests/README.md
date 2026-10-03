@@ -256,6 +256,7 @@ processes; they are not supported user controls:
 | `DOTNET_DbgEnableMiniDump`, `DOTNET_DbgMiniDumpType`, `DOTNET_DbgMiniDumpName`, `DOTNET_CreateDumpDiagnostics` | Configure createdump crash capture. |
 | `DOTNET_DbgEnableElfDumpOnMacOS`, `TMPDIR` | Produce readable ELF dumps and a short diagnostics socket path on macOS. |
 | `DOTNET_gcServer`, `DOTNET_GCHeapCount`, `DOTNET_GCDynamicAdaptationMode` | Create deterministic four-heap Server GC targets. |
+| `SOS_LLDB_HARDWARE_JIT_BREAKPOINTS` | Set to `1` for live LLDB hosts on macOS arm64 so SOS plants `bpmd` breakpoints as hardware breakpoints. Debugserver writes a software breakpoint by copy-on-writing the `MAP_JIT` page, and running threads can then intermittently take a spurious `EXC_BAD_ACCESS` (`KERN_PROTECTION_FAILURE`) instruction fault. Hardware breakpoints are limited to a few per process (6 on Apple M-series), and setting more fails. |
 
 ## Output and artifacts
 
@@ -287,6 +288,13 @@ failed runtime/configuration leg without increasing artifacts for passing legs.
 test project, SOS owns file collection, staging, validation, and work-item metadata.
 It creates one self-contained payload per OS, RID, configuration, and queue;
 submission uses one work item per runtime, plus the Windows Framework work item.
+Windows ARM64 runs on the Windows 11 ARM64 Helix queue with an ARM64 SDK,
+runtime, DbgEng, native SOS, and debuggee payload.
+
+The managed DbgEng engine and capture processes initialize SOS through
+`HostServices.Initialize` after loading the native extension. This shares their
+existing CoreCLR instead of starting another runtime or falling back to Desktop CLR.
+
 The payload contains `SOS.Tests`, its harness subprocesses, native SOS, the
 repository-built dotnet-dump, DbgEng on Windows, and all prebuilt Core,
 SingleFile, and Framework debuggees needed by that platform. The exact runtime
