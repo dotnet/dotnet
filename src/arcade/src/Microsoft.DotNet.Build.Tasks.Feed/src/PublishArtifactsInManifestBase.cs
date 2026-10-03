@@ -216,6 +216,8 @@ public abstract class PublishArtifactsInManifestBase : Microsoft.Build.Utilities
 
     protected LatestLinksManager LinkManager { get; set; } = null;
 
+    private readonly ConcurrentQueue<(HashSet<string> Assets, TargetFeedConfig FeedConfig)> _pendingLatestLinks = new();
+
     /// <summary>
     /// For functions where retry is possible, max number of retries to perform
     /// </summary>
@@ -1761,34 +1763,45 @@ public abstract class PublishArtifactsInManifestBase : Microsoft.Build.Utilities
         if (feedConfig.Type == FeedType.AzureStorageContainer &&
             feedConfig.LatestLinkShortUrlPrefixes.Any())
         {
-
-            if (LinkManager == null)
-            {
-                // If there is a client cert supplied, use that.
-                // Otherwise, use the client secret.
-                if (AkaMSClientCertificate != null)
-                {
-                    LinkManager = new LatestLinksManager(
-                        AkaMSClientId,
-                        AkaMSClientCertificate,
-                        AkaMSTenant,
-                        AkaMSGroupOwner,
-                        AkaMSCreatedBy,
-                        AkaMsOwners,
-                        Log);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Cannot create latest links for feed config without aka.ms authentication information");
-                }
-            }
-
-            // The latest links should be updated only after the publishing is complete, to avoid
-            // dead links in the interim.
-            await LinkManager.CreateOrUpdateLatestLinksAsync(
-                blobAssets.Select(b => b.Id).ToHashSet(),
-                feedConfig);
+            _pendingLatestLinks.Enqueue((blobAssets.Select(b => b.Id).ToHashSet(), feedConfig));
         }
+    }
+
+    protected async Task PublishAssetLocationsAndLatestLinksAsync(IProductConstructionServiceApi client)
+    {
+        await PersistPendingAssetLocationAsync(client);
+
+        // The latest links should be updated only after publishing is complete, to avoid
+        // dead links in the interim.
+        while (!Log.HasLoggedErrors && _pendingLatestLinks.TryDequeue(out var pendingLinks))
+        {
+            await CreateOrUpdateLatestLinksAsync(pendingLinks.Assets, pendingLinks.FeedConfig);
+        }
+    }
+
+    protected virtual async Task CreateOrUpdateLatestLinksAsync(HashSet<string> assets, TargetFeedConfig feedConfig)
+    {
+        if (LinkManager == null)
+        {
+            // If there is a client cert supplied, use that.
+            if (AkaMSClientCertificate != null)
+            {
+                LinkManager = new LatestLinksManager(
+                    AkaMSClientId,
+                    AkaMSClientCertificate,
+                    AkaMSTenant,
+                    AkaMSGroupOwner,
+                    AkaMSCreatedBy,
+                    AkaMsOwners,
+                    Log);
+            }
+            else
+            {
+                throw new InvalidOperationException("Cannot create latest links for feed config without aka.ms authentication information");
+            }
+        }
+
+        await LinkManager.CreateOrUpdateLatestLinksAsync(assets, feedConfig);
     }
 
     private async Task PublishAssetsUsingStreamingPublishingAsync(
