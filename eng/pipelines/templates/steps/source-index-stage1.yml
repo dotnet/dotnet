@@ -30,6 +30,7 @@ parameters:
 steps:
 - task: UseDotNet@2
   displayName: "Source Index: Install .NET SDK"
+  continueOnError: true
   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
   inputs:
     packageType: sdk
@@ -45,6 +46,7 @@ steps:
     & $dotnet tool install complog --version "${{ parameters.sourceIndexComplogPackageVersion }}" --source ${{ parameters.sourceIndexPublicPackageSource }} --tool-path $toolPath
     & $dotnet tool install UploadIndexStage1 --version ${{ parameters.sourceIndexUploadPackageVersion }} --source ${{ parameters.sourceIndexPackageSource }} --tool-path $toolPath
   displayName: "Source Index: Install Tools"
+  continueOnError: true
   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
   workingDirectory: $(Agent.TempDirectory)
 
@@ -113,10 +115,12 @@ steps:
       }
     }
   displayName: "Source Index: Process Binlogs into Complogs"
+  continueOnError: true
   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
 
 - task: AzureCLI@2
   displayName: "Source Index: Upload to Azure (${{ parameters.sourceIndexName }})"
+  continueOnError: true
   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
   inputs:
     azureSubscription: 'SourceDotNet Stage1 Publish'
@@ -143,4 +147,5 @@ steps:
       Remove-Item -Path $baseDir -Recurse -Force -ErrorAction SilentlyContinue
     }
   displayName: "Source Index: Clean up intermediate files"
+  continueOnError: true
   condition: and(always(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['SourceIndexForce'], 'true')))
