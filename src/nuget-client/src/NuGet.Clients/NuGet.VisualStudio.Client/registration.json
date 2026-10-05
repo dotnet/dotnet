@@ -197,6 +197,14 @@
                 "title": "@Text_AllowInsecureConnections_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
                 "default": false,
                 "helpUri": "https://aka.ms/nuget-https-everywhere"
+              },
+              "minPublishAgeHours": {
+                "type": "integer",
+                "title": "@Text_MinPublishAgeHours_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "minimum": 0,
+                "maximum": 256204778,
+                "default": 0,
+                "helpUri": "https://aka.ms/nuget/min-publish-age"
               }
             }
           },
@@ -205,6 +213,41 @@
           "default": [],
           "allowItemEditing": true,
           "allowAdditionsAndRemovals": true
+        },
+        "packageSources.minPublishAgeExceptions": {
+          "type": "array",
+          "title": "@Text_MinPublishAgeExceptions_Title;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "description": "@Text_MinPublishAgeExceptions_Description;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "visibleWhen": "${config:packageSources.showMinPublishAgeExceptions}",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packageIdPattern": {
+                "type": "string",
+                "title": "@Text_PackageSourceMappingPattern_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "example": "@Text_Watermark_ExamplePackageIdPattern;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "uniqueness": "caseInsensitive",
+                "maxLength": 100,
+                "messages": [
+                  {
+                    "text": "@Error_PackageSourceMappingPattern_Missing;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:packageIdPattern} ~= '^\\\\s*$'",
+                    "severity": "error"
+                  }
+                ]
+              }
+            }
+          },
+          "default": [],
+          "allowItemEditing": true,
+          "allowAdditionsAndRemovals": true,
+          "helpUri": "https://aka.ms/nuget/min-publish-age"
+        },
+        "packageSources.showMinPublishAgeExceptions": {
+          "type": "boolean",
+          "title": "@Text_MinPublishAgeExceptions_Title;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "default": false,
+          "visibleWhen": "false"
         },
         "nuGetAudit.enableCheckbox": {
           "type": "boolean",
