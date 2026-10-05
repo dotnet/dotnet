@@ -324,8 +324,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             string nuspecFileName = string.IsNullOrEmpty(PackageNuspecPath) ? string.Empty : Path.GetFileName(PackageNuspecPath);
 
             // Discover all packageable files on disk. The textOnlyPackages on-disk layout already
-            // matches the .nupkg layout (e.g. Sdk/Sdk.targets, contentFiles/cs/<tfm>/...), so a simple
-            // include-everything-except-{csproj,nuspec} works for all packages.
+            // matches the .nupkg layout (e.g. Sdk/Sdk.targets, contentFiles/cs/<tfm>/...).
             List<string> allFiles = new();
             if (Directory.Exists(projectDirectory))
             {
@@ -337,7 +336,9 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     {
                         continue;
                     }
-                    if (rel.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(rel, Path.GetFileName(TargetPath), StringComparison.OrdinalIgnoreCase) ||
+                        (!string.Equals(PackageType, "text", StringComparison.OrdinalIgnoreCase) &&
+                         rel.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)))
                         continue;
                     // .il files are the source for ilasm; the assembled .dll output is added by
                     // a separate target in src/targetPacks/Directory.Build.targets and should not

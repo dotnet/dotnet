@@ -1,0 +1,160 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.DotNet.Web.ItemTemplates.11.0</PackageId>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>11.0.0-rc.1.26453.118</PackageVersion>
+    <AssemblyName>Microsoft.DotNet.Web.ItemTemplates.11.0</AssemblyName>
+    <Serviceable>true</Serviceable>
+    <Description>Web File Templates for Microsoft Template Engine.
+
+To install the templates in this package, run 'dotnet new --install Microsoft.DotNet.Web.ItemTemplates.11.0::11.0.0-rc.1.26453.118'.</Description>
+    <PackageProjectUrl>https://asp.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>aspnet templates</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageType>Template</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="content/ApiController/.template.config/dotnetcli.host.json" Pack="true" PackagePath="content/ApiController/.template.config" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.cs.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.de.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.en.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.es.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.fr.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.it.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.ja.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.ko.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.pl.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.pt-BR.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.ru.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.tr.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.zh-Hans.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/localize/templatestrings.zh-Hant.json" Pack="true" PackagePath="content/ApiController/.template.config/localize" />
+    <None Include="content/ApiController/.template.config/template.json" Pack="true" PackagePath="content/ApiController/.template.config" />
+    <None Include="content/ApiController/ValueController.cs" Pack="true" PackagePath="content/ApiController" />
+    <None Include="content/MvcController/.template.config/dotnetcli.host.json" Pack="true" PackagePath="content/MvcController/.template.config" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.cs.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.de.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.en.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.es.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.fr.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.it.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.ja.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.ko.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.pl.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.pt-BR.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.ru.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.tr.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.zh-Hans.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/localize/templatestrings.zh-Hant.json" Pack="true" PackagePath="content/MvcController/.template.config/localize" />
+    <None Include="content/MvcController/.template.config/template.json" Pack="true" PackagePath="content/MvcController/.template.config" />
+    <None Include="content/MvcController/HomeController.cs" Pack="true" PackagePath="content/MvcController" />
+    <None Include="content/Protobuf/.template.config/dotnetcli.host.json" Pack="true" PackagePath="content/Protobuf/.template.config" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.cs.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.de.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.en.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.es.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.fr.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.it.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.ja.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.ko.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.pl.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.pt-BR.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.ru.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.tr.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.zh-Hans.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/localize/templatestrings.zh-Hant.json" Pack="true" PackagePath="content/Protobuf/.template.config/localize" />
+    <None Include="content/Protobuf/.template.config/template.json" Pack="true" PackagePath="content/Protobuf/.template.config" />
+    <None Include="content/Protobuf/protobuf.proto" Pack="true" PackagePath="content/Protobuf" />
+    <None Include="content/RazorComponent/.template.config/dotnetcli.host.json" Pack="true" PackagePath="content/RazorComponent/.template.config" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.cs.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.de.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.en.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.es.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.fr.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.it.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.ja.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.ko.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.pl.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.pt-BR.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.ru.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.tr.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.zh-Hans.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/localize/templatestrings.zh-Hant.json" Pack="true" PackagePath="content/RazorComponent/.template.config/localize" />
+    <None Include="content/RazorComponent/.template.config/template.json" Pack="true" PackagePath="content/RazorComponent/.template.config" />
+    <None Include="content/RazorComponent/Component1.razor" Pack="true" PackagePath="content/RazorComponent" />
+    <None Include="content/RazorComponent/Component1.razor.cs" Pack="true" PackagePath="content/RazorComponent" />
+    <None Include="content/RazorPage/.template.config/dotnetcli.host.json" Pack="true" PackagePath="content/RazorPage/.template.config" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.cs.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.de.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.en.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.es.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.fr.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.it.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.ja.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.ko.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.pl.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.pt-BR.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.ru.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.tr.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.zh-Hans.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/localize/templatestrings.zh-Hant.json" Pack="true" PackagePath="content/RazorPage/.template.config/localize" />
+    <None Include="content/RazorPage/.template.config/template.json" Pack="true" PackagePath="content/RazorPage/.template.config" />
+    <None Include="content/RazorPage/Index.cshtml" Pack="true" PackagePath="content/RazorPage" />
+    <None Include="content/RazorPage/Index.cshtml.cs" Pack="true" PackagePath="content/RazorPage" />
+    <None Include="content/RazorView/.template.config/dotnetcli.host.json" Pack="true" PackagePath="content/RazorView/.template.config" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.cs.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.de.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.en.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.es.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.fr.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.it.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.ja.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.ko.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.pl.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.pt-BR.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.ru.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.tr.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.zh-Hans.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/localize/templatestrings.zh-Hant.json" Pack="true" PackagePath="content/RazorView/.template.config/localize" />
+    <None Include="content/RazorView/.template.config/template.json" Pack="true" PackagePath="content/RazorView/.template.config" />
+    <None Include="content/RazorView/Index.cshtml" Pack="true" PackagePath="content/RazorView" />
+    <None Include="content/ViewImports/.template.config/dotnetcli.host.json" Pack="true" PackagePath="content/ViewImports/.template.config" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.cs.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.de.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.en.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.es.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.fr.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.it.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.ja.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.ko.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.pl.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.pt-BR.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.ru.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.tr.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.zh-Hans.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/localize/templatestrings.zh-Hant.json" Pack="true" PackagePath="content/ViewImports/.template.config/localize" />
+    <None Include="content/ViewImports/.template.config/template.json" Pack="true" PackagePath="content/ViewImports/.template.config" />
+    <None Include="content/ViewImports/_ViewImports.cshtml" Pack="true" PackagePath="content/ViewImports" />
+    <None Include="content/ViewStart/.template.config/dotnetcli.host.json" Pack="true" PackagePath="content/ViewStart/.template.config" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.cs.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.de.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.en.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.es.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.fr.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.it.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.ja.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.ko.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.pl.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.pt-BR.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.ru.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.tr.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.zh-Hans.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/localize/templatestrings.zh-Hant.json" Pack="true" PackagePath="content/ViewStart/.template.config/localize" />
+    <None Include="content/ViewStart/.template.config/template.json" Pack="true" PackagePath="content/ViewStart/.template.config" />
+    <None Include="content/ViewStart/_ViewStart.cshtml" Pack="true" PackagePath="content/ViewStart" />
+  </ItemGroup>
+
+</Project>
