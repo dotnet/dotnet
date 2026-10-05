@@ -265,6 +265,7 @@
         .gitignore;
         .gitkeep;
         .html;
+        .http;
         .ico;
         .js;
         .json;
@@ -287,6 +288,7 @@
         .txt;
         .vb;
         .vbproj;
+        .webmanifest;
         .woff;
         .woff2;
         .xlf;

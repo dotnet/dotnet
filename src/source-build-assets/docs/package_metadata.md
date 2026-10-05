@@ -88,8 +88,8 @@ differs from the centralized default. Concrete rules used today:
 | Type | Source dir | Has on-disk content packed via `<None>` | Has assembly built via `Build` | Has IL→DLL pipeline |
 |---|---|---|---|---|
 | Reference (`PackageType=ref`) | `src/referencePackages/src/<id>/<version>` | No (assembly is the content) | Yes (`<Compile>` items in `Directory.Build.targets`) | No |
-| Text-only (`PackageType=text`) | `src/textOnlyPackages/src/<id>/<version>` | Yes (everything except csproj) | No (`Build` is not invoked; only `Pack`) | No |
-| Targeting pack (`PackageType=target`) | `src/targetPacks/ILsrc/<id>/<version>` | Yes (everything except csproj/.il) | No (`Build` overridden to no-op) | Yes — `BuildTargetingPackIlSrc` runs `BeforeTargets="GenerateNuspec"` and emits `<None Pack="true">` items for each assembled `.dll` |
+| Text-only (`PackageType=text`) | `src/textOnlyPackages/src/<id>/<version>` | Yes (everything except the generated package project and nuspec; template content may include `.csproj` files) | No (`Build` is not invoked; only `Pack`) | No |
+| Targeting pack (`PackageType=target`) | `src/targetPacks/ILsrc/<id>/<version>` | Yes (everything except `.csproj`, `.nuspec`, and `.il` files) | No (`Build` overridden to no-op) | Yes — `BuildTargetingPackIlSrc` runs `BeforeTargets="GenerateNuspec"` and emits `<None Pack="true">` items for each assembled `.dll` |
 
 ## Placeholder TargetFrameworks (NU5130)
 

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.McpServer.ProjectTemplates.11.0</PackageId>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <PackageVersion>11.0.0-rc.1.26453.118</PackageVersion>
+    <AssemblyName>Microsoft.McpServer.ProjectTemplates.11.0</AssemblyName>
+    <Serviceable>true</Serviceable>
+    <Description>MCP Server Template Pack for Microsoft Template Engine
+
+To install the templates in this package, run 'dotnet new --install Microsoft.McpServer.ProjectTemplates.11.0::11.0.0-rc.1.26453.118'.</Description>
+    <PackageProjectUrl>https://asp.net/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>aspnet templates</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageType>Template</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="content/McpServer-CSharp/.template.config/dotnetcli.host.json" Pack="true" PackagePath="content/McpServer-CSharp/.template.config" />
+    <None Include="content/McpServer-CSharp/.template.config/ide.host.json" Pack="true" PackagePath="content/McpServer-CSharp/.template.config" />
+    <None Include="content/McpServer-CSharp/.template.config/ide/icon.ico" Pack="true" PackagePath="content/McpServer-CSharp/.template.config/ide" />
+    <None Include="content/McpServer-CSharp/.template.config/template.json" Pack="true" PackagePath="content/McpServer-CSharp/.template.config" />
+    <None Include="content/McpServer-CSharp/common/Tools/RandomNumberTools.cs" Pack="true" PackagePath="content/McpServer-CSharp/common/Tools" />
+    <None Include="content/McpServer-CSharp/local/.mcp/server.json" Pack="true" PackagePath="content/McpServer-CSharp/local/.mcp" />
+    <None Include="content/McpServer-CSharp/local/McpServer-CSharp.csproj" Pack="true" PackagePath="content/McpServer-CSharp/local" />
+    <None Include="content/McpServer-CSharp/local/Program.cs" Pack="true" PackagePath="content/McpServer-CSharp/local" />
+    <None Include="content/McpServer-CSharp/local/README.md" Pack="true" PackagePath="content/McpServer-CSharp/local" />
+    <None Include="content/McpServer-CSharp/remote/McpServer-CSharp.csproj" Pack="true" PackagePath="content/McpServer-CSharp/remote" />
+    <None Include="content/McpServer-CSharp/remote/McpServer-CSharp.http" Pack="true" PackagePath="content/McpServer-CSharp/remote" />
+    <None Include="content/McpServer-CSharp/remote/Program.cs" Pack="true" PackagePath="content/McpServer-CSharp/remote" />
+    <None Include="content/McpServer-CSharp/remote/Properties/launchSettings.json" Pack="true" PackagePath="content/McpServer-CSharp/remote/Properties" />
+    <None Include="content/McpServer-CSharp/remote/README.md" Pack="true" PackagePath="content/McpServer-CSharp/remote" />
+  </ItemGroup>
+
+</Project>

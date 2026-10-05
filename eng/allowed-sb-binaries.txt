@@ -55,6 +55,7 @@ src/runtime/src/libraries/System.Text.Encoding.CodePages/src/Data/codepages.nlp 
 src/runtime/src/native/external/brotli/common/dictionary.bin.br
 
 # source-build-assets
+src/source-build-assets/src/textOnlyPackages/**/*.db
 src/source-build-assets/src/externalPackages/src/newtonsoft-json/Src/Newtonsoft.Json.Tests/SpaceShipV2.bson
 src/source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass.reg # UTF16-LE text file
 src/source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass2.reg # UTF16-LE text file
