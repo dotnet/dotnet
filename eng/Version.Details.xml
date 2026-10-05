@@ -6,25 +6,25 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>14fbf8d5271c98133561eb55185fdb05b286f578</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="10.0.0-beta.26475.128">
+    <Dependency Name="Microsoft.DotNet.Build.Manifest" Version="10.0.0-beta.26504.104">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>b6b3f56c97d46e30836aa98040ba67fb999edd5a</Sha>
+      <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="10.0.113-servicing.26475.128">
+    <Dependency Name="Microsoft.NET.Sdk" Version="10.0.113-servicing.26504.104">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>b6b3f56c97d46e30836aa98040ba67fb999edd5a</Sha>
+      <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="10.0.13">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>b6b3f56c97d46e30836aa98040ba67fb999edd5a</Sha>
+      <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.Platforms" Version="10.0.13-servicing.26475.128">
+    <Dependency Name="Microsoft.NETCore.Platforms" Version="10.0.13-servicing.26504.104">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>b6b3f56c97d46e30836aa98040ba67fb999edd5a</Sha>
+      <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="10.0.0-beta.26475.128">
+    <Dependency Name="Microsoft.DotNet.SignCheckTask" Version="10.0.0-beta.26504.104">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>b6b3f56c97d46e30836aa98040ba67fb999edd5a</Sha>
+      <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25407.5">
       <Uri>arcade-services</Uri>
