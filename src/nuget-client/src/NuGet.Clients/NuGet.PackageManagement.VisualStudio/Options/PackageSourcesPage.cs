@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -19,6 +20,8 @@ namespace NuGet.PackageManagement.VisualStudio.Options
     {
         internal const bool DefaultNuGetAudit = false;
         internal const string MonikerPackageSources = "packageSources.notMachineWide";
+        internal const string MonikerMinPublishAgeExceptions = "packageSources.minPublishAgeExceptions";
+        internal const string MonikerShowMinPublishAgeExceptions = "packageSources.showMinPublishAgeExceptions";
         internal const string MonikerAuditSources = "nuGetAudit.auditSources";
         internal const string MonikerNuGetAudit = "nuGetAudit.enableCheckbox";
         internal const string MonikerMachineWideSources = "machineWide.machineWidePackageSources";
@@ -27,8 +30,10 @@ namespace NuGet.PackageManagement.VisualStudio.Options
         internal const string MonikerSourceUrl = "sourceUrl";
         internal const string MonikerIsEnabled = "isEnabled";
         internal const string MonikerAllowInsecureConnections = "allowInsecureConnections";
+        internal const string MonikerMinPublishAgeHours = "minPublishAgeHours";
+        internal const string MonikerPackageIdPattern = "packageIdPattern";
 
-        private IPackageSourceProvider _packageSourceProvider;
+        private readonly IPackageSourceProvider _packageSourceProvider;
         public event EventHandler? RevalidationRequired;
 
         public PackageSourcesPage(VSSettings vsSettings, IPackageSourceProvider packageSourceProvider)
@@ -69,6 +74,33 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                             cancellationToken);
 
                         return GetValuePackageSources<T>(packageSources);
+                    }
+                case MonikerMinPublishAgeExceptions:
+                    {
+                        IReadOnlyList<MinPublishAgeExceptionItem> exceptions = await Task.Run(
+                            () => CreateMinPublishAgeExceptionsProvider().GetMinPublishAgeExceptionItems(),
+                            cancellationToken);
+
+                        return GetValueMinPublishAgeExceptions<T>(exceptions);
+                    }
+                case MonikerShowMinPublishAgeExceptions:
+                    {
+                        bool showMinPublishAgeExceptions = await Task.Run(
+                            () =>
+                            {
+                                IReadOnlyList<PackageSource> packageSources = LoadPackageSources(isMachineWide: false);
+                                if (packageSources.Any(packageSource => packageSource.MinPublishAge > TimeSpan.Zero))
+                                {
+                                    return true;
+                                }
+
+                                return CreateMinPublishAgeExceptionsProvider()
+                                    .GetMinPublishAgeExceptionItems()
+                                    .Count > 0;
+                            },
+                            cancellationToken);
+
+                        return await ConvertValueOrThrow<T>(showMinPublishAgeExceptions);
                     }
                 case MonikerNuGetAudit:
                     {
@@ -116,6 +148,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                 switch (moniker)
                 {
                     case MonikerNuGetAudit:
+                    case MonikerShowMinPublishAgeExceptions:
                         return (ExternalSettingOperationResult)ExternalSettingOperationResult.Success.Instance;
                     case MonikerPackageSources:
                         var packageSourcesList = (IReadOnlyList<IDictionary<string, object>>)value;
@@ -125,6 +158,18 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                                 ExternalSettingOperationResult savePackageSourcesResult = SavePackageSources(packageSourcesList, cancellationToken);
                                 isRefreshNeeded = savePackageSourcesResult == ExternalSettingOperationResult.Success.Instance;
                                 return savePackageSourcesResult;
+                            },
+                            cancellationToken);
+                    case MonikerMinPublishAgeExceptions:
+                        var minPublishAgeExceptionsList = (IReadOnlyList<IDictionary<string, object>>)value;
+                        return await Task.Run(
+                            () =>
+                            {
+                                ExternalSettingOperationResult saveResult = SaveMinPublishAgeExceptions(
+                                    minPublishAgeExceptionsList,
+                                    cancellationToken);
+                                isRefreshNeeded = saveResult == ExternalSettingOperationResult.Success.Instance;
+                                return saveResult;
                             },
                             cancellationToken);
                     case MonikerAuditSources:
@@ -236,6 +281,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                     string source = packageSourceDictionary[MonikerSourceUrl].ToString();
                     bool isEnabled = (bool)packageSourceDictionary[MonikerIsEnabled];
                     bool allowInsecureConnections = (bool)packageSourceDictionary[MonikerAllowInsecureConnections];
+                    TimeSpan minPublishAge = ParseMinPublishAge(packageSourceDictionary);
 
                     PackageSource packageSource =
                         PackageSourceValidator.FindExistingOrCreate(
@@ -245,6 +291,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                             isEnabled,
                             allowInsecureConnections,
                             existingPackageSources);
+                    packageSource.MinPublishAge = minPublishAge;
 
                     packageSources.Add(packageSource);
                 }
@@ -262,6 +309,34 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             }
 
             return result;
+        }
+
+        private ExternalSettingOperationResult SaveMinPublishAgeExceptions(
+            IReadOnlyList<IDictionary<string, object>> minPublishAgeExceptionsList,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var exceptions = new List<MinPublishAgeExceptionItem>(minPublishAgeExceptionsList.Count);
+                foreach (IDictionary<string, object> exceptionDictionary in minPublishAgeExceptionsList)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    exceptions.Add(new MinPublishAgeExceptionItem
+                    {
+                        Pattern = exceptionDictionary[MonikerPackageIdPattern].ToString()
+                    });
+                }
+
+                CreateMinPublishAgeExceptionsProvider().SaveMinPublishAgeExceptions(exceptions);
+                return ExternalSettingOperationResult.Success.Instance;
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
+#pragma warning restore CA1031 // Do not catch general exception types
+            {
+                ActivityLog.LogError(ExceptionHelper.LogEntrySource, ex.ToString());
+                return CreateSettingErrorResult(ex.Message, isTransient: true);
+            }
         }
 
         private ExternalSettingOperationResult SaveAuditSources(
@@ -340,10 +415,12 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             string source = packageSourceDictionary[MonikerSourceUrl].ToString().Trim();
             bool isEnabled = (bool)packageSourceDictionary[MonikerIsEnabled];
             bool allowInsecureConnections = (bool)packageSourceDictionary[MonikerAllowInsecureConnections];
+            TimeSpan minPublishAge = ParseMinPublishAge(packageSourceDictionary);
 
             var packageSource = new PackageSource(source, lookupName, isEnabled)
             {
                 AllowInsecureConnections = allowInsecureConnections,
+                MinPublishAge = minPublishAge,
             };
 
             return packageSource;
@@ -382,13 +459,14 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                 // Each list item is represented by a dictionary, which in this case will have a single key-value pair for ConfigPath.
                 foreach (PackageSource packageSource in packageSources)
                 {
-                    var dict = new Dictionary<string, object>(capacity: 5)
+                    var dict = new Dictionary<string, object>(capacity: 6)
                     {
                         { MonikerPackageSourceId, packageSource.Name }, // Use the package source name as a unique identifier
                         { MonikerSourceName, packageSource.Name },
                         { MonikerSourceUrl, packageSource.SourceUri }, // Throws if Source is an invalid URI
                         { MonikerIsEnabled, packageSource.IsEnabled },
-                        { MonikerAllowInsecureConnections, packageSource.AllowInsecureConnections }
+                        { MonikerAllowInsecureConnections, packageSource.AllowInsecureConnections },
+                        { MonikerMinPublishAgeHours, (long)packageSource.MinPublishAge.TotalHours }
                     };
 
                     packageSourcesList.Add(dict);
@@ -411,6 +489,43 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             return result;
         }
 
+        private static ExternalSettingOperationResult<T> GetValueMinPublishAgeExceptions<T>(
+            IReadOnlyList<MinPublishAgeExceptionItem> exceptions)
+        {
+            var exceptionList = new List<Dictionary<string, object>>(exceptions.Count);
+            foreach (MinPublishAgeExceptionItem exception in exceptions)
+            {
+                exceptionList.Add(new Dictionary<string, object>(capacity: 1)
+                {
+                    { MonikerPackageIdPattern, exception.Pattern }
+                });
+            }
+
+            return ExternalSettingOperationResult.SuccessResult((T)(object)exceptionList);
+        }
+
+        private MinPublishAgeExceptionsProvider CreateMinPublishAgeExceptionsProvider()
+        {
+            return _vsSettings.CreateMinPublishAgeExceptionsProvider();
+        }
+
+        private static TimeSpan ParseMinPublishAge(IReadOnlyDictionary<string, object> packageSourceDictionary)
+        {
+            if (!packageSourceDictionary.TryGetValue(MonikerMinPublishAgeHours, out object minPublishAgeHoursValue))
+            {
+                return TimeSpan.Zero;
+            }
+
+            string value = Convert.ToString(minPublishAgeHoursValue, CultureInfo.InvariantCulture);
+            if (!uint.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out uint hours)
+                || hours > TimeSpan.MaxValue.TotalHours)
+            {
+                throw new ArgumentOutOfRangeException(MonikerMinPublishAgeHours);
+            }
+
+            return TimeSpan.FromHours(hours);
+        }
+
         public OneOrMany<SettingMessage> ValidateSetting(string moniker, object value)
         {
             return default;
@@ -426,7 +541,8 @@ namespace NuGet.PackageManagement.VisualStudio.Options
 
             bool isAuditSources = arraySettingMoniker == MonikerAuditSources;
             bool isPackageSources = arraySettingMoniker == MonikerPackageSources;
-            if (!isPackageSources && !isAuditSources)
+            bool isMinPublishAgeExceptions = arraySettingMoniker == MonikerMinPublishAgeExceptions;
+            if (!isPackageSources && !isAuditSources && !isMinPublishAgeExceptions)
             {
                 return settingMessages;
             }
@@ -438,6 +554,12 @@ namespace NuGet.PackageManagement.VisualStudio.Options
 
                 switch (propertyMoniker)
                 {
+                    case MonikerPackageIdPattern:
+                        {
+                            string pattern = arraySettingContent[arrayItemIndex][MonikerPackageIdPattern].ToString();
+                            _ = new MinPublishAgeExceptionItem { Pattern = pattern };
+                            break;
+                        }
                     case MonikerSourceName:
                         {
                             break;
@@ -465,6 +587,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                             break;
                         }
                     case MonikerAllowInsecureConnections:
+                    case MonikerMinPublishAgeHours:
                         {
                             break;
                         }
