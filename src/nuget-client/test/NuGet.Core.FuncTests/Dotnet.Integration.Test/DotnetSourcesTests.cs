@@ -363,6 +363,47 @@ namespace Dotnet.Integration.Test
         }
 
         [PlatformFact(Platform.Windows)]
+        public void Sources_WhenUpdatingNonExistentSource_Errors()
+        {
+            using (TestDirectory configFileDirectory = _fixture.CreateTestDirectory())
+            {
+                string configFileName = "nuget.config";
+                string configFilePath = Path.Combine(configFileDirectory, configFileName);
+                var nugetConfig =
+                    @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <packageSources>
+    <add key=""test_source"" value=""http://source.test.initial"" />
+  </packageSources>
+</configuration>";
+                CreateXmlFile(configFilePath, nugetConfig);
+
+                // Arrange
+                var args = new string[]
+                {
+                    "nuget",
+                    "update",
+                    "source",
+                    "nonexistent_source",
+                    "--username",
+                    "user",
+                    "--password",
+                    "password",
+                    "--store-password-in-clear-text",
+                    "--configfile",
+                    configFilePath
+                };
+
+                // Act
+                CommandRunnerResult result = _fixture.RunDotnetExpectFailure(configFileDirectory, string.Join(" ", args));
+
+                // Assert
+                string expectedError = string.Format(CultureInfo.CurrentCulture, Strings.SourcesCommandNoMatchingSourcesFound, "nonexistent_source");
+                Assert.Contains(expectedError, result.AllOutput);
+            }
+        }
+
+        [PlatformFact(Platform.Windows)]
         public void Sources_WhenUpdatingHttpsSource_Succeeds()
         {
             using (TestDirectory configFileDirectory = _fixture.CreateTestDirectory())
