@@ -961,7 +961,11 @@ public class SqlServerMigrationsSqlGenerator : MigrationsSqlGenerator
             return;
         }
 
-        if (operation[RelationalAnnotationNames.JsonIndex] is RelationalJsonIndex jsonIndex)
+        var jsonIndex = operation[RelationalAnnotationNames.JsonIndex] as RelationalJsonIndex
+            ?? model?.GetRelationalModel()
+                .FindTable(operation.Table, operation.Schema)?
+                .Indexes.FirstOrDefault(i => i.Name == operation.Name)?[RelationalAnnotationNames.JsonIndex] as RelationalJsonIndex;
+        if (jsonIndex is not null)
         {
             GenerateJsonIndex(jsonIndex);
             return;
@@ -3322,7 +3326,7 @@ public class SqlServerMigrationsSqlGenerator : MigrationsSqlGenerator
 
                     // we removed the table, so we no longer need it's temporal information
                     // there will be no more operations involving this table
-                    temporalTableInformationMap.Remove((tableName, schema));
+                    temporalTableInformationMap.Remove((tableName, rawSchema));
 
                     break;
                 }
@@ -3346,7 +3350,7 @@ public class SqlServerMigrationsSqlGenerator : MigrationsSqlGenerator
 
                     // since table was renamed, update entry in the temporal info map
                     temporalTableInformationMap[(renameTableOperation.NewName!, renameTableOperation.NewSchema)] = temporalInformation;
-                    temporalTableInformationMap.Remove((tableName, schema));
+                    temporalTableInformationMap.Remove((tableName, rawSchema));
 
                     break;
                 }

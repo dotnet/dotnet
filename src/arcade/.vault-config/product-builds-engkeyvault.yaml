@@ -94,12 +94,6 @@ secrets:
       Name: dotnet-renovate-bot
 
   #Publish-Build-Assets
-  BotAccount-dotnet-maestro-bot-PAT:
-    type: github-access-token
-    parameters:
-      gitHubBotAccountSecret: BotAccount-dotnet-maestro-bot
-      gitHubBotAccountName: dotnet-maestro-bot
-
   BotAccount-dotnet-bot-repo-PAT:
     type: github-access-token
     parameters:
