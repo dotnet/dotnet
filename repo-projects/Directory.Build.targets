@@ -350,19 +350,8 @@
        There are 3 files generated -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="CreateBuildInputProps"
-          DependsOnTargets="ResolveProjectReferences;GetProducedPackagesFromTransitiveReferences;GetProducedPackagesFromTransitiveReferencesFromPreviousBuildPasses"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)CreateBuildInputProps.complete">
-    <!-- Get the previously-built-source-built package information from the manifest from that build. -->
-    <ItemGroup>
-      <_PreviouslySourceBuiltAssetManifests Include="$(PreviouslySourceBuiltPackagesPath)VerticalManifest.xml" />
-    </ItemGroup>
-
-    <GetKnownArtifactsFromAssetManifests AssetManifests="@(_PreviouslySourceBuiltAssetManifests)" Condition="Exists(@(_PreviouslySourceBuiltAssetManifests))">
-      <Output TaskParameter="KnownPackages" ItemName="_PreviouslyBuiltSourceBuiltPackages" />
-    </GetKnownArtifactsFromAssetManifests>
-
+  <!-- Load shared inputs even when the generated package properties are up to date. -->
+  <Target Name="GetSharedComponentBuildInputs">
     <PropertyGroup>
       <_SharedComponentFilterMode>$(SharedComponentFilter_NonToolingOnly)</_SharedComponentFilterMode>
       <_SharedComponentFilterMode Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">$(SharedComponentFilter_BootstrapRepoDepsOnly)</_SharedComponentFilterMode>
@@ -373,6 +362,20 @@
              Properties="SharedComponentFilterMode=$(_SharedComponentFilterMode)">
       <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
     </MSBuild>
+  </Target>
+
+  <Target Name="CreateBuildInputProps"
+          DependsOnTargets="ResolveProjectReferences;GetProducedPackagesFromTransitiveReferences;GetProducedPackagesFromTransitiveReferencesFromPreviousBuildPasses;GetSharedComponentBuildInputs;GetRuntimePackVersion"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(BaseIntermediateOutputPath)CreateBuildInputProps.complete">
+    <!-- Get the previously-built-source-built package information from the manifest from that build. -->
+    <ItemGroup>
+      <_PreviouslySourceBuiltAssetManifests Include="$(PreviouslySourceBuiltPackagesPath)VerticalManifest.xml" />
+    </ItemGroup>
+
+    <GetKnownArtifactsFromAssetManifests AssetManifests="@(_PreviouslySourceBuiltAssetManifests)" Condition="Exists(@(_PreviouslySourceBuiltAssetManifests))">
+      <Output TaskParameter="KnownPackages" ItemName="_PreviouslyBuiltSourceBuiltPackages" />
+    </GetKnownArtifactsFromAssetManifests>
 
     <PropertyGroup>
       <_UsePackageVersionPropsAggregation>true</_UsePackageVersionPropsAggregation>
@@ -564,12 +567,39 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="SetBuildProperties"
-          DependsOnTargets="PrepareRepositoryReferences;SetRepoOriginalSourceRevisionId;GetProducedPackagesFromTransitiveReferences">
-    <!-- Make everything that depends on live runtime repo uses the live targeting pack to avoid a mismatch between the API/version packages expect to be in framework and what the actual targeting pack provides. -->
-    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' == 'true'">
+  <Target Name="GetRuntimePackVersion"
+          DependsOnTargets="PrepareRepositoryReferences;GetProducedPackagesFromTransitiveReferences;GetSharedComponentBuildInputs">
+    <!-- Use matching runtime contracts whether runtime is built live or consumed from a shared-component build. -->
+    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+      <_UseRuntimePackOverrides Condition="'@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' == 'true'
+                                           or ('$(DotNetBuildSharedComponents)' != 'true' and '$(UseBootstrapArcade)' != 'true')">true</_UseRuntimePackOverrides>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(_UseRuntimePackOverrides)' == 'true'">
+      <_RuntimeReferencePack Include="@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref'))"
+                             Condition="'@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' == 'true'" />
+      <_RuntimeReferencePack Include="@(_PreviouslyBuiltSourceBuiltSharedComponentPackages->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref'))"
+                             Condition="'@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' != 'true'" />
+      <_RuntimeReferencePackVersion Include="@(_RuntimeReferencePack->Metadata('Version')->Distinct())" />
+      <_RuntimeReferencePackWithoutVersion Include="@(_RuntimeReferencePack)" Condition="'%(_RuntimeReferencePack.Version)' == '' or $([System.String]::IsNullOrWhiteSpace('%(_RuntimeReferencePack.Version)'))" />
+    </ItemGroup>
+
+    <Error Condition="'$(_UseRuntimePackOverrides)' == 'true' and '@(_RuntimeReferencePack)' == ''"
+           Text="No Microsoft.NETCore.App.Ref package was found in the selected runtime build inputs for $(RepositoryName)." />
+    <Error Condition="'@(_RuntimeReferencePackWithoutVersion)' != ''"
+           Text="Microsoft.NETCore.App.Ref has missing or empty Version metadata in the selected runtime build inputs for $(RepositoryName)." />
+    <Error Condition="'$(_UseRuntimePackOverrides)' == 'true' and '@(_RuntimeReferencePackVersion->Count())' != '1'"
+           Text="Expected one Microsoft.NETCore.App.Ref version in the selected runtime build inputs for $(RepositoryName), but found: @(_RuntimeReferencePackVersion)." />
+
+    <PropertyGroup Condition="'$(_UseRuntimePackOverrides)' == 'true'">
       <!-- Use the targeting pack version as a shortcut for other pack versions since they all version consistently -->
-      <RuntimePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref')->Metadata('Version'))</RuntimePackVersion>
+      <RuntimePackVersion>@(_RuntimeReferencePackVersion)</RuntimePackVersion>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="SetBuildProperties"
+          DependsOnTargets="PrepareRepositoryReferences;SetRepoOriginalSourceRevisionId;GetProducedPackagesFromTransitiveReferences;GetSharedComponentBuildInputs;GetRuntimePackVersion">
+    <PropertyGroup Condition="'$(_UseRuntimePackOverrides)' == 'true'">
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentTargetingPackVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentDefaultRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
