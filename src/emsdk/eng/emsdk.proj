@@ -234,10 +234,10 @@
     <!-- Emscripten doesn't support multiple embuilder tasks in the same run -->
     <Exec WorkingDirectory="$(EmscriptenDir)"
       Command="$(EmBuilder) build SYSTEM"
-      EnvironmentVariables="EM_LLVM_ROOT=$(BuildLLVMDir)\bin;EM_BINARYEN_ROOT=$(BuildBinaryenDir);EM_NODE_JS=$(BuildNodeDir)\bin\node"/>
+      EnvironmentVariables="EMSDK_PYTHON=$(PythonPath);EM_LLVM_ROOT=$(BuildLLVMDir)\bin;EM_BINARYEN_ROOT=$(BuildBinaryenDir);EM_NODE_JS=$(BuildNodeDir)\bin\node"/>
     <Exec WorkingDirectory="$(EmscriptenDir)"
       Command="$(EmBuilder) build MINIMAL"
-      EnvironmentVariables="EM_LLVM_ROOT=$(BuildLLVMDir)\bin;EM_BINARYEN_ROOT=$(BuildBinaryenDir);EM_NODE_JS=$(BuildNodeDir)\bin\node"/>
+      EnvironmentVariables="EMSDK_PYTHON=$(PythonPath);EM_LLVM_ROOT=$(BuildLLVMDir)\bin;EM_BINARYEN_ROOT=$(BuildBinaryenDir);EM_NODE_JS=$(BuildNodeDir)\bin\node"/>
 
     <Delete Files="$(EmscriptenDir)\node_modules\.bin\google-closure-compiler" />
 
