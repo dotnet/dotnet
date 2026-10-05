@@ -91,10 +91,10 @@
       "commitSha": "b9b54526b7908ea519b503196100a34dd2e52374"
     },
     {
-      "packageVersion": "9.0.21-servicing.26473.20",
+      "packageVersion": "9.0.21-servicing.26504.4",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "0bba4abcc46915230f120f936b17b7b022596856"
+      "commitSha": "d280e4fb388c6deed22d480daada060b6b456008"
     },
     {
       "packageVersion": "9.0.0-preview.26459.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2e7b40d2a5e6dea6615fc7e649d77d5c4cab0eff"
+      "commitSha": "78f338b19311aeed387af74f0ceefd9bf8d2c0b9"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26451.2",
