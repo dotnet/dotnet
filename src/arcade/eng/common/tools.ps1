@@ -32,7 +32,7 @@
 [bool]$nodeReuse = if (Test-Path variable:nodeReuse) { $nodeReuse } else { !$ci }
 
 # Set to true to build with MSBuild's multi-threaded mode (-mt). Enabled by default for both local and CI builds.
-# Not applied when building with VS MSBuild.
+# Not applied when building with msbuild.exe (VS MSBuild).
 [bool]$msbuildMultiThreaded = if (Test-Path variable:msbuildMultiThreaded) { $msbuildMultiThreaded } else { $true }
 
 # Configures warning treatment in msbuild.
@@ -566,12 +566,11 @@ function LocateVisualStudio([object]$vsRequirements = $null){
 function InitializeBuildTool() {
   # Allow a caller (e.g. a bootstrap script running out-of-proc) to inject the build tool via
   # environment variables instead of the in-proc $global:_BuildTool variable. Only Path and
-  # Command are needed by the MSBuild function below; Tool is derived from the injected path.
+  # Command are consumed by the MSBuild function below, so those are all that's needed.
   if ($env:_BuildToolPath) {
     return $global:_BuildTool = @{
       Path    = $env:_BuildToolPath
       Command = $env:_BuildToolCommand
-      Tool    = if ([System.IO.Path]::GetFileName($env:_BuildToolPath) -eq 'msbuild.exe') { 'vs' } else { 'dotnet' }
     }
   }
 
@@ -602,7 +601,7 @@ function InitializeBuildTool() {
     }
     $dotnetPath = Join-Path $dotnetRoot (GetExecutableFileName 'dotnet')
 
-    $buildTool = @{ Path = $dotnetPath; Command = 'msbuild'; Tool = 'dotnet' }
+    $buildTool = @{ Path = $dotnetPath; Command = 'msbuild' }
   } elseif ($msbuildEngine -eq "vs") {
     try {
       $msbuildPath = InitializeVisualStudioMSBuild
@@ -611,7 +610,7 @@ function InitializeBuildTool() {
       ExitWithExitCode 1
     }
 
-    $buildTool = @{ Path = $msbuildPath; Command = ""; Tool = 'vs'; ExcludePrereleaseVS = $excludePrereleaseVS }
+    $buildTool = @{ Path = $msbuildPath; Command = ""; ExcludePrereleaseVS = $excludePrereleaseVS }
   } else {
     Write-PipelineTelemetryError -Category 'InitializeToolset' -Message "Unexpected value of -msbuildEngine: '$msbuildEngine'."
     ExitWithExitCode 1
@@ -814,8 +813,8 @@ function MSBuild() {
 
   $cmdArgs = "$($buildTool.Command) /m /nologo /clp:Summary /v:$verbosity /nr:$nodeReuse /p:ContinuousIntegrationBuild=$ci"
 
-  # Build with MSBuild's multi-threaded mode, but not with VS MSBuild for now.
-  if ($msbuildMultiThreaded -and $buildTool.Tool -ne 'vs') {
+  # Build with MSBuild's multi-threaded mode, but not with msbuild.exe (VS MSBuild) for now.
+  if ($msbuildMultiThreaded -and [System.IO.Path]::GetFileName($buildTool.Path) -ne 'msbuild.exe') {
     $cmdArgs += ' -mt'
   }
 
