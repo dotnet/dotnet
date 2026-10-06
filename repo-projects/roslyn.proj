@@ -15,6 +15,7 @@
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != ''">
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)officialBuildId $(OfficialBuildId)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:DotNetBuildTests=false</BuildArgs>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)officialSourceBranchName placeholder</BuildArgs>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)officialVisualStudioDropAccessToken placeholder</BuildArgs>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)officialSkipApplyOptimizationData true</BuildArgs>
