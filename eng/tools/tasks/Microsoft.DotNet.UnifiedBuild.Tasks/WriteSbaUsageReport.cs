@@ -201,12 +201,25 @@ public partial class WriteSbaUsageReport : Task
     private void ReadSbaPackages(string packageSrcRelativePath, bool trackTfms)
     {
         string packageSrcPath = Path.Combine(SbaRepoSrcPath, packageSrcRelativePath);
-        foreach (string projectPath in Directory.GetFiles(packageSrcPath, "*.csproj", SearchOption.AllDirectories))
+
+        // Packages follow the <id>/<version>/<Id>.<version>.csproj layout. Only enumerate that level so that
+        // project files embedded in package content (e.g. project templates) aren't treated as packages.
+        IEnumerable<string> projectPaths = Directory.EnumerateDirectories(packageSrcPath)
+            .SelectMany(Directory.EnumerateDirectories)
+            .SelectMany(versionDir => Directory.EnumerateFiles(versionDir, "*.csproj", SearchOption.TopDirectoryOnly));
+
+        foreach (string projectPath in projectPaths)
         {
             DirectoryInfo? directory = Directory.GetParent(projectPath);
             string version = directory!.Name;
             string projectName = Path.GetFileNameWithoutExtension(projectPath);
             HashSet<string>? tfms = null;
+
+            if (!projectName.EndsWith($".{version}", StringComparison.OrdinalIgnoreCase))
+            {
+                LogError($"Project {projectPath} does not follow the <id>/<version>/<id>.<version>.csproj convention.");
+                continue;
+            }
 
             if (trackTfms)
             {
