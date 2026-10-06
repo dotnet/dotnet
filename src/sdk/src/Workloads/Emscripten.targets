@@ -1,0 +1,28 @@
+<Project>
+  <Target Name="_ValidateEmscriptenPackageVersion"
+          BeforeTargets="CollectPackageReferences;CollectPackageDownloads;GenerateNuspec">
+    <Error Condition="'$(EmscriptenPackageVersion)' == ''"
+           Text="An Emscripten package version is required. For 1xx, select the emsdk-produced version; for upstack, flow Microsoft.NET.Sdk.Emscripten.Version.Internal from the selected 1xx SDK as MicrosoftNETSdkEmscriptenVersionInternalPackageVersion." />
+    <!-- Internal is always prerelease. Before stabilizing, select the stable emsdk-produced
+         property for EmscriptenVersionCurrent (historically
+         Microsoft.NET.Runtime.Emscripten.3.1.56.Cache.win-x64.Msi.x64) in Emscripten.props
+         and the SDK marker producer.
+         Change manifest references, marker production, raw acquisition/staging and MSI downloads
+         together; never strip a prerelease suffix. Remove this guard after that transition. -->
+    <Error Condition="('$(PreReleaseVersionLabel)' == 'rtm' or '$(PreReleaseVersionLabel)' == 'servicing' or '$(PreReleaseVersionLabel)' == 'hotfix') and
+                      $([System.String]::Copy('$(EmscriptenPackageVersion)').Contains('-'))"
+           Text="A non-prerelease SDK must use non-prerelease Emscripten packages. Select the stable emsdk-produced package version for EmscriptenVersionCurrent in Emscripten.props and the SDK marker producer." />
+  </Target>
+
+  <Target Name="_ValidateEmscriptenVersionMarker"
+          DependsOnTargets="_ValidateEmscriptenPackageVersion"
+          Condition="'$(DotNet1xxWorkloadManifestVersion)' != ''">
+    <Error Condition="!Exists('$(PkgMicrosoft_NET_Sdk_Emscripten_Version_Internal)\data\EmscriptenVersion.txt')"
+           Text="Restore Microsoft.NET.Sdk.Emscripten.Version.Internal at the selected 1xx SDK's flowed version before generating manifests or staging workload installers." />
+    <ReadLinesFromFile File="$(PkgMicrosoft_NET_Sdk_Emscripten_Version_Internal)\data\EmscriptenVersion.txt">
+      <Output TaskParameter="Lines" ItemName="_SelectedEmscriptenVersion" />
+    </ReadLinesFromFile>
+    <Error Condition="'@(_SelectedEmscriptenVersion)' != '$(EmscriptenVersionCurrent)'"
+           Text="The selected SDK Emscripten marker uses family '@(_SelectedEmscriptenVersion)', but EmscriptenVersionCurrent is '$(EmscriptenVersionCurrent)'. Flow the matching SDK marker and Emscripten package family together." />
+  </Target>
+</Project>

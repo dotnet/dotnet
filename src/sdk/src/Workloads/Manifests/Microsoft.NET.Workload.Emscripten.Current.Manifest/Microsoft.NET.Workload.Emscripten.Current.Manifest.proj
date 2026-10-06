@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.Build.NoTargets">
+  <Import Project="..\..\Emscripten.props" />
 
   <PropertyGroup>
     <GenerateNuspecDependsOn>_GenerateWorkloadManifestFiles;$(GenerateNuspecDependsOn)</GenerateNuspecDependsOn>
@@ -14,11 +15,13 @@
     <None Include="$(WorkloadManifestTargetsPath)" Pack="true" PackagePath="data" />
   </ItemGroup>
 
-  <Target Name="_GenerateWorkloadManifestFiles">
+  <Import Project="..\..\Emscripten.targets" />
+
+  <Target Name="_GenerateWorkloadManifestFiles" DependsOnTargets="_ValidateEmscriptenPackageVersion;_ValidateEmscriptenVersionMarker">
     <ItemGroup>
       <_WorkloadManifestValues Include="NetVersion" Value="net12" />
       <_WorkloadManifestValues Include="WorkloadVersion" Value="$(PackageVersion)" />
-      <_WorkloadManifestValues Include="EmsdkVersion" Value="$(MicrosoftNETCoreAppRuntimePackageVersion)" />
+      <_WorkloadManifestValues Include="EmsdkVersion" Value="$(EmscriptenPackageVersion)" />
       <_WorkloadManifestValues Include="EmscriptenVersion" Value="$(EmscriptenVersionCurrent)" />
     </ItemGroup>
 

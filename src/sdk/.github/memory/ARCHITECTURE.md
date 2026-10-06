@@ -33,6 +33,18 @@ runtime-library generators or `dotnet/sdk` for SDK analyzers.
 
 ## Key Abstractions
 
+### Emscripten Workload Inputs
+
+The raw Emscripten toolchain version is independent of runtime and SDK versions.
+1xx builds use the `Emscripten.Internal` dependency pin and republish its selected
+version as `Microsoft.NET.Sdk.Emscripten.Version.Internal` through the manifest traversal.
+The producer selects the standalone pin directly and imports shared validation
+targets, but not consumer props or a reference to its own transport package.
+Upstack uses that SDK marker's flowed version, generates manifests locally, and
+downloads both payload and manifest MSIs using their respective versions.
+MSI generation remains SDK-owned. See the
+[workload build input contract](../../src/Workloads/README.md).
+
 ### Shared CLI Definition Tree
 
 [`DotNetCommandDefinition`](../../src/Cli/Microsoft.DotNet.Cli.Definitions/Commands/DotNetCommandDefinition.cs)

@@ -1,7 +1,11 @@
 <Project Sdk="Microsoft.Build.Traversal" DefaultTargets="Pack">
 
   <ItemGroup>
-    <ProjectReference Include="**\*.Manifest.proj" />
+    <_ManifestProjectReference Include="**\*.Manifest.proj" />
+    <ProjectReference Include="@(_ManifestProjectReference)" />
+    <ProjectReference Include="..\EmscriptenVersion\Microsoft.NET.Sdk.Emscripten.Version.Internal.proj"
+                      Condition="'$(DotNet1xxWorkloadManifestVersion)' == ''"
+                      ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
   </ItemGroup>
 
   <Target Name="LayoutBuiltinManifests">
@@ -10,7 +14,7 @@
       <_VersionOverride Condition="'$(DotNet1xxWorkloadManifestVersion)' != ''">Version=$(DotNet1xxWorkloadManifestVersion)</_VersionOverride>
     </PropertyGroup>
 
-    <MSBuild Projects="@(ProjectReference)"
+    <MSBuild Projects="@(_ManifestProjectReference)"
              Targets="LayoutManifest"
              Properties="ManifestDirectory=$(ManifestDirectory);$(_VersionOverride)" />
   </Target>

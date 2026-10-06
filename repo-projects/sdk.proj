@@ -20,6 +20,7 @@
     <BuildArgs Condition="'$(BuildWorkloads)' == 'true'">$(BuildArgs) /p:BuildWorkloads=true</BuildArgs>
     <BuildArgs Condition="'$(BuildWorkloads)' == 'true' and '$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DownloadWorkloadMsis=true</BuildArgs>
     <BuildArgs Condition="'$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:DotNet1xxRuntimeVersion=$(MicrosoftNETCoreAppRefVersion) /p:DotNet1xxWorkloadManifestVersion=$(DotNet1xxWorkloadManifestVersion)</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildSharedComponents)' != 'true'">$(BuildArgs) /p:MicrosoftNETSdkEmscriptenVersionInternalPackageVersion=$(MicrosoftNETSdkEmscriptenVersionInternalPackageVersion)</BuildArgs>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,8 +28,6 @@
     <RepositoryReference Include="aspnetcore" />
     <RepositoryReference Include="command-line-api" />
     <RepositoryReference Include="deployment-tools" />
-    <!-- we're focusing on x64 and arm64 for the webassembly build tools -->
-    <RepositoryReference Include="emsdk" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(PgoInstrument)' != 'true' and ('$(TargetArchitecture)' == 'x64' or '$(TargetArchitecture)' == 'arm64')" />
     <RepositoryReference Include="fsharp" />
     <RepositoryReference Include="msbuild" />
     <RepositoryReference Include="nuget-client" />
