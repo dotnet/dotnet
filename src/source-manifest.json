@@ -133,10 +133,10 @@
       "commitSha": "691d821bdbe3abbb9543c37791e14ae06e8a01b6"
     },
     {
-      "barId": 335171,
+      "barId": 335374,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "5f30bca6640f77cdd5dfad584d2207f2c4016979"
+      "commitSha": "de5e40fdc1f13aa7325436d9e2f0008fd47426c1"
     },
     {
       "barId": 335270,
