@@ -70,7 +70,13 @@ public class BlameCollectorTests
         _configurationElement = null;
         _context = new DataCollectionEnvironmentContext(_dataCollectionContext);
 
-        _filepath = Path.Combine(Path.GetTempPath(), "Test");
+        // A fixed name under the temp directory is shared by every instance of this class, and this class
+        // is constructed once per test method. ConcurrentTestCaseStartAndEndEventsShouldNotCorruptState
+        // then races on it: the constructor's File.Create succeeded, so the path was a file at that point,
+        // but by the time CleanUp ran File.Delete failed with UnauthorizedAccessException, which is what
+        // that exception means for a path that has become a directory or is otherwise not deletable.
+        // A per-instance name removes the shared path, and with it the whole race.
+        _filepath = Path.Combine(Path.GetTempPath(), $"Test_{Guid.NewGuid():N}");
         FileStream stream = File.Create(_filepath);
         stream.Dispose();
     }

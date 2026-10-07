@@ -843,7 +843,7 @@ public class IntegrationTestBase
     /// Returns the VsTestConsole Wrapper.
     /// </summary>
     /// <returns></returns>
-    public IVsTestConsoleWrapper GetVsTestConsoleWrapper(Dictionary<string, string?>? environmentVariables = null, TraceLevel traceLevel = TraceLevel.Verbose)
+    public IVsTestConsoleWrapper GetVsTestConsoleWrapper(Dictionary<string, string?>? environmentVariables = null, TraceLevel traceLevel = TraceLevel.Verbose, bool startSession = true)
     {
         ConsoleParameters consoleParameters = new();
         if (traceLevel != TraceLevel.Off)
@@ -930,7 +930,10 @@ public class IntegrationTestBase
         }
 
         var vstestConsoleWrapper = new VsTestConsoleWrapper(consoleRunnerPath, dotnetPath, consoleParameters);
-        vstestConsoleWrapper.StartSession();
+        if (startSession)
+        {
+            vstestConsoleWrapper.StartSession();
+        }
 
         return vstestConsoleWrapper;
     }
@@ -1221,5 +1224,32 @@ public class IntegrationTestBase
     protected void StdErrHasTestRunFailedMessageButNoOtherError()
     {
         StdErr?.Trim().Should().Be("Test Run Failed.");
+    }
+
+    /// <summary>
+    /// Returns a template-engine home that only this caller uses.
+    /// </summary>
+    ///
+    /// <remarks>
+    /// `dotnet new` keeps its template cache at
+    /// %DOTNET_CLI_HOME%\.templateengine\&lt;sdk version&gt;\templatecache.json, a single per-user
+    /// file. Two scaffolding tests running at once fight over it:
+    ///
+    ///     Failed to store template cache, details: The process cannot access the file
+    ///     '...\.templateengine\...\templatecache.json' because it is being used by another process.
+    ///
+    /// seen three times each on 18.11 and 18.10, and not at all on 18.7, so it is a race rather
+    /// than a deterministic failure. Giving each caller its own DOTNET_CLI_HOME moves the whole
+    /// .templateengine tree under it, so there is no shared file left to contend on. Measured:
+    /// two homes produce two independent caches and both scaffolds succeed.
+    ///
+    /// The cost is a cold cache on first use in each home. That is paid once per test here, which
+    /// is acceptable for three tests; if more scaffolding tests appear, share one home per class.
+    /// </remarks>
+    protected static string CreateIsolatedTemplateEngineHome(string parentDirectory)
+    {
+        var home = Path.Combine(parentDirectory, "clihome");
+        Directory.CreateDirectory(home);
+        return home;
     }
 }

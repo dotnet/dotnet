@@ -175,24 +175,19 @@ extends:
                     $vsRepoId = "a290117c-5a8a-40f7-bc2c-f14dbe3acf6d"
                     $targetFilePath = "/src/vset/Agile/TestPlatform/RocksteadyCLI/App.config"
 
-                    # Extract the PR number from roslyn-tools output.
-                    # The tool logs a PR URL like: https://dev.azure.com/devdiv/DevDiv/_git/VS/pullrequest/735439
-                    # We match the URL pattern specifically to avoid grabbing timestamps from PR titles.
+                    # Only the explicit insertion line identifies the PR to update.
+                    # Changelog links can reference other PRs before this line.
                     $outputText = $roslynOutput -join "`n"
-                    $prId = $null
-                    if ($outputText -match '/pullrequest/(\d+)') {
-                      $prId = $Matches[1]
-                    } elseif ($outputText -match 'pullrequests/(\d+)') {
-                      $prId = $Matches[1]
-                    }
+                    $insertionPrMatches = [regex]::Matches($outputText, '(?m)^Insertion PR: https://dev\.azure\.com/devdiv/DevDiv/_git/VS/pullrequest/([0-9]+)\r?$')
 
-                    if (-not $prId) {
-                      Write-Error "Could not extract PR ID from roslyn-tools output. Cannot push App.config and revision.txt."
+                    if ($insertionPrMatches.Count -ne 1) {
+                      Write-Error "Expected exactly one 'Insertion PR: https://dev.azure.com/devdiv/DevDiv/_git/VS/pullrequest/<id>' line in roslyn-tools output, but found $($insertionPrMatches.Count). Cannot push App.config and revision.txt."
                       Write-Host "roslyn-tools output was:"
                       Write-Host $outputText
                       exit 1
                     }
                     else {
+                      $prId = $insertionPrMatches[0].Groups[1].Value
                       Write-Host "Detected insertion PR #$prId, pushing App.config and revision.txt..."
 
                       try {

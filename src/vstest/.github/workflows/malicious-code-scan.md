@@ -19,6 +19,10 @@ tools:
   bash: true
 
 safe-outputs:
+  github-app:
+    client-id: ${{ vars.APP_ID }}
+    private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    ignore-if-missing: true
   noop:
     report-as-issue: false
   create-code-scanning-alert:

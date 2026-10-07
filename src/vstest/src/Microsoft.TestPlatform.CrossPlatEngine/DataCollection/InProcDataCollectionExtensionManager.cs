@@ -17,6 +17,9 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
+// ObjectModel.DataCollection has a FileHelper of its own, and its internals are visible here.
+using FileHelper = Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.FileHelper;
+
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection;
 
 /// <summary>

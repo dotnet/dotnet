@@ -112,11 +112,11 @@ public sealed class CodeCoveragePublishTests : AcceptanceTestBase
         Assert.IsTrue(File.Exists(collectorPath), collectorPath);
         Assert.IsFalse(File.Exists(Path.Combine(deployment.Path, "Microsoft.VisualStudio.TraceDataCollector.dll")));
 
-        // Use the SDK's existing runner without TestAdapterPath. DataCollectionRequestHandler.AddExtensionAssemblies
-        // searches the test source directories recursively, independently of the test host's adapter discovery.
+        // Use the branch-built runner so the published testhost can negotiate process identity.
+        // Keep TestAdapterPath unset to exercise recursive collector discovery.
         Directory.CreateDirectory(DiagLogsDirectory);
         var output = RunDotnet(
-            $@"vstest ""{Path.Combine(deployment.Path, "SimpleTestProject.dll")}"" /collect:""Code Coverage;Format=cobertura"" /ResultsDirectory:""{deployment.Path}"" /logger:""console;verbosity=normal"" /Diag:""{Path.Combine(DiagLogsDirectory, "coverage.log")}""",
+            $@"""{GetDotnetRunnerPath()}"" ""{Path.Combine(deployment.Path, "SimpleTestProject.dll")}"" /collect:""Code Coverage;Format=cobertura"" /ResultsDirectory:""{deployment.Path}"" /logger:""console;verbosity=normal"" /Diag:""{Path.Combine(DiagLogsDirectory, "coverage.log")}""",
             expectedExitCode: 1,
             packagesDirectory: Path.Combine(deployment.Path, "empty-cache"));
         Assert.Contains("Passed: 1", output);

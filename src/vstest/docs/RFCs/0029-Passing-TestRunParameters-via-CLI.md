@@ -44,4 +44,4 @@ The arguments are parsed and `attribute name` and `attribute value` are fetched 
 
 ### Note
 Some special characters like &,<,> are converted to their escaped form and stored in runsettings. <br>
-For more info on escaped strings refer [this](https://www.ibm.com/support/knowledgecenter/en/SSEQTP_liberty/com.ibm.websphere.wlp.doc/ae/rwlp_xml_escape.html).
+For more info on escaped strings, refer to [Predefined Entities in the XML specification](https://www.w3.org/TR/xml/#sec-predefined-ent).

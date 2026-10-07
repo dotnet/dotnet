@@ -9,7 +9,8 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.AdapterUtilities.UnitTests</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>$(NoWarn);RS1024</NoWarn>
+    <!-- VSTEST001: tests cover the experimental xxHash128 test id API, so they call it on purpose. -->
+    <NoWarn>$(NoWarn);RS1024;VSTEST001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

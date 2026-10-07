@@ -48,7 +48,8 @@ safe-outputs:
     hide-older-comments: true
   push-to-pull-request-branch:
     target: "*"
-    title-prefix: "[fix] "
+    github-token-for-extra-empty-commit: app
+    required-title-prefix: "[fix] "
     max: 3
   reply-to-pull-request-review-comment:
     max: 10

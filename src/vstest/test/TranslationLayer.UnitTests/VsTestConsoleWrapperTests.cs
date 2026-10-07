@@ -80,6 +80,27 @@ public class VsTestConsoleWrapperTests
     }
 
     [TestMethod]
+    public async Task StartSessionAsyncShouldLaunchConsoleBeforeWaitingForConnection()
+    {
+        var calls = new List<string>();
+        _mockRequestSender.Setup(rs => rs.InitializeCommunication())
+            .Callback(() => calls.Add("initialize"))
+            .Returns(100);
+        _mockProcessManager.Setup(pm => pm.StartProcess(_consoleParameters))
+            .Callback(() => calls.Add("launch"));
+        _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>()))
+            .Callback(() => calls.Add("wait"))
+            .Returns(true);
+
+        // Existing binaries can still call the obsolete async entry point.
+#pragma warning disable CS0618
+        await _consoleWrapper.StartSessionAsync();
+#pragma warning restore CS0618
+
+        CollectionAssert.AreEqual(new[] { "initialize", "launch", "wait" }, calls);
+    }
+
+    [TestMethod]
     public void StartSessionShouldThrowExceptionOnBadPort()
     {
         _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(-1);

@@ -29,11 +29,6 @@ namespace Microsoft.TestPlatform.VsTestConsole.TranslationLayer;
 /// </summary>
 internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
 {
-    /// <summary>
-    /// The minimum protocol version that has test session support.
-    /// </summary>
-    private const int MinimumProtocolVersionWithTestSessionSupport = 5;
-
     private readonly ICommunicationManager _communicationManager;
     private readonly IDataSerializer _dataSerializer;
     private readonly ITestPlatformEventSource _testPlatformEventSource;
@@ -94,8 +89,8 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
 
             Task.Run(() =>
             {
-                _communicationManager.WaitForClientConnection(Timeout.Infinite);
-                _handShakeSuccessful = HandShakeWithVsTestConsole();
+                _handShakeSuccessful = _communicationManager.WaitForClientConnection(Timeout.Infinite)
+                    && HandShakeWithVsTestConsole();
                 _handShakeComplete.Set();
             });
         }

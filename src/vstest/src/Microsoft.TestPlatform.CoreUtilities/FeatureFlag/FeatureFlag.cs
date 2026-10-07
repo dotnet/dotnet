@@ -27,6 +27,7 @@ internal partial class FeatureFlag : IFeatureFlag
     private static readonly IReadOnlyDictionary<string, bool> DefaultValues = new Dictionary<string, bool>
     {
         [VSTEST_DISABLE_MTP_TESTHOST] = true,
+        [VSTEST_DISABLE_XXHASH128_TESTCASE_ID] = true,
     };
 
     private readonly ConcurrentDictionary<string, bool> _cache = new();
@@ -78,6 +79,9 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable not sharing .NET Framework testhosts. Which will return behavior to sharing testhosts when they are running .NET Framework dlls, and are not disabling appdomains or running in parallel.
     public const string VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST = nameof(VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST);
 
+    // Disable forwarding multiple test case events for executions that share the same test case ID.
+    public const string VSTEST_DISABLE_MULTIPLE_TESTCASE_EVENTS = nameof(VSTEST_DISABLE_MULTIPLE_TESTCASE_EVENTS);
+
     // Disable setting DOTNET_ROOT environment variable on non-Windows platforms. We used to set it only only on Windows when we found testhost.exe, now we set it always to allow xunit v3 to run tests in child process.
     public const string VSTEST_DISABLE_DOTNET_ROOT_ON_NONWINDOWS = nameof(VSTEST_DISABLE_DOTNET_ROOT_ON_NONWINDOWS);
 
@@ -87,6 +91,17 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable running Microsoft.Testing.Platform applications under vstest while the integration is experimental.
     // This defaults to true. Set it to 0 to opt in to the feature.
     public const string VSTEST_DISABLE_MTP_TESTHOST = nameof(VSTEST_DISABLE_MTP_TESTHOST);
+
+    // Disable computing test case ids with xxHash128, falling back to the SHA1 ids the platform has
+    // always produced. Moving to xxHash128 changes the id of every test whose id the platform
+    // computes, which is a breaking change for anything that stored those ids - most notably Azure
+    // DevOps Test Case work item association. It therefore ships available but not default: this
+    // defaults to true, so this release changes no id at all, and set it to 0 to opt in early.
+    //
+    // Deleting the DefaultValues entry above is the entire behavioural change of the release that
+    // makes xxHash128 the default. The polarity survives that flip - 1 selects SHA1 and 0 selects
+    // xxHash128 both before and after - so a value written down today keeps meaning the same thing.
+    public const string VSTEST_DISABLE_XXHASH128_TESTCASE_ID = nameof(VSTEST_DISABLE_XXHASH128_TESTCASE_ID);
 
     private static bool GetValue(string featureFlag)
     {
