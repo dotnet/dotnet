@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Shared;
@@ -17,12 +15,12 @@ namespace NuGet.ProjectModel
 
         public LockFileItem(string path)
         {
-            Path = path;
+            Path = path ?? throw new ArgumentNullException(nameof(path));
         }
 
         public string Path { get; }
 
-        private Dictionary<string, string> _properties;
+        private Dictionary<string, string>? _properties;
         public IDictionary<string, string> Properties
         {
             get
@@ -41,7 +39,7 @@ namespace NuGet.ProjectModel
 
         public override string ToString() => Path;
 
-        public bool Equals(LockFileItem other)
+        public bool Equals(LockFileItem? other)
         {
             if (other == null)
             {
@@ -72,7 +70,7 @@ namespace NuGet.ProjectModel
             return false;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as LockFileItem);
         }
@@ -89,16 +87,32 @@ namespace NuGet.ProjectModel
 
         public static implicit operator LockFileItem(string path) => new LockFileItem(path);
 
-        protected string GetProperty(string name)
+        protected string? GetProperty(string name)
         {
-            string value;
-            Properties.TryGetValue(name, out value);
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            Properties.TryGetValue(name, out string? value);
             return value;
         }
 
-        protected void SetProperty(string name, string value)
+        protected void SetProperty(string name, string? value)
         {
-            Properties[name] = value;
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (value == null)
+            {
+                Properties.Remove(name);
+            }
+            else
+            {
+                Properties[name] = value;
+            }
         }
     }
 }

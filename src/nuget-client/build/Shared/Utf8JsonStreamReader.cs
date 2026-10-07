@@ -92,6 +92,19 @@ namespace NuGet.Shared
 
         internal int GetInt32() => _reader.GetInt32();
 
+        internal string ReadScalarAsInvariantString()
+        {
+            return _reader.TokenType switch
+            {
+                JsonTokenType.String => _reader.GetString(),
+                JsonTokenType.Number => ReadNumberAsInvariantString(),
+                JsonTokenType.True => bool.TrueString,
+                JsonTokenType.False => bool.FalseString,
+                JsonTokenType.Null => null,
+                _ => throw new InvalidCastException(),
+            };
+        }
+
         internal int CurrentDepth => _reader.CurrentDepth;
 
         internal bool Read()
@@ -103,6 +116,7 @@ namespace NuGet.Shared
             {
                 GetMoreBytesFromStream();
             }
+
             return wasRead;
         }
 
@@ -115,6 +129,7 @@ namespace NuGet.Shared
             {
                 GetMoreBytesFromStream();
             }
+
             if (!wasSkipped)
             {
                 _reader.Skip();
@@ -334,11 +349,13 @@ namespace NuGet.Shared
         // This function is called when Read() returns false and we're not already in the final block
         private void GetMoreBytesFromStream()
         {
-            if (_reader.BytesConsumed < _bufferUsed)
+            int bytesConsumed = checked((int)_reader.BytesConsumed);
+
+            if (bytesConsumed < _bufferUsed)
             {
                 // If the number of bytes consumed by the reader is less than the amount set in the buffer then we have leftover bytes
                 var oldBuffer = _buffer;
-                ReadOnlySpan<byte> leftover = oldBuffer.AsSpan((int)_reader.BytesConsumed);
+                ReadOnlySpan<byte> leftover = oldBuffer.AsSpan(bytesConsumed);
                 _bufferUsed = leftover.Length;
 
                 // If the leftover bytes are the same as the buffer size then we are at capacity and need to double the buffer size
@@ -359,6 +376,25 @@ namespace NuGet.Shared
             }
 
             ReadStreamIntoBuffer(_reader.CurrentState);
+        }
+
+        private string ReadNumberAsInvariantString()
+        {
+            if (_reader.TryGetInt64(out long integer))
+            {
+                return integer.ToString(CultureInfo.InvariantCulture);
+            }
+
+            ReadOnlySpan<byte> value = _reader.ValueSpan;
+            bool isIntegral = value.IndexOf((byte)'.') < 0
+                && value.IndexOf((byte)'e') < 0
+                && value.IndexOf((byte)'E') < 0;
+            if (isIntegral)
+            {
+                throw new InvalidCastException("Object must implement IConvertible.");
+            }
+
+            return _reader.GetDouble().ToString(CultureInfo.InvariantCulture);
         }
 
         /// <summary>

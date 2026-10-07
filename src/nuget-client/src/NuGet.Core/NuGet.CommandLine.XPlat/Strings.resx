@@ -876,7 +876,11 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
     <value>The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified.</value>
   </data>
   <data name="SourcesCommandMinPublishAgeHoursDescription" xml:space="preserve">
-    <value>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</value>
+    <value>The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</value>
+  </data>
+  <data name="SourcesCommandMinPublishAgeHoursOutOfRange" xml:space="preserve">
+    <value>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</value>
+    <comment>0 - the invalid number of hours. 1 - the maximum supported number of hours.</comment>
   </data>
   <data name="SourcesCommandValidProtocolVersion" xml:space="preserve">
     <value>The protocol version specified is invalid. Provide a valid protocol version.</value>

@@ -5147,5 +5147,33 @@ namespace NuGet.VisualStudio.Implementation.Test.SolutionExplorer.Models
                     Assert.Equal(sourceType, target.Type);
                 });
         }
+
+        [Fact]
+        public void FromLockFile_LogWithoutLibraryId_SkipsLog()
+        {
+            const string TargetAlias = "net8.0";
+            var lockFile = new LockFile
+            {
+                PackageSpec = new PackageSpec
+                {
+                    FilePath = "project.csproj"
+                },
+                Targets =
+                [
+                    new LockFileTarget
+                    {
+                        TargetAlias = TargetAlias
+                    }
+                ],
+                LogMessages =
+                [
+                    new AssetsLogMessage(NuGet.Common.LogLevel.Warning, NuGet.Common.NuGetLogCode.NU1000, "message", TargetAlias)
+                ]
+            };
+
+            AssetsFileDependenciesSnapshot snapshot = AssetsFileDependenciesSnapshot.FromLockFile(lockFile);
+
+            Assert.Empty(snapshot.DataByTarget[TargetAlias].Logs);
+        }
     }
 }

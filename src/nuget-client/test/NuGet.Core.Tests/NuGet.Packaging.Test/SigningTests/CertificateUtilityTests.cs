@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Packaging.Signing;
@@ -435,6 +436,30 @@ namespace NuGet.Packaging.Test
         }
 
         [Fact]
+        public void GetFreshestCrlUrls_WithExtension_OutputsUrls()
+        {
+            const string freshestCrlUrl = "http://crl.example.com/test.delta.crl";
+
+            using (var certificate = SigningTestUtility.GenerateCertificate("test",
+                generator =>
+                {
+                    X509Extension crlDistributionPointExtension = CertificateRevocationListBuilder.BuildCrlDistributionPointExtension(
+                        new[] { freshestCrlUrl });
+
+                    generator.Extensions.Add(
+                        new X509Extension("2.5.29.46", crlDistributionPointExtension.RawData, critical: false));
+                }))
+            {
+                var urls = CertificateUtility.GetFreshestCrlUrls(certificate);
+
+                Assert.Single(urls);
+                Assert.Equal(freshestCrlUrl, urls[0]);
+                CertificateUtility.X509Certificate2ToString(certificate, Common.HashAlgorithmName.SHA256)
+                    .Should().Contain(string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateFreshestCrlUrl, freshestCrlUrl));
+            }
+        }
+
+        [Fact]
         public void GetOcspUrls_WithNoExtension_ReturnsEmpty()
         {
             using (var certificate = SigningTestUtility.GenerateCertificate("test", generator => { }))
@@ -494,6 +519,73 @@ namespace NuGet.Packaging.Test
                 }))
             {
                 var urls = CertificateUtility.GetOcspUrls(certificate);
+
+                urls.Should().HaveCount(1);
+                urls[0].Should().Be(NuGet.Packaging.Signing.DerEncoding.SR.Cryptography_Der_Invalid_Encoding);
+            }
+        }
+
+        [Fact]
+        public void GetCaIssuersUrls_WithNoExtension_ReturnsEmpty()
+        {
+            using (var certificate = SigningTestUtility.GenerateCertificate("test", generator => { }))
+            {
+                var urls = CertificateUtility.GetCaIssuersUrls(certificate);
+
+                Assert.Empty(urls);
+            }
+        }
+
+        [Fact]
+        public void GetCaIssuersUrls_WithExtension_OutputsUrl()
+        {
+            const string caIssuersUrl = "http://ca.example.com/cert.crt";
+
+            using (var certificate = SigningTestUtility.GenerateCertificate("test",
+                generator =>
+                {
+                    generator.Extensions.Add(
+                        new Microsoft.Internal.NuGet.Testing.SignedPackages.X509AuthorityInformationAccessExtension(
+                            ocspResponderUrl: null, caIssuersUrl: new Uri(caIssuersUrl)));
+                }))
+            {
+                var urls = CertificateUtility.GetCaIssuersUrls(certificate);
+
+                Assert.Single(urls);
+                Assert.Equal(caIssuersUrl, urls[0]);
+                CertificateUtility.X509Certificate2ToString(certificate, Common.HashAlgorithmName.SHA256)
+                    .Should().Contain(string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateCaIssuersUrl, caIssuersUrl));
+            }
+        }
+
+        [Fact]
+        public void GetCaIssuersUrls_WithOcspOnly_ReturnsEmpty()
+        {
+            using (var certificate = SigningTestUtility.GenerateCertificate("test",
+                generator =>
+                {
+                    generator.Extensions.Add(
+                        new Microsoft.Internal.NuGet.Testing.SignedPackages.X509AuthorityInformationAccessExtension(
+                            ocspResponderUrl: new Uri("http://ocsp.example.com"), caIssuersUrl: null));
+                }))
+            {
+                var urls = CertificateUtility.GetCaIssuersUrls(certificate);
+
+                Assert.Empty(urls);
+            }
+        }
+
+        [Fact]
+        public void GetCaIssuersUrls_WithInvalidDerEncoding_ReturnsError()
+        {
+            using (var certificate = SigningTestUtility.GenerateCertificate("test",
+                generator =>
+                {
+                    var invalidData = new byte[] { 0xFF, 0xFF, 0xFF };
+                    generator.Extensions.Add(new X509Extension("1.3.6.1.5.5.7.1.1", invalidData, critical: false));
+                }))
+            {
+                var urls = CertificateUtility.GetCaIssuersUrls(certificate);
 
                 urls.Should().HaveCount(1);
                 urls[0].Should().Be(NuGet.Packaging.Signing.DerEncoding.SR.Cryptography_Der_Invalid_Encoding);

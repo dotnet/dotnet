@@ -208,6 +208,7 @@ internal static class PackageUpdateCommandRunner
                 if (mappedSources is not null && mappedSources.Count == 0)
                 {
                     logger.LogError(Messages.Error_PackageSourceMappingNotFound(packageIdentity.Id));
+                    successful = false;
                     continue;
                 }
 
