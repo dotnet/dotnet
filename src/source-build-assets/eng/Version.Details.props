@@ -7,10 +7,10 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet-dotnet dependencies -->
     <MicrosoftBclCryptographyPackageVersion>10.0.14</MicrosoftBclCryptographyPackageVersion>
-    <MicrosoftBuildPackageVersion>18.0.36</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildUtilitiesCorePackageVersion>18.0.36</MicrosoftBuildUtilitiesCorePackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26473.102</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.114-servicing.26473.102</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftBuildPackageVersion>18.0.37</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildUtilitiesCorePackageVersion>18.0.37</MicrosoftBuildUtilitiesCorePackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.26505.127</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.114-servicing.26505.127</MicrosoftDotNetGenAPITaskPackageVersion>
     <MicrosoftNETCoreILAsmPackageVersion>10.0.14</MicrosoftNETCoreILAsmPackageVersion>
     <MicrosoftNETCoreILDAsmPackageVersion>10.0.14</MicrosoftNETCoreILDAsmPackageVersion>
   </PropertyGroup>
