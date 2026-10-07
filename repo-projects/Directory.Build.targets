@@ -570,7 +570,7 @@
   <Target Name="GetRuntimePackVersion"
           DependsOnTargets="PrepareRepositoryReferences;GetProducedPackagesFromTransitiveReferences;GetSharedComponentBuildInputs">
     <!-- Use matching runtime contracts whether runtime is built live or consumed from a shared-component build. -->
-    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(IsTestRun)' != 'true'">
       <_UseRuntimePackOverrides Condition="'@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' == 'true'
                                            or ('$(DotNetBuildSharedComponents)' != 'true' and '$(UseBootstrapArcade)' != 'true')">true</_UseRuntimePackOverrides>
     </PropertyGroup>
