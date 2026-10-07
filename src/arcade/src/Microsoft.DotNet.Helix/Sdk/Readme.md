@@ -90,7 +90,7 @@ Useful parameters:
 - `helixAccessToken`: optional token for authenticated Helix access on internal builds; ignored with a warning when `useEntraAuthentication` is enabled.
 - `useEntraAuthentication`: use a refreshable Entra credential for authenticated Helix access.
 - `helixEntraScope`: explicit Entra scope required when `helixBaseUri` identifies a custom host.
-- `azureSubscription`: Azure service connection ID authorized for Helix; required when `useEntraAuthentication` is enabled.
+- `azureSubscription`: workload identity federation service connection name authorized for Helix; required when `useEntraAuthentication` is enabled.
 - `pollingIntervalSeconds`: how often the job monitor checks for new completed jobs.
 - `timeoutInMinutes`: overall timeout for the job monitor.
 - `continueOnError`: allow the pipeline to continue when the monitor job fails. Defaults to `false`.
@@ -102,6 +102,7 @@ Implementation and semantic design documents are indexed at
 Behavior notes:
 
 - The reporter uses its own `SYSTEM_ACCESSTOKEN`, so it does not depend on the shorter-lived token from the job that originally submitted the Helix work.
+- Entra-authenticated monitoring runs inside `AzureCLI@2` with `keepAzSessionActive` enabled. The task renews its workload identity session while the monitor runs, so the timeout does not require a single long-lived access token.
 - If parseable xUnit, JUnit, or TRX result files are available, those are uploaded.
 - Result processing uses globally bounded work-item parallelism and streams XML
   instead of loading complete result documents. Status polling remains
