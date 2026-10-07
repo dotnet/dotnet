@@ -1,12 +1,5 @@
 <Project>
   <PropertyGroup>
     <EmscriptenPackageVersion Condition="'$(DotNet1xxWorkloadManifestVersion)' == ''">$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)</EmscriptenPackageVersion>
-    <EmscriptenPackageVersion Condition="'$(DotNet1xxWorkloadManifestVersion)' != ''">$(MicrosoftNETSdkEmscriptenVersionInternalPackageVersion)</EmscriptenPackageVersion>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(DotNet1xxWorkloadManifestVersion)' != ''">
-    <PackageReference Include="Microsoft.NET.Sdk.Emscripten.Version.Internal"
-                      VersionOverride="$(MicrosoftNETSdkEmscriptenVersionInternalPackageVersion)"
-                      PrivateAssets="all" ExcludeAssets="all" GeneratePathProperty="true" />
-  </ItemGroup>
 </Project>

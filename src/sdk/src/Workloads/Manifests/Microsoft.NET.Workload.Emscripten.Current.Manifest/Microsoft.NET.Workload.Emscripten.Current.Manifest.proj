@@ -15,9 +15,32 @@
     <None Include="$(WorkloadManifestTargetsPath)" Pack="true" PackagePath="data" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(DotNet1xxWorkloadManifestVersion)' != ''">
+    <PackageDownload Include="$(PackageId)" Version="[$(DotNet1xxWorkloadManifestVersion)]" />
+  </ItemGroup>
+
+  <Import Project="$(RepoRoot)src\Tasks\sdk-tasks\sdk-tasks.InTree.targets"
+          Condition="'$(DotNet1xxWorkloadManifestVersion)' != ''" />
   <Import Project="..\..\Emscripten.targets" />
 
-  <Target Name="_GenerateWorkloadManifestFiles" DependsOnTargets="_ValidateEmscriptenPackageVersion;_ValidateEmscriptenVersionMarker">
+  <Target Name="_ReadEmscriptenVersionFromManifest"
+          DependsOnTargets="ResolveProjectReferences"
+          Condition="'$(DotNet1xxWorkloadManifestVersion)' != ''">
+    <PropertyGroup>
+      <_SelectedEmscriptenManifest>$(NuGetPackageRoot)$(PackageId.ToLowerInvariant())\$(DotNet1xxWorkloadManifestVersion.ToLowerInvariant())\data\WorkloadManifest.json</_SelectedEmscriptenManifest>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_SelectedEmscriptenManifest)')"
+           Text="The selected 1xx Emscripten manifest was not restored: $(_SelectedEmscriptenManifest)." />
+    <ReadEmscriptenManifest ManifestPath="$(_SelectedEmscriptenManifest)"
+                           ManifestVersion="$(DotNet1xxWorkloadManifestVersion)"
+                           NetVersion="net$(VersionMajor)"
+                           EmscriptenVersion="$(EmscriptenVersionCurrent)">
+      <Output TaskParameter="PackageVersion" PropertyName="EmscriptenPackageVersion" />
+    </ReadEmscriptenManifest>
+  </Target>
+
+  <Target Name="_GenerateWorkloadManifestFiles"
+          DependsOnTargets="_ReadEmscriptenVersionFromManifest;_ValidateEmscriptenPackageVersion">
     <ItemGroup>
       <_WorkloadManifestValues Include="NetVersion" Value="net12" />
       <_WorkloadManifestValues Include="WorkloadVersion" Value="$(PackageVersion)" />

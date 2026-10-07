@@ -117,14 +117,17 @@
     <ManifestPackagesToDownload Include="@(_ManifestProjectFiles->'%(Filename)')" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
-    <!-- Emscripten uses the standalone pin in 1xx, and the SDK-republished pin in upstack. -->
-    <PackageDownload Include="@(RuntimeWorkloadPacksToDownload)" Version="[$(MicrosoftNETCoreAppRuntimePackageVersion)]" />
-    <PackageDownload Include="@(EmsdkWorkloadPacksToDownload)" Version="[$(EmscriptenPackageVersion)]" />
-  </ItemGroup>
+  <Target Name="_AddWorkloadPackDownloads"
+          DependsOnTargets="_ValidateEmscriptenPackageVersion"
+          BeforeTargets="CollectPackageDownloads"
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true' and '$(DotNet1xxWorkloadManifestVersion)' == ''">
+    <ItemGroup>
+      <PackageDownload Include="@(RuntimeWorkloadPacksToDownload)" Version="[$(MicrosoftNETCoreAppRuntimePackageVersion)]" />
+      <PackageDownload Include="@(EmsdkWorkloadPacksToDownload)" Version="[$(EmscriptenPackageVersion)]" />
+    </ItemGroup>
+  </Target>
 
   <Target Name="_AddMsiPackageDownloads"
-          DependsOnTargets="_ValidateEmscriptenPackageVersion"
           BeforeTargets="CollectPackageDownloads"
           Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' == 'true'">
     <ItemGroup>
@@ -151,29 +154,6 @@
                        Version="[$(DotNet1xxRuntimeVersion)]"
                        Condition="!$([System.String]::Copy('%(RuntimeWorkloadPacksToDownload.Identity)').Contains('.win-')) and '%(RuntimeWorkloadPacksToDownload.ExcludeAsMsi)' != 'true'" />
 
-      <!-- Emscripten payload MSIs retain the raw pack's version, not the runtime version. -->
-      <!-- For RID-specific packages, add single MSI with matching architecture -->
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.x64"
-                       Version="[$(EmscriptenPackageVersion)]"
-                       Condition="$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-x64'))" />
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.x86"
-                       Version="[$(EmscriptenPackageVersion)]"
-                       Condition="$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-x86'))" />
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.arm64"
-                       Version="[$(EmscriptenPackageVersion)]"
-                       Condition="$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-arm64'))" />
-
-      <!-- For non-RID-specific packages, add MSI packages for all three architectures -->
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.x86"
-                       Version="[$(EmscriptenPackageVersion)]"
-                       Condition="!$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-'))" />
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.x64"
-                       Version="[$(EmscriptenPackageVersion)]"
-                       Condition="!$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-'))" />
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.arm64"
-                       Version="[$(EmscriptenPackageVersion)]"
-                       Condition="!$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-'))" />
-
       <!-- MSI packages for ManifestPackagesToDownload -->
       <!-- Manifest packages are not RID-specific, add MSI packages for all three architectures -->
       <PackageDownload Include="%(ManifestPackagesToDownload.Identity)-$(BuiltInWorkloadFeatureBand).Msi.x86" 
@@ -185,9 +165,15 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="_ValidateUpstackWorkloadMsiMode"
+          BeforeTargets="CollectPackageDownloads;Build"
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DotNet1xxWorkloadManifestVersion)' != '' and '$(DownloadWorkloadMsis)' != 'true'">
+    <Error Text="Upstack workload installer builds require DownloadWorkloadMsis=true to reuse the selected 1xx manifest MSIs. Emscripten payloads are not downloaded or rebuilt in upstack bands." />
+  </Target>
+
   <Target Name="_CollectDownloadedWorkloadPacks"
-          DependsOnTargets="_ValidateEmscriptenPackageVersion;_ValidateEmscriptenVersionMarker"
-          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
+          DependsOnTargets="_ValidateEmscriptenPackageVersion"
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true' and '$(DotNet1xxWorkloadManifestVersion)' == ''">
     <ItemGroup>
       <_EmsdkWorkloadPackage Include="@(EmsdkWorkloadPacksToDownload)">
         <LowercaseId>$([System.String]::Copy('%(Identity)').ToLowerInvariant())</LowercaseId>
@@ -220,12 +206,10 @@
   </Target>
 
   <Target Name="_CollectDownloadedWorkloadMsis"
-          DependsOnTargets="_ValidateEmscriptenPackageVersion;_ValidateEmscriptenVersionMarker"
           Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' == 'true'">
     <ItemGroup>
       <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(RuntimeWorkloadPacksToDownload.Identity).Msi.*\$(DotNet1xxRuntimeVersion)\*.nupkg" 
                               Condition="'%(RuntimeWorkloadPacksToDownload.ExcludeAsMsi)' != 'true'" />
-      <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(EmsdkWorkloadPacksToDownload.Identity).Msi.*\$(EmscriptenPackageVersion)\*.nupkg" />
       <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(ManifestPackagesToDownload.Identity)-$(BuiltInWorkloadFeatureBand).Msi.*\$(DotNet1xxWorkloadManifestVersion)\*.nupkg" />
     </ItemGroup>
 
@@ -250,7 +234,7 @@
   </Target>
 
   <Target Name="BuildWorkloadMsis"
-          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true' and '$(DotNet1xxWorkloadManifestVersion)' == ''">
     <ItemGroup>
       <!-- Overrides for Visual Studio setup generation. If the workload definition IDs change,
             these must be updated. -->

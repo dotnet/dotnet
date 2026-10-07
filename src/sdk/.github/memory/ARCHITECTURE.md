@@ -36,12 +36,18 @@ runtime-library generators or `dotnet/sdk` for SDK analyzers.
 ### Emscripten Workload Inputs
 
 The raw Emscripten toolchain version is independent of runtime and SDK versions.
-1xx builds use the `Emscripten.Internal` dependency pin and republish its selected
-version as `Microsoft.NET.Sdk.Emscripten.Version.Internal` through the manifest traversal.
-The producer selects the standalone pin directly and imports shared validation
-targets, but not consumer props or a reference to its own transport package.
-Upstack uses that SDK marker's flowed version, generates manifests locally, and
-downloads both payload and manifest MSIs using their respective versions.
+1xx builds use the `Emscripten.Internal` dependency pin in their generated manifest.
+Upstack restores the selected 1xx Emscripten manifest as a normal package download
+and reads its raw pack versions during manifest generation, checking package-ID
+family coherence.
+The reader is a repository-only `sdk-tasks` task, registered in
+[`sdk-tasks.InTree.targets`](../../src/Tasks/sdk-tasks/sdk-tasks.InTree.targets);
+its parser/model sources and resources are compiled directly into that assembly,
+without a reader package or project dependency. Restore does not invoke the reader.
+No additional SDK-produced version transport package is required.
+Upstack generates manifests locally and
+downloads manifest MSIs for the SDK installer, but no Emscripten payload packages
+or payload-MSI wrappers. Runtime payload-MSI staging is unchanged.
 MSI generation remains SDK-owned. See the
 [workload build input contract](../../src/Workloads/README.md).
 

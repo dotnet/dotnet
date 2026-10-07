@@ -2,9 +2,10 @@
 
 The VMR no longer schedules raw emsdk production through the SDK or browser-runtime
 build graph. Runtime still consumes Emscripten to build WebAssembly binaries.
-The SDK retains workload manifest generation, payload-MSI wrapping, manifest-MSI
-generation, and the existing `DownloadWorkloadMsis` modes/cadence, consistent with
-10.0. Only raw toolchain production moves out of the VMR.
+The SDK retains local workload manifest generation and 1xx payload/manifest-MSI
+generation, consistent with 10.0. Raw toolchain production moves out of the VMR.
+Upstack reuses manifest MSIs but no longer downloads or stages Emscripten
+toolchain payloads or their payload-MSI wrappers.
 
 ## Scope
 
@@ -20,34 +21,36 @@ generation, and the existing `DownloadWorkloadMsis` modes/cadence, consistent wi
 | Artifact | Producer / version selection |
 | --- | --- |
 | Raw SDK, Cache, Node, Python packages | Standalone emsdk; runtime and SDK 1xx select its approved release through dependency flow. |
-| `Microsoft.NET.Sdk.Emscripten.Version.Internal` | SDK 1xx republishes the selected emsdk version as a new non-shipping transport package. Its package version equals the raw emsdk version; `data/EmscriptenVersion.txt` records the package-ID family and is packed through a `None` item with the standard generated nuspec. |
-| Current Emscripten manifest | Locally generated in all bands, SDK/workload-versioned; pack references use the standalone pin in 1xx or the SDK marker's flowed version in upstack. |
-| Emscripten payload MSI NuGets | SDK-owned, retain the raw-pack version contract and existing generation cadence. Upstack downloads and stages them at the SDK marker's version. |
+| Current Emscripten manifest | Locally generated in all bands, SDK/workload-versioned; pack references use the standalone pin in 1xx or the selected 1xx manifest's pack versions in upstack. |
+| Emscripten payload MSI NuGets | SDK 1xx-owned, retain the raw-pack version contract and existing generation cadence. Upstack does not download or stage them. |
 | Upstack manifest MSI NuGets | Downloaded and staged at the selected `DotNet1xxWorkloadManifestVersion`. Runtime payload MSIs continue using `DotNet1xxRuntimeVersion`. |
 
-The marker is connected to the SDK's existing manifest restore/build/pack
-traversal, reached through redist and workload packaging.
-The producer selects the 1xx standalone emsdk input directly and imports
-`Emscripten.targets` for shared validation, without importing consumer props or
-referencing its own package.
-Standard Arcade/VMR publication exposes its non-shipping package as an `External` asset for dependency
-flow. Upstack obtains `MicrosoftNETSdkEmscriptenVersionInternalPackageVersion` from this
-SDK-produced asset; the VMR forwards it across the separate SDK-process boundary.
-Upstack restores the marker and checks its family before generation/staging.
-It must flow with the selected 1xx workload set, not from a separate emsdk
-subscription, coherence relationship, or runtime version.
+The 1xx manifest already records the raw emsdk package version and family.
+Upstack restores that manifest using the existing
+`DotNet1xxWorkloadManifestVersion` selection, then reads and validates its pack
+versions and family during manifest generation, after ordinary restore.
+The reader parser, model sources, and resources are compiled directly into
+`sdk-tasks`, avoiding a reader-package or reader-project bootstrap dependency.
+No task compilation or manifest-content reading takes place during ordinary
+or static-graph restore.
+There is no additional SDK version transport package or independent upstack
+emsdk subscription, coherence relationship, or runtime-version inference.
 
 Manifest generation remains local, including existing upstack SDK-version
-overrides. There is no selected-manifest copy/download path. Upstack continues
-downloading **both Emscripten payload MSIs and manifest MSIs**. MSI/SWIX generation
-is still controlled by the existing modes; no build-once installer policy is added.
+overrides. The selected 1xx manifest is downloaded as an input, not copied over
+the locally generated manifest. Upstack continues downloading **manifest MSIs**, which the Windows SDK
+installation bundle embeds. The eight unused Emscripten payload-MSI copies are
+removed from its internal artifact set. Runtime payload-MSI staging is unchanged.
+Upstack installer builds require the existing `DownloadWorkloadMsis=true` mode;
+MSI/SWIX generation remains a 1xx operation. Downloaded MSI packages and generated
+upstack manifests keep their existing internal publication visibility.
 
 An effective prerelease Emscripten version is rejected for SDK labels `rtm`,
-`servicing`, and `hotfix`, including marker consumption/MSI restore. Stable
+`servicing`, and `hotfix`, including upstack manifest generation. Stable
 versions are accepted. Since Internal is always prerelease, emsdk must eventually
 publish a stable version property for the `EmscriptenVersionCurrent` family.
-Switch producer and consumer version selection, manifest references, marker production, raw
-acquisition/staging, and MSI downloads together; never strip a prerelease suffix.
+Switch 1xx version selection, manifest references, raw
+acquisition/staging, and payload-MSI generation together; never strip a prerelease suffix.
 Remove the temporary guard after that transition.
 
 See the [SDK workload input contract](../src/sdk/src/Workloads/README.md) for
@@ -56,15 +59,17 @@ project/import paths, package layout, and publication details.
 ## Rollout prerequisites and validation
 
 Standalone emsdk production, subscription changes, promotion/signing, and future
-stable-version properties are separate work. Publish a real marker from SDK 1xx
-before registering that asset in the consuming upstack branch's dependency
-metadata. No nonexistent package version is pinned in this change.
+stable-version properties are separate work. Upstack uses its existing selected
+1xx workload manifest; no new SDK dependency-flow asset needs registration.
+No nonexistent package version is pinned in this change.
 
-Validate official workload/VS packaging, later-band payload/manifest-MSI reuse,
+Validate official workload/VS packaging, later-band manifest-MSI reuse,
 fresh-cache `wasm-tools` installation and native/AOT publishing, and shared-component/
 offline source-build behavior. Local investigation exercised MSBuild selection,
-staging, release guards, marker publication/traversal, and a real local
-marker-pack -> generated version props -> restore -> manifest-pack path; the
+staging, release guards, and manifest generation. Manifest-derived selection was
+also exercised through ordinary and static-graph restore from fresh package
+caches, with isolated payload/tool metadata fixtures, and real 1xx/upstack manifest
+packs. Those checks do not establish real installer generation or signing; the
 investigation test harness is not included in this change.
 Metadata-only pack smoke used `TargetFramework=net11.0` because the installed
 12-branded stage-0 SDK still rejects net12 targets; this is not full product validation.

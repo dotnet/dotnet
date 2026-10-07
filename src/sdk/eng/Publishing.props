@@ -34,9 +34,6 @@
   <!-- The PGO sdk should always have External visibility, even if someone changes the default artifact visibility -->
   <ItemGroup>
     <Artifact Update="$(ArtifactsShippingPackagesDir)dotnet-sdk-pgo-*" Visibility="External" />
-    <!-- Non-shipping version marker consumed by dependency flow into upstack SDK bands. -->
-    <Artifact Update="$(ArtifactsNonShippingPackagesDir)Microsoft.NET.Sdk.Emscripten.Version.Internal.*.nupkg" Visibility="External"
-              Condition="'$(DotNet1xxWorkloadManifestVersion)' == ''" />
   </ItemGroup>
 
   <!-- Temporarily remove the .Msi workload pack nugets in non .NET product build mode (until the repo official build gets removed), but keep the manifest .Msi packages. -->
@@ -57,7 +54,6 @@
   <ItemGroup Condition="'$(DotNet1xxWorkloadManifestVersion)' != ''">
     <Artifact Update="$(ArtifactsShippingPackagesDir)Microsoft.NET.Workload.*.Manifest-*.nupkg" Visibility="Internal" />
     <Artifact Update="$(ArtifactsNonShippingPackagesDir)Microsoft.NET.Workload.*.Manifest-*.nupkg" Visibility="Internal" />
-    <Artifact Update="$(ArtifactsNonShippingPackagesDir)Microsoft.NET.Sdk.Emscripten.Version.Internal.*.nupkg" Visibility="Internal" />
   </ItemGroup>
 
   <Target Name="GetNonStableProductVersion">
