@@ -232,6 +232,7 @@
 
   <ItemGroup  Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <EnvironmentVariables Include="NuGetAudit=false" />
+    <EnvironmentVariables Include="DeterministicTimestamp=$(SOURCE_DATE_EPOCH)" Condition="'$(SOURCE_DATE_EPOCH)' != ''" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableExtraDebugging)' == 'true'">
