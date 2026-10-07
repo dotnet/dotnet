@@ -27,9 +27,14 @@ public class Build : IntegrationTestBase
     private static readonly string Dotnet = Path.GetFullPath(Path.Combine(Root, ".dotnet", OSUtils.IsWindows ? "dotnet.exe" : "dotnet"));
 
     [AssemblyInitialize]
-    public static void AssemblyInitialize(TestContext _)
+    public static void AssemblyInitialize(TestContext context)
     {
         SetDotnetEnvironment();
+        if (bool.TryParse(context.Properties["SkipIntegrationTestBuild"]?.ToString(), out var skipBuild) && skipBuild)
+        {
+            return;
+        }
+
         BuildTestAssetsAndUnzipPackages();
         BuildTestAssetsCompatibility();
         CopyAndPatchDotnet();
@@ -49,7 +54,7 @@ public class Build : IntegrationTestBase
 
     private static void CopyAndPatchDotnet()
     {
-        var patchedDotnetDir = Path.GetFullPath(Path.Combine(Root, "artifacts", "tmp", ".dotnet"));
+        var patchedDotnetDir = IntegrationTestEnvironment.PatchedDotnetDirectory;
 
         // Copy dotnet.
         DirectoryUtils.CopyDirectory(new DirectoryInfo(DotnetDir), new DirectoryInfo(patchedDotnetDir));

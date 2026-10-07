@@ -141,9 +141,12 @@ public class ProxyDataCollectionManagerTests
     [TestMethod]
     public void SendTestHostInitiazliedShouldPassProcessIdToRequestSender()
     {
-        _proxyDataCollectionManager.TestHostLaunched(1234);
+        using var process = Process.GetCurrentProcess();
+        _proxyDataCollectionManager.TestHostLaunched(process.Id);
 
-        _mockDataCollectionRequestSender.Verify(x => x.SendTestHostLaunched(It.Is<TestHostLaunchedPayload>(y => y.ProcessId == 1234)));
+        _mockDataCollectionRequestSender.Verify(
+            x => x.SendTestHostLaunched(
+                It.Is<TestHostLaunchedPayload>(y => y.ProcessId == process.Id)));
     }
 
     [TestMethod]

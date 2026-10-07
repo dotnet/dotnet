@@ -44,6 +44,7 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [RunnerCompatibilityDataSource]
     public void RunAllTests(RunnerInfo runnerInfo)
@@ -62,6 +63,7 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [RunnerCompatibilityDataSource(BeforeFeature = Features.MULTI_TFM)]
     public void RunAllTestsWithMixedTFMsWillFailToRunTestsFromTheIncompatibleTFMDll(RunnerInfo runnerInfo)
@@ -84,6 +86,7 @@ public class RunTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [TestHostCompatibilityDataSource]
     [RunnerCompatibilityDataSource(AfterFeature = Features.MULTI_TFM)]

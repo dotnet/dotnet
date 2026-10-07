@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -43,8 +43,10 @@ public class PostProcessingTests : AcceptanceTestBase
         Parallel.For(0, 5, i =>
         {
             string projectFolder = Path.Combine(TempDirectory.Path, i.ToString(CultureInfo.InvariantCulture));
-            ExecuteApplication(GetConsoleRunnerPath(), $"new mstest -o {projectFolder}", out string stdOut, out string stdError, out int exitCode);
+            // Give this test its own template cache; the shared one races with other scaffolds.
+            ExecuteApplication(GetConsoleRunnerPath(), $"new mstest -o {projectFolder}", out string stdOut, out string stdError, out int exitCode, new Dictionary<string, string> { ["DOTNET_CLI_HOME"] = CreateIsolatedTemplateEngineHome(TempDirectory.Path) });
             Assert.AreEqual(exitCode, 0);
+            UseLocallyBuiltTestSdk(projectFolder);
             ExecuteApplication(GetConsoleRunnerPath(), $"build {projectFolder} -c release", out stdOut, out stdError, out exitCode);
             Assert.AreEqual(exitCode, 0);
 

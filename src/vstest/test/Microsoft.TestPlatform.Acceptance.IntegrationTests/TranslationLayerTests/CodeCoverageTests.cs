@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -112,6 +113,11 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
 
         // assert
         Assert.AreEqual(6, _runEventHandler.TestResults.Count);
+        if (_runEventHandler.Attachments.Count != 1)
+        {
+            WriteAttachmentFailureDiagnostics(_runEventHandler);
+        }
+
         Assert.AreEqual(1, _runEventHandler.Attachments.Count);
         Assert.IsTrue(_telemetryEventsHandler.Events.Any(e => e.Name.StartsWith("vs/codecoverage") && e.Properties.Any()));
 
@@ -119,6 +125,44 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
 
         Assert.AreEqual("324f817a-7420-4e6d-b3c1-143fbed6d855", _runEventHandler.Metrics!["VS.TestPlatform.DataCollector.CorProfiler.datacollector://microsoft/CodeCoverage/2.0"]);
         Assert.AreEqual("324f817a-7420-4e6d-b3c1-143fbed6d855", _runEventHandler.Metrics["VS.TestPlatform.DataCollector.CoreClrProfiler.datacollector://microsoft/CodeCoverage/2.0"]);
+    }
+
+    private void WriteAttachmentFailureDiagnostics(RunEventHandler handler)
+    {
+        Write($"Coverage attachment failure: {handler.Attachments.Count} sets, {handler.TestResults.Count} test results.");
+        foreach (var set in handler.Attachments.Take(10))
+        {
+            Write($"Attachment set: {set.Uri}; files={set.Attachments.Count}");
+            foreach (var attachment in set.Attachments.Take(10))
+            {
+                Write($"Attachment file: {attachment.Uri}; exists={attachment.Uri.IsFile && File.Exists(attachment.Uri.LocalPath)}");
+            }
+        }
+
+        foreach (var collector in handler.InvokedDataCollectors.Take(10))
+        {
+            Write($"Collector: {collector.Uri}; {collector.AssemblyQualifiedName}; file={collector.FilePath}; processor={collector.HasAttachmentProcessor}");
+        }
+
+        Write($"Run errors: {handler.Errors.Count}");
+        foreach (var error in handler.Errors.Take(10))
+        {
+            Write(error ?? string.Empty);
+        }
+
+        foreach (var metric in handler.Metrics?.Where(m => m.Key.StartsWith("VS.AttachmentsProcessing.", StringComparison.Ordinal)).Take(10)
+            ?? Enumerable.Empty<KeyValuePair<string, object>>())
+        {
+            Write($"Metric: {metric.Key}={metric.Value}");
+        }
+
+        foreach (var line in CoverageFailureDiagnostics.ReadProcessorContext(Path.Combine(TempDirectory.Path, "log.txt")))
+        {
+            Write(line);
+        }
+
+        static void Write(string message)
+            => Console.WriteLine(CoverageFailureDiagnostics.RedactAndLimit(message));
     }
 
     [TestMethod]

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 
 using Microsoft.TestPlatform.TestUtilities;
+using Microsoft.TestPlatform.VsTestConsole.TranslationLayer;
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -43,6 +44,32 @@ public class DiscoverTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [NetCoreTargetFrameworkDataSource(useDesktopRunner: false)]
+    public async Task StartSessionAsyncShouldDiscoverTestsWithLocallyBuiltConsole(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+        var consoleWrapper = new VsTestConsoleWrapper(GetDotnetRunnerPath(), new ConsoleParameters());
+        try
+        {
+            await consoleWrapper.StartSessionAsync();
+
+            var handler = new DiscoveryEventHandler2();
+            consoleWrapper.DiscoverTests(
+                GetTestAssemblies(),
+                GetDefaultRunSettings(),
+                new TestPlatformOptions(),
+                handler);
+
+            Assert.AreEqual(6, handler.DiscoveredTestCases.Count);
+        }
+        finally
+        {
+            consoleWrapper.EndSession();
+        }
+    }
+
+    [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [RunnerCompatibilityDataSource]
     public void DiscoverTestsUsingDiscoveryEventHandler1(RunnerInfo runnerInfo)
@@ -61,6 +88,7 @@ public class DiscoverTests : AcceptanceTestBase
     }
 
     [TestMethod]
+    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [RunnerCompatibilityDataSource]
     public void DiscoverTestsUsingDiscoveryEventHandler2AndTelemetryOptedOut(RunnerInfo runnerInfo)

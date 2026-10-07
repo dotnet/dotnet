@@ -56,6 +56,9 @@ public class ExecutorUnitTests
         var version = suffixIndex == -1 ? assemblyVersion : assemblyVersion.Substring(0, suffixIndex);
         StringAssert.Contains(mockOutput.Messages.First().Message,
             version);
+        // The banner always shows the short version, including on builds with no suffix.
+        Assert.IsFalse(mockOutput.Messages.First().Message!.Contains(version + "-"),
+            "The banner must show the short version; the suffix is only kept in diag mode.");
     }
 
     [TestMethod]

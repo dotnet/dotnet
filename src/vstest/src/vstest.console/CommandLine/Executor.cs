@@ -438,7 +438,8 @@ internal class Executor
         string? assemblyVersion = Product.Version;
         if (!isDiag)
         {
-            var end = Product.Version?.IndexOf("-release");
+            // Drop the whole suffix, not just the -release one. Diag mode keeps the full version.
+            var end = Product.Version?.IndexOf("-");
 
             if (end >= 0)
             {

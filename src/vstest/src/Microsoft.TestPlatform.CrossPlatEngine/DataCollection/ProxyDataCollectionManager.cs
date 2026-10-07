@@ -201,8 +201,8 @@ internal class ProxyDataCollectionManager : IProxyDataCollectionManager
                 dataCollectionEventsPort = result.DataCollectionEventsPort;
 
                 EqtTrace.Info(
-                    "ProxyDataCollectionManager.BeforeTestRunStart: SendBeforeTestRunStartAndGetResult successful, env variable from datacollector: {0}  and testhost port: {1}",
-                    string.Join(";", environmentVariables),
+                    "ProxyDataCollectionManager.BeforeTestRunStart: SendBeforeTestRunStartAndGetResult successful, received {0} environment variables and testhost port: {1}",
+                    environmentVariables.Count,
                     dataCollectionEventsPort);
             },
             runEventsHandler);
@@ -215,10 +215,10 @@ internal class ProxyDataCollectionManager : IProxyDataCollectionManager
     /// <inheritdoc />
     public void TestHostLaunched(int processId)
     {
-        var payload = new TestHostLaunchedPayload();
-        payload.ProcessId = processId;
-
-        _dataCollectionRequestSender.SendTestHostLaunched(payload);
+        _dataCollectionRequestSender.SendTestHostLaunched(new TestHostLaunchedPayload
+        {
+            ProcessId = processId,
+        });
     }
 
     /// <summary>
@@ -235,7 +235,6 @@ internal class ProxyDataCollectionManager : IProxyDataCollectionManager
     {
         _dataCollectionPort = _dataCollectionRequestSender.InitializeCommunication();
 
-        // Warn the user that execution will wait for debugger attach.
         _dataCollectionProcessId = _dataCollectionLauncher.LaunchDataCollector(null, GetCommandLineArguments(_dataCollectionPort));
         EqtTrace.Info("ProxyDataCollectionManager.Initialize: Launched datacollector processId: {0} port: {1}", _dataCollectionProcessId, _dataCollectionPort);
 

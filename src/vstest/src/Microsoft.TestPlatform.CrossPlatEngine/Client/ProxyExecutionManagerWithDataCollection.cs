@@ -61,9 +61,7 @@ internal class ProxyExecutionManagerWithDataCollection : ProxyExecutionManager
     }
 
     private void TestHostLaunchedHandler(object? sender, HostProviderEventArgs e)
-    {
-        ProxyDataCollectionManager.TestHostLaunched(e.ProcessId);
-    }
+        => ProxyDataCollectionManager.TestHostLaunched(e.ProcessId);
 
     /// <summary>
     /// Gets the data collection run events handler.
