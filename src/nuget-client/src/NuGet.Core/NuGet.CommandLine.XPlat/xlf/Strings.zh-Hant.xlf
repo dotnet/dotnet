@@ -395,7 +395,7 @@ NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecur
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
         <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
-        <target state="translated">專案 '{0}' 不是 PackageReference 專案。此命令僅支援 NuGet PackageReference 專案。</target>
+        <target state="needs-review-translation">專案 `{0}` 會使用 NuGet 套件的 package.config，且命令僅能搭配套件參考專案使用。</target>
         <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
@@ -405,7 +405,7 @@ NuGet 需要 HTTPS 來源。您必須在 NuGet.Config 檔案中將 'allowInsecur
       </trans-unit>
       <trans-unit id="Error_PackagePublishDateMissing">
         <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
-        <target state="translated">套件來源 '{0}' 未提供套件 '{1}' 版本 '{2}' 的發佈日期。由於該來源已設定最低發佈時間，因此這項資訊是必要的。</target>
+        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
         <note>{0} - package source name
 {1} - package ID
 {2} - package version</note>
@@ -1041,7 +1041,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
         <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
-        <target state="translated">尚未達到所設定最低發佈時間的較新版本套件: {0}。</target>
+        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
         <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -1260,9 +1260,14 @@ The search is a case-insensitive string comparison using the supplied value, whi
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
-        <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
-        <target state="translated">套件發佈後，必須經過的最低時數，才能選取它進行更新。設為 0 可移除該值。</target>
+        <source>The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</source>
+        <target state="new">The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
+        <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
         <source>Name of the source.</source>
@@ -1311,72 +1316,72 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="StageCommand_Description">
         <source>Manages packages in a staging environment.</source>
-        <target state="translated">在暫存環境中管理套件。</target>
+        <target state="new">Manages packages in a staging environment.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Description">
         <source>Stages a package on the server without publishing it.</source>
-        <target state="translated">在伺服器上暫存套件，而不發佈套件。</target>
+        <target state="new">Stages a package on the server without publishing it.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_InvalidGroup">
         <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
-        <target state="translated">群組識別碼必須為 1-64 個字元，只能使用 A-Z、a-z、0-9、'.'、'_' 或 '-'，且開頭和結尾必須是字母或數字。</target>
+        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_MissingSource">
         <source>No package source was provided and DefaultPushSource is not configured.</source>
-        <target state="translated">未提供套件來源，且未設定 DefaultPushSource。</target>
+        <target state="new">No package source was provided and DefaultPushSource is not configured.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackageNotFound">
         <source>The package file '{0}' does not exist.</source>
-        <target state="translated">套件檔案 '{0}' 不存在。</target>
+        <target state="new">The package file '{0}' does not exist.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackagePathRequired">
         <source>A package path is required.</source>
-        <target state="translated">需要套件路徑。</target>
+        <target state="new">A package path is required.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_ResourceNotFound">
         <source>The source '{0}' does not advertise a supported package staging resource.</source>
-        <target state="translated">來源 '{0}' 未通告支援的套件暫存資源。</target>
+        <target state="new">The source '{0}' does not advertise a supported package staging resource.</target>
         <note>0 - package source</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
         <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
-        <target state="translated">檔案 '{0}' 不是支援的套件。指定 .nupkg、.snupkg 或 .symbols.nupkg 檔案。</target>
+        <target state="new">The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="translated">將套件上傳至指定的暫存群組。</target>
+        <target state="new">Uploads the package into the specified staging group.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
         <source>Prevents automatic discovery and staging of a sibling symbols package.</source>
-        <target state="translated">防止自動探索和暫存同層級的符號套件。</target>
+        <target state="new">Prevents automatic discovery and staging of a sibling symbols package.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackagePathArgument_Description">
         <source>The path to the package to stage.</source>
-        <target state="translated">要暫存套件的路徑。</target>
+        <target state="new">The path to the package to stage.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackageStaged">
         <source>Staged package '{0}'.</source>
-        <target state="translated">已暫存套件 '{0}'。</target>
+        <target state="new">Staged package '{0}'.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsFailed">
         <source>Failed to stage symbols package '{0}': {1}</source>
-        <target state="translated">無法暫存符號套件 '{0}': {1}</target>
+        <target state="new">Failed to stage symbols package '{0}': {1}</target>
         <note>0 - symbols package path; 1 - error message</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsStaged">
         <source>Staged symbols package '{0}'.</source>
-        <target state="translated">已暫存符號套件 '{0}'。</target>
+        <target state="new">Staged symbols package '{0}'.</target>
         <note>0 - symbols package path</note>
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
@@ -1537,7 +1542,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="Warn_AddPkgNonCompliantPackageId">
         <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
-        <target state="translated">套件 ID '{0}' 不符合 NuGet 套件識別碼標準。套件識別碼不得超過 100 個字元，並以字母、數字或底線開頭，且只包含 ASCII 字母、數字、點 (.)、連字號 (-) 和底線 (_)。句點和連字號不得連續出現，也不得出現在結尾。</target>
+        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
         <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">

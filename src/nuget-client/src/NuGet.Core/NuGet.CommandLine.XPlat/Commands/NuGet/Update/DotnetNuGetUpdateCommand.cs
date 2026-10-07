@@ -3,6 +3,7 @@
 
 using System;
 using System.CommandLine;
+using System.Globalization;
 using System.Threading.Tasks;
 using NuGet.Commands;
 
@@ -12,15 +13,20 @@ namespace NuGet.CommandLine.XPlat.Commands.NuGet.Update
     {
         internal static void Register(Command parent, Func<ILoggerWithColor> getLogger)
         {
+            Register(parent, getLogger, args => UpdateSourceRunner.Run(args, () => getLogger()));
+        }
+
+        internal static void Register(Command parent, Func<ILoggerWithColor> getLogger, Action<UpdateSourceArgs> runSource)
+        {
             var updateCmd = new Command("update", Strings.Update_Description);
 
-            RegisterUpdateSource(updateCmd, getLogger);
+            RegisterUpdateSource(updateCmd, runSource);
             RegisterUpdateClientCert(updateCmd, getLogger);
 
             parent.Subcommands.Add(updateCmd);
         }
 
-        private static void RegisterUpdateSource(Command parent, Func<ILoggerWithColor> getLogger)
+        private static void RegisterUpdateSource(Command parent, Action<UpdateSourceArgs> runSource)
         {
             var sourceCmd = new Command("source", Strings.UpdateSourceCommandDescription);
 
@@ -34,6 +40,23 @@ namespace NuGet.CommandLine.XPlat.Commands.NuGet.Update
             var configfile = new Option<string>("--configfile") { Description = Strings.Option_ConfigFile };
             var allowInsecureConnections = new Option<bool>("--allow-insecure-connections") { Description = Strings.SourcesCommandAllowInsecureConnectionsDescription };
             var minPublishAgeHours = new Option<uint?>("--min-publish-age-hours") { Description = Strings.SourcesCommandMinPublishAgeHoursDescription };
+            minPublishAgeHours.Validators.Add(result =>
+            {
+                if (result.Tokens.Count != 1 || !uint.TryParse(result.Tokens[0].Value, out uint value))
+                {
+                    // System.CommandLine reports the conversion error but still runs validators, so don't add a second error.
+                    return;
+                }
+
+                if (value > TimeSpan.MaxValue.TotalHours)
+                {
+                    result.AddError(string.Format(
+                        CultureInfo.CurrentCulture,
+                        Strings.SourcesCommandMinPublishAgeHoursOutOfRange,
+                        value,
+                        (uint)TimeSpan.MaxValue.TotalHours));
+                }
+            });
 
             sourceCmd.Arguments.Add(nameArg);
             sourceCmd.Options.Add(source);
@@ -62,7 +85,7 @@ namespace NuGet.CommandLine.XPlat.Commands.NuGet.Update
                     MinPublishAgeHours = parseResult.GetValue(minPublishAgeHours),
                 };
 
-                UpdateSourceRunner.Run(args, () => getLogger());
+                runSource(args);
                 return Task.FromResult(0);
             });
 

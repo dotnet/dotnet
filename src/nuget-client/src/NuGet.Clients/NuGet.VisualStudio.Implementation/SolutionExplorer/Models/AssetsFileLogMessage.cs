@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.IO;
 using NuGet.Common;
 using NuGet.ProjectModel;
@@ -14,11 +15,17 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
     {
         public AssetsFileLogMessage(string projectFilePath, IAssetsLogMessage logMessage)
         {
+            string? libraryId = logMessage.LibraryId;
+            if (libraryId == null)
+            {
+                throw new ArgumentException("The log message must identify a library.", nameof(logMessage));
+            }
+
             Code = logMessage.Code;
             Level = logMessage.Level;
             WarningLevel = logMessage.WarningLevel;
             Message = logMessage.Message;
-            LibraryName = NormalizeLibraryName(logMessage.LibraryId, projectFilePath);
+            LibraryName = NormalizeLibraryName(libraryId, projectFilePath);
         }
 
         public NuGetLogCode Code { get; }
@@ -29,11 +36,14 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
 
         public bool Equals(IAssetsLogMessage other, string projectFilePath)
         {
-            return other.Code == Code
+            string? libraryId = other.LibraryId;
+
+            return libraryId != null
+                && other.Code == Code
                 && other.Level == Level
                 && other.WarningLevel == WarningLevel
                 && other.Message == Message
-                && NormalizeLibraryName(other.LibraryId, projectFilePath) == LibraryName;
+                && NormalizeLibraryName(libraryId, projectFilePath) == LibraryName;
         }
 
         private static string NormalizeLibraryName(string libraryName, string projectFilePath)

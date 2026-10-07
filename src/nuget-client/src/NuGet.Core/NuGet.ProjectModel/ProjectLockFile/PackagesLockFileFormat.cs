@@ -77,7 +77,9 @@ namespace NuGet.ProjectModel
             {
                 var json = JsonUtility.LoadJson(reader);
                 var lockFile = ReadLockFile(json);
+#pragma warning disable CS0618 // Preserve the behavior of the obsolete PackagesLockFile.Path property.
                 lockFile.Path = path;
+#pragma warning restore CS0618
                 return lockFile;
             }
             catch (Exception ex)
@@ -90,7 +92,9 @@ namespace NuGet.ProjectModel
                 return new PackagesLockFile
                 {
                     Version = int.MinValue,
+#pragma warning disable CS0618 // Preserve the behavior of the obsolete PackagesLockFile.Path property.
                     Path = path
+#pragma warning restore CS0618
                 };
             }
         }
