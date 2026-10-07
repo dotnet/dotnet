@@ -72,9 +72,11 @@ internal publication visibility.
 ## Stabilization and rollout
 
 `Emscripten.Internal` is always prerelease. Validation rejects an effective
-prerelease Emscripten version when the SDK label is `rtm`, `servicing`, or
-`hotfix`, including upstack manifest generation and 1xx raw restore. Stable
-Emscripten versions are accepted; never synthesize one by stripping a suffix.
+prerelease Emscripten version when `DotNetFinalVersionKind=release` or the SDK
+label is `rtm`, `servicing`, or `hotfix`, including upstack manifest generation
+and 1xx raw restore. The final-release check also applies when the label remains
+`alpha`. Stable Emscripten versions are accepted; never synthesize one by stripping
+a suffix.
 
 Before stabilization, emsdk must expose a stable package-version property for
 the current family (historically the

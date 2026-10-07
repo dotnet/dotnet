@@ -8,7 +8,8 @@
          Upstack inherits that version from the selected 1xx manifest.
          Change manifest references, 1xx raw acquisition/staging and payload-MSI generation
          together; never strip a prerelease suffix. Remove this guard after that transition. -->
-    <Error Condition="('$(PreReleaseVersionLabel)' == 'rtm' or '$(PreReleaseVersionLabel)' == 'servicing' or '$(PreReleaseVersionLabel)' == 'hotfix') and
+    <Error Condition="('$(DotNetFinalVersionKind)' == 'release' or
+                      '$(PreReleaseVersionLabel)' == 'rtm' or '$(PreReleaseVersionLabel)' == 'servicing' or '$(PreReleaseVersionLabel)' == 'hotfix') and
                       $([System.String]::Copy('$(EmscriptenPackageVersion)').Contains('-'))"
            Text="A non-prerelease SDK must use non-prerelease Emscripten packages. Select the stable emsdk-produced package version for EmscriptenVersionCurrent in the 1xx Emscripten.props and flow the updated workload manifest." />
   </Target>

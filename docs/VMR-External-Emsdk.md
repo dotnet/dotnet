@@ -45,8 +45,10 @@ Upstack installer builds require the existing `DownloadWorkloadMsis=true` mode;
 MSI/SWIX generation remains a 1xx operation. Downloaded MSI packages and generated
 upstack manifests keep their existing internal publication visibility.
 
-An effective prerelease Emscripten version is rejected for SDK labels `rtm`,
-`servicing`, and `hotfix`, including upstack manifest generation. Stable
+An effective prerelease Emscripten version is rejected when
+`DotNetFinalVersionKind=release` or the SDK label is `rtm`, `servicing`, or
+`hotfix`, including upstack manifest generation. A final-release build cannot
+bypass this check by retaining an `alpha` label. Stable
 versions are accepted. Since Internal is always prerelease, emsdk must eventually
 publish a stable version property for the `EmscriptenVersionCurrent` family.
 Switch 1xx version selection, manifest references, raw
