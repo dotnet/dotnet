@@ -193,9 +193,18 @@ thread checks use existing targets. Frame-limit tests
 retain the original Heap-dump matrix; live and additional dump-kind coverage
 are deferred. Their shared debuggees remain.
 The ICorDebug frame-limit test excludes Framework, as the legacy test did.
-Temporary, narrowly scoped ICorDebug skips for .NET 10 Windows x86 NestedException
+Temporary, narrowly scoped ICorDebug skips for .NET 10 Windows x86 legacy-DAC Heap and Mini dumps (not Full dumps)
 and .NET 11 macOS ARM64 SingleFile/cDAC are defined in
 [SOSTestSkips.cs](SOSTestSkips.cs), with inline investigation notes and removal criteria.
+`AsyncMain.script` is retired by `ClrStackTests.ClrStack_DmlPreservesAsyncMainName`,
+which runs `clrstack /d` and requires the literal `AsyncMainTest.<Main>(...)` frame.
+`ThreadApartment.script` is retired by `ClrThreadsTests.ClrThreads_ReportsApartmentStates`,
+which identifies the STA and MTA workers by their stacks and matches their OS thread IDs
+to the expected apartment rows on Windows. Both additions use dump-only Heap
+matrices and retain their debuggees. ThreadApartment now captures its unhandled
+exception after both apartment threads are ready, instead of stopping at `Debugger.Break`;
+the worker threads remain alive through capture. Its Core, SingleFile, and Framework
+artifacts are included in the Windows harness payload.
 `ClrStackRuntimeFramesTests` adds dump-only checks for `FaultingExceptionFrame`
 on DivZero and `SoftwareExceptionFrame` on SimpleThrow. The latter runs on .NET 10+
 Core/SingleFile; both preserve the legacy Windows x86 exclusion.
@@ -211,9 +220,16 @@ matrices. Framework shared-static field coverage is deferred. The reference
 test uses the standard matrix, including SingleFile,
 and checks identical reference oracles through `dumpobj -refs` in native hosts
 or `dumpobj` plus `dumpobjgcrefs` in dotnet-dump, which lacks the callback bridge.
-`Reflection.script` remains active because its reflected target-invocation
-boundary is still a specialized legacy scenario; `DumpGCData.script` retains
-its zero-to-one pinned-object transition. [COVERAGE.md](COVERAGE.md) records the
+`DynamicMethod.script` is retired by `DynamicMethodTests`, which checks the emitted
+Fibonacci IL and the ICorDebug local-to-object-to-IL round-trip. Its variable
+matrix remains Core-only; heap inspection also covers SingleFile. Empty matrices
+in excluded flavor shards skip only these two theories.
+`Reflection.script` is retired using the existing
+`PrintExceptionTests.PrintException_ReflectionInnerException` coverage without
+adding assertions or duplicating generic stack/thread checks on this target.
+Both retain their existing debuggees without changing the harness or CI.
+`DumpGCData.script` retains its zero-to-one pinned-object transition.
+The legacy runner remains active. [COVERAGE.md](COVERAGE.md) records the
 evidence and all remaining retained scenarios and gaps.
 
 ## Controls
