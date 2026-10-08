@@ -1,5 +1,5 @@
-# This pipeline builds the VMR twice within a single run and compares the two SDK
-# tarballs to validate that the regular-file contents inside the tarballs are
+# This pipeline source-builds the VMR twice within a single run and compares the SDK
+# and artifacts tarballs to validate that the regular-file contents inside the tarballs are
 # reproducible.
 
 schedules:
@@ -27,7 +27,6 @@ resources:
       # Trigger on build stages vs successful pipeline completion for a higher run frequency when there are
       # publish/validation failures.
       stages:
-        - VMR_Vertical_Build
         - VMR_SourceOnly_Build
 
   repositories:
@@ -67,9 +66,6 @@ extends:
     containers:
       ${{ variables.centOSStreamContainerName }}:
         image: ${{ variables.centOSStreamContainerImage }}
-        options: ${{ variables.defaultContainerOptions }}
-      ${{ variables.azurelinuxX64CrossContainerName }}:
-        image: ${{ variables.azurelinuxX64CrossContainerImage }}
         options: ${{ variables.defaultContainerOptions }}
 
     stages:

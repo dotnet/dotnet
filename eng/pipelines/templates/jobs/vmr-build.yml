@@ -147,7 +147,7 @@ parameters:
   type: stepList
   default: []
 
-# When true, compute SOURCE_DATE_EPOCH from Build.BuildNumber and pass it to the build.
+# When true, compute SOURCE_DATE_EPOCH from Build.BuildNumber and pass it to source-only builds.
 - name: setSourceDateEpoch
   type: boolean
   default: false
@@ -465,7 +465,7 @@ jobs:
 
   - ${{ parameters.initSteps }}
 
-  - ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+  - ${{ if and(eq(parameters.buildSourceOnly, true), eq(parameters.setSourceDateEpoch, true)) }}:
     - pwsh: |
         # extract the date and revision from the build number (YYYYMMDD.Revision) and use it to calculate the SOURCE_DATE_EPOCH
         $parts = '$(Build.BuildNumber)'.Split('.')
@@ -676,9 +676,9 @@ jobs:
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
-      ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
+      ${{ if or(and(eq(parameters.buildSourceOnly, true), eq(parameters.setSourceDateEpoch, true)), eq(parameters.sign, 'true')) }}:
         env:
-          ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+          ${{ if and(eq(parameters.buildSourceOnly, true), eq(parameters.setSourceDateEpoch, true)) }}:
             SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
           ${{ if eq(parameters.sign, 'true') }}:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
@@ -934,9 +934,9 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
-        ${{ if or(eq(parameters.setSourceDateEpoch, true), eq(parameters.sign, 'true')) }}:
+        ${{ if or(and(eq(parameters.buildSourceOnly, true), eq(parameters.setSourceDateEpoch, true)), eq(parameters.sign, 'true')) }}:
           env:
-            ${{ if eq(parameters.setSourceDateEpoch, true) }}:
+            ${{ if and(eq(parameters.buildSourceOnly, true), eq(parameters.setSourceDateEpoch, true)) }}:
               SOURCE_DATE_EPOCH: $(SOURCE_DATE_EPOCH)
             ${{ if eq(parameters.sign, 'true') }}:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)

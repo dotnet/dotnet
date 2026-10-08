@@ -10,7 +10,7 @@ parameters:
 
 stages:
 
-# Two parallel build stages, each producing a full set of SDK tarballs from the same
+# Two parallel source-only build stages, each producing SDK and artifacts tarballs from the same
 # pipeline-resolved commit and the same pipeline-resolved container image digest.
 # Same-pipeline-run guarantees the same toolchain (clang/LLD, etc.) for both stages,
 # so any difference in the regular-file contents between their outputs is real
@@ -40,24 +40,6 @@ stages:
       runTests: false
       withPreviousSDK: false
       createSourceArtifact: false
-      brandingType: ${{ variables.brandingType }}
-      setSourceDateEpoch: true
-
-  # Microsoft build (Linux x64, cross-build, unsigned). Both Build1 and Build2 stages
-  # produce delay-signed (zero-filled signature) outputs; they should be byte-identical
-  # to one another.
-  - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
-    parameters:
-      buildName: Build1_Linux
-      isBuiltFromVmr: true
-      pool: ${{ parameters.pool_Linux }}
-      container:
-        name: ${{ variables.azurelinuxX64CrossContainerName }}
-        image: ${{ variables.azurelinuxX64CrossContainerImage }}
-      crossRootFs: '/crossrootfs/x64'
-      targetOS: linux
-      targetArchitecture: x64
-      runTests: false
       brandingType: ${{ variables.brandingType }}
       setSourceDateEpoch: true
 
@@ -94,28 +76,7 @@ stages:
           echo "Shifted date: $(date)"
         displayName: Shift system clock forward by 1 day
 
-  - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
-    parameters:
-      buildName: Build2_Linux
-      isBuiltFromVmr: true
-      pool: ${{ parameters.pool_Linux }}
-      container:
-        name: ${{ variables.azurelinuxX64CrossContainerName }}
-        image: ${{ variables.azurelinuxX64CrossContainerImage }}
-      crossRootFs: '/crossrootfs/x64'
-      targetOS: linux
-      targetArchitecture: x64
-      runTests: false
-      brandingType: ${{ variables.brandingType }}
-      setSourceDateEpoch: true
-      initSteps:
-      - script: |
-          echo "Current date: $(date)"
-          sudo date -s "+1 day"
-          echo "Shifted date: $(date)"
-        displayName: Shift system clock forward by 1 day
-
-# Compare stage: download both stages' SDK tarballs and run the reproducibility tests.
+# Compare stage: download both stages' SDK and artifacts tarballs and run the reproducibility tests.
 - stage: Compare
   dependsOn:
   - Build1
@@ -133,16 +94,5 @@ stages:
       build2JobName: ${{ format('Build2_SB_{0}_Offline_MsftSdk_x64', variables.centOSStreamName) }}
       targetRid: ${{ variables.centOSStreamX64Rid }}
       architecture: x64
-      buildType: SourceBuilt
       publishTestResultsPr: true
       pullRequestTitle: 'Update Source-Built Reproducibility Exclusions'
-
-  - template: /eng/pipelines/templates/jobs/reproducibility-test.yml@self
-    parameters:
-      build1JobName: Build1_Linux_x64
-      build2JobName: Build2_Linux_x64
-      targetRid: ${{ variables.linuxX64Rid }}
-      architecture: x64
-      buildType: Msft
-      publishTestResultsPr: true
-      pullRequestTitle: 'Update Microsoft Reproducibility Exclusions'

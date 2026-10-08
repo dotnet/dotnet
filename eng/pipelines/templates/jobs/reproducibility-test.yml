@@ -13,12 +13,6 @@ parameters:
 - name: architecture
   type: string
 
-- name: buildType
-  type: string
-  values:
-  - SourceBuilt
-  - Msft
-
 - name: publishTestResultsPr
   type: boolean
   default: false
@@ -28,7 +22,7 @@ parameters:
   default: 'Update Reproducibility Test Baselines and Exclusions'
 
 jobs:
-- job: Reproducibility_${{ parameters.buildType }}_${{ parameters.build1JobName }}_${{ parameters.architecture }}
+- job: Reproducibility_SourceBuilt_${{ parameters.build1JobName }}_${{ parameters.architecture }}
   timeoutInMinutes: 150
   variables:
   - template: ../variables/pipelines.yml
@@ -46,24 +40,20 @@ jobs:
     inputs:
       buildType: current
       artifact: ${{ parameters.build1JobName }}_Artifacts
-      ${{ if eq(parameters.buildType, 'Msft') }}:
-        patterns: '**/assets/Release/Sdk/*/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
-      ${{ else }}:
-        patterns: '**/assets/Release/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
+      patterns: '**/assets/Release/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
       downloadPath: $(Pipeline.Workspace)/Artifacts
       checkDownloadedFiles: true
     displayName: Download First SDK Tarball (from Build1 stage)
 
-  - ${{ if eq(parameters.buildType, 'SourceBuilt') }}:
-    # Download the first artifacts tarball from this pipeline's Build1 stage.
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: current
-        artifact: ${{ parameters.build1JobName }}_Artifacts
-        patterns: '**/assets/Release/Private.SourceBuilt.Artifacts.+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*).${{ parameters.targetRid }}.tar.gz'
-        downloadPath: $(Pipeline.Workspace)/Artifacts
-        checkDownloadedFiles: true
-      displayName: Download First Artifacts Tarball (from Build1 stage)
+  # Download the first artifacts tarball from this pipeline's Build1 stage.
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: current
+      artifact: ${{ parameters.build1JobName }}_Artifacts
+      patterns: '**/assets/Release/Private.SourceBuilt.Artifacts.+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*).${{ parameters.targetRid }}.tar.gz'
+      downloadPath: $(Pipeline.Workspace)/Artifacts
+      checkDownloadedFiles: true
+    displayName: Download First Artifacts Tarball (from Build1 stage)
 
   - script: |
       # Move artifacts to root for easy discovery
@@ -82,42 +72,37 @@ jobs:
       echo "##vso[task.setvariable variable=FirstSdkTarballPath]$(Pipeline.Workspace)/Artifacts/$first_sdk_tarball"
     displayName: Locate first SDK tarball
 
-  - ${{ if eq(parameters.buildType, 'SourceBuilt') }}:
-    - script: |
-        first_artifacts_tarball=$(find "$(Pipeline.Workspace)/Artifacts" -name "Private.SourceBuilt.Artifacts.*.${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
+  - script: |
+      first_artifacts_tarball=$(find "$(Pipeline.Workspace)/Artifacts" -name "Private.SourceBuilt.Artifacts.*.${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
 
-        if [[ -z "$first_artifacts_tarball" ]]; then
-          echo "First artifacts tarball not found in '$(Pipeline.Workspace)/Artifacts'. The Build1 stage's '${{ parameters.build1JobName }}' job might have failed to publish the expected artifact."
-          exit 1
-        fi
+      if [[ -z "$first_artifacts_tarball" ]]; then
+        echo "First artifacts tarball not found in '$(Pipeline.Workspace)/Artifacts'. The Build1 stage's '${{ parameters.build1JobName }}' job might have failed to publish the expected artifact."
+        exit 1
+      fi
 
-        echo "First artifacts tarball: $first_artifacts_tarball"
-        echo "##vso[task.setvariable variable=FirstArtifactsTarballPath]$(Pipeline.Workspace)/Artifacts/$first_artifacts_tarball"
-      displayName: Locate first artifacts tarball
+      echo "First artifacts tarball: $first_artifacts_tarball"
+      echo "##vso[task.setvariable variable=FirstArtifactsTarballPath]$(Pipeline.Workspace)/Artifacts/$first_artifacts_tarball"
+    displayName: Locate first artifacts tarball
 
   # Download the second SDK tarball from this pipeline's Build2 stage
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: current
       artifact: ${{ parameters.build2JobName }}_Artifacts
-      ${{ if eq(parameters.buildType, 'Msft') }}:
-        patterns: '**/assets/Release/Sdk/*/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
-      ${{ else }}:
-        patterns: '**/assets/Release/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
+      patterns: '**/assets/Release/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz'
       downloadPath: $(Pipeline.Workspace)/RebuildArtifacts
       checkDownloadedFiles: true
     displayName: Download Second SDK Tarball (from Build2 stage)
 
-  - ${{ if eq(parameters.buildType, 'SourceBuilt') }}:
-    # Download the second artifacts tarball from this pipeline's Build2 stage
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: current
-        artifact: ${{ parameters.build2JobName }}_Artifacts
-        patterns: '**/assets/Release/Private.SourceBuilt.Artifacts.+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*).${{ parameters.targetRid }}.tar.gz'
-        downloadPath: $(Pipeline.Workspace)/RebuildArtifacts
-        checkDownloadedFiles: true
-      displayName: Download Second Artifacts Tarball (from Build2 stage)
+  # Download the second artifacts tarball from this pipeline's Build2 stage
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: current
+      artifact: ${{ parameters.build2JobName }}_Artifacts
+      patterns: '**/assets/Release/Private.SourceBuilt.Artifacts.+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*).${{ parameters.targetRid }}.tar.gz'
+      downloadPath: $(Pipeline.Workspace)/RebuildArtifacts
+      checkDownloadedFiles: true
+    displayName: Download Second Artifacts Tarball (from Build2 stage)
 
   - script: |
       find $(Pipeline.Workspace)/RebuildArtifacts -type f -exec mv {} $(Pipeline.Workspace)/RebuildArtifacts \;
@@ -135,40 +120,28 @@ jobs:
       echo "##vso[task.setvariable variable=SecondSdkTarballPath]$(Pipeline.Workspace)/RebuildArtifacts/$second_sdk_tarball"
     displayName: Locate second SDK tarball
 
-  - ${{ if eq(parameters.buildType, 'SourceBuilt') }}:
-    - script: |
-        second_artifacts_tarball=$(find "$(Pipeline.Workspace)/RebuildArtifacts" -name "Private.SourceBuilt.Artifacts.*.${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
+  - script: |
+      second_artifacts_tarball=$(find "$(Pipeline.Workspace)/RebuildArtifacts" -name "Private.SourceBuilt.Artifacts.*.${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
 
-        if [[ -z "$second_artifacts_tarball" ]]; then
-          echo "Second artifacts tarball not found in rebuild artifacts."
-          exit 1
-        fi
+      if [[ -z "$second_artifacts_tarball" ]]; then
+        echo "Second artifacts tarball not found in rebuild artifacts."
+        exit 1
+      fi
 
-        echo "Second artifacts tarball: $second_artifacts_tarball"
-        echo "##vso[task.setvariable variable=SecondArtifactsTarballPath]$(Pipeline.Workspace)/RebuildArtifacts/$second_artifacts_tarball"
-      displayName: Locate second artifacts tarball
+      echo "Second artifacts tarball: $second_artifacts_tarball"
+      echo "##vso[task.setvariable variable=SecondArtifactsTarballPath]$(Pipeline.Workspace)/RebuildArtifacts/$second_artifacts_tarball"
+    displayName: Locate second artifacts tarball
 
-  - ${{ if eq(parameters.buildType, 'SourceBuilt') }}:
-    - script: >
-        eng/common/dotnet.sh test
-        $(Build.SourcesDirectory)/test/Microsoft.DotNet.Reproducibility.Tests/Microsoft.DotNet.Reproducibility.Tests.csproj
-        -bl:$(Build.SourcesDirectory)/artifacts/log/Release/ReproducibilityTests.binlog
-        /p:SourceBuiltSdkTarballPath1=$(FirstSdkTarballPath)
-        /p:SourceBuiltArtifactsTarballPath1=$(FirstArtifactsTarballPath)
-        /p:SourceBuiltSdkTarballPath2=$(SecondSdkTarballPath)
-        /p:SourceBuiltArtifactsTarballPath2=$(SecondArtifactsTarballPath)
-      displayName: Run Reproducibility Tests
-      workingDirectory: $(Build.SourcesDirectory)
-
-  - ${{ else }}:
-    - script: >
-        eng/common/dotnet.sh test
-        $(Build.SourcesDirectory)/test/Microsoft.DotNet.Reproducibility.Tests/Microsoft.DotNet.Reproducibility.Tests.csproj
-        -bl:$(Build.SourcesDirectory)/artifacts/log/Release/ReproducibilityTests.binlog
-        /p:MsftSdkTarballPath1=$(FirstSdkTarballPath)
-        /p:MsftSdkTarballPath2=$(SecondSdkTarballPath)
-      displayName: Run Reproducibility Tests
-      workingDirectory: $(Build.SourcesDirectory)
+  - script: >
+      eng/common/dotnet.sh test
+      $(Build.SourcesDirectory)/test/Microsoft.DotNet.Reproducibility.Tests/Microsoft.DotNet.Reproducibility.Tests.csproj
+      -bl:$(Build.SourcesDirectory)/artifacts/log/Release/ReproducibilityTests.binlog
+      /p:SourceBuiltSdkTarballPath1=$(FirstSdkTarballPath)
+      /p:SourceBuiltArtifactsTarballPath1=$(FirstArtifactsTarballPath)
+      /p:SourceBuiltSdkTarballPath2=$(SecondSdkTarballPath)
+      /p:SourceBuiltArtifactsTarballPath2=$(SecondArtifactsTarballPath)
+    displayName: Run Reproducibility Tests
+    workingDirectory: $(Build.SourcesDirectory)
 
   # Collect logs
   - script: |
@@ -205,4 +178,4 @@ jobs:
           originalFilesDirectory: test/Microsoft.DotNet.Reproducibility.Tests/assets
           updatedFilesDirectory: $(Build.StagingDirectory)/BuildLogs
           pullRequestTitle: ${{ parameters.pullRequestTitle }}
-          identifier: ${{ parameters.buildType }}
+          identifier: SourceBuilt
