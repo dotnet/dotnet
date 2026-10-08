@@ -49,7 +49,7 @@ namespace NuGet.Commands
 
                     var dependency = new LockFileDependency()
                     {
-                        Id = library.Name,
+                        Id = identity.Id,
                         ResolvedVersion = library.Version,
                         ContentHash = libraryLookup[identity].Sha512,
                         Dependencies = library.Dependencies
@@ -94,9 +94,9 @@ namespace NuGet.Commands
                 {
                     var projectIdentity = new PackageIdentity(projectReference.Name!, projectReference.Version);
                     var projectFullPath = projectFullPaths[projectIdentity];
-                    var id = PathUtility.GetStringComparerBasedOnOS().Equals(Path.GetFileNameWithoutExtension(projectFullPath), projectReference.Name)
-                        ? projectReference.Name.ToLowerInvariant()
-                        : projectReference.Name;
+                    var id = PathUtility.GetStringComparerBasedOnOS().Equals(Path.GetFileNameWithoutExtension(projectFullPath), projectIdentity.Id)
+                        ? projectIdentity.Id.ToLowerInvariant()
+                        : projectIdentity.Id;
 
                     var dependency = new LockFileDependency()
                     {

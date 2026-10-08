@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#nullable disable
+using System;
 
 namespace NuGet.ProjectModel
 {
@@ -16,11 +16,11 @@ namespace NuGet.ProjectModel
 
         public LockFileRuntimeTarget(string path, string runtime, string assetType) : this(path)
         {
-            Runtime = runtime;
-            AssetType = assetType;
+            Runtime = runtime ?? throw new ArgumentNullException(nameof(runtime));
+            AssetType = assetType ?? throw new ArgumentNullException(nameof(assetType));
         }
 
-        public string Runtime
+        public string? Runtime
         {
             get
             {
@@ -32,7 +32,7 @@ namespace NuGet.ProjectModel
             }
         }
 
-        public string AssetType
+        public string? AssetType
         {
             get
             {

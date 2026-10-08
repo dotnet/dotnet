@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using NuGet.Frameworks;
@@ -18,18 +16,23 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Target framework.
         /// </summary>
-        public NuGetFramework TargetFramework { get; set; }
+        /// <remarks>
+        /// NULL_INC: Annotated as non-null but no runtime check is enforced in the setter
+        /// to avoid introducing a new throw in a previously-permissive code path.
+        /// Revisit with telemetry to confirm callers never assign null.
+        /// </remarks>
+        public required NuGetFramework TargetFramework { get; set; }
 
         /// <summary>	
         /// Null for RIDless graphs.	
         /// </summary>	
-        public string RuntimeIdentifier { get; set; }
+        public string? RuntimeIdentifier { get; set; }
 
         /// <summary>
         /// Target alias for version 3 lock files when multiple aliases exist for the same framework.
         /// It is very important that the alias is *not* set when there are no duplicate frameworks, since this drives the format of the lock file.
         /// </summary>
-        public string TargetAlias { get; set; }
+        public string? TargetAlias { get; set; }
 
         /// <summary>
         /// 
@@ -41,7 +44,7 @@ namespace NuGet.ProjectModel
         /// </summary>
         public string Name => GetNameString(TargetFramework, RuntimeIdentifier, TargetAlias);
 
-        public bool Equals(PackagesLockFileTarget other)
+        public bool Equals(PackagesLockFileTarget? other)
         {
             if (other == null)
             {
@@ -59,7 +62,7 @@ namespace NuGet.ProjectModel
                 && EqualityUtility.SequenceEqualWithNullCheck(Dependencies, other.Dependencies);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as PackagesLockFileTarget);
         }
@@ -76,7 +79,7 @@ namespace NuGet.ProjectModel
             return combiner.CombinedHash;
         }
 
-        private static string GetNameString(NuGetFramework framework, string runtime, string alias)
+        private static string GetNameString(NuGetFramework framework, string? runtime, string? alias)
         {
             string frameworkString;
 

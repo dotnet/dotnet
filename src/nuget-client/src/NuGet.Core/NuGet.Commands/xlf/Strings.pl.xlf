@@ -220,7 +220,7 @@
       </trans-unit>
       <trans-unit id="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown">
         <source>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</source>
-        <target state="translated">Następujące elementy PackageReference nie mogą określać wersji zmiennoprzecinkowej, ponieważ jest włączone ochładzanie źródła pakietu: {0}.</target>
+        <target state="new">The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</target>
         <note>
       0 - The comma delimited list of package names that specified a floating version.
       Do not localize `PackageReference`
@@ -1237,11 +1237,6 @@ Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby kor
         <target state="translated">Określone źródło jest nieprawidłowe. Podaj prawidłowe źródło.</target>
         <note />
       </trans-unit>
-      <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
-        <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
-        <target state="translated">Minimalny wiek publikacji wynoszący {0} godzin jest nieprawidłowy. Wartość musi należeć do zakresu od 0 do {1}.</target>
-        <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
-      </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">
         <source>Unable to find any package source(s) matching name: {0}.</source>
         <target state="translated">Nie można odnaleźć żadnych źródeł pakietów pasujących do nazwy {0}.</target>
@@ -1442,27 +1437,27 @@ Uaktualnij zestaw .NET SDK lub usuń RestoreUseLegacyDependencyResolver, aby kor
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Critical">
         <source>critical</source>
-        <target state="translated">krytyczna</target>
+        <target state="translated">krytyczne</target>
         <note>As in "This package has a critical severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_High">
         <source>high</source>
-        <target state="translated">wysoka</target>
+        <target state="translated">wysokie</target>
         <note>As in "This package has a high severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Low">
         <source>low</source>
-        <target state="translated">niska</target>
+        <target state="translated">niskie</target>
         <note>As in "This package has a low severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_Moderate">
         <source>moderate</source>
-        <target state="translated">umiarkowana</target>
+        <target state="translated">umiarkowane</target>
         <note>As in "This package has a moderate severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="Vulnerability_Severity_unknown">
         <source>unknown</source>
-        <target state="translated">nieznana</target>
+        <target state="translated">nieznane</target>
         <note>As in "This package has a unknown severity vulnerability"</note>
       </trans-unit>
       <trans-unit id="WarningAsError">

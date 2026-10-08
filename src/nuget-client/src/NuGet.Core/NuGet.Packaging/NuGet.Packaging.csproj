@@ -38,6 +38,9 @@
     <Compile Include="$(SharedDirectory)\SimplePool.cs" />
     <Compile Include="$(SharedDirectory)\StringBuilderPool.cs" />
     <Compile Include="$(SharedDirectory)\TaskResult.cs" />
+    <Compile Include="$(SharedDirectory)\Utf8JsonReaderExtensions.cs" />
+    <Compile Include="$(SharedDirectory)\Utf8JsonStreamReader.cs" />
+    <Compile Include="$(SharedDirectory)\Utf8JsonStreamReaderConverter.cs" />
     <Compile Include="$(SharedDirectory)\XmlUtility.cs" />
   </ItemGroup>
 

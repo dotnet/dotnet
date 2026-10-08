@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Text.Json;
 using NuGet.Shared;
@@ -22,11 +20,11 @@ namespace NuGet.ProjectModel
     /// </example>
     internal class Utf8JsonStreamLockFileItemConverter<T> : IUtf8JsonStreamReaderConverter<T> where T : LockFileItem
     {
-        private Func<string, T> _lockFileItemCreator;
+        private readonly Func<string, T> _lockFileItemCreator;
 
         public Utf8JsonStreamLockFileItemConverter(Func<string, T> lockFileItemCreator)
         {
-            _lockFileItemCreator = lockFileItemCreator;
+            _lockFileItemCreator = lockFileItemCreator ?? throw new ArgumentNullException(nameof(lockFileItemCreator));
         }
 
         public T Read(ref Utf8JsonStreamReader reader)
@@ -39,20 +37,26 @@ namespace NuGet.ProjectModel
             }
 
             //We want to read the property name right away
-            var lockItemPath = reader.GetString();
-            LockFileItem lockFileItem = _lockFileItemCreator(lockItemPath);
+            string lockItemPath = reader.GetString()
+                ?? throw new JsonException("Expected a non-null lock file item path.");
+            T lockFileItem = _lockFileItemCreator(lockItemPath);
 
             reader.Read();
             if (reader.TokenType == JsonTokenType.StartObject)
             {
                 while (reader.Read() && reader.TokenType == JsonTokenType.PropertyName)
                 {
-                    var propertyName = reader.GetString();
-                    lockFileItem.Properties[propertyName] = reader.ReadNextTokenAsString();
+                    string propertyName = reader.GetString()
+                        ?? throw new JsonException("Expected a non-null lock file item property name.");
+                    string? propertyValue = reader.ReadNextTokenAsString();
+                    if (propertyValue != null)
+                    {
+                        lockFileItem.Properties[propertyName] = propertyValue;
+                    }
                 }
             }
 
-            return lockFileItem as T;
+            return lockFileItem;
         }
     }
 }

@@ -17,6 +17,16 @@
         <target state="translated">작성자의 기본 시그니처</target>
         <note />
       </trans-unit>
+      <trans-unit id="CertUtilityCertificateCaIssuersUrl">
+        <source>CA Issuers URL: {0}</source>
+        <target state="new">CA Issuers URL: {0}</target>
+        <note>0 - certificate authority issuers URL</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateFreshestCrlUrl">
+        <source>Freshest CRL URL: {0}</source>
+        <target state="new">Freshest CRL URL: {0}</target>
+        <note>0 - freshest CRL distribution point URL</note>
+      </trans-unit>
       <trans-unit id="CertUtilityCertificateHash">
         <source>{0} hash: {1}</source>
         <target state="translated">{0} 해시: {1}</target>
