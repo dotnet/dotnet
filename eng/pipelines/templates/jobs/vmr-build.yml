@@ -539,6 +539,7 @@ jobs:
 
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
     - script: |
+        set -e
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
         if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
           storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
@@ -546,7 +547,7 @@ jobs:
           storageKey=""
         fi
         mkdir -p "$(sharedComponentsDir)"
-        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" false "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
+        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" true "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
         tar -xzf $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
         rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
       displayName: Download Shared Component Artifacts
@@ -711,6 +712,7 @@ jobs:
           prepSdk=true
 
           if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+            customPrepArgs="${customPrepArgs} --no-shared-components"
             prepSdk=false
           fi
 

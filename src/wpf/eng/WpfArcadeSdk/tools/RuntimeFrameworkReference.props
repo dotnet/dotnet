@@ -1,7 +1,0 @@
-<Project>
-  <!-- workaround for package downgrade in Microsoft.NetCore.Platforms -->
-  <PropertyGroup>
-    <DisableImplicitNETCorePlatformsReference>true</DisableImplicitNETCorePlatformsReference>
-  </PropertyGroup>
-
-</Project>
