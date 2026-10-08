@@ -1,1 +1,5 @@
-
+[diff] sdk/12.0.100-alpha.1.26508.101/DotnetTools/dotnet-watch/12.0.100-alpha.1.26508.101/tools/net12.0/any/dotnet-watch.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/MSBuild.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/NuGet.CommandLine.XPlat.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/dotnet.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/redist.deps.json
