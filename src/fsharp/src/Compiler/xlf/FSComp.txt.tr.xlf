@@ -347,11 +347,6 @@
         <target state="translated">'TailCall' özniteliği özyinelemeli olmayan işlevlerde kullanılıyorsa uyarılar oluşturur.</target>
         <note />
       </trans-unit>
-      <trans-unit id="featureConstraintIntersectionOnFlexibleTypes">
-        <source>Constraint intersection on flexible types</source>
-        <target state="translated">Esnek türlerde kısıtlama kesişimi</target>
-        <note />
-      </trans-unit>
       <trans-unit id="featureDeprecatePlacesWhereSeqCanBeOmitted">
         <source>Deprecate places where 'seq' can be omitted</source>
         <target state="new">Deprecate places where 'seq' can be omitted</target>
@@ -375,11 +370,6 @@
       <trans-unit id="featureEnforceAttributeTargets">
         <source>Enforce AttributeTargets</source>
         <target state="translated">AttributeTargets'ı zorla</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="featureErrorForNonVirtualMembersOverrides">
-        <source>Raises errors for non-virtual members overrides</source>
-        <target state="translated">Sanal olmayan üyelerde geçersiz kılmalar için hatalar oluştur</target>
         <note />
       </trans-unit>
       <trans-unit id="featureErrorOnBitwiseOpsOnNonIntegralEnums">
@@ -495,11 +485,6 @@
       <trans-unit id="featurePreprocessorElif">
         <source>#elif preprocessor directive</source>
         <target state="new">#elif preprocessor directive</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="featureReallyLongList">
-        <source>list literals of any size</source>
-        <target state="translated">tüm boyutlardaki sabit değerleri listele</target>
         <note />
       </trans-unit>
       <trans-unit id="featureRecordConstructorSyntax">
@@ -4700,11 +4685,6 @@
       <trans-unit id="tcUnableToParseFormatString">
         <source>Unable to parse format string '{0}'</source>
         <target state="translated">'{0}' biçim dizesi ayrıştırılamıyor</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="tcListLiteralMaxSize">
-        <source>This list expression exceeds the maximum size for list literals. Use an array for larger literals and call Array.ToList.</source>
-        <target state="translated">Bu liste ifadesi liste sabit değerlerinin en büyük boyutunu aşıyor. Daha büyük sabit değerler için dizi kullanın ve Array.ToList işlevini çağırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="tcExpressionFormRequiresObjectConstructor">
