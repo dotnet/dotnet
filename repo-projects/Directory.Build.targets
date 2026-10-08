@@ -351,7 +351,8 @@
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <!-- Load shared inputs even when the generated package properties are up to date. -->
-  <Target Name="GetSharedComponentBuildInputs">
+  <Target Name="GetSharedComponentBuildInputs"
+          Condition="'$(DotNetBuildSharedComponents)' != 'true'">
     <PropertyGroup>
       <_SharedComponentFilterMode>$(SharedComponentFilter_NonToolingOnly)</_SharedComponentFilterMode>
       <_SharedComponentFilterMode Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">$(SharedComponentFilter_BootstrapRepoDepsOnly)</_SharedComponentFilterMode>
