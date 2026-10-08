@@ -1,1 +1,9 @@
-
+[diff] sdk/12.0.100-alpha.1.26508.101/Containers/tasks/net12.0/Microsoft.NET.Build.Containers.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/DotnetTools/dotnet-format/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/DotnetTools/dotnet-format/dotnet-format.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/DotnetTools/dotnet-watch/12.0.100-alpha.1.26508.101/tools/net12.0/any/dotnet-watch.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/MSBuild.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/NuGet.CommandLine.XPlat.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/Sdks/Microsoft.NET.Sdk.Razor/tools/rzc.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/dotnet.deps.json
+[diff] sdk/12.0.100-alpha.1.26508.101/redist.deps.json
