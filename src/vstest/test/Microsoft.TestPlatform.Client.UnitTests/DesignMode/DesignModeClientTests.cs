@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.TestPlatform.Common.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
@@ -37,19 +38,30 @@ public class DesignModeClientTests
 
     private readonly Mock<ITestRequestManager> _mockTestRequestManager;
     private readonly Mock<ICommunicationManager> _mockCommunicationManager;
+    private readonly Mock<IConnectionAuthenticationResponder> _mockConnectionAuthenticationResponder;
     private readonly DesignModeClient _designModeClient;
     private readonly int _protocolVersion = 7;
     private readonly AutoResetEvent _completeEvent;
     private readonly Mock<IEnvironment> _mockPlatformEnvironment;
+    private const string DesignModeSecrets = "design-mode-child-secret:design-mode-parent-secret";
 
     public DesignModeClientTests()
     {
         _mockTestRequestManager = new Mock<ITestRequestManager>();
         _mockCommunicationManager = new Mock<ICommunicationManager>();
+        _mockConnectionAuthenticationResponder = _mockCommunicationManager.As<IConnectionAuthenticationResponder>();
         _mockPlatformEnvironment = new Mock<IEnvironment>();
         _designModeClient = new DesignModeClient(_mockCommunicationManager.Object, JsonDataSerializer.Instance, _mockPlatformEnvironment.Object);
         _completeEvent = new AutoResetEvent(false);
+
+        // The translation layer generates the pair and passes it to the vstest.console process it
+        // starts. Without it the console refuses to connect, so every test needs it set.
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestDesignModeConnectionSecrets, DesignModeSecrets);
     }
+
+    [TestCleanup]
+    public void ClearConnectionSecrets()
+        => Environment.SetEnvironmentVariable(EnvironmentHelper.VstestDesignModeConnectionSecrets, null);
 
     [TestMethod]
     public void DesignModeClientBeforeConnectInstanceShouldReturnNull()
@@ -141,6 +153,47 @@ public class DesignModeClientTests
         _designModeClient.ConnectToClientAndProcessRequests(PortNumber, _mockTestRequestManager.Object);
 
         _mockCommunicationManager.Verify(cm => cm.SendMessage(MessageType.VersionCheck, 1), Times.Once());
+    }
+
+    [TestMethod]
+    public void DesignModeClientConnectShouldPresentTheSecretFromTheEnvironment()
+    {
+        var verCheck = new Message { MessageType = MessageType.VersionCheck, Payload = _protocolVersion };
+        var sessionEnd = new Message { MessageType = MessageType.SessionEnd };
+        _mockCommunicationManager.Setup(cm => cm.WaitForServerConnection(It.IsAny<int>())).Returns(true);
+        _mockCommunicationManager.SetupSequence(cm => cm.ReceiveMessage()).Returns(verCheck).Returns(sessionEnd);
+
+        _designModeClient.ConnectToClientAndProcessRequests(PortNumber, _mockTestRequestManager.Object);
+
+        // The value is taken out of the environment, so nothing this process starts inherits it.
+        Assert.IsNull(Environment.GetEnvironmentVariable(EnvironmentHelper.VstestDesignModeConnectionSecrets));
+        _mockConnectionAuthenticationResponder.Verify(
+            responder => responder.UseConnectionSecretsAsChild(DesignModeSecrets),
+            Times.Once());
+
+        // The handshake belongs to the transport, so it is never sent as an application message.
+        _mockCommunicationManager.Verify(
+            cm => cm.SendMessage(MessageType.Handshake, It.IsAny<object>()),
+            Times.Never());
+        _mockCommunicationManager.Verify(cm => cm.SendMessage(MessageType.SessionConnected), Times.Once());
+    }
+
+    /// <summary>
+    /// There is no unauthenticated mode, so a translation layer that does not supply the pair is
+    /// refused with a message naming the package to update.
+    /// </summary>
+    [TestMethod]
+    public void DesignModeClientConnectShouldFailWhenTheSecretsAreMissing()
+    {
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestDesignModeConnectionSecrets, null);
+
+        var error = Assert.ThrowsException<TestPlatformException>(
+            () => _designModeClient.ConnectToClientAndProcessRequests(PortNumber, _mockTestRequestManager.Object)).Message;
+
+        StringAssert.Contains(error, "vstest.console failed to connect to the parent process");
+
+        StringAssert.Contains(error, "https://aka.ms/vstest/negotiation-error");
+        _mockCommunicationManager.Verify(cm => cm.SetupClientAsync(It.IsAny<IPEndPoint>()), Times.Never());
     }
 
     [TestMethod]

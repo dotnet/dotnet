@@ -35,7 +35,7 @@
     <runtimeOutputPackageVersion>9.0.21-servicing.26504.4</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>10b1153c42ff74bd58460cacc794f2e9b1f48918</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.26459.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>3bd7d67f92dd2477c51586c7b91ac0788994db55</sdkGitCommitHash>
+    <sdkGitCommitHash>5b925bbbb124689cadc91411fb92b92b0f35e3f9</sdkGitCommitHash>
     <sourcebuildassetsGitCommitHash>eccb0828682858d8daa029ba29adce07fd70d9a7</sourcebuildassetsGitCommitHash>
     <sourcebuildassetsOutputPackageVersion>9.0.0-alpha.1.26451.2</sourcebuildassetsOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>1c800169e674c7becf88434a0d2817453cf91dd7</sourcebuildexternalsGitCommitHash>
@@ -50,8 +50,8 @@
     <templatingOutputPackageVersion>9.0.122-servicing.26474.6</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>47c90e140b027225b799ca8413af10ee3d5f1126</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rtm.25262.1</testtemplatesOutputPackageVersion>
-    <vstestGitCommitHash>bc9161306b23641b0364b8f93d546da4d48da1eb</vstestGitCommitHash>
-    <vstestOutputPackageVersion>17.12.0-release-24508-01</vstestOutputPackageVersion>
+    <vstestGitCommitHash>cd7560b1ac8b0914ef4416fc77a12282ea418463</vstestGitCommitHash>
+    <vstestOutputPackageVersion>17.12.1-hotfix-26505-13</vstestOutputPackageVersion>
     <windowsdesktopGitCommitHash>f476308cc2fcbe56170bb754f63f2b61fb0305da</windowsdesktopGitCommitHash>
     <windowsdesktopOutputPackageVersion>9.0.21</windowsdesktopOutputPackageVersion>
     <winformsGitCommitHash>9c6b32286e13e1039372879da37959c4bf7adc63</winformsGitCommitHash>

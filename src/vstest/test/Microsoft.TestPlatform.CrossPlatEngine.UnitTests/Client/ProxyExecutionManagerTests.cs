@@ -45,6 +45,7 @@ public class ProxyExecutionManagerTests : ProxyBaseManagerTests
     public ProxyExecutionManagerTests()
     {
         _mockRequestSender = new Mock<ITestRequestSender>();
+        _mockRequestSender.As<IConnectionValidationConfigurable>();
         _mockTestRunCriteria = new Mock<TestRunCriteria>(new List<string> { "source.dll" }, 10);
         //this.mockDataSerializer = new Mock<IDataSerializer>();
         _mockRequestData = new Mock<IRequestData>();

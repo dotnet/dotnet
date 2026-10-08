@@ -1,1 +1,7 @@
 #nullable enable
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.SupportsConnectionSecrets.get -> bool
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.TestHostPath.get -> string?
+Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DefaultTestHostManager.TestHostVersion.get -> string?
+virtual Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.SupportsConnectionSecrets.get -> bool
+virtual Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.TestHostPath.get -> string?
+virtual Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.TestHostVersion.get -> string?

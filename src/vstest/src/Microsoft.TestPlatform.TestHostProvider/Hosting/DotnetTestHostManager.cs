@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -47,7 +47,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
 /// </remarks>
 [ExtensionUri(DotnetTestHostUri)]
 [FriendlyName(DotnetTestHostFriendlyName)]
-public class DotnetTestHostManager : ITestRuntimeProvider2
+public class DotnetTestHostManager : ITestRuntimeProvider3
 {
     private const string DotnetTestHostUri = "HostProvider://DotnetTestHost";
     // Should the friendly name ever change, please make sure to change the corresponding constant
@@ -75,6 +75,9 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     private bool _isVersionCheckRequired = true;
     private string? _dotnetHostPath;
     private bool _captureOutput;
+    private bool _supportsConnectionSecrets;
+    private string? _testHostVersion;
+    private string? _testHostPath;
     private protected TestHostManagerCallbacks? _testHostManagerCallbacks;
 
     /// <summary>
@@ -134,6 +137,25 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
     /// project must be launched in a separate test host process.
     /// </remarks>
     public bool Shared => false;
+
+    /// <summary>
+    /// Gets a value indicating whether the resolved testhost.dll is new enough to validate the
+    /// connection secrets during the handshake. Computed in <see cref="GetTestHostProcessStartInfo"/>
+    /// (where the testhost path and version are resolved), so it is only meaningful after that method
+    /// has been called for the current run.
+    /// </summary>
+    public virtual bool SupportsConnectionSecrets => _supportsConnectionSecrets;
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Resolved in <see cref="GetTestHostProcessStartInfo"/> along with
+    /// <see cref="SupportsConnectionSecrets"/>, so the user can be told which version was found when
+    /// it is too old.
+    /// </remarks>
+    public virtual string? TestHostVersion => _testHostVersion;
+
+    /// <inheritdoc />
+    public virtual string? TestHostPath => _testHostPath;
 
     /// <summary>
     /// Gets a value indicating whether the test host supports protocol version check
@@ -219,6 +241,49 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         // and this would go into a queue after all the other startup tasks. Meaning we will start
         // testhost much later, and not immediately.
         return Task.FromResult(LaunchHost(testHostStartInfo, cancellationToken));
+    }
+
+    /// <summary>
+    /// Determines whether the resolved testhost.dll performs the connection identity check. The
+    /// testhost.dll comes from the user's Microsoft.NET.Test.Sdk package and may predate the fix, or
+    /// may be a numerically newer historical version that was never serviced with it. If the version
+    /// cannot be determined we report it as unsupported, which refuses the run rather than launching
+    /// a test host whose identity we could not check.
+    /// </summary>
+    private bool IsTesthostSupportingConnectionSecrets(TestProcessStartInfo startInfo, string testHostPath)
+    {
+        var testhostDllPath = !testHostPath.IsNullOrEmpty()
+            ? testHostPath
+            : Path.ChangeExtension(startInfo.FileName, ".dll");
+
+        _testHostVersion = null;
+
+        _testHostPath = null;
+
+        if (testhostDllPath.IsNullOrEmpty() || !_fileHelper.Exists(testhostDllPath))
+        {
+            EqtTrace.Verbose("DotnetTestHostManager.IsTesthostSupportingConnectionSecrets: Could not locate testhost.dll to determine its version; treating the connection secrets as unsupported.");
+            return false;
+        }
+
+        // The version is read only so the user can be told which testhost was found. The decision
+        // itself comes from the marker compiled into that testhost, which is a fact about the build
+        // rather than a prediction about the patch number it would ship as.
+        try
+        {
+            _testHostVersion = FileVersionInfo.GetVersionInfo(testhostDllPath).ProductVersion;
+        }
+        catch (Exception ex)
+        {
+            EqtTrace.Verbose("DotnetTestHostManager.IsTesthostSupportingConnectionSecrets: Could not read the version of testhost.dll '{0}'. {1}", testhostDllPath, ex);
+        }
+
+        _testHostPath = testhostDllPath;
+
+        var supported = ConnectionSecretsMarker.IsMarked(testhostDllPath);
+
+        EqtTrace.Verbose("DotnetTestHostManager.IsTesthostSupportingConnectionSecrets: Testhost '{0}' (version {1}) {2} the connection secrets.", testhostDllPath, _testHostVersion, supported ? "supports" : "does not perform");
+        return supported;
     }
 
     /// <inheritdoc/>
@@ -534,6 +599,13 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         }
 
         startInfo.WorkingDirectory = sourceDirectory;
+
+        // The testhost.dll comes from the user's Microsoft.NET.Test.Sdk package and may be older than
+        // this runner. Determine here (where the testhost path is resolved) whether it is new enough to
+        // validate the connection secrets during the handshake, so the runner can decide whether to send
+        // and enforce it. Older or undeterminable testhosts are treated as unsupported, which keeps the
+        // feature backwards compatible.
+        _supportsConnectionSecrets = IsTesthostSupportingConnectionSecrets(startInfo, testHostPath);
 
         return startInfo;
 

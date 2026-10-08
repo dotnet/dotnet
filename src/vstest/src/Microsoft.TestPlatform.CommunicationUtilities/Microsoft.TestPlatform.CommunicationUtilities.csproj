@@ -6,6 +6,10 @@
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\shared\ConnectionSecretsCapabilities.cs" Link="ConnectionSecretsCapabilities.cs" />
+    <Compile Include="..\..\shared\ParentProcessResolver.cs" Link="ParentProcessResolver.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Microsoft.TestPlatform.CoreUtilities\Microsoft.TestPlatform.CoreUtilities.csproj" />
     <ProjectReference Include="..\Microsoft.TestPlatform.ObjectModel\Microsoft.TestPlatform.ObjectModel.csproj" />
     <ProjectReference Include="..\Microsoft.TestPlatform.Common\Microsoft.TestPlatform.Common.csproj" />

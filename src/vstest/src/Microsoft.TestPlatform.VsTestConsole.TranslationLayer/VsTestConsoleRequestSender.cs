@@ -95,8 +95,8 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
 
             Task.Run(() =>
             {
-                _communicationManager.WaitForClientConnection(Timeout.Infinite);
-                _handShakeSuccessful = HandShakeWithVsTestConsole();
+                _handShakeSuccessful = _communicationManager.WaitForClientConnection(Timeout.Infinite)
+                    && HandShakeWithVsTestConsole();
                 _handShakeComplete.Set();
             });
         }
@@ -121,6 +121,18 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
     }
 
     /// <inheritdoc/>
+    public string? ConnectionValidationError => GetConnectionValidator().ConnectionValidationError;
+
+    public void RequireConnectionValidation()
+        => GetConnectionValidator().RequireConnectionValidation();
+
+    public void UseConnectionSecrets(string connectionSecrets)
+        => GetConnectionValidator().UseConnectionSecrets(connectionSecrets);
+
+    public void CannotValidateConnection(string error)
+        => GetConnectionValidator().CannotValidateConnection(error);
+
+    /// <inheritdoc/>
     public async Task<int> InitializeCommunicationAsync(int clientConnectionTimeout)
     {
         EqtTrace.Info($"VsTestConsoleRequestSender.InitializeCommunicationAsync: Started with client connection timeout {clientConnectionTimeout} milliseconds.");
@@ -133,8 +145,9 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
         {
             port = _communicationManager.HostServer(new IPEndPoint(IPAddress.Loopback, 0)).Port;
             var timeoutSource = new CancellationTokenSource(clientConnectionTimeout);
-            await Task.Run(() =>
-                _communicationManager.AcceptClientAsync(), timeoutSource.Token).ConfigureAwait(false);
+            await Task.Run(
+                () => _communicationManager.AcceptClientAsync(),
+                timeoutSource.Token).ConfigureAwait(false);
 
             _handShakeSuccessful = await HandShakeWithVsTestConsoleAsync().ConfigureAwait(false);
             _handShakeComplete.Set();
@@ -1523,6 +1536,11 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
                 _protocolVersion);
         }
     }
+
+    private IConnectionValidationConfigurable GetConnectionValidator()
+        => _communicationManager as IConnectionValidationConfigurable
+            ?? throw new PeerProcessValidationException(
+                "The translation-layer communication transport cannot validate the peer connection.");
 
     private void HandleTelemetryEvent(ITelemetryEventsHandler telemetryEventsHandler, Message message)
     {

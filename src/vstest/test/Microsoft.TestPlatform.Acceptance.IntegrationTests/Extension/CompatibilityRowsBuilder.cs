@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using NuGet.Versioning;
 
 using Microsoft.TestPlatform.TestUtilities;
+
+using NuGet.Versioning;
 
 namespace Microsoft.TestPlatform.AcceptanceTests;
 

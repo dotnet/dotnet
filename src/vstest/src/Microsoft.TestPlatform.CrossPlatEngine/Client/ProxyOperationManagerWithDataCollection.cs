@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -97,6 +97,8 @@ public class ProxyOperationManagerWithDataCollection : ProxyOperationManager
             }
         }
 
+        ProxyExecutionManagerWithDataCollection.AddTestHostConnectionSecrets(testProcessStartInfo, ProxyDataCollectionManager);
+
         // Update telemetry opt in status because by default test host telemetry is opted out.
         var telemetryOptedIn = _requestData.IsTelemetryOptedIn ? "true" : "false";
         testProcessStartInfo.Arguments += $" --datacollectionport {_dataCollectionPort} --telemetryoptedin {telemetryOptedIn}";
@@ -152,7 +154,5 @@ public class ProxyOperationManagerWithDataCollection : ProxyOperationManager
     }
 
     private void TestHostLaunchedHandler(object? sender, HostProviderEventArgs e)
-    {
-        ProxyDataCollectionManager.TestHostLaunched(e.ProcessId);
-    }
+        => ProxyDataCollectionManager.TestHostLaunched(e.ProcessId);
 }

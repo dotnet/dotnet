@@ -106,6 +106,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources {
             }
         }
         
+        
         /// <summary>
         ///   Looks up a localized string similar to {0} process failed to connect to {1} process after {2} seconds. This may occur due to machine slowness, please set environment variable {3} to increase timeout..
         /// </summary>
@@ -157,6 +158,159 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources {
         public static string VersionCheckTimedout {
             get {
                 return ResourceManager.GetString("VersionCheckTimedout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to vstest.console failed to connect to testhost. testhost cannot take part in the connection negotiation that verifies the identity of both processes. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project. For more information see: {0}.
+        /// </summary>
+        public static string ConnectionSecretsTesthostUnsupported {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsTesthostUnsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microsoft.TestPlatform.TranslationLayer failed to connect to vstest.console. vstest.console cannot take part in the connection negotiation that verifies the identity of both processes. For more information see: {0}.
+        /// </summary>
+        public static string ConnectionSecretsConsoleUnsupported {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsConsoleUnsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} failed to connect to the parent process. The parent process did not initiate the connection negotiation that verifies the identity of both processes. For more information see: {1}.
+        /// </summary>
+        public static string ConnectionSecretsParentDidNotNegotiate {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsParentDidNotNegotiate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The connection was refused. The process that connected did not present the expected secret. For more information see: {0}.
+        /// </summary>
+        public static string ConnectionSecretsPeerSecretMismatch {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsPeerSecretMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The connection was refused. The parent process did not present the expected secret. For more information see: {0}.
+        /// </summary>
+        public static string ConnectionSecretsParentSecretMismatch {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsParentSecretMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The connection failed. The negotiation with the process that connected did not complete. For more information see: {0}.
+        /// </summary>
+        public static string ConnectionSecretsPeerNegotiationIncomplete {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsPeerNegotiationIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The connection failed. The negotiation with the parent process did not complete. For more information see: {0}.
+        /// </summary>
+        public static string ConnectionSecretsParentNegotiationIncomplete {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsParentNegotiationIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The connection failed. The connection negotiation could not be set up because of an internal error in the test platform. For more information see: {0}.
+        /// </summary>
+        public static string ConnectionSecretsInternalError {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsInternalError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} version: {1}.
+        /// </summary>
+        public static string ConnectionSecretsDetailVersion {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsDetailVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} path: {1}.
+        /// </summary>
+        public static string ConnectionSecretsDetailPath {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsDetailPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to parent process id: {0}.
+        /// </summary>
+        public static string ConnectionSecretsDetailParentProcessId {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsDetailParentProcessId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to parent process: {0}.
+        /// </summary>
+        public static string ConnectionSecretsDetailParentProcessName {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsDetailParentProcessName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to reason: {0}.
+        /// </summary>
+        public static string ConnectionSecretsDetailReason {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsDetailReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to parent process path: {0}.
+        /// </summary>
+        public static string ConnectionSecretsDetailParentProcessPath {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsDetailParentProcessPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to parent process version: {0}.
+        /// </summary>
+        public static string ConnectionSecretsDetailParentProcessVersion {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsDetailParentProcessVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to vstest.console path: {0}.
+        /// </summary>
+        public static string ConnectionSecretsDetailVsTestConsolePath {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsDetailVsTestConsolePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to vstest.console version: {0}.
+        /// </summary>
+        public static string ConnectionSecretsDetailVsTestConsoleVersion {
+            get {
+                return ResourceManager.GetString("ConnectionSecretsDetailVsTestConsoleVersion", resourceCulture);
             }
         }
     }

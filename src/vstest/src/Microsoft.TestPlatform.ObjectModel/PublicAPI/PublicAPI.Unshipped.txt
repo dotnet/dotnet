@@ -1,6 +1,10 @@
-﻿#nullable enable
+#nullable enable
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITelemetryEventsHandler
 Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.ITelemetryEventsHandler.HandleTelemetryEvent(Microsoft.VisualStudio.TestPlatform.ObjectModel.TelemetryEvent! telemetryEvent) -> void
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Host.ITestRuntimeProvider3
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Host.ITestRuntimeProvider3.SupportsConnectionSecrets.get -> bool
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Host.ITestRuntimeProvider3.TestHostPath.get -> string?
+Microsoft.VisualStudio.TestPlatform.ObjectModel.Host.ITestRuntimeProvider3.TestHostVersion.get -> string?
 Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryInitializer
 Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryInitializer.Initialize(Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter! telemetryReporter) -> void
 Microsoft.VisualStudio.TestPlatform.ObjectModel.ITelemetryReporter

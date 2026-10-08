@@ -41,7 +41,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
 /// </summary>
 [ExtensionUri(DefaultTestHostUri)]
 [FriendlyName(DefaultTestHostFriendlyName)]
-public class DefaultTestHostManager : ITestRuntimeProvider2
+public class DefaultTestHostManager : ITestRuntimeProvider3
 {
     private const string DefaultTestHostUri = "HostProvider://DefaultTestHost";
     // Should the friendly name ever change, please make sure to change the corresponding constant
@@ -113,6 +113,28 @@ public class DefaultTestHostManager : ITestRuntimeProvider2
 
     /// <inheritdoc/>
     public bool Shared { get; private set; }
+
+    /// <summary>
+    /// Gets a value indicating whether the test host launched by this provider performs the
+    /// connection identity check. The .NET Framework <c>testhost.exe</c> ships next to the runner, so
+    /// it is always the same version as the runner and always performs it.
+    /// </summary>
+    public bool SupportsConnectionSecrets => true;
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// testhost.exe ships next to this assembly and is built from the same source, so the version of
+    /// this assembly is the version of the test host.
+    /// </remarks>
+    public string? TestHostVersion
+        => typeof(DefaultTestHostManager).Assembly.GetName().Version?.ToString();
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Never surfaced, because <see cref="SupportsConnectionSecrets"/> is always true here and the
+    /// message that would print a path is therefore unreachable for this provider.
+    /// </remarks>
+    public string? TestHostPath => null;
 
     /// <summary>
     /// Gets the properties of the test executor launcher. These could be the targetID for emulator/phone specific scenarios.

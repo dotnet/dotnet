@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -10,6 +10,7 @@ using System.Threading;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.EventHandlers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
@@ -24,6 +25,9 @@ using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 using CrossPlatResources = Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Resources.Resources;
 using ObjectModelConstants = Microsoft.VisualStudio.TestPlatform.ObjectModel.Constants;
+
+using CommunicationUtilitiesResources = Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources;
+using CoreUtilitiesConstants = Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
@@ -124,6 +128,42 @@ public class TestRequestHandler : ITestRequestHandler, IDeploymentAwareTestReque
         }
 
         _communicationEndPoint = _communicationEndpointFactory.Create(ConnectionInfo.Role);
+        var connectionSecrets = Environment.GetEnvironmentVariable(EnvironmentHelper.VstestConnectionSecrets);
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionSecrets, null);
+        if (StringUtils.IsNullOrEmpty(connectionSecrets))
+        {
+            // An outdated parent is what causes this, so the parent cannot report it. The message has
+            // to come from here and travel back as standard error, where the runner embeds it in
+            // TestHostExitedWithError.
+            var parent = ParentProcessResolver.ResolveFromCommandLine();
+            var error = ConnectionSecretsCapabilities.WithDetails(
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    CommunicationUtilitiesResources.ConnectionSecretsParentDidNotNegotiate,
+                    CoreUtilitiesConstants.TesthostProcessName,
+                    ConnectionSecretsCapabilities.NegotiationErrorLink),
+                new[]
+                {
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailParentProcessId, parent.ProcessId > 0 ? parent.ProcessId.ToString(CultureInfo.InvariantCulture) : string.Empty),
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailParentProcessName, parent.Name),
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailParentProcessPath, parent.Path),
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailParentProcessVersion, parent.Version),
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailVsTestConsolePath, parent.VsTestConsolePath),
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailVsTestConsoleVersion, parent.VsTestConsoleVersion),
+                });
+
+            EqtTrace.Error("TestRequestHandler.InitializeCommunication: {0}", error);
+            throw new PeerProcessValidationException(error);
+        }
+
+        if (_communicationEndPoint is not IConnectionAuthenticationResponder responder)
+        {
+            throw new PeerProcessValidationException(
+                "The testhost communication transport cannot present the connection secrets.");
+        }
+
+        responder.UseConnectionSecretsAsChild(connectionSecrets);
+
         _communicationEndPoint.Connected += (sender, connectedArgs) =>
         {
             if (!connectedArgs.Connected)
@@ -359,6 +399,7 @@ public class TestRequestHandler : ITestRequestHandler, IDeploymentAwareTestReque
 
                     // Send the negotiated protocol to request sender
                     TPDebug.Assert(_channel is not null, "_channel is null");
+
                     _channel.Send(_dataSerializer.SerializePayload(MessageType.VersionCheck, _protocolVersion));
 
                     // Can only do this after InitializeCommunication because TestHost cannot "Send Log" unless communications are initialized

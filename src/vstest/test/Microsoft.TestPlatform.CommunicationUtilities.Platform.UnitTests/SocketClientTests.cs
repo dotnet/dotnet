@@ -5,7 +5,9 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
@@ -169,5 +171,38 @@ public class SocketClientTests : SocketTestsBase, IDisposable
         _tcpListener.Start();
 
         return ((IPEndPoint)_tcpListener.LocalEndpoint).ToString();
+    }
+}
+
+[TestClass]
+public class SocketClientAuthenticationTests
+{
+    [TestMethod]
+    public async Task SocketClientStopShouldInterruptAuthentication()
+    {
+        var socketClient = new SocketClient();
+        var listener = new TcpListener(IPAddress.Loopback, 0);
+        try
+        {
+            ((IConnectionAuthenticationResponder)socketClient).UseConnectionSecretsAsChild(ConnectionSecrets.GeneratePair());
+            socketClient.Connected += (_, _) => { };
+            listener.Start();
+            socketClient.Start(listener.LocalEndpoint.ToString()!);
+            using var client = await listener.AcceptTcpClientAsync();
+            var stream = client.GetStream();
+            stream.ReadTimeout = 10000;
+            using var reader = new BinaryReader(stream, Encoding.UTF8, leaveOpen: true);
+            _ = reader.ReadString();
+
+            socketClient.Stop();
+
+            Assert.IsTrue(client.Client.Poll(1000000, SelectMode.SelectRead));
+            Assert.AreEqual(0, client.Client.Available);
+        }
+        finally
+        {
+            socketClient.Stop();
+            listener.Stop();
+        }
     }
 }

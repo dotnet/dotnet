@@ -48,6 +48,15 @@ public sealed class DataCollectionRequestSender : IDataCollectionRequestSender
         _dataSerializer = dataSerializer;
     }
 
+    string? IDataCollectionRequestSender.ConnectionValidationError
+        => GetConnectionValidator().ConnectionValidationError;
+
+    void IDataCollectionRequestSender.RequireConnectionValidation()
+        => GetConnectionValidator().RequireConnectionValidation();
+
+    void IDataCollectionRequestSender.UseConnectionSecrets(string connectionSecrets)
+        => GetConnectionValidator().UseConnectionSecrets(connectionSecrets);
+
     /// <summary>
     /// Creates an endpoint and listens for client connection asynchronously
     /// </summary>
@@ -202,4 +211,9 @@ public sealed class DataCollectionRequestSender : IDataCollectionRequestSender
 
         requestHandler?.HandleLogMessage(dataCollectionMessageEventArgs.Level, logMessage);
     }
+
+    private IConnectionValidationConfigurable GetConnectionValidator()
+        => _communicationManager as IConnectionValidationConfigurable
+            ?? throw new PeerProcessValidationException(
+                "The datacollector communication transport cannot validate the peer connection.");
 }

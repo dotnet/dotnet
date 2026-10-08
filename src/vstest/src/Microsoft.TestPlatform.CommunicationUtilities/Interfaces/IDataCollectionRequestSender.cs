@@ -21,6 +21,21 @@ internal interface IDataCollectionRequestSender
     int InitializeCommunication();
 
     /// <summary>
+    /// Requires the datacollector connection to be authenticated before it is admitted.
+    /// </summary>
+    void RequireConnectionValidation();
+
+    /// <summary>
+    /// Uses the environment-provided connection secrets to authenticate the datacollector.
+    /// </summary>
+    void UseConnectionSecrets(string connectionSecrets);
+
+    /// <summary>
+    /// Gets the last connection-validation failure.
+    /// </summary>
+    string? ConnectionValidationError { get; }
+
+    /// <summary>
     /// Waits for Request Handler to be connected
     /// </summary>
     /// <param name="connectionTimeout">Time to wait for connection</param>

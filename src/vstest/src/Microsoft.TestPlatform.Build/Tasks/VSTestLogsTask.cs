@@ -7,6 +7,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.TestPlatform.Build.Tasks;
+
 public class VSTestLogsTask : Task
 {
     public string? LogType { get; set; }

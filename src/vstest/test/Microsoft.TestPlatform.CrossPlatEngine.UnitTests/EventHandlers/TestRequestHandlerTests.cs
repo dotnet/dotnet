@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
@@ -37,10 +38,12 @@ public class TestRequestHandlerTests
     private ITestRequestHandler _requestHandler;
     private readonly TestHostConnectionInfo _testHostConnectionInfo;
     private readonly JobQueue<Action> _jobQueue;
+    private const string ConnectionSecrets = "child-secret:parent-secret";
 
     public TestRequestHandlerTests()
     {
         _mockCommunicationClient = new Mock<ICommunicationEndPoint>();
+        _mockCommunicationClient.As<IConnectionAuthenticationResponder>();
         _mockCommunicationEndpointFactory = new Mock<ICommunicationEndpointFactory>();
         _mockChannel = new Mock<ICommunicationChannel>();
         _mockChannel.Setup(mc => mc.MessageReceived).Returns(new TrackableEvent<MessageReceivedEventArgs>());
@@ -67,6 +70,10 @@ public class TestRequestHandlerTests
         _mockTestHostManagerFactory.Setup(mf => mf.GetExecutionManager()).Returns(_mockExecutionManager.Object);
         _mockCommunicationEndpointFactory.Setup(f => f.Create(ConnectionRole.Client))
             .Returns(_mockCommunicationClient.Object);
+
+        // vstest.console passes the pair to the testhost through its environment, and the handler
+        // reads and clears it when it initializes.
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionSecrets, ConnectionSecrets);
 
         _requestHandler = new TestableTestRequestHandler(
             _testHostConnectionInfo,
@@ -103,6 +110,9 @@ public class TestRequestHandlerTests
             .Returns(socketClient);
         var rh = new TestableTestRequestHandler(connectionInfo, _mockCommunicationEndpointFactory.Object, _dataSerializer, _jobQueue);
 
+        // The handler takes the pair out of the environment when it initializes, so it has to be put
+        // back for a second handler in the same process.
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionSecrets, ConnectionSecrets);
         rh.InitializeCommunication();
         _requestHandler.WaitForRequestSenderConnection(1000);
     }
@@ -121,9 +131,32 @@ public class TestRequestHandlerTests
             _mockCommunicationEndpointFactory.Object,
             JsonDataSerializer.Instance,
             _jobQueue);
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionSecrets, ConnectionSecrets);
         _requestHandler.InitializeCommunication();
 
         Assert.IsFalse(_requestHandler.WaitForRequestSenderConnection(1));
+    }
+
+    /// <summary>
+    /// The testhost is started by vstest.console. Started any other way it has no secrets, and must
+    /// say so rather than wait out the connection timeout.
+    /// </summary>
+    [TestMethod]
+    public void InitializeCommunicationShouldFailWhenTheSecretsAreMissing()
+    {
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionSecrets, null);
+        var handler = new TestableTestRequestHandler(
+            _testHostConnectionInfo,
+            _mockCommunicationEndpointFactory.Object,
+            JsonDataSerializer.Instance,
+            _jobQueue);
+
+        var error = Assert.ThrowsException<PeerProcessValidationException>(
+            () => handler.InitializeCommunication()).Message;
+
+        StringAssert.Contains(error, "testhost failed to connect to the parent process");
+
+        StringAssert.Contains(error, "https://aka.ms/vstest/negotiation-error");
     }
 
     [TestMethod]

@@ -22,6 +22,91 @@
         <target state="translated">Активное обнаружение тестов прервано. Причина: {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="ConnectionSecretsConsoleUnsupported">
+        <source>Microsoft.TestPlatform.TranslationLayer failed to connect to vstest.console. vstest.console cannot take part in the connection negotiation that verifies the identity of both processes. For more information see: {0}</source>
+        <target state="new">Microsoft.TestPlatform.TranslationLayer failed to connect to vstest.console. vstest.console cannot take part in the connection negotiation that verifies the identity of both processes. For more information see: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsDetailParentProcessId">
+        <source>parent process id: {0}</source>
+        <target state="new">parent process id: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsDetailParentProcessName">
+        <source>parent process: {0}</source>
+        <target state="new">parent process: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsDetailParentProcessPath">
+        <source>parent process path: {0}</source>
+        <target state="new">parent process path: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsDetailParentProcessVersion">
+        <source>parent process version: {0}</source>
+        <target state="new">parent process version: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsDetailPath">
+        <source>{0} path: {1}</source>
+        <target state="new">{0} path: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsDetailReason">
+        <source>reason: {0}</source>
+        <target state="new">reason: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsDetailVersion">
+        <source>{0} version: {1}</source>
+        <target state="new">{0} version: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsDetailVsTestConsolePath">
+        <source>vstest.console path: {0}</source>
+        <target state="new">vstest.console path: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsDetailVsTestConsoleVersion">
+        <source>vstest.console version: {0}</source>
+        <target state="new">vstest.console version: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsInternalError">
+        <source>The connection failed. The connection negotiation could not be set up because of an internal error in the test platform. For more information see: {0}</source>
+        <target state="new">The connection failed. The connection negotiation could not be set up because of an internal error in the test platform. For more information see: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsParentDidNotNegotiate">
+        <source>{0} failed to connect to the parent process. The parent process did not initiate the connection negotiation that verifies the identity of both processes. For more information see: {1}</source>
+        <target state="new">{0} failed to connect to the parent process. The parent process did not initiate the connection negotiation that verifies the identity of both processes. For more information see: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsParentNegotiationIncomplete">
+        <source>The connection failed. The negotiation with the parent process did not complete. For more information see: {0}</source>
+        <target state="new">The connection failed. The negotiation with the parent process did not complete. For more information see: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsParentSecretMismatch">
+        <source>The connection was refused. The parent process did not present the expected secret. For more information see: {0}</source>
+        <target state="new">The connection was refused. The parent process did not present the expected secret. For more information see: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsPeerNegotiationIncomplete">
+        <source>The connection failed. The negotiation with the process that connected did not complete. For more information see: {0}</source>
+        <target state="new">The connection failed. The negotiation with the process that connected did not complete. For more information see: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsPeerSecretMismatch">
+        <source>The connection was refused. The process that connected did not present the expected secret. For more information see: {0}</source>
+        <target state="new">The connection was refused. The process that connected did not present the expected secret. For more information see: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConnectionSecretsTesthostUnsupported">
+        <source>vstest.console failed to connect to testhost. testhost cannot take part in the connection negotiation that verifies the identity of both processes. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project. For more information see: {0}</source>
+        <target state="new">vstest.console failed to connect to testhost. testhost cannot take part in the connection negotiation that verifies the identity of both processes. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project. For more information see: {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UnableToCommunicateToTestHost">
         <source>Unable to communicate with test host process.</source>
         <target state="translated">Не удалось связаться с хост-процессом теста.</target>

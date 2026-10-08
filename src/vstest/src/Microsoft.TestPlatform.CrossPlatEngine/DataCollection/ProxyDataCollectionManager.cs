@@ -11,6 +11,7 @@ using System.Xml;
 using Microsoft.VisualStudio.TestPlatform.Common.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
@@ -47,6 +48,17 @@ internal class ProxyDataCollectionManager : IProxyDataCollectionManager
     private readonly IRequestData _requestData;
     private int _dataCollectionPort;
     private int _dataCollectionProcessId;
+
+    /// <summary>
+    /// The secret pair for the testhost to datacollector test-case-events channel. Generated here so
+    /// that both processes receive it through their environment and it never travels over a message.
+    /// </summary>
+    private string? _testHostConnectionSecrets;
+
+    /// <summary>
+    /// Gets the secret pair the testhost must present on the test-case-events channel.
+    /// </summary>
+    internal string? TestHostConnectionSecrets => _testHostConnectionSecrets;
 
     /// <summary>
     /// The settings xml
@@ -201,8 +213,8 @@ internal class ProxyDataCollectionManager : IProxyDataCollectionManager
                 dataCollectionEventsPort = result.DataCollectionEventsPort;
 
                 EqtTrace.Info(
-                    "ProxyDataCollectionManager.BeforeTestRunStart: SendBeforeTestRunStartAndGetResult successful, env variable from datacollector: {0}  and testhost port: {1}",
-                    string.Join(";", environmentVariables),
+                    "ProxyDataCollectionManager.BeforeTestRunStart: SendBeforeTestRunStartAndGetResult successful, received {0} environment variables and testhost port: {1}",
+                    environmentVariables.Count,
                     dataCollectionEventsPort);
             },
             runEventsHandler);
@@ -215,10 +227,10 @@ internal class ProxyDataCollectionManager : IProxyDataCollectionManager
     /// <inheritdoc />
     public void TestHostLaunched(int processId)
     {
-        var payload = new TestHostLaunchedPayload();
-        payload.ProcessId = processId;
-
-        _dataCollectionRequestSender.SendTestHostLaunched(payload);
+        _dataCollectionRequestSender.SendTestHostLaunched(new TestHostLaunchedPayload
+        {
+            ProcessId = processId,
+        });
     }
 
     /// <summary>
@@ -233,10 +245,25 @@ internal class ProxyDataCollectionManager : IProxyDataCollectionManager
     /// <inheritdoc />
     public void Initialize()
     {
+        // The datacollector binary always ships next to the runner (it is resolved from the runner's
+        // own assembly folder, never from the user's package), so it is version-locked to us and
+        // always performs the identity check. Both pairs are generated here, in the runner, and each
+        // one is handed to the processes that need it through their environment. Generating the
+        // testhost pair here rather than in the datacollector means no secret has to travel back
+        // over a message.
+        var connectionSecrets = ConnectionSecrets.GeneratePair();
+        _testHostConnectionSecrets = ConnectionSecrets.GeneratePair();
+        var environmentVariables = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase)
+        {
+            [EnvironmentHelper.VstestConnectionSecrets] = connectionSecrets,
+            [EnvironmentHelper.VstestDataCollectionConnectionSecrets] = _testHostConnectionSecrets,
+        };
+        _dataCollectionRequestSender.RequireConnectionValidation();
+        _dataCollectionRequestSender.UseConnectionSecrets(connectionSecrets);
+
         _dataCollectionPort = _dataCollectionRequestSender.InitializeCommunication();
 
-        // Warn the user that execution will wait for debugger attach.
-        _dataCollectionProcessId = _dataCollectionLauncher.LaunchDataCollector(null, GetCommandLineArguments(_dataCollectionPort));
+        _dataCollectionProcessId = _dataCollectionLauncher.LaunchDataCollector(environmentVariables, GetCommandLineArguments(_dataCollectionPort));
         EqtTrace.Info("ProxyDataCollectionManager.Initialize: Launched datacollector processId: {0} port: {1}", _dataCollectionProcessId, _dataCollectionPort);
 
         var connectionTimeout = GetConnectionTimeout(_dataCollectionProcessId);
@@ -247,6 +274,12 @@ internal class ProxyDataCollectionManager : IProxyDataCollectionManager
         if (connected == false)
         {
             EqtTrace.Error("ProxyDataCollectionManager.Initialize: failed to connect to datacollector process, processId: {0} port: {1}", _dataCollectionProcessId, _dataCollectionPort);
+            if (!_dataCollectionRequestSender.ConnectionValidationError.IsNullOrWhiteSpace())
+            {
+                throw new TestPlatformException(
+                    $"The datacollector connection was rejected because its identity could not be validated: {_dataCollectionRequestSender.ConnectionValidationError}");
+            }
+
             throw new TestPlatformException(
                 string.Format(
                     CultureInfo.CurrentCulture,

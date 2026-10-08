@@ -80,6 +80,15 @@ public class DefaultTestHostManagerTests
     }
 
     [TestMethod]
+    public void SupportsConnectionSecretsShouldReturnTrue()
+    {
+        // testhost.exe ships next to the runner, so it is always version-matched with the runner
+        // and can always validate the connection secrets.
+        Assert.IsInstanceOfType<ITestRuntimeProvider3>(_testHostManager);
+        Assert.IsTrue(((ITestRuntimeProvider3)_testHostManager).SupportsConnectionSecrets);
+    }
+
+    [TestMethod]
     public void GetTestHostProcessStartInfoShouldIncludeFileNameFromSubFolderTestHostWhenCurrentProcessIsDotnet()
     {
         _mockProcessHelper.Setup(ph => ph.GetCurrentProcessFileName()).Returns("dotnet.exe");

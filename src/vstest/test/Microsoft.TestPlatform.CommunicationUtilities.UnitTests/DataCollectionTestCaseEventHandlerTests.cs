@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -24,6 +24,7 @@ namespace Microsoft.TestPlatform.CommunicationUtilities.UnitTests;
 public class DataCollectionTestCaseEventHandlerTests
 {
     private readonly Mock<ICommunicationManager> _mockCommunicationManager;
+    private readonly Mock<IConnectionValidationConfigurable> _mockConnectionValidator;
     private readonly Mock<IDataCollectionManager> _mockDataCollectionManager;
     private readonly DataCollectionTestCaseEventHandler _requestHandler;
     private readonly Mock<IDataSerializer> _dataSerializer;
@@ -32,6 +33,7 @@ public class DataCollectionTestCaseEventHandlerTests
     public DataCollectionTestCaseEventHandlerTests()
     {
         _mockCommunicationManager = new Mock<ICommunicationManager>();
+        _mockConnectionValidator = _mockCommunicationManager.As<IConnectionValidationConfigurable>();
         _mockDataCollectionManager = new Mock<IDataCollectionManager>();
         _dataSerializer = new Mock<IDataSerializer>();
         _messageSink = new Mock<IMessageSink>();
@@ -39,20 +41,36 @@ public class DataCollectionTestCaseEventHandlerTests
     }
 
     [TestMethod]
-    public void InitializeShouldInitializeConnection()
+    public void InitializeShouldInitializeConnectionAndArmTheSecrets()
     {
+        const string secrets = "child-secret:parent-secret";
         _mockCommunicationManager.Setup(x => x.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Returns(new IPEndPoint(IPAddress.Loopback, 1));
-        _requestHandler.InitializeCommunication();
+        _requestHandler.InitializeCommunication(secrets);
 
         _mockCommunicationManager.Verify(x => x.HostServer(new IPEndPoint(IPAddress.Loopback, 0)), Times.Once);
         _mockCommunicationManager.Verify(x => x.AcceptClientAsync(), Times.Once);
+        _mockConnectionValidator.Verify(x => x.RequireConnectionValidation(), Times.Once);
+        _mockConnectionValidator.Verify(x => x.UseConnectionSecrets(secrets), Times.Once);
+    }
+
+    /// <summary>
+    /// The endpoint must not be able to start without the means to check who connects to it.
+    /// </summary>
+    [TestMethod]
+    [DataRow("")]
+    [DataRow("   ")]
+    public void InitializeShouldRefuseToStartWithoutSecrets(string secrets)
+    {
+        Assert.ThrowsException<ArgumentException>(() => _requestHandler.InitializeCommunication(secrets));
+
+        _mockCommunicationManager.Verify(x => x.HostServer(It.IsAny<IPEndPoint>()), Times.Never);
     }
 
     [TestMethod]
     public void InitializeShouldThrowExceptionIfExceptionIsThrownByCommunicationManager()
     {
         _mockCommunicationManager.Setup(x => x.HostServer(new IPEndPoint(IPAddress.Loopback, 0))).Throws<Exception>();
-        Assert.ThrowsException<Exception>(() => _requestHandler.InitializeCommunication());
+        Assert.ThrowsException<Exception>(() => _requestHandler.InitializeCommunication("child-secret:parent-secret"));
     }
 
     [TestMethod]
@@ -143,4 +161,5 @@ public class DataCollectionTestCaseEventHandlerTests
 
         Assert.ThrowsException<Exception>(() => _requestHandler.ProcessRequests());
     }
+
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #if !NETFRAMEWORK
@@ -43,7 +43,9 @@ public class DotnetArchitectureSwitchTestsWindowsOnly : AcceptanceTestBase
         {
             ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
             [$"DOTNET_ROOT_{architectureTo}"] = Path.GetDirectoryName(dotnetPathTo)!,
-            ["ExpectedArchitecture"] = architectureTo
+            ["ExpectedArchitecture"] = architectureTo,
+            // Give this test its own template cache; the shared one races with other scaffolds.
+            ["DOTNET_CLI_HOME"] = CreateIsolatedTemplateEngineHome(TempDirectory.Path)
         };
 
         if (architectureTo == "X86")
@@ -51,6 +53,7 @@ public class DotnetArchitectureSwitchTestsWindowsOnly : AcceptanceTestBase
             environmentVariables.Add("DOTNET_ROOT(x86)", Path.GetDirectoryName(dotnetPathTo)!);
         }
         ExecuteApplication(dotnetPath, "new mstest", out _, out string _, out _, environmentVariables, TempDirectory.Path);
+        UseLocallyBuiltTestSdk(TempDirectory.Path);
 
         // Patch test file
         File.WriteAllText(Path.Combine(TempDirectory.Path, "UnitTest1.cs"),

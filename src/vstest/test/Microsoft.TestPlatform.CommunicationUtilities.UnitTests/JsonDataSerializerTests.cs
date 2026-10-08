@@ -28,6 +28,24 @@ public class JsonDataSerializerTests
     }
 
     [TestMethod]
+    public void SerializeAndDeserializeHandshakePayloadShouldRoundTripTheSecret()
+    {
+        // The handshake decides whether a connection is admitted at all, so the secret must survive a
+        // real serialize/deserialize round trip (System.Text.Json on .NET, Jsonite on .NET Framework).
+        // The unit tests that mock the serializer cannot prove this.
+        var rawMessage = _jsonDataSerializer.SerializePayload(
+            MessageType.Handshake,
+            new HandshakePayload { Secret = "ABCDEF0123456789ABCDEF0123456789" });
+
+        var message = _jsonDataSerializer.DeserializeMessage(rawMessage);
+        Assert.AreEqual(MessageType.Handshake, message.MessageType);
+
+        var payload = _jsonDataSerializer.DeserializePayload<HandshakePayload>(message);
+        Assert.IsNotNull(payload);
+        Assert.AreEqual("ABCDEF0123456789ABCDEF0123456789", payload.Secret);
+    }
+
+    [TestMethod]
     [DataRow(0)]
     [DataRow(1)]
     [DataRow(2)]

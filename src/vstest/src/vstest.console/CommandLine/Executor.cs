@@ -11,6 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
+using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
@@ -20,10 +23,6 @@ using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Execution;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-
-using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
-using Abstraction::Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
-
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Resources.Resources;
@@ -438,7 +437,10 @@ internal class Executor
         string? assemblyVersion = Product.Version;
         if (!isDiag)
         {
-            var end = Product.Version?.IndexOf("-release");
+            // Drop the whole suffix, not just the -release one, so a -hotfix or any other build prints a
+            // clean version rather than 18.12.0-hotfixaaa23423. Diag mode keeps the full version,
+            // which is what a bug report needs.
+            var end = Product.Version?.IndexOf("-");
 
             if (end >= 0)
             {

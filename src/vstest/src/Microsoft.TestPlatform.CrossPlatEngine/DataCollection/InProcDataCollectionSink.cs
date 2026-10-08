@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 
 namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection;
+
 // <inheritdoc />
 internal class InProcDataCollectionSink : IDataCollectionSink
 {

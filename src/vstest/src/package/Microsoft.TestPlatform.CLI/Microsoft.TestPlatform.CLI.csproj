@@ -5,8 +5,16 @@
 
   <PropertyGroup>
     <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true' ">Microsoft.TestPlatform.CLI.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">Microsoft.TestPlatform.CLI.sourcebuild.product.nuspec</NuspecFile>
+    <!--
+      Same NU5050 duplication as Microsoft.TestPlatform.Build: NetPrevious and NetCurrent both
+      evaluate to net11.0 under Arcade 11, so the dual-TFM nuspec resolves both halves to the same
+      destinations. With the tokens collapsed the dual nuspec has 89 file entries but only 45
+      distinct ones, and the product nuspec has exactly those same 45 - no difference in either
+      direction - so the package content is unchanged. Both conditions are unchanged wherever the
+      two TFMs differ.
+    -->
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true' and '$(NetPrevious)' != '$(NetCurrent)'">Microsoft.TestPlatform.CLI.sourcebuild.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and ('$(DotNetBuildOrchestrator)' == 'true' or '$(NetPrevious)' == '$(NetCurrent)')">Microsoft.TestPlatform.CLI.sourcebuild.product.nuspec</NuspecFile>
     <IsPackable>true</IsPackable>
     <!-- This package is included even in source build -->
     <ExcludeFromSourceOnlyBuild>false</ExcludeFromSourceOnlyBuild>

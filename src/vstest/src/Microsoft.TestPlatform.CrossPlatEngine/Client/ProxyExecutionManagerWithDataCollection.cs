@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -23,6 +24,7 @@ internal class ProxyExecutionManagerWithDataCollection : ProxyExecutionManager
     private IDictionary<string, string?>? _dataCollectionEnvironmentVariables;
     private int _dataCollectionPort;
     private readonly IRequestData _requestData;
+    private readonly ITestRuntimeProvider _testHostManager;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProxyExecutionManagerWithDataCollection"/> class.
@@ -55,15 +57,14 @@ internal class ProxyExecutionManagerWithDataCollection : ProxyExecutionManager
         ProxyDataCollectionManager = proxyDataCollectionManager;
         DataCollectionRunEventsHandler = new DataCollectionRunEventsHandler();
         _requestData = requestData;
+        _testHostManager = testHostManager;
         _dataCollectionEnvironmentVariables = new Dictionary<string, string?>();
 
         testHostManager.HostLaunched += TestHostLaunchedHandler;
     }
 
     private void TestHostLaunchedHandler(object? sender, HostProviderEventArgs e)
-    {
-        ProxyDataCollectionManager.TestHostLaunched(e.ProcessId);
-    }
+        => ProxyDataCollectionManager.TestHostLaunched(e.ProcessId);
 
     /// <summary>
     /// Gets the data collection run events handler.
@@ -193,11 +194,42 @@ internal class ProxyExecutionManagerWithDataCollection : ProxyExecutionManager
             }
         }
 
+        AddTestHostConnectionSecrets(testProcessStartInfo, ProxyDataCollectionManager);
+
         // Update Telemetry Opt in status because by default in Test Host Telemetry is opted out
         var telemetryOptedIn = _requestData.IsTelemetryOptedIn ? "true" : "false";
         testProcessStartInfo.Arguments += $" --datacollectionport {_dataCollectionPort} --telemetryoptedin {telemetryOptedIn}";
 
         return testProcessStartInfo;
+    }
+
+    /// <summary>
+    /// Puts the test-case-events secret pair into the testhost environment.
+    /// </summary>
+    ///
+    /// <remarks>
+    /// The datacollector already holds its half, handed to it when it was launched. The testhost is
+    /// the side that opens the test-case-events channel to the datacollector, so it needs the other
+    /// half, and the datacollector refuses that connection without it. This is the only point where
+    /// both the data collection manager and the testhost start info are in scope.
+    ///
+    /// The concrete manager is internal to this assembly, so reading the secret off it costs no
+    /// public API. <see cref="IProxyDataCollectionManager"/> is a shipped public interface and
+    /// deliberately does not carry the secret.
+    /// </remarks>
+    internal static void AddTestHostConnectionSecrets(
+        TestProcessStartInfo testProcessStartInfo,
+        IProxyDataCollectionManager proxyDataCollectionManager)
+    {
+        if (proxyDataCollectionManager is not ProxyDataCollectionManager dataCollectionManager
+            || dataCollectionManager.TestHostConnectionSecrets.IsNullOrWhiteSpace())
+        {
+            return;
+        }
+
+        testProcessStartInfo.EnvironmentVariables ??= new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+        testProcessStartInfo.EnvironmentVariables[EnvironmentHelper.VstestDataCollectionConnectionSecrets] =
+            dataCollectionManager.TestHostConnectionSecrets;
     }
 }
 

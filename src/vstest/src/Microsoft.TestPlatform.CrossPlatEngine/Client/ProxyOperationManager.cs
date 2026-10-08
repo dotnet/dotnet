@@ -1,4 +1,4 @@
-
+﻿
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Threading;
 
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
@@ -200,6 +201,10 @@ public class ProxyOperationManager
 
         _testHostProcessStdError = string.Empty;
         TestHostConnectionInfo testHostConnectionInfo = TestHostManager.GetTestHostConnectionInfo();
+        var connectionValidator = RequestSender as IConnectionValidationConfigurable
+            ?? throw new TestPlatformException(
+                "The testhost request sender cannot validate the peer connection.");
+        connectionValidator.RequireConnectionValidation();
 
         var portNumber = 0;
         if (testHostConnectionInfo.Role == ConnectionRole.Client)
@@ -231,6 +236,75 @@ public class ProxyOperationManager
                 sources,
                 envVars,
                 connectionInfo));
+        testHostStartInfo.EnvironmentVariables ??= new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+        var dataCollectionConnectionSecrets = GetEnvironmentVariable(
+            testHostStartInfo.EnvironmentVariables,
+            EnvironmentHelper.VstestDataCollectionConnectionSecrets);
+        SetEnvironmentVariable(
+            testHostStartInfo.EnvironmentVariables,
+            EnvironmentHelper.VstestConnectionSecrets,
+            value: null);
+        SetEnvironmentVariable(
+            testHostStartInfo.EnvironmentVariables,
+            EnvironmentHelper.VstestDataCollectionConnectionSecrets,
+            value: null);
+        SetEnvironmentVariable(
+            testHostStartInfo.EnvironmentVariables,
+            EnvironmentHelper.VstestDesignModeConnectionSecrets,
+            value: null);
+
+        // The identity check has no unauthenticated mode to fall back to, so a testhost that does not
+        // perform it is refused here, before it is launched, with a message that names what to
+        // install. Letting it start would end in a connection timeout whose cause is invisible.
+        if (TestHostManager is not ITestRuntimeProvider3 { SupportsConnectionSecrets: true })
+        {
+            var provider = TestHostManager as ITestRuntimeProvider3;
+            var error = ConnectionSecretsCapabilities.WithDetails(
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    CommunicationUtilitiesResources.ConnectionSecretsTesthostUnsupported,
+                    ConnectionSecretsCapabilities.NegotiationErrorLink),
+                new[]
+                {
+                    ConnectionSecretsCapabilities.Detail(
+                        CommunicationUtilitiesResources.ConnectionSecretsDetailVersion,
+                        CoreUtilitiesConstants.TesthostProcessName,
+                        provider?.TestHostVersion ?? string.Empty),
+                    ConnectionSecretsCapabilities.Detail(
+                        CommunicationUtilitiesResources.ConnectionSecretsDetailPath,
+                        CoreUtilitiesConstants.TesthostProcessName,
+                        provider?.TestHostPath ?? string.Empty),
+                });
+
+            EqtTrace.Error("ProxyOperationManager.SetupChannel: {0}", error);
+            connectionValidator.CannotValidateConnection(error);
+
+            // For a client-role testhost InitializeCommunication above already opened the endpoint,
+            // and nothing on the throw path closes it: CannotValidateConnection only records the
+            // error for the waiting validator, and the callers of SetupChannel handle the exception
+            // by reporting it rather than by closing the channel. Close it here so a refused run
+            // does not leave a listening socket behind.
+            RequestSender.Close();
+
+            throw new TestPlatformException(error);
+        }
+
+        var connectionSecrets = ConnectionSecrets.GeneratePair();
+        SetEnvironmentVariable(
+            testHostStartInfo.EnvironmentVariables,
+            EnvironmentHelper.VstestConnectionSecrets,
+            connectionSecrets);
+        if (!dataCollectionConnectionSecrets.IsNullOrWhiteSpace())
+        {
+            SetEnvironmentVariable(
+                testHostStartInfo.EnvironmentVariables,
+                EnvironmentHelper.VstestDataCollectionConnectionSecrets,
+                dataCollectionConnectionSecrets);
+        }
+
+        connectionValidator.UseConnectionSecrets(connectionSecrets);
+
+
         try
         {
             // Launch the test host.
@@ -291,6 +365,12 @@ public class ProxyOperationManager
             // Throw a test platform exception along with the error messages from the test if the test host exited unexpectedly
             // before communication was established.
             ThrowOnTestHostExited(sources, _testHostExited.IsSet);
+
+            if (!connectionValidator.ConnectionValidationError.IsNullOrWhiteSpace())
+            {
+                throw new TestPlatformException(
+                    $"The testhost connection was rejected because its identity could not be validated: {connectionValidator.ConnectionValidationError}");
+            }
 
             // Throw a test platform exception stating the connection to test could not be established even after waiting
             // for the configure timeout period.
@@ -550,5 +630,35 @@ public class ProxyOperationManager
         }
 
         throw new TestPlatformException(errorMsg);
+    }
+    private static string? GetEnvironmentVariable(
+        IDictionary<string, string?> environmentVariables,
+        string name)
+    {
+        if (environmentVariables.TryGetValue(name, out var value))
+        {
+            return value;
+        }
+
+        var key = environmentVariables.Keys.FirstOrDefault(
+            key => string.Equals(key, name, StringComparison.OrdinalIgnoreCase));
+        return key is null ? null : environmentVariables[key];
+    }
+
+    private static void SetEnvironmentVariable(
+        IDictionary<string, string?> environmentVariables,
+        string name,
+        string? value)
+    {
+        var keys = environmentVariables.Keys
+            .Where(key => string.Equals(key, name, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        foreach (var key in keys)
+        {
+            environmentVariables.Remove(key);
+        }
+
+        // A null value is an intentional tombstone that removes an inherited process variable.
+        environmentVariables[name] = value;
     }
 }

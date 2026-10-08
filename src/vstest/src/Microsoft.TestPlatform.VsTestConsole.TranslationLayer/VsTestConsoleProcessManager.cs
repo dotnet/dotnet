@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -13,6 +13,7 @@ using Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer.Resources;
@@ -57,8 +58,30 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
     private bool _vstestConsoleStarted;
     private bool _vstestConsoleExited;
     private bool _isDisposed;
+    private bool? _supportsConnectionSecrets;
+    private string? _processVersion;
 
     internal IFileHelper FileHelper { get; set; }
+
+    /// <inheritdoc/>
+    public DateTime? ProcessStartTimeUtc { get; private set; }
+
+    /// <inheritdoc/>
+    public bool SupportsConnectionSecrets => _supportsConnectionSecrets ??= ComputeSupportsConnectionSecrets();
+
+    /// <inheritdoc/>
+    public string? ProcessVersion
+    {
+        get
+        {
+            // The version is read as a side effect of the capability check, so make sure it ran.
+            _ = SupportsConnectionSecrets;
+            return _processVersion;
+        }
+    }
+
+    /// <inheritdoc/>
+    public string? ProcessPath => _vstestConsolePath;
 
     /// <inheritdoc/>
     public event EventHandler? ProcessExited;
@@ -110,6 +133,7 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
             throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, InternalResources.CannotFindConsoleRunner, consoleRunnerPath), consoleRunnerPath);
         }
 
+        ProcessStartTimeUtc = null;
         var arguments = string.Join(" ", BuildArguments(consoleParameters));
         var info = new ProcessStartInfo(consoleRunnerPath, arguments)
         {
@@ -137,7 +161,14 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
                     // Not printing the value on purpose, env variables can contain secrets and we don't need to know the values
                     // most of the time.
                     EqtTrace.Verbose("VsTestCommandLineWrapper.StartProcess: Setting environment variable: {0}", envVariable.Key);
-                    info.EnvironmentVariables[envVariable.Key] = envVariable.Value?.ToString();
+                    if (envVariable.Value is null)
+                    {
+                        info.EnvironmentVariables.Remove(envVariable.Key);
+                    }
+                    else
+                    {
+                        info.EnvironmentVariables[envVariable.Key] = envVariable.Value.ToString();
+                    }
                 }
             }
         }
@@ -145,6 +176,7 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
         try
         {
             _process = Process.Start(info);
+            ProcessStartTimeUtc = _process!.StartTime.ToUniversalTime();
         }
         catch (Win32Exception ex)
         {
@@ -258,6 +290,36 @@ internal sealed class VsTestConsoleProcessManager : IProcessManager, IDisposable
                 ? new DotnetHostHelper().GetDotnetPath()
                 : _dotnetExePath
             : GetEscapeSequencedPath(_vstestConsolePath);
+
+    private bool ComputeSupportsConnectionSecrets()
+    {
+        // We start vstest.console ourselves and know its path, so we read its file version and check
+        // it against the table of bands that perform the identity check. A console whose version
+        // cannot be read is treated as unsupported, which refuses the session rather than starting a
+        // console whose identity we could not check.
+        try
+        {
+            if (_vstestConsolePath.IsNullOrEmpty() || !FileHelper.Exists(_vstestConsolePath))
+            {
+                EqtTrace.Verbose("VsTestConsoleProcessManager.ComputeSupportsConnectionSecrets: Could not locate vstest.console to determine its version; treating the connection secrets as unsupported.");
+                return false;
+            }
+
+            _processVersion = FileVersionInfo.GetVersionInfo(_vstestConsolePath).ProductVersion;
+
+            // The decision comes from the marker compiled into the console, which is a fact about that
+            // build rather than a prediction about the patch number it would ship as.
+            var supported = ConnectionSecretsMarker.IsMarked(_vstestConsolePath);
+
+            EqtTrace.Verbose("VsTestConsoleProcessManager.ComputeSupportsConnectionSecrets: Console '{0}' (version {1}) {2} the connection secrets.", _vstestConsolePath, _processVersion, supported ? "supports" : "does not perform");
+            return supported;
+        }
+        catch (Exception ex)
+        {
+            EqtTrace.Verbose("VsTestConsoleProcessManager.ComputeSupportsConnectionSecrets: Could not read the version of vstest.console '{0}'; treating the connection secrets as unsupported. {1}", _vstestConsolePath, ex);
+            return false;
+        }
+    }
 
     private static string GetEscapeSequencedPath(string path)
         => path.IsNullOrEmpty() ? path : $"\"{path.Trim('"')}\"";

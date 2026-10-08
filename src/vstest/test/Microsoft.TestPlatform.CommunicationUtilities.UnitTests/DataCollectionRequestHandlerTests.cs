@@ -33,6 +33,8 @@ namespace Microsoft.TestPlatform.CommunicationUtilities.UnitTests;
 [TestClass]
 public class DataCollectionRequestHandlerTests
 {
+    private const string ControlChannelSecrets = "control-child-secret:control-parent-secret";
+    private const string TestHostChannelSecrets = "testhost-child-secret:testhost-parent-secret";
     private readonly Mock<ICommunicationManager> _mockCommunicationManager;
     private readonly Mock<IMessageSink> _mockMessageSink;
     private readonly Mock<IDataCollectionManager> _mockDataCollectionManager;
@@ -52,6 +54,7 @@ public class DataCollectionRequestHandlerTests
     public DataCollectionRequestHandlerTests()
     {
         _mockCommunicationManager = new Mock<ICommunicationManager>();
+        _mockCommunicationManager.As<IConnectionAuthenticationResponder>();
         _mockMessageSink = new Mock<IMessageSink>();
         _mockDataCollectionManager = new Mock<IDataCollectionManager>();
         _mockDataSerializer = new Mock<IDataSerializer>();
@@ -61,11 +64,17 @@ public class DataCollectionRequestHandlerTests
         _mockRequestData = new Mock<IRequestData>();
         _mockMetricsCollection = new Mock<IMetricsCollection>();
         _mockRequestData.Setup(r => r.MetricsCollection).Returns(_mockMetricsCollection.Object);
+
+        // vstest.console generates both pairs and passes them through the datacollector's
+        // environment. The handler reads and clears them when it is constructed.
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionSecrets, ControlChannelSecrets);
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestDataCollectionConnectionSecrets, TestHostChannelSecrets);
         _requestHandler = new TestableDataCollectionRequestHandler(_mockCommunicationManager.Object, _mockMessageSink.Object, _mockDataCollectionManager.Object, _mockDataCollectionTestCaseEventHandler.Object, _mockDataSerializer.Object, _mockFileHelper.Object, _mockRequestData.Object);
 
         _mockCommunicationManager.SetupSequence(x => x.ReceiveMessage()).Returns(_beforeTestRunStart).Returns(_afterTestRunEnd);
 
         _mockDataCollectionManager.Setup(x => x.SessionStarted(It.IsAny<SessionStartEventArgs>())).Returns(true);
+        _mockDataCollectionManager.Setup(x => x.InitializeDataCollectors(It.IsAny<string>())).Returns(new Dictionary<string, string?>());
     }
 
     [TestCleanup]
@@ -189,7 +198,7 @@ public class DataCollectionRequestHandlerTests
 
         _requestHandler.ProcessRequests();
 
-        _mockDataCollectionTestCaseEventHandler.Verify(x => x.InitializeCommunication(), Times.Once);
+        _mockDataCollectionTestCaseEventHandler.Verify(x => x.InitializeCommunication(It.IsAny<string>()), Times.Once);
         _mockDataCollectionTestCaseEventHandler.Verify(x => x.WaitForRequestHandlerConnection(It.IsAny<int>()), Times.Once);
         _mockDataCollectionTestCaseEventHandler.Verify(x => x.ProcessRequests(), Times.Once);
 
@@ -270,7 +279,7 @@ public class DataCollectionRequestHandlerTests
 
         _requestHandler.ProcessRequests();
 
-        _mockDataCollectionTestCaseEventHandler.Verify(x => x.InitializeCommunication(), Times.Once);
+        _mockDataCollectionTestCaseEventHandler.Verify(x => x.InitializeCommunication(It.IsAny<string>()), Times.Once);
         _mockDataCollectionTestCaseEventHandler.Verify(x => x.ProcessRequests(), Times.Once);
         _mockDataCollectionTestCaseEventHandler.Verify(x => x.WaitForRequestHandlerConnection(It.IsAny<int>()), Times.Once);
     }
@@ -311,7 +320,7 @@ public class DataCollectionRequestHandlerTests
 
         _requestHandler.ProcessRequests();
 
-        _mockDataCollectionTestCaseEventHandler.Verify(x => x.InitializeCommunication(), Times.Never);
+        _mockDataCollectionTestCaseEventHandler.Verify(x => x.InitializeCommunication(It.IsAny<string>()), Times.Never);
         _mockDataCollectionTestCaseEventHandler.Verify(x => x.ProcessRequests(), Times.Never);
         _mockDataCollectionTestCaseEventHandler.Verify(x => x.WaitForRequestHandlerConnection(It.IsAny<int>()), Times.Never);
     }

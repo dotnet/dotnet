@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.Client.RequestHelper;
 using Microsoft.VisualStudio.TestPlatform.Client.TestRunAttachmentsProcessing;
-using Microsoft.VisualStudio.TestPlatform.Common;
 using Microsoft.VisualStudio.TestPlatform.Common.Logging;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
@@ -28,6 +27,8 @@ using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 
 using CommunicationUtilitiesResources = Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources;
+using CoreUtilitiesConstants = Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants;
+using TPDebug = Microsoft.VisualStudio.TestPlatform.Common.TPDebug;
 
 namespace Microsoft.VisualStudio.TestPlatform.Client.DesignMode;
 
@@ -116,6 +117,38 @@ public class DesignModeClient : IDesignModeClient
         TestRequestManager = testRequestManager;
 
         EqtTrace.Info("Trying to connect to server on port : {0}", port);
+        var connectionSecrets = Environment.GetEnvironmentVariable(EnvironmentHelper.VstestDesignModeConnectionSecrets);
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestDesignModeConnectionSecrets, null);
+        if (string.IsNullOrEmpty(connectionSecrets))
+        {
+            // An outdated parent is what causes this, so the parent cannot report it.
+            var parent = ParentProcessResolver.ResolveFromCommandLine();
+            var error = ConnectionSecretsCapabilities.WithDetails(
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    CommunicationUtilitiesResources.ConnectionSecretsParentDidNotNegotiate,
+                    CoreUtilitiesConstants.VstestConsoleProcessName,
+                    ConnectionSecretsCapabilities.NegotiationErrorLink),
+                new[]
+                {
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailParentProcessId, parent.ProcessId > 0 ? parent.ProcessId.ToString(CultureInfo.InvariantCulture) : string.Empty),
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailParentProcessName, parent.Name),
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailParentProcessPath, parent.Path),
+                    ConnectionSecretsCapabilities.Detail(CommunicationUtilitiesResources.ConnectionSecretsDetailParentProcessVersion, parent.Version),
+                });
+
+            EqtTrace.Error("DesignModeClient.ConnectToClientAndProcessRequests: {0}", error);
+            throw new TestPlatformException(error);
+        }
+
+        if (_communicationManager is not IConnectionAuthenticationResponder responder)
+        {
+            throw new TestPlatformException(
+                "The design-mode communication transport cannot present the connection secrets.");
+        }
+
+        responder.UseConnectionSecretsAsChild(connectionSecrets);
+
         _communicationManager.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port));
 
         var connectionTimeoutInSecs = EnvironmentHelper.GetConnectionTimeout();

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -25,8 +25,10 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
+
 
 using CommunicationUtilitiesResources = Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources;
 using CoreUtilitiesConstants = Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants;
@@ -49,6 +51,18 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
     private readonly IRequestData _requestData;
 
     private Task? _testCaseEventMonitorTask;
+
+    /// <summary>
+    /// The secret pair for the test-case-events channel to the testhost. vstest.console generates it
+    /// and gives the same value to both this process and the testhost, so it never travels over a
+    /// message.
+    /// </summary>
+    private readonly string? _testHostConnectionSecrets;
+
+    /// <summary>
+    /// The secret pair for the control channel back to vstest.console.
+    /// </summary>
+    private readonly string? _connectionSecrets;
 
     /// <summary>
     /// Use to cancel data collection test case events monitoring if test run is canceled.
@@ -96,6 +110,13 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
         _cancellationTokenSource = new CancellationTokenSource();
         _fileHelper = fileHelper;
         _requestData = requestData;
+
+        // Take both secrets out of the environment as soon as this process has an object to hold
+        // them, so nothing this process starts later can inherit them.
+        _connectionSecrets = Environment.GetEnvironmentVariable(EnvironmentHelper.VstestConnectionSecrets);
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestConnectionSecrets, null);
+        _testHostConnectionSecrets = Environment.GetEnvironmentVariable(EnvironmentHelper.VstestDataCollectionConnectionSecrets);
+        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestDataCollectionConnectionSecrets, null);
     }
 
     /// <summary>
@@ -157,6 +178,37 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
     /// <inheritdoc />
     public void InitializeCommunication(int port)
     {
+        if (string.IsNullOrEmpty(_connectionSecrets))
+        {
+            // The datacollector ships from the runner's own folder and is version locked to it, so an
+            // outdated parent is impossible here. This only happens when it is started directly.
+            var parent = ParentProcessResolver.ResolveFromCommandLine();
+            var error = ConnectionSecretsCapabilities.WithDetails(
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.Resources.ConnectionSecretsParentDidNotNegotiate,
+                    CoreUtilitiesConstants.DatacollectorProcessName,
+                    ConnectionSecretsCapabilities.NegotiationErrorLink),
+                new[]
+                {
+                    ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessId, parent.ProcessId > 0 ? parent.ProcessId.ToString(CultureInfo.InvariantCulture) : string.Empty),
+                    ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessName, parent.Name),
+                    ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessPath, parent.Path),
+                    ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessVersion, parent.Version),
+                });
+
+            EqtTrace.Error("DataCollectionRequestHandler.InitializeCommunication: {0}", error);
+            throw new PeerProcessValidationException(error);
+        }
+
+        if (_communicationManager is not IConnectionAuthenticationResponder responder)
+        {
+            throw new PeerProcessValidationException(
+                "The datacollector communication transport cannot present the connection secrets.");
+        }
+
+        responder.UseConnectionSecretsAsChild(_connectionSecrets!);
+
         _communicationManager.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port));
     }
 
@@ -317,7 +369,31 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
         var testCaseEventsPort = 0;
         if (areTestCaseLevelEventsRequired)
         {
-            testCaseEventsPort = _dataCollectionTestCaseEventHandler.InitializeCommunication();
+            if (string.IsNullOrEmpty(_testHostConnectionSecrets))
+            {
+                // vstest.console generates this pair and gives it to both sides. If it is absent the
+                // runner is older than this datacollector, so the cause is the same as the missing
+                // parent pair above and the message says the same thing.
+                var parent = ParentProcessResolver.ResolveFromCommandLine();
+                var error = ConnectionSecretsCapabilities.WithDetails(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.Resources.ConnectionSecretsParentDidNotNegotiate,
+                        CoreUtilitiesConstants.DatacollectorProcessName,
+                        ConnectionSecretsCapabilities.NegotiationErrorLink),
+                    new[]
+                    {
+                        ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessId, parent.ProcessId > 0 ? parent.ProcessId.ToString(CultureInfo.InvariantCulture) : string.Empty),
+                        ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessName, parent.Name),
+                        ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessPath, parent.Path),
+                        ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessVersion, parent.Version),
+                    });
+
+                EqtTrace.Error("DataCollectionRequestHandler.HandleBeforeTestRunStart: {0}", error);
+                throw new TestPlatformException(error);
+            }
+
+            testCaseEventsPort = _dataCollectionTestCaseEventHandler.InitializeCommunication(_testHostConnectionSecrets!);
 
             _testCaseEventMonitorTask = Task.Factory.StartNew(
                 () =>
@@ -332,11 +408,14 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
                         }
                         else
                         {
+                            var validationError = _dataCollectionTestCaseEventHandler.ConnectionValidationError;
                             EqtTrace.Error(
-                                "DataCollectionRequestHandler.HandleBeforeTestRunStart: TestCaseEventHandler timed out while connecting to the Sender.");
+                                "DataCollectionRequestHandler.HandleBeforeTestRunStart: TestCaseEventHandler failed to connect to the Sender. Validation error: {0}",
+                                validationError);
                             _dataCollectionTestCaseEventHandler.Close();
                             throw new TestPlatformException(
-                                string.Format(
+                                validationError
+                                ?? string.Format(
                                     CultureInfo.CurrentCulture,
                                     CommunicationUtilitiesResources.ConnectionTimeoutErrorMessage,
                                     CoreUtilitiesConstants.DatacollectorProcessName,
@@ -348,6 +427,11 @@ internal class DataCollectionRequestHandler : IDataCollectionRequestHandler, IDi
                     catch (Exception e)
                     {
                         EqtTrace.Error("DataCollectionRequestHandler.HandleBeforeTestRunStart : Error occurred during test case events handling: {0}.", e);
+                        _messageSink.SendMessage(
+                            new DataCollectionMessageEventArgs(
+                                TestMessageLevel.Error,
+                                $"Test case event channel failed: {e.Message}"));
+                        throw;
                     }
                 },
                 _cancellationTokenSource.Token);

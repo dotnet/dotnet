@@ -94,6 +94,11 @@
     <ItemGroup>
       <MicrosoftCodeCoverageInstrumentationFiles Include="$(PkgMicrosoft_CodeCoverage_Instrumentation)\runtimes\win\native\*"></MicrosoftCodeCoverageInstrumentationFiles>
       <MicrosoftCodeCoverageIOFiles Include="$(PkgMicrosoft_CodeCoverage_IO)\lib\netstandard2.0\**\*"></MicrosoftCodeCoverageIOFiles>
+      <!-- DependencyModel 3.x ships lib/net451, not lib/net461 (net461 first appears in 5.0).
+           Measured on the packages: 3.0.0 and 3.1.0 both carry lib/net451 at 64 888 bytes, and
+           6.0.0 carries no net451 at all. 17.11 pins 3.0.0 and uses this same net451 path.
+           Changing this back to net461 without also moving the pin off 3.x makes the Include match
+           nothing and silently drops the DLL from the package. -->
       <MicrosoftExtensionsDependencyModelFiles Include="$(PkgMicrosoft_Extensions_DependencyModel)\lib\net451\*"></MicrosoftExtensionsDependencyModelFiles>
       <MicrosoftExtensionsFileSystemGlobbingFiles Include="$(PkgMicrosoft_Extensions_FileSystemGlobbing)\lib\netstandard2.0\*"></MicrosoftExtensionsFileSystemGlobbingFiles>
       <PlatformAbstractionsDepsJsonFiles Include="..\..\Microsoft.TestPlatform.PlatformAbstractions\bin\$(Configuration)\$(TargetFramework)\*.deps.json"></PlatformAbstractionsDepsJsonFiles>

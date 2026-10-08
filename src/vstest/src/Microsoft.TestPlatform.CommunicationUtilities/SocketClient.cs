@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 
@@ -18,15 +19,17 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 /// Communication client implementation over sockets.
 /// </summary>
 [SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Would cause a breaking change if users are inheriting this class and implement IDisposable")]
-public class SocketClient : ICommunicationEndPoint
+public class SocketClient : ICommunicationEndPoint, IConnectionValidationConfigurable, IConnectionAuthenticationResponder
 {
     private readonly CancellationTokenSource _cancellation;
     private readonly TcpClient _tcpClient;
     private readonly Func<Stream, ICommunicationChannel> _channelFactory;
+    private readonly ConnectionValidator _connectionValidator;
 
     private ICommunicationChannel? _channel;
     private bool _stopped;
     private string? _endPoint;
+    private string? _connectionSecretsResponder;
 
     public SocketClient()
         : this(stream => new LengthPrefixCommunicationChannel(stream))
@@ -41,6 +44,27 @@ public class SocketClient : ICommunicationEndPoint
 
         _tcpClient = new TcpClient { NoDelay = true };
         _channelFactory = channelFactory;
+        _connectionValidator = new ConnectionValidator();
+    }
+
+    string? IConnectionValidationConfigurable.ConnectionValidationError => _connectionValidator.Error;
+
+    void IConnectionValidationConfigurable.RequireConnectionValidation()
+        => _connectionValidator.RequireValidation();
+
+    void IConnectionValidationConfigurable.UseConnectionSecrets(string connectionSecrets)
+        => _connectionValidator.UseConnectionSecrets(connectionSecrets);
+
+    void IConnectionValidationConfigurable.CannotValidateConnection(string error)
+        => _connectionValidator.CannotValidate(error);
+    void IConnectionAuthenticationResponder.UseConnectionSecretsAsChild(string connectionSecrets)
+    {
+        if (string.IsNullOrWhiteSpace(connectionSecrets))
+        {
+            throw new ArgumentException("The connection secrets cannot be empty.", nameof(connectionSecrets));
+        }
+
+        _connectionSecretsResponder = connectionSecrets;
     }
 
     /// <inheritdoc />
@@ -98,6 +122,23 @@ public class SocketClient : ICommunicationEndPoint
             return;
         }
 
+        var validationResult = ValidateConnection();
+        if (!validationResult.Succeeded)
+        {
+            _tcpClient.Close();
+            Connected.SafeInvoke(
+                this,
+                new ConnectedEventArgs(new PeerProcessValidationException(validationResult.Error!)),
+                "SocketClient: ServerPeerValidationFailed");
+            return;
+        }
+
+        if (_cancellation.IsCancellationRequested)
+        {
+            _tcpClient.Close();
+            return;
+        }
+
         _channel = _channelFactory(_tcpClient.GetStream());
         Connected.SafeInvoke(this, new ConnectedEventArgs(_channel), "SocketClient: ServerConnected");
 
@@ -128,5 +169,19 @@ public class SocketClient : ICommunicationEndPoint
 
             Disconnected?.SafeInvoke(this, new DisconnectedEventArgs(), "SocketClient: ServerDisconnected");
         }
+    }
+
+    private PeerProcessValidationResult ValidateConnection()
+    {
+        if (_connectionSecretsResponder is not null)
+        {
+            return ConnectionHandshake.AuthenticateAsChild(
+                _tcpClient,
+                _connectionSecretsResponder,
+                EnvironmentHelper.GetConnectionTimeout() * 1000,
+                _cancellation.Token);
+        }
+
+        return _connectionValidator.ValidateAsParent(_tcpClient, _cancellation.Token);
     }
 }

@@ -14,6 +14,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Microsoft.VisualStudio.TestPlatform.Common.Utilities;
+
 /* Expected attribute shape
 
     namespace Microsoft.VisualStudio.TestPlatform

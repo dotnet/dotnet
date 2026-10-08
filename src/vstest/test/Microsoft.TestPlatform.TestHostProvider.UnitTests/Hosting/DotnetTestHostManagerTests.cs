@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Host;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -124,6 +125,83 @@ public class DotnetTestHostManagerTests
         Action action = () => _dotnetHostManager.GetTestHostProcessStartInfo(sources, null, _defaultConnectionInfo);
 
         Assert.ThrowsException<InvalidOperationException>(action);
+    }
+
+    [TestMethod]
+    public void DotnetTestHostManagerShouldImplementITestRuntimeProvider3()
+    {
+        Assert.IsInstanceOfType<ITestRuntimeProvider3>(_dotnetHostManager);
+    }
+
+    [TestMethod]
+    public void SupportsConnectionSecretsShouldBeFalseWhenTesthostVersionCannotBeProbed()
+    {
+        // The constructor already resolved a testhost.dll whose version cannot be read (the file does
+        // not really exist on disk), so the manager must conservatively report the nonce as unsupported.
+        Assert.IsFalse(_dotnetHostManager.SupportsConnectionSecrets);
+    }
+
+    /// <summary>
+    /// The marker is a fact about a build, so it is read out of the assembly rather than inferred
+    /// from a version. This test assembly carries the marker; the assemblies it links do not.
+    /// </summary>
+    [TestMethod]
+    public void IsMarkedShouldRecogniseAnAssemblyCarryingTheMarker()
+    {
+        var markedAssembly = typeof(DotnetTestHostManagerTests).Assembly.Location;
+
+        Assert.IsTrue(ConnectionSecretsMarker.IsMarked(markedAssembly));
+    }
+
+    [TestMethod]
+    public void IsMarkedShouldNotServeOnePathFromAnotherThatDiffersOnlyByCase()
+    {
+        // The cache is keyed by the path exactly as given. A case-insensitive key lets one binary
+        // inherit another's answer when the two paths differ only by case - and that answer decides
+        // whether a peer is trusted. On a case-sensitive filesystem those are two different files.
+        //
+        // Deterministic on both kinds of filesystem, because it does not need two files to exist at
+        // once: the second lookup is made after the file is gone, so a case-insensitive cache answers
+        // it from the first entry while an ordinal one reads and finds nothing.
+        var directory = Path.Combine(Path.GetTempPath(), "marker-case-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        try
+        {
+            var lower = Path.Combine(directory, "marker.dll");
+            var upper = Path.Combine(directory, "MARKER.dll");
+            File.Copy(typeof(DotnetTestHostManagerTests).Assembly.Location, lower);
+
+            Assert.IsTrue(ConnectionSecretsMarker.IsMarked(lower), "the copied assembly carries the marker");
+
+            File.Delete(lower);
+
+            Assert.IsFalse(
+                ConnectionSecretsMarker.IsMarked(upper),
+                "a path that differs only by case must not be answered from another path's cache entry");
+        }
+        finally
+        {
+            Directory.Delete(directory, true);
+        }
+    }
+
+    [TestMethod]
+    public void IsMarkedShouldRejectAnAssemblyWithoutTheMarker()
+    {
+        var unmarkedAssembly = typeof(Mock).Assembly.Location;
+
+        Assert.IsFalse(ConnectionSecretsMarker.IsMarked(unmarkedAssembly));
+    }
+
+    /// <summary>
+    /// Anything that cannot be read is reported as unmarked, so a peer whose identity could not be
+    /// established is refused rather than launched.
+    /// </summary>
+    [TestMethod]
+    public void IsMarkedShouldRejectWhatItCannotRead()
+    {
+        Assert.IsFalse(ConnectionSecretsMarker.IsMarked(string.Empty));
+        Assert.IsFalse(ConnectionSecretsMarker.IsMarked(Path.Combine(Path.GetTempPath(), "no-such-assembly.dll")));
     }
 
     [TestMethod]

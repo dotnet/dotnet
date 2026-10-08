@@ -13,6 +13,7 @@ using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.TestPlatform.AcceptanceTests;
+
 // This tests need specific sdks to be installed on arm machine
 // >= ARM 6.0.2xx
 // >= x64 6.0.2xx

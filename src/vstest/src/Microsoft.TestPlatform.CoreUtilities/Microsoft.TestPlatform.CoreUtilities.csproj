@@ -18,7 +18,74 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' != '$(NetFrameworkMinimum)' ">
     <PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="4.0.0" />
+    <!-- netcoreapp3.1's Microsoft.NETCore.App declares Microsoft.Win32.Registry as a framework-provided
+         package, so a 4.0.0 reference is suppressed and nothing reaches the compile line; the ref pack's
+         type forwards then resolve to nothing and every Registry type fails with CS1069. 5.0.0 is above
+         that override, so the compile asset survives. Only this TFM is raised - the others build today
+         and their package content must stay equivalent to the shipped 17.12 artifacts.
+         COPIED FROM 17.8 AND 17.11, WHERE IT IS PROVEN: 17.8's build 3067220 took `Build` from "fails at
+         the C# compiler" to `succeeded` with exactly this change, and 17.11's 3067302 measured CS1069
+         18 -> 0. 17.12 carries the IDENTICAL 4.0.0 pin and the IDENTICAL TargetFrameworks list, measured
+         on this branch, so it hits the same defect. Deliberately NOT 17.14's mechanism, which conditions
+         the reference to netstandard2.0 only and would leave netcoreapp3.1 with nothing. -->
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.0.0" Condition=" '$(TargetFramework)' != '$(NetCoreAppMinimum)' " />
+    <!-- ExcludeAssets="runtime": the 5.0.0 COMPILE asset is what fixes CS1069, but its RUNTIME asset
+         must not reach vstest.console.deps.json. Without this, deps.json demands
+         runtimes/win/lib/netstandard2.0/Microsoft.Win32.Registry.dll, Microsoft.TestPlatform.CLI does
+         not contain it, and vstest.console fails to START on netcoreapp3.1. MEASURED ON THIS LINE, not
+         inferred from 17.11: build 3067419's acceptance run stopped at 672/1105 and the TRX names
+         "package: 'Microsoft.Win32.Registry', version: '5.0.0' path:
+         'runtimes/win/lib/netstandard2.0/Microsoft.Win32.Registry.dll'" with Runner = netcoreapp3.1,
+         against Microsoft.TestPlatform.CLI.17.12.0-release-26455-13.nupkg. Shipped 17.11.1's CLI was
+         measured to carry ZERO runtimes/ entries and to list Registry with no runtime section at all,
+         so excluding the runtime asset RESTORES the shipped shape rather than changing it.
+         netcoreapp3.1's shared framework provides the assembly at runtime. Port of 17.11's 5e2ea42ac.
+
+         PrivateAssets MUST be "all". A narrower list is MEASURED insufficient across FOUR builds
+         spanning both lines, all byte-for-byte identical to their own control on the acceptance
+         assembly: 17.11 3067428 (control, no attribute), 3067436 (ExcludeAssets="runtime"),
+         3067475 (plus PrivateAssets="runtime;contentfiles;analyzers;build") all gave
+         690 Passed / 325 Failed / 90 NotExecuted out of 1105; 17.12 3067429 (control) and
+         3067480 (this file's previous revision) both gave 672 / 343 / 90. Identical numbers across
+         four different asset configurations mean none of them changed the artifact.
+
+         What the produced artifact actually says, read out of the nupkg build 3067475 emitted:
+         contentFiles/any/netcoreapp3.1/vstest.console.deps.json lists Microsoft.Win32.Registry/5.0.0
+         with BOTH a runtime section (lib/netstandard2.0) AND a runtimeTargets section
+         (runtimes/win/lib/netstandard2.0), while the package ships NEITHER file - a recursive scan
+         of the extracted CLI nupkg finds zero files matching Win32.Registry. Shipped 17.11.1's CLI
+         lists Microsoft.Win32.Registry/4.0.0 with no runtime and no runtimeTargets section at all,
+         which is why it starts. The defect is therefore the 4.0.0 -> 5.0.0 bump making the SDK stop
+         treating the package as framework-provided, not an asset attribute on the reference.
+
+         CORRECTION, MEASURED ON BUILD 3067504 - THE VERSION MATTERS AND 5.0.0 WAS THE WRONG ONE.
+         PrivateAssets="all" DID work: the deps.json entry is gone and the old "assembly specified in
+         the application dependencies manifest was not found" error is gone with it. It UNMASKED the
+         real one. Acceptance moved 672/343/90 -> 680 Passed / 335 Failed / 90 NotExecuted - a move of
+         exactly 8, the same move 17.11 made on 3067499 - and 159 of the 335 surviving failures name:
+           System.IO.FileNotFoundException: Could not load file or assembly
+           'Microsoft.Win32.Registry, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.
+         So the assembly is now resolved from the shared framework, as intended - but the COMPILE-TIME
+         IDENTITY baked in by package 5.0.0 is 5.0.0.0, and .NET rolls assembly versions UP only, never
+         DOWN. A netcoreapp3.1 shared framework carries 4.1.3.0, so 5.0.0.0 can never be satisfied.
+         MEASURED package -> assembly version: 4.0.0 -> 4.0.0.0, 4.4.0 -> 4.1.0.0, 4.7.0 -> 4.1.3.0,
+         5.0.0 -> 5.0.0.0. And the framework PackageOverrides entry is Microsoft.Win32.Registry|4.4.0
+         (read out of Microsoft.NETCore.App.Ref 6.0.36 and 8.0.27 on the dev box), which is why 4.0.0
+         is suppressed and gives CS1069.
+         4.7.0 is the ONE version that satisfies BOTH constraints: it is ABOVE the 4.4.0 override so the
+         compile asset survives and CS1069 stays fixed, and its identity 4.1.3.0 is exactly what a 3.1
+         framework provides and is BELOW every modern one (6.0.0.0 / 8.0.0.0 / 9.0.0.0 / 10.0.0.0), so
+         it rolls up everywhere. Shipped 17.12's CLI compiled against 4.0.0 -> 4.0.0.0 for the same
+         reason. Port of 17.11's 95b5d90d6, whose own build was queued as 3067529.
+
+         The narrower list failed because it omits "compile". The compile asset still flowed across
+         the ProjectReference, which put the library into vstest.console's graph, and the deps.json
+         emitter then wrote the library's FULL asset set, runtimeTargets included. Suppressing
+         "runtime" alone cannot help once the library is in the graph. "all" keeps the package
+         entirely private to this project, so the compile asset still fixes CS1069 here and nothing
+         reaches vstest.console. Verified safe: no source file outside this project references
+         Microsoft.Win32, so no consumer needs the compile asset. -->
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" ExcludeAssets="runtime" PrivateAssets="all" Condition=" '$(TargetFramework)' == '$(NetCoreAppMinimum)' " />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- MSB3270 Suppress warnings about testhost being x64 (AMD64)/x86 when imported into AnyCPU (MSIL) projects. -->
@@ -57,4 +57,7 @@
     <None Include="..\testhost.x86\app.config" Link="app.config" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\shared\ConnectionSecretsMarkerAssembly.cs" Link="ConnectionSecretsMarkerAssembly.cs" />
+  </ItemGroup>
 </Project>

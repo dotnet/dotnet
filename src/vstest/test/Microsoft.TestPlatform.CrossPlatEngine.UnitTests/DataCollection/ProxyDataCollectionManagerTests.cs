@@ -66,6 +66,37 @@ public class ProxyDataCollectionManagerTests
     }
 
     [TestMethod]
+    public void InitializeShouldInjectConnectionSecretsIntoDataCollectorEnvironmentAndArmSender()
+    {
+        _mockDataCollectionRequestSender.Setup(x => x.WaitForRequestHandlerConnection(It.IsAny<int>())).Returns(true);
+
+        string? injectedSecrets = null;
+        string? injectedTestHostSecrets = null;
+        _mockDataCollectionLauncher
+            .Setup(x => x.LaunchDataCollector(It.IsAny<IDictionary<string, string?>>(), It.IsAny<IList<string>>()))
+            .Callback<IDictionary<string, string?>?, IList<string>>((env, _) =>
+            {
+                env?.TryGetValue(EnvironmentHelper.VstestConnectionSecrets, out injectedSecrets);
+                env?.TryGetValue(EnvironmentHelper.VstestDataCollectionConnectionSecrets, out injectedTestHostSecrets);
+            });
+
+        _proxyDataCollectionManager.Initialize();
+
+        // A pair is two 256-bit values rendered as hex, joined by one separator: 64 + 1 + 64.
+        Assert.IsFalse(string.IsNullOrEmpty(injectedSecrets));
+        Assert.AreEqual(129, injectedSecrets!.Length);
+        _mockDataCollectionRequestSender.Verify(x => x.RequireConnectionValidation(), Times.Once);
+        _mockDataCollectionRequestSender.Verify(x => x.UseConnectionSecrets(injectedSecrets), Times.Once);
+
+        // The runner also generates the datacollector-to-testhost pair, so that secret never has to
+        // travel back over a message.
+        Assert.IsFalse(string.IsNullOrEmpty(injectedTestHostSecrets));
+        Assert.AreEqual(129, injectedTestHostSecrets!.Length);
+        Assert.AreNotEqual(injectedSecrets, injectedTestHostSecrets);
+        Assert.AreEqual(injectedTestHostSecrets, _proxyDataCollectionManager.TestHostConnectionSecrets);
+    }
+
+    [TestMethod]
     public void InitializeShouldThrowExceptionIfConnectionTimeouts()
     {
         _mockDataCollectionRequestSender.Setup(x => x.WaitForRequestHandlerConnection(It.IsAny<int>())).Returns(false);
@@ -141,9 +172,12 @@ public class ProxyDataCollectionManagerTests
     [TestMethod]
     public void SendTestHostInitiazliedShouldPassProcessIdToRequestSender()
     {
-        _proxyDataCollectionManager.TestHostLaunched(1234);
+        using var process = Process.GetCurrentProcess();
+        _proxyDataCollectionManager.TestHostLaunched(process.Id);
 
-        _mockDataCollectionRequestSender.Verify(x => x.SendTestHostLaunched(It.Is<TestHostLaunchedPayload>(y => y.ProcessId == 1234)));
+        _mockDataCollectionRequestSender.Verify(
+            x => x.SendTestHostLaunched(
+                It.Is<TestHostLaunchedPayload>(y => y.ProcessId == process.Id)));
     }
 
     [TestMethod]

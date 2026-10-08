@@ -4,6 +4,7 @@
 #pragma warning disable IDE1006 // Naming Styles
 // For some reason only this occurence of vstest is flagged in build, and no other.
 namespace vstest.ProgrammerTests.Fakes;
+
 #pragma warning restore IDE1006 // Naming Styles
 
 internal class DebugOptions

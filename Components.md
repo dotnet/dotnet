@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@10b1153](https://github.com/dotnet/scenario-tests/tree/10b1153c42ff74bd58460cacc794f2e9b1f48918)*
 - `src/sdk`  
-*[dotnet/sdk@3bd7d67](https://github.com/dotnet/sdk/tree/3bd7d67f92dd2477c51586c7b91ac0788994db55)*
+*[dotnet/sdk@5b925bb](https://github.com/dotnet/sdk/tree/5b925bbbb124689cadc91411fb92b92b0f35e3f9)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@eccb082](https://github.com/dotnet/source-build-assets/tree/eccb0828682858d8daa029ba29adce07fd70d9a7)*
 - `src/source-build-externals`  
@@ -90,7 +90,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/test-templates`  
 *[dotnet/test-templates@47c90e1](https://github.com/dotnet/test-templates/tree/47c90e140b027225b799ca8413af10ee3d5f1126)*
 - `src/vstest`  
-*[microsoft/vstest@bc91613](https://github.com/microsoft/vstest/tree/bc9161306b23641b0364b8f93d546da4d48da1eb)*
+*[_git/microsoft-vstest@cd7560b](https://dev.azure.com/dnceng/internal/_git/microsoft-vstest/?version=GCcd7560b1ac8b0914ef4416fc77a12282ea418463)*
 - `src/windowsdesktop`  
 *[_git/dotnet-windowsdesktop@f476308](https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop/?version=GCf476308cc2fcbe56170bb754f63f2b61fb0305da)*
 - `src/winforms`  

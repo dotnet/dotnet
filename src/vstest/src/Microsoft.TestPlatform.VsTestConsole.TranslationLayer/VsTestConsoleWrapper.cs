@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces;
@@ -21,6 +22,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions.Interfaces;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer;
 using Microsoft.VisualStudio.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
 
@@ -146,6 +148,8 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         EqtTrace.Info("VsTestConsoleWrapper.StartSession: Starting VsTestConsoleWrapper session.");
 
         _testPlatformEventSource.TranslationLayerInitializeStart();
+
+        ConfigureConnectionValidation();
 
         // Start communication
         var port = _requestSender.InitializeCommunication();
@@ -657,9 +661,10 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
 
         _testPlatformEventSource.TranslationLayerInitializeStart();
 
-        var timeout = EnvironmentHelper.GetConnectionTimeout();
+        ConfigureConnectionValidation();
+
         // Start communication
-        var port = await _requestSender.InitializeCommunicationAsync(timeout * 1000).ConfigureAwait(false);
+        var port = _requestSender.InitializeCommunication();
 
         if (port > 0)
         {
@@ -674,6 +679,7 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
 
             // Start vstest.console.exe process
             _vstestConsoleProcessManager.StartProcess(_consoleParameters);
+            _sessionStarted = await Task.Run(WaitForConnection).ConfigureAwait(false);
         }
         else
         {
@@ -1159,6 +1165,48 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
 
     #endregion
 
+    /// <summary>
+    /// Generates the secret pair for the channel to vstest.console and passes it to the console
+    /// through its environment. A console that does not perform the identity check is refused here,
+    /// because there is no unauthenticated mode to fall back to.
+    /// </summary>
+    private void ConfigureConnectionValidation()
+    {
+        _requestSender.RequireConnectionValidation();
+        if (!_vstestConsoleProcessManager.SupportsConnectionSecrets)
+        {
+            // Say plainly which component is too old and what to install, rather than letting this
+            // surface as a connection timeout the user has to diagnose.
+            var error = ConnectionSecretsCapabilities.WithDetails(
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    CommunicationUtilitiesResources.ConnectionSecretsConsoleUnsupported,
+                    ConnectionSecretsCapabilities.NegotiationErrorLink),
+                new[]
+                {
+                    ConnectionSecretsCapabilities.Detail(
+                        CommunicationUtilitiesResources.ConnectionSecretsDetailVersion,
+                        CoreUtilitiesConstants.VstestConsoleProcessName,
+                        _vstestConsoleProcessManager.ProcessVersion ?? string.Empty),
+                    ConnectionSecretsCapabilities.Detail(
+                        CommunicationUtilitiesResources.ConnectionSecretsDetailPath,
+                        CoreUtilitiesConstants.VstestConsoleProcessName,
+                        _vstestConsoleProcessManager.ProcessPath ?? string.Empty),
+                });
+
+            EqtTrace.Error("VsTestConsoleWrapper.StartSession: {0}", error);
+            _requestSender.CannotValidateConnection(error);
+            throw new TransationLayerException(error);
+        }
+
+        // This is the design-mode variable, kept separate from VstestConnectionSecrets so that the
+        // pair for this channel is not confused with the one vstest.console generates for a testhost
+        // that inherits its environment.
+        var connectionSecrets = ConnectionSecrets.GeneratePair();
+        _consoleParameters.EnvironmentVariables[EnvironmentHelper.VstestDesignModeConnectionSecrets] = connectionSecrets;
+        _requestSender.UseConnectionSecrets(connectionSecrets);
+    }
+
     private void EnsureInitialized()
     {
         if (!_vstestConsoleProcessManager.IsProcessInitialized())
@@ -1200,6 +1248,12 @@ public class VsTestConsoleWrapper : IVsTestConsoleWrapper
         var timeout = EnvironmentHelper.GetConnectionTimeout();
         if (!_requestSender.WaitForRequestHandlerConnection(timeout * 1000))
         {
+            if (!_requestSender.ConnectionValidationError.IsNullOrWhiteSpace())
+            {
+                throw new TransationLayerException(
+                    $"The vstest.console connection was rejected because its identity could not be validated: {_requestSender.ConnectionValidationError}");
+            }
+
             var processName = _processHelper.GetCurrentProcessFileName();
             throw new TransationLayerException(
                 string.Format(

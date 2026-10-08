@@ -4,6 +4,7 @@
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
+
 internal static class ProtocolVersioning
 {
     public const int HighestSupportedVersion = Version7;
@@ -54,4 +55,9 @@ internal static class ProtocolVersioning
     public const int Version5 = 5;
     public const int Version6 = 6;
     public const int Version7 = 7;
+
+    // The connection-identity handshake deliberately does not appear in this table. It is exchanged
+    // before the version is negotiated, and it ships in serviced builds whose protocol version stays
+    // where it was, so a peer's protocol version says nothing about whether it performs the check.
+    // See ConnectionSecretsCapabilities for the mechanism that does answer that question.
 }

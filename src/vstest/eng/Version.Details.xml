@@ -22,6 +22,12 @@
       <SourceBuild RepoName="source-build-externals" ManagedOnly="true" />
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-assets" Version="9.0.0-alpha.1.26208.6">
+      <Uri>https://github.com/dotnet/source-build-assets</Uri>
+      <Sha>8e19a1b4f607fcbecc4edbd322d77a60d4e25c3c</Sha>
+      <SourceBuild RepoName="source-build-assets" ManagedOnly="true" />
+    </Dependency>
+    <!-- The assets intermediate omits the 2.0.0 FileSystemGlobbing and 4.7.0 System.Text.Json packages used by this line. -->
     <Dependency Name="Microsoft.SourceBuild.Intermediate.source-build-reference-packages" Version="9.0.0-alpha.1.24352.1">
       <Uri>https://github.com/dotnet/source-build-reference-packages</Uri>
       <Sha>cc732c57199f725857c201da146525e3be6bc504</Sha>
@@ -33,14 +39,19 @@
       <Sha>30ab651fcb4354552bd4891619a0bdd81e0ebdbf</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
-    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="3.1.0">
+    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="6.0.0">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
+      <Sha>8470979eb44c2218025515234d3e01138bd74afb</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
     <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="2.0.0">
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
+    </Dependency>
+    <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
+    <Dependency Name="System.Runtime.CompilerServices.Unsafe" Version="6.0.0">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>8470979eb44c2218025515234d3e01138bd74afb</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>

@@ -1,2 +1,31 @@
 #nullable enable
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsConsoleUnsupported.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsDetailParentProcessId.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsDetailParentProcessName.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsDetailParentProcessPath.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsDetailParentProcessVersion.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsDetailPath.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsDetailReason.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsDetailVersion.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsDetailVsTestConsolePath.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsDetailVsTestConsoleVersion.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsInternalError.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsParentDidNotNegotiate.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsParentNegotiationIncomplete.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsParentSecretMismatch.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsPeerNegotiationIncomplete.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsPeerSecretMismatch.get -> string
+~static Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources.Resources.ConnectionSecretsTesthostUnsupported.get -> string
+const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.Handshake = "TestPlatform.Handshake" -> string!
 const Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel.MessageType.TelemetryEventMessage = "TestPlatform.TelemetryEvent" -> string!
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.HandshakePayload
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.HandshakePayload.HandshakePayload() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.HandshakePayload.Secret.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.HandshakePayload.Secret.set -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IConnectionAuthenticationResponder
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IConnectionAuthenticationResponder.UseConnectionSecretsAsChild(string! connectionSecrets) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IConnectionValidationConfigurable
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IConnectionValidationConfigurable.CannotValidateConnection(string! error) -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IConnectionValidationConfigurable.ConnectionValidationError.get -> string?
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IConnectionValidationConfigurable.RequireConnectionValidation() -> void
+Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces.IConnectionValidationConfigurable.UseConnectionSecrets(string! connectionSecrets) -> void

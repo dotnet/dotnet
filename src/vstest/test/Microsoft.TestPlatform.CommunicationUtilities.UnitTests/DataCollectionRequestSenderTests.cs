@@ -156,4 +156,5 @@ public class DataCollectionRequestSenderTests
 
         _mockCommunicationManager.Verify(x => x.SendMessage(MessageType.BeforeTestRunStart, It.Is<BeforeTestRunStartPayload>(p => p.SettingsXml == string.Empty && p.IsTelemetryOptedIn)));
     }
+
 }
