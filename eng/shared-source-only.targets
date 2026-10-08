@@ -71,7 +71,7 @@
       <SharedComponentFilteredPackages Remove="@(SharedComponentFilteredPackages)" 
                                        Condition="'@(_ItemsToRemove)' != '' and 
                                                   '$(_ItemsToRemoveString)' != '' and
-                                                  $(_ItemsToRemoveString.Contains($([System.String]::Concat('%(Identity)', '::', '%(Version)'))))" />
+                                                  $(_ItemsToRemoveString.Contains($([System.String]::Concat('%(SharedComponentFilteredPackages.Identity)', '::', '%(SharedComponentFilteredPackages.Version)'))))" />
 
       <SharedComponentFilteredPackages Update="@(SharedComponentFilteredPackages)">
         <PackagePath>$(SharedComponentsArtifactsPath)$([System.IO.Path]::GetFileName('%(PipelineArtifactPath)'))</PackagePath>

@@ -1,5 +1,0 @@
-{
-    global:
-        _ZTI16PAL_SEHException;
-        _ZTS16PAL_SEHException;
-};
