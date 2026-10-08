@@ -18,6 +18,7 @@
     <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
     <_GeneratedVersionFilePath>$(IntermediateOutputPath)DefaultVersions.Generated.props</_GeneratedVersionFilePath>
     <NoWarn>$(NoWarn);3021;NU5105;NU5111;SYSLIB0013</NoWarn>
+    <DefineConstants>$(DefineConstants);ARCADE_SDK_BUILD_TASKS_ASSEMBLY</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,6 +50,7 @@
 
   <ItemGroup>
     <Compile Include="..\Common\Internal\AssemblyResolution.cs" Link="src\AssemblyResolution.cs" />
+    <Compile Include="..\Common\Tasks\ExecWithRetries.cs" Link="src\ExecWithRetries.cs" />
   </ItemGroup>
 
   <ItemGroup>
