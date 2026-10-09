@@ -15,9 +15,15 @@
     <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
 
     <!-- Pass properties in so that nuget-client doesn't need to hardcode them as the repo doesn't import the Arcade infra. -->
-    <BuildArgs>$(BuildArgs) /p:NetCurrent=$(NetCurrent)</BuildArgs>
-    <BuildArgs Condition="'$(NetPrevious)' != ''">$(BuildArgs) /p:NetPrevious=$(NetPrevious)</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:NetMinimum=$(NetMinimum)</BuildArgs>
+    <NuGetClientNetCurrent>$(NetCurrent)</NuGetClientNetCurrent>
+    <NuGetClientNetPrevious>$(NetPrevious)</NuGetClientNetPrevious>
+    <NuGetClientNetMinimum>$(NetMinimum)</NuGetClientNetMinimum>
+    <NuGetClientNetCurrent Condition="'$(DotNetBuildSourceOnly)' == 'true'">net$(VersionMajor).$(VersionMinor)</NuGetClientNetCurrent>
+    <NuGetClientNetPrevious Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(NetPrevious)' != ''">$(NuGetClientNetCurrent)</NuGetClientNetPrevious>
+    <NuGetClientNetMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NuGetClientNetCurrent)</NuGetClientNetMinimum>
+    <BuildArgs>$(BuildArgs) /p:NetCurrent=$(NuGetClientNetCurrent)</BuildArgs>
+    <BuildArgs Condition="'$(NuGetClientNetPrevious)' != ''">$(BuildArgs) /p:NetPrevious=$(NuGetClientNetPrevious)</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:NetMinimum=$(NuGetClientNetMinimum)</BuildArgs>
 
     <!-- This is a default in the arcade sdk which nuget-client doesn't use. -->
     <BuildArgs Condition="'$(OfficialBuild)' == 'true'">$(BuildArgs) /p:NuGetAudit=false</BuildArgs>
