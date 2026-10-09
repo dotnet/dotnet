@@ -10,8 +10,13 @@
 
   <ItemGroup Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">
     <!-- Short stack builds stop at runtime, not the whole SDK -->
-    <RepositoryReference Include="sdk" Condition="'$(ShortStack)' != 'true'" />
+    <RepositoryReference Include="sdk" Condition="'$(ShortStack)' != 'true' and '$(BuildRuntimeProductsOnly)' != 'true'" />
     <RepositoryReference Include="runtime" Condition="'$(ShortStack)' == 'true'" />
+
+    <!-- Runtime product builds include all runtime families without building the SDK -->
+    <RepositoryReference Include="runtime" Condition="'$(BuildRuntimeProductsOnly)' == 'true'" />
+    <RepositoryReference Include="aspnetcore" Condition="'$(BuildRuntimeProductsOnly)' == 'true'" />
+    <RepositoryReference Include="windowsdesktop" Condition="'$(BuildRuntimeProductsOnly)' == 'true' and '$(TargetOS)' == 'windows'" />
   </ItemGroup>
 
   <!-- Build the cross-OS DACs. -->
@@ -43,6 +48,13 @@
       Runtime is a shared component, so we should not and cannot have a short-stack build if we're not building the shared components.
     -->
     <Error Text="Cannot have a short-stack build if we're not building the shared components." Condition="'$(DotNetBuildSharedComponents)' != 'true'" />
+  </Target>
+
+  <Target Name="ValidateRuntimeProductsOnlyBuild"
+          Condition="'$(BuildRuntimeProductsOnly)' == 'true'"
+          BeforeTargets="PrepareProjectReferences">
+    <Error Text="Cannot build runtime products without building the shared components." Condition="'$(DotNetBuildSharedComponents)' != 'true'" />
+    <Error Text="BuildRuntimeProductsOnly and ShortStack cannot both be enabled." Condition="'$(ShortStack)' == 'true'" />
   </Target>
 
 </Project>
