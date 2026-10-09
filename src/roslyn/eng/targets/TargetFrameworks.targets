@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OutputType)' == 'Exe' and
+                            '$(TargetFramework)' == '$(NetRoslynBuildTool)' and '$(NetRoslynBuildTool)' != '$(NetCurrent)'">
+    <!-- Build tools intentionally consume the live packages' netstandard assets on the bootstrap framework. -->
+    <SuppressTfmSupportBuildWarnings Condition="'$(SuppressTfmSupportBuildWarnings)' == ''">true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+
   <!-- Throw an Error if NetVSShared doesn't contain both NetVS and NetVSCode -->
   <Target Name="CheckNetVSShared" BeforeTargets="Build">
     <Error Condition="!$(NetVSShared.Contains($(NetVS)))" Text="NetVSShared must contain NetVS" />
