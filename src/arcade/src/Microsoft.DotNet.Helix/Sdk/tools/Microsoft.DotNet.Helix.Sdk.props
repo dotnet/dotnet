@@ -11,6 +11,7 @@
 
   <PropertyGroup>
     <NETCORE_ENGINEERING_TELEMETRY>Helix</NETCORE_ENGINEERING_TELEMETRY>
+    <HelixUseEntraAuthentication Condition="'$(HelixUseEntraAuthentication)' == ''">false</HelixUseEntraAuthentication>
   </PropertyGroup>
 
   <UsingTask TaskName="SendHelixJob" AssemblyFile="$(MicrosoftDotNetHelixSdkTasksAssembly)"/>

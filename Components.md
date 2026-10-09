@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@c11157d](https://github.com/dotnet/arcade/tree/c11157d174c111c4ab316dc60ff53311e410ef97)*
+*[dotnet/arcade@d237251](https://github.com/dotnet/arcade/tree/d23725174e27de790e188bbce48fc190c569da5b)*
 - `src/aspire`  
 *[microsoft/aspire@5fa9337](https://github.com/microsoft/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@47d4e3f](https://github.com/dotnet/fsharp/tree/47d4e3f91e4e5414b6dafbf14288b9c5a798ef99)*
 - `src/msbuild`  
-*[dotnet/msbuild@07da1b9](https://github.com/dotnet/msbuild/tree/07da1b9a89da6d00c5a5a6a385cdcebfdfed7110)*
+*[dotnet/msbuild@2a6130a](https://github.com/dotnet/msbuild/tree/2a6130a2996d5cd81b39e1f05a7736b0685fc870)*
 - `src/nuget-client`  
 *[_git/NuGet-NuGet.Client-Trusted@c921250](https://dev.azure.com/devdiv/DevDiv/_git/NuGet-NuGet.Client-Trusted/?version=GCc92125011405028c945371a89e1a1eb0e735456d)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -46,11 +46,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@3879076](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC3879076d9a06ce098d37c3882fb1845a6627335b)*
 - `src/scenario-tests`  
-*[dotnet/scenario-tests@10b1153](https://github.com/dotnet/scenario-tests/tree/10b1153c42ff74bd58460cacc794f2e9b1f48918)*
+*[dotnet/scenario-tests@a4c8099](https://github.com/dotnet/scenario-tests/tree/a4c8099828bc33c4bb9080d8047db9a6730eca8a)*
 - `src/sdk`  
-*[dotnet/sdk@aedcf87](https://github.com/dotnet/sdk/tree/aedcf87f3496627f5c181c554643aba4dfd37b63)*
+*[dotnet/sdk@5779094](https://github.com/dotnet/sdk/tree/5779094faba69a753eb8f9c1cf0f648835c1ed6d)*
 - `src/source-build-assets`  
-*[dotnet/source-build-assets@eccb082](https://github.com/dotnet/source-build-assets/tree/eccb0828682858d8daa029ba29adce07fd70d9a7)*
+*[dotnet/source-build-assets@e0c13de](https://github.com/dotnet/source-build-assets/tree/e0c13de7eb3b8231866515e40747ba91b545bff8)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@1c80016](https://github.com/dotnet/source-build-externals/tree/1c800169e674c7becf88434a0d2817453cf91dd7)*
     - `src/source-build-externals/src/abstractions-xunit`  

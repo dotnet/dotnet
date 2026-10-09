@@ -7,7 +7,12 @@
     <DefaultItemExcludes Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) != '.NETFramework'">**/*.Desktop.*</DefaultItemExcludes>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <DefineConstants>$(DefineConstants);DOTNET_BUILD_SOURCE_ONLY</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
     <PackageReference Include="Microsoft.Build.Framework" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" />
     <PackageReference Include="Newtonsoft.Json" />
@@ -27,6 +32,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Client\CSharp\Microsoft.DotNet.Helix.Client.csproj" />
     <ProjectReference Include="..\JobSender\Microsoft.DotNet.Helix.JobSender.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.DotNet.Helix.Sdk.Tests" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">

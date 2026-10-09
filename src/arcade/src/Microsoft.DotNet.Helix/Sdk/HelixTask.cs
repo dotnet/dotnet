@@ -6,6 +6,10 @@ using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using Microsoft.Build.Framework;
+#if !DOTNET_BUILD_SOURCE_ONLY
+using Azure.Core;
+using Azure.Identity;
+#endif
 using Microsoft.DotNet.Helix.Client;
 
 namespace Microsoft.DotNet.Helix.Sdk
@@ -25,6 +29,11 @@ namespace Microsoft.DotNet.Helix.Sdk
         public string AccessToken { get; set; }
 
         /// <summary>
+        /// Use a refreshable Entra credential instead of anonymous or PAT authentication.
+        /// </summary>
+        public bool UseEntraAuthentication { get; set; }
+
+        /// <summary>
         ///   If <see langword="true"/>, fail when posting jobs to non-existent queues; If <see langword="false"/> allow it and print a warning.
         ///   Note if an MSBuild sequence starts and waits on jobs, and none are started, this will still fail.
         ///   Defined on HelixTask so the catch block around Execute() can know about it.
@@ -37,15 +46,98 @@ namespace Microsoft.DotNet.Helix.Sdk
 
         private IHelixApi GetHelixApi()
         {
+            if (UseEntraAuthentication && !string.IsNullOrEmpty(AccessToken))
+            {
+                Log.LogWarning(
+                    "HelixAccessToken is set but ignored because HelixUseEntraAuthentication is enabled.");
+            }
+
+            if (UseEntraAuthentication)
+            {
+                Log.LogMessage(MessageImportance.Low, "Authenticating to helix api using a refreshable Entra credential.");
+                return CreateHelixApi(
+                    BaseUri,
+                    AccessToken,
+                    UseEntraAuthentication,
+                    () => CreateEntraHelixApi(BaseUri));
+            }
+
             if (string.IsNullOrEmpty(AccessToken))
             {
                 Log.LogMessage(MessageImportance.Low, "No AccessToken provided, using anonymous access to helix api.");
-                return ApiFactory.GetAnonymous(BaseUri);
+            }
+            else
+            {
+                Log.LogMessage(MessageImportance.Low, "Authenticating to helix api using provided AccessToken");
             }
 
-            Log.LogMessage(MessageImportance.Low, "Authenticating to helix api using provided AccessToken");
-            return ApiFactory.GetAuthenticated(BaseUri, AccessToken);
+            return CreateHelixApi(BaseUri, AccessToken, UseEntraAuthentication, entraApiFactory: null);
         }
+
+        internal static IHelixApi CreateHelixApi(
+            string baseUri,
+            string accessToken,
+            bool useEntraAuthentication,
+            Func<IHelixApi> entraApiFactory)
+        {
+            if (useEntraAuthentication)
+            {
+                return entraApiFactory();
+            }
+
+            return string.IsNullOrEmpty(accessToken)
+                ? ApiFactory.GetAnonymous(baseUri)
+                : ApiFactory.GetAuthenticated(baseUri, accessToken);
+        }
+
+        private static IHelixApi CreateEntraHelixApi(string baseUri)
+        {
+#if DOTNET_BUILD_SOURCE_ONLY
+            throw new PlatformNotSupportedException(
+                "Helix Entra authentication is not available in source-build.");
+#else
+            return ApiFactory.GetAuthenticatedWithEntra(
+                baseUri,
+                CreateEntraTokenCredential());
+#endif
+        }
+
+#if !DOTNET_BUILD_SOURCE_ONLY
+        private static TokenCredential CreateEntraTokenCredential()
+        {
+            return CreateEntraTokenCredential(
+                Environment.GetEnvironmentVariable("SYSTEM_ACCESSTOKEN"),
+                Environment.GetEnvironmentVariable("AZURESUBSCRIPTION_CLIENT_ID"),
+                Environment.GetEnvironmentVariable("AZURESUBSCRIPTION_TENANT_ID"),
+                Environment.GetEnvironmentVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
+                Environment.GetEnvironmentVariable("SYSTEM_OIDCREQUESTURI"),
+                () => new DefaultAzureCredential());
+        }
+
+        internal static TokenCredential CreateEntraTokenCredential(
+            string systemAccessToken,
+            string clientId,
+            string tenantId,
+            string serviceConnectionId,
+            string oidcRequestUri,
+            Func<TokenCredential> fallbackCredentialFactory)
+        {
+            if (!string.IsNullOrEmpty(systemAccessToken) &&
+                !string.IsNullOrEmpty(clientId) &&
+                !string.IsNullOrEmpty(tenantId) &&
+                !string.IsNullOrEmpty(serviceConnectionId) &&
+                !string.IsNullOrEmpty(oidcRequestUri))
+            {
+                return new AzurePipelinesCredential(
+                    tenantId,
+                    clientId,
+                    serviceConnectionId,
+                    systemAccessToken);
+            }
+
+            return fallbackCredentialFactory();
+        }
+#endif
 
         public void Cancel()
         {
@@ -62,7 +154,11 @@ namespace Microsoft.DotNet.Helix.Sdk
             }
             catch (RestApiException ex) when (ex.Response.Status == (int)HttpStatusCode.Unauthorized)
             {
-                Log.LogError(FailureCategory.Build, "Helix operation returned 'Unauthorized'. Did you forget to set HelixAccessToken?");
+                Log.LogError(
+                    FailureCategory.Build,
+                    UseEntraAuthentication
+                        ? "Helix operation returned 'Unauthorized'. Verify that the configured Entra identity is authorized for Helix."
+                        : "Helix operation returned 'Unauthorized'. Did you forget to set HelixAccessToken?");
             }
             catch (RestApiException ex) when (ex.Response.Status == (int)HttpStatusCode.Forbidden)
             {

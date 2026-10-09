@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.26458.10",
+      "packageVersion": "9.0.0-beta.26468.4",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "c11157d174c111c4ab316dc60ff53311e410ef97"
+      "commitSha": "d23725174e27de790e188bbce48fc190c569da5b"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -61,10 +61,10 @@
       "commitSha": "47d4e3f91e4e5414b6dafbf14288b9c5a798ef99"
     },
     {
-      "packageVersion": "17.12.57-preview-26069-01",
+      "packageVersion": "17.12.77-preview-26475-03",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "07da1b9a89da6d00c5a5a6a385cdcebfdfed7110"
+      "commitSha": "2a6130a2996d5cd81b39e1f05a7736b0685fc870"
     },
     {
       "packageVersion": "6.12.5-rc.1",
@@ -97,22 +97,22 @@
       "commitSha": "3879076d9a06ce098d37c3882fb1845a6627335b"
     },
     {
-      "packageVersion": "9.0.0-preview.26459.1",
+      "packageVersion": "9.0.0-preview.26469.1",
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "10b1153c42ff74bd58460cacc794f2e9b1f48918"
+      "commitSha": "a4c8099828bc33c4bb9080d8047db9a6730eca8a"
     },
     {
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "aedcf87f3496627f5c181c554643aba4dfd37b63"
+      "commitSha": "5779094faba69a753eb8f9c1cf0f648835c1ed6d"
     },
     {
-      "packageVersion": "9.0.0-alpha.1.26451.2",
+      "packageVersion": "9.0.0-alpha.1.26501.2",
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "eccb0828682858d8daa029ba29adce07fd70d9a7"
+      "commitSha": "e0c13de7eb3b8231866515e40747ba91b545bff8"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26366.1",

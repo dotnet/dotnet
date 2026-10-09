@@ -57,9 +57,34 @@ steps:
 
 ### Internal builds
 
-In the dev.azure.com/dnceng/internal project, you can use the `DotNet-HelixApi-Access` variable group to provide this secret to your build and then specify the `HelixApiAccessToken` secret for the `HelixAccessToken` parameter.
+Internal builds can authenticate with Entra ID through an Azure service connection or with a legacy Helix access token.
 
 Please note that authorized jobs *cannot* be submitted to queues with `IsInternalOnly` set to false. To determine this value for a particular queue, see the list of available queues [here](https://helix.dot.net/api/2018-03-14/info/queues).
+
+#### Entra ID authentication
+
+Set `HelixUseEntraAuthentication` to `true` and pass an Azure service connection authorized for Helix through `HelixAzureSubscription`. These parameters configure the `send-to-helix.yml` steps template and the SDK tasks that submit jobs.
+
+When Entra authentication is enabled, the template does not forward `HelixAccessToken` to the Helix processes. If a legacy token is still injected by a variable group, explicit Entra opt-in takes precedence and the task ignores the token with a warning.
+
+The template passes the service connection identifiers to the SDK, which uses
+them with Azure Pipelines' system access token and OIDC endpoint to create an
+`AzurePipelinesCredential`. This allows the SDK to request fresh tokens without
+depending on Azure CLI state from an earlier pipeline task.
+
+```yaml
+steps:
+- template: /eng/common/templates/steps/send-to-helix.yml
+  displayName: Send to Helix
+  parameters:
+    HelixUseEntraAuthentication: true
+    HelixAzureSubscription: <Azure service connection ID authorized for Helix>
+    # other parameters here
+```
+
+#### Legacy access-token authentication
+
+In the dev.azure.com/dnceng/internal project, you can use the `DotNet-HelixApi-Access` variable group to provide this secret to your build and then specify the `HelixApiAccessToken` secret for the `HelixAccessToken` parameter.
 
 Example:
 
