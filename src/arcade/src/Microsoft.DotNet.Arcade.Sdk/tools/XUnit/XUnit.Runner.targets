@@ -68,7 +68,7 @@
         Redirect std output of the runner.
         Note that xUnit outputs failure info to both STDOUT (stack trace, message) and STDERR (failed test name)
       -->
-      <_TestRunnerCommand Condition="'$(TestCaptureOutput)' != 'false'">$(_TestRunnerCommand) > "%(TestToRun.ResultsStdOutPath)" 2>&amp;1</_TestRunnerCommand>
+      <_TestRunnerCommand Condition="'$(TestCaptureOutput)' != 'false'">$(_TestRunnerCommand) >> "%(TestToRun.ResultsStdOutPath)" 2>&amp;1</_TestRunnerCommand>
     </PropertyGroup>
 
     <ItemGroup>
@@ -80,6 +80,12 @@
     <MakeDir Directories="@(_OutputFiles->'%(RootDir)%(Directory)')"/>
     <Delete Files="@(_OutputFiles)" />
 
+    <!-- Write the command before running tests to avoid reopening the log after the runner exits. -->
+    <WriteLinesToFile File="%(TestToRun.ResultsStdOutPath)"
+                      Overwrite="true"
+                      Lines=";=== COMMAND LINE ===;$(_TestRunnerCommand)"
+                      Condition="'$(TestCaptureOutput)' != 'false'" />
+
     <Message Text="Running tests: $(_TestAssembly) [$(_TestEnvironment)]" Importance="high"/>
     <Exec Command='$(_TestRunnerCommand)'
           LogStandardErrorAsError="false"
@@ -89,14 +95,6 @@
           ContinueOnError="WarnAndContinue">
       <Output TaskParameter="ExitCode" PropertyName="_TestErrorCode" />
     </Exec>
-
-    <!--
-      Add command line to the log.
-    -->
-    <WriteLinesToFile File="%(TestToRun.ResultsStdOutPath)"
-                      Overwrite="false"
-                      Lines=";=== COMMAND LINE ===;$(_TestRunnerCommand)"
-                      Condition="'$(TestCaptureOutput)' != 'false'" />
 
     <!--
       Report test status.
