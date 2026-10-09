@@ -1,5 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Sdk Name="Microsoft.DotNet.SharedFramework.Sdk" />
 
+  <PropertyGroup>
+    <RuntimeIdentifier>$(PortableTargetRid)</RuntimeIdentifier>
+    <GenerateInstallers>false</GenerateInstallers>
+  </PropertyGroup>
+
   <Import Project="$(MSBuildThisFileDirectory)Microsoft.NETCore.App.Host.props" />
 </Project>
