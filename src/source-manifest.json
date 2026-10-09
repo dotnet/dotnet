@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 335737,
+      "barId": 335913,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "00cc683ad1b7859fd9c582fafd6c18cd05f5c3ff"
+      "commitSha": "ff0ca5dff8fdd2966be49f7f9d6bece62b19cd2c"
     },
     {
-      "barId": 335799,
+      "barId": 335915,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "27928a5c0037e3a4aebda09ec75fc7c611224871"
+      "commitSha": "0a492d3156df303d1e10784437120b303a47ac7f"
     },
     {
       "barId": 333053,
