@@ -269,7 +269,7 @@ stages:
             - template: ../steps/download-artifacts.yml
               parameters:
                 artifactDescription: Microsoft WASM Packages
-                artifactName: Browser_Shortstack_wasm_Artifacts
+                artifactName: Browser_CoreCLR_Shortstack_wasm_Artifacts
                 downloadFilePatterns: packages/Release/Shipping/**
                 copyDestination: $(Pipeline.Workspace)/msft-pkgs
                 flattenDirs: true
