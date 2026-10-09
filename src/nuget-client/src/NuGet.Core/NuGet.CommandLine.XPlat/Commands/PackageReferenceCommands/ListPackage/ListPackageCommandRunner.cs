@@ -616,8 +616,16 @@ namespace NuGet.CommandLine.XPlat
                                 .Where(newVersion => MeetsConstraints(newVersion.Identity.Version, transitivePackage, listPackageArgs))
                                 .Max(i => i.Identity.Version);
 
-                            transitivePackage.LatestPackageMetadata = matchingPackage.First(p => p.Identity.Version == latestVersion);
-                            transitivePackage.UpdateLevel = GetUpdateLevel(transitivePackage.ResolvedPackageMetadata.Identity.Version, transitivePackage.LatestPackageMetadata.Identity.Version);
+                            if (latestVersion is not null)
+                            {
+                                transitivePackage.LatestPackageMetadata = matchingPackage.First(p => p.Identity.Version == latestVersion);
+                                transitivePackage.UpdateLevel = GetUpdateLevel(transitivePackage.ResolvedPackageMetadata.Identity.Version, transitivePackage.LatestPackageMetadata.Identity.Version);
+                            }
+                            else // no latest version available with the given constraints
+                            {
+                                transitivePackage.LatestPackageMetadata = null;
+                                transitivePackage.UpdateLevel = UpdateLevel.NoUpdate;
+                            }
                         }
 
                         var matchingPackagesWithDeprecationMetadata = await Task.WhenAll(

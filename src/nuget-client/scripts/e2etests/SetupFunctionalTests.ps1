@@ -1,6 +1,8 @@
 param (
     [ValidateSet("17.0")]
-    [string]$VSVersion = "17.0")
+    [string]$VSVersion = "17.0",
+    # Overrides the default NuGet.Tests.psm1 path for DartLab1ES runs
+    [string]$NuGetTestsPSM1)
 
  . "$PSScriptRoot\Utils.ps1"
  . "$PSScriptRoot\VSUtils.ps1"
@@ -70,9 +72,11 @@ trap
 }
 
 
-$NuGetRoot = Split-Path $PSScriptRoot -Parent
-
-$NuGetTestsPSM1 = Join-Path $NuGetRoot "NuGet.Tests.psm1"
+if ([string]::IsNullOrEmpty($NuGetTestsPSM1))
+{
+    $NuGetRoot = Split-Path $PSScriptRoot -Parent
+    $NuGetTestsPSM1 = Join-Path $NuGetRoot "NuGet.Tests.psm1"
+}
 
 Write-Host "NuGetTestsPSM1 variable value is:" $NuGetTestsPSM1
 

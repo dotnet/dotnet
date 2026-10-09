@@ -62,7 +62,10 @@ function RealTimeLogResults
     [Parameter(Mandatory=$true)]
     [string]$NuGetTestPath,
     [Parameter(Mandatory=$true)]
-    [int] $EachTestTimeoutInSecs)
+    [int] $EachTestTimeoutInSecs,
+    # Directory where the test results will be stored for DartLab1ES runs
+    [Parameter(Mandatory=$false)]
+    [string]$ResultsDirectory)
 
     trap
     {
@@ -166,11 +169,11 @@ function RealTimeLogResults
                     $resultsFile = Join-Path $currentBinFolder.FullName results.html
                     if (Test-Path $resultsFile)
                     {
-                        CopyResultsToCI $NuGetDropPath $RunCounter $resultsFile
+                        CopyResultsToCI $NuGetDropPath $RunCounter $resultsFile $ResultsDirectory
                     }
                     else
                     {
-                        CopyResultsToCI $NuGetDropPath $RunCounter $testResults
+                        CopyResultsToCI $NuGetDropPath $RunCounter $testResults $ResultsDirectory
                     }
                     break
                 }
@@ -202,7 +205,7 @@ function RealTimeLogResults
 
             $errorMessage = 'Run Failed - Results.html did not get created. ' `
             + 'This indicates that the tests did not finish running. It could be that the VS crashed or a test timed out. Please investigate.'
-            CopyResultsToCI $NuGetDropPath $RunCounter $testResults
+            CopyResultsToCI $NuGetDropPath $RunCounter $testResults $ResultsDirectory
 
             Write-Error $errorMessage
             return $null
@@ -230,7 +233,9 @@ function CopyResultsToCI
     [Parameter(Mandatory=$true)]
     [string]$RunCounter,
     [Parameter(Mandatory=$true)]
-    [string]$resultsFile)
+    [string]$resultsFile,
+    [Parameter(Mandatory=$false)]
+    [string]$ResultsDirectory)
 
     $DropPathFileInfo = Get-Item $NuGetDropPath
     $DropPathParent = $DropPathFileInfo.Parent
@@ -241,7 +246,7 @@ function CopyResultsToCI
     $FullLogFilePath = Join-Path $EndToEndPath $FullLogFileName
     $RealTimeResultsFilePath = Join-Path $ResultsFileParent.FullName 'Realtimeresults.txt'
 
-    $TestResultsPath = Join-Path $DropPathParent.FullName 'testresults'
+    $TestResultsPath = if ($ResultsDirectory) { $ResultsDirectory } else { Join-Path $DropPathParent.FullName 'testresults' }
     $FullLogFileDestinationPath = Join-Path $TestResultsPath $FullLogFileName
     mkdir $TestResultsPath -ErrorAction Ignore
 
@@ -258,7 +263,7 @@ function CopyResultsToCI
         Write-Host "##vso[task.uploadfile]$FullLogFileDestinationPath"
     }
 
-    OutputResultsForCI -NuGetDropPath $NuGetDropPath -RunCounter $RunCounter -RealTimeResultsFilePath $RealTimeResultsFilePath
+    OutputResultsForCI -NuGetDropPath $NuGetDropPath -RunCounter $RunCounter -RealTimeResultsFilePath $RealTimeResultsFilePath -ResultsDirectory $ResultsDirectory
 }
 
 function OutputResultsForCI
@@ -269,13 +274,15 @@ function OutputResultsForCI
     [Parameter(Mandatory=$true)]
     [string]$RunCounter,
     [Parameter(Mandatory=$true)]
-    [string]$RealTimeResultsFilePath)
+    [string]$RealTimeResultsFilePath,
+    [Parameter(Mandatory=$false)]
+    [string]$ResultsDirectory)
 
     $DropPathFileInfo = Get-Item $NuGetDropPath
     $DropPathParent = $DropPathFileInfo.Parent
 
-    $TestResultsPath = Join-Path $DropPathParent.FullName 'testresults'
-    $DestinationFileName = 'E2EResults-' + $RunCounter + '.xml'
+    $TestResultsPath = if ($ResultsDirectory) { $ResultsDirectory } else { Join-Path $DropPathParent.FullName 'testresults' }
+    $DestinationFileName = if ($ResultsDirectory) { 'JUnit.xml' } else { 'E2EResults-' + $RunCounter + '.xml' }
     $DestinationPath = Join-Path $TestResultsPath $DestinationFileName
     Write-JunitXml -RealTimeResultsFile $RealTimeResultsFilePath -XmlResultsFilePath $DestinationPath
 }

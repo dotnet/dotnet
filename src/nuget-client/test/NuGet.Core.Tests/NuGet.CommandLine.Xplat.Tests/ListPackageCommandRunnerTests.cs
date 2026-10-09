@@ -210,6 +210,77 @@ namespace NuGet.CommandLine.Xplat.Tests
                 // Assert
                 Assert.Null(exception);
             }
+
+            [Theory]
+            [InlineData(false, "1.0.0-preview", true, false, false, false, null, nameof(UpdateLevel.NoUpdate))]
+            [InlineData(true, "1.0.0-preview", true, false, false, false, null, nameof(UpdateLevel.NoUpdate))]
+            [InlineData(false, "1.0.0-preview", true, true, false, false, "1.0.0-preview", nameof(UpdateLevel.NoUpdate))]
+            [InlineData(true, "1.0.0-preview", true, true, false, false, "1.0.0-preview", nameof(UpdateLevel.NoUpdate))]
+            [InlineData(false, "2.0.0", false, false, false, false, null, nameof(UpdateLevel.NoUpdate))]
+            [InlineData(true, "2.0.0", false, false, false, false, null, nameof(UpdateLevel.NoUpdate))]
+            [InlineData(false, "1.1.0", true, false, true, false, null, nameof(UpdateLevel.NoUpdate))]
+            [InlineData(true, "1.1.0", true, false, true, false, null, nameof(UpdateLevel.NoUpdate))]
+            [InlineData(false, "2.0.0", true, false, false, true, null, nameof(UpdateLevel.NoUpdate))]
+            [InlineData(true, "2.0.0", true, false, false, true, null, nameof(UpdateLevel.NoUpdate))]
+            [InlineData(false, "2.0.0", true, false, false, false, "2.0.0", nameof(UpdateLevel.Major))]
+            [InlineData(true, "2.0.0", true, false, false, false, "2.0.0", nameof(UpdateLevel.Major))]
+            [InlineData(true, "1.1.0", true, false, false, true, "1.1.0", nameof(UpdateLevel.Minor))]
+            [InlineData(true, "1.0.1", true, false, true, false, "1.0.1", nameof(UpdateLevel.Patch))]
+            public async Task UpdatePackages_WithSourceMetadata_RespectsVersionConstraints(
+                bool isTransitive,
+                string sourceVersion,
+                bool isListed,
+                bool includePrerelease,
+                bool highestPatch,
+                bool highestMinor,
+                string expectedVersion,
+                string expectedUpdateLevel)
+            {
+                var runner = new ListPackageCommandRunner(new MSBuildAPIUtility(NullLogger.Instance, virtualProjectBuilder: null));
+                var installedPackage = ListPackageTestHelper.CreateInstalledPackageReference(
+                    resolvedPackageVersionString: "1.0.0-preview",
+                    latestPackageVersionString: sourceVersion);
+                installedPackage.UpdateLevel = UpdateLevel.Major;
+
+                var sourceMetadata = new Mock<IPackageSearchMetadata>();
+                sourceMetadata.Setup(m => m.Identity).Returns(installedPackage.LatestPackageMetadata.Identity);
+                sourceMetadata.Setup(m => m.IsListed).Returns(isListed);
+                var metadata = new Dictionary<string, List<IPackageSearchMetadata>>
+                {
+                    [installedPackage.Name] = new List<IPackageSearchMetadata> { sourceMetadata.Object }
+                };
+                var framework = new FrameworkPackages("net10.0", "net10.0")
+                {
+                    TopLevelPackages = isTransitive ? new List<InstalledPackageReference>() : new List<InstalledPackageReference> { installedPackage },
+                    TransitivePackages = isTransitive ? new List<InstalledPackageReference> { installedPackage } : new List<InstalledPackageReference>()
+                };
+                var args = new ListPackageArgs(
+                    path: "",
+                    packageSources: new List<PackageSource>(),
+                    frameworks: new List<string>(),
+                    reportType: ReportType.Outdated,
+                    renderer: new ListPackageConsoleRenderer(TextWriter.Null, TextWriter.Null),
+                    includeTransitive: true,
+                    prerelease: includePrerelease,
+                    highestPatch: highestPatch,
+                    highestMinor: highestMinor,
+                    auditSources: null,
+                    logger: NullLogger.Instance,
+                    cancellationToken: CancellationToken.None);
+
+                await runner.UpdatePackagesWithSourceMetadata(new List<FrameworkPackages> { framework }, metadata, args);
+
+                if (expectedVersion is null)
+                {
+                    Assert.Null(installedPackage.LatestPackageMetadata);
+                }
+                else
+                {
+                    Assert.Same(sourceMetadata.Object, installedPackage.LatestPackageMetadata);
+                    Assert.Equal(expectedVersion, installedPackage.LatestPackageMetadata.Identity.Version.ToNormalizedString());
+                }
+                Assert.Equal(expectedUpdateLevel, installedPackage.UpdateLevel.ToString());
+            }
         }
 
         public class PackagesFilterForDeprecated
