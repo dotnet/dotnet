@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@659e244](https://github.com/dotnet/arcade/tree/659e244c0464986411ccd6ccf51084c96ae66091)*
+*[dotnet/arcade@c0cf270](https://github.com/dotnet/arcade/tree/c0cf2702a670a20e5103532c2a4910ea7ac94ce1)*
 - `src/aspire`  
 *[_git/microsoft-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/microsoft-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@1cff37e](https://github.com/dotnet/installer/tree/1cff37ee22e8b43a2bece0a4e95acb4a5f082e87)*
+*[dotnet/installer@e9ab058](https://github.com/dotnet/installer/tree/e9ab0584c2fd0a7ed993a6fbd40061d66ff1a694)*
 - `src/msbuild`  
 *[dotnet/msbuild@7806cbf](https://github.com/dotnet/msbuild/tree/7806cbf7b0fd91ea6ab55c2e42d8ed973114e197)*
 - `src/nuget-client`  
@@ -50,9 +50,9 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/sdk`  
 *[_git/dotnet-sdk@8514954](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC85149546984b9f28beb05daeb8e0e8492eecd357)*
 - `src/source-build-assets`  
-*[dotnet/source-build-assets@57bfccd](https://github.com/dotnet/source-build-assets/tree/57bfccd8cd6091e138f487653e7eefcfef2e455a)*
+*[dotnet/source-build-assets@5aeee27](https://github.com/dotnet/source-build-assets/tree/5aeee2738338530a92d7f6caa2c7d5f569fed3c4)*
 - `src/source-build-externals`  
-*[dotnet/source-build-externals@669661e](https://github.com/dotnet/source-build-externals/tree/669661ea25e55b41167966df076c15ac70bf3718)*
+*[dotnet/source-build-externals@490113e](https://github.com/dotnet/source-build-externals/tree/490113ea252cb25880a7abc9926af8ffcf471e33)*
     - `src/source-build-externals/src/abstractions-xunit`  
     *[xunit/abstractions.xunit@b75d54d](https://github.com/xunit/abstractions.xunit/tree/b75d54d73b141709f805c2001b16f3dd4d71539d)*
     - `src/source-build-externals/src/application-insights`  
