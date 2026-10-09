@@ -236,7 +236,7 @@ When you identify a failure, ping the appropriate team. This table is derived fr
 
 Before the end of your shift:
 
-1. Set up a **handoff sync** with the next QB on the schedule (TODO: Shawn Rothlisberger to put together a schedule)
+1. Set up a **handoff sync** with the next QB on the schedule - https://devdiv.visualstudio.com/DevDiv/_wiki/wikis/DevDiv.wiki/55810/VMR-QB (maintained by Michal Pavelka)
 2. Share what's currently hot:
    - What's broken in the build
    - What PRs have been open too long, who owns them, and why they're stuck

@@ -25,15 +25,20 @@
       "version": "v4",
       "sha": "ea165f8d65b6e75b540449e92b4886f43607fa02"
     },
-    "github/gh-aw-actions/setup-cli@v0.89.3": {
-      "repo": "github/gh-aw-actions/setup-cli",
-      "version": "v0.89.3",
-      "sha": "e67822c8ebaae760c3be935622dbfe343a465306"
+    "github/codeql-action/upload-sarif@v4.38.2": {
+      "repo": "github/codeql-action/upload-sarif",
+      "version": "v4.38.2",
+      "sha": "2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2"
     },
-    "github/gh-aw-actions/setup@v0.89.3": {
+    "github/gh-aw-actions/setup-cli@v0.89.21": {
+      "repo": "github/gh-aw-actions/setup-cli",
+      "version": "v0.89.21",
+      "sha": "924af5fdc64061cfbf66fb584c8b07e2ac230c60"
+    },
+    "github/gh-aw-actions/setup@v0.89.21": {
       "repo": "github/gh-aw-actions/setup",
-      "version": "v0.89.3",
-      "sha": "e67822c8ebaae760c3be935622dbfe343a465306"
+      "version": "v0.89.21",
+      "sha": "924af5fdc64061cfbf66fb584c8b07e2ac230c60"
     }
   }
 }

@@ -278,9 +278,17 @@
     <value>CRL URL: {0}</value>
     <comment>0 - CRL distribution point URL</comment>
   </data>
+  <data name="CertUtilityCertificateFreshestCrlUrl" xml:space="preserve">
+    <value>Freshest CRL URL: {0}</value>
+    <comment>0 - freshest CRL distribution point URL</comment>
+  </data>
   <data name="CertUtilityCertificateOcspUrl" xml:space="preserve">
     <value>OCSP URL: {0}</value>
     <comment>0 - OCSP responder URL</comment>
+  </data>
+  <data name="CertUtilityCertificateCaIssuersUrl" xml:space="preserve">
+    <value>CA Issuers URL: {0}</value>
+    <comment>0 - certificate authority issuers URL</comment>
   </data>
   <data name="CertUtilityMultipleCertificatesFooter" xml:space="preserve">
     <value>... {0} more.</value>

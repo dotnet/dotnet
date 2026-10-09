@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Concurrent;
 
@@ -10,7 +8,7 @@ namespace NuGet.ProjectModel
 {
     public struct BuildAction : IEquatable<BuildAction>
     {
-        private static ConcurrentDictionary<string, BuildAction> _knownBuildActions = new ConcurrentDictionary<string, BuildAction>(StringComparer.OrdinalIgnoreCase);
+        private static readonly ConcurrentDictionary<string, BuildAction> KnownBuildActions = new ConcurrentDictionary<string, BuildAction>(StringComparer.OrdinalIgnoreCase);
 
         public static readonly BuildAction None = Define(nameof(None));
         public static readonly BuildAction Compile = Define(nameof(Compile));
@@ -27,7 +25,7 @@ namespace NuGet.ProjectModel
         public static readonly BuildAction AndroidResource = Define(nameof(AndroidResource));
         public static readonly BuildAction BundleResource = Define(nameof(BundleResource));
 
-        public string Value { get; }
+        public string? Value { get; }
 
         public bool IsKnown { get; }
 
@@ -39,8 +37,12 @@ namespace NuGet.ProjectModel
 
         public static BuildAction Parse(string value)
         {
-            BuildAction action;
-            if (_knownBuildActions.TryGetValue(value, out action))
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            if (KnownBuildActions.TryGetValue(value, out BuildAction action))
             {
                 return action;
             }
@@ -49,7 +51,7 @@ namespace NuGet.ProjectModel
 
         public override string ToString()
         {
-            return $"{Value}";
+            return Value ?? string.Empty;
         }
 
         public bool Equals(BuildAction other)
@@ -57,7 +59,7 @@ namespace NuGet.ProjectModel
             return string.Equals(other.Value, Value, StringComparison.OrdinalIgnoreCase);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is BuildAction && Equals((BuildAction)obj);
         }
@@ -84,7 +86,7 @@ namespace NuGet.ProjectModel
         private static BuildAction Define(string name)
         {
             var buildAction = new BuildAction(name, true);
-            _knownBuildActions[name] = buildAction;
+            KnownBuildActions[name] = buildAction;
             return buildAction;
         }
     }
