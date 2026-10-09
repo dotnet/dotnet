@@ -23,9 +23,6 @@ namespace NuGet.PackageManagement.VisualStudio
 
         private readonly Lazy<INuGetUILogger> _outputConsoleLogger;
         private readonly IAsyncServiceProvider _asyncServiceProvider;
-        private readonly Func<Task<IEnumerable<ICredentialProvider>>> _vsCredentialProvidersFactory;
-        private readonly Func<Task<IEnumerable<ICredentialProvider>>> _pluginCredentialProvidersFactory;
-        private readonly Func<Task<IEnumerable<ICredentialProvider>>> _credentialPromptFactory;
 
         [ImportingConstructor]
         internal DefaultVSCredentialServiceProvider(Lazy<INuGetUILogger> outputConsoleLogger)
@@ -39,48 +36,46 @@ namespace NuGet.PackageManagement.VisualStudio
         {
             _asyncServiceProvider = asyncServiceProvider ?? throw new ArgumentNullException(nameof(asyncServiceProvider));
             _outputConsoleLogger = outputConsoleLogger ?? throw new ArgumentNullException(nameof(outputConsoleLogger));
-            _vsCredentialProvidersFactory = CreateVsCredentialProvidersAsync;
-            _pluginCredentialProvidersFactory = CreatePluginCredentialProvidersAsync;
-            _credentialPromptFactory = CreateCredentialPromptAsync;
-        }
-
-        /// <param name="vsCredentialProvidersFactory">Creates the MEF imported Visual Studio credential providers.</param>
-        /// <param name="pluginCredentialProvidersFactory">Creates the child process plugin credential providers.</param>
-        /// <param name="credentialPromptFactory">Creates the credential prompt provider.</param>
-        internal DefaultVSCredentialServiceProvider(
-            IAsyncServiceProvider asyncServiceProvider,
-            Lazy<INuGetUILogger> outputConsoleLogger,
-            Func<Task<IEnumerable<ICredentialProvider>>> vsCredentialProvidersFactory,
-            Func<Task<IEnumerable<ICredentialProvider>>> pluginCredentialProvidersFactory,
-            Func<Task<IEnumerable<ICredentialProvider>>> credentialPromptFactory
-            )
-            : this(asyncServiceProvider, outputConsoleLogger)
-        {
-            _vsCredentialProvidersFactory = vsCredentialProvidersFactory ?? throw new ArgumentNullException(nameof(vsCredentialProvidersFactory));
-            _pluginCredentialProvidersFactory = pluginCredentialProvidersFactory ?? throw new ArgumentNullException(nameof(pluginCredentialProvidersFactory));
-            _credentialPromptFactory = credentialPromptFactory ?? throw new ArgumentNullException(nameof(credentialPromptFactory));
         }
 
         public async Task<NuGet.Configuration.ICredentialService> GetCredentialServiceAsync()
         {
-            // Initialize the credential providers. Providers that can acquire credentials without user
-            // interaction must come before those that prompt, so that a user is only asked to type
-            // credentials when nothing else was able to supply them.
+            // Initialize the credential providers.
             var credentialProviders = new List<ICredentialProvider>();
+            var webProxy = await _asyncServiceProvider.GetServiceAsync<SVsWebProxy, IVsWebProxy>();
+            var uiShell = await _asyncServiceProvider.GetServiceAsync<SVsUIShell, IVsUIShell>();
 
-            // VS MEF-plugin credential providers
             await TryAddCredentialProvidersAsync(
                 credentialProviders,
                 Strings.CredentialProviderFailed_VisualStudioAccountProvider,
-                _vsCredentialProvidersFactory);
+                async () =>
+                {
+                    var importer = new VsCredentialProviderImporter(
+                        (exception, failureMessage) => LogCredentialProviderError(exception, failureMessage));
 
-            // child process plugin credential providers
+                    return await importer.GetProvidersAsync();
+                });
+
+            TryAddCredentialProviders(
+                credentialProviders,
+                Strings.CredentialProviderFailed_VisualStudioCredentialProvider,
+                () =>
+                {
+                    Debug.Assert(webProxy != null);
+
+                    return new ICredentialProvider[] {
+                        new VisualStudioCredentialProvider(
+                            webProxy,
+                            uiShell)
+                    };
+                });
+
             await TryAddCredentialProvidersAsync(
                 credentialProviders,
                 Strings.CredentialProviderFailed_PluginCredentialProvider,
-                _pluginCredentialProvidersFactory);
+                async () => await (new SecurePluginCredentialProviderBuilder(PluginManager.Instance, canShowDialog: true, logger: NullLogger.Instance).BuildAllAsync())
+                );
 
-            // the current user's ambient Windows credentials
             if (PreviewFeatureSettings.DefaultCredentialsAfterCredentialProviders)
             {
                 TryAddCredentialProviders(
@@ -94,45 +89,12 @@ namespace NuGet.PackageManagement.VisualStudio
                 });
             }
 
-            // proxy credentials and username/password prompt windows
-            await TryAddCredentialProvidersAsync(
-                credentialProviders,
-                Strings.CredentialProviderFailed_VisualStudioCredentialProvider,
-                _credentialPromptFactory);
-
             var credentialService = new CredentialService(
                 new AsyncLazy<IEnumerable<ICredentialProvider>>(() => Task.FromResult((IEnumerable<ICredentialProvider>)credentialProviders)),
                 nonInteractive: false,
                 handlesDefaultCredentials: PreviewFeatureSettings.DefaultCredentialsAfterCredentialProviders);
 
             return credentialService;
-        }
-
-        private async Task<IEnumerable<ICredentialProvider>> CreateVsCredentialProvidersAsync()
-        {
-            var importer = new VsCredentialProviderImporter(
-                (exception, failureMessage) => LogCredentialProviderError(exception, failureMessage));
-
-            return await importer.GetProvidersAsync();
-        }
-
-        private static async Task<IEnumerable<ICredentialProvider>> CreatePluginCredentialProvidersAsync()
-        {
-            return await new SecurePluginCredentialProviderBuilder(PluginManager.Instance, canShowDialog: true, logger: NullLogger.Instance).BuildAllAsync();
-        }
-
-        private async Task<IEnumerable<ICredentialProvider>> CreateCredentialPromptAsync()
-        {
-            var webProxy = await _asyncServiceProvider.GetServiceAsync<SVsWebProxy, IVsWebProxy>();
-            var uiShell = await _asyncServiceProvider.GetServiceAsync<SVsUIShell, IVsUIShell>();
-
-            Debug.Assert(webProxy != null);
-
-            return new ICredentialProvider[] {
-                new VisualStudioCredentialProvider(
-                    webProxy,
-                    uiShell)
-            };
         }
 
         private async Task TryAddCredentialProvidersAsync(
