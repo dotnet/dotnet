@@ -461,13 +461,14 @@
                                PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
                                OutputPath="$(SnapshotPackageVersionPropsPath)" />
 
-    <!-- Write a single file that contains imports for both the current and previously built packages -->
+    <!-- Write a single file that contains imports for both the current and previously built packages.
+         Escape "$" so SkipCurrentVersionOverrides is evaluated by the consuming project, not this target. -->
     <PropertyGroup>
       <PackageVersionsPropsContents Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '$(_UseSharedComponentsInputs)' == 'true'">
         <![CDATA[
 <Project>
   <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
-  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
+  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" Condition="'%24(SkipCurrentVersionOverrides)' != 'true'" />
   <Import Project="$(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)" />
 </Project>
 ]]>
@@ -476,7 +477,7 @@
         <![CDATA[
 <Project>
   <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
-  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
+  <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" Condition="'%24(SkipCurrentVersionOverrides)' != 'true'" />
 </Project>
 ]]>
       </PackageVersionsPropsContents>
