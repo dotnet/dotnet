@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "10.0.300",
+    "version": "11.0.100-rc.1.26425.128",
     "allowPrerelease": true,
     "paths": [
       "$host$"
@@ -11,13 +11,17 @@
     "runner": "Microsoft.Testing.Platform"
   },
   "tools": {
-    "dotnet": "10.0.300",
+    "dotnet": "11.0.100-rc.1.26425.128",
     "vs": {
-      "version": "18.0"
+      "version": "18.6"
     },
-    "xcopy-msbuild": "18.0.0"
+    "runtimes": {
+      "dotnet": [
+        "10.0.10"
+      ]
+    }
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "10.0.0-beta.26453.2"
+    "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.26469.4"
   }
 }
