@@ -534,7 +534,8 @@ jobs:
           storageKey=""
         fi
         # Download the 1xx source-built SDK
-        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "" $storageKey
+        mkdir -p "$(downloadedArtifactsDir)"
+        DownloadArchive "1xx source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(downloadedArtifactsDir)" "" "" $storageKey
       displayName: Download 1xx SDK
 
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
