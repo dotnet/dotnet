@@ -303,6 +303,21 @@ extends:
                 fetchDepth: 1
                 clean: true
 
+              - ${{ if eq(pool.os, 'linux') }}:
+                # A regular interactive login creates /run/user/<uid> (the XDG_RUNTIME_DIR convention) via
+                # pam_systemd, which the artifacts-directory fallback (GetUserPrivateTempPath) relies on as
+                # the current user's private temporary directory. The hosted agent never logs in that way, so
+                # the directory is missing and that fallback path goes untested. Create it here the same way a
+                # login session would, rather than loosening the product code or the tests to tolerate it
+                # being absent.
+                - script: |
+                    set -e
+                    uid=$(id -u)
+                    sudo mkdir -p "/run/user/$uid"
+                    sudo chown "$uid" "/run/user/$uid"
+                    sudo chmod 700 "/run/user/$uid"
+                  displayName: Ensure the XDG runtime directory exists
+
               # Build but don't pack, packing does not work on non-windows and we want to test what we built on Windows
               # anyway. Because that is what we will publish.
               - script: ./build.sh

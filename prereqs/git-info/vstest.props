@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>cd7560b1ac8b0914ef4416fc77a12282ea418463</GitCommitHash>
-    <OfficialBuildId>20261005.13</OfficialBuildId>
-    <OutputPackageVersion>17.12.1-hotfix-26505-13</OutputPackageVersion>
+    <GitCommitHash>0a893aece1833e102575c519cfc951befd760f78</GitCommitHash>
+    <OfficialBuildId>20261009.17</OfficialBuildId>
+    <OutputPackageVersion>17.12.1-hotfix-26509-17</OutputPackageVersion>
     <PreReleaseVersionLabel>hotfix</PreReleaseVersionLabel>
     <IsStable>false</IsStable>
   </PropertyGroup>

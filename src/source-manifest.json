@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "5b925bbbb124689cadc91411fb92b92b0f35e3f9"
+      "commitSha": "314d917ba9b1fae7bdcee4a7a2708b6c3ad3170b"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26451.2",
@@ -151,10 +151,10 @@
       "commitSha": "47c90e140b027225b799ca8413af10ee3d5f1126"
     },
     {
-      "packageVersion": "17.12.1-hotfix-26505-13",
+      "packageVersion": "17.12.1-hotfix-26509-17",
       "path": "vstest",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/microsoft-vstest",
-      "commitSha": "cd7560b1ac8b0914ef4416fc77a12282ea418463"
+      "commitSha": "0a893aece1833e102575c519cfc951befd760f78"
     },
     {
       "packageVersion": "9.0.21",

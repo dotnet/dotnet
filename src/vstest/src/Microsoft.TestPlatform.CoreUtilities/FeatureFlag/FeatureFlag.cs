@@ -72,6 +72,12 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable not sharing .NET Framework testhosts. Which will return behavior to sharing testhosts when they are running .NET Framework dlls, and are not disabling appdomains or running in parallel.
     public const string VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST = nameof(VSTEST_DISABLE_SHARING_NETFRAMEWORK_TESTHOST);
 
+    // Disable the Unix handling of the directory holding the test session artifacts: narrowing a directory
+    // vstest creates to its owner, and verifying on Linux that a directory given by VSTEST_ARTIFACTS_DIRECTORY
+    // is owned by the current user and reachable by nobody else. Set it to 1 where that ownership or those
+    // permissions cannot be represented or changed, such as a mounted Windows or network volume.
+    public const string VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION = nameof(VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION);
+
 
     [Obsolete("Only use this in tests.")]
     internal static void Reset()
