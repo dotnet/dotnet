@@ -1,8 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
+using System;
 using System.Collections.Generic;
 using NuGet.Shared;
 
@@ -12,7 +11,7 @@ namespace NuGet.ProjectModel.ProjectLockFile
     {
         public static LockFileDependencyComparerWithoutContentHash Default { get; } = new LockFileDependencyComparerWithoutContentHash();
 
-        public bool Equals(LockFileDependency x, LockFileDependency y)
+        public bool Equals(LockFileDependency? x, LockFileDependency? y)
         {
             if (ReferenceEquals(x, y))
             {
@@ -32,6 +31,11 @@ namespace NuGet.ProjectModel.ProjectLockFile
 
         public int GetHashCode(LockFileDependency obj)
         {
+            if (obj == null)
+            {
+                throw new ArgumentNullException(nameof(obj));
+            }
+
             var combiner = new HashCodeCombiner();
             combiner.AddObject(LockFileDependencyIdVersionComparer.Default.GetHashCode(obj));
             combiner.AddObject(obj.RequestedVersion);

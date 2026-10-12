@@ -46,9 +46,9 @@ namespace NuGet.ProjectModel.Test
 
             Assert.Equal("PackageA", target.Dependencies[0].Id);
             Assert.Equal(PackageDependencyType.Direct, target.Dependencies[0].Type);
-            Assert.Equal("[1.*, )", target.Dependencies[0].RequestedVersion.ToNormalizedString());
-            Assert.Equal("1.0.0", target.Dependencies[0].ResolvedVersion.ToNormalizedString());
-            Assert.NotEmpty(target.Dependencies[0].ContentHash);
+            Assert.Equal("[1.*, )", target.Dependencies[0].RequestedVersion?.ToNormalizedString());
+            Assert.Equal("1.0.0", target.Dependencies[0].ResolvedVersion?.ToNormalizedString());
+            Assert.False(string.IsNullOrEmpty(target.Dependencies[0].ContentHash));
             Assert.Equal(1, target.Dependencies[0].Dependencies.Count);
             Assert.Equal("PackageB", target.Dependencies[0].Dependencies[0].Id);
 
@@ -56,8 +56,8 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal("PackageB", target.Dependencies[1].Id);
             Assert.Equal(PackageDependencyType.Transitive, target.Dependencies[1].Type);
             Assert.Null(target.Dependencies[1].RequestedVersion);
-            Assert.Equal("1.0.0", target.Dependencies[0].ResolvedVersion.ToNormalizedString());
-            Assert.NotEmpty(target.Dependencies[1].ContentHash);
+            Assert.Equal("1.0.0", target.Dependencies[0].ResolvedVersion?.ToNormalizedString());
+            Assert.False(string.IsNullOrEmpty(target.Dependencies[1].ContentHash));
         }
 
         [Fact]
@@ -180,9 +180,9 @@ namespace NuGet.ProjectModel.Test
 
             Assert.Equal("PackageA", target.Dependencies[0].Id);
             Assert.Equal(PackageDependencyType.Direct, target.Dependencies[0].Type);
-            Assert.Equal("[1.*, )", target.Dependencies[0].RequestedVersion.ToNormalizedString());
-            Assert.Equal("1.0.0", target.Dependencies[0].ResolvedVersion.ToNormalizedString());
-            Assert.NotEmpty(target.Dependencies[0].ContentHash);
+            Assert.Equal("[1.*, )", target.Dependencies[0].RequestedVersion?.ToNormalizedString());
+            Assert.Equal("1.0.0", target.Dependencies[0].ResolvedVersion?.ToNormalizedString());
+            Assert.False(string.IsNullOrEmpty(target.Dependencies[0].ContentHash));
             Assert.Equal(2, target.Dependencies[0].Dependencies.Count);
             Assert.Equal("PackageB", target.Dependencies[0].Dependencies[0].Id);
             Assert.Equal("runtime.win10-arm.PackageA", target.Dependencies[0].Dependencies[1].Id);
@@ -192,8 +192,8 @@ namespace NuGet.ProjectModel.Test
             Assert.Equal("runtime.win10-arm.PackageA", target.Dependencies[1].Id);
             Assert.Equal(PackageDependencyType.Transitive, target.Dependencies[1].Type);
             Assert.Null(target.Dependencies[1].RequestedVersion);
-            Assert.Equal("1.0.0", target.Dependencies[0].ResolvedVersion.ToNormalizedString());
-            Assert.NotEmpty(target.Dependencies[1].ContentHash);
+            Assert.Equal("1.0.0", target.Dependencies[0].ResolvedVersion?.ToNormalizedString());
+            Assert.False(string.IsNullOrEmpty(target.Dependencies[1].ContentHash));
         }
 
         [Fact]

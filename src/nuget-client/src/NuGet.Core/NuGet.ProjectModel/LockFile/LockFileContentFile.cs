@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-#nullable disable
-
 using System;
 using System.Globalization;
 using NuGet.Packaging;
@@ -21,7 +19,7 @@ namespace NuGet.ProjectModel
         {
         }
 
-        public string OutputPath
+        public string? OutputPath
         {
             get
             {
@@ -33,7 +31,7 @@ namespace NuGet.ProjectModel
             }
         }
 
-        public string PPOutputPath
+        public string? PPOutputPath
         {
             get
             {
@@ -59,7 +57,7 @@ namespace NuGet.ProjectModel
             }
         }
 
-        public string CodeLanguage
+        public string? CodeLanguage
         {
             get
             {

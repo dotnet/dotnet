@@ -1,0 +1,7 @@
+# This file is auto-generated from .CodeQL.yml and CodeQL.yml files in src/.
+# Manual changes will be overwritten.
+
+path_classifiers:
+  library:
+    # --- dotnet/source-build-assets ---
+    - "src/source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/**"

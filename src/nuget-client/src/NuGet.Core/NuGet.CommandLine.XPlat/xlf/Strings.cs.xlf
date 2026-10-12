@@ -395,7 +395,7 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
         <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
-        <target state="translated">Projekt '{0}' není PackageReference projekt. Tento příkaz podporuje jenom projekty NuGet PackageReference.</target>
+        <target state="needs-review-translation">Projekt {0} používá pro balíčky NuGet package.config, ale daný příkaz funguje jen s projekty odkazů na balíčky.</target>
         <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
@@ -405,7 +405,7 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
       </trans-unit>
       <trans-unit id="Error_PackagePublishDateMissing">
         <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
-        <target state="translated">Zdrojový '{0}' balíčku neposkytl datum publikování pro verzi '{1}' balíčku '{2}', které je povinné, protože zdroj má nakonfigurované minimální stáří publikování.</target>
+        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
         <note>{0} - package source name
 {1} - package ID
 {2} - package version</note>
@@ -1041,7 +1041,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
         <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
-        <target state="translated">Balíčky s novějšími verzemi, které nedosáhly nakonfigurovaného minimálního stáří publikování: {0}.</target>
+        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
         <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -1260,9 +1260,14 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
-        <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
-        <target state="new">The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</target>
+        <source>The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</source>
+        <target state="new">The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
+        <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
         <source>Name of the source.</source>
@@ -1321,7 +1326,7 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_InvalidGroup">
         <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
-        <target state="translated">ID skupiny musí mít 1–64 znaků, musí obsahovat pouze znaky A–Z, a–z, 0–9, ., _ nebo - a musí začínat a končit písmenem nebo číslicí.</target>
+        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_MissingSource">
@@ -1351,7 +1356,7 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="translated">Nahraje balíček do zadané pracovní skupiny.</target>
+        <target state="new">Uploads the package into the specified staging group.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
@@ -1537,7 +1542,7 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       </trans-unit>
       <trans-unit id="Warn_AddPkgNonCompliantPackageId">
         <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
-        <target state="translated">ID balíčku '{0}' nesplňuje standardy ID balíčku NuGet. ID balíčků nesmí být delší než 100 znaků, začínat písmenem, číslicí nebo podtržítkem a obsahovat jenom písmena ASCII, číslice, tečky (.), spojovníky (-) a podtržítka (_). Tečky a pomlčky se nemůžou vyskytovat za sebou ani na konci.</target>
+        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
         <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">

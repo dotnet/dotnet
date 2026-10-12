@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System.Collections.Generic;
 using NuGet.Common;
 
@@ -26,9 +24,11 @@ namespace NuGet.ProjectModel
         string Message { get; }
 
         /// <summary>
-        /// Indicates the project for which the error was thrown.
+        /// The project associated with the message. Restore populates this path before collecting
+        /// project messages.
+        /// It can be <see langword="null"/> in points of the message lifecycle like creation, but not in practice as part of an assets file.
         /// </summary>
-        string ProjectPath { get; }
+        string? ProjectPath { get; }
 
         /// <summary>
         /// Level to indicate the warning level for the message.
@@ -39,7 +39,7 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Indicates the file for which the error was thrown.
         /// </summary>
-        string FilePath { get; }
+        string? FilePath { get; }
 
         /// <summary>
         /// Indicates the starting line for which the error was thrown.
@@ -64,11 +64,11 @@ namespace NuGet.ProjectModel
         /// <summary>
         /// Project or Package Id
         /// </summary>
-        string LibraryId { get; }
+        string? LibraryId { get; }
 
         /// <summary>
         /// List of TargetGraphs
         /// </summary>
-        IReadOnlyList<string> TargetGraphs { get; }
+        IReadOnlyList<string>? TargetGraphs { get; }
     }
 }

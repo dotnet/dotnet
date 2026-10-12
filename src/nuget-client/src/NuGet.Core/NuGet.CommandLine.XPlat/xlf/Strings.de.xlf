@@ -395,7 +395,7 @@ NuGet erfordert HTTPS-Quellen. Um HTTP-Quellen zu verwenden, müssen Sie „allo
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
         <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
-        <target state="translated">Das Projekt „{0}“ ist kein PackageReference-Projekt. Dieser Befehl unterstützt nur NuGet PackageReference-Projekte.</target>
+        <target state="needs-review-translation">Das Projekt "{0}" verwendet "package.config" für NuGet-Pakete, der Befehl funktioniert jedoch nur mit Projekten mit Paketverweis.</target>
         <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
@@ -405,7 +405,7 @@ NuGet erfordert HTTPS-Quellen. Um HTTP-Quellen zu verwenden, müssen Sie „allo
       </trans-unit>
       <trans-unit id="Error_PackagePublishDateMissing">
         <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
-        <target state="translated">Die Paketquelle '{0}' hat kein Veröffentlichungsdatum für das Paket '{1}' Version '{2}' angegeben. Dies ist erforderlich, da für die Quelle ein Mindestalter für die Veröffentlichung konfiguriert ist.</target>
+        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
         <note>{0} - package source name
 {1} - package ID
 {2} - package version</note>
@@ -1041,7 +1041,7 @@ Weitere Informationen finden Sie unter https://docs.nuget.org/docs/reference/com
       </trans-unit>
       <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
         <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
-        <target state="translated">Pakete mit neueren Versionen, die das konfigurierte Mindestalter für die Veröffentlichung nicht erreicht haben: {0}.</target>
+        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
         <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -1260,9 +1260,14 @@ Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit de
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
-        <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
-        <target state="translated">Die Mindestanzahl an Stunden, die nach der Veröffentlichung eines Pakets vergehen muss, bevor es für ein Update ausgewählt werden kann. Legen Sie den Wert auf 0 fest, um ihn zu entfernen.</target>
+        <source>The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</source>
+        <target state="new">The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
+        <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
+        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
         <source>Name of the source.</source>
@@ -1311,72 +1316,72 @@ Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit de
       </trans-unit>
       <trans-unit id="StageCommand_Description">
         <source>Manages packages in a staging environment.</source>
-        <target state="translated">Verwaltet Pakete in einer Staging-Umgebung.</target>
+        <target state="new">Manages packages in a staging environment.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Description">
         <source>Stages a package on the server without publishing it.</source>
-        <target state="translated">Stellt ein Paket auf dem Server bereit, ohne es zu veröffentlichen.</target>
+        <target state="new">Stages a package on the server without publishing it.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_InvalidGroup">
         <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
-        <target state="translated">Die Gruppen-ID muss 1–64 Zeichen lang sein, darf nur A–Z, a–z, 0–9, ".", "_" oder "-" enthalten und muss mit einem Buchstaben oder einer Ziffer beginnen und enden.</target>
+        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_MissingSource">
         <source>No package source was provided and DefaultPushSource is not configured.</source>
-        <target state="translated">Es wurde keine Paketquelle angegeben, und DefaultPushSource ist nicht konfiguriert.</target>
+        <target state="new">No package source was provided and DefaultPushSource is not configured.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackageNotFound">
         <source>The package file '{0}' does not exist.</source>
-        <target state="translated">Die Paketdatei „{0}“ ist nicht vorhanden.</target>
+        <target state="new">The package file '{0}' does not exist.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackagePathRequired">
         <source>A package path is required.</source>
-        <target state="translated">Ein Pfad zum Paket ist erforderlich.</target>
+        <target state="new">A package path is required.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_ResourceNotFound">
         <source>The source '{0}' does not advertise a supported package staging resource.</source>
-        <target state="translated">Die Quelle „{0}“ stellt keine unterstützte Paketstagingressource bereit.</target>
+        <target state="new">The source '{0}' does not advertise a supported package staging resource.</target>
         <note>0 - package source</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
         <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
-        <target state="translated">Die Datei '{0}' ist kein unterstütztes Paket. Geben Sie eine NUPKG-, SNUPKG- oder SYMBOLS.NUPKG-Datei an.</target>
+        <target state="new">The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="translated">Lädt das Paket in die angegebene Staginggruppe hoch.</target>
+        <target state="new">Uploads the package into the specified staging group.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
         <source>Prevents automatic discovery and staging of a sibling symbols package.</source>
-        <target state="translated">Verhindert die automatische Ermittlung und das Staging eines zugehörigen Symbolpakets.</target>
+        <target state="new">Prevents automatic discovery and staging of a sibling symbols package.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackagePathArgument_Description">
         <source>The path to the package to stage.</source>
-        <target state="translated">Der Pfad zum bereitzustellenden Paket.</target>
+        <target state="new">The path to the package to stage.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackageStaged">
         <source>Staged package '{0}'.</source>
-        <target state="translated">Paket „{0}“ bereitgestellt.</target>
+        <target state="new">Staged package '{0}'.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsFailed">
         <source>Failed to stage symbols package '{0}': {1}</source>
-        <target state="translated">Das Symbolpaket „{0}“ konnte nicht bereitgestellt werden: {1}</target>
+        <target state="new">Failed to stage symbols package '{0}': {1}</target>
         <note>0 - symbols package path; 1 - error message</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsStaged">
         <source>Staged symbols package '{0}'.</source>
-        <target state="translated">Symbolpaket „{0}“ bereitgestellt.</target>
+        <target state="new">Staged symbols package '{0}'.</target>
         <note>0 - symbols package path</note>
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
@@ -1537,7 +1542,7 @@ Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit de
       </trans-unit>
       <trans-unit id="Warn_AddPkgNonCompliantPackageId">
         <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
-        <target state="translated">Die Paket-ID '{0}' entspricht nicht den NuGet-Paket-ID-Standards. Paket-IDs dürfen nicht mehr als 100 Zeichen umfassen, mit einem Buchstaben, einer Ziffer oder einem Unterstrich beginnen und dürfen nur ASCII-Buchstaben, Ziffern, Punkte (.), Bindestriche (-) und Unterstriche (_) enthalten. Punkte und Striche dürfen nicht nacheinander oder am Ende angezeigt werden.</target>
+        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
         <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">
