@@ -45,8 +45,10 @@
     <BuildArgs Condition="'$(MonoAOTEnableLLVM)' != ''">$(BuildArgs) /p:MonoAOTEnableLLVM=$(MonoAOTEnableLLVM)</BuildArgs>
     <BuildArgs Condition="'$(MonoBundleLLVMOptimizer)' != ''">$(BuildArgs) /p:MonoBundleLLVMOptimizer=$(MonoBundleLLVMOptimizer)</BuildArgs>
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
-    <!-- Pass through the C++ standard library to use (e.g., libc++ or (the default) libstdc++). -->
+    <!-- Pass through the C++ library selection properties. -->
     <BuildArgs Condition="'$(TargetCxxStandardLibrary)' != ''">$(BuildArgs) /p:TargetCxxStandardLibrary=$(TargetCxxStandardLibrary)</BuildArgs>
+    <BuildArgs Condition="'$(TargetCxxStandardLibraryStatic)' != ''">$(BuildArgs) /p:TargetCxxStandardLibraryStatic=$(TargetCxxStandardLibraryStatic)</BuildArgs>
+    <BuildArgs Condition="'$(TargetCxxAbiLibrary)' != ''">$(BuildArgs) /p:TargetCxxAbiLibrary=$(TargetCxxAbiLibrary)</BuildArgs>
     <BuildArgs Condition="'$(CppCompilerAndLinker)' != ''">$(BuildArgs) /p:CppCompilerAndLinker=$(CppCompilerAndLinker)</BuildArgs>
 
     <!-- Handle system libraries -->
