@@ -1,0 +1,25 @@
+# This file is auto-generated from .CodeQL.yml and CodeQL.yml files in src/.
+# Manual changes will be overwritten.
+
+path_classifiers:
+  library:
+    # --- dotnet/source-build-assets ---
+    - "src/source-build-assets/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/**"
+
+  refs:
+    # --- dotnet/aspnetcore ---
+    # The test/ directories don't contain shipping implementations of code, so they should
+    # be excluded from analysis.
+    - src/aspnetcore/src/**/test/*
+
+    # --- dotnet/runtime ---
+    # The ref/ directories don't contain shipping implementations of code, so they should
+    # be excluded from analysis. If there is a problem at the API layer, the analysis
+    # engine will detect the problem in the src/ implementations anyway.
+    - src/runtime/src/libraries/**/ref/*
+    # exclude artifacts/obj/**/CMakeFiles/**/CheckFunctionExists.c since CMake
+    # generates random directory names causing creation of duplicate issues
+    # related to obsolete encryption algorithm used. Note that CheckFuntionExists
+    # files are generated as part of build-time checks in CMake and are not compiled
+    # or linked into any product binaries.
+    - src/runtime/artifacts/obj/**/CMakeFiles/**/CheckFunctionExists.c
