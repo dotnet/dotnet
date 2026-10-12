@@ -59,6 +59,12 @@
     <PreReleaseVersion>$([MSBuild]::Add($(BuildNumber), 100))</PreReleaseVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Keep the VSIX version above previously shipped 19.0 versions to avoid VS setup downgrades.
+         Encode the NuGet version as major * 10000 + minor * 100 + patch, followed by the build revision. -->
+    <NuGetVsixVersion>19.0.$([MSBuild]::Add($([MSBuild]::Add($([MSBuild]::Multiply($(MajorNuGetVersion), 10000)), $([MSBuild]::Multiply($(MinorNuGetVersion), 100)))), $(PatchNuGetVersion))).$(PreReleaseVersion)</NuGetVsixVersion>
+  </PropertyGroup>
+
   <!--Setting the product information for Beta builds-->
   <Choose>
     <!-- If we aren't excluding the build number, use the release label and the build number. -->
@@ -105,6 +111,10 @@
 
   <Target Name="GetSemanticVersion">
     <Message Text="$(SemanticVersion)" Importance="High"/>
+  </Target>
+  <Target Name="ValidateNuGetVsixVersion" BeforeTargets="PrepareForBuild;GetNuGetVsixVersion">
+    <Error Condition="$(VsTargetMajorVersion) &gt; 19"
+           Text="VsTargetMajorVersion ($(VsTargetMajorVersion)) exceeds the hardcoded VSIX major version (19). Update NuGetVsixVersion in build\config.props to use $(VsTargetMajorVersion) via the VsTargetMajorVersion property instead of the hardcoded 19 prefix, and then delete this target." />
   </Target>
   <Target Name="GetNuGetSdkVsSemanticVersion">
     <Message Text="$(NuGetSdkVsSemanticVersion)" Importance="High"/>
