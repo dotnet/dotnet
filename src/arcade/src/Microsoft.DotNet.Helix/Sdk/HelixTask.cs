@@ -105,13 +105,17 @@ namespace Microsoft.DotNet.Helix.Sdk
 #if !DOTNET_BUILD_SOURCE_ONLY
         private static TokenCredential CreateEntraTokenCredential()
         {
-            return CreateEntraTokenCredential(
+            TokenCredential fallbackCredential = CreateEntraTokenCredential(
                 Environment.GetEnvironmentVariable("SYSTEM_ACCESSTOKEN"),
                 Environment.GetEnvironmentVariable("AZURESUBSCRIPTION_CLIENT_ID"),
                 Environment.GetEnvironmentVariable("AZURESUBSCRIPTION_TENANT_ID"),
                 Environment.GetEnvironmentVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
                 Environment.GetEnvironmentVariable("SYSTEM_OIDCREQUESTURI"),
                 () => new DefaultAzureCredential());
+
+            return new ChainedTokenCredential(
+                new AzureCliCredential(),
+                fallbackCredential);
         }
 
         internal static TokenCredential CreateEntraTokenCredential(

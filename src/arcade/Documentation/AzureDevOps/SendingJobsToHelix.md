@@ -65,12 +65,9 @@ Please note that authorized jobs *cannot* be submitted to queues with `IsInterna
 
 Set `HelixUseEntraAuthentication` to `true` and pass an Azure service connection authorized for Helix through `HelixAzureSubscription`. These parameters configure the `send-to-helix.yml` steps template and the SDK tasks that submit jobs.
 
-When Entra authentication is enabled, the template does not forward `HelixAccessToken` to the Helix processes. If a legacy token is still injected by a variable group, explicit Entra opt-in takes precedence and the task ignores the token with a warning.
+The service connection must use workload identity federation. The template runs the Helix process inside `AzureCLI@2` with automatic session refresh enabled, and the Helix client prefers `AzureCliCredential` over managed identity. This allows it to obtain renewable access tokens for both Azure DevOps-issued and Microsoft Entra-issued service connections, including on hosted agents where an unavailable managed identity would otherwise prevent the credential chain from reaching Azure CLI. This is required for inline waits, which can run longer than a single workload identity assertion remains valid.
 
-The template passes the service connection identifiers to the SDK, which uses
-them with Azure Pipelines' system access token and OIDC endpoint to create an
-`AzurePipelinesCredential`. This allows the SDK to request fresh tokens without
-depending on Azure CLI state from an earlier pipeline task.
+When Entra authentication is enabled, the template does not forward `HelixAccessToken` to the Helix processes. If a legacy token is still injected by a variable group, explicit Entra opt-in takes precedence and the task ignores the token with a warning.
 
 ```yaml
 steps:
@@ -78,7 +75,7 @@ steps:
   displayName: Send to Helix
   parameters:
     HelixUseEntraAuthentication: true
-    HelixAzureSubscription: <Azure service connection ID authorized for Helix>
+    HelixAzureSubscription: <workload identity federation service connection name authorized for Helix>
     # other parameters here
 ```
 
