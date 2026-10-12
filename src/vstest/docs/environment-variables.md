@@ -152,6 +152,12 @@ This document lists environment variables that are currently handled by VSTest s
 - **Example**: `VSTEST_DISABLE_ARTIFACTS_POSTPROCESSING_NEW_SDK_UX=1`
 - **Usage**: Useful when parsing console output and need to maintain compatibility
 
+### VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION
+- **Description**: Disables the Unix checks around the directory holding the test session artifacts: narrowing a directory vstest creates to its owner, and verifying on Linux that a directory given by `VSTEST_ARTIFACTS_DIRECTORY` is a real directory, owned by the current user, that no other user can reach.
+- **Values**: Set to any non-zero value to disable
+- **Example**: `VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION=1`
+- **Usage**: Needed where the ownership or the permissions of that directory cannot be represented or changed, such as a mounted Windows or network volume. Has no effect on Windows.
+
 ### VSTEST_DISABLE_FASTER_JSON_SERIALIZATION
 - **Description**: Disables the faster JSON serialization mechanism and falls back to standard serialization.
 - **Values**: Set to any non-zero value to disable
@@ -259,6 +265,10 @@ This document lists environment variables that are currently handled by VSTest s
 - **Description**: Skips Microsoft Fakes configuration during test execution.
 - **Values**: Set to "1" to skip
 - **Example**: `VSTEST_SKIP_FAKES_CONFIGURATION=1`
+
+### VSTEST_ARTIFACTS_DIRECTORY
+- **Description**: Absolute path to an existing directory that vstest.console writes the test session artifacts into, as `<directory>/<testSessionCorrelationId>/...`. Set by the .NET SDK, which creates the directory, gives every vstest.console process of one invocation the same value, and deletes it when the invocation finishes. vstest.console never creates, widens or deletes this directory, only what it puts inside it. When the variable is absent, or is not an absolute path, the artifacts go under the temporary directory instead. On Linux the directory is verified before it is used; see `VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION`. Not typically set by hand.
+- **Example**: `VSTEST_ARTIFACTS_DIRECTORY=/tmp/3f2504e0-4f89-11d3-9a0c-0305e82c3301`
 
 ## Discovery Variables
 

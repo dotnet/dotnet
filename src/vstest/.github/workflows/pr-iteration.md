@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  models: read
   pull-requests: read
   issues: read
   copilot-requests: write

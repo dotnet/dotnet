@@ -16,6 +16,15 @@ export DOTNET_DbgMiniDumpName=$HELIX_WORKITEM_UPLOAD_ROOT/coredump.%p
 export DOTNET_EnableCrashReport=1
 
 export TestExecutionDirectory=$(realpath "$(mktemp -d "${TMPDIR:-/tmp}"/dotnetSdkTests.XXXXXXXX)")
+
+# Helix Linux work items have no systemd-logind session, so /run/user/<uid> does not exist and the dotnet CLI
+# cannot create the vstest artifacts directory there. Use a directory inside the work item instead.
+if [ "$(uname -s)" = "Linux" ] && [ ! -d "/run/user/$(id -u)" ]; then
+    export VSTEST_ARTIFACTS_BASE_DIRECTORY="$TestExecutionDirectory/vstest-artifacts"
+    mkdir -p "$VSTEST_ARTIFACTS_BASE_DIRECTORY"
+    chmod 0700 "$VSTEST_ARTIFACTS_BASE_DIRECTORY"
+fi
+
 export DOTNET_CLI_HOME=$TestExecutionDirectory/.dotnet
 cp -a $HELIX_CORRELATION_PAYLOAD/t/TestExecutionDirectoryFiles/. $TestExecutionDirectory/
 
