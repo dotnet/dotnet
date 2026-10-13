@@ -1,0 +1,56 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Will Godbe <willgodbe@Wills-MacBook-Pro.local>
+Date: Tue, 6 Oct 2026 14:42:55 -0700
+Subject: [PATCH] Normalize SourceBuild archive ownership
+
+Create SourceBuild archives with the expected user and group IDs.
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+---
+ .../tools/SourceBuild/SourceBuildIntermediate.proj           | 2 +-
+ .../build/archives.targets                                   | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/src/Microsoft.DotNet.Arcade.Sdk/tools/SourceBuild/SourceBuildIntermediate.proj b/src/Microsoft.DotNet.Arcade.Sdk/tools/SourceBuild/SourceBuildIntermediate.proj
+index bfdc981b..c79b9237 100644
+--- a/src/Microsoft.DotNet.Arcade.Sdk/tools/SourceBuild/SourceBuildIntermediate.proj
++++ b/src/Microsoft.DotNet.Arcade.Sdk/tools/SourceBuild/SourceBuildIntermediate.proj
+@@ -113,7 +113,7 @@
+       Overwrite="true"
+       Condition="'@(AbsoluteSymbolPath)' != ''" />
+ 
+-    <Exec Command="tar --numeric-owner -czf $(SymbolsArchiveName) --files-from=$(SymbolsList)"
++    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(SymbolsArchiveName) --files-from=$(SymbolsList)"
+           WorkingDirectory="$(SymbolsRoot)" Condition="Exists($(SymbolsList))" />
+     <Message Importance="High" Text="Packaged symbols to $(SymbolsArchiveName)" Condition="Exists($(SymbolsArchiveName))" />
+ 
+diff --git a/src/Microsoft.DotNet.Build.Tasks.Archives/build/archives.targets b/src/Microsoft.DotNet.Build.Tasks.Archives/build/archives.targets
+index de69a8b5..bc2f54f0 100644
+--- a/src/Microsoft.DotNet.Build.Tasks.Archives/build/archives.targets
++++ b/src/Microsoft.DotNet.Build.Tasks.Archives/build/archives.targets
+@@ -64,6 +64,7 @@
+   <PropertyGroup>
+     <ArchiveName Condition="'$(ArchiveName)' == ''">$([System.IO.Path]::GetFileNameWithoutExtension($(MSBuildProjectFile)))</ArchiveName>
+     <SymbolsArchiveName Condition="'$(SymbolsArchiveName)' == ''">$(ArchiveName)-symbols</SymbolsArchiveName>
++    <_TarOwnershipArguments Condition="'$(DotNetBuildFromSource)' == 'true'">--numeric-owner --owner=2001 --group=2001</_TarOwnershipArguments>
+   </PropertyGroup>
+ 
+   <Target Name="_CreateArchive"
+@@ -83,7 +84,7 @@
+                   Overwrite="true"
+                   DestinationFile="$(_DestinationFileName)"
+                   Condition="'$(ArchiveFormat)' == 'zip'"/>
+-    <Exec Command="tar -C '$(_OutputPathRoot)' -czf $(_DestinationFileName) ."
++    <Exec Command="tar $(_TarOwnershipArguments) -C '$(_OutputPathRoot)' -czf $(_DestinationFileName) ."
+           IgnoreExitCode="true"
+           IgnoreStandardErrorWarningFormat="true"
+           Condition="'$(ArchiveFormat)' == 'tar.gz'"/>
+@@ -108,7 +109,7 @@
+                   Overwrite="true"
+                   DestinationFile="$(_DestinationFileName)"
+                   Condition="'$(ArchiveFormat)' == 'zip'"/>
+-    <Exec Command="tar -C '$(_SymbolsOutputPathRoot)' -czf $(_DestinationFileName) ."
++    <Exec Command="tar $(_TarOwnershipArguments) -C '$(_SymbolsOutputPathRoot)' -czf $(_DestinationFileName) ."
+           IgnoreExitCode="true"
+           IgnoreStandardErrorWarningFormat="true"
+           Condition="'$(ArchiveFormat)' == 'tar.gz'"/>
