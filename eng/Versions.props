@@ -19,7 +19,7 @@
       'preview' produces assets with a '.final' branding suffix.
       'release' produces assets without a branding suffix.
     -->
-    <RepoDotNetFinalVersionKind>repodefault</RepoDotNetFinalVersionKind>
+    <RepoDotNetFinalVersionKind>release</RepoDotNetFinalVersionKind>
 
     <!-- Disable NuGet audit when online feeds are not available (offline source-build).
          The root NuGet.config defines audit sources pointing to nuget.org, which is

@@ -38,10 +38,14 @@
        number. This is not an approach that .NET uses for its builds, which use a date-varying number. However, the exact suffix is not that
        important as long as it can be used as part of the assembly version, and does not overlap with NuGet's existing packages or assemblies.
        One way we can achieve this is to intake .NET's normal version properties, and apply a bit of math to mimic how .NET would calculate assembly versions.
-       See https://github.com/dotnet/arcade/blob/d27184f7cb92b4abb4b20e91ecb5c43bc43de65b/src/Microsoft.DotNet.Arcade.Sdk/src/CalculateAssemblyAndFileVersions.cs#L65 -->
+       See https://github.com/dotnet/arcade/blob/d27184f7cb92b4abb4b20e91ecb5c43bc43de65b/src/Microsoft.DotNet.Arcade.Sdk/src/CalculateAssemblyAndFileVersions.cs#L65
+       Unlike Arcade, NuGet can't carry the overflow (PatchNumber / 50000) in another version field, so a modulus of 50000 would make the
+       number wrap around on October 1st, producing lower versions than earlier builds (NU1109 package downgrades).
+       PatchNumber is ((yy - 19) * 1000 + mm * 50 + dd) * 100 + r, so modulo 100000 yields (mm * 50 + dd) * 100 + r, which increases
+       monotonically within a calendar year and stays below the UInt16 limit (65535) of assembly versions. -->
   <Target Name="SetNuGetBuildNumber" BeforeTargets="SetBuildProperties">
     <PropertyGroup>
-      <BuildArgs Condition="'$(_PatchNumber)' != ''">$(BuildArgs) /p:BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 50000))</BuildArgs>
+      <BuildArgs Condition="'$(_PatchNumber)' != ''">$(BuildArgs) /p:BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 100000))</BuildArgs>
     </PropertyGroup>
   </Target>
 
