@@ -109,6 +109,15 @@ public class SdkTemplateTest
         }
         if (Commands.HasFlag(DotNetSdkActions.Test))
         {
+            if (Template is DotNetSdkTemplate.XUnit or DotNetSdkTemplate.NUnit or DotNetSdkTemplate.MSTest)
+            {
+                string? testSdkPackageVersion = Environment.GetEnvironmentVariable("TestSdkPackageVersion");
+                if (!string.IsNullOrEmpty(testSdkPackageVersion))
+                {
+                    DotNetSdkHelper.OverrideTestSdkVersion(projectDirectory, testSdkPackageVersion);
+                }
+            }
+
             dotNetHelper.ExecuteTest(projectDirectory);
         }
     }

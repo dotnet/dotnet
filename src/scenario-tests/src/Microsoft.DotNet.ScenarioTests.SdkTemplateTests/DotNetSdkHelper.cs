@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Xml.XPath;
 using System.Xml;
+using System.Xml.Linq;
 using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.ScenarioTests.SdkTemplateTests;
@@ -251,6 +252,35 @@ internal class DotNetSdkHelper
 
     public void ExecuteTest(string projectDirectory) =>
         ExecuteCmd($"test {GetBinLogOption(projectDirectory, "test")}", workingDirectory: projectDirectory);
+
+    internal static void OverrideTestSdkVersion(string projectDirectory, string version)
+    {
+        string projectFilePath = Directory.GetFiles(projectDirectory, "*.*proj", SearchOption.TopDirectoryOnly)
+            .Where(path => Path.GetExtension(path) is ".csproj" or ".fsproj" or ".vbproj")
+            .Single();
+        XDocument project = XDocument.Load(projectFilePath, LoadOptions.PreserveWhitespace);
+        XElement reference = project.Descendants()
+            .SingleOrDefault(element => element.Name.LocalName == "PackageReference"
+                && string.Equals((string?)element.Attribute("Include"), "Microsoft.NET.Test.Sdk", StringComparison.OrdinalIgnoreCase))
+            ?? throw new InvalidOperationException($"Test project '{projectFilePath}' does not reference Microsoft.NET.Test.Sdk.");
+
+        XAttribute? versionAttribute = reference.Attribute("Version");
+        XElement? versionElement = reference.Elements().SingleOrDefault(element => element.Name.LocalName == "Version");
+        if (versionAttribute is not null)
+        {
+            versionAttribute.Value = version;
+        }
+        else if (versionElement is not null)
+        {
+            versionElement.Value = version;
+        }
+        else
+        {
+            reference.SetAttributeValue("Version", version);
+        }
+
+        project.Save(projectFilePath);
+    }
 
     private static string GetBinLogOption(string projectDirectory, string command, string? differentiator = null)
     {
