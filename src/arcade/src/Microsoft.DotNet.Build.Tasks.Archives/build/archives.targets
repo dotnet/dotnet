@@ -64,6 +64,7 @@
   <PropertyGroup>
     <ArchiveName Condition="'$(ArchiveName)' == ''">$([System.IO.Path]::GetFileNameWithoutExtension($(MSBuildProjectFile)))</ArchiveName>
     <SymbolsArchiveName Condition="'$(SymbolsArchiveName)' == ''">$(ArchiveName)-symbols</SymbolsArchiveName>
+    <_TarOwnershipArguments Condition="'$(DotNetBuildFromSource)' == 'true'">--numeric-owner --owner=2001 --group=2001</_TarOwnershipArguments>
   </PropertyGroup>
 
   <Target Name="_CreateArchive"
@@ -83,7 +84,7 @@
                   Overwrite="true"
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(ArchiveFormat)' == 'zip'"/>
-    <Exec Command="tar -C '$(_OutputPathRoot)' -czf $(_DestinationFileName) ."
+    <Exec Command="tar $(_TarOwnershipArguments) -C '$(_OutputPathRoot)' -czf $(_DestinationFileName) ."
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true"
           Condition="'$(ArchiveFormat)' == 'tar.gz'"/>
@@ -108,7 +109,7 @@
                   Overwrite="true"
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(ArchiveFormat)' == 'zip'"/>
-    <Exec Command="tar -C '$(_SymbolsOutputPathRoot)' -czf $(_DestinationFileName) ."
+    <Exec Command="tar $(_TarOwnershipArguments) -C '$(_SymbolsOutputPathRoot)' -czf $(_DestinationFileName) ."
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true"
           Condition="'$(ArchiveFormat)' == 'tar.gz'"/>
