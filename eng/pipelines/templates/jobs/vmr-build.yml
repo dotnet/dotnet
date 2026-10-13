@@ -122,6 +122,10 @@ parameters:
   type: boolean
   default: true
 
+- name: useBuiltSdkForTests
+  type: boolean
+  default: false
+
 # Freeform field for extra values to pass to build.sh for special build modes
 - name: extraProperties
   type: string
@@ -196,6 +200,10 @@ jobs:
     - name: BotAccount-dotnet-bot-repo-PAT
       value: N/A
   - name: additionalBuildArgs
+    value: ''
+  - name: SourceBuiltMicrosoftNETTestSdkVersion
+    value: ''
+  - name: SourceBuiltTestSdkDir
     value: ''
   - name: runTestsTimeout
     value: 60
@@ -717,6 +725,11 @@ jobs:
     - ${{ if eq(parameters.runTests, 'True') }}:
       - ${{ parameters.testInitSteps }}
 
+      - ${{ if and(parameters.buildSourceOnly, parameters.useBuiltSdkForTests, eq(variables['System.TeamProject'], 'internal')) }}:
+        - template: ../steps/prepare-source-built-test-sdk.yml
+          parameters:
+            buildArguments: $(additionalBuildArgs) $(baseArguments) $(baseProperties) $(targetProperties) ${{ parameters.extraProperties }}
+
       # Setup the NuGet sources used by the tests to use private feeds. This is necessary when testing internal-only product
       # builds where the packages are only available in the private feeds. This allows the tests to restore from those feeds.
       # The sdk repo's NuGet.config is configured earilier in the pipeline to use internal feeds.
@@ -730,6 +743,18 @@ jobs:
           customPreBuildArgs=''
           customBuildArgs="--test --excludeCIBinarylog /bl:artifacts/log/Release/Test.binlog $(baseArguments)"
           extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) ${{ parameters.extraProperties }}"
+
+          testSdkArgs=()
+          if [[ '${{ parameters.useBuiltSdkForTests }}' == 'True' ]]; then
+            sourceBuiltTestSdkVersion="$(SourceBuiltMicrosoftNETTestSdkVersion)"
+            sourceBuiltTestSdkDir="$(SourceBuiltTestSdkDir)"
+            if [[ -z "$sourceBuiltTestSdkVersion" || ! -x "$sourceBuiltTestSdkDir/dotnet" ]]; then
+              echo "Source-built test SDK and matching Microsoft.NET.Test.Sdk version have not been prepared." >&2
+              exit 1
+            fi
+            extraBuildProperties="$extraBuildProperties /p:MicrosoftNETTestSdkVersion=$sourceBuiltTestSdkVersion"
+            testSdkArgs=(--with-sdk "$sourceBuiltTestSdkDir" "/p:DotNetSdkExtractDir=$sourceBuiltTestSdkDir")
+          fi
 
           if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
             # Preserve HOME across the sudo boundary so the Azure Artifacts credential
@@ -762,7 +787,7 @@ jobs:
             echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
           fi
 
-          $customPreBuildArgs ./build.sh $buildArgs
+          $customPreBuildArgs ./build.sh $buildArgs "${testSdkArgs[@]}"
 
         displayName: Run Tests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
