@@ -267,7 +267,18 @@ variables:
 
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: defaultPoolName
-    value: NetCore-Public-XL
+    # Prefer the PR target branch when selecting the servicing XL pool.
+    value: $[
+        replace(
+          replace(
+            eq(contains(coalesce(variables['System.PullRequest.TargetBranch'], variables['Build.SourceBranch'], 'refs/heads/main'), 'release'), 'true'),
+            True,
+            'NetCore-Public-Svc-XL'
+          ),
+          False,
+          'NetCore-Public-XL'
+        )
+      ]
   - name: shortStackPoolName
     value: NetCore-Public
   - name: poolImage_Linux
@@ -286,7 +297,17 @@ variables:
       value: windows.vs2022.amd64.open
 - ${{ else }}:
   - name: defaultPoolName
-    value: NetCore1ESPool-Internal
+    value: $[
+        replace(
+          replace(
+            eq(contains(coalesce(variables['System.PullRequest.TargetBranch'], variables['Build.SourceBranch'], 'refs/heads/main'), 'release'), 'true'),
+            True,
+            'NetCore1ESPool-Internal-Svc-XL'
+          ),
+          False,
+          'NetCore1ESPool-Internal'
+        )
+      ]
   - name: shortStackPoolName
     value: NetCore1ESPool-Internal
   - name: poolImage_Linux
@@ -299,4 +320,3 @@ variables:
     value: macos-latest-internal
   - name: poolImage_Windows
     value: windows.vs2022.amd64
-
