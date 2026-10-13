@@ -238,9 +238,14 @@ jobs:
   - name: runTestsTimeout
     value: 30
 
-  - ${{ if parameters.buildSourceOnly }}:
-    - name: sharedComponentsDir
-      value: $(Agent.TempDirectory)/shared-components
+  - name: sharedComponentsDir
+    value: $(Agent.TempDirectory)/shared-components
+
+  - name: sharedComponentsProperty
+    ${{ if parameters.excludeRuntimeDependentJobs }}:
+      value: /p:CustomSharedComponentsArtifactsPath=$(sharedComponentsDir)
+    ${{ else }}:
+      value: ''
 
   - ${{ if parameters.isBuiltFromVmr }}:
     - name: vmrPath
@@ -334,7 +339,7 @@ jobs:
     value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
 
   - name: baseProperties
-    value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
+    value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName) $(sharedComponentsProperty)
 
   - name: targetProperties
     ${{ if and(ne(parameters.targetOS, ''), ne(parameters.targetArchitecture, '')) }}:
@@ -842,9 +847,6 @@ jobs:
             if [[ '${{ parameters.sign }}' == 'True' ]]; then
               # Set up for signing source-built artifacts post-build.
               extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
-            fi
-            if [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
-              customBuildArgs="$customBuildArgs --with-shared-components $(sharedComponentsDir)"
             fi
           fi
 
