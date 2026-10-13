@@ -63,6 +63,13 @@ variables:
 
 - template: /eng/common/templates-official/variables/pool-providers.yml@self
 - template: /eng/pipelines/templates/variables/vmr-build.yml@self
+  parameters:
+    ${{ if and(eq(variables.isScheduleTrigger, 'true'), eq(variables['Build.CronSchedule.DisplayName'], 'Signed main build on Saturdays')) }}:
+      desiredSigning: Signed (Real)
+    ${{ else }}:
+      desiredSigning: ${{ parameters.desiredSigning }}
+    desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+    isOfficialBuild: true
 
 resources:
   repositories:
@@ -186,16 +193,36 @@ extends:
         options: ${{ variables.defaultContainerOptions }}
 
     stages:
-    - template: /eng/pipelines/templates/stages/vmr-scan.yml@self
-    - template: /eng/pipelines/templates/stages/vmr-build.yml@self
-      parameters:
-        ${{ if and(eq(variables.isScheduleTrigger, 'true'), eq(variables['Build.CronSchedule.DisplayName'], 'Signed main build on Saturdays')) }}:
-          desiredSigning: Signed (Real)
-        ${{ else }}:
-          desiredSigning: ${{ parameters.desiredSigning }}
-        desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
-        isOfficialBuild: true
-        scope: full
-        # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
-        # This is enabled for all branches except main and 1xx
-        excludeRuntimeDependentJobs: false
+    - stage: VMR_Vertical_Build
+      displayName: macOS signing experiment
+      dependsOn: []
+      jobs:
+      - ${{ each architecture in split('x64,arm64', ',') }}:
+        - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
+          parameters:
+            buildName: OSX
+            isBuiltFromVmr: true
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool:
+              name: Azure Pipelines
+              vmImage: $(poolImage_Mac_Hosted)
+              os: macOS
+            targetOS: osx
+            targetArchitecture: ${{ architecture }}
+            brandingType: ${{ variables.brandingType }}
+      - template: /eng/pipelines/templates/jobs/vmr-build.yml@self
+        parameters:
+          buildName: OSX_Shortstack_Mono_LLVMAOT
+          isBuiltFromVmr: true
+          sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
+          pool:
+            name: Azure Pipelines
+            vmImage: $(poolImage_Mac_Hosted)
+            os: macOS
+          useMonoRuntime: true
+          targetOS: osx
+          targetArchitecture: x64
+          extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
+          brandingType: ${{ variables.brandingType }}
