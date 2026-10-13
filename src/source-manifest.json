@@ -25,10 +25,10 @@
       "commitSha": "c5a9c026ac65f674ed4830d5d11c80b66b8c8118"
     },
     {
-      "barId": 335693,
+      "barId": 336185,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "74878b50aab1c07a7cdcaa15f28115768388cdcc"
+      "commitSha": "1c9d1c76bb4fc8a4f194085b62a68fc3dd2f0acc"
     },
     {
       "barId": 335724,
@@ -37,10 +37,10 @@
       "commitSha": "3dca69bf4ad1f03fa4738e0f3e99506c24135340"
     },
     {
-      "barId": 335988,
+      "barId": 336298,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "b25d18f14cb06b98c9690401373d92c84fe744aa"
+      "commitSha": "47f4f56c7f56dc46a627570540a1a57122708f5b"
     },
     {
       "barId": 331904,
