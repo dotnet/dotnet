@@ -8,9 +8,9 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-arcade-services dependencies -->
     <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.26451.2</MicrosoftDotNetDarcLibPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26425.128</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildManifestPackageVersion>11.0.0-beta.26425.128</MicrosoftDotNetBuildManifestPackageVersion>
-    <MicrosoftDotNetSignCheckTaskPackageVersion>11.0.0-beta.26425.128</MicrosoftDotNetSignCheckTaskPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.26504.105</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildManifestPackageVersion>11.0.0-beta.26504.105</MicrosoftDotNetBuildManifestPackageVersion>
+    <MicrosoftDotNetSignCheckTaskPackageVersion>11.0.0-beta.26504.105</MicrosoftDotNetSignCheckTaskPackageVersion>
     <MicrosoftNETSdkPackageVersion>11.0.100-rc.1.26425.128</MicrosoftNETSdkPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
