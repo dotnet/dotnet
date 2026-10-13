@@ -59,9 +59,19 @@ namespace NuGet.Packaging.Signing
                 issues.Add(SignatureLog.InformationLog($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateCrlUrl, url)}"));
             }
 
+            foreach (string url in GetFreshestCrlUrls(cert))
+            {
+                issues.Add(SignatureLog.InformationLog($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateFreshestCrlUrl, url)}"));
+            }
+
             foreach (string url in GetOcspUrls(cert))
             {
                 issues.Add(SignatureLog.InformationLog($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateOcspUrl, url)}"));
+            }
+
+            foreach (string url in GetCaIssuersUrls(cert))
+            {
+                issues.Add(SignatureLog.InformationLog($"{indentation}{string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateCaIssuersUrl, url)}"));
             }
 
             return issues;
@@ -82,9 +92,19 @@ namespace NuGet.Packaging.Signing
                 certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateCrlUrl, url));
             }
 
+            foreach (string url in GetFreshestCrlUrls(cert))
+            {
+                certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateFreshestCrlUrl, url));
+            }
+
             foreach (string url in GetOcspUrls(cert))
             {
                 certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateOcspUrl, url));
+            }
+
+            foreach (string url in GetCaIssuersUrls(cert))
+            {
+                certStringBuilder.AppendLine(indentation + string.Format(CultureInfo.CurrentCulture, Strings.CertUtilityCertificateCaIssuersUrl, url));
             }
         }
 
@@ -472,11 +492,27 @@ namespace NuGet.Packaging.Signing
         internal static IReadOnlyList<string> GetCrlDistributionPointUrls(X509Certificate2 cert)
         {
             const string CrlDistributionPointsOid = "2.5.29.31";
+
+            return GetCrlDistributionPointUrls(cert, CrlDistributionPointsOid);
+        }
+
+        /// <summary>
+        /// Extracts Freshest CRL URLs from the certificate's Freshest CRL extension (OID 2.5.29.46).
+        /// </summary>
+        internal static IReadOnlyList<string> GetFreshestCrlUrls(X509Certificate2 cert)
+        {
+            const string FreshestCrlOid = "2.5.29.46";
+
+            return GetCrlDistributionPointUrls(cert, FreshestCrlOid);
+        }
+
+        private static IReadOnlyList<string> GetCrlDistributionPointUrls(X509Certificate2 cert, string extensionOid)
+        {
             // context-specific primitive tag [6] for uniformResourceIdentifier in GeneralName
             const byte GeneralNameUriTag = 0x86;
 
             var urls = new List<string>();
-            var extension = cert.Extensions[CrlDistributionPointsOid];
+            var extension = cert.Extensions[extensionOid];
 
             if (extension == null)
             {
@@ -536,8 +572,24 @@ namespace NuGet.Packaging.Signing
         /// </summary>
         internal static IReadOnlyList<string> GetOcspUrls(X509Certificate2 cert)
         {
-            const string AuthorityInfoAccessOid = "1.3.6.1.5.5.7.1.1";
             const string OcspAccessMethodOid = "1.3.6.1.5.5.7.48.1";
+
+            return GetAuthorityInformationAccessUrls(cert, OcspAccessMethodOid);
+        }
+
+        /// <summary>
+        /// Extracts CA Issuers URLs from the certificate's Authority Information Access extension (OID 1.3.6.1.5.5.7.1.1).
+        /// </summary>
+        internal static IReadOnlyList<string> GetCaIssuersUrls(X509Certificate2 cert)
+        {
+            const string CaIssuersAccessMethodOid = "1.3.6.1.5.5.7.48.2";
+
+            return GetAuthorityInformationAccessUrls(cert, CaIssuersAccessMethodOid);
+        }
+
+        private static IReadOnlyList<string> GetAuthorityInformationAccessUrls(X509Certificate2 cert, string accessMethodOid)
+        {
+            const string AuthorityInfoAccessOid = "1.3.6.1.5.5.7.1.1";
             // context-specific primitive tag [6] for uniformResourceIdentifier in GeneralName
             const byte GeneralNameUriTag = 0x86;
 
@@ -560,7 +612,7 @@ namespace NuGet.Packaging.Signing
                     var adReader = reader.ReadSequence();
                     string oid = adReader.ReadOidAsString();
 
-                    if (string.Equals(oid, OcspAccessMethodOid, StringComparison.Ordinal) && adReader.HasData)
+                    if (string.Equals(oid, accessMethodOid, StringComparison.Ordinal) && adReader.HasData)
                     {
                         byte tag = adReader.PeekTag();
 

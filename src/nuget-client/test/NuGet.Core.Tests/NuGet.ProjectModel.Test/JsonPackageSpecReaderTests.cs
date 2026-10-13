@@ -26,6 +26,19 @@ namespace NuGet.ProjectModel.Test
     public class JsonPackageSpecReaderTests
     {
         [Fact]
+        public void GetPackageSpec_WhenVersionIsInvalid_ThrowsWithoutLineInfo()
+        {
+            const string json = """{"version":"invalid"}""";
+
+            FileFormatException exception = Assert.Throws<FileFormatException>(
+                () => JsonPackageSpecReader.GetPackageSpec(json, "TestProject", "project.json"));
+
+            Assert.StartsWith("Error reading '' : 'invalid' is not a valid version string.", exception.Message);
+            Assert.Equal(0, exception.Line);
+            Assert.Equal(0, exception.Column);
+        }
+
+        [Fact]
         public void PackageSpecReader_PackageMissingVersion()
         {
             // Arrange

@@ -45,8 +45,10 @@ namespace NuGet.PackageManagement.Utility
             }
             else if (enableLockFile == true || lockFileExists)
             {
-                var lockFile = GetLockFile(lockFileExists, lockFileName);
-                lockFile.Targets[0].TargetFramework = msbuildProject.ProjectSystem.TargetFramework;
+                var lockFile = GetLockFile(
+                    lockFileExists,
+                    lockFileName,
+                    msbuildProject.ProjectSystem.TargetFramework);
                 var contentHashUtil = new PackagesConfigContentHashProvider(msbuildProject.FolderNuGetProject);
                 ApplyChanges(lockFile, actionsList, contentHashUtil, token);
                 PackagesLockFileFormat.Write(lockFileName, lockFile);
@@ -183,7 +185,10 @@ namespace NuGet.PackageManagement.Utility
             return null;
         }
 
-        internal static PackagesLockFile GetLockFile(bool lockFileExists, string lockFileName)
+        internal static PackagesLockFile GetLockFile(
+            bool lockFileExists,
+            string lockFileName,
+            NuGetFramework targetFramework)
         {
             PackagesLockFile lockFile;
 
@@ -193,7 +198,10 @@ namespace NuGet.PackageManagement.Utility
                 lockFile.Version = PackagesLockFileFormat.Version;
                 if (lockFile.Targets.Count == 0)
                 {
-                    lockFile.Targets.Add(new PackagesLockFileTarget());
+                    lockFile.Targets.Add(new PackagesLockFileTarget
+                    {
+                        TargetFramework = targetFramework
+                    });
                 }
                 else if (lockFile.Targets.Count > 1)
                 {
@@ -214,7 +222,10 @@ namespace NuGet.PackageManagement.Utility
             else
             {
                 lockFile = new PackagesLockFile();
-                lockFile.Targets.Add(new PackagesLockFileTarget());
+                lockFile.Targets.Add(new PackagesLockFileTarget
+                {
+                    TargetFramework = targetFramework
+                });
             }
 
             return lockFile;
@@ -306,9 +317,11 @@ namespace NuGet.PackageManagement.Utility
             }
 
             var lockFile = new PackagesLockFile();
-            var target = new PackagesLockFileTarget();
+            var target = new PackagesLockFileTarget
+            {
+                TargetFramework = projectTfm
+            };
             lockFile.Targets.Add(target);
-            target.TargetFramework = projectTfm;
 
             using (var stream = File.OpenRead(pcFile))
             {

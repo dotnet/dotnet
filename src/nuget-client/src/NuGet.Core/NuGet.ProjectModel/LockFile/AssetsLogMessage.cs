@@ -1,8 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +18,9 @@ namespace NuGet.ProjectModel
         [JsonConverter(typeof(JsonStringEnumConverter<LogLevel>))]
         public LogLevel Level { get; }
         public string Message { get; }
-        public string ProjectPath { get; set; }
+
+        /// <inheritdoc />
+        public string? ProjectPath { get; set; }
 
         [JsonIgnore]
         public WarningLevel WarningLevel { get; set; } = WarningLevel.Severe; //setting default to Severe as 0 implies show no warnings
@@ -40,9 +40,9 @@ namespace NuGet.ProjectModel
             }
         }
 
-        public string FilePath { get; set; }
-        public string LibraryId { get; set; }
-        public IReadOnlyList<string> TargetGraphs { get; set; }
+        public string? FilePath { get; set; }
+        public string? LibraryId { get; set; }
+        public IReadOnlyList<string>? TargetGraphs { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int StartLineNumber { get; set; }
@@ -58,6 +58,11 @@ namespace NuGet.ProjectModel
 
         public static IAssetsLogMessage Create(IRestoreLogMessage logMessage)
         {
+            if (logMessage == null)
+            {
+                throw new ArgumentNullException(nameof(logMessage));
+            }
+
             return new AssetsLogMessage(logMessage.Level, logMessage.Code, logMessage.Message)
             {
                 ProjectPath = logMessage.ProjectPath,
@@ -82,10 +87,10 @@ namespace NuGet.ProjectModel
             LogLevel level,
             NuGetLogCode code,
             string message,
-            string projectPath,
-            string filePath,
-            string libraryId,
-            IReadOnlyList<string> targetGraphs,
+            string? projectPath,
+            string? filePath,
+            string? libraryId,
+            IReadOnlyList<string>? targetGraphs,
             int startLineNumber,
             int startColumnNumber,
             int endLineNumber,
@@ -93,11 +98,11 @@ namespace NuGet.ProjectModel
         {
             Level = level;
             Code = code;
-            Message = message;
+            Message = message ?? throw new ArgumentNullException(nameof(message));
             ProjectPath = projectPath;
             FilePath = filePath;
             LibraryId = libraryId;
-            TargetGraphs = targetGraphs ?? new List<string>();
+            TargetGraphs = targetGraphs;
             StartLineNumber = startLineNumber;
             StartColumnNumber = startColumnNumber;
             EndLineNumber = endLineNumber;
@@ -105,13 +110,13 @@ namespace NuGet.ProjectModel
         }
 
         public AssetsLogMessage(LogLevel logLevel, NuGetLogCode errorCode,
-            string errorString, string targetGraph)
+            string errorString, string? targetGraph)
         {
             Level = logLevel;
             Code = errorCode;
-            Message = errorString;
+            Message = errorString ?? throw new ArgumentNullException(nameof(errorString));
 
-            if (!string.IsNullOrEmpty(targetGraph))
+            if (targetGraph is { Length: > 0 })
             {
                 TargetGraphs = new List<string>
                 {
@@ -125,7 +130,7 @@ namespace NuGet.ProjectModel
         {
         }
 
-        public bool Equals(IAssetsLogMessage other)
+        public bool Equals(IAssetsLogMessage? other)
         {
             if (other == null)
             {
@@ -155,7 +160,7 @@ namespace NuGet.ProjectModel
             return false;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
             return Equals(other as IAssetsLogMessage);
         }
