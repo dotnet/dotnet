@@ -42,9 +42,16 @@
     <!-- DefaultVersions.props -->
     <OfficialBuild Condition="'$(OfficialBuild)' != ''">false</OfficialBuild>
     <OfficialBuild Condition="'$(OfficialBuildId)' != ''">true</OfficialBuild>
+  </PropertyGroup>
 
-    <!-- TargetFrameworkDefaults.props -->
-    <NetCurrent>net11.0</NetCurrent>
+  <!-- Override the bootstrap Arcade framework defaults while they lag behind the product.
+       Keep this fallback for future retargeting; update the condition and defaults together. -->
+  <PropertyGroup Condition="'$(NetCurrent)' != 'net12.0'">
+    <NetCurrent>net12.0</NetCurrent>
+    <NetPrevious>net11.0</NetPrevious>
+    <NetPrevious Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(NetPrevious)' != ''">$(NetCurrent)</NetPrevious>
+    <NetMinimum>net10.0</NetMinimum>
+    <NetMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NetMinimum>
   </PropertyGroup>
 
   <!-- Manually import the Versions.props file when the Arcade SDK isn't used. -->
