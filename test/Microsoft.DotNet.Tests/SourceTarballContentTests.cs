@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Formats.Tar;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -79,6 +80,23 @@ public class SourceTarballContentTests
         string actualContent = string.Join(Environment.NewLine, filteredMissing);
         string? message = BaselineHelper.CompareBaselineContents(BaselineFileName, actualContent, OutputHelper, Config.LogsDirectory, BaselineSubDir);
         Assert.True(message == null, message);
+    }
+
+    [Fact(Skip = "A repository root and source tarball are required", SkipWhen = nameof(ExcludeSourceTarballContentTests))]
+    public void SourceTarballHasExpectedOwnership()
+    {
+        string sourceTarballPath = Config.SourceTarballPath!;
+
+        using FileStream fileStream = File.OpenRead(sourceTarballPath);
+        using GZipStream gzipStream = new(fileStream, CompressionMode.Decompress);
+        using TarReader reader = new(gzipStream);
+
+        TarEntry? entry;
+        while ((entry = reader.GetNextEntry()) is not null)
+        {
+            Assert.True(entry.Uid == 2001, $"{entry.Name} has UID {entry.Uid}, expected 2001.");
+            Assert.True(entry.Gid == 2001, $"{entry.Name} has GID {entry.Gid}, expected 2001.");
+        }
     }
 
     /// <summary>
