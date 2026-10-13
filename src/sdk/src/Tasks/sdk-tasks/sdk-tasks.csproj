@@ -1,7 +1,7 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <SkipCurrentVersionOverrides Condition="'$(DotNetBuildFromVMR)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true'">true</SkipCurrentVersionOverrides>
+    <SkipCurrentSourceBuiltPackageVersionOverrides Condition="'$(DotNetBuildFromVMR)' == 'true' or '$(DotNetBuildSourceOnly)' == 'true'">true</SkipCurrentSourceBuiltPackageVersionOverrides>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />

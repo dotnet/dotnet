@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <SkipCurrentVersionOverrides Condition="'$(DotNetBuild)' == 'true'">true</SkipCurrentVersionOverrides>
+    <SkipCurrentSourceBuiltPackageVersionOverrides Condition="'$(DotNetBuild)' == 'true'">true</SkipCurrentSourceBuiltPackageVersionOverrides>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
