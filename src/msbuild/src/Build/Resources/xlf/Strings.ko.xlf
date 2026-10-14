@@ -3079,11 +3079,6 @@ Utilization:          {0} Average Utilization: {1:###.0}</source>
         <target state="translated">빌드를 시작했습니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="FileLocation">
-        <source>{0} ({1},{2})</source>
-        <target state="translated">{0}({1},{2})</target>
-        <note>A file location to be embedded in a string.</note>
-      </trans-unit>
       <trans-unit id="MSBuild.CannotRebaseOutputItemPath">
         <source>MSB3203: The output path "{0}" cannot be rebased. {1}</source>
         <target state="translated">MSB3203: 출력 경로 "{0}"의 기준 주소를 다시 지정할 수 없습니다. {1}</target>
@@ -3496,14 +3491,6 @@ Utilization:          {0} Average Utilization: {1:###.0}</source>
         <source>MSB5015: The properties could not be read from the WebsiteProperties section of the "{0}" project.</source>
         <target state="translated">MSB5015: "{0}" 프로젝트의 WebsiteProperties 섹션에서 속성을 읽을 수 없습니다.</target>
         <note>{StrBegin="MSB5015: "}UE: The solution filename is provided separately to loggers.</note>
-      </trans-unit>
-      <trans-unit id="SubCategoryForSolutionParsingErrors">
-        <source>Solution file</source>
-        <target state="translated">솔루션 파일</target>
-        <note>UE: this fragment is used to describe errors found while parsing solution files. For example, if a normal error is
-      displayed like this: "MSBUILD : error MSB0000: This is an error.", then an error from solution parsing would look like this:
-      "MSBUILD : Solution file error MSB0000: This is an error."
-      LOCALIZATION: This fragment needs to be localized.</note>
       </trans-unit>
       <trans-unit id="UnrecognizedSolutionComment">
         <source>Unrecognized solution version "{0}", attempting to continue.</source>
