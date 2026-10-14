@@ -97,7 +97,10 @@ namespace NuGet.PackageManagement.Test.Utility
             {
                 Targets = new List<PackagesLockFileTarget>
                 {
-                    new PackagesLockFileTarget()
+                    new PackagesLockFileTarget
+                    {
+                        TargetFramework = NuGetFramework.AnyFramework
+                    }
                 }
             };
 
@@ -127,6 +130,7 @@ namespace NuGet.PackageManagement.Test.Utility
                 {
                     new PackagesLockFileTarget
                     {
+                        TargetFramework = NuGetFramework.AnyFramework,
                         Dependencies = new List<LockFileDependency>
                         {
                             new LockFileDependency
@@ -163,6 +167,7 @@ namespace NuGet.PackageManagement.Test.Utility
                 {
                     new PackagesLockFileTarget
                     {
+                        TargetFramework = NuGetFramework.AnyFramework,
                         Dependencies = new List<LockFileDependency>
                         {
                             new LockFileDependency
@@ -202,6 +207,7 @@ namespace NuGet.PackageManagement.Test.Utility
                 {
                     new PackagesLockFileTarget
                     {
+                        TargetFramework = NuGetFramework.AnyFramework,
                         Dependencies = new List<LockFileDependency>
                         {
                             new LockFileDependency
@@ -246,6 +252,7 @@ namespace NuGet.PackageManagement.Test.Utility
                 {
                     new PackagesLockFileTarget
                     {
+                        TargetFramework = NuGetFramework.AnyFramework,
                         Dependencies = new List<LockFileDependency>
                         {
                             new LockFileDependency
@@ -290,6 +297,7 @@ namespace NuGet.PackageManagement.Test.Utility
                 {
                     new PackagesLockFileTarget
                     {
+                        TargetFramework = NuGetFramework.AnyFramework,
                         Dependencies = new List<LockFileDependency>
                         {
                             new LockFileDependency

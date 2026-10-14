@@ -67,7 +67,7 @@ namespace NuGet.Commands
             newPackageSource.AllowInsecureConnections = args.AllowInsecureConnections;
             if (args.MinPublishAgeHours.HasValue)
             {
-                newPackageSource.MinPublishAge = RunnerHelper.ParseMinPublishAge(args.MinPublishAgeHours.Value);
+                newPackageSource.MinPublishAge = TimeSpan.FromHours(args.MinPublishAgeHours.Value);
             }
 
             if (newPackageSource.IsHttp && !newPackageSource.IsHttps && !newPackageSource.AllowInsecureConnections)
@@ -326,7 +326,7 @@ namespace NuGet.Commands
 
             if (args.MinPublishAgeHours.HasValue)
             {
-                existingSource.MinPublishAge = RunnerHelper.ParseMinPublishAge(args.MinPublishAgeHours.Value);
+                existingSource.MinPublishAge = TimeSpan.FromHours(args.MinPublishAgeHours.Value);
             }
 
             sourceProvider.UpdatePackageSource(existingSource, updateCredentials: existingSource.Credentials != null, updateEnabled: false);
@@ -438,21 +438,6 @@ namespace NuGet.Commands
 
             // specified protocol version is invalid
             throw new CommandException(string.Format(Strings.SourcesCommandValidProtocolVersion, minSupportedProtocolVersion, maxSupportedProtocolVersion));
-        }
-
-        public static TimeSpan ParseMinPublishAge(uint minPublishAgeHours)
-        {
-            if (minPublishAgeHours > TimeSpan.MaxValue.TotalHours)
-            {
-                throw new CommandException(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        Strings.SourcesCommandMinPublishAgeHoursOutOfRange,
-                        minPublishAgeHours,
-                        (uint)TimeSpan.MaxValue.TotalHours));
-            }
-
-            return TimeSpan.FromHours(minPublishAgeHours);
         }
     }
 }

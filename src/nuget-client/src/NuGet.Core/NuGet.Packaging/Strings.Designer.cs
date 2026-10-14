@@ -158,6 +158,15 @@ namespace NuGet.Packaging {
                 return ResourceManager.GetString("CertUtilityCertificateCrlUrl", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Freshest CRL URL: {0}.
+        /// </summary>
+        internal static string CertUtilityCertificateFreshestCrlUrl {
+            get {
+                return ResourceManager.GetString("CertUtilityCertificateFreshestCrlUrl", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to OCSP URL: {0}.
@@ -165,6 +174,15 @@ namespace NuGet.Packaging {
         internal static string CertUtilityCertificateOcspUrl {
             get {
                 return ResourceManager.GetString("CertUtilityCertificateOcspUrl", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to CA Issuers URL: {0}.
+        /// </summary>
+        internal static string CertUtilityCertificateCaIssuersUrl {
+            get {
+                return ResourceManager.GetString("CertUtilityCertificateCaIssuersUrl", resourceCulture);
             }
         }
         

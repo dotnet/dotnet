@@ -220,7 +220,7 @@
       </trans-unit>
       <trans-unit id="Error_FloatingVersionsNotAllowedWithPackageSourceCooldown">
         <source>The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</source>
-        <target state="translated">Os seguintes itens PackageReference não podem especificar uma versão flutuante porque o resfriamento da origem do pacote está habilitado: {0}.</target>
+        <target state="new">The following PackageReference items cannot specify a floating version because package source cooldown is enabled: {0}.</target>
         <note>
       0 - The comma delimited list of package names that specified a floating version.
       Do not localize `PackageReference`
@@ -1236,11 +1236,6 @@ Atualize o SDK do .NET ou remova RestoreUseLegacyDependencyResolver para usar es
         <source>The source specified is invalid. Provide a valid source.</source>
         <target state="translated">A origem especificada é inválida. Forneça uma origem válida.</target>
         <note />
-      </trans-unit>
-      <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
-        <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
-        <target state="translated">O tempo mínimo de publicação de {0} horas é inválido. O valor deve estar entre 0 e {1}.</target>
-        <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">
         <source>Unable to find any package source(s) matching name: {0}.</source>

@@ -126,7 +126,8 @@ namespace NuGet.VisualStudio.SolutionExplorer.Models
                 int j = 0;
                 foreach (IAssetsLogMessage logMessage in lockFile.LogMessages)
                 {
-                    if (!logMessage.TargetGraphs.Contains(target))
+                    // We only handle package specific messages.
+                    if (logMessage.LibraryId == null || logMessage.TargetGraphs?.Contains(target) != true)
                     {
                         continue;
                     }

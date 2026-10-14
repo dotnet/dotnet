@@ -8,8 +8,6 @@
     <OutputName>$(TargetName)</OutputName>
     <OutputType>vsix</OutputType>
     <IsPackage>true</IsPackage>
-    <!-- Keep in sync with the GetNuGetVsixVersion target in NuGet.VisualStudio.Client.csproj. -->
-    <NuGetVsixVersion>$(NuGetSdkVsSemanticVersion).$(PreReleaseVersion)</NuGetVsixVersion>
     <!-- We set this to false here so we can batch sign the vsix later -->
     <MicroBuild_SigningEnabled>false</MicroBuild_SigningEnabled>
   </PropertyGroup>

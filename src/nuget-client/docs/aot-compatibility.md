@@ -6,6 +6,7 @@ However, NuGet still utilizes Newtonsoft.Json for deserialization, which uses re
 We are in the process of migrating to System.Text.Json source-generated deserialization.
 Until the migration is complete, both deserialization paths coexist, gated under a feature switch.
 Enabling the feature switch ensures NuGet.Protocol uses System.Text.Json instead of Newtonsoft.Json, allowing the linker to trim the Newtonsoft.Json code path entirely.
+The global.json SDK resolver reader uses System.Text.Json directly and is not controlled by this switch.
 
 ## Using NuGet in a Native AOT Application
 
