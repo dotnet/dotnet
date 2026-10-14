@@ -113,7 +113,7 @@
       Overwrite="true"
       Condition="'@(AbsoluteSymbolPath)' != ''" />
 
-    <Exec Command="tar --numeric-owner -czf $(SymbolsArchiveName) --files-from=$(SymbolsList)"
+    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(SymbolsArchiveName) --files-from=$(SymbolsList)"
           WorkingDirectory="$(SymbolsRoot)" Condition="Exists($(SymbolsList))" />
     <Message Importance="High" Text="Packaged symbols to $(SymbolsArchiveName)" Condition="Exists($(SymbolsArchiveName))" />
 
