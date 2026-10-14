@@ -26,6 +26,12 @@ parameters:
 - name: bootstrapArtifactName
   type: string
   default: SB_CentOSStream10_Online_MsftSdk_x64_Artifacts
+- name: buildLogsArtifactName
+  type: string
+  default: SB_CentOSStream10_Offline_CurrentSourceBuiltSdk_x64_BuildLogs_Attempt1
+- name: testRepetitions
+  type: number
+  default: 10
 - name: sdkFileName
   type: string
   default: dotnet-sdk-12.0.100-ci-centos.10-x64.tar.gz
@@ -114,6 +120,7 @@ jobs:
       runOnline: false
       skipBuild: true
       runTests: true
+      unixTestRepetitions: ${{ parameters.testRepetitions }}
       brandingType: empty
       reuseBuildArtifactsFrom:
       - PrebuiltSourceBuild
@@ -152,6 +159,19 @@ jobs:
           targetPath: $(Build.SourcesDirectory)/artifacts
           allowPartiallySucceededBuilds: true
           allowFailedBuilds: true
+      - task: DownloadPipelineArtifact@2
+        displayName: Restore the original build-time binary-scan report used by validation
+        inputs:
+          buildType: specific
+          project: public
+          definition: '278'
+          buildVersionToDownload: specific
+          pipelineId: ${{ parameters.sourceBuildId }}
+          artifactName: ${{ parameters.buildLogsArtifactName }}
+          itemPattern: artifacts/log/Release/binary-report/NewBinaries.txt
+          targetPath: $(Build.SourcesDirectory)
+          allowPartiallySucceededBuilds: true
+          allowFailedBuilds: true
       - task: CopyFiles@2
         displayName: Supply shipping and nonshipping product packages to validation restore
         inputs:
@@ -169,6 +189,7 @@ jobs:
           TargetFolder: $(Pipeline.Workspace)/prebuilt-test-packages
       - bash: |
           set -euo pipefail
+          test -f artifacts/log/Release/binary-report/NewBinaries.txt
           python3 "$(reproToolsDirectory)/prepare-test-toolset.py" \
             --packages "$(previouslySourceBuiltArtifactsDir)" --source src/scenario-tests
           python3 "$(reproToolsDirectory)/prepare-sdk.py" \

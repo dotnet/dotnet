@@ -9,6 +9,13 @@ the original complete VMR commit, restore its product outputs and manifests,
 and execute the template's full `build.sh --test --source-only` phase using the
 original source-build bootstrap SDK and package cache.
 
+Each job repeats the full test phase ten times by default (`testRepetitions`).
+Repetitions stop on the first test-phase failure. Each invocation has a separate
+orchestrator binlog, and scenario logs are preserved under
+`artifacts/log/Release/repetitions/<iteration>`. The original binary-scan report
+is restored from the original BuildLogs artifact so build-time validation inputs
+are retained without rerunning product compilation.
+
 `skipBuild: true` removes product compilation. The supported
 `DotNetSourceOnlyTestOnly=true` validation mode also removes the scenario
 harness's product-repository build dependencies. The normal build scripts still

@@ -146,6 +146,11 @@ parameters:
   type: object
   default: {}
 
+# Repeat the complete Unix test phase without repeating checkout and bootstrap.
+- name: unixTestRepetitions
+  type: number
+  default: 1
+
 - name: finalizeSteps
   type: stepList
   default: []
@@ -972,7 +977,7 @@ jobs:
           set -e
 
           customPreBuildArgs=''
-          customBuildArgs="--test --excludeCIBinarylog /bl:artifacts/log/Release/Test.binlog $(baseArguments)"
+          customBuildArgs="--test --excludeCIBinarylog $(baseArguments)"
           extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) ${{ parameters.extraProperties }}"
 
           if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
@@ -1006,13 +1011,36 @@ jobs:
             echo "  Hard nofile limit: $(ulimit -Hn 2>/dev/null || echo 'unknown')"
           fi
 
-          echo ""
-          echo "=== Run Tests ==="
-          echo "Running $customPreBuildArgs ./build.sh $buildArgs"
-          $customPreBuildArgs ./build.sh $buildArgs
+          repetitions='${{ parameters.unixTestRepetitions }}'
+          if [[ ! "$repetitions" =~ ^[1-9][0-9]*$ ]]; then
+            echo "Expected a positive integer for unixTestRepetitions." >&2
+            exit 1
+          fi
+          for ((iteration = 1; iteration <= repetitions; iteration++)); do
+            binaryLog=artifacts/log/Release/Test.binlog
+            if ((repetitions > 1)); then
+              binaryLog="artifacts/log/Release/Test-$iteration.binlog"
+            fi
+            echo ""
+            echo "=== Run Tests ($iteration/$repetitions) ==="
+            echo "Running $customPreBuildArgs ./build.sh $buildArgs /bl:$binaryLog"
+            testExit=0
+            $customPreBuildArgs ./build.sh $buildArgs "/bl:$binaryLog" || testExit=$?
+            if ((repetitions > 1)) && [[ -d artifacts/log/Release/scenario-tests ]]; then
+              mkdir -p artifacts/log/Release/repetitions
+              $customPreBuildArgs cp -a artifacts/log/Release/scenario-tests \
+                "artifacts/log/Release/repetitions/$iteration"
+            fi
+            if ((testExit != 0)); then
+              exit "$testExit"
+            fi
+          done
 
         displayName: Run Tests
-        timeoutInMinutes: ${{ variables.runTestsTimeout }}
+        ${{ if gt(parameters.unixTestRepetitions, 1) }}:
+          timeoutInMinutes: 150
+        ${{ else }}:
+          timeoutInMinutes: ${{ variables.runTestsTimeout }}
         env: ${{ parameters.testEnvironment }}
 
   - ${{ parameters.finalizeSteps }}
