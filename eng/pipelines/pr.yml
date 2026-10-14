@@ -12,104 +12,95 @@
 #   https://dev.azure.com/dnceng/internal/_build?definitionId=1532
 #   YML schedule trigger disabled by override in AzDO UI
 
-# Only run daily on schedule to save resources
+# Temporary download-only crash reproduction; queue this diagnostic branch manually.
 trigger: none
-
-pr:
-  branches:
-    include:
-    - main
-    - release/*
-  paths:
-    include:
-      - '*'
-    exclude:
-      - 'docs/*'
-      - '*.md'
-
-schedules:
-  - cron: "0 5 * * *" # run at 05:00 (UTC)
-    branches:
-      include:
-      - main
-    always: false # run only if there were changes since the last successful scheduled run.
+pr: none
 
 parameters:
-- name: buildScope
-  displayName: 'Build Scope'
+- name: sourceBuildId
+  type: number
+  default: 1629149
+- name: artifactName
   type: string
-  default: 'auto'
-  values:
-    - auto
-    - lite
-    - full
+  default: SB_CentOSStream10_Offline_CurrentSourceBuiltSdk_x64_Artifacts_Attempt1
+- name: sdkFileName
+  type: string
+  default: dotnet-sdk-12.0.100-ci-centos.10-x64.tar.gz
+- name: sdkSha512
+  type: string
+  default: 5a3a58f354efc5a73a1858ce25b536852009fabd6d65ef3508ef6df011bbcd031725eb116ec11477447a682a58d6f7daa75b11b4796c10f1971c10587e348ea8
+- name: iterations
+  type: number
+  default: 1000
+- name: parallelism
+  type: number
+  default: 8
+- name: commands
+  type: string
+  default: globaljson
+- name: locales
+  type: string
+  default: en-US,it-IT
 
 variables:
-- name: isScheduleTrigger
-  value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
-
-- name: isPRTrigger
-  value: ${{ eq(variables['Build.Reason'], 'PullRequest') }}
-
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
-  - name: skipComponentGovernanceDetection  # we run CG on internal builds only
+  - name: skipComponentGovernanceDetection
     value: true
-
-  - name: Codeql.Enabled  # we run CodeQL on internal builds only
+  - name: Codeql.Enabled
     value: false
 
-- template: /eng/common/templates/variables/pool-providers.yml@self
-- template: /eng/pipelines/templates/variables/vmr-build.yml@self
-
-stages:
-- template: /eng/pipelines/templates/stages/vmr-build.yml
-  parameters:
-    ${{ if eq(parameters.buildScope, 'auto') }}:
-      ${{ if or(eq(variables.isScheduleTrigger, 'true'), contains(variables['Build.DefinitionName'], '-full')) }}:
-        scope: full
-      ${{ elseif eq(variables.isPRTrigger, 'true') }}:
-        scope: lite
-      ${{ else }}:
-        scope: full
-    ${{ else }}:
-      scope: ${{ parameters.buildScope }}
-    # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
-    # This is enabled for all branches except main and 1xx
-    excludeRuntimeDependentJobs: false
-
-- stage: ValidateUserChanges
-  displayName: Validate user changes in VMR
-  dependsOn: []
-  condition: and(
-              eq(variables['isPRTrigger'], 'true'),
-              and(
-                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
-                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'darc-')),
-                  not(startsWith(variables['System.PullRequest.SourceBranch'], 'release-pr-'))
-              )
-          )
-  jobs:
-    - job: Validate
-      displayName: Run Validation Script
-      pool:
-        name: $(shortStackPoolName)
-        demands: ImageOverride -equals $(poolImage_Linux)
-      steps:
-        - checkout: self
-          fetchDepth: 0
-          persistCredentials: ${{ ne(variables['System.TeamProject'], 'public') }}
-          retryCountOnTaskFailure: 5
-
-        - script: |
-            set -ex
-            echo "Fetching target branch: $(System.PullRequest.TargetBranch)"
-            git fetch origin $(System.PullRequest.TargetBranch)
-          displayName: Fetch target branch
-
-        - script: |
-            set -ex
-            eng/common/dotnet.sh run --project eng/tools/ChangeValidation/ChangeValidation.csproj
-          displayName: Run ChangeValidation tool
-          env:
-            SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
-            SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)
+jobs:
+- job: ReproduceSdkCrash
+  timeoutInMinutes: 120
+  pool:
+    name: NetCore-Public-XL
+    demands: ImageOverride -equals build.azurelinux.3.amd64.open
+  container:
+    image: mcr.microsoft.com/dotnet-buildtools/prereqs@sha256:b06d7a274acbc1f5e7b2ae9eefeb8e73012708d79aff5c637b0321b7984a96d9
+    options: --privileged --ulimit core=-1 --ulimit nofile=65536:65536
+  steps:
+  - checkout: self
+    fetchDepth: 1
+  - task: DownloadPipelineArtifact@2
+    displayName: Download prebuilt SDK only
+    inputs:
+      buildType: specific
+      project: public
+      definition: '278'
+      buildVersionToDownload: specific
+      pipelineId: ${{ parameters.sourceBuildId }}
+      artifactName: ${{ parameters.artifactName }}
+      itemPattern: '**/${{ parameters.sdkFileName }}'
+      targetPath: $(Pipeline.Workspace)/sdk-download
+      allowPartiallySucceededBuilds: true
+      allowFailedBuilds: true
+  - bash: |
+      set -euo pipefail
+      python3 eng/repro-sdk-crash/prepare-sdk.py \
+        --input "$(Pipeline.Workspace)/sdk-download" \
+        --filename "$SDK_FILE" --sha512 "$SDK_SHA512" \
+        --output "$(Pipeline.Workspace)/repro-sdk"
+    displayName: Verify and extract SDK
+    env:
+      SDK_FILE: ${{ parameters.sdkFileName }}
+      SDK_SHA512: ${{ parameters.sdkSha512 }}
+  - bash: |
+      set -euo pipefail
+      python3 eng/repro-sdk-crash/reproduce.py \
+        --sdk "$(Pipeline.Workspace)/repro-sdk" \
+        --output "$(Pipeline.Workspace)/repro-results" \
+        --nuget-config "$(Build.SourcesDirectory)/NuGet.config" \
+        --iterations "$ITERATIONS" --parallelism "$PARALLELISM" \
+        --commands "$COMMANDS" --locales "$LOCALES" --verify-dumps
+    displayName: Verify dump capture and repeat SDK commands
+    env:
+      ITERATIONS: ${{ parameters.iterations }}
+      PARALLELISM: ${{ parameters.parallelism }}
+      COMMANDS: ${{ parameters.commands }}
+      LOCALES: ${{ parameters.locales }}
+  - task: PublishPipelineArtifact@1
+    displayName: Publish dumps and reproduction logs
+    condition: always()
+    inputs:
+      targetPath: $(Pipeline.Workspace)/repro-results
+      artifact: sdk-crash-repro-$(Build.BuildId)-$(System.JobAttempt)
