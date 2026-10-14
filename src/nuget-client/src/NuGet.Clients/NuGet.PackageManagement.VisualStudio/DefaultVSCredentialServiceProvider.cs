@@ -23,9 +23,9 @@ namespace NuGet.PackageManagement.VisualStudio
 
         private readonly Lazy<INuGetUILogger> _outputConsoleLogger;
         private readonly IAsyncServiceProvider _asyncServiceProvider;
-        private readonly Func<Task<IEnumerable<ICredentialProvider>>> _vsCredentialProvidersFactory;
-        private readonly Func<Task<IEnumerable<ICredentialProvider>>> _pluginCredentialProvidersFactory;
-        private readonly Func<Task<IEnumerable<ICredentialProvider>>> _credentialPromptFactory;
+        private Func<Task<IEnumerable<ICredentialProvider>>> _vsCredentialProvidersFactory;
+        private Func<Task<IEnumerable<ICredentialProvider>>> _pluginCredentialProvidersFactory;
+        private Func<Task<IEnumerable<ICredentialProvider>>> _credentialPromptFactory;
 
         [ImportingConstructor]
         internal DefaultVSCredentialServiceProvider(Lazy<INuGetUILogger> outputConsoleLogger)
@@ -39,9 +39,6 @@ namespace NuGet.PackageManagement.VisualStudio
         {
             _asyncServiceProvider = asyncServiceProvider ?? throw new ArgumentNullException(nameof(asyncServiceProvider));
             _outputConsoleLogger = outputConsoleLogger ?? throw new ArgumentNullException(nameof(outputConsoleLogger));
-            _vsCredentialProvidersFactory = CreateVsCredentialProvidersAsync;
-            _pluginCredentialProvidersFactory = CreatePluginCredentialProvidersAsync;
-            _credentialPromptFactory = CreateCredentialPromptAsync;
         }
 
         /// <param name="vsCredentialProvidersFactory">Creates the MEF imported Visual Studio credential providers.</param>
@@ -63,6 +60,11 @@ namespace NuGet.PackageManagement.VisualStudio
 
         public async Task<NuGet.Configuration.ICredentialService> GetCredentialServiceAsync()
         {
+            // Binding these delegates can load NuGet.Credentials, so defer it until credentials are needed.
+            _vsCredentialProvidersFactory ??= CreateVsCredentialProvidersAsync;
+            _pluginCredentialProvidersFactory ??= CreatePluginCredentialProvidersAsync;
+            _credentialPromptFactory ??= CreateCredentialPromptAsync;
+
             // Initialize the credential providers. Providers that can acquire credentials without user
             // interaction must come before those that prompt, so that a user is only asked to type
             // credentials when nothing else was able to supply them.

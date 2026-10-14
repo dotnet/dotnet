@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- Generated .NET Standard APIs lack the ExperimentalAttribute annotations present on net8.0.
+       Suppress only the resulting cross-TFM diagnostics: https://github.com/dotnet/sdk/issues/56553 -->
+  <Suppression>
+    <DiagnosticId>CP0023</DiagnosticId>
+    <Left>lib/netstandard2.1/System.Security.Cryptography.Pkcs.dll</Left>
+    <Right>lib/net8.0/System.Security.Cryptography.Pkcs.dll</Right>
+    <IsBaselineSuppression>false</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>
