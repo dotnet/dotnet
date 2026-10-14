@@ -1,0 +1,8 @@
+<Project DefaultTargets="Test">
+  <Target Name="Test">
+    <Error Condition="!Exists('$(TestAssembly)')" Text="The original prebuilt scenario-test assembly is missing." />
+    <Exec Command='"$(TestDotNetRoot)/dotnet" exec --fx-version $(TestFxVersion) "$(TestAssembly)" $(TestArgs)'
+          WorkingDirectory="$(ScenarioProjectDirectory)"
+          EnvironmentVariables="RestoreConfigFile=$(TestRestoreConfigFile);RuntimeFrameworkVersion=$(TestFxVersion)" />
+  </Target>
+</Project>

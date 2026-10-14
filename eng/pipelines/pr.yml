@@ -47,8 +47,16 @@ parameters:
 - name: scenarioRepeats
   type: number
   default: 3
+- name: scenarioHarnessFileName
+  type: string
+  default: Microsoft.DotNet.ScenarioTests.SdkTemplateTests.11.0.0-ci.nupkg
+- name: scenarioHarnessSha512
+  type: string
+  default: 3c03b19dc93c79897be22ca2c4dc040ba287212aed22c7d3eba99472d79e715ac40bb0efa3474b193981a18c9c7bff98a06dbc0b884264d0211ee487cc75f2e3
 
 variables:
+- name: reproSdkDirectory
+  value: $(Build.SourcesDirectory)/artifacts/obj/extracted-dotnet-sdk
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: skipComponentGovernanceDetection
     value: true
@@ -102,7 +110,7 @@ jobs:
       python3 eng/repro-sdk-crash/prepare-sdk.py \
         --input "$(Pipeline.Workspace)/sdk-download" \
         --filename "$SDK_FILE" --sha512 "$SDK_SHA512" \
-        --output "$(Pipeline.Workspace)/repro-sdk" \
+        --output "$(reproSdkDirectory)" \
         2>&1 | tee "$(Pipeline.Workspace)/repro-results/sdk-preparation.log"
     displayName: Verify and extract SDK
     env:
@@ -111,7 +119,7 @@ jobs:
   - bash: |
       set -euo pipefail
       python3 eng/repro-sdk-crash/reproduce.py \
-        --sdk "$(Pipeline.Workspace)/repro-sdk" \
+        --sdk "$(reproSdkDirectory)" \
         --output "$(Pipeline.Workspace)/repro-results/replay" \
         --nuget-config "$(Build.SourcesDirectory)/NuGet.config" \
         --iterations "$ITERATIONS" --parallelism "$PARALLELISM" \
@@ -123,10 +131,24 @@ jobs:
       PARALLELISM: ${{ parameters.parallelism }}
       COMMANDS: ${{ parameters.commands }}
       LOCALES: ${{ parameters.locales }}
+  - task: DownloadPipelineArtifact@2
+    displayName: Download original source-built scenario harness
+    condition: and(succeeded(), eq(variables['reproMode'], 'scenarios'))
+    inputs:
+      buildType: specific
+      project: public
+      definition: '278'
+      buildVersionToDownload: specific
+      pipelineId: ${{ parameters.sourceBuildId }}
+      artifactName: ${{ parameters.artifactName }}
+      itemPattern: packages/Release/NonShipping/scenario-tests/${{ parameters.scenarioHarnessFileName }}
+      targetPath: $(Pipeline.Workspace)/scenario-download
+      allowPartiallySucceededBuilds: true
+      allowFailedBuilds: true
   - bash: |
       set -euo pipefail
       python3 eng/repro-sdk-crash/reproduce.py \
-        --sdk "$(Pipeline.Workspace)/repro-sdk" \
+        --sdk "$(reproSdkDirectory)" \
         --output "$(Pipeline.Workspace)/repro-results/preflight" \
         --iterations 1 --parallelism 1 --dump-prefix COMPlus --verify-dumps
       if [[ ! "$TEST_SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
@@ -134,26 +156,29 @@ jobs:
         exit 1
       fi
       git fetch --no-tags --depth=1 origin "$TEST_SOURCE_COMMIT"
-      mkdir -p "$(Pipeline.Workspace)/scenario-source"
-      git archive "$TEST_SOURCE_COMMIT" src/scenario-tests \
-        | tar -x -C "$(Pipeline.Workspace)/scenario-source"
-    displayName: Verify inherited dump settings and fetch original test sources
+      git show "$TEST_SOURCE_COMMIT:src/scenario-tests/NuGet.config" \
+        | cmp - src/scenario-tests/NuGet.config
+    displayName: Verify inherited dump settings and original restore configuration
     condition: and(succeeded(), eq(variables['reproMode'], 'scenarios'))
     env:
       TEST_SOURCE_COMMIT: ${{ parameters.scenarioSourceCommit }}
   - bash: |
       set -euo pipefail
       sudo -E --preserve-env=HOME python3 eng/repro-sdk-crash/run-scenarios.py \
-        --sdk "$(Pipeline.Workspace)/repro-sdk" \
-        --source "$(Pipeline.Workspace)/scenario-source/src/scenario-tests" \
+        --sdk "$(reproSdkDirectory)" \
+        --source "$(Build.SourcesDirectory)/src/scenario-tests" \
         --source-commit "$TEST_SOURCE_COMMIT" \
+        --harness-package "$(Pipeline.Workspace)/scenario-download/packages/Release/NonShipping/scenario-tests/$HARNESS_FILE" \
+        --harness-sha512 "$HARNESS_SHA512" \
         --output "$(Pipeline.Workspace)/repro-results/scenarios" \
         --repeats "$SCENARIO_REPEATS"
-    displayName: Repeat original scenario-test suite against prebuilt SDK
+    displayName: Replay original prebuilt scenario harness through MSBuild
     condition: and(succeeded(), eq(variables['reproMode'], 'scenarios'))
     env:
       TEST_SOURCE_COMMIT: ${{ parameters.scenarioSourceCommit }}
       SCENARIO_REPEATS: ${{ parameters.scenarioRepeats }}
+      HARNESS_FILE: ${{ parameters.scenarioHarnessFileName }}
+      HARNESS_SHA512: ${{ parameters.scenarioHarnessSha512 }}
   - bash: |
       set -euo pipefail
       if [[ -d "$(Pipeline.Workspace)/repro-results" ]]; then
