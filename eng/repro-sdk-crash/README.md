@@ -15,8 +15,13 @@ harness's product-repository build dependencies. The normal build scripts still
 build the test projects and generated sample projects. This mode uses bootstrap
 Arcade for the scenario harness. Its shell-script toolset is populated from the
 original prebuilt Arcade package, since source-built `-ci` versions cannot be
-downloaded from NuGet. The replay does not reconstruct the processes or cache
-contents left behind by the original product build.
+downloaded from NuGet. Validation's additional local package source includes
+both shipping and nonshipping product packages, with missing packages supplied
+from the original stage-one source-built package archive. Product packages take
+precedence over bootstrap packages. This also supplies Arcade's source-built
+tool dependencies: test-only mode does not add the normal prebuilt feeds.
+The replay does not reconstruct the processes or cache contents left behind by
+the original product build.
 
 Full dumps use `COMPlus_*` settings so scenario subprocesses retain them. The
 intentional capture smoke test is separate from actual test-phase dumps.

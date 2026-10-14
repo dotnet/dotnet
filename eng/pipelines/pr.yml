@@ -153,11 +153,19 @@ jobs:
           allowPartiallySucceededBuilds: true
           allowFailedBuilds: true
       - task: CopyFiles@2
-        displayName: Supply prebuilt packages to the normal standalone validation restore
+        displayName: Supply shipping and nonshipping product packages to validation restore
         inputs:
-          SourceFolder: $(Build.SourcesDirectory)/artifacts/packages/Release/Shipping
+          SourceFolder: $(Build.SourcesDirectory)/artifacts/packages/Release
           Contents: '**/*.nupkg'
           FlattenFolders: true
+          TargetFolder: $(Pipeline.Workspace)/prebuilt-test-packages
+      - task: CopyFiles@2
+        displayName: Supply original source-built tool dependencies without replacing product packages
+        inputs:
+          SourceFolder: $(previouslySourceBuiltArtifactsDir)
+          Contents: '**/*.nupkg'
+          FlattenFolders: true
+          OverWrite: false
           TargetFolder: $(Pipeline.Workspace)/prebuilt-test-packages
       - bash: |
           set -euo pipefail
