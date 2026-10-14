@@ -157,7 +157,14 @@ jobs:
       fi
       git fetch --no-tags --depth=1 origin "$TEST_SOURCE_COMMIT"
       git show "$TEST_SOURCE_COMMIT:src/scenario-tests/NuGet.config" \
-        | cmp - src/scenario-tests/NuGet.config
+        | python3 -c '
+      import pathlib
+      import sys
+
+      if sys.stdin.buffer.read() != pathlib.Path(sys.argv[1]).read_bytes():
+          raise SystemExit("NuGet.config differs from the pinned scenario-test source")
+      print("Verified NuGet.config matches the pinned scenario-test source.")
+      ' src/scenario-tests/NuGet.config
     displayName: Verify inherited dump settings and original restore configuration
     condition: and(succeeded(), eq(variables['reproMode'], 'scenarios'))
     env:
