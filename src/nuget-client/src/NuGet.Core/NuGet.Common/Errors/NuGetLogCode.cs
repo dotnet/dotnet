@@ -279,6 +279,7 @@ namespace NuGet.Common
         /// <summary>
         /// Package Signature is invalid
         /// </summary>
+        [Obsolete]
         NU1410 = 1410,
 
         /// <summary>
@@ -700,6 +701,7 @@ namespace NuGet.Common
         /// <summary>
         /// Error_UnableToLocateBuildOutput
         /// </summary>
+        [Obsolete]
         NU5007 = 5007,
 
         /// <summary>
@@ -846,6 +848,7 @@ namespace NuGet.Common
         /// <summary>
         /// https://aka.ms/malformedNuGetLicenseUrl
         /// </summary>
+        [Obsolete]
         NU5036 = 5036,
 
         /// <summary>
@@ -876,6 +879,7 @@ namespace NuGet.Common
         /// <summary>
         /// Error_ProjectJsonPack_Deprecated_And_Disabled
         /// </summary>
+        [Obsolete]
         NU5042 = 5042,
 
         /// <summary>
@@ -946,6 +950,7 @@ namespace NuGet.Common
         /// <summary>
         /// LegacyVersionWarning
         /// </summary>
+        [Obsolete]
         NU5105 = 5105,
 
         /// <summary>
@@ -1046,6 +1051,7 @@ namespace NuGet.Common
         ///<summary>
         /// ProjectJsonPack_Deprecated
         /// </summary>
+        [Obsolete]
         NU5126 = 5126,
 
         /// <summary>
