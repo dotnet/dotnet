@@ -46,9 +46,4 @@ public class AssemblyResolveEventArgs : EventArgs
     /// Gets or sets the name of the item to resolve.
     /// </summary>
     public string? Name { get; set; }
-
-    /// <summary>
-    /// Gets or sets the assembly that requested the resolution, if available.
-    /// </summary>
-    public Assembly? RequestingAssembly { get; set; }
 }

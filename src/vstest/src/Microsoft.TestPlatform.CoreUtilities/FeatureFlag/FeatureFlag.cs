@@ -78,19 +78,12 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable turning dynamic code coverage for native code to OFF by default. Setting this to 1 will skip adding the setting.
     public const string VSTEST_DISABLE_DYNAMICNATIVE_CODECOVERAGE_DEFAULT_SETTING = nameof(VSTEST_DISABLE_DYNAMICNATIVE_CODECOVERAGE_DEFAULT_SETTING);
 
-    // When set, warns when vstest provides its own copy of a tracked assembly (e.g. Newtonsoft.Json)
-    // to resolve a dependency of an extension that did not ship its own copy.
-    // Set VSTEST_OPTIN_WARN_MISSING_EXTENSIONS_DEPENDENCIES=1 to opt into warnings before enforcement.
-    public const string VSTEST_OPTIN_WARN_MISSING_EXTENSIONS_DEPENDENCIES = nameof(VSTEST_OPTIN_WARN_MISSING_EXTENSIONS_DEPENDENCIES);
-
-    // Disables the warning about missing extension dependencies, even after enforcement.
-    public const string VSTEST_DISABLE_WARN_MISSING_EXTENSIONS_DEPENDENCIES = nameof(VSTEST_DISABLE_WARN_MISSING_EXTENSIONS_DEPENDENCIES);
-
     // Disable the Unix handling of the directory holding the test session artifacts: narrowing a directory
     // vstest creates to its owner, and verifying on Linux that a directory given by VSTEST_ARTIFACTS_DIRECTORY
     // is owned by the current user and reachable by nobody else. Set it to 1 where that ownership or those
     // permissions cannot be represented or changed, such as a mounted Windows or network volume.
     public const string VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION = nameof(VSTEST_DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION);
+
 
 
     [Obsolete("Only use this in tests.")]
