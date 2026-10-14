@@ -12,7 +12,7 @@
 #   https://dev.azure.com/dnceng/internal/_build?definitionId=1532
 #   YML schedule trigger disabled by override in AzDO UI
 
-# Temporary crash reproduction with a prebuilt SDK; queue this diagnostic branch manually.
+# Temporary test-only replay of the original source-build job; queue manually.
 trigger: none
 pr: none
 
@@ -23,40 +23,28 @@ parameters:
 - name: artifactName
   type: string
   default: SB_CentOSStream10_Offline_CurrentSourceBuiltSdk_x64_Artifacts_Attempt1
+- name: bootstrapArtifactName
+  type: string
+  default: SB_CentOSStream10_Online_MsftSdk_x64_Artifacts
 - name: sdkFileName
   type: string
   default: dotnet-sdk-12.0.100-ci-centos.10-x64.tar.gz
 - name: sdkSha512
   type: string
   default: 5a3a58f354efc5a73a1858ce25b536852009fabd6d65ef3508ef6df011bbcd031725eb116ec11477447a682a58d6f7daa75b11b4796c10f1971c10587e348ea8
-- name: iterations
-  type: number
-  default: 1000
-- name: parallelism
-  type: number
-  default: 8
-- name: commands
-  type: string
-  default: globaljson
-- name: locales
-  type: string
-  default: en-US,it-IT
-- name: scenarioSourceCommit
+- name: sourceCommit
   type: string
   default: 7ce4ffe96338f8ab32e8215021a1ce8a710b1577
-- name: scenarioRepeats
-  type: number
-  default: 3
-- name: scenarioHarnessFileName
-  type: string
-  default: Microsoft.DotNet.ScenarioTests.SdkTemplateTests.11.0.0-ci.nupkg
-- name: scenarioHarnessSha512
-  type: string
-  default: 3c03b19dc93c79897be22ca2c4dc040ba287212aed22c7d3eba99472d79e715ac40bb0efa3474b193981a18c9c7bff98a06dbc0b884264d0211ee487cc75f2e3
 
 variables:
-- name: reproSdkDirectory
-  value: $(Build.SourcesDirectory)/artifacts/obj/extracted-dotnet-sdk
+- template: /eng/common/templates/variables/pool-providers.yml@self
+- template: /eng/pipelines/templates/variables/vmr-build.yml@self
+  parameters:
+    buildSourceOnly: true
+- name: defaultContainerOptions
+  value: --privileged --ulimit core=-1 --ulimit nofile=65536:65536
+- name: reproToolsDirectory
+  value: $(Agent.TempDirectory)/sdk-crash-repro
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
   - name: skipComponentGovernanceDetection
     value: true
@@ -64,23 +52,7 @@ variables:
     value: false
 
 jobs:
-- job: ReproduceSdkCrash
-  timeoutInMinutes: 120
-  strategy:
-    maxParallel: 4
-    matrix:
-      CommandLoop:
-        reproMode: commands
-        reproLane: command-loop
-      Scenarios1:
-        reproMode: scenarios
-        reproLane: scenarios-1
-      Scenarios2:
-        reproMode: scenarios
-        reproLane: scenarios-2
-      Scenarios3:
-        reproMode: scenarios
-        reproLane: scenarios-3
+- job: PrebuiltSourceBuild
   pool:
     name: NetCore-Public-XL
     demands: ImageOverride -equals build.azurelinux.3.amd64.open
@@ -90,112 +62,132 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
-  - bash: mkdir -p "$(Pipeline.Workspace)/repro-results"
-    displayName: Initialize reproduction diagnostics
   - task: DownloadPipelineArtifact@2
-    displayName: Download prebuilt SDK only
+    displayName: Download the original stage-one SDK and source-built package archive
     inputs:
       buildType: specific
       project: public
       definition: '278'
       buildVersionToDownload: specific
       pipelineId: ${{ parameters.sourceBuildId }}
-      artifactName: ${{ parameters.artifactName }}
-      itemPattern: '**/${{ parameters.sdkFileName }}'
-      targetPath: $(Pipeline.Workspace)/sdk-download
+      artifactName: ${{ parameters.bootstrapArtifactName }}
+      itemPattern: |
+        assets/*/dotnet-sdk-*.tar.gz
+        assets/*/Private.SourceBuilt.Artifacts.*.tar.gz
+      targetPath: $(Build.ArtifactStagingDirectory)/prebuilt
       allowPartiallySucceededBuilds: true
       allowFailedBuilds: true
   - bash: |
       set -euo pipefail
-      python3 eng/repro-sdk-crash/prepare-sdk.py \
-        --input "$(Pipeline.Workspace)/sdk-download" \
-        --filename "$SDK_FILE" --sha512 "$SDK_SHA512" \
-        --output "$(reproSdkDirectory)" \
-        2>&1 | tee "$(Pipeline.Workspace)/repro-results/sdk-preparation.log"
-    displayName: Verify and extract SDK
-    env:
-      SDK_FILE: ${{ parameters.sdkFileName }}
-      SDK_SHA512: ${{ parameters.sdkSha512 }}
-  - bash: |
-      set -euo pipefail
-      python3 eng/repro-sdk-crash/reproduce.py \
-        --sdk "$(reproSdkDirectory)" \
-        --output "$(Pipeline.Workspace)/repro-results/replay" \
-        --nuget-config "$(Build.SourcesDirectory)/NuGet.config" \
-        --iterations "$ITERATIONS" --parallelism "$PARALLELISM" \
-        --commands "$COMMANDS" --locales "$LOCALES" --verify-dumps
-    displayName: Verify dump capture and repeat SDK commands
-    condition: and(succeeded(), eq(variables['reproMode'], 'commands'))
-    env:
-      ITERATIONS: ${{ parameters.iterations }}
-      PARALLELISM: ${{ parameters.parallelism }}
-      COMMANDS: ${{ parameters.commands }}
-      LOCALES: ${{ parameters.locales }}
-  - task: DownloadPipelineArtifact@2
-    displayName: Download original source-built scenario harness
-    condition: and(succeeded(), eq(variables['reproMode'], 'scenarios'))
-    inputs:
-      buildType: specific
-      project: public
-      definition: '278'
-      buildVersionToDownload: specific
-      pipelineId: ${{ parameters.sourceBuildId }}
-      artifactName: ${{ parameters.artifactName }}
-      itemPattern: packages/Release/NonShipping/scenario-tests/${{ parameters.scenarioHarnessFileName }}
-      targetPath: $(Pipeline.Workspace)/scenario-download
-      allowPartiallySucceededBuilds: true
-      allowFailedBuilds: true
-  - bash: |
-      set -euo pipefail
-      python3 eng/repro-sdk-crash/reproduce.py \
-        --sdk "$(reproSdkDirectory)" \
-        --output "$(Pipeline.Workspace)/repro-results/preflight" \
-        --iterations 1 --parallelism 1 --dump-prefix COMPlus --verify-dumps
-      if [[ ! "$TEST_SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
-        echo "Expected a full scenario-test source commit SHA." >&2
-        exit 1
-      fi
-      git fetch --no-tags --depth=1 origin "$TEST_SOURCE_COMMIT"
-      git show "$TEST_SOURCE_COMMIT:src/scenario-tests/NuGet.config" \
-        | python3 -c '
+      python3 - "$(Build.ArtifactStagingDirectory)/prebuilt" <<'PY'
       import pathlib
       import sys
 
-      if sys.stdin.buffer.read() != pathlib.Path(sys.argv[1]).read_bytes():
-          raise SystemExit("NuGet.config differs from the pinned scenario-test source")
-      print("Verified NuGet.config matches the pinned scenario-test source.")
-      ' src/scenario-tests/NuGet.config
-    displayName: Verify inherited dump settings and original restore configuration
-    condition: and(succeeded(), eq(variables['reproMode'], 'scenarios'))
-    env:
-      TEST_SOURCE_COMMIT: ${{ parameters.scenarioSourceCommit }}
-  - bash: |
-      set -euo pipefail
-      sudo -E --preserve-env=HOME python3 eng/repro-sdk-crash/run-scenarios.py \
-        --sdk "$(reproSdkDirectory)" \
-        --source "$(Build.SourcesDirectory)/src/scenario-tests" \
-        --source-commit "$TEST_SOURCE_COMMIT" \
-        --harness-package "$(Pipeline.Workspace)/scenario-download/packages/Release/NonShipping/scenario-tests/$HARNESS_FILE" \
-        --harness-sha512 "$HARNESS_SHA512" \
-        --output "$(Pipeline.Workspace)/repro-results/scenarios" \
-        --repeats "$SCENARIO_REPEATS"
-    displayName: Replay original prebuilt scenario harness through MSBuild
-    condition: and(succeeded(), eq(variables['reproMode'], 'scenarios'))
-    env:
-      TEST_SOURCE_COMMIT: ${{ parameters.scenarioSourceCommit }}
-      SCENARIO_REPEATS: ${{ parameters.scenarioRepeats }}
-      HARNESS_FILE: ${{ parameters.scenarioHarnessFileName }}
-      HARNESS_SHA512: ${{ parameters.scenarioHarnessSha512 }}
-  - bash: |
-      set -euo pipefail
-      if [[ -d "$(Pipeline.Workspace)/repro-results" ]]; then
-        sudo chown -R "$(id -u):$(id -g)" "$(Pipeline.Workspace)/repro-results"
-      fi
-    displayName: Restore diagnostics ownership after sudo
-    condition: and(always(), eq(variables['reproMode'], 'scenarios'))
+      root = pathlib.Path(sys.argv[1])
+      for pattern in ("assets/*/dotnet-sdk-*.tar.gz", "assets/*/Private.SourceBuilt.Artifacts.*.tar.gz"):
+          files = list(root.glob(pattern))
+          if len(files) != 1:
+              raise SystemExit(f"Expected one {pattern}, found {len(files)}")
+          print(f"Reusing {files[0]} ({files[0].stat().st_size} bytes)")
+      PY
+    displayName: Verify both original bootstrap inputs were downloaded
   - task: PublishPipelineArtifact@1
-    displayName: Publish dumps and reproduction logs
-    condition: always()
+    displayName: Supply prebuilt inputs to the normal source-build job template
     inputs:
-      targetPath: $(Pipeline.Workspace)/repro-results
-      artifact: sdk-crash-repro-$(Build.BuildId)-$(reproLane)-$(System.JobAttempt)
+      targetPath: $(Build.ArtifactStagingDirectory)/prebuilt
+      artifact: PrebuiltSourceBuild_Artifacts
+
+- ${{ each lane in split('1,2,3', ',') }}:
+  - template: /eng/pipelines/templates/jobs/vmr-build.yml
+    parameters:
+      buildName: SB_CentOSStream10_Offline_CurrentSourceBuiltSdk_Replay${{ lane }}
+      targetArchitecture: x64
+      artifactsRid: centos.10-x64
+      pool:
+        name: NetCore-Public-XL
+        demands: ImageOverride -equals build.azurelinux.3.amd64.open
+      container:
+        name: centOSStreamContainer
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs@sha256:b06d7a274acbc1f5e7b2ae9eefeb8e73012708d79aff5c637b0321b7984a96d9
+      isBuiltFromVmr: true
+      buildSourceOnly: true
+      runOnline: false
+      skipBuild: true
+      runTests: true
+      brandingType: empty
+      reuseBuildArtifactsFrom:
+      - PrebuiltSourceBuild
+      extraProperties: >
+        /p:DotNetSourceOnlyTestOnly=true
+        /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
+        /p:ExtraRestoreSourcePath=$(Pipeline.Workspace)/prebuilt-test-packages
+        /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/prebuilt-test-packages
+        /p:VerticalName=SB_CentOSStream10_Offline_CurrentSourceBuiltSdk_x64
+      initSteps:
+      - bash: |
+          set -euo pipefail
+          mkdir -p "$(reproToolsDirectory)"
+          cp -a eng/repro-sdk-crash/. "$(reproToolsDirectory)/"
+          if [[ ! "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Expected a full original source commit SHA." >&2
+            exit 1
+          fi
+          git fetch --no-tags --depth=1 origin "$SOURCE_COMMIT"
+          git switch --detach "$SOURCE_COMMIT"
+          mkdir -p artifacts/log/Release/dumps
+          git rev-parse HEAD > artifacts/log/Release/replay-source-commit.txt
+        displayName: Restore the original complete VMR sources, retaining only the capture tools
+        env:
+          SOURCE_COMMIT: ${{ parameters.sourceCommit }}
+      testInitSteps:
+      - task: DownloadPipelineArtifact@2
+        displayName: Restore the original product outputs and package manifests, without rebuilding
+        inputs:
+          buildType: specific
+          project: public
+          definition: '278'
+          buildVersionToDownload: specific
+          pipelineId: ${{ parameters.sourceBuildId }}
+          artifactName: ${{ parameters.artifactName }}
+          targetPath: $(Build.SourcesDirectory)/artifacts
+          allowPartiallySucceededBuilds: true
+          allowFailedBuilds: true
+      - task: CopyFiles@2
+        displayName: Supply prebuilt packages to the normal standalone validation restore
+        inputs:
+          SourceFolder: $(Build.SourcesDirectory)/artifacts/packages/Release/Shipping
+          Contents: '**/*.nupkg'
+          FlattenFolders: true
+          TargetFolder: $(Pipeline.Workspace)/prebuilt-test-packages
+      - bash: |
+          set -euo pipefail
+          python3 "$(reproToolsDirectory)/prepare-sdk.py" \
+            --input artifacts --filename "$SDK_FILE" --sha512 "$SDK_SHA512" \
+            --output artifacts/obj/extracted-dotnet-sdk \
+            2>&1 | tee artifacts/log/Release/sdk-preparation.log
+          python3 "$(reproToolsDirectory)/reproduce.py" \
+            --sdk artifacts/obj/extracted-dotnet-sdk \
+            --output artifacts/log/Release/dump-check \
+            --iterations 1 --parallelism 1 --dump-prefix COMPlus --verify-dumps
+        displayName: Verify the original SDK and full-dump capture before the normal test phase
+        env:
+          SDK_FILE: ${{ parameters.sdkFileName }}
+          SDK_SHA512: ${{ parameters.sdkSha512 }}
+      testEnvironment:
+        TestRestoreConfigFile: $(Build.SourcesDirectory)/src/scenario-tests/NuGet.config
+        COMPlus_DbgEnableMiniDump: '1'
+        COMPlus_DbgMiniDumpType: '4'
+        COMPlus_DbgMiniDumpName: $(Build.SourcesDirectory)/artifacts/log/Release/dumps/core.%e.%p.%t.dmp
+        COMPlus_CreateDumpDiagnostics: '1'
+        COMPlus_EnableCrashReport: '1'
+      finalizeSteps:
+      - bash: |
+          set -euo pipefail
+          for directory in artifacts/log artifacts/TestResults; do
+            if [[ -d "$directory" ]]; then
+              sudo chown -R "$(id -u):$(id -g)" "$directory"
+            fi
+          done
+          python3 "$(reproToolsDirectory)/summarize-dumps.py" artifacts/log/Release/dumps
+        displayName: Preserve root-owned dumps and distinguish crashes from diagnostic snapshots
+        condition: always()

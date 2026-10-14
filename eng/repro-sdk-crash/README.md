@@ -1,0 +1,29 @@
+# Source-build crash replay
+
+The diagnostic `eng/pipelines/pr.yml` is manual-only. It reuses the normal
+`vmr-build.yml` job template, rather than the standalone MSBuild launcher.
+
+A preparation job downloads the original stage-one SDK and
+`Private.SourceBuilt.Artifacts` archive. Three independent replay jobs check out
+the original complete VMR commit, restore its product outputs and manifests,
+and execute the template's full `build.sh --test --source-only` phase using the
+original source-build bootstrap SDK and package cache.
+
+`skipBuild: true` removes product compilation. The supported
+`DotNetSourceOnlyTestOnly=true` validation mode also removes the scenario
+harness's product-repository build dependencies. The normal build scripts still
+build the test projects and generated sample projects. This mode uses bootstrap
+Arcade for the scenario harness; it does not reconstruct the processes or cache
+contents left behind by the original product build.
+
+Full dumps use `COMPlus_*` settings so scenario subprocesses retain them. The
+intentional capture smoke test is separate from actual test-phase dumps.
+Each replay job's `*_BuildLogs_Attempt*` artifact is published unconditionally
+and contains the logs, test results, dump reports, and matching runtime under
+`artifacts/log/Release/dump-check/debugging-sdk`. Actual dumps are under
+`artifacts/log/Release/dumps`.
+
+`summarize-dumps.py` fails the job when a report identifies a crashed thread.
+A diagnostic snapshot with no crashed thread (such as a snapshot of container
+PID 1 in `pause`) is preserved but does not by itself count as a reproduced
+crash. Dumps without reports are retained and explicitly marked unclassified.
