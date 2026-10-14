@@ -7,9 +7,9 @@ used by most workloads. CoreCLR tests live in [`../tests`](../tests/) (the
 ## macOS NativeAOT tool metadata
 
 NativeAOT tool publishing projects set `HostBundleIdentifier` and `HostBundleName`
-to embed an Info.plist in macOS executables. `eng/toolAot.targets` derives
-`CFBundleVersion` from `FileVersion` and `CFBundleShortVersionString` from
-`VersionPrefix`, using the existing build versioning.
+to embed an Info.plist in macOS executables. `eng/toolAot.targets` omits the optional
+bundle version keys because assembly versions do not follow Apple's bundle version
+format.
 Bundle identifiers use `com.microsoft.dotnet.<executable-name>` in lowercase;
 `HostBundleName` sets `CFBundleName` to the executable name without that prefix.
 Native CMake executables use the same identifier and name convention.

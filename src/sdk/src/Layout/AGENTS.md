@@ -48,8 +48,9 @@ Identifiers use `com.microsoft.dotnet.<executable-name>` in lowercase, including
 `LayoutBundledTools` ad hoc signs the three native `aspnetcoretools` shims after
 copying the selected package into the SDK layout. It preserves any existing
 entitlements, without adding JIT entitlements to NativeAOT tools. Its file selection
-is scoped to the selected package version and RID (`tools/any/<rid>` for
-self-contained tools) and excludes debug-symbol bundles.
+is scoped to the selected package version and RID (`tools/*/<rid>`).
+The framework directory is `any` for self-contained tools. Selection excludes
+debug-symbol bundles.
 This is an integrated signing experiment: permanent signing belongs in the
 ASP.NET Core publishing targets so standalone packages have the same identities,
 and SDK composition does not replace a producer's official signature.

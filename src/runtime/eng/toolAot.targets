@@ -30,7 +30,6 @@
 
   <Target Name="GenerateHostInfoPlist"
           BeforeTargets="LinkNative"
-          DependsOnTargets="GetAssemblyVersion"
           Condition="'$(PublishAot)' == 'true' and '$(PortableOS)' == 'osx' and '$(OutputType)' == 'Exe' and '$(NativeLib)' == '' and '$(HostBundleIdentifier)' != ''">
     <Error Condition="'$(HostBundleName)' == ''" Text="HostBundleName must be set when HostBundleIdentifier is set." />
 
@@ -44,10 +43,6 @@
   <string>$(HostBundleIdentifier.Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Replace("'", '&apos;'))</string>
   <key>CFBundleName</key>
   <string>$(HostBundleName.Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Replace("'", '&apos;'))</string>
-  <key>CFBundleVersion</key>
-  <string>$(FileVersion)</string>
-  <key>CFBundleShortVersionString</key>
-  <string>$(VersionPrefix)</string>
 </dict>
 </plist>]]></_HostInfoPlistContents>
     </PropertyGroup>
