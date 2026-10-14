@@ -32,7 +32,6 @@
     <!--
         When updating the version of .NET Core for MSBuild, this property is the 'source of truth'.
         Other locations to update the version number:
-          global.json
           scripts/Deploy-MSBuild.ps1
           src/Framework/README.md
           src/Utilities/README.md
@@ -44,8 +43,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DOTNET_INSTALL_DIR Condition="'$(DOTNET_INSTALL_DIR)' == ''">$(RepoRoot).dotnet\</DOTNET_INSTALL_DIR>
-
     <!-- Repository and project URLs (used in nuget packages) -->
     <RepositoryUrl>https://github.com/dotnet/msbuild</RepositoryUrl>
     <PackageProjectUrl>http://go.microsoft.com/fwlink/?LinkId=624683</PackageProjectUrl>
