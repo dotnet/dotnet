@@ -722,6 +722,8 @@ stages:
           targetOS: windows
           targetArchitecture: x64
           buildPass: 2
+          artifactsRid: ${{ variables.centOSStreamX64Rid }}
+          excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
           extraProperties: /p:BuildWorkloads=true
           reuseBuildArtifactsFrom:
           - Windows_x64
