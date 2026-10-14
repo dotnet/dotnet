@@ -820,7 +820,11 @@ internal sealed class JobMonitorRunner : IJobMonitorRunner, IDisposable
         throw new PlatformNotSupportedException(
             "Helix Entra authentication is not available in source-build.");
 #else
-        var credential = new DefaultIdentityTokenCredential();
+        var credential = new DefaultIdentityTokenCredential(
+            new DefaultIdentityTokenCredentialOptions
+            {
+                PreferAzureCliCredential = true
+            });
         return string.IsNullOrWhiteSpace(entraScope)
             ? ApiFactory.GetAuthenticatedWithEntra(baseUri, credential)
             : ApiFactory.GetAuthenticatedWithEntra(baseUri, credential, entraScope);

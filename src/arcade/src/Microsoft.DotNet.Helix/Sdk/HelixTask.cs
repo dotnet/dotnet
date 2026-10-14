@@ -103,7 +103,11 @@ public abstract class HelixTask : BaseTask, ICancelableTask
         throw new PlatformNotSupportedException(
             "Helix Entra authentication is not available on .NET Framework.");
 #else
-        var credential = new DefaultIdentityTokenCredential();
+        var credential = new DefaultIdentityTokenCredential(
+            new DefaultIdentityTokenCredentialOptions
+            {
+                PreferAzureCliCredential = true
+            });
         return string.IsNullOrWhiteSpace(entraScope)
             ? ApiFactory.GetAuthenticatedWithEntra(baseUri, credential)
             : ApiFactory.GetAuthenticatedWithEntra(baseUri, credential, entraScope);
