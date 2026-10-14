@@ -242,6 +242,16 @@ steps:
           $vsBootstrapperBranch = dotnet msbuild -getProperty:VsTargetBranch build\config.props
           Write-Host "VS Bootstrapper Branch: $vsBootstrapperBranch"
           Write-Host "##vso[task.setvariable variable=VsBootstrapperBranch;isOutput=true]$vsBootstrapperBranch"
+
+          $components = (Get-Content "build\tests.vsconfig" | ConvertFrom-Json).components
+          $visualStudioInstallationParameters = (($components | ForEach-Object { "--add $_" }) + @(
+            '--installPath "C:\Test\VisualStudio"',
+            '--norestart',
+            '--quiet',
+            '--removeOos True',
+            '--wait'
+          )) -join ' '
+          Write-Host "##vso[task.setvariable variable=VisualStudioInstallationParameters;isOutput=true]$visualStudioInstallationParameters"
         } catch {
           Write-Host "##vso[task.LogIssue type=error;]Unable to set variables for DartLab: $_"
           exit 1

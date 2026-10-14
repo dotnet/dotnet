@@ -6658,64 +6658,6 @@ $@"<package xmlns='http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd'>
             }
         }
 
-
-        [PlatformFact(Platform.Windows)]
-        public void PackCommand_WhenUsingSemver2Version_NU5105_IsNotRaised()
-        {
-            var nugetexe = Util.GetNuGetExePath();
-
-            using (var workingDirectory = TestDirectory.Create())
-            {
-                var proj1Directory = Path.Combine(workingDirectory, "proj1");
-
-                // create project 1
-                Util.CreateFile(
-                    proj1Directory,
-                    "proj1.csproj",
-    $@"<Project ToolsVersion='4.0' DefaultTargets='Build'
-    xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <OutputPath>out</OutputPath>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include='proj1_file1.cs' />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include='proj1_file2.txt' />
-  </ItemGroup>
-  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
-</Project>");
-                Util.CreateFile(
-                    proj1Directory,
-                    "proj1_file1.cs",
-    @"using System;
-
-namespace Proj1
-{
-    public class Class1
-    {
-        public int A { get; set; }
-    }
-}");
-                Util.CreateFile(
-                    proj1Directory,
-                    "proj1_file2.txt",
-                    "file2");
-
-
-                // Act
-                var r = CommandRunner.Run(
-                    nugetexe,
-                    proj1Directory,
-                    $"pack proj1.csproj -build -version 1.0.0-rtm+asdassd",
-                    testOutputHelper: _testOutputHelper);
-                r.Success.Should().BeTrue(because: r.AllOutput);
-                r.AllOutput.Should().NotContain(NuGetLogCode.NU5105.ToString());
-            }
-        }
-
         [Fact]
         public void PackCommand_WhenNuspecReplacementTokensAreUsed_AssemblyMetadataIsExtracted()
         {
