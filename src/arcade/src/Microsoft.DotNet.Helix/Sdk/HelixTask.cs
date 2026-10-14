@@ -94,7 +94,11 @@ namespace Microsoft.DotNet.Helix.Sdk
 #else
             return ApiFactory.GetAuthenticatedWithEntra(
                 baseUri,
-                new DefaultIdentityTokenCredential());
+                new DefaultIdentityTokenCredential(
+                    new DefaultIdentityTokenCredentialOptions
+                    {
+                        PreferAzureCliCredential = true
+                    }));
 #endif
         }
 
