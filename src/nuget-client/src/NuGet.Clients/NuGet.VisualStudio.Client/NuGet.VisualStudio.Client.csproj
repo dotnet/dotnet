@@ -289,15 +289,11 @@
   </ItemGroup>
 
   <!--
-    The VSIX version is the VS version that this build of NuGet targets, plus the build revision.
+    The VSIX version is calculated in build\config.props and shared with the BuildTools VSIX.
     source.extension.vsixmanifest refers to this target with the |%CurrentProject%;GetNuGetVsixVersion| token,
     which the VSSDK replaces while detokenizing the manifest.
   -->
-  <Target Name="GetNuGetVsixVersion" Returns="$(NuGetVsixVersion)">
-    <PropertyGroup>
-      <NuGetVsixVersion>$(NuGetSdkVsSemanticVersion).$(PreReleaseVersion)</NuGetVsixVersion>
-    </PropertyGroup>
-  </Target>
+  <Target Name="GetNuGetVsixVersion" Returns="$(NuGetVsixVersion)" />
 
   <ItemGroup>
     <VsixIncludeFile Include=".vsixinclude" />

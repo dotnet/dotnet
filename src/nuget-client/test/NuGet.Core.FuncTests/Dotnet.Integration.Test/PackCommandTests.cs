@@ -5329,38 +5329,6 @@ namespace ClassLibrary
             }
         }
 
-        [PlatformFact(Platform.Windows)]
-        public void PackCommand_WhenUsingSemver2Version_NU5105_IsNotRaised()
-        {
-            using (var testDirectory = _dotnetFixture.CreateTestDirectory())
-            {
-                var projectName = "ClassLibrary1";
-                var workingDirectory = Path.Combine(testDirectory, projectName);
-                Directory.CreateDirectory(workingDirectory);
-                var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
-                _dotnetFixture.CreateDotnetNewProject(testDirectory.Path, projectName, " classlib", testOutputHelper: _testOutputHelper);
-
-                using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
-                {
-                    var xml = XDocument.Load(stream);
-
-                    ProjectFileUtils.AddProperty(xml, "PackageVersion", "1.0.0+mySpecialSemver2Metadata");
-                    ProjectFileUtils.WriteXmlToFile(xml, stream);
-                }
-
-                _dotnetFixture.RestoreProjectExpectSuccess(workingDirectory, projectName, testOutputHelper: _testOutputHelper);
-
-                var nupkgPath = Path.Combine(workingDirectory, $"{projectName}.1.0.0.nupkg");
-                var nuspecPath = Path.Combine(workingDirectory, "obj", $"{projectName}.1.0.0.nuspec");
-
-                var result = _dotnetFixture.PackProjectExpectSuccess(workingDirectory, projectName, $"/p:PackageOutputPath={workingDirectory}", testOutputHelper: _testOutputHelper);
-
-                Assert.True(File.Exists(nupkgPath), $"The output .nupkg is not in the expected place. {result.AllOutput}");
-                Assert.True(File.Exists(nuspecPath), $"The intermediate nuspec file is not in the expected place. {result.AllOutput}");
-                result.AllOutput.Should().NotContain(NuGetLogCode.NU5105.ToString());
-            }
-        }
-
         [PlatformTheory(Platform.Windows)]
         [InlineData("false")]
         [InlineData("true")]

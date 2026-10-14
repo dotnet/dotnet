@@ -854,7 +854,7 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The certificate finger you&apos;re trying to add is already in the certificate fingerprint list..
+        ///   Looks up a localized string similar to The certificate fingerprint you&apos;re trying to add is already in the certificate fingerprint list..
         /// </summary>
         internal static string Error_TrustFingerPrintAlreadyExist {
             get {
