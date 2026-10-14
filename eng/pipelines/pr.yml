@@ -12,7 +12,7 @@
 #   https://dev.azure.com/dnceng/internal/_build?definitionId=1532
 #   YML schedule trigger disabled by override in AzDO UI
 
-# Temporary download-only crash reproduction; queue this diagnostic branch manually.
+# Temporary crash reproduction with a prebuilt SDK; queue this diagnostic branch manually.
 trigger: none
 pr: none
 
@@ -41,6 +41,12 @@ parameters:
 - name: locales
   type: string
   default: en-US,it-IT
+- name: scenarioSourceCommit
+  type: string
+  default: 7ce4ffe96338f8ab32e8215021a1ce8a710b1577
+- name: scenarioRepeats
+  type: number
+  default: 3
 
 variables:
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
@@ -52,6 +58,21 @@ variables:
 jobs:
 - job: ReproduceSdkCrash
   timeoutInMinutes: 120
+  strategy:
+    maxParallel: 4
+    matrix:
+      CommandLoop:
+        reproMode: commands
+        reproLane: command-loop
+      Scenarios1:
+        reproMode: scenarios
+        reproLane: scenarios-1
+      Scenarios2:
+        reproMode: scenarios
+        reproLane: scenarios-2
+      Scenarios3:
+        reproMode: scenarios
+        reproLane: scenarios-3
   pool:
     name: NetCore-Public-XL
     demands: ImageOverride -equals build.azurelinux.3.amd64.open
@@ -96,14 +117,53 @@ jobs:
         --iterations "$ITERATIONS" --parallelism "$PARALLELISM" \
         --commands "$COMMANDS" --locales "$LOCALES" --verify-dumps
     displayName: Verify dump capture and repeat SDK commands
+    condition: and(succeeded(), eq(variables['reproMode'], 'commands'))
     env:
       ITERATIONS: ${{ parameters.iterations }}
       PARALLELISM: ${{ parameters.parallelism }}
       COMMANDS: ${{ parameters.commands }}
       LOCALES: ${{ parameters.locales }}
+  - bash: |
+      set -euo pipefail
+      python3 eng/repro-sdk-crash/reproduce.py \
+        --sdk "$(Pipeline.Workspace)/repro-sdk" \
+        --output "$(Pipeline.Workspace)/repro-results/preflight" \
+        --iterations 1 --parallelism 1 --dump-prefix COMPlus --verify-dumps
+      if [[ ! "$TEST_SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+        echo "Expected a full scenario-test source commit SHA." >&2
+        exit 1
+      fi
+      git fetch --no-tags --depth=1 origin "$TEST_SOURCE_COMMIT"
+      mkdir -p "$(Pipeline.Workspace)/scenario-source"
+      git archive "$TEST_SOURCE_COMMIT" src/scenario-tests \
+        | tar -x -C "$(Pipeline.Workspace)/scenario-source"
+    displayName: Verify inherited dump settings and fetch original test sources
+    condition: and(succeeded(), eq(variables['reproMode'], 'scenarios'))
+    env:
+      TEST_SOURCE_COMMIT: ${{ parameters.scenarioSourceCommit }}
+  - bash: |
+      set -euo pipefail
+      sudo -E --preserve-env=HOME python3 eng/repro-sdk-crash/run-scenarios.py \
+        --sdk "$(Pipeline.Workspace)/repro-sdk" \
+        --source "$(Pipeline.Workspace)/scenario-source/src/scenario-tests" \
+        --source-commit "$TEST_SOURCE_COMMIT" \
+        --output "$(Pipeline.Workspace)/repro-results/scenarios" \
+        --repeats "$SCENARIO_REPEATS"
+    displayName: Repeat original scenario-test suite against prebuilt SDK
+    condition: and(succeeded(), eq(variables['reproMode'], 'scenarios'))
+    env:
+      TEST_SOURCE_COMMIT: ${{ parameters.scenarioSourceCommit }}
+      SCENARIO_REPEATS: ${{ parameters.scenarioRepeats }}
+  - bash: |
+      set -euo pipefail
+      if [[ -d "$(Pipeline.Workspace)/repro-results" ]]; then
+        sudo chown -R "$(id -u):$(id -g)" "$(Pipeline.Workspace)/repro-results"
+      fi
+    displayName: Restore diagnostics ownership after sudo
+    condition: and(always(), eq(variables['reproMode'], 'scenarios'))
   - task: PublishPipelineArtifact@1
     displayName: Publish dumps and reproduction logs
     condition: always()
     inputs:
       targetPath: $(Pipeline.Workspace)/repro-results
-      artifact: sdk-crash-repro-$(Build.BuildId)-$(System.JobAttempt)
+      artifact: sdk-crash-repro-$(Build.BuildId)-$(reproLane)-$(System.JobAttempt)

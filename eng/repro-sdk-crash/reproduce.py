@@ -48,6 +48,7 @@ def main():
     parser.add_argument("--commands", default="globaljson")
     parser.add_argument("--locales", default="en-US,it-IT")
     parser.add_argument("--timeout", type=int, default=300)
+    parser.add_argument("--dump-prefix", choices=("DOTNET", "COMPlus"), default="DOTNET")
     parser.add_argument("--verify-dumps", action="store_true",
                         help="Use prebuilt F# Interactive to FailFast before the real attempts.")
     args = parser.parse_args()
@@ -95,11 +96,15 @@ def main():
         "DOTNET_ROLL_FORWARD": "Major",
         "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
         "DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "1",
-        "DOTNET_DbgEnableMiniDump": "1",
-        "DOTNET_DbgMiniDumpType": "4",
-        "DOTNET_DbgMiniDumpName": str(output / "dumps/core.%e.%p.%t.dmp"),
-        "DOTNET_CreateDumpDiagnostics": "1",
-        "DOTNET_EnableCrashReport": "1",
+    })
+    environment.update({
+        f"{args.dump_prefix}_{key}": value for key, value in {
+            "DbgEnableMiniDump": "1",
+            "DbgMiniDumpType": "4",
+            "DbgMiniDumpName": str(output / "dumps/core.%e.%p.%t.dmp"),
+            "CreateDumpDiagnostics": "1",
+            "EnableCrashReport": "1",
+        }.items()
     })
     if args.nuget_config:
         config = output / "NuGet.config"
@@ -114,6 +119,7 @@ def main():
         "parallelism": args.parallelism,
         "commands": modes,
         "locales": locales,
+        "dump_prefix": args.dump_prefix,
     }
     for name, path in (("cpuinfo", "/proc/cpuinfo"), ("core_pattern", "/proc/sys/kernel/core_pattern"),
                        ("os-release", "/etc/os-release")):
@@ -122,7 +128,7 @@ def main():
     if args.verify_dumps:
         check = output / "capture-check"
         check_environment = dict(environment)
-        check_environment["DOTNET_DbgMiniDumpName"] = str(check / "smoke.%p.%t.dmp")
+        check_environment[f"{args.dump_prefix}_DbgMiniDumpName"] = str(check / "smoke.%p.%t.dmp")
         status = execute(
             [str(sdk / "dotnet"), str(sdk_directories[0] / "FSharp/fsi.dll"),
              "--exec", str(pathlib.Path(__file__).with_name("verify-dumps.fsx"))],

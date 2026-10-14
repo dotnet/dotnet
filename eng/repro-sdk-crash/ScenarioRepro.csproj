@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Microsoft.DotNet.ScenarioTests.SdkTemplateTests</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    <UseAppHost>false</UseAppHost>
+    <RollForward>Major</RollForward>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(ScenarioSourceRoot)/src/Microsoft.DotNet.ScenarioTests.Common/*.cs" />
+    <Compile Include="$(ScenarioSourceRoot)/src/Microsoft.DotNet.ScenarioTests.SdkTemplateTests/*.cs" />
+    <None Include="$(ScenarioSourceRoot)/test/resources/**/*"
+          Link="%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(ScenarioSourceRoot)/src/Microsoft.DotNet.ScenarioTests.SdkTemplateTests/assets/**/*"
+          Link="assets/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Reference Include="System.CommandLine">
+      <HintPath>$(SdkDirectory)/System.CommandLine.dll</HintPath>
+    </Reference>
+    <PackageReference Include="xunit.assert" Version="2.9.3" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.utility" Version="2.9.3" />
+  </ItemGroup>
+</Project>
