@@ -1,6 +1,6 @@
 {
   "sdk": {
-    "version": "8.0.126",
+    "version": "8.0.131",
     "rollForward": "latestPatch",
     "paths": [
       ".dotnet",
@@ -8,9 +8,9 @@
     ]
   },
   "tools": {
-    "dotnet": "8.0.126"
+    "dotnet": "8.0.131"
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.26431.7"
+    "Microsoft.DotNet.Arcade.Sdk": "8.0.0-beta.26468.3"
   }
 }
