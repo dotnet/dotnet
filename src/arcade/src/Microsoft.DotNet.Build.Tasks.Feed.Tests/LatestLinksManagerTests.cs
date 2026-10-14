@@ -77,7 +77,8 @@ public class LatestLinksManagerTests
     [Fact]
     public void GetLatestLinksToCreate_Patterns()
     {
-        var taskLoggingHelper = new Microsoft.Build.Utilities.TaskLoggingHelper(new StubTask());
+        var buildEngine = new MockBuildEngine();
+        var taskLoggingHelper = new Microsoft.Build.Utilities.TaskLoggingHelper(new StubTask { BuildEngine = buildEngine });
         // Arrange
         var assetsToPublish = new HashSet<string>
         {
@@ -107,6 +108,8 @@ public class LatestLinksManagerTests
         var manager = new LatestLinksManager("clientId", null, "tenant", "groupOwner", "createdBy", "owners", taskLoggingHelper);
 
         var links = manager.GetLatestLinksToCreate(assetsToPublish, feedConfig, "https://example.com/feed/");
+
+        buildEngine.BuildMessageEvents.Should().BeEmpty();
 
         // Flattenned links should remove the path elements
         links.Should().BeEquivalentTo(new List<AkaMSLink>
