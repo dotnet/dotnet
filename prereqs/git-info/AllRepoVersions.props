@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <arcadeGitCommitHash>659e244c0464986411ccd6ccf51084c96ae66091</arcadeGitCommitHash>
-    <arcadeOutputPackageVersion>8.0.0-beta.26465.3</arcadeOutputPackageVersion>
+    <arcadeGitCommitHash>81ab8642ca205b5901656f5ca532748b740092f1</arcadeGitCommitHash>
+    <arcadeOutputPackageVersion>8.0.0-beta.26508.2</arcadeOutputPackageVersion>
     <aspireGitCommitHash>48e42f59d64d84b404e904996a9ed61f2a17a569</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.0.0-preview.1.23557.2</aspireOutputPackageVersion>
     <aspnetcoreGitCommitHash>7413d24330774263a78a4f3837ca53493518455a</aspnetcoreGitCommitHash>
@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>8.1.657407</formatOutputPackageVersion>
     <fsharpGitCommitHash>fc5e9eda234e2b69aa479f4f83faddc31fdd4da7</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.102-beta.24081.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>ff4ffb298ada6c96ddfc84b466820fbf9374a370</installerGitCommitHash>
+    <installerGitCommitHash>e506958233de22e9e45caf0bd683831d6d02d494</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>293f66545288e700258d9d979e84b67b585a4f93</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.60-servicing-26431-08</msbuildOutputPackageVersion>
@@ -37,10 +37,10 @@
     <runtimeOutputPackageVersion>8.0.32-servicing.26504.5</runtimeOutputPackageVersion>
     <sdkGitCommitHash>f0ea720aa93f8a6bff86b51c065d39068b4b3a94</sdkGitCommitHash>
     <sdkOutputPackageVersion>8.0.132-servicing.26505.8</sdkOutputPackageVersion>
-    <sourcebuildassetsGitCommitHash>57bfccd8cd6091e138f487653e7eefcfef2e455a</sourcebuildassetsGitCommitHash>
-    <sourcebuildassetsOutputPackageVersion>8.0.0-alpha.1.26451.1</sourcebuildassetsOutputPackageVersion>
-    <sourcebuildexternalsGitCommitHash>669661ea25e55b41167966df076c15ac70bf3718</sourcebuildexternalsGitCommitHash>
-    <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.26451.1</sourcebuildexternalsOutputPackageVersion>
+    <sourcebuildassetsGitCommitHash>5aeee2738338530a92d7f6caa2c7d5f569fed3c4</sourcebuildassetsGitCommitHash>
+    <sourcebuildassetsOutputPackageVersion>8.0.0-alpha.1.26501.1</sourcebuildassetsOutputPackageVersion>
+    <sourcebuildexternalsGitCommitHash>490113ea252cb25880a7abc9926af8ffcf471e33</sourcebuildexternalsGitCommitHash>
+    <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.26501.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>453ab23d599ac904ded70bd9194959a76b05702f</sourcebuildreferencepackagesGitCommitHash>
     <sourcebuildreferencepackagesOutputPackageVersion>8.0.0-alpha.1.23221.1</sourcebuildreferencepackagesOutputPackageVersion>
     <sourcelinkGitCommitHash>23d09f7a0e5cfd3829eafb8f5b7c87e98f29f5ef</sourcelinkGitCommitHash>
