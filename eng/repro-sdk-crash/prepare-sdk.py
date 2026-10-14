@@ -16,20 +16,30 @@ def main():
         parser.error("--filename must be a basename")
     if not re.fullmatch(r"[0-9a-fA-F]{128}", args.sha512):
         parser.error("--sha512 must contain 128 hexadecimal digits")
-    matches = list(args.input.rglob(args.filename))
-    if len(matches) != 1:
-        parser.error(f"Expected one SDK archive, found {len(matches)}")
-    digest = hashlib.sha512()
-    with matches[0].open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    if digest.hexdigest() != args.sha512.lower():
-        raise RuntimeError(f"SDK checksum mismatch: {digest.hexdigest()}")
+    matches = sorted(path for path in args.input.rglob(args.filename) if path.is_file())
+    if not matches:
+        parser.error(f"No SDK archive named {args.filename} found under {args.input}")
+    verified = []
+    for archive in matches:
+        digest = hashlib.sha512()
+        with archive.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        actual = digest.hexdigest()
+        print(f"SDK candidate: {archive}\nSHA512: {actual}", flush=True)
+        if actual == args.sha512.lower():
+            verified.append(archive)
+        else:
+            print("Rejected: SHA512 does not match the requested SDK.", flush=True)
+    if not verified:
+        raise RuntimeError(f"No SDK archive matches expected SHA512 {args.sha512.lower()}")
+    archive = verified[0]
+    print(f"Found {len(verified)} checksum-matching SDK archive(s); extracting {archive}", flush=True)
     args.output.mkdir(parents=True, exist_ok=False)
-    subprocess.run(["tar", "-xzf", str(matches[0]), "-C", str(args.output)], check=True)
+    subprocess.run(["tar", "-xzf", str(archive), "-C", str(args.output)], check=True)
     if not (args.output / "dotnet").is_file():
         raise RuntimeError("Extracted archive does not contain dotnet")
-    print(f"Verified SDK SHA512: {digest.hexdigest()}", flush=True)
+    print(f"Verified SDK SHA512: {args.sha512.lower()}", flush=True)
 
 
 if __name__ == "__main__":

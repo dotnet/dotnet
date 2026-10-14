@@ -61,6 +61,8 @@ jobs:
   steps:
   - checkout: self
     fetchDepth: 1
+  - bash: mkdir -p "$(Pipeline.Workspace)/repro-results"
+    displayName: Initialize reproduction diagnostics
   - task: DownloadPipelineArtifact@2
     displayName: Download prebuilt SDK only
     inputs:
@@ -79,7 +81,8 @@ jobs:
       python3 eng/repro-sdk-crash/prepare-sdk.py \
         --input "$(Pipeline.Workspace)/sdk-download" \
         --filename "$SDK_FILE" --sha512 "$SDK_SHA512" \
-        --output "$(Pipeline.Workspace)/repro-sdk"
+        --output "$(Pipeline.Workspace)/repro-sdk" \
+        2>&1 | tee "$(Pipeline.Workspace)/repro-results/sdk-preparation.log"
     displayName: Verify and extract SDK
     env:
       SDK_FILE: ${{ parameters.sdkFileName }}
@@ -88,7 +91,7 @@ jobs:
       set -euo pipefail
       python3 eng/repro-sdk-crash/reproduce.py \
         --sdk "$(Pipeline.Workspace)/repro-sdk" \
-        --output "$(Pipeline.Workspace)/repro-results" \
+        --output "$(Pipeline.Workspace)/repro-results/replay" \
         --nuget-config "$(Build.SourcesDirectory)/NuGet.config" \
         --iterations "$ITERATIONS" --parallelism "$PARALLELISM" \
         --commands "$COMMANDS" --locales "$LOCALES" --verify-dumps
