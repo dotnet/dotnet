@@ -13,7 +13,9 @@ original source-build bootstrap SDK and package cache.
 `DotNetSourceOnlyTestOnly=true` validation mode also removes the scenario
 harness's product-repository build dependencies. The normal build scripts still
 build the test projects and generated sample projects. This mode uses bootstrap
-Arcade for the scenario harness; it does not reconstruct the processes or cache
+Arcade for the scenario harness. Its shell-script toolset is populated from the
+original prebuilt Arcade package, since source-built `-ci` versions cannot be
+downloaded from NuGet. The replay does not reconstruct the processes or cache
 contents left behind by the original product build.
 
 Full dumps use `COMPlus_*` settings so scenario subprocesses retain them. The

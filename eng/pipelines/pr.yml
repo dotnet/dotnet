@@ -161,6 +161,8 @@ jobs:
           TargetFolder: $(Pipeline.Workspace)/prebuilt-test-packages
       - bash: |
           set -euo pipefail
+          python3 "$(reproToolsDirectory)/prepare-test-toolset.py" \
+            --packages "$(previouslySourceBuiltArtifactsDir)" --source src/scenario-tests
           python3 "$(reproToolsDirectory)/prepare-sdk.py" \
             --input artifacts --filename "$SDK_FILE" --sha512 "$SDK_SHA512" \
             --output artifacts/obj/extracted-dotnet-sdk \
