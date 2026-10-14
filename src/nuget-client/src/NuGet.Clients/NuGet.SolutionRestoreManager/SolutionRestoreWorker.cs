@@ -75,8 +75,6 @@ namespace NuGet.SolutionRestoreManager
         private Lazy<INuGetErrorList> _errorList;
         private readonly Lazy<IOutputConsoleProvider> _outputConsoleProvider;
 
-        private readonly Lazy<INuGetFeatureFlagService> _nugetFeatureFlagService;
-
         public Task<bool> CurrentRestoreOperation => _activeRestoreTask;
 
         /// <summary>
@@ -99,7 +97,6 @@ namespace NuGet.SolutionRestoreManager
             Lazy<Common.ILogger> logger,
             Lazy<INuGetErrorList> errorList,
             Lazy<IOutputConsoleProvider> outputConsoleProvider,
-            Lazy<INuGetFeatureFlagService> nugetFeatureFlagService,
             Lazy<IVulnerabilitiesNotificationService> vulnerabilitiesFoundService)
             : this(AsyncServiceProvider.GlobalProvider,
                   solutionManager,
@@ -107,7 +104,6 @@ namespace NuGet.SolutionRestoreManager
                   logger,
                   errorList,
                   outputConsoleProvider,
-                  nugetFeatureFlagService,
                   vulnerabilitiesFoundService)
         { }
 
@@ -118,7 +114,6 @@ namespace NuGet.SolutionRestoreManager
             Lazy<Common.ILogger> logger,
             Lazy<INuGetErrorList> errorList,
             Lazy<IOutputConsoleProvider> outputConsoleProvider,
-            Lazy<INuGetFeatureFlagService> nugetFeatureFlagService,
             Lazy<IVulnerabilitiesNotificationService> vulnerabilitiesFoundService)
         {
             if (asyncServiceProvider == null)
@@ -151,11 +146,6 @@ namespace NuGet.SolutionRestoreManager
                 throw new ArgumentNullException(nameof(outputConsoleProvider));
             }
 
-            if (nugetFeatureFlagService == null)
-            {
-                throw new ArgumentNullException(nameof(nugetFeatureFlagService));
-            }
-
             if (vulnerabilitiesFoundService == null)
             {
                 throw new ArgumentNullException(nameof(vulnerabilitiesFoundService));
@@ -167,7 +157,6 @@ namespace NuGet.SolutionRestoreManager
             _logger = logger;
             _errorList = errorList;
             _outputConsoleProvider = outputConsoleProvider;
-            _nugetFeatureFlagService = nugetFeatureFlagService;
             _vulnerabilitiesFoundService = vulnerabilitiesFoundService;
 
             var joinableTaskContextNode = new JoinableTaskContextNode(ThreadHelper.JoinableTaskContext);
@@ -723,7 +712,6 @@ namespace NuGet.SolutionRestoreManager
             {
                 { RestoreTelemetryEvent.ImplicitRestoreReason, restoreReason },
                 { RestoreTelemetryEvent.RequestCount, requestCount },
-                { RestoreTelemetryEvent.IsBulkFileRestoreCoordinationEnabled, true },
                 { RestoreTelemetryEvent.ProjectRestoreInfoSourcesCount, projectRestoreInfoSourcesCount },
                 { RestoreTelemetryEvent.ProjectsReadyCheckTotalTime, bulkRestoreCoordinationTotalTime },
                 { RestoreTelemetryEvent.ProjectsReadyCheckCount, projectsReadyCheckCount },

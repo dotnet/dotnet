@@ -448,8 +448,8 @@ NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için Nu
         <note>{0} - Path to the project with the error</note>
       </trans-unit>
       <trans-unit id="Error_TrustFingerPrintAlreadyExist">
-        <source>The certificate finger you're trying to add is already in the certificate fingerprint list.</source>
-        <target state="translated">Eklemeye çalıştığınız sertifika parmak izi zaten sertifika parmak izi listesinde var.</target>
+        <source>The certificate fingerprint you're trying to add is already in the certificate fingerprint list.</source>
+        <target state="needs-review-translation">Eklemeye çalıştığınız sertifika parmak izi zaten sertifika parmak izi listesinde var.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_TrustedRepoAlreadyExists">

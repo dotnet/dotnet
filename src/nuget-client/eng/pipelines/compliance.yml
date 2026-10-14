@@ -21,7 +21,7 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@MicroBuildTemplate
   parameters:
     settings:
-      networkIsolationPolicy: Preferred,CFSClean,CFSClean2,CFSClean3
+      networkIsolationPolicy: Preferred,CFSClean,CFSClean2,CFSClean3,APIScan
     sdl:
       sourceAnalysisPool: VSEng-MicroBuildVSStable
       binskim:
