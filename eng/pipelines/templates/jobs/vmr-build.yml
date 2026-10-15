@@ -544,19 +544,24 @@ jobs:
       displayName: Download 1xx SDK
 
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
-    - script: |
+    - bash: |
         set -e
-        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        source "eng/download-source-built-archive.sh"
         if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
           storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
         else
           storageKey=""
         fi
-        mkdir -p "$(sharedComponentsDir)"
-        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" true "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
-        tar -xzf $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
-        rm -f $(sharedComponentsDir)/Private.SourceBuilt.SharedComponents.*.tar.gz
+        sharedComponentsDir="$(sharedComponentsDir)"
+        if [[ "$AGENT_OS" == "Windows_NT" ]]; then
+          sharedComponentsDir="$(wslpath -u "$sharedComponentsDir")"
+        fi
+        mkdir -p "$sharedComponentsDir"
+        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" true "${{ parameters.artifactsRid }}" "$sharedComponentsDir" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
+        tar -xzf "$sharedComponentsDir"/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$sharedComponentsDir"
+        rm -f "$sharedComponentsDir"/Private.SourceBuilt.SharedComponents.*.tar.gz
       displayName: Download Shared Component Artifacts
+      workingDirectory: $(sourcesPath)
 
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - task: PowerShell@2
