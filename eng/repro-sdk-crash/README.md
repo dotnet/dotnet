@@ -31,7 +31,11 @@ The replay does not reconstruct the processes or cache contents left behind by
 the original product build.
 
 Full dumps use `COMPlus_*` settings so scenario subprocesses retain them. The
-intentional capture smoke test is separate from actual test-phase dumps.
+intentional capture smoke test uses a separate SDK extraction under
+`$(Agent.TempDirectory)/sdk-crash-capture-sdk`, as well as separate dump, home,
+and package-cache directories. The normal test phase alone extracts and runs
+the actual test SDK; the smoke check does not prepopulate or start processes
+from that SDK directory.
 Each replay job's `*_BuildLogs_Attempt*` artifact is published unconditionally
 and contains the logs, test results, dump reports, and matching runtime under
 `artifacts/log/Release/dump-check/debugging-sdk`. Actual dumps are under

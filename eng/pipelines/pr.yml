@@ -194,10 +194,10 @@ jobs:
             --packages "$(previouslySourceBuiltArtifactsDir)" --source src/scenario-tests
           python3 "$(reproToolsDirectory)/prepare-sdk.py" \
             --input artifacts --filename "$SDK_FILE" --sha512 "$SDK_SHA512" \
-            --output artifacts/obj/extracted-dotnet-sdk \
+            --output "$(Agent.TempDirectory)/sdk-crash-capture-sdk" \
             2>&1 | tee artifacts/log/Release/sdk-preparation.log
           python3 "$(reproToolsDirectory)/reproduce.py" \
-            --sdk artifacts/obj/extracted-dotnet-sdk \
+            --sdk "$(Agent.TempDirectory)/sdk-crash-capture-sdk" \
             --output artifacts/log/Release/dump-check \
             --iterations 1 --parallelism 1 --dump-prefix COMPlus --verify-dumps
         displayName: Verify the original SDK and full-dump capture before the normal test phase
