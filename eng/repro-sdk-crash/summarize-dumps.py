@@ -5,10 +5,16 @@ import pathlib
 
 def summarize(directory):
     records = []
-    for dump in sorted(directory.glob("*.dmp")):
+    dumps = set(directory.glob("*.dmp"))
+    dumps.update(
+        pathlib.Path(str(report).removesuffix(".crashreport.json"))
+        for report in directory.glob("*.dmp.crashreport.json")
+    )
+    for dump in sorted(dumps):
         report = pathlib.Path(str(dump) + ".crashreport.json")
-        record = {"dump": dump.name}
+        record = {"dump": dump.name if dump.is_file() else None}
         if report.is_file():
+            record["report"] = report.name
             payload = json.loads(report.read_text())["payload"]
             threads = [
                 thread for thread in payload["threads"]

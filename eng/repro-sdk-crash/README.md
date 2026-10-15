@@ -60,8 +60,26 @@ SIGQUIT smoke core under `kernel-check`, and directs subsequent cores to
 The normal container already has an unlimited core-size limit. Kernel cores have
 no runtime crash report, so the summary marks them unclassified until a debugger
 confirms the signal and crashing thread; a smoke core is not a reproduction.
-Matching host/runtime/DAC binaries are published under `kernel-debugging-sdk`.
+Matching host/runtime/DAC binaries are published under `debugging-sdk`.
 Kernel capture and runtime dump capture cannot be enabled together.
+
+Three further independent experiments use `enableDumpCapture=false` and
+`enableKernelCoreCapture=false`, retaining the normal test commands and skipping
+the intentional managed crash/command-loop preflight:
+
+| `diagnosticMode` | Captured evidence |
+| --- | --- |
+| `report-only` | Runtime JSON crash report with stacks, without a runtime dump. Still uses the runtime crash handler. |
+| `eventpipe` | Per-process streaming `.nettrace` files under `traces`, with GC, exception, and sampling events. No runtime dump settings. |
+| `verbose-dump` | Full runtime dumps and crash reports, plus verbose `createdump` diagnostics in test process output. |
+
+The default `standard` mode preserves the existing capture/no-capture switches.
+Alternative modes cannot be combined with either capture switch. Each alternative
+publishes matching runtime/DAC binaries under `debugging-sdk` without executing
+that SDK beforehand. `COMPlus_*` settings survive the scenario subprocess
+environment filtering. Streaming traces can still lose the last events on a
+crash and affect timing; a trace is not a substitute for a native crash stack.
+Report-only JSON files are classified even when there is no corresponding dump.
 
 The intentional capture smoke test uses a separate SDK extraction under
 `$(Agent.TempDirectory)/sdk-crash-capture-sdk`, as well as separate dump, home,

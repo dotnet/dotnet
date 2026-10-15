@@ -38,6 +38,14 @@ parameters:
 - name: enableKernelCoreCapture
   type: boolean
   default: false
+- name: diagnosticMode
+  type: string
+  default: standard
+  values:
+  - standard
+  - report-only
+  - eventpipe
+  - verbose-dump
 - name: sdkFileName
   type: string
   default: dotnet-sdk-12.0.100-ci-centos.10-x64.tar.gz
@@ -142,6 +150,10 @@ jobs:
       initSteps:
       - bash: |
           set -euo pipefail
+          if [[ "$DIAGNOSTIC_MODE" != "standard" && ("$RUNTIME_CAPTURE" != "False" || "$KERNEL_CAPTURE" != "False") ]]; then
+            echo "Alternative diagnostic modes require enableDumpCapture=false and enableKernelCoreCapture=false." >&2
+            exit 1
+          fi
           mkdir -p "$(reproToolsDirectory)"
           cp -a eng/repro-sdk-crash/. "$(reproToolsDirectory)/"
           if [[ ! "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
@@ -163,6 +175,9 @@ jobs:
         displayName: Restore the original complete VMR sources, retaining only the capture tools
         env:
           SOURCE_COMMIT: ${{ parameters.sourceCommit }}
+          DIAGNOSTIC_MODE: ${{ parameters.diagnosticMode }}
+          RUNTIME_CAPTURE: ${{ parameters.enableDumpCapture }}
+          KERNEL_CAPTURE: ${{ parameters.enableKernelCoreCapture }}
       testInitSteps:
       - task: DownloadPipelineArtifact@2
         displayName: Restore the original product outputs and package manifests, without rebuilding
@@ -213,10 +228,19 @@ jobs:
             --input artifacts --filename "$SDK_FILE" --sha512 "$SDK_SHA512" \
             --output "$(Agent.TempDirectory)/sdk-crash-capture-sdk" \
             2>&1 | tee artifacts/log/Release/sdk-preparation.log
+          mkdir -p artifacts/log/Release/traces
         displayName: Verify the original SDK before the normal test phase
         env:
           SDK_FILE: ${{ parameters.sdkFileName }}
           SDK_SHA512: ${{ parameters.sdkSha512 }}
+      - ${{ if or(parameters.enableKernelCoreCapture, ne(parameters.diagnosticMode, 'standard')) }}:
+        - bash: |
+            set -euo pipefail
+            mkdir -p artifacts/log/Release/debugging-sdk/shared
+            cp "$(Agent.TempDirectory)/sdk-crash-capture-sdk/dotnet" artifacts/log/Release/debugging-sdk/
+            cp -a "$(Agent.TempDirectory)/sdk-crash-capture-sdk/shared/Microsoft.NETCore.App" \
+              artifacts/log/Release/debugging-sdk/shared/
+          displayName: Preserve the matching runtime and DAC without executing the SDK
       - ${{ if parameters.enableDumpCapture }}:
         - bash: |
             set -euo pipefail
@@ -238,9 +262,9 @@ jobs:
             ]
             if settings:
                 raise SystemExit(f"Unexpected ambient crash-capture settings: {sorted(settings)}")
-            print("No dump environment settings; intentional crash smoke test skipped.")
+            print("No inherited dump settings; intentional managed crash smoke test skipped.")
             PY
-          displayName: Verify the no-dump experiment has no ambient capture settings
+          displayName: Verify there are no ambient runtime capture settings
       - ${{ if parameters.enableKernelCoreCapture }}:
         - bash: |
             set -euo pipefail
@@ -281,21 +305,27 @@ jobs:
               ulimit -c
               cat /proc/self/coredump_filter
             } > artifacts/log/Release/kernel-capture.txt
-            mkdir -p artifacts/log/Release/kernel-debugging-sdk/shared
-            cp "$(Agent.TempDirectory)/sdk-crash-capture-sdk/dotnet" artifacts/log/Release/kernel-debugging-sdk/
-            cp -a "$(Agent.TempDirectory)/sdk-crash-capture-sdk/shared/Microsoft.NETCore.App" \
-              artifacts/log/Release/kernel-debugging-sdk/shared/
           displayName: Enable kernel cores without runtime capture settings or a managed smoke test
           env:
             RUNTIME_CAPTURE: ${{ parameters.enableDumpCapture }}
       testEnvironment:
         TestRestoreConfigFile: $(Build.SourcesDirectory)/src/scenario-tests/NuGet.config
-        ${{ if parameters.enableDumpCapture }}:
+        ${{ if or(parameters.enableDumpCapture, in(parameters.diagnosticMode, 'report-only', 'verbose-dump')) }}:
           COMPlus_DbgEnableMiniDump: '1'
           COMPlus_DbgMiniDumpType: '4'
           COMPlus_DbgMiniDumpName: $(Build.SourcesDirectory)/artifacts/log/Release/dumps/core.%e.%p.%t.dmp
           COMPlus_CreateDumpDiagnostics: '1'
           COMPlus_EnableCrashReport: '1'
+        ${{ if eq(parameters.diagnosticMode, 'report-only') }}:
+          COMPlus_EnableCrashReportOnly: '1'
+        ${{ if eq(parameters.diagnosticMode, 'verbose-dump') }}:
+          COMPlus_CreateDumpVerboseDiagnostics: '1'
+        ${{ if eq(parameters.diagnosticMode, 'eventpipe') }}:
+          COMPlus_EnableEventPipe: '1'
+          COMPlus_EventPipeOutputPath: $(Build.SourcesDirectory)/artifacts/log/Release/traces/runtime.{pid}.nettrace
+          COMPlus_EventPipeOutputStreaming: '1'
+          COMPlus_EventPipeCircularMB: '8'
+          COMPlus_EventPipeConfig: Microsoft-Windows-DotNETRuntime:0x8001:5,Microsoft-DotNETCore-SampleProfiler:0:5
       finalizeSteps:
       - ${{ if parameters.enableKernelCoreCapture }}:
         - bash: |
