@@ -9,7 +9,19 @@ the original complete VMR commit, restore its product outputs and manifests,
 and execute the template's full `build.sh --test --source-only` phase using the
 original source-build bootstrap SDK and package cache.
 
-Each job repeats the full test phase ten times by default (`testRepetitions`).
+Replay1 retains the original container digest
+`b06d7a274acbc1f5e7b2ae9eefeb8e73012708d79aff5c637b0321b7984a96d9`.
+Replay2 and Replay3 use
+`5629fb0d6a5d9c70de8479bb2b488c2845a7fa24b4e2e654c74aca21eacef6f5`,
+the digest pulled by the same failing CentOS leg in normal build 1634439 on
+October 15. All three jobs retain the original SDK, source commit, bootstrap
+inputs, and test commands, isolating the container change rather than also
+switching to that build's SDK. `replay-host.txt` records the kernel, CPU, memory,
+resource limits, and installed RPM versions for comparing native dependencies.
+The original crash also occurred with the older image, so this comparison does
+not assume the newer image introduced the problem.
+
+Each job runs the full test phase once by default (`testRepetitions`).
 Repetitions stop on the first test-phase failure. Each invocation has a separate
 orchestrator binlog, and scenario logs are preserved under
 `artifacts/log/Release/repetitions/<iteration>`. The original binary-scan report

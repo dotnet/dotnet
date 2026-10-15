@@ -31,7 +31,7 @@ parameters:
   default: SB_CentOSStream10_Offline_CurrentSourceBuiltSdk_x64_BuildLogs_Attempt1
 - name: testRepetitions
   type: number
-  default: 10
+  default: 1
 - name: sdkFileName
   type: string
   default: dotnet-sdk-12.0.100-ci-centos.10-x64.tar.gz
@@ -114,7 +114,10 @@ jobs:
         demands: ImageOverride -equals build.azurelinux.3.amd64.open
       container:
         name: centOSStreamContainer
-        image: mcr.microsoft.com/dotnet-buildtools/prereqs@sha256:b06d7a274acbc1f5e7b2ae9eefeb8e73012708d79aff5c637b0321b7984a96d9
+        ${{ if eq(lane, '1') }}:
+          image: mcr.microsoft.com/dotnet-buildtools/prereqs@sha256:b06d7a274acbc1f5e7b2ae9eefeb8e73012708d79aff5c637b0321b7984a96d9
+        ${{ else }}:
+          image: mcr.microsoft.com/dotnet-buildtools/prereqs@sha256:5629fb0d6a5d9c70de8479bb2b488c2845a7fa24b4e2e654c74aca21eacef6f5
       isBuiltFromVmr: true
       buildSourceOnly: true
       runOnline: false
@@ -143,6 +146,14 @@ jobs:
           git switch --detach "$SOURCE_COMMIT"
           mkdir -p artifacts/log/Release/dumps
           git rev-parse HEAD > artifacts/log/Release/replay-source-commit.txt
+          {
+            uname -a
+            cat /etc/os-release
+            cat /proc/cpuinfo
+            cat /proc/meminfo
+            ulimit -a
+            rpm -qa --qf '%{NAME} %{VERSION}-%{RELEASE} %{ARCH}\n' | sort
+          } > artifacts/log/Release/replay-host.txt
         displayName: Restore the original complete VMR sources, retaining only the capture tools
         env:
           SOURCE_COMMIT: ${{ parameters.sourceCommit }}
