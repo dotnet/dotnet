@@ -22,7 +22,6 @@ namespace NuGet.VisualStudio
         public const string SolutionUpToDateCheck = nameof(SolutionUpToDateCheck);
         public const string ImplicitRestoreReason = nameof(ImplicitRestoreReason);
         public const string RequestCount = nameof(RequestCount);
-        public const string IsBulkFileRestoreCoordinationEnabled = nameof(IsBulkFileRestoreCoordinationEnabled);
         public const string ProjectsReadyCheckCount = nameof(ProjectsReadyCheckCount);
         public const string ProjectReadyCheckTimings = nameof(ProjectReadyCheckTimings);
         public const string ProjectsReadyCheckTotalTime = nameof(ProjectsReadyCheckTotalTime);

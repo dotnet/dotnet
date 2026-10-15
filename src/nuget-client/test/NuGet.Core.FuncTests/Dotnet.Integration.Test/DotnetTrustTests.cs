@@ -560,7 +560,7 @@ namespace Dotnet.Integration.Test
                     testOutputHelper: _testOutputHelper);
 
                 // Main assert
-                result.AllOutput.Should().Contain("The certificate finger you're trying to add is already in the certificate fingerprint list");
+                result.AllOutput.Should().Contain("The certificate fingerprint you're trying to add is already in the certificate fingerprint list.");
                 result.AllOutput.Should().NotContain("--help");
             }
         }

@@ -27,7 +27,7 @@ namespace Microsoft.Build.NuGetSdkResolver
     /// <summary>
     /// Represents a NuGet-based SDK resolver.  It is very important that this class does not reference any NuGet assemblies
     /// directly as an optimization to avoid loading them unless they are needed.  The current implementation only loads
-    /// Newtonsoft.Json if a global.json is found and it contains the msbuild-sdks section and a few NuGet assemblies to parse
+    /// a JSON parser if a global.json is found and it contains the msbuild-sdks section and a few NuGet assemblies to parse
     /// a version.  The remaining NuGet assemblies are then loaded to do a restore.
     /// </summary>
     public sealed class NuGetSdkResolver : SdkResolver

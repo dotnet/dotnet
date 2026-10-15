@@ -31,6 +31,7 @@
   <ItemGroup>
     <!-- Newtonsoft.Json 13.0.4 includes the AOT annotations this compatibility test needs. -->
     <PackageReference Include="Newtonsoft.Json" VersionOverride="13.0.4" />
+    <PackageReference Include="Microsoft.Build.Framework" />
 
     <RuntimeHostConfigurationOption Include="NuGet.UseSystemTextJsonDeserialization"
                                     Value="true"
@@ -47,6 +48,7 @@
     <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj" />
     <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
     <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\NuGet.Versioning\NuGet.Versioning.csproj" />
+    <CoreLibraryProjects Include="$(RepositoryRootDirectory)src\NuGet.Core\Microsoft.Build.NuGetSdkResolver\Microsoft.Build.NuGetSdkResolver.csproj" />
 
     <TrimmerRootAssembly Include="@(CoreLibraryProjects->'%(FileName)')" />
     <ProjectReference Include="@(CoreLibraryProjects)" />
