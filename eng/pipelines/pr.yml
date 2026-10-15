@@ -35,6 +35,9 @@ parameters:
 - name: enableDumpCapture
   type: boolean
   default: true
+- name: enableKernelCoreCapture
+  type: boolean
+  default: false
 - name: sdkFileName
   type: string
   default: dotnet-sdk-12.0.100-ci-centos.10-x64.tar.gz
@@ -238,6 +241,53 @@ jobs:
             print("No dump environment settings; intentional crash smoke test skipped.")
             PY
           displayName: Verify the no-dump experiment has no ambient capture settings
+      - ${{ if parameters.enableKernelCoreCapture }}:
+        - bash: |
+            set -euo pipefail
+            if [[ "$RUNTIME_CAPTURE" != "False" || "${TF_BUILD:-}" != "True" ]]; then
+              echo "Kernel capture requires an Azure CI job with enableDumpCapture=false." >&2
+              exit 1
+            fi
+            cat /proc/sys/kernel/core_pattern > artifacts/log/Release/original-core-pattern.txt
+            mkdir -p artifacts/log/Release/kernel-check
+            printf '%s\n' "$(Build.SourcesDirectory)/artifacts/log/Release/kernel-check/core.%e.%p.%t.dmp" \
+              | sudo tee /proc/sys/kernel/core_pattern
+            ulimit -c unlimited
+            python3 - <<'PY'
+            import os
+            import pathlib
+            import signal
+
+            pid = os.fork()
+            if pid == 0:
+                signal.signal(signal.SIGQUIT, signal.SIG_DFL)
+                os.kill(os.getpid(), signal.SIGQUIT)
+                os._exit(1)
+            _, status = os.waitpid(pid, 0)
+            dumps = list(pathlib.Path("artifacts/log/Release/kernel-check").glob("*.dmp"))
+            if not os.WIFSIGNALED(status) or os.WTERMSIG(status) != signal.SIGQUIT or not os.WCOREDUMP(status):
+                raise SystemExit(f"Native kernel-core check did not dump: wait status {status}")
+            if len(dumps) != 1:
+                raise SystemExit(f"Expected one native smoke core, found {len(dumps)}")
+            with dumps[0].open("rb") as core:
+                if core.read(4) != b"\x7fELF":
+                    raise SystemExit("Native smoke core is not ELF")
+            print(f"Verified native kernel core: {dumps[0]} ({dumps[0].stat().st_size} bytes)")
+            PY
+            printf '%s\n' "$(Build.SourcesDirectory)/artifacts/log/Release/dumps/kernel.%e.%p.%t.dmp" \
+              | sudo tee /proc/sys/kernel/core_pattern
+            {
+              cat /proc/sys/kernel/core_pattern
+              ulimit -c
+              cat /proc/self/coredump_filter
+            } > artifacts/log/Release/kernel-capture.txt
+            mkdir -p artifacts/log/Release/kernel-debugging-sdk/shared
+            cp "$(Agent.TempDirectory)/sdk-crash-capture-sdk/dotnet" artifacts/log/Release/kernel-debugging-sdk/
+            cp -a "$(Agent.TempDirectory)/sdk-crash-capture-sdk/shared/Microsoft.NETCore.App" \
+              artifacts/log/Release/kernel-debugging-sdk/shared/
+          displayName: Enable kernel cores without runtime capture settings or a managed smoke test
+          env:
+            RUNTIME_CAPTURE: ${{ parameters.enableDumpCapture }}
       testEnvironment:
         TestRestoreConfigFile: $(Build.SourcesDirectory)/src/scenario-tests/NuGet.config
         ${{ if parameters.enableDumpCapture }}:
@@ -247,6 +297,16 @@ jobs:
           COMPlus_CreateDumpDiagnostics: '1'
           COMPlus_EnableCrashReport: '1'
       finalizeSteps:
+      - ${{ if parameters.enableKernelCoreCapture }}:
+        - bash: |
+            set -euo pipefail
+            if [[ -f artifacts/log/Release/original-core-pattern.txt ]]; then
+              sudo tee /proc/sys/kernel/core_pattern < artifacts/log/Release/original-core-pattern.txt
+            else
+              echo "Kernel capture setup did not save a core pattern; nothing to restore."
+            fi
+          displayName: Restore the worker kernel core pattern
+          condition: always()
       - bash: |
           set -euo pipefail
           for directory in artifacts/log artifacts/TestResults; do
