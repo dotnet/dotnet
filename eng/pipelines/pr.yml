@@ -32,6 +32,9 @@ parameters:
 - name: testRepetitions
   type: number
   default: 1
+- name: enableDumpCapture
+  type: boolean
+  default: true
 - name: sdkFileName
   type: string
   default: dotnet-sdk-12.0.100-ci-centos.10-x64.tar.gz
@@ -207,21 +210,42 @@ jobs:
             --input artifacts --filename "$SDK_FILE" --sha512 "$SDK_SHA512" \
             --output "$(Agent.TempDirectory)/sdk-crash-capture-sdk" \
             2>&1 | tee artifacts/log/Release/sdk-preparation.log
-          python3 "$(reproToolsDirectory)/reproduce.py" \
-            --sdk "$(Agent.TempDirectory)/sdk-crash-capture-sdk" \
-            --output artifacts/log/Release/dump-check \
-            --iterations 1 --parallelism 1 --dump-prefix COMPlus --verify-dumps
-        displayName: Verify the original SDK and full-dump capture before the normal test phase
+        displayName: Verify the original SDK before the normal test phase
         env:
           SDK_FILE: ${{ parameters.sdkFileName }}
           SDK_SHA512: ${{ parameters.sdkSha512 }}
+      - ${{ if parameters.enableDumpCapture }}:
+        - bash: |
+            set -euo pipefail
+            python3 "$(reproToolsDirectory)/reproduce.py" \
+              --sdk "$(Agent.TempDirectory)/sdk-crash-capture-sdk" \
+              --output artifacts/log/Release/dump-check \
+              --iterations 1 --parallelism 1 --dump-prefix COMPlus --verify-dumps
+          displayName: Verify full-dump capture before the normal test phase
+      - ${{ else }}:
+        - bash: |
+            set -euo pipefail
+            python3 - <<'PY'
+            import os
+
+            settings = [
+                name for name in os.environ
+                if name.upper().startswith(("COMPLUS_", "DOTNET_"))
+                and ("DUMP" in name.upper() or "CRASHREPORT" in name.upper())
+            ]
+            if settings:
+                raise SystemExit(f"Unexpected ambient crash-capture settings: {sorted(settings)}")
+            print("No dump environment settings; intentional crash smoke test skipped.")
+            PY
+          displayName: Verify the no-dump experiment has no ambient capture settings
       testEnvironment:
         TestRestoreConfigFile: $(Build.SourcesDirectory)/src/scenario-tests/NuGet.config
-        COMPlus_DbgEnableMiniDump: '1'
-        COMPlus_DbgMiniDumpType: '4'
-        COMPlus_DbgMiniDumpName: $(Build.SourcesDirectory)/artifacts/log/Release/dumps/core.%e.%p.%t.dmp
-        COMPlus_CreateDumpDiagnostics: '1'
-        COMPlus_EnableCrashReport: '1'
+        ${{ if parameters.enableDumpCapture }}:
+          COMPlus_DbgEnableMiniDump: '1'
+          COMPlus_DbgMiniDumpType: '4'
+          COMPlus_DbgMiniDumpName: $(Build.SourcesDirectory)/artifacts/log/Release/dumps/core.%e.%p.%t.dmp
+          COMPlus_CreateDumpDiagnostics: '1'
+          COMPlus_EnableCrashReport: '1'
       finalizeSteps:
       - bash: |
           set -euo pipefail

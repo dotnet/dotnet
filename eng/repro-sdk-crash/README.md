@@ -43,7 +43,15 @@ The replay does not reconstruct the processes or cache contents left behind by
 the original product build.
 
 Full dumps use `COMPlus_*` settings so scenario subprocesses retain them. The
-intentional capture smoke test uses a separate SDK extraction under
+`enableDumpCapture=false` parameter omits all five capture settings from the
+test environment and skips the intentional crash smoke test and command-loop
+preflight. A preflight check rejects inherited `COMPlus_*` or `DOTNET_*`
+dump/crash-report settings rather than silently running a contaminated control.
+SDK checksum verification, inputs, container matrix, and full normal tests are
+unchanged. With capture disabled, inspect the test logs and exit codes; an empty
+dump summary does not establish that no process crashed.
+
+The intentional capture smoke test uses a separate SDK extraction under
 `$(Agent.TempDirectory)/sdk-crash-capture-sdk`, as well as separate dump, home,
 and package-cache directories. The normal test phase alone extracts and runs
 the actual test SDK; the smoke check does not prepopulate or start processes
