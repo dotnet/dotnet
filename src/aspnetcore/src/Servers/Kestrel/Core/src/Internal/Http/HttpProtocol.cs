@@ -438,10 +438,6 @@ internal abstract partial class HttpProtocol : IHttpResponseControl
 
     protected abstract void ApplicationAbort();
 
-    protected virtual void OnRequestProcessingEnding()
-    {
-    }
-
     protected virtual void OnRequestProcessingEnded()
     {
     }
@@ -502,6 +498,11 @@ internal abstract partial class HttpProtocol : IHttpResponseControl
             }
 
             shouldScheduleCancellation = _abortedCts != null && !_preventRequestAbortedCancellation;
+
+            // Disable keep-alive before publishing the abort. The release write and acquire read of
+            // volatile _connectionAborted ensure that, when draining is skipped because of an abort,
+            // the next request-loop condition observes _keepAlive as false.
+            _keepAlive = false;
             _connectionAborted = true;
         }
 
@@ -551,7 +552,7 @@ internal abstract partial class HttpProtocol : IHttpResponseControl
         IncrementRequestHeadersCount();
 
         string key = name.GetHeaderName();
-        var valueStr = value.GetRequestHeaderString(key, HttpRequestHeaders.EncodingSelector, checkForNewlineChars: false);
+        var valueStr = value.GetRequestHeaderString(key, HttpRequestHeaders.EncodingSelector, checkForNewlineChars: true);
         RequestTrailers.Append(key, valueStr);
     }
 

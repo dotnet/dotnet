@@ -5,20 +5,20 @@
     <arcadeOutputPackageVersion>9.0.0-beta.26507.8</arcadeOutputPackageVersion>
     <aspireGitCommitHash>5fa9337a84a52e9bd185d04d156eccbdcf592f74</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.2.2-preview.1.24521.5</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>4e6235b8f9af12335ecd58a0a06b8f4105af2de0</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>9.0.20-servicing.26414.7</aspnetcoreOutputPackageVersion>
-    <cecilGitCommitHash>eebca361032c2a1ded7be6244b91b757d54be02a</cecilGitCommitHash>
-    <cecilOutputPackageVersion>0.11.5-alpha.26404.3</cecilOutputPackageVersion>
+    <aspnetcoreGitCommitHash>b4d87e3b9131a019bc3b51df99ff69ac79bef459</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>9.0.21-servicing.26505.9</aspnetcoreOutputPackageVersion>
+    <cecilGitCommitHash>5850baac30805f358b113f0b12966ce234023725</cecilGitCommitHash>
+    <cecilOutputPackageVersion>0.11.5-alpha.26418.4</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>803d8598f98fb4efd94604b32627ee9407f246db</commandlineapiGitCommitHash>
     <commandlineapiOutputPackageVersion>0.1.532403</commandlineapiOutputPackageVersion>
     <deploymenttoolsGitCommitHash>b2d5c0c5841de4bc036ef4c84b5db3532504e5f3</deploymenttoolsGitCommitHash>
     <deploymenttoolsOutputPackageVersion>9.0.0-rtm.25059.4</deploymenttoolsOutputPackageVersion>
     <diagnosticsGitCommitHash>513150c2f25077b1fcb194407e53c433c975f39b</diagnosticsGitCommitHash>
     <diagnosticsOutputPackageVersion>8.0.0-preview.24416.1</diagnosticsOutputPackageVersion>
-    <efcoreGitCommitHash>e3050de15c005dfd3223da1475572044b72a6758</efcoreGitCommitHash>
-    <efcoreOutputPackageVersion>9.0.20</efcoreOutputPackageVersion>
-    <emsdkGitCommitHash>b2bf6cec0cb4ce281802ac3951bdd14287aad112</emsdkGitCommitHash>
-    <emsdkOutputPackageVersion>9.0.20-servicing.26406.7</emsdkOutputPackageVersion>
+    <efcoreGitCommitHash>fffdf15fc1e78ac3d480a1621f3902685961b5c0</efcoreGitCommitHash>
+    <efcoreOutputPackageVersion>9.0.21</efcoreOutputPackageVersion>
+    <emsdkGitCommitHash>2b4c425892386783f059f98bd2aa8d780b78617f</emsdkGitCommitHash>
+    <emsdkOutputPackageVersion>9.0.21-servicing.26464.5</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>47d4e3f91e4e5414b6dafbf14288b9c5a798ef99</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>9.0.101-beta.25070.7</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>2a6130a2996d5cd81b39e1f05a7736b0685fc870</msbuildGitCommitHash>
@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.26226.5</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>fc52718eccdb37693a40a518b1178b1e23114e68</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.12.0-3.25609.5</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>3879076d9a06ce098d37c3882fb1845a6627335b</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.20-servicing.26413.15</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>d280e4fb388c6deed22d480daada060b6b456008</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.21-servicing.26504.4</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>a4c8099828bc33c4bb9080d8047db9a6730eca8a</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.26469.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>fda90a86d2603f8583f6117a13b284282c4b3e81</sdkGitCommitHash>
+    <sdkGitCommitHash>8224b4edb6fdb85559573ea2c4fd755dd5efe49a</sdkGitCommitHash>
     <sourcebuildassetsGitCommitHash>e0c13de7eb3b8231866515e40747ba91b545bff8</sourcebuildassetsGitCommitHash>
     <sourcebuildassetsOutputPackageVersion>9.0.0-alpha.1.26501.2</sourcebuildassetsOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>1c800169e674c7becf88434a0d2817453cf91dd7</sourcebuildexternalsGitCommitHash>
@@ -46,18 +46,18 @@
     <sourcelinkOutputPackageVersion>9.0.0-beta.26417.3</sourcelinkOutputPackageVersion>
     <symreaderGitCommitHash>0710a7892d89999956e8808c28e9dd0512bd53f3</symreaderGitCommitHash>
     <symreaderOutputPackageVersion>2.2.0-beta.24327.2</symreaderOutputPackageVersion>
-    <templatingGitCommitHash>d6bb682832461366b9fe50dee7a72c7feeadbc41</templatingGitCommitHash>
-    <templatingOutputPackageVersion>9.0.121-servicing.26412.3</templatingOutputPackageVersion>
+    <templatingGitCommitHash>80d3eb2c8df4149690a915909f4941bc04cb5186</templatingGitCommitHash>
+    <templatingOutputPackageVersion>9.0.122-servicing.26474.6</templatingOutputPackageVersion>
     <testtemplatesGitCommitHash>47c90e140b027225b799ca8413af10ee3d5f1126</testtemplatesGitCommitHash>
     <testtemplatesOutputPackageVersion>1.1.0-rtm.25262.1</testtemplatesOutputPackageVersion>
     <vstestGitCommitHash>bc9161306b23641b0364b8f93d546da4d48da1eb</vstestGitCommitHash>
     <vstestOutputPackageVersion>17.12.0-release-24508-01</vstestOutputPackageVersion>
-    <windowsdesktopGitCommitHash>e1078413a088bdc4c4d5b3cd45faeda03d7d1076</windowsdesktopGitCommitHash>
-    <windowsdesktopOutputPackageVersion>9.0.20</windowsdesktopOutputPackageVersion>
-    <winformsGitCommitHash>6502cec45fb6ee15a78a39105e6cd9ccf2e6c364</winformsGitCommitHash>
-    <winformsOutputPackageVersion>9.0.20-servicing.26414.2</winformsOutputPackageVersion>
-    <wpfGitCommitHash>b11f25ba2d9d291ca38621d7ba15ad9563e96d30</wpfGitCommitHash>
-    <wpfOutputPackageVersion>9.0.20-rtm.26421.6</wpfOutputPackageVersion>
+    <windowsdesktopGitCommitHash>f476308cc2fcbe56170bb754f63f2b61fb0305da</windowsdesktopGitCommitHash>
+    <windowsdesktopOutputPackageVersion>9.0.21</windowsdesktopOutputPackageVersion>
+    <winformsGitCommitHash>9c6b32286e13e1039372879da37959c4bf7adc63</winformsGitCommitHash>
+    <winformsOutputPackageVersion>9.0.21-servicing.26505.2</winformsOutputPackageVersion>
+    <wpfGitCommitHash>7fbb84f1cccc9d180c782e1180a36ba8aa36d137</wpfGitCommitHash>
+    <wpfOutputPackageVersion>9.0.21-rtm.26505.5</wpfOutputPackageVersion>
     <xdtGitCommitHash>63ae81154c50a1cf9287cc47d8351d55b4289e6d</xdtGitCommitHash>
     <xdtOutputPackageVersion>10.0.0-preview.24609.2</xdtOutputPackageVersion>
     <xlifftasksGitCommitHash>73f0850939d96131c28cf6ea6ee5aacb4da0083a</xlifftasksGitCommitHash>
