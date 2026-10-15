@@ -273,15 +273,28 @@ jobs:
               exit 1
             fi
             cat /proc/sys/kernel/core_pattern > artifacts/log/Release/original-core-pattern.txt
+            if sudo test -e /etc/sudoers.d/sdk-crash-repro-core; then
+              echo "Refusing to replace an existing kernel-core sudo policy." >&2
+              exit 1
+            fi
+            printf 'Defaults rlimit_core=infinity\n' > artifacts/log/Release/kernel-core-sudoers
+            sudo visudo -cf artifacts/log/Release/kernel-core-sudoers
+            touch artifacts/log/Release/kernel-core-sudoers-installed
+            sudo install -m 0440 artifacts/log/Release/kernel-core-sudoers /etc/sudoers.d/sdk-crash-repro-core
+            sudo visudo -cf /etc/sudoers
             mkdir -p artifacts/log/Release/kernel-check
             printf '%s\n' "$(Build.SourcesDirectory)/artifacts/log/Release/kernel-check/core.%e.%p.%t.dmp" \
               | sudo tee /proc/sys/kernel/core_pattern
             ulimit -c unlimited
-            python3 - <<'PY'
+            sudo -E --preserve-env=HOME python3 - <<'PY'
             import os
             import pathlib
+            import resource
             import signal
 
+            limits = resource.getrlimit(resource.RLIMIT_CORE)
+            if limits != (resource.RLIM_INFINITY, resource.RLIM_INFINITY):
+                raise SystemExit(f"sudo did not preserve unlimited core limits: {limits}")
             pid = os.fork()
             if pid == 0:
                 signal.signal(signal.SIGQUIT, signal.SIG_DFL)
@@ -302,6 +315,9 @@ jobs:
               | sudo tee /proc/sys/kernel/core_pattern
             {
               cat /proc/sys/kernel/core_pattern
+              echo "Core limits inside the same sudo boundary as Run Tests:"
+              sudo -E --preserve-env=HOME /bin/bash -c 'ulimit -Sc; ulimit -Hc'
+              echo "Direct shell core limit and filter:"
               ulimit -c
               cat /proc/self/coredump_filter
             } > artifacts/log/Release/kernel-capture.txt
@@ -336,6 +352,16 @@ jobs:
               echo "Kernel capture setup did not save a core pattern; nothing to restore."
             fi
           displayName: Restore the worker kernel core pattern
+          condition: always()
+        - bash: |
+            set -euo pipefail
+            if [[ -f artifacts/log/Release/kernel-core-sudoers-installed ]]; then
+              sudo rm -f -- /etc/sudoers.d/sdk-crash-repro-core
+              sudo visudo -cf /etc/sudoers
+            else
+              echo "Kernel capture did not install a sudo policy; nothing to restore."
+            fi
+          displayName: Remove the temporary container sudo core-limit policy
           condition: always()
       - bash: |
           set -euo pipefail

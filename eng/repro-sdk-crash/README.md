@@ -57,7 +57,13 @@ smoke/preflight commands. This mode is restricted to Azure CI workers. It saves
 the worker's original `core_pattern`, verifies kernel capture using a small native
 SIGQUIT smoke core under `kernel-check`, and directs subsequent cores to
 `dumps/kernel.*.dmp`. An always-run finalizer restores the original kernel setting.
-The normal container already has an unlimited core-size limit. Kernel cores have
+The container starts with unlimited core-size limits, but its sudo policy resets
+both soft and hard limits to zero. Kernel mode temporarily installs
+`Defaults rlimit_core=infinity` inside the job container, validates it with
+`visudo`, and performs the native smoke check through the same `sudo -E
+--preserve-env=HOME` boundary as the real tests. An always-run finalizer removes
+this policy. `kernel-capture.txt` records the limits inside that sudo boundary,
+not just those in the setup shell. Kernel cores have
 no runtime crash report, so the summary marks them unclassified until a debugger
 confirms the signal and crashing thread; a smoke core is not a reproduction.
 Matching host/runtime/DAC binaries are published under `debugging-sdk`.
