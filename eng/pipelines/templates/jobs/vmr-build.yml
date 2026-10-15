@@ -544,24 +544,102 @@ jobs:
       displayName: Download 1xx SDK
 
   - ${{ if parameters.excludeRuntimeDependentJobs }}:
-    - bash: |
-        set -e
-        source "eng/download-source-built-archive.sh"
-        if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
-          storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
-        else
-          storageKey=""
-        fi
-        sharedComponentsDir="$(sharedComponentsDir)"
-        if [[ "$AGENT_OS" == "Windows_NT" ]]; then
-          sharedComponentsDir="$(wslpath -u "$sharedComponentsDir")"
-        fi
-        mkdir -p "$sharedComponentsDir"
-        DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" true "${{ parameters.artifactsRid }}" "$sharedComponentsDir" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
-        tar -xzf "$sharedComponentsDir"/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$sharedComponentsDir"
-        rm -f "$sharedComponentsDir"/Private.SourceBuilt.SharedComponents.*.tar.gz
-      displayName: Download Shared Component Artifacts
-      workingDirectory: $(sourcesPath)
+    - ${{ if eq(parameters.targetOS, 'windows') }}:
+      - task: PowerShell@2
+        displayName: Download Shared Component Artifacts
+        inputs:
+          targetType: inline
+          script: |
+            $ErrorActionPreference = 'Stop'
+            $ProgressPreference = 'SilentlyContinue'
+
+            function Download-WithRetries([string] $uri, [string] $outFile) {
+              for ($attempt = 1; $attempt -le 5; $attempt++) {
+                try {
+                  Invoke-WebRequest -Uri $uri -OutFile $outFile -UseBasicParsing | Out-Null
+                  return $true
+                }
+                catch {
+                  $statusCode = [int] $_.Exception.Response.StatusCode
+                  if ($statusCode -eq 404) {
+                    return $false
+                  }
+                  if ($attempt -eq 5) {
+                    throw "Download failed after $attempt attempts with HTTP status $statusCode"
+                  }
+                  Start-Sleep -Seconds 3
+                }
+              }
+            }
+
+            $artifactsRid = '${{ parameters.artifactsRid }}'
+            $versionDetailsPath = Join-Path '$(sourcesPath)' 'eng/Version.Details.props'
+            $versionNode = Select-Xml -Path $versionDetailsPath -XPath '//MicrosoftNETSdkPackageVersion' | Select-Object -First 1
+            if ($null -eq $versionNode) {
+              throw "MicrosoftNETSdkPackageVersion was not found in $versionDetailsPath"
+            }
+
+            $version = $versionNode.Node.InnerText
+            $sourceFileName = "Private.SourceBuilt.Artifacts.$version.$artifactsRid.tar.gz"
+            $destinationFileName = "Private.SourceBuilt.SharedComponents.$version.$artifactsRid.tar.gz"
+            $sharedComponentsDir = '$(sharedComponentsDir)'
+            $archivePath = Join-Path $sharedComponentsDir $destinationFileName
+            New-Item -ItemType Directory -Force -Path $sharedComponentsDir | Out-Null
+
+            $locations = @()
+            if ($artifactsRid -eq 'centos.10-x64') {
+              $locations += @{ Url = 'https://builds.dotnet.microsoft.com/dotnet/source-build'; StorageKey = '' }
+            }
+            $locations += @{ Url = 'https://ci.dot.net/public/source-build'; StorageKey = '' }
+            if ($env:SYSTEM_TEAMPROJECT -eq 'internal') {
+              $locations += @{
+                Url = 'https://ci.dot.net/internal/source-build'
+                StorageKey = '$(dotnetbuilds-internal-container-read-token-base64)'
+              }
+            }
+
+            $downloadSucceeded = $false
+            foreach ($location in $locations) {
+              $displayUrl = "$($location.Url)/$sourceFileName"
+              $archiveUrl = $displayUrl
+              if ($location.StorageKey) {
+                $storageQuery = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($location.StorageKey))
+                $archiveUrl = "${archiveUrl}?$storageQuery"
+                $displayUrl = "${displayUrl}?[redacted]"
+              }
+
+              Write-Host "Downloading shared component artifacts from $displayUrl..."
+              if (Download-WithRetries $archiveUrl $archivePath) {
+                $downloadSucceeded = $true
+                break
+              }
+              Write-Host 'Not found, trying next location...'
+            }
+
+            if (-not $downloadSucceeded) {
+              throw 'Failed to download shared component artifacts from all available locations'
+            }
+
+            & tar.exe -xzf $archivePath -C $sharedComponentsDir
+            if ($LASTEXITCODE -ne 0) {
+              throw "tar.exe failed with exit code $LASTEXITCODE"
+            }
+            Remove-Item -Force $archivePath
+
+    - ${{ else }}:
+      - script: |
+          set -e
+          source "$(sourcesPath)/eng/download-source-built-archive.sh"
+          if [[ $SYSTEM_TEAMPROJECT == "internal" ]]; then
+            storageKey="$(dotnetbuilds-internal-container-read-token-base64)"
+          else
+            storageKey=""
+          fi
+          mkdir -p "$(sharedComponentsDir)"
+          DownloadArchive "shared component artifacts" "PrivateSourceBuiltArtifactsVersion" true "${{ parameters.artifactsRid }}" "$(sharedComponentsDir)" "Private.SourceBuilt.SharedComponents" "MicrosoftNETSdkPackageVersion" $storageKey
+          tar -xzf "$(sharedComponentsDir)"/Private.SourceBuilt.SharedComponents.*.tar.gz -C "$(sharedComponentsDir)"
+          rm -f "$(sharedComponentsDir)"/Private.SourceBuilt.SharedComponents.*.tar.gz
+        displayName: Download Shared Component Artifacts
 
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - task: PowerShell@2
