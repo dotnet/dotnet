@@ -1,0 +1,6 @@
+{
+  "readme": "Optional. To get the reports by email, copy this file to local/qb-config.local.json (that folder is git-ignored) and set recipient to your email address (several addresses may be separated by ';'; at least one must be your own, because the reports are sent from the Outlook account that matches it). With no recipient, reports are saved to local/reports and no email is sent. pluginRoot is optional: leave it blank unless your Copilot plugins are not under COPILOT_HOME or ~/.copilot/installed-plugins.",
+  "recipient": "",
+  "model": "",
+  "pluginRoot": ""
+}
