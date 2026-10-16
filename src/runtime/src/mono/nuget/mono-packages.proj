@@ -4,7 +4,7 @@
   </ItemGroup>
 
   <!-- ASP.NET Core consumes this package on non-browser platforms too. -->
-  <ItemGroup>
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <ProjectReference Include="Microsoft.NETCore.BrowserDebugHost.Transport\Microsoft.NETCore.BrowserDebugHost.Transport.pkgproj" />
   </ItemGroup>
 
