@@ -28,6 +28,8 @@ NuGet.Commands.AddSourceArgs.AllowInsecureConnections.get -> bool
 NuGet.Commands.AddSourceArgs.AllowInsecureConnections.set -> void
 ~NuGet.Commands.AddSourceArgs.Configfile.get -> string
 ~NuGet.Commands.AddSourceArgs.Configfile.set -> void
+NuGet.Commands.AddSourceArgs.MinPublishAgeHours.get -> uint?
+NuGet.Commands.AddSourceArgs.MinPublishAgeHours.set -> void
 ~NuGet.Commands.AddSourceArgs.Name.get -> string
 ~NuGet.Commands.AddSourceArgs.Name.set -> void
 ~NuGet.Commands.AddSourceArgs.Password.get -> string
@@ -580,6 +582,8 @@ NuGet.Commands.RestoreRequest.LockFileVersion.set -> void
 ~NuGet.Commands.RestoreRequest.MSBuildProjectExtensionsPath.set -> void
 NuGet.Commands.RestoreRequest.MaxDegreeOfConcurrency.get -> int
 NuGet.Commands.RestoreRequest.MaxDegreeOfConcurrency.set -> void
+~NuGet.Commands.RestoreRequest.MinPublishAgeExceptions.get -> NuGet.Configuration.MinPublishAgeExceptions
+~NuGet.Commands.RestoreRequest.MinPublishAgeExceptions.init -> void
 NuGet.Commands.RestoreRequest.PackageSaveMode.get -> NuGet.Packaging.PackageSaveMode
 NuGet.Commands.RestoreRequest.PackageSaveMode.set -> void
 ~NuGet.Commands.RestoreRequest.PackageSourceMapping.get -> NuGet.Configuration.PackageSourceMapping
@@ -791,6 +795,8 @@ NuGet.Commands.UpdateSourceArgs.AllowInsecureConnections.get -> bool
 NuGet.Commands.UpdateSourceArgs.AllowInsecureConnections.set -> void
 ~NuGet.Commands.UpdateSourceArgs.Configfile.get -> string
 ~NuGet.Commands.UpdateSourceArgs.Configfile.set -> void
+NuGet.Commands.UpdateSourceArgs.MinPublishAgeHours.get -> uint?
+NuGet.Commands.UpdateSourceArgs.MinPublishAgeHours.set -> void
 ~NuGet.Commands.UpdateSourceArgs.Name.get -> string
 ~NuGet.Commands.UpdateSourceArgs.Name.set -> void
 ~NuGet.Commands.UpdateSourceArgs.Password.get -> string

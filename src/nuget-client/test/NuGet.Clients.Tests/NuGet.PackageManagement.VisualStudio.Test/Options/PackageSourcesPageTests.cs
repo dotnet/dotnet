@@ -1,7 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,14 +14,16 @@ using Microsoft.VisualStudio.Utilities.UnifiedSettings;
 using Moq;
 using NuGet.Configuration;
 using NuGet.PackageManagement.VisualStudio.Options;
+using NuGet.Test.Utility;
 using NuGet.VisualStudio;
 using Xunit;
 
 namespace NuGet.PackageManagement.VisualStudio.Test.Options
 {
     [Collection(MockedVS.Collection)]
-    public class PackageSourcesPageTests : NuGetExternalSettingsProviderTests<PackageSourcesPage>
+    public class PackageSourcesPageTests : NuGetExternalSettingsProviderTests<PackageSourcesPage>, IDisposable
     {
+        private readonly TestDirectory _settingsDirectory;
         private IEnumerable<PackageSource> _packageSources;
         private IEnumerable<PackageSource> _savedPackageSources;
         private IEnumerable<PackageSource> _auditSources;
@@ -33,6 +37,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             _packageSources = Enumerable.Empty<PackageSource>();
             _auditSources = Enumerable.Empty<PackageSource>();
             _savedPackageSources = Enumerable.Empty<PackageSource>();
+            _settingsDirectory = TestDirectory.Create();
+            WriteSettings("<configuration />");
         }
 
         protected override PackageSourcesPage CreateInstance(VSSettings? vsSettings)
@@ -65,7 +71,224 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
                     _countDisablePackageSourceCalled++;
                 });
 
-            return new PackageSourcesPage(vsSettings!, mockedPackageSourceProvider.Object);
+            return new PackageSourcesPage(
+                vsSettings!,
+                mockedPackageSourceProvider.Object);
+        }
+
+        protected override string GetSolutionDirectory()
+        {
+            return _settingsDirectory.Path;
+        }
+
+        public void Dispose()
+        {
+            _settingsDirectory.Dispose();
+        }
+
+        [Fact]
+        public void Constructor_WithNullVsSettings_ThrowsArgumentNullException()
+        {
+            Action act = () => new PackageSourcesPage(
+                vsSettings: null!,
+                Mock.Of<IPackageSourceProvider>());
+
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("vsSettings");
+        }
+
+        [Fact]
+        public async Task GetValueAsync_PackageSourceWithMinPublishAge_ReturnsHoursAsync()
+        {
+            _packageSources =
+            [
+                new PackageSource("https://unit.test/v3/index.json", "unit")
+                {
+                    MinPublishAge = TimeSpan.FromHours(48)
+                }
+            ];
+
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+
+            ExternalSettingOperationResult<IReadOnlyList<IDictionary<string, object>>> result =
+                await instance.GetValueAsync<IReadOnlyList<IDictionary<string, object>>>(
+                    PackageSourcesPage.MonikerPackageSources,
+                    CancellationToken.None);
+
+            IReadOnlyList<IDictionary<string, object>> sources = result
+                .As<ExternalSettingOperationResult<IReadOnlyList<IDictionary<string, object>>>.Success>()
+                .Value;
+            sources.Should().ContainSingle();
+            sources[0][PackageSourcesPage.MonikerMinPublishAgeHours].Should().Be(48L);
+        }
+
+        [Fact]
+        public async Task SetValueAsync_PackageSourceWithMinPublishAge_SavesHoursAsync()
+        {
+            var packageSource = new Dictionary<string, object>
+            {
+                [PackageSourcesPage.MonikerSourceName] = "unit",
+                [PackageSourcesPage.MonikerSourceUrl] = "https://unit.test/v3/index.json",
+                [PackageSourcesPage.MonikerIsEnabled] = true,
+                [PackageSourcesPage.MonikerAllowInsecureConnections] = false,
+                [PackageSourcesPage.MonikerMinPublishAgeHours] = 72L,
+            };
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+
+            ExternalSettingOperationResult result = await instance.SetValueAsync(
+                PackageSourcesPage.MonikerPackageSources,
+                new[] { packageSource },
+                CancellationToken.None);
+
+            result.Should().BeOfType<ExternalSettingOperationResult.Success>();
+            _savedPackageSources.Should().ContainSingle()
+                .Which.MinPublishAge.Should().Be(TimeSpan.FromHours(72));
+        }
+
+        [Fact]
+        public async Task GetValueAsync_MinPublishAgeExceptions_ReturnsPatternsAsync()
+        {
+            WriteSettings(
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="System.*" />
+                        <package pattern="Contoso.Client" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+
+            ExternalSettingOperationResult<IReadOnlyList<IDictionary<string, object>>> result =
+                await instance.GetValueAsync<IReadOnlyList<IDictionary<string, object>>>(
+                    PackageSourcesPage.MonikerMinPublishAgeExceptions,
+                    CancellationToken.None);
+
+            IReadOnlyList<IDictionary<string, object>> exceptions = result
+                .As<ExternalSettingOperationResult<IReadOnlyList<IDictionary<string, object>>>.Success>()
+                .Value;
+            exceptions.Select(item => (string)item[PackageSourcesPage.MonikerPackageIdPattern])
+                .Should().BeEquivalentTo("System.*", "Contoso.Client");
+        }
+
+        [Fact]
+        public async Task GetValueAsync_ShowMinPublishAgeExceptions_WithNoMinimumAgeOrExceptions_ReturnsFalseAsync()
+        {
+            _packageSources =
+            [
+                new PackageSource("https://unit.test/v3/index.json", "unit")
+            ];
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+
+            ExternalSettingOperationResult<bool> result = await instance.GetValueAsync<bool>(
+                PackageSourcesPage.MonikerShowMinPublishAgeExceptions,
+                CancellationToken.None);
+
+            result.As<ExternalSettingOperationResult<bool>.Success>().Value.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task GetValueAsync_ShowMinPublishAgeExceptions_WithMinimumAge_ReturnsTrueAsync()
+        {
+            _packageSources =
+            [
+                new PackageSource("https://unit.test/v3/index.json", "unit")
+                {
+                    MinPublishAge = TimeSpan.FromHours(1)
+                }
+            ];
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+
+            ExternalSettingOperationResult<bool> result = await instance.GetValueAsync<bool>(
+                PackageSourcesPage.MonikerShowMinPublishAgeExceptions,
+                CancellationToken.None);
+
+            result.As<ExternalSettingOperationResult<bool>.Success>().Value.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task GetValueAsync_ShowMinPublishAgeExceptions_WithException_ReturnsTrueAsync()
+        {
+            WriteSettings(
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="System.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+
+            ExternalSettingOperationResult<bool> result = await instance.GetValueAsync<bool>(
+                PackageSourcesPage.MonikerShowMinPublishAgeExceptions,
+                CancellationToken.None);
+
+            result.As<ExternalSettingOperationResult<bool>.Success>().Value.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task SetValueAsync_MinPublishAgeExceptions_SavesPatternsAsync()
+        {
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+            IDictionary<string, object>[] exceptions =
+            [
+                new Dictionary<string, object>
+                {
+                    [PackageSourcesPage.MonikerPackageIdPattern] = "System.*"
+                },
+                new Dictionary<string, object>
+                {
+                    [PackageSourcesPage.MonikerPackageIdPattern] = "Contoso.Client"
+                },
+            ];
+
+            ExternalSettingOperationResult result = await instance.SetValueAsync(
+                PackageSourcesPage.MonikerMinPublishAgeExceptions,
+                exceptions,
+                CancellationToken.None);
+
+            result.Should().BeOfType<ExternalSettingOperationResult.Success>();
+            var provider = new MinPublishAgeExceptionsProvider(CreateSettings());
+            provider.GetMinPublishAgeExceptionItems().Select(item => item.Pattern)
+                .Should().BeEquivalentTo("System.*", "Contoso.Client");
+        }
+
+        [Fact]
+        public async Task SetValueAsync_EmptyMinPublishAgeExceptions_SavesEmptySectionAsync()
+        {
+            WriteSettings(
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="System.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+
+            ExternalSettingOperationResult result = await instance.SetValueAsync(
+                PackageSourcesPage.MonikerMinPublishAgeExceptions,
+                Array.Empty<IDictionary<string, object>>(),
+                CancellationToken.None);
+
+            result.Should().BeOfType<ExternalSettingOperationResult.Success>();
+            File.ReadAllText(Path.Combine(
+                _settingsDirectory.Path,
+                NuGetConstants.NuGetSolutionSettingsFolder,
+                "NuGet.Config"))
+                .Should().Contain("<minPublishAgeExceptions />");
+        }
+
+        private void WriteSettings(string content)
+        {
+            string settingsRoot = Path.Combine(_settingsDirectory.Path, NuGetConstants.NuGetSolutionSettingsFolder);
+            Directory.CreateDirectory(settingsRoot);
+            File.WriteAllText(Path.Combine(settingsRoot, "NuGet.Config"), content);
+        }
+
+        private Settings CreateSettings()
+        {
+            return new Settings(Path.Combine(_settingsDirectory.Path, NuGetConstants.NuGetSolutionSettingsFolder));
         }
 
         [Theory]

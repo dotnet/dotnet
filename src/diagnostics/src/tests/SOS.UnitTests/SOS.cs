@@ -291,39 +291,6 @@ public class SOSStackTraceTests
     private ITestOutputHelper Output { get; set; }
 
     [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task StackTraceSoftwareExceptionFrame(TestConfiguration config)
-    {
-        if (config.RuntimeFrameworkVersionMajor < 10)
-        {
-            Assert.Skip("This test validates SoftwareExceptionFrame handling, before .NET10, these aren't used in this debuggee scenario.");
-        }
-
-        SOSTestHelpers.SkipIfWinX86(config);
-
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "SimpleThrow",
-            scriptName: "StackTraceSoftwareExceptionFrame.script",
-            Output,
-            testName: "SOS.StackTraceSoftwareExceptionFrame",
-            testTriage: true);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task StackTraceFaultingExceptionFrame(TestConfiguration config)
-    {
-        SOSTestHelpers.SkipIfWinX86(config);
-
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "DivZero",
-            scriptName: "StackTraceFaultingExceptionFrame.script",
-            Output,
-            testName: "SOS.StackTraceFaultingExceptionFrame",
-            testTriage: true);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
     public async Task StackTests(TestConfiguration config)
     {
         // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
@@ -335,43 +302,6 @@ public class SOSStackTraceTests
             scriptName: "StackTests.script",
             Output,
             testName: "SOS.StackTests");
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task ClrStackWithNumberOfFrames(TestConfiguration config)
-    {
-        if (config.IsDesktop)
-        {
-            Assert.Skip("The behavior of ClrStack -i is not the same on Desktop");
-        }
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "DivZero",
-            scriptName: "ClrStackWithNumberOfFrames.script",
-            Output,
-            testName: "SOS.ClrStackWithNumberOfFrames",
-            testTriage: true);
-    }
-}
-
-public class SOSExceptionTests
-{
-    public SOSExceptionTests(ITestOutputHelper output)
-    {
-        Output = output;
-    }
-
-    private ITestOutputHelper Output { get; set; }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task TaskNestedException(TestConfiguration config)
-    {
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "TaskNestedException",
-            scriptName: "TaskNestedException.script",
-            Output,
-            testTriage: true);
     }
 }
 
@@ -468,41 +398,6 @@ public class SOSGCTests
 
     private ITestOutputHelper Output { get; set; }
 
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task GCTests(TestConfiguration config)
-    {
-        SOSTestHelpers.SkipIfArm(config);
-        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
-        SOSTestHelpers.SkipIfWinX86(config);
-
-        // Live only
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "GCWhere",
-            scriptName: "GCTests.script",
-            Output,
-            testName: "SOS.GCTests",
-            testDump: false);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task GCPOHTests(TestConfiguration config)
-    {
-        if (config.IsDesktop || config.RuntimeFrameworkVersionMajor < 5)
-        {
-            Assert.Skip("This test validates POH behavior, which was introduced in .net 5");
-        }
-        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
-        SOSTestHelpers.SkipIfWinX86(config);
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "GCPOH",
-            scriptName: "GCPOH.script",
-            Output,
-            testName: "SOS.GCPOHTests",
-            testDump: false);
-    }
-
     [Theory, MemberData(nameof(SOSTestHelpers.GetGCConfigurations), MemberType = typeof(SOSTestHelpers))]
     public async Task FindRootsOlderGeneration(TestConfiguration config)
     {
@@ -598,30 +493,6 @@ public class SOSDumpTests
     }
 
     [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task ConcurrentDictionaries(TestConfiguration config)
-    {
-        if (OS.Kind != OSKind.Windows && config.RuntimeFrameworkVersionMajor == 10)
-        {
-            Assert.Skip("Dumping concurrent dict objects in dumps hits unavailable memory on linux dumps. Tracking: dotnet/diagnostics#5491");
-        }
-
-        await SOSTestHelpers.RunTest(
-            scriptName: "ConcurrentDictionaries.script",
-            new SOSRunner.TestInformation
-            {
-                TestConfiguration = config,
-                TestLive = false,
-                TestName = "SOS.ConcurrentDictionaries",
-                DebuggeeName = "DotnetDumpCommands",
-                DebuggeeArguments = "dcd",
-                DumpNameSuffix = "dcd",
-                UsePipeSync = true,
-                DumpGenerator = SOSRunner.DumpGenerator.DotNetDump,
-            },
-            Output);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
     public async Task OtherCommands(TestConfiguration config)
     {
         // This debuggee needs the directory of the exes/dlls to load the SymbolTestDll assembly.
@@ -649,29 +520,6 @@ public class SOSMethodTests
 
     private ITestOutputHelper Output { get; set; }
 
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task DynamicMethod(TestConfiguration config)
-    {
-        if (config.PublishSingleFile || config.IsDesktop)
-        {
-            Assert.Skip("Single file and desktop framework not supported");
-        }
-
-        if (config.RuntimeFrameworkVersionMajor == 10)
-        {
-            // The clrstack -i -a command regressed on .NET 10 win-x86, so skip this test for now.
-            SOSTestHelpers.SkipIfWinX86(config);
-        }
-
-        await SOSTestHelpers.RunTest(config, debuggeeName: "DynamicMethod", scriptName: "DynamicMethod.script", Output);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task Reflection(TestConfiguration config)
-    {
-        await SOSTestHelpers.RunTest(config, debuggeeName: "ReflectionTest", scriptName: "Reflection.script", Output, testTriage: true);
-    }
-
     [Theory, MemberData(nameof(SOSTestHelpers.GetNetCoreConfigurations), MemberType = typeof(SOSTestHelpers))]
     public async Task VarargPInvokeInteropMD(TestConfiguration config)
     {
@@ -689,54 +537,6 @@ public class SOSMethodTests
             Output,
             testName: "SOS.VarargPInvokeInteropMD",
             testDump: false);
-    }
-}
-
-public class SOSThreadingTests
-{
-    public SOSThreadingTests(ITestOutputHelper output)
-    {
-        Output = output;
-    }
-
-    private ITestOutputHelper Output { get; set; }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task ThreadApartment(TestConfiguration config)
-    {
-        if (OS.Kind != OSKind.Windows)
-        {
-            Assert.Skip("Apartment state is a Windows COM concept");
-        }
-
-        await SOSTestHelpers.RunTest(config, debuggeeName: "ThreadApartment", scriptName: "ThreadApartment.script", Output);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task LineNums(TestConfiguration config)
-    {
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "LineNums",
-            scriptName: "LineNums.script",
-            Output,
-            testTriage: true);
-    }
-}
-
-public class SOSAsyncTests
-{
-    public SOSAsyncTests(ITestOutputHelper output)
-    {
-        Output = output;
-    }
-
-    private ITestOutputHelper Output { get; set; }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task AsyncMain(TestConfiguration config)
-    {
-        await SOSTestHelpers.RunTest(config, debuggeeName: "AsyncMain", scriptName: "AsyncMain.script", Output, testTriage: true);
     }
 }
 

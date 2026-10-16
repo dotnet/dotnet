@@ -211,5 +211,53 @@ namespace NuGet.Configuration.Test
                 .NotContain("<clear />");
             File.ReadAllText(parentConfigPath).Should().Be(originalParentConfig);
         }
+
+        [Fact]
+        public void SaveMinPublishAgeExceptions_WithEmptyList_SavesEmptySectionToSelectedConfig()
+        {
+            // Arrange
+            using var directory = TestDirectory.Create();
+            var childDirectory = Path.Combine(directory.Path, "child");
+            var parentConfigPath = Path.Combine(directory.Path, Settings.DefaultSettingsFileName);
+            SettingsTestUtils.CreateConfigurationFile(
+                Settings.DefaultSettingsFileName,
+                directory,
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="Legacy.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+            var originalParentConfig = File.ReadAllText(parentConfigPath);
+            SettingsTestUtils.CreateConfigurationFile(
+                Settings.DefaultSettingsFileName,
+                childDirectory,
+                """
+                <configuration>
+                    <minPublishAgeExceptions>
+                        <package pattern="Contoso.*" />
+                    </minPublishAgeExceptions>
+                </configuration>
+                """);
+
+            var provider = new MinPublishAgeExceptionsProvider(
+                Settings.LoadSettings(
+                    childDirectory,
+                    configFileName: null,
+                    machineWideSettings: null,
+                    loadUserWideSettings: false,
+                    useTestingGlobalPath: false));
+
+            // Act
+            provider.SaveMinPublishAgeExceptions(Array.Empty<MinPublishAgeExceptionItem>());
+
+            // Assert
+            File.ReadAllText(Path.Combine(childDirectory, Settings.DefaultSettingsFileName))
+                .Should()
+                .Contain("<minPublishAgeExceptions />");
+            File.ReadAllText(parentConfigPath).Should().Be(originalParentConfig);
+            provider.GetMinPublishAgeExceptionItems().Should().BeEmpty();
+        }
     }
 }

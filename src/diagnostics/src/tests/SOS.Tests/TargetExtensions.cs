@@ -111,6 +111,10 @@ internal static partial class TargetExtensions
     public static SosTable Clrstack(this Target self, bool suppressLines = false) =>
         ParseFrameTable(self.Sos(suppressLines ? "clrstack -n" : "clrstack"));
 
+    /// <summary>Run <c>!clrstack /d</c> and parse the debugger-rendered frame table.</summary>
+    public static SosTable ClrstackDml(this Target self) =>
+        ParseFrameTable(self.Sos("clrstack /d"));
+
     /// <summary>
     /// Run <c>!clrstack -c &lt;count&gt;</c> (limit the number of printed frames) and parse the frame
     /// table. SOS counts every printed row toward the limit, internal frames included.
@@ -278,15 +282,19 @@ internal static partial class TargetExtensions
 
     /// <summary>
     /// Run the EXPERIMENTAL <c>!clrstack -i</c> (ICorDebug) — optionally with <c>-a</c> to also dump
-    /// each managed frame's parameters and locals — and parse its distinct output: a banner, a
+    /// each managed frame's parameters and locals, or <c>-c</c> to limit frames -- and parse its distinct output: a banner, a
     /// Child SP / IP / Call Site listing where managed frames read
     /// <c>[DEFAULT] [hasThis] &lt;ret&gt; &lt;Type.Method&gt;(&lt;sig&gt;) (&lt;module&gt;)</c>, and (with
     /// <c>-a</c>) <c>PARAMETERS:</c>/<c>LOCALS:</c> blocks of <c>+ &lt;type&gt; &lt;name&gt; @ 0x&lt;addr&gt;</c>,
     /// <c>+ &lt;type&gt; &lt;name&gt; = &lt;value&gt;</c>, or <c>+ (Error … '&lt;name&gt;')</c> lines.
     /// </summary>
-    public static IReadOnlyList<IcorFrame> ClrstackICorDebug(this Target self, bool variables)
+    public static IReadOnlyList<IcorFrame> ClrstackICorDebug(this Target self, bool variables, int? count = null)
     {
-        SosOutput output = self.Sos(variables ? "clrstack -i -a" : "clrstack -i");
+        string command = variables ? "clrstack -i -a" : "clrstack -i";
+        if (count.HasValue)
+            command += $" -c {count.Value}";
+
+        SosOutput output = self.Sos(command);
         string[] lines = output.Text.Replace("\r", string.Empty).Split('\n');
 
         int header = Array.FindIndex(lines, l => l.Contains("Child SP") && l.Contains("IP") && l.Contains("Call Site"));

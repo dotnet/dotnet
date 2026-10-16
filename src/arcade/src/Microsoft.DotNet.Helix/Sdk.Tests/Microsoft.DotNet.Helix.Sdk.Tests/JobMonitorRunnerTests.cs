@@ -871,6 +871,44 @@ public class JobMonitorRunnerTests
         azdo.CompleteTestRunCallCount.Should().Be(1);
     }
 
+    [Theory]
+    [InlineData(true, "https://helix.example/workitem/console")]
+    [InlineData(false, "https://helix.example/workitem/console")]
+    [InlineData(true, null)]
+    [InlineData(false, null)]
+    [InlineData(true, "")]
+    [InlineData(false, "")]
+    public void TestOnlyFailure_PreservesConsoleLink(bool testResultsFirst, string consoleOutputUri)
+    {
+        var state = new MonitorState();
+        HelixJobInfo job = HelixJob("helix-linux", "finished");
+        var workItem = new WorkItemSummary("details/workitem", job.JobName, "workitem", "Finished")
+        {
+            ExitCode = 0,
+            ConsoleOutputUri = consoleOutputUri,
+        };
+        state.ObserveJobs([job]);
+
+        if (testResultsFirst)
+        {
+            state.ObserveTestResult(job.JobName, workItem.Name, allPassed: false);
+        }
+
+        state.TryRecordWorkItemOutcomes(job, [workItem]);
+
+        if (!testResultsFirst)
+        {
+            state.ObserveTestResult(job.JobName, workItem.Name, allPassed: false);
+        }
+
+        state.HasFailedWorkItem.Should().BeTrue();
+        FailedWorkItemConsoleInfo failure = state.SnapshotFailedWorkItemConsoleInfo().Should().ContainSingle().Subject;
+        failure.JobName.Should().Be(job.DisplayName);
+        failure.WorkItemName.Should().Be(workItem.Name);
+        failure.State.Should().Be("Failed (AzDO tests)");
+        failure.ConsoleOutput.Should().Be(string.IsNullOrEmpty(consoleOutputUri) ? "no console link available" : consoleOutputUri);
+    }
+
     [Fact]
     public void IncrementalTestFailure_DoesNotStickAcrossPassingIncarnation()
     {
@@ -4903,6 +4941,7 @@ public class JobMonitorRunnerTests
     {
         var azdo = new FakeAzureDevOpsService();
         var helix = new FakeHelixService();
+        var logger = new RecordingLogger();
 
         // Configure the fake upload to report AllPassed=false for this work item, simulating
         // an uploaded TRX that contained at least one failing test even though the work
@@ -4929,13 +4968,26 @@ public class JobMonitorRunnerTests
                 ],
             });
 
-        var runner = CreateRunner(azdo, helix);
+        helix.WithWorkItems("helix-linux",
+        [
+            new WorkItemSummary("details/workitem-1", "helix-linux", "workitem-1", "Finished")
+            {
+                ExitCode = 0,
+                ConsoleOutputUri = "https://helix.example/workitem-1/console",
+            },
+        ]);
+
+        var runner = new JobMonitorRunner(DefaultOptions(), logger, azdo, helix, NoDelay);
         int exitCode = await runner.RunAsync(CancellationToken.None);
 
         exitCode.Should().Be(1);
         helix.Resubmissions.Should().BeEmpty();
         azdo.UploadedJobNames.Should().BeEquivalentTo(["helix-linux"]);
         azdo.CompletedTestRunIds.Should().ContainSingle();
+        logger.Messages.Should().Contain(message =>
+            message.Contains("Failed work item information:", StringComparison.Ordinal)
+            && message.Contains("workitem-1 (Job: helix-linux) (Failed (AzDO tests))", StringComparison.Ordinal)
+            && message.Contains("Console: https://helix.example/workitem-1/console", StringComparison.Ordinal));
         IReadOnlyDictionary<string, IReadOnlySet<string>> failedTestWorkItems =
             await azdo.GetFailedTestWorkItemsAsync(CancellationToken.None);
         failedTestWorkItems["helix-linux"].Should().BeEquivalentTo(["workitem-1"]);

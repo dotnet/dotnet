@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Runtime.InteropServices;
 using SOS.TestHarness;
 using Xunit;
 
@@ -33,17 +34,19 @@ public sealed class TestMatrixCapabilityTests
         Assert.False(TestMatrices.SupportsGcRootEnumeration(config with { Flavor = Flavor.Framework }));
     }
 
-    [Fact]
-    public void DumpObjExcludesOnlyUnixNet10LegacyHeapDumps()
+    [Theory]
+    [InlineData(Flavor.Core)]
+    [InlineData(Flavor.SingleFile)]
+    public void DumpObjExcludesOnlyUnixNet10LegacyHeapDumps(Flavor flavor)
     {
-        TestConfig config = Config(Host.Lldb, Dac.Legacy);
+        TestConfig config = Config(Host.Lldb, Dac.Legacy) with { Flavor = flavor };
 
         Assert.False(TestMatrices.SupportsDumpObj(config, isWindows: false));
         Assert.True(TestMatrices.SupportsDumpObj(config, isWindows: true));
         Assert.True(TestMatrices.SupportsDumpObj(config with { CoreVersion = CoreVersion.Net8 }, isWindows: false));
         Assert.True(TestMatrices.SupportsDumpObj(config with { DumpKind = DumpKind.Full }, isWindows: false));
         Assert.True(TestMatrices.SupportsDumpObj(config with { Liveness = Liveness.Live }, isWindows: false));
-        Assert.True(TestMatrices.SupportsDumpObj(config with { Flavor = Flavor.SingleFile }, isWindows: false));
+        Assert.True(TestMatrices.SupportsDumpObj(config with { Flavor = Flavor.Framework }, isWindows: false));
         Assert.True(TestMatrices.SupportsDumpObj(config with { Dac = Dac.CDac }, isWindows: false));
     }
 
@@ -83,6 +86,24 @@ public sealed class TestMatrixCapabilityTests
     public void NotReachableInRangeIgnoresOnlyLivenessProgress(string line, bool expected)
     {
         Assert.Equal(expected, NativeAddressSpaceTests.IsLivenessProgress(line));
+    }
+
+    [Fact]
+    public void X86DebugInfoSkipCoversOnlyWindowsX86Net10LegacyReducedDumps()
+    {
+        TestConfig config = Config(Host.Cdb, Dac.Legacy);
+
+        Assert.NotNull(SOSTestSkips.GetX86DebugInfoSkipReason(config, isWindows: true, Architecture.X86));
+        Assert.Null(SOSTestSkips.GetX86DebugInfoSkipReason(config, isWindows: false, Architecture.X86));
+        Assert.Null(SOSTestSkips.GetX86DebugInfoSkipReason(config, isWindows: true, Architecture.X64));
+        Assert.Null(SOSTestSkips.GetX86DebugInfoSkipReason(config with { CoreVersion = CoreVersion.Net11 }, isWindows: true, Architecture.X86));
+        Assert.Null(SOSTestSkips.GetX86DebugInfoSkipReason(config with { Dac = Dac.CDac }, isWindows: true, Architecture.X86));
+        Assert.Null(SOSTestSkips.GetX86DebugInfoSkipReason(config with { DumpKind = DumpKind.Full }, isWindows: true, Architecture.X86));
+        Assert.Null(SOSTestSkips.GetX86DebugInfoSkipReason(config with { Liveness = Liveness.Live }, isWindows: true, Architecture.X86));
+        Assert.Null(SOSTestSkips.GetX86DebugInfoSkipReason(config with { Flavor = Flavor.Framework }, isWindows: true, Architecture.X86));
+
+        // The frame-count rule shares the same defect, so it skips on the same configurations.
+        Assert.NotNull(SOSTestSkips.GetICorDebugFrameCountSkipReason(config, isWindows: true, isMacOS: false, Architecture.X86));
     }
 
     private static TestConfig Config(Host host, Dac dac) =>

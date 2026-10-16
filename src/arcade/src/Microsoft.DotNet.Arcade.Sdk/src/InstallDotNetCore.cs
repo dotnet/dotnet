@@ -160,14 +160,14 @@ public class InstallDotNetCore : Microsoft.Build.Utilities.Task
                                     {
                                         if (!String.IsNullOrEmpty(e.Data))
                                         {
-                                            Console.WriteLine(e.Data);
+                                                Log.LogMessage(MessageImportance.High, e.Data);
                                         }
                                     };
                                     process.ErrorDataReceived += (sender, e) =>
                                     {
                                         if (!String.IsNullOrEmpty(e.Data))
                                         {
-                                            Console.Error.WriteLine(e.Data);
+                                                Log.LogMessage(MessageImportance.High, e.Data);
                                         }
                                     };
                                     process.BeginOutputReadLine();
@@ -264,7 +264,7 @@ public class InstallDotNetCore : Microsoft.Build.Utilities.Task
         return items.ToArray();
     }
 
-    private static bool CheckRuntimeDotnetInstalled(
+        private bool CheckRuntimeDotnetInstalled(
         string dotnetRoot,
         string version,
         string architecture,
@@ -294,7 +294,7 @@ public class InstallDotNetCore : Microsoft.Build.Utilities.Task
 
         if (Directory.Exists(runtimePath))
         {
-            Console.WriteLine($"  Runtime toolset '{runtime}/{architecture} v{version}' already installed in directory '{runtimePath}'.");
+                Log.LogMessage(MessageImportance.Normal, $"  Runtime toolset '{runtime}/{architecture} v{version}' already installed in directory '{runtimePath}'.");
             return true;
         }
 

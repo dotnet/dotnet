@@ -1261,7 +1261,7 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
         <source>The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</source>
-        <target state="new">The minimum number of hours after a package is published before it can be selected for update. Set to 0 to remove the value.</target>
+        <target state="translated">Nombre minimal d’heures après la publication d’un package avant qu’il puisse être sélectionné pour la mise à jour. Définissez sur 0 pour supprimer la valeur.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
@@ -1321,12 +1321,12 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_InvalidGroup">
         <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
-        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
+        <target state="translated">L’ID de groupe doit comprendre entre 1 et 64 caractères, utiliser uniquement les caractères A-Z, a-z, 0-9, « . », « _ » ou « - », et commencer et se terminer par une lettre ou un chiffre.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_MissingSource">
         <source>No package source was provided and DefaultPushSource is not configured.</source>
-        <target state="new">No package source was provided and DefaultPushSource is not configured.</target>
+        <target state="translated">Aucune source de package n’a été fournie et DefaultPushSource n’est pas configuré.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackageNotFound">
@@ -1341,7 +1341,7 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_ResourceNotFound">
         <source>The source '{0}' does not advertise a supported package staging resource.</source>
-        <target state="new">The source '{0}' does not advertise a supported package staging resource.</target>
+        <target state="translated">Le '{0}' source ne publie pas de ressource intermédiaire de package prise en charge.</target>
         <note>0 - package source</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
@@ -1351,7 +1351,7 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="new">Uploads the package into the specified staging group.</target>
+        <target state="translated">Charge le package dans le groupe intermédiaire spécifié.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">

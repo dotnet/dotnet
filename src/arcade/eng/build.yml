@@ -5,13 +5,15 @@ parameters:
 - name: microbuildUseESRP
   default: false
   type: boolean
-# When true (default), run the Validate Arcade SDK stage: three parallel validations of the newly
-# produced SDK - signing validation, self-build (self-bootstrap), and promotion to a test channel
-# with the new Arcade. Set to false as a bootstrap-breakage escape hatch to ship a new Arcade when
-# the current one cannot self-validate; the promotion to '.NET Eng - Latest' still runs on build
-# success.
+# When true (default), run the Validate Arcade SDK stage for the newly produced SDK. Set to false as
+# a bootstrap-breakage escape hatch to ship a new Arcade when the current one cannot self-validate;
+# the promotion to '.NET Eng - Latest' still runs on build success.
 - name: runValidateSdk
   default: true
+  type: boolean
+# Promotion validation requires credentials restricted to the internal official pipeline.
+- name: runPromotionValidation
+  default: false
   type: boolean
 # The channel successful builds are promoted to, and the source branch the promotion gate runs on.
 # Defined once here so they aren't duplicated throughout the promotion stage below.
@@ -83,7 +85,8 @@ stages:
       parameters:
         microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
     # Validate that build promotion works when driven by the newly built Arcade.
-    - template: /eng/validate-promotion.yml@self
+    - ${{ if eq(parameters.runPromotionValidation, true) }}:
+      - template: /eng/validate-promotion.yml@self
 
 - template: /eng/common/templates-official/post-build/post-build.yml@self
   parameters:

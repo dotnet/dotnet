@@ -15,6 +15,30 @@ namespace SOS.Tests;
 /// </summary>
 public sealed class ClrThreadsTests
 {
+    public static TheoryData<TestConfig> ApartmentMatrix { get; } =
+        TestConfig.BuildMatrix([TargetCatalog.ThreadApartment]);
+
+    [WindowsTheory]
+    [MemberData(nameof(ApartmentMatrix))]
+    public async Task ClrThreads_ReportsApartmentStates(TestConfig config)
+    {
+        using Target target = await Targets.GetTargetAsync(config);
+        target.GoToFirstStop();
+
+        SosTable threads = target.Sos("clrthreads").AsThreadsTable();
+        IReadOnlyList<TargetExtensions.ThreadStack> stacks = target.ClrstackAllThreads();
+        AssertWorkerApartment("ThreadApartment.StaWorker()", "STA");
+        AssertWorkerApartment("ThreadApartment.MtaWorker()", "MTA");
+
+        void AssertWorkerApartment(string method, string apartment)
+        {
+            TargetExtensions.ThreadStack stack = Assert.Single(stacks, thread => thread.Frames.Any(frame => frame.Function.Contains(method, StringComparison.Ordinal)));
+            uint osThreadId = Convert.ToUInt32(stack.OsThreadId, 16);
+            SosRow thread = Assert.Single(threads, row => row["OSID"].AsUInt32(Sos.Hex) == osThreadId);
+            Assert.Equal(apartment, thread["Apt"].Value);
+        }
+    }
+
     /// <summary>
     /// A matrix of all combinations of hosts, targets, and flavors.
     /// Hosts.DumpHosts = [cdb, dotnet-dump] || [lldb, dotnet-dump]
@@ -40,6 +64,10 @@ public sealed class ClrThreadsTests
 
         clrthreads["ThreadCount"].AssertValid(Sos.Dec);
         Assert.NotEqual(0u, clrthreads["ThreadCount"].AsUInt32(Sos.Dec));
+        clrthreads["UnstartedThread"].AssertValid(Sos.Dec);
+        clrthreads["BackgroundThread"].AssertValid(Sos.Dec);
+        clrthreads["PendingThread"].AssertValid(Sos.Dec);
+        clrthreads["DeadThread"].AssertValid(Sos.Dec);
 
         SosTable table = clrthreads.AsThreadsTable();
         Assert.NotEmpty(table);
@@ -52,6 +80,9 @@ public sealed class ClrThreadsTests
         // the column alignment were handled. A misaligned column would put a non-address in ThreadOBJ,
         // or something other than the two GC modes / known apartment states in their columns.
         table.AssertAll(row => Sos.Addr.Matches(row["ThreadOBJ"]), "ThreadOBJ is an address");
+        table.AssertAll(row => Sos.Dec.Matches(row["ID"]), "ID is decimal");
+        table.AssertAll(row => Sos.Hex.Matches(row["OSID"]), "OSID is hexadecimal");
+        table.AssertAll(row => Sos.Hex.Matches(row["State"]), "State is hexadecimal");
         table.AssertAll(row => row["GC Mode"] == "Preemptive" || row["GC Mode"] == "Cooperative", "GC Mode is Preemptive or Cooperative");
         table.AssertAll(row => row["Apt"].Value is "MTA" or "STA" or "NTA" or "Ukn", "Apt is a known apartment state");
 

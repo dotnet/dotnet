@@ -288,6 +288,17 @@
     <ProjectCapability Include="CreateVsixContainer" />
   </ItemGroup>
 
+  <!--
+    The VSIX version is the VS version that this build of NuGet targets, plus the build revision.
+    source.extension.vsixmanifest refers to this target with the |%CurrentProject%;GetNuGetVsixVersion| token,
+    which the VSSDK replaces while detokenizing the manifest.
+  -->
+  <Target Name="GetNuGetVsixVersion" Returns="$(NuGetVsixVersion)">
+    <PropertyGroup>
+      <NuGetVsixVersion>$(NuGetSdkVsSemanticVersion).$(PreReleaseVersion)</NuGetVsixVersion>
+    </PropertyGroup>
+  </Target>
+
   <ItemGroup>
     <VsixIncludeFile Include=".vsixinclude" />
     <VsixIgnoreFile Include=".vsixignore" />

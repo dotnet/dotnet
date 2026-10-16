@@ -128,6 +128,29 @@ public class HelixServiceTests
     }
 
     [Fact]
+    public async Task GetJobsForBuildAsync_DoesNotRetryNonTransientFailures()
+    {
+        var api = CreateApi();
+        var failure = new HttpRequestException("Bad request.", null, HttpStatusCode.BadRequest);
+        api.Job
+            .Setup(j => j.ListAsync(null, 1_000, null, null, It.IsAny<IImmutableDictionary<string, string>>(), It.IsAny<string>(), null, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(failure);
+
+        HelixService service = CreateService(api.Api.Object);
+
+        HttpRequestException exception = await Assert.ThrowsAsync<HttpRequestException>(() =>
+            service.GetJobsForBuildAsync(
+                source: "ci/public/dotnet/runtime/refs/heads/main",
+                buildId: "123",
+                CancellationToken.None));
+
+        Assert.Same(failure, exception);
+        api.Job.Verify(
+            j => j.ListAsync(null, 1_000, null, null, It.IsAny<IImmutableDictionary<string, string>>(), It.IsAny<string>(), null, It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
     public async Task DownloadTestResultsAsync_FiltersFilesUsesFileSystemAndContinuesAfterDownloadFailure()
     {
         var api = CreateApi();

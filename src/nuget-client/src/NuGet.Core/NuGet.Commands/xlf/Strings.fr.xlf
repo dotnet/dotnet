@@ -1239,7 +1239,7 @@ Mettez à niveau votre Kit de développement logiciel (SDK) .NET ou supprimez Re
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
         <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
-        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <target state="translated">L’antériorité minimale de publication de {0} heures n’est pas valide. La valeur doit être comprise entre 0 et {1}.</target>
         <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNoMatchingSourcesFound">

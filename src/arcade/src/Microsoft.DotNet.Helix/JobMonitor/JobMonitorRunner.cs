@@ -822,7 +822,11 @@ internal sealed class JobMonitorRunner : IJobMonitorRunner, IDisposable
 #else
         return ApiFactory.GetAuthenticatedWithEntra(
             baseUri,
-            new DefaultIdentityTokenCredential());
+            new DefaultIdentityTokenCredential(
+                new DefaultIdentityTokenCredentialOptions
+                {
+                    PreferAzureCliCredential = true
+                }));
 #endif
     }
 

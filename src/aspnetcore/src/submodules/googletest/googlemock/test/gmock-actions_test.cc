@@ -53,11 +53,6 @@
 // Silence C4100 (unreferenced formal parameter) and C4503 (decorated name
 // length exceeded) for MSVC.
 GTEST_DISABLE_MSC_WARNINGS_PUSH_(4100 4503)
-#if defined(_MSC_VER) && (_MSC_VER == 1900)
-// and silence C4800 (C4800: 'int *const ': forcing value
-// to bool 'true' or 'false') for MSVC 15
-GTEST_DISABLE_MSC_WARNINGS_PUSH_(4800)
-#endif
 
 namespace testing {
 namespace {
@@ -270,7 +265,7 @@ TEST(BuiltInDefaultValueTest, IsZeroForNumericTypes) {
   EXPECT_EQ(0U, BuiltInDefaultValue<unsigned char>::Get());
   EXPECT_EQ(0, BuiltInDefaultValue<signed char>::Get());
   EXPECT_EQ(0, BuiltInDefaultValue<char>::Get());
-#if GMOCK_WCHAR_T_IS_NATIVE_
+#if GTEST_HAS_NATIVE_WCHAR
 #if !defined(__WCHAR_UNSIGNED__)
   EXPECT_EQ(0, BuiltInDefaultValue<wchar_t>::Get());
 #else
@@ -299,7 +294,7 @@ TEST(BuiltInDefaultValueTest, ExistsForNumericTypes) {
   EXPECT_TRUE(BuiltInDefaultValue<unsigned char>::Exists());
   EXPECT_TRUE(BuiltInDefaultValue<signed char>::Exists());
   EXPECT_TRUE(BuiltInDefaultValue<char>::Exists());
-#if GMOCK_WCHAR_T_IS_NATIVE_
+#if GTEST_HAS_NATIVE_WCHAR
   EXPECT_TRUE(BuiltInDefaultValue<wchar_t>::Exists());
 #endif
   EXPECT_TRUE(BuiltInDefaultValue<unsigned short>::Exists());  // NOLINT
@@ -1101,6 +1096,7 @@ TEST(SetArgPointeeTest, AcceptsStringLiteral) {
   EXPECT_STREQ("world", ptr);
 }
 
+#if GTEST_HAS_STD_WSTRING
 TEST(SetArgPointeeTest, AcceptsWideStringLiteral) {
   typedef void MyFunction(const wchar_t**);
   Action<MyFunction> a = SetArgPointee<0>(L"world");
@@ -1108,16 +1104,13 @@ TEST(SetArgPointeeTest, AcceptsWideStringLiteral) {
   a.Perform(std::make_tuple(&ptr));
   EXPECT_STREQ(L"world", ptr);
 
-#if GTEST_HAS_STD_WSTRING
-
   typedef void MyStringFunction(std::wstring*);
   Action<MyStringFunction> a2 = SetArgPointee<0>(L"world");
   std::wstring str = L"";
   a2.Perform(std::make_tuple(&str));
   EXPECT_EQ(L"world", str);
-
-#endif
 }
+#endif
 
 // Tests that SetArgPointee<N>() accepts a char pointer.
 TEST(SetArgPointeeTest, AcceptsCharPointer) {
@@ -2219,7 +2212,4 @@ TEST(ActionMacro, LargeArity) {
 }  // namespace
 }  // namespace testing
 
-#if defined(_MSC_VER) && (_MSC_VER == 1900)
-GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4800
-#endif
 GTEST_DISABLE_MSC_WARNINGS_POP_()  // 4100 4503

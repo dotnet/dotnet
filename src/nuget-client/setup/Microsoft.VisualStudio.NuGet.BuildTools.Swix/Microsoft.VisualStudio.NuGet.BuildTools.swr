@@ -1,7 +1,7 @@
 use vs
 
 package name=Microsoft.VisualStudio.NuGet.BuildTools
-        version=$(MajorVSVersion).0.$(MajorNuGetVersion)0$(MinorNuGetVersion)0$(PatchNuGetVersion).$(BuildNumber)
+        version=$(NuGetVsixVersion)
         vs.package.productArch=neutral
 
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet

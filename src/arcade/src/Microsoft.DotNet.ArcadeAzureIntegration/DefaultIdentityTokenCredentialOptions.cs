@@ -11,5 +11,6 @@ public class DefaultIdentityTokenCredentialOptions
     public bool UseAzurePipelineCredentialAloneIfConfigured { get; set; } = true;
     public string? ManagedIdentityClientId { get; set; } = null;
     public bool ExcludeAzureCliCredential { get; set; }
+    public bool PreferAzureCliCredential { get; set; }
     public bool DisableShortCache { get; set; }
 }

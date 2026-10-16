@@ -148,6 +148,21 @@ namespace NuGet.Configuration
                 throw new InvalidOperationException(Resources.NoWritteableConfig);
             }
 
+            AddEmptySection(outputSettingsFile, sectionName);
+        }
+
+        internal void AddEmptySection(SettingsFile outputSettingsFile, string sectionName)
+        {
+            if (outputSettingsFile.IsMachineWide)
+            {
+                throw new InvalidOperationException(Resources.CannotUpdateMachineWide);
+            }
+
+            if (outputSettingsFile.IsReadOnly)
+            {
+                throw new InvalidOperationException(Resources.CannotUpdateReadOnlyConfig);
+            }
+
             outputSettingsFile.AddEmptySection(sectionName);
 
             if (_computedSections.TryGetValue(sectionName, out _))

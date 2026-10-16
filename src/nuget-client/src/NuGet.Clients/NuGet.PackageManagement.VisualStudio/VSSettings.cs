@@ -221,6 +221,11 @@ namespace NuGet.PackageManagement.VisualStudio
 
         public IList<string> GetConfigRoots() => SolutionSettings.GetConfigRoots();
 
+        internal MinPublishAgeExceptionsProvider CreateMinPublishAgeExceptionsProvider()
+        {
+            return new MinPublishAgeExceptionsProvider(SolutionSettings);
+        }
+
         public void Dispose()
         {
             SolutionManager.SolutionOpening -= OnSolutionOpenedOrClosed;

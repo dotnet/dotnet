@@ -7,7 +7,7 @@
 # package.
 #
 CLANG_NAME=$(basename "$0")
-CLANG_CC=$(dirname $0)/clang-23
+CLANG_CC=$(dirname "$0")/clang-23
 
 EXTRA_ARGS=""
 case $CLANG_NAME in

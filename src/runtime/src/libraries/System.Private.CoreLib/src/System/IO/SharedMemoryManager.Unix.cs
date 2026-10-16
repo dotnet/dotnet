@@ -962,6 +962,11 @@ namespace System.IO
             _creationDeletionProcessLock.VerifyIsLocked();
         }
 
+        public void VerifyCreationDeletionProcessLockIsNotLocked()
+        {
+            _creationDeletionProcessLock.VerifyIsNotLocked();
+        }
+
         public AutoReleaseFileLock AcquireCreationDeletionLockForId(
             SharedMemoryId id,
             out SafeFileHandle runtimeDirectoryHandle)
