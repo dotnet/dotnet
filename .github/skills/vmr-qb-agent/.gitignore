@@ -1,0 +1,9 @@
+# Everything one QB creates for their own sessions lives in local/ and is never published:
+# qb-config.local.json (your email address), the issue history, reports, logs, evidence, the team roster, verified
+# findings, aliases, handoff files, and any notes or drafts. ./verify/Invoke-Verify.ps1 fails if local/ is not ignored,
+# if Git tracks or has staged anything in it, or if a file that belongs in local/ sits in knowledge/ or references/.
+/local/
+# Your own settings (an email address) from copying qb-config.template.json. Ignored wherever it is.
+qb-config.local.json
+# Your own copy of knowledge/routing.json, made once on first use. It belongs in local/knowledge/; ignored wherever it is.
+routing.local.json
