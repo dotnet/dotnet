@@ -50,7 +50,7 @@
     <PrivateSourceBuiltSdkVersion>11.0.100-rc.1.26425.128</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>11.0.100-rc.1.26425.128</PrivateSourceBuiltArtifactsVersion>
     <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
-    <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
+    <DotNet1xxWorkloadManifestVersion>11.0.100-rtm.26480.113</DotNet1xxWorkloadManifestVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.8</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
