@@ -36,6 +36,24 @@ Two families of targets:
 - Producing the laid-out SDK requires the **full repo build** (so the components exist
   to copy), not just this project — see the root build/dogfood instructions.
 
+### macOS tool signing
+
+`PublishRoslyn` and `CreateMSBuildAppHost` ad hoc sign the concrete SDK apphosts with
+per-tool `SigningIdentifier` metadata and their existing entitlement files. Official
+signing must preserve those identifiers and entitlements or explicitly supply the
+same values. Do not assign a shared product identifier to apphost templates.
+Identifiers use `com.microsoft.dotnet.<executable-name>` in lowercase, including
+`msbuild`, `vbcscompiler`, and the `dotnet-*` tool names.
+
+`LayoutBundledTools` ad hoc signs the three native `aspnetcoretools` shims after
+copying the selected package into the SDK layout. It preserves any existing
+entitlements, without adding JIT entitlements to NativeAOT tools. Its file selection
+is scoped to the selected package version and RID (`tools/any/<rid>` for
+self-contained tools) and excludes debug-symbol bundles.
+This is an integrated signing experiment: permanent signing belongs in the
+ASP.NET Core publishing targets so standalone packages have the same identities,
+and SDK composition does not replace a producer's official signature.
+
 ### Workload manifest layout ownership
 
 [`LayoutManifests`](redist/targets/BundledManifests.targets) may only delete the

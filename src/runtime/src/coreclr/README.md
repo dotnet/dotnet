@@ -4,6 +4,23 @@ This folder contains the source for CoreCLR, the .NET runtime implementation
 used by most workloads. CoreCLR tests live in [`../tests`](../tests/) (the
 `src/tests` subtree).
 
+## macOS NativeAOT tool metadata
+
+NativeAOT tool publishing projects set `HostBundleIdentifier` and `HostBundleName`
+to embed an Info.plist in macOS executables. `eng/toolAot.targets` derives
+`CFBundleVersion` from `FileVersion` and `CFBundleShortVersionString` from
+`VersionPrefix`, using the existing build versioning.
+Bundle identifiers use `com.microsoft.dotnet.<executable-name>` in lowercase;
+`HostBundleName` sets `CFBundleName` to the executable name without that prefix.
+Native CMake executables use the same identifier and name convention.
+
+This metadata does not create an app bundle. Final signing should use the embedded
+bundle identifier, or explicitly supply the same value. The linker-generated ad
+hoc signature does not automatically use the embedded bundle identifier.
+`AdHocSignHost` applies the identifier after native linking and symbol stripping,
+before the executable is copied to its publish directory. Official signing must
+preserve that identifier or explicitly supply the same value.
+
 ## Building and testing
 
 See the workflow docs for the authoritative instructions — they cover the
