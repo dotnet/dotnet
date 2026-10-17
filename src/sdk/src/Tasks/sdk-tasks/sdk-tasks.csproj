@@ -12,6 +12,17 @@
   <ItemGroup>
     <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\SdkFeatureBand.cs" LinkBase="Common"/>
     <Compile Include="$(RepoRoot)src\Common\WorkloadSetVersion.cs" LinkBase="Common" />
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\WorkloadManifestReader*.cs" LinkBase="WorkloadManifestReader" />
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\WorkloadManifest.cs" LinkBase="WorkloadManifestReader" />
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\WorkloadManifestFormatException.cs" LinkBase="WorkloadManifestReader" />
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\WorkloadDefinition.cs" LinkBase="WorkloadManifestReader" />
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\WorkloadId.cs" LinkBase="WorkloadManifestReader" />
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\WorkloadPack.cs" LinkBase="WorkloadManifestReader" />
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\WorkloadPackId.cs" LinkBase="WorkloadManifestReader" />
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\WorkloadPackKind.cs" LinkBase="WorkloadManifestReader" />
+    <Compile Include="$(RepoRoot)src\Resolvers\Microsoft.DotNet.MSBuildSdkResolver\FXVersion.cs" LinkBase="WorkloadManifestReader" />
+    <EmbeddedResource Include="$(RepoRoot)src\Resolvers\Microsoft.NET.Sdk.WorkloadManifestReader\Strings.resx"
+                      LinkBase="WorkloadManifestReader" GenerateSource="true" Namespace="Microsoft.NET.Sdk.Localization" />
   </ItemGroup>
 
   <ItemGroup>

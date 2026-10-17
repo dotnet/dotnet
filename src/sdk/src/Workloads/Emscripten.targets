@@ -1,0 +1,16 @@
+<Project>
+  <Target Name="_ValidateEmscriptenPackageVersion">
+    <Error Condition="'$(EmscriptenPackageVersion)' == ''"
+           Text="An Emscripten package version is required. For 1xx, select the emsdk-produced version; for upstack, read it from the Emscripten manifest selected by DotNet1xxWorkloadManifestVersion." />
+    <!-- Internal is always prerelease. Before stabilizing, select the stable emsdk-produced
+         property for EmscriptenVersionCurrent (historically
+         Microsoft.NET.Runtime.Emscripten.3.1.56.Cache.win-x64.Msi.x64) in Emscripten.props.
+         Upstack inherits that version from the selected 1xx manifest.
+         Change manifest references, 1xx raw acquisition/staging and payload-MSI generation
+         together; never strip a prerelease suffix. Remove this guard after that transition. -->
+    <Error Condition="('$(DotNetFinalVersionKind)' == 'release' or
+                      '$(PreReleaseVersionLabel)' == 'rtm' or '$(PreReleaseVersionLabel)' == 'servicing' or '$(PreReleaseVersionLabel)' == 'hotfix') and
+                      $([System.String]::Copy('$(EmscriptenPackageVersion)').Contains('-'))"
+           Text="A non-prerelease SDK must use non-prerelease Emscripten packages. Select the stable emsdk-produced package version for EmscriptenVersionCurrent in the 1xx Emscripten.props and flow the updated workload manifest." />
+  </Target>
+</Project>

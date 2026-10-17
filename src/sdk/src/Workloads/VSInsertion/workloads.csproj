@@ -1,5 +1,6 @@
 ﻿<Project>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+  <Import Project="..\Emscripten.props" />
 
   <PropertyGroup>
     <TargetFramework>$(SdkTargetFramework)</TargetFramework>
@@ -57,6 +58,7 @@
   </ItemGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
+  <Import Project="..\Emscripten.targets" />
 
   <ItemGroup>
     <RuntimeWorkloadPacksToDownload Include="Microsoft.NET.Runtime.MonoAOTCompiler.Task" />
@@ -115,12 +117,15 @@
     <ManifestPackagesToDownload Include="@(_ManifestProjectFiles->'%(Filename)')" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
-    <!-- we use MicrosoftNETCoreAppRuntimePackageVersion for the runtime packages, and the Emscripten.Internal
-         version for the emsdk packages, whose own IDs contain the Emscripten version and the RID -->
-    <PackageDownload Include="@(RuntimeWorkloadPacksToDownload)" Version="[$(MicrosoftNETCoreAppRuntimePackageVersion)]" />
-    <PackageDownload Include="@(EmsdkWorkloadPacksToDownload)" Version="[$(MicrosoftNETRuntimeEmscriptenInternalPackageVersion)]" />
-  </ItemGroup>
+  <Target Name="_AddWorkloadPackDownloads"
+          DependsOnTargets="_ValidateEmscriptenPackageVersion"
+          BeforeTargets="CollectPackageDownloads"
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true' and '$(DotNet1xxWorkloadManifestVersion)' == ''">
+    <ItemGroup>
+      <PackageDownload Include="@(RuntimeWorkloadPacksToDownload)" Version="[$(MicrosoftNETCoreAppRuntimePackageVersion)]" />
+      <PackageDownload Include="@(EmsdkWorkloadPacksToDownload)" Version="[$(EmscriptenPackageVersion)]" />
+    </ItemGroup>
+  </Target>
 
   <Target Name="_AddMsiPackageDownloads"
           BeforeTargets="CollectPackageDownloads"
@@ -149,29 +154,6 @@
                        Version="[$(DotNet1xxRuntimeVersion)]"
                        Condition="!$([System.String]::Copy('%(RuntimeWorkloadPacksToDownload.Identity)').Contains('.win-')) and '%(RuntimeWorkloadPacksToDownload.ExcludeAsMsi)' != 'true'" />
 
-      <!-- MSI packages for EmsdkWorkloadPacksToDownload -->
-      <!-- For RID-specific packages, add single MSI with matching architecture -->
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.x64" 
-                       Version="[$(DotNet1xxRuntimeVersion)]"
-                       Condition="$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-x64'))" />
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.x86" 
-                       Version="[$(DotNet1xxRuntimeVersion)]"
-                       Condition="$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-x86'))" />
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.arm64" 
-                       Version="[$(DotNet1xxRuntimeVersion)]"
-                       Condition="$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-arm64'))" />
-      
-      <!-- For non-RID-specific packages, add MSI packages for all three architectures -->
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.x86" 
-                       Version="[$(DotNet1xxRuntimeVersion)]"
-                       Condition="!$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-'))" />
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.x64" 
-                       Version="[$(DotNet1xxRuntimeVersion)]"
-                       Condition="!$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-'))" />
-      <PackageDownload Include="%(EmsdkWorkloadPacksToDownload.Identity).Msi.arm64" 
-                       Version="[$(DotNet1xxRuntimeVersion)]"
-                       Condition="!$([System.String]::Copy('%(EmsdkWorkloadPacksToDownload.Identity)').Contains('.win-'))" />
-
       <!-- MSI packages for ManifestPackagesToDownload -->
       <!-- Manifest packages are not RID-specific, add MSI packages for all three architectures -->
       <PackageDownload Include="%(ManifestPackagesToDownload.Identity)-$(BuiltInWorkloadFeatureBand).Msi.x86" 
@@ -183,12 +165,27 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="_ValidateUpstackWorkloadMsiMode"
+          BeforeTargets="CollectPackageDownloads;Build"
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DotNet1xxWorkloadManifestVersion)' != '' and '$(DownloadWorkloadMsis)' != 'true'">
+    <Error Text="Upstack workload installer builds require DownloadWorkloadMsis=true to reuse the selected 1xx manifest MSIs. Emscripten payloads are not downloaded or rebuilt in upstack bands." />
+  </Target>
+
   <Target Name="_CollectDownloadedWorkloadPacks"
-          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
+          DependsOnTargets="_ValidateEmscriptenPackageVersion"
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true' and '$(DotNet1xxWorkloadManifestVersion)' == ''">
     <ItemGroup>
+      <_EmsdkWorkloadPackage Include="@(EmsdkWorkloadPacksToDownload)">
+        <LowercaseId>$([System.String]::Copy('%(Identity)').ToLowerInvariant())</LowercaseId>
+        <Version>$([System.String]::Copy('$(EmscriptenPackageVersion)').ToLowerInvariant())</Version>
+      </_EmsdkWorkloadPackage>
+      <_EmsdkWorkloadPackageFile Include="@(_EmsdkWorkloadPackage->'$(NuGetPackageRoot)%(LowercaseId)/%(Version)/%(LowercaseId).%(Version).nupkg')" />
       <DownloadedWorkloadPacks Include="$(NuGetPackageRoot)\%(RuntimeWorkloadPacksToDownload.Identity)\$(MicrosoftNETCoreAppRuntimePackageVersion)\*.nupkg" />
-      <DownloadedWorkloadPacks Include="$(NuGetPackageRoot)\%(EmsdkWorkloadPacksToDownload.Identity)\$(MicrosoftNETCoreAppRuntimePackageVersion)\*.nupkg" />
+      <DownloadedWorkloadPacks Include="@(_EmsdkWorkloadPackageFile)" />
     </ItemGroup>
+
+    <Error Condition="!Exists('%(_EmsdkWorkloadPackageFile.Identity)')"
+           Text="Required Emscripten workload package is missing: %(_EmsdkWorkloadPackageFile.Identity). Restore the selected toolchain packages before building installers." />
 
     <Copy SourceFiles="@(DownloadedWorkloadPacks)"
           DestinationFolder="$(WorkloadPacksSource)"
@@ -213,7 +210,6 @@
     <ItemGroup>
       <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(RuntimeWorkloadPacksToDownload.Identity).Msi.*\$(DotNet1xxRuntimeVersion)\*.nupkg" 
                               Condition="'%(RuntimeWorkloadPacksToDownload.ExcludeAsMsi)' != 'true'" />
-      <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(EmsdkWorkloadPacksToDownload.Identity).Msi.*\$(DotNet1xxRuntimeVersion)\*.nupkg" />
       <DownloadedWorkloadMsis Include="$(NuGetPackageRoot)\%(ManifestPackagesToDownload.Identity)-$(BuiltInWorkloadFeatureBand).Msi.*\$(DotNet1xxWorkloadManifestVersion)\*.nupkg" />
     </ItemGroup>
 
@@ -238,7 +234,7 @@
   </Target>
 
   <Target Name="BuildWorkloadMsis"
-          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true'">
+          Condition="'$(BuildWorkloads)' == 'true' and '$(DownloadWorkloadMsis)' != 'true' and '$(DotNet1xxWorkloadManifestVersion)' == ''">
     <ItemGroup>
       <!-- Overrides for Visual Studio setup generation. If the workload definition IDs change,
             these must be updated. -->
