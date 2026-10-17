@@ -609,6 +609,26 @@
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownILLinkPackCurrentVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownAppHostPackCurrentVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownCrossgen2PackCurrentVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownILCompilerPackCurrentVersion=$(RuntimePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownWebAssemblySdkPackCurrentVersion=$(RuntimePackVersion)</BuildArgs>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'aspnetcore'))' == 'true'">
+      <AspNetCorePackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.AspNetCore.App.Ref')->Metadata('Version'))</AspNetCorePackVersion>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentTargetingPackVersion=$(AspNetCorePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentDefaultRuntimeFrameworkVersion=$(AspNetCorePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftAspNetCoreAppCurrentLatestRuntimeFrameworkVersion=$(AspNetCorePackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownAspNetCorePackCurrentVersion=$(AspNetCorePackVersion)</BuildArgs>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'windowsdesktop'))' == 'true'">
+      <WindowsDesktopPackVersion>@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.WindowsDesktop.App.Ref')->Metadata('Version'))</WindowsDesktopPackVersion>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentTargetingPackVersion=$(WindowsDesktopPackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentDefaultRuntimeFrameworkVersion=$(WindowsDesktopPackVersion)</BuildArgs>
+      <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftWindowsDesktopAppCurrentLatestRuntimeFrameworkVersion=$(WindowsDesktopPackVersion)</BuildArgs>
     </PropertyGroup>
 
     <PropertyGroup>
