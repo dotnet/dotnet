@@ -727,10 +727,8 @@ stages:
             - Android_Shortstack_x86
             - iOS_Shortstack_arm64
             - iOSSimulator_Shortstack_arm64
-            - iOSSimulator_Shortstack_x64
             - tvOS_Shortstack_arm64
             - tvOSSimulator_Shortstack_arm64
-            - tvOSSimulator_Shortstack_x64
             - MacCatalyst_Shortstack_arm64
             - MacCatalyst_Shortstack_x64
 
