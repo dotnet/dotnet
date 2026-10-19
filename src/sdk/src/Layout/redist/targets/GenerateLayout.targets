@@ -252,11 +252,15 @@
   </Target>
 
   <Target Name="PublishTestCli">
+    <ItemGroup>
+      <_TestCliEntryPoint Include="$(NuGetPackageRoot)microsoft.testplatform.cli/$(MicrosoftTestPlatformCLIPackageVersion)/contentFiles/any/net*/vstest.console.dll" />
+    </ItemGroup>
+
+    <Error Condition="'@(_TestCliEntryPoint->Count())' != '1'"
+           Text="Expected exactly one vstest.console.dll under '$(NuGetPackageRoot)microsoft.testplatform.cli/$(MicrosoftTestPlatformCLIPackageVersion)/contentFiles/any/net*'; found @(_TestCliEntryPoint->Count())." />
+
     <PropertyGroup>
-      <TestCliNuGetDirectoryTargetFramework>net10.0</TestCliNuGetDirectoryTargetFramework>
-      <!-- NetTFMUpdate: Restore $(NetCurrent) when the source-built VSTest CLI targets net12.0. -->
-      <TestCliNuGetDirectoryTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net11.0</TestCliNuGetDirectoryTargetFramework>
-      <TestCliNuGetDirectory>$(NuGetPackageRoot)microsoft.testplatform.cli/$(MicrosoftTestPlatformCLIPackageVersion)/contentFiles/any/$(TestCliNuGetDirectoryTargetFramework)/</TestCliNuGetDirectory>
+      <TestCliNuGetDirectory>@(_TestCliEntryPoint->'%(RootDir)%(Directory)')</TestCliNuGetDirectory>
     </PropertyGroup>
 
     <ItemGroup>
