@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 335919,
+      "barId": 336718,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "9da3ab019225dc6b3ed5a689834de2c3de91777c"
+      "commitSha": "07e04004e3a62fe36e167a3f2f06c8f5de06cfeb"
     },
     {
-      "barId": 336642,
+      "barId": 336680,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "d5d779be2842c4c9c4230082dd9c3686f92da542"
+      "commitSha": "2dd208bb942eb6b50744eee5ad85f0ccda6fceca"
     },
     {
       "barId": 332483,
@@ -31,10 +31,10 @@
       "commitSha": "2ee21e1b8f7721ea9cb89cd4db4f589b37b579d7"
     },
     {
-      "barId": 336319,
+      "barId": 336528,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "bda798a59e012faaecb1b5ec19e036f64deedc0d"
+      "commitSha": "8aad68b17b1bd99bffdbfe94ed57dd8a88e4e57f"
     },
     {
       "barId": 336674,
@@ -79,10 +79,10 @@
       "commitSha": "bf197380970291bf920d5108d3f5e2b2fb69411c"
     },
     {
-      "barId": 331904,
+      "barId": 335110,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "f4382f62e440af1f3dcd78f1db1f43191d11bd47"
+      "commitSha": "22f775f4154d002eb9628d6ff608172d4c61c453"
     },
     {
       "barId": 336496,
