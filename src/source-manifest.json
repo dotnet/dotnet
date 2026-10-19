@@ -43,10 +43,10 @@
       "commitSha": "c5fa6798ae61dd74b32f2fddc3c218a9c10d8bf7"
     },
     {
-      "barId": 336358,
+      "barId": 337108,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "40c43a913617342b1a4a276e3814cdc75bbadf41"
+      "commitSha": "344532584fb39dc896bf00d1169906983e89ceec"
     },
     {
       "barId": 336768,
@@ -103,10 +103,10 @@
       "commitSha": "072a82dec6215579a4760538bc04bed4441a4b6e"
     },
     {
-      "barId": 326919,
+      "barId": 337097,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "260aefcbf91e84ea4a4941336a0210656edd55d7"
+      "commitSha": "287a665608d539082008a06c57e1d7c72904821a"
     },
     {
       "barId": 336392,
@@ -115,10 +115,10 @@
       "commitSha": "36206450d47fec22e281ba9846445edc796f5080"
     },
     {
-      "barId": 333367,
+      "barId": 337125,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "5ac208ff24b54289e3566adad8a6e2decf8efa1f"
+      "commitSha": "401204d07222526fcc753a027cfd2ec7314b73ed"
     },
     {
       "barId": 334833,
@@ -133,10 +133,10 @@
       "commitSha": "ae7ab9b222d2af2bfb33cef2ee008252b49b5a2f"
     },
     {
-      "barId": 328782,
+      "barId": 337096,
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "1e27f35024f7e3e6ee1e429057f8d50a7fc3cb57"
+      "commitSha": "a2d0f55ab47cc2b79fb73c3ba7656c34cc84fee2"
     }
   ],
   "submodules": [
