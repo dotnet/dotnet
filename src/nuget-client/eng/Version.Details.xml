@@ -43,17 +43,17 @@
       <Uri>https://github.com/dotnet/corefx</Uri>
       <Sha>30ab651fcb4354552bd4891619a0bdd81e0ebdbf</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.Pkcs" Version="6.0.4">
+    <Dependency Name="System.Security.Cryptography.Pkcs" Version="8.0.2">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>e37fab9fc9f7bce120a7165491ed392a73f8ab51</Sha>
+      <Sha>b9a49e4a6d3a444a3685e318c74a7892d01873f7</Sha>
     </Dependency>
     <Dependency Name="System.Security.Cryptography.ProtectedData" Version="9.0.6">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>2aade6beb02ea367fd97c4070a4198802fe61c03</Sha>
     </Dependency>
-    <Dependency Name="System.Security.Cryptography.Xml" Version="10.0.10">
+    <Dependency Name="System.Security.Cryptography.Xml" Version="10.0.13">
       <Uri>https://github.com/dotnet/runtime</Uri>
-      <Sha>ace9703c57db8596ccc3e3efdc7e65b6975c0b2d</Sha>
+      <Sha>6aa72daa24f66c01c3d7b6a32519e9d21396deec</Sha>
     </Dependency>
     <Dependency Name="System.Formats.Asn1" Version="8.0.1">
       <Uri>https://github.com/dotnet/runtime</Uri>
