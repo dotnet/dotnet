@@ -1,0 +1,12 @@
+description: Branch classification configuration for repository
+resource: repository
+configuration:
+  branchClassificationSettings:
+    defaultClassification: nonproduction
+    ruleset:
+      - name: prod-branches
+        branchNames:
+          - main
+          - release/*
+          - internal/release/*
+        classification: production
