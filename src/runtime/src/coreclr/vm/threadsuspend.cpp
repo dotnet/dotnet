@@ -1110,6 +1110,7 @@ Thread::UserAbort(EEPolicy::ThreadAbortTypes abortType, DWORD timeout)
     {
         THROWS;
         GC_TRIGGERS; // For GetXxxException
+        MODE_ANY;
     }
     CONTRACTL_END;
 
@@ -4620,6 +4621,13 @@ StackWalkAction SWCB_GetExecutionState(CrawlFrame *pCF, VOID *pData)
     }
 #endif // TARGET_X86
 
+    // On 32-bit targets and in IL stubs the InlinedCallFrame stays linked for the whole method, and
+    // it is reported before the method that contains it. Skip it when it has no active call.
+    if (!pCF->IsFrameless() && !InlinedCallFrame::FrameHasActiveCall(pCF->GetFrame()))
+    {
+        return SWA_CONTINUE;
+    }
+
     // This will help factor out some repeated code.
     bool notJittedCase = false;
 
@@ -4803,9 +4811,11 @@ HijackFrame::HijackFrame(LPVOID returnAddress, Thread *thread, HijackArgs *args 
 
 void STDCALL OnHijackWorker(HijackArgs * pArgs)
 {
-    CONTRACTL{
+    CONTRACTL
+    {
         THROWS;
         GC_TRIGGERS;
+        MODE_COOPERATIVE;
     }
     CONTRACTL_END;
 
@@ -5421,6 +5431,7 @@ void ThreadSuspend::RestartEE(BOOL SuspendSucceeded)
     }
 #endif // PROFILING_SUPPORTED
 
+#ifdef FEATURE_MULTITHREADING
     //
     // If we raised this thread's priority in SuspendRuntime, we restore it here.
     //
@@ -5432,6 +5443,7 @@ void ThreadSuspend::RestartEE(BOOL SuspendSucceeded)
             pCurThread->m_Priority = INVALID_THREAD_PRIORITY;
         }
     }
+#endif // FEATURE_MULTITHREADING
 
     FireEtwGCRestartEEEnd_V1(GetClrInstanceId());
 
@@ -5545,6 +5557,7 @@ retry_for_debugger:
     }
 #endif // PROFILING_SUPPORTED
 
+#ifdef FEATURE_MULTITHREADING
     //
     // If this thread is running at low priority, boost its priority.  We remember the old
     // priority so that we can restore it in ResumeEE.
@@ -5559,6 +5572,7 @@ retry_for_debugger:
             pCurThread->SetThreadPriority(THREAD_PRIORITY_NORMAL);
         }
     }
+#endif // FEATURE_MULTITHREADING
 
     //
     // Now that we've instructed all threads to please stop,

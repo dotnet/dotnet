@@ -448,8 +448,8 @@ O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicita
         <note>{0} - Path to the project with the error</note>
       </trans-unit>
       <trans-unit id="Error_TrustFingerPrintAlreadyExist">
-        <source>The certificate finger you're trying to add is already in the certificate fingerprint list.</source>
-        <target state="translated">O dedo do certificado que você está tentando adicionar já está na lista de impressões digitais do certificado.</target>
+        <source>The certificate fingerprint you're trying to add is already in the certificate fingerprint list.</source>
+        <target state="needs-review-translation">O dedo do certificado que você está tentando adicionar já está na lista de impressões digitais do certificado.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_TrustedRepoAlreadyExists">
