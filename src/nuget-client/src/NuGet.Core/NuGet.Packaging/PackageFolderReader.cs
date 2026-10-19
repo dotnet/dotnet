@@ -22,6 +22,7 @@ namespace NuGet.Packaging
     public class PackageFolderReader : PackageReaderBase
     {
         private readonly DirectoryInfo _root;
+        private readonly string _rootPath;
 
         /// <summary>
         /// Package folder reader
@@ -61,6 +62,7 @@ namespace NuGet.Packaging
             : base(frameworkProvider, compatibilityProvider)
         {
             _root = folder;
+            _rootPath = PathUtility.EnsureTrailingSlash(folder.FullName);
         }
 
         public override string GetNuspecFile()
@@ -84,7 +86,7 @@ namespace NuGet.Packaging
         }
 
         /// <summary>
-        /// Opens a local file in read only mode.
+        /// Opens a local file within the package root in read only mode.
         /// </summary>
         public override Stream GetStream(string path)
         {
@@ -93,9 +95,9 @@ namespace NuGet.Packaging
 
         private FileInfo GetFile(string path)
         {
-            var file = new FileInfo(Path.Combine(_root.FullName, path));
+            var file = new FileInfo(Path.Combine(_rootPath, path));
 
-            if (!file.FullName.StartsWith(_root.FullName, StringComparison.OrdinalIgnoreCase))
+            if (!file.FullName.StartsWith(_rootPath, PathUtility.GetStringComparisonBasedOnOS()))
             {
                 // the given path does not appear under the folder root
                 throw new FileNotFoundException(path);

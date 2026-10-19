@@ -1,4 +1,5 @@
 #nullable enable
+*REMOVED*~NuGet.Commands.CommandException.CommandException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) -> void
 NuGet.Commands.AddSourceArgs.MinPublishAgeHours.get -> uint?
 NuGet.Commands.AddSourceArgs.MinPublishAgeHours.set -> void
 NuGet.Commands.UpdateSourceArgs.MinPublishAgeHours.get -> uint?

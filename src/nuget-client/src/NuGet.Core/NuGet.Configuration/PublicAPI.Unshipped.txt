@@ -1,4 +1,5 @@
 #nullable enable
+*REMOVED*NuGet.Configuration.NuGetConfigurationException.NuGetConfigurationException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
 static NuGet.Configuration.SettingsUtility.GetApiKey(NuGet.Configuration.ISettings! settings, string! endpoint, string! source) -> string?
 NuGet.Configuration.PackageSource.MinPublishAge.get -> System.TimeSpan
 NuGet.Configuration.PackageSource.MinPublishAge.set -> void

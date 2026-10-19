@@ -5,7 +5,6 @@ using System;
 
 namespace NuGet.PackageManagement.VisualStudio.Exceptions
 {
-    [Serializable]
     public class ProjectNotNominatedException : InvalidOperationException
     {
         public ProjectNotNominatedException() : base()
