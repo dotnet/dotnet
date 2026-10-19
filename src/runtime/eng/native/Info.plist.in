@@ -5,8 +5,8 @@
 <plist version="1.0">
     <dict>
         <key>CFBundleIdentifier</key>
-        <string>@MACOS_BUNDLE_IDENTIFIER@</string>
+        <string>${MACOS_BUNDLE_IDENTIFIER}</string>
         <key>CFBundleName</key>
-        <string>@targetName@</string>
+        <string>${targetName}</string>
     </dict>
 </plist>

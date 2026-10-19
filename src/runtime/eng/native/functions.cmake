@@ -704,7 +704,7 @@ endfunction()
 function(set_macos_bundle_identifier targetName identifier)
     set(MACOS_BUNDLE_IDENTIFIER "${identifier}")
     set(infoPlist "${CMAKE_CURRENT_BINARY_DIR}/${targetName}.Info.plist")
-    configure_file("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/Info.plist.in" "${infoPlist}" @ONLY)
+    configure_file("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/Info.plist.in" "${infoPlist}")
 
     # Let signing tools use a stable identifier instead of a UUID-derived fallback.
     target_link_options(${targetName} PRIVATE "LINKER:-sectcreate,__TEXT,__info_plist,${infoPlist}")

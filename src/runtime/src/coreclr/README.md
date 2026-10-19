@@ -13,13 +13,16 @@ format.
 Bundle identifiers use `com.microsoft.dotnet.<executable-name>` in lowercase;
 `HostBundleName` sets `CFBundleName` to the executable name without that prefix.
 Native CMake executables use the same identifier and name convention.
+Both builds use `eng/native/Info.plist.in`; NativeAOT generates it with
+`Microsoft.DotNet.Build.Tasks.Templating`.
 
 This metadata does not create an app bundle. Final signing should use the embedded
 bundle identifier, or explicitly supply the same value. The linker-generated ad
 hoc signature does not automatically use the embedded bundle identifier.
 `AdHocSignHost` applies the identifier after native linking and symbol stripping,
-before the executable is copied to its publish directory. Official signing must
-preserve that identifier or explicitly supply the same value.
+before the executable is copied to its publish directory. It preserves existing
+entitlements without adding JIT entitlements. Official signing must preserve the
+identifier and entitlements or explicitly supply the same values.
 
 ## Building and testing
 
