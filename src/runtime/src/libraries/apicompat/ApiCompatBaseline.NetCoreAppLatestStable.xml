@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- TODO: Remove after the .NET 11 GA APICompat baseline includes dotnet/runtime#135756. -->
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:System.IO.Compression.ZstandardDictionary.Train(System.ReadOnlySpan{System.Byte},System.ReadOnlySpan{System.Int32},System.Int32)</Target>
+    <Left>net11.0/System.IO.Compression.dll</Left>
+    <Right>net12.0/System.IO.Compression.dll</Right>
+  </Suppression>
 </Suppressions>
