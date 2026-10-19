@@ -802,7 +802,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
     <comment>0 - trusted signer name</comment>
   </data>
   <data name="Error_TrustFingerPrintAlreadyExist" xml:space="preserve">
-    <value>The certificate finger you're trying to add is already in the certificate fingerprint list.</value>
+    <value>The certificate fingerprint you're trying to add is already in the certificate fingerprint list.</value>
   </data>
   <data name="Error_HttpServerUsage" xml:space="preserve">
     <value>You are running the '{0}' operation with an 'HTTP' source, '{1}'. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</value>

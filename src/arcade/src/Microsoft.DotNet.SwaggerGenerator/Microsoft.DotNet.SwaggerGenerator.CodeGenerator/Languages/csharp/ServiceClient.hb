@@ -90,7 +90,13 @@ public partial class {{pascalCase Name}} : I{{pascalCase Name}}
 
     private static HttpPipeline CreatePipeline({{pascalCase Name}}Options options)
     {
-        return HttpPipelineBuilder.Build(options, Array.Empty<HttpPipelinePolicy>(), Array.Empty<HttpPipelinePolicy>(), new {{pascalCase Name}}ResponseClassifier());
+        {{!-- Some endpoints answer with a redirect to storage rather than the content itself, for
+              example Helix console logs. Without client redirect handling the generated client
+              rejects the 302, because it only accepts 2xx. Azure.Core drops the Authorization
+              header when a redirect crosses to another host, so the service token is not sent to
+              the redirect target. This was previously fixed in the generated output instead of
+              here (dotnet/arcade#15599) and was lost the next time that file was regenerated. --}}
+        return HttpPipelineBuilder.Build(options, Array.Empty<HttpPipelinePolicy>(), Array.Empty<HttpPipelinePolicy>(), new HttpPipelineTransportOptions() { IsClientRedirectEnabled = true }, new {{pascalCase Name}}ResponseClassifier());
     }
 
     public HttpPipeline Pipeline

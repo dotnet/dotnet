@@ -57,7 +57,12 @@ public class LatestLinksManager
 
         if (linksToCreate.Any())
         {
-            _logger.LogMessage(MessageImportance.High, "\nThe following aka.ms links for blobs will be created:");
+            _logger.LogMessage(MessageImportance.High, "\nThe following aka.ms links for blobs will be created or updated:");
+
+            foreach (AkaMSLink link in linksToCreate)
+            {
+                _logger.LogMessage(MessageImportance.High, $"  aka.ms/{link.ShortUrl} -> {link.TargetUrl}");
+            }
 
             await _linkManager.CreateOrUpdateLinksAsync(linksToCreate, _akaMSOwners, _akaMSCreatedBy, _akaMSGroupOwner, true);
         }
@@ -118,7 +123,6 @@ public class LatestLinksManager
         string actualTargetUrl = feedBaseUrl + asset;
 
         AkaMSLink newLink = new AkaMSLink(GetLatestShortUrlForBlob(shortUrlPrefix, asset, flatten), actualTargetUrl);
-        _logger.LogMessage(MessageImportance.High, $"  aka.ms/{newLink.ShortUrl} -> {newLink.TargetUrl}");
 
         return newLink;
     }

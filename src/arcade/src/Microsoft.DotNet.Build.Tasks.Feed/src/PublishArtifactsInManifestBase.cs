@@ -933,7 +933,7 @@ public abstract class PublishArtifactsInManifestBase : Microsoft.Build.Utilities
 
         await Task.WhenAll(publishTasks);
 
-        Log.LogMessage(MessageImportance.High, "\nCompleted publishing of packages: ");
+        Log.LogMessage(MessageImportance.High, "\nCompleted publishing of packages.");
     }
 
     protected virtual HashSet<PackageArtifactModel> SplitPackageByAssetSelection(HashSet<PackageArtifactModel> packages, TargetFeedConfig feedConfig)
@@ -1220,7 +1220,7 @@ public abstract class PublishArtifactsInManifestBase : Microsoft.Build.Utilities
 
         await Task.WhenAll(publishTasks);
 
-        Log.LogMessage(MessageImportance.High, "\nCompleted publishing of blobs: ");
+        Log.LogMessage(MessageImportance.High, "\nCompleted publishing of blobs.");
     }
 
     /// <summary>
