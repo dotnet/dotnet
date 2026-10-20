@@ -88,7 +88,7 @@
           AfterTargets="LinkNative"
           Condition="'$(PublishAot)' == 'true' and '$(PortableOS)' == 'osx' and '$(OutputType)' == 'Exe' and '$(NativeLib)' == '' and '$(HostBundleIdentifier)' != ''">
     <!-- Sign after LinkNative finishes modifying the binary, including symbol stripping, and before publish copies it. -->
-    <Exec Command="codesign --sign - --force --preserve-metadata=entitlements --identifier &quot;$(HostBundleIdentifier)&quot; &quot;$(NativeBinary)&quot;" />
+    <Exec Command="codesign --sign - --force --preserve-metadata=entitlements,requirements,flags,runtime,launch-constraints,library-constraints --identifier &quot;$(HostBundleIdentifier)&quot; &quot;$(NativeBinary)&quot;" />
   </Target>
 
 </Project>

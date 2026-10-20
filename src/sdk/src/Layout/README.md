@@ -5,5 +5,7 @@ identifiers to the `csc`, `vbc`, and `VBCSCompiler` apphosts created by
 `PublishRoslyn` in `redist/targets/GenerateLayout.targets`. Identifiers are
 lowercase, including `com.microsoft.dotnet.vbcscompiler`.
 
-The signing step retains `roslyn-entitlements.plist`. Reusable apphost templates
+The signing step applies `roslyn-entitlements.plist` and preserves existing
+requirements, signing flags, hardened runtime version, and launch and library
+constraints while explicitly setting the identifier. Reusable apphost templates
 remain application-neutral.

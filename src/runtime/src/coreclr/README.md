@@ -14,6 +14,7 @@ assembly versions do not follow Apple's bundle version format.
 This metadata does not create an app bundle. The linker-generated ad hoc signature
 does not automatically use the embedded identifier. `AdHocSignHost` applies the
 identifier after linking and symbol stripping, before publishing copies the
-executable. Existing entitlements are preserved without adding JIT entitlements.
-Official signing must preserve the identifier and entitlements or explicitly
-supply the same values.
+executable. Existing entitlements, requirements, signing flags, hardened runtime
+version, and launch and library constraints are preserved while explicitly setting
+the identifier, without adding JIT entitlements. Official signing must preserve the
+identifier and security settings or explicitly supply the same values.
