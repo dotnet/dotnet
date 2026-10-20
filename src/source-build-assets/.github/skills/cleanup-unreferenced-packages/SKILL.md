@@ -220,6 +220,19 @@ Deleting (<N> packages):
 
 Proceed to Step 6 with both **mature** and **middle-window** packages.
 
+### Step 5b: Check SBRP Generation Test Fixtures
+
+Before deleting packages, inspect the package list in
+`tests/SbrpTests/GenerateScriptTests.cs` (`GenerateScriptTests.Data`). Each entry is a
+generation test fixture that requires its package source directory to exist. If a
+deletion candidate appears in this list, update the fixture as part of the cleanup:
+
+- Replace it with an existing package version that preserves the test's intended
+  coverage (for example, a package with multiple target frameworks), or remove the
+  fixture if that coverage is no longer needed.
+- Verify the replacement's source directory and project file exist in the checkout.
+- Include the fixture change in the cleanup PR and run the affected `Sbrp.Tests` test.
+
 ### Step 6: Delete Packages
 
 For each package in the confirmed deletion list:
