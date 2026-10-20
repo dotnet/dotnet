@@ -25,7 +25,7 @@
     <ProjectReference Include="..\Microsoft.NET.ProjectData.Generators\Microsoft.NET.ProjectData.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" SkipGetTargetFrameworkProperties="true" SetPlatform="" />
 
     <AdditionalFiles Include="..\Microsoft.NET.ProjectData.Generators\project-data-schema.json" />
-    <InternalsVisibleTo Include="Microsoft.NET.ProjectData.Tasks.UnitTests" Key="$(VsPublicKey)" />
+    <InternalsVisibleTo Include="Microsoft.NET.ProjectData.Tasks.UnitTests" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
