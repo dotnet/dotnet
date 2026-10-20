@@ -24,11 +24,29 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.NET.ProjectData.Generators\Microsoft.NET.ProjectData.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" SkipGetTargetFrameworkProperties="true" SetPlatform="" />
 
+    <AdditionalFiles Include="..\Microsoft.NET.ProjectData.Generators\project-data-schema.json" />
+    <InternalsVisibleTo Include="Microsoft.NET.ProjectData.Tasks.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
+    <!-- The generator depends on System.Text.Json, so pass its runtime dependency closure as /analyzer inputs to the compiler.
+         These DLLs are needed to run the generator, independently of this project's compile and runtime references. -->
     <Analyzer Include="$(PkgSystem_IO_Pipelines)\lib\netstandard2.0\System.IO.Pipelines.dll" />
     <Analyzer Include="$(PkgSystem_Text_Json)\lib\netstandard2.0\System.Text.Json.dll" />
+  </ItemGroup>
 
-    <AdditionalFiles Include="..\Microsoft.NET.ProjectData.Generators\project-data-schema.json" />
-    <InternalsVisibleTo Include="Microsoft.NET.ProjectData.Tasks.UnitTests" Key="$(VsPublicKey)" />
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <!-- The generator ProjectReference supplies its DLL to the compiler, not its runtime dependency chain.
+         For SourceBuild, supply the bootstrap-compatible packages restored by the generator project.
+         This project's PkgSystem_* properties identify its own resolved dependencies, which can differ.
+         Bootstrap PackageReferences here would select those versions for this project's dependency
+         graph too, even with ExcludeAssets="all". Use explicit package-root paths to keep the compiler's
+         generator dependencies separate from this project's product dependencies. -->
+    <Analyzer Include="$(NuGetPackageRoot)microsoft.bcl.asyncinterfaces\$(BundledNETCoreAppPackageVersion)\lib\netstandard2.0\Microsoft.Bcl.AsyncInterfaces.dll" />
+    <Analyzer Include="$(NuGetPackageRoot)system.collections.immutable\$(BundledNETCoreAppPackageVersion)\lib\netstandard2.0\System.Collections.Immutable.dll" />
+    <Analyzer Include="$(NuGetPackageRoot)system.io.pipelines\$(BundledNETCoreAppPackageVersion)\lib\netstandard2.0\System.IO.Pipelines.dll" />
+    <Analyzer Include="$(NuGetPackageRoot)system.text.encodings.web\$(BundledNETCoreAppPackageVersion)\lib\netstandard2.0\System.Text.Encodings.Web.dll" />
+    <Analyzer Include="$(NuGetPackageRoot)system.text.json\$(BundledNETCoreAppPackageVersion)\lib\netstandard2.0\System.Text.Json.dll" />
   </ItemGroup>
 
   <ItemGroup>

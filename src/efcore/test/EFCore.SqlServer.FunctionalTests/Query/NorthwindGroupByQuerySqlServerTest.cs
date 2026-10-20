@@ -19,6 +19,39 @@ public class NorthwindGroupByQuerySqlServerTest : NorthwindGroupByQueryRelationa
     public virtual void Check_all_tests_overridden()
         => TestHelpers.AssertAllMethodsOverridden(GetType());
 
+    public override async Task SelectMany_DefaultIfEmpty_over_GroupBy(bool async)
+    {
+        await base.SelectMany_DefaultIfEmpty_over_GroupBy(async);
+
+        AssertSql(
+            """
+SELECT [p].[ProductID], [o0].[Key], ISNULL([o0].[Sum], 0) AS [Sum]
+FROM [Products] AS [p]
+LEFT JOIN (
+    SELECT [o].[ProductID] AS [Key], ISNULL(SUM(CAST([o].[Quantity] AS int)), 0) AS [Sum], [o].[ProductID]
+    FROM [Order Details] AS [o]
+    WHERE [o].[ProductID] < 10
+    GROUP BY [o].[ProductID]
+) AS [o0] ON [p].[ProductID] = [o0].[ProductID]
+""");
+    }
+
+    public override async Task SelectMany_DefaultIfEmpty_over_Distinct(bool async)
+    {
+        await base.SelectMany_DefaultIfEmpty_over_Distinct(async);
+
+        AssertSql(
+            """
+SELECT [p].[ProductID], [o0].[Key], COALESCE([o0].[Quantity], CAST(0 AS smallint)) AS [Quantity]
+FROM [Products] AS [p]
+LEFT JOIN (
+    SELECT DISTINCT [o].[ProductID] AS [Key], [o].[Quantity], 1 AS [marker], [o].[ProductID]
+    FROM [Order Details] AS [o]
+    WHERE [o].[ProductID] < 10
+) AS [o0] ON [p].[ProductID] = [o0].[ProductID]
+""");
+    }
+
     public override async Task GroupBy_ValueTuple_projection_joined_on_tuple_member(bool async)
     {
         await base.GroupBy_ValueTuple_projection_joined_on_tuple_member(async);
@@ -2848,7 +2881,7 @@ GROUP BY [e].[EmployeeID]
 
         AssertSql(
             """
-SELECT [c].[City], [c].[CustomerID], [c].[Address], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
+SELECT [c].[City], DENSE_RANK() OVER(ORDER BY [c].[City]), [c].[CustomerID], [c].[Address], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
 ORDER BY [c].[City]
 """);
@@ -2860,9 +2893,33 @@ ORDER BY [c].[City]
 
         AssertSql(
             """
-SELECT [c].[City], [c].[CustomerID], [c].[Address], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
+SELECT [c].[City], DENSE_RANK() OVER(ORDER BY [c].[City]), [c].[CustomerID], [c].[Address], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
 ORDER BY [c].[City]
+""");
+    }
+
+    public override async Task GroupBy_select_grouping_list_ordered_by_key_descending(bool async)
+    {
+        await base.GroupBy_select_grouping_list_ordered_by_key_descending(async);
+
+        AssertSql(
+            """
+SELECT [o].[CustomerID], DENSE_RANK() OVER(ORDER BY [o].[CustomerID] DESC), [o].[OrderID]
+FROM [Orders] AS [o]
+ORDER BY [o].[CustomerID] DESC
+""");
+    }
+
+    public override async Task GroupBy_select_grouping_list_with_composite_key_ordered_out_of_key_order(bool async)
+    {
+        await base.GroupBy_select_grouping_list_with_composite_key_ordered_out_of_key_order(async);
+
+        AssertSql(
+            """
+SELECT [o].[CustomerID], [o].[EmployeeID], DENSE_RANK() OVER(ORDER BY [o].[EmployeeID], [o].[CustomerID] DESC), [o].[OrderID]
+FROM [Orders] AS [o]
+ORDER BY [o].[EmployeeID], [o].[CustomerID] DESC
 """);
     }
 
@@ -3159,7 +3216,7 @@ ORDER BY [o0].[OrderID]
 
         AssertSql(
             """
-SELECT [e].[ReportsTo], [e].[EmployeeID], [e].[City], [e].[Country], [e].[FirstName], [e].[Title]
+SELECT [e].[ReportsTo], DENSE_RANK() OVER(ORDER BY [e].[ReportsTo]), [e].[EmployeeID], [e].[City], [e].[Country], [e].[FirstName], [e].[Title]
 FROM [Employees] AS [e]
 ORDER BY [e].[ReportsTo]
 """);
@@ -3171,7 +3228,7 @@ ORDER BY [e].[ReportsTo]
 
         AssertSql(
             """
-SELECT [e].[ReportsTo], [e].[EmployeeID]
+SELECT [e].[ReportsTo], DENSE_RANK() OVER(ORDER BY [e].[ReportsTo]), [e].[EmployeeID]
 FROM [Employees] AS [e]
 ORDER BY [e].[ReportsTo]
 """);
@@ -3183,7 +3240,7 @@ ORDER BY [e].[ReportsTo]
 
         AssertSql(
             """
-SELECT [e].[ReportsTo], [e].[EmployeeID]
+SELECT [e].[ReportsTo], DENSE_RANK() OVER(ORDER BY [e].[ReportsTo]), [e].[EmployeeID]
 FROM [Employees] AS [e]
 ORDER BY [e].[ReportsTo]
 """);
@@ -4108,7 +4165,7 @@ WHERE [o0].[OrderID] = [t].[c]
 
         AssertSql(
             """
-SELECT [o].[CustomerID], [o].[OrderID]
+SELECT [o].[CustomerID], DENSE_RANK() OVER(ORDER BY [o].[CustomerID]), [o].[OrderID]
 FROM [Orders] AS [o]
 ORDER BY [o].[CustomerID]
 """);
@@ -4218,7 +4275,7 @@ ORDER BY [o1].[CustomerID]
 
         AssertSql(
             """
-SELECT [o].[CustomerID], [o].[OrderID]
+SELECT [o].[CustomerID], DENSE_RANK() OVER(ORDER BY [o].[CustomerID]), [o].[OrderID]
 FROM [Orders] AS [o]
 ORDER BY [o].[CustomerID]
 """);
@@ -4230,7 +4287,7 @@ ORDER BY [o].[CustomerID]
 
         AssertSql(
             """
-SELECT [o].[CustomerID], [o].[OrderID]
+SELECT [o].[CustomerID], DENSE_RANK() OVER(ORDER BY [o].[CustomerID]), [o].[OrderID]
 FROM [Orders] AS [o]
 ORDER BY [o].[CustomerID]
 """);
@@ -4242,7 +4299,7 @@ ORDER BY [o].[CustomerID]
 
         AssertSql(
             """
-SELECT [o].[CustomerID], [o].[OrderID]
+SELECT [o].[CustomerID], DENSE_RANK() OVER(ORDER BY [o].[CustomerID]), [o].[OrderID]
 FROM [Orders] AS [o]
 ORDER BY [o].[CustomerID]
 """);
@@ -4312,7 +4369,7 @@ ORDER BY [o1].[CustomerID]
 
         AssertSql(
             """
-SELECT [o].[CustomerID]
+SELECT [o].[CustomerID], DENSE_RANK() OVER(ORDER BY [o].[CustomerID])
 FROM [Orders] AS [o]
 ORDER BY [o].[CustomerID]
 """);
