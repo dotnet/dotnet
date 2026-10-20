@@ -1,13 +1,13 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="diagnostics" Sha="1764f3933fefec396a352f4472a7781d96bb88d4" BarId="334704" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Diagnostics.Runtime" Version="4.1.750501">
+    <Dependency Name="Microsoft.Diagnostics.Runtime" Version="4.2.751201">
       <Uri>https://github.com/microsoft/clrmd</Uri>
-      <Sha>d9aa8150c26ab9aa1c5649cae33707db5514e9bb</Sha>
+      <Sha>2e7e5d74cddb2be0ac523aedead10b90a95e71c3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.Runtime.Utilities" Version="4.1.750501">
+    <Dependency Name="Microsoft.Diagnostics.Runtime.Utilities" Version="4.2.751201">
       <Uri>https://github.com/microsoft/clrmd</Uri>
-      <Sha>d9aa8150c26ab9aa1c5649cae33707db5514e9bb</Sha>
+      <Sha>2e7e5d74cddb2be0ac523aedead10b90a95e71c3</Sha>
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25210.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
@@ -19,17 +19,17 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26505.3">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.26508.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e3fa3e3a894a8693eb875b48e6002e15d063f0b4</Sha>
+      <Sha>00cc683ad1b7859fd9c582fafd6c18cd05f5c3ff</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.CodeAnalysis" Version="10.0.0-beta.26505.3">
+    <Dependency Name="Microsoft.DotNet.CodeAnalysis" Version="10.0.0-beta.26508.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e3fa3e3a894a8693eb875b48e6002e15d063f0b4</Sha>
+      <Sha>00cc683ad1b7859fd9c582fafd6c18cd05f5c3ff</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.RemoteExecutor" Version="10.0.0-beta.26505.3" Pinned="true">
+    <Dependency Name="Microsoft.DotNet.RemoteExecutor" Version="10.0.0-beta.26508.3" Pinned="true">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e3fa3e3a894a8693eb875b48e6002e15d063f0b4</Sha>
+      <Sha>00cc683ad1b7859fd9c582fafd6c18cd05f5c3ff</Sha>
     </Dependency>
     <!-- dotnet/installer: Testing version of the SDK. Needed for the signed & entitled host. -->
     <Dependency Name="Microsoft.NET.Sdk" Version="11.0.100-rtm.26480.113">
@@ -57,29 +57,29 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>1764f3933fefec396a352f4472a7781d96bb88d4</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26473.114">
+    <Dependency Name="runtime.win-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26513.123">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>c567e8ff13b8ada7c5285c60bc2ac1111ae602e7</Sha>
+      <Sha>e1fc22dd641fa857d198afa8ec4c96eac1ac7f29</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26473.114">
+    <Dependency Name="runtime.win-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26513.123">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>c567e8ff13b8ada7c5285c60bc2ac1111ae602e7</Sha>
+      <Sha>e1fc22dd641fa857d198afa8ec4c96eac1ac7f29</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26473.114">
+    <Dependency Name="runtime.linux-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26513.123">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>c567e8ff13b8ada7c5285c60bc2ac1111ae602e7</Sha>
+      <Sha>e1fc22dd641fa857d198afa8ec4c96eac1ac7f29</Sha>
     </Dependency>
-    <Dependency Name="runtime.linux-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26473.114">
+    <Dependency Name="runtime.linux-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26513.123">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>c567e8ff13b8ada7c5285c60bc2ac1111ae602e7</Sha>
+      <Sha>e1fc22dd641fa857d198afa8ec4c96eac1ac7f29</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26473.114">
+    <Dependency Name="runtime.osx-x64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26513.123">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>c567e8ff13b8ada7c5285c60bc2ac1111ae602e7</Sha>
+      <Sha>e1fc22dd641fa857d198afa8ec4c96eac1ac7f29</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26473.114">
+    <Dependency Name="runtime.osx-arm64.Microsoft.DotNet.Cdac.Transport" Version="12.0.0-alpha.1.26513.123">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>c567e8ff13b8ada7c5285c60bc2ac1111ae602e7</Sha>
+      <Sha>e1fc22dd641fa857d198afa8ec4c96eac1ac7f29</Sha>
     </Dependency>
     <!--
       These versions should not be used by any project that contributes to the design-time experience in VS, such as an analyzer, code-fix, or generator assembly.

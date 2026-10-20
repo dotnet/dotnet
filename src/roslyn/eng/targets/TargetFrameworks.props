@@ -14,6 +14,7 @@
           - OS-specific TFMs like NetRoslynWindowsTests are excluded as they are not cross-platform.
           - NetRoslynBuildHostNetCoreVersion because the BuildHost is an isolated executable that
             does not share test utilities or broadly-consumed library layers.
+          - NetRoslynBuildTool because build executables run on the SDK's bundled framework.
   -->
   <PropertyGroup>
     <NetRoslyn>net10.0</NetRoslyn>
@@ -57,5 +58,9 @@
       </PropertyGroup>
     </Otherwise>
   </Choose>
+
+  <PropertyGroup>
+    <NetRoslynBuildTool>$(BundledNETCoreAppTargetFramework)</NetRoslynBuildTool>
+  </PropertyGroup>
 
 </Project>
