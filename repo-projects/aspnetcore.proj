@@ -75,7 +75,11 @@
       By not lifting the M.CA version to the current version and instead using the N-1 version, we guarantee that it will match the version
       containing in the executed SDK and avoiding this error.
     -->
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisSourceGeneratorVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="SourceGenerator_MicrosoftCodeAnalysisCommonVersion" Version="%24(MicrosoftCodeAnalysisCommonPreviousVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="SourceGenerator_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
+
+    <!-- In normal builds, these analyzers use older Roslyn packages for compatibility with older VS versions, separately
+         from the newer source generators above. Source-build uses N-1 packages for both. -->
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
 

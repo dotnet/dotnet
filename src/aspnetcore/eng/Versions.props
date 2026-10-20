@@ -119,9 +119,10 @@
     <MicrosoftCodeAnalysisCSharpAnalyzerTestingVersion>1.1.2</MicrosoftCodeAnalysisCSharpAnalyzerTestingVersion>
     <MicrosoftCodeAnalysisCSharpCodeFixTestingVersion>1.1.2</MicrosoftCodeAnalysisCSharpCodeFixTestingVersion>
     <MicrosoftCodeAnalysisCSharpSourceGeneratorsTestingVersion>1.1.2</MicrosoftCodeAnalysisCSharpSourceGeneratorsTestingVersion>
-    <!-- Specifies the version of Roslyn that should be referenced by source generators.
-         This gets overriden by source-build, separately from MicrosoftCodeAnalysisVersion_LatestVS. -->
-    <MicrosoftCodeAnalysisSourceGeneratorVersion>$(MicrosoftCodeAnalysisVersion_LatestVS)</MicrosoftCodeAnalysisSourceGeneratorVersion>
+    <!-- Specifies the versions of Roslyn packages that should be referenced by source generators.
+         These get overridden by source-build, separately from MicrosoftCodeAnalysisVersion_LatestVS. -->
+    <SourceGenerator_MicrosoftCodeAnalysisCommonVersion>$(MicrosoftCodeAnalysisVersion_LatestVS)</SourceGenerator_MicrosoftCodeAnalysisCommonVersion>
+    <SourceGenerator_MicrosoftCodeAnalysisCSharpVersion>$(MicrosoftCodeAnalysisVersion_LatestVS)</SourceGenerator_MicrosoftCodeAnalysisCSharpVersion>
     <MicrosoftCssParserVersion>1.0.0-20230414.1</MicrosoftCssParserVersion>
     <MicrosoftIdentityModelJsonWebTokensVersion>$(IdentityModelVersion)</MicrosoftIdentityModelJsonWebTokensVersion>
     <MicrosoftIdentityModelLoggingVersion>$(IdentityModelVersion)</MicrosoftIdentityModelLoggingVersion>
