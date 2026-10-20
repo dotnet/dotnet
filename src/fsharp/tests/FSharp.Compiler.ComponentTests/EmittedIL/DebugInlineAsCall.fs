@@ -2,6 +2,7 @@ namespace EmittedIL
 
 open System.Diagnostics
 open System.Runtime.CompilerServices
+open FSharp.Test
 open Xunit
 open FSharp.Test.Compiler
 
@@ -1739,6 +1740,41 @@ let main _ =
         |> verifySequencePoints
 
     [<Fact>]
+    let ``Resumable 04 - Builder Run is inlined`` () =
+        FSharp """
+open Microsoft.FSharp.Core.CompilerServices
+open Microsoft.FSharp.Core.CompilerServices.StateMachineHelpers
+
+#nowarn "3501"
+#nowarn "3513"
+
+type Builder() =
+    member inline _.Run(code: ResumableCode<unit, int>) =
+        if __useResumableCode then
+            __stateMachine<unit, int>
+                (MoveNextMethodImpl<_>(fun sm -> code.Invoke(&sm) |> ignore))
+                (SetStateMachineMethodImpl<_>(fun _ _ -> ()))
+                (AfterCode<_, _>(fun _ -> 42))
+        else
+            0
+
+let builder = Builder()
+
+[<EntryPoint>]
+let main _ =
+    let code = ResumableCode<unit, int>(fun _ -> true)
+    let result = builder.Run code
+    if result = 42 then 0 else 1
+"""
+        |> withDebug
+        |> withNoOptimize
+        |> asExe
+        |> compileAndRun
+        |> shouldSucceed
+        |> withExitCode 0
+        |> verifySequencePoints
+
+    [<Fact>]
     let ``InlineIfLambda 01 - Debug`` () =
         FSharp """
 let inline apply ([<InlineIfLambda>] f: int -> int) (x: int) : int =
@@ -1770,4 +1806,109 @@ let main _ =
         |> compile
         |> shouldSucceed
         |> verifyILNotPresent ["call       int32 Test::apply(class [FSharp.Core]Microsoft.FSharp.Core.FSharpFunc`2<int32,int32>,"]
+
+    // https://github.com/dotnet/fsharp/issues/20063
+    [<FactForNETCOREAPP>]
+    let ``Stackalloc 01 - Debug`` () =
+        FSharp """
+open System
+open FSharp.NativeInterop
+#nowarn 9
+
+let inline stackalloc n = Span<char>(NativePtr.stackalloc<char> n |> NativePtr.toVoidPtr, n)
+
+[<EntryPoint>]
+let main _ =
+    let b = stackalloc 3
+    b[0] <- 'a'
+    b[1] <- 'b'
+    b[2] <- 'c'
+    if String b = "abc" then 0 else 1
+"""
+        |> withDebug
+        |> withNoOptimize
+        |> asExe
+        |> compileAndRun
+        |> verifySequencePoints
+
+    [<FactForNETCOREAPP>]
+    let ``Stackalloc 02 - Nested wrappers`` () =
+        FSharp """
+open System
+open FSharp.NativeInterop
+#nowarn 9
+
+let inline alloc n : nativeptr<char> = NativePtr.stackalloc<char> n
+let inline stackalloc n = Span<char>(alloc n |> NativePtr.toVoidPtr, n)
+
+[<EntryPoint>]
+let main _ =
+    let b = stackalloc 2
+    b[0] <- 'a'
+    b[1] <- 'b'
+    if String b = "ab" then 0 else 1
+"""
+        |> withDebug
+        |> withNoOptimize
+        |> asExe
+        |> compileAndRun
+        |> verifySequencePoints
+
+    [<FactForNETCOREAPP>]
+    let ``Stackalloc 03 - Different assembly`` () =
+        let library =
+            FSharp """
+module MyLib
+
+open System
+open FSharp.NativeInterop
+#nowarn 9
+
+let inline alloc n : nativeptr<char> = NativePtr.stackalloc<char> n
+let inline stackalloc n = Span<char>(alloc n |> NativePtr.toVoidPtr, n)
+"""
+            |> withDebug
+            |> withNoOptimize
+            |> asLibrary
+            |> withName "Lib"
+
+        FSharp """
+open System
+open MyLib
+
+[<EntryPoint>]
+let main _ =
+    let b = stackalloc 2
+    b[0] <- 'a'
+    b[1] <- 'b'
+    if String b = "ab" then 0 else 1
+"""
+        |> withDebug
+        |> withNoOptimize
+        |> withReferences [library]
+        |> asExe
+        |> compileAndRun
+        |> verifySequencePoints
+
+    [<FactForNETCOREAPP>]
+    let ``Stackalloc 04 - Only the wrappers are force inlined`` () =
+        FSharp """
+open System
+open FSharp.NativeInterop
+#nowarn 9
+
+let inline stackalloc n = Span<char>(NativePtr.stackalloc<char> n |> NativePtr.toVoidPtr, n)
+let inline fill (b: Span<char>) c = b.Fill c
+
+[<EntryPoint>]
+let main _ =
+    let b = stackalloc 2
+    fill b 'a'
+    if String b = "aa" then 0 else 1
+"""
+        |> withDebug
+        |> withNoOptimize
+        |> asExe
+        |> compileAndRun
+        |> verifySequencePoints
 

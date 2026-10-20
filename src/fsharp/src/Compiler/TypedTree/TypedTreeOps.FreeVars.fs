@@ -1082,19 +1082,20 @@ module internal MemberRepresentation =
     module SimplifyTypes =
 
         // CAREFUL! This function does NOT walk constraints
-        let rec foldTypeButNotConstraints f z ty =
-            let ty = stripTyparEqns ty
+        let rec foldTypeButNotConstraints normalizeType f z ty =
+            let ty = normalizeType ty
             let z = f z ty
 
             match ty with
-            | TType_forall(_, bodyTy) -> foldTypeButNotConstraints f z bodyTy
+            | TType_forall(_, bodyTy) -> foldTypeButNotConstraints normalizeType f z bodyTy
 
             | TType_app(_, tys, _)
             | TType_ucase(_, tys)
             | TType_anon(_, tys)
-            | TType_tuple(_, tys) -> List.fold (foldTypeButNotConstraints f) z tys
+            | TType_tuple(_, tys) -> List.fold (foldTypeButNotConstraints normalizeType f) z tys
 
-            | TType_fun(domainTy, rangeTy, _) -> foldTypeButNotConstraints f (foldTypeButNotConstraints f z domainTy) rangeTy
+            | TType_fun(domainTy, rangeTy, _) ->
+                foldTypeButNotConstraints normalizeType f (foldTypeButNotConstraints normalizeType f z domainTy) rangeTy
 
             | TType_var _ -> z
 
@@ -1109,7 +1110,7 @@ module internal MemberRepresentation =
         let accTyparCounts z ty =
             // Walk type to determine typars and their counts (for pprinting decisions)
             (z, ty)
-            ||> foldTypeButNotConstraints (fun z ty ->
+            ||> foldTypeButNotConstraints stripTyparEqns (fun z ty ->
                 match ty with
                 | TType_var(tp, _) when tp.Rigidity = TyparRigidity.Rigid -> incM tp z
                 | _ -> z)
@@ -1381,6 +1382,41 @@ module internal MemberRepresentation =
         else
             tagClass name
 
+    let richTextOfEntityRefName xref name =
+        RichText.ofTaggedText (tagEntityRefName xref name)
+
+    let richTextOfEntityName (entity: Entity) name =
+        richTextOfEntityRefName (mkLocalEntityRef entity) name
+
+    let richTextOfEntityRef (xref: EntityRef) =
+        richTextOfEntityRefName xref xref.DisplayName
+
+    let richTextOfEntity (entity: Entity) =
+        richTextOfEntityName entity entity.DisplayName
+
+    let tagValName g (v: Val) name =
+        let isDiscard (name: string) = name.StartsWithOrdinal "_"
+
+        if v.IsMember then
+            if (arityOfVal v).HasNoArgs then
+                tagMember name
+            else
+                tagMethod name
+        elif isForallFunctionTy g v.Type && not (isDiscard v.DisplayNameCore) then
+            if IsOperatorDisplayName v.DisplayName then
+                tagOperator name
+            else
+                tagFunction name
+        elif not v.IsCompiledAsTopLevel && not (isDiscard v.DisplayNameCore) then
+            tagLocal name
+        elif v.IsModuleBinding then
+            tagModuleBinding name
+        else
+            tagUnknownEntity name
+
+    let richTextOfValName g (v: Val) =
+        RichText.ofTaggedText (tagValName g v v.DisplayName)
+
     let fullDisplayTextOfTyconRef (tcref: TyconRef) =
         fullNameOfEntityRef (fun tcref -> tcref.DisplayNameWithStaticParametersAndUnderscoreTypars) tcref
 
@@ -1415,6 +1451,9 @@ module internal MemberRepresentation =
 
     let fullDisplayTextOfModRef r =
         fullNameOfEntityRef (fun eref -> eref.DemangledModuleOrNamespaceName) r
+
+    let fullDisplayTextOfModRefAsLayout r =
+        fullNameOfEntityRefAsLayout (fun eref -> eref.DemangledModuleOrNamespaceName) r
 
     let fullDisplayTextOfTyconRefAsLayout tcref =
         fullNameOfEntityRefAsLayout (fun tcref -> tcref.DisplayNameWithStaticParametersAndUnderscoreTypars) tcref
@@ -1472,6 +1511,20 @@ module internal MemberRepresentation =
         | ValueNone -> wordL n
         | ValueSome pathText -> pathText ^^ SepL.dot ^^ wordL n
     //pathText +.+ vref.DisplayName
+
+    // A qualified name is classified one component at a time: each name by what it names and each dot
+    // as punctuation. Splicing the flattened text into a message instead would classify the dots, and
+    // every component, as whatever the last component happens to be.
+    let richTextOfPath p = toRichText (layoutOfPath p)
+
+    let richTextOfQualifiedModRef r =
+        toRichText (fullDisplayTextOfModRefAsLayout r)
+
+    let richTextOfQualifiedTyconRef tcref =
+        toRichText (fullDisplayTextOfTyconRefAsLayout tcref)
+
+    let richTextOfQualifiedValRef vref =
+        toRichText (fullDisplayTextOfValRefAsLayout vref)
 
     let fullMangledPathToTyconRef (tcref: TyconRef) =
         match tcref with
