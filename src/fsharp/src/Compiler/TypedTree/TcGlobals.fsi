@@ -268,6 +268,8 @@ type internal TcGlobals =
 
     member ResumableCode_tcr: TypedTree.EntityRef
 
+    member ResumableStateMachine_tcr: TypedTree.EntityRef
+
     member System_Runtime_CompilerServices_RuntimeFeature_ty: TypedTree.TType option
 
     member addrof2_vref: TypedTree.ValRef
@@ -941,6 +943,8 @@ type internal TcGlobals =
 
     member sbyte_operator_info: IntrinsicValRef
 
+    member string_operator_info: IntrinsicValRef
+
     member sbyte_tcr: TypedTree.EntityRef
 
     member sbyte_ty: TypedTree.TType
@@ -1004,8 +1008,6 @@ type internal TcGlobals =
     member splice_expr_vref: TypedTree.ValRef
 
     member splice_raw_expr_vref: TypedTree.ValRef
-
-    member sprintf_info: IntrinsicValRef
 
     member sprintf_vref: TypedTree.ValRef
 
