@@ -34,6 +34,9 @@ exception, source-line, stack, thread, live/dump, and CLRMA assertions into the
 command-focused suite. Two additional scripts, `DynamicMethod.script` and
 `Reflection.script`, are retired using their existing modern debuggees and
 focused emitted-IL checks and existing reflection-exception coverage.
+`TaskNestedException.script` is retired by a three-level task-exception test.
+`ConcurrentDictionaries.script` is retired by focused dictionary-content,
+argument-error, and referenced-array/object/value-class tests.
 The remaining legacy runner and scenarios stay in place.
 
 ## Legacy-to-new map
@@ -42,7 +45,7 @@ The remaining legacy runner and scenarios stay in place.
 | --- | --- | --- |
 | `AsyncMain.script` | Retired | General stack shape is covered by `ClrStackLinesTests` and `ClrStackAllThreadsTests`; the async-`Main` frame identity has no new oracle. |
 | `ClrStackWithNumberOfFrames.script` | Retired | `ClrStackFrameCountTests.ClrStack_FrameCount` compares each `-c N` result with the exact prefix of an unlimited walk and checks an over-limit request across four crash targets. |
-| `ConcurrentDictionaries.script` | Improved | `SpecializedInspectionTests.Dcd_DumpsConcurrentDictionary`, `DumpArrayTests`, and `ObjectFieldsTests` provide typed data assertions. Legacy still covers dcd argument errors and its wider generic key/value set. |
+| `ConcurrentDictionaries.script` | Retired | `ConcurrentDictionaryTests` checks all five legacy generic key/value shapes plus the existing int/string fixture, exact counts and entries, argument errors, long-string truncation, null values, and `dumparray`/`dumpobj`/`dumpvc` round-trips. Rooted fixtures at the Scenarios heap stop preserve native and dotnet-dump host coverage and add Framework/CDB coverage alongside Framework/dotnet-dump, without named-pipe capture infrastructure. The .NET 10 Unix exclusion (#5491) and Alpine `dumpobj` exclusion (#5840) remain. |
 | `DivZero.script` | Retired | `PrintExceptionTests.PrintException_NoInnerException` verifies the exact exception type, message, HResult, no-inner state, generated frame, `-nested`, and `-lines` output across live and dump rows. `ClrThreadsTests`, `ClrStackLinesTests`, and `ClrStackICorDebugTests` cover the remaining thread and stack behavior. |
 | `DualRuntimes.script` | Retained | Generic stacks, threads, heaps, and runtime listing are covered; loading and switching between two runtimes in one process remains a specialized legacy scenario. |
 | `DumpGCData.script` | Covered | `DiagnosticCommandTests.DumpGcData_ReportsGcStatistics` directly exercises `dumpgcdata`. |
@@ -64,7 +67,7 @@ The remaining legacy runner and scenarios stay in place.
 | `StackTests.script` | Improved | `ClrStackTests`, `ClrStackFullTests`, `ClrStackAllThreadsTests`, `ClrStackArgsLocalsTests`, `StackInspectionTests`, and `RuntimeInfoTests` replace shape-only checks with tables and address round-trips. |
 | `StackTraceFaultingExceptionFrame.script` | Retired | Exception and ordinary stack data are covered; no new assertion requires the synthetic `[FaultingExceptionFrame: ...]` row. |
 | `StackTraceSoftwareExceptionFrame.script` | Retired | Exception and ordinary stack data are covered; no new assertion requires the synthetic `[SoftwareExceptionFrame: ...]` row. |
-| `TaskNestedException.script` | Gap | New tests cover one inner-exception round-trip, not the AggregateException/task chain and source lines. |
+| `TaskNestedException.script` | Retired | `PrintExceptionTests.PrintException_TaskExceptionChain` follows `AggregateException -> FormatException -> InvalidOperationException` addresses, checks messages, ordered task/caller/throw frames and source lines, and requires no further inner exception across live and Heap/Mini dump rows. The original sources and separately built library are included in the modern payload; the app project moves to the standard debuggee-folder location. |
 | `TestExtensions.script` | Retained | This validates extension-command interception and dispatch rather than SOS product output; it remains a legacy harness integration test. |
 | `ThreadApartment.script` | Retired | `ClrThreadsTests.ClrThreads_ReportsApartmentStates` identifies the named STA/MTA workers in `clrstack -all`, matches their OS thread IDs to `clrthreads`, and asserts each worker's expected apartment on Windows. |
 | `VarargPInvokeInteropMD.script` | Retained | Vararg P/Invoke, IL stubs, native breakpointing, `ip2md`, and `clru -il` form one specialized interop scenario. Generic `ip2md` and `clru` have new structured tests. |
