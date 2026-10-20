@@ -120,7 +120,6 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Trait("Category", "Offline")]
     [Trait("SkipIfPlatform", "LINUX")]
     [Trait("SkipIfPlatform", "OSX")]
-    [Trait("Category", TestCategories.RequiresNet12RuntimeTargetingPack)]
     public void VerifyWebAppTemplate()
     {
         var newTest = new SdkTemplateTest(
@@ -177,7 +176,6 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.FSharp)]
     [Trait("Category", "RequiresPortableAssets")]
-    [Trait("Category", TestCategories.RequiresNet12RuntimeTargetingPack)]
     public void VerifyMVCTemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -190,7 +188,6 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.FSharp)]
     [Trait("Category", "RequiresPortableAssets")]
-    [Trait("Category", TestCategories.RequiresNet12RuntimeTargetingPack)]
     public void VerifyWebAPITemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -202,7 +199,6 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Theory]
     [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.FSharp)]
-    [Trait("Category", TestCategories.RequiresNet12RuntimeTargetingPack)]
     public void VerifyWebTemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -213,7 +209,6 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
 
     [Theory]
     [Trait("Category", "RequiresNonTargetRidPackages")]
-    [Trait("Category", TestCategories.RequiresNet12RuntimeTargetingPack)]
     [InlineData(DotNetLanguage.CSharp)]
     public void VerifyBlazorWasmTemplate(DotNetLanguage language)
     {
@@ -225,7 +220,6 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
 
     [Theory]
     [InlineData(DotNetLanguage.CSharp)]
-    [Trait("Category", TestCategories.RequiresNet12RuntimeTargetingPack)]
     public void VerifyRazorTemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -237,7 +231,6 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Fact]
     [Trait("SkipIfBuild", "Portable")] // Portable builds don't bundle an AOT compiler.
     [Trait("SkipIfBuild", "Mono")]     // Mono builds don't bundle an AOT compiler.
-    [Trait("Category", TestCategories.RequiresNet12RuntimeTargetingPack)]
     public void VerifyWebTemplatePublishBundledAot()
     {
         var newTest = new SdkTemplateTest(

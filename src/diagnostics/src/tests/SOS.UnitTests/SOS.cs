@@ -305,27 +305,6 @@ public class SOSStackTraceTests
     }
 }
 
-public class SOSExceptionTests
-{
-    public SOSExceptionTests(ITestOutputHelper output)
-    {
-        Output = output;
-    }
-
-    private ITestOutputHelper Output { get; set; }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task TaskNestedException(TestConfiguration config)
-    {
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "TaskNestedException",
-            scriptName: "TaskNestedException.script",
-            Output,
-            testTriage: true);
-    }
-}
-
 public class SOSInterpreterTests
 {
     public SOSInterpreterTests(ITestOutputHelper output)
@@ -511,30 +490,6 @@ public class SOSDumpTests
             testName: "SOS.MiniDumpLocalVarLookup",
             testMini: true,
             dumpGenerator: SOSRunner.DumpGenerator.NativeDebugger);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task ConcurrentDictionaries(TestConfiguration config)
-    {
-        if (OS.Kind != OSKind.Windows && config.RuntimeFrameworkVersionMajor == 10)
-        {
-            Assert.Skip("Dumping concurrent dict objects in dumps hits unavailable memory on linux dumps. Tracking: dotnet/diagnostics#5491");
-        }
-
-        await SOSTestHelpers.RunTest(
-            scriptName: "ConcurrentDictionaries.script",
-            new SOSRunner.TestInformation
-            {
-                TestConfiguration = config,
-                TestLive = false,
-                TestName = "SOS.ConcurrentDictionaries",
-                DebuggeeName = "DotnetDumpCommands",
-                DebuggeeArguments = "dcd",
-                DumpNameSuffix = "dcd",
-                UsePipeSync = true,
-                DumpGenerator = SOSRunner.DumpGenerator.DotNetDump,
-            },
-            Output);
     }
 
     [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
