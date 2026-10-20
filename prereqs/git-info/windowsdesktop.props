@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>f476308cc2fcbe56170bb754f63f2b61fb0305da</GitCommitHash>
-    <OfficialBuildId>20261005.1</OfficialBuildId>
-    <OutputPackageVersion>9.0.21</OutputPackageVersion>
+    <GitCommitHash>b79d6d5614899b7b927beac2bd5e70aca9161de6</GitCommitHash>
+    <OfficialBuildId>20261020.1</OfficialBuildId>
+    <OutputPackageVersion>9.0.23</OutputPackageVersion>
     <PreReleaseVersionLabel></PreReleaseVersionLabel>
     <IsStable>true</IsStable>
   </PropertyGroup>
