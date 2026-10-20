@@ -26,7 +26,7 @@ safe-outputs:
     report-as-issue: false
 steps:
 - name: Download super-linter log
-  uses: actions/download-artifact@v8.0.1
+  uses: actions/download-artifact@v8.0.2
   with:
     name: super-linter-log
     path: /tmp/gh-aw/
@@ -54,7 +54,7 @@ jobs:
         VALIDATE_MARKDOWN: "true"
       id: super-linter
       name: Super-linter
-      uses: super-linter/super-linter@v8.7.0
+      uses: super-linter/super-linter@v9.0.0
     - id: check-results
       name: Check for linting issues
       run: |
@@ -69,7 +69,7 @@ jobs:
         fi
     - if: always()
       name: Upload super-linter log
-      uses: actions/upload-artifact@v7.0.1
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: super-linter-log
         path: super-linter.log
