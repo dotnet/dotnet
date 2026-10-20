@@ -2288,6 +2288,13 @@ TEST_F(UnorderedElementsAreTest, WorksWithUncopyable) {
               UnorderedElementsAre(Truly(ValueIsPositive), UncopyableIs(-3)));
 }
 
+TEST_F(UnorderedElementsAreTest, WorksWithNativeArrayPassedAsPointerAndSize) {
+  int array[] = {0, 1};
+  ::std::tuple<int*, size_t> array_as_tuple(array, 2);
+  EXPECT_THAT(array_as_tuple, UnorderedElementsAre(1, 0));
+  EXPECT_THAT(array_as_tuple, Not(UnorderedElementsAre(0)));
+}
+
 TEST_F(UnorderedElementsAreTest, SucceedsWhenExpected) {
   const int a[] = {1, 2, 3};
   std::vector<int> s(std::begin(a), std::end(a));
