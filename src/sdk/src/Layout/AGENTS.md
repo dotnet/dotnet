@@ -39,16 +39,19 @@ Two families of targets:
 ### macOS tool signing
 
 `PublishRoslyn` and `CreateMSBuildAppHost` ad hoc sign the concrete SDK apphosts with
-per-tool `SigningIdentifier` metadata and their existing entitlement files. Official
-signing must preserve those identifiers and entitlements or explicitly supply the
-same values. Do not assign a shared product identifier to apphost templates.
+per-tool `SigningIdentifier` metadata and their existing entitlement files, while
+preserving other signing metadata. Official signing must preserve those identifiers
+and entitlements or explicitly supply the same values. Do not assign a shared
+product identifier to apphost templates.
 Identifiers use `com.microsoft.dotnet.<executable-name>` in lowercase, including
 `msbuild`, `vbcscompiler`, and the `dotnet-*` tool names.
 
 `LayoutBundledTools` ad hoc signs the three native `aspnetcoretools` shims after
-copying the selected package into the SDK layout. It preserves any existing
-entitlements, without adding JIT entitlements to NativeAOT tools. Its file selection
-is scoped to the selected package version and RID (`tools/*/<rid>`).
+copying the selected package into the SDK layout. It preserves existing entitlements,
+requirements, signing flags, hardened runtime version, and launch and library
+constraints while explicitly setting the identifier, without adding JIT
+entitlements to NativeAOT tools. Its file selection is scoped to the selected
+package version and RID (`tools/*/<rid>`).
 The framework directory is `any` for self-contained tools. Selection excludes
 debug-symbol bundles.
 This is an integrated signing experiment: permanent signing belongs in the
