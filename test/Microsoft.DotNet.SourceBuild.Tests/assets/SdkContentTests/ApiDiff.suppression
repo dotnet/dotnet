@@ -9,6 +9,18 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.MtpTestRuntimeProvider</Target>
+    <Left>/msft/sdk/x.y.z/Extensions/Microsoft.TestPlatform.TestHostRuntimeProvider.dll</Left>
+    <Right>/sb/sdk/x.y.z/Extensions/Microsoft.TestPlatform.TestHostRuntimeProvider.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.MTP.MtpProxyManagerFactory</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.TestPlatform.CrossPlatEngine.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.TestPlatform.CrossPlatEngine.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
     <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
     <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
