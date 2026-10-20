@@ -136,7 +136,7 @@
     <Error Condition="'@(_BundledMacToolPackage)' != '' and @(_BundledMacToolHost->Count()) != 3"
            Text="Expected the three native ASP.NET Core SDK tool hosts in the selected aspnetcoretools layout; found @(_BundledMacToolHost->Count())." />
 
-    <Exec Command="codesign --sign - --force --identifier '%(_BundledMacToolHost.SigningIdentifier)' --preserve-metadata=entitlements &quot;%(_BundledMacToolHost.FullPath)&quot;"
+    <Exec Command="codesign --sign - --force --identifier '%(_BundledMacToolHost.SigningIdentifier)' --preserve-metadata=entitlements,requirements,flags,runtime,launch-constraints,library-constraints &quot;%(_BundledMacToolHost.FullPath)&quot;"
           Condition="'@(_BundledMacToolHost)' != ''" />
   </Target>
 

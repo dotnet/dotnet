@@ -21,8 +21,10 @@ bundle identifier, or explicitly supply the same value. The linker-generated ad
 hoc signature does not automatically use the embedded bundle identifier.
 `AdHocSignHost` applies the identifier after native linking and symbol stripping,
 before the executable is copied to its publish directory. It preserves existing
-entitlements without adding JIT entitlements. Official signing must preserve the
-identifier and entitlements or explicitly supply the same values.
+entitlements, requirements, signing flags, hardened runtime version, and launch and
+library constraints while explicitly setting the identifier, without adding JIT
+entitlements. Official signing must preserve the identifier and security settings
+or explicitly supply the same values.
 
 ## Building and testing
 
