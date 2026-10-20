@@ -490,8 +490,15 @@ jobs:
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(parameters.buildSourceOnly, 'True')) }}:
     # Authenticate with service connections to be able to pull packages to external nuget feeds.
     - task: NuGetAuthenticate@1
+      displayName: Authenticate devdiv/dotnet-core-internal-tooling feed (WIF)
       inputs:
-        nuGetServiceConnections: devdiv-engineering-feed-r-wif, devdiv/dotnet-core-internal-tooling
+        azureDevOpsServiceConnection: dnceng-devdiv-dotnet-core-internal-tooling-feed-rw-wif
+        feedUrl: https://pkgs.dev.azure.com/devdiv/_packaging/dotnet-core-internal-tooling/nuget/v3/index.json
+    - task: NuGetAuthenticate@1
+      displayName: Authenticate devdiv/Engineering feed (WIF)
+      inputs:
+        azureDevOpsServiceConnection: devdiv-engineering-feed-r-wif
+        feedUrl: https://devdiv.pkgs.visualstudio.com/_packaging/Engineering/nuget/v3/index.json
 
   # https://github.com/dotnet/dotnet/issues/1758
   # After a re-boostrap:
@@ -889,4 +896,3 @@ jobs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
-
