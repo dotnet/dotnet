@@ -1,1 +1,4 @@
 #nullable enable
+*REMOVED*NuGet.Credentials.PluginException.PluginException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+*REMOVED*NuGet.Credentials.PluginUnexpectedStatusException.PluginUnexpectedStatusException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+*REMOVED*NuGet.Credentials.ProviderException.ProviderException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void

@@ -9,7 +9,6 @@ namespace NuGet.Credentials
     /// <summary>
     /// The exception thrown when a plugin credential provider cannot be started or returns an invalid response.
     /// </summary>
-    [Serializable]
     public class PluginException : Exception
     {
         private const string RedactedPassword = "********";
@@ -31,17 +30,7 @@ namespace NuGet.Credentials
         /// <param name="message">The message that describes the error.</param>
         /// <param name="inner">The exception that caused the current exception.</param>
         public PluginException(string? message, Exception? inner) : base(message, inner) { }
-#if IS_DESKTOP
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PluginException"/> class with serialized data.
-        /// </summary>
-        /// <param name="info">The object that contains the serialized object data.</param>
-        /// <param name="context">The contextual information about the source or destination.</param>
-        protected PluginException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context) : base(info, context)
-        { }
-#endif
+
         /// <summary>
         /// Creates an exception for an error raised while executing a plugin credential provider.
         /// </summary>

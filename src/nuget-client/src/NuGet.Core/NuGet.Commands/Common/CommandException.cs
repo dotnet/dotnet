@@ -5,11 +5,9 @@
 
 using System;
 using System.Globalization;
-using System.Runtime.Serialization;
 
 namespace NuGet.Commands
 {
-    [Serializable]
     public class CommandException : Exception
     {
         public CommandException()
@@ -28,14 +26,6 @@ namespace NuGet.Commands
 
         public CommandException(string message, Exception exception)
             : base(message, exception)
-        {
-        }
-
-#if NET8_0_OR_GREATER
-        [Obsolete(DiagnosticId = "SYSLIB0051")] // https://github.com/dotnet/docs/issues/34893
-#endif
-        protected CommandException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

@@ -1,4 +1,8 @@
 #nullable enable
+*REMOVED*NuGet.Protocol.Core.Types.FatalProtocolException.FatalProtocolException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+*REMOVED*NuGet.Protocol.Core.Types.NuGetProtocolException.NuGetProtocolException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+*REMOVED*NuGet.Protocol.Core.Types.RetriableProtocolException.RetriableProtocolException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
+*REMOVED*NuGet.Protocol.InvalidCacheProtocolException.InvalidCacheProtocolException(System.Runtime.Serialization.SerializationInfo! info, System.Runtime.Serialization.StreamingContext context) -> void
 NuGet.Protocol.PackageStagingResourceV3
 NuGet.Protocol.PackageStagingResourceV3.PushPackageAsync(string! packagePath, string? apiKey, string? groupId, System.TimeSpan requestTimeout, bool allowInsecureConnections, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 NuGet.Protocol.PackageStagingResourceV3.PushSymbolsAsync(string! packagePath, string? apiKey, string? groupId, System.TimeSpan requestTimeout, bool allowInsecureConnections, NuGet.Common.ILogger! logger, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
