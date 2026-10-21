@@ -22,7 +22,7 @@ public class GenerateScriptTests
         new object[] { "Microsoft.DotNet.Web.ProjectTemplates.11.0", "11.0.0-rc.1.26453.118", PackageType.Text },
         new object[] { "Microsoft.McpServer.ProjectTemplates.11.0", "11.0.0-rc.1.26453.118", PackageType.Text },
         new object[] { "System.Memory", "4.6.3", PackageType.Reference }, // Simple reference package w/o customizations
-        new object[] { "System.Threading.Channels", "8.0.0", PackageType.Reference }, // Reference package w/numerous TFMs
+        new object[] { "Microsoft.Bcl.Cryptography", "10.0.4", PackageType.Reference }, // Reference package w/numerous TFMs
         new object[] { "System.Text.Json", "8.0.5", PackageType.Reference }, // Package w/Customizations.props
         new object[] { "System.Collections.Immutable", "8.0.0", PackageType.Reference }, // Package w/Customizations.cs
         new object[] { "Microsoft.NETCore.App.Ref", "10.0.0", PackageType.Target }, // Target pack

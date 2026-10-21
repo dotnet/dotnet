@@ -15,6 +15,7 @@ path_classifiers:
     # --- dotnet/source-build-assets ---
     - "src/source-build-assets/src/externalPackages/**"
     - "src/source-build-assets/src/referencePackages/**"
+    - "src/source-build-assets/artifacts/obj/**"
 
   refs:
     # --- dotnet/aspnetcore ---

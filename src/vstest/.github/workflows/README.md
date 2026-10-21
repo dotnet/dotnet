@@ -21,7 +21,7 @@ imported through the `imports:` frontmatter field.
 
 ```bash
 # Install the gh-aw CLI extension (once per machine)
-gh extension install github/gh-aw --pin v0.89.21
+gh extension install github/gh-aw --pin v0.91.6
 
 # Compile a single workflow after editing its .md source. Strict mode is the
 # default — keep it that way. NEVER set `strict: false` in frontmatter.
@@ -38,7 +38,7 @@ gh aw logs <workflow-id>
 gh aw audit <run-id>
 ```
 
-Use gh-aw v0.89.21 to match the compiler recorded in the generated workflows.
+Use gh-aw v0.91.6 to match the compiler recorded in the generated workflows.
 When updating gh-aw actions, use the matching compiler, update
 `.github/aw/actions-lock.json`, and recompile all workflows so the generated
 steps and manifests keep the same action versions.
