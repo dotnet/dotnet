@@ -2,3 +2,4 @@ path_classifiers:
   library:
     - "src/externalPackages/**"
     - "src/referencePackages/**"
+    - "artifacts/obj/**"

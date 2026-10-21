@@ -48,7 +48,6 @@ tools:
   github:
     toolsets: [default]
   cache-memory: true
-  web-fetch:
   bash: true
   edit:
 
@@ -121,7 +120,7 @@ For each broken link found in the test results (but NOT in the unfixable list):
      - The surrounding documentation
 
 2. **Search for alternatives:**
-   - Use web-fetch to search for if the content has moved to a new URL
+   - Check whether the content has moved to a new URL
    - Try common alternatives (www vs non-www, http vs https, with/without trailing slash)
    - Look for redirects or updated documentation
    - Check if there's an official replacement
@@ -173,7 +172,7 @@ This fingerprint update records both fixed links and reviewed unfixable links, s
 - **Preserve context:** When replacing links, make sure the new URL points to equivalent or better content
 - **Document everything:** Keep the cache memory up to date with unfixable links
 - **Be selective:** Only add links to the unfixable list if you've genuinely tried to find alternatives
-- **Use web-fetch wisely:** Try to fetch the broken URL and check for redirects or alternatives
+- **Check before changing:** Look for redirects or alternatives before replacing a link
 - **Scope:** This workflow checks absolute HTTP(S) links. The `md-link-checker` workflow checks relative file links and anchors.
 
 ## Example Cache Memory Update
