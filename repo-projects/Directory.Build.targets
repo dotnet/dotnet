@@ -569,7 +569,7 @@
   </Target>
 
   <Target Name="GetRuntimePackVersion"
-          DependsOnTargets="PrepareRepositoryReferences;GetProducedPackagesFromTransitiveReferences;GetProducedPackagesFromTransitiveReferencesFromPreviousBuildPasses;GetSharedComponentBuildInputs">
+          DependsOnTargets="PrepareRepositoryReferences;GetProducedPackagesFromTransitiveReferences;GetSharedComponentBuildInputs">
     <!-- Use matching runtime contracts whether runtime is built live or consumed from a shared-component build. -->
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(IsTestRun)' != 'true'">
       <_UseRuntimePackOverrides Condition="'@(TransitiveRepositoryReference->AnyHaveMetadataValue('Identity', 'runtime'))' == 'true'
@@ -585,34 +585,16 @@
       <_RuntimeReferencePackWithoutVersion Include="@(_RuntimeReferencePack)" Condition="'%(_RuntimeReferencePack.Version)' == '' or $([System.String]::IsNullOrWhiteSpace('%(_RuntimeReferencePack.Version)'))" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(RepositoryName)' == 'sdk' and '$(BuildWorkloads)' == 'true' and '$(DotNetBuildSharedComponents)' != 'true'">
-      <_DotNet1xxRuntimeReferencePack Include="@(_DependencyProducedPackage->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref'))"
-                                      Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-      <_DotNet1xxRuntimeReferencePack Include="@(_PreviouslyBuiltSourceBuiltSharedComponentPackages->WithMetadataValue('Identity', 'Microsoft.NETCore.App.Ref'))"
-                                      Condition="'@(_DotNet1xxRuntimeReferencePack)' == ''" />
-      <_DotNet1xxRuntimeReferencePackVersion Include="@(_DotNet1xxRuntimeReferencePack->Metadata('Version')->Distinct())" />
-      <_DotNet1xxRuntimeReferencePackWithoutVersion Include="@(_DotNet1xxRuntimeReferencePack)" Condition="'%(_DotNet1xxRuntimeReferencePack.Version)' == '' or $([System.String]::IsNullOrWhiteSpace('%(_DotNet1xxRuntimeReferencePack.Version)'))" />
-    </ItemGroup>
-
     <Error Condition="'$(_UseRuntimePackOverrides)' == 'true' and '@(_RuntimeReferencePack)' == ''"
            Text="No Microsoft.NETCore.App.Ref package was found in the selected runtime build inputs for $(RepositoryName)." />
     <Error Condition="'@(_RuntimeReferencePackWithoutVersion)' != ''"
            Text="Microsoft.NETCore.App.Ref has missing or empty Version metadata in the selected runtime build inputs for $(RepositoryName)." />
     <Error Condition="'$(_UseRuntimePackOverrides)' == 'true' and '@(_RuntimeReferencePackVersion->Count())' != '1'"
            Text="Expected one Microsoft.NETCore.App.Ref version in the selected runtime build inputs for $(RepositoryName), but found: @(_RuntimeReferencePackVersion)." />
-    <Error Condition="'$(RepositoryName)' == 'sdk' and '$(BuildWorkloads)' == 'true' and '$(DotNetBuildSharedComponents)' != 'true' and '@(_DotNet1xxRuntimeReferencePack)' == ''"
-           Text="No Microsoft.NETCore.App.Ref package was found in the selected runtime build inputs for SDK workloads." />
-    <Error Condition="'@(_DotNet1xxRuntimeReferencePackWithoutVersion)' != ''"
-           Text="Microsoft.NETCore.App.Ref has missing or empty Version metadata in the selected runtime build inputs for SDK workloads." />
-    <Error Condition="'$(RepositoryName)' == 'sdk' and '$(BuildWorkloads)' == 'true' and '$(DotNetBuildSharedComponents)' != 'true' and '@(_DotNet1xxRuntimeReferencePackVersion->Count())' != '1'"
-           Text="Expected one Microsoft.NETCore.App.Ref version in the selected runtime build inputs for SDK workloads, but found: @(_DotNet1xxRuntimeReferencePackVersion)." />
 
     <PropertyGroup Condition="'$(_UseRuntimePackOverrides)' == 'true'">
       <!-- Use the targeting pack version as a shortcut for other pack versions since they all version consistently -->
       <RuntimePackVersion>@(_RuntimeReferencePackVersion)</RuntimePackVersion>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(RepositoryName)' == 'sdk' and '$(BuildWorkloads)' == 'true' and '$(DotNetBuildSharedComponents)' != 'true'">
-      <DotNet1xxRuntimeVersion>@(_DotNet1xxRuntimeReferencePackVersion)</DotNet1xxRuntimeVersion>
     </PropertyGroup>
   </Target>
 
@@ -624,10 +606,6 @@
       <BuildArgs>$(BuildArgs) /p:KnownFrameworkReferenceMicrosoftNETCoreAppCurrentLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentMonoLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
       <BuildArgs>$(BuildArgs) /p:KnownRuntimePackMicrosoftNETCoreAppCurrentNativeAOTLatestRuntimeFrameworkVersion=$(RuntimePackVersion)</BuildArgs>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(RepositoryName)' == 'sdk' and '$(BuildWorkloads)' == 'true' and '$(DotNetBuildSharedComponents)' != 'true'">
-      <BuildArgs>$(BuildArgs) /p:DotNet1xxRuntimeVersion=$(DotNet1xxRuntimeVersion)</BuildArgs>
     </PropertyGroup>
 
     <PropertyGroup>
