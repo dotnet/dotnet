@@ -67,7 +67,12 @@
 
   <PropertyGroup>
     <_RepoToolManifest>$([MSBuild]::NormalizePath('$(RepoRoot)', '.config', 'dotnet-tools.json'))</_RepoToolManifest>
+    <!-- Retry once by default in CI; callers can override the number of attempts. -->
+    <RestoreRepoToolsMaxAttempts Condition="'$(RestoreRepoToolsMaxAttempts)' == '' and '$(ContinuousIntegrationBuild)' == 'true'">2</RestoreRepoToolsMaxAttempts>
+    <RestoreRepoToolsMaxAttempts Condition="'$(RestoreRepoToolsMaxAttempts)' == ''">1</RestoreRepoToolsMaxAttempts>
   </PropertyGroup>
+
+  <UsingTask TaskName="Microsoft.DotNet.Arcade.Sdk.ExecWithRetries" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
 
   <!-- When doing source-only build, we should not use these in the inner or orchestrated builds. -->
   <Target Name="RestoreRepoTools"
@@ -80,7 +85,11 @@
       <RestoreConfigFileOption Condition="'$(RestoreConfigFile)' != ''">--configfile "$(RestoreConfigFile)"</RestoreConfigFileOption>
     </PropertyGroup>
 
-    <Exec Command='"$(DotNetTool)" tool restore $(RestoreConfigFileOption)' WorkingDirectory="$(RepoRoot)" />
+    <Microsoft.DotNet.Arcade.Sdk.ExecWithRetries
+      Command='"$(DotNetTool)" tool restore $(RestoreConfigFileOption)'
+      WorkingDirectory="$(RepoRoot)"
+      IgnoreStandardErrorWarningFormat="true"
+      MaxAttempts="$(RestoreRepoToolsMaxAttempts)" />
   </Target>
 
   <!-- Set as DependsOnTargets when internal tools (e.g. IBC data, optprof) is required -->
