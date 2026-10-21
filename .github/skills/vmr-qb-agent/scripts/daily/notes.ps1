@@ -3,7 +3,7 @@ Set-StrictMode -Version Latest
 # daily/notes.ps1 - Run notes: everything that was stale, missing, wrong or failed during a run but did not stop it.
 # A run never stops for these. They are collected as they happen, written to the run log, shown at the top of the overall
 # summary and at the top of the email, and each one says how to fix it. A note with severity 'first' (internal authentication,
-# missing evidence, an email that was not sent) is listed before the others and drawn in red.
+# missing evidence) is listed before the others and drawn in red.
 # Defines functions only; loading it runs nothing.
 
 $script:QBRunNotes = [Collections.Generic.List[object]]::new()
@@ -56,7 +56,7 @@ function Invoke-QBOptional {
     .SYNOPSIS
     Runs an optional step. If it throws, the run goes on with -Default and a note says what was not used and how to fix it.
     .DESCRIPTION
-    For inputs the round can do without (history, the QB's own triage context, the roster): a damaged or unreadable one is
+    For inputs the round can do without (the routing registry, the owner table): a damaged or unreadable one is
     reported, never a reason to lose the report. The file itself is left untouched.
     #>
     [CmdletBinding()]
@@ -110,7 +110,7 @@ function Format-QBRunNotesHtml {
 }
 
 function Remove-QBRunNotesBlock {
-    # Takes the notes block out of a report, so a check or a re-run reads only what the model wrote.
+    # Removes runner-owned notes from the report Markdown.
     [CmdletBinding()]
     param([AllowEmptyString()][string] $Content)
     $begin = [regex]::Escape($script:QBRunNotesBegin); $end = [regex]::Escape($script:QBRunNotesEnd)
