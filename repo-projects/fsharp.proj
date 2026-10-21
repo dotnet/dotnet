@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="runtime" />
     <RepositoryReference Include="source-build-assets" />
   </ItemGroup>
 
