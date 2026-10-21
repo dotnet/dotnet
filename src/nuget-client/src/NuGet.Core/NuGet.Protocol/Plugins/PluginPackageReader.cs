@@ -1113,11 +1113,15 @@ namespace NuGet.Protocol.Plugins
 
         private static string GetTemporaryDirectoryPath()
         {
+#if NETCOREAPP
+            return Directory.CreateTempSubdirectory("NuGet-").FullName;
+#else
             var tempDirectoryPath = Path.Combine(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), Path.GetRandomFileName());
 
             Directory.CreateDirectory(tempDirectoryPath);
 
             return tempDirectoryPath;
+#endif
         }
 
         public override Task<PrimarySignature?> GetPrimarySignatureAsync(CancellationToken token)
