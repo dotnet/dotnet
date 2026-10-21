@@ -1,7 +1,6 @@
 # Everything one QB creates for their own sessions lives in local/ and is never published:
-# qb-config.local.json (your email address), the issue history, reports, logs, evidence, the team roster, verified
-# findings, aliases, handoff files, and any notes or drafts. ./verify/Invoke-Verify.ps1 fails if local/ is not ignored,
-# if Git tracks or has staged anything in it, or if a file that belongs in local/ sits in knowledge/ or references/.
+# qb-config.local.json (your email address), reports, logs, evidence, your owner notes, the optional team roster, and any notes or
+# drafts. Preflight stops the run if a config holding your email address is tracked by Git or not ignored.
 /local/
 # Your own settings (an email address) from copying qb-config.template.json. Ignored wherever it is.
 qb-config.local.json

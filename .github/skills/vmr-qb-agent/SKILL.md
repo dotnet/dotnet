@@ -3,14 +3,13 @@ name: vmr-qb-agent
 description: >-
   Supports the .NET VMR Quarterback (QB) rotation for dotnet/dotnet.
   Use when preparing daily QB reports, assessing pipeline health, classifying
-  build failures, identifying owners, reviewing recurring issues, or recording
-  owner updates. Scripts collect build logs, pipeline timelines, issue details,
-  and code-flow status; validate reports; maintain issue history; and optionally
-  deliver reports by email. The model generates report narratives from the
-  collected information. For detailed investigation of individual CI or Helix
-  failures, use ci-analysis, helix-investigation, or pipeline-investigation.
-  For source-build failures involving prebuilt dependencies, use
-  source-build-investigation.
+  build failures, identifying owners, or reviewing recurring issues. Scripts
+  collect build logs, pipeline timelines, issue details, and code-flow status;
+  the model writes the reports from that evidence by the rules in references/;
+  reports are saved and optionally delivered by email. For detailed
+  investigation of individual CI or Helix failures, use ci-analysis,
+  helix-investigation, or pipeline-investigation. For source-build failures
+  involving prebuilt dependencies, use source-build-investigation.
 ---
 
 # VMR QB Agent
@@ -18,18 +17,21 @@ description: >-
 The Quarterback watches VMR build health and code flow, routes failures to owners, and merges flow
 PRs. This skill automates most of that round.
 
-**This file is the entry point.** Read the guide for the workflow you are in; each guide says which
-script to run, and that script calls the other scripts of its own folder. Run every script from
-`.github/skills/vmr-qb-agent/scripts/` in PowerShell 7 on Windows.
+**This file is the entry point.** The rules live in the guides under `references/`; the scripts only
+collect, run the model, save and email. Run every script from `.github/skills/vmr-qb-agent/scripts/`
+in PowerShell 7 on Windows.
 
-| Workflow | Read | Run | Its scripts |
-|---|---|---|---|
-| The daily round: check access, collect evidence, write and validate the reports, record, email | [references/daily.md](references/daily.md) | `./daily/Invoke-Preflight.ps1` first, then `./daily/Invoke-Daily.ps1`; `./daily/Invoke-Report.ps1` to validate a finished report | `scripts/daily/` |
-| Classify a failure: fatal or not, what to call it, who owns it, which repo timed out, whether to file | [references/triage.md](references/triage.md) | `./triage/Invoke-Triage.ps1 timeout -LogPath <log>` (its one action: which repo was building when a leg timed out). Owner and issue evidence is collected by the daily round; whether it is a duplicate is `./history/Invoke-History.ps1 duplicates` | `scripts/triage/` |
-| "Have we seen this before?", record what an owner told you, hand history to the next QB | [references/history.md](references/history.md) | `./history/Invoke-History.ps1 <action>`, `./history/Invoke-Record.ps1` | `scripts/history/` |
-| The shape of the reports and the action text | [references/report-contract.md](references/report-contract.md) | checked by `./daily/Invoke-Report.ps1` | `scripts/daily/` |
-| Optional setup, the team roster, your own routing | this file; routing in [references/triage.md](references/triage.md) | `./common/Invoke-Setup.ps1`, `./common/Invoke-Contacts.ps1`, `./common/Invoke-Routing.ps1` | `scripts/common/` |
-| Maintainers: is this skill fit to publish? | [README.md](README.md) | `./verify/Invoke-Verify.ps1` | `scripts/verify/` |
+When launched for a specific report stage with an evidence file, follow `references/runner-instructions.md` for that stage.
+Collection is already complete; do not start another daily round. Agents and subagents read the skill/reference Markdown
+and the named data files directly.
+
+| Workflow | Read | Run |
+|---|---|---|
+| The daily round: check access, collect evidence, write the reports, email | [references/daily.md](references/daily.md) | `./daily/Invoke-Preflight.ps1` first, then `./daily/Invoke-Daily.ps1` |
+| The shape of the reports and the action text | [references/report-contract.md](references/report-contract.md) | written by the model; nothing checks it |
+| Classify a failure: fatal or not, what to call it, who owns it, which repo timed out | [references/triage.md](references/triage.md) | done by the round; a timeout names its repo in the digest |
+| The nested model's instructions | [references/runner-instructions.md](references/runner-instructions.md) | read directly by each report stage |
+| "Have we seen this before?", what an owner told you | the History section below | a search, one appended line |
 
 Nothing has to be set up first. By default reports are saved and **no email is sent** (see
 [README.md](README.md) to get them by email).
@@ -42,14 +44,12 @@ authentication problem that stops the round.
 
 ## The one rule
 
-**Scripts collect build logs and pipeline timelines; the model uses those inputs to write reports.**
-The model may also perform the read-only Maestro and GitHub checks explicitly required by the
-reporting workflow. It must not re-query Azure DevOps or acquire credentials; scripts own that collection.
-Scripts assign finding numbers, validate reports, record history and send mail; the model does not.
-Each of those has a script and a check, and what a check
-finds is written at the top of the report, where it is read, but never costs the report.
-Earlier hand-run versions of this round produced confident reports from partial evidence, pinged
-teams that do not exist, and numbered the same finding differently in two places.
+**Scripts collect build logs and pipeline timelines; the model uses those inputs to write the
+reports by the rules in `references/`.** The model may also perform the read-only Maestro and GitHub
+checks the reports call for. It must not re-query Azure DevOps or acquire credentials; scripts own
+that collection. Nothing validates the reports: every rule is written once, in the guide it belongs
+to, and a QB reads a report before acting on it. What a script could not read is written at the top of
+the report as a run note.
 
 ## Rules that apply to every task
 
@@ -57,37 +57,43 @@ teams that do not exist, and numbered the same finding differently in two places
   anything unless explicitly asked.
 - **Never force-push a codeflow PR.** PRs titled `Source code updates from ...` belong to
   `dotnet-maestro[bot]`.
-- **Routing has two sources, never copies.** Repo-to-owner is read from the Repo Ownership table in
-  `docs/VMR-QB-Guide.md` (saved once to `local/knowledge/guide-ownership.json`, which stands in when the Guide cannot be read),
-  and so is the real-team list; a repo name written as a handle (such as `runtime`)
-  resolves to that repo's owner from the same table, with no alias list. Channel rules, redirects and
-  category routing are defined only in `knowledge/routing.json`. An unverified handle is a ping to nobody. Two different edits:
-  a contributor changing what the skill ships edits `knowledge/routing.json` and runs `./verify/Invoke-Verify.ps1 -SyncDocs` (the
-  tables in `references/triage.md` are generated); a QB changing their own routing uses `./common/Invoke-Routing.ps1`, which edits
-  `local/knowledge/routing.local.json`, refuses anything that would not load, never overwrites the file, and reconciles a changed
-  shipped file without losing the QB's edits (`diff`, `adopt`, `acknowledge`).
+- **Routing has two official sources.** Repo-to-owner and the list of real teams come from the Repo
+  Ownership table in `docs/VMR-QB-Guide.md`; a repo name written as a handle (such as `runtime`)
+  resolves to that repo's owner from the same table. Channel rules, redirects and category routing are
+  defined only in `knowledge/routing.json`. An unverified handle is a ping to nobody. The first run
+  copies each into `local/knowledge/` (`guide-ownership.json`, `routing.local.json`) and uses the
+  copies from then on; nothing is fetched or compared. Edit `routing.local.json` to change your own
+  routing; after a pull that changes the Guide's table or `routing.json`, delete the copy and the next
+  run makes a new one.
 - **Keep finding names stable across days.** A renamed finding reads as new and hides a recurrence.
-  Check history before inventing a name.
-- **Fatal vs non-fatal** is defined by the pipeline-investigation skill, from timeline records and never from message
-  text; [references/triage.md](references/triage.md) adds only the two QB-side rules. A non-fatal finding is monitor-only.
+  Read recent overall reports and reuse their exact finding names.
+- **Fatal vs non-fatal** is defined by the pipeline-investigation skill, from timeline records and
+  never from message text; [references/triage.md](references/triage.md) adds only the QB-side rules.
+  A non-fatal finding is monitor-only.
 - **Do not hide a gap.** If a source could not be read, the report must say it was not read.
-- **Do not lose a report to a stale input.** Only PowerShell older than 7.2, a state folder that cannot be written, a
-  missing GitHub sign-in and a config holding your email address that Git tracks or does not ignore stop the daily round
-  (exit 2). Everything else is a **run note**, written at the top of the
-  overall report and the email with how to fix it, internal authentication first: internal sign-in, a routing copy behind
-  the shipped file, an owner the Guide no longer lists, a bad config, a damaged history or triage context, a
-  missing Copilot CLI or skill, a pinned model the CLI refused, a failed report check. Without the model, the scripts'
-  evidence digest is saved and sent instead. Exit 0 means a report (or the digest) was delivered, whatever the notes say.
-- **Everything local to you lives in `local/`, and `local/` is git-ignored.** Settings (your email, if you want email), history, reports, logs, evidence, the team roster, verified findings, aliases and handoff files are one QB's own, so none of it is published. `./verify/Invoke-Verify.ps1` fails if `local/` is not ignored, or if Git tracks or has staged anything in it.
+- **Only four things stop the round before it starts** (exit 2): PowerShell older than 7.3, a state
+  folder that cannot be written, a missing GitHub sign-in, and a config holding your email address that
+  Git tracks or does not ignore. A model run that fails, or a crash, fails the round (exit 1) and, when
+  email is on, one short email says so. Everything else is a **run note** at the top of the overall
+  report and the email, with how to fix it, internal authentication first.
+- **Everything local to you lives in `local/`, and `local/` is git-ignored.** Settings (your email, if
+  you want email), reports, logs, evidence, the team roster and your notes are one QB's own, so none of
+  it is published.
+
+## History
+
+The saved reports and your owner notes are the history; nothing else is kept.
+
+- **Have we seen this before?** `Select-String -Path local/reports/overall-summary-*.md -Pattern '<words from the finding>'`.
+- **What an owner told you:** append a dated line to `local/owner-notes.md` with the finding name as the
+  report shows it, the owner, what they said in their words, and a link. The round gives the file to
+  the model, which must honor it (it decides New Issue and Monitor-only placement).
 
 ## Layout
 
 | Path | Holds |
 |---|---|
 | `references/` | The guides above, the report contract, and the nested model's instructions |
-| `scripts/` | One folder per workflow, each with its entry scripts (`Invoke-*.ps1`) and the libraries only they use: `daily/` (preflight, evidence collector, prompts, report contract and gate, the per-run workspace for the nested model, the round), `triage/` (timeout attribution, issue evidence), `history/` (issue store, search, record, handoff), `verify/` (knowledge check, publish gate), `common/` (paths, config, routing and its local editing, team roster, setup), and `tests/` (`scripts/tests/Invoke-VmrQBTests.ps1`) |
+| `scripts/` | `daily/` (preflight, the round, evidence collector, model digest, email), `triage/` (timeout attribution, issue search), `common/` (paths, config, local data initialization), and `tests/` (offline checks) |
 | `knowledge/` | `routing.json`, the only shipped data |
-| `local/` (git-ignored, created on first use) | `qb-config.local.json` (optional: copy `qb-config.template.json` here and set `recipient` to get email), `issue-history.json`, `reports/`, `logs/`, `artifacts/`, `run/`, `handoff/` (handoff files, including a history seed from the previous QB), and `knowledge/`: `team-contacts.json` (the roster; `./common/Invoke-Contacts.ps1` builds it), `triage-context.local.json` (verified findings; `./history/Invoke-Record.ps1 -AddContext`) `routing.local.json` (your copy of `routing.json`, made once on first use; your routing changes and incident notes go here), `guide-ownership.json` (the Guide's Repo Ownership table as first read, renewed only when the Guide file changes or on `./common/Invoke-Routing.ps1 refresh-ownership`) and `issue-aliases.json` (optional). `VMR_QB_HOME` points the skill at a different folder |
-
-`knowledge/` is a starting point, not scripture: handles change, issues get fixed, ownership moves.
-`./verify/Invoke-Verify.ps1 -Online` re-checks every handle, contact and linked issue against GitHub.
+| `local/` (git-ignored, created on first use) | `qb-config.local.json` - optional settings: `sender` selects the Outlook sending account; `recipients` lists destinations, with an empty list sending to `sender`.<br>`reports/` - saved reports.<br>`logs/` - run and model logs.<br>`artifacts/` - collected evidence.<br>`owner-notes.md` - owner updates.<br>`knowledge/routing.local.json` - the routing copy used by runs.<br>`knowledge/guide-ownership.json` - the local ownership copy.<br>`knowledge/team-contacts.json` - optional, hand-edited contacts.<br>Update local routing data when teams or ownership change.<br>`VMR_QB_HOME` points the skill at a different folder. |
