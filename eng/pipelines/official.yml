@@ -77,6 +77,8 @@ extends:
     settings:
       networkIsolationPolicy: Permissive, CFSClean, CFSClean2
     featureFlags:
+      # Use fresh checkouts to avoid Razor formatting failures with cached VHD sources.
+      autoManagedVhd: false
       useBinskimResponseFile: true
       incrementalSDLBinaryAnalysis: true
       autoEnablePREfastWithNewRuleset: false
