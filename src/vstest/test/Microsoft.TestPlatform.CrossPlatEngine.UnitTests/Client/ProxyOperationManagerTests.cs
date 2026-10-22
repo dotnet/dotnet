@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -41,7 +41,6 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
 
     private readonly ProxyOperationManager _testOperationManager;
     private readonly Mock<ITestRequestSender> _mockRequestSender;
-    private readonly Mock<IConnectionValidationConfigurable> _mockConnectionValidator;
     private readonly Mock<IRequestData> _mockRequestData;
 
     private Mock<IProcessHelper>? _mockProcessHelper;
@@ -54,7 +53,6 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
     public ProxyOperationManagerTests()
     {
         _mockRequestSender = new Mock<ITestRequestSender>();
-        _mockConnectionValidator = _mockRequestSender.As<IConnectionValidationConfigurable>();
         _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(ConnectionTimeout, It.IsAny<CancellationToken>())).Returns(true);
         _mockRequestData = new Mock<IRequestData>();
         _mockRequestData.Setup(rd => rd.MetricsCollection).Returns(new Mock<IMetricsCollection>().Object);
@@ -153,148 +151,6 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
     }
 
     [TestMethod]
-    public void SetupChannelShouldInjectConnectionSecretsWhenProviderSupportsConnectionSecrets()
-    {
-        var startInfo = new TestProcessStartInfo();
-        var mockProvider = CreateProviderMock(supportsConnectionSecrets: true, startInfo);
-        _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(123);
-
-        var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, mockProvider.Object);
-        operationManager.SetupChannel([], DefaultRunSettings);
-
-        Assert.IsNotNull(startInfo.EnvironmentVariables);
-        Assert.IsTrue(startInfo.EnvironmentVariables.TryGetValue(EnvironmentHelper.VstestConnectionSecrets, out var secrets));
-        // A pair is two 256-bit values rendered as hex, joined by one separator: 64 + 1 + 64.
-        Assert.IsFalse(string.IsNullOrEmpty(secrets));
-        Assert.AreEqual(129, secrets!.Length);
-        _mockConnectionValidator.Verify(x => x.RequireConnectionValidation(), Times.Once);
-        _mockConnectionValidator.Verify(x => x.UseConnectionSecrets(secrets), Times.Once);
-    }
-
-    [TestMethod]
-    public void SetupChannelShouldCanonicalizeReservedSecretsEnvironmentVariables()
-    {
-        const string lowerConnectionSecrets = "vstest_connection_secrets";
-        const string lowerDataCollectionSecrets = "vstest_datacollection_connection_secrets";
-        const string lowerDesignModeSecrets = "vstest_designmode_connection_secrets";
-        var startInfo = new TestProcessStartInfo
-        {
-            EnvironmentVariables = new Dictionary<string, string?>(StringComparer.Ordinal)
-            {
-                [lowerConnectionSecrets] = "stale",
-                [lowerDataCollectionSecrets] = "stale",
-                [lowerDesignModeSecrets] = "stale",
-            },
-        };
-        var mockProvider = CreateProviderMock(supportsConnectionSecrets: true, startInfo);
-        _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(123);
-
-        var operationManager = new TestableProxyOperationManager(
-            _mockRequestData.Object,
-            _mockRequestSender.Object,
-            mockProvider.Object);
-        operationManager.SetupChannel([], DefaultRunSettings);
-
-        Assert.IsNotNull(startInfo.EnvironmentVariables);
-        Assert.IsFalse(startInfo.EnvironmentVariables.ContainsKey(lowerConnectionSecrets));
-        Assert.IsFalse(startInfo.EnvironmentVariables.ContainsKey(lowerDataCollectionSecrets));
-        Assert.IsFalse(startInfo.EnvironmentVariables.ContainsKey(lowerDesignModeSecrets));
-        Assert.IsFalse(string.IsNullOrEmpty(startInfo.EnvironmentVariables[EnvironmentHelper.VstestConnectionSecrets]));
-        Assert.AreEqual("stale", startInfo.EnvironmentVariables[EnvironmentHelper.VstestDataCollectionConnectionSecrets]);
-        Assert.IsNull(startInfo.EnvironmentVariables[EnvironmentHelper.VstestDesignModeConnectionSecrets]);
-    }
-
-    /// <summary>
-    /// There is no unauthenticated mode, so a test host that does not perform the identity check is
-    /// refused before it is launched, and the reason names the component and the version to move to.
-    /// </summary>
-    [TestMethod]
-    public void SetupChannelShouldRefuseATestHostThatDoesNotSupportConnectionSecrets()
-    {
-        var startInfo = new TestProcessStartInfo();
-        var mockProvider = CreateProviderMock(supportsConnectionSecrets: false, startInfo);
-        _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(123);
-
-        var operationManager = new TestableProxyOperationManager(_mockRequestData.Object, _mockRequestSender.Object, mockProvider.Object);
-
-        var error = Assert.ThrowsException<TestPlatformException>(
-            () => operationManager.SetupChannel([], DefaultRunSettings)).Message;
-
-        // The message must say where to read about the fix, so the user is not left with a
-        // timeout whose cause they have to guess.
-        StringAssert.Contains(error, "https://aka.ms/vstest/negotiation-error");
-        _mockConnectionValidator.Verify(x => x.UseConnectionSecrets(It.IsAny<string>()), Times.Never);
-        _mockRequestSender.Verify(rs => rs.Close(), Times.Once, "A refused run must close the channel it already opened.");
-        _mockConnectionValidator.Verify(x => x.CannotValidateConnection(error), Times.Once);
-        mockProvider.Verify(
-            p => p.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()),
-            Times.Never,
-            "A test host that cannot be validated must not be launched at all.");
-    }
-
-    /// <summary>
-    /// A provider that only implements the older interfaces cannot report which test host it
-    /// launches, so it is treated the same as one that reports no support.
-    /// </summary>
-    [TestMethod]
-    public void SetupChannelShouldRefuseAProviderThatCannotReportSupport()
-    {
-        var legacyProvider = new Mock<ITestRuntimeProvider>();
-        legacyProvider.SetupGet(th => th.Shared).Returns(true);
-        legacyProvider.Setup(
-                m => m.GetTestHostProcessStartInfo(
-                    It.IsAny<IEnumerable<string>>(),
-                    It.IsAny<IDictionary<string, string?>>(),
-                    It.IsAny<TestRunnerConnectionInfo>()))
-            .Returns(new TestProcessStartInfo());
-        _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(123);
-        var operationManager = new TestableProxyOperationManager(
-            _mockRequestData.Object,
-            _mockRequestSender.Object,
-            legacyProvider.Object);
-
-        var error = Assert.ThrowsException<TestPlatformException>(
-            () => operationManager.SetupChannel([], DefaultRunSettings)).Message;
-
-        StringAssert.Contains(error, "https://aka.ms/vstest/negotiation-error");
-        _mockConnectionValidator.Verify(x => x.UseConnectionSecrets(It.IsAny<string>()), Times.Never);
-        _mockRequestSender.Verify(rs => rs.Close(), Times.Once, "A refused run must close the channel it already opened.");
-        legacyProvider.Verify(
-            p => p.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()),
-            Times.Never);
-    }
-
-    private static Mock<ITestRuntimeProvider3> CreateProviderMock(
-        bool supportsConnectionSecrets,
-        TestProcessStartInfo startInfo,
-        int? launchedProcessId = null)
-    {
-        var mockProvider = new Mock<ITestRuntimeProvider3>();
-        mockProvider.SetupGet(th => th.Shared).Returns(true);
-        mockProvider.SetupGet(th => th.SupportsConnectionSecrets).Returns(supportsConnectionSecrets);
-        mockProvider.Setup(
-                m => m.GetTestHostProcessStartInfo(
-                    It.IsAny<IEnumerable<string>>(),
-                    It.IsAny<IDictionary<string, string?>>(),
-                    It.IsAny<TestRunnerConnectionInfo>()))
-            .Returns(startInfo);
-        mockProvider.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
-            .Callback(
-                () =>
-                {
-                    using var process = Process.GetCurrentProcess();
-                    mockProvider.Raise(
-                        thm => thm.HostLaunched += null,
-                        new HostProviderEventArgs(
-                            string.Empty,
-                            0,
-                            launchedProcessId ?? process.Id));
-                })
-            .Returns(Task.FromResult(true));
-        return mockProvider;
-    }
-
-    [TestMethod]
     public void SetupChannelShouldAddCorrectTraceLevelForTestHost()
     {
 #if NETFRAMEWORK
@@ -333,7 +189,6 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         };
         ProtocolConfig protocolConfig = new() { Version = 2 };
         var mockCommunicationServer = new Mock<ICommunicationEndPoint>();
-        mockCommunicationServer.As<IConnectionValidationConfigurable>();
 
         mockCommunicationServer.Setup(mc => mc.Start(connectionInfo.Endpoint)).Returns(IPAddress.Loopback + ":123").Callback(
             () => mockCommunicationServer.Raise(s => s.Connected += null, mockCommunicationServer.Object, new ConnectedEventArgs(_mockChannel.Object)));
@@ -361,7 +216,6 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         };
         ProtocolConfig protocolConfig = new() { Version = 2 };
         var mockCommunicationEndpoint = new Mock<ICommunicationEndPoint>();
-        mockCommunicationEndpoint.As<IConnectionValidationConfigurable>();
         mockCommunicationEndpoint.Setup(mc => mc.Start(connectionInfo.Endpoint)).Returns(connectionInfo.Endpoint).Callback(() => mockCommunicationEndpoint.Raise(
             s => s.Connected += null,
             mockCommunicationEndpoint.Object,
@@ -585,12 +439,6 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         _testOperationManager.Close();
     }
 
-    private static HostProviderEventArgs CreateCurrentHostLaunchedArgs()
-    {
-        using var process = Process.GetCurrentProcess();
-        return new HostProviderEventArgs(string.Empty, 0, process.Id);
-    }
-
     private void SetupWaitForTestHostExit()
     {
         // Raise host exited when end session is called
@@ -602,7 +450,7 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
     {
         // Raise host exited when end session is called
         _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
-            .Callback(() => _mockTestHostManager.Raise(t => t.HostLaunched += null, CreateCurrentHostLaunchedArgs()))
+            .Callback(() => _mockTestHostManager.Raise(t => t.HostLaunched += null, new HostProviderEventArgs(string.Empty)))
             .Returns(Task.FromResult(launchStatus));
     }
 
@@ -695,15 +543,6 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
             IRequestData requestData,
             ITestRequestSender requestSender,
             ITestRuntimeProvider testHostManager,
-            Framework testHostManagerFramework)
-            : base(requestData, requestSender, testHostManager, testHostManagerFramework)
-        {
-        }
-
-        public TestableProxyOperationManager(
-            IRequestData requestData,
-            ITestRequestSender requestSender,
-            ITestRuntimeProvider testHostManager,
             CancellationTokenSource cancellationTokenSource) : base(requestData, requestSender, testHostManager, Framework.DefaultFramework)
         {
             CancellationTokenSource = cancellationTokenSource;
@@ -741,11 +580,6 @@ public class ProxyOperationManagerTests : ProxyBaseManagerTests
         }
 
         internal override bool IsVersionCheckRequired => _isVersionCheckRequired;
-
-        // These tests are about the version check, and they override
-        // GetTestHostProcessStartInfo, which is where the real manager resolves the testhost and its
-        // version. Report support so the run is not refused before it gets that far.
-        public override bool SupportsConnectionSecrets => true;
 
         public override TestProcessStartInfo GetTestHostProcessStartInfo(
             IEnumerable<string> sources,

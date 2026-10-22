@@ -1,18 +1,13 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.ObjectModel;
 using System.Net;
 
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
-using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
-using System.Globalization;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
-using CoreUtilitiesConstants = Microsoft.VisualStudio.TestPlatform.CoreUtilities.Constants;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
@@ -68,38 +63,6 @@ public class DataCollectionTestCaseEventSender : IDataCollectionTestCaseEventSen
     /// <inheritdoc />
     public void InitializeCommunication(int port)
     {
-        var connectionSecrets = Environment.GetEnvironmentVariable(EnvironmentHelper.VstestDataCollectionConnectionSecrets);
-        Environment.SetEnvironmentVariable(EnvironmentHelper.VstestDataCollectionConnectionSecrets, null);
-        if (string.IsNullOrEmpty(connectionSecrets))
-        {
-            // An outdated parent is what causes this, so the parent cannot report it.
-            var parent = ParentProcessResolver.ResolveFromCommandLine();
-            var error = ConnectionSecretsCapabilities.WithDetails(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    Resources.Resources.ConnectionSecretsParentDidNotNegotiate,
-                    CoreUtilitiesConstants.TesthostProcessName,
-                    ConnectionSecretsCapabilities.NegotiationErrorLink),
-                new[]
-                {
-                    ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessId, parent.ProcessId > 0 ? parent.ProcessId.ToString(CultureInfo.InvariantCulture) : string.Empty),
-                    ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessName, parent.Name),
-                    ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessPath, parent.Path),
-                    ConnectionSecretsCapabilities.Detail(Resources.Resources.ConnectionSecretsDetailParentProcessVersion, parent.Version),
-                });
-
-            EqtTrace.Error("DataCollectionTestCaseEventSender: {0}", error);
-            throw new PeerProcessValidationException(error);
-        }
-
-        if (_communicationManager is not IConnectionAuthenticationResponder responder)
-        {
-            throw new PeerProcessValidationException(
-                "The test-case event communication transport cannot present the connection secrets.");
-        }
-
-        responder.UseConnectionSecretsAsChild(connectionSecrets);
-
         _communicationManager.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, port));
     }
 

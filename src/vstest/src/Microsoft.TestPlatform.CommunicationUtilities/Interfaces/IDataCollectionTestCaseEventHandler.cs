@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
@@ -11,17 +11,10 @@ internal interface IDataCollectionTestCaseEventHandler
     // TODO : Similar interfaces exist, need redesign.
 
     /// <summary>
-    /// Gets the connection-validation failure reported by the transport.
-    /// </summary>
-    string? ConnectionValidationError { get; }
-
-    /// <summary>
-    /// Initializes the communication for sending requests, and arms the transport with the secret
-    /// pair the testhost must present. The secrets are required, so an endpoint can never be started
-    /// without the means to check who connects to it.
+    /// Initializes the communication for sending requests
     /// </summary>
     /// <returns>Port Number of the communication channel</returns>
-    int InitializeCommunication(string connectionSecrets);
+    int InitializeCommunication();
 
     /// <summary>
     /// Waits for Request Handler to be connected.

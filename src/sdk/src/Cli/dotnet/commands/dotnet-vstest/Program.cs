@@ -34,8 +34,6 @@ namespace Microsoft.DotNet.Tools.VSTest
             // We run post processing also if execution is failed for possible partial successful result to post process.
             exitCode |= TestCommand.RunArtifactPostProcessingIfNeeded(testSessionCorrelationId, parseResult, FeatureFlag.Instance);
 
-            VSTestArtifactsDirectory.Delete();
-
             return exitCode;
         }
 

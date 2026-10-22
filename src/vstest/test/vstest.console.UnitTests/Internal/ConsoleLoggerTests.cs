@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading;
 
 using Microsoft.Extensions.FileSystemGlobbing;
-using Microsoft.TestPlatform.TestUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Internal;
 using Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
 using Microsoft.VisualStudio.TestPlatform.Common.Logging;
@@ -20,6 +19,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.TestPlatform.TestUtilities;
 
 using Moq;
 

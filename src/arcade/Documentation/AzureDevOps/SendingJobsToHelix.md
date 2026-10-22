@@ -57,31 +57,9 @@ steps:
 
 ### Internal builds
 
-Internal builds can authenticate with Entra ID through an Azure service connection or with a legacy Helix access token.
+In the dev.azure.com/dnceng/internal project, you can use the `DotNet-HelixApi-Access` variable group to provide this secret to your build and then specify the `HelixApiAccessToken` secret for the `HelixAccessToken` parameter.
 
 Please note that authorized jobs *cannot* be submitted to queues with `IsInternalOnly` set to false. To determine this value for a particular queue, see the list of available queues [here](https://helix.dot.net/api/2018-03-14/info/queues).
-
-#### Entra ID authentication
-
-Set `HelixUseEntraAuthentication` to `true` and pass an Azure service connection authorized for Helix through `HelixAzureSubscription`. These parameters configure the `send-to-helix.yml` steps template and the SDK tasks that submit jobs.
-
-The service connection must use workload identity federation. The template runs the Helix process inside `AzureCLI@2` with automatic session refresh enabled, and the Helix client prefers `AzureCliCredential` over managed identity. This allows it to obtain renewable access tokens for both Azure DevOps-issued and Microsoft Entra-issued service connections, including on hosted agents where an unavailable managed identity would otherwise prevent the credential chain from reaching Azure CLI. This is required for inline waits, which can run longer than a single workload identity assertion remains valid.
-
-When Entra authentication is enabled, the template does not forward `HelixAccessToken` to the Helix processes. If a legacy token is still injected by a variable group, explicit Entra opt-in takes precedence and the task ignores the token with a warning.
-
-```yaml
-steps:
-- template: /eng/common/templates/steps/send-to-helix.yml
-  displayName: Send to Helix
-  parameters:
-    HelixUseEntraAuthentication: true
-    HelixAzureSubscription: <workload identity federation service connection name authorized for Helix>
-    # other parameters here
-```
-
-#### Legacy access-token authentication
-
-In the dev.azure.com/dnceng/internal project, you can use the `DotNet-HelixApi-Access` variable group to provide this secret to your build and then specify the `HelixApiAccessToken` secret for the `HelixAccessToken` parameter.
 
 Example:
 

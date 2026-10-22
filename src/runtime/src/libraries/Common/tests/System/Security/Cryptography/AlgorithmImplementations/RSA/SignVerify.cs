@@ -149,7 +149,6 @@ namespace System.Security.Cryptography.Rsa.Tests
         }
 
         [ConditionalFact(typeof(RSAFactory), nameof(RSAFactory.SupportsSha1Signatures))]
-        [ActiveIssue("https://github.com/dotnet/runtime/issues/134002", TestPlatforms.Android)]
         public void ExpectedSignature_SHA1_384()
         {
             byte[] expectedSignature =
@@ -353,7 +352,6 @@ namespace System.Security.Cryptography.Rsa.Tests
         }
 
         [ConditionalFact(typeof(RSAFactory), nameof(RSAFactory.SupportsSha1Signatures))]
-        [ActiveIssue("https://github.com/dotnet/runtime/issues/134002", TestPlatforms.Android)]
         public void VerifySignature_SHA1_384()
         {
             byte[] signature =

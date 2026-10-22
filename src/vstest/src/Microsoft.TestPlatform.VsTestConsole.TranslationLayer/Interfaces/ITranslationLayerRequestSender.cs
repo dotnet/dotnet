@@ -24,27 +24,6 @@ internal interface ITranslationLayerRequestSender : IDisposable, ITranslationLay
     int InitializeCommunication();
 
     /// <summary>
-    /// Requires the vstest.console connection to be authenticated before it is admitted.
-    /// </summary>
-    void RequireConnectionValidation();
-
-    /// <summary>
-    /// Uses the connection secrets to check the identity of the vstest.console that connects.
-    /// </summary>
-    void UseConnectionSecrets(string connectionSecrets);
-
-    /// <summary>
-    /// Records that no secrets are available, so a waiting connection fails promptly with this
-    /// explanation instead of running to the connection timeout.
-    /// </summary>
-    void CannotValidateConnection(string error);
-
-    /// <summary>
-    /// Gets the last connection-validation failure.
-    /// </summary>
-    string? ConnectionValidationError { get; }
-
-    /// <summary>
     /// Waits for the request handler to be connected.
     /// </summary>
     ///

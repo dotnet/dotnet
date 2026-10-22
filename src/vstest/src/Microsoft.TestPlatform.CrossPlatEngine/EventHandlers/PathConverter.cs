@@ -13,7 +13,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
-
 /// <summary>
 /// Converts paths in received and sent objects, to make testhost seem like it run a local test,
 /// while it was in fact running a test on a remote system, in a totally different path. This is for UWP which

@@ -12,21 +12,8 @@
     <!-- This package is included even in source build -->
     <IsPackable>true</IsPackable>
     <NuspecFile Condition="'$(DotNetBuildSourceOnly)' != 'true'">Microsoft.TestPlatform.Build.nuspec</NuspecFile>
-    <!--
-      The CI source build leg packs both the previous and the current source build TFM, so it uses a
-      nuspec that lists every file twice, once per TFM. Arcade unsets NetPrevious when it equals
-      NetMinimum (TargetFrameworkDefaults.props) and Directory.Build.props then sets NetPrevious to
-      NetMinimum, so under Arcade 11 both properties evaluate to net11.0. The two halves of that
-      nuspec then resolve to the same destinations and pack fails with NU5050, "Attempted to pack
-      multiple files into the same location(s)": 14 destinations, all of them lib/net11.0/.
-
-      The product nuspec lists only the current TFM. With the tokens collapsed to a single value its
-      file set is identical to the dual nuspec's - 5 entries and 3 distinct versus 3 and 3, with no
-      difference in either direction - so selecting it when the two TFMs are equal drops the
-      duplication without changing the package. Both conditions are unchanged wherever they differ.
-    -->
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true' and '$(NetPrevious)' != '$(NetCurrent)'">Microsoft.TestPlatform.Build.sourcebuild.nuspec</NuspecFile>
-    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and ('$(DotNetBuildOrchestrator)' == 'true' or '$(NetPrevious)' == '$(NetCurrent)')">Microsoft.TestPlatform.Build.sourcebuild.product.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' != 'true'">Microsoft.TestPlatform.Build.sourcebuild.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">Microsoft.TestPlatform.Build.sourcebuild.product.nuspec</NuspecFile>
     <NuspecBasePath>$(OutputPath)</NuspecBasePath>
     <PackageId>Microsoft.TestPlatform.Build</PackageId>
     <PackageTags>vstest visual-studio unittest testplatform mstest microsoft test testing</PackageTags>

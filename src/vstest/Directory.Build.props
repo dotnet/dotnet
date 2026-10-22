@@ -10,33 +10,6 @@
     <IsSourceFile Condition="$([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src/')) OR $([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectFullPath)).StartsWith('src\'))">true</IsSourceFile>
     <SrcPackageFolder>$(RepoRoot)src\package\</SrcPackageFolder>
     <Nullable>enable</Nullable>
-    <!--
-      NuGet package pruning is on by default for any project targeting net10.0 or greater, and the
-      .NET 11 SDK's NuGet.targets only applies that default when this property is empty. Nothing in
-      this branch targets net10.0 on a normal build, but Directory.Build.targets overrides
-      TargetFrameworks to $(NetPrevious);$(NetCurrent) for the source-build leg, and Arcade 11 moves
-      NetCurrent to net11.0. So that one leg, and only that leg, builds in the range where pruning
-      switches on.
-
-      The visible symptom is NU1510 on direct PackageReferences that the targeting pack now
-      supplies, promoted to errors because warnings are errors here. Measured on build 3067406:
-      four of them, in CoreUtilities (System.Diagnostics.FileVersionInfo, Microsoft.Win32.Registry,
-      System.Reflection.Metadata) and ObjectModel (System.Reflection.Metadata).
-
-      Removing those PackageReferences, which is what NU1510 asks for, is not available: the same
-      projects also target netstandard2.0 and net462, where the packages are genuinely required and
-      dropping them yields CS1069. The two legs want opposite things, so the change has to be to the
-      new behaviour rather than to the references.
-
-      Turning pruning off is also the conservative choice for content equivalence against the
-      published packages. Pruning removes framework-provided entries from the restore graph, which
-      is how a nuspec dependency list or a deps.json quietly gets shorter, and these packages have
-      to stay comparable to what shipped.
-
-      This is a port of the same property from the 17.11 line, where it was measured to take NU1510
-      from 6 to 0 on build 3067392.
-    -->
-    <RestoreEnablePackagePruning>false</RestoreEnablePackagePruning>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -112,36 +85,8 @@
   <!-- Test config -->
   <PropertyGroup>
     <TestRunnerName>MSTest</TestRunnerName>
-  </PropertyGroup>
-
-  <!--
-    Test filtering.
-
-    The runner accepts a single filter argument, so every exclusion this repository applies has to
-    be composed into one expression before it is handed over. Appending a second filter argument does
-    not intersect the two, it makes the runner see a duplicated argument.
-
-    Two exclusions exist:
-
-      TestCategory!=Windows, TestCategory!=Windows-Review
-        Pre-existing, unchanged. Windows-only tests are skipped when the run is not on Windows. It
-        applies to every test project.
-
-      TestCategory!=Compatibility
-        Scoped to the acceptance suite. Those tests pair the console and the test host across a
-        matrix of published versions. Older published combinations cannot negotiate the required
-        identity handshake this payload introduces, which is the intended refusal, so the matrix
-        rows report as failures on a servicing branch even though the product behaves correctly.
-
-        This excludes only the matrix rows carrying the category. The payload's own refusal and
-        negotiation tests are deliberately NOT categorised, so they continue to run and continue to
-        prove that an unauthenticated peer is rejected.
-  -->
-  <PropertyGroup>
-    <_TestCategoryFilter Condition=" '$(OS)' != 'Windows_NT' ">TestCategory!=Windows&amp;TestCategory!=Windows-Review</_TestCategoryFilter>
-    <_TestCategoryFilter Condition=" '$(MSBuildProjectName)' == 'Microsoft.TestPlatform.Acceptance.IntegrationTests' and '$(_TestCategoryFilter)' != '' ">$(_TestCategoryFilter)&amp;TestCategory!=Compatibility</_TestCategoryFilter>
-    <_TestCategoryFilter Condition=" '$(MSBuildProjectName)' == 'Microsoft.TestPlatform.Acceptance.IntegrationTests' and '$(_TestCategoryFilter)' == '' ">TestCategory!=Compatibility</_TestCategoryFilter>
-    <TestRunnerAdditionalArguments Condition=" '$(_TestCategoryFilter)' != '' ">$(TestRunnerAdditionalArguments) --filter "$(_TestCategoryFilter)"</TestRunnerAdditionalArguments>
+    <!-- Skip windows only tests on non-windows systems. -->
+    <TestRunnerAdditionalArguments Condition=" '$(OS)' != 'Windows_NT' ">$(TestRunnerAdditionalArguments) --filter "TestCategory!=Windows&amp;TestCategory!=Windows-Review"</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
 </Project>

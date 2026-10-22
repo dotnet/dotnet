@@ -52,15 +52,6 @@ public static class MessageType
     public const string VersionCheck = "ProtocolVersion";
 
     /// <summary>
-    /// Connection-identity secrets exchanged before the transport admits a child. The child presents
-    /// the secret it was given through its environment, and the parent answers with its own only
-    /// after the child's has matched. This exchange happens before the protocol version is
-    /// negotiated, so it is not gated on one.
-    /// </summary>
-    [ProtocolVersion(Version0, typeof(HandshakePayload), Description = "Connection-identity secrets exchanged before the protocol version is negotiated. Not gated on a protocol version.")]
-    public const string Handshake = "TestPlatform.Handshake";
-
-    /// <summary>
     /// Protocol Error
     /// </summary>
     public const string ProtocolError = "ProtocolError";

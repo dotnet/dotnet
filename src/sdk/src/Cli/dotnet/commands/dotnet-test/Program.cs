@@ -51,14 +51,10 @@ namespace Microsoft.DotNet.Tools.Test
             // Run dll/exe directly using the VSTestForwardingApp
             if (ContainsBuiltTestSources(args))
             {
-                int exitCode = ForwardToVSTestConsole(parseResult, args, settings, testSessionCorrelationId);
-                VSTestArtifactsDirectory.Delete();
-                return exitCode;
+                return ForwardToVSTestConsole(parseResult, args, settings, testSessionCorrelationId);
             }
 
-            int msbuildExitCode = ForwardToMsbuild(parseResult, settings, testSessionCorrelationId);
-            VSTestArtifactsDirectory.Delete();
-            return msbuildExitCode;
+            return ForwardToMsbuild(parseResult, settings, testSessionCorrelationId);
         }
 
         private static int ForwardToMsbuild(ParseResult parseResult, string[] settings, string testSessionCorrelationId)
@@ -244,13 +240,6 @@ namespace Microsoft.DotNet.Tools.Test
                 VSTestTrace.SafeWriteTrace(() => $"Root variable set {rootVariableName}:{rootValue}");
             }
 
-            if (VSTestArtifactsDirectory.GetOrCreate() is string artifactsDirectory)
-            {
-                testCommand.EnvironmentVariable(VSTestArtifactsDirectory.EnvironmentVariableName, artifactsDirectory);
-                VSTestTrace.SafeWriteTrace(
-                    () => $"Artifacts directory variable set {VSTestArtifactsDirectory.EnvironmentVariableName}:{artifactsDirectory}");
-            }
-
             VSTestTrace.SafeWriteTrace(() => $"Starting test using MSBuild with arguments '{testCommand.GetArgumentsToMSBuild()}' custom MSBuild path '{msbuildPath}' norestore '{noRestore}'");
             return testCommand;
         }
@@ -262,7 +251,9 @@ namespace Microsoft.DotNet.Tools.Test
                 return 0;
             }
 
-            if (!TryFindArtifactDirectory(testSessionCorrelationId, out string expectedArtifactDirectory))
+            // VSTest runner will save artifacts inside a temp folder if needed.
+            string expectedArtifactDirectory = Path.Combine(Path.GetTempPath(), testSessionCorrelationId);
+            if (!Directory.Exists(expectedArtifactDirectory))
             {
                 VSTestTrace.SafeWriteTrace(() => "No artifact found, post-processing won't run.");
                 return 0;
@@ -277,23 +268,25 @@ namespace Microsoft.DotNet.Tools.Test
                 artifactsPostProcessArgs.Add($"--diag:{parseResult.GetValue(TestCommandParser.DiagOption)}");
             }
 
-            return new VSTestForwardingApp(artifactsPostProcessArgs).Execute();
-        }
-
-        internal static bool TryFindArtifactDirectory(string testSessionCorrelationId, out string artifactDirectory)
-        {
-            if (VSTestArtifactsDirectory.Current is string artifactsDirectory)
+            try
             {
-                string candidate = Path.Combine(artifactsDirectory, testSessionCorrelationId);
-                if (Directory.Exists(candidate))
+                return new VSTestForwardingApp(artifactsPostProcessArgs).Execute();
+            }
+            finally
+            {
+                if (Directory.Exists(expectedArtifactDirectory))
                 {
-                    artifactDirectory = candidate;
-                    return true;
+                    VSTestTrace.SafeWriteTrace(() => $"Cleaning artifact directory '{expectedArtifactDirectory}'.");
+                    try
+                    {
+                        Directory.Delete(expectedArtifactDirectory, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        VSTestTrace.SafeWriteTrace(() => $"Exception during artifact cleanup: \n{ex}");
+                    }
                 }
             }
-
-            artifactDirectory = null;
-            return false;
         }
 
         private static bool ContainsBuiltTestSources(string[] args)

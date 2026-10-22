@@ -9,7 +9,6 @@ using Microsoft.VisualStudio.TestPlatform.Utilities;
 using CommandLineResources = Microsoft.VisualStudio.TestPlatform.CommandLine.Resources.Resources;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
-
 // <summary>
 //     Argument Executor for the "-?|--Help|/?|/Help" Help command line argument.
 // </summary>

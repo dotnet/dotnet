@@ -95,12 +95,10 @@ void PrintTo(EnumWithPrintTo e, std::ostream* os) {
   *os << (e == kEWPT1 ? "kEWPT1" : "invalid");
 }
 
-// A class implicitly convertible to intmax_t.
+// A class implicitly convertible to BiggestInt.
 class BiggestIntConvertible {
  public:
-  operator intmax_t() const {  // NOLINT(google-explicit-constructor)
-    return 42;
-  }
+  operator ::testing::internal::BiggestInt() const { return 42; }
 };
 
 // A parent class with two child classes. The parent and one of the kids have
@@ -358,7 +356,7 @@ TEST(PrintEnumTest, EnumWithPrintTo) {
 TEST(PrintClassTest, AbslStringify) { EXPECT_EQ("(10, 20)", Print(Point())); }
 #endif
 
-// Tests printing a class implicitly convertible to intmax_t.
+// Tests printing a class implicitly convertible to BiggestInt.
 
 TEST(PrintClassTest, BiggestIntConvertible) {
   EXPECT_EQ("42", Print(BiggestIntConvertible()));
@@ -775,7 +773,7 @@ TEST(PrintPointerTest, NonMemberFunctionPointer) {
   // pointers to objects, and some compilers (e.g. GCC 3.4) enforce
   // this limitation.
   EXPECT_EQ(PrintPointer(reinterpret_cast<const void*>(
-                reinterpret_cast<intmax_t>(&MyFunction))),
+                reinterpret_cast<internal::BiggestInt>(&MyFunction))),
             Print(&MyFunction));
   int (*p)(bool) = NULL;  // NOLINT
   EXPECT_EQ("NULL", Print(p));
@@ -1476,8 +1474,8 @@ TEST(PrintReferenceTest, HandlesFunctionPointer) {
   // standard disallows casting between pointers to functions and
   // pointers to objects, and some compilers (e.g. GCC 3.4) enforce
   // this limitation.
-  const std::string fp_string = PrintPointer(
-      reinterpret_cast<const void*>(reinterpret_cast<intmax_t>(fp)));
+  const std::string fp_string = PrintPointer(reinterpret_cast<const void*>(
+      reinterpret_cast<internal::BiggestInt>(fp)));
   EXPECT_EQ("@" + fp_pointer_string + " " + fp_string, PrintByRef(fp));
 }
 

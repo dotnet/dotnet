@@ -26,39 +26,6 @@ public class IntegrationTestEnvironment
         // Get root directory from test assembly output directory
         ?? Path.GetFullPath(@"..\..\..\..\..".Replace('\\', Path.DirectorySeparatorChar));
 
-    /// <summary>
-    /// The copied and patched dotnet the acceptance suite runs against, one directory per run.
-    ///
-    /// This used to be a fixed path, artifacts/tmp/.dotnet, shared by every run. The acceptance
-    /// suite executes its target frameworks at the same time and both copied into it, so one run
-    /// executed hostfxr.dll out of the directory while the other overwrote it, and every test in
-    /// the losing run failed in AssemblyInitialize with
-    ///
-    ///   IOException: The process cannot access the file
-    ///   '...\artifacts\tmp\.dotnet\host\fxr\...\hostfxr.dll' because it is being used by another process.
-    ///
-    /// Measured on this branch's build 3077696: 625 failures, almost all of them that one exception
-    /// in the net48_x64 run. It had never been seen because the other half used to fail first on
-    /// the compatibility rows, which suppressed this half entirely, so the two never overlapped
-    /// until those rows were filtered out and the other half started passing.
-    ///
-    /// A mutex around the copy does not fix it: the conflict is one run EXECUTING from the
-    /// directory while another OVERWRITES it, which outlives the copy.
-    ///
-    /// AppContext.BaseDirectory already differs per target framework, so hashing it gives one
-    /// directory per run without inventing a discriminator. That is sufficient here because each
-    /// target framework of this suite runs at exactly one architecture; a suite that ran the same
-    /// target framework at two architectures would share one output directory and would need the
-    /// architecture folded in as well. GetPathHash is the same helper the acceptance suite already
-    /// uses to shorten its compatibility asset names.
-    ///
-    /// COMPUTED HERE AND ONLY HERE. Two places used to derive this path independently - Build.cs
-    /// wrote it and IntegrationTestBase read it - and discriminating in one of them would have left
-    /// the other looking in the old shared location for something no longer there.
-    /// </summary>
-    public static string PatchedDotnetDirectory { get; } = Path.GetFullPath(
-        Path.Combine(RepoRootDirectory, "artifacts", "tmp", $".dotnet-{GetPathHash(AppContext.BaseDirectory)}"));
-
     public static string ArtifactsTempDirectory { get; } = Path.Combine(RepoRootDirectory, "artifacts", "tmp", BuildConfiguration);
 
     public static string LocalPackageSource { get; } = Path.Combine(RepoRootDirectory, "artifacts", "packages", BuildConfiguration, "Shipping").TrimEnd(Path.DirectorySeparatorChar);

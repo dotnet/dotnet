@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -150,55 +150,4 @@
   <data name="AbortedTestDiscoveryWithReason" xml:space="preserve">
     <value>The active test discovery was aborted. Reason: {0}</value>
   </data>
-  <data name="ConnectionSecretsTesthostUnsupported" xml:space="preserve">
-    <value>vstest.console failed to connect to testhost. testhost cannot take part in the connection negotiation that verifies the identity of both processes. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project. For more information see: {0}</value>
-  </data>
-  <data name="ConnectionSecretsConsoleUnsupported" xml:space="preserve">
-    <value>Microsoft.TestPlatform.TranslationLayer failed to connect to vstest.console. vstest.console cannot take part in the connection negotiation that verifies the identity of both processes. For more information see: {0}</value>
-  </data>
-  <data name="ConnectionSecretsParentDidNotNegotiate" xml:space="preserve">
-    <value>{0} failed to connect to the parent process. The parent process did not initiate the connection negotiation that verifies the identity of both processes. For more information see: {1}</value>
-  </data>
-  <data name="ConnectionSecretsPeerSecretMismatch" xml:space="preserve">
-    <value>The connection was refused. The process that connected did not present the expected secret. For more information see: {0}</value>
-  </data>
-  <data name="ConnectionSecretsParentSecretMismatch" xml:space="preserve">
-    <value>The connection was refused. The parent process did not present the expected secret. For more information see: {0}</value>
-  </data>
-  <data name="ConnectionSecretsPeerNegotiationIncomplete" xml:space="preserve">
-    <value>The connection failed. The negotiation with the process that connected did not complete. For more information see: {0}</value>
-  </data>
-  <data name="ConnectionSecretsParentNegotiationIncomplete" xml:space="preserve">
-    <value>The connection failed. The negotiation with the parent process did not complete. For more information see: {0}</value>
-  </data>
-  <data name="ConnectionSecretsInternalError" xml:space="preserve">
-    <value>The connection failed. The connection negotiation could not be set up because of an internal error in the test platform. For more information see: {0}</value>
-  </data>
-  <data name="ConnectionSecretsDetailVersion" xml:space="preserve">
-    <value>{0} version: {1}</value>
-  </data>
-  <data name="ConnectionSecretsDetailPath" xml:space="preserve">
-    <value>{0} path: {1}</value>
-  </data>
-  <data name="ConnectionSecretsDetailParentProcessId" xml:space="preserve">
-    <value>parent process id: {0}</value>
-  </data>
-  <data name="ConnectionSecretsDetailParentProcessName" xml:space="preserve">
-    <value>parent process: {0}</value>
-  </data>
-  <data name="ConnectionSecretsDetailReason" xml:space="preserve">
-    <value>reason: {0}</value>
-  </data>
-  <data name="ConnectionSecretsDetailParentProcessPath" xml:space="preserve">
-    <value>parent process path: {0}</value>
-  </data>
-  <data name="ConnectionSecretsDetailParentProcessVersion" xml:space="preserve">
-    <value>parent process version: {0}</value>
-  </data>
-  <data name="ConnectionSecretsDetailVsTestConsolePath" xml:space="preserve">
-    <value>vstest.console path: {0}</value>
-  </data>
-  <data name="ConnectionSecretsDetailVsTestConsoleVersion" xml:space="preserve">
-    <value>vstest.console version: {0}</value>
-  </data>
-</root>
+</root>

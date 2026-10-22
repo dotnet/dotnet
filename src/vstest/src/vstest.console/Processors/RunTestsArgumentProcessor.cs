@@ -232,11 +232,7 @@ internal class RunTestsArgumentExecutor : IArgumentExecutor
             if (_commandLineOptions.ArtifactProcessingMode == ArtifactProcessingMode.Collect)
             {
                 TPDebug.Assert(RunSettingsManager.Instance.ActiveRunSettings.SettingsXml is not null, "RunSettingsManager.Instance.ActiveRunSettings.SettingsXml is null");
-                var collectionWarning = _artifactProcessingManager.CollectArtifacts(e, RunSettingsManager.Instance.ActiveRunSettings.SettingsXml);
-                if (collectionWarning is not null)
-                {
-                    _output.Warning(false, collectionWarning);
-                }
+                _artifactProcessingManager.CollectArtifacts(e, RunSettingsManager.Instance.ActiveRunSettings.SettingsXml);
             }
         }
     }

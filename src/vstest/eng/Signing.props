@@ -28,14 +28,6 @@
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.Package.dll" CertificateName="3PartySHA2" />
 
-    <!--
-      Arcade 11 added .cab to its default Microsoft400 extension list, and Sign.proj now rejects
-      two certificates for the same extension. Arcade 9 did not define .cab at all, so the line
-      below was the only definition and the IntelliTrace cab in Microsoft.TestPlatform shipped
-      unsigned. Remove Arcade's default first so this stays the single definition and the cab
-      keeps shipping unsigned - deleting it outright would start signing it with Microsoft400.
-    -->
-    <FileExtensionSignInfo Remove=".cab" />
     <FileExtensionSignInfo Include=".cab" CertificateName="None" />
   </ItemGroup>
 </Project>

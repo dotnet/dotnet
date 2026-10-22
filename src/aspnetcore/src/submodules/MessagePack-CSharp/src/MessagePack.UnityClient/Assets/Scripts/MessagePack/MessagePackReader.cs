@@ -33,17 +33,6 @@ namespace MessagePack
         private SequenceReader<byte> reader;
 
         /// <summary>
-        /// The minimum number of bytes that previously-read container headers have committed to their children
-        /// but that have not yet been consumed.
-        /// </summary>
-        private long minimumRemainingChildBytes;
-
-        /// <summary>
-        /// The value of <see cref="Consumed"/> when <see cref="minimumRemainingChildBytes"/> was last updated.
-        /// </summary>
-        private long minimumRemainingChildBytesCheckpoint;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="MessagePackReader"/> struct.
         /// </summary>
         /// <param name="memory">The buffer to read from.</param>
@@ -365,7 +354,7 @@ namespace MessagePack
             // Protect against corrupted or mischievious data that may lead to allocating way too much memory.
             // We allow for each primitive to be the minimal 1 byte in size.
             // Formatters that know each element is larger can optionally add a stronger check.
-            this.ReserveMinimumChildBytes(count);
+            ThrowInsufficientBufferUnless(this.reader.Remaining >= count);
 
             return count;
         }
@@ -443,7 +432,7 @@ namespace MessagePack
             // Protect against corrupted or mischievious data that may lead to allocating way too much memory.
             // We allow for each primitive to be the minimal 1 byte in size, and we have a key=value map, so that's 2 bytes.
             // Formatters that know each element is larger can optionally add a stronger check.
-            this.ReserveMinimumChildBytes((long)count * 2);
+            ThrowInsufficientBufferUnless(this.reader.Remaining >= (long)count * 2);
 
             return count;
         }
@@ -1008,20 +997,6 @@ namespace MessagePack
             {
                 ThrowNotEnoughBytesException();
             }
-        }
-
-        private void ReserveMinimumChildBytes(long minimumChildBytes)
-        {
-            long consumed = this.reader.Consumed;
-            long bytesConsumedSinceCheckpoint = consumed - this.minimumRemainingChildBytesCheckpoint;
-            this.minimumRemainingChildBytes = Math.Max(0, this.minimumRemainingChildBytes - bytesConsumedSinceCheckpoint);
-            this.minimumRemainingChildBytesCheckpoint = consumed;
-
-            ThrowInsufficientBufferUnless(
-                minimumChildBytes >= 0
-                && this.minimumRemainingChildBytes <= this.reader.Remaining
-                && minimumChildBytes <= this.reader.Remaining - this.minimumRemainingChildBytes);
-            this.minimumRemainingChildBytes += minimumChildBytes;
         }
 
         private int GetBytesLength()

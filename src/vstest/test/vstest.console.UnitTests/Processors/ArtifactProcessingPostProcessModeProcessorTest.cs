@@ -2,8 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestPlatform.CommandLine.Processors;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Engine;
@@ -60,39 +58,6 @@ public class ArtifactProcessingPostProcessModeProcessorTest
         ArtifactProcessingPostProcessModeProcessorExecutor artifactProcessingPostProcessModeProcessorExecutor = new(new CommandLineOptions(), _artifactProcessingManagerMock.Object);
         artifactProcessingPostProcessModeProcessorExecutor.Initialize(null);
         Assert.AreEqual(ArgumentProcessorResult.Fail, artifactProcessingPostProcessModeProcessorExecutor.Execute());
-    }
-
-    [TestMethod]
-    public void ProcessorExecutor_ShouldReportTheReasonOfAnAsynchronousFailure()
-    {
-        // The manager is awaited with Wait(), so a failure arrives wrapped in an AggregateException. The
-        // reason has to survive the unwrapping, otherwise the run ends with an exit code and nothing else.
-        var output = new DummyOutput();
-        _artifactProcessingManagerMock.Setup(x => x.PostProcessArtifactsAsync())
-            .Returns(Task.FromException(new InvalidOperationException("the artifacts directory is not usable")));
-
-        ArtifactProcessingPostProcessModeProcessorExecutor executor = new(new CommandLineOptions(), _artifactProcessingManagerMock.Object, output);
-        executor.Initialize(null);
-
-        Assert.AreEqual(ArgumentProcessorResult.Fail, executor.Execute());
-
-        Assert.AreEqual(1, output.Errors.Count);
-        StringAssert.Contains(output.Errors[0], "the artifacts directory is not usable");
-    }
-
-    private sealed class DummyOutput : IOutput
-    {
-        public List<string> Errors { get; } = [];
-
-        public void Write(string? message, OutputLevel level)
-        {
-            if (level == OutputLevel.Error && message is not null)
-            {
-                Errors.Add(message);
-            }
-        }
-
-        public void WriteLine(string? message, OutputLevel level) => Write(message, level);
     }
 
     [TestMethod]

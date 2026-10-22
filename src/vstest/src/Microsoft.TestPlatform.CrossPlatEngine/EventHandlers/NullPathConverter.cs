@@ -10,7 +10,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
-
 internal class NullPathConverter : IPathConverter
 {
     private static readonly Lazy<NullPathConverter> LazyInstance = new(() => new NullPathConverter());

@@ -1,4 +1,1 @@
 ﻿#nullable enable
-const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.EnvironmentHelper.VstestConnectionSecrets = "VSTEST_CONNECTION_SECRETS" -> string!
-const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.EnvironmentHelper.VstestDataCollectionConnectionSecrets = "VSTEST_DATACOLLECTION_CONNECTION_SECRETS" -> string!
-const Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers.EnvironmentHelper.VstestDesignModeConnectionSecrets = "VSTEST_DESIGNMODE_CONNECTION_SECRETS" -> string!

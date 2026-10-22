@@ -1,12 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net9.0 is pinned literally, not $(NetCurrent): the nuspec and the shipped 17.12 package
-         both declare lib\net9.0, while $(NetCurrent) floats with Arcade and resolves to net11.0
-         on Arcade 11, which made pack look for an artifacts\bin\...\net11.0 the nuspec never asks
-         for. Measured on 17.11's build 3067328 and ported; the green 17.14 line pins the same
-         literal on this same line. -->
-    <TargetFrameworks>netstandard2.0;$(NetFrameworkMinimum);net6.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;$(NetFrameworkMinimum);net6.0;net8.0;$(NetCurrent)</TargetFrameworks>
     <AssemblyName>Microsoft.TestPlatform.AdapterUtilities</AssemblyName>
     <RootNamespace>Microsoft.TestPlatform.AdapterUtilities</RootNamespace>
   </PropertyGroup>

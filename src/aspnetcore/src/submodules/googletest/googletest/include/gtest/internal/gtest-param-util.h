@@ -601,7 +601,7 @@ class [[nodiscard]] ParameterizedTestSuiteInfo
 
           MakeAndRegisterTestInfo(
               test_suite_name, test_name.c_str(),
-              /*type_param=*/nullptr,  // No type parameter.
+              nullptr,  // No type parameter.
               PrintToString(param).c_str(), test_info->code_location,
               GetTestSuiteTypeId(),
               SuiteApiResolver<TestSuite>::GetSetUpCaseOrSuite(file, line),

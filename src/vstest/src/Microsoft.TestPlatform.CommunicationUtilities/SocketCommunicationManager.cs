@@ -21,7 +21,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 /// Facilitates communication using sockets
 /// </summary>
 [SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Would cause a breaking change if users are inheriting this class and implement IDisposable")]
-public class SocketCommunicationManager : ICommunicationManager, IConnectionValidationConfigurable, IConnectionAuthenticationResponder
+public class SocketCommunicationManager : ICommunicationManager
 {
     /// <summary>
     /// The server stream read timeout constant (in microseconds).
@@ -37,8 +37,6 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     /// TCP Client that can connect to a TCP listener
     /// </summary>
     private TcpClient? _tcpClient;
-
-    private TcpClient? _acceptedTcpClient;
 
     /// <summary>
     /// Binary Writer to write to channel stream
@@ -65,8 +63,6 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     /// </summary>
     private readonly ManualResetEvent _clientConnectionAcceptedEvent = new(false);
 
-    private readonly ManualResetEvent _connectionValidationFailedEvent = new(false);
-
     /// <summary>
     /// Sync object for sending messages
     /// SendMessage over socket channel is NOT thread-safe
@@ -80,10 +76,6 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
 
     private Socket? _socket;
 
-    private readonly ConnectionValidator _connectionValidator;
-    private CancellationTokenSource _connectionValidationCancellation = new();
-    private string? _connectionSecretsResponder;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SocketCommunicationManager"/> class.
     /// </summary>
@@ -95,27 +87,6 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     internal SocketCommunicationManager(IDataSerializer dataSerializer)
     {
         _dataSerializer = dataSerializer;
-        _connectionValidator = new ConnectionValidator();
-    }
-
-    string? IConnectionValidationConfigurable.ConnectionValidationError => _connectionValidator.Error;
-
-    void IConnectionValidationConfigurable.RequireConnectionValidation()
-        => _connectionValidator.RequireValidation();
-
-    void IConnectionValidationConfigurable.UseConnectionSecrets(string connectionSecrets)
-        => _connectionValidator.UseConnectionSecrets(connectionSecrets);
-
-    void IConnectionValidationConfigurable.CannotValidateConnection(string error)
-        => _connectionValidator.CannotValidate(error);
-    void IConnectionAuthenticationResponder.UseConnectionSecretsAsChild(string connectionSecrets)
-    {
-        if (string.IsNullOrWhiteSpace(connectionSecrets))
-        {
-            throw new ArgumentException("The connection secrets cannot be empty.", nameof(connectionSecrets));
-        }
-
-        _connectionSecretsResponder = connectionSecrets;
     }
 
     #region ServerMethods
@@ -127,13 +98,6 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     /// <returns>Port of the listener</returns>
     public IPEndPoint HostServer(IPEndPoint endpoint)
     {
-        if (_connectionValidationCancellation.IsCancellationRequested)
-        {
-            _connectionValidationCancellation.Dispose();
-            _connectionValidationCancellation = new CancellationTokenSource();
-        }
-
-        _connectionValidationFailedEvent.Reset();
         _tcpListener = new TcpListener(endpoint);
         _tcpListener.Start();
         EqtTrace.Info("Listening on Endpoint : {0}", (IPEndPoint)_tcpListener.LocalEndpoint);
@@ -147,52 +111,16 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task AcceptClientAsync()
     {
-        var listener = _tcpListener;
-        if (listener is null || _connectionValidationCancellation.IsCancellationRequested)
+        if (_tcpListener == null)
         {
             return;
         }
 
         _clientConnectedEvent.Reset();
 
-        TcpClient client;
-        try
-        {
-            client = await listener.AcceptTcpClientAsync();
-        }
-        catch (ObjectDisposedException) when (_connectionValidationCancellation.IsCancellationRequested)
-        {
-            return;
-        }
-        catch (SocketException) when (_connectionValidationCancellation.IsCancellationRequested)
-        {
-            return;
-        }
-
-        client.Client.NoDelay = true;
-
-        // Accept one client, as before authentication was added. A rejected peer ends the
-        // connection attempt; the same secrets must not be offered to another candidate.
-        var validationResult = ValidateConnection(client);
-        if (!validationResult.Succeeded)
-        {
-            client.Close();
-            EqtTrace.Warning(
-                "SocketCommunicationManager.AcceptClientAsync: Rejected a TCP connection: {0}",
-                validationResult.Error);
-            StopServer();
-            _connectionValidationFailedEvent.Set();
-            return;
-        }
-
-        if (_connectionValidationCancellation.IsCancellationRequested)
-        {
-            client.Close();
-            return;
-        }
-
-        _acceptedTcpClient = client;
+        var client = await _tcpListener.AcceptTcpClientAsync();
         _socket = client.Client;
+        _socket.NoDelay = true;
 
         // Using Buffered stream only in case of write, and Network stream in case of read.
         var bufferedStream = new PlatformStream().CreateBufferedStream(client.GetStream(), SocketConstants.BufferSize);
@@ -202,7 +130,7 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
 
         _clientConnectedEvent.Set();
         EqtTrace.Info("Using the buffer size of {0} bytes", SocketConstants.BufferSize);
-        EqtTrace.Info("Accepted and validated client connection");
+        EqtTrace.Info("Accepted Client request and set the flag");
     }
 
     /// <summary>
@@ -213,10 +141,7 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     public bool WaitForClientConnection(int clientConnectionTimeout)
     {
         var stopWatch = Stopwatch.StartNew();
-        var waitResult = WaitHandle.WaitAny(
-            [_clientConnectedEvent, _connectionValidationFailedEvent],
-            clientConnectionTimeout);
-        var result = waitResult == 0;
+        var result = _clientConnectedEvent.WaitOne(clientConnectionTimeout);
         EqtTrace.Verbose("SocketCommunicationManager.WaitForClientConnection took: {0} ms, with {1} ms timeout, and finished with {2}.", stopWatch.ElapsedMilliseconds, clientConnectionTimeout, result);
 
         return result;
@@ -227,11 +152,8 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     /// </summary>
     public void StopServer()
     {
-        _connectionValidationCancellation.Cancel();
         _tcpListener?.Stop();
         _tcpListener = null;
-        _acceptedTcpClient?.Close();
-        _acceptedTcpClient = null;
         _binaryReader?.Dispose();
         _binaryWriter?.Dispose();
     }
@@ -249,14 +171,7 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     {
         // TODO: pass cancellation token, if user cancels the operation, so we don't wait 50 secs to connect
         // for now added a check for validation of this.tcpclient
-        if (_connectionValidationCancellation.IsCancellationRequested)
-        {
-            _connectionValidationCancellation.Dispose();
-            _connectionValidationCancellation = new CancellationTokenSource();
-        }
-
         _clientConnectionAcceptedEvent.Reset();
-        _connectionValidationFailedEvent.Reset();
         EqtTrace.Info("Trying to connect to server on socket : {0} ", endpoint);
         _tcpClient = new TcpClient { NoDelay = true };
         _socket = _tcpClient.Client;
@@ -273,17 +188,6 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
 
                 if (_tcpClient.Connected)
                 {
-                    var validationResult = ValidateConnection(_tcpClient);
-                    if (!validationResult.Succeeded)
-                    {
-                        EqtTrace.Error(
-                            "SocketCommunicationManager.SetupClientAsync: TCP peer validation failed: {0}",
-                            validationResult.Error);
-                        _tcpClient.Close();
-                        _connectionValidationFailedEvent.Set();
-                        return;
-                    }
-
                     // Using Buffered stream only in case of write, and Network stream in case of read.
                     var bufferedStream = new PlatformStream().CreateBufferedStream(_tcpClient.GetStream(), SocketConstants.BufferSize);
                     var networkStream = _tcpClient.GetStream();
@@ -314,10 +218,7 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     public bool WaitForServerConnection(int connectionTimeout)
     {
         var stopWatch = Stopwatch.StartNew();
-        var waitResult = WaitHandle.WaitAny(
-            [_clientConnectionAcceptedEvent, _connectionValidationFailedEvent],
-            connectionTimeout);
-        var result = waitResult == 0;
+        var result = _clientConnectionAcceptedEvent.WaitOne(connectionTimeout);
         EqtTrace.Verbose("SocketCommunicationManager.WaitForServerConnection took: {0} ms, with {1} ms timeout, and finished with {2}.", stopWatch.ElapsedMilliseconds, connectionTimeout, result);
 
         return result;
@@ -328,7 +229,6 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     /// </summary>
     public void StopClient()
     {
-        _connectionValidationCancellation.Cancel();
         // tcpClient.Close() calls tcpClient.Dispose().
         _tcpClient?.Close();
         _tcpClient = null;
@@ -446,22 +346,6 @@ public class SocketCommunicationManager : ICommunicationManager, IConnectionVali
     public T? DeserializePayload<T>(Message message)
     {
         return _dataSerializer.DeserializePayload<T>(message);
-    }
-
-    private PeerProcessValidationResult ValidateConnection(TcpClient client)
-    {
-        if (_connectionSecretsResponder is not null)
-        {
-            return ConnectionHandshake.AuthenticateAsChild(
-                client,
-                _connectionSecretsResponder,
-                EnvironmentHelper.GetConnectionTimeout() * 1000,
-                _connectionValidationCancellation.Token);
-        }
-
-        return _connectionValidator.ValidateAsParent(
-            client,
-            _connectionValidationCancellation.Token);
     }
 
     private string? TryReceiveRawMessage(CancellationToken cancellationToken)

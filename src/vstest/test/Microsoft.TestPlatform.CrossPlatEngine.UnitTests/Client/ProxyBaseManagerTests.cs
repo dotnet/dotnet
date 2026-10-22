@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading;
@@ -32,7 +31,7 @@ public class ProxyBaseManagerTests
     private readonly Mock<IFileHelper> _mockFileHelper;
     private readonly DiscoveryDataAggregator _discoveryDataAggregator;
 
-    protected readonly Mock<ITestRuntimeProvider3> _mockTestHostManager;
+    protected readonly Mock<ITestRuntimeProvider> _mockTestHostManager;
 
     private Mock<ICommunicationEndPoint>? _mockCommunicationEndpoint;
     private ITestRequestSender? _testRequestSender;
@@ -42,7 +41,7 @@ public class ProxyBaseManagerTests
 
     public ProxyBaseManagerTests()
     {
-        _mockTestHostManager = new Mock<ITestRuntimeProvider3>();
+        _mockTestHostManager = new Mock<ITestRuntimeProvider>();
         _mockDataSerializer = new Mock<IDataSerializer>();
         _mockRequestData = new Mock<IRequestData>();
         _mockChannel = new Mock<ICommunicationChannel>();
@@ -54,11 +53,6 @@ public class ProxyBaseManagerTests
         _mockDataSerializer.Setup(mds => mds.DeserializeMessage(null!)).Returns(new Message());
         _mockDataSerializer.Setup(mds => mds.DeserializeMessage(string.Empty)).Returns(new Message());
         _mockTestHostManager.SetupGet(th => th.Shared).Returns(true);
-
-        // A test host that does not perform the identity check is refused before it is launched, so
-        // the default provider used across these tests reports that it does.
-        _mockTestHostManager.SetupGet(th => th.SupportsConnectionSecrets).Returns(true);
-
         _mockTestHostManager.Setup(
                 m => m.GetTestHostProcessStartInfo(
                     It.IsAny<IEnumerable<string>>(),
@@ -67,13 +61,7 @@ public class ProxyBaseManagerTests
             .Returns(new TestProcessStartInfo());
         _mockTestHostManager.Setup(tmh => tmh.LaunchTestHostAsync(It.IsAny<TestProcessStartInfo>(), It.IsAny<CancellationToken>()))
             .Callback(
-                () =>
-                {
-                    using var process = Process.GetCurrentProcess();
-                    _mockTestHostManager.Raise(
-                        thm => thm.HostLaunched += null,
-                        new HostProviderEventArgs(string.Empty, 0, process.Id));
-                })
+                () => _mockTestHostManager.Raise(thm => thm.HostLaunched += null, new HostProviderEventArgs(string.Empty)))
             .Returns(Task.FromResult(true));
     }
 
@@ -87,7 +75,6 @@ public class ProxyBaseManagerTests
             Transport = Transport.Sockets
         };
         _mockCommunicationEndpoint = new Mock<ICommunicationEndPoint>();
-        _mockCommunicationEndpoint.As<IConnectionValidationConfigurable>();
         _testRequestSender = new TestRequestSender(_mockCommunicationEndpoint.Object, connectionInfo, _mockDataSerializer.Object, _protocolConfig, Clientprocessexitwait);
         _mockCommunicationEndpoint.Setup(mc => mc.Start(connectionInfo.Endpoint)).Returns(connectionInfo.Endpoint).Callback(() => _mockCommunicationEndpoint.Raise(
             s => s.Connected += null,

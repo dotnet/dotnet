@@ -10,7 +10,6 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
-using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection;
 using Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Interfaces;
@@ -44,7 +43,6 @@ public class ProxyExecutionManagerWithDataCollectionTests
     {
         _mockTestHostManager = new Mock<ITestRuntimeProvider>();
         _mockRequestSender = new Mock<ITestRequestSender>();
-        _mockRequestSender.As<IConnectionValidationConfigurable>();
         _mockDataSerializer = new Mock<IDataSerializer>();
         _mockRequestData = new Mock<IRequestData>();
         _mockMetricsCollection = new Mock<IMetricsCollection>();
@@ -153,68 +151,6 @@ public class ProxyExecutionManagerWithDataCollectionTests
 
         // Verify.
         Assert.IsTrue(testProcessStartInfo.Arguments.Contains("--telemetryoptedin false"));
-    }
-
-    // These two cover the connection secrets that let the testhost open the test-case-events channel
-    // to the datacollector. They deliberately use the concrete ProxyDataCollectionManager rather than
-    // the mocked interface: the secret is only reachable through the concrete type, so a test built
-    // on the mock would keep passing while nothing read it, which is exactly how this went unnoticed.
-    [TestMethod]
-    public void UpdateTestProcessStartInfoShouldPassDataCollectionConnectionSecretsToTestHost()
-    {
-        var proxyDataCollectionManager = CreateInitializedDataCollectionManager();
-        var testProcessStartInfo = new TestProcessStartInfo { Arguments = string.Empty };
-
-        var proxyExecutionManager = new TestableProxyExecutionManagerWithDataCollection(_mockRequestSender.Object, _mockTestHostManager.Object, proxyDataCollectionManager);
-
-        // Act.
-        proxyExecutionManager.UpdateTestProcessStartInfoWrapper(testProcessStartInfo);
-
-        // Verify.
-        Assert.IsNotNull(proxyDataCollectionManager.TestHostConnectionSecrets);
-        Assert.IsNotNull(testProcessStartInfo.EnvironmentVariables);
-        Assert.AreEqual(
-            proxyDataCollectionManager.TestHostConnectionSecrets,
-            testProcessStartInfo.EnvironmentVariables[EnvironmentHelper.VstestDataCollectionConnectionSecrets]);
-    }
-
-    [TestMethod]
-    public void UpdateTestProcessStartInfoShouldNotPassDataCollectionConnectionSecretsWhenThereAreNone()
-    {
-        _mockDataCollectionManager.Setup(x => x.BeforeTestRunStart(It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<ITestMessageEventHandler>())).Returns(DataCollectionParameters.CreateDefaultParameterInstance());
-
-        var testProcessStartInfo = new TestProcessStartInfo { Arguments = string.Empty };
-
-        var proxyExecutionManager = new TestableProxyExecutionManagerWithDataCollection(_mockRequestSender.Object, _mockTestHostManager.Object, _mockDataCollectionManager.Object);
-
-        // Act.
-        proxyExecutionManager.UpdateTestProcessStartInfoWrapper(testProcessStartInfo);
-
-        // Verify.
-        var carriesSecrets = testProcessStartInfo.EnvironmentVariables is not null
-            && testProcessStartInfo.EnvironmentVariables.ContainsKey(EnvironmentHelper.VstestDataCollectionConnectionSecrets);
-        Assert.IsFalse(carriesSecrets, "An empty secret must not be written to the testhost environment.");
-    }
-
-    private ProxyDataCollectionManager CreateInitializedDataCollectionManager()
-    {
-        var mockRequestSender = new Mock<IDataCollectionRequestSender>();
-        mockRequestSender.Setup(x => x.WaitForRequestHandlerConnection(It.IsAny<int>())).Returns(true);
-
-        var proxyDataCollectionManager = new ProxyDataCollectionManager(
-            _mockRequestData.Object,
-            string.Empty,
-            new List<string> { "abc.dll" },
-            mockRequestSender.Object,
-            _mockProcessHelper.Object,
-            new Mock<IDataCollectionLauncher>().Object);
-
-        // Initialize is what generates the pair, and it runs before UpdateTestProcessStartInfo in
-        // the real flow: ProxyExecutionManagerWithDataCollection.Initialize calls it before
-        // base.Initialize, and UpdateTestProcessStartInfo runs later, from SetupChannel.
-        proxyDataCollectionManager.Initialize();
-
-        return proxyDataCollectionManager;
     }
 
     [TestMethod]

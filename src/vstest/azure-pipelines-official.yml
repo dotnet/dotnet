@@ -4,11 +4,6 @@ trigger:
     include:
     - main
     - rel/*
-    # A merge into internal/rel/<version> must build. rel/* does not match it, so until
-    # this line existed a merged servicing change sat unbuilt until someone queued it by
-    # hand. Azure DevOps reads this file from the branch that was pushed, so this can only
-    # ever select this branch's own servicing line.
-    - internal/rel/*
     exclude:
     - rel/15.*
     - rel/16.*
@@ -60,7 +55,7 @@ parameters:
     image: 1es-ubuntu-2204
     os: linux
   - name: Azure Pipelines
-    image: macos-14
+    image: macos-13
     os: macOS
 
 variables:
@@ -90,85 +85,30 @@ variables:
     - name: _ReleaseVersionKind
       value: release
 
-  # DevDiv drop access token is acquired via WIF service connection (dnceng-devdiv-drop-rw-code-rw-wif).
-  # The DotNet-VSTS-Infra-Access and DotNet-Symbol-Server-Pats variable groups this file used to
-  # reference NO LONGER EXIST; their PATs were migrated to WIF and disabled. See main's fdd72c528,
-  # "Remove dead DotNet-VSTS-Infra-Access variable group reference (#16203)".
-  #
-  # WHY THIS WAS FATAL RATHER THAN MERELY STALE: a `- group:` at the ROOT variables level is resolved
-  # at YAML COMPILE TIME, so the official pipeline could not LOAD from this branch at all - no build
-  # could even start. Verified absent: neither group is among the 150 variable groups in
-  # dnceng/internal. internal/rel/18.0 carried the identical defect and nohwnd-18-0-build-on-modern-infra
-  # fixed it the same way; nohwnd-17-14-build-on-modern-infra did the same on the neighbouring line.
+  # Group gives access to $microsoft-symbol-server-pat and $symweb-symbol-server-pat
+  - group: DotNet-Symbol-Server-Pats
+  # Group gives access to $dn-bot-devdiv-drop-rw-code-rw and dn-bot-dnceng-build-rw-code-rw
+  - group: DotNet-VSTS-Infra-Access
   - name: _DevDivDropAccessToken
-    value: ''
+    value: $(dn-bot-devdiv-drop-rw-code-rw)
   - name: _SignType
     value: real
   - name: _SignArgs
     value: /p:DotNetSignType=$(_SignType) /p:TeamName=$(_TeamName) /p:Sign=$(_Sign)
-  # PULL REQUEST VALIDATION, ported from 18.12. A pull request build must not sign and must not
-  # restore the internal tools; both steps are delivery-only. Every non-pull-request value below is
-  # byte-identical to what this branch used before, so branch builds are unchanged.
-  #
-  # _SignType is deliberately left at real. The servicing branches gate on it - they refuse to sign
-  # unless it is real - and a pull request build satisfies that gate by not signing at all rather
-  # than by claiming a different type.
-  #
-  # SETTING _Sign ALONE DOES NOTHING, which cost 18.12 build 3076572. On this branch _Sign is read
-  # only by _SignArgs, and _SignArgs IS NEVER REFERENCED ANYWHERE - verified, the single consumer of
-  # the build arguments is $(_InternalBuildArgs) at the Build step. Signing comes from CIBuild.cmd,
-  # which always passes -sign, which build.ps1 turns into /p:Sign=True. The override below works
-  # because build.ps1 appends @properties AFTER /p:Sign=$sign, so /p:Sign in _InternalBuildArgs is
-  # the last one and wins. If that ordering ever changes, this stops working silently and the
-  # signing verification failure comes back.
-  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-    - name: _Sign
-      value: false
-  - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-    - name: _Sign
-      value: True
+  - name: _Sign
+    value: True
   - name: VisualStudioDropName
-    # VALIDATION CARRIER: the project and definition segments are pinned rather than taken from
-    # $(System.TeamProject)/$(Build.DefinitionName), so this file proves the destination is internal
-    # instead of inheriting it from wherever the pipeline happens to run. The branch segment keeps
-    # this validation drop off the real 17.12 drop path.
-    #
-    # THE realsigned-DO-NOT-SHIP- PREFIX BELONGS HERE, NOT ONLY ON THE UPLOAD TASK. This value is
-    # passed to the BUILD at /p:VisualStudioDropName below and is baked into the payload URLs inside
-    # the .vsman. The upload task's destination and this value must be the SAME STRING, and when they
-    # were two hand-written literals on the 17.14 line they diverged - the prefix was added to the
-    # destination only, and every payload URL in the delivered .vsman 404'd. One variable referenced
-    # twice cannot diverge; two literals describing one path already had.
-    value: Products/internal/microsoft-vstest/realsigned-DO-NOT-SHIP-$(Build.SourceBranchName)/$(Build.BuildNumber)
-  # A pull request build publishes nothing, so it needs no SBOM - the publish steps are already
-  # gated on Build.Reason for exactly that reason. Generating one also drags in the internal tools
-  # restore, and that step FAILS OUTRIGHT in a pull request build: eng/common/internal/Tools.csproj
-  # references both MicroBuild.Core and MicroBuild.Plugins.SwixBuild, NuGet's generated
-  # Tools.csproj.nuget.g.props imports the Swix props, MicroBuild.Core.props imports the same file
-  # again, and -ci turns that MSB4011 duplicate-import warning into an error.
-  #
-  # eng/restore-internal-tools.yml on this branch ALREADY reads _skipRestoreInternalTools, but
-  # nothing defined it - so the condition evaluated ne('', 'true') and the step ran anyway. This
-  # adds the missing producer; it does not change the consumer.
-  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-    - name: _skipRestoreInternalTools
-      value: true
-    - name: _SbomArgs
-      value: ''
-  - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-    - name: _skipRestoreInternalTools
-      value: false
-    - name: _SbomArgs
-      value: /p:GenerateSbom=true
+    value: Products/$(System.TeamProject)/$(Build.DefinitionName)/$(Build.SourceBranchName)/$(Build.BuildNumber)
   - name: _InternalBuildArgs
     value: /p:DotNetSignType=$(_SignType)
       /p:TeamName=$(_TeamName)
       /p:DotNetFinalVersionKind=$(_ReleaseVersionKind)
       /p:DotNetPublishUsingPipelines=true
+      /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+      /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
       /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
       /p:VisualStudioDropName=$(VisualStudioDropName)
-      /p:Sign=$(_Sign)
-      $(_SbomArgs)
+      /p:GenerateSbom=true
 
 resources:
   repositories:
@@ -185,7 +125,7 @@ extends:
         enabled: true
     pool:
       name: $(DncEngInternalBuildPool)
-      image: windows.vs2026preview.scout.amd64
+      image: 1es-windows-2022
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling
@@ -198,30 +138,18 @@ extends:
         parameters:
           enableMicrobuild: true
           enablePublishBuildArtifacts: true
-          # Register only official builds of this private servicing branch, never PRs.
-          enablePublishBuildAssets: ${{ and(eq(variables['System.TeamProjectId'], '7ea9116e-9fac-403d-b258-b31fcf1bb293'), eq(variables['Build.Repository.ID'], 'ef257391-4d76-4240-8649-3f21ac49c392'), eq(variables['Build.SourceBranch'], 'refs/heads/internal/rel/17.12'), ne(variables['Build.Reason'], 'PullRequest')) }}
+          enablePublishBuildAssets: true
+          enablePublishUsingPipelines: true
           enablePublishTestResults: true
           testResultsFormat: 'vstest'
           enableTelemetry: true
           enableSourceBuild: true
-          # Arcade forwards named source-build parameters from a mapping, not a list.
-          sourceBuildParameters:
-            defaultManagedPlatform:
-              name: Managed
-              container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream-10-amd64
-              buildScript: bash ./eng/BuildSourceBuildIntermediate.sh
-              buildArguments: /p:OfficialBuildId=$(Build.BuildNumber)
-          publishBuildAssetsDependsOn:
-          - job: Windows
-          - ${{ each pool in parameters.otherOsPools }}:
-            - job: ${{ pool.os }}
-          - job: Source_Build_Managed
           jobs:
           - job: Windows
             timeoutInMinutes: 120
             pool:
               name: $(DncEngInternalBuildPool)
-              image: windows.vs2026preview.scout.amd64
+              image: 1es-windows-2022
               os: windows
             steps:
             # This steps help to understand versions of .NET runtime installed on the machine,
@@ -247,12 +175,6 @@ extends:
             - ${{ if eq(parameters.SkipTests, False) }}:
               # -ci is allowing to import some environment variables and some required configurations
               # -nobl avoid overwriting binlog of the main Build
-              # Arcade invokes dotnet test <assembly>.dll. Select the patched console through
-              # VSTEST_CONSOLE_PATH so the testhost does not reject the SDK's unpatched console.
-              - powershell: eng\prepare-test-console.ps1 -Configuration Release
-                displayName: Use the vstest.console this build produced
-                condition: succeeded()
-
               - script: Test.cmd
                   -configuration Release
                   -ci
@@ -261,17 +183,6 @@ extends:
                   -performanceTest
                 name: Test
                 displayName: Test
-                env:
-                  VSTEST_CONSOLE_PATH: $(_LocalVSTestConsolePath)
-
-              # The test results folder is not produced when the job fails before any test runs,
-              # and publishing a missing path would report a second, misleading failure.
-              - pwsh: |
-                  $dir = "$(Build.SourcesDirectory)/artifacts/TestResults/Release"
-                  $hasFiles = (Test-Path -LiteralPath $dir) -and (@(Get-ChildItem -LiteralPath $dir -File -Recurse -ErrorAction SilentlyContinue).Count -gt 0)
-                  Write-Host "##vso[task.setvariable variable=HasTestResults]$($hasFiles.ToString().ToLowerInvariant())"
-                displayName: 'Check for Test Results folders'
-                condition: failed()
 
               # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
               # through the console or trx
@@ -280,7 +191,7 @@ extends:
                 inputs:
                   PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
                   ArtifactName: TestResults
-                condition: and(failed(), eq(variables['HasTestResults'], 'true'))
+                condition: failed()
 
             - task: 1ES.PublishBuildArtifacts@1
               displayName: 'Publish VSSetup'
@@ -303,21 +214,6 @@ extends:
                 fetchDepth: 1
                 clean: true
 
-              - ${{ if eq(pool.os, 'linux') }}:
-                # A regular interactive login creates /run/user/<uid> (the XDG_RUNTIME_DIR convention) via
-                # pam_systemd, which the artifacts-directory fallback (GetUserPrivateTempPath) relies on as
-                # the current user's private temporary directory. The hosted agent never logs in that way, so
-                # the directory is missing and that fallback path goes untested. Create it here the same way a
-                # login session would, rather than loosening the product code or the tests to tolerate it
-                # being absent.
-                - script: |
-                    set -e
-                    uid=$(id -u)
-                    sudo mkdir -p "/run/user/$uid"
-                    sudo chown "$uid" "/run/user/$uid"
-                    sudo chmod 700 "/run/user/$uid"
-                  displayName: Ensure the XDG runtime directory exists
-
               # Build but don't pack, packing does not work on non-windows and we want to test what we built on Windows
               # anyway. Because that is what we will publish.
               - script: ./build.sh
@@ -334,10 +230,6 @@ extends:
                   targetPath: '$(Build.SourcesDirectory)/artifacts/packages/Release/Shipping'
 
               - ${{ if eq(parameters.SkipTests, False) }}:
-                - pwsh: ./eng/prepare-test-console.ps1 -Configuration Release
-                  displayName: Use the vstest.console this build produced
-                  condition: succeeded()
-
                 - script: ./test.sh
                     --configuration Release
                     --ci
@@ -345,17 +237,6 @@ extends:
                     --performanceTest
                   name: Test
                   displayName: Test
-                  env:
-                    VSTEST_CONSOLE_PATH: $(_LocalVSTestConsolePath)
-
-                # The test results folder is not produced when the job fails before any test runs,
-                # and publishing a missing path would report a second, misleading failure.
-                - pwsh: |
-                    $dir = "$(Build.SourcesDirectory)/artifacts/TestResults/Release"
-                    $hasFiles = (Test-Path -LiteralPath $dir) -and (@(Get-ChildItem -LiteralPath $dir -File -Recurse -ErrorAction SilentlyContinue).Count -gt 0)
-                    Write-Host "##vso[task.setvariable variable=HasTestResults]$($hasFiles.ToString().ToLowerInvariant())"
-                  displayName: 'Check for Test Results folders'
-                  condition: failed()
 
                 # This step is only helpful for diagnosing some issues with vstest/test host that would not appear
                 # through the console or trx
@@ -364,7 +245,7 @@ extends:
                   inputs:
                     PathtoPublish: '$(Build.SourcesDirectory)/artifacts/TestResults/Release'
                     ArtifactName: TestResults
-                  condition: and(failed(), eq(variables['HasTestResults'], 'true'))
+                  condition: failed()
 
           - job: Publish
             dependsOn: 
@@ -372,7 +253,7 @@ extends:
                 - ${{ pool.os }}
             pool:
                 name: $(DncEngInternalBuildPool)
-                image: windows.vs2026preview.scout.amd64
+                image: 1es-windows-2022
                 os: windows
             steps:
               # The template job needs a log, otherwise it writes a warning. We can disable log uploading only for
@@ -392,47 +273,32 @@ extends:
                   artifactName: VSSetupArtifacts
                   targetPath: '$(Build.SourcesDirectory)/artifacts/VSSetup/Release'
 
-              # Package and symbol publication uses the guarded BAR/Darc flow below.
+              - task: NuGetAuthenticate@1
+                displayName: 'NuGet Authenticate to dotnet-tools and test-tools feeds'
+
+              - task:  1ES.PublishNuget@1
+                displayName: 'Publish NuGet packages to dotnet-tools feed'
+                inputs:
+                  packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
+                  packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
+                  publishVstsFeed: 'public/dotnet-tools'
+
+              - task:  1ES.PublishNuget@1
+                displayName: 'Publish NuGet packages to test-tools feed'
+                inputs:
+                  packageParentPath: '$(Build.SourcesDirectory)/artifacts/packages/Release'
+                  packagesToPush: '$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.nupkg;!$(Build.SourcesDirectory)/artifacts/packages/Release/**/*.symbols.nupkg'
+                  publishVstsFeed: 'public/test-tools'
 
               # Publishes setup VSIXes to a drop.
               # Note: The insertion tool looks for the display name of this task in the logs.
-              #
-              # THE DROP TOKEN IS MINTED HERE, VIA WIF. The PAT this line used to use came from the
-              # DotNet-VSTS-Infra-Access variable group, which no longer exists - so without this
-              # step _DevDivDropAccessToken is empty and the upload cannot authenticate. This is the
-              # same mechanism nohwnd-17-14-build-on-modern-infra and nohwnd-18-0-build-on-modern-infra
-              # use, and it is the single most uncertain change on this branch precisely because the
-              # thing it replaces is gone and cannot be compared against.
-              - task: AzureCLI@2
-                displayName: Get DevDiv Drop Access Token
-                inputs:
-                  azureSubscription: 'dnceng-devdiv-drop-rw-code-rw-wif'
-                  scriptType: pscore
-                  scriptLocation: inlineScript
-                  inlineScript: |
-                    $token = az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv
-                    Write-Host "##vso[task.setvariable variable=_DevDivDropAccessToken;issecret=true]$token"
-                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-
-              # WARNING LABEL IN THE PATH, NOT DECORATION. The drop task exposes no annotation input,
-              # so the drop path is the only place a warning about these artifacts can live.
-              #
-              # These artifacts are REAL-SIGNED, so every binary carries a valid Microsoft signature
-              # and a signature check CANNOT distinguish them from genuinely shipped bits. They are a
-              # rebuild of a servicing line on modern infrastructure, produced to prove the pipeline
-              # works. They were never released and must never be shipped or inserted.
-              #
-              # The prefix lives in $(VisualStudioDropName), which is ALSO passed to the build at
-              # /p:VisualStudioDropName - one variable referenced twice. On the 17.14 line these were
-              # two hand-written literals and they diverged: the prefix reached the upload
-              # destination only, so every payload URL inside the delivered .vsman 404'd.
               - task: 1ES.MicroBuildVstsDrop@1
                 displayName: Upload VSTS Drop
                 inputs:
                   dropName: $(VisualStudioDropName)
                   dropFolder: 'artifacts\VSSetup\Release\Insertion'
                   accessToken: $(_DevDivDropAccessToken)
-                condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+                condition: succeeded()
 
               - task: 1ES.PublishBuildArtifacts@1
                 displayName: Publish Artifact VSSetup
@@ -449,15 +315,10 @@ extends:
             LclSource: lclFilesfromPackage
             LclPackageId: 'LCL-JUNO-PROD-VSTEST'
 
-    - ${{ if and(eq(variables['System.TeamProjectId'], '7ea9116e-9fac-403d-b258-b31fcf1bb293'), eq(variables['Build.Repository.ID'], 'ef257391-4d76-4240-8649-3f21ac49c392'), eq(variables['Build.SourceBranch'], 'refs/heads/internal/rel/17.12'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-      # Keep NuGet validation of every package; only signing excludes the unsigned
-      # source-build transport package, as the historical Arcade template did.
-      - template: /eng/ValidateSourceBuildIntermediate.yml@self
-      - template: /eng/common/templates-official/post-build/post-build.yml@self
-        parameters:
-          publishingInfraVersion: 3
-          requireDefaultChannels: true
-          enableSigningValidation: false
-          enableNugetValidation: false
-          validateDependsOn:
-          - Validate
+    - template: eng\common\templates-official\post-build\post-build.yml@self
+      parameters:
+        publishingInfraVersion: 3
+        SDLValidationParameters:
+          enable: false
+          continueOnError: false
+          params: ' -SourceToolsList @("policheck","credscan")'

@@ -7,8 +7,8 @@ using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
 using Microsoft.TestPlatform.TestUtilities;
@@ -49,7 +49,7 @@ public class Build : IntegrationTestBase
 
     private static void CopyAndPatchDotnet()
     {
-        var patchedDotnetDir = IntegrationTestEnvironment.PatchedDotnetDirectory;
+        var patchedDotnetDir = Path.GetFullPath(Path.Combine(Root, "artifacts", "tmp", ".dotnet"));
 
         // Copy dotnet.
         DirectoryUtils.CopyDirectory(new DirectoryInfo(DotnetDir), new DirectoryInfo(patchedDotnetDir));
@@ -59,9 +59,9 @@ public class Build : IntegrationTestBase
         var packageName = $"Microsoft.TestPlatform.Build.{netTestSdkVersion}.nupkg";
         var packagePath = Path.GetFullPath(Path.Combine(IntegrationTestEnvironment.PublishDirectory, packageName));
 
-        // e.g. artifacts\tmp\.dotnet-a1b2c3d4\sdk\
+        // e.g. artifacts\tmp\.dotnet\sdk\
         var sdkDirectory = Path.Combine(patchedDotnetDir, "sdk");
-        // e.g. artifacts\tmp\.dotnet-a1b2c3d4\sdk\8.0.100-preview.6.23330.14
+        // e.g. artifacts\tmp\.dotnet\sdk\8.0.100-preview.6.23330.14
         var dotnetSdkDirectory = Directory.GetDirectories(sdkDirectory).Single();
         DirectoryUtils.CopyDirectory(Path.Combine(packagePath, "lib", "netstandard2.0"), dotnetSdkDirectory);
         DirectoryUtils.CopyDirectory(Path.Combine(packagePath, "runtimes", "any", "native"), dotnetSdkDirectory);
@@ -182,10 +182,7 @@ public class Build : IntegrationTestBase
 
             File.Copy(Path.Combine(testAssetsDir, "Directory.Build.targets"), Path.Combine(generated, "Directory.Build.targets"));
 
-            // The .NET 10+ solution template defaults to the .slnx format, but generatedSln above
-            // is a classic .sln path, so the following 'sln add' would not find the file. Pin the
-            // format rather than letting the installed SDK decide it.
-            ExecuteApplication2(Dotnet, $"""new sln --format sln --name CompatibilityTestAssets --output "{generated}""");
+            ExecuteApplication2(Dotnet, $"""new sln --name CompatibilityTestAssets --output "{generated}""");
 
             var projectsToAdd = new List<string>();
             foreach (var project in projects)

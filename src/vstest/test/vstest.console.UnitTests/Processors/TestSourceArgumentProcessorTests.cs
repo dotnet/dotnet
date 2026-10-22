@@ -14,7 +14,6 @@ using Moq;
 using vstest.console.Internal;
 
 namespace Microsoft.VisualStudio.TestPlatform.CommandLine.UnitTests.Processors;
-
 // <summary>
 // Tests for TestSourceArgumentProcessor
 // </summary>

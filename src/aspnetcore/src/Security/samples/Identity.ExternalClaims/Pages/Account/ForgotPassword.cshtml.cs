@@ -49,13 +49,7 @@ public class ForgotPasswordModel : PageModel
             // visit https://go.microsoft.com/fwlink/?LinkID=532713
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             var callbackUrl = Url.ResetPasswordCallbackLink(user.Id, code, Request.Scheme);
-            var storedEmail = await _userManager.GetEmailAsync(user);
-            if (string.IsNullOrEmpty(storedEmail))
-            {
-                throw new InvalidOperationException("Users must have an email.");
-            }
-
-            await _emailSender.SendResetPasswordAsync(storedEmail, callbackUrl);
+            await _emailSender.SendResetPasswordAsync(Input.Email, callbackUrl);
             return RedirectToPage("./ForgotPasswordConfirmation");
         }
 

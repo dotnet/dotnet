@@ -55,31 +55,31 @@ LEAF_ENTRY ResolveWorkerChainLookupAsmStub, _TEXT
         mov     rax, BACKPATCH_FLAG  // First we check if r11 has the BACKPATCH_FLAG set
         and     rax, r11             // Set the flags based on (BACKPATCH_FLAG and r11)
         pop     rax                  // pop the pointer to the ResolveCacheElem from the top of stack (leaving the flags unchanged)
-        jnz     LOCAL_LABEL(Fail_RWCLAS)          // If the BACKPATCH_FLAGS is set we will go directly to the ResolveWorkerAsmStub
+        jnz     Fail_RWCLAS          // If the BACKPATCH_FLAGS is set we will go directly to the ResolveWorkerAsmStub
 
-LOCAL_LABEL(MainLoop_RWCLAS):
+MainLoop_RWCLAS:
         mov     rax, [rax+0x18]   // get the next entry in the chain (don't bother checking the first entry again)
         test    rax,rax          // test if we hit a terminating NULL
-        jz      LOCAL_LABEL(Fail_RWCLAS)
+        jz      Fail_RWCLAS
 
         cmp    rdx, [rax+0x00]    // compare our MT with the one in the ResolveCacheElem
-        jne    LOCAL_LABEL(MainLoop_RWCLAS)
+        jne    MainLoop_RWCLAS
         cmp    r10, [rax+0x08]    // compare our DispatchToken with one in the ResolveCacheElem
-        jne    LOCAL_LABEL(MainLoop_RWCLAS)
-LOCAL_LABEL(Success_RWCLAS):
+        jne    MainLoop_RWCLAS
+Success_RWCLAS:
         PREPARE_EXTERNAL_VAR CHAIN_SUCCESS_COUNTER, rdx
         sub    qword ptr [rdx],1 // decrement success counter
-        jl     LOCAL_LABEL(Promote_RWCLAS)
+        jl     Promote_RWCLAS
         mov    rax, [rax+0x10]    // get the ImplTarget
         pop    rdx
         jmp    rax
 
-LOCAL_LABEL(Promote_RWCLAS):                  // Move this entry to head position of the chain
+Promote_RWCLAS:                  // Move this entry to head position of the chain
         // be quick to reset the counter so we don't get a bunch of contending threads
         mov    qword ptr [rdx], INITIAL_SUCCESS_COUNT
         or     r11, PROMOTE_CHAIN_FLAG
         mov    r10, rax          // We pass the ResolveCacheElem to ResolveWorkerAsmStub instead of the DispatchToken
-LOCAL_LABEL(Fail_RWCLAS):
+Fail_RWCLAS:
         pop    rdx               // Restore the original saved rdx value
         push   r10               // pass the DispatchToken or ResolveCacheElem to promote to ResolveWorkerAsmStub
 

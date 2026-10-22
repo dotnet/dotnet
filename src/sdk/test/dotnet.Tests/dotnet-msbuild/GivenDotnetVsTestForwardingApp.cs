@@ -3,7 +3,6 @@
 
 namespace Microsoft.DotNet.Cli.MSBuild.Tests
 {
-    [Collection(TestConstants.UsesStaticTelemetryState)]
     public class GivenDotnetVsTestForwardingApp
     {
         [Fact]

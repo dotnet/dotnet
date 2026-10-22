@@ -124,20 +124,7 @@
 
     <file src="net462\Newtonsoft.Json.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
 
-    <!-- This exclude list dates from when this line pinned Microsoft.Extensions.DependencyModel
-         6.0.0, which depends on System.Text.Json, so System.Text.Json.dll and
-         System.Text.Encodings.Web.dll landed in the net462 output and the src="net462\System*.dll"
-         glob below swept them into the package. Measured then: this package packed 473 entries
-         where verify-nupkgs expects 471, and the 2 extras were exactly those files. The shipped
-         Microsoft.TestPlatform.CLI 17.12.0 has 472 entries, minus its .signature.p7s = 471 (verify
-         runs before signing), and contains NEITHER file - so excluding them RESTORES parity with
-         what shipped rather than changing it. The pin is now 3.1.0, whose net451 dependency group
-         is Newtonsoft.Json and NOT System.Text.Json, so the two names should no longer reach the
-         net462 output at all and these two entries become no-ops. They are kept because
-         rel/17.14, rel/18.0 and rel/18.7 carry these same two names in this same exclude list, so
-         this is the upstream pattern rather than a local invention - and because a no-op exclude
-         cannot change the packed count either way. -->
-    <file src="net462\System*.dll" exclude="net462\System.Buffers.dll;net462\System.ComponentModel.Composition.dll;net462\System.Memory.dll;net462\System.Numerics.Vectors.dll;net462\System.Runtime.CompilerServices.Unsafe.dll;net462\System.Threading.Tasks.Extensions.dll;net462\System.Diagnostics.DiagnosticSource.dll;net462\System.Text.Json.dll;net462\System.Text.Encodings.Web.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
+    <file src="net462\System*.dll" exclude="net462\System.Buffers.dll;net462\System.ComponentModel.Composition.dll;net462\System.Memory.dll;net462\System.Numerics.Vectors.dll;net462\System.Runtime.CompilerServices.Unsafe.dll;net462\System.Threading.Tasks.Extensions.dll;net462\System.Diagnostics.DiagnosticSource.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
     <file src="net462\netstandard.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
     <file src="net462\Microsoft.Win32.Primitives.dll" target="contentFiles\any\netcoreapp3.1\TestHostNetFramework" />
 

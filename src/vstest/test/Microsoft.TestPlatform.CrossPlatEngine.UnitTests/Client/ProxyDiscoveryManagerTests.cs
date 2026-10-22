@@ -43,7 +43,6 @@ public class ProxyDiscoveryManagerTests : ProxyBaseManagerTests
     public ProxyDiscoveryManagerTests()
     {
         _mockRequestSender = new Mock<ITestRequestSender>();
-        _mockRequestSender.As<IConnectionValidationConfigurable>();
         _mockRequestData = new Mock<IRequestData>();
         _mockMetricsCollection = new Mock<IMetricsCollection>();
         _mockFileHelper = new Mock<IFileHelper>();

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -9,7 +9,6 @@ using Microsoft.TestPlatform.CommunicationUtilities.UnitTests.TestDoubles;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
-using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,52 +25,27 @@ public class DataCollectionTestCaseEventSenderTests
     private readonly DataCollectionTestCaseEventSender _dataCollectionTestCaseEventSender;
     private readonly Mock<ICommunicationManager> _mockCommunicationManager;
     private readonly TestCase _testCase = new("hello", new Uri("world://how"), "1.dll");
-    private const string TestHostChannelSecrets = "child-secret:parent-secret";
 
     public DataCollectionTestCaseEventSenderTests()
     {
         _mockCommunicationManager = new Mock<ICommunicationManager>();
-        _mockCommunicationManager.As<IConnectionAuthenticationResponder>();
         _dataCollectionTestCaseEventSender = new TestableDataCollectionTestCaseEventSender(_mockCommunicationManager.Object, JsonDataSerializer.Instance);
     }
 
     [TestMethod]
     public void InitializeShouldInitializeCommunicationManager()
     {
-        using var _ = ResetableEnvironment.SetEnvironmentVariable(EnvironmentHelper.VstestDataCollectionConnectionSecrets, TestHostChannelSecrets);
-
         _dataCollectionTestCaseEventSender.InitializeCommunication(123);
 
         _mockCommunicationManager.Verify(x => x.SetupClientAsync(new IPEndPoint(IPAddress.Loopback, 123)), Times.Once);
-        _mockCommunicationManager.As<IConnectionAuthenticationResponder>()
-            .Verify(x => x.UseConnectionSecretsAsChild(TestHostChannelSecrets), Times.Once);
     }
 
     [TestMethod]
     public void InitializeShouldThrowExceptionIfThrownByCommunicationManager()
     {
-        using var _ = ResetableEnvironment.SetEnvironmentVariable(EnvironmentHelper.VstestDataCollectionConnectionSecrets, TestHostChannelSecrets);
         _mockCommunicationManager.Setup(x => x.SetupClientAsync(It.IsAny<IPEndPoint>())).Throws<Exception>();
 
         Assert.ThrowsException<Exception>(() => _dataCollectionTestCaseEventSender.InitializeCommunication(123));
-    }
-
-    /// <summary>
-    /// The testhost receives this pair from vstest.console. Without it there is no unauthenticated
-    /// mode to fall back to, so it must say what is missing rather than wait out the timeout.
-    /// </summary>
-    [TestMethod]
-    public void InitializeShouldFailWhenTheSecretsAreMissing()
-    {
-        using var _ = ResetableEnvironment.SetEnvironmentVariable(EnvironmentHelper.VstestDataCollectionConnectionSecrets, null);
-
-        var error = Assert.ThrowsException<PeerProcessValidationException>(
-            () => _dataCollectionTestCaseEventSender.InitializeCommunication(123)).Message;
-
-        StringAssert.Contains(error, "testhost failed to connect to the parent process");
-
-        StringAssert.Contains(error, "https://aka.ms/vstest/negotiation-error");
-        _mockCommunicationManager.Verify(x => x.SetupClientAsync(It.IsAny<IPEndPoint>()), Times.Never);
     }
 
     [TestMethod]

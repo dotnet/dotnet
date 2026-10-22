@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.TestPlatform.VsTestConsole.TranslationLayer.Interfaces;
-using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Tracing.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
@@ -56,7 +55,6 @@ public class VsTestConsoleWrapperTests
         _mockRequestSender.Setup(rs => rs.WaitForRequestHandlerConnection(It.IsAny<int>())).Returns(true);
         _mockRequestSender.Setup(rs => rs.InitializeCommunication()).Returns(100);
         _mockRequestSender.Setup(rs => rs.InitializeCommunicationAsync(It.IsAny<int>())).Returns(Task.FromResult(100));
-        _mockProcessManager.Setup(pm => pm.SupportsConnectionSecrets).Returns(true);
     }
 
     [TestMethod]
@@ -79,46 +77,6 @@ public class VsTestConsoleWrapperTests
         Assert.AreEqual(TraceLevel.Verbose, _consoleParameters.TraceLevel, "Default value of trace level should be verbose.");
 
         _mockProcessManager.Verify(pm => pm.StartProcess(_consoleParameters), Times.Once);
-    }
-
-    [TestMethod]
-    public void StartSessionShouldArmConnectionSecretsAndPassItToConsoleViaEnvironmentVariable()
-    {
-        _mockProcessManager.Setup(pm => pm.SupportsConnectionSecrets).Returns(true);
-        string? capturedSecrets = null;
-        _mockRequestSender.Setup(rs => rs.UseConnectionSecrets(It.IsAny<string>())).Callback<string>(n => capturedSecrets = n);
-
-        _consoleWrapper.StartSession();
-
-        _mockRequestSender.Verify(rs => rs.RequireConnectionValidation(), Times.Once);
-        _mockRequestSender.Verify(rs => rs.UseConnectionSecrets(It.IsAny<string>()), Times.Once);
-        Assert.IsFalse(string.IsNullOrEmpty(capturedSecrets), "A secret pair must be generated and armed on the request sender.");
-        Assert.IsTrue(
-            _consoleParameters.EnvironmentVariables.TryGetValue(EnvironmentHelper.VstestDesignModeConnectionSecrets, out var envSecrets),
-            "The connection secrets must be passed to vstest.console via an environment variable, never argv.");
-        Assert.AreEqual(capturedSecrets, envSecrets, "The pair armed on the request sender must be the same one passed to the console via the environment variable.");
-    }
-
-    /// <summary>
-    /// There is no unauthenticated mode, so an older vstest.console is refused with a message that
-    /// names the component and the version to move to, rather than left to time out.
-    /// </summary>
-    [TestMethod]
-    public void StartSessionShouldRefuseAConsoleThatDoesNotSupportConnectionSecrets()
-    {
-        _mockProcessManager.Setup(pm => pm.SupportsConnectionSecrets).Returns(false);
-        _mockProcessManager.Setup(pm => pm.ProcessVersion).Returns("17.0.0");
-
-        var error = Assert.ThrowsException<TransationLayerException>(() => _consoleWrapper.StartSession()).Message;
-
-        StringAssert.Contains(error, "17.0.0");
-        StringAssert.Contains(error, "https://aka.ms/vstest/negotiation-error");
-        _mockRequestSender.Verify(rs => rs.UseConnectionSecrets(It.IsAny<string>()), Times.Never);
-        _mockRequestSender.Verify(rs => rs.CannotValidateConnection(error), Times.Once);
-        _mockProcessManager.Verify(
-            pm => pm.StartProcess(It.IsAny<ConsoleParameters>()),
-            Times.Never,
-            "A console that cannot be validated must not be started at all.");
     }
 
     [TestMethod]

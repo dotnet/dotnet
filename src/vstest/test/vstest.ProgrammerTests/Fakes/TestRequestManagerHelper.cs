@@ -7,7 +7,6 @@ using Microsoft.VisualStudio.TestPlatform.CommandLine.TestPlatformHelpers;
 
 #pragma warning disable IDE1006 // Naming Styles
 namespace vstest.ProgrammerTests.Fakes;
-
 #pragma warning restore IDE1006 // Naming Styles
 
 internal class TestRequestManagerTestHelper

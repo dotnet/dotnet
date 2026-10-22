@@ -338,13 +338,6 @@
       <Ngen>false</Ngen>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.TestPlatform\Microsoft.TestPlatform.csproj">
-      <!-- The VSIX itself builds as $(NetFrameworkMinimum) (net462), but every path it reads out of
-           $(TestPlatformBinFolder) is the net472 output, and Microsoft.TestPlatform's CopyFiles target
-           that populates those per-package subfolders is conditioned on TargetFramework == net472.
-           Without pinning the TFM here the reference resolves to the net462 leg, so the net472 folder
-           is not guaranteed to exist when the VSIX is packed and VSSDK1025 fails on the first literal
-           VsixSourceItem. -->
-      <SetTargetFramework>TargetFramework=net472</SetTargetFramework>
       <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
       <ExcludeAssets>all</ExcludeAssets>
       <Private>False</Private>

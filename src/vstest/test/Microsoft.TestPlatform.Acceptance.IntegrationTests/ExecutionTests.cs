@@ -3,16 +3,15 @@
 
 using System;
 using System.IO;
-using System.Linq;
-
-using FluentAssertions;
 
 using Microsoft.TestPlatform.TestUtilities;
-using Microsoft.VisualStudio.TestPlatform.Common;
-using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 
 using TestPlatform.TestUtilities;
+using System.Linq;
+using Microsoft.VisualStudio.TestPlatform.Common;
+using FluentAssertions;
 
 namespace Microsoft.TestPlatform.AcceptanceTests;
 
@@ -21,7 +20,6 @@ public class ExecutionTests : AcceptanceTestBase
 {
     //TODO: It looks like the first 3 tests would be useful to multiply by all 3 test frameworks, should we make the test even more generic, or duplicate them?
     [TestMethod]
-    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [MSTestCompatibilityDataSource(InProcess = true)]
     public void RunMultipleTestAssemblies(RunnerInfo runnerInfo)
@@ -39,7 +37,6 @@ public class ExecutionTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [TestPlatformCompatibilityDataSource]
     public void RunTestsFromMultipleMSTestAssemblies(RunnerInfo runnerInfo)
@@ -57,7 +54,6 @@ public class ExecutionTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [TestHostCompatibilityDataSource]
     public void RunMultipleMSTestAssembliesOnVstestConsoleAndTesthostCombinations(RunnerInfo runnerInfo)
@@ -75,7 +71,6 @@ public class ExecutionTests : AcceptanceTestBase
     }
 
     [TestMethod]
-    [TestCategory("Compatibility")]
     [TestCategory("Windows-Review")]
     [RunnerCompatibilityDataSource]
     public void RunMultipleMSTestAssembliesOnVstestConsoleAndTesthostCombinations2(RunnerInfo runnerInfo)
@@ -116,7 +111,6 @@ public class ExecutionTests : AcceptanceTestBase
     // and after --arch feature implementation we won't find correct muxer on CI.
     [TestCategory("Windows")]
     [TestMethod]
-    [TestCategory("Compatibility")]
     [MSTestCompatibilityDataSource]
     public void RunMultipleTestAssembliesInParallel(RunnerInfo runnerInfo)
     {

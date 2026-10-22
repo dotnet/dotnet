@@ -288,32 +288,6 @@ public class TestRequestSenderTests
         Assert.AreEqual(message, TimoutErrorMessage);
     }
 
-    [TestMethod]
-    public void CheckVersionWithTestHostShouldSucceedWhenTestHostSendsOnlyVersion()
-    {
-        // The identity handshake happens in the transport, before this point, so the version
-        // exchange itself sees only a plain version response.
-        SetupRaiseOnlyVersionOnSend();
-        SetupFakeCommunicationChannel();
-
-        _testRequestSender.CheckVersionWithTestHost();
-
-        _mockChannel.Verify(mc => mc.Send(It.IsAny<string>()), Times.Once);
-    }
-
-    [TestMethod]
-    public void CheckVersionWithTestHostShouldTolerateTestMessageBeforeVersion()
-    {
-        // A test (log) message arriving before the version response is ignored, and the exchange
-        // completes on the version message.
-        SetupRaiseTestMessageThenVersionOnSend();
-        SetupFakeCommunicationChannel();
-
-        _testRequestSender.CheckVersionWithTestHost();
-
-        _mockChannel.Verify(mc => mc.Send(It.IsAny<string>()), Times.Once);
-    }
-
     #endregion
 
     #region Discovery Protocol Tests
@@ -949,54 +923,6 @@ public class TestRequestSenderTests
     private void SetupRaiseMessageReceivedOnCheckVersion()
     {
         _mockChannel.Setup(mc => mc.Send(It.IsAny<string>())).Callback(RaiseMessageReceivedEvent);
-    }
-
-    private void SetupRaiseHandshakeThenVersionOnSend(string secretToSendBack, int negotiatedVersion = Dummynegotiatedprotocolversion)
-    {
-        // Emulate a testhost that, on receiving the version request, sends back a connection secrets
-        // message first and then the version response (the order the runner enforces).
-        const string handshakeData = "handshakeData";
-        const string versionData = "versionData";
-
-        _mockDataSerializer.Setup(ds => ds.DeserializeMessage(handshakeData)).Returns(new Message { MessageType = MessageType.Handshake });
-        _mockDataSerializer.Setup(ds => ds.DeserializeMessage(versionData)).Returns(new Message { MessageType = MessageType.VersionCheck });
-        _mockDataSerializer.Setup(ds => ds.DeserializePayload<HandshakePayload>(It.Is<Message>(m => m.MessageType == MessageType.Handshake))).Returns(new HandshakePayload { Secret = secretToSendBack });
-        _mockDataSerializer.Setup(ds => ds.DeserializePayload<int>(It.Is<Message>(m => m.MessageType == MessageType.VersionCheck))).Returns(negotiatedVersion);
-
-        _mockChannel.Setup(mc => mc.Send(It.IsAny<string>())).Callback(() =>
-        {
-            _mockChannel.Object.MessageReceived.Notify(_mockChannel.Object, new MessageReceivedEventArgs { Data = handshakeData }, nameof(SetupRaiseHandshakeThenVersionOnSend));
-            _mockChannel.Object.MessageReceived.Notify(_mockChannel.Object, new MessageReceivedEventArgs { Data = versionData }, nameof(SetupRaiseHandshakeThenVersionOnSend));
-        });
-    }
-
-    private void SetupRaiseOnlyVersionOnSend(int negotiatedVersion = Dummynegotiatedprotocolversion)
-    {
-        // Emulate a testhost that sends only the version response (no connection secrets).
-        const string versionData = "versionData";
-
-        _mockDataSerializer.Setup(ds => ds.DeserializeMessage(versionData)).Returns(new Message { MessageType = MessageType.VersionCheck });
-        _mockDataSerializer.Setup(ds => ds.DeserializePayload<int>(It.Is<Message>(m => m.MessageType == MessageType.VersionCheck))).Returns(negotiatedVersion);
-
-        _mockChannel.Setup(mc => mc.Send(It.IsAny<string>())).Callback(() => _mockChannel.Object.MessageReceived.Notify(_mockChannel.Object, new MessageReceivedEventArgs { Data = versionData }, nameof(SetupRaiseOnlyVersionOnSend)));
-    }
-
-    private void SetupRaiseTestMessageThenVersionOnSend(int negotiatedVersion = Dummynegotiatedprotocolversion)
-    {
-        // Emulate a testhost that sends a test (log) message before its version response, with no
-        // connection secrets in between.
-        const string testMessageData = "testMessageData";
-        const string versionData = "versionData";
-
-        _mockDataSerializer.Setup(ds => ds.DeserializeMessage(testMessageData)).Returns(new Message { MessageType = MessageType.TestMessage });
-        _mockDataSerializer.Setup(ds => ds.DeserializeMessage(versionData)).Returns(new Message { MessageType = MessageType.VersionCheck });
-        _mockDataSerializer.Setup(ds => ds.DeserializePayload<int>(It.Is<Message>(m => m.MessageType == MessageType.VersionCheck))).Returns(negotiatedVersion);
-
-        _mockChannel.Setup(mc => mc.Send(It.IsAny<string>())).Callback(() =>
-        {
-            _mockChannel.Object.MessageReceived.Notify(_mockChannel.Object, new MessageReceivedEventArgs { Data = testMessageData }, nameof(SetupRaiseTestMessageThenVersionOnSend));
-            _mockChannel.Object.MessageReceived.Notify(_mockChannel.Object, new MessageReceivedEventArgs { Data = versionData }, nameof(SetupRaiseTestMessageThenVersionOnSend));
-        });
     }
 
     private void ResetRaiseMessageReceivedOnCheckVersion()

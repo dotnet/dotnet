@@ -63,8 +63,7 @@ public class MultipartReader
     }
 
     /// <summary>
-    /// The limit for the number of header lines to read per multipart section.
-    /// Headers with the same name count separately.
+    /// The limit for the number of headers to read.
     /// </summary>
     public int HeadersCountLimit { get; set; } = DefaultHeadersCountLimit;
 
@@ -124,7 +123,7 @@ public class MultipartReader
             var name = line.Substring(0, splitIndex);
             var value = line.Substring(splitIndex + 1, line.Length - splitIndex - 1).Trim();
             accumulator.Append(name, value);
-            if (accumulator.ValueCount > HeadersCountLimit)
+            if (accumulator.KeyCount > HeadersCountLimit)
             {
                 throw new InvalidDataException($"Multipart headers count limit {HeadersCountLimit} exceeded.");
             }

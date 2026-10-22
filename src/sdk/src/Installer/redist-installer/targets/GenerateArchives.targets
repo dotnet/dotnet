@@ -25,7 +25,6 @@
         SourceDirectory="$(RedistLayoutPath)"
         DestinationArchive="$(ArtifactsShippingPackagesDir)$(ArtifactNameWithVersionCombinedHostHostFxrFrameworkSdk).tar.gz"
         OverwriteDestination="true"
-        NormalizeSourceBuildOwnership="$(DotNetBuildSourceOnly)"
         IgnoreExitCode="$(IgnoreTarExitCode)" />
   </Target>
 

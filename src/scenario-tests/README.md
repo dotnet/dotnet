@@ -40,10 +40,3 @@ Optionally, for SxS SDK installations, a `-sdk-version` option may be used to ov
 For other options, see the help of the scenario test harness:
 
 `dotnet <test dll> --help`
-
-For private SDK builds, `TestSdkPackageVersion` optionally selects a compatible
-`Microsoft.NET.Test.Sdk` package for generated xUnit, NUnit, and MSTest projects.
-Other templates retain their normal `dotnet test` behavior without requiring a
-Test SDK package reference. The selected package and its dependencies must be
-available from the test's NuGet sources. This is distinct from `TestSdkVersion`,
-which selects the SDK installation.

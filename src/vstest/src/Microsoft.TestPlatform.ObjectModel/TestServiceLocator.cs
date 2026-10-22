@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 
 namespace Microsoft.VisualStudio.TestPlatform.ObjectModel;
-
 #pragma warning disable RS0016 // Add public types and members to the declared API
 #pragma warning disable RS0037 // Enable tracking of nullability of reference types in the declared API
 

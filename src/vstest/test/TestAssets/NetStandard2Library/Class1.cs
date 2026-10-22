@@ -4,7 +4,6 @@
 using System;
 
 namespace NetStandard2Library;
-
 public class Class1
 {
 

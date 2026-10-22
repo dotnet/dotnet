@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -32,16 +30,8 @@ public class Message
     /// <returns> The <see cref="string"/>. </returns>
     public override string ToString()
     {
-        // Redact by scanning for property names that look like they hold a secret, rather than by
-        // listing the message types that carry one. A list has to be updated whenever a message or a
-        // variable is added or renamed, and the one time it is not, the value lands in a log. This
-        // covers the handshake secret, and the environment blocks that other messages carry to a
-        // child process.
-        //
-        // This line has no RawMessage, so the payload is redacted after it is serialized rather than
-        // before it is parsed. The output keeps the shape this line has always produced.
         // TODO: Review where this is used, we should avoid extensive serialization and deserialization,
         // and this might be happening in multiple places that are not the edge of our process.
-        return $"({MessageType}) -> {(Payload == null ? "null" : SecretRedaction.RedactSecretsInJson(Payload.ToString(Formatting.Indented)))}";
+        return $"({MessageType}) -> {(Payload == null ? "null" : Payload.ToString(Formatting.Indented))}";
     }
 }

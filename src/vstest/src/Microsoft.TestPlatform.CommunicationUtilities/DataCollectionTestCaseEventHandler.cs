@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -48,20 +48,8 @@ internal class DataCollectionTestCaseEventHandler : IDataCollectionTestCaseEvent
     }
 
     /// <inheritdoc />
-    public string? ConnectionValidationError
-        => (_communicationManager as IConnectionValidationConfigurable)?.ConnectionValidationError;
-
-    /// <inheritdoc />
-    public int InitializeCommunication(string connectionSecrets)
+    public int InitializeCommunication()
     {
-        if (string.IsNullOrWhiteSpace(connectionSecrets))
-        {
-            throw new ArgumentException("The connection secrets cannot be empty.", nameof(connectionSecrets));
-        }
-
-        var validator = GetConnectionValidator();
-        validator.RequireConnectionValidation();
-        validator.UseConnectionSecrets(connectionSecrets);
         var endpoint = _communicationManager.HostServer(new IPEndPoint(IPAddress.Loopback, 0));
         _communicationManager.AcceptClientAsync();
         return endpoint.Port;
@@ -161,9 +149,4 @@ internal class DataCollectionTestCaseEventHandler : IDataCollectionTestCaseEvent
         }
         while (!isSessionEnd);
     }
-
-    private IConnectionValidationConfigurable GetConnectionValidator()
-        => _communicationManager as IConnectionValidationConfigurable
-            ?? throw new PeerProcessValidationException(
-                "The test-case event communication transport cannot validate the peer connection.");
 }

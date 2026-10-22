@@ -49,7 +49,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Microsoft.AspNetCore.Http.Connections.Tests;
 
-public partial class HttpConnectionDispatcherTests : VerifiableLoggedTest
+public class HttpConnectionDispatcherTests : VerifiableLoggedTest
 {
     [Fact]
     public async Task NegotiateVersionZeroReservesConnectionIdAndReturnsIt()
