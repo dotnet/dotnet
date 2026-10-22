@@ -169,35 +169,36 @@ internal sealed class TypedCollectionConverterFactory<TCollection, TElement> : T
 
         if (type.IsInterface)
         {
-            // Match the requested interface exactly because FormDataConverter<TCollection> is invariant.
+            // At this point we are dealing with an interface. We test from the most specific to the least specific
+            // to find the best fit for the well-known set of interfaces we support.
             return type switch
             {
                 // System.Collections.Immutable
-                var _ when type == typeof(IImmutableSet<TElement>) =>
+                var _ when type.IsAssignableTo(typeof(IImmutableSet<TElement>)) =>
                     ImmutableHashSetBufferAdapter<TElement>.CreateInterfaceConverter(elementTypeConverter),
-                var _ when type == typeof(IImmutableList<TElement>) =>
+                var _ when type.IsAssignableTo(typeof(IImmutableList<TElement>)) =>
                     ImmutableListBufferAdapter<TElement>.CreateInterfaceConverter(elementTypeConverter),
-                var _ when type == typeof(IImmutableQueue<TElement>) =>
+                var _ when type.IsAssignableTo(typeof(IImmutableQueue<TElement>)) =>
                     ImmutableQueueBufferAdapter<TElement>.CreateInterfaceConverter(elementTypeConverter),
-                var _ when type == typeof(IImmutableStack<TElement>) =>
+                var _ when type.IsAssignableTo(typeof(IImmutableStack<TElement>)) =>
                     ImmutableStackBufferAdapter<TElement>.CreateInterfaceConverter(elementTypeConverter),
 
                 // System.Collections.Generics
-                var _ when type == typeof(IReadOnlySet<TElement>) =>
-                    CreateConverter<IReadOnlySet<TElement>, HashSet<TElement>>(elementTypeConverter),
-                var _ when type == typeof(IReadOnlyList<TElement>) =>
-                    CreateConverter<IReadOnlyList<TElement>, List<TElement>>(elementTypeConverter),
-                var _ when type == typeof(IReadOnlyCollection<TElement>) =>
-                    CreateConverter<IReadOnlyCollection<TElement>, List<TElement>>(elementTypeConverter),
-                var _ when type == typeof(ISet<TElement>) =>
+                var _ when type.IsAssignableTo(typeof(ISet<TElement>)) =>
                     CreateConverter<ISet<TElement>, HashSet<TElement>>(elementTypeConverter),
-                var _ when type == typeof(IList<TElement>) =>
+                var _ when type.IsAssignableTo(typeof(IList<TElement>)) =>
                     CreateConverter<IList<TElement>, List<TElement>>(elementTypeConverter),
-                var _ when type == typeof(ICollection<TElement>) =>
+                var _ when type.IsAssignableTo(typeof(ICollection<TElement>)) =>
                     CreateConverter<ICollection<TElement>, List<TElement>>(elementTypeConverter),
+                var _ when type.IsAssignableTo(typeof(IReadOnlySet<TElement>)) =>
+                    CreateConverter<IReadOnlySet<TElement>, HashSet<TElement>>(elementTypeConverter),
+                var _ when type.IsAssignableTo(typeof(IReadOnlyList<TElement>)) =>
+                    CreateConverter<IReadOnlyList<TElement>, List<TElement>>(elementTypeConverter),
+                var _ when type.IsAssignableTo(typeof(IReadOnlyCollection<TElement>)) =>
+                    CreateConverter<IReadOnlyCollection<TElement>, List<TElement>>(elementTypeConverter),
 
                 // Leave IEnumerable to last, since it's the least specific.
-                var _ when type == typeof(IEnumerable<TElement>) =>
+                var _ when type.IsAssignableTo(typeof(IEnumerable<TElement>)) =>
                     CreateConverter<IEnumerable<TElement>, List<TElement>>(elementTypeConverter),
 
                 _ => throw new InvalidOperationException($"Unable to create converter for '{type.FullName}'."),
