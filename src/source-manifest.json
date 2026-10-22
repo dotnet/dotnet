@@ -13,10 +13,10 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "9.0.22-servicing.26519.23",
+      "packageVersion": "9.0.23-servicing.26520.26",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "cc53379f74963c4509ddfa91845132146d7054aa"
+      "commitSha": "573937e97b7000064f12e508289760c71b541c2a"
     },
     {
       "packageVersion": "0.11.5-alpha.26418.4",
@@ -49,10 +49,10 @@
       "commitSha": "0caa924feff539f20ce395ab296ae87e5c6e8999"
     },
     {
-      "packageVersion": "9.0.22-servicing.26508.5",
+      "packageVersion": "9.0.23-servicing.26520.1",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "a84b7393bb5e3c30caf5fc50752c732913cc1fce"
+      "commitSha": "5a21e41bb1189fc3162a1d036bbbea6104c2c64c"
     },
     {
       "packageVersion": "9.0.101-beta.25070.7",
@@ -91,10 +91,10 @@
       "commitSha": "b9b54526b7908ea519b503196100a34dd2e52374"
     },
     {
-      "packageVersion": "9.0.22-servicing.26518.10",
+      "packageVersion": "9.0.23-servicing.26521.20",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "66d05fc4b82bdd1957db651a70be5e8296e1470f"
+      "commitSha": "9ac7dc7b2b730d687e7973a25b58d667eef41e5b"
     },
     {
       "packageVersion": "9.0.0-preview.26469.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "8778b65b4af77327403799d80638dfb68a5881af"
+      "commitSha": "ca866d286705a058d78eebb3bcc353853d158069"
     },
     {
       "packageVersion": "9.0.0-alpha.1.26501.2",
