@@ -152,14 +152,13 @@ jobs:
       workingDirectory: $(Build.StagingDirectory)
 
   - ${{ if ne(variables['System.TeamProject'], 'public') }}:
-    - script: cp "$(sourcesPath)/src/installer/NuGet.config" "$(sourcesPath)/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config"
-      displayName: Copy Test NuGet Config
-
-    - task: Bash@3
-      displayName: Setup Private Feeds Credentials
-      inputs:
-        filePath: $(sourcesPath)/src/installer/eng/common/SetupNugetSources.sh
-        arguments: $(sourcesPath)/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config $Token
+    - script: |
+        set -euo pipefail
+        config="$(sourcesPath)/test/Microsoft.DotNet.SourceBuild.SmokeTests/assets/online.NuGet.Config"
+        cp "$(sourcesPath)/src/installer/NuGet.config" "$config"
+        bash "$(sourcesPath)/src/installer/eng/common/SetupNugetSources.sh" "$config" "$Token"
+        cp "$config" "$(sourcesPath)/test/NuGet.config"
+      displayName: Setup Private Feeds for Smoke Tests
       env:
         # The smoke tests restore from internal darc-int feeds while running inside a container, so the
         # Azure Artifacts credential provider on the host agent is unreachable. Instead, embed a valid
@@ -271,12 +270,21 @@ jobs:
       dockerVolumeArgs="-v $(sourcesPath):/vmr"
       dockerEnvArgs="-e SMOKE_TESTS_EXCLUDE_OMNISHARP=${{ parameters.excludeOmniSharpTests }} -e SMOKE_TESTS_WARN_SDK_CONTENT_DIFFS=true -e SMOKE_TESTS_RUNNING_IN_CI=true"
       poisonArg=''
+      extraBuildProperties=''
+
+      if [[ '$(System.TeamProject)' == 'internal' ]]; then
+        testSdkHotfixVersion='17.8.1-hotfix-26509-15'
+        extraBuildProperties="$extraBuildProperties /p:SmokeTestsTestSdkVersion=$testSdkHotfixVersion"
+        if [[ -n '${{ parameters.reuseBuildArtifactsFrom }}' && '${{ parameters.withPreviousSDK }}' != 'True' ]]; then
+          extraBuildProperties="$extraBuildProperties /p:MicrosoftNETTestSdkVersion=$testSdkHotfixVersion"
+        fi
+      fi
 
       if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
         poisonArg='--poison'
       fi
 
-      docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed ${{ parameters.extraProperties }}
+      docker run --rm $dockerVolumeArgs -w /vmr $dockerEnvArgs ${{ parameters.container }} ./build.sh $poisonArg --run-smoke-test $(additionalBuildArgs) -- -p:SmokeTestConsoleVerbosity=detailed $extraBuildProperties ${{ parameters.extraProperties }}
     displayName: Run Tests
 
   # Don't use CopyFiles@2 as it encounters permissions issues because it indexes all files in the source directory graph.

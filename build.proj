@@ -202,6 +202,8 @@
             SMOKE_TESTS_TARGET_RID=$(TargetRid);
             SMOKE_TESTS_PORTABLE_RID=$(PortableRid);
             SMOKE_TESTS_CUSTOM_PACKAGES_PATH=$(CustomSourceBuiltPackagesPath);
+            SMOKE_TESTS_TEST_SDK_VERSION=$(SmokeTestsTestSdkVersion);
+            MicrosoftNETTestSdkVersion=$(MicrosoftNETTestSdkVersion);
             $(CustomTestEnvVars)" />
   </Target>
 
