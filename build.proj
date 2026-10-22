@@ -95,7 +95,7 @@
       <UnifiedSymbolsTarball>$(OutputPath)dotnet-symbols-all-$(MicrosoftSourceBuildIntermediateInstallerVersion)-$(TargetRid).tar.gz</UnifiedSymbolsTarball>
     </PropertyGroup>
 
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(UnifiedSymbolsTarball) *"
+    <Exec Command="tar --numeric-owner -czf $(UnifiedSymbolsTarball) *"
           WorkingDirectory="$(UnifiedSymbolsLayout)" />
 
     <Message Importance="High" Text="Packaged all symbols in '$(UnifiedSymbolsTarball)'" />
@@ -125,7 +125,7 @@
                             SdkSymbolsLayoutPath="$(SdkSymbolsLayout)"
                             FailOnMissingPDBs="true" />
 
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(SdkSymbolsTarball) *"
+    <Exec Command="tar --numeric-owner -czf $(SdkSymbolsTarball) *"
           WorkingDirectory="$(SdkSymbolsLayout)" />
 
     <Message Importance="High" Text="Packaged sdk symbols in '$(SdkSymbolsTarball)'" />
@@ -236,7 +236,7 @@
     <Copy SourceFiles="@(SmokeTestsPrereqs)"
           DestinationFolder="$(SmokeTestsPrereqPackagesDir)" />
 
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -czf $(SmokeTestPrereqsTarballName) ."
+    <Exec Command="tar --numeric-owner -czf $(SmokeTestPrereqsTarballName) ."
           WorkingDirectory="$(SmokeTestsPrereqPackagesDir)"/>
 
     <Message Importance="High" Text="Packaged smoke-test prereqs in '$(SmokeTestPrereqsTarballName)'" />
@@ -290,7 +290,7 @@
       <TarballWorkingDir>$(ResultingPrebuiltPackagesDir)</TarballWorkingDir>
     </PropertyGroup>
 
-    <Exec Command="tar --numeric-owner --owner=2001 --group=2001 -zcf $(TarballFilePath) -C $(TarballWorkingDir) ." />
+    <Exec Command="tar --numeric-owner -zcf $(TarballFilePath) -C $(TarballWorkingDir) ." />
 
     <Message Text="Tarball '$(TarballFilePath)' was successfully created from '$(TarballWorkingDir)'" Importance="High" />
   </Target>
