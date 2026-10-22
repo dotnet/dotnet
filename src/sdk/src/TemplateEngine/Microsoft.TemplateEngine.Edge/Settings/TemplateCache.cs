@@ -57,7 +57,7 @@ namespace Microsoft.TemplateEngine.Edge.Settings
             foreach (var duplicatedIdentities in templateDeduplicationDictionary)
             {
                 // last template with same Identity wins, others will be ignored due to applied deduplication logic
-                (IScanTemplateInfo Template, ITemplatePackage TemplatePackage, ILocalizationLocator? Localization, IMountPoint MountPoint) chosenTemplate = duplicatedIdentities.Value.Last();
+                (IScanTemplateInfo Template, ITemplatePackage TemplatePackage, ILocalizationLocator? Localization, IMountPoint MountPoint) chosenTemplate = duplicatedIdentities.Value[duplicatedIdentities.Value.Count - 1];
 
                 ILocalizationLocator? loc = GetBestLocalizationLocatorMatch(chosenTemplate.Template);
                 (string, JsonObject?)? hostFile = GetBestHostConfigMatch(chosenTemplate.Template, environmentSettings, chosenTemplate.MountPoint);
@@ -260,7 +260,7 @@ namespace Microsoft.TemplateEngine.Edge.Settings
             foreach (var identityToTemplates in templateDeduplicationDictionary)
             {
                 // we print the message only if managed template wins and we have > 1 managed templates with overlapping identities
-                var lastTemplate = identityToTemplates.Value.Last();
+                var lastTemplate = identityToTemplates.Value[identityToTemplates.Value.Count - 1];
                 var managedTemplates = identityToTemplates.Value.Where(templateInto => templateInto.TemplatePackage is IManagedTemplatePackage).ToArray();
                 if (lastTemplate.TemplatePackage is IManagedTemplatePackage && managedTemplates.Length > 1)
                 {
