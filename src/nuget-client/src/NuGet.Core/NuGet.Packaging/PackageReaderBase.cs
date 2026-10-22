@@ -552,7 +552,17 @@ namespace NuGet.Packaging
         /// </summary>
         protected static void ValidatePackageEntry(string normalizedDestination, string normalizedFilePath, PackageIdentity packageIdentity)
         {
-            // Destination and filePath must be normalized.
+            GetValidatedPackageEntryPath(normalizedDestination, normalizedFilePath, packageIdentity);
+        }
+
+        /// <summary>
+        /// Returns the canonical extraction path after checking that it is inside the destination directory.
+        /// </summary>
+        /// <param name="normalizedDestination">The canonical destination path, including its trailing directory separator.</param>
+        /// <param name="normalizedFilePath">The package entry path, with URI escaping decoded and directory separators normalized.</param>
+        /// <param name="packageIdentity">The package identity used in the error message for an unsafe entry.</param>
+        internal static string GetValidatedPackageEntryPath(string normalizedDestination, string normalizedFilePath, PackageIdentity packageIdentity)
+        {
             var fullPath = Path.GetFullPath(Path.Combine(normalizedDestination, normalizedFilePath));
 
             if (!fullPath.StartsWith(normalizedDestination, PathUtility.GetStringComparisonBasedOnOS()) || fullPath.Length == normalizedDestination.Length)
@@ -563,6 +573,9 @@ namespace NuGet.Packaging
                     packageIdentity,
                     normalizedFilePath));
             }
+
+            // Use the checked path for extraction rather than recombining the untrusted entry path.
+            return fullPath;
         }
 
         protected string NormalizeDirectoryPath(string path)
