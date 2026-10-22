@@ -14,6 +14,9 @@
     <ToolCommandName>roslyn-language-server</ToolCommandName>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
+    <!-- NuGet: Package might not work without long file path support. -->
+    <NoWarn>$(NoWarn);NU5123</NoWarn>
+
     <!-- Publishing settings -->
     <SelfContained>false</SelfContained>
     <PublishDir Condition="'$(RuntimeIdentifier)' != ''">$(ArtifactsDir)/LanguageServer/$(Configuration)/$(TargetFramework)/$(RuntimeIdentifier)</PublishDir>
