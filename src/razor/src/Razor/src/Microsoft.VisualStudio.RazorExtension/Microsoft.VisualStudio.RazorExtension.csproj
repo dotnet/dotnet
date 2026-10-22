@@ -38,14 +38,14 @@
   <!-- Import the list of service hub services we proffer, to generate various files to include in the VSIX -->
   <Import Project="$(RepositoryEngineeringDir)targets\Services.props" />
 
-  <!-- Include Razor SDK design time assets in the VSIX -->
+  <!-- Include only the copied design-time assets, without restoring the SDK's unused task assemblies. -->
   <ItemGroup>
-    <Content Include="$(PkgMicrosoft_NET_Sdk_Razor)\build\netstandard2.0\Microsoft.NET.Sdk.Razor.DesignTime.targets">
+    <Content Include="$(SharedFilesRoot)RazorDesignTime\Microsoft.NET.Sdk.Razor.DesignTime.targets">
       <IncludeInVsix>true</IncludeInVsix>
       <InstallRoot>MSBuild</InstallRoot>
       <VSIXSubPath>Microsoft\VisualStudio\Razor\</VSIXSubPath>
     </Content>
-    <Content Include="$(PkgMicrosoft_NET_Sdk_Razor)\build\netstandard2.0\Rules\*.xaml">
+    <Content Include="$(SharedFilesRoot)RazorDesignTime\Rules\*.xaml">
       <IncludeInVsix>true</IncludeInVsix>
       <InstallRoot>MSBuild</InstallRoot>
       <VSIXSubPath>Microsoft\VisualStudio\Razor\Rules\</VSIXSubPath>
@@ -200,7 +200,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk.Razor" IncludeAssets="None" PrivateAssets="All" GeneratePathProperty="true" />
     <PackageReference Include="System.Resources.Extensions" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" />
     <!-- Manually upgrade to address CG alert. When the VS packages

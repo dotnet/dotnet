@@ -1,0 +1,3 @@
+# Generated-rule fallback names hash these bytes. Preserve the original package's line endings.
+Microsoft.NET.Sdk.Razor.DesignTime.targets -text
+Rules/*.xaml -text

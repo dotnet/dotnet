@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
+  "registrations": [
+    {
+      "component": {
+        "type": "git",
+        "git": {
+          "name": "dotnet/aspnetcore",
+          "repositoryUrl": "https://github.com/dotnet/aspnetcore",
+          "commitHash": "20b6779cf3af2fed6a8fe64a0865cfab50b776bb"
+        }
+      },
+      "license": "Apache-2.0",
+      "description": "Only Microsoft.NET.Sdk.Razor.DesignTime.targets and the five XAML files in Rules are copied from src/Razor/Microsoft.NET.Sdk.Razor/src/build/netstandard2.0. These preserve the exact bytes from Microsoft.NET.Sdk.Razor 6.0.0-alpha.1.21072.5; upstream source differs only in CRLF/LF line endings. No SDK task assemblies or runtime components are included.",
+      "version": "https://github.com/dotnet/aspnetcore/tree/20b6779cf3af2fed6a8fe64a0865cfab50b776bb"
+    }
+  ],
+  "version": 1
+}
