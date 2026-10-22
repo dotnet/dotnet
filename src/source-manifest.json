@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "8.0.0-beta.26508.2",
+      "packageVersion": "8.0.0-beta.26465.3",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "81ab8642ca205b5901656f5ca532748b740092f1"
+      "commitSha": "659e244c0464986411ccd6ccf51084c96ae66091"
     },
     {
       "packageVersion": "8.0.0-preview.1.23557.2",
@@ -13,10 +13,10 @@
       "commitSha": "48e42f59d64d84b404e904996a9ed61f2a17a569"
     },
     {
-      "packageVersion": "8.0.32-servicing.26505.5",
+      "packageVersion": "8.0.33-servicing.26522.2",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "7413d24330774263a78a4f3837ca53493518455a"
+      "commitSha": "22cdf6c9e048a2949dd0d4c6b43f8d914905d9cb"
     },
     {
       "packageVersion": "0.11.4-alpha.26379.1",
@@ -43,10 +43,10 @@
       "commitSha": "5ce78f66d89ea529e459abddb129ab36cb5bd936"
     },
     {
-      "packageVersion": "8.0.32-servicing.26464.4",
+      "packageVersion": "8.0.33-servicing.26520.4",
       "path": "emsdk",
-      "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "63c23ed7dde6a6946dee74960a0391681c040ac0"
+      "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-emsdk",
+      "commitSha": "e4d02cab49b7d36b894a073247f90a6dcece276f"
     },
     {
       "packageVersion": "8.1.657407",
@@ -64,7 +64,7 @@
       "packageVersion": "8.0.100",
       "path": "installer",
       "remoteUri": "https://github.com/dotnet/installer",
-      "commitSha": "b9af749fb7bc26840858b87285fda9e3ffe7a196"
+      "commitSha": "caff41d2783d0d82118722f143a67242bb582c64"
     },
     {
       "packageVersion": "17.8.60-servicing-26431-08",
@@ -97,28 +97,28 @@
       "commitSha": "0963af6bfc2a3d5083faa2b7c1c91a4eee29a6f4"
     },
     {
-      "packageVersion": "8.0.32-servicing.26504.5",
+      "packageVersion": "8.0.33-servicing.26521.10",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "b9a49e4a6d3a444a3685e318c74a7892d01873f7"
+      "commitSha": "dfe48c5f82448e8e9e51dbfa8eccf8af750c4f92"
     },
     {
-      "packageVersion": "8.0.132-servicing.26505.8",
+      "packageVersion": "8.0.133-servicing.26522.1",
       "path": "sdk",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-sdk",
-      "commitSha": "f0ea720aa93f8a6bff86b51c065d39068b4b3a94"
+      "commitSha": "60eafacf90a5ee050fcd930a70f4e3078c0c617d"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.26501.1",
+      "packageVersion": "8.0.0-alpha.1.26451.1",
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "5aeee2738338530a92d7f6caa2c7d5f569fed3c4"
+      "commitSha": "57bfccd8cd6091e138f487653e7eefcfef2e455a"
     },
     {
-      "packageVersion": "8.0.0-alpha.1.26501.1",
+      "packageVersion": "8.0.0-alpha.1.26451.1",
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "490113ea252cb25880a7abc9926af8ffcf471e33"
+      "commitSha": "669661ea25e55b41167966df076c15ac70bf3718"
     },
     {
       "packageVersion": "8.0.0-alpha.1.23221.1",
@@ -139,10 +139,10 @@
       "commitSha": "2c8079e2e8e78c0cd11ac75a32014756136ecdb9"
     },
     {
-      "packageVersion": "8.0.132-servicing.26467.9",
+      "packageVersion": "8.0.133-servicing.26520.1",
       "path": "templating",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-templating",
-      "commitSha": "6c165f8eb5eeff719e22072369244ed6ee317e5c"
+      "commitSha": "312eb90c8d8caa1c1bbd47bc80a55f23f2a4337d"
     },
     {
       "packageVersion": "1.1.0-rc.23410.2",

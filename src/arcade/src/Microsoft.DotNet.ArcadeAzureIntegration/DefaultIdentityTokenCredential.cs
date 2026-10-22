@@ -46,7 +46,7 @@ public class DefaultIdentityTokenCredential : TokenCredential
     {
         TokenCredential? azurePipelinesCredential = GetAzurePipelinesCredentialForAzurePipelineTask();
 
-        if (options.UseAzurePipelineCredentialAloneIfConfigured && !options.PreferAzureCliCredential)
+        if (options.UseAzurePipelineCredentialAloneIfConfigured)
         {
             if (azurePipelinesCredential != null)
             {
@@ -59,15 +59,6 @@ public class DefaultIdentityTokenCredential : TokenCredential
         }
 
         List<TokenCredential> tokenCredentials = [];
-
-        TokenCredential? azureCliCredential = options.ExcludeAzureCliCredential
-            ? null
-            : CreateAzureCliCredential(options.DisableShortCache);
-
-        if (options.PreferAzureCliCredential && azureCliCredential != null)
-        {
-            tokenCredentials.Add(azureCliCredential);
-        }
 
         // Add Azure Pipelines credential if the environment variables are set
         if (azurePipelinesCredential != null)
@@ -93,8 +84,21 @@ public class DefaultIdentityTokenCredential : TokenCredential
             tokenCredentials.Add(workloadIdentityCredential);
         }
 
-        if (!options.PreferAzureCliCredential && azureCliCredential != null)
+        if (!options.ExcludeAzureCliCredential)
         {
+            // Add Azure CLI credential as the last resort
+            // az command to disable auto update of the Azure CLI to avoid timeout waiting for
+            // console input will be called before first use of AzureCliCredential
+            TokenCredential azureCliCredential = new AzureCliCredentialWithAzNoUpdateWrapper(
+                new AzureCliCredential(new AzureCliCredentialOptions
+                {
+                    ProcessTimeout = TimeSpan.FromSeconds(30)
+                })
+            );
+            if (!options.DisableShortCache)
+            {
+                azureCliCredential = new TokenCredentialShortCache(azureCliCredential);
+            }
             tokenCredentials.Add(azureCliCredential);
         }
 
@@ -105,19 +109,6 @@ public class DefaultIdentityTokenCredential : TokenCredential
 
         var ret = new ChainedTokenCredential(tokenCredentials.ToArray());
         return ret;
-    }
-
-    private static TokenCredential CreateAzureCliCredential(bool disableShortCache)
-    {
-        TokenCredential credential = new AzureCliCredentialWithAzNoUpdateWrapper(
-            new AzureCliCredential(new AzureCliCredentialOptions
-            {
-                ProcessTimeout = TimeSpan.FromSeconds(30)
-            }));
-
-        return disableShortCache
-            ? credential
-            : new TokenCredentialShortCache(credential);
     }
 
     private static object _workloadTokenFileLock = new object();
