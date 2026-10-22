@@ -90,7 +90,7 @@
 
       Downgrade NuGet Audit NU1901, NU1902 and NU1903 to warnings and keep NU1904 (critical) as error. -->
   <PropertyGroup>
-    <RepoBuildWarningCodesToSurface>NU1901;NU1902;NU1903;NU5123</RepoBuildWarningCodesToSurface>
+    <RepoBuildWarningCodesToSurface>NU1901;NU1902;NU1903</RepoBuildWarningCodesToSurface>
   </PropertyGroup>
 
 
