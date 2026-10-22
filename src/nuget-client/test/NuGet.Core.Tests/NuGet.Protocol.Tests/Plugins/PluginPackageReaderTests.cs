@@ -155,6 +155,7 @@ namespace NuGet.Protocol.Plugins.Tests
         {
             const string fileInPackage = "a";
             const string fileContent = "b";
+            string tempDirectoryPath = null;
 
             using (var test = new PluginPackageReaderTest())
             {
@@ -170,6 +171,7 @@ namespace NuGet.Protocol.Plugins.Tests
                     .Callback<MessageMethod, CopyFilesInPackageRequest, CancellationToken>(
                         (method, request, cancellationToken) =>
                         {
+                            tempDirectoryPath = request.DestinationFolderPath;
                             var filePath = Path.Combine(request.DestinationFolderPath, request.FilesInPackage.Single());
 
                             File.WriteAllText(filePath, fileContent);
@@ -187,6 +189,9 @@ namespace NuGet.Protocol.Plugins.Tests
                     Assert.Equal(fileContent, streamContent);
                 }
             }
+
+            Assert.NotNull(tempDirectoryPath);
+            Assert.False(Directory.Exists(tempDirectoryPath));
         }
 
         [Fact]
