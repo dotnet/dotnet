@@ -55,10 +55,10 @@
     <NuGetPackagingVersion>7.0.3</NuGetPackagingVersion>
     <!-- runtime dependencies -->
     <MicrosoftExtensionsFileSystemGlobbingVersion>10.0.1</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsLoggingConsoleVersion>10.0.1</MicrosoftExtensionsLoggingConsoleVersion>
+    <MicrosoftExtensionsLoggingConsoleVersion>10.0.13</MicrosoftExtensionsLoggingConsoleVersion>
     <MicrosoftExtensionsLoggingVersion>10.0.1</MicrosoftExtensionsLoggingVersion>
     <MicrosoftExtensionsHostingVersion>10.0.1</MicrosoftExtensionsHostingVersion>
-    <SystemSecurityCryptographyXmlVersion>10.0.10</SystemSecurityCryptographyXmlVersion>
+    <SystemSecurityCryptographyXmlVersion>10.0.13</SystemSecurityCryptographyXmlVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.4</NewtonsoftJsonVersion>
     <OctokitVersion>14.0.0</OctokitVersion>
