@@ -5,8 +5,8 @@
     <arcadeOutputPackageVersion>8.0.0-beta.26465.3</arcadeOutputPackageVersion>
     <aspireGitCommitHash>48e42f59d64d84b404e904996a9ed61f2a17a569</aspireGitCommitHash>
     <aspireOutputPackageVersion>8.0.0-preview.1.23557.2</aspireOutputPackageVersion>
-    <aspnetcoreGitCommitHash>9fec36802cf923d2795d352c1f00ef44e6adbc9e</aspnetcoreGitCommitHash>
-    <aspnetcoreOutputPackageVersion>8.0.33-servicing.26522.43</aspnetcoreOutputPackageVersion>
+    <aspnetcoreGitCommitHash>380bd0d498fbaa0a8ddd67c325aa748dd21f7596</aspnetcoreGitCommitHash>
+    <aspnetcoreOutputPackageVersion>8.0.33-servicing.26523.12</aspnetcoreOutputPackageVersion>
     <cecilGitCommitHash>a1cb4f641df8967b3338e6f630f594ca4962b467</cecilGitCommitHash>
     <cecilOutputPackageVersion>0.11.4-alpha.26379.1</cecilOutputPackageVersion>
     <commandlineapiGitCommitHash>02fe27cd6a9b001c8feb7938e6ef4b3799745759</commandlineapiGitCommitHash>
@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>8.1.657407</formatOutputPackageVersion>
     <fsharpGitCommitHash>fc5e9eda234e2b69aa479f4f83faddc31fdd4da7</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.102-beta.24081.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>0f63c859c6851e1c48dff83a41391bc3f555e909</installerGitCommitHash>
+    <installerGitCommitHash>62e6bab6ed8cd2dfc6ae0eb4553f872da33ec447</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>293f66545288e700258d9d979e84b67b585a4f93</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.60-servicing-26431-08</msbuildOutputPackageVersion>
@@ -35,8 +35,8 @@
     <roslynOutputPackageVersion>4.8.0-7.25569.25</roslynOutputPackageVersion>
     <runtimeGitCommitHash>da7a9beabf4cccc624399d583f52f080a4c858c2</runtimeGitCommitHash>
     <runtimeOutputPackageVersion>8.0.33-servicing.26522.19</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>1b585c10b994b09d7ab460e49b1550fb751079ff</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.133-servicing.26523.16</sdkOutputPackageVersion>
+    <sdkGitCommitHash>2951ff8cd900f9d0b4aa8c01d41c993e0ffe2a0b</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.133-servicing.26523.25</sdkOutputPackageVersion>
     <sourcebuildassetsGitCommitHash>57bfccd8cd6091e138f487653e7eefcfef2e455a</sourcebuildassetsGitCommitHash>
     <sourcebuildassetsOutputPackageVersion>8.0.0-alpha.1.26451.1</sourcebuildassetsOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>669661ea25e55b41167966df076c15ac70bf3718</sourcebuildexternalsGitCommitHash>
