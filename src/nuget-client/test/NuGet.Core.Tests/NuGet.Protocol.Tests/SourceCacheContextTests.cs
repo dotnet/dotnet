@@ -2,7 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
+#if !NET7_0_OR_GREATER
+using NuGet.Common;
+#endif
 using NuGet.Protocol.Core.Types;
+#if NET7_0_OR_GREATER
+using NuGet.Test.Utility;
+#endif
 using Xunit;
 
 namespace NuGet.Protocol.Tests
@@ -23,6 +29,35 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal(folderA, folderB);
             }
         }
+
+        [Fact]
+        public void SourceCacheContext_GeneratedTempFolder_UsesTargetSpecificLocation()
+        {
+            using var target = new SourceCacheContext();
+
+            var folder = target.GeneratedTempFolder;
+
+#if NET7_0_OR_GREATER
+            Assert.True(Directory.Exists(folder));
+            Assert.Equal(Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar), Path.GetDirectoryName(folder));
+            Assert.StartsWith("NuGet-", Path.GetFileName(folder));
+#else
+            Assert.False(Directory.Exists(folder));
+            Assert.Equal(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), Path.GetDirectoryName(folder));
+#endif
+        }
+
+#if NET7_0_OR_GREATER
+        [PlatformFact(Platform.Linux, Platform.Darwin)]
+        public void SourceCacheContext_GeneratedTempFolder_HasOwnerOnlyPermissions()
+        {
+            using var target = new SourceCacheContext();
+
+            var mode = File.GetUnixFileMode(target.GeneratedTempFolder);
+
+            Assert.Equal(UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute, mode);
+        }
+#endif
 
         [Fact]
         public void SourceCacheContext_DisposeDeletesGeneratedTempFolder()

@@ -11,7 +11,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-roslyn dependencies -->
     <MicrosoftCodeAnalysisCSharpPackageVersion>4.14.0</MicrosoftCodeAnalysisCSharpPackageVersion>
     <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>4.14.0</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
-    <MicrosoftNetCompilersToolsetPackageVersion>5.13.0-1.26514.14</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>5.13.0-1.26516.4</MicrosoftNetCompilersToolsetPackageVersion>
     <!-- dotnet-roslyn-analyzers dependencies -->
     <MicrosoftCodeAnalysisAnalyzersPackageVersion>3.11.0</MicrosoftCodeAnalysisAnalyzersPackageVersion>
     <!-- dotnet-runtime dependencies -->

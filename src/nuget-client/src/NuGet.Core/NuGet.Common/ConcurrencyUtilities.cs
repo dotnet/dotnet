@@ -19,14 +19,6 @@ namespace NuGet.Common
         private const int HashLength = 20;
         private static readonly TimeSpan SleepDuration = TimeSpan.FromMilliseconds(10);
         private static readonly KeyedLock PerFileLock = new KeyedLock();
-        private static bool? _useDeleteOnClose = null;
-
-        // FileOptions.DeleteOnClose causes concurrency issues on Mac OS X and Linux.
-        // These are fixed in .NET 7 (https://github.com/dotnet/runtime/pull/55327).
-        // To continue working in parallel with older versions of .NET,
-        // we cannot use DeleteOnClose by default until .NET 6 goes EOL (Nov 2024).
-        private static bool UseDeleteOnClose => _useDeleteOnClose ??= RuntimeEnvironmentHelper.IsWindows ||
-                                               EnvironmentVariableReader.GetEnvironmentVariable("NUGET_ConcurrencyUtils_DeleteOnClose") == "1"; // opt-in.
 
         internal static IEnvironmentVariableReader EnvironmentVariableReader { get; set; } = EnvironmentVariableWrapper.Instance;
 
@@ -36,13 +28,12 @@ namespace NuGet.Common
         }
 
         /// <summary>
-        /// Clears the environment-derived caches (the delete-on-close opt-in and the lock-file base path) so they
-        /// are re-read from the current environment on next use. The base path also derives from the NuGet temp
-        /// directory; callers should reset <see cref="NuGetEnvironment" /> as well.
+        /// Clears the cached lock-file base path so it is re-read from the current environment on next use.
+        /// The base path also derives from the NuGet home or temp directory; callers should reset
+        /// <see cref="NuGetEnvironment" /> as well.
         /// </summary>
         internal static void ResetEnvironmentCaches()
         {
-            _useDeleteOnClose = null;
             _basePath = null;
         }
 
@@ -235,7 +226,7 @@ namespace NuGet.Common
                 FileAccess.ReadWrite,
                 FileShare.None,
                 bufferSize: 32,
-                options: UseDeleteOnClose ? FileOptions.DeleteOnClose : FileOptions.None);
+                options: FileOptions.DeleteOnClose);
         }
 
         private static string? _basePath;
@@ -249,7 +240,11 @@ namespace NuGet.Common
                     return basePath;
                 }
 
-                basePath = Path.Combine(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), "lock");
+                var folder = RuntimeEnvironmentHelper.IsLinux &&
+                    string.IsNullOrEmpty(EnvironmentVariableReader.GetEnvironmentVariable("NUGET_SCRATCH"))
+                    ? NuGetFolderPath.NuGetHome
+                    : NuGetFolderPath.Temp;
+                basePath = Path.Combine(NuGetEnvironment.GetFolderPath(folder), "lock");
 
                 Directory.CreateDirectory(basePath);
 

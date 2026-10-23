@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
@@ -45,7 +44,9 @@ namespace NuGet.Commands
                 IgnoreFailedSources = true,
             })
             {
-                var projectDirectory = Path.Combine(NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp), Guid.NewGuid().ToString("N", null));
+#pragma warning disable RS0030 // This is only a synthetic project path; no directory is created or files written here.
+                var projectDirectory = Path.Combine(Path.GetTempPath(), $"NuGet-{Guid.NewGuid():N}");
+#pragma warning restore RS0030
 
                 var projectName = Guid.NewGuid().ToString("N", null);
 

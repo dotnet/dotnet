@@ -1363,6 +1363,14 @@ EndGlobal";
                 nonLatestTarget.Libraries.Should().ContainSingle(e => e.Name.Equals("x"));
                 LockFileTarget latestTarget = assetsFile.Targets.Single(e => e.TargetFramework.Equals(NuGetFramework.Parse("net472")) && string.IsNullOrEmpty(e.RuntimeIdentifier));
                 latestTarget.Libraries.Should().NotContain(e => e.Name.Equals("x"));
+
+                var propsFilePath = Path.Combine(workingDirectory1, "obj", $"{projectName1}.csproj.nuget.g.props");
+                var propsXml = XDocument.Load(propsFilePath);
+                var itemGroupConditions = propsXml.Root.Elements()
+                    .Where(e => e.Name.LocalName == "ItemGroup")
+                    .Select(e => e.Attribute("Condition")?.Value.Trim());
+                var expectedCondition = $"'$(TargetFramework)' == '{notLatestNetFrameworkAlias}' AND '$(ExcludeRestorePackageImports)' != 'true'";
+                itemGroupConditions.Should().Contain(condition => condition != null && condition.Contains(expectedCondition));
             }
         }
 

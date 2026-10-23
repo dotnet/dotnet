@@ -4,8 +4,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
+#if !NET7_0_OR_GREATER
 using NuGet.Common;
+#endif
 
 namespace NuGet.Protocol.Core.Types
 {
@@ -18,6 +19,7 @@ namespace NuGet.Protocol.Core.Types
         /// Path of temp folder if requested by GeneratedTempFolder
         /// </summary>
         private string? _generatedTempFolder;
+        private readonly object _generatedTempFolderLock = new object();
 
         /// <summary>
         /// Default amount of time to cache version lists.
@@ -97,19 +99,30 @@ namespace NuGet.Protocol.Core.Types
         {
             get
             {
-                if (_generatedTempFolder == null)
+                lock (_generatedTempFolderLock)
                 {
-                    var newTempFolder = Path.Combine(
-                        NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp),
-                        Guid.NewGuid().ToString());
+                    if (_generatedTempFolder == null)
+                    {
+#if NET7_0_OR_GREATER
+                        _generatedTempFolder = Directory.CreateTempSubdirectory("NuGet-").FullName;
+#else
+                        _generatedTempFolder = Path.Combine(
+                            NuGetEnvironment.GetFolderPath(NuGetFolderPath.Temp),
+                            Guid.NewGuid().ToString());
+#endif
+                    }
 
-                    Interlocked.CompareExchange(ref _generatedTempFolder, newTempFolder, comparand: null);
+                    return _generatedTempFolder;
                 }
-
-                return _generatedTempFolder;
             }
 
-            set => Interlocked.CompareExchange(ref _generatedTempFolder, value, comparand: null);
+            set
+            {
+                lock (_generatedTempFolderLock)
+                {
+                    _generatedTempFolder ??= value;
+                }
+            }
         }
 
         public bool IgnoreFailedSources { get; set; }
@@ -128,7 +141,10 @@ namespace NuGet.Protocol.Core.Types
                 RefreshMemoryCache = RefreshMemoryCache,
                 SessionId = SessionId
             };
-            clone._generatedTempFolder = _generatedTempFolder;
+            lock (_generatedTempFolderLock)
+            {
+                clone._generatedTempFolder = _generatedTempFolder;
+            }
             return clone;
         }
 
@@ -154,7 +170,11 @@ namespace NuGet.Protocol.Core.Types
 
         protected virtual void Dispose(bool disposing)
         {
-            var currentTempFolder = Interlocked.CompareExchange(ref _generatedTempFolder, value: null, comparand: null);
+            string? currentTempFolder;
+            lock (_generatedTempFolderLock)
+            {
+                currentTempFolder = _generatedTempFolder;
+            }
 
             if (currentTempFolder != null)
             {
