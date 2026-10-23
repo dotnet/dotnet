@@ -59,6 +59,11 @@ internal class SqliteDataRecord(sqlite3_stmt stmt, bool hasRows, SqliteConnectio
             ? throw new InvalidOperationException(Resources.NoData)
             : base.GetValue(ordinal)!;
 
+    public override int GetValues(object?[] values)
+        => !_stepped || sqlite3_data_count(Handle) == 0
+            ? throw new InvalidOperationException(Resources.NoData)
+            : base.GetValues(values);
+
     protected override double GetDoubleCore(int ordinal)
         => sqlite3_column_double(Handle, ordinal);
 
@@ -154,8 +159,8 @@ internal class SqliteDataRecord(sqlite3_stmt stmt, bool hasRows, SqliteConnectio
             return match.Value.Value;
         }
 
-        // NB: Message is provided by framework
-        throw new ArgumentOutOfRangeException(nameof(name), name, message: null);
+        // IDataRecord.GetOrdinal: "If the index of the named field is not found, an IndexOutOfRangeException is thrown."
+        throw new IndexOutOfRangeException(name);
     }
 
     public virtual string GetDataTypeName(int ordinal)
