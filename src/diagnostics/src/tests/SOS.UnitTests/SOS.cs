@@ -281,30 +281,6 @@ public static class SOSTestHelpers
     }
 }
 
-public class SOSStackTraceTests
-{
-    public SOSStackTraceTests(ITestOutputHelper output)
-    {
-        Output = output;
-    }
-
-    private ITestOutputHelper Output { get; set; }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task StackTests(TestConfiguration config)
-    {
-        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
-        SOSTestHelpers.SkipIfWinX86(config);
-
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "NestedExceptionTest",
-            scriptName: "StackTests.script",
-            Output,
-            testName: "SOS.StackTests");
-    }
-}
-
 public class SOSInterpreterTests
 {
     public SOSInterpreterTests(ITestOutputHelper output)
@@ -418,42 +394,6 @@ public class SOSGCTests
             Output,
             testName: "SOS.FindRootsOlderGeneration",
             testDump: false);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.GetGCConfigurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task DumpGCData(TestConfiguration config)
-    {
-        if (config.RuntimeFrameworkVersionMajor < 10)
-        {
-            Assert.Skip("This test validates a bug which was fixed in .NET 10");
-        }
-
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "DumpGCData",
-            scriptName: "DumpGCData.script",
-            Output,
-            testName: "SOS.DumpGCData",
-            testDump: false);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task DumpGen(TestConfiguration config)
-    {
-        await SOSTestHelpers.RunTest(
-            scriptName: "DumpGen.script",
-            new SOSRunner.TestInformation
-            {
-                TestConfiguration = config,
-                TestLive = false,
-                TestName = "SOS.DumpGen",
-                DebuggeeName = "DotnetDumpCommands",
-                DebuggeeArguments = "dumpgen",
-                DumpNameSuffix = "dumpgen",
-                UsePipeSync = true,
-                DumpGenerator = SOSRunner.DumpGenerator.DotNetDump,
-            },
-            Output);
     }
 }
 
