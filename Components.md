@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@5fa9337](https://github.com/dotnet/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@8548181](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC8548181e09189d6561392c6a5ef8971b2213951e)*
+*[_git/dotnet-aspnetcore@7bfdfb1](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC7bfdfb1805454473ab2899ff6f4d71b552e81f50)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@36ba75f](https://github.com/google/googletest/tree/36ba75f0ad5383a9759f17f3f72fd4661c72cb6d)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -26,7 +26,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@513150c](https://github.com/dotnet/diagnostics/tree/513150c2f25077b1fcb194407e53c433c975f39b)*
 - `src/efcore`  
-*[_git/dotnet-efcore@7eee03d](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GC7eee03deb0bffe73697b4c5b456a5c69df48a1a6)*
+*[_git/dotnet-efcore@f074993](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GCf074993939d02219e40d1ef8b6d862568fce3a1f)*
 - `src/emsdk`  
 *[_git/dotnet-emsdk@4fb6c08](https://dev.azure.com/dnceng/internal/_git/dotnet-emsdk/?version=GC4fb6c08127e402a1efb89e727943e64652e2d6f1)*
 - `src/fsharp`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@10b1153](https://github.com/dotnet/scenario-tests/tree/10b1153c42ff74bd58460cacc794f2e9b1f48918)*
 - `src/sdk`  
-*[dotnet/sdk@03ac1c0](https://github.com/dotnet/sdk/tree/03ac1c0f1093723bd1d5b6081b2a7dfd85811e7e)*
+*[dotnet/sdk@4ae1468](https://github.com/dotnet/sdk/tree/4ae1468a8f2dd165cdcf3a106ac09468b9e814f5)*
 - `src/source-build-assets`  
 *[dotnet/source-build-assets@eccb082](https://github.com/dotnet/source-build-assets/tree/eccb0828682858d8daa029ba29adce07fd70d9a7)*
 - `src/source-build-externals`  
