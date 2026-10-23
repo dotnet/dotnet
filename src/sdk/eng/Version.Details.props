@@ -8,12 +8,12 @@ This file should be imported by eng/Versions.props
     <!-- dotnet-core-setup dependencies -->
     <NETStandardLibraryRefPackageVersion>2.1.0</NETStandardLibraryRefPackageVersion>
     <!-- dotnet-dotnet dependencies -->
-    <dotnetdevcertsPackageVersion>10.0.14-servicing.26520.138</dotnetdevcertsPackageVersion>
-    <dotnetuserjwtsPackageVersion>10.0.14-servicing.26520.138</dotnetuserjwtsPackageVersion>
-    <dotnetusersecretsPackageVersion>10.0.14-servicing.26520.138</dotnetusersecretsPackageVersion>
-    <MicrosoftAspNetCoreAnalyzersPackageVersion>10.0.14-servicing.26520.138</MicrosoftAspNetCoreAnalyzersPackageVersion>
+    <dotnetdevcertsPackageVersion>10.0.14-servicing.26522.126</dotnetdevcertsPackageVersion>
+    <dotnetuserjwtsPackageVersion>10.0.14-servicing.26522.126</dotnetuserjwtsPackageVersion>
+    <dotnetusersecretsPackageVersion>10.0.14-servicing.26522.126</dotnetusersecretsPackageVersion>
+    <MicrosoftAspNetCoreAnalyzersPackageVersion>10.0.14-servicing.26522.126</MicrosoftAspNetCoreAnalyzersPackageVersion>
     <MicrosoftAspNetCoreAppRefPackageVersion>10.0.14</MicrosoftAspNetCoreAppRefPackageVersion>
-    <MicrosoftAspNetCoreAppRefInternalPackageVersion>10.0.14-servicing.26520.138</MicrosoftAspNetCoreAppRefInternalPackageVersion>
+    <MicrosoftAspNetCoreAppRefInternalPackageVersion>10.0.14-servicing.26522.126</MicrosoftAspNetCoreAppRefInternalPackageVersion>
     <MicrosoftAspNetCoreAuthenticationFacebookPackageVersion>10.0.14</MicrosoftAspNetCoreAuthenticationFacebookPackageVersion>
     <MicrosoftAspNetCoreAuthenticationGooglePackageVersion>10.0.14</MicrosoftAspNetCoreAuthenticationGooglePackageVersion>
     <MicrosoftAspNetCoreAuthenticationMicrosoftAccountPackageVersion>10.0.14</MicrosoftAspNetCoreAuthenticationMicrosoftAccountPackageVersion>
@@ -21,15 +21,15 @@ This file should be imported by eng/Versions.props
     <MicrosoftAspNetCoreComponentsPackageVersion>10.0.14</MicrosoftAspNetCoreComponentsPackageVersion>
     <MicrosoftAspNetCoreComponentsAnalyzersPackageVersion>10.0.14</MicrosoftAspNetCoreComponentsAnalyzersPackageVersion>
     <MicrosoftAspNetCoreComponentsFormsPackageVersion>10.0.14</MicrosoftAspNetCoreComponentsFormsPackageVersion>
-    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>10.0.14-servicing.26520.138</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>10.0.14-servicing.26522.126</MicrosoftAspNetCoreComponentsSdkAnalyzersPackageVersion>
     <MicrosoftAspNetCoreComponentsWebPackageVersion>10.0.14</MicrosoftAspNetCoreComponentsWebPackageVersion>
     <MicrosoftAspNetCoreComponentsWebAssemblyPackageVersion>10.0.14</MicrosoftAspNetCoreComponentsWebAssemblyPackageVersion>
     <MicrosoftAspNetCoreComponentsWebAssemblyServerPackageVersion>10.0.14</MicrosoftAspNetCoreComponentsWebAssemblyServerPackageVersion>
     <MicrosoftAspNetCoreComponentsWebViewPackageVersion>10.0.14</MicrosoftAspNetCoreComponentsWebViewPackageVersion>
-    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>10.0.14-servicing.26520.138</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
+    <MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>10.0.14-servicing.26522.126</MicrosoftAspNetCoreDeveloperCertificatesXPlatPackageVersion>
     <MicrosoftAspNetCoreMetadataPackageVersion>10.0.14</MicrosoftAspNetCoreMetadataPackageVersion>
-    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>10.0.14-servicing.26520.138</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
-    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>10.0.14-servicing.26520.138</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcAnalyzersPackageVersion>10.0.14-servicing.26522.126</MicrosoftAspNetCoreMvcAnalyzersPackageVersion>
+    <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>10.0.14-servicing.26522.126</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
     <MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>10.4.0-preview.26466.105</MicrosoftAspNetCoreMvcRazorExtensionsToolingInternalPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>10.0.14</MicrosoftAspNetCoreTestHostPackageVersion>
     <MicrosoftBclAsyncInterfacesPackageVersion>10.0.14</MicrosoftBclAsyncInterfacesPackageVersion>
@@ -59,8 +59,8 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetSignToolPackageVersion>10.0.0-beta.26466.105</MicrosoftDotNetSignToolPackageVersion>
     <MicrosoftDotNetWebItemTemplates100PackageVersion>10.0.14</MicrosoftDotNetWebItemTemplates100PackageVersion>
     <MicrosoftDotNetWebProjectTemplates100PackageVersion>10.0.14</MicrosoftDotNetWebProjectTemplates100PackageVersion>
-    <MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>10.0.14-servicing.26520.138</MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>
-    <MicrosoftDotNetWpfProjectTemplatesPackageVersion>10.0.14-servicing.26520.138</MicrosoftDotNetWpfProjectTemplatesPackageVersion>
+    <MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>10.0.14-servicing.26522.126</MicrosoftDotnetWinFormsProjectTemplatesPackageVersion>
+    <MicrosoftDotNetWpfProjectTemplatesPackageVersion>10.0.14-servicing.26522.126</MicrosoftDotNetWpfProjectTemplatesPackageVersion>
     <MicrosoftDotNetXliffTasksPackageVersion>10.0.0-beta.26466.105</MicrosoftDotNetXliffTasksPackageVersion>
     <MicrosoftDotNetXUnitExtensionsPackageVersion>10.0.0-beta.26466.105</MicrosoftDotNetXUnitExtensionsPackageVersion>
     <MicrosoftExtensionsConfigurationIniPackageVersion>10.0.14</MicrosoftExtensionsConfigurationIniPackageVersion>
@@ -78,15 +78,15 @@ This file should be imported by eng/Versions.props
     <MicrosoftMcpServerProjectTemplates100PackageVersion>10.0.14</MicrosoftMcpServerProjectTemplates100PackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.9.0-1.26466.105</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftNetCompilersToolsetFrameworkPackageVersion>5.9.0-1.26466.105</MicrosoftNetCompilersToolsetFrameworkPackageVersion>
-    <MicrosoftNETHostModelPackageVersion>10.0.14-servicing.26520.138</MicrosoftNETHostModelPackageVersion>
+    <MicrosoftNETHostModelPackageVersion>10.0.14-servicing.26522.126</MicrosoftNETHostModelPackageVersion>
     <MicrosoftNETILLinkTasksPackageVersion>10.0.14</MicrosoftNETILLinkTasksPackageVersion>
     <MicrosoftNETRuntimeEmscripten3156Cachewinx64PackageVersion>10.0.14</MicrosoftNETRuntimeEmscripten3156Cachewinx64PackageVersion>
     <MicrosoftNETRuntimeEmscriptenSdkInternalPackageVersion>10.0.0-preview.7.25377.103</MicrosoftNETRuntimeEmscriptenSdkInternalPackageVersion>
     <MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>10.4.0-preview.26466.105</MicrosoftNETSdkRazorSourceGeneratorsTransportPackageVersion>
-    <MicrosoftNETSdkWindowsDesktopPackageVersion>10.0.14-servicing.26520.138</MicrosoftNETSdkWindowsDesktopPackageVersion>
+    <MicrosoftNETSdkWindowsDesktopPackageVersion>10.0.14-servicing.26522.126</MicrosoftNETSdkWindowsDesktopPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>18.7.0-release-26466-105</MicrosoftNETTestSdkPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>10.0.14</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCorePlatformsPackageVersion>10.0.14-servicing.26520.138</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>10.0.14-servicing.26522.126</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftSourceLinkAzureReposGitPackageVersion>10.0.402</MicrosoftSourceLinkAzureReposGitPackageVersion>
     <MicrosoftSourceLinkBitbucketGitPackageVersion>10.0.402</MicrosoftSourceLinkBitbucketGitPackageVersion>
     <MicrosoftSourceLinkCommonPackageVersion>10.0.402</MicrosoftSourceLinkCommonPackageVersion>
@@ -105,7 +105,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftTestPlatformCLIPackageVersion>18.7.0-release-26466-105</MicrosoftTestPlatformCLIPackageVersion>
     <MicrosoftWebXdtPackageVersion>3.2.14</MicrosoftWebXdtPackageVersion>
     <MicrosoftWin32SystemEventsPackageVersion>10.0.14</MicrosoftWin32SystemEventsPackageVersion>
-    <MicrosoftWindowsDesktopAppInternalPackageVersion>10.0.14-servicing.26520.138</MicrosoftWindowsDesktopAppInternalPackageVersion>
+    <MicrosoftWindowsDesktopAppInternalPackageVersion>10.0.14-servicing.26522.126</MicrosoftWindowsDesktopAppInternalPackageVersion>
     <MicrosoftWindowsDesktopAppRefPackageVersion>10.0.14</MicrosoftWindowsDesktopAppRefPackageVersion>
     <NuGetBuildTasksPackageVersion>7.9.0-rc.46705</NuGetBuildTasksPackageVersion>
     <NuGetBuildTasksConsolePackageVersion>7.9.0-rc.46705</NuGetBuildTasksConsolePackageVersion>
