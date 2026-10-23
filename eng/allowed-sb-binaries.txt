@@ -54,6 +54,11 @@ src/runtime/src/libraries/System.Speech/src/**/*.upsmap # https://github.com/dot
 src/runtime/src/libraries/System.Text.Encoding.CodePages/src/Data/codepages.nlp # https://github.com/dotnet/runtime/issues/81693
 src/runtime/src/native/external/brotli/common/dictionary.bin.br
 
+# sdk
+src/sdk/.dotnet/
+src/sdk/artifacts/.dotnetup/
+src/sdk/eng/dotnetup/
+
 # source-build-assets
 src/source-build-assets/src/externalPackages/src/humanizer/src/Humanizer.Tests**/*.pfx
 src/source-build-assets/src/externalPackages/src/newtonsoft-json/Src/Newtonsoft.Json.Tests/SpaceShipV2.bson
