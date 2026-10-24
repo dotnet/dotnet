@@ -184,18 +184,18 @@ internal sealed class TypedCollectionConverterFactory<TCollection, TElement> : T
                     ImmutableStackBufferAdapter<TElement>.CreateInterfaceConverter(elementTypeConverter),
 
                 // System.Collections.Generics
-                var _ when type.IsAssignableTo(typeof(IReadOnlySet<TElement>)) =>
-                    CreateConverter<IReadOnlySet<TElement>, HashSet<TElement>>(elementTypeConverter),
-                var _ when type.IsAssignableTo(typeof(IReadOnlyList<TElement>)) =>
-                    CreateConverter<IReadOnlyList<TElement>, List<TElement>>(elementTypeConverter),
-                var _ when type.IsAssignableTo(typeof(IReadOnlyCollection<TElement>)) =>
-                    CreateConverter<IReadOnlyCollection<TElement>, List<TElement>>(elementTypeConverter),
                 var _ when type.IsAssignableTo(typeof(ISet<TElement>)) =>
                     CreateConverter<ISet<TElement>, HashSet<TElement>>(elementTypeConverter),
                 var _ when type.IsAssignableTo(typeof(IList<TElement>)) =>
                     CreateConverter<IList<TElement>, List<TElement>>(elementTypeConverter),
                 var _ when type.IsAssignableTo(typeof(ICollection<TElement>)) =>
                     CreateConverter<ICollection<TElement>, List<TElement>>(elementTypeConverter),
+                var _ when type.IsAssignableTo(typeof(IReadOnlySet<TElement>)) =>
+                    CreateConverter<IReadOnlySet<TElement>, HashSet<TElement>>(elementTypeConverter),
+                var _ when type.IsAssignableTo(typeof(IReadOnlyList<TElement>)) =>
+                    CreateConverter<IReadOnlyList<TElement>, List<TElement>>(elementTypeConverter),
+                var _ when type.IsAssignableTo(typeof(IReadOnlyCollection<TElement>)) =>
+                    CreateConverter<IReadOnlyCollection<TElement>, List<TElement>>(elementTypeConverter),
 
                 // Leave IEnumerable to last, since it's the least specific.
                 var _ when type.IsAssignableTo(typeof(IEnumerable<TElement>)) =>

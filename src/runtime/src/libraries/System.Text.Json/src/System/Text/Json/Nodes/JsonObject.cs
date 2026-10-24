@@ -35,7 +35,13 @@ namespace System.Text.Json.Nodes
         /// <param name="options">Options to control the behavior.</param>
         public JsonObject(IEnumerable<KeyValuePair<string, JsonNode?>> properties, JsonNodeOptions? options = null) : this(options)
         {
-            int capacity = properties is ICollection<KeyValuePair<string, JsonNode?>> propertiesCollection ? propertiesCollection.Count : 0;
+            int capacity =
+#if NET12_0_OR_GREATER // ICollection<T> : IReadOnlyCollection<T> on .NET 12+
+                properties is IReadOnlyCollection<KeyValuePair<string, JsonNode?>> propertiesCollection
+#else
+                properties is ICollection<KeyValuePair<string, JsonNode?>> propertiesCollection
+#endif
+                ? propertiesCollection.Count : 0;
             OrderedDictionary<string, JsonNode?> dictionary = CreateDictionary(options, capacity);
 
             foreach (KeyValuePair<string, JsonNode?> node in properties)
