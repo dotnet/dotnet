@@ -166,12 +166,13 @@ public class CreateXHarnessAppleWorkItemsTests
         // process current directory, which other tests running in parallel may change.
         string projectDirectory = _task.TaskEnvironment.ProjectDirectory.Value;
         string expectedAppBundlePath = _task.TaskEnvironment.GetAbsolutePath("apps/System.Foo.app");
+        string expectedArchivePath = _task.TaskEnvironment.GetAbsolutePath("apps/xharness-payload-system.foo.zip");
         expectedAppBundlePath.Should().StartWith(projectDirectory);
 
         _zipArchiveManager
-            .Verify(x => x.ArchiveDirectory(expectedAppBundlePath, It.IsAny<string>(), true), Times.Once);
+            .Verify(x => x.ArchiveDirectory(expectedAppBundlePath, expectedArchivePath, true), Times.Once);
 
-        _task.WorkItems.Single().GetMetadata("PayloadArchive").Should().StartWith(projectDirectory);
+        _task.WorkItems.Single().GetMetadata("PayloadArchive").Should().Be(expectedArchivePath);
     }
 
     [Fact]

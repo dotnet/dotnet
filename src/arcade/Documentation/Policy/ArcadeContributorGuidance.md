@@ -33,7 +33,7 @@ The default Arcade issue template should be used with every issue filed.  The te
 
 ### Triage and Backlog Management
 - New Arcade issues are triaged at least once a week.  
-- Issues which have been marked via the template as blocking or causing unreasonable pain are looked at right away via FR ([First Responders](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/107/%5Bint%5D-First-Responders))  NOTE: This wiki is not publically facing yet (sorry community).  Please reach out if you would like to understand more details.
+- Issues which have been marked via the template as blocking or causing unreasonable pain are looked at right away via FR ([First Responders](https://dev.azure.com/dnceng/internal/_wiki/wikis/DNCEng%20Services%20Wiki/1897/Responsibilities?anchor=first-responders-role))  NOTE: This wiki is not publically facing yet (sorry community).  Please reach out if you would like to understand more details.
 - General "scrubs" happen at least once a year.
 
 
