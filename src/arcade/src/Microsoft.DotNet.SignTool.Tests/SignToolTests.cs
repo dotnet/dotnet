@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -279,6 +281,17 @@ public class SignToolTests : IDisposable
 
     private static string s_snPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "sn", "sn.exe");
     private static string s_pkgToolPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "pkg", "Microsoft.Dotnet.MacOsPkg.Cli.dll");
+    private static readonly Lazy<bool> s_isGpgAvailable = new(() =>
+    {
+        try
+        {
+            return Process.Run("gpg", ["--version"]).ExitCode == 0;
+        }
+        catch (Win32Exception)
+        {
+            return false;
+        }
+    });
 
     private string GetResourcePath(string name, string relativePath = null)
     {
@@ -2096,9 +2109,9 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
             "File 'IncorrectlySignedDeb.deb' Certificate='LinuxSign'"
         };
 
-        // If running on a platform other than Linux, both packages will be submitted for signing
-        // because the CL verification tool (gpg) is not available.
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        // If gpg is not available, both packages will be submitted for signing
+        // because their signatures cannot be verified.
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || !s_isGpgAvailable.Value)
         {
             expectedFilesToBeSigned.Add("File 'SignedDeb.deb' Certificate='LinuxSign'");
         }
@@ -2127,9 +2140,9 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "test.rpm"
             "File 'IncorrectlySignedRpm.rpm' Certificate='LinuxSign'"
         };
 
-        // If running on a platform other than Linux, both packages will be submitted for signing
-        // because the CL verification tool (gpg) is not available.
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        // If gpg is not available, both packages will be submitted for signing
+        // because their signatures cannot be verified.
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || !s_isGpgAvailable.Value)
         {
             expectedFilesToBeSigned.Add("File 'SignedRpm.rpm' Certificate='LinuxSign'");
         }

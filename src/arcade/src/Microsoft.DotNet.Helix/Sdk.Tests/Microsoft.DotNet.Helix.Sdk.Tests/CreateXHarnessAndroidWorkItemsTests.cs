@@ -141,12 +141,13 @@ public class CreateXHarnessAndroidWorkItemsTests
         // process current directory, which other tests running in parallel may change.
         string projectDirectory = _task.TaskEnvironment.ProjectDirectory.Value;
         string expectedApkPath = _task.TaskEnvironment.GetAbsolutePath("apks/System.Foo.apk");
+        string expectedArchivePath = _task.TaskEnvironment.GetAbsolutePath("apks/xharness-payload-system.foo.zip");
         expectedApkPath.Should().StartWith(projectDirectory);
 
         _zipArchiveManager
-            .Verify(x => x.ArchiveFile(expectedApkPath, It.IsAny<string>()), Times.Once);
+            .Verify(x => x.ArchiveFile(expectedApkPath, expectedArchivePath), Times.Once);
 
-        _task.WorkItems.Single().GetMetadata("PayloadArchive").Should().StartWith(projectDirectory);
+        _task.WorkItems.Single().GetMetadata("PayloadArchive").Should().Be(expectedArchivePath);
     }
 
     [Fact]
