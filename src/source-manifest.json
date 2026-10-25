@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 335931,
+      "barId": 338195,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "7dad90156e9d69e991ad499ece9cf805cabcf506"
+      "commitSha": "7663bc91853be9540495d9e502f1b29a02b8be83"
     },
     {
       "barId": 336188,
@@ -31,16 +31,16 @@
       "commitSha": "2ee21e1b8f7721ea9cb89cd4db4f589b37b579d7"
     },
     {
-      "barId": 337771,
+      "barId": 338040,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "c77affd40350dd516da2bdf9f789f461ca03f19d"
+      "commitSha": "551036f6a7892af7061d13ca03198654cf8fb2af"
     },
     {
-      "barId": 337983,
+      "barId": 338200,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "dc5f6f32df2fd66a1be4ef025085fbff7b726c88"
+      "commitSha": "c0f183ba1b7dc5ff392c596350a701f6ad206052"
     },
     {
       "barId": 337873,
@@ -55,10 +55,10 @@
       "commitSha": "d12022d6d0ec9c3355fbb3ae293f67c6babd2c84"
     },
     {
-      "barId": 337882,
+      "barId": 338100,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "9966dc645890c6c6357b6a788f8d0cf5a453a62e"
+      "commitSha": "ad616f42ced6d62a1926a19641bd0c4353d185c3"
     },
     {
       "barId": 337571,
