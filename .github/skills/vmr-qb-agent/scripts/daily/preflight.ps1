@@ -138,6 +138,7 @@ function Test-VmrQBStateRoot {
         $holdsEmail = $false
         try {
             $document = Get-Content -LiteralPath $paths.ConfigPath -Raw | ConvertFrom-Json
+            if ($document -isnot [Management.Automation.PSCustomObject]) { throw 'The config must be a JSON object.' }
             # Protect raw addresses even when validation disables sending.
             $addresses = @(
                 Get-VmrQBField $document 'sender'
