@@ -55,7 +55,7 @@ function Get-CopilotArgs {
     $a.AddRange([string[]]@(
         '-C', $WorkDirectory, '--prompt', $Prompt, '--silent', '--stream', 'off',
         '--output-format', 'json', '--no-color', '--no-ask-user',
-        '--no-remote', '--no-remote-export', '--no-auto-update', '--deny-tool=write'
+        '--sync-session=off', '--no-auto-update', '--deny-tool=write'
     ))
     $model = [string](Get-VmrQBField $config 'model')
     if (-not [string]::IsNullOrWhiteSpace($model)) { $a.Add('--model'); $a.Add($model.Trim()) }
