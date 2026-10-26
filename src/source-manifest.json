@@ -19,10 +19,10 @@
       "commitSha": "8b8bdd0e7a8ca16c0f58020276835d1aef712e9e"
     },
     {
-      "barId": 336223,
+      "barId": 337646,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "d06ff716f77d3187145ac735606eb92ce5739279"
+      "commitSha": "eef106df3e5e74fae30236e1449cc3f4e955207a"
     },
     {
       "barId": 329538,
@@ -73,10 +73,10 @@
       "commitSha": "2c1964599c1c6a428519ee9decce69f68284ec99"
     },
     {
-      "barId": 337973,
+      "barId": 338306,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "4295b5cfabe8b4d43feeb99d2fcdb3f6d580911b"
+      "commitSha": "3734b6da84340b26e07301263c173a3ffe32442a"
     },
     {
       "barId": 335115,
@@ -109,10 +109,10 @@
       "commitSha": "55900b031f11a607e2a99a49a450b26a7ef522d8"
     },
     {
-      "barId": 336777,
+      "barId": 338302,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "a29631cbd11a5d8381e7fd9feacf1b92715293aa"
+      "commitSha": "844e206498e6741ee3824b272c6146da9c905e48"
     },
     {
       "barId": 335429,
@@ -121,10 +121,10 @@
       "commitSha": "e95b692aa80fb9aee711ad6847b1a8dd0a5d786a"
     },
     {
-      "barId": 336725,
+      "barId": 337434,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "c4891de0851184dcbe95d16ca543969fe2540245"
+      "commitSha": "514724aea49f8c17492c7b950f52bb777c0eebdf"
     },
     {
       "barId": 337661,
