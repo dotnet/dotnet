@@ -326,17 +326,14 @@ function Add-QBCoverageNotes {
 function Add-QBPreflightNotes {
     <#
     .SYNOPSIS
-    Turns preflight warnings into run notes. Internal authentication (showFirst) leads, in red, and is recorded once.
+    Records preflight observations separately from the collector's final coverage decision.
     #>
     param([Parameter(Mandatory)][object] $Preflight)
     foreach ($warning in @($Preflight.warnings)) {
         Write-Warning "$($warning.name): $($warning.detail)"
-        if ([bool]$warning.showFirst) {
-            $script:QBCoverageGap = $true
-            Add-QBRunNote -Source 'internal-auth' -Key 'internal-auth' -Severity first -Fix $warning.remedy `
-                -Message "The internal builds are UNKNOWN, not healthy - $($warning.name): $($warning.detail)"
-        }
-        else { Add-QBRunNote -Source 'preflight' -Fix $warning.remedy -Message "$($warning.name): $($warning.detail)" }
+        $severity = if ([bool]$warning.showFirst) { 'first' } else { 'note' }
+        Add-QBRunNote -Source 'preflight' -Severity $severity -Fix $warning.remedy `
+            -Message "Preflight warning - $($warning.name): $($warning.detail)"
     }
 }
 
