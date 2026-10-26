@@ -184,7 +184,7 @@ function Get-QBJobTimeLimitMinutes {
     if ($JobId) {
         foreach ($record in @($Task)) {
             if ([string](Get-QBField $record 'jobId') -ne $JobId) { continue }
-            foreach ($message in @(Get-QBField $record 'issues' @())) { $texts.Add([string]$message) }
+            foreach ($message in @(Get-QBField $record 'issues' @())) { $texts.Add([string](Get-QBField $message 'message' $message)) }
         }
     }
     if ($null -ne $Log) {
@@ -212,7 +212,8 @@ function New-QBModelEvidence {
             Set-Content -LiteralPath $path -Encoding utf8
         return $path
     }
-    function Get-DiagnosticSeverity([string] $Text, [string] $TaskResult, [string] $JobResult) {
+    function Get-DiagnosticSeverity([string] $Text, [string] $TaskResult, [string] $JobResult, [string] $IssueType) {
+        if ($IssueType -eq 'warning') { return 'nonTerminating' }
         # Record-based first: an issue is fatal only if its task failed AND its parent Job failed. 1ES/Guardian tasks emit
         # ##[error] and still let the job pass (continueOnError), so log text alone lies. Only a record that could not be tied to a
         # Job (no result for it) falls back to the message text.
@@ -263,14 +264,15 @@ function New-QBModelEvidence {
         # has to be loaded here.
         $messages = @(
             foreach ($task in $Tasks) {
-                foreach ($text in @($task.issues)) {
-                    @{ text = [string]$text; task = $task.task; job = $task.job; path = $null; line = $null
+                foreach ($issue in @($task.issues)) {
+                    @{ text = [string](Get-QBField $issue 'message'); issueType = [string](Get-QBField $issue 'type')
+                        task = $task.task; job = $task.job; path = $null; line = $null
                         taskResult = [string](Get-QBField $task 'result'); jobResult = [string](Get-QBField $task 'jobResult') }
                 }
             }
             foreach ($log in $Logs) {
                 foreach ($excerpt in @(Get-QBField $log 'excerpts' @())) {
-                    @{ text = [string]$excerpt.text; task = $log.task; job = $log.job; path = $log.path; line = $excerpt.line
+                    @{ text = [string]$excerpt.text; issueType = $null; task = $log.task; job = $log.job; path = $log.path; line = $excerpt.line
                         taskResult = [string](Get-QBField $log 'result'); jobResult = [string](Get-QBField $log 'jobResult') }
                 }
             }
@@ -311,7 +313,7 @@ function New-QBModelEvidence {
             $key = [regex]::Replace($key, '\(in [\d.]+ \w+\)', '(duration)')
             $key = [regex]::Replace($key, 'global\\msbuild-server-running-[a-z0-9_-]+', 'global\msbuild-server-running-<id>')
             # Include each occurrence's severity in the group key so fatal and non-fatal copies remain separate.
-            $severity = Get-DiagnosticSeverity $message.text ([string]$message.taskResult) ([string]$message.jobResult)
+            $severity = Get-DiagnosticSeverity $message.text ([string]$message.taskResult) ([string]$message.jobResult) ([string]$message.issueType)
             $key = "$severity|$key"
             if (-not $groups.Contains($key)) {
                 $groups[$key] = @{ quote = $quote; explanation = $explanation; rank = $rank; tasks = [Collections.Generic.HashSet[string]]::new()
@@ -364,8 +366,11 @@ function New-QBModelEvidence {
                         foreach ($task in @($record | ForEach-Object { @(Get-QBField $_ 'tasks' @()) })) {
                             if ((Get-QBField $task 'result') -eq 'succeeded') { continue }
                             $messages = @(@(Get-QBField $task 'issues' @()) | ForEach-Object {
-                                Short-Text (Get-QBField $_ 'message') 900
-                            } | Select-Object -Unique -First 3)
+                                [pscustomobject]@{
+                                    type = Get-QBField $_ 'type'
+                                    message = Short-Text (Get-QBField $_ 'message') 900
+                                }
+                            } | Select-Object type,message -Unique -First 3)
                             if ((Get-QBField $task 'recordType') -ne 'Task' -and $messages.Count -eq 0) { continue }
                             [ordered]@{ task = Get-QBField $task 'task'; job = Get-QBField $task 'job'; jobId = Get-QBField $task 'jobId'
                                 jobResult = Get-QBField $task 'jobResult'
