@@ -309,13 +309,15 @@ function Add-QBCoverageNotes {
     param([AllowEmptyCollection()][string[]] $Alerts = @())
     foreach ($alert in @($Alerts)) {
         if ([string]::IsNullOrWhiteSpace($alert)) { continue }
-        if ($alert -match '(?i)authenticat|sign[ -]?in|az login|token acquisition|HTTP 40[13]') {
-            $script:QBCoverageGap = $true
+        $script:QBCoverageGap = $true
+        if ($alert -match '^(?i)(internal|collection):' -and $alert -match '(?i)authenticat|sign[ -]?in|az login|token acquisition|HTTP 40[13]') {
             Add-QBRunNote -Source 'internal-auth' -Key 'internal-auth' -Severity first -Message "The internal builds are UNKNOWN, not healthy: $alert" -Fix 'az login --allow-no-subscriptions'
         }
-        elseif ($alert -match '^Issue(/owner)? evidence|^\d+ additional issue') { Add-QBRunNote -Source 'evidence' -Message $alert }
+        elseif ($alert -match '^Issue(/owner)? evidence|^\d+ additional issue') {
+            $fix = if ($alert -match 'gh auth login') { 'gh auth login --hostname github.com' } else { '' }
+            Add-QBRunNote -Source 'evidence' -Message $alert -Fix $fix
+        }
         else {
-            $script:QBCoverageGap = $true
             Add-QBRunNote -Source 'evidence' -Severity first -Message $alert
         }
     }

@@ -79,18 +79,19 @@ function Get-QBCoverageAlerts {
     $errors = @(Get-QBField $Evidence 'requiredErrors' @())
     $orderedErrors = @($errors | Sort-Object { -not [bool](Get-QBField $_ 'authenticationRequired' $false) })
     foreach ($requiredError in @($orderedErrors | Select-Object -First 8)) {
+        $scope = [string](Get-QBField $requiredError 'scope')
         $message = [string](Get-QBField $requiredError 'message')
         if ($message.Length -gt 1200) { $message = $message.Substring(0, 1200) + ' (full details retained in sources.json)' }
-        if ($message) { $alerts.Add("$(Get-QBField $requiredError 'scope'): $message") }
+        if ($message) { $alerts.Add("${scope}: $message") }
         $signIn = [string](Get-QBField $requiredError 'signInCommand')
-        if ($signIn) { $alerts.Add("Authenticate the Microsoft work account for dnceng/internal: $signIn") }
+        if ($signIn) { $alerts.Add("${scope}: Authentication required. Run: $signIn") }
     }
     if ($errors.Count -gt 8) { $alerts.Add("$($errors.Count - 8) additional pipeline evidence errors are retained in the run's sources.json.") }
     $internal = Get-QBInternalPipeline $Evidence
     if ((Get-QBField $internal 'status') -ne 'available' -and $alerts.Count -eq 0) {
-        $alerts.Add("Internal pipeline coverage is $(Get-QBField $internal 'status'), not verified complete.")
+        $alerts.Add("internal: Pipeline coverage is $(Get-QBField $internal 'status'), not verified complete.")
         $command = [string](Get-QBField $internal 'loginCommand')
-        if ($command) { $alerts.Add("Authenticate the Microsoft work account for dnceng/internal: $command") }
+        if ($command) { $alerts.Add("internal: Authentication required. Run: $command") }
     }
     if ((Get-QBField $Evidence 'status') -ne 'complete' -and $alerts.Count -eq 0) {
         $alerts.Add('Pipeline evidence is incomplete; do not treat missing internal results as healthy.')
@@ -100,7 +101,7 @@ function Get-QBCoverageAlerts {
         $issueErrors = @(Get-QBField $IssueEvidence 'errors' @())
         foreach ($issueError in @($issueErrors | Select-Object -First 5)) {
             $message = [string](Get-QBField $issueError 'message')
-            if ($message) { $alerts.Add($message) }
+            if ($message) { $alerts.Add("Issue evidence: $message") }
         }
         if ($issueErrors.Count -gt 5) { $alerts.Add("$($issueErrors.Count - 5) additional issue/owner errors are retained in issue-evidence.json.") }
     }
