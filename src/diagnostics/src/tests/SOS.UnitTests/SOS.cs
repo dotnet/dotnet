@@ -281,30 +281,6 @@ public static class SOSTestHelpers
     }
 }
 
-public class SOSStackTraceTests
-{
-    public SOSStackTraceTests(ITestOutputHelper output)
-    {
-        Output = output;
-    }
-
-    private ITestOutputHelper Output { get; set; }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task StackTests(TestConfiguration config)
-    {
-        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
-        SOSTestHelpers.SkipIfWinX86(config);
-
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "NestedExceptionTest",
-            scriptName: "StackTests.script",
-            Output,
-            testName: "SOS.StackTests");
-    }
-}
-
 public class SOSInterpreterTests
 {
     public SOSInterpreterTests(ITestOutputHelper output)
@@ -357,38 +333,6 @@ public class SOSInterpreterTests
     }
 }
 
-public class SOSOverflowTests
-{
-    public SOSOverflowTests(ITestOutputHelper output)
-    {
-        Output = output;
-    }
-
-    private ITestOutputHelper Output { get; set; }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task Overflow(TestConfiguration config)
-    {
-        await SOSTestHelpers.RunTest(
-            scriptName: "Overflow.script",
-            new SOSRunner.TestInformation
-            {
-                TestConfiguration = config,
-                DebuggeeName = "Overflow",
-                // Generating the logging for overflow test causes so much output from createdump that it hangs/timesout the test run
-                DumpDiagnostics = config.IsNETCore && config.RuntimeFrameworkVersionMajor >= 6,
-                // Single file dumps don't capture the overflow exception info so disable testing against a dump
-                // Issue: https://github.com/dotnet/diagnostics/issues/2515
-                // Desktop CLR heap dumps don't expose the stack overflow exception through the thread data.
-                // Issue: https://github.com/dotnet/diagnostics/issues/5757
-                TestDump = !config.PublishSingleFile && !config.IsDesktop,
-                // The .NET Core createdump facility may not catch stack overflow so use gdb to generate dump
-                DumpGenerator = config.StackOverflowCreatesDump ? SOSRunner.DumpGenerator.CreateDump : SOSRunner.DumpGenerator.NativeDebugger
-            },
-            Output);
-    }
-}
-
 public class SOSGCTests
 {
     public SOSGCTests(ITestOutputHelper output)
@@ -418,96 +362,6 @@ public class SOSGCTests
             Output,
             testName: "SOS.FindRootsOlderGeneration",
             testDump: false);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.GetGCConfigurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task DumpGCData(TestConfiguration config)
-    {
-        if (config.RuntimeFrameworkVersionMajor < 10)
-        {
-            Assert.Skip("This test validates a bug which was fixed in .NET 10");
-        }
-
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "DumpGCData",
-            scriptName: "DumpGCData.script",
-            Output,
-            testName: "SOS.DumpGCData",
-            testDump: false);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task DumpGen(TestConfiguration config)
-    {
-        await SOSTestHelpers.RunTest(
-            scriptName: "DumpGen.script",
-            new SOSRunner.TestInformation
-            {
-                TestConfiguration = config,
-                TestLive = false,
-                TestName = "SOS.DumpGen",
-                DebuggeeName = "DotnetDumpCommands",
-                DebuggeeArguments = "dumpgen",
-                DumpNameSuffix = "dumpgen",
-                UsePipeSync = true,
-                DumpGenerator = SOSRunner.DumpGenerator.DotNetDump,
-            },
-            Output);
-    }
-}
-
-public class SOSDumpTests
-{
-    public SOSDumpTests(ITestOutputHelper output)
-    {
-        Output = output;
-    }
-
-    private ITestOutputHelper Output { get; set; }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.GetNetCoreConfigurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task MiniDumpLocalVarLookup(TestConfiguration config)
-    {
-        if (OS.Kind != OSKind.Windows)
-        {
-            Assert.Skip("Test only supports CDB and therefore only runs on Windows");
-        }
-
-        if (config.PublishSingleFile)
-        {
-            Assert.Skip("Single file does not support mini dumps");
-        }
-
-        // The default dumpGenerator, CreateDump, only supports taking dumps at exceptions.
-        // DotnetDump could support taking a dump at a breakpoint, but this SOS test framework doesn't currently support this operation.
-        // Therefore we use the NativeDebugger to take a dump at the DebugBreak() call in the debuggee.
-        await SOSTestHelpers.RunTest(
-            config,
-            debuggeeName: "MiniDumpLocalVarLookup",
-            scriptName: "MiniDumpLocalVarLookup.script",
-            Output,
-            testName: "SOS.MiniDumpLocalVarLookup",
-            testMini: true,
-            dumpGenerator: SOSRunner.DumpGenerator.NativeDebugger);
-    }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.Configurations), MemberType = typeof(SOSTestHelpers))]
-    public async Task OtherCommands(TestConfiguration config)
-    {
-        // This debuggee needs the directory of the exes/dlls to load the SymbolTestDll assembly.
-        await SOSTestHelpers.RunTest(
-            scriptName: "OtherCommands.script",
-            new SOSRunner.TestInformation
-            {
-                TestConfiguration = config,
-                TestName = "SOS.OtherCommands",
-                DebuggeeName = "SymbolTestApp",
-                EnableStressLog = true,
-                // Assumes that SymbolTestDll.dll that is dynamically loaded is the parent directory of the single file app
-                DebuggeeArguments = config.PublishSingleFile ? Path.Combine("%DEBUG_ROOT%", "..") : "%DEBUG_ROOT%"
-            },
-            Output);
     }
 }
 
@@ -607,73 +461,6 @@ public class SOSScenarioTests
                 DumpGenerator = SOSRunner.DumpGenerator.DotNetDump
             },
             Output);
-    }
-}
-
-public class SOSStackAndOtherTests
-{
-    public SOSStackAndOtherTests(ITestOutputHelper output)
-    {
-        Output = output;
-    }
-
-    private ITestOutputHelper Output { get; set; }
-
-    [Theory, MemberData(nameof(SOSTestHelpers.GetConfigurations), "TestName", "SOS.StackAndOtherTests", MemberType = typeof(SOSTestHelpers))]
-    public async Task StackAndOtherTests(TestConfiguration config)
-    {
-        // Tracking: https://github.com/dotnet/diagnostics/issues/5883 (dotnet/runtime#129456)
-        SOSTestHelpers.SkipIfWinX86(config);
-
-        foreach (TestConfiguration currentConfig in TestRunner.EnumeratePdbTypeConfigs(config))
-        {
-            // Assumes that SymbolTestDll.dll that is dynamically loaded is the parent directory of the single file app
-            string debuggeeArguments = currentConfig.PublishSingleFile ? Path.Combine("%DEBUG_ROOT%", "..") : "%DEBUG_ROOT%";
-            string debuggeeDumpOutputRootDir = Path.Combine(currentConfig.DebuggeeDumpOutputRootDir(), currentConfig.DebugType);
-            string debuggeeDumpInputRootDir = Path.Combine(currentConfig.DebuggeeDumpInputRootDir(), currentConfig.DebugType);
-
-            // This debuggee needs the directory of the exes/dlls to load the SymbolTestDll assembly.
-            await SOSTestHelpers.RunTest(
-                scriptName: "StackAndOtherTests.script", new SOSRunner.TestInformation
-                {
-                    TestConfiguration = currentConfig,
-                    TestName = "SOS.StackAndOtherTests",
-                    DebuggeeName = "SymbolTestApp",
-                    DebuggeeArguments = debuggeeArguments,
-                    DumpNameSuffix = currentConfig.DebugType,
-                    DebuggeeDumpOutputRootDir = debuggeeDumpOutputRootDir,
-                    DebuggeeDumpInputRootDir = debuggeeDumpInputRootDir,
-                    UsePipeSync = true,
-                    DumpGenerator = SOSRunner.DumpGenerator.DotNetDump,
-                    DisableDacSignatureVerification = currentConfig.PublishSingleFile,
-                },
-                Output);
-
-            // This tests using regular Windows PDBs with no managed hosting. SOS should fallback
-            // to using native implementations of the host/target/runtime.
-            if (currentConfig.DebugType == "full")
-            {
-                Dictionary<string, string> settings = new(currentConfig.AllSettings)
-                {
-                    ["SetHostRuntime"] = "-none"
-                };
-                await SOSTestHelpers.RunTest(
-                    scriptName: "StackAndOtherTests.script", new SOSRunner.TestInformation
-                    {
-                        TestConfiguration = new TestConfiguration(settings),
-                        TestName = "SOS.StackAndOtherTests",
-                        DebuggeeName = "SymbolTestApp",
-                        DebuggeeArguments = debuggeeArguments,
-                        DumpNameSuffix = currentConfig.DebugType,
-                        DebuggeeDumpOutputRootDir = debuggeeDumpOutputRootDir,
-                        DebuggeeDumpInputRootDir = debuggeeDumpInputRootDir,
-                        UsePipeSync = true,
-                        DumpGenerator = SOSRunner.DumpGenerator.DotNetDump,
-                        DisableDacSignatureVerification = currentConfig.PublishSingleFile,
-                    },
-                    Output);
-            }
-        }
     }
 }
 

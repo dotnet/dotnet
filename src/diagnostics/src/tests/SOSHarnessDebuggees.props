@@ -12,6 +12,14 @@
       <SupportsSingleFile>true</SupportsSingleFile>
       <SupportsFramework>true</SupportsFramework>
     </SOSHarnessDebuggee>
+    <SOSHarnessDebuggee Include="$(MSBuildThisFileDirectory)SOS.UnitTests/Debuggees/DotnetDumpCommands/DotnetDumpCommands.csproj">
+      <SupportsSingleFile>true</SupportsSingleFile>
+      <SupportsFramework>true</SupportsFramework>
+    </SOSHarnessDebuggee>
+    <SOSHarnessDebuggee Include="$(MSBuildThisFileDirectory)SOS.UnitTests/Debuggees/DumpGCData/DumpGCData.csproj">
+      <SupportsSingleFile>false</SupportsSingleFile>
+      <SupportsFramework>false</SupportsFramework>
+    </SOSHarnessDebuggee>
     <SOSHarnessDebuggee Include="$(MSBuildThisFileDirectory)SOS.UnitTests/Debuggees/DynamicMethod/DynamicMethod.csproj">
       <SupportsSingleFile>true</SupportsSingleFile>
       <SupportsFramework>false</SupportsFramework>
