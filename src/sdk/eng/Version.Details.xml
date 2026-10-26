@@ -226,7 +226,7 @@
       <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
     <Dependency Name="System.Formats.Asn1" Version="10.0.13">
-      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
     <Dependency Name="System.Security.Cryptography.ProtectedData" Version="10.0.13">
@@ -508,11 +508,11 @@
       <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
     <Dependency Name="System.Security.Cryptography.Pkcs" Version="10.0.13">
-      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
     <Dependency Name="System.Security.Cryptography.Xml" Version="10.0.13">
-      <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
+      <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>4099f83977f4d29604a9aeb971fb0a7bc1d5f699</Sha>
     </Dependency>
     <Dependency Name="System.Security.Permissions" Version="10.0.13">
