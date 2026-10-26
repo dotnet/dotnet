@@ -4,6 +4,7 @@ Set-StrictMode -Version Latest
 # collection that failed. Nothing here checks, repairs or renders what the model writes: the model writes the whole report from
 # the digest, by the rules in references/. Defines functions only; loading it runs nothing.
 . (Join-Path $PSScriptRoot '..\triage\timeout.ps1')
+. (Join-Path $PSScriptRoot 'evidence.ps1')
 
 # A wrapper diagnostic (MSB3073 and friends) normally hides the real error and is dropped. When a job retains nothing else -
 # common on Windows legs, where repo builds redirect inner output to a log file - dropping it leaves the finding with no
@@ -227,7 +228,7 @@ function New-QBModelEvidence {
         return 'nonTerminating'
     }
     function Short-Text([object] $Text, [int] $Limit = 800) {
-        $value = [string]$Text
+        $value = Protect-VmrEvidenceDiagnostic -Text ([string]$Text)
         if ($value.Length -le $Limit) { return $value }
         return $value.Substring(0, $Limit)
     }
