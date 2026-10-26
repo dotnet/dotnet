@@ -475,7 +475,9 @@ function New-QBModelEvidence {
                 problemBuilds = $problems
                 active = @(
                     foreach ($path in @(Get-QBField $pipeline 'activeInventoryPaths' @())) {
-                        Get-QBInventoryBuilds $path | Select-Object id, sourceBranch, status, queueTime
+                        $activeInventory = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json -Depth 100
+                        @(Get-QBField $activeInventory 'value' @()) | Select-Object id, sourceBranch, status, queueTime,
+                            @{Name='observedAtUtc'; Expression={ Get-QBField $activeInventory 'observedAtUtc' }}
                     }
                 )
             }
