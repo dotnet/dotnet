@@ -173,10 +173,9 @@ build, no build twice, none outside the list, each keeping all its independent f
   owner applies (for example 1ES/Guardian/SBoM task tooling, agent or pool problems, container images, other VMR build
   infrastructure) write `No identified owner`.
 - Timeouts: take the repo from the digest's `logs[].repoBuild` (`repoAtTimeout`, `bystanders`, `errorOnlyRepos`, `statement`,
-  `timedOut`, `uncertain`, `reliable`, `timeLimitMinutes`, `limitSource`) as `triage.md` describes, never from error text. When
-  `timedOut` is false the leg did not run to its limit: classify it by its own diagnostic and do not call it a timeout. When
-  `uncertain` is true (`limitSource` says the 150-minute default was assumed) say that whether it timed out is unconfirmed,
-  and do not call it a failure or a cancellation on that basis.
+  `timedOut`, `uncertain`, `reliable`, `timeLimitMinutes`, `limitSource`) as `triage.md` describes. `timedOut` requires confirming
+  job timeline evidence; the task log only supplies repo attribution. When `uncertain` is true, do not infer a timeout,
+  failure, or cancellation from the task log's length or an assumed limit.
 
 **Priority actions.** The numbered list `1.`, `2.`, ... of what the QB should act on, most urgent first, one item per action:
 `N. **BH #N - <finding name>:** <what failed and why it matters, with direct build links>`. A finding name describes the

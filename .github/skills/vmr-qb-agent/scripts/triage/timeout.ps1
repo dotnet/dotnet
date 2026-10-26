@@ -8,8 +8,7 @@ Set-StrictMode -Version Latest
 #     2026-10-05T10:32:01.0000000Z   [10:32:01.82] Building arcade...done
 # Repo builds run in parallel, so several repos are "open" at once, and a repo that merely logged an error in the same file is NOT
 # necessarily the one that timed out.
-# "Started but never finished" is also true of whichever repo started last when an upstream failure tore the build down, so a
-# timeout needs the log to have run to the job's time limit; otherwise the leg ended by failure or cancellation.
+# Job timeline evidence establishes a timeout; task-log markers identify which repos were still building.
 
 function Get-VmrQBRepoBuildState {
     [CmdletBinding()]
@@ -67,54 +66,49 @@ function Get-VmrQBTimeoutAttribution {
     .SYNOPSIS
     The sentence-sized answer for a leg reported as timed out: was it a timeout, and which repo was running?
     .DESCRIPTION
-    A leg counts as having run to its limit only if the log spans at least 90% of -TimeLimitMinutes (default 150, the VMR leg limit;
-    pass the number from the job's own "maximum time of N minutes" message when you have it). A shorter log ended by failure or
-    cancellation, and no repo is blamed for a timeout that did not happen.
-    For a real timeout, a repo is a SUSPECT only if it was unfinished AND had been running at least 10 minutes when the log ended;
+    -JobTimedOut confirms the job timeout from its timeline evidence. A task log can span only part of a job, so its length
+    neither proves nor disproves a job timeout. Without confirming evidence the verdict is uncertain.
+    For a confirmed timeout, a repo is a SUSPECT only if it was unfinished AND had been running at least 10 minutes when the log ended;
     repos started moments before the end are BYSTANDERS. Repos that logged errors but are not suspects are listed separately, so an
     unrelated error in the same file can never be mistaken for the cause.
-    -LimitIsAssumed says the limit is the default rather than the job's own. A log that stops short of an assumed limit is then
-    reported as uncertain (the job may have had a shorter limit and timed out), never as a leg that failed or was cancelled.
+    -LimitIsAssumed labels the default limit; it is not evidence that the job timed out.
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][object] $State,
         [ValidateRange(1, 1440)][int] $TimeLimitMinutes = 150,
-        [switch] $LimitIsAssumed
+        [switch] $LimitIsAssumed,
+        [switch] $JobTimedOut
     )
     $minRunningMinutes = 10
     $open = @($State.repos | Where-Object running)
-    $nearLimit = $null -ne $State.elapsedMinutes -and $State.elapsedMinutes -ge [Math]::Floor($TimeLimitMinutes * 0.9)
-    $trusted = $State.reliable -and $nearLimit
+    $trusted = $State.reliable -and $JobTimedOut
     $suspects = @(if ($trusted) { $open | Where-Object { $null -ne $_.runningSeconds -and $_.runningSeconds -ge ($minRunningMinutes * 60) } })
     $bystanders = @(if ($trusted) { $open | Where-Object { $_ -notin $suspects } })
     $suspectNames = @($suspects | ForEach-Object repo)
     $errorOnly = @($State.errorRepos | Where-Object { $_ -notin $suspectNames })
     $describe = { param($repo) '{0} (running {1} min)' -f $repo.repo, [int]($repo.runningSeconds / 60) }
-    $uncertain = [bool]($LimitIsAssumed -and $State.reliable -and -not $nearLimit)
+    $uncertain = -not [bool]$JobTimedOut
     $assumption = if ($LimitIsAssumed) { " The $TimeLimitMinutes-minute limit is the VMR default; the job's own limit was not available." } else { '' }
     $openText = if ($open.Count) { " Repo build(s) open at the end: $(@($open | ForEach-Object { & $describe $_ }) -join ', ')." } else { '' }
     $statement = if (-not $State.reliable) { 'No "Building <repo>" markers in this log; it is not a repo-build log, so no repo can be named from it.' }
         elseif ($uncertain) {
-            "This log spans $($State.elapsedMinutes) minutes, short of the $TimeLimitMinutes-minute default, but the job's own time limit was not available, so whether this leg timed out is uncertain.$openText Do not report it as a timeout, and do not name a repo as its cause, until the job's own limit (its 'maximum time of N minutes' message) is known."
-        }
-        elseif (-not $nearLimit) {
-            "This log spans $($State.elapsedMinutes) minutes, short of the $TimeLimitMinutes-minute limit, so the leg ended by failure or cancellation, not by timing out.$openText Do not report it as a timeout."
+            "This task log spans $($State.elapsedMinutes) minutes, but the job's timeline did not establish a timeout, so the timeout verdict is uncertain.$openText Do not report a timeout or name a repo as its cause without confirming job evidence.$assumption"
         }
         elseif ($suspects.Count -eq 0) {
             $why = if ($bystanders.Count) { "$(@($bystanders | ForEach-Object { & $describe $_ }) -join ', ') only started just before the end, so none of them is the cause" }
                    else { 'every repo build that started also finished, so the time was spent outside a repo build' }
-            "The log ran to the time limit but no repo had been running for $minRunningMinutes minutes or more when it ended: $why.$assumption"
+            "The job timeline confirms a timeout (limit $TimeLimitMinutes minutes), but no repo had been running for $minRunningMinutes minutes or more when this task log ended: $why."
         }
         else {
-            $text = "The log ran $($State.elapsedMinutes) minutes (limit $TimeLimitMinutes). Repo build(s) with no '...done' after running at least $minRunningMinutes minutes: $(@($suspects | ForEach-Object { & $describe $_ }) -join ', ').$assumption"
+            $text = "The job timeline confirms a timeout (limit $TimeLimitMinutes minutes); this task log spans $($State.elapsedMinutes) minutes. Repo build(s) with no '...done' after running at least $minRunningMinutes minutes: $(@($suspects | ForEach-Object { & $describe $_ }) -join ', ')."
             if ($bystanders.Count) { $text += " Started just before the end, not suspects: $(@($bystanders | ForEach-Object repo) -join ', ')." }
             if ($errorOnly.Count) { $text += " Logged errors but were not running long: $($errorOnly -join ', ') - do not attribute the timeout to them." }
             $text
         }
     return [pscustomobject]@{
         reliable         = [bool]$State.reliable
-        timedOut         = [bool]$trusted
+        timedOut         = [bool]$JobTimedOut
         uncertain        = $uncertain
         timeLimitMinutes = $TimeLimitMinutes
         limitAssumed     = [bool]$LimitIsAssumed

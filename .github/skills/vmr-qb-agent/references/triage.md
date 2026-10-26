@@ -43,9 +43,9 @@ and reuse the exact name when the failure matches.
 A leg that "timed out" is a statement about the leg. The owner is whichever repo was running when the time ran out, and that comes
 from the log's own `Building <repo>` / `Building <repo>...done` markers (a start with no matching done was still running), never from
 which repo logged an error in the same file. The digest gives the answer as `logs[].repoBuild`, computed by `triage/timeout.ps1`: a
-leg is a timeout only when its log spans at least 90% of the job's own time limit (without that limit the 150-minute VMR default is
-assumed and the answer is "uncertain", never "failed"), and a repo is a suspect only if it was unfinished and had been running for at
-least 10 minutes. Use that answer as given. If `reliable` is false, say the attribution is unconfirmed and name no repo.
+job timeout must be confirmed by the job's explicit timeline evidence, not by the duration of one task's log. Without confirming
+evidence the answer is uncertain, even for a long log. For a confirmed timeout, a repo is a suspect only if it was unfinished and
+had been running for at least 10 minutes. Use that answer as given. If `reliable` is false, name no repo.
 
 ## 4. Routing
 

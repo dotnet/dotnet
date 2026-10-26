@@ -141,13 +141,12 @@ function Get-QBRepoBuildPacket {
     .SYNOPSIS
     The repo-build attribution for one downloaded log, or $null when it is not a repo-build log.
     .DESCRIPTION
-    Derived mechanically from the log's own start/done markers and elapsed time, so the model is handed
-    the answer rather than reading it off the log. Failures here must never break packet generation.
+    The job's explicit timeout message establishes the verdict. The task log's start/done markers establish attribution,
+    not whether the job timed out. Failures here must never break packet generation.
     #>
     param(
         [string] $Path,
-        # The job's own time limit when the timeline stated it ("... maximum time of N minutes"). Without it the 150-minute VMR
-        # default is assumed, and the attribution says so instead of calling a short log a failure or cancellation.
+        # Extracted from an explicit job-timeout message, not from a configured limit or the task-log duration.
         [AllowNull()][Nullable[int]] $TimeLimitMinutes
     )
     if (-not $Path -or -not (Get-Command Get-VmrQBRepoBuildState -ErrorAction SilentlyContinue)) { return $null }
@@ -156,7 +155,7 @@ function Get-QBRepoBuildPacket {
         if (-not (Select-String -LiteralPath $Path -Pattern '\] Building [A-Za-z0-9._-]+' -Quiet)) { return $null }
         $state = Get-VmrQBRepoBuildState -Path $Path
         if (-not (Get-QBField $state 'hasMarkers' $false)) { return $null }
-        $attribution = if ($null -ne $TimeLimitMinutes -and $TimeLimitMinutes -ge 1) { Get-VmrQBTimeoutAttribution -State $state -TimeLimitMinutes ([int]$TimeLimitMinutes) }
+        $attribution = if ($null -ne $TimeLimitMinutes -and $TimeLimitMinutes -ge 1) { Get-VmrQBTimeoutAttribution -State $state -TimeLimitMinutes ([int]$TimeLimitMinutes) -JobTimedOut }
                        else { Get-VmrQBTimeoutAttribution -State $state -LimitIsAssumed }
         return [ordered]@{
             reliable = Get-QBField $state 'reliable'; elapsedMinutes = Get-QBField $state 'elapsedMinutes'
@@ -175,19 +174,21 @@ function Get-QBJobTimeLimitMinutes {
     .SYNOPSIS
     The time limit the pipeline itself reported for a job ("... ran longer than the maximum time of N minutes"), or $null.
     .DESCRIPTION
-    Looked for in the job's retained timeline messages and then in the log's own diagnostic excerpts, by job record id, so one
-    leg's limit is never applied to another leg that shares its display name. $null means the limit is unknown, not 150.
+    Looked for in the job's retained timeline messages and job-log excerpts, by job record id, so one leg's limit is never
+    applied to another leg that shares its display name. $null means no confirming timeout message was retained.
     #>
     param([string] $JobId, [AllowNull()][object[]] $Task = @(), [AllowNull()][object] $Log)
     $pattern = 'ran longer than the maximum time of (?<minutes>\d+) minutes'
     $texts = [Collections.Generic.List[string]]::new()
     if ($JobId) {
         foreach ($record in @($Task)) {
-            if ([string](Get-QBField $record 'jobId') -ne $JobId) { continue }
-            foreach ($message in @(Get-QBField $record 'issues' @())) { $texts.Add([string](Get-QBField $message 'message' $message)) }
+            if ([string](Get-QBField $record 'jobId') -ne $JobId -or (Get-QBField $record 'recordType') -ne 'Job') { continue }
+            foreach ($message in @(Get-QBField $record 'issues' @())) {
+                if ((Get-QBField $message 'type') -ne 'warning') { $texts.Add([string](Get-QBField $message 'message' $message)) }
+            }
         }
     }
-    if ($null -ne $Log) {
+    if ($null -ne $Log -and (Get-QBField $Log 'recordType') -eq 'Job') {
         $texts.Add([string](Get-QBField $Log 'diagnosticExcerpt'))
         foreach ($excerpt in @(Get-QBField $Log 'diagnosticExcerpts' @())) { $texts.Add([string](Get-QBField $excerpt 'text')) }
     }

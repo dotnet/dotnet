@@ -34,7 +34,7 @@ try {
             (L '10:01:02.0' 'Building runtime'), (L '10:01:03.0' 'Building emsdk'),
             '2026-10-05T10:20:00.0000000Z D:\a\_work\1\s\src\aspnetcore\eng\build.cmd(12,3): error MSB3073: command exited with code 1',
             (L '10:30:00.0' 'Building aspnetcore...done'), '2026-10-05T12:30:00.0000000Z ##[section]Finishing: Linux_x64')
-        $result = Judge $leg
+        $result = Judge $leg @{ JobTimedOut = $true }
         Assert (($result.repoAtTimeout -join ',') -eq 'runtime,emsdk') "suspects=$($result.repoAtTimeout -join ',')"
         Assert ($result.repoAtTimeout -notcontains 'aspnetcore') 'aspnetcore must never be named for a timeout it did not cause'
         Assert ($result.errorOnlyRepos -contains 'aspnetcore') 'the error-only repo must be reported separately'
@@ -42,14 +42,14 @@ try {
         Assert ($result.statement -match 'runtime \(running 149 min\)') "running time missing or wrong: $($result.statement)"
     }
 
-    Check 'A repo that only started last is a bystander, and a log short of the limit is no timeout' {
-        $ran = Judge (Log @((L '10:00:00.0' 'Building runtime'), (L '10:01:00.0' 'Building runtime...done'), (L '12:27:00.0' 'Building sdk'), '2026-10-05T12:30:00.0000000Z ##[section]Finishing: Linux_x64'))
+    Check 'Late starters are bystanders; task-log length does not establish a job timeout' {
+        $ran = Judge (Log @((L '10:00:00.0' 'Building runtime'), (L '10:01:00.0' 'Building runtime...done'), (L '12:27:00.0' 'Building sdk'), '2026-10-05T12:30:00.0000000Z ##[section]Finishing: Linux_x64')) @{ JobTimedOut = $true }
         Assert ($ran.timedOut -and $ran.repoAtTimeout.Count -eq 0 -and $ran.bystanders -contains 'sdk') "a repo that ran 3 minutes was named: $($ran.repoAtTimeout -join ',')"
         Assert ($ran.statement -match 'none of them is the cause') $ran.statement
         # sdk had been running 55 minutes in a leg that FAILED; the log stopped far short of the 150-minute limit.
         $failed = Judge (Log @((L '10:00:00.0' 'Building sdk'), '2026-10-05T10:55:00.0000000Z ##[error]Build FAILED.', '2026-10-05T10:55:01.0000000Z ##[section]Finishing: Build'))
         Assert (-not $failed.timedOut -and $failed.repoAtTimeout.Count -eq 0) 'no repo may be blamed for a timeout that did not happen'
-        Assert ($failed.statement -match 'spans 55 minutes' -and $failed.statement -match 'ended by failure or cancellation, not by timing out' -and $failed.statement -match 'Do not report it as a timeout') $failed.statement
+        Assert ($failed.uncertain -and $failed.statement -match 'spans 55 minutes' -and $failed.statement -match 'did not establish a timeout') $failed.statement
     }
 
     Check 'A second pass of the same repo is tracked as still running' {
@@ -67,22 +67,22 @@ try {
         }
     }
 
-    Check 'The job''s own limit decides, and an assumed limit is uncertain rather than a failure' {
+    Check 'Job evidence confirms a timeout; an assumed limit and log duration do not' {
         $short = Get-VmrQBRepoBuildState -Path (New-Leg 58)
-        $at60 = Get-VmrQBTimeoutAttribution -State $short -TimeLimitMinutes 60
+        $at60 = Get-VmrQBTimeoutAttribution -State $short -TimeLimitMinutes 60 -JobTimedOut
         Assert ($at60.timedOut -and ($at60.repoAtTimeout -join ',') -eq 'runtime,emsdk' -and -not $at60.limitAssumed -and $at60.timeLimitMinutes -eq 60) "60-minute limit: $($at60 | ConvertTo-Json -Compress)"
         foreach ($limit in 150, 240) {
             $other = Get-VmrQBTimeoutAttribution -State $short -TimeLimitMinutes $limit
-            Assert (-not $other.timedOut -and $other.statement -match 'ended by failure or cancellation') "a 58-minute log did not time out against a stated $limit-minute limit"
+            Assert (-not $other.timedOut -and $other.uncertain) 'A configured limit alone does not prove a job timeout.'
         }
         $assumed = Get-VmrQBTimeoutAttribution -State $short -LimitIsAssumed
         Assert (-not $assumed.timedOut -and $assumed.uncertain -and $assumed.limitAssumed -and $assumed.repoAtTimeout.Count -eq 0) 'an assumed limit with a short log is uncertain and names no repo'
-        Assert ($assumed.statement -match 'uncertain' -and $assumed.statement -match 'not available' -and $assumed.statement -notmatch 'ended by failure or cancellation') "an assumed limit must not turn into a different cause: $($assumed.statement)"
+        Assert ($assumed.statement -match 'uncertain' -and $assumed.statement -notmatch 'ended by failure or cancellation') "an assumed limit must not turn into a different cause: $($assumed.statement)"
         $long = Get-VmrQBRepoBuildState -Path (New-Leg 149)
-        $stated = Get-VmrQBTimeoutAttribution -State $long -TimeLimitMinutes 150
+        $stated = Get-VmrQBTimeoutAttribution -State $long -TimeLimitMinutes 150 -JobTimedOut
         Assert ($stated.timedOut -and -not $stated.uncertain -and ($stated.repoAtTimeout -join ',') -eq 'runtime,emsdk') 'a 149-minute log is a timeout at a stated 150 and is never uncertain'
         $assumedLong = Get-VmrQBTimeoutAttribution -State $long -LimitIsAssumed
-        Assert ($assumedLong.timedOut -and -not $assumedLong.uncertain -and $assumedLong.statement -match 'VMR default') 'a log that reached the assumed limit is analysed and says the limit was assumed'
+        Assert (-not $assumedLong.timedOut -and $assumedLong.uncertain -and $assumedLong.repoAtTimeout.Count -eq 0) 'a long log alone must not establish a timeout'
     }
 
     Check 'The daily packet uses the limit the job itself reported, per job id, and says when it had to assume one' {
@@ -93,11 +93,11 @@ try {
         Assert ((Get-QBJobTimeLimitMinutes -JobId 'job-short' -Task $tasks -Log $null) -eq 60) 'the job''s own limit comes from its own record'
         Assert ((Get-QBJobTimeLimitMinutes -JobId 'job-other' -Task $tasks -Log $null) -eq 240) 'another job keeps its own limit'
         Assert ($null -eq (Get-QBJobTimeLimitMinutes -JobId 'job-unknown' -Task $tasks -Log $null)) 'a job that never reported a limit has none, not 150'
-        $fromLog = [pscustomobject]@{ diagnosticExcerpt = 'The job running on agent C ran longer than the maximum time of 90 minutes.' }
+        $fromLog = [pscustomobject]@{ recordType = 'Job'; diagnosticExcerpt = 'The job running on agent C ran longer than the maximum time of 90 minutes.' }
         Assert ((Get-QBJobTimeLimitMinutes -JobId 'job-unknown' -Task $tasks -Log $fromLog) -eq 90) 'the log''s own diagnostic is the fallback'
-        $leg = New-Leg 58
+        $leg = New-Leg 40
         $known = Get-QBRepoBuildPacket -Path $leg -TimeLimitMinutes 60
-        Assert ($known.timedOut -eq $true -and $known.timeLimitMinutes -eq 60 -and $known.limitSource -match 'job''s own limit' -and ($known.repoAtTimeout -join ',') -eq 'runtime,emsdk') "a stated 60-minute limit makes the 58-minute leg a timeout: $($known | ConvertTo-Json -Compress)"
+        Assert ($known.timedOut -eq $true -and $known.timeLimitMinutes -eq 60 -and $known.limitSource -match 'job''s own limit' -and ($known.repoAtTimeout -join ',') -eq 'runtime,emsdk') "a confirmed 60-minute job timeout also applies to its 40-minute task log: $($known | ConvertTo-Json -Compress)"
         $unknown = Get-QBRepoBuildPacket -Path $leg -TimeLimitMinutes $null
         Assert ($unknown.timedOut -eq $false -and $unknown.uncertain -eq $true -and $unknown.limitSource -match 'assumed' -and $unknown.statement -match 'uncertain') "an unknown limit is uncertain, not a failure: $($unknown | ConvertTo-Json -Compress)"
     }
