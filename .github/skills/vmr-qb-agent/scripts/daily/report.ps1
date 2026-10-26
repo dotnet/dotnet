@@ -389,7 +389,18 @@ function New-QBModelEvidence {
                             }
                         }
                     )
-                    $buildLogs = @($logIndex.logs | Where-Object { $_.buildId -eq $build.id -and (Get-QBField $_ 'organization') -eq $organization })
+                    $buildLogs = @($logIndex.logs | Where-Object {
+                        $log = $_
+                        if ($log.buildId -ne $build.id) { return $false }
+                        if (-not (Get-QBField $log 'promotionBuildId')) {
+                            return (Get-QBField $log 'organization') -eq $organization -and (Get-QBField $log 'actualBuildId') -eq $build.id
+                        }
+                        return @($promotions | Where-Object {
+                            (Get-QBField $_ 'promotionBuildId') -eq (Get-QBField $log 'actualBuildId') -and
+                            (Get-QBField $_ 'promotionBuildId') -eq (Get-QBField $log 'promotionBuildId') -and
+                            (Get-QBField $_ 'organization') -eq (Get-QBField $log 'organization')
+                        }).Count -gt 0
+                    })
                     $logs = @(
                         foreach ($log in $buildLogs) {
                             if ((Get-QBField $log 'evidenceKind') -in @('warningSample', 'warning')) { continue }
