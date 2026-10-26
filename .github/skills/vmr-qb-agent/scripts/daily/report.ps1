@@ -367,19 +367,26 @@ function New-QBModelEvidence {
                         $_.buildId -eq $build.id -and
                         (Get-QBField $_ 'organization') -eq $organization
                     } | Select-Object -First 1)
+                    $promotions = @(@(Get-QBField $failureIndex 'promotions' @()) | Where-Object {
+                        $_.buildId -eq $build.id -and (Get-QBField $_ 'rootScope') -eq (Get-QBField $pipeline 'name')
+                    })
+                    $record += $promotions
                     $tasks = @(
-                        foreach ($task in @($record | ForEach-Object { @(Get-QBField $_ 'tasks' @()) })) {
-                            if ((Get-QBField $task 'result') -eq 'succeeded') { continue }
-                            $messages = @(@(Get-QBField $task 'issues' @()) | ForEach-Object {
-                                [pscustomobject]@{
-                                    type = Get-QBField $_ 'type'
-                                    message = Short-Text (Get-QBField $_ 'message') 900
-                                }
-                            } | Select-Object type,message -Unique -First 3)
-                            if ((Get-QBField $task 'recordType') -ne 'Task' -and $messages.Count -eq 0) { continue }
-                            [ordered]@{ task = Get-QBField $task 'task'; job = Get-QBField $task 'job'; jobId = Get-QBField $task 'jobId'
-                                jobResult = Get-QBField $task 'jobResult'
-                                recordType = Get-QBField $task 'recordType'; result = Get-QBField $task 'result'; issues = $messages }
+                        foreach ($sourceRecord in $record) {
+                            foreach ($task in @(Get-QBField $sourceRecord 'tasks' @())) {
+                                if ((Get-QBField $task 'result') -eq 'succeeded') { continue }
+                                $messages = @(@(Get-QBField $task 'issues' @()) | ForEach-Object {
+                                    [pscustomobject]@{
+                                        type = Get-QBField $_ 'type'
+                                        message = Short-Text (Get-QBField $_ 'message') 900
+                                    }
+                                } | Select-Object type,message -Unique -First 3)
+                                if ((Get-QBField $task 'recordType') -ne 'Task' -and $messages.Count -eq 0) { continue }
+                                [ordered]@{ task = Get-QBField $task 'task'; job = Get-QBField $task 'job'; jobId = Get-QBField $task 'jobId'
+                                    jobResult = Get-QBField $task 'jobResult'
+                                    promotionBuildId = Get-QBField $sourceRecord 'promotionBuildId'
+                                    recordType = Get-QBField $task 'recordType'; result = Get-QBField $task 'result'; issues = $messages }
+                            }
                         }
                     )
                     $buildLogs = @($logIndex.logs | Where-Object { $_.buildId -eq $build.id -and (Get-QBField $_ 'organization') -eq $organization })
