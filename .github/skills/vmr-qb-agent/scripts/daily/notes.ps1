@@ -2,7 +2,7 @@ Set-StrictMode -Version Latest
 
 # daily/notes.ps1 - Run notes: everything that was stale, missing, wrong or failed during a run but did not stop it.
 # A run never stops for these. They are collected as they happen, written to the run log, shown at the top of the overall
-# summary and at the top of the email, and each one says how to fix it. A note with severity 'first' (internal authentication,
+# summary, and each one says how to fix it. A note with severity 'first' (internal authentication,
 # missing evidence) is listed before the others and drawn in red.
 # Defines functions only; loading it runs nothing.
 
@@ -14,7 +14,7 @@ $script:QBRunNotesShown = 12
 function Clear-QBRunNotes { $script:QBRunNotes.Clear() }
 
 function Format-QBNoteText {
-    # One line, no angle brackets (they would be read as HTML in the report and the email), bounded.
+    # One line, no angle brackets (they would be read as HTML in the report), bounded.
     param([AllowNull()][string] $Text, [int] $Limit = 400)
     $line = ([regex]::Replace([string]$Text, '\s+', ' ')).Trim().Replace('<', '(').Replace('>', ')')
     if ($line.Length -gt $Limit) { $line = $line.Substring(0, $Limit - 3) + '...' }
@@ -90,23 +90,6 @@ function Format-QBRunNotesMarkdown {
     if ($notes.Count -gt $script:QBRunNotesShown) { $lines.Add("> - ... and $($notes.Count - $script:QBRunNotesShown) more in the run log.") }
     $lines.Add($script:QBRunNotesEnd)
     return ($lines -join "`n")
-}
-
-function Format-QBRunNotesHtml {
-    [CmdletBinding()]
-    param([AllowEmptyCollection()][object[]] $Notes = (Get-QBRunNotes))
-    # An empty default arrives as $null, which @() would count as one note.
-    $notes = @($Notes | Where-Object { $null -ne $_ })
-    if (-not $notes.Count) { return '' }
-    $esc = { param($s) [Net.WebUtility]::HtmlEncode([string]$s) }
-    $border = if (@($notes | Where-Object severity -eq 'first').Count) { '#d13438' } else { '#c19c00' }
-    $items = foreach ($note in @($notes | Select-Object -First $script:QBRunNotesShown)) {
-        $head = if ($note.severity -eq 'first') { '<strong style="color:#d13438;">' + (& $esc $note.message) + '</strong>' } else { & $esc $note.message }
-        $fix = if ($note.fix) { ' <em>Fix:</em> ' + (& $esc $note.fix) } else { '' }
-        "<li>$head$fix</li>"
-    }
-    $more = if ($notes.Count -gt $script:QBRunNotesShown) { "<li>... and $($notes.Count - $script:QBRunNotesShown) more in the run log.</li>" } else { '' }
-    return "<div style=""border:2px solid $border;padding:10px;margin:10px 0;""><strong>Run notes ($($notes.Count))</strong> - the report was still produced. Something was stale, missing or failed.<ul>$($items -join '')$more</ul></div>"
 }
 
 function Remove-QBRunNotesBlock {

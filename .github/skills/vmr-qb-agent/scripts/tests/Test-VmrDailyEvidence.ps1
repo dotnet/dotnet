@@ -212,7 +212,7 @@ try {
         }
         Assert-True ((Read-TestJson $index.failureTasksPath).builds.Count -eq 0 -and (Read-TestJson $index.rootLogsPath).logs.Count -eq 0) 'empty indexes'
     }
-    "PASS: $script:passed offline collector tests. No network, sign-in, report, email or change outside local/."
+    "PASS: $script:passed offline collector tests. No network, sign-in, report or change outside local/."
 }
 finally {
     if ([IO.Directory]::Exists($script:root)) { [IO.Directory]::Delete($script:root, $true) }

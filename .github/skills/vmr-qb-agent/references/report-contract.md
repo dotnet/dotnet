@@ -246,8 +246,8 @@ copy-ready operational-issue draft lives, and omitting it is the single biggest 
 
 ## Rules that apply to the whole report
 
-- **Links.** Every hyperlink is an HTTPS web URL, never a file:// URI, drive path or relative Markdown path; local reports are
-  email attachments, not web links. For a monitoring gap with no build or PR, link the affected service page and state the
+- **Links.** Every hyperlink is an HTTPS web URL, never a file:// URI, drive path or relative Markdown path.
+  For a monitoring gap with no build or PR, link the affected service page and state the
   missing inventory (`https://dev.azure.com/dnceng/internal/_build` for unavailable internal access; the verified
   subscription or dashboard URL for Maestro coverage). Never invent a build id to satisfy a link.
 - **Reconciliation.** The Build Health priority list and the Summary describe the same set: every action-backed finding has an

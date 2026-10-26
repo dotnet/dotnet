@@ -3,9 +3,8 @@ Set-StrictMode -Version Latest
 # daily/preflight.ps1 - Preflight: will a daily run be able to see what it needs to see (sign-in, tools, identity)?
 # Dot-sourced by Invoke-Preflight.ps1 and Invoke-Daily.ps1; it defines functions only and runs nothing.
 #
-# Only four things stop a run (exit 2): PowerShell older than 7.3, a state folder that cannot be written, no GitHub sign-in, and a
-# config holding your email address that Git tracks or does not ignore (the next commit could publish it). Everything else is a
-# warning that the run turns into a note at the top of its report. A report built without internal access is "unknown", never
+# Only three things stop a run (exit 2): PowerShell older than 7.3, a state folder that cannot be written, and no GitHub sign-in.
+# Everything else is a warning that the run turns into a note at the top of its report. A report built without internal access is "unknown", never
 # "healthy", so authentication problems are listed first with the command that fixes them. The Copilot CLI and its plugins are
 # prerequisites (README.md) and are not checked: without them the first model call fails the run.
 . (Join-Path $PSScriptRoot '..\common\core.ps1')
@@ -120,7 +119,7 @@ function Test-VmrQBGitHubAccess {
 function Test-VmrQBStateRoot {
     $paths = Get-VmrQBPaths
     $checks = [Collections.Generic.List[object]]::new()
-    $everyScope = @('Collection', 'Synthesis', 'Sending')
+    $everyScope = @('Collection', 'Synthesis')
     try {
         [void][IO.Directory]::CreateDirectory($paths.StateRoot)
         $probe = Join-Path $paths.StateRoot ('.preflight-' + [guid]::NewGuid().ToString('N'))
@@ -129,69 +128,7 @@ function Test-VmrQBStateRoot {
     }
     catch { $checks.Add((New-VmrQBCheck 'state-root' 'State directory is writable' 'fail' "$($paths.StateRoot): $(Limit-VmrQBText $_.Exception.Message)" 'Set VMR_QB_HOME to a writable directory.' $everyScope)); return $checks.ToArray() }
 
-    # A config that holds your email address inside a git work tree is a commit away from being public, so the run stops until it is
-    # safe. Git tracking it (or having it staged) is the worse case: an ignore rule does not protect a tracked file. Untracked and not
-    # ignored, a `git add -A` stages it. Only a definite answer from git stops a run; a git that cannot answer (no repository, a
-    # safe.directory refusal) is not a reason to stop. Git is asked from the config's own folder with its file name, so the answer
-    # does not depend on how the path is spelled (8.3 short names, symlinks).
-    if ((Get-Command git -ErrorAction SilentlyContinue) -and (Test-Path -LiteralPath $paths.ConfigPath)) {
-        $holdsEmail = $false
-        try {
-            $document = Get-Content -LiteralPath $paths.ConfigPath -Raw | ConvertFrom-Json
-            if ($document -isnot [Management.Automation.PSCustomObject]) { throw 'The config must be a JSON object.' }
-            # Protect raw addresses even when validation disables sending.
-            $addresses = @(
-                Get-VmrQBField $document 'sender'
-                Get-VmrQBField $document 'recipients'
-            )
-            $holdsEmail = @(Get-VmrQBRecipientList $addresses).Count -gt 0
-        }
-        catch {
-            # An unreadable config may still contain addresses.
-            $holdsEmail = $true
-        }
-        $configDirectory = Split-Path -Parent $paths.ConfigPath
-        $configName = Split-Path -Leaf $paths.ConfigPath
-        $top = (& git -C $configDirectory rev-parse --show-toplevel 2>$null)
-        if ($holdsEmail -and $LASTEXITCODE -eq 0 -and $top) {
-            $indexed = @(& git -C $configDirectory ls-files --cached -- $configName 2>$null)
-            $indexExit = $LASTEXITCODE
-            $notIgnored = $false
-            if ($indexExit -eq 0 -and -not $indexed.Count) {
-                & git -C $configDirectory check-ignore -q -- $configName 2>$null
-                $notIgnored = ($LASTEXITCODE -eq 1)
-            }
-            if ($indexExit -eq 0 -and $indexed.Count) {
-                $checks.Add((New-VmrQBCheck 'state-in-repo' 'Your email address is not at risk of being committed' 'fail' "The local config holds your email address and Git tracks it or has it staged in '$top'. An ignore rule does not protect a tracked file, so the next commit would publish it." "Stop tracking it and keep your copy: git -C `"$configDirectory`" rm --cached -- `"$configName`"  (add -f if Git refuses). Then add an ignore rule for it and run this check again. If it was already committed or pushed, treat the address as exposed." $everyScope))
-            }
-            elseif ($notIgnored) {
-                $checks.Add((New-VmrQBCheck 'state-in-repo' 'Your email address is not at risk of being committed' 'fail' "The local config holds your email address and sits in the git work tree '$top' without an ignore rule, so a 'git add -A' would stage it." "Add an ignore rule that covers it, such as the line $configName in that repository's .gitignore (or your whole state folder, which also holds your reports and logs), then run this check again." $everyScope))
-            }
-        }
-    }
     return $checks.ToArray()
-}
-
-function Test-VmrQBOutlook {
-    param([Parameter(Mandatory)][string] $Sender)
-    $name = 'Outlook is available for sending'
-    $com = [Collections.Generic.List[object]]::new()
-    $offline = $false; $found = $false
-    try {
-        $app = New-Object -ComObject Outlook.Application; $com.Add($app)
-        $session = $app.Session; $com.Add($session)
-        $offline = [bool]$session.Offline
-        $accounts = $session.Accounts; $com.Add($accounts)
-        for ($i = 1; $i -le $accounts.Count; $i++) {
-            $account = $accounts.Item($i); $com.Add($account)
-            if ($account.SmtpAddress -ieq $Sender) { $found = $true; break }
-        }
-    }
-    catch { return New-VmrQBCheck 'outlook' $name 'warn' (Limit-VmrQBText $_.Exception.Message) 'Email uses classic Outlook through COM. Start classic Outlook (the "New Outlook" has no COM interface), or run with -SkipEmail.' @('Sending') }
-    finally { foreach ($o in $com) { if ($null -ne $o) { [void][Runtime.InteropServices.Marshal]::ReleaseComObject($o) } } }
-    if ($offline) { return New-VmrQBCheck 'outlook' $name 'warn' 'Outlook is in offline mode.' 'Switch Outlook to online mode, or run with -SkipEmail.' @('Sending') }
-    if (-not $found) { return New-VmrQBCheck 'outlook' $name 'warn' "Outlook has no account matching sender '$Sender'." 'Set sender to the email address of an account available in classic Outlook; it does not have to be in recipients.' @('Sending') }
-    return New-VmrQBCheck 'outlook' $name 'ok' 'Online, account found.' '' @('Sending')
 }
 
 function Invoke-VmrQBPreflight {
@@ -199,16 +136,16 @@ function Invoke-VmrQBPreflight {
     .SYNOPSIS
     Runs every check relevant to the requested scope and returns structured results.
     .PARAMETER Scope
-    Collection (evidence), Synthesis (the model run), Sending (email). Default: all three.
+    Collection (evidence), Synthesis (the model run). Default: both.
     .OUTPUTS
     ok (nothing blocking), checks, blocking, warnings, authErrors.
     #>
     [CmdletBinding()]
     param(
-        [ValidateSet('Collection', 'Synthesis', 'Sending')][string[]] $Scope = @('Collection', 'Synthesis', 'Sending'),
+        [ValidateSet('Collection', 'Synthesis')][string[]] $Scope = @('Collection', 'Synthesis'),
         [switch] $SkipNetwork
     )
-    $everyScope = @('Collection', 'Synthesis', 'Sending')
+    $everyScope = @('Collection', 'Synthesis')
     $checks = [Collections.Generic.List[object]]::new()
     $add = { param($c) foreach ($item in @($c)) { $checks.Add($item) } }
 
@@ -219,29 +156,20 @@ function Invoke-VmrQBPreflight {
 
     $paths = Get-VmrQBPaths
     $configResult = Get-VmrQBConfigLenient -Path $paths.ConfigPath
-    $config = $configResult.Config
-    $emailOn = -not [string]::IsNullOrWhiteSpace([string]$config.sender)
     if (@($configResult.Problems).Count) {
-        & $add (New-VmrQBCheck 'config' 'QB config is valid' 'warn' (Limit-VmrQBText (@($configResult.Problems) -join ' ') 400) "No email is sent until $($paths.ConfigPath) is fixed; the reports are still produced and saved." @('Sending'))
+        & $add (New-VmrQBCheck 'config' 'QB config is valid' 'warn' (Limit-VmrQBText (@($configResult.Problems) -join ' ') 400) "Fix $($paths.ConfigPath); qb-config.template.json shows the shape. The defaults are used until then." $everyScope)
     }
     else {
-        $detail = if ($emailOn) {
-            "Reports are emailed from $($config.sender) to $(@(Get-VmrQBRecipientList -Value $config.recipients -Sender $config.sender) -join '; ')."
-        } else {
-            "No sender configured: reports are saved to $($paths.ReportsDir) and not emailed. To get them by email, copy qb-config.template.json to $($paths.ConfigPath) and set `"sender`" (see README.md)."
-        }
-        & $add (New-VmrQBCheck 'config' 'QB config is valid' 'ok' $detail '' @('Sending'))
+        & $add (New-VmrQBCheck 'config' 'QB config is valid' 'ok' "Reports are saved to $($paths.ReportsDir)." '' $everyScope)
     }
 
-    # Every network check serves Collection, so a run that only writes reports or sends them makes no network call.
+    # Every network check serves Collection, so a run that only writes reports makes no network call.
     if (-not $SkipNetwork -and 'Collection' -in $Scope) {
         & $add (Test-VmrQBAzureCliToken)
         & $add (Test-VmrQBAzureDevOpsAccess -Organization 'dnceng')
         & $add (Test-VmrQBAzureDevOpsAccess -Organization 'dnceng-public')
         & $add (Test-VmrQBGitHubAccess)
     }
-    if ('Sending' -in $Scope -and $emailOn) { & $add (Test-VmrQBOutlook -Sender $config.sender) }
-
     # Only checks that serve a requested scope can block.
     $relevant = @($checks | Where-Object { @($_.scopes | Where-Object { $_ -in $Scope }).Count -gt 0 })
     $blocking = @($relevant | Where-Object status -eq 'fail')

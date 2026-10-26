@@ -2,13 +2,12 @@
 .SYNOPSIS
     Preflight: will a daily run be able to see what it needs to see? Run it first. Authentication problems print first.
 .DESCRIPTION
-    Only PowerShell 7.3, a writable state folder, the GitHub sign-in and a config holding your email address that Git tracks or
-    does not ignore can stop a run (exit code 2). Everything else is a warning that the run turns into a note at the top of its
-    report. With no sender configured, sending is not part of the default check.
+    Only PowerShell 7.3, a writable state folder and the GitHub sign-in can stop a run (exit code 2). Everything else is a
+    warning that the run turns into a note at the top of its report.
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('Collection', 'Synthesis', 'Sending')][string[]] $Scope = @('Collection', 'Synthesis', 'Sending'),
+    [ValidateSet('Collection', 'Synthesis')][string[]] $Scope = @('Collection', 'Synthesis'),
     [switch] $SkipNetwork
 )
 Set-StrictMode -Version Latest
@@ -16,7 +15,6 @@ $ErrorActionPreference = 'Stop'
 
 . (Join-Path $PSScriptRoot 'preflight.ps1')
 
-if (-not $PSBoundParameters.ContainsKey('Scope') -and [string]::IsNullOrWhiteSpace([string](Get-VmrQBConfigLenient).Config.sender)) { $Scope = @('Collection', 'Synthesis') }
 $result = Invoke-VmrQBPreflight -Scope $Scope -SkipNetwork:$SkipNetwork
 
 Write-Host "VMR QB preflight (scope: $($Scope -join ', '))" -ForegroundColor Cyan

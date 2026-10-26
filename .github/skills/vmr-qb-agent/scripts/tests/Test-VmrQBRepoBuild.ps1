@@ -105,4 +105,4 @@ try {
 finally { Remove-Item -LiteralPath $scratch -Recurse -Force -ErrorAction SilentlyContinue }
 
 if ($failures) { Write-Host "$failures repo-build test(s) failed." -ForegroundColor Red; exit 1 }
-Write-Host '6 offline repo-build tests. Synthetic logs only; no network, email, or external changes.' -ForegroundColor Green
+Write-Host '6 offline repo-build tests. Synthetic logs only; no network or external changes.' -ForegroundColor Green

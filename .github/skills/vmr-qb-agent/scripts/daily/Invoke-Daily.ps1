@@ -1,27 +1,23 @@
 <#
 .SYNOPSIS
-    VMR Quarterback (QB) daily round: collect evidence, have the Copilot CLI write three reports, save them, optionally email them.
+    VMR Quarterback (QB) daily round: collect evidence, have the Copilot CLI write three reports, save them locally.
 
 .DESCRIPTION
     Writes build-health-<date>.md, code-flow-<date>.md and overall-summary-<date>.md to local/reports. The rules for the reports
     live in references/ (report-contract.md, runner-instructions.md, triage.md); this script only collects, runs the model, saves
-    and emails. It is read-only: nothing is merged, approved, closed, commented on or retried.
+    the reports locally. It is read-only: nothing is merged, approved, closed, commented on or retried.
 
-    Something that could not be read (the internal sign-in, a source) is a run note at the top of the overall report and of the
-    email, and the internal builds are then UNKNOWN, never healthy. A failed run (a model run that fails, a crash) stops the round:
-    exit 1 and, when email is on, one short email says it failed. Exit codes: 0 delivered, 1 failed, 2 preflight stop.
+    Something that could not be read (the internal sign-in, a source) is a run note at the top of the overall report and in the
+    run log, and the internal builds are then UNKNOWN, never healthy. A failed run (a model run that fails, a crash) stops the round:
+    exit 1 and the console and run log say why. Exit codes: 0 saved, 1 failed, 2 preflight stop.
 
-    -UseExistingReports sends the reports already saved for the date (no collection, no model) and leaves them, with the run notes
-    they were saved with, as they are. -CollectOnly stops after the
-    evidence. Settings are optional: local/qb-config.local.json (sender, recipients, model, pluginRoot); no sender means no email.
+    -CollectOnly stops after the evidence. Settings are optional: local/qb-config.local.json (model, pluginRoot).
     The Copilot CLI and its plugins are prerequisites (README.md) and are not checked.
 #>
 [CmdletBinding()]
 param(
     [string] $Date,
-    [switch] $SkipEmail,
-    [switch] $CollectOnly,
-    [switch] $UseExistingReports
+    [switch] $CollectOnly
 )
 
 $ErrorActionPreference = 'Stop'
@@ -37,7 +33,6 @@ $MaxOutputMB = 250
 . (Join-Path $PSScriptRoot 'evidence.ps1')
 . (Join-Path $PSScriptRoot 'report.ps1')
 . (Join-Path $PSScriptRoot 'preflight.ps1')
-. (Join-Path $PSScriptRoot 'email.ps1')
 . (Join-Path $PSScriptRoot '..\triage\issue.ps1')
 
 # --------------------------------------------------------------------------- #
@@ -338,63 +333,6 @@ function Add-QBPreflightNotes {
 }
 
 # --------------------------------------------------------------------------- #
-# Outlook                                                                      #
-# --------------------------------------------------------------------------- #
-function Send-QBEmail {
-    param(
-        [Parameter(Mandatory)][AllowEmptyCollection()][string[]] $Attachments,
-        [Parameter(Mandatory)][string] $HtmlBody,
-        [string] $SubjectSuffix = ''
-    )
-    $subject = "[VMR QB] Daily monitoring - $Date$SubjectSuffix"
-    $sender = [string]$config.sender
-    $recipients = @(Get-VmrQBRecipientList -Value $config.recipients -Sender $sender)
-    $com = [Collections.Generic.List[object]]::new()
-    try {
-        $outlook = New-Object -ComObject Outlook.Application; $com.Add($outlook)
-        $session = $outlook.Session; $com.Add($session)
-        if ($session.Offline) { throw 'Outlook is offline; the monitoring email was not sent.' }
-        $accounts = $session.Accounts; $com.Add($accounts)
-        $accountList = @(for ($i = 1; $i -le $accounts.Count; $i++) { $c = $accounts.Item($i); $com.Add($c); $c })
-        $account = @($accountList | Where-Object { $_.SmtpAddress -ieq $sender }) | Select-Object -First 1
-        if ($null -eq $account) { throw "Outlook has no account matching sender '$sender'; set sender to an account available in classic Outlook." }
-        $store = $account.DeliveryStore; $com.Add($store)
-        $sentFolder = $store.GetDefaultFolder(5); $com.Add($sentFolder)
-        $mail = $outlook.CreateItem(0); $com.Add($mail)
-        $mail.SendUsingAccount = $account
-        $mail.SaveSentMessageFolder = $sentFolder
-        $mail.To = $recipients -join '; '
-        $mail.Subject = $subject
-        $mail.HTMLBody = $HtmlBody
-        foreach ($attachment in $Attachments) { [void]$mail.Attachments.Add($attachment) }
-        $mail.Send()
-        Write-Host "  -> email sent from $sender to $($recipients -join '; ') ($($Attachments.Count) attachment(s))" -ForegroundColor Green
-    }
-    finally {
-        foreach ($o in $com) { if ($null -ne $o) { try { [void][Runtime.InteropServices.Marshal]::ReleaseComObject($o) } catch { } } }
-        [GC]::Collect(); [GC]::WaitForPendingFinalizers()
-    }
-}
-
-function Send-QBNoticeEmail {
-    <#
-    .SYNOPSIS
-    A short email that says the run did not start or did not finish, and why, with whatever reports exist attached.
-    #>
-    param(
-        [Parameter(Mandatory)][string] $Heading, [Parameter(Mandatory)][string] $Intro,
-        [AllowEmptyCollection()][object[]] $Items = @(), [string[]] $Attachments = @(),
-        [Parameter(Mandatory)][string] $SubjectSuffix
-    )
-    $listed = foreach ($item in @($Items)) {
-        "<li><b>$([Net.WebUtility]::HtmlEncode([string]$item.name))</b>: $([Net.WebUtility]::HtmlEncode([string]$item.detail))" +
-        $(if ($item.remedy) { "<br/>Fix: <code>$([Net.WebUtility]::HtmlEncode([string]$item.remedy))</code>" } else { '' }) + '</li>'
-    }
-    $body = "<html><body style='font-family:Segoe UI,Arial,sans-serif'><h3>$([Net.WebUtility]::HtmlEncode($Heading))</h3><p>$([Net.WebUtility]::HtmlEncode($Intro))</p><ul>$($listed -join '')</ul>$(Format-QBRunNotesHtml)<p>Run <code>./daily/Invoke-Preflight.ps1</code> to re-check.</p></body></html>"
-    Send-QBEmail -Attachments $Attachments -HtmlBody $body -SubjectSuffix $SubjectSuffix
-}
-
-# --------------------------------------------------------------------------- #
 # Dot-sourcing this file only defines the functions above.                      #
 # --------------------------------------------------------------------------- #
 if ($MyInvocation.InvocationName -eq '.') { return }
@@ -405,21 +343,8 @@ $script:QBStage = 'setup'
 $script:QBCoverageGap = $false
 Clear-QBRunNotes
 $paths = Get-VmrQBPaths
-# Nothing in the config can stop a run: it says where the email goes and which model to pin. A problem is a note at the top of
-# the report (and a warning here) and the default stands in for it.
-$configResult = Get-VmrQBConfigLenient -Path $paths.ConfigPath
-$config = $configResult.Config
-foreach ($problem in @($configResult.Problems)) {
-    Write-Warning $problem
-    Add-QBRunNote -Source 'config' -Severity first -Message $problem
-}
-# An empty sender means: save the reports, send no email.
-if (-not $SkipEmail -and -not $CollectOnly -and [string]::IsNullOrWhiteSpace([string]$config.sender)) {
-    if (-not @($configResult.Problems).Count) {
-        Write-Host "No sender configured: reports are saved to $($paths.ReportsDir) and not emailed. To get them by email, copy qb-config.template.json to $($paths.ConfigPath) and set ""sender"" (see README.md)." -ForegroundColor Yellow
-    }
-    $SkipEmail = [switch]::new($true)
-}
+# Preflight reports config problems; the defaults stand in for an unreadable config.
+$config = (Get-VmrQBConfigLenient -Path $paths.ConfigPath).Config
 $localNow  = [DateTimeOffset]::Now
 $windowEnd = $localNow.ToUniversalTime()
 if (-not $Date) { $Date = $localNow.ToString('yyyy-MM-dd') }
@@ -435,24 +360,18 @@ $overallPath     = Join-Path $reportDir "overall-summary-$Date.md"
 $codeFlowHandle = $null
 $results = [Collections.Generic.List[object]]::new()
 
-# Everything from here on runs inside one safety net. A failed run is never a silent non-run: it is written to the run log and,
-# when email is on, sent as a short notice with whatever reports were already generated attached.
+# Everything from here on runs inside one safety net. A failed run is shown in the console and written to the run log.
 try {
     # The date names every file of the run, so it is checked first.
     $parsedDate = [datetime]::MinValue
     if (-not [datetime]::TryParseExact($Date, 'yyyy-MM-dd', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::None, [ref]$parsedDate)) {
         throw "-Date must be a calendar date written yyyy-MM-dd, not '$Date'."
     }
-    # Preflight: check every dependency this run needs BEFORE spending an hour on it. Only four failures stop the run; every other
+    # Preflight: check every dependency this run needs BEFORE spending an hour on it. Only three failures stop the run; every other
     # problem is a warning, and the report opens with a note for each, internal authentication first.
     $script:QBStage = 'preflight'
-    $scopes = @()
-    if (-not $UseExistingReports) { $scopes += 'Collection' }
-    if (-not ($UseExistingReports -or $CollectOnly)) { $scopes += 'Synthesis' }
-    if (-not ($SkipEmail -or $CollectOnly)) { $scopes += 'Sending' }
-    # The hard stops that protect the machine and your address (PowerShell version, state folder, tracked config) apply to every
-    # invocation, delivery of saved reports with email off included; the scopes only add the network and Outlook checks.
-    if (-not $scopes.Count) { $scopes = @('Synthesis') }
+    $scopes = @('Collection')
+    if (-not $CollectOnly) { $scopes += 'Synthesis' }
     $preflight = Invoke-VmrQBPreflight -Scope $scopes
     Add-QBPreflightNotes -Preflight $preflight
     if (-not $preflight.ok) {
@@ -461,139 +380,110 @@ try {
             Write-Host ("  {0}: {1}" -f $check.name, $check.detail) -ForegroundColor Red
             if ($check.remedy) { Write-Host ("      -> {0}" -f $check.remedy) -ForegroundColor Yellow }
         }
-        # Tell the QB by email when we can: a silent non-run is how a day gets missed.
-        if ('Sending' -in $scopes) {
-            try {
-                Send-QBNoticeEmail -Heading "The VMR QB run for $Date did not start" -Intro 'Preflight found a problem that stops the run. No report was generated.' `
-                    -Items @($preflight.blocking) -SubjectSuffix ' - NOT RUN (preflight failed)'
-            }
-            catch { Write-Warning "Could not send the preflight notice: $($_.Exception.Message)" }
-        }
         exit 2
     }
 
     foreach ($directory in @($reportDir, $logDir)) { [void](New-Item -ItemType Directory -Force -Path $directory) }
     Write-Host "=== VMR QB daily monitoring for $Date ===" -ForegroundColor Yellow
 
-    if ($UseExistingReports) {
-        $script:QBStage = 'saved reports'
-        foreach ($name in 'build-health', 'code-flow', 'overall-summary') {
-            $path = Join-Path $reportDir "$name-$Date.md"
-            if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "-UseExistingReports: $path does not exist." }
-            $results.Add([pscustomobject]@{ name = $name; status = 'succeeded'; path = $path; seconds = 0; model = $null })
-        }
+    [void](New-Item -ItemType Directory -Force -Path $runDirectory)
+    [void](Invoke-QBOptional -Name 'Local routing' -Script { Initialize-VmrQBLocalRouting })
+    [void](Invoke-QBOptional -Name 'Local ownership' -Script { Initialize-VmrQBGuideOwnership })
+
+    # Evidence for both pipelines. A collection that fails entirely is UNKNOWN evidence, never "healthy".
+    $script:QBStage = 'collection'
+    $evidencePath = Join-Path $runDirectory 'sources.json'
+    $issueEvidencePath = Join-Path $runDirectory 'issue-evidence.json'
+    try {
+        Invoke-VmrDailyEvidence -ReportDate $Date -WindowStart $windowEnd.AddHours(-24) -WindowEnd $windowEnd -OutputDirectory $runDirectory | Out-Host
+        $evidence = Get-Content -LiteralPath $evidencePath -Raw | ConvertFrom-Json -Depth 100
+        if ($evidence.schemaVersion -ne 2 -or $evidence.reportDate -ne $Date) { throw 'Collector returned an unsupported or incorrectly dated evidence index.' }
     }
-    else {
-        [void](New-Item -ItemType Directory -Force -Path $runDirectory)
-        [void](Invoke-QBOptional -Name 'Local routing' -Script { Initialize-VmrQBLocalRouting })
-        [void](Invoke-QBOptional -Name 'Local ownership' -Script { Initialize-VmrQBGuideOwnership })
-
-        # Evidence for both pipelines. A collection that fails entirely is UNKNOWN evidence, never "healthy".
-        $script:QBStage = 'collection'
-        $evidencePath = Join-Path $runDirectory 'sources.json'
-        $issueEvidencePath = Join-Path $runDirectory 'issue-evidence.json'
-        try {
-            Invoke-VmrDailyEvidence -ReportDate $Date -WindowStart $windowEnd.AddHours(-24) -WindowEnd $windowEnd -OutputDirectory $runDirectory | Out-Host
-            $evidence = Get-Content -LiteralPath $evidencePath -Raw | ConvertFrom-Json -Depth 100
-            if ($evidence.schemaVersion -ne 2 -or $evidence.reportDate -ne $Date) { throw 'Collector returned an unsupported or incorrectly dated evidence index.' }
-        }
-        catch {
-            Write-Warning "Pipeline evidence collection failed: $($_.Exception.Message)"
-            $evidence = New-QBUnavailableEvidence -Date $Date -WindowEnd $windowEnd -Message $_.Exception.Message
-            $evidence | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $evidencePath -Encoding utf8
-        }
-        try {
-            $problemIds = @($evidence.pipelines | ForEach-Object { @(Get-QBField $_ 'requiredProblemBuildIds' @()) } | Sort-Object -Unique)
-            if ($evidence.rootLogsPath -and (Test-Path -LiteralPath $evidence.rootLogsPath)) {
-                $logIndex = Get-Content -LiteralPath $evidence.rootLogsPath -Raw | ConvertFrom-Json -Depth 100
-                $problemIds += @($logIndex.logs | ForEach-Object { Get-QBField $_ 'promotionBuildId' } | Where-Object { $null -ne $_ })
-            }
-            [void](New-VmrIssueTriageEvidence -OutputDirectory $runDirectory -BuildIds @($problemIds | Sort-Object -Unique) `
-                -ObservationCutoffUtc ([DateTimeOffset]$evidence.observationCutoffUtc))
-            $issueEvidence = Get-Content -LiteralPath $issueEvidencePath -Raw | ConvertFrom-Json -Depth 100
-        }
-        catch {
-            Write-Warning "Issue evidence collection failed: $($_.Exception.Message)"
-            $issueEvidence = [pscustomobject]@{
-                schemaVersion = 1; status = 'partial'; observedAtUtc = [DateTimeOffset]::UtcNow.ToString('o')
-                issues = @(); assigneeCandidates = @(); fixPullRequests = @()
-                errors = @([pscustomobject]@{ resource = 'GitHub issue evidence'; message = $_.Exception.Message })
-            }
-            $issueEvidence | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $issueEvidencePath -Encoding utf8
-        }
-        $coverageAlerts = @(Get-QBCoverageAlerts -Evidence $evidence -IssueEvidence $issueEvidence)
-        foreach ($alert in $coverageAlerts) { Write-Warning $alert }
-        Add-QBCoverageNotes -Alerts $coverageAlerts
-        $ownerNotes = $null
-        if (-not $CollectOnly -and (Test-Path -LiteralPath $paths.OwnerNotesPath -PathType Leaf)) {
-            $ownerNotes = Join-Path $dayDirectory 'owner-notes.md'
-            Copy-Item -LiteralPath $paths.OwnerNotesPath -Destination $ownerNotes -Force
-        }
-        $runContext = [ordered]@{
-            computerTime = [DateTimeOffset]::Now.ToString('o')
-            timeZone = [TimeZoneInfo]::Local.Id
-            reportDirectory = $reportDir
-            guideOwnershipPath = $paths.GuideOwnershipPath
-            routingPath = $paths.LocalRoutingPath
-            contactsPath = $paths.ContactsPath
-            ownerNotesPath = $ownerNotes
-        }
-        $modelEvidence = New-QBModelEvidence -Evidence $evidence -IssueEvidence $issueEvidence -OutputDirectory $runDirectory -RunContext $runContext
-        if ($CollectOnly) {
-            Write-Host "Evidence: $evidencePath"
-            Write-Host "Issue evidence: $issueEvidencePath"
-            if ($coverageAlerts.Count) { exit 1 }
-            exit 0
-        }
-
-        $script:QBStage = 'model reports'
-        $runnerDoc = Join-Path $paths.ReferencesRoot 'runner-instructions.md'
-        $triageDoc = Join-Path $paths.ReferencesRoot 'triage.md'
-        $contractDoc = Join-Path $paths.ReferencesRoot 'report-contract.md'
-        foreach ($document in @($runnerDoc, $triageDoc, $contractDoc)) { if (-not (Test-Path -LiteralPath $document -PathType Leaf)) { throw "The reference document $document is missing." } }
-        # Grant data folders, not the state root holding the private email configuration.
-        $dataDirectories = @($reportDir, $dayDirectory, $paths.ReferencesRoot, $paths.LocalKnowledgeDir |
-            Where-Object { Test-Path -LiteralPath $_ -PathType Container })
-
-        # Code flow starts first and overlaps build health; the two are independent.
-        $codeFlowHandle = Start-CopilotReport -Stage 'code-flow' -EvidencePath $modelEvidence.pipelinePath `
-            -TranscriptPath (Join-Path $logDir "copilot-code-flow-$Date-$stamp.jsonl") `
-            -ErrorPath (Join-Path $logDir "copilot-code-flow-$Date-$stamp.stderr.log") -DataDirectory $dataDirectories -WorkDirectory $runDirectory
-        Write-Host "[$([DateTime]::Now.ToString('HH:mm:ss'))] Started code flow report concurrently with build health." -ForegroundColor DarkCyan
-
-        $script:QBStage = 'build-health'
-        $results.Add((New-Report -Name 'build-health' -EvidencePath $modelEvidence.pipelinePath -OutputPath $buildHealthPath -EvidenceOnly -DataDirectory $dataDirectories -Watch @($codeFlowHandle)))
-
-        $script:QBStage = 'code-flow'
-        $results.Add((New-Report -Name 'code-flow' -OutputPath $codeFlowPath -Handle $codeFlowHandle))
-
-        $script:QBStage = 'overall-summary'
-        $results.Add((New-Report -Name 'overall-summary' -EvidencePath $modelEvidence.pipelinePath -OutputPath $overallPath -DataDirectory $dataDirectories))
+    catch {
+        Write-Warning "Pipeline evidence collection failed: $($_.Exception.Message)"
+        $evidence = New-QBUnavailableEvidence -Date $Date -WindowEnd $windowEnd -Message $_.Exception.Message
+        $evidence | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $evidencePath -Encoding utf8
     }
+    try {
+        $problemIds = @($evidence.pipelines | ForEach-Object { @(Get-QBField $_ 'requiredProblemBuildIds' @()) } | Sort-Object -Unique)
+        if ($evidence.rootLogsPath -and (Test-Path -LiteralPath $evidence.rootLogsPath)) {
+            $logIndex = Get-Content -LiteralPath $evidence.rootLogsPath -Raw | ConvertFrom-Json -Depth 100
+            $problemIds += @($logIndex.logs | ForEach-Object { Get-QBField $_ 'promotionBuildId' } | Where-Object { $null -ne $_ })
+        }
+        [void](New-VmrIssueTriageEvidence -OutputDirectory $runDirectory -BuildIds @($problemIds | Sort-Object -Unique) `
+            -ObservationCutoffUtc ([DateTimeOffset]$evidence.observationCutoffUtc))
+        $issueEvidence = Get-Content -LiteralPath $issueEvidencePath -Raw | ConvertFrom-Json -Depth 100
+    }
+    catch {
+        Write-Warning "Issue evidence collection failed: $($_.Exception.Message)"
+        $issueEvidence = [pscustomobject]@{
+            schemaVersion = 1; status = 'partial'; observedAtUtc = [DateTimeOffset]::UtcNow.ToString('o')
+            issues = @(); assigneeCandidates = @(); fixPullRequests = @()
+            errors = @([pscustomobject]@{ resource = 'GitHub issue evidence'; message = $_.Exception.Message })
+        }
+        $issueEvidence | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $issueEvidencePath -Encoding utf8
+    }
+    $coverageAlerts = @(Get-QBCoverageAlerts -Evidence $evidence -IssueEvidence $issueEvidence)
+    foreach ($alert in $coverageAlerts) { Write-Warning $alert }
+    Add-QBCoverageNotes -Alerts $coverageAlerts
+    $ownerNotes = $null
+    if (-not $CollectOnly -and (Test-Path -LiteralPath $paths.OwnerNotesPath -PathType Leaf)) {
+        $ownerNotes = Join-Path $dayDirectory 'owner-notes.md'
+        Copy-Item -LiteralPath $paths.OwnerNotesPath -Destination $ownerNotes -Force
+    }
+    $runContext = [ordered]@{
+        computerTime = [DateTimeOffset]::Now.ToString('o')
+        timeZone = [TimeZoneInfo]::Local.Id
+        reportDirectory = $reportDir
+        guideOwnershipPath = $paths.GuideOwnershipPath
+        routingPath = $paths.LocalRoutingPath
+        contactsPath = $paths.ContactsPath
+        ownerNotesPath = $ownerNotes
+    }
+    $modelEvidence = New-QBModelEvidence -Evidence $evidence -IssueEvidence $issueEvidence -OutputDirectory $runDirectory -RunContext $runContext
+    if ($CollectOnly) {
+        Write-Host "Evidence: $evidencePath"
+        Write-Host "Issue evidence: $issueEvidencePath"
+        if ($coverageAlerts.Count) { exit 1 }
+        exit 0
+    }
+
+    $script:QBStage = 'model reports'
+    $runnerDoc = Join-Path $paths.ReferencesRoot 'runner-instructions.md'
+    $triageDoc = Join-Path $paths.ReferencesRoot 'triage.md'
+    $contractDoc = Join-Path $paths.ReferencesRoot 'report-contract.md'
+    foreach ($document in @($runnerDoc, $triageDoc, $contractDoc)) { if (-not (Test-Path -LiteralPath $document -PathType Leaf)) { throw "The reference document $document is missing." } }
+    # Grant data folders, not the state root holding the local configuration.
+    $dataDirectories = @($reportDir, $dayDirectory, $paths.ReferencesRoot, $paths.LocalKnowledgeDir |
+        Where-Object { Test-Path -LiteralPath $_ -PathType Container })
+
+    # Code flow starts first and overlaps build health; the two are independent.
+    $codeFlowHandle = Start-CopilotReport -Stage 'code-flow' -EvidencePath $modelEvidence.pipelinePath `
+        -TranscriptPath (Join-Path $logDir "copilot-code-flow-$Date-$stamp.jsonl") `
+        -ErrorPath (Join-Path $logDir "copilot-code-flow-$Date-$stamp.stderr.log") -DataDirectory $dataDirectories -WorkDirectory $runDirectory
+    Write-Host "[$([DateTime]::Now.ToString('HH:mm:ss'))] Started code flow report concurrently with build health." -ForegroundColor DarkCyan
+
+    $script:QBStage = 'build-health'
+    $results.Add((New-Report -Name 'build-health' -EvidencePath $modelEvidence.pipelinePath -OutputPath $buildHealthPath -EvidenceOnly -DataDirectory $dataDirectories -Watch @($codeFlowHandle)))
+
+    $script:QBStage = 'code-flow'
+    $results.Add((New-Report -Name 'code-flow' -OutputPath $codeFlowPath -Handle $codeFlowHandle))
+
+    $script:QBStage = 'overall-summary'
+    $results.Add((New-Report -Name 'overall-summary' -EvidencePath $modelEvidence.pipelinePath -OutputPath $overallPath -DataDirectory $dataDirectories))
 
     # The run notes go at the top of the overall summary, under its title: this is where the QB reads that something was stale,
-    # missing or unreadable. The report itself is saved exactly as the model wrote it. Saved reports keep the notes they were
-    # saved with, and delivering them says nothing about how complete that run was.
+    # missing or unreadable. The report itself is saved exactly as the model wrote it.
     $script:QBStage = 'finish'
-    $runStatus = if ($UseExistingReports) { 're-sent from saved reports' } elseif ($script:QBCoverageGap) { 'partial' } else { 'complete' }
-    if (-not $UseExistingReports) {
-        [void](Invoke-QBOptional -Name 'The run notes block' -Script {
-            Set-Content -LiteralPath $overallPath -Value (Set-QBRunNotesBlock -Content (Get-Content -LiteralPath $overallPath -Raw)) -Encoding utf8
-        })
-    }
-    $attachments = @($results | ForEach-Object { $_.path })
-    if (-not $SkipEmail) {
-        $script:QBStage = 'email'
-        $htmlBody = ConvertTo-QBHtmlBody -Date $Date -RunStatus $runStatus -Results $results.ToArray() -Attachments $attachments `
-            -OverallMarkdown (Get-Content -LiteralPath $overallPath -Raw) -Notes @(Get-QBRunNotes) -KeepSavedNotes:$UseExistingReports
-        Send-QBEmail -Attachments $attachments -HtmlBody $htmlBody
-    }
-    else { Write-Host 'Email skipped.' -ForegroundColor DarkYellow }
+    $runStatus = if ($script:QBCoverageGap) { 'partial' } else { 'complete' }
+    [void](Invoke-QBOptional -Name 'The run notes block' -Script {
+        Set-Content -LiteralPath $overallPath -Value (Set-QBRunNotesBlock -Content (Get-Content -LiteralPath $overallPath -Raw)) -Encoding utf8
+    })
 
-    # The log records a run that is already done: failing to write it cannot make a delivered run a failed one.
+    # The log records a run that is already done: failing to write it cannot make a saved run a failed one.
     try {
         [ordered]@{
-            date = $Date; startedAt = $localNow.ToString('o'); runStatus = $runStatus; delivered = $true; emailSent = (-not $SkipEmail)
+            date = $Date; startedAt = $localNow.ToString('o'); runStatus = $runStatus
             notes = @(Get-QBRunNotes | ForEach-Object { [ordered]@{ severity = $_.severity; source = $_.source; message = $_.message; fix = $_.fix } })
             reports = @($results | ForEach-Object { [ordered]@{ name = $_.name; status = $_.status; path = $_.path; seconds = $_.seconds; model = $_.model } })
         } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $logDir "run-$Date-$stamp.json") -Encoding utf8
@@ -622,21 +512,11 @@ catch {
     try {
         [void](New-Item -ItemType Directory -Force -Path $logDir)
         [ordered]@{
-            date = $Date; startedAt = $localNow.ToString('o'); runStatus = 'failed'; delivered = $false; stage = $failedStage; error = $failureMessage
+            date = $Date; startedAt = $localNow.ToString('o'); runStatus = 'failed'; stage = $failedStage; error = $failureMessage
             notes = @(Get-QBRunNotes | ForEach-Object { [ordered]@{ severity = $_.severity; source = $_.source; message = $_.message; fix = $_.fix } })
             reports = @($generated)
         } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $logDir "run-$Date-$stamp.json") -Encoding utf8
     }
     catch { Write-Warning "Could not write the run log: $($_.Exception.Message)" }
-    # A silent failure is how a day gets missed: say so by email when email is on, with whatever reports were already generated.
-    if (-not $SkipEmail -and -not $CollectOnly) {
-        try {
-            Send-QBNoticeEmail -Heading "The VMR QB run for $Date failed" `
-                -Intro "The run stopped at '$failedStage'. $(if ($generated.Count) { 'The reports that were already generated are attached.' } else { 'No report was generated.' })" `
-                -Items @([pscustomobject]@{ name = $failedStage; detail = $failureMessage; remedy = 'See the run log in the logs folder; run ./daily/Invoke-Preflight.ps1 to re-check.' }) `
-                -Attachments $generated -SubjectSuffix ' - RUN FAILED'
-        }
-        catch { Write-Warning "Could not send the failure notice: $($_.Exception.Message)" }
-    }
     exit 1
 }

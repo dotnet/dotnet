@@ -3,7 +3,7 @@ Set-StrictMode -Version Latest
 # common/core.ps1 - Paths, optional config, plugin discovery and local routing/ownership data initialization.
 # Dot-sourced by the entry scripts and the tests; it defines functions only and runs nothing.
 #
-# SHIPPED files (scripts/, knowledge/routing.json, references/, SKILL.md) are public. LOCAL files (an email address, reports, logs,
+# SHIPPED files (scripts/, knowledge/routing.json, references/, SKILL.md) are public. LOCAL files (settings, reports, logs,
 # evidence, notes, the team roster) belong to one QB and live in ONE git-ignored folder, <skill>/local/. $env:VMR_QB_HOME points
 # the skill at a different folder.
 
@@ -36,7 +36,7 @@ function Get-VmrQBPaths {
         KnowledgeRoot      = Join-Path $skill 'knowledge'
         ReferencesRoot     = Join-Path $skill 'references'
         StateRoot          = $StateRoot
-        # Your own settings (an email address): local, git-ignored and optional. The shipped template is the blank copy source.
+        # Your own settings: local, git-ignored and optional. The shipped template is the blank copy source.
         ConfigPath         = Join-Path $StateRoot 'qb-config.local.json'
         TemplatePath       = Join-Path $skill 'qb-config.template.json'
         # What people told you about findings, written by hand. It is handed to the model.
@@ -113,33 +113,9 @@ function Find-VmrQBPlugin {
 # ---------------------------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------------------------
-function Test-VmrQBEmailAddress {
-    param([AllowEmptyString()][AllowNull()][string] $Address)
-    if ([string]::IsNullOrWhiteSpace($Address)) { return $false }
-    # Deliberately permissive: catch obvious typos and empty values, not police valid addresses.
-    return [bool]([regex]::IsMatch($Address.Trim(), '^[^@\s]+@[^@\s]+\.[^@\s]+$'))
-}
-
-function Get-VmrQBRecipientList {
-    # Empty recipients mean the sender when resolving delivery; without a sender this only parses the configured list.
-    param([AllowNull()][object] $Value, [string] $Sender = '')
-    $list = @(@($Value) | ForEach-Object { [string]$_ -split '[;,]' } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
-    if ($list.Count -eq 0 -and -not [string]::IsNullOrWhiteSpace($Sender)) { return @($Sender.Trim()) }
-    return $list
-}
-
-function Test-VmrQBRecipients {
-    # Zero or more addresses; every configured address must be valid.
-    param([AllowNull()][object] $Value)
-    $list = @(Get-VmrQBRecipientList $Value)
-    return @($list | Where-Object { -not (Test-VmrQBEmailAddress $_) }).Count -eq 0
-}
-
 function Get-VmrQBDefaultConfig {
-    # The built-in defaults, the same as the shipped qb-config.template.json. An empty sender means "do not send email".
+    # The built-in defaults, the same as the shipped qb-config.template.json.
     return [pscustomobject][ordered]@{
-        sender     = ''
-        recipients = @()
         model      = ''
         # Optional folder(s) holding the Copilot plugins (one folder per plugin). Blank: they are found under COPILOT_HOME and
         # ~/.copilot/installed-plugins, in any marketplace folder.
@@ -152,8 +128,8 @@ function Get-VmrQBConfigLenient {
     .SYNOPSIS
     The config for a run, which never stops for it: a problem comes back in Problems and the default stands in for it.
     .DESCRIPTION
-    local/qb-config.local.json is optional and names the sending account, recipients, model and plugins. Empty recipients send to
-    the sender. Invalid email settings disable email with a problem explaining the fix; reports are still saved.
+    local/qb-config.local.json optionally names the model and plugins. An unreadable or invalid config uses the defaults
+    and returns a problem explaining the fix.
     #>
     [CmdletBinding()]
     param([string] $Path = (Get-VmrQBPaths).ConfigPath)
@@ -162,26 +138,13 @@ function Get-VmrQBConfigLenient {
     if (-not (Test-Path -LiteralPath $Path)) { return [pscustomobject]@{ Config = $defaults; Problems = @() } }
     $config = $null
     try { $config = Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json }
-    catch { $problems.Add("The QB config $Path is not valid JSON ($($_.Exception.Message)), so the defaults are used and no email is sent. To get email, fix the file (qb-config.template.json shows the shape) and set sender to your Outlook account address.") }
+    catch { $problems.Add("The QB config $Path is not valid JSON ($($_.Exception.Message)), so the defaults are used. Fix the file; qb-config.template.json shows the shape.") }
     if ($null -eq $config -or $config -isnot [System.Management.Automation.PSCustomObject]) {
-        if ($problems.Count -eq 0) { $problems.Add("The QB config $Path is not a JSON object, so the defaults are used and no email is sent. To get email, copy qb-config.template.json over it and set sender to your Outlook account address.") }
+        if ($problems.Count -eq 0) { $problems.Add("The QB config $Path is not a JSON object, so the defaults are used. Fix the file; qb-config.template.json shows the shape.") }
         return [pscustomobject]@{ Config = $defaults; Problems = @($problems) }
     }
     foreach ($property in $defaults.PSObject.Properties) {
         if ($null -eq $config.PSObject.Properties[$property.Name]) { $config | Add-Member -NotePropertyName $property.Name -NotePropertyValue $property.Value }
-    }
-    $config.sender = ([string]$config.sender).Trim()
-    $config.recipients = @(Get-VmrQBRecipientList $config.recipients)
-    if ($config.sender -and -not (Test-VmrQBEmailAddress $config.sender)) {
-        $problems.Add("The 'sender' in $Path must be one Outlook account email address; no email is sent until it is fixed.")
-        $config.sender = ''
-    }
-    if (-not (Test-VmrQBRecipients $config.recipients)) {
-        $problems.Add("The 'recipients' in $Path must contain valid email addresses, or be empty to send to sender; no email is sent until it is fixed.")
-        $config.sender = ''
-    }
-    elseif ($config.recipients.Count -gt 0 -and -not $config.sender -and $problems.Count -eq 0) {
-        $problems.Add("Set 'sender' in $Path to the Outlook account to send from; no email is sent without it.")
     }
     return [pscustomobject]@{ Config = $config; Problems = @($problems) }
 }
