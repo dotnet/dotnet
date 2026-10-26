@@ -56,8 +56,6 @@ src/efcore/test/EFCore.Tests/ChangeTracking/EntityEntryTest.cs|proprietary-licen
 src/efcore/test/EfCore.Tests/ChangeTracking/MemberEntryTest.cs|proprietary-license
 src/efcore/test/EFCore.Tests/ChangeTracking/PropertyEntryTest.cs|proprietary-license
 
-# Package license metadata does not license the lockfile source
-
 #
 # fsharp
 #
