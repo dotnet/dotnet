@@ -266,13 +266,14 @@ function New-QBModelEvidence {
             foreach ($task in $Tasks) {
                 foreach ($issue in @($task.issues)) {
                     @{ text = [string](Get-QBField $issue 'message'); issueType = [string](Get-QBField $issue 'type')
-                        task = $task.task; job = $task.job; path = $null; line = $null
+                        task = $task.task; job = $task.job; jobId = Get-QBField $task 'jobId'; path = $null; line = $null
                         taskResult = [string](Get-QBField $task 'result'); jobResult = [string](Get-QBField $task 'jobResult') }
                 }
             }
             foreach ($log in $Logs) {
                 foreach ($excerpt in @(Get-QBField $log 'excerpts' @())) {
-                    @{ text = [string]$excerpt.text; issueType = $null; task = $log.task; job = $log.job; path = $log.path; line = $excerpt.line
+                    @{ text = [string]$excerpt.text; issueType = $null; task = $log.task; job = $log.job
+                        jobId = Get-QBField $log 'jobId'; path = $log.path; line = $excerpt.line
                         taskResult = [string](Get-QBField $log 'result'); jobResult = [string](Get-QBField $log 'jobResult') }
                 }
             }
@@ -282,7 +283,11 @@ function New-QBModelEvidence {
         $wrapperPattern = '(?i)MSB3073|Bash exited|Script failed|The command |0 Error|Build failed with exit'
         $jobsWithRealDiagnostic = [Collections.Generic.HashSet[string]]::new()
         foreach ($message in $messages) {
-            if ($message.text -notmatch $wrapperPattern) { [void]$jobsWithRealDiagnostic.Add([string]$message.job) }
+            $message['jobKey'] = if ($message.jobId) { [string]$message.jobId } else { [string]$message.job }
+            $message['severity'] = Get-DiagnosticSeverity $message.text ([string]$message.taskResult) ([string]$message.jobResult) ([string]$message.issueType)
+            if ($message.jobKey -and $message.text -notmatch $wrapperPattern -and $message.severity -eq 'terminating') {
+                [void]$jobsWithRealDiagnostic.Add($message.jobKey)
+            }
         }
 
         $groups = [ordered]@{}
@@ -290,7 +295,7 @@ function New-QBModelEvidence {
             $rank = 1
             $explanation = $null
             if ($message.text -match $wrapperPattern) {
-                if ($jobsWithRealDiagnostic.Contains([string]$message.job)) { continue }
+                if ($message.jobKey -and $jobsWithRealDiagnostic.Contains($message.jobKey)) { continue }
                 $explanation = ConvertTo-WrapperDiagnostic $message.text
                 if (-not $explanation) { continue }
                 $quote = $message.text
@@ -313,7 +318,7 @@ function New-QBModelEvidence {
             $key = [regex]::Replace($key, '\(in [\d.]+ \w+\)', '(duration)')
             $key = [regex]::Replace($key, 'global\\msbuild-server-running-[a-z0-9_-]+', 'global\msbuild-server-running-<id>')
             # Include each occurrence's severity in the group key so fatal and non-fatal copies remain separate.
-            $severity = Get-DiagnosticSeverity $message.text ([string]$message.taskResult) ([string]$message.jobResult) ([string]$message.issueType)
+            $severity = $message.severity
             $key = "$severity|$key"
             if (-not $groups.Contains($key)) {
                 $groups[$key] = @{ quote = $quote; explanation = $explanation; rank = $rank; tasks = [Collections.Generic.HashSet[string]]::new()
