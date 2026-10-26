@@ -214,7 +214,7 @@ function New-QBModelEvidence {
         return $path
     }
     function Get-DiagnosticSeverity([string] $Text, [string] $TaskResult, [string] $JobResult, [string] $IssueType) {
-        if ($IssueType -eq 'warning') { return 'nonTerminating' }
+        if ($IssueType -eq 'warning' -or $Text -match '(?i)(?:^|\s)##\[warning\]|^Warning:') { return 'nonTerminating' }
         # Record-based first: an issue is fatal only if its task failed AND its parent Job failed. 1ES/Guardian tasks emit
         # ##[error] and still let the job pass (continueOnError), so log text alone lies. Only a record that could not be tied to a
         # Job (no result for it) falls back to the message text.
@@ -286,8 +286,13 @@ function New-QBModelEvidence {
         foreach ($message in $messages) {
             $message['jobKey'] = if ($message.jobId) { [string]$message.jobId } else { [string]$message.job }
             $message['severity'] = Get-DiagnosticSeverity $message.text ([string]$message.taskResult) ([string]$message.jobResult) ([string]$message.issueType)
-            if ($message.jobKey -and $message.text -notmatch $wrapperPattern -and $message.severity -eq 'terminating') {
-                [void]$jobsWithRealDiagnostic.Add($message.jobKey)
+            if ($message.text -notmatch $wrapperPattern) {
+                $quote = [regex]::Replace($message.text, '^\d{4}-\d{2}-\d{2}T\S+Z\s*', '').Trim()
+                $errorText = [regex]::Match($quote, '(?i)(?:error [A-Z]+\d+:\s*(?:\([^)]*\)\s*)?|error\s*:\s*)(?<message>.+)')
+                if ($errorText.Success) { $quote = $errorText.Groups['message'].Value }
+                if ($quote.Length -lt 12 -or $quote -match '(?i)^(?:at |--- End|Stack trace:|Warning:|\+ echo|\* \[new branch\]|If there were failures)') { continue }
+                $message['quote'] = $quote
+                if ($message.jobKey -and $message.severity -eq 'terminating') { [void]$jobsWithRealDiagnostic.Add($message.jobKey) }
             }
         }
 
@@ -303,10 +308,8 @@ function New-QBModelEvidence {
                 $rank = 2
             }
             else {
-                $quote = [regex]::Replace($message.text, '^\d{4}-\d{2}-\d{2}T\S+Z\s*', '').Trim()
-                $errorText = [regex]::Match($quote, '(?i)(?:error [A-Z]+\d+:\s*(?:\([^)]*\)\s*)?|error\s*:\s*)(?<message>.+)')
-                if ($errorText.Success) { $quote = $errorText.Groups['message'].Value }
-                if ($quote -match '(?i)^(?:at |--- End|Stack trace:|Warning:|\+ echo|\* \[new branch\]|If there were failures)') { continue }
+                if (-not $message.ContainsKey('quote')) { continue }
+                $quote = $message.quote
             }
             if ($quote.Length -lt 12) { continue }
             $quote = Short-Text $quote 900
