@@ -144,7 +144,11 @@ function Test-VmrQBStateRoot {
                 Get-VmrQBField $document 'recipients'
             )
             $holdsEmail = @(Get-VmrQBRecipientList $addresses).Count -gt 0
-        } catch { }
+        }
+        catch {
+            # An unreadable config may still contain addresses.
+            $holdsEmail = $true
+        }
         $configDirectory = Split-Path -Parent $paths.ConfigPath
         $configName = Split-Path -Leaf $paths.ConfigPath
         $top = (& git -C $configDirectory rev-parse --show-toplevel 2>$null)
