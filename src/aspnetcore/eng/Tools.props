@@ -3,20 +3,17 @@
   <Target Name="GenerateDirectoryBuildFiles"
       AfterTargets="Restore">
     <!--
-      Separate invocations with a distinct global property set so that the second one re-evaluates the
-      project and can load the package imports written by the first one.
-
       This target runs while a restore is in progress, so MSBuild sets the MSBuildIsRestoring global
-      property, which makes Microsoft.Common.props default ImportProjectExtensionProps to false. Set it
-      explicitly on both calls so the second one imports obj\GenerateFiles.csproj.nuget.g.props and can
-      resolve the GenerateFileFromTemplate task. The differing values also keep the two global property
-      sets distinct, which is what forces the second call to re-evaluate the project.
+      property. Microsoft.Common.props turns that into ImportProjectExtensionProps=false, which skips
+      importing obj\GenerateFiles.csproj.nuget.g.props. Dropping MSBuildIsRestoring from the second
+      invocation lets it import those package props and resolve the GenerateFileFromTemplate task.
+      It also gives the two invocations distinct global property sets, so the second one re-evaluates
+      the project instead of reusing the instance restored by the first.
     -->
     <MSBuild Projects="$(RepoRoot)eng\tools\GenerateFiles\GenerateFiles.csproj"
-        Properties="ImportProjectExtensionProps=false"
         Targets="Restore" />
     <MSBuild Projects="$(RepoRoot)eng\tools\GenerateFiles\GenerateFiles.csproj"
-        Properties="ImportProjectExtensionProps=true"
+        RemoveProperties="MSBuildIsRestoring"
         Targets="GenerateDirectoryBuildFiles" />
   </Target>
 </Project>
