@@ -27,7 +27,7 @@
     <NewtonsoftJsonReleaseVersion>13.0.4</NewtonsoftJsonReleaseVersion>
     <VsSolutionPersistenceReleaseVersion>1.0.52</VsSolutionPersistenceReleaseVersion>
     <SpectreConsoleReleaseVersion>0.54.0</SpectreConsoleReleaseVersion>
-    <OpenTelemetryDotNetReleaseVersion>1.16.0</OpenTelemetryDotNetReleaseVersion>
+    <OpenTelemetryDotNetReleaseVersion>1.18.0</OpenTelemetryDotNetReleaseVersion>
     <OpenTelemetryDotNetContribHttpReleaseVersion>1.16.0</OpenTelemetryDotNetContribHttpReleaseVersion>
     <OpenTelemetryDotNetContribRuntimeReleaseVersion>1.15.1</OpenTelemetryDotNetContribRuntimeReleaseVersion>
     <OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion>1.1.0</OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion>

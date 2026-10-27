@@ -49,8 +49,13 @@
     -->
     <PrivateSourceBuiltSdkVersion>11.0.100-rc.2.26504.105</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>11.0.100-rc.2.26504.105</PrivateSourceBuiltArtifactsVersion>
-    <!-- workload manifest version for 1xx SDK feature band, used by 2xx+ branches to include 1xx workloads -->
-    <DotNet1xxWorkloadManifestVersion>$([System.Text.RegularExpressions.Regex]::Match($(MicrosoftNETSdkVersion), '^(\d+\.\d+\.\d+)').Value)</DotNet1xxWorkloadManifestVersion>
+    <!-- The SDK package retains its build stamp when shipping manifests switch to stable or .final versions. -->
+    <_DotNet1xxSdkPrereleaseLabel>$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETSdkVersion)', '(?&lt;=-)[^.]+').Value)</_DotNet1xxSdkPrereleaseLabel>
+    <DotNet1xxWorkloadManifestVersion>$(MicrosoftNETSdkVersion)</DotNet1xxWorkloadManifestVersion>
+    <DotNet1xxWorkloadManifestVersion Condition="'$(_DotNet1xxSdkPrereleaseLabel)' == 'servicing' or '$(RepoDotNetFinalVersionKind)' == 'release'">$([System.Text.RegularExpressions.Regex]::Match('$(MicrosoftNETSdkVersion)', '^\d+\.\d+\.\d+').Value)</DotNet1xxWorkloadManifestVersion>
+    <DotNet1xxWorkloadManifestVersion Condition="'$(RepoDotNetFinalVersionKind)' == 'preview' and '$(_DotNet1xxSdkPrereleaseLabel)' != 'servicing' and '$(_DotNet1xxSdkPrereleaseLabel)' != 'rtm'">$([System.Text.RegularExpressions.Regex]::Replace('$(MicrosoftNETSdkVersion)', '^(\d+\.\d+\.\d+-[^.]+(?:\.\d+)?)(?:\.\d+){2}$', '$1.final'))</DotNet1xxWorkloadManifestVersion>
+    <!-- Manifest IDs include the selected 1xx prerelease branding, without the build number or .final. -->
+    <DotNet1xxWorkloadManifestPackageIdSuffix Condition="'$(_DotNet1xxSdkPrereleaseLabel)' != '' and '$(_DotNet1xxSdkPrereleaseLabel)' != 'rtm' and '$(_DotNet1xxSdkPrereleaseLabel)' != 'servicing'">$([System.Text.RegularExpressions.Regex]::Replace('$(MicrosoftNETSdkVersion)', '^\d+\.\d+\.\d+|\.(\d+\.\d+|final)$', ''))</DotNet1xxWorkloadManifestPackageIdSuffix>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.8</SystemCommandLineVersion>
     <!-- msbuild dependencies -->

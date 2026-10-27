@@ -6,6 +6,41 @@ Notes](../../RELEASENOTES.md).
 
 ## Unreleased
 
+## 1.18.0
+
+Released 2026-Aug-21
+
+## 1.18.0-rc.1
+
+Released 2026-Aug-21
+
+* Fixed the exporter to read responses with
+  `HttpCompletionOption.ResponseHeadersRead` for the .NET Framework and
+  .NET Standard targets, matching the behavior on .NET to avoid buffering
+  the response body in memory when it is not actually used.
+  ([#7582](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7582))
+
+* Added support for serializing attribute values that are key/value lists
+  (`IEnumerable<KeyValuePair<string, object?>>`).
+  ([#7015](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7015))
+
+## 1.17.0
+
+Released 2026-Jul-16
+
+## 1.17.0-rc.1
+
+Released 2026-Jul-16
+
+* The library is now marked as trim and AOT compatible.
+  ([#7441](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7441))
+
+* Dropped the vendored `EnvironmentVariablesConfigurationProvider` copy; the
+  provider is now sourced transitively from the
+  `Microsoft.Extensions.Configuration.EnvironmentVariables` package referenced
+  by `OpenTelemetry`. No public API or behavioural change.
+  ([#7146](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7146))
+
 ## 1.16.0
 
 Released 2026-Jun-10

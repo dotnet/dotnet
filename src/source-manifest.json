@@ -25,16 +25,16 @@
       "commitSha": "fe180deb551cc47a57de788c936e2fd4d778a909"
     },
     {
-      "barId": 338100,
+      "barId": 338361,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "ad616f42ced6d62a1926a19641bd0c4353d185c3"
+      "commitSha": "4ce895fc4f530fea2d81f2ad462c827f0d30d05c"
     },
     {
-      "barId": 337571,
+      "barId": 338465,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "623454983addd9cad23a4c16a28c8faf458c7546"
+      "commitSha": "062cf0499a7a0fc4ee9d0baf1ffb35525663a049"
     },
     {
       "barId": 337244,
@@ -55,10 +55,10 @@
       "commitSha": "e794ecf95d4a75330fbf2c3d9565c444e4f7e586"
     },
     {
-      "barId": 327067,
+      "barId": 338504,
       "path": "source-build-assets",
       "remoteUri": "https://github.com/dotnet/source-build-assets",
-      "commitSha": "71716795a1073c47e27c9374fbd822b4421f72da"
+      "commitSha": "5f28909348bf1c41458d3ef6588b6b04c289d8df"
     },
     {
       "barId": 337660,
@@ -127,7 +127,7 @@
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet",
       "remoteUri": "https://github.com/open-telemetry/opentelemetry-dotnet",
-      "commitSha": "611868a27afda59761da60b98610f8d3b85497dc"
+      "commitSha": "9db92a4e978b4ae432183c790259be48a475578f"
     },
     {
       "path": "source-build-assets/src/externalPackages/src/opentelemetry-dotnet-contrib",

@@ -140,6 +140,37 @@ namespace NuGet.Commands.Test
         }
 
         [Fact]
+        public void RunPackageBuild_WithSymbolsAndSuffix_BothPackageFileNamesIncludeSuffix()
+        {
+            using (var test = DefaultExclusionsTest.Create())
+            {
+                var args = new PackArgs()
+                {
+                    CurrentDirectory = test.CurrentDirectory.FullName,
+                    Exclude = Enumerable.Empty<string>(),
+                    Logger = NullLogger.Instance,
+                    Path = test.NuspecFile.FullName,
+                    Symbols = true,
+                    Suffix = "beta",
+                };
+                var runner = new PackCommandRunner(args, createProjectFactory: null);
+
+                var result = runner.RunPackageBuild();
+                Assert.True(result);
+
+                var nupkgPath = Path.Combine(test.CurrentDirectory.FullName, "DefaultExclusions.1.0.0-beta.nupkg");
+                var symbolsNupkgPath = Path.Combine(test.CurrentDirectory.FullName, "DefaultExclusions.1.0.0-beta.symbols.nupkg");
+                File.Exists(nupkgPath).Should().BeTrue();
+                File.Exists(symbolsNupkgPath).Should().BeTrue();
+
+                using (var package = new PackageArchiveReader(symbolsNupkgPath))
+                {
+                    package.GetIdentity().Version.Should().Be(NuGetVersion.Parse("1.0.0-beta"));
+                }
+            }
+        }
+
+        [Fact]
         public void RunPackageBuild_WithGenerateNugetPackageFalse_ReturnsTrue()
         {
             using (var testDirectory = TestDirectory.Create())
