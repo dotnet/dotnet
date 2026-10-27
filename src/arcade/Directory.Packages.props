@@ -17,7 +17,7 @@
     <XUnitAnalyzersVersion>2.0.0-pre.51</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion>$(XUnitVersion)</XUnitRunnerConsoleVersion>
     <XUnitRunnerVisualStudioVersion>4.0.0-pre.4</XUnitRunnerVisualStudioVersion>
-    <MicrosoftTestingPlatformVersion>2.2.3</MicrosoftTestingPlatformVersion>
+    <MicrosoftTestingPlatformVersion>2.5.1</MicrosoftTestingPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
