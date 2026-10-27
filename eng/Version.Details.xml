@@ -22,9 +22,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
       <Sha>820230c386db5b0106c5430b3e5aee92a7826bf5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.App.Ref" Version="11.0.0-rc.1.26425.128">
+    <Dependency Name="Microsoft.NETCore.App.Ref" Version="11.0.0-rc.2.26504.105">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-dotnet</Uri>
-      <Sha>3551975be08744f0418857c5bed8ab1545c5dd47</Sha>
+      <Sha>820230c386db5b0106c5430b3e5aee92a7826bf5</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
