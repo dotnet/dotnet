@@ -4,15 +4,19 @@
       AfterTargets="Restore">
     <!--
       Separate invocations with a distinct global property set so that the second one re-evaluates the
-      project and can load the package info written by the first one. _GenerateFilesPass is only used to
-      make the two global property sets differ; without it both calls would share a single project
-      instance and GenerateFileFromTemplate would be unavailable on a clean checkout.
+      project and can load the package imports written by the first one.
+
+      This target runs while a restore is in progress, so MSBuild sets the MSBuildIsRestoring global
+      property, which makes Microsoft.Common.props default ImportProjectExtensionProps to false. Set it
+      explicitly on both calls so the second one imports obj\GenerateFiles.csproj.nuget.g.props and can
+      resolve the GenerateFileFromTemplate task. The differing values also keep the two global property
+      sets distinct, which is what forces the second call to re-evaluate the project.
     -->
     <MSBuild Projects="$(RepoRoot)eng\tools\GenerateFiles\GenerateFiles.csproj"
-        Properties="_GenerateFilesPass=Restore"
+        Properties="ImportProjectExtensionProps=false"
         Targets="Restore" />
     <MSBuild Projects="$(RepoRoot)eng\tools\GenerateFiles\GenerateFiles.csproj"
-        Properties="_GenerateFilesPass=Generate"
+        Properties="ImportProjectExtensionProps=true"
         Targets="GenerateDirectoryBuildFiles" />
   </Target>
 </Project>
