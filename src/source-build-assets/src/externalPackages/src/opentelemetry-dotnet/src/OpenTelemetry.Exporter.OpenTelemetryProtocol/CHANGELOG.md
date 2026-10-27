@@ -7,6 +7,121 @@ Notes](../../RELEASENOTES.md).
 
 ## Unreleased
 
+## 1.18.0
+
+Released 2026-Aug-21
+
+## 1.18.0-rc.1
+
+Released 2026-Aug-21
+
+* Fixed `UseOtlpExporter` to respect options configured through
+  `services.Configure<OtlpExporterOptions>(...)`.
+  ([#7540](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7540))
+
+* Clamped the server-supplied OTLP/gRPC retry delay (`RetryInfo.retry_delay`) to
+  a non-negative value. A negative delay previously caused the telemetry batch
+  to be dropped.
+  ([#7544](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7544))
+
+* Fixed serialization failures leaving failed trace, metric, and log batches in
+  the serializer's per-thread state. For logs, this also leaked pooled instances.
+  ([#7579](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7579))
+
+* Fixed the persistent-storage retry thread terminating permanently on an
+  unexpected exception, which silently disabled `disk` retry for the remaining
+  process lifetime while stored telemetry continued to accumulate and then
+  expire.
+  ([#7597](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7597))
+
+* Fixed the OTLP exporter from retrying certain non-transient HTTP failures.
+  ([#7600](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7600))
+
+* Added support for serializing attribute values that are key/value lists
+  (`IEnumerable<KeyValuePair<string, object?>>`) as nested OTLP `kvlist` values.
+  Nesting is limited to a maximum recursion depth of 3; deeper values fall back
+  to their string representation.
+  ([#7015](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7015))
+
+* A server-supplied throttle delay (OTLP/gRPC `RetryInfo.retry_delay` or
+  OTLP/HTTP `Retry-After`) is now clamped to a minimum of 100 milliseconds.
+  ([#7583](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7583))
+
+* Added `OtlpExporterOptions.MaxResponseSizeBytes` to configure the maximum size
+  of a response the exporter will accept, as required by the OpenTelemetry
+  specification. The default is the recommended 4 MiB. A response exceeding the
+  limit is discarded and treated as a non-retryable failure.
+  ([#7583](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7583))
+
+* Improved OTLP log attribute serialization performance by avoiding unnecessary
+  boxing.
+  ([#7645](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7645))
+
+* Improved OTLP histogram serialization performance by avoiding a redundant
+  scan of explicit bucket bounds.
+  ([#7647](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7647))
+
+* The OTLP exporter will now export logger version if it was specified. Log
+  records are grouped into `ScopeLogs` by logger name and version, so loggers
+  sharing a name but reporting different versions are exported as separate
+  scopes.
+  ([#7636](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7636))
+
+* Fixed persistent storage allowing a blob write to exceed the configured
+  maximum storage size.
+  ([#7646](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7646))
+
+* Improved OTLP/gRPC response status handling performance by avoiding unnecessary
+  header enumeration on .NET 8+.
+  ([#7659](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7659))
+
+* Added `OtlpExporterOptions.MaxRequestSizeBytes` to configure the OTLP request
+  size limit, as required by the OpenTelemetry specification. The default is the
+  recommended 64 MiB. A batch whose serialized payload exceeds the limit is not
+  sent and is dropped in its entirety. The maximum supported value is 256 MiB.
+  ([#7584](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7584))
+
+* **Breaking:** The maximum size of a single export request is now 64 MiB by
+  default instead of 128 MiB to conform with the OpenTelemetry specification.
+  Raise the value of `OtlpExporterOptions.MaxRequestSizeBytes` property to
+  increase the capacity.
+  ([#7584](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7584))
+
+## 1.17.0
+
+Released 2026-Jul-16
+
+## 1.17.0-rc.1
+
+Released 2026-Jul-16
+
+* Fixed `OtlpLogExporter` so `OtlpExporterOptions.ExportProcessorType` and
+  `OtlpExporterOptions.BatchExportProcessorOptions` are respected when
+  `LogRecordExportProcessorOptions` are not configured.
+  ([#7399](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7399))
+
+* The library is now marked as trim and AOT compatible.
+  ([#7441](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7441))
+
+* Fixed the OTLP exporter dropping retryable data instead of saving it to disk
+  when persistent storage retry is enabled and an export exceeds the configured
+  timeout.
+  ([#7447](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7447))
+
+* Cached pre-serialized metric metadata (`Name` / `Description` / `Unit`) to avoid
+  re-encoding on every OTLP metric export.
+  ([#7307](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7307))
+
+* Fixed the OTLP/HTTP exporter silently dropping data when an export timed out.
+  ([#7455](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7455))
+
+* Fixed the OTLP/gRPC exporter logging incorrectly when an export timed out.
+  ([#7455](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7455))
+
+* The `Resource` Schema URL is now exported on the OTLP `ResourceSpans`,
+  `ResourceMetrics`, and `ResourceLogs` messages.
+  ([#7472](https://github.com/open-telemetry/opentelemetry-dotnet/pull/7472))
+
 ## 1.16.0
 
 Released 2026-Jun-10

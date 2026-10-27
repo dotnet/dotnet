@@ -41,8 +41,17 @@ Maintainers (admins) are needed to merge PRs and for the push to NuGet.**
            * `OpenTelemetry.Shims.OpenTracing` - Defined by spec (stable but
              incomplete implementation)
 
-       * As of the `1.9.0` release cycle core unstable packages always depend on
-         the stable versions of core packages. Before releasing a non-core
+         * `declarativeconfig-`: Packages not yet ready for release.
+           These are intentionally excluded from the automated release
+           workflows. To enable automated releases, add `declarativeconfig-` to
+           `.github/workflows/prepare-release.yml` and
+           `.github/workflows/publish-packages-1.0.yml`.
+
+           * `OpenTelemetry.Configuration.Declarative` - Defined by spec
+             (experimental)
+
+       * As of the `1.17.0` release cycle core unstable packages always depend
+         on the stable versions of core packages. Before releasing a non-core
          component ensure the `OTelLatestStableVer` property in
          `Directory.Packages.props` has been updated to the latest stable core
          version.
@@ -169,8 +178,8 @@ Maintainers (admins) are needed to merge PRs and for the push to NuGet.**
 
     4. Extract the artifacts from the archive (`.zip`) into a local folder.
 
-    5. Download latest [nuget.exe](https://www.nuget.org/downloads) into the
-       same folder from step 4.
+    5. Ensure the .NET SDK version specified in `global.json` (or newer) is
+       installed.
 
     6. Create or regenerate an API key from nuget.org (only maintainers have
        access). When creating API keys make sure it is set to expire in 1 day or
@@ -180,9 +189,14 @@ Maintainers (admins) are needed to merge PRs and for the push to NuGet.**
        4:
 
        ```powershell
-       .\nuget.exe setApiKey <actual api key>
+       $nugetApiKey = Read-Host -Prompt 'NuGet API key' -AsSecureString
+       $env:NUGET_API_KEY = [System.Net.NetworkCredential]::new('', $nugetApiKey).Password
 
-       get-childitem -Recurse | where {$_.extension -eq ".nupkg"} | foreach ($_) {.\nuget.exe push $_.fullname -Source https://api.nuget.org/v3/index.json}
+       Get-ChildItem -Recurse -Filter "*.nupkg" | ForEach-Object {
+         dotnet nuget push $_.FullName `
+           --skip-duplicate `
+           --source https://api.nuget.org/v3/index.json
+       }
        ```
 
     8. Validate that the package(s) are uploaded. Packages are available
@@ -197,8 +211,10 @@ Maintainers (admins) are needed to merge PRs and for the push to NuGet.**
        draft Release and click `Publish release`.
     </details>
 
- 7. If a new stable version of the core packages was released, a PR should have
-    been automatically created by the [Complete
+ 7. If a new stable version of the core packages was released, the
+    [check-for-new-sdk-releases](https://github.com/open-telemetry/opentelemetry-dotnet-contrib/blob/main/.github/workflows/check-for-new-sdk-releases.yml)
+    workflow in the opentelemetry-dotnet-contrib repository should detect it
+    within an hour and a PR should be automatically created by the [Complete
     release](https://github.com/open-telemetry/opentelemetry-dotnet/actions/workflows/post-release.yml)
     workflow to update the `OTelLatestStableVer` property in
     `Directory.Packages.props` to the just released stable version. Merge that
