@@ -242,6 +242,9 @@ function New-QBModelEvidence {
         if ($value.Length -le $Limit) { return $value }
         return $value.Substring(0, $Limit)
     }
+    function Test-GenericBuildStatus([string] $Text) {
+        return $Text -match '(?i)^(?:##\[(?:error|warning)\]\s*)?(?:\d+>\s*)?(?:Build (?:FAILED|succeeded)\.?|''[A-Za-z0-9][A-Za-z0-9._-]*'' failed during build\.)$'
+    }
     function Get-DiagnosticLines([string] $Path, [object[]] $Fallback) {
         if (-not $Path -or -not (Test-Path -LiteralPath $Path -PathType Leaf)) { return $Fallback }
         $selected = [Collections.Generic.List[object]]::new()
@@ -251,6 +254,7 @@ function New-QBModelEvidence {
             $lineNumber++
             if ($line -notmatch '(?i)\bexception\b|\bfailed\b|\berror\b|timed out|unauthorized|\bcannot |could not |unable to |channel with ID|Invalid argument:') { continue }
             $message = [regex]::Replace($line, '^\d{4}-\d{2}-\d{2}T\S+Z\s*', '').Trim()
+            if (Test-GenericBuildStatus $message) { continue }
             if ($message -match '(?i)\b(?:0 errors?|failed:\s*0)\b') { continue }
             $rank = if ($message -match '(?i)Unhandled exception|MSBuild server failed|401 \(Unauthorized|Channel with ID|Unable to finish invocation|error NU\d+|Text file busy|stopped hearing from agent|task has timed out|Invalid argument:') { 0 }
                 elseif ($message.Length -gt 1600 -or $message -match '(?i)MSB3073|Bash exited|Script failed|##\[section\]') { 2 }
@@ -299,7 +303,8 @@ function New-QBModelEvidence {
                 $quote = [regex]::Replace($message.text, '^\d{4}-\d{2}-\d{2}T\S+Z\s*', '').Trim()
                 $errorText = [regex]::Match($quote, '(?i)(?:error [A-Z]+\d+:\s*(?:\([^)]*\)\s*)?|error\s*:\s*)(?<message>.+)')
                 if ($errorText.Success) { $quote = $errorText.Groups['message'].Value }
-                if ($quote.Length -lt 12 -or $quote -match '(?i)^(?:at |--- End|Stack trace:|Warning:|\+ echo|\* \[new branch\]|If there were failures)') { continue }
+                if ($quote.Length -lt 12 -or (Test-GenericBuildStatus $quote) -or
+                    $quote -match '(?i)^(?:at |--- End|Stack trace:|Warning:|\+ echo|\* \[new branch\]|If there were failures)') { continue }
                 $message['quote'] = $quote
                 if ($message.jobKey -and $message.severity -eq 'terminating') { [void]$jobsWithRealDiagnostic.Add($message.jobKey) }
             }
