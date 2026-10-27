@@ -46,12 +46,11 @@ body:
       options:
         - label: This issue is blocking
   
-  - type: checkboxes
-    id: affected-releases
+  - type: input
+    id: affected-branches
     attributes:
-      label: Affected Releases
-      description: Select the releases affected by this operational issue
-      options:
-        - label: .NET 10
-        - label: .NET 10 (SDK band build)
-        - label: .NET 11
+      label: Affected Branches
+      description: Enter the branch(es) affected by this operational issue
+      value: main
+    validations:
+      required: false
