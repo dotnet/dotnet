@@ -21,18 +21,6 @@ if ($LASTEXITCODE -ne 0) {
     throw "Cannot read '$sourceManifestPath' from runtime commit '$commit'."
 }
 
-$versionsPath = 'eng/Versions.props'
-$versionsContents = & git -C $runtimeRoot show "${commit}:$versionsPath"
-if ($LASTEXITCODE -ne 0) {
-    throw "Cannot read '$versionsPath' from runtime commit '$commit'."
-}
-
-[xml] $versions = $versionsContents -join "`n"
-$productVersion = $versions.SelectSingleNode('/Project/PropertyGroup/ProductVersion')?.InnerText
-if ($productVersion -notmatch '^\d+\.\d+\.\d+$') {
-    throw "Invalid ProductVersion '$productVersion' in '$versionsPath'."
-}
-
 [xml] $sourceManifest = $sourceManifestContents -join "`n"
 $includes = @(
     $sourceManifest.SelectNodes('/Project/ItemGroup/CDacSourceManifestSource') |
@@ -71,17 +59,24 @@ try {
 
     $cdacRoot = Join-Path $snapshot 'src/native/managed/cdac'
     @(
-        'cmake'
-        'inc'
-        'scripts'
-        'tests'
-        'tools'
-        'IData.md'
-        'README.md'
-        'cdac.slnx'
+        @{ Path = 'cmake' }
+        @{ Path = 'inc' }
+        @{ Path = 'scripts' }
+        @{ Path = 'IData.md' }
+        @{ Path = 'README.md' }
+        @{ Path = 'cdac.slnx' }
+        @{ Path = 'tests'; Keep = 'TestInfrastructure' }
+        @{ Path = 'tools'; Keep = 'CdacUsageGraph' }
+        @{ Path = 'tools\CdacUsageGraph'; Keep = 'src' }
     ) | ForEach-Object {
-        $path = Join-Path $cdacRoot $_
-        if (Test-Path -LiteralPath $path) {
+        $path = Join-Path $cdacRoot $_.Path
+        if ($_.ContainsKey('Keep')) {
+            $keep = $_.Keep
+            Get-ChildItem -LiteralPath $path -Force |
+                Where-Object { $_.Name -ne $keep } |
+                Remove-Item -Recurse -Force
+        }
+        elseif (Test-Path -LiteralPath $path) {
             Remove-Item -LiteralPath $path -Recurse -Force
         }
     }
@@ -106,10 +101,6 @@ try {
     [IO.File]::WriteAllText(
         (Join-Path $PSScriptRoot 'runtime-source.txt'),
         "$commit`n",
-        [Text.UTF8Encoding]::new($false))
-    [IO.File]::WriteAllText(
-        (Join-Path $PSScriptRoot 'runtime-version.txt'),
-        "$productVersion`n",
         [Text.UTF8Encoding]::new($false))
 }
 finally {
