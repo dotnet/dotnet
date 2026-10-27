@@ -249,6 +249,7 @@ Comma-separated matrix allow-lists are case-insensitive enum names:
 | `SOSHARNESS_ONLY_DUMPKIND` | Select `Heap`, `Mini`, and/or `Full`. |
 | `SOSHARNESS_ONLY_COREVERSIONS` | Select versions such as `Net8,Net11`; explicit selection also permits an out-of-support version. |
 | `SOSHARNESS_ONLY_DAC` | Select `Legacy` and/or `CDac`. |
+| `SOSHARNESS_ONLY_HOSTRUNTIME` | Select `Managed` and/or `None`. |
 | `SOSHARNESS_TEST_OUT_OF_SUPPORT_CORE` | Set to `1` to include every installed out-of-support runtime. |
 | `SOSHARNESS_HOST_RUNTIME_DIR` | Override the complete runtime layout used to host SOS's managed extension. |
 | `SOSHARNESS_MAX_LIVE` | Set the positive maximum number of concurrent live sessions. |
@@ -338,7 +339,9 @@ work items. To submit SOS alone, invoke `eng/helix/SendToHelix.proj` with
 Private runtime validation passes `PrivateBuildTesting=true` and
 `LiveRuntimeDir` to the sender. The payload includes that complete runtime
 layout and overlays it onto the matching Helix-provisioned runtime before the
-test starts. Private runs submit only the configured runtime shard and select
+test starts. Helix downloads the runtime by its `RuntimeDownload` (build)
+version, but installs it under `shared/Microsoft.NETCore.App/<Runtime>`, so the
+overlay targets the `Runtime` (product) version. Private runs submit only the configured runtime shard and select
 the `Core` flavor; self-contained and Framework targets continue to use product
 runtime packages and are therefore excluded.
 
