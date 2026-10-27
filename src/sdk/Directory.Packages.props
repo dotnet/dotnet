@@ -23,6 +23,8 @@
     <PackageVersion Include="Microsoft.Build.NuGetSdkResolver" Version="$(MicrosoftBuildNuGetSdkResolverPackageVersion)" />
     <PackageVersion Include="Microsoft.Build.TaskAuthoring.Analyzer" Version="$(MicrosoftBuildTaskAuthoringAnalyzerPackageVersion)" />
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryDotnetPackageVersion)" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="$(OpenTelemetryDotnetPackageVersion)" />
+    <PackageVersion Include="OpenTelemetry.Api.ProviderBuilderExtensions" Version="$(OpenTelemetryDotnetPackageVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="$(OpenTelemetryDotnetPackageVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryDotnetPackageVersion)" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OpenTelemetryInstrumentationHttpPackageVersion)" />
