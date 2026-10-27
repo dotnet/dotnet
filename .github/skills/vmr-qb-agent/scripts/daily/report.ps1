@@ -213,9 +213,16 @@ function New-QBModelEvidence {
             Set-Content -LiteralPath $path -Encoding utf8
         return $path
     }
-    function Get-DiagnosticSeverity([string] $Text, [string] $TaskResult, [string] $JobResult, [string] $IssueType) {
+    function Get-DiagnosticSeverity([string] $Text, [string] $TaskResult, [string] $JobResult, [string] $IssueType, [string] $RecordType) {
         if ($IssueType -eq 'warning' -or $Text -match '(?i)(?:^|\s)##\[warning\]|^Warning:') { return 'nonTerminating' }
-        # Record-based first: an issue is fatal only if its task failed AND its parent Job failed. 1ES/Guardian tasks emit
+        if ($JobResult -eq 'canceled') {
+            if ($RecordType -eq 'Job' -and
+                $Text -match '(?i)ran longer than the maximum time of \d+ minutes|\bjob (?:has )?timed out\b|stopped hearing from agent') {
+                return 'terminating'
+            }
+            return 'nonTerminating'
+        }
+        # Otherwise, an issue is fatal only if its task failed AND its parent Job failed. 1ES/Guardian tasks emit
         # ##[error] and still let the job pass (continueOnError), so log text alone lies. Only a record that could not be tied to a
         # Job (no result for it) falls back to the message text.
         if ($TaskResult -and $JobResult) {
@@ -267,6 +274,7 @@ function New-QBModelEvidence {
             foreach ($task in $Tasks) {
                 foreach ($issue in @($task.issues)) {
                     @{ text = [string](Get-QBField $issue 'message'); issueType = [string](Get-QBField $issue 'type')
+                        recordType = Get-QBField $task 'recordType'
                         task = $task.task; job = $task.job; jobId = Get-QBField $task 'jobId'; path = $null; line = $null
                         taskResult = [string](Get-QBField $task 'result'); jobResult = [string](Get-QBField $task 'jobResult') }
                 }
@@ -274,6 +282,7 @@ function New-QBModelEvidence {
             foreach ($log in $Logs) {
                 foreach ($excerpt in @(Get-QBField $log 'excerpts' @())) {
                     @{ text = [string]$excerpt.text; issueType = $null; task = $log.task; job = $log.job
+                        recordType = Get-QBField $log 'recordType'
                         jobId = Get-QBField $log 'jobId'; path = $log.path; line = $excerpt.line
                         taskResult = [string](Get-QBField $log 'result'); jobResult = [string](Get-QBField $log 'jobResult') }
                 }
@@ -285,7 +294,7 @@ function New-QBModelEvidence {
         $jobsWithRealDiagnostic = [Collections.Generic.HashSet[string]]::new()
         foreach ($message in $messages) {
             $message['jobKey'] = if ($message.jobId) { [string]$message.jobId } else { [string]$message.job }
-            $message['severity'] = Get-DiagnosticSeverity $message.text ([string]$message.taskResult) ([string]$message.jobResult) ([string]$message.issueType)
+            $message['severity'] = Get-DiagnosticSeverity $message.text ([string]$message.taskResult) ([string]$message.jobResult) ([string]$message.issueType) ([string]$message.recordType)
             if ($message.text -notmatch $wrapperPattern) {
                 $quote = [regex]::Replace($message.text, '^\d{4}-\d{2}-\d{2}T\S+Z\s*', '').Trim()
                 $errorText = [regex]::Match($quote, '(?i)(?:error [A-Z]+\d+:\s*(?:\([^)]*\)\s*)?|error\s*:\s*)(?<message>.+)')
@@ -423,6 +432,7 @@ function New-QBModelEvidence {
                             )
                             $entry = [ordered]@{
                                 task = Get-QBField $log 'task'; job = Get-QBField $log 'job'; jobId = Get-QBField $log 'jobId'; result = Get-QBField $log 'result'
+                                recordType = Get-QBField $log 'recordType'
                                 jobResult = Get-QBField $log 'jobResult'
                                 available = Get-QBField $log 'available'; logId = Get-QBField $log 'logId'
                                 promotionBuildId = Get-QBField $log 'promotionBuildId'
