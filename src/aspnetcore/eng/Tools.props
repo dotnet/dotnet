@@ -9,11 +9,9 @@
       instance and GenerateFileFromTemplate would be unavailable on a clean checkout.
     -->
     <MSBuild Projects="$(RepoRoot)eng\tools\GenerateFiles\GenerateFiles.csproj"
-        RemoveProperties="BaseIntermediateOutputPath"
         Properties="_GenerateFilesPass=Restore"
         Targets="Restore" />
     <MSBuild Projects="$(RepoRoot)eng\tools\GenerateFiles\GenerateFiles.csproj"
-        RemoveProperties="BaseIntermediateOutputPath"
         Properties="_GenerateFilesPass=Generate"
         Targets="GenerateDirectoryBuildFiles" />
   </Target>
