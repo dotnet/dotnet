@@ -6,6 +6,7 @@ Set-StrictMode -Version Latest
 # repo-projects/Directory.Build.targets logs one marker when a repo build starts and one when it finishes:
 #     2026-10-05T10:31:21.0000000Z   [10:31:21.05] Building arcade
 #     2026-10-05T10:32:01.0000000Z   [10:32:01.82] Building arcade...done
+# An unsuccessful build ends with "'arcade' failed during build." instead of a done marker.
 # Repo builds run in parallel, so several repos are "open" at once, and a repo that merely logged an error in the same file is NOT
 # necessarily the one that timed out.
 # Job timeline evidence establishes a timeout; task-log markers identify which repos were still building.
@@ -16,6 +17,7 @@ function Get-VmrQBRepoBuildState {
     if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { throw "Log not found: $Path" }
     $prefix = [regex]'^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z'
     $marker = [regex]'^(?<ts>\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z)\s*\[[\d:.]+\]\s+Building\s+(?<repo>[A-Za-z0-9][A-Za-z0-9._-]*?)(?<done>\.\.\.done)?\s*$'
+    $failedMarker = [regex]'(?i)^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z\s+''(?<repo>[A-Za-z0-9][A-Za-z0-9._-]*)'' failed during build\.\s*$'
     $errorPattern = [regex]'(?i)(?:\berror\b\s*[A-Z]*\d*\s*:|##\[error\]|\bFAILED\b|exited with code [1-9])'
     $repoPath = [regex]'(?i)(?:^|[\\/ "''(])src[\\/](?<repo>[a-z0-9][a-z0-9._-]*)[\\/]'
     $stampOf = {
@@ -39,6 +41,14 @@ function Get-VmrQBRepoBuildState {
             if (-not $repos.Contains($repo)) { $repos[$repo] = [pscustomobject]@{ repo = $repo; open = 0; lastStart = $null } }
             if ($match.Groups['done'].Success) { $repos[$repo].open = [Math]::Max(0, $repos[$repo].open - 1) }
             else { $repos[$repo].open++; $repos[$repo].lastStart = & $stampOf $match.Groups['ts'].Value }
+        }
+        elseif ($text.IndexOf(' failed during build.', [StringComparison]::OrdinalIgnoreCase) -ge 0 -and
+                ($match = $failedMarker.Match($text)).Success) {
+            $repo = $match.Groups['repo'].Value.ToLowerInvariant()
+            if ($repos.Contains($repo)) {
+                $repos[$repo].open = [Math]::Max(0, $repos[$repo].open - 1)
+                if ($repo -notin $errorRepos) { $errorRepos.Add($repo) }
+            }
         }
         elseif (($text.IndexOf('error', [StringComparison]::OrdinalIgnoreCase) -ge 0 -or $text.IndexOf('FAILED', [StringComparison]::Ordinal) -ge 0 -or
                 $text.IndexOf('exited with code', [StringComparison]::Ordinal) -ge 0) -and $errorPattern.IsMatch($text)) {
@@ -97,13 +107,13 @@ function Get-VmrQBTimeoutAttribution {
         }
         elseif ($suspects.Count -eq 0) {
             $why = if ($bystanders.Count) { "$(@($bystanders | ForEach-Object { & $describe $_ }) -join ', ') only started just before the end, so none of them is the cause" }
-                   else { 'every repo build that started also finished, so the time was spent outside a repo build' }
+                   else { 'every repo build that started also ended, so the time was spent outside a repo build' }
             "The job timeline confirms a timeout (limit $TimeLimitMinutes minutes), but no repo had been running for $minRunningMinutes minutes or more when this task log ended: $why."
         }
         else {
-            $text = "The job timeline confirms a timeout (limit $TimeLimitMinutes minutes); this task log spans $($State.elapsedMinutes) minutes. Repo build(s) with no '...done' after running at least $minRunningMinutes minutes: $(@($suspects | ForEach-Object { & $describe $_ }) -join ', ')."
+            $text = "The job timeline confirms a timeout (limit $TimeLimitMinutes minutes); this task log spans $($State.elapsedMinutes) minutes. Repo build(s) still running after at least $minRunningMinutes minutes: $(@($suspects | ForEach-Object { & $describe $_ }) -join ', ')."
             if ($bystanders.Count) { $text += " Started just before the end, not suspects: $(@($bystanders | ForEach-Object repo) -join ', ')." }
-            if ($errorOnly.Count) { $text += " Logged errors but were not running long: $($errorOnly -join ', ') - do not attribute the timeout to them." }
+            if ($errorOnly.Count) { $text += " Logged errors but are not timeout suspects: $($errorOnly -join ', ') - do not attribute the timeout to them." }
             $text
         }
     return [pscustomobject]@{

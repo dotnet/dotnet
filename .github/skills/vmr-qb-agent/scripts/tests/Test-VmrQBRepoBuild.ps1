@@ -29,11 +29,11 @@ function New-Leg([int] $Minutes) {
 
 try {
     Check 'A leg cut off mid-build names the repos that were running, not the one that only logged an error' {
-        # aspnetcore logs an unrelated error but finishes; runtime and emsdk are still building when the log ends 150 minutes in.
+        # aspnetcore fails and stops; runtime and emsdk are still building when the log ends 150 minutes in.
         $leg = Log @((L '10:00:00.0' 'Building arcade'), (L '10:01:00.0' 'Building arcade...done'), (L '10:01:01.0' 'Building aspnetcore'),
             (L '10:01:02.0' 'Building runtime'), (L '10:01:03.0' 'Building emsdk'),
             '2026-10-05T10:20:00.0000000Z D:\a\_work\1\s\src\aspnetcore\eng\build.cmd(12,3): error MSB3073: command exited with code 1',
-            (L '10:30:00.0' 'Building aspnetcore...done'), '2026-10-05T12:30:00.0000000Z ##[section]Finishing: Linux_x64')
+            "2026-10-05T10:30:00.0000000Z 'aspnetcore' failed during build.", '2026-10-05T12:30:00.0000000Z ##[section]Finishing: Linux_x64')
         $result = Judge $leg @{ JobTimedOut = $true }
         Assert (($result.repoAtTimeout -join ',') -eq 'runtime,emsdk') "suspects=$($result.repoAtTimeout -join ',')"
         Assert ($result.repoAtTimeout -notcontains 'aspnetcore') 'aspnetcore must never be named for a timeout it did not cause'
