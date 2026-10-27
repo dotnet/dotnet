@@ -3,23 +3,17 @@
   <Target Name="GenerateDirectoryBuildFiles"
       AfterTargets="Restore">
     <!--
-      This target runs while a restore is in progress, which disables the import of
-      obj\GenerateFiles.csproj.nuget.g.props in the second invocation unless both global properties
-      below are dropped. Without that import the package-provided GenerateFileFromTemplate task
-      can't be resolved.
-        - MSBuildIsRestoring is set by MSBuild's /restore switch and makes Microsoft.Common.props
-          default ImportProjectExtensionProps to false, skipping the import entirely.
-        - ExcludeRestorePackageImports is set by Arcade's toolset when it restores the repo tools
-          (and by NuGet during its restore graph walk). It neuters the contents of nuget.g.props,
-          including the ImportGroup that brings in the package's .props.
-      Which one is set depends on the Arcade version in use, so drop both. Doing so also gives the
-      two invocations distinct global property sets, so the second one re-evaluates the project
-      instead of reusing the instance restored by the first.
+      This target runs while a restore is in progress, so MSBuild sets the MSBuildIsRestoring global
+      property. Microsoft.Common.props turns that into ImportProjectExtensionProps=false, which skips
+      importing obj\GenerateFiles.csproj.nuget.g.props. Dropping MSBuildIsRestoring from the second
+      invocation lets it import those package props and resolve the GenerateFileFromTemplate task.
+      It also gives the two invocations distinct global property sets, so the second one re-evaluates
+      the project instead of reusing the instance restored by the first.
     -->
     <MSBuild Projects="$(RepoRoot)eng\tools\GenerateFiles\GenerateFiles.csproj"
         Targets="Restore" />
     <MSBuild Projects="$(RepoRoot)eng\tools\GenerateFiles\GenerateFiles.csproj"
-        RemoveProperties="MSBuildIsRestoring;ExcludeRestorePackageImports"
+        RemoveProperties="MSBuildIsRestoring"
         Targets="GenerateDirectoryBuildFiles" />
   </Target>
 </Project>
