@@ -229,7 +229,7 @@
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Save your solution before managing NuGet packages.</source>
-        <target state="translated">Die Lösung wurde nicht gespeichert. Speichern Sie Ihre Lösung, bevor Sie NuGet-Pakete verwalten.</target>
+        <target state="translated">Projektmappe nicht gespeichert. Speichern Sie Ihre Projektmappe, bevor Sie NuGet-Pakete verwalten.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_DeprecatedFramework_DocumentLink">

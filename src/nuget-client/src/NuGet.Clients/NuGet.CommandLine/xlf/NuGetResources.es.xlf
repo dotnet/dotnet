@@ -250,7 +250,7 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
       </trans-unit>
       <trans-unit id="Error_ProjectJsonNotAllowed">
         <source>Invalid input '{0}'. Provide the path of an msbuild solution file instead. Support for XProj and standalone project.json files has been removed, to continue working with legacy projects use NuGet 3.5.x from https://nuget.org/downloads</source>
-        <target state="translated">Entrada no válida "{0}". Se ha eliminado la compatibilidad con XProj. Se ha eliminado la compatibilidad con XProj y archivos project.json independientes; para continuar trabajando con proyectos heredados, use NuGet 3.5.x desde https://nuget.org/downloads</target>
+        <target state="translated">Entrada no válida "{0}". Proporcione un archivo de solución de msbuild en su lugar. Se ha eliminado la compatibilidad con XProj y archivos project.json independientes; para continuar trabajando con proyectos heredados, use NuGet 3.5.x desde https://nuget.org/downloads</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_ProjectJson_Deprecated_And_Removed">

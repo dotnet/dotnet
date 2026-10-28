@@ -395,7 +395,7 @@ NuGet nécessite des sources HTTPS. Pour utiliser des sources HTTP, vous devez d
       </trans-unit>
       <trans-unit id="Error_NotPRProject">
         <source>The project '{0}' is not a PackageReference project. This command only supports NuGet PackageReference projects.</source>
-        <target state="needs-review-translation">Le projet '{0}' utilise package.config pour les packages NuGet, alors que la commande fonctionne uniquement avec les projets de référence de package.</target>
+        <target state="translated">Le projet '{0}' n’est pas un projet PackageReference. Cette commande prend uniquement en charge les projets PackageReference NuGet.</target>
         <note>{0} - Path to the project with the error, {Locked="PackageReference"}</note>
       </trans-unit>
       <trans-unit id="Error_PackageDownload_VersionNotFound">
@@ -405,7 +405,7 @@ NuGet nécessite des sources HTTPS. Pour utiliser des sources HTTP, vous devez d
       </trans-unit>
       <trans-unit id="Error_PackagePublishDateMissing">
         <source>Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</source>
-        <target state="new">Package source '{0}' did not provide a publish date for package '{1}' version '{2}', which is required because the source has a minimum publish age configured.</target>
+        <target state="translated">La source du package '{0}' n’a pas fourni de date de publication pour la version '{1}' du package '{2}', ce qui est obligatoire, car une ancienneté de publication minimale est configurée pour la source.</target>
         <note>{0} - package source name
 {1} - package ID
 {2} - package version</note>
@@ -449,7 +449,7 @@ NuGet nécessite des sources HTTPS. Pour utiliser des sources HTTP, vous devez d
       </trans-unit>
       <trans-unit id="Error_TrustFingerPrintAlreadyExist">
         <source>The certificate fingerprint you're trying to add is already in the certificate fingerprint list.</source>
-        <target state="needs-review-translation">Le doigt de certificat que vous essayez d’ajouter figure déjà dans la liste des empreintes digitales de certificat.</target>
+        <target state="translated">L’empreinte de certificat que vous essayez d’ajouter figure déjà dans la liste des empreintes digitales de certificat.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_TrustedRepoAlreadyExists">
@@ -1041,7 +1041,7 @@ Pour plus d’informations, consultez https://docs.nuget.org/docs/reference/comm
       </trans-unit>
       <trans-unit id="PackageUpdate_PackagesAwaitingCooldown">
         <source>Packages with newer versions that have not reached the configured minimum publish age: {0}.</source>
-        <target state="new">Packages with newer versions that have not reached the configured minimum publish age: {0}.</target>
+        <target state="translated">Packages avec des versions plus récentes qui n’ont pas atteint l’âge de publication minimal configuré : {0}.</target>
         <note>{0}: Comma-separated package IDs with newer versions that have not reached the configured minimum publish age</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
@@ -1261,12 +1261,12 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursDescription">
         <source>The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</source>
-        <target state="new">The minimum number of hours a package must have been published before it can be selected for update. Set to 0 to disable.</target>
+        <target state="translated">Nombre minimal d’heures de publication d’un package doit avant de pouvoir le sélectionner pour une mise à jour. Définissez sur 0 pour désactiver.</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandMinPublishAgeHoursOutOfRange">
         <source>The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</source>
-        <target state="new">The minimum publish age of {0} hours is invalid. The value must be between 0 and {1}.</target>
+        <target state="translated">L’antériorité minimale de publication de {0} heures n’est pas valide. La valeur doit être comprise entre 0 et {1}.</target>
         <note>0 - the invalid number of hours. 1 - the maximum supported number of hours.</note>
       </trans-unit>
       <trans-unit id="SourcesCommandNameDescription">
@@ -1316,72 +1316,72 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
       </trans-unit>
       <trans-unit id="StageCommand_Description">
         <source>Manages packages in a staging environment.</source>
-        <target state="new">Manages packages in a staging environment.</target>
+        <target state="translated">Permet de gérer les packages dans un environnement intermédiaire.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Description">
         <source>Stages a package on the server without publishing it.</source>
-        <target state="new">Stages a package on the server without publishing it.</target>
+        <target state="translated">Place un package en environnement intermédiaire sur le serveur sans le publier.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_InvalidGroup">
         <source>The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</source>
-        <target state="new">The group ID must be 1-64 characters, use only A-Z, a-z, 0-9, '.', '_', or '-', and start and end with a letter or digit.</target>
+        <target state="translated">L’ID de groupe doit comprendre entre 1 et 64 caractères, utiliser uniquement les caractères A-Z, a-z, 0-9, « . », « _ » ou « - », et commencer et se terminer par une lettre ou un chiffre.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_MissingSource">
         <source>No package source was provided and DefaultPushSource is not configured.</source>
-        <target state="new">No package source was provided and DefaultPushSource is not configured.</target>
+        <target state="translated">Aucune source de package n’a été fournie et DefaultPushSource n’est pas configuré.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackageNotFound">
         <source>The package file '{0}' does not exist.</source>
-        <target state="new">The package file '{0}' does not exist.</target>
+        <target state="translated">Le fichier de package « {0} » n’existe pas.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_PackagePathRequired">
         <source>A package path is required.</source>
-        <target state="new">A package path is required.</target>
+        <target state="translated">Un chemin de package est requis.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_ResourceNotFound">
         <source>The source '{0}' does not advertise a supported package staging resource.</source>
-        <target state="new">The source '{0}' does not advertise a supported package staging resource.</target>
+        <target state="translated">Le '{0}' source ne publie pas de ressource intermédiaire de package prise en charge.</target>
         <note>0 - package source</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_Error_UnsupportedPackage">
         <source>The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</source>
-        <target state="new">The file '{0}' is not a supported package. Specify a .nupkg, .snupkg, or .symbols.nupkg file.</target>
+        <target state="translated">Le fichier « {0} » n’est pas un package pris en charge. Spécifiez un fichier .nupkg, .snupkg ou .symbols.nupkg.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_GroupOption_Description">
         <source>Uploads the package into the specified staging group.</source>
-        <target state="new">Uploads the package into the specified staging group.</target>
+        <target state="translated">Charge le package dans le groupe intermédiaire spécifié.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_NoSymbolsOption_Description">
         <source>Prevents automatic discovery and staging of a sibling symbols package.</source>
-        <target state="new">Prevents automatic discovery and staging of a sibling symbols package.</target>
+        <target state="translated">Empêche la découverte et la gestion intermédiaire automatiques d’un package de symboles frère.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackagePathArgument_Description">
         <source>The path to the package to stage.</source>
-        <target state="new">The path to the package to stage.</target>
+        <target state="translated">Chemin du package à placer en environnement intermédiaire.</target>
         <note />
       </trans-unit>
       <trans-unit id="StagePushCommand_PackageStaged">
         <source>Staged package '{0}'.</source>
-        <target state="new">Staged package '{0}'.</target>
+        <target state="translated">Package « {0} » placé en environnement intermédiaire.</target>
         <note>0 - package path</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsFailed">
         <source>Failed to stage symbols package '{0}': {1}</source>
-        <target state="new">Failed to stage symbols package '{0}': {1}</target>
+        <target state="translated">Nous n’avons pas pu placer le package de symboles « {0} » dans l’environnement intermédiaire : {1}</target>
         <note>0 - symbols package path; 1 - error message</note>
       </trans-unit>
       <trans-unit id="StagePushCommand_SymbolsStaged">
         <source>Staged symbols package '{0}'.</source>
-        <target state="new">Staged symbols package '{0}'.</target>
+        <target state="translated">Package de symboles placés en environnement intermédiaire « {0} ».</target>
         <note>0 - symbols package path</note>
       </trans-unit>
       <trans-unit id="SymbolApiKey_Description">
@@ -1542,7 +1542,7 @@ La recherche est une comparaison de chaînes qui ne respecte pas la casse à l�
       </trans-unit>
       <trans-unit id="Warn_AddPkgNonCompliantPackageId">
         <source>The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</source>
-        <target state="new">The package ID '{0}' does not meet NuGet package ID standards. Package IDs must be no more than 100 characters, start with a letter, digit, or underscore, and contain only ASCII letters, digits, dots (.), dashes (-), and underscores (_). Dots and dashes cannot appear consecutively or at the end.</target>
+        <target state="translated">L’ID de package '{0}' ne répond pas aux normes d’ID de package NuGet. Les ID de package ne doivent pas dépasser 100 caractères, commencer par une lettre, un chiffre ou un trait de soulignement et contenir uniquement des lettres ASCII, des chiffres, des points (.), des tirets (-) et des traits de soulignement (_). Les points et les tirets ne peuvent pas apparaître consécutivement ou à la fin.</target>
         <note>{0} - Package Id</note>
       </trans-unit>
       <trans-unit id="Warn_AddPkgWithoutRestore">

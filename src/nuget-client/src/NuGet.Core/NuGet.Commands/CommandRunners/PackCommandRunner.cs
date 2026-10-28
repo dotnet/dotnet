@@ -783,9 +783,10 @@ namespace NuGet.Commands
                         Strings.NuGetDocs));
             }
 
-            string outputPath = GetOutputPath(symbolsBuilder, _packArgs, symbols: true);
-
+            // The version suffix is applied here, so it has to happen before the file name is computed from the version
             InitCommonPackageBuilderProperties(symbolsBuilder);
+
+            string outputPath = GetOutputPath(symbolsBuilder, _packArgs, symbols: true);
             return BuildPackage(symbolsBuilder, outputPath, symbolsPackage: false);
         }
 
