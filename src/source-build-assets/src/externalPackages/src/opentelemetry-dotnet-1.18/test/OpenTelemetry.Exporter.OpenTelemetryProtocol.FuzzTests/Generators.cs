@@ -1,0 +1,369 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
+using FsCheck;
+using FsCheck.Fluent;
+using OpenTelemetry.Exporter.OpenTelemetryProtocol.Implementation;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+
+namespace OpenTelemetry.Exporter.OpenTelemetryProtocol.FuzzTests;
+
+internal static class Generators
+{
+    public static readonly ActivitySource TestActivitySource = new("Fuzz.ActivitySource", "1.0.0");
+
+    private static readonly Gen<ActivityStatusCode> ActivityStatusCodes = Gen.Elements(
+    [
+        ActivityStatusCode.Unset,
+        ActivityStatusCode.Ok,
+        ActivityStatusCode.Error,
+    ]);
+
+    private static readonly Gen<LogRecordSeverity> LogRecordSeverities = Gen.Elements(
+    [
+        LogRecordSeverity.Debug,
+        LogRecordSeverity.Error,
+        LogRecordSeverity.Fatal,
+        LogRecordSeverity.Info,
+        LogRecordSeverity.Trace,
+        LogRecordSeverity.Unspecified,
+        LogRecordSeverity.Warn,
+    ]);
+
+    private static readonly Gen<object?> KvListLeafValueGen = Gen.OneOf(
+        Gen.Constant<object?>(null),
+        Gen.Elements<object?>(string.Empty, "value", "multi\nline", "with spaces", new string('x', 256)),
+        Gen.Choose(int.MinValue, int.MaxValue).Select(x => (object?)(long)x),
+        Gen.Choose(-1000, 1000).Select(x => (object?)x),
+        Gen.Elements<object?>(0.0, 3.14, -1.5, double.NaN, double.PositiveInfinity, double.MinValue, double.MaxValue),
+        Gen.Elements<object?>(true, false),
+        Gen.Constant<object?>(new[] { 1, 2, 3 }),
+        Gen.Constant<object?>(new[] { "a", "b", "c" }),
+        Gen.Constant<object?>(new byte[] { 0, 1, 2, 3 }));
+
+    private static readonly Gen<string?> SchemaUrls = Gen.Elements(
+    [
+        null,
+        string.Empty,
+        "https://opentelemetry.io/schemas/1.0.0",
+        "https://opentelemetry.io/schemas/1.36.0",
+    ]);
+
+    public static Arbitrary<SdkLimitOptions> SdkLimitOptionsArbitrary()
+    {
+        var gen = from spanAttributesLimit in Gen.Choose(0, 1000).Select(x => (int?)x)
+                  from spanEventsLimit in Gen.Choose(0, 1000).Select(x => (int?)x)
+                  from spanLinksLimit in Gen.Choose(0, 1000).Select(x => (int?)x)
+                  from spanEventAttributesLimit in Gen.Choose(0, 1000).Select(x => (int?)x)
+                  from spanLinkAttributesLimit in Gen.Choose(0, 1000).Select(x => (int?)x)
+                  from attributeValueLimit in Gen.Choose(0, 10000).Select(x => (int?)x)
+                  from logAttributesLimit in Gen.Choose(0, 1000).Select(x => (int?)x)
+                  select new SdkLimitOptions
+                  {
+                      AttributeValueLengthLimit = attributeValueLimit,
+                      LogRecordAttributeCountLimit = logAttributesLimit,
+                      SpanAttributeCountLimit = spanAttributesLimit,
+                      SpanEventAttributeCountLimit = spanEventAttributesLimit,
+                      SpanEventCountLimit = spanEventsLimit,
+                      SpanLinkAttributeCountLimit = spanLinkAttributesLimit,
+                      SpanLinkCountLimit = spanLinksLimit,
+                  };
+
+        return gen.ToArbitrary();
+    }
+
+    public static Arbitrary<Activity> ActivityArbitrary(ActivityStatusCode? status = default)
+    {
+        var gen = Gen.Sized(size =>
+        {
+            var activity = TestActivitySource.StartActivity($"TestActivity_{Guid.NewGuid():N}");
+            if (activity == null)
+            {
+                return Gen.Constant(new Activity("Fallback"));
+            }
+
+            // Generate tags
+            var tagCount = Math.Min(size, 50);
+            for (var i = 0; i < tagCount; i++)
+            {
+                activity.SetTag($"tag.{i}", $"value_{i}_{Guid.NewGuid():N}");
+            }
+
+            // Generate events
+            var eventCount = Math.Min(size / 10, 10);
+            for (var i = 0; i < eventCount; i++)
+            {
+                var eventTags = new ActivityTagsCollection
+                {
+                    { $"event.tag.{i}", $"event_value_{i}" },
+                };
+                activity.AddEvent(new ActivityEvent($"Event_{i}", DateTimeOffset.UtcNow, eventTags));
+            }
+
+#if NET
+            var allTraceFlags = Enum.GetValues<ActivityTraceFlags>();
+#else
+            var allTraceFlags = Enum.GetValues(typeof(ActivityTraceFlags)).OfType<ActivityTraceFlags>().ToArray();
+#endif
+
+            var traceFlagsGenerator = Gen
+                .SubListOf(allTraceFlags)
+                .Select((flags) => flags.Aggregate(ActivityTraceFlags.None, (current, next) => current | next));
+
+            // Generate links
+            var linkCount = Math.Min(size / 10, 10);
+            for (var i = 0; i < linkCount; i++)
+            {
+                var linkTags = new ActivityTagsCollection
+                {
+                    { $"link.tag.{i}", $"link_value_{i}" },
+                };
+
+                var context = new ActivityContext(
+                    ActivityTraceId.CreateRandom(),
+                    ActivitySpanId.CreateRandom(),
+                    traceFlagsGenerator.Sample(0, 1).First());
+
+                activity.AddLink(new ActivityLink(context, linkTags));
+            }
+
+            activity.SetStatus(status ?? ActivityStatusCodes.Sample(size, 1).First());
+
+            return Gen.Constant(activity);
+        });
+
+        return gen.ToArbitrary();
+    }
+
+    public static Arbitrary<Resource> ResourceArbitrary()
+    {
+        var gen = Gen.Sized(size =>
+        {
+            var count = Math.Min(size, 20);
+            var attributes = new Dictionary<string, object>(count);
+
+            for (var i = 0; i < count; i++)
+            {
+                attributes[$"resource.attr.{i}"] = $"value_{i}";
+            }
+
+            var schemaUrl = SchemaUrls.Sample(size, 1).First();
+
+            return Gen.Constant(Resource.Empty.Merge(new Resource(attributes, schemaUrl)));
+        });
+
+        return gen.ToArbitrary();
+    }
+
+    /// <summary>
+    /// Generates valid Metric instances for different metric types.
+    /// </summary>
+    public static Arbitrary<Batch<Metric>> BatchMetricArbitrary()
+    {
+        var gen = Gen.Sized(size =>
+        {
+            var metrics = new List<Metric>();
+
+            var builder = Sdk.CreateMeterProviderBuilder()
+                .AddMeter("FuzzTest.Meter")
+                .AddInMemoryExporter(metrics);
+
+            if (size % 7 == 0)
+            {
+                var boundaries = new double[Math.Min(size % 10, 10)];
+                for (var i = 0; i < boundaries.Length; i++)
+                {
+                    boundaries[i] = (i * 50.0) + (size % 50);
+                }
+
+                builder.AddView("test.histogram", new ExplicitBucketHistogramConfiguration { Boundaries = boundaries });
+            }
+
+            using (var meterProvider = builder.Build())
+            {
+                using var meter = new Meter("FuzzTest.Meter", "1.0.0");
+
+                var counterByte = meter.CreateCounter<byte>("test.counter.byte");
+                var counterInt16 = meter.CreateCounter<short>("test.counter.int16");
+                var counterInt32 = meter.CreateCounter<int>("test.counter.int32");
+                var counterInt64 = meter.CreateCounter<long>("test.counter.int64");
+                var counterSingle = meter.CreateCounter<float>("test.counter.single");
+                var counterDouble = meter.CreateCounter<double>("test.counter.double");
+
+                for (var i = 0; i < size; i++)
+                {
+                    counterByte.Add((byte)(100 * i));
+                    counterInt16.Add((short)(100 * i));
+                    counterInt32.Add(100 * i);
+                    counterInt64.Add(100 * i);
+                    counterSingle.Add(100 * i);
+                    counterDouble.Add(100 * i);
+                }
+
+                var gauge = meter.CreateGauge<double>("test.gauge");
+
+                for (var i = 0; i < size; i++)
+                {
+                    gauge.Record(0.1 * i);
+                }
+
+                var histogram = meter.CreateHistogram<int>("test.histogram");
+
+                for (var i = 0; i < size; i++)
+                {
+                    histogram.Record(300 * i);
+                }
+
+                meterProvider.ForceFlush();
+            }
+
+            var batch = new Batch<Metric>([.. metrics], metrics.Count);
+
+            return Gen.Constant(batch);
+        });
+
+        return gen.ToArbitrary();
+    }
+
+    /// <summary>
+    /// Generates valid LogRecord instances.
+    /// </summary>
+    public static Arbitrary<LogRecord> LogRecordArbitrary(LogRecordSeverity? severity = default)
+    {
+        var gen = Gen.Sized(size =>
+        {
+            var logRecord = LogRecordSharedPool.Current.Rent();
+
+            logRecord.Severity = severity ?? LogRecordSeverities.Sample(size, 1).First();
+            logRecord.Timestamp = DateTime.UtcNow;
+
+            // Add attributes
+            var count = Math.Min(size, 50);
+            var attributes = new List<KeyValuePair<string, object?>>(count);
+            for (var i = 0; i < count; i++)
+            {
+                attributes.Add(new KeyValuePair<string, object?>($"log.attribute.{i}", $"value_{i}"));
+            }
+
+            if (attributes.Count > 0)
+            {
+                logRecord.Attributes = attributes;
+            }
+
+            return Gen.Constant(logRecord);
+        });
+
+        return gen.ToArbitrary();
+    }
+
+    public static Arbitrary<Activity[]> ActivityBatchArbitrary()
+    {
+        var gen = Gen.Sized(size =>
+        {
+            var batchSize = Math.Min(size, 100);
+            return Gen.ArrayOf(ActivityArbitrary().Generator, batchSize);
+        });
+
+        return gen.ToArbitrary();
+    }
+
+    public static Arbitrary<int> BufferSizeArbitrary() => Gen.Choose(64, 10 * 1024 * 1024).ToArbitrary();
+
+    public static Arbitrary<LogRecordSeverity> LogRecordSeverityArbitrary() => LogRecordSeverities.ToArbitrary();
+
+    // Depth up to 5 exceeds TagWriter.MaxRecursionDepth (3) so the stringify-fallback path is also exercised.
+    public static Arbitrary<List<KeyValuePair<string, object?>>> KvListArbitrary() => KvListGen(5).ToArbitrary();
+
+    public static Arbitrary<Activity[]> ActivityWithKvListBatchArbitrary()
+    {
+        var gen = Gen.Sized(size =>
+        {
+            var batchSize = Math.Min(Math.Max(size / 4, 1), 20);
+            return Gen.ArrayOf(ActivityWithKvListGen(), batchSize);
+        });
+
+        return gen.ToArbitrary();
+    }
+
+    public static Arbitrary<LogRecord[]> LogRecordsWithKvListArbitrary()
+    {
+        var gen = Gen.Sized(size =>
+        {
+            var count = Math.Min(Math.Max(size / 4, 1), 10);
+            return Gen.ArrayOf(LogRecordWithKvListGen(), count);
+        });
+
+        return gen.ToArbitrary();
+    }
+
+    private static Gen<List<KeyValuePair<string, object?>>> KvListGen(int maxDepth) =>
+        Gen.Sized(size =>
+        {
+            var count = Math.Min(Math.Max(size / 4, 0), 8);
+
+            Gen<object?> valueGen = maxDepth > 0
+                ? Gen.Frequency(
+                    (4, KvListLeafValueGen),
+                    (1, KvListGen(maxDepth - 1).Select(l => (object?)l)))
+                : KvListLeafValueGen;
+
+            var entryGen = from keyIndex in Gen.Choose(0, 1_000_000)
+                           from value in valueGen
+                           select new KeyValuePair<string, object?>($"k{keyIndex}", value);
+
+            return Gen.ArrayOf(entryGen, count).Select(arr => arr.ToList());
+        });
+
+    private static Gen<Activity> ActivityWithKvListGen() =>
+        from activity in ActivityArbitrary().Generator
+        from kvListCount in Gen.Choose(0, 5)
+        from kvLists in Gen.ArrayOf(KvListGen(5), kvListCount)
+        select AttachKvListTags(activity, kvLists);
+
+    private static Gen<LogRecord> LogRecordWithKvListGen() =>
+        from severity in Gen.Elements(
+            LogRecordSeverity.Debug,
+            LogRecordSeverity.Error,
+            LogRecordSeverity.Fatal,
+            LogRecordSeverity.Info,
+            LogRecordSeverity.Trace,
+            LogRecordSeverity.Unspecified,
+            LogRecordSeverity.Warn)
+        from kvListCount in Gen.Choose(0, 5)
+        from kvLists in Gen.ArrayOf(KvListGen(5), kvListCount)
+        select BuildLogRecordWithKvLists(severity, kvLists);
+
+    private static Activity AttachKvListTags(Activity activity, List<KeyValuePair<string, object?>>[] kvLists)
+    {
+        for (var i = 0; i < kvLists.Length; i++)
+        {
+            activity.SetTag($"kvlist.{i}", kvLists[i]);
+        }
+
+        return activity;
+    }
+
+    private static LogRecord BuildLogRecordWithKvLists(LogRecordSeverity severity, List<KeyValuePair<string, object?>>[] kvLists)
+    {
+        var logRecord = LogRecordSharedPool.Current.Rent();
+        logRecord.Severity = severity;
+        logRecord.Timestamp = DateTime.UtcNow;
+
+        if (kvLists.Length > 0)
+        {
+            var attributes = new List<KeyValuePair<string, object?>>(kvLists.Length);
+            for (var i = 0; i < kvLists.Length; i++)
+            {
+                attributes.Add(new KeyValuePair<string, object?>($"kvlist.{i}", kvLists[i]));
+            }
+
+            logRecord.Attributes = attributes;
+        }
+
+        return logRecord;
+    }
+}

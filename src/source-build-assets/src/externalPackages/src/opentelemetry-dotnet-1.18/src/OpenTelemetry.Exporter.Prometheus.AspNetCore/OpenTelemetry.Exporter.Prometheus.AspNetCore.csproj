@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- OmniSharp/VS Code requires TargetFrameworks to be in descending order for IntelliSense and analysis. -->
+    <TargetFrameworks>$(TargetFrameworksForPrometheusAspNetCore)</TargetFrameworks>
+    <Description>ASP.NET Core middleware for hosting OpenTelemetry .NET Prometheus Exporter</Description>
+    <PackageTags>$(PackageTags);prometheus;metrics</PackageTags>
+    <MinVerTagPrefix>coreunstable-</MinVerTagPrefix>
+    <DefineConstants>$(DefineConstants);PROMETHEUS_ASPNETCORE</DefineConstants>
+    <NoWarn>$(NoWarn);CA2007</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(RunningDotNetPack)' != 'true'">
+    <ProjectReference Include="$(RepoRoot)\src\OpenTelemetry\OpenTelemetry.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(RunningDotNetPack)' == 'true'">
+    <PackageReference Include="OpenTelemetry" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoRoot)\src\OpenTelemetry.Exporter.Prometheus.HttpListener\Internal\Shared\**\*.cs" Link="Includes\Prometheus\%(RecursiveDir)\%(Filename)%(Extension)" />
+    <Compile Include="$(RepoRoot)\src\Shared\CharExtensions.cs" Link="Includes\CharExtensions.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\ExceptionExtensions.cs" Link="Includes\ExceptionExtensions.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\Guard.cs" Link="Includes\Guard.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\Shims\Lock.cs" Link="Includes\Shims\Lock.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\Shims\NullableAttributes.cs" Link="Includes\Shims\NullableAttributes.cs" />
+    <Compile Include="$(RepoRoot)\src\Shared\StopwatchExtensions.cs" Link="Includes\StopwatchExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="OpenTelemetry.Exporter.Prometheus.AspNetCore.Tests" PublicKey="$(StrongNamePublicKey)" />
+    <InternalsVisibleTo Include="OpenTelemetry.Exporter.Prometheus.Tests" PublicKey="$(StrongNamePublicKey)" />
+  </ItemGroup>
+
+</Project>

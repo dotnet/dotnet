@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>$(TargetFrameworksForTests)</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)\test\OpenTelemetry.Tests.Stress\OpenTelemetry.Tests.Stress.csproj" />
+  </ItemGroup>
+
+</Project>

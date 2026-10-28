@@ -1,0 +1,3 @@
+﻿# TYPE test_gauge_seconds gauge
+# HELP test_gauge_seconds Hello, world!
+test_gauge_seconds{otel_scope_name="GaugeZeroDimensionWithDescriptionAndUnit"} 123

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>$(TargetFrameworksForAotCompatibilityTests)</TargetFrameworks>
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <TrimmerRootAssembly Include="OpenTelemetry.Api.ProviderBuilderExtensions" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Api" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Exporter.Console" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Exporter.InMemory" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Exporter.Prometheus.HttpListener" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Exporter.Zipkin" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Extensions.Hosting" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Extensions.Propagators" />
+    <TrimmerRootAssembly Include="OpenTelemetry.Shims.OpenTracing" />
+    <TrimmerRootAssembly Include="OpenTelemetry" />
+
+    <TrimmerRootAssembly Update="@(TrimmerRootAssembly)" Path="$(RepoRoot)\src\%(Identity)\%(Identity).csproj" />
+    <ProjectReference Include="@(TrimmerRootAssembly->'%(Path)')" />
+  </ItemGroup>
+
+</Project>

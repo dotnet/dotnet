@@ -1,0 +1,383 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  # The push trigger would run the CI workflow when any changes get merged to main branch.
+  # The build badge on the main README uses the CI results on the main branch to report the build status.
+  push:
+    branches: [ 'main*' ]
+  pull_request:
+    branches: [ 'main*' ]
+  merge_group:
+    types: [ checks_requested ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  lint-misspell-sanitycheck:
+    uses: ./.github/workflows/sanitycheck.yml
+
+  code-ql:
+    uses: ./.github/workflows/codeql-analysis-steps.yml
+    permissions:
+      actions: read # Scan GitHub Actions workflows
+      contents: read # Checkout the repository
+      security-events: write # Store results in the Security tab
+    with:
+      trigger: ${{ github.event_name }}
+
+  detect-changes:
+    name: Detect changes
+    runs-on: windows-2025
+    outputs:
+      changes: ${{ steps.changes.outputs.changes }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        filter: 'tree:0'
+        persist-credentials: false
+        show-progress: false
+    - name: Filter paths
+      uses: AurorNZ/paths-filter@c9dd42e99db87803313ff6f4b1150cc9f6c836af # v5.0.0
+      id: changes
+      with:
+        filters: |
+          md: ['**.md']
+          build: ['build/**', '.github/**/*.yml', '**/*.targets', '**/*.props', 'global.json']
+          github: ['.github/**/*']
+          pwsh: [ '**.ps1', '**.psm1', '**.psd1' ]
+          shared: ['src/Shared/**']
+          code: ['**.cs', '**.csproj', '.editorconfig']
+          solution: ['OpenTelemetry.slnx', 'OpenTelemetry.Extended.slnx']
+          packaged-code: ['src/**', '!**/*.md']
+          api-code: ['*/OpenTelemetry.Api*/**', '!**/*.md']
+          api-packages: ['src/OpenTelemetry.Api*/**', '!**/*.md']
+          hosting: ['src/OpenTelemetry.Extensions.Hosting/**', '!**/*.md']
+          instrumentation: ['*/OpenTelemetry.Instrumentation*/**', 'test/TestApp.AspNetCore/**', '!**/*.md']
+          sdk-code: ['src/OpenTelemetry/**', 'test/OpenTelemetry.Tests/**', '!**/*.md']
+          sdk-package: ['src/OpenTelemetry/**', '!**/*.md']
+          unstable-core-packages: ['src/OpenTelemetry.Exporter.Prometheus.AspNetCore/**', 'src/OpenTelemetry.Exporter.Prometheus.HttpListener/**', 'src/OpenTelemetry.Shims.OpenTracing/**', '!**/*.md']
+          android: ['test/OpenTelemetry.Android.*/**', 'test/Shared/OtlpHttpCollector.cs', '.github/workflows/android-tests.yml']
+          apple: ['test/OpenTelemetry.Apple.*/**', 'test/Shared/OtlpHttpCollector.cs', '.github/workflows/apple-tests.yml']
+          blazor: ['test/OpenTelemetry.BlazorWasm.*/**', 'test/Shared/OtlpHttpCollector.cs', '.github/workflows/blazor-wasm-integration-test.yml']
+          maui: ['test/OpenTelemetry.Maui.*/**', 'test/Shared/OtlpHttpCollector.cs', '.github/workflows/maui-tests.yml']
+          otlp: ['*/OpenTelemetry.Exporter.OpenTelemetryProtocol*/**', '!**/*.md']
+
+  lint-actions:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'github')
+    uses: ./.github/workflows/actionlint.yml
+    permissions:
+      actions: read # Read GitHub Actions workflows
+      contents: read # Read repository contents
+
+  lint-md:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'md')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+    uses: ./.github/workflows/markdownlint.yml
+
+  lint-pwsh:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'pwsh')
+      || contains(needs.detect-changes.outputs.changes, 'github')
+    uses: ./.github/workflows/pwshlint.yml
+    permissions:
+      contents: read # To checkout the code
+
+  lint-dotnet-format:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'code')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+    uses: ./.github/workflows/dotnet-format.yml
+
+  test-pwsh:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'pwsh')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+    uses: ./.github/workflows/pwsh-test.yml
+    permissions:
+      contents: read # To checkout the code
+
+  build-test-solution:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'solution')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/Component.BuildTest.yml
+    with:
+      project-name: 'OpenTelemetry.slnx'
+      code-cov-name: 'Solution'
+      trigger: ${{ github.event_name }}
+      install-wasm-tools: true
+
+  build-test-project-stable:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'code')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/Component.BuildTest.yml
+    with:
+      project-name: './build/OpenTelemetry.proj'
+      project-build-commands: '-p:ExposeExperimentalFeatures=false'
+      code-cov-name: 'Project-Stable'
+      trigger: ${{ github.event_name }}
+
+  build-test-project-experimental:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'code')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/Component.BuildTest.yml
+    with:
+      project-name: './build/OpenTelemetry.proj'
+      project-build-commands: '-p:ExposeExperimentalFeatures=true'
+      code-cov-name: 'Project-Experimental'
+      trigger: ${{ github.event_name }}
+
+  # Build unstable core libraries using stable packages released to NuGet
+  build-test-unstable-core:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'unstable-core-packages')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/Component.BuildTest.yml
+    with:
+      project-name: './build/UnstableCoreLibraries.proj'
+      project-build-commands: '-p:RunningDotNetPack=true -p:ExposeExperimentalFeatures=true'
+      code-cov-name: 'UnstableCoreLibraries-Experimental'
+      trigger: ${{ github.event_name }}
+
+  otlp-integration-test:
+    name: OTLP integration tests
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'api-packages')
+      || contains(needs.detect-changes.outputs.changes, 'sdk-package')
+      || contains(needs.detect-changes.outputs.changes, 'otlp')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: ${{ github.event_name == 'merge_group' }}
+      matrix:
+        version: [ net8.0, net9.0, net10.0 ]
+    env:
+      FRAMEWORK_VERSION: ${{ matrix.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          filter: 'tree:0'
+          persist-credentials: false
+          show-progress: false
+      - name: Build OTLP test image
+        run: docker compose --file=test/OpenTelemetry.Exporter.OpenTelemetryProtocol.Tests/IntegrationTest/docker-compose.yml "--file=build/docker-compose.${FRAMEWORK_VERSION}.yml" --project-directory=. --profile build build build-image
+      - name: Run OTLP Exporter docker compose
+        run: docker compose --file=test/OpenTelemetry.Exporter.OpenTelemetryProtocol.Tests/IntegrationTest/docker-compose.yml "--file=build/docker-compose.${FRAMEWORK_VERSION}.yml" --project-directory=. up --exit-code-from=tests --no-build
+
+  android-integration-test:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'android')
+      || contains(needs.detect-changes.outputs.changes, 'sdk-package')
+      || contains(needs.detect-changes.outputs.changes, 'otlp')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/android-tests.yml
+    with:
+      trigger: ${{ github.event_name }}
+
+  apple-integration-test:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'apple')
+      || contains(needs.detect-changes.outputs.changes, 'sdk-package')
+      || contains(needs.detect-changes.outputs.changes, 'otlp')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/apple-tests.yml
+    with:
+      trigger: ${{ github.event_name }}
+
+  blazor-wasm-integration-test:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'blazor')
+      || contains(needs.detect-changes.outputs.changes, 'sdk-package')
+      || contains(needs.detect-changes.outputs.changes, 'otlp')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/blazor-wasm-integration-test.yml
+    with:
+      trigger: ${{ github.event_name }}
+
+  maui-integration-test:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'maui')
+      || contains(needs.detect-changes.outputs.changes, 'hosting')
+      || contains(needs.detect-changes.outputs.changes, 'sdk-package')
+      || contains(needs.detect-changes.outputs.changes, 'otlp')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/maui-tests.yml
+    with:
+      trigger: ${{ github.event_name }}
+
+  w3c-trace-context-integration-test:
+    name: W3C Trace Context integration tests
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'api-packages')
+      || contains(needs.detect-changes.outputs.changes, 'sdk-package')
+      || contains(needs.detect-changes.outputs.changes, 'instrumentation')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: ${{ github.event_name == 'merge_group' }}
+      matrix:
+        version: [ net8.0, net9.0, net10.0 ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          filter: 'tree:0'
+          persist-credentials: false
+          show-progress: false
+      - name: Run W3C Trace Context docker compose
+        run: docker compose --file=test/OpenTelemetry.Instrumentation.W3cTraceContext.Tests/docker-compose.yml "--file=build/docker-compose.${FRAMEWORK_VERSION}.yml" --project-directory=. up --exit-code-from=tests --build
+        env:
+          FRAMEWORK_VERSION: ${{ matrix.version }}
+
+  validate-benchmarks:
+    name: Validate benchmarks
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'code') ||
+      contains(needs.detect-changes.outputs.changes, 'build') ||
+      contains(needs.detect-changes.outputs.changes, 'shared')
+    strategy:
+      fail-fast: ${{ github.event_name == 'merge_group' }}
+      matrix:
+        os:
+          # renovate: datasource=github-runners depType=github-runner
+          - ubuntu-24.04
+          # renovate: datasource=github-runners depType=github-runner
+          - windows-2025
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+        show-progress: false
+    - name: Setup .NET
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+    - name: Run benchmarks
+      shell: pwsh
+      run: |
+        $runtimes = @("net10.0")
+        if ($IsWindows) {
+          $runtimes += "net462"
+        }
+        ./benchmark.ps1 @("*SamplerBenchmarks*") -EnableMemoryDiagnoser -Job Short -Runtimes $runtimes -SkipBaseline
+
+  validate-packages:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'packaged-code')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/package-validation.yml
+
+  generate-docs:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'packaged-code')
+      || contains(needs.detect-changes.outputs.changes, 'md')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/docfx.yml
+
+  verify-aot-compat:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'packaged-code')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/verifyaotcompat.yml
+    with:
+      trigger: ${{ github.event_name }}
+
+  concurrency-tests:
+    needs: detect-changes
+    if: |
+      contains(needs.detect-changes.outputs.changes, 'api-code')
+      || contains(needs.detect-changes.outputs.changes, 'sdk-code')
+      || contains(needs.detect-changes.outputs.changes, 'build')
+      || contains(needs.detect-changes.outputs.changes, 'shared')
+    uses: ./.github/workflows/concurrency-tests.yml
+    with:
+      trigger: ${{ github.event_name }}
+
+  build-test:
+    name: build-test
+    needs: [
+      detect-changes,
+      code-ql,
+      lint-actions,
+      lint-misspell-sanitycheck,
+      lint-md,
+      lint-pwsh,
+      lint-dotnet-format,
+      test-pwsh,
+      build-test-solution,
+      build-test-project-stable,
+      build-test-project-experimental,
+      build-test-unstable-core,
+      android-integration-test,
+      apple-integration-test,
+      blazor-wasm-integration-test,
+      maui-integration-test,
+      otlp-integration-test,
+      w3c-trace-context-integration-test,
+      validate-benchmarks,
+      validate-packages,
+      generate-docs,
+      verify-aot-compat,
+      concurrency-tests
+      ]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Report CI status
+      shell: bash
+      env:
+        CI_SUCCESS: ${{ !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+      run: |
+        if [ "${CI_SUCCESS}" == "true" ]
+        then
+          echo 'Build complete'
+        else
+          echo 'Build failed'
+          exit 1
+        fi

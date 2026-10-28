@@ -1,0 +1,898 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+using System.Collections;
+using System.Diagnostics;
+
+namespace OpenTelemetry.Context.Propagation.Tests;
+
+public class TraceContextPropagatorTests
+{
+    private const string TraceParent = "traceparent";
+    private const string TraceState = "tracestate";
+    private const string TraceId = "0af7651916cd43dd8448eb211c80319c";
+    private const string SpanId = "b9c7c989f97918e1";
+
+    private static readonly IEnumerable<string> Empty = [];
+
+    private static readonly Func<IDictionary<string, string>, string, IEnumerable<string>> Getter =
+        static (headers, name) => headers.TryGetValue(name, out var value) ? [value] : [];
+
+    private static readonly Func<IDictionary<string, string[]>, string, IEnumerable<string>> ArrayGetter =
+        static (headers, name) => headers.TryGetValue(name, out var value) ? value : [];
+
+    private static readonly Action<IDictionary<string, string>, string, string> Setter =
+        static (carrier, name, value) => carrier[name] = value;
+
+    [Fact]
+    public void CanParseExampleFromSpec()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+            { TraceState, $"congo=lZWRzIHRoNhcm5hbCBwbGVhc3VyZS4,rojo=00-{TraceId}-00f067aa0ba902b7-01" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), context.ActivityContext.TraceId);
+        Assert.Equal(ActivitySpanId.CreateFromString(SpanId.AsSpan()), context.ActivityContext.SpanId);
+
+        Assert.True(context.ActivityContext.IsRemote);
+        Assert.True(context.ActivityContext.IsValid());
+        Assert.NotEqual(0, (int)(context.ActivityContext.TraceFlags & ActivityTraceFlags.Recorded));
+
+        Assert.Equal($"congo=lZWRzIHRoNhcm5hbCBwbGVhc3VyZS4,rojo=00-{TraceId}-00f067aa0ba902b7-01", context.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void NotSampled()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-00" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), context.ActivityContext.TraceId);
+        Assert.Equal(ActivitySpanId.CreateFromString(SpanId.AsSpan()), context.ActivityContext.SpanId);
+        Assert.Equal(0, (int)(context.ActivityContext.TraceFlags & ActivityTraceFlags.Recorded));
+
+        Assert.True(context.ActivityContext.IsRemote);
+        Assert.True(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void RandomTraceId()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-02" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), context.ActivityContext.TraceId);
+        Assert.Equal(ActivitySpanId.CreateFromString(SpanId.AsSpan()), context.ActivityContext.SpanId);
+
+        // https://github.com/open-telemetry/opentelemetry-dotnet/pull/6899
+        // will change this to use ActivityTraceFlags.RandomTraceId instead.
+        Assert.Equal((ActivityTraceFlags)2, context.ActivityContext.TraceFlags);
+
+        Assert.True(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void RandomTraceIdAndRecorded()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-03" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), context.ActivityContext.TraceId);
+        Assert.Equal(ActivitySpanId.CreateFromString(SpanId.AsSpan()), context.ActivityContext.SpanId);
+
+        Assert.True(context.ActivityContext.TraceFlags.HasFlag(ActivityTraceFlags.Recorded));
+
+        // https://github.com/open-telemetry/opentelemetry-dotnet/pull/6899
+        // will change this to use ActivityTraceFlags.RandomTraceId instead.
+        Assert.True(context.ActivityContext.TraceFlags.HasFlag((ActivityTraceFlags)2));
+
+        Assert.True(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void IsBlankIfNoHeader()
+    {
+        var headers = new Dictionary<string, string>();
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        Assert.False(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void Extract_ReturnsExistingContextIfAlreadyValid()
+    {
+        var existing = new ActivityContext(
+            ActivityTraceId.CreateFromString("11111111111111111111111111111111".AsSpan()),
+            ActivitySpanId.CreateFromString("2222222222222222".AsSpan()),
+            ActivityTraceFlags.Recorded,
+            traceState: "k1=v1");
+
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(new PropagationContext(existing, default), headers, Getter);
+
+        // The carrier is not consulted at all when a valid context was already extracted.
+        Assert.Equal(existing.TraceId, context.ActivityContext.TraceId);
+        Assert.Equal(existing.SpanId, context.ActivityContext.SpanId);
+        Assert.Equal("k1=v1", context.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void Extract_IsBlankIfCarrierIsNull()
+    {
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, null!, Getter);
+
+        Assert.False(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void Extract_IsBlankIfGetterIsNull()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract<IDictionary<string, string>>(default, headers, null!);
+
+        Assert.False(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void Extract_IsBlankIfGetterThrows()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract<IDictionary<string, string>>(
+            default,
+            headers,
+            static (_, _) => throw new InvalidOperationException("The carrier could not be read."));
+
+        Assert.False(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void Extract_IsBlankIfTraceparentValuesAreNull()
+    {
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract<IDictionary<string, string>>(default, new Dictionary<string, string>(), static (_, _) => null);
+
+        Assert.False(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void Extract_IgnoresMultipleReadOnlyListTraceparentValues()
+    {
+        var headers = new Dictionary<string, ReadOnlyCarrierValues>
+        {
+            [TraceParent] = new([$"00-{TraceId}-{SpanId}-01", $"00-{TraceId}-{SpanId}-00"]),
+        };
+
+        var target = new TraceContextPropagator();
+        var context = target.Extract(default, headers, static (carrier, name) =>
+            carrier.TryGetValue(name, out var value) ? value : new ReadOnlyCarrierValues([]));
+
+        Assert.False(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void Extract_IgnoresEmptyEnumerableTraceparentValues()
+    {
+        var headers = new Dictionary<string, EnumerableCarrierValues>
+        {
+            [TraceParent] = new([]),
+        };
+
+        var target = new TraceContextPropagator();
+        var context = target.Extract(default, headers, static (carrier, name) =>
+            carrier.TryGetValue(name, out var value) ? value : new EnumerableCarrierValues([]));
+
+        Assert.False(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void Extract_IgnoresEmptyReadOnlyListTracestateValues()
+    {
+        var headers = new Dictionary<string, ReadOnlyCarrierValues>
+        {
+            [TraceParent] = new([$"00-{TraceId}-{SpanId}-01"]),
+            [TraceState] = new([]),
+        };
+
+        var target = new TraceContextPropagator();
+        var context = target.Extract(default, headers, static (carrier, name) =>
+            carrier.TryGetValue(name, out var value) ? value : new ReadOnlyCarrierValues([]));
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), context.ActivityContext.TraceId);
+        Assert.Null(context.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void Extract_CombinesMultipleEnumerableTracestateValues()
+    {
+        var headers = new Dictionary<string, EnumerableCarrierValues>
+        {
+            [TraceParent] = new([$"00-{TraceId}-{SpanId}-01"]),
+            [TraceState] = new(["k1=v1", "k2=v2", "k3=v3"]),
+        };
+
+        var target = new TraceContextPropagator();
+        var context = target.Extract(default, headers, static (carrier, name) =>
+            carrier.TryGetValue(name, out var value) ? value : new EnumerableCarrierValues([]));
+
+        Assert.Equal("k1=v1,k2=v2,k3=v3", context.ActivityContext.TraceState);
+    }
+
+    [Theory]
+    [InlineData($"00-xyz7651916cd43dd8448eb211c80319c-{SpanId}-01")]
+    [InlineData($"00-xyz7651916cd43dd8448eb211c80319c-{SpanId}-02")]
+    [InlineData($"00-xyz7651916cd43dd8448eb211c80319c-{SpanId}-03")]
+    [InlineData($"00-{TraceId}-xyz7c989f97918e1-01")]
+    [InlineData($"00-{TraceId}-{SpanId}-x1")]
+    [InlineData($"00-{TraceId}-{SpanId}-1x")]
+    //// Non-hex character in the version.
+    [InlineData($"x0-{TraceId}-{SpanId}-01")]
+    [InlineData($"0x-{TraceId}-{SpanId}-01")]
+    //// Upper-case hex is not accepted for either id.
+    [InlineData($"00-0AF7651916CD43DD8448EB211C80319C-{SpanId}-01")]
+    [InlineData($"00-{TraceId}-B9C7C989F97918E1-01")]
+    //// An all-zero trace id or span id is invalid.
+    [InlineData($"00-00000000000000000000000000000000-{SpanId}-01")]
+    [InlineData($"00-{TraceId}-0000000000000000-01")]
+    [InlineData($"00-{TraceId}-{SpanId}-0")] // Too short to be a version 0 traceparent
+    [InlineData($"00x{TraceId}-{SpanId}-01")] // The delimiter after the version is not a dash
+    [InlineData($"00-{TraceId}x{SpanId}-01")] // The delimiter between the trace id and the span id is not a dash
+    [InlineData($"00-{TraceId}-{SpanId}x01")] // The delimiter between the span id and the trace flags is not a dash
+    public void IsBlankIfInvalid(string invalidTraceParent)
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, invalidTraceParent },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        Assert.False(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void TracestateToStringEmpty()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        Assert.Null(context.ActivityContext.TraceState);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData(" ,  ")]
+    public void TracestateToStringEmptyHeaderValue(string traceState)
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+            { TraceState, traceState },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        Assert.Null(context.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void TracestateToString()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+            { TraceState, "k1=v1,k2=v2,k3=v3" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        Assert.Equal("k1=v1,k2=v2,k3=v3", context.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void Extract_SupportsReadOnlyListCarrierValues()
+    {
+        var headers = new Dictionary<string, ReadOnlyCarrierValues>
+        {
+            [TraceParent] = new([$"00-{TraceId}-{SpanId}-01"]),
+            [TraceState] = new(["k1=v1"]),
+        };
+
+        var target = new TraceContextPropagator();
+        var actual = target.Extract(default, headers, static (carrier, name) =>
+            carrier.TryGetValue(name, out var value) ? value : new ReadOnlyCarrierValues([]));
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), actual.ActivityContext.TraceId);
+        Assert.Equal(ActivitySpanId.CreateFromString(SpanId.AsSpan()), actual.ActivityContext.SpanId);
+        Assert.Equal("k1=v1", actual.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void Extract_SupportsEnumerableCarrierValues()
+    {
+        var headers = new Dictionary<string, EnumerableCarrierValues>
+        {
+            [TraceParent] = new([$"00-{TraceId}-{SpanId}-01"]),
+            [TraceState] = new(["  k1=v1 , k2=v2  "]),
+        };
+
+        var target = new TraceContextPropagator();
+        var actual = target.Extract(default, headers, static (carrier, name) =>
+            carrier.TryGetValue(name, out var value) ? value : new EnumerableCarrierValues([]));
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), actual.ActivityContext.TraceId);
+        Assert.Equal(ActivitySpanId.CreateFromString(SpanId.AsSpan()), actual.ActivityContext.SpanId);
+        Assert.Equal("k1=v1,k2=v2", actual.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void Extract_EnumeratesEnumerableTracestateValuesOnce()
+    {
+        var tracestateValues = new SingleUseEnumerableCarrierValues("  k1=v1 , k2=v2  ");
+        var headers = new Dictionary<string, IEnumerable<string>>
+        {
+            [TraceParent] = new EnumerableCarrierValues($"00-{TraceId}-{SpanId}-01"),
+            [TraceState] = tracestateValues,
+        };
+
+        var target = new TraceContextPropagator();
+        var actual = target.Extract(default, headers, static (carrier, name) =>
+            carrier.TryGetValue(name, out var value) ? value : Empty);
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), actual.ActivityContext.TraceId);
+        Assert.Equal(ActivitySpanId.CreateFromString(SpanId.AsSpan()), actual.ActivityContext.SpanId);
+        Assert.Equal("k1=v1,k2=v2", actual.ActivityContext.TraceState);
+        Assert.Equal(1, tracestateValues.EnumerationCount);
+    }
+
+    [Fact]
+    public void Extract_IgnoresMultipleEnumerableTraceparentValues()
+    {
+        var headers = new Dictionary<string, EnumerableCarrierValues>
+        {
+            [TraceParent] = new([$"00-{TraceId}-{SpanId}-01", $"00-{TraceId}-{SpanId}-00"]),
+        };
+
+        var target = new TraceContextPropagator();
+        var context = target.Extract(default, headers, static (carrier, name) =>
+            carrier.TryGetValue(name, out var value) ? value : new EnumerableCarrierValues([]));
+
+        Assert.False(context.ActivityContext.IsValid());
+    }
+
+    [Fact]
+    public void Extract_IgnoresEmptyEnumerableTracestateValues()
+    {
+        var headers = new Dictionary<string, EnumerableCarrierValues>
+        {
+            [TraceParent] = new([$"00-{TraceId}-{SpanId}-01"]),
+            [TraceState] = new([]),
+        };
+
+        var target = new TraceContextPropagator();
+        var context = target.Extract(default, headers, static (carrier, name) =>
+            carrier.TryGetValue(name, out var value) ? value : new EnumerableCarrierValues([]));
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), context.ActivityContext.TraceId);
+        Assert.Null(context.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void TryExtractTracestate_SingleHeaderReturnsOriginalString()
+    {
+        Assert.True(TraceContextPropagator.TryExtractTracestate(["k1=v1,k2=v2"], out var actual));
+        Assert.Equal("k1=v1,k2=v2", actual);
+    }
+
+    [Fact]
+    public void TryExtractTracestate_SingleHeaderReturnsEmptyForWhitespaceOnly()
+    {
+        Assert.True(TraceContextPropagator.TryExtractTracestate([" ,  "], out var actual));
+        Assert.Empty(actual);
+    }
+
+    [Fact]
+    public void TryExtractTracestate_SingleHeaderRejectsTooManyMembers()
+    {
+        var tracestate = string.Join(",", Enumerable.Range(1, 33).Select(static i => $"k{i:D2}=v{i:D2}"));
+
+        Assert.False(TraceContextPropagator.TryExtractTracestate([tracestate], out _));
+    }
+
+    [Fact]
+    public void TryExtractTracestate_SingleHeaderDeduplicatesDuplicateLongKeys()
+    {
+        var key = new string('a', 33);
+
+        Assert.True(TraceContextPropagator.TryExtractTracestate([$"{key}=1,{key}=2"], out var actual));
+        Assert.Equal($"{key}=1", actual);
+    }
+
+    [Fact]
+    public async Task Extract_DoesNotHangWhenLaterKeyAppearsInsideEarlierValue()
+    {
+        // Regression test for GHSA-8785-wc3w-h8q6
+        const string tracestate = "foo1=foo2,foo2=1";
+
+        var deadline = TimeSpan.FromSeconds(1);
+
+        var extractionTask = Task.Run(() => CallTraceContextPropagator(tracestate));
+
+        using var cts = new CancellationTokenSource(deadline);
+
+#if NET
+        await extractionTask.WaitAsync(cts.Token);
+#else
+        var completedTask = await Task.WhenAny(extractionTask, Task.Delay(deadline, cts.Token));
+        Assert.True(extractionTask.IsCompleted, $"The task did not complete within {deadline}.");
+        Assert.Same(extractionTask, completedTask);
+#endif
+
+        Assert.Equal(tracestate, await extractionTask);
+    }
+
+    [Fact]
+    public void TryExtractTracestate_NullCollectionReturnsEmpty()
+    {
+        Assert.True(TraceContextPropagator.TryExtractTracestate((IEnumerable<string>?)null, out var actual));
+        Assert.Empty(actual);
+    }
+
+    [Fact]
+    public void Extract_HandlesNullTracestateValue()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, (_, name) => headers.TryGetValue(name, out var value) ? [value] : [null!]);
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), context.ActivityContext.TraceId);
+        Assert.Equal(ActivitySpanId.CreateFromString(SpanId.AsSpan()), context.ActivityContext.SpanId);
+
+        Assert.True(context.ActivityContext.IsRemote);
+        Assert.True(context.ActivityContext.IsValid());
+        Assert.NotEqual(0, (int)(context.ActivityContext.TraceFlags & ActivityTraceFlags.Recorded));
+
+        Assert.Null(context.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void Extract_HandlesNullTracestateValues()
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+        };
+
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, (_, name) => headers.TryGetValue(name, out var value) ? [value] : [string.Empty, null!]);
+
+        Assert.Equal(ActivityTraceId.CreateFromString(TraceId.AsSpan()), context.ActivityContext.TraceId);
+        Assert.Equal(ActivitySpanId.CreateFromString(SpanId.AsSpan()), context.ActivityContext.SpanId);
+
+        Assert.True(context.ActivityContext.IsRemote);
+        Assert.True(context.ActivityContext.IsValid());
+        Assert.NotEqual(0, (int)(context.ActivityContext.TraceFlags & ActivityTraceFlags.Recorded));
+
+        Assert.Null(context.ActivityContext.TraceState);
+    }
+
+    [Fact]
+    public void Inject_NoTracestate()
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var spanId = ActivitySpanId.CreateRandom();
+        var expectedHeaders = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{traceId}-{spanId}-01" },
+        };
+
+        var activityContext = new ActivityContext(traceId, spanId, ActivityTraceFlags.Recorded, traceState: null);
+        var propagationContext = new PropagationContext(activityContext, default);
+        var carrier = new Dictionary<string, string>();
+        var propagator = new TraceContextPropagator();
+        propagator.Inject(propagationContext, carrier, Setter);
+
+        Assert.Equal(expectedHeaders, carrier);
+    }
+
+    [Fact]
+    public void Inject_WithTracestate()
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var spanId = ActivitySpanId.CreateRandom();
+        var expectedHeaders = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{traceId}-{spanId}-01" },
+            { TraceState, $"congo=lZWRzIHRoNhcm5hbCBwbGVhc3VyZS4,rojo=00-{traceId}-00f067aa0ba902b7-01" },
+        };
+
+        var activityContext = new ActivityContext(traceId, spanId, ActivityTraceFlags.Recorded, expectedHeaders[TraceState]);
+        var propagationContext = new PropagationContext(activityContext, default);
+        var carrier = new Dictionary<string, string>();
+        var propagator = new TraceContextPropagator();
+        propagator.Inject(propagationContext, carrier, Setter);
+
+        Assert.Equal(expectedHeaders, carrier);
+    }
+
+    [Fact]
+    public void Inject_WithRandomTraceId()
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var spanId = ActivitySpanId.CreateRandom();
+        var expectedHeaders = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{traceId}-{spanId}-02" },
+            { TraceState, $"congo=lZWRzIHRoNhcm5hbCBwbGVhc3VyZS4,rojo=00-{traceId}-00f067aa0ba902b7-02" },
+        };
+
+        // https://github.com/open-telemetry/opentelemetry-dotnet/pull/6899
+        // will change this to use ActivityTraceFlags.RandomTraceId instead.
+        var activityContext = new ActivityContext(traceId, spanId, (ActivityTraceFlags)2, expectedHeaders[TraceState]);
+        var propagationContext = new PropagationContext(activityContext, default);
+        var carrier = new Dictionary<string, string>();
+        var propagator = new TraceContextPropagator();
+        propagator.Inject(propagationContext, carrier, Setter);
+
+        Assert.Equal(expectedHeaders, carrier);
+    }
+
+    [Theory]
+    [InlineData(4, "04")]
+    [InlineData(16, "10")]
+    [InlineData(255, "ff")]
+    public void Inject_WithUnknownTraceFlags(int traceFlags, string expectedFlags)
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var spanId = ActivitySpanId.CreateRandom();
+
+        // Trace flags that none of the known values match are formatted as hex.
+        var activityContext = new ActivityContext(traceId, spanId, (ActivityTraceFlags)traceFlags, traceState: null);
+        var propagationContext = new PropagationContext(activityContext, default);
+        var carrier = new Dictionary<string, string>();
+        var propagator = new TraceContextPropagator();
+        propagator.Inject(propagationContext, carrier, Setter);
+
+        Assert.Equal($"00-{traceId}-{spanId}-{expectedFlags}", carrier[TraceParent]);
+    }
+
+    [Fact]
+    public void Inject_DoesNothingIfCarrierIsNull()
+    {
+        var activityContext = new ActivityContext(ActivityTraceId.CreateRandom(), ActivitySpanId.CreateRandom(), ActivityTraceFlags.Recorded, traceState: null);
+        var propagationContext = new PropagationContext(activityContext, default);
+
+        var invocations = 0;
+        var propagator = new TraceContextPropagator();
+        propagator.Inject(propagationContext, (IDictionary<string, string>)null!, (_, _, _) => invocations++);
+
+        Assert.Equal(0, invocations);
+    }
+
+    [Fact]
+    public void Inject_DoesNothingIfSetterIsNull()
+    {
+        var activityContext = new ActivityContext(ActivityTraceId.CreateRandom(), ActivitySpanId.CreateRandom(), ActivityTraceFlags.Recorded, traceState: null);
+        var propagationContext = new PropagationContext(activityContext, default);
+        var carrier = new Dictionary<string, string>();
+
+        var propagator = new TraceContextPropagator();
+        propagator.Inject<IDictionary<string, string>>(propagationContext, carrier, null!);
+
+        Assert.Empty(carrier);
+    }
+
+    [Fact]
+    public void Inject_TruncatesOversizedTracestate()
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var spanId = ActivitySpanId.CreateRandom();
+        var expectedTraceState = string.Join(",", Enumerable.Range(0, 17).Select(i => $"k{i:00}={new string('a', 15)}"));
+        var oversizedTraceState = $"big={new string('a', 196)},{expectedTraceState}";
+
+        var activityContext = new ActivityContext(traceId, spanId, ActivityTraceFlags.Recorded, oversizedTraceState);
+        var propagationContext = new PropagationContext(activityContext, default);
+        var carrier = new Dictionary<string, string>();
+        var propagator = new TraceContextPropagator();
+        propagator.Inject(propagationContext, carrier, Setter);
+
+        Assert.Equal($"00-{traceId}-{spanId}-01", carrier[TraceParent]);
+        Assert.Equal(expectedTraceState, carrier[TraceState]);
+    }
+
+    [Fact]
+    public void Inject_TruncatesOversizedTracestateWithoutLargeEntries()
+    {
+        var traceId = ActivityTraceId.CreateRandom();
+        var spanId = ActivitySpanId.CreateRandom();
+
+        var allEntries = Enumerable.Range(0, 30).Select(i => $"k{i:00}={new string('a', 15)}").ToList();
+        var oversizedTraceState = string.Join(",", allEntries);
+        var expectedTraceState = string.Join(",", allEntries.Take(25));
+
+        var activityContext = new ActivityContext(traceId, spanId, ActivityTraceFlags.Recorded, oversizedTraceState);
+        var propagationContext = new PropagationContext(activityContext, default);
+        var carrier = new Dictionary<string, string>();
+        var propagator = new TraceContextPropagator();
+        propagator.Inject(propagationContext, carrier, Setter);
+
+        Assert.Equal($"00-{traceId}-{spanId}-01", carrier[TraceParent]);
+        Assert.Equal(expectedTraceState, carrier[TraceState]);
+        Assert.True(carrier[TraceState].Length <= 512);
+    }
+
+    [Fact]
+    public void DuplicateKeys()
+    {
+        // test_tracestate_duplicated_keys
+        Assert.Equal("foo=1", CallTraceContextPropagator("foo=1,foo=1"));
+        Assert.Equal("foo=1", CallTraceContextPropagator("foo=1,foo=2"));
+        Assert.Equal("foo=1", CallTraceContextPropagator(["foo=1", "foo=1"]));
+        Assert.Equal("foo=1", CallTraceContextPropagator(["foo=1", "foo=2"]));
+        Assert.Equal("foo=1,bar=2,baz=3", CallTraceContextPropagator("foo=1,bar=2,baz=3,foo=4"));
+    }
+
+    [Fact]
+    public void NoDuplicateKeys()
+    {
+        Assert.Equal("foo=1,bar=foo,baz=2", CallTraceContextPropagator("foo=1,bar=foo,baz=2"));
+        Assert.Equal("foo=1,bar=2,baz=foo", CallTraceContextPropagator("foo=1,bar=2,baz=foo"));
+        Assert.Equal("foo=1,foo@tenant=2", CallTraceContextPropagator("foo=1,foo@tenant=2"));
+        Assert.Equal("foo=1,tenant@foo=2", CallTraceContextPropagator("foo=1,tenant@foo=2"));
+    }
+
+    [Fact]
+    public void Key_IllegalCharacters()
+    {
+        // test_tracestate_key_illegal_characters
+        Assert.Empty(CallTraceContextPropagator("foo =1"));
+        Assert.Empty(CallTraceContextPropagator("FOO =1"));
+        Assert.Empty(CallTraceContextPropagator("foo.bar=1"));
+
+        // The same, but spread over multiple tracestate headers.
+        Assert.Empty(CallTraceContextPropagator(["bar=1", "foo =1"]));
+        Assert.Empty(CallTraceContextPropagator(["bar=1", "FOO =1"]));
+        Assert.Empty(CallTraceContextPropagator(["bar=1", "foo.bar=1"]));
+    }
+
+    [Fact]
+    public void Member_MissingKeyOrValue()
+    {
+        Assert.Empty(CallTraceContextPropagator("novalue"));
+        Assert.Empty(CallTraceContextPropagator(["bar=1", "novalue"]));
+    }
+
+    [Fact]
+    public void Key_AtSignGrammar()
+    {
+        // test_tracestate_key_illegal_vendor_format
+        Assert.Equal("foo@=1,bar=2", CallTraceContextPropagator("foo@=1,bar=2"));
+        Assert.Empty(CallTraceContextPropagator("@foo=1,bar=2"));
+        Assert.Equal("foo@@bar=1,bar=2", CallTraceContextPropagator("foo@@bar=1,bar=2"));
+        Assert.Equal("foo@bar@baz=1,bar=2", CallTraceContextPropagator("foo@bar@baz=1,bar=2"));
+    }
+
+    [Fact]
+    public void MemberCountLimit()
+    {
+        // test_tracestate_member_count_limit
+        var output1 = CallTraceContextPropagator(
+        [
+            "bar01=01,bar02=02,bar03=03,bar04=04,bar05=05,bar06=06,bar07=07,bar08=08,bar09=09,bar10=10",
+            "bar11=11,bar12=12,bar13=13,bar14=14,bar15=15,bar16=16,bar17=17,bar18=18,bar19=19,bar20=20",
+            "bar21=21,bar22=22,bar23=23,bar24=24,bar25=25,bar26=26,bar27=27,bar28=28,bar29=29,bar30=30",
+            "bar31=31,bar32=32"
+        ]);
+        var expected =
+            "bar01=01,bar02=02,bar03=03,bar04=04,bar05=05,bar06=06,bar07=07,bar08=08,bar09=09,bar10=10" + "," +
+            "bar11=11,bar12=12,bar13=13,bar14=14,bar15=15,bar16=16,bar17=17,bar18=18,bar19=19,bar20=20" + "," +
+            "bar21=21,bar22=22,bar23=23,bar24=24,bar25=25,bar26=26,bar27=27,bar28=28,bar29=29,bar30=30" + "," +
+            "bar31=31,bar32=32";
+        Assert.Equal(expected, output1);
+
+        var output2 = CallTraceContextPropagator(
+        [
+            "bar01=01,bar02=02,bar03=03,bar04=04,bar05=05,bar06=06,bar07=07,bar08=08,bar09=09,bar10=10",
+            "bar11=11,bar12=12,bar13=13,bar14=14,bar15=15,bar16=16,bar17=17,bar18=18,bar19=19,bar20=20",
+            "bar21=21,bar22=22,bar23=23,bar24=24,bar25=25,bar26=26,bar27=27,bar28=28,bar29=29,bar30=30",
+            "bar31=31,bar32=32,bar33=33"
+        ]);
+        Assert.Empty(output2);
+    }
+
+    [Fact]
+    public void Key_KeyLengthLimit()
+    {
+        // test_tracestate_key_length_limit
+        var input1 = new string('z', 256) + "=1";
+        Assert.Equal(input1, CallTraceContextPropagator(input1));
+        Assert.Empty(CallTraceContextPropagator(new string('z', 257) + "=1"));
+        var input2 = new string('t', 241) + "@" + new string('v', 14) + "=1";
+        Assert.Equal(input2, CallTraceContextPropagator(input2));
+        var input3 = new string('t', 242) + "@v=1";
+        Assert.Equal(input3, CallTraceContextPropagator(input3));
+        var input4 = "t@" + new string('v', 15) + "=1";
+        Assert.Equal(input4, CallTraceContextPropagator(input4));
+    }
+
+    [Fact]
+    public void Value_IllegalCharacters()
+    {
+        // test_tracestate_value_illegal_characters
+        Assert.Empty(CallTraceContextPropagator("foo=bar=baz"));
+        Assert.Empty(CallTraceContextPropagator("foo=,bar=3"));
+
+        // The same, but spread over multiple tracestate headers.
+        Assert.Empty(CallTraceContextPropagator(["bar=1", "foo=bar=baz"]));
+        Assert.Empty(CallTraceContextPropagator(["bar=1", "foo="]));
+    }
+
+    [Fact]
+    public void Traceparent_Version()
+    {
+        // test_traceparent_version_0x00
+        Assert.NotEqual(
+            "12345678901234567890123456789012",
+            CallTraceContextPropagatorWithTraceParent("00-12345678901234567890123456789012-1234567890123456-01."));
+        Assert.NotEqual(
+            "12345678901234567890123456789012",
+            CallTraceContextPropagatorWithTraceParent("00-12345678901234567890123456789012-1234567890123456-01-what-the-future-will-be-like"));
+
+        // test_traceparent_version_0xcc
+        Assert.Equal(
+            "12345678901234567890123456789012",
+            CallTraceContextPropagatorWithTraceParent("cc-12345678901234567890123456789012-1234567890123456-01"));
+        Assert.Equal(
+            "12345678901234567890123456789012",
+            CallTraceContextPropagatorWithTraceParent("cc-12345678901234567890123456789012-1234567890123456-01-what-the-future-will-be-like"));
+        Assert.NotEqual(
+            "12345678901234567890123456789012",
+            CallTraceContextPropagatorWithTraceParent("cc-12345678901234567890123456789012-1234567890123456-01.what-the-future-will-be-like"));
+
+        // test_traceparent_version_0xff
+        Assert.NotEqual(
+            "12345678901234567890123456789012",
+            CallTraceContextPropagatorWithTraceParent("ff-12345678901234567890123456789012-1234567890123456-01"));
+    }
+
+    private static string CallTraceContextPropagatorWithTraceParent(string traceparent)
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, traceparent },
+        };
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+        return context.ActivityContext.TraceId.ToString();
+    }
+
+    private static string CallTraceContextPropagator(string tracestate)
+    {
+        var headers = new Dictionary<string, string>
+        {
+            { TraceParent, $"00-{TraceId}-{SpanId}-01" },
+            { TraceState, tracestate },
+        };
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, Getter);
+
+        var traceState = context.ActivityContext.TraceState;
+        Assert.NotNull(traceState);
+        return traceState;
+    }
+
+    private static string CallTraceContextPropagator(string[] tracestate)
+    {
+        var headers = new Dictionary<string, string[]>
+        {
+            { TraceParent, [$"00-{TraceId}-{SpanId}-01"] },
+            { TraceState, tracestate },
+        };
+        var propagator = new TraceContextPropagator();
+        var context = propagator.Extract(default, headers, ArrayGetter);
+
+        var traceState = context.ActivityContext.TraceState;
+        Assert.NotNull(traceState);
+        return traceState;
+    }
+
+    private sealed class ReadOnlyCarrierValues(params string[] values) : IReadOnlyList<string>
+    {
+        public int Count => values.Length;
+
+        public string this[int index] => values[index];
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            foreach (var value in values)
+            {
+                yield return value;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    }
+
+    private sealed class EnumerableCarrierValues(params string[] values) : IEnumerable<string>
+    {
+        public IEnumerator<string> GetEnumerator()
+        {
+            foreach (var value in values)
+            {
+                yield return value;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    }
+
+    private sealed class SingleUseEnumerableCarrierValues(params string[] values) : IEnumerable<string>
+    {
+        public int EnumerationCount { get; private set; }
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            if (this.EnumerationCount++ > 0)
+            {
+                throw new InvalidOperationException("Sequence was enumerated multiple times.");
+            }
+
+            foreach (var value in values)
+            {
+                yield return value;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    }
+}

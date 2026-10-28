@@ -181,6 +181,21 @@ to .NET. The following sections describe how to add/upgrade the various types of
    The source-build-assets source may need to flow in at the same time as the cooresponding changes in product repos which take a dependency on the new component version.
    Sometimes it can be easier to add the new upgraded version along side the older version and then delete the old version after all product repos have been upgraded to the new version.
 
+#### Building Multiple Versions of an External Component
+
+When consumers require different versions, keep a separate submodule and `.proj` for each source revision.
+The `.proj` filename must match its submodule directory so source copying, patches, logs, and build outputs
+remain isolated. Each version must have its own `SourceRevisionId`, release version property, and sibling
+`.props` validation metadata. Set `ReleaseVersionProperty` on the `FileVersionValidationPackage` item when
+the release version property cannot be derived from the component name.
+
+OpenTelemetry builds both 1.16.0 (`opentelemetry-dotnet`) and 1.18.0 (`opentelemetry-dotnet-1.18`).
+They share `opentelemetry-dotnet.targets`, but use separate upstream sources and package metadata.
+The contrib project continues to depend on `opentelemetry-dotnet` (1.16.0).
+
+Add new submodules in this repository first, then forward-flow them into the VMR.
+VMR backflow can update existing tracked submodules, but does not create new submodules.
+
 #### Patches
 
 1. When creating/updating patches, it is desirable to backport the changes whenever feasible as this reduces

@@ -28,6 +28,7 @@
     <VsSolutionPersistenceReleaseVersion>1.0.52</VsSolutionPersistenceReleaseVersion>
     <SpectreConsoleReleaseVersion>0.54.0</SpectreConsoleReleaseVersion>
     <OpenTelemetryDotNetReleaseVersion>1.16.0</OpenTelemetryDotNetReleaseVersion>
+    <OpenTelemetryDotNet118ReleaseVersion>1.18.0</OpenTelemetryDotNet118ReleaseVersion>
     <OpenTelemetryDotNetContribHttpReleaseVersion>1.16.0</OpenTelemetryDotNetContribHttpReleaseVersion>
     <OpenTelemetryDotNetContribRuntimeReleaseVersion>1.15.1</OpenTelemetryDotNetContribRuntimeReleaseVersion>
     <OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion>1.1.0</OpenTelemetryDotNetContribPersistentStorageAbstractionsReleaseVersion>

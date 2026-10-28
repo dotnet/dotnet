@@ -1,0 +1,1128 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+#if !NETFRAMEWORK
+using System.Diagnostics.Metrics;
+using System.Globalization;
+using System.Net;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using OpenTelemetry.Exporter.Prometheus.Tests;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+
+namespace OpenTelemetry.Exporter.Prometheus.AspNetCore.Tests;
+
+public sealed class PrometheusExporterMiddlewareTests
+{
+    private const string MeterName = nameof(PrometheusExporterMiddlewareTests);
+    private const string MeterVersion = "1.0.1";
+
+    private static readonly TimeSpan DeadlineMargin = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan MaxCollectWait = TimeSpan.FromSeconds(30);
+
+    [Fact]
+    public async Task RunWithDefaultOptions()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint());
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RunWithScopeInfoEnabledConfigured(bool scopeInfoEnabled)
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            services => services.Configure<PrometheusAspNetCoreOptions>(o => o.ScopeInfoEnabled = scopeInfoEnabled),
+            assertResponseContent: false);
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings).UseParameters(scopeInfoEnabled);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RunWithTargetInfoEnabledConfigured(bool targetInfoEnabled)
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            services => services.Configure<PrometheusAspNetCoreOptions>(o => o.TargetInfoEnabled = targetInfoEnabled),
+            assertResponseContent: false);
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings).UseParameters(targetInfoEnabled);
+    }
+
+    [Theory]
+    [InlineData("all")]
+    [InlineData("service_name")]
+    [InlineData("none")]
+    public async Task RunWithResourceConstantLabelsConfigured(string filter)
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            services => services.Configure<PrometheusAspNetCoreOptions>(o => o.ResourceConstantLabels = filter switch
+            {
+                "all" => static _ => true,
+                "service_name" => static key => key == "service.name",
+                _ => static _ => false,
+            }),
+            assertResponseContent: false);
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings).UseParameters(filter);
+    }
+
+    [Fact]
+    public async Task RunWithCustomScrapeEndpointPath()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics_options",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            services => services.Configure<PrometheusAspNetCoreOptions>(o => o.ScrapeEndpointPath = "metrics_options"));
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithScrapeEndpointPathFallback()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            services => services.Configure<PrometheusAspNetCoreOptions>(o => o.ScrapeEndpointPath = null));
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithScrapeEndpointPathFallbackFromAddPrometheusExporter()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics_from_AddPrometheusExporter",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            configureOptions: o =>
+            {
+                o.ScrapeEndpointPath = "/metrics_from_AddPrometheusExporter";
+            });
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithScrapeEndpointPathOverride()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics_override",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint("/metrics_override"));
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithPathNamedOptionsOverride()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics_override",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(
+                meterProvider: null,
+                predicate: null,
+                path: null,
+                configureBranchedPipeline: null,
+                optionsName: "myOptions"),
+            services =>
+            {
+                services.Configure<PrometheusAspNetCoreOptions>("myOptions", o => o.ScrapeEndpointPath = "/metrics_override");
+            });
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithHttpContextPredicate()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics_predicate?enabled=true",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(
+                httpContext => httpContext.Request.Path == "/metrics_predicate" && httpContext.Request.Query["enabled"] == "true"));
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithMixedPredicateAndPath()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics_predicate",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(
+                meterProvider: null,
+                predicate: httpcontext => httpcontext.Request.Path == "/metrics_predicate",
+                path: "/metrics_path",
+                configureBranchedPipeline: branch => branch.Use((context, next) =>
+                {
+                    context.Response.Headers.Append("X-MiddlewareExecuted", "true");
+                    return next();
+                }),
+                optionsName: null),
+            services => services.Configure<PrometheusAspNetCoreOptions>(o => o.ScrapeEndpointPath = "/metrics_options"),
+            validateResponse: rsp =>
+            {
+                if (!rsp.Headers.TryGetValues("X-MiddlewareExecuted", out var headers))
+                {
+                    headers = [];
+                }
+
+                Assert.Equal("true", headers.FirstOrDefault());
+            });
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithMixedPath()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics_path",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(
+                meterProvider: null,
+                predicate: null,
+                path: "/metrics_path",
+                configureBranchedPipeline: branch => branch.Use((context, next) =>
+                {
+                    context.Response.Headers.Append("X-MiddlewareExecuted", "true");
+                    return next();
+                }),
+                optionsName: null),
+            services => services.Configure<PrometheusAspNetCoreOptions>(o => o.ScrapeEndpointPath = "/metrics_options"),
+            validateResponse: rsp =>
+            {
+                if (!rsp.Headers.TryGetValues("X-MiddlewareExecuted", out var headers))
+                {
+                    headers = [];
+                }
+
+                Assert.Equal("true", headers.FirstOrDefault());
+            });
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithMeterProvider()
+    {
+        using var meterProvider = Sdk.CreateMeterProviderBuilder()
+            .AddMeter(MeterName)
+            .ConfigureResource(x => x.Clear().AddService("my_service", serviceInstanceId: "id1"))
+            .AddPrometheusExporter()
+            .Build();
+
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(
+                meterProvider: meterProvider,
+                predicate: null,
+                path: null,
+                configureBranchedPipeline: null,
+                optionsName: null),
+            registerMeterProvider: false);
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithNoMetrics()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            skipMetrics: true);
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithMapPrometheusScrapingEndpoint()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseRouting().UseEndpoints(builder => builder.MapPrometheusScrapingEndpoint()),
+            services => services.AddRouting());
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithMapPrometheusScrapingEndpointWithPathOverride()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics_path",
+            app => app.UseRouting().UseEndpoints(builder => builder.MapPrometheusScrapingEndpoint("metrics_path")),
+            services => services.AddRouting());
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithMapPrometheusScrapingEndpointWithPathNamedOptionsOverride()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics_path",
+            app => app.UseRouting().UseEndpoints(builder => builder.MapPrometheusScrapingEndpoint(
+                path: null,
+                meterProvider: null,
+                configureBranchedPipeline: null,
+                optionsName: "myOptions")),
+            services =>
+            {
+                services.AddRouting();
+                services.Configure<PrometheusAspNetCoreOptions>("myOptions", o => o.ScrapeEndpointPath = "/metrics_path");
+            });
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithMapPrometheusScrapingEndpointWithMeterProvider()
+    {
+        using var meterProvider = Sdk.CreateMeterProviderBuilder()
+            .AddMeter(MeterName)
+            .ConfigureResource(x => x.Clear().AddService("my_service", serviceInstanceId: "id1"))
+            .AddPrometheusExporter()
+            .Build();
+
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseRouting().UseEndpoints(builder => builder.MapPrometheusScrapingEndpoint(
+                path: null,
+                meterProvider: meterProvider,
+                configureBranchedPipeline: null,
+                optionsName: null)),
+            services => services.AddRouting(),
+            registerMeterProvider: false);
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithTextPlainResponse()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            acceptHeader: "text/plain");
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithOpenMetricsVersionHeader()
+    {
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            acceptHeader: "application/openmetrics-text; version=1.0.0",
+            contentType: "application/openmetrics-text; version=1.0.0; charset=utf-8; escaping=underscores");
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Theory]
+    [MemberData(nameof(PrometheusAcceptHeaders.Valid), MemberType = typeof(PrometheusAcceptHeaders))]
+    public void Negotiate_UsesTypedAcceptHeaders(
+        string accept,
+        string mediaType,
+        bool isOpenMetrics,
+        string version,
+        string? escaping)
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Headers.Accept = accept;
+
+        var actual = PrometheusExporterMiddleware.Negotiate(context.Request.GetTypedHeaders());
+
+        Assert.Equal(mediaType, actual.MediaType);
+        Assert.Equal(isOpenMetrics, actual.IsOpenMetrics);
+        Assert.Equal(Version.Parse(version), actual.Version);
+        Assert.Equal(escaping, actual.Escaping);
+    }
+
+    [Theory]
+    [MemberData(nameof(PrometheusAcceptHeaders.Invalid), MemberType = typeof(PrometheusAcceptHeaders))]
+    public void Negotiate_UsesFallbackForInvalidHeader(string accept)
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Headers.Accept = accept;
+
+        var actual = PrometheusExporterMiddleware.Negotiate(context.Request.GetTypedHeaders());
+
+        Assert.Equivalent(PrometheusProtocol.Fallback, actual);
+    }
+
+    [Theory]
+    [InlineData("text/plain; version=1.0.0")]
+    [InlineData("application/openmetrics-text; version=1.0.0")]
+    public void Negotiate_UsesUnderscoreEscaping_ForV1_WhenClientDoesNotNegotiateOne(string accept)
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Headers.Accept = accept;
+
+        var actual = PrometheusExporterMiddleware.Negotiate(context.Request.GetTypedHeaders());
+
+        Assert.Equal(PrometheusProtocol.UnderscoresEscaping, actual.Escaping);
+    }
+
+    [Fact]
+    public void Negotiate_DoesNotNegotiateEscaping_ForV0()
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Headers.Accept = "text/plain; version=0.0.4";
+
+        var actual = PrometheusExporterMiddleware.Negotiate(context.Request.GetTypedHeaders());
+
+        Assert.Null(actual.Escaping);
+    }
+
+    [Fact]
+    public async Task RunWithTextPlainResponseAndMeterTags()
+    {
+        var meterTags = new KeyValuePair<string, object?>[]
+        {
+            new("meterKey1", "value1"),
+            new("meterKey2", "value2"),
+        };
+
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            acceptHeader: "text/plain",
+            meterTags: meterTags);
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithOpenMetricsVersionHeaderAndMeterTags()
+    {
+        var meterTags = new KeyValuePair<string, object?>[]
+        {
+            new("meterKey1", "value1"),
+            new("meterKey2", "value2"),
+        };
+
+        var output = await RunPrometheusExporterMiddlewareIntegrationTest(
+            "/metrics",
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            acceptHeader: "application/openmetrics-text; version=1.0.0",
+            contentType: "application/openmetrics-text; version=1.0.0; charset=utf-8; escaping=underscores",
+            meterTags: meterTags);
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public Task CanServeMultipleContentTypes_NoMeterTags() =>
+        RunPrometheusExporterMiddlewareIntegrationTestWithMultipleContentTypes();
+
+    [Fact]
+    public async Task CanServeMultipleContentTypes_WithMeterTags()
+    {
+        var meterTags = new KeyValuePair<string, object?>[]
+        {
+            new("meterKey1", "value1"),
+            new("meterKey2", "value2"),
+        };
+
+        await RunPrometheusExporterMiddlewareIntegrationTestWithMultipleContentTypes(meterTags);
+    }
+
+    [Fact]
+    public async Task RunWithNoTranslationStrategyAndNegotiatedAllowUtf8Escaping()
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            configureOptions: o =>
+            {
+                o.TranslationStrategy = PrometheusTranslationStrategy.NoTranslation;
+
+                // Disabled to keep the snapshot focused on name translation.
+                o.ScopeInfoEnabled = false;
+                o.TargetInfoEnabled = false;
+            });
+
+        using var meter = new Meter(MeterName, MeterVersion);
+
+        // A dotted (non-legacy) metric name, a dotted label key and a unit together exercise
+        // both axes: with NoTranslation the names pass through as UTF-8 (written in the quoted
+        // exposition format) and no unit or '_total' suffixes are appended.
+        meter.CreateCounter<long>("http.server.requests", unit: "By")
+            .Add(5, new KeyValuePair<string, object?>("http.host", "localhost"));
+
+        host.Services.GetRequiredService<MeterProvider>().ForceFlush();
+
+        using var client = host.GetTestClient();
+
+        // The client negotiates escaping=allow-utf-8, so the names the strategy passed through
+        // unaltered survive the second escaping pass content negotiation applies.
+        client.DefaultRequestHeaders.Add("Accept", "text/plain; version=1.0.0; escaping=allow-utf-8");
+
+        using var response = await client.GetAsync(new Uri("/metrics", UriKind.Relative));
+        var output = (await response.Content.ReadAsStringAsync()).ReplaceLineEndings();
+
+        await host.StopAsync();
+
+        Assert.Equal(
+            "text/plain; version=1.0.0; charset=utf-8; escaping=allow-utf-8",
+            response.Content.Headers.ContentType!.ToString());
+
+        await Verify(output, "txt", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithUnderscoreEscapingWithoutSuffixesStrategy_OmitsUnitAndTotalSuffixes()
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            configureOptions: o =>
+            {
+                o.TranslationStrategy = PrometheusTranslationStrategy.UnderscoreEscapingWithoutSuffixes;
+                o.ScopeInfoEnabled = false;
+                o.TargetInfoEnabled = false;
+            });
+
+        using var meter = new Meter(MeterName, MeterVersion);
+        meter.CreateCounter<long>("http.server.requests", unit: "By")
+            .Add(5, new KeyValuePair<string, object?>("host", "localhost"));
+
+        host.Services.GetRequiredService<MeterProvider>().ForceFlush();
+
+        using var client = host.GetTestClient();
+        using var response = await client.GetAsync(new Uri("/metrics", UriKind.Relative));
+        var output = await response.Content.ReadAsStringAsync();
+
+        await host.StopAsync();
+
+        await Verify(output, "txt", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithNoUtf8EscapingWithSuffixesStrategy_KeepsUtf8NameWithSuffixes()
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            configureOptions: o =>
+            {
+                o.TranslationStrategy = PrometheusTranslationStrategy.NoUTF8EscapingWithSuffixes;
+                o.ScopeInfoEnabled = false;
+                o.TargetInfoEnabled = false;
+            });
+
+        using var meter = new Meter(MeterName, MeterVersion);
+        meter.CreateCounter<long>("http.server.requests", unit: "By").Add(5);
+
+        host.Services.GetRequiredService<MeterProvider>().ForceFlush();
+
+        using var client = host.GetTestClient();
+
+        // The client negotiates escaping=allow-utf-8, so the UTF-8 name the strategy passed
+        // through unaltered survives the second escaping pass content negotiation applies.
+        client.DefaultRequestHeaders.Add("Accept", "text/plain; version=1.0.0; escaping=allow-utf-8");
+
+        using var response = await client.GetAsync(new Uri("/metrics", UriKind.Relative));
+        var output = await response.Content.ReadAsStringAsync();
+
+        await host.StopAsync();
+
+        await Verify(output, "txt", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithNoTranslationStrategyAndNegotiatedUnderscoreEscaping()
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            configureOptions: o =>
+            {
+                o.TranslationStrategy = PrometheusTranslationStrategy.NoTranslation;
+                o.ScopeInfoEnabled = false;
+                o.TargetInfoEnabled = false;
+            });
+
+        using var meter = new Meter(MeterName, MeterVersion);
+        meter.CreateCounter<long>("http.server.requests", unit: "By")
+            .Add(5, new KeyValuePair<string, object?>("http.host", "localhost"));
+
+        host.Services.GetRequiredService<MeterProvider>().ForceFlush();
+
+        using var client = host.GetTestClient();
+
+        // The exporter is configured with NoTranslation (UTF-8 passthrough), and the client
+        // negotiates escaping=underscores. The strategy leaves the names unaltered, so the second
+        // escaping pass content negotiation applies is what underscore-escapes the metric and
+        // label names. The suffix axis is not negotiated, so no unit or '_total' suffixes are
+        // added.
+        client.DefaultRequestHeaders.Add("Accept", "text/plain; version=1.0.0; escaping=underscores");
+
+        using var response = await client.GetAsync(new Uri("/metrics", UriKind.Relative));
+        var output = (await response.Content.ReadAsStringAsync()).ReplaceLineEndings();
+
+        await host.StopAsync();
+
+        Assert.Equal(
+            "text/plain; version=1.0.0; charset=utf-8; escaping=underscores",
+            response.Content.Headers.ContentType!.ToString());
+
+        await Verify(output, "txt", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task RunWithUnderscoreEscapingWithSuffixesStrategyAndNegotiatedAllowUtf8Escaping()
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            configureOptions: o =>
+            {
+                o.TranslationStrategy = PrometheusTranslationStrategy.UnderscoreEscapingWithSuffixes;
+                o.ScopeInfoEnabled = false;
+                o.TargetInfoEnabled = false;
+            });
+
+        using var meter = new Meter(MeterName, MeterVersion);
+        meter.CreateCounter<long>("http.server.requests", unit: "By")
+            .Add(5, new KeyValuePair<string, object?>("http.host", "localhost"));
+
+        host.Services.GetRequiredService<MeterProvider>().ForceFlush();
+
+        using var client = host.GetTestClient();
+
+        // The exporter is configured with UnderscoreEscapingWithSuffixes, but the client negotiates
+        // escaping=allow-utf-8. The strategy is applied first, so the names are already
+        // underscore-escaped by the time content negotiation is applied and allow-utf-8 cannot
+        // revert them. The response reports the escaping that was applied, not the one negotiated.
+        client.DefaultRequestHeaders.Add("Accept", "text/plain; version=1.0.0; escaping=allow-utf-8");
+
+        using var response = await client.GetAsync(new Uri("/metrics", UriKind.Relative));
+        var output = (await response.Content.ReadAsStringAsync()).ReplaceLineEndings();
+
+        await host.StopAsync();
+
+        Assert.Equal(
+            "text/plain; version=1.0.0; charset=utf-8; escaping=underscores",
+            response.Content.Headers.ContentType!.ToString());
+
+        await Verify(output, "txt", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Theory]
+    [InlineData("dots")]
+    [InlineData("values")]
+    public async Task RunWithUnderscoreEscapingStrategyAndNegotiatedReversibleEscaping_ReportsEscapingApplied(string escaping)
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            configureOptions: o =>
+            {
+                o.TranslationStrategy = PrometheusTranslationStrategy.UnderscoreEscapingWithSuffixes;
+                o.ScopeInfoEnabled = false;
+                o.TargetInfoEnabled = false;
+            });
+
+        using var meter = new Meter(MeterName, MeterVersion);
+        meter.CreateCounter<long>("http.server.requests", unit: "By")
+            .Add(5, new KeyValuePair<string, object?>("http.host", "localhost"));
+
+        host.Services.GetRequiredService<MeterProvider>().ForceFlush();
+
+        using var client = host.GetTestClient();
+
+        // The dots and values schemes are reversible encodings of the name they are given, so
+        // applying one to a name the strategy has already escaped would encode the escaping rather
+        // than the original name (dots, for example, doubles every '_' it finds). The strategy has
+        // already discarded what those schemes exist to preserve, so the names stay underscore
+        // escaped and the response reports the escaping that was applied instead.
+        client.DefaultRequestHeaders.Add("Accept", $"text/plain; version=1.0.0; escaping={escaping}");
+
+        using var response = await client.GetAsync(new Uri("/metrics", UriKind.Relative));
+        var output = (await response.Content.ReadAsStringAsync()).ReplaceLineEndings("\n");
+
+        await host.StopAsync();
+
+        Assert.Equal(
+            "text/plain; version=1.0.0; charset=utf-8; escaping=underscores",
+            response.Content.Headers.ContentType!.ToString());
+
+        Assert.Contains("# TYPE http_server_requests_bytes_total counter\n", output, StringComparison.Ordinal);
+        Assert.Contains("http_server_requests_bytes_total{http_host=\"localhost\"} 5\n", output, StringComparison.Ordinal);
+    }
+
+    // See https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk_exporters/prometheus.md#interaction-with-translation-strategy
+    [Theory]
+    [InlineData(PrometheusTranslationStrategy.UnderscoreEscapingWithSuffixes, null, "foo_bar_bytes_total")]
+    [InlineData(PrometheusTranslationStrategy.UnderscoreEscapingWithSuffixes, "underscores", "foo_bar_bytes_total")]
+    [InlineData(PrometheusTranslationStrategy.UnderscoreEscapingWithSuffixes, "allow-utf-8", "foo_bar_bytes_total")]
+    [InlineData(PrometheusTranslationStrategy.UnderscoreEscapingWithoutSuffixes, null, "foo_bar")]
+    [InlineData(PrometheusTranslationStrategy.UnderscoreEscapingWithoutSuffixes, "underscores", "foo_bar")]
+    [InlineData(PrometheusTranslationStrategy.UnderscoreEscapingWithoutSuffixes, "allow-utf-8", "foo_bar")]
+    [InlineData(PrometheusTranslationStrategy.NoUTF8EscapingWithSuffixes, null, "foo_bar_bytes_total")]
+    [InlineData(PrometheusTranslationStrategy.NoUTF8EscapingWithSuffixes, "underscores", "foo_bar_bytes_total")]
+    [InlineData(PrometheusTranslationStrategy.NoUTF8EscapingWithSuffixes, "allow-utf-8", "foo.bar_bytes_total")]
+    [InlineData(PrometheusTranslationStrategy.NoTranslation, null, "foo_bar")]
+    [InlineData(PrometheusTranslationStrategy.NoTranslation, "underscores", "foo_bar")]
+    [InlineData(PrometheusTranslationStrategy.NoTranslation, "allow-utf-8", "foo.bar")]
+    public async Task RunWithTranslationStrategy_MatchesSpecification(
+        PrometheusTranslationStrategy strategy,
+        string? escaping,
+        string expectedName)
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            configureOptions: o =>
+            {
+                o.TranslationStrategy = strategy;
+
+                // Disabled to keep the response focused on name translation.
+                o.ScopeInfoEnabled = false;
+                o.TargetInfoEnabled = false;
+            });
+
+        using var meter = new Meter(MeterName, MeterVersion);
+        meter.CreateCounter<long>("foo.bar", unit: "By").Add(5);
+
+        host.Services.GetRequiredService<MeterProvider>().ForceFlush();
+
+        using var client = host.GetTestClient();
+
+        var accept = escaping is null
+            ? "text/plain; version=1.0.0"
+            : $"text/plain; version=1.0.0; escaping={escaping}";
+
+        client.DefaultRequestHeaders.Add("Accept", accept);
+
+        using var response = await client.GetAsync(new Uri("/metrics", UriKind.Relative));
+        var output = (await response.Content.ReadAsStringAsync()).ReplaceLineEndings("\n");
+
+        await host.StopAsync();
+
+        // A name that is not a valid legacy name is written using the quoted exposition format,
+        // where the metric name is the first entry of the label set rather than a prefix.
+        var quoted = !PrometheusEscaping.IsValidLegacyName(expectedName);
+        var name = quoted ? $"\"{expectedName}\"" : expectedName;
+
+        Assert.Contains($"# TYPE {name} counter\n", output, StringComparison.Ordinal);
+        Assert.Contains(quoted ? $"{{{name}}} 5\n" : $"{name}{{}} 5\n", output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task BufferSizeIncreasesWithLotOfMetrics()
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint());
+
+        using var meter = new Meter(MeterName, MeterVersion);
+
+        for (var x = 0; x < 1000; x++)
+        {
+            var counter = meter.CreateCounter<double>("counter_double_" + x, unit: "By");
+            counter.Add(1);
+        }
+
+        host.Services.GetRequiredService<MeterProvider>().ForceFlush();
+
+        using var client = host.GetTestClient();
+
+        using var response = await client.GetAsync(new Uri("/metrics", UriKind.Relative));
+        var output = await response.Content.ReadAsStringAsync();
+
+        Assert.NotEmpty(output);
+
+        await host.StopAsync();
+
+        await Verify(output, "text", PrometheusSerializerTests.VerifySettings);
+    }
+
+    [Fact]
+    public async Task ScrapeExceedingMaxResponseSizeReturns500()
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint(),
+            configureOptions: o => o.MaxScrapeResponseSizeBytes = PrometheusExporterOptions.InitialScrapeResponseSizeBytes);
+
+        using var meter = new Meter(MeterName, MeterVersion);
+
+        // Emit enough series that the serialized response far exceeds the configured maximum, so
+        // the response buffer cannot grow to hold it and the scrape fails rather than returning a
+        // misleading empty 200 response.
+        for (var x = 0; x < 2_000; x++)
+        {
+            meter.CreateCounter<double>("counter_double_" + x, unit: "By").Add(1);
+        }
+
+        host.Services.GetRequiredService<MeterProvider>().ForceFlush();
+
+        using var client = host.GetTestClient();
+
+        using var response = await client.GetAsync(new Uri("/metrics", UriKind.Relative));
+
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+
+        await host.StopAsync();
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WhenNoData_Returns200()
+    {
+        using var exporter = new PrometheusExporter(new PrometheusExporterOptions());
+        exporter.Collect = _ => true;
+        var middleware = new PrometheusExporterMiddleware(exporter);
+
+        var context = new DefaultHttpContext();
+
+        await middleware.InvokeAsync(context);
+
+        Assert.Equal(StatusCodes.Status200OK, context.Response.StatusCode);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WhenExceptionOccurs_Returns500()
+    {
+        using var exporter = new PrometheusExporter(new PrometheusExporterOptions());
+        exporter.Collect = _ => throw new InvalidOperationException("Simulated collection failure");
+        var middleware = new PrometheusExporterMiddleware(exporter);
+
+        var context = new DefaultHttpContext();
+
+        await middleware.InvokeAsync(context);
+
+        Assert.Equal(StatusCodes.Status500InternalServerError, context.Response.StatusCode);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WhenExceptionOccursAfterResponseStarted_DoesNotReturn500()
+    {
+        using var exporter = new PrometheusExporter(new PrometheusExporterOptions());
+        exporter.Collect = _ => throw new InvalidOperationException("Simulated collection failure");
+        var middleware = new PrometheusExporterMiddleware(exporter);
+
+        var context = new DefaultHttpContext();
+
+        // Replace the response feature so HasStarted returns true, simulating response headers already committed.
+        context.Features.Set<IHttpResponseFeature>(new AlreadyStartedHttpResponseFeature());
+
+        await middleware.InvokeAsync(context);
+
+        Assert.Equal(StatusCodes.Status200OK, context.Response.StatusCode);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WhenRequest_TimesOut_Returns408()
+    {
+        using var exporter = new PrometheusExporter(new PrometheusExporterOptions());
+        exporter.Collect = _ => true;
+        var middleware = new PrometheusExporterMiddleware(exporter);
+
+        var context = new DefaultHttpContext()
+        {
+            RequestAborted = new CancellationToken(canceled: true),
+        };
+
+        await middleware.InvokeAsync(context);
+
+        Assert.Equal(StatusCodes.Status408RequestTimeout, context.Response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("0.9")]
+    [InlineData("1")]
+    public async Task InvokeAsync_WhenRequestDeadlineExceeded_Returns408(string value)
+    {
+        // The scrape timeout is enforced via CancellationTokenSource.CancelAfter, whose
+        // cancellation callback is dispatched on the thread pool, and the middleware only
+        // checks the token once Collect has returned. Blocking Collect for a fixed time
+        // assumes that callback will have run by then, which is not so when the pool is
+        // saturated (as it is when sibling test assemblies run alongside this one in CI):
+        // the callback is delayed past the sleep, the token is still un-cancelled, and the
+        // response is a 200. So wait on a timer of this test's own instead, which ties the
+        // wait to the pool actually dispatching timer callbacks rather than to the clock.
+        // It has to be armed here, on entry to the collection, rather than up front: the
+        // middleware arms its deadline only once it starts handling the request, so a timer
+        // started before that comes due first whenever the intervening work takes longer
+        // than the margin, and the collection then returns while the middleware's own token
+        // is still live.
+        EnsureThreadPoolWorkerThreadsAvailable();
+
+        var scrapeTimeout = TimeSpan.FromSeconds(double.Parse(value, CultureInfo.InvariantCulture));
+
+        using var exporter = new PrometheusExporter(new PrometheusExporterOptions());
+
+        exporter.Collect = _ =>
+        {
+            using var deadlinePassed = new CancellationTokenSource(scrapeTimeout + DeadlineMargin);
+            deadlinePassed.Token.WaitHandle.WaitOne(MaxCollectWait);
+            return true;
+        };
+
+        var middleware = new PrometheusExporterMiddleware(exporter);
+
+        var context = new DefaultHttpContext();
+
+        context.Request.Headers.Append("X-Prometheus-Scrape-Timeout-Seconds", value);
+
+        await middleware.InvokeAsync(context);
+
+        Assert.Equal(StatusCodes.Status408RequestTimeout, context.Response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("-1")]
+    [InlineData("0")]
+    [InlineData("0.0009")]
+    [InlineData("2147483")]
+    [InlineData("2147483.1")]
+    [InlineData("1.05e+003")]
+    [InlineData("foo")]
+    [InlineData("+Inf")]
+    [InlineData("-Inf")]
+    [InlineData("NaN")]
+    public async Task InvokeAsync_WhenRequestDeadlineInvalid_Returns200(string scrapeTimeoutSeconds)
+    {
+        using var exporter = new PrometheusExporter(new PrometheusExporterOptions());
+        exporter.Collect = _ => true;
+
+        var middleware = new PrometheusExporterMiddleware(exporter);
+
+        var context = new DefaultHttpContext();
+
+        context.Request.Headers.Append("X-Prometheus-Scrape-Timeout-Seconds", scrapeTimeoutSeconds);
+
+        await middleware.InvokeAsync(context);
+
+        Assert.Equal(StatusCodes.Status200OK, context.Response.StatusCode);
+    }
+
+    private static void EnsureThreadPoolWorkerThreadsAvailable()
+    {
+        ThreadPool.GetMinThreads(out var workerThreads, out var completionPortThreads);
+
+        var desiredWorkerThreads = Math.Max(workerThreads, Environment.ProcessorCount * 2);
+
+        if (desiredWorkerThreads > workerThreads)
+        {
+            ThreadPool.SetMinThreads(desiredWorkerThreads, completionPortThreads);
+        }
+    }
+
+    private static async Task RunPrometheusExporterMiddlewareIntegrationTestWithMultipleContentTypes(
+        KeyValuePair<string, object?>[]? meterTags = null,
+        string? contentType = null)
+    {
+        using var host = await StartTestHostAsync(
+            app => app.UseOpenTelemetryPrometheusScrapingEndpoint());
+
+        var counterTags = new KeyValuePair<string, object?>[]
+        {
+            new("key1", "value1"),
+            new("key2", "value2"),
+        };
+
+        using var meter = new Meter(MeterName, MeterVersion, meterTags);
+
+        var counter = meter.CreateCounter<double>("counter_double", unit: "By");
+        counter.Add(100.18D, counterTags);
+        counter.Add(0.99D, counterTags);
+
+        // Generate alternating formats
+        var testCases = new bool[] { true, false, true, true, false };
+
+        using var client = host.GetTestClient();
+
+        foreach (var testCase in testCases)
+        {
+            using var request = new HttpRequestMessage
+            {
+                Headers = { { "Accept", testCase ? "application/openmetrics-text" : "text/plain" } },
+                RequestUri = new Uri("/metrics", UriKind.Relative),
+                Method = HttpMethod.Get,
+            };
+            using var response = await client.SendAsync(request);
+            await VerifyResponseAsync(response, testCase, meterTags, contentType);
+        }
+
+        await host.StopAsync();
+    }
+
+    private static async Task<string> RunPrometheusExporterMiddlewareIntegrationTest(
+        string path,
+        Action<IApplicationBuilder> configure,
+        Action<IServiceCollection>? configureServices = null,
+        Action<HttpResponseMessage>? validateResponse = null,
+        bool registerMeterProvider = true,
+        Action<PrometheusAspNetCoreOptions>? configureOptions = null,
+        bool skipMetrics = false,
+        string acceptHeader = "application/openmetrics-text",
+        string? contentType = null,
+        KeyValuePair<string, object?>[]? meterTags = null,
+        bool assertResponseContent = true)
+    {
+        var requestOpenMetrics = acceptHeader.StartsWith("application/openmetrics-text", StringComparison.Ordinal);
+
+        using var host = await StartTestHostAsync(
+            configure,
+            configureServices,
+            registerMeterProvider,
+            configureOptions);
+
+        var counterTags = new KeyValuePair<string, object?>[]
+        {
+            new("key1", "value1"),
+            new("key2", "value2"),
+        };
+
+        using var meter = new Meter(MeterName, MeterVersion, meterTags);
+
+        var counter = meter.CreateCounter<double>("counter_double", unit: "By");
+        if (!skipMetrics)
+        {
+            counter.Add(100.18D, counterTags);
+            counter.Add(0.99D, counterTags);
+        }
+
+        using var client = host.GetTestClient();
+
+        if (!string.IsNullOrEmpty(acceptHeader))
+        {
+            client.DefaultRequestHeaders.Add("Accept", acceptHeader);
+        }
+
+        using var response = await client.GetAsync(new Uri(path, UriKind.Relative));
+
+        string responseContent;
+
+        if (!skipMetrics)
+        {
+            var options = new PrometheusAspNetCoreOptions();
+            configureOptions?.Invoke(options);
+
+            responseContent = await VerifyResponseAsync(
+                response,
+                requestOpenMetrics,
+                meterTags,
+                contentType,
+                assertResponseContent);
+        }
+        else
+        {
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            responseContent = await response.Content.ReadAsStringAsync();
+        }
+
+        validateResponse?.Invoke(response);
+
+        await host.StopAsync();
+        return responseContent;
+    }
+
+    private static async Task<string> VerifyResponseAsync(
+        HttpResponseMessage response,
+        bool requestOpenMetrics,
+        KeyValuePair<string, object?>[]? meterTags,
+        string? contentType,
+        bool assertResponseContent = true)
+    {
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(response.Content.Headers.Contains("Last-Modified"));
+
+        contentType ??=
+            requestOpenMetrics ?
+            "application/openmetrics-text; version=1.0.0; charset=utf-8; escaping=underscores" :
+            "text/plain; version=0.0.4; charset=utf-8";
+
+        Assert.Equal(contentType, response.Content.Headers.ContentType!.ToString());
+        Assert.Equal(["Accept-Encoding"], response.Headers.Vary);
+
+        var content = (await response.Content.ReadAsStringAsync()).ReplaceLineEndings();
+
+        if (assertResponseContent)
+        {
+            var additionalTags = meterTags is { Length: > 0 }
+                ? $"{string.Join(",", meterTags.Select(x => $"otel_scope_{x.Key}=\"{x.Value}\""))},"
+                : string.Empty;
+            var createdMetricSample = requestOpenMetrics
+                ? $"counter_double_bytes_created{{otel_scope_name=\"{MeterName}\",otel_scope_version=\"{MeterVersion}\",{additionalTags}key1=\"value1\",key2=\"value2\"}} [0-9]+(?:\\.[0-9]+)?"
+                : string.Empty;
+
+            var normalizedContent = content.ReplaceLineEndings();
+
+            var expected = requestOpenMetrics
+                ? $$"""
+                    # TYPE target info
+                    # HELP target Target metadata
+                    target_info{service_name="my_service",service_instance_id="id1"} 1
+                    # TYPE counter_double_bytes counter
+                    # UNIT counter_double_bytes bytes
+                    counter_double_bytes_total{otel_scope_name="{{MeterName}}",otel_scope_version="{{MeterVersion}}",{{additionalTags}}key1="value1",key2="value2"} 101.17
+                    {{createdMetricSample}}
+                    # EOF
+
+                    """.ReplaceLineEndings()
+                : $$"""
+                    # TYPE target_info gauge
+                    # HELP target_info Target metadata
+                    target_info{service_name="my_service",service_instance_id="id1"} 1
+                    # TYPE counter_double_bytes_total counter
+                    counter_double_bytes_total{otel_scope_name="{{MeterName}}",otel_scope_version="{{MeterVersion}}",{{additionalTags}}key1="value1",key2="value2"} 101.17
+
+                    """.ReplaceLineEndings();
+
+            var matches = Regex.Matches(normalizedContent, "^" + expected + "$");
+
+            Assert.True(matches.Count == 1, normalizedContent);
+        }
+
+        return content;
+    }
+
+    private static Task<IHost> StartTestHostAsync(
+        Action<IApplicationBuilder> configure,
+        Action<IServiceCollection>? configureServices = null,
+        bool registerMeterProvider = true,
+        Action<PrometheusAspNetCoreOptions>? configureOptions = null) =>
+        new HostBuilder()
+            .ConfigureLogging((logging) => logging.ClearProviders())
+            .ConfigureWebHost(webBuilder => webBuilder
+                .UseTestServer()
+                .ConfigureServices(services =>
+                {
+                    if (registerMeterProvider)
+                    {
+                        services.AddOpenTelemetry().WithMetrics(builder => builder
+                            .ConfigureResource(x => x.Clear().AddService("my_service", serviceInstanceId: "id1"))
+                            .AddMeter(MeterName)
+                            .AddPrometheusExporter(o =>
+                            {
+                                configureOptions?.Invoke(o);
+                            }));
+                    }
+
+                    configureServices?.Invoke(services);
+                })
+                .Configure(configure))
+            .StartAsync();
+
+    private sealed class AlreadyStartedHttpResponseFeature : HttpResponseFeature
+    {
+        public override bool HasStarted => true;
+    }
+}
+#endif
