@@ -119,6 +119,7 @@ public class ExecutionManager : IExecutionManager
         }
         finally
         {
+            _activeTestRun?.Dispose();
             _activeTestRun = null;
         }
     }
@@ -154,6 +155,7 @@ public class ExecutionManager : IExecutionManager
         }
         finally
         {
+            _activeTestRun?.Dispose();
             _activeTestRun = null;
         }
     }
