@@ -7,19 +7,19 @@
     -->
     <Dependency Name="Microsoft.WindowsDesktop.App.Ref" Version="8.0.34" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop</Uri>
-      <Sha>1dfc7df7dbdeca7b06bc303296dfc2415bc81ded</Sha>
+      <Sha>5b8c8c7af4a1366fb9e0c64de2d5f81e65575e9b</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.34-servicing.26521.7" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.SharedFramework.x64.8.0" Version="8.0.34-servicing.26522.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop</Uri>
-      <Sha>1dfc7df7dbdeca7b06bc303296dfc2415bc81ded</Sha>
+      <Sha>5b8c8c7af4a1366fb9e0c64de2d5f81e65575e9b</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.34-servicing.26521.7" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="VS.Redist.Common.WindowsDesktop.TargetingPack.x64.8.0" Version="8.0.34-servicing.26522.1" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop</Uri>
-      <Sha>1dfc7df7dbdeca7b06bc303296dfc2415bc81ded</Sha>
+      <Sha>5b8c8c7af4a1366fb9e0c64de2d5f81e65575e9b</Sha>
     </Dependency>
     <Dependency Name="Microsoft.WindowsDesktop.App.Runtime.win-x64" Version="8.0.34" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop</Uri>
-      <Sha>1dfc7df7dbdeca7b06bc303296dfc2415bc81ded</Sha>
+      <Sha>5b8c8c7af4a1366fb9e0c64de2d5f81e65575e9b</Sha>
     </Dependency>
     <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.34-servicing.26521.22" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
@@ -87,20 +87,20 @@
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.134">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>a7c8c9da9db854cee8630610fff613068a603350</Sha>
+      <Sha>01bbf12169887b090fb08977fcf989b0b07f57aa</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.134-servicing.26522.5">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.134-servicing.26522.7">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>a7c8c9da9db854cee8630610fff613068a603350</Sha>
+      <Sha>01bbf12169887b090fb08977fcf989b0b07f57aa</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.134-servicing.26522.5">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.134-servicing.26522.7">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>a7c8c9da9db854cee8630610fff613068a603350</Sha>
+      <Sha>01bbf12169887b090fb08977fcf989b0b07f57aa</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.134-servicing.26522.5">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.134-servicing.26522.7">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>a7c8c9da9db854cee8630610fff613068a603350</Sha>
+      <Sha>01bbf12169887b090fb08977fcf989b0b07f57aa</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
@@ -124,13 +124,13 @@
       <Sha>1e5f3603af2277910aad946736ee23283e7f3e16</Sha>
     </Dependency>
     <!-- For coherency purposes, these versions should be gated by the versions of winforms and wpf routed via windowsdesktop -->
-    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.34-servicing.26521.6" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
+    <Dependency Name="Microsoft.Dotnet.WinForms.ProjectTemplates" Version="8.0.34-servicing.26522.1" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-winforms</Uri>
-      <Sha>94dd923459058168a871823c18b5a628b8ace842</Sha>
+      <Sha>48e94d429fbbb371a4b05162bfd238bd90c71c3e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="8.0.34-servicing.26521.11" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
+    <Dependency Name="Microsoft.DotNet.Wpf.ProjectTemplates" Version="8.0.34-servicing.26522.3" CoherentParentDependency="Microsoft.WindowsDesktop.App.Runtime.win-x64">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-wpf</Uri>
-      <Sha>26bd6690f224b1140d27a6adade311e7dd50e30c</Sha>
+      <Sha>fdf2fe7582596495dffe930330b5bd0a6c319d78</Sha>
     </Dependency>
     <Dependency Name="Microsoft.FSharp.Compiler" Version="12.8.102-beta.24081.2" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/fsharp</Uri>
