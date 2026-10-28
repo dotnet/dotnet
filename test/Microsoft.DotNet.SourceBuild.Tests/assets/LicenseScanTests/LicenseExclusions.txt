@@ -44,6 +44,13 @@ src/aspnetcore/src/Installers/Windows/**/*.wxs|unknown-license-reference
 src/deployment-tools/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 
 #
+# diagnostics
+#
+
+# False positive
+src/diagnostics/src/dbi/runtime/src/native/external/libunwind/doc/libunwind-ia64.*|generic-exception
+
+#
 # efcore
 #
 
