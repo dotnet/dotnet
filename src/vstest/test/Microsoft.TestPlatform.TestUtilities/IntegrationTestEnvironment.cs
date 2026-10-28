@@ -28,6 +28,10 @@ public class IntegrationTestEnvironment
 
     public static string ArtifactsTempDirectory { get; } = Path.Combine(RepoRootDirectory, "artifacts", "tmp", BuildConfiguration);
 
+    // Another test harness may still be executing dotnet while this harness prepares its copy.
+    public static string PatchedDotnetDirectory { get; } = Path.GetFullPath(
+        Path.Combine(RepoRootDirectory, "artifacts", "tmp", $".dotnet-{GetPathHash(AppContext.BaseDirectory)}"));
+
     public static string LocalPackageSource { get; } = Path.Combine(RepoRootDirectory, "artifacts", "packages", BuildConfiguration, "Shipping").TrimEnd(Path.DirectorySeparatorChar);
     public static string LatestLocallyBuiltNugetVersion { get; } = GetLatestLocallyBuiltPackageVersion();
 

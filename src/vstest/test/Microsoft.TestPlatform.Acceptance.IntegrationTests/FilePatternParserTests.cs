@@ -63,6 +63,7 @@ public class FilePatternParserTests : AcceptanceTestBase
     public void WildCardPatternShouldCorrectlyWorkForRelativeAssemblyPath(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
+        var originalWorkingDirectory = Directory.GetCurrentDirectory();
 
         var testAssembly = GetSampleTestAssembly();
         testAssembly = testAssembly.Replace("SimpleTestProject.dll", "*TestProj*.dll");
@@ -71,16 +72,15 @@ public class FilePatternParserTests : AcceptanceTestBase
         var testAssemblyDirectory = testAssembly.Substring(0, wildCardIndex);
         testAssembly = testAssembly.Substring(wildCardIndex);
 
-        Directory.SetCurrentDirectory(testAssemblyDirectory);
-
         var arguments = PrepareArguments(
            testAssembly,
            GetTestAdapterPath(),
            string.Empty, string.Empty,
            runnerInfo.InIsolationValue, resultsDirectory: TempDirectory.Path);
 
-        InvokeVsTest(arguments);
+        InvokeVsTest(arguments, workingDirectory: testAssemblyDirectory);
         ValidateSummaryStatus(1, 1, 1);
+        Assert.AreEqual(originalWorkingDirectory, Directory.GetCurrentDirectory(), "The runner must not change the acceptance harness working directory.");
     }
 
     [TestMethod]

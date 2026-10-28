@@ -8,9 +8,8 @@
   <PropertyGroup Label="Version settings">
     <AspNetCoreMajorVersion>8</AspNetCoreMajorVersion>
     <AspNetCoreMinorVersion>0</AspNetCoreMinorVersion>
-    <AspNetCorePatchVersion>32</AspNetCorePatchVersion>
-    <PreReleaseVersionIteration>
-    </PreReleaseVersionIteration>
+    <AspNetCorePatchVersion>34</AspNetCorePatchVersion>
+    <PreReleaseVersionIteration></PreReleaseVersionIteration>
     <IdentityModelVersion Condition="'$(IsIdentityModelTestJob)' != 'true'">7.7.3</IdentityModelVersion>
     <IdentityModelVersion Condition="'$(IsIdentityModelTestJob)' == 'true'">7.*</IdentityModelVersion>
     <!--
@@ -66,12 +65,12 @@
   <PropertyGroup Label="Automated">
     <!-- Packages from dotnet/runtime -->
     <MicrosoftExtensionsDependencyModelVersion>8.0.2</MicrosoftExtensionsDependencyModelVersion>
-    <MicrosoftNETCoreAppRefVersion>8.0.32</MicrosoftNETCoreAppRefVersion>
-    <MicrosoftNETCoreAppRuntimewinx64Version>8.0.32</MicrosoftNETCoreAppRuntimewinx64Version>
-    <MicrosoftNETRuntimeMonoAOTCompilerTaskVersion>8.0.32</MicrosoftNETRuntimeMonoAOTCompilerTaskVersion>
-    <MicrosoftNETRuntimeWebAssemblySdkVersion>8.0.32</MicrosoftNETRuntimeWebAssemblySdkVersion>
-    <MicrosoftNETCoreAppRuntimeAOTwinx64CrossbrowserwasmVersion>8.0.32</MicrosoftNETCoreAppRuntimeAOTwinx64CrossbrowserwasmVersion>
-    <MicrosoftNETCoreBrowserDebugHostTransportVersion>8.0.32-servicing.26504.5</MicrosoftNETCoreBrowserDebugHostTransportVersion>
+    <MicrosoftNETCoreAppRefVersion>8.0.34</MicrosoftNETCoreAppRefVersion>
+    <MicrosoftNETCoreAppRuntimewinx64Version>8.0.34</MicrosoftNETCoreAppRuntimewinx64Version>
+    <MicrosoftNETRuntimeMonoAOTCompilerTaskVersion>8.0.34</MicrosoftNETRuntimeMonoAOTCompilerTaskVersion>
+    <MicrosoftNETRuntimeWebAssemblySdkVersion>8.0.34</MicrosoftNETRuntimeWebAssemblySdkVersion>
+    <MicrosoftNETCoreAppRuntimeAOTwinx64CrossbrowserwasmVersion>8.0.34</MicrosoftNETCoreAppRuntimeAOTwinx64CrossbrowserwasmVersion>
+    <MicrosoftNETCoreBrowserDebugHostTransportVersion>8.0.34-servicing.26521.22</MicrosoftNETCoreBrowserDebugHostTransportVersion>
     <MicrosoftExtensionsCachingAbstractionsVersion>8.0.0</MicrosoftExtensionsCachingAbstractionsVersion>
     <MicrosoftExtensionsCachingMemoryVersion>8.0.1</MicrosoftExtensionsCachingMemoryVersion>
     <MicrosoftExtensionsConfigurationAbstractionsVersion>8.0.0</MicrosoftExtensionsConfigurationAbstractionsVersion>
@@ -92,7 +91,7 @@
     <MicrosoftExtensionsFileProvidersCompositeVersion>8.0.0</MicrosoftExtensionsFileProvidersCompositeVersion>
     <MicrosoftExtensionsFileProvidersPhysicalVersion>8.0.0</MicrosoftExtensionsFileProvidersPhysicalVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>8.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftExtensionsHostFactoryResolverSourcesVersion>8.0.32-servicing.26504.5</MicrosoftExtensionsHostFactoryResolverSourcesVersion>
+    <MicrosoftExtensionsHostFactoryResolverSourcesVersion>8.0.34-servicing.26521.22</MicrosoftExtensionsHostFactoryResolverSourcesVersion>
     <MicrosoftExtensionsHostingAbstractionsVersion>8.0.1</MicrosoftExtensionsHostingAbstractionsVersion>
     <MicrosoftExtensionsHostingVersion>8.0.1</MicrosoftExtensionsHostingVersion>
     <MicrosoftExtensionsHttpVersion>8.0.1</MicrosoftExtensionsHttpVersion>
@@ -108,7 +107,7 @@
     <MicrosoftExtensionsOptionsDataAnnotationsVersion>8.0.0</MicrosoftExtensionsOptionsDataAnnotationsVersion>
     <MicrosoftExtensionsOptionsVersion>8.0.2</MicrosoftExtensionsOptionsVersion>
     <MicrosoftExtensionsPrimitivesVersion>8.0.0</MicrosoftExtensionsPrimitivesVersion>
-    <MicrosoftInternalRuntimeAspNetCoreTransportVersion>8.0.32-servicing.26504.5</MicrosoftInternalRuntimeAspNetCoreTransportVersion>
+    <MicrosoftInternalRuntimeAspNetCoreTransportVersion>8.0.34-servicing.26521.22</MicrosoftInternalRuntimeAspNetCoreTransportVersion>
     <SystemConfigurationConfigurationManagerVersion>8.0.1</SystemConfigurationConfigurationManagerVersion>
     <SystemDiagnosticsDiagnosticSourceVersion>8.0.1</SystemDiagnosticsDiagnosticSourceVersion>
     <SystemDiagnosticsEventLogVersion>8.0.2</SystemDiagnosticsEventLogVersion>
@@ -128,9 +127,9 @@
     <SystemThreadingAccessControlVersion>8.0.0</SystemThreadingAccessControlVersion>
     <SystemThreadingChannelsVersion>8.0.0</SystemThreadingChannelsVersion>
     <SystemThreadingRateLimitingVersion>8.0.0</SystemThreadingRateLimitingVersion>
-    <MicrosoftSourceBuildIntermediateruntimelinuxx64Version>8.0.32-servicing.26504.5</MicrosoftSourceBuildIntermediateruntimelinuxx64Version>
+    <MicrosoftSourceBuildIntermediateruntimelinuxx64Version>8.0.34-servicing.26521.22</MicrosoftSourceBuildIntermediateruntimelinuxx64Version>
     <!-- Only listed explicitly to workaround https://github.com/dotnet/cli/issues/10528 -->
-    <MicrosoftNETCorePlatformsVersion>8.0.32-servicing.26504.5</MicrosoftNETCorePlatformsVersion>
+    <MicrosoftNETCorePlatformsVersion>8.0.34-servicing.26521.22</MicrosoftNETCorePlatformsVersion>
     <MicrosoftBclAsyncInterfacesVersion>8.0.0</MicrosoftBclAsyncInterfacesVersion>
     <!-- Transitive package to provide coherency in dotnet/extensions -->
     <MicrosoftBclTimeProviderVersion>8.0.1</MicrosoftBclTimeProviderVersion>
@@ -142,14 +141,14 @@
     <MicrosoftExtensionsDiagnosticsTestingVersion>9.0.0-preview.9.24518.1</MicrosoftExtensionsDiagnosticsTestingVersion>
     <MicrosoftExtensionsTimeProviderTestingVersion>9.0.0-preview.9.24518.1</MicrosoftExtensionsTimeProviderTestingVersion>
     <!-- Packages from dotnet/efcore -->
-    <dotnetefVersion>8.0.32</dotnetefVersion>
-    <MicrosoftEntityFrameworkCoreInMemoryVersion>8.0.32</MicrosoftEntityFrameworkCoreInMemoryVersion>
-    <MicrosoftEntityFrameworkCoreRelationalVersion>8.0.32</MicrosoftEntityFrameworkCoreRelationalVersion>
-    <MicrosoftEntityFrameworkCoreSqliteVersion>8.0.32</MicrosoftEntityFrameworkCoreSqliteVersion>
-    <MicrosoftEntityFrameworkCoreSqlServerVersion>8.0.32</MicrosoftEntityFrameworkCoreSqlServerVersion>
-    <MicrosoftEntityFrameworkCoreToolsVersion>8.0.32</MicrosoftEntityFrameworkCoreToolsVersion>
-    <MicrosoftEntityFrameworkCoreVersion>8.0.32</MicrosoftEntityFrameworkCoreVersion>
-    <MicrosoftEntityFrameworkCoreDesignVersion>8.0.32</MicrosoftEntityFrameworkCoreDesignVersion>
+    <dotnetefVersion>8.0.34</dotnetefVersion>
+    <MicrosoftEntityFrameworkCoreInMemoryVersion>8.0.34</MicrosoftEntityFrameworkCoreInMemoryVersion>
+    <MicrosoftEntityFrameworkCoreRelationalVersion>8.0.34</MicrosoftEntityFrameworkCoreRelationalVersion>
+    <MicrosoftEntityFrameworkCoreSqliteVersion>8.0.34</MicrosoftEntityFrameworkCoreSqliteVersion>
+    <MicrosoftEntityFrameworkCoreSqlServerVersion>8.0.34</MicrosoftEntityFrameworkCoreSqlServerVersion>
+    <MicrosoftEntityFrameworkCoreToolsVersion>8.0.34</MicrosoftEntityFrameworkCoreToolsVersion>
+    <MicrosoftEntityFrameworkCoreVersion>8.0.34</MicrosoftEntityFrameworkCoreVersion>
+    <MicrosoftEntityFrameworkCoreDesignVersion>8.0.34</MicrosoftEntityFrameworkCoreDesignVersion>
     <!-- Packages from dotnet/roslyn -->
     <MicrosoftCodeAnalysisCommonVersion>4.8.0-7.24574.2</MicrosoftCodeAnalysisCommonVersion>
     <MicrosoftCodeAnalysisExternalAccessAspNetCoreVersion>4.8.0-7.24574.2</MicrosoftCodeAnalysisExternalAccessAspNetCoreVersion>
@@ -161,13 +160,13 @@
     <NuGetVersioningVersion>6.2.4</NuGetVersioningVersion>
     <NuGetFrameworksVersion>6.2.4</NuGetFrameworksVersion>
     <!-- Packages from dotnet/arcade -->
-    <MicrosoftDotNetBuildTasksInstallersVersion>8.0.0-beta.26431.7</MicrosoftDotNetBuildTasksInstallersVersion>
-    <MicrosoftDotNetBuildTasksTemplatingVersion>8.0.0-beta.26431.7</MicrosoftDotNetBuildTasksTemplatingVersion>
-    <MicrosoftDotNetRemoteExecutorVersion>8.0.0-beta.26431.7</MicrosoftDotNetRemoteExecutorVersion>
+    <MicrosoftDotNetBuildTasksInstallersVersion>8.0.0-beta.26468.3</MicrosoftDotNetBuildTasksInstallersVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>8.0.0-beta.26468.3</MicrosoftDotNetBuildTasksTemplatingVersion>
+    <MicrosoftDotNetRemoteExecutorVersion>8.0.0-beta.26468.3</MicrosoftDotNetRemoteExecutorVersion>
     <!-- Packages from dotnet/source-build-externals -->
-    <MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>8.0.0-alpha.1.26451.1</MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>8.0.0-alpha.1.26501.1</MicrosoftSourceBuildIntermediatesourcebuildexternalsVersion>
     <!-- Packages from dotnet/source-build-assets -->
-    <MicrosoftSourceBuildIntermediatesourcebuildassetsVersion>8.0.0-alpha.1.26451.1</MicrosoftSourceBuildIntermediatesourcebuildassetsVersion>
+    <MicrosoftSourceBuildIntermediatesourcebuildassetsVersion>8.0.0-alpha.1.26501.1</MicrosoftSourceBuildIntermediatesourcebuildassetsVersion>
     <!-- Packages from dotnet/symreader -->
     <MicrosoftSourceBuildIntermediatesymreaderVersion>2.0.0-beta-23228-03</MicrosoftSourceBuildIntermediatesymreaderVersion>
     <!-- Packages from dotnet/runtime -->

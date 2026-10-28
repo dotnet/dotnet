@@ -3,6 +3,10 @@
     <TargetFrameworks>$(NetCoreAppMinimum);$(NetFrameworkMinimum);net47;net471;net472;net48;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetCoreAppMinimum)' and '$(DotNetBuildFromSource)' != 'true'">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
   <PropertyGroup>
     <!-- MSB3270 Suppress warnings about platform specific projects imported in AnyCPU (MSIL) projects. -->
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>

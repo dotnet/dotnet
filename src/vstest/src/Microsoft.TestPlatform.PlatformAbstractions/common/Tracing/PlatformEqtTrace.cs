@@ -84,7 +84,7 @@ public partial class PlatformEqtTrace : IPlatformEqtTrace
 
     private static readonly object LockObject = new();
 
-    private static TraceSource? s_traceSource;
+    private static volatile TraceSource? s_traceSource;
 
     /// <summary>
     /// Specifies whether the trace is initialized or not

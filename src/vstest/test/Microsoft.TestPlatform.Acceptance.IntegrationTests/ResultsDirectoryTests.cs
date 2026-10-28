@@ -43,7 +43,8 @@ public class ResultsDirectoryTests : AcceptanceTestBase
         var arguments = PrepareArguments(GetSampleTestAssembly(), GetTestAdapterPath(), string.Empty, FrameworkArgValue, runnerInfo.InIsolationValue);
         var trxFileName = "TestResults.trx";
         var relativeDirectory = @$"relative_{Guid.NewGuid()}\directory";
-        var resultsDirectory = Path.Combine(Directory.GetCurrentDirectory(), relativeDirectory);
+        var workingDirectory = Directory.GetCurrentDirectory();
+        var resultsDirectory = Path.Combine(workingDirectory, relativeDirectory);
 
         var trxFilePath = Path.Combine(resultsDirectory, trxFileName);
         arguments = string.Concat(arguments, $" /logger:\"trx;LogFileName={trxFileName}\"");
@@ -54,7 +55,7 @@ public class ResultsDirectoryTests : AcceptanceTestBase
             Directory.Delete(resultsDirectory, true);
         }
 
-        InvokeVsTest(arguments);
+        InvokeVsTest(arguments, workingDirectory: workingDirectory);
 
         Assert.IsTrue(File.Exists(trxFilePath), $"Expected Trx file: {trxFilePath} not created in results directory");
         TempDirectory.TryRemoveDirectory(resultsDirectory);

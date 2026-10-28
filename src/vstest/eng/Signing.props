@@ -1,4 +1,49 @@
 <Project>
+
+  <!--
+    ARCADE 11 SIGNING DEFAULTS - one half is loud, the other changes shipped bytes silently.
+
+    Arcade 11 added extensions to its DEFAULT FileExtensionSignInfo that Arcade 7 did not have:
+
+      Arcade 7 (this line's original)        Arcade 11 (what this branch now builds with)
+      .dll;.exe;.mibc  -> Microsoft400       .dll;.exe;.mibc;.msi;.cab -> Microsoft400
+                                             .dylib   -> MacDeveloperHarden        NEW
+
+    The two halves behave completely differently:
+
+      declared here + new Arcade 11 default  ->  hard build error, impossible to miss
+      NOT declared  + new Arcade 11 default  ->  SILENT content change on a GREEN build
+
+    rel/17.8 hit BOTH. The loud half was measured on build 3067227, whose Sign step failed in 18
+    seconds with:
+
+      Sign.proj(74,5): error : Multiple certificates for extension '.cab' defined for
+      CollisionPriorityId ''. There should be one certificate per extension per collision
+      priority id.
+
+    - the line below already declared .cab -> None, and Arcade 11 now declares .cab -> Microsoft400
+    as well. The silent half applies to .dylib, which this line declared nothing for. On rel/17.14
+    that same gap let Arcade 11 overwrite an "Developer ID Application: Microsoft Corporation
+    (UBF8T346G9)" APPLE signature on two .dylib files with MacDeveloperHarden - same file size,
+    different bytes, no error, green build. That is an equivalence defect with no diagnostic, so it
+    is fixed here even though only .cab was reported.
+
+    CertificateName="None" does not merely stop adding a second signature: the file passes through
+    unsigned from the package it was copied out of, so the producer's original bytes are preserved
+    exactly. Verified on 17.14 by hash before and after.
+
+    Fix the loud half with Remove then re-add, NEVER by deleting the declaration. Deleting hands the
+    extension back to Arcade's default and changes what ships, on a green build.
+
+    This matches rel/17.3's eng/Signing.props, which signs green on build 3067215.
+  -->
+  <ItemGroup>
+    <FileExtensionSignInfo Remove=".cab" />
+    <FileExtensionSignInfo Include=".cab" CertificateName="None" />
+    <FileExtensionSignInfo Remove=".dylib" />
+    <FileExtensionSignInfo Include=".dylib" CertificateName="None" />
+  </ItemGroup>
+
   <!--
     These are third party libraries that we use in Arcade. We need to sign them even if they
     are already signed. However, they must be signed with a 3rd party certificate.
@@ -27,7 +72,5 @@
     <FileSignInfo Include="Microsoft.Deployment.Resources.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.dll" CertificateName="3PartySHA2" />
     <FileSignInfo Include="Microsoft.Deployment.WindowsInstaller.Package.dll" CertificateName="3PartySHA2" />
-
-    <FileExtensionSignInfo Include=".cab" CertificateName="None" />
   </ItemGroup>
 </Project>

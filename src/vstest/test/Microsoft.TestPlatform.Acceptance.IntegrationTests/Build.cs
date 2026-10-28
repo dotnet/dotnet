@@ -22,16 +22,21 @@ namespace Microsoft.TestPlatform.Acceptance.IntegrationTests;
 [TestClass]
 public class Build : IntegrationTestBase
 {
+    // Asset builds start a new MSBuild process; keep this servicing branch's build/pack warning policy.
+    private const string TestAssetBuildOptions = "--no-restore -p:TreatWarningsAsErrors=false";
     private static readonly string Root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
     private static readonly string DotnetDir = Path.GetFullPath(Path.Combine(Root, ".dotnet"));
     private static readonly string Dotnet = Path.GetFullPath(Path.Combine(Root, ".dotnet", OSUtils.IsWindows ? "dotnet.exe" : "dotnet"));
 
     [AssemblyInitialize]
-    public static void AssemblyInitialize(TestContext _)
+    public static void AssemblyInitialize(TestContext context)
     {
         SetDotnetEnvironment();
         BuildTestAssetsAndUnzipPackages();
-        BuildTestAssetsCompatibility();
+        if (context.Properties.Contains("BuildCompatibility") && bool.Parse((string)context.Properties["BuildCompatibility"]!))
+        {
+            BuildTestAssetsCompatibility();
+        }
         CopyAndPatchDotnet();
     }
 
@@ -49,10 +54,22 @@ public class Build : IntegrationTestBase
 
     private static void CopyAndPatchDotnet()
     {
-        // TODO: patch dotnet with latest build targets
-        var patchedDotnetDir = Path.GetFullPath(Path.Combine(Root, "artifacts", "tmp", ".dotnet"));
+        var patchedDotnetDir = IntegrationTestEnvironment.PatchedDotnetDirectory;
 
         DirectoryUtils.CopyDirectory(new DirectoryInfo(DotnetDir), new DirectoryInfo(patchedDotnetDir));
+
+        var packageName = $"Microsoft.TestPlatform.Build.{IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion}.nupkg";
+        var packagePath = Path.Combine(IntegrationTestEnvironment.PublishDirectory, packageName);
+        var sdkDirectory = Path.Combine(patchedDotnetDir, "sdk");
+        var dotnetSdkDirectories = Directory.GetDirectories(sdkDirectory);
+        if (dotnetSdkDirectories.Length != 1)
+        {
+            throw new InvalidOperationException($"Expected one .NET SDK directory in '{sdkDirectory}', found {dotnetSdkDirectories.Length}.");
+        }
+
+        var dotnetSdkDirectory = dotnetSdkDirectories.Single();
+        DirectoryUtils.CopyDirectory(Path.Combine(packagePath, "lib", "netstandard2.0"), dotnetSdkDirectory);
+        DirectoryUtils.CopyDirectory(Path.Combine(packagePath, "runtimes", "any", "native"), dotnetSdkDirectory);
     }
 
     private static void BuildTestAssetsCompatibility()
@@ -150,7 +167,7 @@ public class Build : IntegrationTestBase
         {
             // Cache is up-to-date, just rebuilding solution.
             ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" "{generatedSln}" """);
-            ExecuteApplication2(Dotnet, $"build {generatedSln} --no-restore --configuration {IntegrationTestEnvironment.BuildConfiguration} -v:minimal");
+            ExecuteApplication2(Dotnet, $"build {generatedSln} {TestAssetBuildOptions} --configuration {IntegrationTestEnvironment.BuildConfiguration} -v:minimal");
             rebuild = false;
         }
 
@@ -170,7 +187,7 @@ public class Build : IntegrationTestBase
 
             File.Copy(Path.Combine(testAssetsDir, "Directory.Build.targets"), Path.Combine(generated, "Directory.Build.targets"));
 
-            ExecuteApplication2(Dotnet, $"""new sln --name CompatibilityTestAssets --output "{generated}""");
+            ExecuteApplication2(Dotnet, $"""new sln --format sln --name CompatibilityTestAssets --output "{generated}""");
 
             var projectsToAdd = new List<string>();
             foreach (var project in projects)
@@ -264,7 +281,7 @@ public class Build : IntegrationTestBase
             ExecuteApplication2(Dotnet, $"""sln {generatedSln} add "{string.Join("\" \"", projectsToAdd)}" """);
 
             ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" "{generatedSln}" """);
-            ExecuteApplication2(Dotnet, $"""build --no-restore --configuration {IntegrationTestEnvironment.BuildConfiguration} "{generatedSln}" """);
+            ExecuteApplication2(Dotnet, $"""build {TestAssetBuildOptions} --configuration {IntegrationTestEnvironment.BuildConfiguration} "{generatedSln}" """);
 
             File.WriteAllText(Path.Combine(generated, "checksum.json"), cacheIdText);
         }
@@ -321,7 +338,7 @@ public class Build : IntegrationTestBase
         var netTestSdkVersion = IntegrationTestEnvironment.LatestLocallyBuiltNugetVersion;
 
         ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" -p:PackageVersion={netTestSdkVersion} "{testAssets}" """);
-        ExecuteApplication2(Dotnet, $"""build "{testAssets}" --configuration {IntegrationTestEnvironment.BuildConfiguration} --no-restore""");
+        ExecuteApplication2(Dotnet, $"""build "{testAssets}" --configuration {IntegrationTestEnvironment.BuildConfiguration} {TestAssetBuildOptions}""");
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -330,11 +347,12 @@ public class Build : IntegrationTestBase
             var cilProject = Path.Combine(Root, "test", "TestAssets", "CILProject", "CILProject.proj");
             var binPath = Path.Combine(Root, "artifacts", "bin", "TestAssets", "CILProject", IntegrationTestEnvironment.BuildConfiguration, "net462");
             ExecuteApplication2(Dotnet, $"""restore --packages {nugetCache} {nugetFeeds} --source "{IntegrationTestEnvironment.LocalPackageSource}" "{cilProject}" """);
-            ExecuteApplication2(Dotnet, $"""build "{cilProject}" --configuration {IntegrationTestEnvironment.BuildConfiguration} --no-restore --output {binPath}""");
+            ExecuteApplication2(Dotnet, $"""build "{cilProject}" --configuration {IntegrationTestEnvironment.BuildConfiguration} {TestAssetBuildOptions} --output {binPath}""");
         }
 
         var packagesToExtract = new[]
         {
+            $"Microsoft.TestPlatform.Build.{netTestSdkVersion}.nupkg",
             $"Microsoft.TestPlatform.{netTestSdkVersion}.nupkg",
             $"Microsoft.TestPlatform.CLI.{netTestSdkVersion}.nupkg",
             $"Microsoft.CodeCoverage.{netTestSdkVersion}.nupkg",

@@ -150,6 +150,45 @@ If you want to run a particular test. Eg: Test Name that contains Blame in Accep
 > test.cmd -p accept -f net451 -filter blame
 ```
 
+### Servicing validation
+
+The servicing pipeline uses Arcade. `-test` runs unit tests; `-integrationTest`
+runs the acceptance project. Build and pack first, then select the locally built
+console so that the runner and testhost come from the same build:
+
+```powershell
+.\eng\common\Build.ps1 -restore -build -pack -configuration Release -projects .\TestPlatform.sln -warnAsError $false
+$env:VSTEST_CONSOLE_PATH = .\eng\Prepare-TestConsole.ps1 -Configuration Release
+.\eng\common\Build.ps1 -test -configuration Release -projects .\TestPlatform.sln -warnAsError $false
+.\eng\common\Build.ps1 -integrationTest -configuration Release -projects .\test\Microsoft.TestPlatform.Acceptance.IntegrationTests\Microsoft.TestPlatform.Acceptance.IntegrationTests.csproj -warnAsError $false
+```
+
+Asset compilation uses the servicing build's warning policy; test failures remain
+fatal. For .NET Framework tests, use short physical paths: the legacy assembly
+loader can reject an adapter dependency when its path exceeds `MAX_PATH`, even
+if the file exists. A short directory junction alone may not help because the
+loader can resolve the longer physical path. Shorten the generated output paths
+rather than changing `loadFromRemoteSources` or other loader policy.
+
+Normal acceptance runs use `acceptance.runsettings`, which excludes the
+`Compatibility` category and all tests in the
+`Microsoft.TestPlatform.AcceptanceTests.Performance` namespace. Performance tests,
+including the privileged `TelemetryPerf` benchmarks, are not run locally or in
+servicing CI. Normal acceptance does not build the historical compatibility assets.
+The CI steps run the `net6.0` and `net48` harnesses separately. To select one
+harness locally, add `/p:TestTargetFrameworks=net6.0` or `/p:TestTargetFrameworks=net48`.
+
+Historical runner/testhost combinations remain separately selectable. Run that
+category explicitly with:
+
+```powershell
+$settings = (Resolve-Path .\test\Microsoft.TestPlatform.Acceptance.IntegrationTests\compatibility.runsettings).Path
+.\eng\common\Build.ps1 -integrationTest -configuration Release -projects .\test\Microsoft.TestPlatform.Acceptance.IntegrationTests\Microsoft.TestPlatform.Acceptance.IntegrationTests.csproj -warnAsError $false "/p:TestRunSettingsFile=$settings"
+```
+
+Both profiles fail if no tests are selected. Compatibility failures are not
+converted to passes or added to a failure baseline.
+
 ## Deployment
 
 This section will discuss the steps to use the `vstest.console` we've built

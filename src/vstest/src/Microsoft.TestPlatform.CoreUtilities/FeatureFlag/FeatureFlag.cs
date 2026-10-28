@@ -60,6 +60,12 @@ internal partial class FeatureFlag : IFeatureFlag
     // Disable setting UTF8 encoding in console.
     public const string DISABLE_UTF8_CONSOLE_ENCODING = VSTEST_ + nameof(DISABLE_UTF8_CONSOLE_ENCODING);
 
+    // Disable the Unix handling of the directory holding the test session artifacts: narrowing a directory
+    // vstest creates to its owner, and verifying on Linux that a directory given by VSTEST_ARTIFACTS_DIRECTORY
+    // is owned by the current user and reachable by nobody else. Set it to 1 where that ownership or those
+    // permissions cannot be represented or changed, such as a mounted Windows or network volume.
+    public const string DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION = VSTEST_ + nameof(DISABLE_ARTIFACTS_DIRECTORY_VERIFICATION);
+
     [Obsolete("Only use this in tests.")]
     internal static void Reset()
     {

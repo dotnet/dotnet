@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 using TestResult = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestResult;
@@ -25,6 +26,24 @@ public class JsonDataSerializerTests
     public JsonDataSerializerTests()
     {
         _jsonDataSerializer = JsonDataSerializer.Instance;
+    }
+
+    [TestMethod]
+    public void MessageToStringShouldRedactSecretsWithoutChangingOtherPayload()
+    {
+        const string serialized = "{\"MessageType\":\"dummy\",\"Payload\":{\"API_KEY\":\"hidden-value\",\"Name\":\"visible\"}}";
+        var deserialized = _jsonDataSerializer.DeserializeMessage(serialized);
+        var message = new Message
+        {
+            MessageType = deserialized.MessageType,
+            Payload = JObject.Parse("{\"API_KEY\":\"hidden-value\",\"Name\":\"visible\"}")
+        };
+
+        foreach (var text in new[] { message.ToString(), deserialized.ToString() })
+        {
+            Assert.IsFalse(text.Contains("hidden-value"), "A secret value must not be logged.");
+            StringAssert.Contains(text, "visible");
+        }
     }
 
     [TestMethod]

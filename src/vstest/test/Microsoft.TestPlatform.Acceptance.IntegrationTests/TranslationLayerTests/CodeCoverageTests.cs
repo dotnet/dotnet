@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -31,9 +31,9 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
     private TestRunAttachmentsProcessingEventHandler? _testRunAttachmentsProcessingEventHandler;
 
     [MemberNotNull(nameof(_vstestConsoleWrapper), nameof(_testRunAttachmentsProcessingEventHandler), nameof(_runEventHandler), nameof(_telemetryEventsHandler))]
-    private void Setup()
+    private void Setup(Action? onProcessExited = null)
     {
-        _vstestConsoleWrapper = GetVsTestConsoleWrapper();
+        _vstestConsoleWrapper = GetVsTestConsoleWrapper(onProcessExited: onProcessExited);
         _runEventHandler = new RunEventHandler();
         _testRunAttachmentsProcessingEventHandler = new TestRunAttachmentsProcessingEventHandler();
         _telemetryEventsHandler = new TelemetryEventsHandler();
@@ -428,10 +428,10 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
     [DoNotParallelize]
     public async Task EndSessionShouldEnsureVstestConsoleProcessDies(RunnerInfo runnerInfo)
     {
-        var numOfProcesses = Process.GetProcessesByName("vstest.console").Length;
+        var processExited = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         SetTestEnvironment(_testEnvironment, runnerInfo);
-        Setup();
+        Setup(() => processExited.TrySetResult(true));
 
         _vstestConsoleWrapper.RunTests(GetTestAssemblies().Take(1), GetCodeCoverageRunSettings(1), null, null, _runEventHandler, _telemetryEventsHandler);
         _vstestConsoleWrapper.RunTests(GetTestAssemblies().Skip(1), GetCodeCoverageRunSettings(1), null, null, _runEventHandler, _telemetryEventsHandler);
@@ -445,11 +445,10 @@ public class CodeCoverageTests : CodeCoverageAcceptanceTestBase
 
         // act
         _vstestConsoleWrapper?.EndSession();
-
-        // Assert
-        Assert.AreEqual(numOfProcesses, Process.GetProcessesByName("vstest.console").Length);
-
         _vstestConsoleWrapper = null;
+
+        await Task.WhenAny(processExited.Task, Task.Delay(TimeSpan.FromSeconds(5)));
+        Assert.IsTrue(processExited.Task.IsCompleted, "The console started by this test did not exit after EndSession.");
     }
 
     private IList<string> GetTestAssemblies()

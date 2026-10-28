@@ -95,8 +95,8 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
 
             Task.Run(() =>
             {
-                _communicationManager.WaitForClientConnection(Timeout.Infinite);
-                _handShakeSuccessful = HandShakeWithVsTestConsole();
+                _handShakeSuccessful = _communicationManager.WaitForClientConnection(Timeout.Infinite)
+                    && HandShakeWithVsTestConsole();
                 _handShakeComplete.Set();
             });
         }
@@ -133,8 +133,9 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
         {
             port = _communicationManager.HostServer(new IPEndPoint(IPAddress.Loopback, 0)).Port;
             var timeoutSource = new CancellationTokenSource(clientConnectionTimeout);
-            await Task.Run(() =>
-                _communicationManager.AcceptClientAsync(), timeoutSource.Token).ConfigureAwait(false);
+            await Task.Run(
+                () => _communicationManager.AcceptClientAsync(),
+                timeoutSource.Token).ConfigureAwait(false);
 
             _handShakeSuccessful = await HandShakeWithVsTestConsoleAsync().ConfigureAwait(false);
             _handShakeComplete.Set();
